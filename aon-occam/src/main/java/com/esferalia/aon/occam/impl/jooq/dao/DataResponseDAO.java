@@ -30,7 +30,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -190,7 +189,7 @@ public class DataResponseDAO {
 	}
 	
 	/// -------------------------------------------------------
-	public static DataResponse insertAEATResponse(AONContext ctx, FiscalModel fm, String aeatResponse ){
+	public static DataResponse insertAEATResponse(AONContext ctx, IFiscalModel fm, String aeatResponse ){
 		final Pair<DataResponseSource,DataAttachSource> pair = getDataResponseData( fm );
 		if (pair.getLeft() == null || pair.getRight() == null) {
 			throw new AonCoreException(" Modelo no soportado en la grabación de la respuesta");

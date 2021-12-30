@@ -12,6 +12,7 @@ public interface IMODEL3902021 {
 	public String getXML(AONContext aonContext, int id);
 	public Mod3902021 save(AONContext ctx, Mod3902021 mod390);
 	public void delete(AONContext ctx,Mod3902021 mod390);
-	public Mod3902021 changeStatus(AONContext ctx, Mod3902021 mod184, FiscalStatus newStatus);
+	public Mod3902021 changeStatus(AONContext ctx, Mod3902021 mod, FiscalStatus newStatus);
+	public Mod3902021 aeatPresentation(AONContext ctx, Mod3902021 mod, String aeatResponse);
 	
 }

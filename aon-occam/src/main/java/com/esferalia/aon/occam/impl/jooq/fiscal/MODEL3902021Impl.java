@@ -41,5 +41,11 @@ public class MODEL3902021Impl implements IMODEL3902021 {
 		return ctx.getDslContext().transactionResult(
 			configuration -> Mod3902021DAO.changeStatus(ctx, mod390, newStatus));		
 	}
+	
+	@Override
+	public Mod3902021 aeatPresentation(AONContext ctx, Mod3902021 mod, String aeatResponse) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod3902021DAO.aeatPresentation(ctx, mod, aeatResponse));
+	}
 
 }

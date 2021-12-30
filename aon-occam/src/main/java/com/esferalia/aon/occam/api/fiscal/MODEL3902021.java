@@ -48,5 +48,11 @@ public class MODEL3902021 {
 			return getImpl().changeStatus(ctx, mod390,  status);
 		}
 	}
+
+	public static Mod3902021 aeatPresentation(Occam occam, Mod3902021 mod, String aeatResponse) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
+		}
+	}
 	
 }

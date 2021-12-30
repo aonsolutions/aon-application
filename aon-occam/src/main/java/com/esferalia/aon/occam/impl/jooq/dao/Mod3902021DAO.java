@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902021.Mod390Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902021.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902021DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -53,6 +54,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.Mod390toAEATIVA2021;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -1053,6 +1055,22 @@ public class Mod3902021DAO {
 		return !vat.isVatSurchargeRegime() 
 				&& !vat.isRectification()
 				&& (vat.isIntracommunityExpenses() || (vat.isIntracommunityPurchase() && vat.isService()));
+	}
+
+	public static Mod3902021 aeatPresentation(AONContext ctx, Mod3902021 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL390)
+					.set(FS_MODEL390.RECEIPT,response.getJustificante())
+					.set(FS_MODEL390.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MODEL390.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
 	}
 
 }
