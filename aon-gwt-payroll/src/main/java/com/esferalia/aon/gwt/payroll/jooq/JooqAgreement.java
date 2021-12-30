@@ -726,7 +726,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
 				.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()));
 
-		// TODO: poner a null todos los contratos que apuntan al convenio borrado
+		// Poner a null todos los contratos que apuntan al convenio borrado
 		dslContext.update(CONTRACT)
 			.set(CONTRACT.AGREEMENT_LEVEL, DSL.val(null, CONTRACT.AGREEMENT_LEVEL))
 			.set(CONTRACT.CATEGORY_DESCRIPTION, DSL.val(null, CONTRACT.CATEGORY_DESCRIPTION))
@@ -1703,6 +1703,52 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				}
 			}
 		}
+		
+		return message;
+	}
+	
+	public static String getAgreementUsedInfo(Connection conn, Agreement agreement) {
+		DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL, getDefaultSettings());
+		
+		String message = "";
+		
+		List<Integer> agreementContracts = dslContext.select(CONTRACT.ID).from(CONTRACT)
+			.where(CONTRACT.AGREEMENT_LEVEL.in(
+					dslContext.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+						.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+						.fetch(AGREEMENT_LEVEL.ID)
+			)).fetch(CONTRACT.ID);
+		
+		Result<Record> infoRecords = dslContext.select().from(CONTRACT)
+			.innerJoin(ENTERPRISE_CCC)
+			.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+			.innerJoin(ENTERPRISE_ACTIVITY)
+			.on(ENTERPRISE_ACTIVITY.ID.eq(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY))
+			.innerJoin(REGISTRY)
+			.on(REGISTRY.ID.eq(ENTERPRISE_ACTIVITY.ENTERPRISE))
+			.innerJoin(PERSON)
+			.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+			.where(CONTRACT.ID.in(agreementContracts))
+			.orderBy(ENTERPRISE_ACTIVITY.ENTERPRISE)
+			.fetch();
+		
+		if(infoRecords.isNotEmpty()) {
+			message = "El convenio <b>" + agreement.getDescription() + "</b> contiene contratos asociados.";
+			Integer enterpriseId = infoRecords.get(0).get(REGISTRY.ID);
+			message += "<br><br>";
+			message += "<b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
+			for(Record infoRecord : infoRecords) {
+				if(AonNumberUtils.equals(enterpriseId, infoRecord.get(REGISTRY.ID)))
+					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
+				else {
+					message += "<br><b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
+					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
+					enterpriseId = infoRecord.get(REGISTRY.ID);
+				}
+			}
+		} else 
+			message = "El convenio <b>" + agreement.getDescription() + "</b> no contiene contratos asociados.";
+		
 		
 		return message;
 	}

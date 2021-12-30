@@ -518,6 +518,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+
+	@Override
+	public String getAgreementUsedInfo(String domain, Agreement agreement) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			return JooqAgreement.getAgreementUsedInfo(connection, agreement);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	
 	@Override
 	public Agreement copyAgreement(String domain, Agreement agreement) {
 		
@@ -2333,21 +2344,21 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public ContractSpecificData getContractSpecificData(String domainName, Integer contractId) {
+	public ContractSpecificData getContractSpecificData(String domainName, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContractSEPE.getContractSpecificData(connection, contractId);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) {
+	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqContractSEPE.setContractSpecificData(connection, domainId, employeeContractData);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 

@@ -4,12 +4,9 @@ import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
-
-import javax.xml.bind.JAXBException;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -49,15 +46,15 @@ public class JooqContractSEPE {
 	
 	// ---------------------------------------------------- DataBase
 	
-	public static ContractSpecificData getContractSpecificData(Connection conn, Integer contractId) {
+	public static ContractSpecificData getContractSpecificData(Connection conn, Integer contractId) throws IllegalArgumentException {
 		return getContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), contractId);
 	}
 	
-	public static void setContractSpecificData(Connection conn, Integer domainId, EmployeeContractInfo employeeContractInfo) {
+	public static void setContractSpecificData(Connection conn, Integer domainId, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		setContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), domainId, employeeContractInfo);
 	}
 	
-	private static ContractSpecificData getContractSpecificDataDB(DSLContext dslContext, Integer contractId) {
+	private static ContractSpecificData getContractSpecificDataDB(DSLContext dslContext, Integer contractId) throws IllegalArgumentException {
 		ContractSpecificData contractSpecificData = new ContractSpecificData();
 		
 		Result<Record> cnoRecords = dslContext.select().from(CONTRACT_DATA)
@@ -100,34 +97,36 @@ public class JooqContractSEPE {
 			if(null == contratos) return contractSpecificData;
 			Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 			JooqContrata.completeContratosParams(obj, contractSpecificData);
-		} catch (JAXBException | IOException | IndexOutOfBoundsException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
 		}
 		
 		return contractSpecificData;
 	}
 	
-	private static void setContractSpecificDataDB(DSLContext dslContext, Integer domainId, EmployeeContractInfo employeeContractInfo) {
-		ContractSpecificData contractSpecificData = employeeContractInfo.getContractSpecificData();
-		
-		Integer contractId = employeeContractInfo.getContractInfo().getContractId();
-		Date startDate = parseToSQLDate(employeeContractInfo.getContractInfo().getStartDate());
-		Date endDate = parseToSQLDate(employeeContractInfo.getContractInfo().getEndDate());
-		String cno = contractSpecificData.getCno();
-		
-		if(AonStringUtils.isNotBlank(cno)) {
-			dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.NAME.eq("CNO")).and(CONTRACT_DATA.CONTRACT.eq(contractId)).execute();
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "CNO")
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, "\"" + cno + "\"")
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
-				.execute();
-		}
-		
+	private static void setContractSpecificDataDB(DSLContext dslContext, Integer domainId, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try {
+		
+			ContractSpecificData contractSpecificData = employeeContractInfo.getContractSpecificData();
+			
+			Integer contractId = employeeContractInfo.getContractInfo().getContractId();
+			Date startDate = parseToSQLDate(employeeContractInfo.getContractInfo().getStartDate());
+			Date endDate = parseToSQLDate(employeeContractInfo.getContractInfo().getEndDate());
+			String cno = contractSpecificData.getCno();
+			
+			if(AonStringUtils.isNotBlank(cno)) {
+				dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.NAME.eq("CNO")).and(CONTRACT_DATA.CONTRACT.eq(contractId)).execute();
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+					.set(CONTRACT_DATA.NAME, "CNO")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, "\"" + cno + "\"")
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.execute();
+			}
+		
 			IContratoType contrato = JooqContrata.createCONTRATOS(employeeContractInfo);
 			
 			if(null != contrato) {
@@ -161,8 +160,9 @@ public class JooqContractSEPE {
 						.execute();
 				}
 			}
-		} catch (JAXBException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

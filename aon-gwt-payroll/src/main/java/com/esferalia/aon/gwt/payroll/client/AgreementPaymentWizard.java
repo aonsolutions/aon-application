@@ -39,6 +39,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
@@ -263,6 +264,30 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	@UiField
 	Button partialityButton;
 	
+	@UiField
+	HTMLPanel weekDaysPanel;
+	
+	@UiField
+	CheckBox mondayCB;
+	
+	@UiField
+	CheckBox tuesdayCB;
+	
+	@UiField
+	CheckBox wednesdayCB;
+	
+	@UiField
+	CheckBox thursdayCB;
+	
+	@UiField
+	CheckBox fridayCB;
+	
+	@UiField
+	CheckBox saturdayCB;
+	
+	@UiField
+	CheckBox sundayCB;
+	
 	@UiField (provided = true)
 	GtzdoWizard gtzdoWizard;
 	
@@ -359,6 +384,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 		// Hide quote defaul
 		UIObject.setVisible(quotePanel.getElement(), false );
+		
+		// Hide weekDays panel default
+		UIObject.setVisible(weekDaysPanel.getElement(), false );
 		
 		// Init Payment
 		payment = new Payment();
@@ -491,6 +519,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			periodicityType.addItem("DIARIO", " * DIAS_TRABAJADOS");
 			periodicityType.addItem("HORAS", " * HORAS_TRABAJADAS");
 			periodicityType.addItem("PEONADAS", " * JORNADAS_REALES");
+			periodicityType.addItem("DIAS EFECTIVOS", " * DIAS_EFECTIVOS");
+			periodicityType.addItem("DIAS SEMANA", " * DIAS_SEMANA");
 			periodicityType.addItem("FIJO", "FIJO");
 		}
 	}
@@ -510,18 +540,54 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		if ( taxEditableAndQuoteNone() ) {
 			UIObject.setVisible(taxedPanel.getElement(), true );
 			UIObject.setVisible(quotePanel.getElement(), true );
+			showCRA0000();
 		} else {
 			if ( taxEditableAndQuoteFull() ) {
 				UIObject.setVisible(taxedPanel.getElement(), true );
 				UIObject.setVisible(quotePanel.getElement(), false );
+				showCRA0013();
 			} else  if ( taxAndQuoteFull() || taxAndQuoteNone() ) {
 				UIObject.setVisible(taxedPanel.getElement(), false );
 				UIObject.setVisible(quotePanel.getElement(), false );
+				showCRADefault();
 			} else {
 				UIObject.setVisible(taxedPanel.getElement(), true );
 				UIObject.setVisible(quotePanel.getElement(), true );
+				showCRADefault();
 			}
 		}
+	}
+
+	private void showCRA0000() {
+		quoteTypeLB.setEnabled(false);
+		quoteExpression.setEnabled(false);
+		quoteFxButton.setVisible(false);
+		quoteTypeLB.setSelectedIndex(1);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), quoteTypeLB);
+		quoteExpression.setValue("0,00");
+	}
+	
+	private void showCRA0013() {
+		taxedTypeLB.setEnabled(false);
+		taxedExpression.setEnabled(false);
+		taxedFxButton.setVisible(false);
+		taxedTypeLB.setSelectedIndex(1);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), taxedTypeLB);
+		taxedExpression.setValue("0,00");
+	}
+	
+	private void showCRADefault() {
+		quoteTypeLB.setEnabled(true);
+		quoteExpression.setEnabled(true);
+		quoteFxButton.setVisible(true);
+		quoteTypeLB.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), quoteTypeLB);
+		taxedTypeLB.setEnabled(true);
+		taxedExpression.setEnabled(true);
+		taxedFxButton.setVisible(true);
+		taxedTypeLB.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), quoteTypeLB);
+		
 	}
 	
 	private boolean taxEditableAndQuoteFull() {
@@ -707,8 +773,16 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	void onPeriodicityTypeChange(ChangeEvent event) {
 		createUpdatePayment();
 		checkPartialityButton();
+		checkIfWeekDays();
 	}
 	
+	@UiHandler({"mondayCB", "tuesdayCB", "wednesdayCB", "thursdayCB", "fridayCB", "saturdayCB", "sundayCB"})
+	void onWeekDaysValueChange(ValueChangeEvent<Boolean> event) {
+		createUpdatePayment();
+		checkPartialityButton();
+	}
+	
+
 	@UiHandler("extraPayDate")
 	void onExtraPayDateChange(ChangeEvent event) {
 		String issueValue = extraPayDate.getValue();
@@ -772,6 +846,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		}
 	}
 	
+	
 	// -------------------------------------------- UiHandler auxiliar method
 	
 	private void checIfExtra() {
@@ -786,6 +861,14 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			periodicityType.setEnabled(true);
 			paymentExpression.setEnabled(false);
 		}
+	}
+
+	private void checkIfWeekDays() {
+		String periodicityTypeValue = periodicityType.getSelectedValue();
+		if(AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA"))
+			UIObject.setVisible(weekDaysPanel.getElement(), true );
+		else
+			UIObject.setVisible(weekDaysPanel.getElement(), false );
 	}
 	
 	private void checkExtraPanel() {
@@ -805,12 +888,13 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		}
 	}
 	
+	
 	// -------------------------------------------- DeckPanel.Methods
 
 	private void showFirstPage() {
 		firstPage.setVisible(true);
 		gtzdoWizard.setVisible(false);
-		container.setHeight("420px");
+		container.setHeight("430px");
 		centerDialog();
 	}
 	
@@ -1006,6 +1090,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
 			String newExpression = "FRACCIONAR(" + expression + ")";
 			expression = newExpression;
+		} if(AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
+			expression += checkWeekDaysExpression();
 		} else {
 			expression += periodicityTypeValue;
 		}
@@ -1013,13 +1099,34 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		return expression;
 	}
 	
+	private String checkWeekDaysExpression() {
+		List<String> selectedWeekDays = new ArrayList<>();
+		if(Boolean.TRUE.equals(mondayCB.getValue())) selectedWeekDays.add("DIAS_LUNES");
+		if(Boolean.TRUE.equals(tuesdayCB.getValue())) selectedWeekDays.add("DIAS_MARTES");
+		if(Boolean.TRUE.equals(wednesdayCB.getValue())) selectedWeekDays.add("DIAS_MIERCOLES");
+		if(Boolean.TRUE.equals(thursdayCB.getValue())) selectedWeekDays.add("DIAS_JUEVES");
+		if(Boolean.TRUE.equals(fridayCB.getValue())) selectedWeekDays.add("DIAS_VIERNES");
+		if(Boolean.TRUE.equals(saturdayCB.getValue())) selectedWeekDays.add("DIAS_SABADO");
+		if(Boolean.TRUE.equals(sundayCB.getValue())) selectedWeekDays.add("DIAS_DOMINGO");
+		
+		String weekDaysExpression = "";
+		if(!selectedWeekDays.isEmpty()) {
+			weekDaysExpression = " * (";
+			for(int i=0; i<selectedWeekDays.size()-1; i++)
+				weekDaysExpression += selectedWeekDays.get(i) + " + ";
+			weekDaysExpression += selectedWeekDays.get(selectedWeekDays.size()-1) + ")";
+		}
+		return weekDaysExpression;
+	}
+	
 	private void checkPartialityButton() {
+		String periodicityTypeValue = periodicityType.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA") && !AonStringUtils.equalsIgnoreCase(periodicityType.getSelectedValue(), "PRORRATEO")) {
 			partialityPanel.getElement().getStyle().setDisplay(Display.NONE);
 		} else {
 			partialityPanel.getElement().getStyle().clearDisplay();
 			String expression = paymentExpression.getValue();
-			if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR")) {
+			if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR") || AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
 				hasPartiality = false;
 				partialityButton.setEnabled(true);
 				getEnableDisableButton(partialityButton, hasPartiality);
@@ -1191,7 +1298,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
 			String newExpression = "FRACCIONAR(" + expression + ")";
 			expression = newExpression;
-		} else {
+		} else if(!AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
 			expression += periodicityTypeValue;
 		}
 		

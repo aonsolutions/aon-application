@@ -4787,85 +4787,61 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		AonToolbar toolbar = new AonToolbar("Convenio");
 		
 		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAllButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.clearDrafts();
-				agreementDraftObject.clearNewDatesWithChanges();
-				agreementDraftObject.clearDeleteDatesWithChanges();
-				agreementDraftObject.calculate(AgreementDraft.this);
-			}
+		undoAllButton.addClickHandler(e -> {
+			agreementDraftObject.clearDrafts();
+			agreementDraftObject.clearNewDatesWithChanges();
+			agreementDraftObject.clearDeleteDatesWithChanges();
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(undoAllButton);
 		
 		undoButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.undo();
-				agreementDraftObject.calculate(AgreementDraft.this);
-//				calculate();
-			}
+		undoButton.addClickHandler(e -> {
+			agreementDraftObject.undo();
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(undoButton);
 		undoButton.setVisible(false);
 		
 		redoButton = new AonToolbarButton("Rehacer", AON.CSS.aonIconRedo() );
-		redoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.redo();
-				agreementDraftObject.calculate(AgreementDraft.this);
-//				calculate();
-			}
+		redoButton.addClickHandler(e -> {
+			agreementDraftObject.redo();
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(redoButton);
 		redoButton.setVisible(false);
 		
 		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.save(AgreementDraft.this);
-			}
-		});
+		acceptButton.addClickHandler(e -> agreementDraftObject.save(AgreementDraft.this));
 		toolbar.add(acceptButton);
 		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
-		printPreviewButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showPreview();
-
-				initTypeListBox();
-				initLevelListBox();
-				initPreviewMonthListBox();
-
-				printPreview();
-			}
+		printPreviewButton.addClickHandler(e -> {
+			showPreview();
+			initTypeListBox();
+			initLevelListBox();
+			initPreviewMonthListBox();
+			printPreview();
 		});
 		toolbar.add(printPreviewButton);
 		
 		fxButton = new AonToolbarButton("fx", AON.CSS.aonIconFx() );
-		fxButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(null == contextProvider)
-					contextProvider = new ContextProvider();
-				
-				FxDialog fxDialog = new FxDialog(contextProvider) {
-					@Override
-					void onAcceptButtonClick(ClickEvent event) {
-						super.onAcceptButtonClick(event);
-						fxhasValue.setValue(getExpression(), true);
-						((Focusable) fxhasValue).setFocus(true);
-					}
-				};
+		fxButton.addClickHandler(e -> {
+			if(null == contextProvider)
+				contextProvider = new ContextProvider();
+			
+			FxDialog fxDialog = new FxDialog(contextProvider) {
+				@Override
+				void onAcceptButtonClick(ClickEvent event) {
+					super.onAcceptButtonClick(event);
+					fxhasValue.setValue(getExpression(), true);
+					((Focusable) fxhasValue).setFocus(true);
+				}
+			};
 
-				fxDialog.setExpression(fxhasValue.getValue());
-				fxDialog.center();
-				fxDialog.show();
-			}
+			fxDialog.setExpression(fxhasValue.getValue());
+			fxDialog.center();
+			fxDialog.show();
 		});
 		toolbar.add(fxButton);
 		fxButton.setEnabled(false);
@@ -4929,6 +4905,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					f -> showError("Error actualizaci\u00F3n", f.getMessage()));
 		});
 		toolbar.add(serviAgreementUpdateButton);
+		
+		AonToolbarButton agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
+		agreementInfoButton.addClickHandler(e -> 
+			agreementDraftObject.getAgreementInfo(message -> {
+				AonDialog dialog = new AonDialog(agreementDraftObject.getDescription(), new HTML(message));
+				dialog.info();
+			}, f -> {}));
+		toolbar.add(agreementInfoButton);
 		
 		CheckBox changesCheck = new CheckBox();
 		changesCheck.setText("Cambios");

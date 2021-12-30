@@ -65,6 +65,7 @@ public interface EnterprisesServiceAsync {
 	void deleteAgreement(String domain, Agreement agreement, AsyncCallback<Void> callback);
 	void updateAgreementId(String domain, Agreement agreement, AsyncCallback<Void> callback);
 	void getDeleteAgreementMessage(String domain, Agreement agreement, AsyncCallback<String> callback);
+	void getAgreementUsedInfo(String currentDomainName, Agreement agreement, AsyncCallback<String> callback) throws IllegalArgumentException;
 	void copyAgreement(String domain, Agreement agreement, AsyncCallback<Agreement> callback);
 	void getWorkplacesExtras(String domain, List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback);
 	void getAgreement(String domain, Integer agreementId, AsyncCallback<Agreement> callback);
@@ -142,8 +143,8 @@ public interface EnterprisesServiceAsync {
 	void getContractOtherInfo(String currentDomainName, Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback);
 	void setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData, AsyncCallback<Map<String, String>> asyncCallback);
-	void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback);
-	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
+	void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback) throws IllegalArgumentException;
+	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> asyncCallback);
 	void getDigitalCertificateTGSS(String currentDomainName, String currentUser, AsyncCallback<DigitalCertificate> asyncCallback);
 	void getDigitalCertificatesSEPE(String currentDomainName, AsyncCallback<List<DigitalCertificate>> asyncCallback);

@@ -138,6 +138,16 @@
 					
 				</g:HTMLPanel>
 				
+				<g:HTMLPanel ui:field="weekDaysPanel" styleName="{style.flex}">
+					<g:CheckBox ui:field="mondayCB" text="Lunes" />
+					<g:CheckBox ui:field="tuesdayCB" text="Martes" />
+					<g:CheckBox ui:field="wednesdayCB" text="Miercoles" />
+					<g:CheckBox ui:field="thursdayCB" text="Jueves" />
+					<g:CheckBox ui:field="fridayCB" text="Viernes" />
+					<g:CheckBox ui:field="saturdayCB" text="Sabado" />
+					<g:CheckBox ui:field="sundayCB" text="Domingo" />
+				</g:HTMLPanel>
+				
 				<aon:GtzdoWizard ui:field="gtzdoWizard"/>
 				
 				<g:HTMLPanel ui:field="paymentsDataGridPanel" styleName="{style.flexColumn}">

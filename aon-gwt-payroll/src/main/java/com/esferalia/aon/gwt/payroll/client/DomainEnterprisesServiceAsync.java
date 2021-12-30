@@ -131,6 +131,10 @@ public class DomainEnterprisesServiceAsync {
 	public void getDeleteAgreementMessage(Agreement agreement, AsyncCallback<String> callback) {
 		enterprisesServiceAsync.getDeleteAgreementMessage(getCurrentDomainName(), agreement, callback);
 	}
+	
+	public void getAgreementUsedInfo(Agreement agreement, AsyncCallback<String> callback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getAgreementUsedInfo(getCurrentDomainName(), agreement, callback);
+	}
 
 	public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
 		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), offset, limit, callback);
@@ -376,11 +380,11 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setContractOtherInfo(getCurrentDomainName(), contractId, contractType, contractOtherData, asyncCallback);
 	}
 	
-	public void getContractSpecificData(Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback) {
+	public void getContractSpecificData(Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getContractSpecificData(getCurrentDomainName(), contractId, asyncCallback);
 	}
 
-	public void setContractSpecificData(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) {
+	public void setContractSpecificData(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.setContractSpecificData(getCurrentDomainName(), employeeContractData, asyncCallback);
 	}
 	
