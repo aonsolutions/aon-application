@@ -261,6 +261,7 @@ public class AgreementDraftObject {
 	private ArrayList<Date> newDatesChanges;
 	private ArrayList<Date> deleteDatesChanges;
 	private DomainEmployeesServiceAsync employeesServiceAsync = DomainEmployeesServiceAsync.newInstance();
+	private DomainEnterprisesServiceAsync enterpriseServiceAsync = DomainEnterprisesServiceAsync.newInstance();
 	private Agreement agreement;
 
 	public AgreementDraftObject(
@@ -1368,4 +1369,19 @@ public class AgreementDraftObject {
 		});
 	}
 
+	public void getAgreementInfo(Consumer<String> succes, Consumer<Throwable> failure) {
+		enterpriseServiceAsync.getAgreementUsedInfo(agreement, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				succes.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 }

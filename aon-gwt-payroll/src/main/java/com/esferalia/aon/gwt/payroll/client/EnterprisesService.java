@@ -75,6 +75,8 @@ public interface EnterprisesService extends RemoteService {
 	void updateAgreementId(String domain, Agreement agreement);
 	
 	String getDeleteAgreementMessage(String domain, Agreement agreement);
+	
+	String getAgreementUsedInfo(String currentDomainName, Agreement agreement) throws IllegalArgumentException;
 
 	void deleteBonusConcept(String domain, Bonus bonus);
 

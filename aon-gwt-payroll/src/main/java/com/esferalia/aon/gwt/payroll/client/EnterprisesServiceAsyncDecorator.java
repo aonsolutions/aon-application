@@ -229,6 +229,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
+	public void getAgreementUsedInfo(String domain, Agreement agreement, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAgreementUsedInfo(domain, agreement, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
 	public void copyAgreement(String domain, Agreement agreement,
 			AsyncCallback<Agreement> callback) {
 		AON.start();
