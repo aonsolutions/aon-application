@@ -1,6 +1,6 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm, isEmptyObject } from "../../../../services/utils.js";
-import { deleteTimeControl, getLocation, getStatus, saveTimeControlDetail } from "../../../../services/service.js";
+import { deleteTimeControl, getLocation, getStatus, saveTimeControlDetail, getTimeControlHistoric } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from "../../../../environments/environments.js";
@@ -12,6 +12,7 @@ import { AON_TAGS } from "../../../../environments/aonTag.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import { AonMap } from "../../../../components/aon-map.js";
 import * as ACTION from '../../../actions.js';
+import { setStyles } from "../../../../services/utilsComponents.js";
 
 
 export class AonEventAdd extends AonElement {
@@ -123,6 +124,12 @@ export class AonEventAdd extends AonElement {
       }
 
       if(!this.applicationParentEl.isEmployee()){
+        toolbarEl.addButton2({
+          id: 'historic',
+          name: MSG.HISTORIC,
+          icon: MATERIAL_ICONS.ASSIGNMENT
+        }, () => this.historic());
+        
         toolbarEl.addButton2(ACTION.DELETE, () => this.delete());
       }
       toolbarEl.title = MSG.EDIT;
@@ -237,6 +244,42 @@ export class AonEventAdd extends AonElement {
     if(this.START_DATE) startDate = AonDateUtils.formatDateOrigin(this.START_DATE);
     this.applicationParentEl.DATE_TMP = {...this.applicationParentEl.DATE_TMP, startDate};
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+  }
+
+  async historic(){
+    try {
+      const resp = await getTimeControlHistoric({id:this.data.id});
+      const r = resp.map(tm=> ({
+        date:  AonDateUtils.setDateTimestamp(new Date(tm.date)),
+        creation_user: tm.creation_user,
+        location: tm.location && tm.location.id ? tm.location.name : null,
+        status: getStatus(tm.status).name
+      }))
+      let d = this.getApplication().getDialog();
+      if(d){
+          const pre  = setStyles(document.createElement("pre"),{
+            backgroundColor: "ghostwhite",
+            border: "1px solid silver",
+            padding: "10px 20px",
+            margin: "20px",
+            whiteSpace: "pre-wrap"
+          });
+          const code = document.createElement("code");
+          code.style.color = "brown";
+          pre.appendChild(code); 
+          code.textContent = JSON.stringify(r, undefined, 2);
+
+          d.clear();
+          if (!this.isMobile()) 
+              d.width = '400px';
+          d.setTitle(MSG.HISTORIC);
+          d.setContent(pre);
+          d.addAcceptAction(() => {});
+          d.open();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   goMessenger(){

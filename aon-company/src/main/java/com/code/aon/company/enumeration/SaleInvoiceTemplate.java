@@ -7,7 +7,9 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum SaleInvoiceTemplate implements IResourceable {
 
-	DEFAULT("saleInvoice"),
+	DEFAULT("default"),
+	
+	STANDARD("saleInvoice"),
 	
 	STANDARD_01("saleInvoiceTemplate2"),
 	

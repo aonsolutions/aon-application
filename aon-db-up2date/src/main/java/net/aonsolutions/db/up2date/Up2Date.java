@@ -20,6 +20,19 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractCleanUpdate;
+import net.aonsolutions.db.up2date.data.DataRequestUpdate;
+import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
+import net.aonsolutions.db.up2date.payroll.IrpfM190Update;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2019Close;
+import net.aonsolutions.db.up2date.tgss.HomeBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
+import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
+import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
 
 
 public class Up2Date {
@@ -197,7 +210,8 @@ public class Up2Date {
     		//WorkplaceUpdate.WORKPLACE_UPDATE,
     		//IrpfM190Update.IRPFM190UPDATE,
     		//Holidays2022Insert.HOLIDAYS2022INSERT,
-    		ContractCleanUpdate.CONTRACTCLEANUPDATE
+    		ContractCleanUpdate.CONTRACTCLEANUPDATE,
+    		TimeControlUpdate.TIMECONTROL_UPDATE
     };
     
 

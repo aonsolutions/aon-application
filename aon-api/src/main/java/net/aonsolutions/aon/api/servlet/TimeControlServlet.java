@@ -54,6 +54,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "/list":
 				response(req, resp, getTimeControlList(api));
 				break;
+			case "/historic":
+				response(req, resp, getTimeControlHistoric(api));
+				break;
 			case "/list-holder":
 				response(req, resp, getTaskHolderTimeControlStream(api));
 				break;
@@ -178,8 +181,13 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		Boolean active = !api.getParams().optString("active").isEmpty() ?  api.getParams().getBoolean("active") : true;
-		if(!api.getParams().optString("startDate").isEmpty()) startDate =  AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE);
+		
+		if(!api.getParams().optString("startDate").isEmpty()) 
+			startDate =  AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
+		
+		if(!api.getParams().optString("endDate").isEmpty()) 
+			endDate = AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE);
+		
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getTimeControlStream(api.getDomain(), "", startDate, endDate)
 		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
@@ -187,6 +195,18 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			array.put(tc.toJSON());
 		});
 		
+		return array;
+	}
+	
+	private Object getTimeControlHistoric(AonApiData api) {
+		Integer id = api.getParams().optInt("id");
+		JSONArray array = new JSONArray();
+		AON_SOLUTIONS.getTimeControlHistoric(api.getDomain(), api.getUser().getLogin(), 
+				f->f.getDomainProperty().eq(api.getDomain().getId()).and(f.getModificatedTimeControlProperty().eq(id))
+		)
+		.forEach(tc -> 
+			array.put(tc.toJSON())
+		);
 		return array;
 	}
 	

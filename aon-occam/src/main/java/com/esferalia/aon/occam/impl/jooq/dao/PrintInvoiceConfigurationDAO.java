@@ -66,7 +66,7 @@ public class PrintInvoiceConfigurationDAO {
 			});
 		
 		ApplicationParameter saleInvoice = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getNameProperty().eq(AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM.name()))).findFirst().orElse(new ApplicationParameter());		
-		config.setActive(AonStringUtils.isBlank(saleInvoice.getValue()) || saleInvoice.getValue().equalsIgnoreCase("saleInvoice"));
+		config.setActive(AonStringUtils.isBlank(saleInvoice.getValue()) || saleInvoice.getValue().equalsIgnoreCase("default"));
 		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
 				.findFirst().orElse(new Attach());
 		config.setBackground(attach);

@@ -15,13 +15,20 @@ public class TimeControlDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	private Integer modificatedTimeControl;
 	private Domain domain;
 	private TimeControlStatus status;
+	private TimeControlCause cause;
 	private TaskHolder taskHolder;
 	private Date date;
 	private String comments;
 	private Location location;
 	private Coordinates coordinates;
+	
+	private Date creationDate;
+	private String creationUser;
+	private Date modificationDate;
+	private String modificationUser;
 	
 	public TimeControlDetail() {
 	
@@ -53,6 +60,16 @@ public class TimeControlDetail implements Serializable {
 		this.status = status;
 		return this;
 	}
+	
+	public TimeControlCause getCause() {
+		return cause;
+	}
+
+	public TimeControlDetail setCause(TimeControlCause cause) {
+		this.cause = cause;
+		return this;
+	}
+
 
 	public Date getDate() {
 		return date;
@@ -60,6 +77,38 @@ public class TimeControlDetail implements Serializable {
 
 	public TimeControlDetail setDate(Date date) {
 		this.date = date;
+		return this;
+	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public TimeControlDetail setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public TimeControlDetail setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public TimeControlDetail setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public TimeControlDetail setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
 		return this;
 	}
 
@@ -99,11 +148,22 @@ public class TimeControlDetail implements Serializable {
 		return this;
 	}
 	
+	public Integer getModificatedTimeControl() {
+		return modificatedTimeControl;
+	}
+
+	public TimeControlDetail setModificatedTimeControl(Integer modificatedTimeControl) {
+		this.modificatedTimeControl = modificatedTimeControl;
+		return this;
+	}
+
+	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("id", getId());
 		json.put("domain", getDomain().getId());
 		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
+		json.put("cause", getCause() != null ? getCause().name().toLowerCase() : TimeControlCause.DEFAULT);
 		json.put("date", getDate().getTime());
 		
 		if(getCoordinates() != null) {
@@ -124,6 +184,20 @@ public class TimeControlDetail implements Serializable {
 			taskHolderJson.put("active", getTaskHolder().getActiveValue());
 			json.put("task_holder", taskHolderJson);
 		}
+		
+		if(getCreationDate()!=null) 
+			json.put("creation_date", getCreationDate().getTime());
+		if(getCreationUser()!=null) 
+			json.put("creation_user", getCreationUser());
+		
+		if(getModificationDate()!=null) 
+			json.put("modification_date", getModificationDate().getTime());
+		if(getModificationUser()!=null) 
+			json.put("modification_user", getModificationUser());
+		
+		if(getModificatedTimeControl()!=null) 
+			json.put("modificated_timecontrol", getModificatedTimeControl());
+		
 		return json;
 	}
 	

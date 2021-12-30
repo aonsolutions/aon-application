@@ -8,18 +8,22 @@ import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Field;
+import org.jooq.InsertSetMoreStep;
 import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.TimecontrolRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
@@ -38,7 +42,7 @@ public class TimeControlDAO {
 
 	private static final TimeControlPropertiesDAO TIMECONTROL_PROPERTIES = new TimeControlPropertiesDAO();
 	
-	public static  SelectConditionStep<Record> select(AONContext ctx, TimeControlFilter filter){	
+	public static SelectConditionStep<Record> select(AONContext ctx, TimeControlFilter filter){	
 		return ctx.getDslContext()
 				.select()
 				.from(TIMECONTROL)
@@ -49,13 +53,21 @@ public class TimeControlDAO {
 				.where(TIMECONTROL_PROPERTIES.getConditions(filter));
 	}
 	
-	
 	public static Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter) {
+		ctx.checkRead();
+		return select(ctx, filter)
+			.and(TIMECONTROL.ID.gt(0))
+			.orderBy(TIMECONTROL.DATE.asc())
+			.fetch().stream().map(new TimeControlDetailFiller());
+	}
+	
+	public static Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter) {
 		ctx.checkRead();
 		return select(ctx, filter)
 			.orderBy(TIMECONTROL.DATE.asc())
 			.fetch().stream().map(new TimeControlDetailFiller());
 	}
+	
 	
 	public static TimeControlDetail getLastTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
 		ctx.checkRead();
@@ -234,35 +246,97 @@ public class TimeControlDAO {
 	
 	private static TimeControlDetail insert(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
-		Integer id = ctx.getDslContext()
-			.insertInto(TIMECONTROL, TIMECONTROL.DOMAIN, TIMECONTROL.TASK_HOLDER, TIMECONTROL.STATUS,
-				TIMECONTROL.DATE, TIMECONTROL.COMMENTS, TIMECONTROL.LOCATION, TIMECONTROL.LATITUDE, TIMECONTROL.LONGITUDE)
-			.values(tcd.getDomain().getId(), tcd.getTaskHolder().getId(), tcd.getStatus().value(),
-					new Timestamp(tcd.getDate().getTime()), tcd.getComments(), tcd.getLocation().getId(),
-					tcd.getCoordinates().getLatitude(), tcd.getCoordinates().getLongitude())
-			.returning(TIMECONTROL.ID).fetchOne().getValue(TIMECONTROL.ID);
+
+	    InsertSetMoreStep<TimecontrolRecord> sets = ctx.getDslContext().insertInto(TIMECONTROL)
+		.set(TIMECONTROL.DOMAIN, tcd.getDomain().getId())
+		.set(TIMECONTROL.TASK_HOLDER, tcd.getTaskHolder().getId())
+		.set(TIMECONTROL.STATUS, tcd.getStatus().value())
+		.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
+		.set(TIMECONTROL.COMMENTS, tcd.getComments())
+		.set(TIMECONTROL.LOCATION, tcd.getLocation().getId())
+		.set(TIMECONTROL.LATITUDE, tcd.getCoordinates().getLatitude())
+		.set(TIMECONTROL.LONGITUDE, tcd.getCoordinates().getLongitude())
+		.set(TIMECONTROL.CREATION_USER, ctx.getUser())
+		.set(TIMECONTROL.CREATION_DATE, new Timestamp(new Date().getTime()))
+		.set(TIMECONTROL.MODIFICATED_TIMECONTROL, tcd.getModificatedTimeControl());
+		
+		if(null != tcd.getId()) 
+			sets.set(TIMECONTROL.ID, tcd.getId());
+		
+		if(null != tcd.getCause()) 
+			sets.set(TIMECONTROL.CAUSE, tcd.getCause().value());
+		
+		Integer id = sets.returning(TIMECONTROL.ID).fetchOne().getValue(TIMECONTROL.ID);
+		
 		ctx.log().debug("INSERT TIMECONTROL id: " + id);	
 		return tcd.setId(id);
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
-		ctx.getDslContext().delete(TIMECONTROL).where(TIMECONTROL.ID.eq(id)).execute();	
-		ctx.log().debug("DELELETE TIMECONTROL id: " +id);	
+		ctx.getDslContext().delete(TIMECONTROL).where(TIMECONTROL.ID.eq(id)).or(TIMECONTROL.MODIFICATED_TIMECONTROL.eq(id)).execute();	
+		ctx.log().debug("DELETE TIMECONTROL id: " +id);	
 	}
 	
 	private static TimeControlDetail update(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
-		ctx.getDslContext()
-			.update(TIMECONTROL)
+		
+		Boolean modified = saveLog(ctx, tcd);
+		
+		System.out.println("MODIFIED " + modified);
+		
+		if(Boolean.TRUE.equals(modified)){
+			ctx.getDslContext().update(TIMECONTROL)
 			.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
 			.set(TIMECONTROL.COMMENTS, tcd.getComments())
 			.set(TIMECONTROL.STATUS, tcd.getStatus().value())
 			.set(TIMECONTROL.LOCATION ,tcd.getLocation()!=null ? tcd.getLocation().getId() : null)
+			.set(TIMECONTROL.MODIFICATION_USER, ctx.getUser())
+			.set(TIMECONTROL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
 			.where(TIMECONTROL.ID.eq(tcd.getId()))
 			.execute();		
-		ctx.log().debug("UPDATE TIMECONTROL id: " + tcd.getId());	
+			ctx.log().debug("UPDATE TIMECONTROL id: " + tcd.getId());	
+		}
+
 		return tcd;
+	}
+	
+	private static Boolean saveLog(AONContext ctx, TimeControlDetail tcd) {
+		Boolean modified = false;
+		try {
+			TimeControlDetail timeControl = getLastTimeControlDetail(ctx, 
+					f->f.getDomainProperty().eq(tcd.getDomain().getId()).and(f.getIdProperty().eq(tcd.getId()))
+			);
+
+			if( 
+				null != tcd.getLocation().getId() && !tcd.getLocation().getId().equals(timeControl.getLocation().getId())           
+				|| !tcd.getComments().equals(timeControl.getComments())            
+				|| !tcd.getStatus().value().equals(timeControl.getStatus().value())
+				|| Boolean.FALSE.equals( compareDate(tcd.getDate(), timeControl.getDate()) )        
+			) {
+			
+				Integer lastMinId = -1;
+				
+				Optional<TimecontrolRecord> last = select(ctx, 
+					f->f.getDomainProperty().eq(tcd.getDomain().getId())
+					.and(f.getIdProperty().lt(0))
+				).orderBy(TIMECONTROL.ID.asc()).limit(1)
+				.fetchOptionalInto(TIMECONTROL);
+				
+				if(last.isPresent()) 
+					lastMinId = last.get().getId() - 1; 
+	
+				timeControl.setId(lastMinId).setModificatedTimeControl(tcd.getId());
+				
+				insert(ctx, timeControl);
+				
+				modified = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return modified;
 	}
 	
 	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details, Date startDate, Date endDate, TimeControlGroup group) {
@@ -322,7 +396,7 @@ public class TimeControlDAO {
 		return tc;
 	}
 
-	public static class TimeControlDetailFiller  implements Function<Record, TimeControlDetail> {
+	public static class TimeControlDetailFiller implements Function<Record, TimeControlDetail> {
 
 		@Override
 		public TimeControlDetail apply(Record record) {
@@ -341,9 +415,25 @@ public class TimeControlDAO {
 					.setTaskHolder(TaskHolderFiller.build(record, null))
 					.setLocation(location)
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
-					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)));	
+					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)))
+					
+					.setCreationDate(record.getValue(TIMECONTROL.CREATION_DATE))
+					.setCreationUser(record.getValue(TIMECONTROL.CREATION_USER))
+					.setModificationDate(record.getValue(TIMECONTROL.MODIFICATION_DATE))
+					.setModificationUser(record.getValue(TIMECONTROL.MODIFICATION_USER))
+					.setModificatedTimeControl(record.getValue(TIMECONTROL.MODIFICATED_TIMECONTROL))
+					;	
 		}
 		
 	}
 	
+	private static Boolean compareDate(Date date1, Date date2) {
+		  Calendar cal1 = Calendar.getInstance();
+	      Calendar cal2 = Calendar.getInstance();
+	     
+	      cal1.setTime(date1);
+	      cal2.setTime(date2);
+
+	      return cal1.equals(cal2);
+	}
 }

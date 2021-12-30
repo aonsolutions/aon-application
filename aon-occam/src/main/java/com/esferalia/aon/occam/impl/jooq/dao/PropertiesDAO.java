@@ -1520,6 +1520,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DOMAIN);}
 		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DATE);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.TASK_HOLDER);}		
+		@Override public Property<Integer> getModificatedTimeControlProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.MODIFICATED_TIMECONTROL);}	
 	}
 	
 	protected static class LocationPropertiesDAO implements LocationProperties {
