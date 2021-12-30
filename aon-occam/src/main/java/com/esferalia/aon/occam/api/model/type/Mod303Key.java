@@ -171,6 +171,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S17U("303-CTS17U",false,null,"N\u00BA unidades")
 	,CT_S17F("303-CTS17F",false,null,"Factor")
 	,CT_S17R("303-CTS17R",false,null,"Resultado")
+	
 	,CT_S117("303-CTS117",false,"C1","Cuota devengada operaciones corrientes")
 	,CT_S118("303-CTS118",false,"D1","Reducciones")
 	,CT_S119("303-CTS119",false,"Z1","\u00CDndice corrector actividades de temporada")
@@ -229,6 +230,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S27U("303-CTS27U",false,null,"N\u00BA unidades")
 	,CT_S27F("303-CTS27F",false,null,"Factor")
 	,CT_S27R("303-CTS27R",false,null,"Resultado")
+	
 	,CT_S217("303-CTS217",false,"C2","Cuota devengada operaciones corrientes")
 	,CT_S218("303-CTS218",false,"D2","Reducciones")
 	,CT_S219("303-CTS219",false,"Z2","\u00CDndice corrector activivades de temporada")

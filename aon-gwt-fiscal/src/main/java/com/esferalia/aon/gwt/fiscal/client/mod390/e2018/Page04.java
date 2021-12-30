@@ -292,8 +292,8 @@ class Page04 extends PageAbs {
 		box83.setEnabled(false);
 		tab4.addRow()
 			.addCell(new Label(AON.MSG.box83Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
-			.addCell(new AonBoxLabel(82),AON.CSS.aonWidth40())
-			.addCell(box82,AON.CSS.aonWidth120());
+			.addCell(new AonBoxLabel(83),AON.CSS.aonWidth40())
+			.addCell(box83,AON.CSS.aonWidth120());
 
 		f01A.addValueChangeHandler(event -> {
 			getModel().ensureFarmerRegime1().setCodigo(f01A.getValue());

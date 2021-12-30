@@ -1341,7 +1341,9 @@ public class Mod3902021 extends Mod390  {
 			k37.setQuota( k37Quota );
 //		}
 		if (isSimplifiedRegime()) {
-			box74 = AonMathUtils.round((getSimpRegime1()==null?0:getSimpRegime1().getBoxJ()) + (getSimpRegime2()==null?0:getSimpRegime2().getBoxJ()));
+			box74 = AonMathUtils.round(
+					(getSimpRegime1()==null?0:getSimpRegime1().getBoxJ()) 
+				  + (getSimpRegime2()==null?0:getSimpRegime2().getBoxJ()));
 			box75 = AonMathUtils.round(
 					  (getFarmerRegime1()!=null?getFarmerRegime1().getQuota():0)
 					+ (getFarmerRegime2()!=null?getFarmerRegime2().getQuota():0)

@@ -5,9 +5,6 @@ import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
-import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
-import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
-import static com.esferalia.aon.jooq.tables.FsVatDetail.FS_VAT_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -71,427 +68,6 @@ public class Mod3902015DAO {
 		boolean accept(VatContext vc);
 	}
 
-	public enum Mod303Key implements Serializable  {
-
-		
-		H1       ("303-H1"),
-		CAG1     ("303-AG1"),
-			CAG1_V1  ("303-AG1V1"),
-			CAG1_V2  ("303-AG1V2"),	
-			CAG1_V3  ("303-AG1V3"),	
-			CAG1_V4  ("303-AG1V4"),
-			CAG1_V5  ("303-AG1V5"),
-			CAG1_V6  ("303-AG1V6"),
-			CAG1_V7  ("303-AG1V7"),	
-		CAG2     ("303-AG2"  ),
-			CAG2_V1  ("303-AG2V1"),
-			CAG2_V2  ("303-AG2V2"),	
-			CAG2_V3  ("303-AG2V3"),	
-			CAG2_V4  ("303-AG2V4"),
-			CAG2_V5  ("303-AG2V5"),
-			CAG2_V6  ("303-AG2V6"),
-			CAG2_V7  ("303-AG2V7"),	
-		CAG3     ("303-AG3"  ),
-			CAG3_V1  ("303-AG3V1"),
-			CAG3_V2  ("303-AG3V2"),	
-			CAG3_V3  ("303-AG3V3"),	
-			CAG3_V4  ("303-AG3V4"),
-			CAG3_V5  ("303-AG3V5"),
-			CAG3_V6  ("303-AG3V6"),
-			CAG3_V7  ("303-AG3V7"),	
-		CAG4     ("303-AG4"  ),
-			CAG4_V1  ("303-AG4V1"),
-			CAG4_V2  ("303-AG4V2"),	
-			CAG4_V3  ("303-AG4V3"),	
-			CAG4_V4  ("303-AG4V4"),
-			CAG4_V5  ("303-AG4V5"),
-			CAG4_V6  ("303-AG4V6"),
-			CAG4_V7  ("303-AG4V7"),
-		H2       ("303-H2"   ),
-		CAC1     ("303-AC1"  ),
-			CAC1_M1U ("303-AC1M1U" ),
-			CAC1_M1I ("303-AC1M1I" ),
-			CAC1_M2U ("303-AC1M2U" ),
-			CAC1_M2I ("303-AC1M2I" ),
-			CAC1_M3U ("303-AC1M3U" ),
-			CAC1_M3I ("303-AC1M3I" ),
-			CAC1_M4U ("303-AC1M4U" ),
-			CAC1_M4I ("303-AC1M4I" ),
-			CAC1_M5U ("303-AC1M5U" ),
-			CAC1_M5I ("303-AC1M5I" ),
-			CAC1_M6U ("303-AC1M6U" ),
-			CAC1_M6I ("303-AC1M6I" ),
-			CAC1_M7U ("303-AC1M7U" ),
-			CAC1_M7I ("303-AC1M7I" ),
-			CAC1_C   ("303-AC1C"   ),
-			CAC1_D   ("303-AC1D"   ),
-			CAC1_Z   ("303-AC1Z"   ),
-			CAC1_ZA  ("303-AC1ZA"  ),
-			CAC1_ZD  ("303-AC1ZD"  ),
-			CAC1_E   ("303-AC1E"   ),
-			CAC1_F   ("303-AC1F"   ),
-			CAC1_G0  ("303-AC1G0"   ),
-			CAC1_G   ("303-AC1G"   ),
-			CAC1_H   ("303-AC1H"   ),
-			CAC1_HA  ("303-AC1HA"  ),
-			CAC1_HD  ("303-AC1HD"  ),
-			CAC1_HT  ("303-AC1HT"  ),
-			CAC1_I   ("303-AC1I"   ),
-			CAC1_J   ("303-AC1J"   ),
-			CAC1_K   ("303-AC1K"   ),
-			CAC1_L   ("303-AC1L"   ),
-			CAC1_M   ("303-AC1M"   ),
-		CAC2     ("303-AC2"  ),
-			CAC2_M1U ("303-AC2M1U" ),
-			CAC2_M1I ("303-AC2M1I" ),
-			CAC2_M2U ("303-AC2M2U" ),
-			CAC2_M2I ("303-AC2M2I" ),
-			CAC2_M3U ("303-AC2M3U" ),
-			CAC2_M3I ("303-AC2M3I" ),
-			CAC2_M4U ("303-AC2M4U" ),
-			CAC2_M4I ("303-AC2M4I" ),
-			CAC2_M5U ("303-AC2M5U" ),
-			CAC2_M5I ("303-AC2M5I" ),
-			CAC2_M6U ("303-AC2M6U" ),
-			CAC2_M6I ("303-AC2M6I" ),
-			CAC2_M7U ("303-AC2M7U" ),
-			CAC2_M7I ("303-AC2M7I" ),
-			CAC2_C   ("303-AC2C"   ),
-			CAC2_D   ("303-AC2D"   ),
-			CAC2_Z   ("303-AC2Z"   ),
-			CAC2_ZA  ("303-AC2ZA"  ),
-			CAC2_ZD  ("303-AC2ZD"  ),
-			CAC2_E   ("303-AC2E"   ),
-			CAC2_F   ("303-AC2F"   ),
-			CAC2_G0  ("303-AC2G0"   ),
-			CAC2_G   ("303-AC2G"   ),
-			CAC2_H   ("303-AC2H"   ),
-			CAC2_HA  ("303-AC2HA"  ),
-			CAC2_HD  ("303-AC2HD"  ),
-			CAC2_HT  ("303-AC2HT"  ),
-			CAC2_I   ("303-AC2I"   ),
-			CAC2_J   ("303-AC2J"   ),
-			CAC2_K   ("303-AC2K"   ),
-			CAC2_L   ("303-AC2L"   ),
-			CAC2_M   ("303-AC2M"   ),
-		CAC3     ("303-AC3"  ),
-			CAC3_M1U ("303-AC3M1U" ), 
-			CAC3_M1I ("303-AC3M1I" ),
-			CAC3_M2U ("303-AC3M2U" ),
-			CAC3_M2I ("303-AC3M2I" ),
-			CAC3_M3U ("303-AC3M3U" ),
-			CAC3_M3I ("303-AC3M3I" ),
-			CAC3_M4U ("303-AC3M4U" ),
-			CAC3_M4I ("303-AC3M4I" ),
-			CAC3_M5U ("303-AC3M5U" ),
-			CAC3_M5I ("303-AC3M5I" ),
-			CAC3_M6U ("303-AC3M6U" ),
-			CAC3_M6I ("303-AC3M6I" ),
-			CAC3_M7U ("303-AC3M7U" ),
-			CAC3_M7I ("303-AC3M7I" ),
-			CAC3_C   ("303-AC3C"   ),
-			CAC3_D   ("303-AC3D"   ),
-			CAC3_Z   ("303-AC3Z"   ),
-			CAC3_ZA  ("303-AC3ZA"  ),
-			CAC3_ZD  ("303-AC3ZD"  ),
-			CAC3_E   ("303-AC3E"   ),
-			CAC3_F   ("303-AC3F"   ),
-			CAC3_G0  ("303-AC3G0"   ),
-			CAC3_G   ("303-AC3G"   ),
-			CAC3_H   ("303-AC3H"   ),
-			CAC3_HA  ("303-AC3HA"  ),
-			CAC3_HD  ("303-AC3HD"  ),
-			CAC3_HT  ("303-AC3HT"  ),
-			CAC3_I   ("303-AC3I"   ),
-			CAC3_J   ("303-AC3J"   ),
-			CAC3_K   ("303-AC3K"   ),
-			CAC3_L   ("303-AC3L"   ),
-			CAC3_M   ("303-AC3M"   ),
-		CAC4     ("303-AC4"  ),
-			CAC4_M1U ("303-AC4M1U"), 
-			CAC4_M1I ("303-AC4M1I" ),
-			CAC4_M2U ("303-AC4M2U" ),
-			CAC4_M2I ("303-AC4M2I" ),
-			CAC4_M3U ("303-AC4M3U" ),
-			CAC4_M3I ("303-AC4M3I" ),
-			CAC4_M4U ("303-AC4M4U" ),
-			CAC4_M4I ("303-AC4M4I" ),
-			CAC4_M5U ("303-AC4M5U" ),
-			CAC4_M5I ("303-AC4M5I" ),
-			CAC4_M6U ("303-AC4M6U" ),
-			CAC4_M6I ("303-AC4M6I" ),
-			CAC4_M7U ("303-AC4M7U" ),
-			CAC4_M7I ("303-AC4M7I" ),
-			CAC4_C   ("303-AC4C"   ),
-			CAC4_D   ("303-AC4D"   ),
-			CAC4_Z   ("303-AC4Z"   ),
-			CAC4_ZA  ("303-AC4ZA"  ),
-			CAC4_ZD  ("303-AC4ZD"  ),
-			CAC4_E   ("303-AC4E"   ),
-			CAC4_F   ("303-AC4F"   ),
-			CAC4_G0  ("303-AC4G0"   ),
-			CAC4_G   ("303-AC4G"   ),
-			CAC4_H   ("303-AC4H"   ),
-			CAC4_HA  ("303-AC4HA"  ),
-			CAC4_HD  ("303-AC4HD"  ),
-			CAC4_HT  ("303-AC4HT"  ),
-			CAC4_I   ("303-AC4I"   ),
-			CAC4_J   ("303-AC4J"   ),
-			CAC4_K   ("303-AC4K"   ),
-			CAC4_L   ("303-AC4L"   ),
-			CAC4_M   ("303-AC4M"   ),
-		C47      ("303-47"   ),
-		C48      ("303-48"   ),
-		C49      ("303-49"   ),
-		C50      ("303-50"   ),
-		H3       ("303-H3"   ),
-		C51      ("303-51"   ),
-		C52      ("303-52"   ),
-		C53      ("303-53"   ),
-		C54      ("303-54"   ),
-		H4       ("303-H4"   ),
-		C55      ("303-55"   ),
-		C56      ("303-56"   ),
-		C57      ("303-57"   ),
-		C58      ("303-58"   ),
-		H5       ("303-H5"   ),
-		C64      ("303-64"   ),
-		C65      ("303-65"   ),
-		C66      ("303-66"   ),
-		C67      ("303-67"   ),
-		C68      ("303-68"   ),
-		C69      ("303-69"   ),
-		C70      ("303-70"   ),
-		C71      ("303-71"   ),
-		PBK  	 ("303-PBK"  ),
-		C59      ("303-59"   ),
-		C60      ("303-60"   ),
-		C61      ("303-61"   ),
-		C62      ("303-62"   ),
-		C63      ("303-63"   ),
-		C74      ("303-74"   ),
-		C75      ("303-75"   ),
-		IAC_01	 ("303-IAC01"),
-		IAE_01	 ("303-IAE01"),
-		IAD_01	 ("303-IAD01"),
-		IAC_02	 ("303-IAC02"),
-		IAE_02	 ("303-IAE02"),
-		IAD_02	 ("303-IAD02"),
-		IAC_03	 ("303-IAC03"),
-		IAE_03	 ("303-IAE03"),
-		IAD_03	 ("303-IAD03"),
-		IAC_04	 ("303-IAC04"),
-		IAE_04	 ("303-IAE04"),
-		IAD_04	 ("303-IAD04"),
-		IAC_05	 ("303-IAC05"),
-		IAE_05	 ("303-IAE05"),
-		IAD_05	 ("303-IAD05"),
-		IAC_06	 ("303-IAC06"),
-		IAE_06	 ("303-IAE06"),
-		IAD_06	 ("303-IAD06"),
-		D		 ("303-D"    ),
-		C79      ("303-79"   ),
-		C80      ("303-80"   ),
-		C81      ("303-81"   ),
-		C82      ("303-82"   ),
-		C83      ("303-83"   ),
-		C84      ("303-84"   ),
-		C85      ("303-85"   ),
-		C86      ("303-86"   ),
-		C87      ("303-87"   ),
-		C88      ("303-88"   )
-		;
-		
-	    public static Mod303Key getKeyWithValue( String value ) {
-	    	for (Mod303Key key : Mod303Key.values() ) {
-	    		if (AonStringUtils.equals(value, key.getValue())) {
-	    			return key;
-	    		}
-	    	}
-	    	throw new IllegalArgumentException("No enum constant " + Mod303Key.class.getName() + " for value " + value);
-	    }
-	    
-	    public static final String ACTIVITIES_PREFIX = "303-AC";
-	    public static final String FARMING_ACTIVITIES_PREFIX = "303-AG";
-	    
-	    private String value;
-	    
-		private Mod303Key(String value) {
-			this.value = value;
-		}
-	    
-		public boolean isFarmer(){
-			return getValue().startsWith(FARMING_ACTIVITIES_PREFIX);
-		}
-
-		public boolean isActivity(){
-			return getValue().startsWith(ACTIVITIES_PREFIX);
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-/*	
-	public static class VatContext {
-		
-		private InvoiceType invoiceType;
-		private RectificationType rectificationType;
-		private boolean service;
-		private InvoiceTransactionType transaction;
-		private boolean investment;
-		private boolean accrualRegime;
-		private boolean surcharge;
-		private double percentage;
-		private double surchargePercent;
-		private VatDeductionType vatDeductionType;
-		private boolean farmerRegime;
-		
-		public InvoiceType getInvoiceType() {
-			return invoiceType;
-		}
-		public VatContext setInvoiceType(InvoiceType invoiceType) {
-			this.invoiceType = invoiceType;
-			return this;
-		}
-		public RectificationType getRectificationType() {
-			return rectificationType;
-		}
-		public VatContext setRectificationType(RectificationType rectificationType) {
-			this.rectificationType = rectificationType;
-			return this;
-		}
-		public boolean isService() {
-			return service;
-		}
-		public VatContext setService(boolean service) {
-			this.service = service;
-			return this;
-		}
-		public InvoiceTransactionType getTransaction() {
-			return transaction;
-		}
-		public VatContext setTransaction(InvoiceTransactionType transaction) {
-			this.transaction = transaction;
-			return this;
-		}
-		public boolean isInvestment() {
-			return investment;
-		}
-		public VatContext setInvestment(boolean investment) {
-			this.investment = investment;
-			return this;
-		}
-		public boolean isSurcharge() {
-			return surcharge;
-		}
-		public VatContext setSurcharge(boolean surcharge) {
-			this.surcharge = surcharge;
-			return this;
-		}
-		public double getSurchargePercent() {
-			return surchargePercent;
-		}
-		public VatContext setSurchargePercent(double surchargePercent) {
-			this.surchargePercent = surchargePercent;
-			return this;
-		}
-		public boolean isAccrualRegime() {
-			return accrualRegime;
-		}
-		public VatContext setAccrualRegime(boolean accrualRegime) {
-			this.accrualRegime = accrualRegime;
-			return this;
-		}
-		public double getPercentage() {
-			return percentage;
-		}
-		public VatContext setPercentage(double percentage) {
-			this.percentage = percentage;
-			return this;
-		}
-		public VatDeductionType getVatDeductionType() {
-			return vatDeductionType;
-		}
-		public VatContext setVatDeductionType(VatDeductionType vatDeductionType) {
-			this.vatDeductionType = vatDeductionType;
-			return this;
-		}
-		public boolean isFarmerRegime() {
-			return farmerRegime;
-		}
-		public VatContext setFarmerRegime(boolean farmerRegime) {
-			this.farmerRegime = farmerRegime;
-			return this;
-		}
-		public boolean isRectification() {
-			return (rectificationType == RectificationType.NORMAL_RECTIFIER);
-		}
-		public boolean isSales() {
-			return (invoiceType == InvoiceType.SALES);
-		}
-		public boolean isPurchase() {
-			return (invoiceType == InvoiceType.PURCHASE);
-		}
-		public boolean isExpenses() {
-			return (invoiceType == InvoiceType.EXPENSES);
-		}
-		public boolean isNational() {
-			return (transaction == InvoiceTransactionType.NATIONAL);
-		}
-		public boolean isIntracommunity() {
-			return (transaction == InvoiceTransactionType.INTRACOMMUNITY);
-		}
-		public boolean isExtracommunity() {
-			return (transaction == InvoiceTransactionType.EXTRACOMMUNITY);
-		}
-		public boolean isCanCeuMel() {
-			return (transaction == InvoiceTransactionType.CAN_CEU_MEL);
-		}
-		public boolean isOtherISP() {
-			return (transaction == InvoiceTransactionType.OTHER_ISP);
-		}
-		public boolean isNationalSales() {
-			return isNational() && isSales();
-		}
-		public boolean isIntracommunitySales() {
-			return isIntracommunity() && isSales();
-		}
-		public boolean isNationalPurchase() {
-			return isNational() && isPurchase();
-		}
-		public boolean isOtherISPPurchase() {
-			return isOtherISP() && isPurchase();
-		}
-		public boolean isIntracommunityPurchase(){
-			return isIntracommunity() && isPurchase();
-		} 
-		public boolean isExtracommunityPurchase(){
-			return isExtracommunity() && isPurchase();
-		} 
-		public boolean isCanCeuMelPurchase(){
-			return isCanCeuMel() && isPurchase();
-		}
-		public boolean isNationalExpenses() {
-			return isNational() && isExpenses();
-		}
-		public boolean isOtherISPExpenses() {
-			return isOtherISP() && isExpenses();
-		}
-		public boolean isExtracommunityExpenses(){
-			return isExtracommunity() && isExpenses();
-		} 
-		public boolean isCanCeuMelExpenses(){
-			return isCanCeuMel() && isExpenses();
-		}
-		public boolean isIntracommunityExpenses(){
-			return isIntracommunity() && isExpenses();
-		} 
-		public boolean isWithoutRightDeductionType() {
-			return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
-		}
-	}
-*/	
 	public static enum DetailKey implements Serializable {
 		
 		  K00_04 (Mod3902015DetailKey.K00_04, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() ==  4)))
@@ -713,11 +289,7 @@ public class Mod3902015DAO {
 		if (mod390.isSimplifiedRegime()) {
 			fillSimplifiedDeclarationResults(ctx, mod390);
 		} else {
-			if (mod390.isOldStyle()) {
-				fillGeneralDeclarationResultsOldStyle(ctx, mod390);
-			} else {
-				fillGeneralDeclarationResults(ctx, mod390);
-			}
+			fillGeneralDeclarationResults(ctx, mod390);
 		}
 		mod390.calculate();
 		return mod390;	
@@ -726,41 +298,6 @@ public class Mod3902015DAO {
 	public static Mod3902015 getMod3902015(AONContext ctx, Mod390 m390) {
 		if (m390.getId() == null) {
 			return create(ctx, m390);
-//			mod390.setId(m390.getId());
-//			mod390.setDomain(m390.getDomain());
-//			mod390.setDomainName(m390.getDomainName());
-//			mod390.setEnterprise(m390.getEnterprise());
-//			mod390.setEnterpriseName(m390.getEnterpriseName());
-//			mod390.setYear(m390.getYear());
-//			mod390.setAdministration(m390.getAdministration());
-//			mod390.setStatus(m390.getStatus());
-//			mod390.setReplacement(m390.isReplacement());
-//			mod390.setComplementary(m390.isComplementary());
-//			mod390.setWithoutActivity(m390.isWithoutActivity());
-//			mod390.setDocument(m390.getDocument());
-//			mod390.setName(m390.getName());
-//			mod390.setFirstSurname(m390.getFirstSurname());
-//			mod390.setSecondSurname(m390.getSecondSurname());
-//			mod390.setContactPhone(m390.getContactPhone());
-//			mod390.setReceipt(m390.getReceipt());
-//			mod390.setReplacedReceipt(m390.getReplacedReceipt());
-//			mod390.setComments(m390.getComments());
-//			mod390.setCreationUser(m390.getCreationUser());
-//			mod390.setCreationDate(m390.getCreationDate());
-//			mod390.setModificationUser(m390.getModificationUser());
-//			mod390.setModificationDate(m390.getModificationDate());
-//			if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
-//				AEATIVA2015 iva = Mod390toAEATIVA2015.getAEATIVA2015(mod390);
-//				try {
-//					AEATIVA2015toMod390.populate(mod390, iva);
-//					return mod390;
-//				} catch (ParseException e) {
-//					e.printStackTrace();
-//					throw new AonCoreException("XML PROBLEM",e);
-//				}
-//			} else {
-//				throw new IllegalArgumentException("Ejercicio incorrecto.");
-//			}
 		}
 		return getById(ctx, m390.getId());
 	}
@@ -859,7 +396,7 @@ public class Mod3902015DAO {
 			.set(FS_MODEL390.DOMAIN, mod390.getDomain())
 			.set(FS_MODEL390.ENTERPRISE, mod390.getEnterprise())
 			.set(FS_MODEL390.YEAR, mod390.getYear())
-			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().getValue())
+			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().value())
 			.set(FS_MODEL390.STATUS,AonEnumUtils.getByte( mod390.getStatus()  ))
 			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
 			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
@@ -880,7 +417,7 @@ public class Mod3902015DAO {
 		ctx.getDslContext()
 			.update(FS_MODEL390)
 			.set(FS_MODEL390.YEAR, mod390.getYear())
-			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().getValue())
+			.set(FS_MODEL390.ADMINISTRATION,mod390.getAdministration().value())
 			.set(FS_MODEL390.STATUS,AonEnumUtils.getByte( mod390.getStatus()  ))
 			.set(FS_MODEL390.SECURITY_LEVEL,AonEnumUtils.getByte(mod390.isConfidential()))
 			.set(FS_MODEL390.COMPLEMENTARY, (byte) 0)
@@ -968,17 +505,6 @@ public class Mod3902015DAO {
 		}
 		
 		final MutableDouble mutProrrata = new MutableDouble();
-		ctx.getDslContext()
-				.select(FS_VAT.PRORATA)
-				.from(FS_VAT)
-				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
-				.and(FS_VAT.YEAR.equal(mod390.getYear()))
-				.fetch()
-				.stream()
-				.forEach( record -> {
-						mutProrrata.setValue( record.getValue(FS_VAT.PRORATA) );
-					}
-				);
 		double prorrata = AonMathUtils.round( mutProrrata.doubleValue() / 100);
 		boolean mustApplyProrrata = (prorrata != AonMathUtils.round(0.00));		
 		
@@ -1009,28 +535,6 @@ public class Mod3902015DAO {
 			}
 			
 		});
-		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata 
-		Record1<BigDecimal> record = ctx.getDslContext()
-			.select(DSL.sum(FS_VAT_DETAIL.QUOTA))
-			.from(FS_VAT_DETAIL)
-			.join(FS_VAT).on(FS_VAT.ID.equal(FS_VAT_DETAIL.FS_VAT))
-			.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
-			.and(FS_VAT.YEAR.equal(mod390.getYear()))
-			.and(FS_VAT_DETAIL.VAT_KEY.equal("RP"))
-			.fetchOne();
-		if (record != null) {
-			BigDecimal quota = record.getValue(DSL.sum(FS_VAT_DETAIL.QUOTA));
-			if (quota != null) {
-				Mod390Detail detail = map.get(Mod3902015DetailKey.K35);
-				if (detail == null) {
-					detail = new Mod390Detail();
-					map.put(Mod3902015DetailKey.K35, detail );
-				}
-				detail.setKey(Mod3902015DetailKey.K35);
-				detail.setQuota(quota.doubleValue());
-			}
-		}
-			
 		return new LinkedList<Mod390Detail>(map.values());
 	}
 	
@@ -1062,17 +566,6 @@ public class Mod3902015DAO {
 		}
 		
 		final MutableDouble mutProrrata = new MutableDouble();
-		ctx.getDslContext()
-				.select(FS_VAT.PRORATA)
-				.from(FS_VAT)
-				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
-				.and(FS_VAT.YEAR.equal(mod390.getYear()))
-				.fetch()
-				.stream()
-				.forEach( record -> {
-						mutProrrata.setValue( record.getValue(FS_VAT.PRORATA) );
-					}
-				);
 		double prorrata = AonMathUtils.round( mutProrrata.doubleValue() / 100);
 		boolean mustApplyProrrata = (prorrata != AonMathUtils.round(0.00));		
 		
@@ -1362,32 +855,6 @@ public class Mod3902015DAO {
 								}
 							}
 					);
-
-			// **********************************************************************************************
-			// **********************************************************************************************
-			
-			// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata 
-			Record1<BigDecimal> record = ctx.getDslContext()
-				.select(DSL.sum(FS_VAT_DETAIL.QUOTA))
-				.from(FS_VAT_DETAIL)
-				.join(FS_VAT).on(FS_VAT.ID.equal(FS_VAT_DETAIL.FS_VAT))
-				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
-				.and(FS_VAT.YEAR.equal(mod390.getYear()))
-				.and(FS_VAT_DETAIL.VAT_KEY.equal("RP"))
-				.fetchOne();
-			if (record != null) {
-				BigDecimal quota = record.getValue(DSL.sum(FS_VAT_DETAIL.QUOTA));
-				if (quota != null) {
-					Mod390Detail detail = map.get(Mod3902015DetailKey.K35);
-					if (detail == null) {
-						detail = new Mod390Detail();
-						map.put(Mod3902015DetailKey.K35, detail );
-					}
-					detail.setKey(Mod3902015DetailKey.K35);
-					detail.setQuota(quota.doubleValue());
-				}
-			}
-				
 		return new LinkedList<Mod390Detail>(map.values());
 	}
 
@@ -1458,198 +925,6 @@ public class Mod3902015DAO {
 		}
 	}
 
-	static class SimplifedRegimeContext {
-		private Mod303Key key;
-		private String description;
-		private double amount;
-
-		public SimplifedRegimeContext(Mod303Key key,String description,double amount) {
-			this.key = key;
-			this.description = description;
-			this.amount = amount;
-		}
-		public Mod303Key getKey() {
-			return key;
-		}
-		public void setKey(Mod303Key key) {
-			this.key = key;
-		}
-		public String getDescription() {
-			return description;
-		}
-		public void setDescription(String description) {
-			this.description = description;
-		}
-		public double getAmount() {
-			return amount;
-		}
-		public void setAmount(double amount) {
-			this.amount = amount;
-		}
-	}
-	
-	@FunctionalInterface
-	static interface ISimplifiedRegimeFiller {
-		boolean fill(SimplifedRegimeContext src,Mod3902015 mod390);
-	}
-
-	static enum SimplifiedRegimeFiller {
-		CAG1     (Mod303Key.CAG1    , 
-				(src,mod390) -> {
-					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
-					mod390.getFarmerRegime1().setCodigo(code);
-					return true;
-								}), 
-		CAG1_V1  (Mod303Key.CAG1_V1 , (src,mod390) -> {mod390.getFarmerRegime1().setIncomes(src.getAmount());return true;}),
-		CAG1_V2  (Mod303Key.CAG1_V2 , (src,mod390) -> {mod390.getFarmerRegime1().setQuotaIndex( AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
-		CAG1_V3  (Mod303Key.CAG1_V3 , (src,mod390) -> {mod390.getFarmerRegime1().setAccrualQuota(src.getAmount());return true;}),
-		CAG1_V6  (Mod303Key.CAG1_V6 , (src,mod390) -> {mod390.getFarmerRegime1().setInputQuotas(src.getAmount());return true;}),
-		CAG1_V7  (Mod303Key.CAG1_V7 , (src,mod390) -> {
-				mod390.getFarmerRegime1().setQuota(src.getAmount());
-				mod390.setBox75( AonMathUtils.round(mod390.getBox75() + src.getAmount()));
-				return true;
-													}),
-		CAG2     (Mod303Key.CAG2    , 
-				(src,mod390) -> {
-					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
-					mod390.getFarmerRegime2().setCodigo(code);
-					return true;
-								}),
-		CAG2_V1  (Mod303Key.CAG2_V1 , (src,mod390) -> {mod390.getFarmerRegime2().setIncomes(src.getAmount());return true;}),
-		CAG2_V2  (Mod303Key.CAG2_V2 , (src,mod390) -> {mod390.getFarmerRegime2().setQuotaIndex(AonMathUtils.round(src.getAmount() / 10000 ,5));return true;}),
-		CAG2_V3  (Mod303Key.CAG2_V3 , (src,mod390) -> {mod390.getFarmerRegime2().setAccrualQuota(src.getAmount());return true;}),
-		CAG2_V6  (Mod303Key.CAG2_V6 , (src,mod390) -> {mod390.getFarmerRegime2().setInputQuotas(src.getAmount());return true;}),
-		CAG2_V7  (Mod303Key.CAG2_V7 , (src,mod390) -> {
-				mod390.getFarmerRegime2().setQuota(src.getAmount());
-				mod390.setBox75( AonMathUtils.round(mod390.getBox75() + src.getAmount()));
-				return true;
-												}),
-		CAC1     (Mod303Key.CAC1    , 
-				(src,mod390) -> {
-					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
-					mod390.getSimpRegime1().setEpigrafe(code);
-					return true;
-								}),
-		CAC1_M1U (Mod303Key.CAC1_M1U, (src,mod390) -> {mod390.getSimpRegime1().setUnit1(src.getAmount());return true;}),
-		CAC1_M1I (Mod303Key.CAC1_M1I, (src,mod390) -> {mod390.getSimpRegime1().setAmount1(src.getAmount());return true;}),
-		CAC1_M2U (Mod303Key.CAC1_M2U, (src,mod390) -> {mod390.getSimpRegime1().setUnit2(src.getAmount());return true;}),
-		CAC1_M2I (Mod303Key.CAC1_M2I, (src,mod390) -> {mod390.getSimpRegime1().setAmount2(src.getAmount());return true;}),
-		CAC1_M3U (Mod303Key.CAC1_M3U, (src,mod390) -> {mod390.getSimpRegime1().setUnit3(src.getAmount());return true;}),
-		CAC1_M3I (Mod303Key.CAC1_M3I, (src,mod390) -> {mod390.getSimpRegime1().setAmount3(src.getAmount());return true;}),
-		CAC1_M4U (Mod303Key.CAC1_M4U, (src,mod390) -> {mod390.getSimpRegime1().setUnit4(src.getAmount());return true;}),
-		CAC1_M4I (Mod303Key.CAC1_M4I, (src,mod390) -> {mod390.getSimpRegime1().setAmount4(src.getAmount());return true;}),
-		CAC1_M5U (Mod303Key.CAC1_M5U, (src,mod390) -> {mod390.getSimpRegime1().setUnit5(src.getAmount());return true;}),
-		CAC1_M5I (Mod303Key.CAC1_M5I, (src,mod390) -> {mod390.getSimpRegime1().setAmount5(src.getAmount());return true;}),
-		CAC1_M6U (Mod303Key.CAC1_M6U, (src,mod390) -> {mod390.getSimpRegime1().setUnit6(src.getAmount());return true;}),
-		CAC1_M6I (Mod303Key.CAC1_M6I, (src,mod390) -> {mod390.getSimpRegime1().setAmount6(src.getAmount());return true;}),
-		CAC1_M7U (Mod303Key.CAC1_M7U, (src,mod390) -> {mod390.getSimpRegime1().setUnit7(src.getAmount());return true;}),
-		CAC1_M7I (Mod303Key.CAC1_M7I, (src,mod390) -> {mod390.getSimpRegime1().setAmount7(src.getAmount());return true;}),
-		CAC1_C   (Mod303Key.CAC1_C  , (src,mod390) -> {
-				mod390.getSimpRegime1().setBoxC(src.getAmount());
-				mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
-				return true;
-													}),
-		CAC1_D   (Mod303Key.CAC1_D  , null),
-		CAC1_Z   (Mod303Key.CAC1_Z  , null),
-		CAC1_ZA  (Mod303Key.CAC1_ZA , null),
-		CAC1_ZD  (Mod303Key.CAC1_ZD , null),
-		CAC1_E   (Mod303Key.CAC1_E  , null),
-		CAC1_F   (Mod303Key.CAC1_F  , null),
-		CAC1_G0  (Mod303Key.CAC1_G0 , (src,mod390) -> {mod390.getSimpRegime1().setBoxD(
-				AonMathUtils.round(mod390.getSimpRegime1().getBoxD() + src.getAmount()));return true;}),
-		CAC1_G   (Mod303Key.CAC1_G  , (src,mod390) -> {mod390.getSimpRegime1().setBoxD(
-				AonMathUtils.round(mod390.getSimpRegime1().getBoxD() + src.getAmount()));return true;}),
-		CAC1_H   (Mod303Key.CAC1_H  , (src,mod390) -> {mod390.getSimpRegime1().setBoxE(src.getAmount());return true;}),
-		CAC1_HA  (Mod303Key.CAC1_HA , null),
-		CAC1_HD  (Mod303Key.CAC1_HD , null),
-		CAC1_HT  (Mod303Key.CAC1_HT , null),
-		CAC1_I   (Mod303Key.CAC1_I  , (src,mod390) -> {mod390.getSimpRegime1().setBoxF(src.getAmount());return true;}),
-		CAC1_J   (Mod303Key.CAC1_J  , (src,mod390) -> {mod390.getSimpRegime1().setBoxG(src.getAmount());return true;}),
-		CAC1_K   (Mod303Key.CAC1_K  , null),
-		CAC1_L   (Mod303Key.CAC1_L  , (src,mod390) -> {mod390.getSimpRegime1().setBoxI(src.getAmount());return true;}),
-		CAC1_M   (Mod303Key.CAC1_M  , (src,mod390) -> {mod390.getSimpRegime1().setBoxJ(src.getAmount());return true;}),
-		CAC2     (Mod303Key.CAC2    , 
-				(src,mod390) -> {
-					String code = AonStringUtils.trim(AonStringUtils.substringBefore(src.getDescription(), "-"));					
-					mod390.getSimpRegime2().setEpigrafe(code);
-					return true;
-								}),
-		CAC2_M1U (Mod303Key.CAC2_M1U, (src,mod390) -> {mod390.getSimpRegime2().setUnit1(src.getAmount());return true;}),
-		CAC2_M1I (Mod303Key.CAC2_M1I, (src,mod390) -> {mod390.getSimpRegime2().setAmount1(src.getAmount());return true;}),
-		CAC2_M2U (Mod303Key.CAC2_M2U, (src,mod390) -> {mod390.getSimpRegime2().setUnit2(src.getAmount());return true;}),
-		CAC2_M2I (Mod303Key.CAC2_M2I, (src,mod390) -> {mod390.getSimpRegime2().setAmount2(src.getAmount());return true;}),
-		CAC2_M3U (Mod303Key.CAC2_M3U, (src,mod390) -> {mod390.getSimpRegime2().setUnit3(src.getAmount());return true;}),
-		CAC2_M3I (Mod303Key.CAC2_M3I, (src,mod390) -> {mod390.getSimpRegime2().setAmount3(src.getAmount());return true;}),
-		CAC2_M4U (Mod303Key.CAC2_M4U, (src,mod390) -> {mod390.getSimpRegime2().setUnit4(src.getAmount());return true;}),
-		CAC2_M4I (Mod303Key.CAC2_M4I, (src,mod390) -> {mod390.getSimpRegime2().setAmount4(src.getAmount());return true;}),
-		CAC2_M5U (Mod303Key.CAC2_M5U, (src,mod390) -> {mod390.getSimpRegime2().setUnit5(src.getAmount());return true;}),
-		CAC2_M5I (Mod303Key.CAC2_M5I, (src,mod390) -> {mod390.getSimpRegime2().setAmount5(src.getAmount());return true;}),
-		CAC2_M6U (Mod303Key.CAC2_M6U, (src,mod390) -> {mod390.getSimpRegime2().setUnit6(src.getAmount());return true;}),
-		CAC2_M6I (Mod303Key.CAC2_M6I, (src,mod390) -> {mod390.getSimpRegime2().setAmount6(src.getAmount());return true;}),
-		CAC2_M7U (Mod303Key.CAC2_M7U, (src,mod390) -> {mod390.getSimpRegime2().setUnit7(src.getAmount());return true;}),
-		CAC2_M7I (Mod303Key.CAC2_M7I, (src,mod390) -> {mod390.getSimpRegime2().setAmount7(src.getAmount());return true;}),
-		CAC2_C   (Mod303Key.CAC2_C  , (src,mod390) ->	{
-				mod390.getSimpRegime2().setBoxC(src.getAmount());
-				mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
-				return true;
-														}),
-		CAC2_D   (Mod303Key.CAC2_D  , null),
-		CAC2_Z   (Mod303Key.CAC2_Z  , null),
-		CAC2_ZA  (Mod303Key.CAC2_ZA , null),
-		CAC2_ZD  (Mod303Key.CAC2_ZD , null),
-		CAC2_E   (Mod303Key.CAC2_E  , null),
-		CAC2_F   (Mod303Key.CAC2_F  , null),
-		
-		CAC2_G0  (Mod303Key.CAC2_G0 , (src,mod390) -> {mod390.getSimpRegime2().setBoxD(
-				AonMathUtils.round(mod390.getSimpRegime2().getBoxD() + src.getAmount()));return true;}),
-		CAC2_G   (Mod303Key.CAC2_G  , (src,mod390) -> {mod390.getSimpRegime2().setBoxD(
-				AonMathUtils.round(mod390.getSimpRegime2().getBoxD() + src.getAmount()));return true;}),
-		CAC2_H   (Mod303Key.CAC2_H  , (src,mod390) -> {mod390.getSimpRegime2().setBoxE(src.getAmount());return true;}),
-		CAC2_HA  (Mod303Key.CAC2_HA , null),
-		CAC2_HD  (Mod303Key.CAC2_HD , null),
-		CAC2_HT  (Mod303Key.CAC2_HT , null),
-		CAC2_I   (Mod303Key.CAC2_I  , (src,mod390) -> {mod390.getSimpRegime2().setBoxF(src.getAmount());return true;}),
-		CAC2_J	 (Mod303Key.CAC2_J  , (src,mod390) -> {mod390.getSimpRegime2().setBoxG(src.getAmount());return true;}),
-		CAC2_K   (Mod303Key.CAC2_K  , null),
-		CAC2_L   (Mod303Key.CAC2_L  , (src,mod390) -> {mod390.getSimpRegime2().setBoxI(src.getAmount());return true;}),
-		CAC2_M   (Mod303Key.CAC2_M  , (src,mod390) -> {mod390.getSimpRegime2().setBoxJ(src.getAmount());return true;}),
-		C51      (Mod303Key.C51     , (src,mod390) -> {mod390.setBox76(src.getAmount());return true;}),
-		C52      (Mod303Key.C52     , (src,mod390) -> {mod390.setBox78(src.getAmount());return true;}),
-		C53      (Mod303Key.C53     , (src,mod390) -> {mod390.setBox77(src.getAmount());return true;}),
-		C54      (Mod303Key.C54     , (src,mod390) -> {mod390.setBox79(src.getAmount());return true;}),
-		C55      (Mod303Key.C55     , (src,mod390) -> {mod390.setBox80(src.getAmount());return true;}),
-		C56      (Mod303Key.C56     , (src,mod390) -> {mod390.setBox81(src.getAmount());return true;}),
-		C57      (Mod303Key.C57     , (src,mod390) -> {mod390.setBox82(src.getAmount());return true;}),
-		C58      (Mod303Key.C58     , (src,mod390) -> {mod390.setBox83(src.getAmount());return true;}),
-		C71      (Mod303Key.C71     , (src,mod390) -> {
-										mod390.setBox97((src.getAmount() < 0)?AonMathUtils.round(mod390.getBox95() + src.getAmount()):0.0);
-										return true;
-													}),
-		PBK      (Mod303Key.PBK     , (src,mod390) -> {mod390.setBox98( AonMathUtils.round(mod390.getBox95() + src.getAmount()) );return true;}),
-		;
-		
-		private Mod303Key key;
-		private ISimplifiedRegimeFiller filler;
-			
-		private SimplifiedRegimeFiller(Mod303Key key,ISimplifiedRegimeFiller filler) {
-			this.key = key;
-			this.filler = filler;
-		}
-		public Mod303Key getKey() {
-			return key;
-		}
-		public ISimplifiedRegimeFiller getFiller() {
-			return filler;
-		}
-		public static void fill(SimplifedRegimeContext src,Mod3902015 mod390) {
-			for (SimplifiedRegimeFiller filler : SimplifiedRegimeFiller.values()) {
-				if (filler.getKey() ==  src.getKey() && filler.getFiller() != null) {
-					filler.getFiller().fill(src, mod390);
-				}
-			}
-		}
-		
-	}	
 	
 	private static Mod3902015 fillSimplifedRegimeData(AONContext ctx, Mod3902015 mod390) {
 		mod390.setSimpRegime1(new SimpliedRegimeActivity());
@@ -1659,26 +934,6 @@ public class Mod3902015DAO {
 		mod390.setFarmerRegime3(new FarmerRegimeActivity());
 		mod390.setFarmerRegime4(new FarmerRegimeActivity());
 		mod390.setFarmerRegime5(new FarmerRegimeActivity());
-		ctx.getDslContext().select(FS_MODEL_DETAIL.TYPE
-				, FS_MODEL_DETAIL.DESCRIPTION
-				, FS_MODEL_DETAIL.AMOUNT)
-			.from(FS_MODEL)
-			.join(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
-			.where(FS_MODEL.DOMAIN.equal(mod390.getDomain()))
-			.and(FS_MODEL.YEAR.equal(mod390.getYear()))
-			.and(FS_MODEL.PERIOD.equal( (byte) Period.T4.ordinal()))
-			.and(FS_MODEL.MODEL.equal("303"))
-		.fetch()
-		.stream()
-		.forEach( record -> {
-			String description = record.getValue( FS_MODEL_DETAIL.DESCRIPTION );
-			String type = record.getValue( FS_MODEL_DETAIL.TYPE );
-			double amount = record.getValue( FS_MODEL_DETAIL.AMOUNT );
-			Mod303Key key = Mod303Key.getKeyWithValue(type);
-			SimplifedRegimeContext src = new SimplifedRegimeContext(key, description, amount);
-			SimplifiedRegimeFiller.fill(src,mod390);
-			}
-		);
 		return mod390;
 	}
 	private static void fillGeneralDeclarationResults(AONContext ctx, Mod3902015 mod390) {
@@ -1710,31 +965,6 @@ public class Mod3902015DAO {
 				}
 			});
 		
-	}
-	private static void fillGeneralDeclarationResultsOldStyle(AONContext ctx, Mod3902015 mod390) {
-		ctx.getDslContext().select(FS_VAT.PERIOD,FS_VAT.TAX_REFUND_REGISTRY
-				,FS_VAT_DECLARATION.DEPOSIT,FS_VAT_DECLARATION.PAY_BACK,FS_VAT_DECLARATION.COMPENSATE)
-				.from(FS_VAT)
-				.join(FS_VAT_DECLARATION).on(FS_VAT.ID.equal(FS_VAT_DECLARATION.FS_VAT))
-				.where(FS_VAT.DOMAIN.equal(mod390.getDomain()))
-				.and(FS_VAT.YEAR.equal(mod390.getYear()))
-				.and(FS_VAT_DECLARATION.ADMINISTRATION.equal((byte) Administration.COMMON_TERRITORY.ordinal()))
-				.fetch()
-				.stream()
-				.forEach( record -> {
-					Period period = Period.values()[record.getValue(FS_VAT.PERIOD)];
-					boolean taxRefundRegistry = record.getValue(FS_VAT.TAX_REFUND_REGISTRY) == 1;
-					mod390.setBox95( AonMathUtils.round(mod390.getBox95() + record.getValue(FS_VAT_DECLARATION.DEPOSIT)));
-					if ( taxRefundRegistry ) {
-						mod390.setBox96( AonMathUtils.round(mod390.getBox96() + record.getValue(FS_VAT_DECLARATION.PAY_BACK)));
-						mod390.setTaxRefund(true);
-					}
-					// Last Period
-					if (period == Period.M12 || period == Period.T4) {
-						mod390.setBox97( record.getValue(FS_VAT_DECLARATION.COMPENSATE));
-						mod390.setBox98( record.getValue(FS_VAT_DECLARATION.PAY_BACK));
-					}
-				});
 	}
 	
 	private static void fillSimplifiedDeclarationResults(AONContext ctx, Mod3902015 mod390) {

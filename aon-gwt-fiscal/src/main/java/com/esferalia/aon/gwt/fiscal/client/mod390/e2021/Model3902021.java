@@ -286,16 +286,46 @@ public class Model3902021 extends DockLayoutPanel  {
 	}
 
 	public void select(Mod3902021 m390) {
-		setModel(m390);
-		clear();
-		
-		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(getModel());
-		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
-		addNorth(getToolbar(), AonToolbar.HEIGTH);
-		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH);
-		
-		addWest( getLinksPanel(), 300 );
-		add(contentContainer);
+		if ("INVALID".equals(m390.getXmlFormat()) ) {
+			AonConfirmDialog cd = new AonConfirmDialog();
+			cd.confirm( "La declaraci\u00F3n est\u00E1 creada con un formato anterior al del ejercicio 2018 y es inv\u00E1lida. \u00BFDesea borrarla?"
+					, new AonConfirmDialogCallback() {
+
+				@Override
+				public void onAccept() {
+					MOD3902021_SERVICE.delete(getCallback().getOptions().getOccam(),
+							m390, new AsyncCallback<Void>() {
+						@Override
+						public void onSuccess(Void result) {
+							getCallback().cleanErrorPanel();
+							getCallback().onRemove( m390 );
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							getCallback().showError(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+						}
+					});
+				}
+
+				@Override
+				public void onCancel() {
+					getCallback().cleanErrorPanel();
+					getCallback().onCancel( m390 );
+				}
+			});
+		} else {
+			setModel(m390);
+			clear();
+			
+			AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(getModel());
+			addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
+			addNorth(getToolbar(), AonToolbar.HEIGTH);
+			addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH);
+			
+			addWest( getLinksPanel(), 300 );
+			add(contentContainer);
+		}
 	}
 
 	private Widget getLinksPanel() {
@@ -349,6 +379,9 @@ public class Model3902021 extends DockLayoutPanel  {
 		page12Link.addClickHandler(event -> showContent(pageLinks,12,new Page12(getModel(), getCallback()),false));
 		
 		scrollPanel.add(pageLinks);
+		if (pageSelected == -1) {
+			showContent(pageLinks, 0,new Page00(cbk),false);
+		}
 		return scrollPanel;
 	}
 	

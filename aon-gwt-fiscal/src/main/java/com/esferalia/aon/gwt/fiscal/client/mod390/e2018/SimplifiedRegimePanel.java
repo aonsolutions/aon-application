@@ -205,7 +205,7 @@ public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHa
 		tab1.addRow()
 			.addCell(new Label(AON.MSG.reductions()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
 			.addCell(new AonBoxLabel(" "), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
-			.addCell(boxC, AON.CSS.aonWidth120());
+			.addCell(boxC1, AON.CSS.aonWidth120());
 		tab1.addRow()
 			.addCell(new Label(AON.MSG.page6D()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
 			.addCell(new AonBoxLabel("D"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
