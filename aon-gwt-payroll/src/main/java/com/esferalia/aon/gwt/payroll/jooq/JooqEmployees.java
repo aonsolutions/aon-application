@@ -1186,6 +1186,8 @@ public class JooqEmployees {
 
 		DSLContext create = DSL.using(conn, SQLDialect.MYSQL,
 				getDefaultSettings());
+		
+		create.execute(SET_FOREIGN_KEY_CHECKS_0);
 
 		// ----------------------------------IRPF-------------------------------------------
 
@@ -1316,8 +1318,11 @@ public class JooqEmployees {
 		create.delete(CONTRACT_PAYMENT)
 				.where(CONTRACT_PAYMENT.CONTRACT.in(personIds)).execute();
 
-		create.delete(CONTRACT).where(Contract.CONTRACT.ID.in(personIds))
+		create.delete(CONTRACT).where(CONTRACT.ID.in(personIds))
 				.execute();
+		
+		create.execute(SET_FOREIGN_KEY_CHECKS_1);
+		System.out.println("Claves referenciales activadas");
 
 		// ----------------------------------------------------------------------------------
 
