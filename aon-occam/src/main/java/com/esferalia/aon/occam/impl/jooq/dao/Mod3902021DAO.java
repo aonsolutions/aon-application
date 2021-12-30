@@ -10,6 +10,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -65,6 +67,8 @@ public class Mod3902021DAO {
 
 	private static final byte ZERO_BYTE = 0;
 	private static final byte ONE_BYTE = 1;
+	// 1 de Julio del 2012		
+	private static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 	
 	@FunctionalInterface
 	public static interface IMod390DetailKey {
@@ -106,9 +110,9 @@ public class Mod3902021DAO {
 		 ,K12	 (Mod3902021DetailKey.C0046	, null)
 		 ,K13	 (Mod3902021DetailKey.C0047	, null)
 		 
-		 ,K14_04 (Mod3902021DetailKey.C0191, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() == 4))) 
-		 ,K14_10 (Mod3902021DetailKey.C0604, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() == 10))) 
-		 ,K14_21 (Mod3902021DetailKey.C0606, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() == 21))) 
+		 ,K14_04 (Mod3902021DetailKey.C0191, (vc -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 4)) 
+		 ,K14_10 (Mod3902021DetailKey.C0604, (vc -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 10)) 
+		 ,K14_21 (Mod3902021DetailKey.C0606, (vc -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 21)) 
 		 ,K15	 (Mod3902021DetailKey.C0049	, null)
 		 
 		 ,K16_04 (Mod3902021DetailKey.C0507, null)
@@ -116,9 +120,9 @@ public class Mod3902021DAO {
 		 ,K16_21 (Mod3902021DetailKey.C0610, null)
 		 ,K17	 (Mod3902021DetailKey.C0513	, null)
 		 
-		 ,K18_04 (Mod3902021DetailKey.C0197, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
-		 ,K18_10 (Mod3902021DetailKey.C0612, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 10))) 
-		 ,K18_21 (Mod3902021DetailKey.C0614, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
+		 ,K18_04 (Mod3902021DetailKey.C0197, (vc -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() ==  4))
+		 ,K18_10 (Mod3902021DetailKey.C0612, (vc -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() == 10)) 
+		 ,K18_21 (Mod3902021DetailKey.C0614, (vc -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() == 21))
 		 ,K19	 (Mod3902021DetailKey.C0051	, null)
 		 
 		 ,K20_04 (Mod3902021DetailKey.C0515, null)
@@ -126,29 +130,29 @@ public class Mod3902021DAO {
 		 ,K20_21 (Mod3902021DetailKey.C0618, null)
 		 ,K21	 (Mod3902021DetailKey.C0521	, null)
 		 
-		 ,K22_04 (Mod3902021DetailKey.C0203, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
-		 ,K22_10 (Mod3902021DetailKey.C0620, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 10)))
-		 ,K22_21 (Mod3902021DetailKey.C0622, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
+		 ,K22_04 (Mod3902021DetailKey.C0203, (vc -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 4))
+		 ,K22_10 (Mod3902021DetailKey.C0620, (vc -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 10))
+		 ,K22_21 (Mod3902021DetailKey.C0622, (vc -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 21))
 		 ,K23	 (Mod3902021DetailKey.C0053	, null)
 		 
-		 ,K24_04 (Mod3902021DetailKey.C0209, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isRectification() && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
-		 ,K24_10 (Mod3902021DetailKey.C0624, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isRectification() && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10)))
-		 ,K24_21 (Mod3902021DetailKey.C0626, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isRectification() && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
+		 ,K24_04 (Mod3902021DetailKey.C0209, (vc -> importacionesInversionFilter(vc) && vc.getPercentage() == 4))
+		 ,K24_10 (Mod3902021DetailKey.C0624, (vc -> importacionesInversionFilter(vc) && vc.getPercentage() == 10))
+		 ,K24_21 (Mod3902021DetailKey.C0626, (vc -> importacionesInversionFilter(vc) && vc.getPercentage() == 21))
 		 ,K25	 (Mod3902021DetailKey.C0055	, null)
 		 
-		 ,K26_04 (Mod3902021DetailKey.C0215, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  4)))
-		 ,K26_10 (Mod3902021DetailKey.C0628, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  10)))
-		 ,K26_21 (Mod3902021DetailKey.C0630, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  21)))
+		 ,K26_04 (Mod3902021DetailKey.C0215, (vc -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 4))
+		 ,K26_10 (Mod3902021DetailKey.C0628, (vc -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 10))
+		 ,K26_21 (Mod3902021DetailKey.C0630, (vc -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 21))
 		 ,K27	 (Mod3902021DetailKey.C0057	, null)
 		 
-		 ,K28_04 (Mod3902021DetailKey.C0221, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
-		 ,K28_10 (Mod3902021DetailKey.C0632, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  10))) 
-		 ,K28_21 (Mod3902021DetailKey.C0634, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  21))) 
+		 ,K28_04 (Mod3902021DetailKey.C0221, (vc -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 4))
+		 ,K28_10 (Mod3902021DetailKey.C0632, (vc -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 10)) 
+		 ,K28_21 (Mod3902021DetailKey.C0634, (vc -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 21)) 
 		 ,K29	 (Mod3902021DetailKey.C0059   , null)
 		 
-		 ,K30_04 (Mod3902021DetailKey.C0588, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  4)))
-		 ,K30_10 (Mod3902021DetailKey.C0636, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  10)))
-		 ,K30_21 (Mod3902021DetailKey.C0638, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  21)))
+		 ,K30_04 (Mod3902021DetailKey.C0588, (vc -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 4))
+		 ,K30_10 (Mod3902021DetailKey.C0636, (vc -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 10))
+		 ,K30_21 (Mod3902021DetailKey.C0638, (vc -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 21))
 		 ,K31	 (Mod3902021DetailKey.C0598   , null)
 		 
 		 ,K32	 (Mod3902021DetailKey.C0061   , (vc -> ((vc.isPurchase() || vc.isExpenses()) && vc.isFarmerRegime())))
@@ -986,4 +990,74 @@ public class Mod3902021DAO {
 		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 
+
+
+	private static boolean importacionesCorrientesFilter(VatContext vat) {
+		return commonImportacionesFilter(vat) && !vat.isInvestment();
+	}
+
+	private static boolean importacionesInversionFilter(VatContext vat) {
+		return commonImportacionesFilter(vat) && vat.isInvestment();
+	}
+
+	private static boolean commonImportacionesFilter(VatContext vat) {
+		boolean basicFilter =  !vat.isVatSurchargeRegime() 
+				&& !vat.isRectification() 
+				&& !vat.isService();
+		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
+			if (vat.getTaxDate().before( IVA_2021_CHANGE_DATE )) {
+				basicFilter = true;
+			} else {
+				basicFilter = vat.hasDuaLinked() || vat.isVatImportation();
+			}
+			return basicFilter; 
+		}
+		return false;
+	}
+	
+	private static boolean operacionesISPFilter(VatContext vat) {
+		return !vat.isVatSurchargeRegime()
+			&& (vat.isOtherISPPurchase() 
+			 || vat.isOtherISPExpenses() 
+			 || vat.isExtracommunityExpenses()
+ 			 || vat.isCanCeuMelExpenses() 
+ 			 || (vat.isExtracommunityPurchase() && vat.isService())
+			 || (vat.isCanCeuMelPurchase() && vat.isService()));
+	}
+
+	private static boolean operacionesInterioresCorrientesFilter(VatContext vat) {
+		return !vat.isVatSurchargeRegime() && !vat.isInvestment()
+			&& !vat.isRectification() && !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
+			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
+	}
+	
+	private static boolean operacionesInterioresInversionFilter(VatContext vat) {
+		return !vat.isVatSurchargeRegime() && vat.isInvestment()
+				&& !vat.isRectification() && !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
+				&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
+	}
+	
+	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat) {
+		return !vat.isInvestment() && adqIntracomunitariasFilter(vat);
+	}
+	private static boolean adqIntracomunitariasInversionFilter(VatContext vat) {
+		return vat.isInvestment() && adqIntracomunitariasFilter(vat);
+	}
+	private static boolean adqIntracomunitariasFilter(VatContext vat) {
+		return !vat.isVatSurchargeRegime() 
+			&& !vat.isService()
+			&& !vat.isRectification()
+			&& vat.isIntracommunityPurchase();
+	}
+	private static boolean adqIntracomunitariasServicios(VatContext vat) {
+		return !vat.isVatSurchargeRegime() 
+				&& !vat.isRectification()
+				&& (vat.isIntracommunityExpenses() || (vat.isIntracommunityPurchase() && vat.isService()));
+	}
+
 }
+
+
+
+
+

@@ -34,7 +34,7 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public String getValidatePrintAction() {
-					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod390ValidatePrintAEAT";
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902021ValidatePrintAEAT";
 					
 				}
 
