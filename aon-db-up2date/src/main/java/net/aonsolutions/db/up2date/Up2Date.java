@@ -19,18 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.data.DataRequestUpdate;
-import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
-import net.aonsolutions.db.up2date.payroll.IrpfM190Update;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2019Close;
-import net.aonsolutions.db.up2date.tgss.HomeBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
-import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
+import net.aonsolutions.db.up2date.payroll.ContractCleanUpdate;
 
 
 public class Up2Date {
@@ -203,11 +192,12 @@ public class Up2Date {
     		//TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
     		//AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
     		//TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
-    		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE
-    		DataRequestUpdate.DATA_REQUEST_UPDATE,
-    		WorkplaceUpdate.WORKPLACE_UPDATE,
-    		IrpfM190Update.IRPFM190UPDATE,
-    		Holidays2022Insert.HOLIDAYS2022INSERT
+    		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE,
+    		//DataRequestUpdate.DATA_REQUEST_UPDATE,
+    		//WorkplaceUpdate.WORKPLACE_UPDATE,
+    		//IrpfM190Update.IRPFM190UPDATE,
+    		//Holidays2022Insert.HOLIDAYS2022INSERT,
+    		ContractCleanUpdate.CONTRACTCLEANUPDATE
     };
     
 
