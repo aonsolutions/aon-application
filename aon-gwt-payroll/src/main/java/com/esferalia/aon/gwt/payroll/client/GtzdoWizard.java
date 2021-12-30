@@ -95,6 +95,7 @@ public abstract class GtzdoWizard extends Composite {
 	
 	private void initPaymentType() {
 		paymentType.clear();
+		paymentType.addItem("MANUAL", "MANUAL");
 		paymentType.addItem("SALARIO_BASE", "SALARIO_BASE");
 		paymentType.addItem("PLUS_SALARIAL", "PLUS_SALARIAL");
 		paymentType.addItem("PLUS_EXTRA_SALARIAL", "PLUS_EXTRA_SALARIAL");
@@ -102,9 +103,7 @@ public abstract class GtzdoWizard extends Composite {
 		paymentType.addItem("MEJORA_IT", "MEJORA_IT");
 		paymentType.setSelectedIndex(4);
 		
-		paymentType.addChangeHandler(e -> {
-			onPaymentTypeChange(paymentType.getSelectedValue());
-		});
+		paymentType.addChangeHandler(e -> onPaymentTypeChange(paymentType.getSelectedValue()));
 	}
 	
 	private void initGtzdoType() {
@@ -418,11 +417,9 @@ public abstract class GtzdoWizard extends Composite {
 	// ------------------------------------------------------ Create Payments ----------------------------------------------------
 	
 	public List<Payment> createPayments() {
-		List<Payment> payments = new ArrayList<Payment>();
-		
+		List<Payment> payments = new ArrayList<>();
 		if(isAllGtzdo()) {
 			Payment payment = new Payment();
-			
 			payment.setId(-1);
 			payment.setDescription(createDescription(null));
 			payment.setExpression("GTZDO(TODO)");
