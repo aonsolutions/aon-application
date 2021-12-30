@@ -244,8 +244,7 @@ public class Page02 extends PageAbs {
 			.addCell(notaryDate3)
 			.addCell(notary3)
 			;
-	}
-	void f() {
+		
 		rdocument.addValueChangeHandler( event -> {
 			getModel().ensureAddress().setRdocument(rdocument.getValue());
 			markAsDirty();

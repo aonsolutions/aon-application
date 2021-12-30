@@ -172,6 +172,10 @@ public class Model390 extends MainEntryPoint {
 		public void cleanErrorPanel() {
 			Model390.this.cleanErrorMessage();
 		}
+		
+		public void reload(Integer id) {
+			onSelect(getOptions(), id);
+		}
 	}
 	
 	private Model390ModuleOptions options;

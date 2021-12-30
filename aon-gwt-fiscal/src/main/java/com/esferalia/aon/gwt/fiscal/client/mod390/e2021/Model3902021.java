@@ -439,7 +439,7 @@ public class Model3902021 extends DockLayoutPanel  {
 			MOD3902021_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.FINISHED, new AsyncCallback<Mod3902021>() {
 				@Override
 				public void onSuccess(Mod3902021 result) {
-					select(result);
+					getCallback().reload(result.getId());
 				}
 
 				@Override
@@ -459,7 +459,7 @@ public class Model3902021 extends DockLayoutPanel  {
 			MOD3902021_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.SENT, new AsyncCallback<Mod3902021>() {
 				@Override
 				public void onSuccess(Mod3902021 result) {
-					select(result);
+					getCallback().reload(result.getId());
 				}
 
 				@Override
@@ -482,7 +482,7 @@ public class Model3902021 extends DockLayoutPanel  {
 			MOD3902021_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.PENDING, new AsyncCallback<Mod3902021>() {
 				@Override
 				public void onSuccess(Mod3902021 result) {
-					select(result);
+					getCallback().reload(result.getId());
 				}
 
 				@Override

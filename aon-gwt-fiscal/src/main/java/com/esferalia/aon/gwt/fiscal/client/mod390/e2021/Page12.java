@@ -45,22 +45,22 @@ class Page12 extends ResizeComposite {
 
 				@Override
 				public String getSendAction() {
-					return null;
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902021SendAEAT";
 				}
 
 				@Override
 				public void sendSuccessfully() {
-					// Nothing
+					callback.reload( getModel().getId() );
 				}
 
 				@Override
 				public String getCheckAction() {
-					return null;
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902021CheckAEAT";
 				}
 
 				@Override
 				public String getCheckDataResponseDataAction() {
-					return null;
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod3902021CheckDataResponseData";
 				}
 
 				@Override

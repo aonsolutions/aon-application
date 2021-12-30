@@ -610,7 +610,7 @@ public class ModelAdmonUtils {
 		}
 	}
 
-	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model) {
+	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
 		try {
 			String year = AonNumberUtils.toString(model.getYear());
 			
