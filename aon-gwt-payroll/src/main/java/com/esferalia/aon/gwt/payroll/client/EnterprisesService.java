@@ -217,9 +217,9 @@ public interface EnterprisesService extends RemoteService {
 	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData);
 	
-	ContractSpecificData getContractSpecificData(String currentDomainName, Integer contractId);
+	ContractSpecificData getContractSpecificData(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
-	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData);	
+	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;	
 	
 	Map<String, CNO> getCNOs(String currentDomainName);
 

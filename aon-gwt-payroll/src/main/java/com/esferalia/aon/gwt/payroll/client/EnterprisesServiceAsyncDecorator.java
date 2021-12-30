@@ -610,13 +610,13 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> callback) {
+	public void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getContractSpecificData(currentDomainName, contractId, new AsyncCallbackWrapper<ContractSpecificData>(callback));
 	}
 
 	@Override
-	public void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
+	public void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.setContractSpecificData(currentDomainName, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
 	}

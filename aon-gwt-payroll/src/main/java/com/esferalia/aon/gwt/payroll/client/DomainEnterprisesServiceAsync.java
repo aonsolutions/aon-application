@@ -380,11 +380,11 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setContractOtherInfo(getCurrentDomainName(), contractId, contractType, contractOtherData, asyncCallback);
 	}
 	
-	public void getContractSpecificData(Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback) {
+	public void getContractSpecificData(Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getContractSpecificData(getCurrentDomainName(), contractId, asyncCallback);
 	}
 
-	public void setContractSpecificData(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) {
+	public void setContractSpecificData(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.setContractSpecificData(getCurrentDomainName(), employeeContractData, asyncCallback);
 	}
 	

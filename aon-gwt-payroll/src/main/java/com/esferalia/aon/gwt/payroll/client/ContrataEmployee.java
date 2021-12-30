@@ -137,7 +137,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								},
 								e -> showError("Generaci\u00F3n Contrato", e.getMessage())
 						);
-					}, f -> {});
+					}, f -> showError("Generaci\u00F3n Contrato", f.getMessage()));
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -805,7 +805,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}, f -> {});
 				break;
 			case 1:
-				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> {}, f -> {});
+				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
+						s -> {}, 
+						f -> showError("Error guardando Datos SEPE", f.getMessage()));
 				break;
 			case 2:
 				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -860,7 +862,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
 							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
 					hideLoadingPanel();
-				}, f -> {});
+				}, f -> showError("Error obtenci\u00f3n Datos SEPE", f.getMessage()));
 				break;
 			case 2:
 				showLoadingPanel();
@@ -1232,8 +1234,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contractSpecificData.setEmployeeContractInfo(
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
 							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
-				, fa -> {})
-			, f -> {});
+				, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()))
+			, f -> showError("Error guardando Datos SEPE", f.getMessage()));
 			break;
 		case 2:
 			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
