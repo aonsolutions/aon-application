@@ -2347,8 +2347,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public ContractSpecificData getContractSpecificData(String domainName, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContractSEPE.getContractSpecificData(connection, contractId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -2357,8 +2357,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqContractSEPE.setContractSpecificData(connection, domainId, employeeContractData);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
