@@ -69,19 +69,28 @@ public class Mod3902021DAO {
 
 	private static final byte ZERO_BYTE = 0;
 	private static final byte ONE_BYTE = 1;
+	
+	public static final double PERCENT1 = 4.0;
+	public static final double PERCENT2 = 10.0;
+	public static final double PERCENT3 = 21.0;
+	public static final double SURCHARGE_PERCENT1 = 0.5;
+	public static final double SURCHARGE_PERCENT2 = 1.4;
+	public static final double SURCHARGE_PERCENT3 = 5.2;
+	public static final double SURCHARGE_PERCENT4 = 1.75;
+	
 	// 1 de Julio del 2012		
 	private static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 	
 	@FunctionalInterface
 	public static interface IMod390DetailKey {
-		boolean accept(VatContext vc);
+		boolean accept(Mod3902021 mod,VatContext vc);
 	}
 
 	public enum DetailKey implements Serializable {
 		
-		  K00_04 (Mod3902021DetailKey.C0002, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() ==  4)))
-		 ,K00_10 (Mod3902021DetailKey.C0004, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() == 10)))
-		 ,K00_21 (Mod3902021DetailKey.C0006, (vc -> (vc.isNationalSales() && !vc.isRectification() && vc.getPercentage() == 21)))
+		  K00_04 (Mod3902021DetailKey.C0002, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent1(vc))
+		 ,K00_10 (Mod3902021DetailKey.C0004, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent2(vc))
+		 ,K00_21 (Mod3902021DetailKey.C0006, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent3(vc))
 		 ,K01_04 (Mod3902021DetailKey.C0501, null)
 		 ,K01_10 (Mod3902021DetailKey.C0503, null)
 		 ,K01_21 (Mod3902021DetailKey.C0505, null)
@@ -89,78 +98,76 @@ public class Mod3902021DAO {
 		 ,K02_10 (Mod3902021DetailKey.C0010, null)
 		 ,K02_21 (Mod3902021DetailKey.C0012, null)
 		 ,K03_21 (Mod3902021DetailKey.C0014, null)
-		 ,K04_04 (Mod3902021DetailKey.C0022, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  4)))
-		 ,K04_10 (Mod3902021DetailKey.C0024, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  10)))
-		 ,K04_21 (Mod3902021DetailKey.C0026, (vc -> (vc.isIntracommunityPurchase() && vc.getPercentage() ==  21)))
+		 ,K04_04 (Mod3902021DetailKey.C0022, (mod, vc) -> isIntracommunityPurchase(vc, mod) && hasPercent1(vc))
+		 ,K04_10 (Mod3902021DetailKey.C0024, (mod, vc) -> isIntracommunityPurchase(vc, mod) && hasPercent2(vc))
+		 ,K04_21 (Mod3902021DetailKey.C0026, (mod, vc) -> isIntracommunityPurchase(vc, mod) && hasPercent3(vc))
 	
-		 ,K05_04 (Mod3902021DetailKey.C0546, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() ==  4)))
-		 ,K05_10 (Mod3902021DetailKey.C0548, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() == 10)))
-		 ,K05_21 (Mod3902021DetailKey.C0552, (vc -> (vc.isIntracommunityExpenses() && vc.getPercentage() == 21)))
-		 ,K06	 (Mod3902021DetailKey.C0028	, (vc -> ( vc.isOtherISPPurchase() 
-				 								|| vc.isOtherISPExpenses() 
-				 								|| vc.isCanCeuMelExpenses() 
-				 								|| vc.isExtracommunityExpenses())))
+		 ,K05_04 (Mod3902021DetailKey.C0546, (mod, vc) -> isIntracommunityExpenses(vc, mod) && hasPercent1(vc))
+		 ,K05_10 (Mod3902021DetailKey.C0548, (mod, vc) -> isIntracommunityExpenses(vc, mod) && hasPercent2(vc))
+		 ,K05_21 (Mod3902021DetailKey.C0552, (mod, vc) -> isIntracommunityExpenses(vc, mod) && hasPercent3(vc))
+
+		 ,K06	 (Mod3902021DetailKey.C0028, (mod, vc) -> isOperacionesISPFilter(vc, mod))
 		 
-		 ,K07	 (Mod3902021DetailKey.C0030	, (vc -> (vc.isNationalSales() && vc.isRectification())))
-		 ,K08	 (Mod3902021DetailKey.C0032	, null)
-		 ,K09	 (Mod3902021DetailKey.C0034	, null)
-		 ,K10_05 (Mod3902021DetailKey.C0036, (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 0.5)))
-		 ,K10_14 (Mod3902021DetailKey.C0600, (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 1.4)))
-		 ,K10_52 (Mod3902021DetailKey.C0602, (vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 5.2)))
-		 ,K10_175(Mod3902021DetailKey.C0042,(vc -> (vc.isSurcharge() && !vc.isRectification() && vc.isNationalSales() && vc.getSurchargePercent() == 1.75)))
-		 ,K11	 (Mod3902021DetailKey.C0044	, (vc -> (vc.isSurcharge() &&  vc.isRectification() && vc.isNationalSales()))) 
-		 ,K12	 (Mod3902021DetailKey.C0046	, null)
-		 ,K13	 (Mod3902021DetailKey.C0047	, null)
+		 ,K07	 (Mod3902021DetailKey.C0030, (mod, vc) -> isCommonNationalSalesRECT(vc, mod))
+		 ,K08	 (Mod3902021DetailKey.C0032, null)
+		 ,K09	 (Mod3902021DetailKey.C0034, null)
+		 ,K10_05 (Mod3902021DetailKey.C0036, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isSurcharge() && hasSurchargePercent1(vc))
+		 ,K10_14 (Mod3902021DetailKey.C0600, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isSurcharge() && hasSurchargePercent2(vc))
+		 ,K10_52 (Mod3902021DetailKey.C0602, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isSurcharge() && hasSurchargePercent3(vc))
+		 ,K10_175(Mod3902021DetailKey.C0042, (mod, vc) -> isCommonNationalSales(vc, mod) && vc.isSurcharge() && hasSurchargePercent4(vc))
+		 ,K11	 (Mod3902021DetailKey.C0044, (mod, vc) -> isCommonNationalSalesRECT(vc, mod) && vc.isSurcharge()) 
+		 ,K12	 (Mod3902021DetailKey.C0046, null)
+		 ,K13	 (Mod3902021DetailKey.C0047, null)
 		 
-		 ,K14_04 (Mod3902021DetailKey.C0191, (vc -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 4)) 
-		 ,K14_10 (Mod3902021DetailKey.C0604, (vc -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 10)) 
-		 ,K14_21 (Mod3902021DetailKey.C0606, (vc -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 21)) 
-		 ,K15	 (Mod3902021DetailKey.C0049	, null)
+		 ,K14_04 (Mod3902021DetailKey.C0191, ((mod, vc) -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 4)) 
+		 ,K14_10 (Mod3902021DetailKey.C0604, ((mod, vc) -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 10)) 
+		 ,K14_21 (Mod3902021DetailKey.C0606, ((mod, vc) -> operacionesInterioresCorrientesFilter(vc) && vc.getPercentage() == 21)) 
+		 ,K15	 (Mod3902021DetailKey.C0049, null)
 		 
 		 ,K16_04 (Mod3902021DetailKey.C0507, null)
 		 ,K16_10 (Mod3902021DetailKey.C0608, null)
 		 ,K16_21 (Mod3902021DetailKey.C0610, null)
-		 ,K17	 (Mod3902021DetailKey.C0513	, null)
+		 ,K17	 (Mod3902021DetailKey.C0513, null)
 		 
-		 ,K18_04 (Mod3902021DetailKey.C0197, (vc -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() ==  4))
-		 ,K18_10 (Mod3902021DetailKey.C0612, (vc -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() == 10)) 
-		 ,K18_21 (Mod3902021DetailKey.C0614, (vc -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() == 21))
-		 ,K19	 (Mod3902021DetailKey.C0051	, null)
+		 ,K18_04 (Mod3902021DetailKey.C0197, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() ==  4))
+		 ,K18_10 (Mod3902021DetailKey.C0612, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() == 10)) 
+		 ,K18_21 (Mod3902021DetailKey.C0614, ((mod, vc) -> operacionesInterioresInversionFilter(vc) && vc.getPercentage() == 21))
+		 ,K19	 (Mod3902021DetailKey.C0051, null)
 		 
 		 ,K20_04 (Mod3902021DetailKey.C0515, null)
 		 ,K20_10 (Mod3902021DetailKey.C0616, null)
 		 ,K20_21 (Mod3902021DetailKey.C0618, null)
-		 ,K21	 (Mod3902021DetailKey.C0521	, null)
+		 ,K21	 (Mod3902021DetailKey.C0521, null)
 		 
-		 ,K22_04 (Mod3902021DetailKey.C0203, (vc -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 4))
-		 ,K22_10 (Mod3902021DetailKey.C0620, (vc -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 10))
-		 ,K22_21 (Mod3902021DetailKey.C0622, (vc -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 21))
-		 ,K23	 (Mod3902021DetailKey.C0053	, null)
+		 ,K22_04 (Mod3902021DetailKey.C0203, ((mod, vc) -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 4))
+		 ,K22_10 (Mod3902021DetailKey.C0620, ((mod, vc) -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 10))
+		 ,K22_21 (Mod3902021DetailKey.C0622, ((mod, vc) -> importacionesCorrientesFilter(vc) && vc.getPercentage() == 21))
+		 ,K23	 (Mod3902021DetailKey.C0053, null)
 		 
-		 ,K24_04 (Mod3902021DetailKey.C0209, (vc -> importacionesInversionFilter(vc) && vc.getPercentage() == 4))
-		 ,K24_10 (Mod3902021DetailKey.C0624, (vc -> importacionesInversionFilter(vc) && vc.getPercentage() == 10))
-		 ,K24_21 (Mod3902021DetailKey.C0626, (vc -> importacionesInversionFilter(vc) && vc.getPercentage() == 21))
-		 ,K25	 (Mod3902021DetailKey.C0055	, null)
+		 ,K24_04 (Mod3902021DetailKey.C0209, ((mod, vc) -> importacionesInversionFilter(vc) && vc.getPercentage() == 4))
+		 ,K24_10 (Mod3902021DetailKey.C0624, ((mod, vc) -> importacionesInversionFilter(vc) && vc.getPercentage() == 10))
+		 ,K24_21 (Mod3902021DetailKey.C0626, ((mod, vc) -> importacionesInversionFilter(vc) && vc.getPercentage() == 21))
+		 ,K25	 (Mod3902021DetailKey.C0055, null)
 		 
-		 ,K26_04 (Mod3902021DetailKey.C0215, (vc -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 4))
-		 ,K26_10 (Mod3902021DetailKey.C0628, (vc -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 10))
-		 ,K26_21 (Mod3902021DetailKey.C0630, (vc -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 21))
-		 ,K27	 (Mod3902021DetailKey.C0057	, null)
+		 ,K26_04 (Mod3902021DetailKey.C0215, ((mod, vc) -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 4))
+		 ,K26_10 (Mod3902021DetailKey.C0628, ((mod, vc) -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 10))
+		 ,K26_21 (Mod3902021DetailKey.C0630, ((mod, vc) -> adqIntracomunitariasCorrientesFilter(vc) && vc.getPercentage() == 21))
+		 ,K27	 (Mod3902021DetailKey.C0057, null)
 		 
-		 ,K28_04 (Mod3902021DetailKey.C0221, (vc -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 4))
-		 ,K28_10 (Mod3902021DetailKey.C0632, (vc -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 10)) 
-		 ,K28_21 (Mod3902021DetailKey.C0634, (vc -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 21)) 
-		 ,K29	 (Mod3902021DetailKey.C0059   , null)
+		 ,K28_04 (Mod3902021DetailKey.C0221, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 4))
+		 ,K28_10 (Mod3902021DetailKey.C0632, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 10)) 
+		 ,K28_21 (Mod3902021DetailKey.C0634, ((mod, vc) -> adqIntracomunitariasInversionFilter(vc) && vc.getPercentage() == 21)) 
+		 ,K29	 (Mod3902021DetailKey.C0059, null)
 		 
-		 ,K30_04 (Mod3902021DetailKey.C0588, (vc -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 4))
-		 ,K30_10 (Mod3902021DetailKey.C0636, (vc -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 10))
-		 ,K30_21 (Mod3902021DetailKey.C0638, (vc -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 21))
-		 ,K31	 (Mod3902021DetailKey.C0598   , null)
+		 ,K30_04 (Mod3902021DetailKey.C0588, ((mod, vc) -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 4))
+		 ,K30_10 (Mod3902021DetailKey.C0636, ((mod, vc) -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 10))
+		 ,K30_21 (Mod3902021DetailKey.C0638, ((mod, vc) -> adqIntracomunitariasServicios(vc) && vc.getPercentage() == 21))
+		 ,K31	 (Mod3902021DetailKey.C0598, null)
 		 
-		 ,K32	 (Mod3902021DetailKey.C0061   , (vc -> ((vc.isPurchase() || vc.isExpenses()) && vc.isFarmerRegime())))
+		 ,K32	 (Mod3902021DetailKey.C0061, ((mod, vc) -> ((vc.isPurchase() || vc.isExpenses()) && vc.isFarmerRegime())))
 		 
 		 // **************
-		 ,K33	 (Mod3902021DetailKey.C0062,  (vc -> vc.isRectification() && (vc.isPurchase() || vc.isExpenses() )))
+		 ,K33	 (Mod3902021DetailKey.C0062, ((mod, vc) -> vc.isRectification() && (vc.isPurchase() || vc.isExpenses() )))
 		 // **************
 		 
 		 ,K34	 (Mod3902021DetailKey.C0063, null)
@@ -168,23 +175,23 @@ public class Mod3902021DAO {
 		 ,K36	 (Mod3902021DetailKey.C0064, null)
 		 ,K37	 (Mod3902021DetailKey.C0065, null)
 		 
-		 ,B099	 (Mod3902021DetailKey.C0099, (vc -> (vc.isNationalSales())))
-		 ,B653	 (Mod3902021DetailKey.C0653, (vc -> (vc.isSales() && vc.isVatAccrualRegime() )))
-		 ,B103	 (Mod3902021DetailKey.C0103, (vc -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
-		 ,B104	 (Mod3902021DetailKey.C0104, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
-		 ,B105	 (Mod3902021DetailKey.C0105, (vc -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
-		 ,B110	 (Mod3902021DetailKey.C0110, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isOtherISP())))
+		 ,B099	 (Mod3902021DetailKey.C0099, ((mod, vc) -> (vc.isNationalSales())))
+		 ,B653	 (Mod3902021DetailKey.C0653, ((mod, vc) -> (vc.isSales() && vc.isVatAccrualRegime() )))
+		 ,B103	 (Mod3902021DetailKey.C0103, ((mod, vc) -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
+		 ,B104	 (Mod3902021DetailKey.C0104, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
+		 ,B105	 (Mod3902021DetailKey.C0105, ((mod, vc) -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
+		 ,B110	 (Mod3902021DetailKey.C0110, ((mod, vc) -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isOtherISP())))
 		 ,B125	 (Mod3902021DetailKey.C0125, null)
 		 ,B126	 (Mod3902021DetailKey.C0126, null)
 		 ,B127	 (Mod3902021DetailKey.C0127, null)
 		 ,B128	 (Mod3902021DetailKey.C0128, null)
 		 ,B100	 (Mod3902021DetailKey.C0100, null)
 		 ,B101	 (Mod3902021DetailKey.C0101, null)
-		 ,B102	 (Mod3902021DetailKey.C0102, (vc -> (vc.isNationalSales() && vc.isSurcharge())))
+		 ,B102	 (Mod3902021DetailKey.C0102, ((mod, vc) -> (vc.isNationalSales() && vc.isSurcharge())))
 		 ,B227	 (Mod3902021DetailKey.C0227, null)
 		 ,B228	 (Mod3902021DetailKey.C0228, null)
 		 ,B106	 (Mod3902021DetailKey.C0106, null)
-		 ,B107	 (Mod3902021DetailKey.C0107, (vc -> (vc.isNationalSales() && vc.isInvestment())))
+		 ,B107	 (Mod3902021DetailKey.C0107, ((mod, vc) -> (vc.isNationalSales() && vc.isInvestment())))
 		 ,B108	 (Mod3902021DetailKey.C0108, null)
 		 ;
 		 
@@ -199,14 +206,14 @@ public class Mod3902021DAO {
 		public Mod3902021DetailKey getKey() {
 			return key;
 		}
-		public boolean accept(VatContext vc) {
-			return accept!=null && accept.accept(vc);
+		public boolean accept(Mod3902021 mod, VatContext vc) {
+			return accept!=null && accept.accept(mod,vc);
 		}
 		
-		public static Mod3902021DetailKey[] getKeys(VatContext vc) {
+		public static Mod3902021DetailKey[] getKeys(Mod3902021 mod,VatContext vc) {
 			List<Mod3902021DetailKey> list = new LinkedList<>();
 			for (DetailKey key : DetailKey.values()) {
-				if (key.accept(vc)) {
+				if (key.accept(mod,vc)) {
 					list.add(key.getKey()); 
 				}
 			}
@@ -570,7 +577,7 @@ public class Mod3902021DAO {
 		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
 		VATDAO.getVatBreakdown(ctx, firstDay, lastDay, mod390)
 		.forEach(vc -> {
-			Mod3902021DetailKey[] keys = DetailKey.getKeys(vc);			
+			Mod3902021DetailKey[] keys = DetailKey.getKeys(mod390,vc);			
 			if (keys != null) {
 				for (Mod3902021DetailKey key : keys) {
 					Mod390Detail detail = map.get(key);
@@ -992,7 +999,60 @@ public class Mod3902021DAO {
 		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 
+	// -----------------------------------------------------------------------
+	// --------------------------------------------------------------- FILTROS
+	// -----------------------------------------------------------------------
+	private static boolean isCommonNationalSales(VatContext vat, Mod3902021 mod) {
+		return !vat.isVatSurchargeRegime() && vat.isNational()
+				&& vat.isSales() && !vat.isRectification();
+	}
+	private static boolean isCommonNationalSalesRECT(VatContext vat, Mod3902021 mod) {
+		return !vat.isVatSurchargeRegime() && vat.isNational()
+				&& vat.isSales() && vat.isRectification();
+	}
+	private static boolean hasPercent1(VatContext vat) {
+		return vat.getPercentage() == PERCENT1;
+	}
 
+	private static boolean hasPercent2(VatContext vat) {
+		return vat.getPercentage() == PERCENT2;
+	}
+
+	private static boolean hasPercent3(VatContext vat) {
+		return vat.getPercentage() == PERCENT3;
+	}
+	private static boolean hasSurchargePercent1(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT1;
+	}
+
+	private static boolean hasSurchargePercent2(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT2;
+	}
+
+	private static boolean hasSurchargePercent3(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT3;
+	}
+	private static boolean hasSurchargePercent4(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT4;
+	}
+	
+	private static boolean isIntracommunityPurchase(VatContext vat, Mod3902021 mod) {
+		return !vat.isVatSurchargeRegime() && !vat.isRectification() && vat.isIntracommunityPurchase();
+	}
+	private static boolean isIntracommunityExpenses(VatContext vat, Mod3902021 mod) {
+		return !vat.isVatSurchargeRegime() && !vat.isRectification() && vat.isIntracommunityExpenses();
+	}
+	private static boolean isOperacionesISPFilter(VatContext vat, Mod3902021 mod) {
+		return !vat.isVatSurchargeRegime()
+				&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses()
+						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
+						|| (vat.isCanCeuMelPurchase() && vat.isService()));
+	}
+
+	
+	// **************************
+	// **************************
+	// **************************
 
 	private static boolean importacionesCorrientesFilter(VatContext vat) {
 		return commonImportacionesFilter(vat) && !vat.isInvestment();
@@ -1073,6 +1133,8 @@ public class Mod3902021DAO {
 		return mod;
 	}
 
+	
+	// vatSurchargeRegime
 }
 
 
