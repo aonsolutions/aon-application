@@ -13,6 +13,7 @@ import eus.bizkaia.ogasuna.sii.documentos.suministrolr.BajaLRDetOperacionIntraco
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.BajaLRFacturasEmitidas;
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.BajaLRFacturasRecibidas;
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.BajaLROperacionesSeguros;
+import eus.bizkaia.ogasuna.sii.documentos.suministrolr.BajaLRVentaBienesConsigna;
 
 
 /**
@@ -42,6 +43,7 @@ import eus.bizkaia.ogasuna.sii.documentos.suministrolr.BajaLROperacionesSeguros;
     "cabecera"
 })
 @XmlSeeAlso({
+    BajaLRVentaBienesConsigna.class,
     BajaLRDetOperacionIntracomunitaria.class,
     BajaLROperacionesSeguros.class,
     BajaLRCobrosMetalico.class,

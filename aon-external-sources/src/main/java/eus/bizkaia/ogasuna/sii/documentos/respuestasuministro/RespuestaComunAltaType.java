@@ -47,7 +47,8 @@ import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DatosPresentacio
     RespuestaLROComunitariasType.class,
     RespuestaLRAgenciasViajesType.class,
     RespuestaLRIMetalicoType.class,
-    RespuestaLROperacionesSegurosType.class
+    RespuestaLROperacionesSegurosType.class,
+    RespuestaLRVentaBienesConsignaType.class
 })
 public class RespuestaComunAltaType {
 
