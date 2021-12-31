@@ -25,6 +25,10 @@ public enum FiscalStatus implements Serializable {
 		return name;
 	}
 	
+	public byte value() {
+		return (byte) ordinal();
+	}
+
 	public abstract <T> T visit(IFiscalStatusVisitor<T> visitor);
 	
 	public static FiscalStatus safeValueOf( String i ) {

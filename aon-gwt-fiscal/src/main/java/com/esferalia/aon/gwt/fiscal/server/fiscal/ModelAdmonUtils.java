@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL131;
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -62,7 +63,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902021;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -88,6 +89,7 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod190Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod3902021Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -479,8 +481,18 @@ public class ModelAdmonUtils {
 				}
 			}
 			
+			@Override 
+			public void visitM390() { 
+				try {
+					if (fm instanceof Mod3902021) {
+						Mod3902021 mod = (Mod3902021) fm;
+						Mod3902021Writer.fillWriter( mod , writer);
+					}
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM390() { /* Auto-generated method stub */}
 			@Override public void visitM349() { /* Auto-generated method stub */}
 			@Override public void visitM347() { /* Auto-generated method stub */}
 			@Override public void visitM200() { /* Auto-generated method stub */}
@@ -534,8 +546,14 @@ public class ModelAdmonUtils {
 			public void visitM303() { 
 				MODEL303.aeatPresentationMod303(occam, getMod303(fm) , aeatResponse);
 			}
+			@Override 
+			public void visitM390() { 
+				if (fm instanceof Mod3902021) {
+					Mod3902021 mod = (Mod3902021) fm;
+					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
+				}
+			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM390() { /* Auto-generated method stub */}
 			@Override public void visitM349() { /* Auto-generated method stub */}
 			@Override public void visitM347() { /* Auto-generated method stub */}
 			@Override public void visitM200() { /* Auto-generated method stub */}
@@ -610,7 +628,7 @@ public class ModelAdmonUtils {
 		}
 	}
 
-	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model) {
+	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
 		try {
 			String year = AonNumberUtils.toString(model.getYear());
 			

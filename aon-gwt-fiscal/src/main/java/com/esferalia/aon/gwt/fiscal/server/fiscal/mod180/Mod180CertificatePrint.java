@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.fiscal.MODEL180;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -42,7 +41,7 @@ public class Mod180CertificatePrint extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("mod190"));
+			int id = Integer.parseInt(req.getParameter("mod180"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String domainName = req.getParameter("domainName");
 			String user = req.getParameter("user");

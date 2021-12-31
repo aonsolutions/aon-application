@@ -1,296 +1,242 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2018;
 
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.IMod3902018CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.IMod3902018Page;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.Model3902018Callback;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Page08 extends ResizeComposite implements RequiresResize , IMod3902018Page {
+class Page08 extends PageAbs {
 
-	interface PageBinder extends UiBinder<Widget, Page08> {
+	private AonDoubleBox box99 = new AonDoubleBox();
+	private AonDoubleBox box653 = new AonDoubleBox();
+	private AonDoubleBox box103 = new AonDoubleBox();
+	private AonDoubleBox box104 = new AonDoubleBox();
+	private AonDoubleBox box105 = new AonDoubleBox();
+	private AonDoubleBox box110 = new AonDoubleBox();
+	private AonDoubleBox box112 = new AonDoubleBox();
+	private AonDoubleBox box100 = new AonDoubleBox();
+	private AonDoubleBox box101 = new AonDoubleBox();
+	private AonDoubleBox box102 = new AonDoubleBox();
+	private AonDoubleBox box227 = new AonDoubleBox();
+	private AonDoubleBox box228 = new AonDoubleBox();
+	private AonDoubleBox box106 = new AonDoubleBox();
+	private AonDoubleBox box107 = new AonDoubleBox();
+	private AonDoubleBox box108 = new AonDoubleBox();
+	
+	public Page08(Model3902018Callback callback) {
+		super(callback);
+		paint();
+		setValue();
+	}
+	
+	@Override
+	protected void setValue() {
+		box99.setValue(getModel().getBox99());
+		box653.setValue(getModel().getBox653());
+		box103.setValue(getModel().getBox103());
+		box104.setValue(getModel().getBox104());
+		box105.setValue(getModel().getBox105());
+		box110.setValue(getModel().getBox110());
+		box112.setValue(getModel().getBox112());
+		box100.setValue(getModel().getBox100());
+		box101.setValue(getModel().getBox101());
+		box102.setValue(getModel().getBox102());
+		box227.setValue(getModel().getBox227());
+		box228.setValue(getModel().getBox228());
+		box106.setValue(getModel().getBox106());
+		box107.setValue(getModel().getBox107());
+		box108.setValue(getModel().getBox108());
 	}
 
-	private static final PageBinder BINDER = GWT.create(PageBinder.class);
+	private void paint() {
+		
+		ScrollPanel scroll = new ScrollPanel();
+		FlowPanel basePanel = new FlowPanel();
+		scroll.add(basePanel);
+		setWidget(scroll);
 
-	IMod3902018CallBack cbk;
-	
-	@UiField
-	DoubleBox box99;
-	
-	@UiField
-	DoubleBox box653;
+		basePanel.add(getTitle(AON.MSG.operationsVolume()));
 
-	@UiField
-	DoubleBox box103;
-	
-	@UiField
-	DoubleBox box104;
-	
-	@UiField
-	DoubleBox box105;
-	
-	@UiField
-	DoubleBox box110;
-	
-	@UiField
-	DoubleBox box112;
-	
-	@UiField
-	DoubleBox box100;
-	
-	@UiField
-	DoubleBox box101;
-	
-	@UiField
-	DoubleBox box102;
-	
-	@UiField
-	DoubleBox box227;
-	
-	@UiField
-	DoubleBox box228;
-	
-	@UiField
-	DoubleBox box106;
-	
-	@UiField
-	DoubleBox box107;
-	
-	@UiField
-	DoubleBox box108;
-	
-	public Page08(Mod3902018 m390) {
-		Widget ui = BINDER.createAndBindUi(this);
-		initWidget(ui);
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab);
+		
+		box99.addValueChangeHandler(event -> {
+			if (box99.getValue() == null) box99.setValue(0.0,false);
+			getModel().setBox99(box99.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box99Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(99),AON.CSS.aonWidth40())
+			.addCell(box99,AON.CSS.aonWidth120());
+
+
+		box653.addValueChangeHandler(event -> {
+			if (box653.getValue() == null) box653.setValue(0.0,false);
+			getModel().setBox653(box653.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box653Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(653),AON.CSS.aonWidth40())
+			.addCell(box653,AON.CSS.aonWidth120());
+		
+
+		box103.addValueChangeHandler(event -> {
+			if (box103.getValue() == null) box103.setValue(0.0,false);
+			getModel().setBox103(box103.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box103Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(103),AON.CSS.aonWidth40())
+			.addCell(box103,AON.CSS.aonWidth120());
+		
+		
+		box104.addValueChangeHandler(event -> {
+			if (box104.getValue() == null) box104.setValue(0.0,false);
+			getModel().setBox104(box104.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box104Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(104),AON.CSS.aonWidth40())
+			.addCell(box104,AON.CSS.aonWidth120());
+		
+		
+		box105.addValueChangeHandler(event -> {
+			if (box105.getValue() == null) box105.setValue(0.0,false);
+			getModel().setBox105(box105.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box105Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(105),AON.CSS.aonWidth40())
+			.addCell(box105,AON.CSS.aonWidth120());
+		
+		
+		box110.addValueChangeHandler(event -> {
+			if (box110.getValue() == null) box110.setValue(0.0,false);
+			getModel().setBox110(box110.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box110Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(110),AON.CSS.aonWidth40())
+			.addCell(box110,AON.CSS.aonWidth120());
+		
+		
+		box112.addValueChangeHandler(event -> {
+			if (box112.getValue() == null) box112.setValue(0.0,false);
+			getModel().setBox112(box112.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box112Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(112),AON.CSS.aonWidth40())
+			.addCell(box112,AON.CSS.aonWidth120());
+		
+		
+		box100.addValueChangeHandler(event -> {
+			if (box100.getValue() == null) box100.setValue(0.0,false);
+			getModel().setBox100(box100.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box100Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(100),AON.CSS.aonWidth40())
+			.addCell(box100,AON.CSS.aonWidth120());
+		
+
+		box101.addValueChangeHandler(event -> {
+			if (box101.getValue() == null) box101.setValue(0.0,false);
+			getModel().setBox101(box101.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box101Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(101),AON.CSS.aonWidth40())
+			.addCell(box101,AON.CSS.aonWidth120());
+		
+		
+		box102.addValueChangeHandler(event -> {
+			if (box102.getValue() == null) box102.setValue(0.0,false);
+			getModel().setBox102(box102.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box102Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(102),AON.CSS.aonWidth40())
+			.addCell(box102,AON.CSS.aonWidth120());
+		
+		
+		box227.addValueChangeHandler(event -> {
+			if (box227.getValue() == null) box227.setValue(0.0,false);
+			getModel().setBox227(box227.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box227Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(227),AON.CSS.aonWidth40())
+			.addCell(box227,AON.CSS.aonWidth120());
+		
+		
+		box228.addValueChangeHandler(event -> {
+			if (box228.getValue() == null) box228.setValue(0.0,false);
+			getModel().setBox228(box228.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box228Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(228),AON.CSS.aonWidth40())
+			.addCell(box228,AON.CSS.aonWidth120());
+		
+		
+		box106.addValueChangeHandler(event -> {
+			if (box106.getValue() == null) box106.setValue(0.0,false);
+			getModel().setBox106(box106.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box106Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(106),AON.CSS.aonWidth40())
+			.addCell(box106,AON.CSS.aonWidth120());
+		
+		box107.addValueChangeHandler(event -> {
+			if (box107.getValue() == null) box107.setValue(0.0,false);
+			getModel().setBox107(box107.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box107Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(107),AON.CSS.aonWidth40())
+			.addCell(box107,AON.CSS.aonWidth120());
+		
 		box108.setEnabled(false);
-		setValue(m390);
-	}
-
-	private void setValue(Mod3902018 m390) {
-		box99.setValue(m390.getBox99());
-		box653.setValue(m390.getBox653());
-		box103.setValue(m390.getBox103());
-		box104.setValue(m390.getBox104());
-		box105.setValue(m390.getBox105());
-		box110.setValue(m390.getBox110());
-		box112.setValue(m390.getBox112());
-		box100.setValue(m390.getBox100());
-		box101.setValue(m390.getBox101());
-		box102.setValue(m390.getBox102());
-		box227.setValue(m390.getBox227());
-		box228.setValue(m390.getBox228());
-		box106.setValue(m390.getBox106());
-		box107.setValue(m390.getBox107());
-		box108.setValue(m390.getBox108());
-	}
-
-	@Override
-	public void populate(Mod3902018 mod390) {
-		mod390.setBox99(box99.getValue());
-		mod390.setBox653(box653.getValue());
-		mod390.setBox103(box103.getValue());
-		mod390.setBox104(box104.getValue());
-		mod390.setBox105(box105.getValue());
-		mod390.setBox110(box110.getValue());
-		mod390.setBox112(box112.getValue());
-		mod390.setBox100(box100.getValue());
-		mod390.setBox101(box101.getValue());
-		mod390.setBox102(box102.getValue());
-		mod390.setBox227(box227.getValue());
-		mod390.setBox228(box228.getValue());
-		mod390.setBox106(box106.getValue());
-		mod390.setBox107(box107.getValue());
-		mod390.setBox108(box108.getValue());
+		tab.addRow()
+			.addCell(new Label(AON.MSG.box108Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(108),AON.CSS.aonWidth40())
+			.addCell(box108,AON.CSS.aonWidth120());
 	}
 	
-	@UiHandler("box99")
-	void onChangeBox99(ChangeEvent event) {
-		if (box99.getValue() == null) box99.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox99(box99.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box653")
-	void onChangeBox653(ChangeEvent event) {
-		if (box653.getValue() == null) box653.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox653(box653.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box103")
-	void onChangeBox103(ChangeEvent event) {
-		if (box103.getValue() == null) box103.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox103(box103.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box104")
-	void onChangeBox104(ChangeEvent event) {
-		if (box104.getValue() == null) box104.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox104(box104.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box105")
-	void onChangeBox105(ChangeEvent event) {
-		if (box105.getValue() == null) box105.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox105(box105.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box110")
-	void onChangeBox110(ChangeEvent event) {
-		if (box110.getValue() == null) box110.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox110(box110.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box112")
-	void onChangeBox112(ChangeEvent event) {
-		if (box112.getValue() == null) box112.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox112(box112.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box100")
-	void onChangeBox100(ChangeEvent event) {
-		if (box100.getValue() == null) box100.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox100(box100.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box101")
-	void onChangeBox101(ChangeEvent event) {
-		if (box101.getValue() == null) box101.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox101(box101.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box102")
-	void onChangeBox102(ChangeEvent event) {
-		if (box102.getValue() == null) box102.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox102(box102.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box227")
-	void onChangeBox227(ChangeEvent event) {
-		if (box227.getValue() == null) box227.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox227(box227.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box228")
-	void onChangeBox228(ChangeEvent event) {
-		if (box228.getValue() == null) box228.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox228(box228.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box106")
-	void onChangeBox106(ChangeEvent event) {
-		if (box106.getValue() == null) box106.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox106(box106.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box107")
-	void onChangeBox107(ChangeEvent event) {
-		if (box107.getValue() == null) box107.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox107(box107.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@Override
-	public void setCallback(IMod3902018CallBack callback) {
-		this.cbk = callback;
-	}
-	
-	@Override
-	public void refresh(Mod3902018 m390) {
-		if (!AonMathUtils.equals(box108.getValue(), m390.getBox108())) 
-			box108.setValue(m390.getBox108(),true,true);
-	}
 }
-

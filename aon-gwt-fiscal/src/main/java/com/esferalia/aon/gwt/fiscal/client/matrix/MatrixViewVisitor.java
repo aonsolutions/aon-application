@@ -27,6 +27,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
@@ -42,6 +44,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -687,10 +690,60 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			callback.onFailure(t);
 		}
 	}
+	
+	@Override 
+	public void visitM390()  { 
+		LOGGER.info("Before visit390");
+		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Model390 model390 = new Model390();
+			Model390ModuleOptions options = new Model390ModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(opt.getConfiguration().getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(opt.getConfiguration().getUser().getLogin());
+			options.setConfiguration(opt.getConfiguration());
+			options.setFiscalModelId( model.getId() );
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			options.setExternalCallback( new AonModuleCallback<Mod390>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod390 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod390 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod390 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
+			model390.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
+	}
 
 	@Override public void visitM347()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM349()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
-	@Override public void visitM390()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM200()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 
 }

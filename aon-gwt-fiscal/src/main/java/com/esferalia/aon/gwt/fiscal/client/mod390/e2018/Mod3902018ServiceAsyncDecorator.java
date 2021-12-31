@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2018;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
@@ -16,40 +17,27 @@ public class Mod3902018ServiceAsyncDecorator implements Mod3902018ServiceAsync {
 	}
 
 	@Override
-	public void getMod3902018(String domainName, Integer domain, String user,Mod390 mod390,
-			AsyncCallback<Mod3902018> callback) {
+	public void get(Occam occam,Mod390 mod390, AsyncCallback<Mod3902018> callback) {
 		AON.start();
-		fsa.getMod3902018(domainName, domain, user, mod390, new AsyncCallbackWrapper<Mod3902018>(
-				callback));
+		fsa.get(occam, mod390, new AsyncCallbackWrapper<Mod3902018>(callback));
 	}
 
 	@Override
-	public void saveMod3902018(String domainName, Integer domain, String user, Mod3902018 mod390,
-			AsyncCallback<Mod3902018> callback) {
+	public void save(Occam occam, Mod3902018 mod390, AsyncCallback<Mod3902018> callback) {
 		AON.start();
-		fsa.saveMod3902018(domainName, domain, user,mod390,
-				new AsyncCallbackWrapper<Mod3902018>(callback));
+		fsa.save(occam,mod390, new AsyncCallbackWrapper<Mod3902018>(callback));
 	}
 
 	@Override
-	public void deleteMod3902018(String domainName, Integer domain, String user,Mod3902018 mod390,
-			AsyncCallback<Void> callback) {
+	public void delete(Occam occam,Mod3902018 mod390, AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.deleteMod3902018(domainName, domain, user,mod390,
-				new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(occam,mod390,new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void changeStatus(String domainName, String user,Mod3902018 mod390, FiscalStatus status,
-			AsyncCallback<Mod3902018> callback) {
+	public void changeStatus(Occam occam,Mod3902018 mod390, FiscalStatus status, AsyncCallback<Mod3902018> callback) {
 		AON.start();
-		fsa.changeStatus(domainName, user, mod390, status,new AsyncCallbackWrapper<Mod3902018>(callback));
-	}
-
-	@Override
-	public void presentationFile(String domainName, Integer domainId, String user, Integer id,
-			AsyncCallback<Integer> callback) {
-		
+		fsa.changeStatus(occam, mod390, status,new AsyncCallbackWrapper<Mod3902018>(callback));
 	}
 
 }
