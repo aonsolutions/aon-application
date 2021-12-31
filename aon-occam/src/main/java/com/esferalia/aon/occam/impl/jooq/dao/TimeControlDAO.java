@@ -64,7 +64,7 @@ public class TimeControlDAO {
 	public static Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter) {
 		ctx.checkRead();
 		return select(ctx, filter)
-			.orderBy(TIMECONTROL.DATE.asc())
+			.orderBy(TIMECONTROL.ID.desc())
 			.fetch().stream().map(new TimeControlDetailFiller());
 	}
 	

@@ -249,12 +249,26 @@ export class AonEventAdd extends AonElement {
   async historic(){
     try {
       const resp = await getTimeControlHistoric({id:this.data.id});
-      const r = resp.map(tm=> ({
-        date:  AonDateUtils.setDateTimestamp(new Date(tm.date)),
-        creation_user: tm.creation_user,
-        location: tm.location && tm.location.id ? tm.location.name : null,
-        status: getStatus(tm.status).name
-      }))
+      const r = resp.map((tm,idx)=> {
+        let obj = {};
+        if(idx===0){
+          if(tm.creation_date){
+            obj = { creation_user: tm.creation_user, creation_date: AonDateUtils.setDateTimestamp(new Date(tm.creation_date)) };
+
+            if(tm.modification_user) obj.last_modification_user = tm.modification_user;
+            if(tm.modification_date) obj.last_modification_date = AonDateUtils.setDateTimestamp(new Date(tm.modification_date));
+          }
+        } else {
+          obj = {
+            registration_date:  AonDateUtils.setDateTimestamp(new Date(tm.date)),
+            creation_user: tm.creation_user,
+            creation_date: AonDateUtils.setDateTimestamp(new Date(tm.creation_date)),
+            location: tm.location && tm.location.id ? tm.location.name : null,
+            status: getStatus(tm.status).name
+          }
+        }
+        return obj;
+      })
       let d = this.getApplication().getDialog();
       if(d){
           const pre  = setStyles(document.createElement("pre"),{
@@ -264,6 +278,7 @@ export class AonEventAdd extends AonElement {
             margin: "20px",
             whiteSpace: "pre-wrap"
           });
+     
           const code = document.createElement("code");
           code.style.color = "brown";
           pre.appendChild(code); 
@@ -271,7 +286,7 @@ export class AonEventAdd extends AonElement {
 
           d.clear();
           if (!this.isMobile()) 
-              d.width = '400px';
+              d.width = '550px';
           d.setTitle(MSG.HISTORIC);
           d.setContent(pre);
           d.addAcceptAction(() => {});
