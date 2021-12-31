@@ -2,7 +2,6 @@ import { post, get, remove, put } from "./request.js";
 import { openFileUrl } from "./fileService.js";
 import { API_URL } from "../environments/environments.js";
 
-
 // PRINT CONFIGURATION
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
 export const saveInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/configuration`, data);
@@ -26,6 +25,7 @@ export const acceptInvoice = (data) => put(`${API_URL}/invoice/accept`, data);
 export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
 
 export const downloadInvoices = (data) => openFileUrl(`${API_URL}/multiple_download/invoice?json=${data}`);
+export const downloadInvoiceExcel = (data) => openFileUrl(`${API_URL}/multiple_download/invoice?json=${data}`);
 
 export const deleteRawdocInvoices = (invoiceIds) => remove(`${API_URL}/invoice/rawdoc`, { id: invoiceIds });
 export const deleteInvoice = (invoiceId) => remove(`${API_URL}/invoice`, { id: invoiceId });

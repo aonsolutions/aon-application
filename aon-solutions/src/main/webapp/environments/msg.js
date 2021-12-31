@@ -242,6 +242,8 @@ export const INCLUDE_CONTACT_DATA = 'Incluir Datos de Contacto';
 export const INFORMATION = MSG.INFORMATION;
 export const INSCRIPTION = 'Inscripción';
 export const INTERNAL = "Interno"; //TODO
+export const INVEST_ASSET = 'Bien Afecto';
+export const INVEST_ASSETS = 'Bienes Afectos';
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
 export const INVOICE_CONCEPTS = MSG.INVOICE_CONCEPTS;
@@ -292,6 +294,7 @@ export const NAME = MSG.NAME;
 export const NEW = MSG.NEW;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
 export const NEW_EXPENSE = MSG.NEW_EXPENSE;
+export const NEW_INVEST_ASSET = 'Nuevo Bien Afecto'; //TODO
 export const NEW_PRODUCT = MSG.NEW_PRODUCT;
 export const NEW_REQUEST = MSG.NEW_REQUEST;
 export const NEXT = MSG.NEXT;
@@ -388,9 +391,10 @@ export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
 export const RESTORED_DATA = MSG.RESTORED_DATA;
 export const RESUME_COSTS = "Resumen de costes"; // TODO
+export const RETENTION_PERCENT = "% Retención"; 
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
 export const REOPEN = "Reabrir"; // TODO
-export const REGIME = "Regimen"; // TODO
+export const REGIME = "Régimen"; // TODO
 export const RGPD_URL = 'RGPD Url';
 
 // ----- S
@@ -480,6 +484,7 @@ export const USERS = MSG.USERS;
 
 export const VAT = MSG.VAT;
 export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja'; // TODO
+export const VAT_PERCENT = '% IVA';
 export const VIEW_PAYROLL = "Ver nómina"; // TODO
 export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
 export const VIEW = "Ver"; // TODO

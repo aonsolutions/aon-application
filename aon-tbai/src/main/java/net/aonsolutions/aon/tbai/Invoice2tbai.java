@@ -60,10 +60,23 @@ public class Invoice2tbai {
 	private static final String SOFTWARE_NAME = "aonSolutions";
 	private static final String SOFTWARE_VERSION = "9.23" ;
 
+	private static final String DEVICE_NUMBER_BIZKAIA_TEST = "TBAIBI00000000PRUEBA";
+	private static final String NIF_BIZKAIA_TEST = "A99800005";
+	private static final String SOFTWARE_NAME_BIZKAIA_TEST = "SOFTWARE GARANTE TICKETBAI PRUEBA";
+	private static final String SOFTWARE_VERSION_BIZKAIA_TEST = "1.0";
+	
+	private final static String TEST_NIF_140 = "99980200M";
+	private final static String TEST_NAME_140 = "8FVCxNbMNm"; 
+	private final static String TEST_SURNAME1_140 = "Vux9anjAES"; 
+	private final static String TEST_SURNAME2_140 = "EMPTmw3fmi";
+
+	private final static String TEST_NIF_240 = "A99802019";
+	private final static String TEST_NAME_240 = "4wbLGzaHUvHzMkJm9Z5knRPBKpLKr7"; 
+	
 	public static TicketBai build(Company company, Invoice invoice, TbaiConfiguration config, TbaiBlockchain blockchain) {
 		TicketBai tbai = new TicketBai();
 		tbai.setCabecera(getCabecera());
-		tbai.setSujetos(getSujetos(company, invoice));
+		tbai.setSujetos(getSujetos(company, invoice, config));
 		tbai.setFactura(getFactura(invoice));
 		tbai.setHuellaTBAI(getHuella(config, blockchain));
 		return tbai;
@@ -96,16 +109,35 @@ public class Invoice2tbai {
 		else software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
+	
+		if(tbai.isBizkaia() && tbai.isTest()) {
+			entidad = new EntidadDesarrolladoraType();
+			entidad.setNIF(NIF_BIZKAIA_TEST);
+			software.setEntidadDesarrolladora(entidad);
+			software.setLicenciaTBAI(DEVICE_NUMBER_BIZKAIA_TEST);
+			software.setNombre(SOFTWARE_NAME_BIZKAIA_TEST);
+			software.setVersion(SOFTWARE_VERSION_BIZKAIA_TEST);
+		}
 		huella.setSoftware(software);
 		return huella;
 	}
 	
-	private static Sujetos getSujetos(Company company, Invoice invoice) {
+	private static Sujetos getSujetos(Company company, Invoice invoice, TbaiConfiguration config) {
 		Sujetos entities = new Sujetos();
-			
+		company.isLegalPerson();
+		String document = company.getDocument();
+		String name = company.getName();
+//		if(config.isTest() && config.isBizkaia() && AonDocumentUtil.isValidCIF(document)) {
+//			document = TEST_NIF_240;
+//			name = TEST_NAME_240;
+//		} else if(config.isTest() && config.isBizkaia()) {
+//			document = TEST_NIF_140;
+//			name = TEST_NAME_140 + " " + TEST_SURNAME1_140 + " " + TEST_SURNAME2_140;			
+//		}
+//		
 		Emisor sender = new Emisor();
-		sender.setApellidosNombreRazonSocial(company.getName());
-		sender.setNIF(company.getDocument());
+		sender.setApellidosNombreRazonSocial(name);
+		sender.setNIF(document);
 		entities.setEmisor(sender);
 			
 		Destinatarios receivers = new Destinatarios();

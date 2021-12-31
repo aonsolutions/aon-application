@@ -38,16 +38,21 @@ import javax.xml.transform.OutputKeys;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.lroe.LROE140;
+import net.aonsolutions.aon.tbai.lroe.LROE240;
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
 import ticketbai.emision.TicketBai;
@@ -95,6 +100,15 @@ public class TbaiMain {
 		
 		if(!tbaiConfiguration.isBizkaia()) {
 			response = sendXML(tbaiConfiguration, xml);			
+			TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
+			HandleStatusCode(response.getStatus().get());
+		} else if(tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {	
+			if(AonDocumentUtil.isValidCIF(company.getDocument())){
+				response = LROE240.alta(company, tbaiConfiguration, invoice, xml);
+			} else {
+				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+				response = LROE140.alta(tbaiConfiguration, person, invoice, xml);	
+			}
 			TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
 			HandleStatusCode(response.getStatus().get());
 		}
@@ -207,7 +221,7 @@ public class TbaiMain {
 		return doc;
 	}
 	
-	private static TbaiResponse getTbaiResponse(byte[] bytes, String sign) {
+	public static TbaiResponse getTbaiResponse(byte[] bytes, String sign) {
 		try {
 			System.out.println("\t Parsing XML response.... ");
 			

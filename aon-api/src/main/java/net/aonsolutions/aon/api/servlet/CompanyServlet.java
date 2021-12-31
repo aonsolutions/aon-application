@@ -121,7 +121,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API COMPANY SERVLET - POST METHOD");
+		LOGGER.info("AON API COMPANY SERVLET - PUT METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
@@ -138,8 +138,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveCompany(AonApiData api) throws Exception {
 		Company company = CompanyJSON.fromJSON(api.getData());
+		checkCompany(api, company);
+		company.setLegalPerson(AonDocumentUtil.isValidCIF(company.getDocument()));
 		if(company.getId() == null) {
-			checkCompany(api, company);
 			String domainName = company.getDocument() + "-" + api.getDomain().getName();
 			Domain d = new Domain()
 				.setName(domainName.toLowerCase())
