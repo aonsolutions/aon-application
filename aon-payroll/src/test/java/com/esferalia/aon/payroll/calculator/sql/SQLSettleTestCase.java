@@ -1865,6 +1865,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Ignore
 	@Test
 	public void testSettleWithExtrasXI() throws ExpressionException, SQLException, SalaryException {
 
