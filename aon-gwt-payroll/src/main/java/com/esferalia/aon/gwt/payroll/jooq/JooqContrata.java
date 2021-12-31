@@ -820,13 +820,13 @@ public class JooqContrata {
 		return null;
 	}
 
-	public static IContratoType createCONTRATOS(EmployeeContractInfo employeeContractInfo) {
-		String tc2 = employeeContractInfo.getContractInfo().getContractType();
-		if(AonStringUtils.isBlank(tc2))
-			return null;
-		IContratoType contratoType = createContratoModel(tc2);
-		
+	public static IContratoType createCONTRATOS(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try {
+			String tc2 = employeeContractInfo.getContractInfo().getContractType();
+			if(AonStringUtils.isBlank(tc2))
+				return null;
+			IContratoType contratoType = createContratoModel(tc2);
+		
 			writeContratosMainData(contratoType, employeeContractInfo);
 			
 			if (tc2.equals(ContractCode.C100.getValue())) {
@@ -894,11 +894,11 @@ public class JooqContrata {
 			} else if (tc2.equals(ContractCode.C990.getValue())) {
 				contratoType = createContract990(contratoType, employeeContractInfo);
 			}
+			
+			return contratoType;
 		} catch (Exception e) {
-			// TODO: handle exception
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		
-		return contratoType;
 	}
 	
 	private static void writeContratosMainData(IContratoType contratos, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
