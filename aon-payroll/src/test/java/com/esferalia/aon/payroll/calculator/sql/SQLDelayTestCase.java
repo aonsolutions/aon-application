@@ -3129,6 +3129,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 	}
 
+
 	@Test
 	public void testITWithConstant() throws ExpressionException, SQLException,
 	SalaryException {

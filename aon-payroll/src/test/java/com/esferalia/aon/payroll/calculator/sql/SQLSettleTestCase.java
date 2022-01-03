@@ -1863,6 +1863,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 	}
 
+
 	@Test
 	public void testSettleWithExtrasXI() throws ExpressionException, SQLException, SalaryException {
 

@@ -381,6 +381,8 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 				DELTA);
 	}
 
+
+
 	@Test
 	public void testStrikeX() throws ExpressionException, SQLException,
 			SalaryException {
