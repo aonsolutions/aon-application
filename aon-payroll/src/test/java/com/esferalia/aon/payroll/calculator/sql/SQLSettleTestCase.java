@@ -78,8 +78,6 @@ import junit.framework.Assert;
 
 public class SQLSettleTestCase extends AbstractSQLTestCase {
 	
-	
-	
 	private static final double DELTA = 0.0005;
 
 	@Test
