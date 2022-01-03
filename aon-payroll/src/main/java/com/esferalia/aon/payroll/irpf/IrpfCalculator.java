@@ -2618,7 +2618,7 @@ public class IrpfCalculator {
 			File error2022File = File.createTempFile(
 					AEATRetencionesError2022.class.getSimpleName(), null);
 
-			es.aeat.pret.c200.mc.c210.ModuloCalculo.procesarFicheroXml(entrada2022File.getAbsolutePath(),
+			es.aeat.pret.c200.mc.c220.ModuloCalculo.procesarFicheroXml(entrada2022File.getAbsolutePath(),
 					error2022File.getAbsolutePath(), null,
 					salida2022File.getAbsolutePath());
 			entrada2022File.delete();
