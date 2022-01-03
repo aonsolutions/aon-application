@@ -211,6 +211,14 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.in.payroll</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
 		<!--dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.pms</artifactId>

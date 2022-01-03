@@ -13,6 +13,7 @@ import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ER
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,9 +113,19 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.aon.tbai.TbaiData;
 
 public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
 
@@ -1555,10 +1566,58 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return getSignerController().getReport(to);
 	}
 	
+	
+	public IAttachment generateInvoiceAttachment(ITransferObject to) {
+		IAttachment attachment = null;
+		try {
+			Invoice inv = (Invoice) this.getTo();
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String login = "";
+			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, inv.getId());
+		
+			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
+			Attach logo = new Attach();
+		
+			if(config.isLogo()) {
+				Integer logoId = company.getRegistry().getId();
+				logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(logoId)
+						.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+			}
+
+			String qrUrl = domainName + "/dip?source=invoice&id=" + inv.getId() ;  
+			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
+			if(tbai.isActive()) {	
+				String tbaiUrl = TbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
+				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+			}
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData());
+			byte[] data = out.toByteArray();
+			attachment = newAttachment(to, MimeType.MIME_PDF);
+			attachment.setData(data);
+			attachment.setMimeType(MimeType.MIME_PDF);
+			attachment.setDescription("Factura");
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onReport " + e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}			
+		return attachment;
+	}
+	
 	@Override
 	public IAttachment getUnsignedAttachment(ITransferObject to, MimeType type) {
 		Invoice invoice = (Invoice) to;
-		if ( type == MimeType.MIME_PDF ) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domainName, domainId, "",
+				com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
+
+		if("default".equalsIgnoreCase(appParam.getValue())){
+			return generateInvoiceAttachment(to);
+		} else if ( type == MimeType.MIME_PDF ) {
 			return generateReportAttachment(to);	
 		} else if ( type == MimeType.MIME_XML && isIncludeFacturae(invoice) ) {
 			return getUnsignedFacturae(to);	
