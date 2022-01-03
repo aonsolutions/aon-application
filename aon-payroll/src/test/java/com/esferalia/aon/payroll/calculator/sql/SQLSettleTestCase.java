@@ -499,7 +499,6 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testSettleVacations2Month() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
