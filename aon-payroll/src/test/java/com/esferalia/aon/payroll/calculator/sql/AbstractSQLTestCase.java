@@ -121,6 +121,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.google.protobuf.TypeOrBuilder;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
 
@@ -1139,7 +1140,17 @@ public abstract class AbstractSQLTestCase {
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
 			String expression, String quoteExpression) {
-		addPayment(aonContext, contract, concept, expression, quoteExpression, PaymentType.CRA_0001);
+		//addPayment(aonContext, contract, concept, expression, quoteExpression, PaymentType.values()[concept.getType()]);
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
+		.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+		.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
+		.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+		.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+		.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+		.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+		.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+		.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
+		.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal()).execute();
 	}
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,

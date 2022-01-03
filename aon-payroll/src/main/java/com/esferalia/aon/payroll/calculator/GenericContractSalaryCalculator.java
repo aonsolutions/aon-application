@@ -61,6 +61,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1650,6 +1651,23 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		Date lastDayOfMonth = AonDateUtils.getMonthLastDay(p.getEnd());
 		return Period.compare(payment.getStartDate(), firstDayOfMonth) < 0 
 				&& Period.compare(payment.getEndDate(), lastDayOfMonth) > 0;
+	}
+
+	protected static boolean isPermanentPayment(IContractPayment payment, Date startDate, Date endDate, ExpressionContext ctx) {
+		return isPermanentPayment(payment, new Period(startDate, endDate), ctx);
+	}
+
+	protected static boolean isPermanentPayment(IContractPayment payment, Period p, ExpressionContext ctx) {
+		try {
+			Date contractStart = ctx.eval(ContextVariable.CONTRACT_START.getName(), p.getStart(), p.getEnd(), Date.class).stream().findAny().map(v -> v.getValue()).orElse(null);
+			Date contractEnd = ctx.eval(ContextVariable.CONTRACT_END.getName(), p.getStart(), p.getEnd(), Date.class).stream().findAny().map(v -> v.getValue()).orElse(null);
+			
+			return  Objects.equals(payment.getStartDate(), contractStart ) 
+					&& Objects.equals(payment.getEndDate(), contractEnd ) ;
+			
+		} catch (Exception e) {
+		}
+		return false;
 	}
 
 	// ---------------------------------------------------------------- Private

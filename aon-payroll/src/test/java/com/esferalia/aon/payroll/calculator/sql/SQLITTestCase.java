@@ -490,10 +490,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
 				null, 100.00);
 
-		addPayment(aonContext, contract, getFirstDayOfMonth(startITDate), "1000.00");
-		
 		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
 		Date endDate = getLastDayOfMonth(startDate);
+		
+		addPayment(aonContext, contract, startDate,endDate, "1000.00");
+		
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
@@ -5857,7 +5858,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	
 
 	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
