@@ -205,7 +205,7 @@ export class AonTable extends AonElement {
         icon.title = value.icon_title;
         td.appendChild(icon);
       } else {
-        td.innerHTML = value[id] ? value[id] : "";
+        td.innerHTML = value[id] !== undefined? value[id] : "";
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {

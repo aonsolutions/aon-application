@@ -77,7 +77,8 @@ public interface ICommon {
 	// --------------------------------------------
 	// ENTERPRISE ACTIVITY
 	// --------------------------------------------
-	
+
+	public EnterpriseActivity getEnterpriseActivity(AONContext ctx, Integer id);
 	public Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx, Integer domainId, Date atDate);
 	
 	// --------------------------------------------

@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -124,6 +125,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -1007,6 +1009,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+
+	public static EnterpriseActivity getEnterpriseActivity(String domainName, Integer domainId, String login, Integer id) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getEnterpriseActivity(ctx, id);
 		}
 	}
 	
@@ -6996,6 +7004,32 @@ public class AON {
 	public static void deleteEnterpriseCCC(Domain domain, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getEnterprise().deleteEnterpriseCCC(ctx, id);
+		}
+	}
+	
+	// INVEST ASSET
+	
+	public static InvestAsset getInvestAsset(Domain domain, User user, InvestAssetFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getInvestAsset(ctx, filter);
+		}
+	}
+	
+	public static Stream<InvestAsset> getInvestAssetStream(Domain domain, User user, InvestAssetFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNewProduct().getInvestAssetStream(ctx, filter);
+		}
+	}
+	
+	public static InvestAsset saveInvestAsset(Domain domain, User user, InvestAsset investAsset) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNewProduct().saveInvestAsset(ctx, investAsset);
+		}
+	}
+	
+	public static void deleteInvestAsset(Domain domain, User user, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getNewProduct().deleteInvestAsset(ctx, id);
 		}
 	}
 }

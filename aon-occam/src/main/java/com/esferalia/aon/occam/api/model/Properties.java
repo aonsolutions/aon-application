@@ -1545,4 +1545,16 @@ public interface Properties {
 		Property<Double> getDeductibleQuotaProperty();
 	}
 	
+	public interface InvestAssetProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getActivityProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getRegimeProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Double> getVatPercentProperty();
+		Property<Double> getRetentionPercentProperty();
+	}	
 }

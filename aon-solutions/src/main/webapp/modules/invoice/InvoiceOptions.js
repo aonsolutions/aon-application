@@ -130,12 +130,18 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.PAYMENT
   }
 
+  export const INVEST = {
+    id: CONSTANT.INVEST_ASSET.initCap(),
+    name: MSG.INVEST_ASSET,
+    icon: MATERIAL_ICONS.INVENTORY_2
+  }
+  
   export const CONCEPTS = {
     id: CONSTANT.CONCEPTS.initCap(),
     name: MSG.CONCEPTS,
     icon: MATERIAL_ICONS.LOCAL_MALL,
     clickable: false,
-    options: [PRODUCT, EXPENSES]
+    options: [PRODUCT, EXPENSES, INVEST]
   }
 
   export const CONFIGURATION_PRINT = {

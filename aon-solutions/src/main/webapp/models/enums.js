@@ -1,3 +1,4 @@
+import { MSG } from "../environments/environments.js"
 import { SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER  } from "../environments/msg.js"
 
 export const ToolbarType = {
@@ -138,3 +139,105 @@ export const MONTHS =[
 	NOVEMBER,
 	DECEMBER
 ];
+
+export const InvestAssetType = {
+	PREMISES: {
+		id: 'PREMISES',
+		name: 'Local' // MSG.PREMISES
+	},
+	OTHER_BUILDING: {
+		id: 'OTHER_BUILDING',
+		name: 'Otros Inmuebles' //MSG.OTHER_BUILDING
+	},
+	MEANS_OF_TRANSPORT: {
+		id: 'MEANS_OF_TRANSPORT',
+		name: 'Medios de Transporte' // MSG.MEANS_OF_TRANSPORT
+	},
+	FIXED_PHONE: {
+		id: 'FIXED_PHONE',
+		name: 'Teléfono Fijo' // MSG.FIXED_PHONE
+	},
+	CELLULAR_PHONE: {
+		id: 'CELLULAR_PHONE',
+		name: 'Teléfono Móvil' // MSG.CELLULAR_PHONE
+	},
+	FAX: {
+		id: 'FAX',
+		name: 'Fax' // MSG.FAX
+	},
+	FURNITURE: {
+		id: 'FURNITURE',
+		name: 'Mobiliario' //MSG.FURNITURE
+	},
+	MACHINERY: {
+		id: 'MACHINERY',
+		name: 'Maquinaria' // MSG.MACHINERY
+	},
+	COMPUTER_EQUIPMENT: {
+		id: 'COMPUTER_EQUIPMENT',
+		name: 'Equipos Informáticos' // MSG.COMPUTER_EQUIPMENT
+	},
+	INSTALLATION: {
+		id: 'INSTALLATION',
+		name: 'Instalación' // MSG.INSTALLATION
+	},
+	ACCOUNT_GROUP_20_ASSET: {
+		id: 'ACCOUNT_GROUP_20_ASSET',
+		name: 'Bienes Grupo 20 PGC' //MSG.ACCOUNT_GROUP_20_ASSET		
+	},
+	ACCOUNT_GROUP_21_ASSET: {
+		id: 'ACCOUNT_GROUP_21_ASSET',
+		name: 'Bienes Grupo 21 PGC' //MSG.ACCOUNT_GROUP_21_ASSET
+	},
+	ACCOUNT_GROUP_23_ASSET: {
+		id: 'ACCOUNT_GROUP_23_ASSET',
+		name: 'Bienes Grupo 23 PGC' //MSG.ACCOUNT_GROUP_23_ASSET
+	},
+	BUILDING_PLOT: {
+		id: 'BUILDING_PLOT',
+		name: 'Solar' //MSG.BUILDING_PLOT
+	}
+}
+
+export const InvestAssetRegime = {
+	PROPERTY: {
+		id: 'PROPERTY',
+		name: 'Propiedad' // MSG.PROPERTY
+	},
+	RENTING: {
+		id: 'RENTING',
+		name: 'Alquiler' // MSG.RENTING
+	},
+	FINANCIAL_LEASING: {
+		id: 'FINANCIAL_LEASING',
+		name: 'Arrendamiento Financiero' // MSG.FINANCIAL_LEASING
+	},
+	OTHER: {
+		id: 'OTHER',
+		name: 'Otro' // MSG.OTHER
+	}
+}
+
+export const InvestAssetRegimeOptions = [
+	{value: 'PROPERTY', name: 'Propiedad'}, // MSG.PROPERTY },
+	{value: 'RENTING', name: 'Alquiler'}, // MSG.RENTING },
+	{value: 'FINANCIAL_LEASING', name: 'Arrendamiento Financiero'}, // MSG.FINANCIAL_LEASING},
+	{value: 'OTHER', name: 'Otro'} // MSG.OTHER}
+];
+
+export const InvestAssetTypeOptions = [
+	{value: 'PREMISES', name: 'Local'}, // MSG.PREMISES },
+	{value: 'OTHER_BUILDING', name: 'Otros Inmuebles'}, //MSG.OTHER_BUILDING},
+	{value: 'MEANS_OF_TRANSPORT', name: 'Medios de Transporte'}, // MSG.MEANS_OF_TRANSPORT},
+	{value: 'FIXED_PHONE', name: 'Teléfono Fijo'}, // MSG.FIXED_PHONE},
+	{value: 'CELLULAR_PHONE', name: 'Teléfono Móvil' },// MSG.CELLULAR_PHONE },
+	{value: 'FAX', name: 'Fax' }, // MSG.FAX},
+	{value: 'FURNITURE', name: 'Mobiliario' }, //MSG.FURNITURE },
+	{value: 'MACHINERY', name: 'Maquinaria' },// MSG.MACHINERY},
+	{value: 'COMPUTER_EQUIPMENT', name: 'Equipos Informáticos'}, // MSG.COMPUTER_EQUIPMENT},
+	{value: 'INSTALLATION', name: 'Instalación'}, // MSG.INSTALLATION},
+	{value: 'ACCOUNT_GROUP_20_ASSET', name: 'Bienes Grupo 20 PGC'}, //MSG.ACCOUNT_GROUP_20_ASSET},
+	{value: 'ACCOUNT_GROUP_21_ASSET', name: 'Bienes Grupo 21 PGC'}, //MSG.ACCOUNT_GROUP_21_ASSET },
+	{value: 'ACCOUNT_GROUP_23_ASSET', name: 'Bienes Grupo 23 PGC'}, //MSG.ACCOUNT_GROUP_23_ASSET},
+	{value: 'BUILDING_PLOT', name: 'Solar'} //MSG.BUILDING_PLOT}
+]

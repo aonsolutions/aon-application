@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -639,7 +640,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private JSONObject saveConfiguration(AonApiData api) {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		company.seteInvoice(JsonUtils.getboolean(api.getData(), IJsonNames.E_INVOICE));
-		
+		JSONObject cJson = api.getData().getJSONObject(IJsonNames.COMPANY);
+		if(cJson.opt(IJsonNames.PERSON) != null) {
+			JSONObject pJson = cJson.getJSONObject(IJsonNames.PERSON);
+			String name = JsonUtils.getString(pJson, IJsonNames.NAME);
+			String surname1 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "1");
+			String surname2 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "2");
+			Person person = AON.getPerson(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(company.getId()));
+			person.setName(name);
+			person.setFirstSurname(surname1);
+			person.setSecondSurname(surname2);
+			person.setDomain(company.getDomain());
+			person.setId(company.getId());
+			AON.savePerson(api.getDomain(), api.getUser().getLogin(), person);
+		}
 		AON.saveCompany(api.getDomain(), api.getUser(), company);
 
 		Administration administration = saveAdministration(api, JsonUtils.getString(api.getData(), IJsonNames.ADMINISTRATION));

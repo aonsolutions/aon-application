@@ -1,144 +1,85 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.SimpliedRegimeActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
-public class SimplifiedRegimePanel extends ResizeComposite {
+public class SimplifiedRegimePanel extends FlowPanel implements HasValueChangeHandlers<SimpliedRegimeActivity> {
 
-	interface SimplifiedRegimePanelBinder extends
-			UiBinder<Widget, SimplifiedRegimePanel> {
+	private AonTextBox epigrafe = new AonTextBox();
+	private AonDoubleBox unit1 = new AonDoubleBox();
+	private AonDoubleBox amount1 = new AonDoubleBox();
+	private AonDoubleBox unit2 = new AonDoubleBox();
+	private AonDoubleBox amount2 = new AonDoubleBox();
+	private AonDoubleBox unit3 = new AonDoubleBox();
+	private AonDoubleBox amount3 = new AonDoubleBox();
+	private AonDoubleBox unit4 = new AonDoubleBox();
+	private AonDoubleBox amount4 = new AonDoubleBox();
+	private AonDoubleBox unit5 = new AonDoubleBox();
+	private AonDoubleBox amount5 = new AonDoubleBox();
+	private AonDoubleBox unit6 = new AonDoubleBox();
+	private AonDoubleBox amount6 = new AonDoubleBox();
+	private AonDoubleBox unit7 = new AonDoubleBox();
+	private AonDoubleBox amount7 = new AonDoubleBox();
+	
+	private AonDoubleBox boxC = new AonDoubleBox();
+	private AonDoubleBox boxD = new AonDoubleBox();
+	private AonDoubleBox boxE = new AonDoubleBox();
+	private AonDoubleBox boxF = new AonDoubleBox();
+	private AonDoubleBox boxG = new AonDoubleBox();
+	private AonDoubleBox boxH = new AonDoubleBox();
+	private AonDoubleBox boxI = new AonDoubleBox();
+	private AonDoubleBox boxJ = new AonDoubleBox();
+	
+	public SimplifiedRegimePanel(SimpliedRegimeActivity regime) {
+		paint();
+		setValue(regime);
 	}
 
-	private static final SimplifiedRegimePanelBinder panelBinder = GWT
-			.create(SimplifiedRegimePanelBinder.class);
-
-	@UiField
-	Label title;
-	
-	@UiField
-    TextBox epigrafe;
-	@UiField
-    DoubleBox unit1;
-	@UiField
-    DoubleBox amount1;
-	@UiField
-    DoubleBox unit2;
-	@UiField
-    DoubleBox amount2;
-	@UiField
-    DoubleBox unit3;
-	@UiField
-    DoubleBox amount3;
-	@UiField
-    DoubleBox unit4;
-	@UiField
-    DoubleBox amount4;
-	@UiField
-    DoubleBox unit5;
-	@UiField
-    DoubleBox amount5;
-	@UiField
-    DoubleBox unit6;
-	@UiField
-    DoubleBox amount6;
-	@UiField
-    DoubleBox unit7;
-	@UiField
-    DoubleBox amount7;
-	
-	@UiField
-    DoubleBox boxC;
-	@UiField
-    DoubleBox boxD;
-	@UiField
-	DoubleBox boxE;
-	@UiField
-	DoubleBox boxF;
-	@UiField
-	DoubleBox boxG;
-	@UiField
-	DoubleBox boxH;
-	@UiField
-	DoubleBox boxI;
-	@UiField
-	DoubleBox boxJ;
-	
-	
-	public SimplifiedRegimePanel() {
-		AON.ensureInjected();
-		
-		Widget ui = panelBinder.createAndBindUi(this);
-		initWidget(ui);
+	private void setValue(SimpliedRegimeActivity regime) {
+		if (regime == null) {
+			empty();
+			return;
+		}
+	    epigrafe.setValue(regime.getEpigrafe(),false);
+	    unit1.setValue(regime.getUnit1(),false);
+	    amount1.setValue(regime.getAmount1(),false);
+	    unit2.setValue(regime.getUnit2(),false);
+	    amount2.setValue(regime.getAmount2(),false);
+	    unit3.setValue(regime.getUnit3(),false);
+	    amount3.setValue(regime.getAmount3(),false);
+	    unit4.setValue(regime.getUnit4(),false);
+	    amount4.setValue(regime.getAmount4(),false);
+	    unit5.setValue(regime.getUnit5(),false);
+	    amount5.setValue(regime.getAmount5(),false);
+	    unit6.setValue(regime.getUnit6(),false);
+	    amount6.setValue(regime.getAmount6(),false);
+	    unit7.setValue(regime.getUnit7(),false);
+	    amount7.setValue(regime.getAmount7(),false);
+	    boxC.setValue(regime.getBoxC(),false);
+	    boxD.setValue(regime.getBoxD(),false);
+		boxE.setValue(regime.getBoxE(),false);
+		boxF.setValue(regime.getBoxF(),false);
+		boxG.setValue(regime.getBoxG(),false);
+		boxH.setValue(regime.getBoxH(),false);
+		boxI.setValue(regime.getBoxI(),false);
+		boxJ.setValue(regime.getBoxJ(),false);
 	}
 
 
-	public void setValue(Mod311Results mod311Results) {
-	    epigrafe.setValue(mod311Results.getEpigrafe());
-	    unit1.setValue(mod311Results.getUnit1());
-	    amount1.setValue(mod311Results.getAmount1());
-	    unit2.setValue(mod311Results.getUnit2());
-	    amount2.setValue(mod311Results.getAmount2());
-	    unit3.setValue(mod311Results.getUnit3());
-	    amount3.setValue(mod311Results.getAmount3());
-	    unit4.setValue(mod311Results.getUnit4());
-	    amount4.setValue(mod311Results.getAmount4());
-	    unit5.setValue(mod311Results.getUnit5());
-	    amount5.setValue(mod311Results.getAmount5());
-	    unit6.setValue(mod311Results.getUnit6());
-	    amount6.setValue(mod311Results.getAmount6());
-	    unit7.setValue(mod311Results.getUnit7());
-	    amount7.setValue(mod311Results.getAmount7());
-	    boxC.setValue(mod311Results.getBoxC());
-	    boxD.setValue(mod311Results.getBoxD());
-		boxE.setValue(mod311Results.getBoxE());
-		boxF.setValue(mod311Results.getBoxF());
-		boxG.setValue(mod311Results.getBoxG());
-		boxH.setValue(mod311Results.getBoxH());
-		boxI.setValue(mod311Results.getBoxI());
-		boxJ.setValue(mod311Results.getBoxJ());
-	}
-
-
-	public void setValue(SimpliedRegimeActivity regime) {
-	    epigrafe.setValue(regime.getEpigrafe());
-	    unit1.setValue(regime.getUnit1());
-	    amount1.setValue(regime.getAmount1());
-	    unit2.setValue(regime.getUnit2());
-	    amount2.setValue(regime.getAmount2());
-	    unit3.setValue(regime.getUnit3());
-	    amount3.setValue(regime.getAmount3());
-	    unit4.setValue(regime.getUnit4());
-	    amount4.setValue(regime.getAmount4());
-	    unit5.setValue(regime.getUnit5());
-	    amount5.setValue(regime.getAmount5());
-	    unit6.setValue(regime.getUnit6());
-	    amount6.setValue(regime.getAmount6());
-	    unit7.setValue(regime.getUnit7());
-	    amount7.setValue(regime.getAmount7());
-	    boxC.setValue(regime.getBoxC());
-	    boxD.setValue(regime.getBoxD());
-		boxE.setValue(regime.getBoxE());
-		boxF.setValue(regime.getBoxF());
-		boxG.setValue(regime.getBoxG());
-		boxH.setValue(regime.getBoxH());
-		boxI.setValue(regime.getBoxI());
-		boxJ.setValue(regime.getBoxJ());
-	}
-
-
-	public SimpliedRegimeActivity populate() {
+	public void fire() {
 		SimpliedRegimeActivity reg = null;
-		if (!AonStringUtils.isEmpty(epigrafe.getValue())) {
+		if (!AonStringUtils.isBlank(epigrafe.getValue())) {
 			reg = new SimpliedRegimeActivity();
 		    reg.setEpigrafe(epigrafe.getValue());
 		    reg.setUnit1(unit1.getValue());
@@ -164,37 +105,157 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 			reg.setBoxI(boxI.getValue());
 			reg.setBoxJ(boxJ.getValue());
 		}
-		return reg;
+		ValueChangeEvent.fire(SimplifiedRegimePanel.this,reg);
 	}
 
-
-	public void empty() {
-	    epigrafe.setValue(null);
-	    unit1.setValue(0.0);
-	    amount1.setValue(0.0);
-	    unit2.setValue(0.0);
-	    amount2.setValue(0.0);
-	    unit3.setValue(0.0);
-	    amount3.setValue(0.0);
-	    unit4.setValue(0.0);
-	    amount4.setValue(0.0);
-	    unit5.setValue(0.0);
-	    amount5.setValue(0.0);
-	    unit6.setValue(0.0);
-	    amount6.setValue(0.0);
-	    unit7.setValue(0.0);
-	    amount7.setValue(0.0);
-	    boxC.setValue(0.0);
-	    boxD.setValue(0.0);
-		boxE.setValue(0.0);
-		boxF.setValue(0.0);
-		boxG.setValue(0.0);
-		boxH.setValue(0.0);
-		boxI.setValue(0.0);
-		boxJ.setValue(0.0);
+	private void empty() {
+	    epigrafe.setValue(null,false);
+	    unit1.setValue(0.0,false);
+	    amount1.setValue(0.0,false);
+	    unit2.setValue(0.0,false);
+	    amount2.setValue(0.0,false);
+	    unit3.setValue(0.0,false);
+	    amount3.setValue(0.0,false);
+	    unit4.setValue(0.0,false);
+	    amount4.setValue(0.0,false);
+	    unit5.setValue(0.0,false);
+	    amount5.setValue(0.0,false);
+	    unit6.setValue(0.0,false);
+	    amount6.setValue(0.0,false);
+	    unit7.setValue(0.0,false);
+	    amount7.setValue(0.0,false);
+	    boxC.setValue(0.0,false);
+	    boxD.setValue(0.0,false);
+		boxE.setValue(0.0,false);
+		boxF.setValue(0.0,false);
+		boxG.setValue(0.0,false);
+		boxH.setValue(0.0,false);
+		boxI.setValue(0.0,false);
+		boxJ.setValue(0.0,false);
 	}
 	
-	public double getBoxJ() {
-		return boxJ.getValue();
+	private void paint() {
+		AonDisplayTable tab0 = new AonDisplayTable();
+		tab0.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab0.addStyleName(AON.CSS.aonBlockCenter());
+		add(tab0);
+		
+		epigrafe.setVisibleLength(7);
+		epigrafe.setMaxLength(7);
+		tab0.addRow()
+			.addCell(new Label(""), AON.CSS.aonWidth150())
+			.addCell(new Label(AON.MSG.epigraph()), AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new AonBoxLabel(66), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(epigrafe, AON.CSS.aonWidth120());
+		unit1.setVisibleLength(7);
+		unit2.setVisibleLength(7);
+		unit3.setVisibleLength(7);
+		unit4.setVisibleLength(7);
+		unit5.setVisibleLength(7);
+		unit6.setVisibleLength(7);
+		unit7.setVisibleLength(7);
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.module() + "1"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(unit1, AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new Label(""), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(amount1, AON.CSS.aonWidth120());
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.module() + "2"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(unit2, AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new Label(""), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(amount2, AON.CSS.aonWidth120());
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.module() + "3"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(unit3, AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new Label(""), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(amount3, AON.CSS.aonWidth120());
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.module() + "4"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(unit4, AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new Label(""), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(amount4, AON.CSS.aonWidth120());
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.module() + "5"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(unit5, AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new Label(""), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(amount5, AON.CSS.aonWidth120());
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.module() + "6"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(unit6, AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new Label(""), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(amount6, AON.CSS.aonWidth120());
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.module() + "7"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight(), AON.CSS.aonPaddingRight())
+			.addCell(unit7, AON.CSS.aonWidth80(), AON.CSS.aonTextRight())
+			.addCell(new Label(""), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(amount7, AON.CSS.aonWidth120());
+
+		AonDisplayTable tab1 = new AonDisplayTable();
+		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab1.addStyleName(AON.CSS.aonBlockCenter());
+		add(tab1);
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6C()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("C"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxC, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6D()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("D"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxD, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6E()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("E"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxE, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6F()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("F"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxF, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6G()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("G"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxG, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6H()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("H"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxH, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6I()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("I"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxI, AON.CSS.aonWidth120());
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.page6J()), AON.CSS.aonWidthAuto(), AON.CSS.aonBorderBottom())
+			.addCell(new AonBoxLabel("J"), AON.CSS.aonWidth40(), AON.CSS.aonTextCenter())
+			.addCell(boxJ, AON.CSS.aonWidth120());
+		
+		
+	    epigrafe.addValueChangeHandler(event -> fire());
+	    unit1.addValueChangeHandler(event -> fire());
+	    amount1.addValueChangeHandler(event -> fire());
+	    unit2.addValueChangeHandler(event -> fire());
+	    amount2.addValueChangeHandler(event -> fire());
+	    unit3.addValueChangeHandler(event -> fire());
+	    amount3.addValueChangeHandler(event -> fire());
+	    unit4.addValueChangeHandler(event -> fire());
+	    amount4.addValueChangeHandler(event -> fire());
+	    unit5.addValueChangeHandler(event -> fire());
+	    amount5.addValueChangeHandler(event -> fire());
+	    unit6.addValueChangeHandler(event -> fire());
+	    amount6.addValueChangeHandler(event -> fire());
+	    unit7.addValueChangeHandler(event -> fire());
+	    amount7.addValueChangeHandler(event -> fire());
+	    boxC.addValueChangeHandler(event -> fire());
+	    boxD.addValueChangeHandler(event -> fire());
+		boxE.addValueChangeHandler(event -> fire());
+		boxF.addValueChangeHandler(event -> fire());
+		boxG.addValueChangeHandler(event -> fire());
+		boxH.addValueChangeHandler(event -> fire());
+		boxI.addValueChangeHandler(event -> fire());
+		boxJ.addValueChangeHandler(event -> fire());
+		
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<SimpliedRegimeActivity> handler) {
+		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 }

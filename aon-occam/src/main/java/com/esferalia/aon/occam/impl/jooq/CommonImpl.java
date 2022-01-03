@@ -435,6 +435,12 @@ public class CommonImpl implements ICommon {
 	}
 
 	@Override
+	public EnterpriseActivity getEnterpriseActivity(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			CompanyDAO.getEnterpriseActivity(ctx, id));
+	}
+	
+	@Override
 	public Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx, Integer domainId, Date atDate) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			CompanyDAO.getEnterpriseActivities(ctx, domainId, atDate));

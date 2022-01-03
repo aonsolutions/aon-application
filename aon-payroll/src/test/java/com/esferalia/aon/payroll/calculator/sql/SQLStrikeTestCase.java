@@ -391,6 +391,7 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testStrikeX() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();

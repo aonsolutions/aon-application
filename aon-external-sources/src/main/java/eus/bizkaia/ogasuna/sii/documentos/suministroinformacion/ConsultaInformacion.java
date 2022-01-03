@@ -16,10 +16,12 @@ import eus.bizkaia.ogasuna.sii.documentos.consultalr.LRConsultaDetOperIntracomun
 import eus.bizkaia.ogasuna.sii.documentos.consultalr.LRConsultaEmitidasType;
 import eus.bizkaia.ogasuna.sii.documentos.consultalr.LRConsultaLROperacionesSegurosType;
 import eus.bizkaia.ogasuna.sii.documentos.consultalr.LRConsultaRecibidasType;
+import eus.bizkaia.ogasuna.sii.documentos.consultalr.LRConsultaVentaBienesConsignaType;
 import eus.bizkaia.ogasuna.sii.documentos.respuestaconsultalr.RespuestaConsultaFacturaCobrosType;
 import eus.bizkaia.ogasuna.sii.documentos.respuestaconsultalr.RespuestaConsultaFacturaPagosType;
 import eus.bizkaia.ogasuna.sii.documentos.respuestaconsultalr.RespuestaConsultaInmueblesType;
 import eus.bizkaia.ogasuna.sii.documentos.respuestaconsultalr.RespuestaConsultaLRFacturasType;
+import eus.bizkaia.ogasuna.sii.documentos.respuestaconsultalr.RespuestaConsultaLRVentaBVType;
 
 
 /**
@@ -59,7 +61,9 @@ import eus.bizkaia.ogasuna.sii.documentos.respuestaconsultalr.RespuestaConsultaL
     ConsultaInmueblesAdicionalesType.class,
     ConsultaPagosType.class,
     LRConsultaLROperacionesSegurosType.class,
+    LRConsultaVentaBienesConsignaType.class,
     RespuestaConsultaLRFacturasType.class,
+    RespuestaConsultaLRVentaBVType.class,
     RespuestaConsultaFacturaCobrosType.class,
     RespuestaConsultaInmueblesType.class,
     RespuestaConsultaFacturaPagosType.class

@@ -50,6 +50,7 @@ import eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.DatosPresentacio
     RespuestaLRBajaIMetalicoType.class,
     RespuestaLRBajaAgenciasViajesType.class,
     RespuestaLRBajaOperacionesSegurosType.class,
+    RespuestaLRBajaVentaBienesConsignaType.class,
     RespuestaLRBajaFRecibidasPagosType.class
 })
 public class RespuestaComunBajaType {

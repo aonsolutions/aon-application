@@ -1,0 +1,19 @@
+package com.esferalia.aon.gwt.fiscal.client.mod390.e2021;
+
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902021;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+@RemoteServiceRelativePath("ms/Mod3902021")
+public interface Mod3902021Service extends RemoteService {
+
+	Mod3902021 get(Occam occam,Mod390 mod390) throws AonCoreException;
+	Mod3902021 save(Occam occam,Mod3902021 mod390) throws AonCoreException;
+	void delete(Occam occam, Mod3902021 mod390) throws AonCoreException;
+	Mod3902021 changeStatus(Occam occam, Mod3902021 mod390, FiscalStatus status) throws AonCoreException;
+
+}

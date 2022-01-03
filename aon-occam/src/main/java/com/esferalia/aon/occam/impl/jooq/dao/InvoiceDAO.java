@@ -362,6 +362,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.WAREHOUSE
 				,INVOICE_DETAIL.WORKPLACE
 				,INVOICE_DETAIL.SOURCE
+				,INVOICE_DETAIL.INVEST_ASSET
 				,SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
@@ -707,6 +708,7 @@ public class InvoiceDAO {
 					.setAddressZIP(record.getValue(RADDRESS.ZIP))
 					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				)
+				.setInvestAsset(record.getValue(INVOICE_DETAIL.INVEST_ASSET))
 				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
 				.setProjectName( record.getValue( PROJECT.NAME ))
 				.setLine(record.getValue( INVOICE_DETAIL.LINE ))

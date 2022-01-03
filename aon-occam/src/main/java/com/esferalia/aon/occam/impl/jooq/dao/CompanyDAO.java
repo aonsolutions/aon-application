@@ -105,6 +105,28 @@ public class CompanyDAO {
 		}
 	}
 	
+	public static class EnterpriseActivityFiller extends Filler implements Function<Record, EnterpriseActivity> {
+		@Override
+		public EnterpriseActivity apply(Record r) {
+			return build(r);
+		}
+		
+		public static EnterpriseActivity build(Record r) {
+			return new EnterpriseActivity()
+				.setId(r.getValue(ENTERPRISE_ACTIVITY.ID) )
+				.setDescription(r.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
+				.setPrincipal(getBoolean(r, ENTERPRISE_ACTIVITY.PRINCIPAL))
+				.setIae(r.getValue(ENTERPRISE_ACTIVITY.IAE))
+//				.setEpigraph( r.getValue(IAE.EPIGRAPH))
+				.setCnae( r.getValue(ENTERPRISE_ACTIVITY.CNAE2009) )
+//				.setCnaeCode( r.getValue(CNAE2009.CODE) )
+//				.setCnaeDescription( r.getValue(CNAE2009.TITLE) )
+				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)));
+		}
+	}
+	
+	
+	
 	public static class CompanyValidation {
 		
 		private CompanyValidation() {

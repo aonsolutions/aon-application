@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -16,45 +17,40 @@ public class Model390ServiceAsyncDecorator implements Model390ServiceAsync {
 	}
 
 	@Override
-	public void getMod390(String domainName, Integer domain, String user, Integer id,
-			AsyncCallback<Mod390> callback) {
+	public void getMod390(Occam occam, Integer id, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fsa.getMod390(domainName, domain, user,id,new AsyncCallbackWrapper<Mod390>(callback));
+		fsa.getMod390(occam,id,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getMod390s(String domainName, Integer domain, String user,
-			AsyncCallback<LinkedList<Mod390>> callback) {
+	public void getMod390s(Occam occam, AsyncCallback<LinkedList<Mod390>> callback) {
 		AON.start();
-		fsa.getMod390s(domainName, domain, user,
-				new AsyncCallbackWrapper<LinkedList<Mod390>>(callback));
+		fsa.getMod390s(occam,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void create(String domainName, int domain, String user, Mod390 mod390, AsyncCallback<Mod390> callback) {
+	public void create(Occam occam, Mod390 mod390, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fsa.create(domainName, domain, user, mod390, new AsyncCallbackWrapper<Mod390>(callback));
+		fsa.create(occam, mod390, new AsyncCallbackWrapper<>(callback));
 		
 	}
 
 	@Override
-	public void initialize(String domainName, int domain, String user, int year, AsyncCallback<Mod390> callback) {
+	public void initialize(Occam occam, int year, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fsa.initialize(domainName, domain, user, year, new AsyncCallbackWrapper<Mod390>(callback));
+		fsa.initialize(occam, year, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void saveComments(String domainName, String user, Mod390 mod390, AsyncCallback<Mod390> callback) {
+	public void saveComments(Occam occam, Mod390 mod390, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fsa.saveComments(domainName, user, mod390, new AsyncCallbackWrapper<Mod390>(callback));
+		fsa.saveComments(occam, mod390, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void delete(String domainName, Integer domain, String user, Mod390 mod390,
-			AsyncCallback<Void> callback) {
+	public void delete(Occam occam, Mod390 mod390, AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.delete(domainName, domain, user, mod390,
-				new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(occam, mod390, new AsyncCallbackWrapper<>(callback));
 	}	
 	
 }
