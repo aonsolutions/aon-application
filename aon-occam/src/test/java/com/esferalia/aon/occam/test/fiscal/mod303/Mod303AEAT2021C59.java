@@ -7,12 +7,13 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonRandom;
@@ -36,8 +37,8 @@ public class Mod303AEAT2021C59 extends AbstractOccamTest {
 		ctx.transaction(conf -> {
 			int times = AonRandom.number(1, 25);
 			for (int i = 0; i < times; i++) {
-				InvoiceDAO.insert(ctx, InvoiceFaker.getSalesCanCeuService(params));
-				InvoiceDAO.insert(ctx, InvoiceFaker.getSalesCanCeu(params));
+				AON.insertInvoice(DOMAIN_NAME, DOMAIN_ID, USER, InvoiceFaker.getSalesCanCeuService(params));
+				AON.insertInvoice(DOMAIN_NAME, DOMAIN_ID, USER, InvoiceFaker.getSalesCanCeu(params));
 			}
 
 			Mod303 mod303 = new Mod303();
@@ -47,9 +48,9 @@ public class Mod303AEAT2021C59 extends AbstractOccamTest {
 			mod303.setPeriod(monthly
 					?Period.getMonthlyPeriod(myLocal.getMonthValue() - 1)
 							:Period.getQuarterlyPeriod(myLocal.get(IsoFields.QUARTER_OF_YEAR)));
-			mod303 = Mod303DAO.initializeMod303(ctx, mod303);
-			mod303 = Mod303DAO.createMod303(ctx, mod303);
-			Mod303DAO.save(ctx, mod303);
+			mod303 = Mod303DAO.initialize(ctx, mod303);
+			mod303 = Mod303DAO.create(ctx, mod303);
+			MODEL303.save(getOccam(), mod303);
 //			Mod303 mod = null; 
 //			Mod303Declaration dec = Mod303Declaration.getInstance(mod);
 		});

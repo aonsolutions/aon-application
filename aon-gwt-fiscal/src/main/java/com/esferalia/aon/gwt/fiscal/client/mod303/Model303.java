@@ -125,6 +125,11 @@ public class Model303 extends MainEntryPoint {
 		}
 
 		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
+		}
+
+		@Override
 		public Model303ModuleOptions getOptions() {
 			return Model303.this.getOptions();
 		}

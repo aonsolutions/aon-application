@@ -25,62 +25,66 @@ public class MODEL303Impl implements IMODEL303 {
 		return list;
 	}
 	@Override
-	public Mod303 calculateMod303(AONContext ctx, Mod303 mod303) {
-		return Mod303DAO.calculateMod303(ctx, mod303);
+	public Mod303 calculate(AONContext ctx, Mod303 mod303) {
+		return Mod303DAO.calculate(ctx, mod303);
 	}
 	@Override
-	public Mod303 saveMod303(AONContext ctx, Mod303 mod303) {
+	public Mod303 calculateProrrate(AONContext ctx, Mod303 mod303) {
+		return Mod303DAO.calculateProrrate(mod303);
+	}
+	@Override
+	public Mod303 save(AONContext ctx, Mod303 mod303) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod303DAO.saveMod303(ctx, mod303));		
 	}
 	@Override
-	public Mod303 saveCommentsMod303(AONContext ctx, Mod303 mod303) {
+	public Mod303 saveComments(AONContext ctx, Mod303 mod303) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod303DAO.saveCommentsMod303(ctx, mod303));		
 	}
 	@Override
-	public Mod303 initializeForFinishMod303(AONContext ctx, Mod303 mod303){
+	public Mod303 initializeForFinish(AONContext ctx, Mod303 mod303){
 		return FiscalModelDAO.initializeForFinish(ctx, mod303);
 	}
 	@Override
-	public Mod303 markAsFinishedMod303(AONContext ctx, Mod303 mod303){
+	public Mod303 markAsFinished(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod303DAO.markAsFinished(ctx, mod303));		
 	}
 	@Override
-	public Mod303 markAsPendingMod303(AONContext ctx, Mod303 mod303){
+	public Mod303 markAsPending(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod303DAO.markAsPending(ctx, mod303));		
 	}
 	@Override
-	public Mod303 markAsSentMod303(AONContext ctx, Mod303 mod303){
+	public Mod303 markAsSent(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod303DAO.markAsSent(ctx, mod303));		
 	}
 	@Override
-	public Mod303 markAsCustomerCheckMod303(AONContext ctx, Mod303 mod303) {
+	public Mod303 markAsCustomerCheck(AONContext ctx, Mod303 mod303) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod303DAO.markAsCustomerCheckMod303(ctx, mod303));		
 	}
 
 	@Override
-	public void deleteMod303(AONContext ctx, Mod303 mod303) {
+	public void delete(AONContext ctx, Mod303 mod303) {
 		ctx.getDslContext().transaction(
 				configuration -> FiscalModelDAO.delete(ctx, mod303));
 	}
 
 	@Override
-	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303) {
-		return Mod303DAO.initializeMod303(ctx,mod303);
+	public Mod303 initialize(AONContext ctx, Mod303 mod303) {
+		return Mod303DAO.initialize(ctx,mod303);
 	}
 
 	@Override
-	public Mod303 createMod303(AONContext ctx, Mod303 mod303) {
-		return Mod303DAO.createMod303(ctx,mod303);
+	public Mod303 create(AONContext ctx, Mod303 mod303) {
+		return Mod303DAO.create(ctx,mod303);
 	}
 	@Override
-	public Mod303 resetMod303(AONContext ctx, Mod303 mod303) {
-		return Mod303DAO.resetMod303(ctx,mod303);
+	public Mod303 reset(AONContext ctx, Mod303 mod303) {
+		return Mod303DAO.reset(ctx,mod303);
 	}
 	@Override
 	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303) {
@@ -88,12 +92,12 @@ public class MODEL303Impl implements IMODEL303 {
 	}
 
 	@Override
-	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
-		return Mod303DAO.getMod303Info(ctx,mod303,script,infoKey);
+	public String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
+		return Mod303DAO.getInfo(ctx,mod303,script,infoKey);
 	}
 	
 	@Override
-	public Mod303 aeatPresentationMod303(AONContext ctx, Mod303 mod303, String aeatResponse) {
+	public Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse) {
 		return Mod303DAO.aeatPresentation(ctx, mod303, aeatResponse);
 	}
 

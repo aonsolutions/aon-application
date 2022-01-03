@@ -86,6 +86,10 @@ public class Model390 extends MainEntryPoint {
 			Model390.this.showErrorMessage(msg);
 		}
 		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
+		}
+		@Override
 		public void showInfoPanel(String text) {
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);

@@ -1,11 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod303Declaration {
 	
@@ -35,13 +38,25 @@ public abstract class Mod303Declaration {
 			mod.ensureDetail(key).addAmount(amount);
 		}
 	}
-
+	
+	private static boolean mustApplyProrrate(Mod303 mod,VatContext vat) {
+		return (mod.hasProrate()) && (!mod.isSpecialProrate() || (mod.isSpecialProrate() && vat.getActivity() == null));
+	}
+	private static double getProrratePercent(Mod303 mod,VatContext vat) {
+		if (mod.isLastPeriod()) {
+			return (vat.isInsidePeriod())?mod.getProratePercent():mod.getPreviousProratePercent();
+		} else {
+			return mod.getProratePercent();
+		}
+	}
+	
 	protected static void addProrrated(Mod303Key key,Mod303 mod,VatContext vat) {
 		double amount = vat.getDeductibleQuota();
-		if (mod.isSpecialProrate()) {
-			if (mod.getProratePercent() != 0 && mod.getProratePercent() != 100 && vat.getActivity() == null) {
-				amount = AonMathUtils.round(amount * mod.getProratePercent() / 100);	
-			}				
+		if (mustApplyProrrate(mod,vat)) {
+			if ( mod.isLastPeriod() && !vat.isInsidePeriod()) {
+				mod.ensureDetail(Mod303Key.CM_072).addAmount(amount);
+			}
+			amount = AonMathUtils.round(amount * getProrratePercent(mod, vat) / 100);	
 		}
 		add( key, mod, amount);
 	}
@@ -70,6 +85,42 @@ public abstract class Mod303Declaration {
 		}
 	}
 
+	public void prorrateRegularization(AONContext ctx, Mod303 mod303){
+		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
+			double lastPercent = mod303.getProratePercent();
+			double prevPercent = mod303.getPreviousProratePercent();
+			if (mod303.hasProrate() && AonNumberUtils.notEquals(lastPercent, prevPercent)) {
+				
+				if (mod303.isDiffCalculationDisabled()) {
+					final Mod303 dupl = new Mod303();
+					dupl.setDomain(mod303.getDomain());
+					dupl.setDomainName(mod303.getDomainName());
+					dupl.setYear(mod303.getYear());
+					dupl.setModel(mod303.getModel());
+					dupl.setPeriod(mod303.getPeriod());
+					dupl.setAdministration(mod303.getAdministration());
+					dupl.setDiffCalculationDisabled(false);
+					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod303.getProratePercent() );
+					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod303.getPreviousProratePercent() );
+//					
+//					mod303.getProratePercent( )
+					Mod303DAO.create(ctx, dupl);
+//					Mod303DAO.getVatBreakdown(ctx,dupl)
+//					.forEach( vat -> initialize(ctx, dupl, vat) );
+					FiscalModelDetail c72 = dupl.ensureDetail(Mod303Key.CM_072);
+					double amount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
+					mod303.ensureDetail(Mod303Key.CM_072).setAmount( amount );
+				}
+			
+			
+				double amount = mod303.ensureDetail(Mod303Key.CM_072).getAmount();
+				double declared = AonMathUtils.round(amount * prevPercent / 100);
+				double mustDeclared = AonMathUtils.round(amount * lastPercent / 100);
+				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(declared - mustDeclared));
+			}
+		}
+	}
+
 	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303){
 	}
 	public void fillSimplifiedRegime(Mod303 mod303){
@@ -79,6 +130,9 @@ public abstract class Mod303Declaration {
 	}
 	public void specificInitialization(Mod303 mod303) {
 	}
+	public Mod303Key getRegularizationKey() {
+		return null;
+	};
 
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);

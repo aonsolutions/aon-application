@@ -30,67 +30,73 @@ public class MODEL303 {
 
 	public static Mod303 calculate(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().calculateMod303(ctx, mod303);
+			return getImpl().calculate(ctx, mod303);
+		}
+	}
+
+	public static Mod303 calculateProrrate(Occam occam, Mod303 mod303) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().calculateProrrate(ctx, mod303);
 		}
 	}
 
 	public static Mod303 save(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().saveMod303(ctx, mod303);
+			return getImpl().save(ctx, mod303);
 		}
 	}
 
 	public static Mod303 saveComments(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().saveCommentsMod303(ctx, mod303);
+			return getImpl().saveComments(ctx, mod303);
 		}
 	}
 	
 	public static Mod303 initializeForFinish(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initializeForFinishMod303(ctx, mod303);
+			return getImpl().initializeForFinish(ctx, mod303);
 		}
 	}
 
 	public static Mod303 finish(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsFinishedMod303(ctx, mod303);
+			return getImpl().markAsFinished(ctx, mod303);
 		}
 	}
 
 	public static Mod303 reopen(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsPendingMod303(ctx, mod303);
+			return getImpl().markAsPending(ctx, mod303);
 		}
 	}
 	
 	public static Mod303 markAsSent(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsSentMod303(ctx, mod303);
+			return getImpl().markAsSent(ctx, mod303);
 		}
 	}
 	public static Mod303 markAsCustomerCheck(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsCustomerCheckMod303(ctx, mod303);
+			return getImpl().markAsCustomerCheck(ctx, mod303);
 		}
 	}
 	
 	
-	public static void deleteMod303(Occam occam, Mod303 mod303) {
+	public static void delete(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			getImpl().deleteMod303(ctx, mod303);
+			getImpl().delete(ctx, mod303);
 		}
 	}
 
-	public static Mod303 initializeMod303(Occam occam, Mod303 mod303) {
+	public static Mod303 initialize(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initializeMod303(ctx, mod303);
+			return getImpl().initialize(ctx, mod303);
 		}
 	}
 
-	public static Mod303 createMod303(Occam occam,Mod303 mod303) {
+	public static Mod303 create(Occam occam,Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().createMod303(ctx, mod303);
+			return getImpl().create(ctx, mod303);
 		}
 	}
 
@@ -100,22 +106,22 @@ public class MODEL303 {
 		}
 	}
 
-	public static String getMod303Info(Occam occam, Mod303 mod303
+	public static String getInfo(Occam occam, Mod303 mod303
 			,IModelScript<Mod303Key> script,FiscalModelKeyInfo infoKey) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod303Info(ctx, mod303, script, infoKey);
+			return getImpl().getInfo(ctx, mod303, script, infoKey);
 		}
 	}
 	
-	public static Mod303 aeatPresentationMod303(Occam occam, Mod303 mod303, String aeatResponse) {
+	public static Mod303 aeatPresentation(Occam occam, Mod303 mod303, String aeatResponse) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().aeatPresentationMod303(ctx, mod303, aeatResponse);
+			return getImpl().aeatPresentation(ctx, mod303, aeatResponse);
 		}
 	}
 
-	public static Mod303 resetMod303(Occam occam, Mod303 mod303) {
+	public static Mod303 reset(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().resetMod303(ctx, mod303);
+			return getImpl().reset(ctx, mod303);
 		}
 	}
 

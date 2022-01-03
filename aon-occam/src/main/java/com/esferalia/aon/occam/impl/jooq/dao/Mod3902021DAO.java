@@ -608,6 +608,7 @@ public class Mod3902021DAO {
 		
 		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata
 		Mod303 mod303 = new Mod303();
+		mod303.setDomain(mod390.getDomain());
 		mod303.setYear(mod390.getYear());
 		mod303.setAdministration(Administration.COMMON_TERRITORY);
 		mod303.setModel( FiscalModelType.M303 );

@@ -2177,13 +2177,9 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		}
 	}
 
-	public static void main(String[] args) {
-		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-			if ( key.isCopyable() ) {
-				System.out.println( key.getKey().toString() +"\t"+ key.getKey().getDescription() );
-			}
-		}
-		
+	@Override
+	public Mod303Key getRegularizationKey() {
+		return Mod303Key.CT_C44;
 	}
 	
 }

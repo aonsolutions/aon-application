@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
@@ -49,7 +50,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	private static final String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
 	private static final String NONE_INFO = "No hay datos";
 	
-	public static enum Mod303KeyInfoDAO {
+	public enum Mod303KeyInfoDAO {
 		 NONE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, NONE_INFO)) )
 		,INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO))))
 		,IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualInputInvoicesInfo(ctx, mod, script,keyDAO))))
@@ -72,7 +73,7 @@ public class Mod303DAO extends FiscalModelDAO {
 
 	public static Stream<Mod303> getMod303s(AONContext ctx,int domain, FiscalModelFilter filter) {
 		return getModelRecords(ctx, domain,FiscalModelType.M303,filter)
-				.map( record -> map303(new Mod303(),record))
+				.map( rec -> map303(new Mod303(),rec))
 				.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
 				;
 	}
@@ -112,7 +113,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static FiscalModel saveOnlyMod303(AONContext ctx, Mod303 mod303) {
-		LinkedHashMap<String, FiscalModelDetail> newMap = new LinkedHashMap<String, FiscalModelDetail>();
+		LinkedHashMap<String, FiscalModelDetail> newMap = new LinkedHashMap<>();
 		for (FiscalModelDetail det :  mod303.getMap().values() ) {
 			if (AonStringUtils.isBlank( det.getDescription() )
 			 && AonMathUtils.isZero( det.getAccumulatedAmount() ) 
@@ -130,7 +131,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod303 saveMod303(AONContext ctx, Mod303 mod303) {
-		calculateMod303(ctx, mod303);
+		calculate(ctx, mod303);
 		FiscalModel fm = saveOnlyMod303(ctx, mod303);
 		return getMod303(ctx, fm.getId());
 	}
@@ -152,11 +153,10 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		return mvelCtx; 
 	}
-	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
+	public static Mod303 calculate(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
 		Mod303MVELContext mvelCtx = getMvelContext( dec, mod303 );
 		for (IMod303KeyDAO key : dec.getKeys()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
-//				Object ret =  mvelCtx.evaluateExpression(key.toString(), key.getExpression());
 				Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
 				Double amount = (Double) ret;
 				mvelCtx.put(key.getKey().toString(), amount);
@@ -167,12 +167,12 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303; 
 	}
 	
-	public static Mod303 calculateMod303(AONContext ctx, Mod303 mod303) {
+	public static Mod303 calculate(AONContext ctx, Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		return calculateMod303(ctx, mod303, dec);
+		return calculate(ctx, mod303, dec);
 	}
 	
-	public static Mod303 initializeMod303(AONContext ctx,Mod303 mod303) {
+	public static Mod303 initialize(AONContext ctx,Mod303 mod303) {
 		if (mod303 == null) {
 			mod303 = new Mod303();
 			mod303.setDomain(ctx.getDomainId());
@@ -202,7 +202,7 @@ public class Mod303DAO extends FiscalModelDAO {
 					.innerJoin(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
 					.where(FS_MODEL.DOMAIN.eq(ctx.getDomainId()))
 					.and(FS_MODEL.MODEL.eq(FiscalModelType.M303.getValue()))
-					.and(FS_MODEL.ADMINISTRATION.eq(mod303.getAdministration().getValue()))
+					.and(FS_MODEL.ADMINISTRATION.eq(mod303.getAdministration().value()))
 					.and(FS_MODEL.YEAR.eq(mod303.getYear()))
 					.and(FS_MODEL_DETAIL.TYPE.eq( mod303.getProrateKey().getValue()))
 					.orderBy(FS_MODEL.PERIOD.desc())
@@ -217,7 +217,7 @@ public class Mod303DAO extends FiscalModelDAO {
 					.innerJoin(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
 					.where(FS_MODEL.DOMAIN.eq(ctx.getDomainId()))
 					.and(FS_MODEL.MODEL.eq(FiscalModelType.M303.getValue()))
-					.and(FS_MODEL.ADMINISTRATION.eq(mod303.getAdministration().getValue()))
+					.and(FS_MODEL.ADMINISTRATION.eq(mod303.getAdministration().value()))
 					.and(FS_MODEL.YEAR.eq(mod303.getYear()))
 					.and(FS_MODEL_DETAIL.TYPE.eq( mod303.getProrateTypeKey().getValue()))
 					.orderBy(FS_MODEL.PERIOD.desc())
@@ -233,11 +233,28 @@ public class Mod303DAO extends FiscalModelDAO {
 			}
 			mod303.ensureDetail(mod303.getProrateKey()).setAmount(perc);
 			mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(type);
+			if (mod303.getPeriod().isLastPeriod()) {
+				mod303.ensureDetail(mod303.getPreviousProrateKey()).setAmount(perc);
+				
+				
+				Date fromDate = AonDateUtils.getYearFirstDay(mod303.getYear());
+				Date toDate = AonDateUtils.getYearLastDay(mod303.getYear());
+				VATDAO.getVatBreakdown(ctx,fromDate,toDate,mod303)
+					.filter( VatContext::isSales )
+					.forEach( vat -> {
+						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
+							mod303.ensureDetail(Mod303Key.CM_070).addAmount( vat.getBase());
+						}
+						mod303.ensureDetail(Mod303Key.CM_071).addAmount( vat.getBase());		
+					});
+				
+				calculateProrrate(mod303);
+			}
 		}
 	}
 	
 	public static Stream<Mod303> getModelsForDiference(AONContext ctx,final Mod303 mod303) {
-		final EnumMap<Period,Mod303> declarations = new EnumMap<Period,Mod303>(Period.class);
+		final EnumMap<Period,Mod303> declarations = new EnumMap<>(Period.class);
 		
 		getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
 			.map( rec -> map303(new Mod303(),rec) )
@@ -247,48 +264,58 @@ public class Mod303DAO extends FiscalModelDAO {
 			.forEach(mod -> {
 				if (!declarations.containsKey(mod.getPeriod())) {
 					declarations.put(mod.getPeriod(), mod);
-					getModelDetails(ctx,mod).forEach( detail -> mod.put( detail));
+					getModelDetails(ctx,mod).forEach( mod::put );
 				}
 			});
-		;
 		return declarations.values().stream();
 	}
 	
 
-	public static Mod303 resetMod303(AONContext ctx,Mod303 mod303) {
+	public static Mod303 reset(AONContext ctx,Mod303 mod303) {
 		mod303.setMap(null);
 		initializeIdentificationData(ctx, mod303);
-		createMod303(ctx,mod303);
+		create(ctx,mod303);
 		return mod303;
 	}
 
-	public static Mod303 createMod303(AONContext ctx,final Mod303 mod303) {
+	public static Mod303 create(AONContext ctx,final Mod303 mod303) {
 		final Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		initializeSimplifiedRegime(ctx,mod303,dec);
+		firstInitialization(ctx,mod303,dec);
+		breakdownInitialization(ctx,mod303,dec);
+		initializeDiffCalculation(ctx,mod303,dec);
+//		initializeProratedKeys(ctx,mod303,dec);
+		resolveDiffCalculation(mod303,dec);
+		dec.prorrateRegularization(ctx,mod303);
+		calculate(ctx, mod303);
+		dec.specificInitialization(mod303);
+		return mod303; 
+	}
 
-		// Inicialización del régimen simplificado.
-		if (dec.hasSimplifiedRegime()) {
-			dec.initializeSimplifiedRegime(ctx, mod303);
-		}
-		
-		// Primera inicialización.		
-		for (IMod303KeyDAO key : dec.getKeys()) {
-			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
-			detail.setExpression(key.getExpression());
-			key.firstInitialize(ctx, mod303);
-		}
-
-		// INTIALIZATION VIA BREAKDOWN		
-		Mod303DAO.getVatBreakdown(ctx,mod303)
-			.forEach( vat -> dec.initialize(ctx, mod303, vat) );
-
+//	private static void initializeProratedKeys(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
+//		if (!mod303.isSpecialProrate() && mod303.hasProrate() && dec.getProrateKeys() != null) {
+//			for (Mod303Key key : dec.getProrateKeys()) {
+//				FiscalModelDetail det = mod303.ensureDetail(key);
+//				double acu;	
+//				if (mod303.isLastPeriod() && mod303.hasPreviousProrate() 
+//				 && AonNumberUtils.notEquals(mod303.getProratePercent(), mod303.getPreviousProratePercent())) {
+//					double prevAcu = det.getDeclaredAmount() * 100 / mod303.getPreviousProratePercent();
+//					double periodAcu = AonMathUtils.round(det.getAccumulatedAmount() - prevAcu);
+//					acu =  AonMathUtils.round( 
+//						(prevAcu * mod303.getPreviousProratePercent() / 100) +
+//						(periodAcu * mod303.getProratePercent() / 100)
+//					);
+//				} else {
+//					acu = AonMathUtils.round( det.getAccumulatedAmount() * mod303.getProratePercent() / 100);	
+//				}
+//				det.setAccumulatedAmount(acu);
+//			}
+//		}
+//	}
+	
+	private static void initializeDiffCalculation(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
 		if (!mod303.isDiffCalculationDisabled()) {
 			getModelsForDiference(ctx, mod303)
-//			getModelRecords(ctx, ctx.getDomainId(),FiscalModelType.M303)
-//			.map( rec -> map303(new Mod303(),rec) )
-//			.filter(mod -> mod.getAdministration() == mod303.getAdministration())
-//			.filter(mod -> mod.getYear() == mod303.getYear())
-//			.filter(mod -> mod.getPeriod().ordinal() < mod303.getPeriod().ordinal())
-//			.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
 			.forEach(mod -> {
 				for (FiscalModelDetail source : mod.getMap().values() ) {
 					Mod303Key key = Mod303Key.getKey(source.getType());
@@ -302,14 +329,27 @@ public class Mod303DAO extends FiscalModelDAO {
 				}
 			});
 		}
-		if (!mod303.isSpecialProrate()) {
-			if (mod303.getProratePercent() != 0 && mod303.getProratePercent() != 100 && dec.getProrateKeys() != null) {
-				for (Mod303Key key : dec.getProrateKeys()) {
-					FiscalModelDetail det = mod303.ensureDetail(key);
-					det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod303.getProratePercent() / 100));
-				}
-			}
+	}
+	private static void breakdownInitialization(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
+		Mod303DAO.getVatBreakdown(ctx,mod303)
+			.forEach( vat -> dec.initialize(ctx, mod303, vat) );
+	}
+	
+	private static void firstInitialization(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
+		// Primera inicialización.		
+		for (IMod303KeyDAO key : dec.getKeys()) {
+			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
+			detail.setExpression(key.getExpression());
+			key.firstInitialize(ctx, mod303);
 		}
+	}
+	private static void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
+		// Inicialización del régimen simplificado.
+		if (dec.hasSimplifiedRegime()) {
+			dec.initializeSimplifiedRegime(ctx, mod303);
+		}
+	}
+	private static void resolveDiffCalculation(Mod303 mod303, Mod303Declaration dec) {
 		for (FiscalModelDetail detail : mod303.getMap().values()) {
 			IMod303KeyDAO key = dec.safeValueOf(mod303, detail.getType());
 			if (key != null && key.getKey().isDiffEnabled()) {
@@ -317,12 +357,8 @@ public class Mod303DAO extends FiscalModelDAO {
 				detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 			}
 		}
-		calculateMod303(ctx, mod303);		
-		dec.specificInitialization(mod303);
-		return mod303; 
 	}
-
-	public static String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
+	public static String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		Mod303KeyInfoDAO k = Mod303KeyInfoDAO.valueOf(infoKey.toString());
 		for (Mod303Key key :script.getKeys()) {
@@ -653,52 +689,18 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303;
 	}
 
-/*
-	public void saveHistory(JSONObject json) throws IOException, JSONException {
-		Boolean ok = json.opt("CEL")!= null;
-		DataResponse dr = new DataResponse()
-				.setSource(getDataResponseSource())
-				.setSourceId(getId())
-				.setCode(isCert() ? (ok ? "Presentación Correcta": "Presentación Fallida"):(ok ? "Validacion Correcta": "Validacion Fallida"))
-				.setDomain(getDomainId())
-				.setResponseDate(new Date());
-		dr = AON.insertDataResponse(getDomainName(), getDomainId(), getUser(), dr);
-		for (Iterator<String> keys = json.keys(); keys.hasNext(); ) {
-		    String key = keys.next();
-		    DataResponseDetail drd = new DataResponseDetail()
-		    		.setDomain(getDomainId())
-		    		.setDataResponse(dr.getId())
-		    		.setDataVariable(key)
-		    		.setDataValue(json.getString(key));
-		    AON.insertDataResponseDetail(getDomainName(), getDomainId(), getUser(), drd);
-		}
-		if(ok && json.opt("url") != null) {
-			Attach attach = AON.getAttach(getDomainName(), getDomainId(), getUser(), f-> 
-				f.getDomainProperty().eq(getDomainId())
-				.and(f.getSourceTypeProperty().eq(getDataAttachSource().value()))
-				.and(f.getSourceBatchProperty().eq(getId()))
-				.and(f.getDescriptionProperty().eq("Presentacion AEAT"))
-				,AttachType.DATA, false);
-			if(attach.getId() != null) {
-				AON.updateAttachData(getDomainName(), getDomainId(), getUser(), 
-						attach.setData(getUrlFile(json.get("url").toString())));
-				json.put("data", attach.getId());
-			} else {
-				Integer attachId = AON.insertAttach(getDomainName(), getDomainId(), getUser(), new Attach()
-						.setSourceType(getDataAttachSource().value())
-						.setSourceBatch(getId())
-						.setType(DataAttachType.RESPONSE_OK.value())
-						.setAttachModule(dr.getId())
-						.setAttachType(AttachType.DATA)
-						.setDomain(new Domain().setName(getDomainName()).setId(getDomainId()))
-						.setData(getUrlFile(json.get("url").toString()))
-						.setMimeType(MimeType.PDF)
-						.setDescription("Presentacion AEAT"));
-				json.put("data", attachId);
+	public static Mod303 calculateProrrate(Mod303 mod303) {
+		if (mod303.hasProrate()) {
+			double c70 = mod303.ensureDetail(Mod303Key.CM_070).getAmount();
+			double c71 = mod303.ensureDetail(Mod303Key.CM_071).getAmount();
+			if (AonMathUtils.isNotZero(c71)) {
+				double prorrate = (c70 * 100 / c71);
+				prorrate = AonMathUtils.ceil(prorrate,0);
+				mod303.ensureDetail(mod303.getProrateKey()).setAmount( prorrate );
 			}
-			updateMod(json);
 		}
-		
+		return mod303;
 	}
- */
+	
 }
+

@@ -29,9 +29,9 @@ public class Mod303Insert extends AbstractOccamTest {
 				mod303.setDomain(DOMAIN_ID);
 				mod303.setYear(AonDateUtils.getYear(now));
 				mod303.setPeriod( p );
-				mod303 = MODEL303.initializeMod303(getOccam(), mod303);
+				mod303 = MODEL303.initialize(getOccam(), mod303);
 				mod303.setAdministration(admon);
-				mod303 = MODEL303.createMod303(getOccam(), mod303);
+				mod303 = MODEL303.create(getOccam(), mod303);
 				MODEL303.save(getOccam(), mod303);
 			}
 		}

@@ -27,6 +27,7 @@ public interface Mod303Service extends RemoteService {
 	Mod303 saveComments(Occam occam, Mod303 mod303) throws AonCoreException;
 	Mod303 initializeForFinish(Occam occam, Mod303 mod303) throws AonCoreException;
 	Mod303 calculate(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 calculateProrrate(Occam occam, Mod303 mod303) throws AonCoreException;
 	String getInfo(Occam occam, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	Mod303 markAsFinished(Occam occam, Mod303 mod303) throws AonCoreException;
 	Mod303 markAsPending(Occam occam, Mod303 mod303) throws AonCoreException;

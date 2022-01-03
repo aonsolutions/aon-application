@@ -13,5 +13,6 @@ public interface IFiscalModelCallback<T extends IFiscalModel,O extends FiscalMod
 	void showInfoPanel(String text);
 	void cleanInfoPanel();
 	void showError(String msg);
+	void hideError();
 	
 }

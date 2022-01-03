@@ -63,6 +63,10 @@ public class Model111 extends MainEntryPoint {
 		public void showError(String msg) {
 			showErrorMessage(msg);
 		}
+		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
+		}
 		
 		@Override
 		public void showInfoPanel(String htmlText) {

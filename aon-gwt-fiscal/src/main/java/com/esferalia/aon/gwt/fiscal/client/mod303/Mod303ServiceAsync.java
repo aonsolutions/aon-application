@@ -23,6 +23,7 @@ public interface Mod303ServiceAsync {
 	void saveComments(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void initializeForFinish(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void calculate(Occam occam, Mod303 mod303,AsyncCallback<Mod303> callback);
+	void calculateProrrate(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback);
 	void getInfo(Occam occam, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void markAsFinished(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void markAsPending(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);

@@ -29,9 +29,9 @@ public class VATFormatter {
 	public static final DecimalFormat DEC2 = new DecimalFormat("#,###.##");
 	
 	protected static final String NO_DATA = "<div>NO SE ENCONTRARON DATOS</div>";
-	static final String MAIN_DIV_MSG = "<pre class=\"aon-fixed-font aon-font-small aon-margin-bottom\">{0}<pre>";
+	static final String MAIN_DIV_MSG = "<pre class=\"aon_fixed_font aon_font_smaller aon_margin_bottom aon_text_center\">{0}<pre>";
 	
-	static final String OP_PRE = "<pre class=\"aon-fixed-font aon-font-small aon-margin-bottom\">";
+	static final String OP_PRE = "<pre class=\"aon_fixed_font aon_font_smaller aon_margin_bottom\">";
 	static final String CL_PRE = "</pre>";
 	static final String OP_DIV = "<div>";
 	static final String CL_DIV = "</div>";

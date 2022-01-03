@@ -59,12 +59,14 @@ public class AEAT_2021_2_Declaration extends Mod303Declaration {
 			Mod303Key.CT_C33, Mod303Key.CT_C35, Mod303Key.CT_C37, Mod303Key.CT_C39, Mod303Key.CT_C41,
 			Mod303Key.CT_C42 };
 
-	private static enum Mod303KeyDAO implements IMod303KeyDAO {
+	private enum Mod303KeyDAO implements IMod303KeyDAO {
 
-		CM_003(Mod303Key.CM_003)
+		 CM_003(Mod303Key.CM_003)
+		,CM_007(Mod303Key.CM_007)
+		,CM_072(Mod303Key.CM_072)
 
-		,CT_A12(Mod303Key.CT_A12, null, null, (ctx, mod) -> set(Mod303Key.CT_A12, mod, 2), null, null, null, null, true),
-		CM_002(Mod303Key.CM_002, null, null,
+		,CT_A12(Mod303Key.CT_A12, null, null, (ctx, mod) -> set(Mod303Key.CT_A12, mod, 2), null, null, null, null, true)
+		,CM_002(Mod303Key.CM_002, null, null,
 				(ctx, mod) -> add(Mod303Key.CM_002, mod,
 						(AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),
 								AonStringUtils.ONE)) ? 1 : 0),
@@ -244,7 +246,18 @@ public class AEAT_2021_2_Declaration extends Mod303Declaration {
 		, CT_C43(Mod303Key.CT_C43)
 
 		// Regularización por aplicación del porcentaje definitivo de prorrata
-		, CT_C44(Mod303Key.CT_C44)
+		, CT_C44(Mod303Key.CT_C44, null, null, null,
+				null
+				,"Total IVA deducible sin prorratear antes del periodo que se liquida: @{CM_072}"
+				  +"<li>IVA deducible con prorrata (@{CM_007}%) de los periodos anteriores: "
+				  + "@{CM_072} * @{CM_007} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}  </li>"
+				  +"<li>IVA deducible con prorrata definitiva (@{CM_003}%) de los periodos anteriores: "
+				  + "@{CM_072} * @{CM_003} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}  </li>"
+				  +"<li>Resultado: "
+				  + "  @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}"
+				  + " - @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}"
+				  + " = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100) - com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}</li>"
+		)
 
 		// Total a deducir
 		, CT_C45(Mod303Key.CT_C45, null, null, null,
@@ -2155,14 +2168,10 @@ public class AEAT_2021_2_Declaration extends Mod303Declaration {
 			}
 		}
 	}
-
-	public static void main(String[] args) {
-		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-			if (key.isCopyable()) {
-				System.out.println(key.getKey().toString() + "\t" + key.getKey().getDescription());
-			}
-		}
-
+	
+	@Override
+	public Mod303Key getRegularizationKey() {
+		return Mod303Key.CT_C44;
 	}
 
 }
