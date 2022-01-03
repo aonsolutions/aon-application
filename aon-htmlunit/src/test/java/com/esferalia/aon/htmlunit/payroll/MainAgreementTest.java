@@ -468,6 +468,7 @@ public class MainAgreementTest {
 	}
 
 	@Test
+	@Ignore
 	public void TestExtras() throws Exception {
 
 		wait4Id("pagas_extras_anulaes,_semestrales_y_trimestreales");
