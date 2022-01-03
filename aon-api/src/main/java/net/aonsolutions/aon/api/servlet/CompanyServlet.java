@@ -149,7 +149,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				.setParentId(api.getDomain().getId())
 				.setActive(true)
 				.setDomainType(DomainType.ENTERPRISE)
-				.setEnableHeredity(false)
+				.setEnableHeredity(true)
 				.setDomainManagement(false);
 			Domain domain = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), d, company);
 			Company c = AON.getCompany(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));

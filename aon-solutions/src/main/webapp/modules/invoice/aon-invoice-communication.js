@@ -6,6 +6,7 @@ import { AonSwitch } from "../../components/aon-switch.js";
 import { AonSelect} from "../../components/aon-select.js";
 import { AonDate} from "../../components/aon-date.js";
 import { AonInput } from "../../components/aon-input.js";
+import { AonDialog } from "../../components/aon-dialog.js";
 
 export class AonInvoiceCommunication extends AonElement {
     
@@ -128,7 +129,6 @@ export class AonInvoiceCommunication extends AonElement {
         test.id = this.TBAI_TEST;
 		test.title = MSG.TEST_ENVIRONMENT;
 	    test.checked = this.configuration.tbai.test;
-        test.disabled = this.configuration.administration === 'BIZKAIA';
         if(!this.configuration.tbai.active) {
             test.classList.add(CSS.AON_NONE);
         }
@@ -273,7 +273,9 @@ export class AonInvoiceCommunication extends AonElement {
         surname2.description = MSG.SURNAME + ' 2';
         div.appendChild(surname2);
 
-        let d = document.getElementById(this.getApplication().DIALOG);
+        let d = new AonDialog();
+        d.id = this.id + 'PersonDialog';
+        this.appendChild(d);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.CHANGE_TYPE);

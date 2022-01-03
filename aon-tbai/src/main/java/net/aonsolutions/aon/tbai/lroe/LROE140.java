@@ -2,6 +2,7 @@ package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -45,7 +46,7 @@ public class LROE140 {
 		nif.setNIF(person.getDocument());
 		nif.setApellidosNombreRazonSocial(person.getName());
 		cabecera.setObligadoTributario(nif);
-		cabecera.setEjercicio(2021);
+		cabecera.setEjercicio(AonDateUtils.getYear(new Date()));
 		cabecera.setCapitulo("1");
 		cabecera.setSubcapitulo("1.1");
 		cabecera.setOperacion(OperacionEnum.A_00);
@@ -57,6 +58,7 @@ public class LROE140 {
 		RentaIngresosType renta = new RentaIngresosType();
 		DetalleRentaIngresosType detalleRenta = new DetalleRentaIngresosType();
 		detalleRenta.setCriterioCobrosYPagos(SiNoEnum.N);
+		
 		detalleRenta.setEpigrafe(invoice.getEpigraph());
 		detalleRenta.setIngresoAComputarIRPFDiferenteBaseImpoIVA(SiNoEnum.N);
 		//detalleRenta.setImporteIngresoIRPF();
@@ -93,14 +95,24 @@ public class LROE140 {
 			
 			final LROEPF140IngresosConFacturaConSGAltaPeticion p140 = build(person, invoice, xml); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAltaPeticion.class );
-			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
+			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
 
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			byte[] data = bos.toByteArray();
-			return LROE.send(tbaiConfiguration, buildJSON(person), data, sign);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length);
+			GZIPOutputStream gzipStream = new GZIPOutputStream(baos);
+			try {
+				gzipStream.write(data);
+			} finally {
+				baos.close();
+				gzipStream.close();
+			}
+			byte[] data2 = baos.toByteArray();
+	
+			return LROE.send(tbaiConfiguration, buildJSON(person), data2, sign);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

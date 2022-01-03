@@ -39,7 +39,7 @@ public class LROE240 {
 		nif.setNIF(company.getDocument()); // TEST_NIF_240); // company.getDocument());
 		nif.setApellidosNombreRazonSocial(company.getName()); // TEST_NAME_240);// company.getName());
 		cabecera.setObligadoTributario(nif);
-		cabecera.setEjercicio(2021);
+		cabecera.setEjercicio(AonDateUtils.getYear(new Date()));
 		cabecera.setCapitulo("1");
 		cabecera.setSubcapitulo("1.1");
 		cabecera.setOperacion(OperacionEnum.A_00);

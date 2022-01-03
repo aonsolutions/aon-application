@@ -197,7 +197,7 @@ public class Invoice2tbai {
 		}
 		factura.setCabeceraFactura(cabecera);
 
-			
+		
 		DatosFacturaType datos = new DatosFacturaType();
 		datos.setFechaOperacion(AonDateUtils.format(invoice.getCreationDate(), "dd-MM-yyyy"));
 		datos.setDescripcionFactura("FACTURA " + invoice.getReferenceCode());
@@ -214,14 +214,20 @@ public class Invoice2tbai {
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}
-			double total =  AonMathUtils.round(tax.getBase() + tax.getQuota());
+			double total =  AonMathUtils.round(tax.getBase() + tax.getQuota() + tax.getSurchargeQuota());
 			detalle.setImporteTotal(Double.toString(total));
 		});
 		
 		Double totalAmount = detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum();
 		
 		datos.setDetallesFactura(detalles);
+		if(invoice.isWithholding()) {
+			double ret = invoice.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType()))
+				.mapToDouble(r -> r.getQuota()).sum();
+			datos.setRetencionSoportada(Double.toString(AonMathUtils.round(ret)));
+		} 
 		datos.setImporteTotalFactura(Double.toString(AonMathUtils.round(totalAmount)));
+
 //		datos.setRetencionSoportada("");
 //		datos.setBaseImponibleACoste("");
 	
