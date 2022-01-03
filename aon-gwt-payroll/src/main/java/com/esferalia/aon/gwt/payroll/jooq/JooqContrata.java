@@ -901,15 +901,19 @@ public class JooqContrata {
 		}
 	}
 	
-	private static void writeContratosMainData(IContratoType contratos, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
-		contratos.setDATOSEMPRESA(createDatosEmpresa(employeeContractInfo));
-		contratos.setDATOSTRABAJADOR(createDatosTrabajador(employeeContractInfo));
-		contratos.setDATOSGENERALESCONTRATO(createDatosGeneralesContrato(employeeContractInfo)); 
-		if(employeeContractInfo.getContractSpecificData().getTemporalWorkEnterprise()){
-			contratos.setDATOSETT(createDatosEtt(employeeContractInfo));
+	private static void writeContratosMainData(IContratoType contratos, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException{
+		try {
+			contratos.setDATOSEMPRESA(createDatosEmpresa(employeeContractInfo));
+			contratos.setDATOSTRABAJADOR(createDatosTrabajador(employeeContractInfo));
+			contratos.setDATOSGENERALESCONTRATO(createDatosGeneralesContrato(employeeContractInfo)); 
+			if(employeeContractInfo.getContractSpecificData().getTemporalWorkEnterprise()){
+				contratos.setDATOSETT(createDatosEtt(employeeContractInfo));
+			}
+			contratos.setDATOSCOMUNICACOPIABASICA(createDatosComunicacionCopiaBasica(employeeContractInfo)); 
+			contratos.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(employeeContractInfo));
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		contratos.setDATOSCOMUNICACOPIABASICA(createDatosComunicacionCopiaBasica(employeeContractInfo)); 
-		contratos.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(employeeContractInfo));
 	}
 	
 	private static DATOSTRABAJADORTYPE createDatosTrabajador(EmployeeContractInfo employeeContractInfo) throws ManagerBeanException {
@@ -1122,14 +1126,18 @@ public class JooqContrata {
 		return c;
 	}
 	
-	private static DATOSCONTRATOEXTRANJEROTYPE createDatosContratoExtranjero(EmployeeContractInfo employeeContractInfo) {
-		if(employeeContractInfo.getContractSpecificData().getAnnexedB()){
-			DATOSCONTRATOEXTRANJEROTYPE datos = new DATOSCONTRATOEXTRANJEROTYPE();
-			datos.setINDCARACTEROFERTA(employeeContractInfo.getContractSpecificData().getAnnexed() ? "E" : "T");
-			datos.setAÑOCONTINGENTE(employeeContractInfo.getContractSpecificData().getSourceYear());
-			return datos;
+	private static DATOSCONTRATOEXTRANJEROTYPE createDatosContratoExtranjero(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			if(employeeContractInfo.getContractSpecificData().getAnnexedB()){
+				DATOSCONTRATOEXTRANJEROTYPE datos = new DATOSCONTRATOEXTRANJEROTYPE();
+				datos.setINDCARACTEROFERTA(employeeContractInfo.getContractSpecificData().getAnnexed() ? "E" : "T");
+				datos.setAÑOCONTINGENTE(employeeContractInfo.getContractSpecificData().getSourceYear());
+				return datos;
+			}
+			return null;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		return null;
 	}
 	
 	private static DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(EmployeeContractInfo employeeContractInfo) {
@@ -1172,13 +1180,17 @@ public class JooqContrata {
 		return datos;
 	}
 	
-	private static DATOSETCOTYPE createDatosEtCote(EmployeeContractInfo employeeContractInfo) {
-		if(employeeContractInfo.getContractSpecificData().getWorkshopSchoolB()){
-			DATOSETCOTYPE datos = new DATOSETCOTYPE();
-			datos.setCODIGOETCOTE(employeeContractInfo.getContractSpecificData().getWorkshopSchool());
-			return datos;
+	private static DATOSETCOTYPE createDatosEtCote(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			if(employeeContractInfo.getContractSpecificData().getWorkshopSchoolB()){
+				DATOSETCOTYPE datos = new DATOSETCOTYPE();
+				datos.setCODIGOETCOTE(employeeContractInfo.getContractSpecificData().getWorkshopSchool());
+				return datos;
+			}
+			return null;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		return null;
 	}
 	
 	private static CONTRATO130TYPE createContract130(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
@@ -1383,45 +1395,53 @@ public class JooqContrata {
 		return null;
 	}
 	
-	private static CONTRATO402TYPE createContract402(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
-		CONTRATO402TYPE c = (CONTRATO402TYPE) contratoType;
-		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
-		c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
-		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
-		c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
-		return c;
-	}
-	
-	private static DATOSPROGEMPLEOPUBLICOTYPE createDatosProgramaEmpleoPublico(EmployeeContractInfo employeeContractInfo) {
-		// TODO
-//		if(params.isEmploymentProgramData()){
-		DATOSPROGEMPLEOPUBLICOTYPE datos = new DATOSPROGEMPLEOPUBLICOTYPE();
-		datos.setACTUACION("");
-		datos.setCORPORACIONLOCAL("");
-		datos.setEJERCICIOPRESUPUESTARIO("");
-		datos.setGRUPOCOTIZACIONCORPORACIONLOCAL("");
-		return datos;
-//		}
-	}
-	
-	private static DATOSCOPIABASICATYPE createDatosCopiaBasica(EmployeeContractInfo employeeContractInfo) {
-		// TODO: consultar en pantalla si el contrato es escrito
-		DATOSCOPIABASICATYPE datos = null;
-		SEPEUtils utils = SEPEUtils.getInstance();
-		String tc2 = employeeContractInfo.getContractInfo().getContractType();
-		if( tc2.equals("402") || tc2.equals("990") ){
-			if( tc2.equals("990") ){
-				datos = datos==null?new DATOSCOPIABASICATYPE():datos;
-				datos.setINDCONTRATOALTADIRECCION("S");
-			}
-			Date start = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getStartDate(),true);
-			Date end = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getEndDate(), false);
-			if( tc2.equals("402") && end!=null && CommonUtil.getDaysBetweenDates(start, end) <= 28){
-				datos = datos==null?new DATOSCOPIABASICATYPE():datos;
-				datos.setINDCONTRATOESCRITO("S");
-			}
+	private static CONTRATO402TYPE createContract402(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException{
+		try {
+			CONTRATO402TYPE c = (CONTRATO402TYPE) contratoType;
+			c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
+			c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
+			c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
+			c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
+			return c;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		return datos;
+	}
+	
+	private static DATOSPROGEMPLEOPUBLICOTYPE createDatosProgramaEmpleoPublico(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			DATOSPROGEMPLEOPUBLICOTYPE datos = new DATOSPROGEMPLEOPUBLICOTYPE();
+			datos.setACTUACION("");
+			datos.setCORPORACIONLOCAL("");
+			datos.setEJERCICIOPRESUPUESTARIO("");
+			datos.setGRUPOCOTIZACIONCORPORACIONLOCAL("");
+			return datos;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	private static DATOSCOPIABASICATYPE createDatosCopiaBasica(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			DATOSCOPIABASICATYPE datos = null;
+			SEPEUtils utils = SEPEUtils.getInstance();
+			String tc2 = employeeContractInfo.getContractInfo().getContractType();
+			if( tc2.equals("402") || tc2.equals("990") ){
+				if( tc2.equals("990") ){
+					datos = datos==null?new DATOSCOPIABASICATYPE():datos;
+					datos.setINDCONTRATOALTADIRECCION("S");
+				}
+				Date start = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getStartDate(),true);
+				Date end = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getEndDate(), false);
+				if( tc2.equals("402") && end!=null && CommonUtil.getDaysBetweenDates(start, end) <= 28){
+					datos = datos==null?new DATOSCOPIABASICATYPE():datos;
+					datos.setINDCONTRATOESCRITO("S");
+				}
+			}
+			return datos;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 	
 	private static CONTRATO403TYPE createContract403(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
