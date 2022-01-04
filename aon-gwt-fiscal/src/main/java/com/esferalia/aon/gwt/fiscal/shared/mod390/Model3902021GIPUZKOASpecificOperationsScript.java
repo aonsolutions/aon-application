@@ -11,22 +11,25 @@ import com.esferalia.aon.occam.api.model.fiscal.KeyTypes;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
-public enum Model3902017GIPUZKOASpecificOperationsScript implements IModelScript<Mod390Key> {
+public enum Model3902021GIPUZKOASpecificOperationsScript implements IModelScript<Mod390Key> {
 	
 	 VOL00 ("Volumen de operaciones",null,TITLE)
-	,VOL01 (Mod390Key.GP_C082.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C082},INVOICE)
+	,VOL01 (Mod390Key.GP_C082.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C108},INVOICE)
 	,VOL02 (Mod390Key.GP_C083.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C083},INVOICE)
 	,VOL03 (Mod390Key.GP_C084.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C084},INVOICE)
-	,VOL04 (Mod390Key.GP_C085.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C085},INVOICE)
-	,VOL05 (Mod390Key.GP_C086.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C086},INVOICE)
-	,VOL06 (Mod390Key.GP_C087.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C087},INVOICE)
-	,VOL07 (Mod390Key.GP_C088.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C088},INVOICE)
-	,VOL08 (Mod390Key.GP_C089.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C089},INVOICE)
-	,VOL09 (Mod390Key.GP_C090.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C090},INVOICE)
-	,VOL10 (Mod390Key.GP_C091.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C091},INVOICE)
-	,VOL11 (Mod390Key.GP_C092.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C092},INVOICE)
-	,VOL12 (Mod390Key.GP_C093.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C093},INVOICE)
-	,VOL13 (Mod390Key.GP_C095.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C095},COMPUTE)
+	,VOL04 (Mod390Key.GP_C084.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C109},INVOICE)
+	,VOL05 (Mod390Key.GP_C084.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C110},INVOICE)
+	,VOL06 (Mod390Key.GP_C085.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C085},INVOICE)
+	,VOL07 (Mod390Key.GP_C086.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C086},INVOICE)
+	,VOL08 (Mod390Key.GP_C087.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C087},INVOICE)
+	,VOL09 (Mod390Key.GP_C084.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C111},INVOICE)
+	,VOL10 (Mod390Key.GP_C088.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C088},INVOICE)
+	,VOL11 (Mod390Key.GP_C084.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C112},INVOICE)
+	,VOL12 (Mod390Key.GP_C084.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C113},INVOICE)
+	,VOL13 (Mod390Key.GP_C091.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C091},INVOICE)
+	,VOL14 (Mod390Key.GP_C092.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C092},INVOICE)
+	,VOL15 (Mod390Key.GP_C093.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C093},INVOICE)
+	,VOL16 (Mod390Key.GP_C095.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C095},COMPUTE)
 	
 	,OPE00 ("Operaciones de compra",null,TITLE)
 	,OPE01 (Mod390Key.GP_C096.getDescription()	,new Mod390Key[]{null,Mod390Key.GP_C096},INVOICE)
@@ -49,11 +52,11 @@ public enum Model3902017GIPUZKOASpecificOperationsScript implements IModelScript
 	private FiscalModelKeyInfo[] infoKeys;
 	private KeyTypes[] keyTypes;
 	
-	private Model3902017GIPUZKOASpecificOperationsScript(String label, Mod390Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model3902021GIPUZKOASpecificOperationsScript(String label, Mod390Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this(label,keys,null,infoKeys);	
 	}
 	
-	private Model3902017GIPUZKOASpecificOperationsScript(String label, Mod390Key[] keys, KeyTypes[] keyTypes,FiscalModelKeyInfo ... infoKeys) {
+	private Model3902021GIPUZKOASpecificOperationsScript(String label, Mod390Key[] keys, KeyTypes[] keyTypes,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;

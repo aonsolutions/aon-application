@@ -17,9 +17,9 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
+public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 	
-	protected GIPUZKOA_2017_Declaration() {
+	protected GIPUZKOA_2021_Declaration() {
 		
 	}
 	
@@ -34,7 +34,7 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 	public static final double SURCHARGE_PERCENT3 = 0.5;
 	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isGipuzkoa() && mod.getYear() >= 2017 && mod.getYear() < 2021;
+		return  mod.isGipuzkoa() && mod.getYear() >= 2021;
 	}
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
 		  Mod390Key.GP_C018
@@ -401,15 +401,19 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 		,GP_C076	(Mod390Key.GP_C076,null,null,null,"GP_C047+GP_C049+GP_C051+GP_C053+GP_C055+GP_C058+GP_C060+GP_C062+GP_C064+GP_C067+GP_C069+GP_C071+GP_C073",null)
 		,GP_C077	(Mod390Key.GP_C077,null,null,null,"GP_C056+GP_C065+GP_C074",null)
 		
-		// OPERACIONES EN RÉGIMEN GENERAL
-		,GP_C082  	(Mod390Key.GP_C082
+		// OPERACIONES RÉGIMEN GENERAL EXCEPTO REG.ESPECIALES (REBU/AGENCIAS DE VIAJE/CRITERIO CAJA)
+		,GP_C108  	(Mod390Key.GP_C108
 			,(mod,vat) -> vat.isNationalSales() && !vat.isInvestment()
-			,(ctx,mod,vat) -> add(Mod390Key.GP_C082,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod390Key.GP_C108,mod,vat.getBase())
 			,null,null,null)
 		// OPERACIONES EN RÉGIMEN ESPECIAL DE AGRICULTURA, GANADER\u00CDA Y PESCA
 		,GP_C083  	(Mod390Key.GP_C083)
 		// OPERACIONES EN RÉGIMEN ESPECIAL DEL RECARGO DE EQUIVALENCIA
 		,GP_C084  	(Mod390Key.GP_C084)
+		// OPERACIONES EN RÉGIMEN ESPECIAL DE BIENES USADOS, OBJETOS DE ARTE, ANTIGÜEDADES Y OBJETOS DE COLECCIÓN
+		,GP_C109  	(Mod390Key.GP_C109)
+		// OPERACIONES EN RÉGIMEN ESPECIAL DE AGENCIAS DE VIAJES
+		,GP_C110  	(Mod390Key.GP_C110)
 		// ENTREGAS INTRACOMUNITARIAS DE BIENES Y DE SERVICIOS
 		,GP_C085  	(Mod390Key.GP_C085
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
@@ -422,15 +426,17 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 			,null,null,null)
 		// OPERACIONES EXENTAS SIN DERECHO A DEDUCCI\u00D3N
 		,GP_C087  	(Mod390Key.GP_C087)
+		// OPERACIONES NO SUJETAS POR REGLAS DE LOCALIZACIÓN (EXCEPTO LAS INCLUIDAS EN LA CASILLA 112)
+		,GP_C1111  	(Mod390Key.GP_C111)
 		// OPERACIONES QUE DAN LUGAR A LA INVERSI\u00D3N DEL SUJETO PASIVO
 		,GP_C088  	(Mod390Key.GP_C088
 			,(mod,vat) -> vat.isOtherISPSales() 
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C088,mod,vat.getBase())
 			,null,null,null)
-		// OPERACIONES NO SUJETAS
-		,GP_C089  	(Mod390Key.GP_C089)
-		// ENTREGAS DE BIENES OBJETO DE INSTALACI\u00D3N O MONTAJE EN OTROS ESTADOS MIEMBROS
-		,GP_C090  	(Mod390Key.GP_C090)
+		// OSS. OPERACIONES NO SUJETAS POR REGLAS DE LOCALIZACIÓN ACOGIDAS A LA OSS.
+		,GP_C112  	(Mod390Key.GP_C112)
+		// OSS. OPERACIONES SUJETAS Y ACOGIDAS A LA OSS.
+		,GP_C113  	(Mod390Key.GP_C113)
 		// ENTREGAS NO HABITUALES DE BIENES INMUEBLES
 		,GP_C091  	(Mod390Key.GP_C091)
 		// OPERACIONES FINANCIERAS NO HABITUALES
@@ -438,7 +444,8 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 		// ENTREGAS DE BIENES DE INVERSI\u00D3N
 		,GP_C093  	(Mod390Key.GP_C093)
 		// TOTAL VOLUMEN DE OPERACIONES
-		,GP_C095	(Mod390Key.GP_C095,null,null,null,"GP_C082+GP_C083+GP_C084+GP_C085+GP_C086+GP_C087+GP_C088+GP_C089+GP_C090+GP_C091+GP_C092+GP_C093",null)
+		,GP_C095	(Mod390Key.GP_C095,null,null,null,
+				"GP_C108+GP_C083+GP_C084+GP_C109+GP_C110+GP_C085+GP_C086+GP_C087+GP_C111+GP_C088+GP_C112+GP_C113-GP_C091-GP_C092-GP_C093+GP_C101",null)
 		// ENTREGAS INTERIORES DE BIENES DEVENGADAS POR INVERSI\u00D3N DEL SUJETO PASIVO COMO CONSECUENCIA DE OPERACIONES TRIANGULARES
 		,GP_C096  	(Mod390Key.GP_C096)
 		// ADQUISICIONES INTERIORES EXENTAS
