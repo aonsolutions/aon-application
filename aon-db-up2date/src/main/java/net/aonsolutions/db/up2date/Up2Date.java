@@ -24,10 +24,14 @@ import net.aonsolutions.db.up2date.data.DataRequestUpdate;
 import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
 import net.aonsolutions.db.up2date.payroll.IrpfM190Update;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022Update;
+import net.aonsolutions.db.up2date.tgss.AgriculturalPercentages2022Update;
 import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.Bases2022Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2019Close;
 import net.aonsolutions.db.up2date.tgss.HomeBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.IPREM2022Update;
 import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
@@ -209,9 +213,14 @@ public class Up2Date {
     		//DataRequestUpdate.DATA_REQUEST_UPDATE,
     		//WorkplaceUpdate.WORKPLACE_UPDATE,
     		//IrpfM190Update.IRPFM190UPDATE,
-    		Holidays2022Insert.HOLIDAYS2022INSERT,
     		ContractCleanUpdate.CONTRACTCLEANUPDATE,
-    		TimeControlUpdate.TIMECONTROL_UPDATE
+    		TimeControlUpdate.TIMECONTROL_UPDATE,
+    		Holidays2022Insert.HOLIDAYS2022INSERT,
+    		Bases2022Update.BASES2022UPDATE,
+    		AgriculturalBases2022Update.AGRICULTURALBASES2022UPDATE,
+    		AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
+    		IPREM2022Update.IPREM2022UPDATE
+    		
     };
     
 

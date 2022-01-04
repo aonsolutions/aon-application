@@ -526,35 +526,22 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	}
 	
 	private void hideYearLBOptions() {
-		ArrayList<Integer> idxsToDelete = new ArrayList<Integer>();
-		for(int i=0; i<this.yearLB.getItemCount(); i++) {
+		for(int i= this.yearLB.getItemCount() -1 ; i >= 0; i--) {
 			Integer year = Integer.parseInt(this.yearLB.getValue(i));
 			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
-			if(isOutOfContractPeriod(lastDayOfYear)) {
-				idxsToDelete.add(i);
+			Date firstDayOfYear = DateUtils.getFirstDayOfYear(year-1900);
+			if(isOutOfContractPeriod(firstDayOfYear, lastDayOfYear)) {
+				this.yearLB.removeItem(i);
 			}
 		}
-		hideOptionYearLB(idxsToDelete);
 	}
 	
-	private void hideOptionYearLB(ArrayList<Integer> idxsToDelete) {
-		for(Integer idx : idxsToDelete)
-			try {
-				this.yearLB.removeItem(idx);
-			} catch (IndexOutOfBoundsException e) {}
-			
-	}
-	
-	private boolean isOutOfContractPeriod(Date date) {
-		Date newEndDate = this.employeeEventsDraft.getContractEndDate();
-		if(null == newEndDate) {
-			Integer nextYear = DateUtils.getYear() + 1;
-			newEndDate = DateUtils.getLastDayOfYear(nextYear);
-		}
+	private boolean isOutOfContractPeriod(Date firstDayOfYear, Date lastDayOfYear) {
+		Date contractEndDate = this.employeeEventsDraft.getContractEndDate();
 		
-		Date startDate = DateUtils.copyDateOnly(this.employeeEventsDraft.getContractStartDate());
+		Date contractStartDate = DateUtils.copyDateOnly(this.employeeEventsDraft.getContractStartDate());
 		
-		return date.before(startDate) || date.after(newEndDate);
+		return contractStartDate.after(lastDayOfYear) || ( contractEndDate != null && contractEndDate.before(firstDayOfYear) );
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
