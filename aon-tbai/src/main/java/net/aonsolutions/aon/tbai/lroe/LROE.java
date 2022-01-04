@@ -88,14 +88,18 @@ public class LROE {
 			System.out.println(https.getContentType());
 			System.out.println(https.getContentLength());
 			TbaiResponse response = new TbaiResponse();
+			response.setStatus(https.getResponseCode());
+			JSONObject respJSON = new JSONObject();
 			for (String key2 : https.getHeaderFields().keySet()) {
 				System.out.println(key2 + ": " + https.getHeaderField(key2));
+				if(key2 != null)
+					respJSON.put(key2, https.getHeaderField(key2));
 			} 
-			
- 
+			response.setJsonInfo(respJSON);
 			InputStream respons = https.getInputStream();
 			byte[] bytes = respons.readAllBytes();
 			byte[] a = decompress(bytes);
+			response.setData(a);
 			try {
 				Document d = XMLUtils.getDocument(a);
 				System.out.println(XMLUtils.documentToString(d));

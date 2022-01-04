@@ -77,7 +77,12 @@ public class PersonDAO {
 	
 	public static Person save(AONContext ctx, Person person) {
 		ctx.checkWrite();
-		return person.getId()!=null ? update(ctx, person) : insert(ctx, person);
+		Person aux = new Person();
+		if(person.getId() != null) {
+			 aux = get(ctx, f -> f.getIdProperty().eq(person.getId()));
+		}
+		return person.getId()!=null && aux.getId() != null 
+			? update(ctx, person) : insert(ctx, person);
 	}
 	
 	public static Person insert(AONContext ctx, Person person) {
@@ -89,9 +94,9 @@ public class PersonDAO {
 		.set(PERSON.GENDER, person.getGender()!=null ? person.getGender().value() : null )
 		.set(PERSON.MARITAL_STATUS, person.getMaritalStatus()!=null ? person.getMaritalStatus().value() : null)
 		.set(PERSON.SOCIAL_SECURITY_NUM, person.getSocialSecurityNum())
-		.set(PERSON.NAME, person.getName())
-		.set(PERSON.FIRST_SURNAME, person.getFirstName())
-		.set(PERSON.SECOND_SURNAME, person.getFirstSurname())
+		.set(PERSON.NAME, person.getFirstName())
+		.set(PERSON.FIRST_SURNAME, person.getFirstSurname())
+		.set(PERSON.SECOND_SURNAME, person.getSecondSurname())
 		.execute();
 		ctx.log().debug("INSERT PERSON id: {0}", person.getId());		
 		return person;
@@ -104,9 +109,9 @@ public class PersonDAO {
 			.set(PERSON.GENDER, person.getGender()!=null ? person.getGender().value() : null )
 			.set(PERSON.MARITAL_STATUS, person.getMaritalStatus()!=null ? person.getMaritalStatus().value() : null)
 			.set(PERSON.SOCIAL_SECURITY_NUM, person.getSocialSecurityNum())
-			.set(PERSON.NAME, person.getName())
-			.set(PERSON.FIRST_SURNAME, person.getFirstName())
-			.set(PERSON.SECOND_SURNAME, person.getFirstSurname())
+			.set(PERSON.NAME, person.getFirstName())
+			.set(PERSON.FIRST_SURNAME, person.getFirstSurname())
+			.set(PERSON.SECOND_SURNAME, person.getSecondSurname())
 			.where(PERSON.REGISTRY.eq(person.getId()))
 			.execute();
 		ctx.log().debug("UPDATE PERSON id: {0}. ({1} rows)", person.getId());		
@@ -139,6 +144,7 @@ public class PersonDAO {
 					.setBirthDate( converDateSql(r.getValue(PERSON.BIRTH_DATE)) )
 					.setMaritalStatus(MaritalStatus.safeValueOf(r.getValue(PERSON.MARITAL_STATUS)))
 					.setSocialSecurityNum(r.getValue(PERSON.SOCIAL_SECURITY_NUM))
+					.setFirstName(r.getValue(PERSON.NAME))
 					.setFirstSurname(r.getValue(PERSON.FIRST_SURNAME))
 					.setSecondSurname(r.getValue(PERSON.SECOND_SURNAME));
 			person.setName(r.getValue(PERSON.NAME));

@@ -54,7 +54,9 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -647,10 +649,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			String surname1 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "1");
 			String surname2 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "2");
 			Person person = AON.getPerson(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(company.getId()));
-			person.setName(name);
+			person.setFirstName(name);
 			person.setFirstSurname(surname1);
 			person.setSecondSurname(surname2);
 			person.setDomain(company.getDomain());
+			person.setGender(Gender.UNKNOWN);
+			person.setMaritalStatus(MaritalStatus.UNKNOWN);
 			person.setId(company.getId());
 			AON.savePerson(api.getDomain(), api.getUser().getLogin(), person);
 		}

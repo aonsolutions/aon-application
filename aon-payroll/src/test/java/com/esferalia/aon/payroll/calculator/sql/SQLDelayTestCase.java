@@ -43,7 +43,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
@@ -72,8 +71,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 	
 	protected static final double DELTA = 0.04;
-	
-	
 	
 	@Test
 	public void testDelaysI() throws ExpressionException, SQLException,
@@ -3132,8 +3129,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 	}
 
+
 	@Test
-	@Ignore
 	public void testITWithConstant() throws ExpressionException, SQLException,
 	SalaryException {
 		Connection connection = getConnection();

@@ -12,6 +12,7 @@ public class EnterpriseActivity implements Serializable {
 	private String description;
 	private boolean principal;
 	private Integer iae;
+	private String section;
 	private String epigraph;
 	private Integer cnae;
 	private String cnaeCode;
@@ -47,6 +48,14 @@ public class EnterpriseActivity implements Serializable {
 	}
 	public EnterpriseActivity setIae(Integer iae) {
 		this.iae = iae;
+		return this;
+	}
+	
+	public String getSection() {
+		return section;
+	}
+	public EnterpriseActivity setSection(String section) {
+		this.section = section;
 		return this;
 	}
 	public String getEpigraph() {

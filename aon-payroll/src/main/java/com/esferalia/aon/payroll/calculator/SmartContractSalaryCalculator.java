@@ -419,10 +419,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(payment, start, end, amount);
 			}
 
-			if ( !type.isBBCCIncluded() 
-				&& type.isBBCCExcluded() ) {
-				return Collections.emptyList();
-			}
 
 			if ( AonStringUtils.equals(PREST_IT, payment.getName())) {
 				double ereFactor = getEreFactor(expressionContext, new Period(start, end));
@@ -450,6 +446,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					return delegate.quote(payment, start, end, amount);
 			}
 
+			if ( !type.isBBCCIncluded() 
+				&& type.isBBCCExcluded() ) {
+				return Collections.emptyList();
+			}
 
 			if (payment.getMonth() != null 
 				&&( type == PaymentType.CRA_0004 
@@ -610,7 +610,15 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				// so we'll subtract the proportional part of IT.
 
 				return subtractITPart(results, its, expressionContext);
-			} else if (
+			} 
+			else if (results.size() == 1 
+					&& results.get(0).getContext().isEmpty()  
+					&& isPermanentPayment(contractPayment, start, end, expressionContext)
+					) {
+				
+				return subtractITPart(results, its, expressionContext);
+			} 
+			else if (
 					results.size() == 1 
 					&& AonStringUtils.equals(contractPayment.getName(), TEMP_PAYMENT)) {
 				return moveITPart(results, its, contractPayment);
@@ -1036,6 +1044,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			} catch (UndefinedVariablesException e) {
 			} catch (ExpressionException e) {
 			}
+		} 
+
+		if (results.size() == 1
+				&& isWholeMonth(results.get(0))	
+				&& results.get(0).getContext().size() == 0
+				&& isPermanentPayment(contractPayment, results.get(0).getPeriod(), expressionContext) ) {
+				try {
+					return subtractOFFPart(results, strikes, expressionContext);
+				} catch (UndefinedVariablesException e) {
+				} catch (ExpressionException e) {
+				}
 		} 
 
 		List<Period> worked = expressionContext.getPeriods(ContextVariable.WORKED_DAYS);

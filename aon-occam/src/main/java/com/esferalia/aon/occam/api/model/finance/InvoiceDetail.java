@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -16,6 +17,7 @@ public class InvoiceDetail implements Serializable {
 	
 	private Invoice invoice;
 	private Integer investAsset;
+	private InvestAsset investAssetData;
 	private Integer project;
 	private String projectName;
 	private Seller seller;
@@ -73,6 +75,15 @@ public class InvoiceDetail implements Serializable {
 		this.invoice = invoice;
 		return this;
 	}
+	
+	public InvestAsset getInvestAssetData() {
+		return investAssetData;
+	}
+	
+	public void setInvestAssetData(InvestAsset investAssetData) {
+		this.investAssetData = investAssetData;
+	}
+	
 	public Integer getInvestAsset() {
 		return investAsset;
 	}

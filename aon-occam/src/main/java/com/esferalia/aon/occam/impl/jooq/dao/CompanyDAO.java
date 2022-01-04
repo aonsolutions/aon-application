@@ -397,7 +397,7 @@ public class CompanyDAO {
 	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain, Date atDate) {
 		return ctx.getDslContext()
 				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
-						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH)
+						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID, IAE.SECTION, IAE.EPIGRAPH)
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
@@ -423,6 +423,7 @@ public class CompanyDAO {
 						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
 						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
 						.setIae( rec.getValue(IAE.ID))
+						.setSection(rec.getValue(IAE.SECTION))
 						.setEpigraph( rec.getValue(IAE.EPIGRAPH))
 						.setCnae( rec.getValue(CNAE2009.ID) )
 						.setCnaeCode( rec.getValue(CNAE2009.CODE) )
@@ -435,7 +436,7 @@ public class CompanyDAO {
 		if (id == null) return null;
 		return ctx.getDslContext()
 				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
-						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH)
+						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH, IAE.SECTION)
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
 				.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
@@ -448,6 +449,7 @@ public class CompanyDAO {
 						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
 						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
 						.setIae( rec.getValue(IAE.ID))
+						.setSection(rec.getValue(IAE.SECTION))
 						.setEpigraph( rec.getValue(IAE.EPIGRAPH))
 						.setCnae( rec.getValue(CNAE2009.ID) )
 						.setCnaeCode( rec.getValue(CNAE2009.CODE) )

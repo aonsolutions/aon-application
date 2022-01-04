@@ -904,6 +904,7 @@ public class InvoiceDAO {
 					: 0)
 			.findFirst()
 			.orElse(0);
+		if(next < 0) next = 0;
 		return ++next;
 	}
 	
