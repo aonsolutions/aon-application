@@ -124,7 +124,6 @@ export class AonInvoiceCommunication extends AonElement {
     	table.addCell(active, 1).style.height = '50px';
         active.setWidth('110px');
 
-        this.configuration.tbai.test = true;
         let test = new AonSwitch();
         test.id = this.TBAI_TEST;
 		test.title = MSG.TEST_ENVIRONMENT;
