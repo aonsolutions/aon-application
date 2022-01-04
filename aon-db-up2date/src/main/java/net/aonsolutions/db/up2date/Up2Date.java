@@ -209,7 +209,7 @@ public class Up2Date {
     		//DataRequestUpdate.DATA_REQUEST_UPDATE,
     		//WorkplaceUpdate.WORKPLACE_UPDATE,
     		//IrpfM190Update.IRPFM190UPDATE,
-    		//Holidays2022Insert.HOLIDAYS2022INSERT,
+    		Holidays2022Insert.HOLIDAYS2022INSERT,
     		ContractCleanUpdate.CONTRACTCLEANUPDATE,
     		TimeControlUpdate.TIMECONTROL_UPDATE
     };
