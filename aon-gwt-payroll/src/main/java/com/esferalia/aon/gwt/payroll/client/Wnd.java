@@ -2,6 +2,20 @@ package com.esferalia.aon.gwt.payroll.client;
 
 public class Wnd {
 
+	public static native boolean isSysAdmin()
+	/*-{
+		return $wnd.isSysAdmin();
+	}-*/;
+
+	public static native boolean isNewAONTheme()
+	/*-{
+		return $wnd.isNewAONTheme();
+	}-*/;
+
+	public static boolean isClassicAONTheme() {
+		return !isNewAONTheme();
+	}
+
 	public static native String isAonSolutions()
 	/*-{
 		var newAon = $wnd.localStorage.getItem("aon_solutions");

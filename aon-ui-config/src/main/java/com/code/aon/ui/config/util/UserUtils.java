@@ -90,12 +90,12 @@ public class UserUtils implements Serializable {
 	public User getLoggedUser() {
 		if (this.loggedUser == null) {
 			this.loggedUser = resolveUser();
-			updateUser(this.loggedUser);
+			fixEsferaliaWebmailToolBar(this.loggedUser);
 		}
 		return loggedUser;
 	}
 
-	private void updateUser(User user) {
+	private void fixEsferaliaWebmailToolBar(User user) {
 		if (user.getToolbar() == Toolbar.ESFERALIA_WEBMAIL) {
 			user.setToolbar(Toolbar.ACENS);
 			try {
@@ -106,6 +106,15 @@ public class UserUtils implements Serializable {
 			}
 		}		
 		this.userScopeIds = getUserScopeIds(false);
+	}
+
+	private void updateUser(User user) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(User.class);
+			bean.update(user);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	private User resolveUser() {
