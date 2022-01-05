@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import eus.bizkaia.ogasuna.sii.documentos.respuestasuministro.RespuestaLRBajaFEmitidasType;
 import eus.bizkaia.ogasuna.sii.documentos.respuestasuministro.RespuestaLRCobrosEmitidasType;
@@ -205,8 +206,8 @@ public class FacturasEmitidas extends SIIBuilt {
 			factura.setIDFactura(idFactura);
 			FacturaExpedidaType fet = new FacturaExpedidaType();
 			
-			fet.setTipoFactura(ClaveTipoFacturaType.F_1); // TODO  De momento a piñon fijo!!!
-			if(vat.getRegistryDocument() == null || vat.getRegistryDocument().equals("")){
+			fet.setTipoFactura(ClaveTipoFacturaType.F_1);
+			if(AonStringUtils.isBlank(vat.getRegistryDocument())){
 				fet.setTipoFactura(ClaveTipoFacturaType.F_2);
 			}
 

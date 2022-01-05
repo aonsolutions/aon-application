@@ -542,15 +542,12 @@ public class SaleInvoiceController extends InvoiceController {
 			
 			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
 			if(tbaiConfiguration.isActive()) {
-				try {
-					TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
-				} catch (Exception e ) {
-					e.printStackTrace();
-				}
+				TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
 			}
 		
 			// SII
 		} catch (Exception e) {
+			e.printStackTrace();
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
@@ -594,9 +591,31 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 	
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		try {
+			if(isTbaiInvoice()) {
+				checkCertificate();
+				Invoice inv = (Invoice) getTo();
+				String domainName = AonUtil.getDomainName();
+				String login = UserUtils.getInstance().getLoggedUser().getLogin();
+				Integer userId = UserUtils.getInstance().getLoggedUser().getId();
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+				tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
+				TbaiMain.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+			}
+			super.onRemove(event);
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
 	public String getRemoveConfirmMessage() {
 		return this.isTbaiInvoice() 
-			? "La factura está enviada a Ticket Bai. Solo se permitirá borrarla en el periodo de pruebas"
+			? "La factura está enviada a TicketBAI. Al borrarla quedará anulada en TicketBai."
 			: "¿Borrar?";
 				
 	}

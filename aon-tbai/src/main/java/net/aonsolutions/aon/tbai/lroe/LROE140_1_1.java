@@ -1,0 +1,107 @@
+package net.aonsolutions.aon.tbai.lroe;
+
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+
+import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.User;
+
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosConSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleRentaIngresosType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresoConSGCodificadoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresosConSGCodificadoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.RentaIngresosType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_altapeticion_v1_0_2.LROEPF140IngresosConFacturaConSGAltaPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionPeticion;
+import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.responses.LROEResponse;
+
+public class LROE140_1_1 extends LROE140 {
+
+	private static final String CAPITULO = "1";
+	private static final String SUBCAPITULO = "1.1";
+	
+	private static LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice,LROEInfo info, byte[] data) {
+		LROEPF140IngresosConFacturaConSGAltaPeticion proba = new LROEPF140IngresosConFacturaConSGAltaPeticion();
+		proba.setCabecera(buildCabecera(person, info));
+
+		IngresosConSGCodificadoType ingresos = new IngresosConSGCodificadoType();
+		IngresoConSGCodificadoType ingreso = new IngresoConSGCodificadoType();
+		RentaIngresosType renta = new RentaIngresosType();
+		DetalleRentaIngresosType detalleRenta = new DetalleRentaIngresosType();
+		detalleRenta.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
+		detalleRenta.setEpigrafe(invoice.getEpigraph());
+		detalleRenta.setIngresoAComputarIRPFDiferenteBaseImpoIVA(SiNoEnum.N);
+		//detalleRenta.setImporteIngresoIRPF();
+		renta.getDetalleRenta().add(detalleRenta);
+		ingreso.setRenta(renta);
+		ingreso.setTicketBai(data);
+		ingresos.getIngreso().add(ingreso);
+		proba.setIngresos(ingresos);
+		return proba;
+	}
+	
+	public static LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
+		try {
+			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			final LROEPF140IngresosConFacturaConSGAltaPeticion p140 = build(person, invoice, info, tbai); 
+			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAltaPeticion.class );
+			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
+
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			jaxbMarshaller.marshal( p140, bos );
+			byte[] xml = bos.toByteArray();
+			LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
+			byte[] data = toGzip(xml);
+			return send(tbaiConfiguration, buildJSON(person, info), data);
+		} catch (Exception e) {
+			return error(e);
+		}
+	}
+	
+	public static LROEInfo buildInfo(OperacionEnum operacion) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
+	}
+	
+	private static LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
+		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
+		lroe.setCabecera(buildCabecera(person, info));
+		AnulacionesIngresosConSGType anulaciones = new AnulacionesIngresosConSGType();
+		
+		AnulacionFacturaConSGType anulacion = new AnulacionFacturaConSGType();
+		anulacion.setAnulacionTicketBai(data);
+		anulaciones.getIngreso().add(anulacion);
+		lroe.setIngresos(anulaciones);
+		return lroe;
+	}
+	
+	public static LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai)  {
+		try {
+			LROEInfo info = buildInfo(OperacionEnum.AN_0);
+			final LROEPF140IngresosConFacturaConSGAnulacionPeticion p140 = buildBaja(person, invoice, info, tbai); 
+			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAnulacionPeticion.class );
+			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
+
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			jaxbMarshaller.marshal( p140, bos );
+			byte[] xml = bos.toByteArray();
+			LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
+			byte[] data = toGzip(xml);
+			return send(tbaiConfiguration, buildJSON(person, info), data);
+		} catch (Exception e) {
+			return error(e);
+		}
+	}
+}

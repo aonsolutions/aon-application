@@ -5,7 +5,8 @@ import java.io.Serializable;
 public enum DataRequestType implements Serializable{
 
 	SII,
-	TBAI;
+	TBAI,
+	LROE;
 
 	public byte value() {
 		return (byte) this.ordinal();

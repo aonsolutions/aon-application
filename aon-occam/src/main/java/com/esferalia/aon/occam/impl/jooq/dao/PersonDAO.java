@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Date;
 import java.util.LinkedList;
@@ -49,6 +50,7 @@ public class PersonDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(PERSON)
+				.join(DOMAIN).on(DOMAIN.ID.eq(PERSON.DOMAIN))
 				.join(REGISTRY).on(REGISTRY.ID.eq(PERSON.REGISTRY))
 				.where(PERSON_PROPERTIES.getConditions(filter));
 	}
@@ -139,7 +141,8 @@ public class PersonDAO {
 		
 		public static Person build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) registry = REGISTRY;
-			Person person = new Person().copy(RegistryFiller.build(r, registry))
+			Person person = new Person()
+					.copy(RegistryFiller.build(r, registry))
 					.setGender(Gender.safeValueOf(r.getValue(PERSON.GENDER)))
 					.setBirthDate( converDateSql(r.getValue(PERSON.BIRTH_DATE)) )
 					.setMaritalStatus(MaritalStatus.safeValueOf(r.getValue(PERSON.MARITAL_STATUS)))

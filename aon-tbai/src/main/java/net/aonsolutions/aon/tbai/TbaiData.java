@@ -4,6 +4,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.DataRequest;
@@ -29,6 +31,9 @@ public class TbaiData {
 	}
 	
 	public static DataRequest saveRequest(Domain domain, User user, Invoice invoice, byte[] data) {
+		JSONObject json = new JSONObject();
+		json.put("tbai", "emision");
+		json.put("invoice", InvoiceJSON.toJSON(invoice).toString());
 		DataRequest request = new DataRequest()
 				.setDomain(domain.getId())
 				.setDate(new Date())
@@ -52,11 +57,38 @@ public class TbaiData {
 		return request;
 	}
 	
+	public static DataRequest saveRequestAnulacion(Domain domain, User user, Invoice invoice, byte[] data) {
+		JSONObject json = new JSONObject();
+		json.put("tbai", "baja");
+		json.put("invoice", InvoiceJSON.toJSON(invoice).toString());
+		DataRequest request = new DataRequest()
+				.setDomain(domain.getId())
+				.setDate(new Date())
+				.setBlackBox(json.toString())
+				.setType(DataRequestType.TBAI);
+		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
+		request.setMd5(md5);
+		
+		request = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), request);
+		
+		Attach attach = new Attach()
+				.setDomain(domain)
+				.setAttachType(AttachType.DATA)
+				.setType(DataAttachType.REQUEST.value())
+				.setSource(DataAttachSource.TBAI.value())
+				.setSourceId(request.getId())
+				.setMimeType(MimeType.XML)
+				.setData(data);
+		
+		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+		return request;
+	}
+	
 	public static TbaiBlockchain getBlockchain(Domain domain, User user) {
 		DataResponse dr = AON.getLastDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
-//			.and(f.getCodeProperty().eq("ok").or(f.getCodeProperty().eq("pending")))
+			.and(f.getCodeProperty().ne("baja"))
 			);
 		
 		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
@@ -70,9 +102,8 @@ public class TbaiData {
 	public static String getTbaiId(String domainName, Integer domainId, String login, Integer invoiceId) {
 		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.TBAI, f -> 
 		f.getDomainProperty().eq(domainId)
-		.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
-//		.and(f.getCodeProperty().eq("ok").or(f.getCodeProperty().eq("pending")))
-		.and(f.getSourceIdProperty().eq(invoiceId)));
+			.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
+			.and(f.getSourceIdProperty().eq(invoiceId)));
 
 		DataResponseDetail drd = dr != null && dr.getId() != null ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
@@ -84,9 +115,9 @@ public class TbaiData {
 	
 	public static String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {
 		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.TBAI, f -> 
-		f.getDomainProperty().eq(domainId)
-		.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
-		.and(f.getSourceIdProperty().eq(invoiceId)));
+			f.getDomainProperty().eq(domainId)
+			.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
+			.and(f.getSourceIdProperty().eq(invoiceId)));
 
 		DataResponseDetail drd = dr != null && dr.getId() != null ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
@@ -165,6 +196,37 @@ public class TbaiData {
 		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
 		
+		return dr;
+	}
+	
+	public static DataResponse saveResponseAnulacion(Domain domain, User user, Invoice invoice, TbaiResponse response, DataRequest dataRequest) {
+		DataResponse dr = null;
+		if(response.isOk()) {
+			dr = new DataResponse()
+				.setDomain(domain.getId())
+				.setCode("baja")
+				.setResponseDate(new Date())
+				.setSource(DataResponseSource.TBAI)
+				.setSourceId(invoice.getId())
+				.setDataRequest(dataRequest.getId());
+		
+			dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+		
+			if(response.getData() != null) {
+				Attach attach = new Attach()
+					.setDomain(domain)
+					.setAttachType(AttachType.DATA)
+					.setType(response.isOk() 
+						? DataAttachType.RESPONSE_OK.value() 
+						: DataAttachType.RESPONSE_ERROR.value())
+					.setSource(DataAttachSource.TBAI.value())
+					.setSourceId(dr.getId())
+					.setMimeType(MimeType.XML)
+					.setData(response.getData());
+			
+				AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+			}
+		}
 		return dr;
 	}
 	

@@ -28,7 +28,6 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Domain;
@@ -41,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AonCompanyFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO.InvestAssetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.watson.AonError;
@@ -116,16 +117,30 @@ public class CompanyDAO {
 				.setId(r.getValue(ENTERPRISE_ACTIVITY.ID) )
 				.setDescription(r.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
 				.setPrincipal(getBoolean(r, ENTERPRISE_ACTIVITY.PRINCIPAL))
-				.setIae(r.getValue(ENTERPRISE_ACTIVITY.IAE))
-//				.setEpigraph( r.getValue(IAE.EPIGRAPH))
-				.setCnae( r.getValue(ENTERPRISE_ACTIVITY.CNAE2009) )
-//				.setCnaeCode( r.getValue(CNAE2009.CODE) )
-//				.setCnaeDescription( r.getValue(CNAE2009.TITLE) )
+				.setIae(checkField(r, IAE.ID)
+						? IaeFiller.build(r)
+						: new Iae().setId(r.getValue(ENTERPRISE_ACTIVITY.IAE)))
+				.setCnae(getValue(r, ENTERPRISE_ACTIVITY.CNAE2009) )
+				.setCnaeCode(getValue(r, CNAE2009.CODE))
+				.setCnaeDescription(getValue(r, CNAE2009.TITLE) )
 				.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, r.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)));
 		}
 	}
 	
-	
+	public static class IaeFiller extends Filler implements Function<Record, Iae> {
+		@Override
+		public Iae apply(Record r) {
+			return build(r);
+		}
+		
+		public static Iae build(Record r) {
+			return new Iae()
+				.setId(getValue(r, IAE.ID) )
+				.setSection(getValue(r, IAE.SECTION))
+				.setEpigraph(getValue(r, IAE.EPIGRAPH))
+				.setTitle(getValue(r, IAE.TITLE));
+		}
+	}
 	
 	public static class CompanyValidation {
 		
@@ -418,18 +433,7 @@ public class CompanyDAO {
 					)
 				.fetch()
 				.stream()
-				.map( rec -> new EnterpriseActivity()
-						.setId(rec.getValue(ENTERPRISE_ACTIVITY.ID) )
-						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
-						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
-						.setIae( rec.getValue(IAE.ID))
-						.setSection(rec.getValue(IAE.SECTION))
-						.setEpigraph( rec.getValue(IAE.EPIGRAPH))
-						.setCnae( rec.getValue(CNAE2009.ID) )
-						.setCnaeCode( rec.getValue(CNAE2009.CODE) )
-						.setCnaeDescription( rec.getValue(CNAE2009.TITLE) )
-						.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
-					);
+				.map(new EnterpriseActivityFiller());
 	}
 
 	public static EnterpriseActivity getEnterpriseActivity(AONContext ctx,Integer id) {
@@ -444,25 +448,14 @@ public class CompanyDAO {
 				.and(ENTERPRISE_ACTIVITY.ID.equal(id))
 				.fetch()
 				.stream()
-				.map( rec -> new EnterpriseActivity()
-						.setId(rec.getValue(ENTERPRISE_ACTIVITY.ID) )
-						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
-						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
-						.setIae( rec.getValue(IAE.ID))
-						.setSection(rec.getValue(IAE.SECTION))
-						.setEpigraph( rec.getValue(IAE.EPIGRAPH))
-						.setCnae( rec.getValue(CNAE2009.ID) )
-						.setCnaeCode( rec.getValue(CNAE2009.CODE) )
-						.setCnaeDescription( rec.getValue(CNAE2009.TITLE) )
-						.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
-						)
+				.map(new EnterpriseActivityFiller())
 				.findFirst()
 				.orElse(null);
 	}
 
 	public static Stream<InvestAsset> getInvestAssets(AONContext ctx, int domainId, Date atDate) {
 		return ctx.getDslContext()
-				.select(INVEST_ASSET.ID,INVEST_ASSET.DESCRIPTION,INVEST_ASSET.VAT_PERCENT)
+				.select()
 				.from(INVEST_ASSET)
 				.where(INVEST_ASSET.DOMAIN.equal(domainId)
 						.and(atDate == null
@@ -473,12 +466,7 @@ public class CompanyDAO {
 						)
 				.fetch()
 				.stream()
-				.map( rec -> new InvestAsset()
-						.setId(rec.getValue(INVEST_ASSET.ID) )
-						.setDescription(rec.getValue(INVEST_ASSET.DESCRIPTION) )
-						.setPercent(rec.getValue(INVEST_ASSET.VAT_PERCENT))
-					)
-				;
+				.map(new InvestAssetFiller());
 	}
 
 }

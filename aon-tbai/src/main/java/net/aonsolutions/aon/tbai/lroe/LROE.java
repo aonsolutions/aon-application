@@ -1,22 +1,16 @@
 package net.aonsolutions.aon.tbai.lroe;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -25,31 +19,27 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
-import jdk.internal.org.jline.utils.InputStreamReader;
 import net.aonsolutions.aon.tbai.TbaiUri;
-import net.aonsolutions.aon.tbai.responses.TbaiResponse;
+import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 
 public class LROE {
 	
-	public static TbaiResponse send(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml, String sign) {
+	protected static final String LROE = "LROE";
+	
+	public static LROEResponse send(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
+		JSONObject responseJSON = new JSONObject();
 		URL url;
 		try {
-			
 			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
@@ -83,53 +73,32 @@ public class LROE {
 			os.write(xml);
 			os.close();
 
-			System.out.println(https.getResponseCode());
-			System.out.println(https.getResponseMessage());
-			System.out.println(https.getContentType());
-			System.out.println(https.getContentLength());
-			TbaiResponse response = new TbaiResponse();
-			response.setStatus(https.getResponseCode());
-			JSONObject respJSON = new JSONObject();
+			responseJSON.put("responseCode", https.getResponseCode());
+			responseJSON.put("responseMessage", https.getResponseMessage());
+			responseJSON.put("responseContentType", https.getContentType());
+			responseJSON.put("responseContentLength", https.getContentLength());
 			for (String key2 : https.getHeaderFields().keySet()) {
-				System.out.println(key2 + ": " + https.getHeaderField(key2));
 				if(key2 != null)
-					respJSON.put(key2, https.getHeaderField(key2));
+					responseJSON.put(key2, https.getHeaderField(key2));
 			} 
-			response.setJsonInfo(respJSON);
-			InputStream respons = https.getInputStream();
-			byte[] bytes = respons.readAllBytes();
-			byte[] a = decompress(bytes);
-			response.setData(a);
+			
+			byte[] responseData = null;
 			try {
-				Document d = XMLUtils.getDocument(a);
+				InputStream respons = https.getInputStream();
+				byte[] bytes = respons.readAllBytes();
+				responseData = decompress(bytes);
+				Document d = XMLUtils.getDocument(responseData);
 				System.out.println(XMLUtils.documentToString(d));
 			} catch (ParserConfigurationException | SAXException e) {
 				e.printStackTrace();
 			}
-			return response;
-		} 
-		catch (MalformedURLException e) {
+			return new LROEResponse(responseJSON, responseData);
+		} catch (Exception e) {
 			e.printStackTrace();
-			return new TbaiResponse().setDescription(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new TbaiResponse().setDescription(e.getMessage());
-		}catch (KeyStoreException e) {
-			e.printStackTrace();
-			throw new IllegalStateException(e.getMessage());
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			throw new IllegalStateException(e.getMessage());
-		} catch (CertificateException e) {
-			e.printStackTrace();
-			throw new IllegalStateException(e.getMessage());
-		} catch (UnrecoverableKeyException e) {
-			e.printStackTrace();
-			throw new IllegalStateException(e.getMessage());
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
+			responseJSON.put("error", true);
+			responseJSON.put("errorMessage", e.getMessage());
+			return new LROEResponse(responseJSON);
 		}
-		return null;
 	}
 	
 	
@@ -179,4 +148,24 @@ public class LROE {
 	        return null;
 	          
 	    }
+	
+	public static byte[] toGzip(byte[] data) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length);
+		GZIPOutputStream gzipStream = new GZIPOutputStream(baos);
+		try {
+			gzipStream.write(data);
+		} finally {
+			baos.close();
+			gzipStream.close();
+		}
+		return baos.toByteArray();
+	}
+	
+	protected static LROEResponse error(Exception e) {
+		e.printStackTrace();
+		JSONObject responseJSON = new JSONObject();
+		responseJSON.put("error", true);
+		responseJSON.put("errorMessage", e.getMessage());
+		return new LROEResponse(responseJSON);
+	}
 }

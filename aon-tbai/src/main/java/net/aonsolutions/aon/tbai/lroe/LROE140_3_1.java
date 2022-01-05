@@ -2,15 +2,10 @@ package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.InvestAssetRegime;
 import com.esferalia.aon.occam.api.model.InvestAssetType;
 import com.esferalia.aon.occam.api.model.Person;
@@ -25,36 +20,19 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Tipo
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.TituloEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienAltaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienesAltaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DatosTipoBienType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFPersonaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_3_1_bienes_alta_altamodifpeticion_v1_0_1.LROEPF140BienesAltaAltaModifPeticion;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
-import net.aonsolutions.aon.tbai.responses.TbaiResponse;
-import net.aonsolutions.aon.tbai.utils.XMLUtils;
+import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
-public class LROE140_3 {
-
-	private final static String MODEL_140 = "140";
-	private final static String TEST_NIF_140 = "99980200M";
-	private final static String TEST_NAME_140 = "8FVCxNbMNm"; 
-	private final static String TEST_SURNAME1_140 = "Vux9anjAES"; 
-	private final static String TEST_SURNAME2_140 = "EMPTmw3fmi";
+public class LROE140_3_1 extends LROE140 {
 	
-	private static LROEPF140BienesAltaAltaModifPeticion build(Person person, Invoice invoice, byte[] data) {
+	private static final String CAPITULO = "3";
+	private static final String SUBCAPITULO = "3.1";
+	
+	private static LROEPF140BienesAltaAltaModifPeticion build(Person person, Invoice invoice, LROEInfo info) {
 		LROEPF140BienesAltaAltaModifPeticion lroe =  new LROEPF140BienesAltaAltaModifPeticion();
-		Cabecera140Type cabecera = new Cabecera140Type();
-		cabecera.setModelo(MODEL_140);
-		NIFPersonaType nif = new NIFPersonaType();
-		nif.setNIF(person.getDocument());
-		nif.setApellidosNombreRazonSocial(person.getName());
-		cabecera.setObligadoTributario(nif);
-		cabecera.setEjercicio(2021);
-		cabecera.setCapitulo("3");
-		cabecera.setSubcapitulo("3.1");
-		cabecera.setOperacion(OperacionEnum.A_00);
-		cabecera.setVersion("1.0");
-		lroe.setCabecera(cabecera);
+		lroe.setCabecera(buildCabecera(person, info));
 		lroe.setBienesAlta(buildBienes(invoice));
 		return lroe;
 	}
@@ -126,30 +104,10 @@ public class LROE140_3 {
 		return null;
 	}
 	
-	private static JSONObject buildJSON(Person person) {
-		JSONObject json = new JSONObject();
-		json.put(IJsonNames.CON, "LROE");
-		json.put(IJsonNames.APA, "3.1");
-		JSONObject json2 = new JSONObject();
-		json2.put(IJsonNames.NIF, person.getDocument()); // TEST_NIF_140);
-		json2.put(IJsonNames.NRS, person.getFirstName()); // TEST_NAME_140);
-		json2.put(IJsonNames.AP1, person.getFirstSurname()); // TEST_SURNAME1_140);
-		json2.put(IJsonNames.AP2, person.getSecondSurname()); // TEST_SURNAME2_140);
-		json.put(IJsonNames.INTE, json2);
-
-		JSONObject drs = new JSONObject();
-		drs.put(IJsonNames.MODE, MODEL_140);
-		drs.put(IJsonNames.EJER, AonDateUtils.getYear(new Date()));
-		json.put(IJsonNames.DRS, drs);
-		return json;
-	}
-	
-	public static TbaiResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] xml) throws StatusCodeException {
+	public static LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) throws StatusCodeException {
 		try {
-			Document doc = XMLUtils.getDocument(xml);
-			String sign = doc.getElementsByTagName("ds:SignatureValue").item(0).getTextContent();
-			
-			final LROEPF140BienesAltaAltaModifPeticion p140 = build(person, invoice, xml); 
+			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00);
+			final LROEPF140BienesAltaAltaModifPeticion p140 = build(person, invoice, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140BienesAltaAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
 
@@ -157,12 +115,11 @@ public class LROE140_3 {
 			
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
-			byte[] data = bos.toByteArray();
-			return LROE.send(tbaiConfiguration, buildJSON(person), data, sign);
+			byte[] data = toGzip(bos.toByteArray());
+			return send(tbaiConfiguration, buildJSON(person, info), data);
 		} catch (Exception e) {
-			e.printStackTrace();
+			return error(e);
 		}
-		return null;
 	}
 	
 	public static void modificacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
