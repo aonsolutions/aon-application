@@ -993,16 +993,20 @@ public class JooqContrata {
 			String tc2 = employeeContractInfo.getContractInfo().getContractType();
 			DATOSGENERALESCONTRATOTYPE datos = new DATOSGENERALESCONTRATOTYPE();
 			datos.setFECHAINICIO(getFormatedDate(employeeContractInfo.getContractInfo().getStartDate()));
-			if( employeeContractInfo.getContractInfo().getEndDate()==null 
-					&& (tc2.equals("402") || tc2.equals("502") || tc2.equals("430") 
-					|| tc2.equals("530") || tc2.equals("420") || tc2.equals("520")  
-					|| tc2.equals("421") || tc2.equals("441") || tc2.equals("541") 
-					|| tc2.equals("452") || tc2.equals("552") || tc2.equals("970") ) ){
-				throw new IllegalArgumentException("La fecha final es necesaria para este tipo de contrato");
-	//			AonUtil.addErrorMessage("La fecha final es necesaria para este tipo de contrato.");
-			} else {
+			if(null != employeeContractInfo.getContractInfo().getEndDate())
 				datos.setFECHATERMINO(getFormatedDate(employeeContractInfo.getContractInfo().getEndDate()));
-			}
+			
+			// TODO: mirar esto el dia de mañana para ver si es necesario
+//			if( employeeContractInfo.getContractInfo().getEndDate()==null 
+//					&& (tc2.equals("402") || tc2.equals("502") || tc2.equals("430") 
+//					|| tc2.equals("530") || tc2.equals("420") || tc2.equals("520")  
+//					|| tc2.equals("421") || tc2.equals("441") || tc2.equals("541") 
+//					|| tc2.equals("452") || tc2.equals("552") || tc2.equals("970") ) ){
+//				throw new IllegalArgumentException("La fecha final es necesaria para este tipo de contrato");
+//	//			AonUtil.addErrorMessage("La fecha final es necesaria para este tipo de contrato.");
+//			} else {
+//				datos.setFECHATERMINO(getFormatedDate(employeeContractInfo.getContractInfo().getEndDate()));
+//			}
 	
 	//		if(employeeContractInfo.getContractInfo().getEndDate()!=null){
 	//			Integer durationInMonths = getMonthsBetweenDates(employeeContractInfo.getContractInfo().getStartDate(), employeeContractInfo.getContractInfo().getEndDate());
