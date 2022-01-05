@@ -7,6 +7,8 @@ import java.util.Date;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -111,6 +113,40 @@ public class TbaiData {
 			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 	
 		return drd.getDataValue();
+	}
+	
+	public static byte[] getTbaiRequestFile(Domain domain, String login, Integer invoiceId) {
+		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.TBAI, f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
+			.and(f.getSourceIdProperty().eq(invoiceId)));
+		Integer aux = dr.getDataRequest();
+		if(aux == null) {
+			DataRequest drq = AON.getDataRequestStream(domain.getName(), domain.getId(), login, f -> 
+					f.getTypeProperty().eq(DataRequestType.TBAI.value()))
+			.filter(r -> {
+				JSONObject json = new  JSONObject(r.getBlackBox());
+				Integer id = 0;
+				if(json.opt("invoice") != null) {
+					id = JsonUtils.getInteger(json.getJSONObject("invoice"), IJsonNames.ID);	
+				} else {
+					id = JsonUtils.getInteger(json, IJsonNames.ID);
+				}
+				return invoiceId.equals(id);
+			}).findFirst().orElse(new DataRequest());
+			aux = drq.getId();
+			dr.setDataRequest(aux);
+			AON.updateDataResponse(domain.getName(), domain.getId(), login, dr, f -> f.getIdProperty().eq(dr.getId()));
+		}
+		Integer dataRequest = aux;
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value()))
+				.and(f.getSourceBatchProperty().eq(dataRequest))
+				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
+			, AttachType.DATA, true);
+
+		return attach.getData();
 	}
 	
 	public static String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {

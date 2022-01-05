@@ -116,16 +116,20 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.TbaiData;
+import net.aonsolutions.aon.tbai.lroe.LROEInformation;
 
 public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
 
@@ -160,6 +164,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean showRemarksWindow;
 	private boolean showAuditInfoWindow;
 	private boolean showFiscalInformationWindow;
+	private boolean showLroeWindow;
 	private boolean showAmortizationWindow;
 	private boolean showRectificationWindow;
 	private String rectificationSeries;
@@ -677,6 +682,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 	public void setShowFiscalInformationWindow(boolean showFiscalInformationWindow) {
 		this.showFiscalInformationWindow = showFiscalInformationWindow;
+	}
+	
+	public boolean isShowLroeWindow() {
+		return showLroeWindow;
+	}
+
+	public void setShowLroeWindow(boolean showLroeWindow) {
+		this.showLroeWindow = showLroeWindow;
 	}
 	
 	public boolean isShowAmortizationWindow() {
@@ -2024,5 +2037,13 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
 		this.tbaiConfiguration = tbaiConfiguration;
 	}
-
+	
+	public LROEInformation getLroe() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		User user = new User().setLogin(login);
+		return LroeData.get(domain, user, getInvoice().getId());		
+	}
 }

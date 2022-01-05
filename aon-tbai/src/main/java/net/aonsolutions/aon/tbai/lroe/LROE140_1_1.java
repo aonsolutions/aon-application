@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
@@ -35,6 +36,8 @@ public class LROE140_1_1 extends LROE140 {
 
 		IngresosConSGCodificadoType ingresos = new IngresosConSGCodificadoType();
 		IngresoConSGCodificadoType ingreso = new IngresoConSGCodificadoType();
+		ingreso.setTicketBai(data);
+		
 		RentaIngresosType renta = new RentaIngresosType();
 		DetalleRentaIngresosType detalleRenta = new DetalleRentaIngresosType();
 		detalleRenta.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
@@ -43,7 +46,7 @@ public class LROE140_1_1 extends LROE140 {
 		//detalleRenta.setImporteIngresoIRPF();
 		renta.getDetalleRenta().add(detalleRenta);
 		ingreso.setRenta(renta);
-		ingreso.setTicketBai(data);
+
 		ingresos.getIngreso().add(ingreso);
 		proba.setIngresos(ingresos);
 		return proba;
@@ -61,9 +64,9 @@ public class LROE140_1_1 extends LROE140 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			byte[] xml = bos.toByteArray();
-			LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
+			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data);
+			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -97,9 +100,9 @@ public class LROE140_1_1 extends LROE140 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			byte[] xml = bos.toByteArray();
-			LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
+			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data);
+			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

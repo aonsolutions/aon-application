@@ -520,6 +520,39 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 
 	@Transient
+	public synchronized void issueInvoiceLroe() {
+		try {
+			checkCertificate();		
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
+			
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+
+			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+			if(invoice.getNumber() < 1) {
+				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+				invoice.setNumber(number);
+				invoice.setReferenceCode(null);
+				invoice.setIssueDate(new Date());
+				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+			}
+
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+			
+			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
+			if(tbaiConfiguration.isActive()) {
+				TbaiMain.createEmisionLROE(company, invoice, tbaiConfiguration);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
+	@Transient
 	public synchronized void issueInvoice() {
 		try {
 			checkCertificate();		
@@ -531,10 +564,12 @@ public class SaleInvoiceController extends InvoiceController {
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
-			Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
-			invoice.setNumber(number);
-			invoice.setReferenceCode(null);
-			invoice.setIssueDate(new Date());
+			if(invoice.getNumber() < 1) {
+				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+				invoice.setNumber(number);
+				invoice.setReferenceCode(null);
+				invoice.setIssueDate(new Date());
+			}
 			
 			AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);

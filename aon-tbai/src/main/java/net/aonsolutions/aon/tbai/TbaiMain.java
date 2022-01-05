@@ -58,6 +58,7 @@ import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.lroe.LROE140_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROE240_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROEInfo;
+import net.aonsolutions.aon.tbai.lroe.LROEInformation;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
@@ -68,6 +69,32 @@ public class TbaiMain {
 
 	private TbaiMain() {
 
+	}
+
+	public static void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws TbaiException {
+		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
+		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {
+			byte[] xml = TbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
+			LROEResponse lroeResponse = null;
+			LROEInfo info = null;
+			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
+				info = LROE240_1_1.buildInfo(OperacionEnum.A_00);
+				lroeResponse = LROE240_1_1.alta(company, tbaiConfiguration, invoice, xml);
+			} else {
+				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+				EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+						company.getDomain().getId(), "", invoice.getActivity());
+				if(ea == null || ea.getId() == null) {
+					ea = AON.getEnterpriseActivities(company.getDomain().getName(),
+						company.getDomain().getId(), "").filter(f ->f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+				}
+				invoice.setEpigraph(ea.getIae().getFullEpigraph());
+				info = LROE140_1_1.buildInfo(OperacionEnum.A_00);
+				lroeResponse = LROE140_1_1.alta(tbaiConfiguration, person, invoice, xml);
+			}
+			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
+			HandleLroeResponse(lroeResponse);
+		}
 	}
 
 	public static void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
@@ -127,7 +154,7 @@ public class TbaiMain {
 				info = LROE140_1_1.buildInfo(OperacionEnum.A_00);
 				lroeResponse = LROE140_1_1.alta(tbaiConfiguration, person, invoice, xml);
 			}
-			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info, request);
+			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
 			HandleLroeResponse(lroeResponse);
 		}
 	}
@@ -164,7 +191,7 @@ public class TbaiMain {
 				info = LROE140_1_1.buildInfo(OperacionEnum.AN_0);
 				lroeResponse = LROE140_1_1.anulacion(tbaiConfiguration, person, invoice, xml);
 			}
-			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info, request);
+			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
 			HandleLroeResponse(lroeResponse);
 		}
 	}

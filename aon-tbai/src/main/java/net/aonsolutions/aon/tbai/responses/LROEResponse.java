@@ -5,9 +5,8 @@ import java.util.Date;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
-import net.aonsolutions.aon.tbai.lroe.LROEInfo;
 
 public class LROEResponse {
 	
@@ -21,6 +20,7 @@ public class LROEResponse {
 	private String responseStatus;
 	private byte[] data;
 	private JSONObject json;
+	private DataRequest dataRequest;
 	
 	public LROEResponse(JSONObject json) {
 		this.json = json;
@@ -79,6 +79,15 @@ public class LROEResponse {
 	
 	public LROEResponse setJson(JSONObject json) {
 		this.json = json;
+		return this;
+	}
+	
+	public DataRequest getDataRequest() {
+		return dataRequest;
+	}
+	
+	public LROEResponse setDataRequest(DataRequest dataRequest) {
+		this.dataRequest = dataRequest;
 		return this;
 	}
 	

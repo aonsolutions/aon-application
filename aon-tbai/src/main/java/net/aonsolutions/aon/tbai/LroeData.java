@@ -21,14 +21,61 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.lroe.LROEInfo;
+import net.aonsolutions.aon.tbai.lroe.LROEInformation;
+import net.aonsolutions.aon.tbai.lroe.LROERequest;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 public class LroeData {
 
 	private LroeData() {
 	
+	}
+	
+	public static LROEInformation get(Domain domain, User user, Integer invoice) {
+		LROEInformation lroe = new LROEInformation();
+		AON.getDataResponseStream(domain.getName(), domain.getId(), user.getLogin(),
+			DataResponseSource.LROE, f -> f.getSourceProperty().eq(DataResponseSource.LROE.value())
+			.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
+				LROERequest request = new LROERequest();
+				request.setDataResponse(r);
+				if(r.getDataRequest() != null) {
+					request.setDataRequest(AON.getDataRequest(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(r.getDataRequest())));	
+				}
+				DataResponseDetail info = AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq("info"))).orElse(new DataResponseDetail());
+				if(!AonStringUtils.isBlank(info.getDataValue())) {
+					JSONObject infoJson = new JSONObject(info.getDataValue());
+					request.setInfo(new LROEInfo(infoJson));
+				}
+				
+				DataResponseDetail json = AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq("json"))).orElse(new DataResponseDetail());
+				if(!AonStringUtils.isBlank(json.getDataValue())) {
+					JSONObject jsonJson = new JSONObject(json.getDataValue());
+					request.setResponse(new LROEResponse(jsonJson));
+				}
+				if("1".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter1().addRequest(request);
+				} else if("2".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter2().addRequest(request);
+				} else if("3".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter3().addRequest(request);
+				} else if("4".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter4().addRequest(request);
+				} else if("5".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter5().addRequest(request);
+				} else if("6".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter6().addRequest(request);
+				} else if("7".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter7().addRequest(request);
+				} else if("8".equals(request.getInfo().getCapitulo())) {
+					lroe.getChapter8().addRequest(request);
+				}
+			});
+		return lroe;
 	}
 	
 	public static DataRequest saveRequest(Domain domain, User user, Invoice invoice, LROEInfo info, byte[] data) {
@@ -58,14 +105,14 @@ public class LroeData {
 		return request;
 	}
 		
-	public static DataResponse saveResponse(Domain domain, User user, Invoice invoice, LROEResponse response, LROEInfo info, DataRequest dataRequest) {
+	public static DataResponse saveResponse(Domain domain, User user, Invoice invoice, LROEResponse response, LROEInfo info) {
 		DataResponse dr = new DataResponse()
 				.setDomain(domain.getId())
 				.setCode(response.getResponseStatus())
 				.setResponseDate(new Date())
 				.setSource(DataResponseSource.LROE)
 				.setSourceId(invoice.getId())
-				.setDataRequest(dataRequest.getId());
+				.setDataRequest(response.getDataRequest().getId());
 		
 		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
 		
