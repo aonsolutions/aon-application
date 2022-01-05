@@ -86,6 +86,11 @@ class Page10 extends PageAbs {
 			type.setValue(getModel().getProrratas().get(idx).getType());
 			type.setMaxLength(1);
 			type.setVisibleLength(2);
+			type.addValueChangeHandler(event -> {
+				getModel().getProrratas().get(idx).setType(type.getValue());
+				markAsDirty();
+			});
+			
 			AonDoubleBox operationsAmount = new AonDoubleBox();
 			operationsAmount.setValue(getModel().getProrratas().get(idx).getAmount());
 			operationsAmount.addValueChangeHandler(event -> {
