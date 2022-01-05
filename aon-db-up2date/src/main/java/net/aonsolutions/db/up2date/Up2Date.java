@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractCleanUpdate;
 import net.aonsolutions.db.up2date.data.DataRequestUpdate;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2022Insert;
 import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
 import net.aonsolutions.db.up2date.payroll.IrpfM190Update;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
@@ -80,7 +81,7 @@ public class Up2Date {
     		//FELLOWSBASES2019UPDATE,
     		//TRAINNINGBASES2019UPDATE,
     		//FELLOWSBASES2019FIX,
-    		//TRAINNINGBASES2019FIX
+    		//TRAINNINGBASES2019FIXE
     		//ALTER_SALARY_CCC
     		//CGC2019FIX
     		//ALTER_FS_MODEL_200_2018,
@@ -213,13 +214,14 @@ public class Up2Date {
     		//DataRequestUpdate.DATA_REQUEST_UPDATE,
     		//WorkplaceUpdate.WORKPLACE_UPDATE,
     		//IrpfM190Update.IRPFM190UPDATE,
-    		ContractCleanUpdate.CONTRACTCLEANUPDATE,
-    		TimeControlUpdate.TIMECONTROL_UPDATE,
-    		Holidays2022Insert.HOLIDAYS2022INSERT,
-    		Bases2022Update.BASES2022UPDATE,
-    		AgriculturalBases2022Update.AGRICULTURALBASES2022UPDATE,
-    		AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
-    		IPREM2022Update.IPREM2022UPDATE
+    		//ContractCleanUpdate.CONTRACTCLEANUPDATE,
+    		//TimeControlUpdate.TIMECONTROL_UPDATE,
+    		//Holidays2022Insert.HOLIDAYS2022INSERT,
+    		//Bases2022Update.BASES2022UPDATE,
+    		//AgriculturalBases2022Update.AGRICULTURALBASES2022UPDATE,
+    		//AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
+    		//IPREM2022Update.IPREM2022UPDATE
+    		IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT
     		
     };
     

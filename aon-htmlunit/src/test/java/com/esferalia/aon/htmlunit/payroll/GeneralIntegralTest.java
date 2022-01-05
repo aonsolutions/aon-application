@@ -844,7 +844,44 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("I.R.P.F ARABA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
 		assertValue("irpfPercentTexTBox", "2,00 %");
+		
+		calculate(Calendar.JANUARY, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
 
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14790.01/12)");
+		wait4Value("db-amount-label-1", 14790.01/12);
+		assertValue("irpfPercentTexTBox", "6,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(15530.01/12)");
+		wait4Value("db-amount-label-1", 15530.01/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(16460.01/12)");
+		wait4Value("db-amount-label-1", 16460.01/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(17700.01/12)");
+		wait4Value("db-amount-label-1", 17700.01/12);
+		assertValue("irpfPercentTexTBox", "9,00 %");
+		
+		//....
+		
+		setValue("db-amount-label-1", "BRUTO(43840.01/12)");
+		wait4Value("db-amount-label-1", 43840.01/12);
+		assertValue("irpfPercentTexTBox", "20,00 %");		
+
+		//...
+		
+		
+		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+		wait4Value("db-amount-label-1", 213160.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
 	@Test
@@ -858,6 +895,26 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
 		assertValue("irpfPercentTexTBox", "39,00 %");
 
+		calculate(Calendar.JANUARY, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(63080.01/12)");
+		wait4Value("db-amount-label-1", 63080.01/12);
+		assertValue("irpfPercentTexTBox", "25,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+		wait4Value("db-amount-label-1", 213160.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
 	@Test
@@ -871,6 +928,26 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY);
 		assertValue("irpfPercentTexTBox", "0,00 %");
 
+		calculate(Calendar.JANUARY, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(72700.01/12)");
+		wait4Value("db-amount-label-1", 72700.01/12);
+		assertValue("irpfPercentTexTBox", "27,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+		wait4Value("db-amount-label-1", 213160.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
 
