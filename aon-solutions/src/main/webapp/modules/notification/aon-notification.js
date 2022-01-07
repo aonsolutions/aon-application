@@ -17,6 +17,7 @@ import { AonToast } from "../../components/aon-toast.js";
 import { AonMessenger } from "../messenger/aon-messenger.js";
 import { App } from "../../models/enums.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import * as LS from "../../services/localStorageService.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -178,7 +179,7 @@ export class AonNotification extends AonElement {
   }
 
   async goNotification(data) {
-    const {id, source, source_id} = data;
+    const {id, source, source_id, domain} = data;
     this.markReadNotification(id);
     if(source && source_id){
       let aonComponent = null;
@@ -194,11 +195,21 @@ export class AonNotification extends AonElement {
       }
 
       if(aonComponent){
+        this.setDomainStorage(domain);
         this.rootPanel(aonComponent);
       }
     }
   }
 
+
+  setDomainStorage(domain){
+    // if(domain && domain.id){
+    //   LS.setDomainId(domain.id);
+    //   LS.setDomainName(domain.name);
+    // }
+  }
+
+  
   /**
    *
    * @param {title, id} data

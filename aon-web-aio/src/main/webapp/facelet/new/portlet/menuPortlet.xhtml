@@ -59,49 +59,86 @@
 			</aon:div>
 		</aon:if>
 
-		<aon:if test="#{aonRole.accountingOperator}">
+		<aon:if test="#{(aonRole.accountingOperator || dur.accounting) and !domainSwitcher.domainManagementAvailable}">
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-account-parent">
 				<aon:commandLink 
 					id="new_menu_accounting"
+					immediate="true"
+					action="portal_accounting"
 					styleClass="aon-button-account" 
 					value="#{bundle.aon_module_accounting}"
-					onclick="javascript:showMenuPortlet('accounting', this); return;"
 					/>
 			</aon:div>
 		</aon:if>
 
-		<aon:if test="#{aonRole.fiscal}">
+		<aon:if test="#{(aonRole.fiscal or dur.fiscal) and !domainSwitcher.domainManagementAvailable}">
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-fiscal-parent">
 				<aon:commandLink 
-				id="new_menu_fiscal"
-				styleClass="aon-button-fiscal" 
-				value="#{bundle.aon_module_fiscal}"
-				onclick="javascript:showMenuPortlet('fiscal', this); return;"
+					id="new_menu_fiscal"
+					immediate="true"
+					action="portal_fiscal"
+					styleClass="aon-button-fiscal" 
+					value="#{bundle.aon_module_fiscal}"
 				/>
 			</aon:div>
 		</aon:if>
 
-		<aon:if test="#{aonRole.payroll}">
+		<aon:if test="#{(aonRole.payroll or dur.payroll) and !domainSwitcher.domainManagementAvailable}">
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-payroll-parent">
 				<aon:commandLink 
-				id="new_menu_payroll"
-				styleClass="aon-button-payroll"
-				value="#{bundle.aon_module_payroll}"
-				onclick="javascript:showMenuPortlet('payroll', this); return;"
+					id="new_menu_payroll"
+					immediate="true"
+					action="portal_payroll"
+					value="#{bundle.aon_module_payroll}"
+					styleClass="aon-button-payroll"
 				/>
 			</aon:div>
 		</aon:if>
 
-		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
-			<aon:commandLink 
-			id="new_menu_document" 
-			immediate="true"
-			action="portal_documental"
-			value="#{bundle.aon_module_document}"
-			styleClass="aon-button-document" />
-		</aon:div>
-
-		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
+		<aon:if test="#{aonRole.document or dur.documental}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
+				<aon:commandLink 
+					id="new_menu_document" 
+					immediate="true"
+					action="portal_documental"
+					value="#{bundle.aon_module_document}"
+					styleClass="aon-button-document" />
+			</aon:div>
+		</aon:if>
+		<aon:if test="#{dur.invoice and !domainSwitcher.domainManagementAvailable}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
+				<aon:commandLink 
+					id="new_menu_invoice" 
+					immediate="true"
+					action="portal_invoice"
+					value="#{bundle.aon_invoices}"
+					styleClass="aon-button-invoice" />
+			</aon:div>
+		</aon:if>
+		
+		<aon:if test="#{dur.timecontrol and !domainSwitcher.domainManagementAvailable}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
+				<aon:commandLink 
+				id="new_menu_timecontrol" 
+				immediate="true"
+				action="portal_timecontrol"
+				value="#{bundle.aon_timecontrol}"
+				styleClass="aon-button-timecontrol" />
+			</aon:div>
+		</aon:if>
+		
+		<aon:if test="#{dur.messenger and dur.beta and !domainSwitcher.domainManagementAvailable}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
+				<aon:commandLink 
+				id="new_menu_messenger" 
+				immediate="true"
+				action="portal_messenger"
+				value="#{bundle.aon_messenger}"
+				styleClass="aon-button-messenger" />
+			</aon:div>
+		</aon:if>
+		
+<!-- 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
 				<aon:commandLink 
 					id="new_menu_configuration"
@@ -110,8 +147,16 @@
 					onclick="javascript:showMenuPortlet('configuration', this); return;"
 					/>
 			</aon:div>
-		</aon:if>
-
+		</aon:if> -->
+		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
+			<aon:commandLink 
+				id="new_menu_configuration"
+				immediate="true"
+				action="portal_configuration"
+				styleClass="aon-button-tools" 
+				value="#{bundle.aon_module_configuration}"
+			/>
+		</aon:div>
 		<aon:if test="#{desktop.showGraphicsPortlet}">
 			<!--aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
 				<aon:commandLink 

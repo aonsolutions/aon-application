@@ -133,8 +133,10 @@
     	border-bottom: 1px solid #ddd;
 	}	
 	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+		cursor: pointer;
 		color : #4b4b4b;
 		background: none;
+		padding: 4px 8px;
 		border-top: none;
 		border-left: none;
 		border-right: none;
@@ -142,7 +144,9 @@
 	}
 	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
 		color : #000;
+		cursor: default;	
 		background: none;
+		padding: 4px 8px;
 		border-top: none;
 		border-left: none;
 		border-right: none;
@@ -558,6 +562,33 @@
 		background: url(#{aonResource.resolve['/images/aon-notes.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
+	
+	.aon-button-invoice {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/aon-invoice.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
+	
+	.aon-button-timecontrol {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/aon-time.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
+	
+	.aon-button-messenger {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/aon-messenger.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
 
 	.aon-button {
 		padding-top:4px;
@@ -573,7 +604,10 @@
 	.aon-button-fiscal:hover,
 	.aon-button-payroll:hover,
 	.aon-button-account:hover,
-	.aon-button-document:hover
+	.aon-button-document:hover,
+	.aon-button-invoice:hover,
+	.aon-button-timecontrol:hover,
+	.aon-button-messenger:hover
 	{
 		padding-right:44px;
 		background-size:40px;
@@ -711,6 +745,12 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-info.svg']}) ;
 	}
 	
+	.aon-icon-download {
+		background-size: 17px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-download.svg']}) ;
+	}
+	
+	
 	.aon-icon-sepe {
 		padding: 24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-sepe.png']});
@@ -721,7 +761,7 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-tgss.png']});
 	}
 	
-	.aon-icon-mail-save{
+	.aon-icon-mail-save {
 		padding: 24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-download.svg']}) ;
 	}
@@ -1020,7 +1060,7 @@
     .aon-menu-popup * ,
     .aon-menu-popup a {
     	color: #FFF;
-    	font-weight: bold;
+    	font-size:13px;
     	white-space: nowrap;
     	
 	}   
@@ -1070,6 +1110,7 @@
 	}
 
     .aon-menu-popup .aon-direct-access-list-element *:hover {
+    	/*font-weight: bold;*/
     	color: #2152A5 !important;
     	background-color: #FFF !important;
 		border-top-right-radius: 50px 50px;
@@ -1117,7 +1158,10 @@
 	div[id$='aonContentPopup'] .aon-button-fiscal,
 	div[id$='aonContentPopup'] .aon-button-account,
 	div[id$='aonContentPopup'] .aon-button-payroll,
-	div[id$='aonContentPopup'] .aon-button-document
+	div[id$='aonContentPopup'] .aon-button-document,
+	div[id$='aonContentPopup'] .aon-button-invoice,
+	div[id$='aonContentPopup'] .aon-button-timecontrol,
+	div[id$='aonContentPopup'] .aon-button-messenger
 	{
 		padding-top: 2px;
 		padding-left: 34px;
@@ -1132,7 +1176,10 @@
 	div[id$='aonContentPopup'] .aon-button-fiscal:hover,
 	div[id$='aonContentPopup'] .aon-button-account:hover,
 	div[id$='aonContentPopup'] .aon-button-payroll:hover,
-	div[id$='aonContentPopup'] .aon-button-document:hover
+	div[id$='aonContentPopup'] .aon-button-document:hover,
+	div[id$='aonContentPopup'] .aon-button-invoice:hover,
+	div[id$='aonContentPopup'] .aon-button-timecontrol:hover,
+	div[id$='aonContentPopup'] .aon-button-messenger:hover
 	{
 		padding-left:40px;
 		background-size: 36px;
@@ -1233,8 +1280,8 @@
 		
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
-		<aon:panelGrid columns="3" width="100%" 
-			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name  aon-width-all, aon-header-options aon-width-300 aon-pl-10" style="height:60px;" >
+		<aon:panelGrid columns="4" width="100%" 
+			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name,aon-header-name  aon-width-all, aon-header-options aon-width-300 aon-pl-10" style="height:60px;" >
 
 			<aon:panelGroup>
 
@@ -1250,6 +1297,25 @@
 					</aon:if>
 
 				</aon:div>
+			</aon:panelGroup>
+			<aon:panelGroup>
+		<aon:commandLink 
+			id="new_aon"
+			action="index" 
+			immediate="true"
+			style="color: #002469;"
+			styleClass="aon-top-menu-item"
+			actionListener="#{userUtils.disableNewAONTheme}" >
+			<aon:outputText
+				value="toggle_on"  
+				styleClass="material-icons" 
+				style="position:absolute; font-size:38px; transform: translateY(-10px); " 
+				/>
+			<aon:outputText
+			value="Nuevo Diseño" 
+			style="padding-left: 38px; white-space: nowrap;" 
+			/>
+		</aon:commandLink>
 			</aon:panelGroup>
 			
 			<aon:panelGroup style="text-align:left; display:flex" >

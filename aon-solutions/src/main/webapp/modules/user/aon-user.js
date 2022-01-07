@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getUser, saveUser, deleteUser,
-	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail, clearDurum, updateDurDefinedUsers} from  '../../services/service.js';
+	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail, clearDurum, updateDurDefinedUsers, getUserRoles} from  '../../services/service.js';
 import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
 import {Role, ToolbarType} from '../../models/enums.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -411,8 +411,13 @@ export class AonUser extends AonElement {
 	}
 
 	back() {
-		this.getApplication().setContent( this.isMobile() 
-			? new AonMobileUserList() : new AonUserList());
+		if(this.isMobile()) {
+			this.getApplication().setContent(new AonMobileUserList());
+		} else {
+			let aonUserList = new AonUserList();
+			aonUserList.setBack(true);
+			this.getApplication().setContent(aonUserList);
+		}
 	}
 
 	next() {
@@ -426,8 +431,11 @@ export class AonUser extends AonElement {
 	}
 
 	changeUser(user) {
-		this.setUser(user);
-		this.init();
+		getUserRoles({user: user.id}).then(roles => {
+			user.roles = roles;
+			this.setUser(user);
+			this.init();
+		});
 	}
 
 	sendEmail() {

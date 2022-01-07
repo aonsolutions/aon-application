@@ -34,12 +34,15 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
@@ -437,6 +440,9 @@ public abstract class EmployeeDraft extends Composite {
 	AonToolbar toolbar;
 	
 	@UiField
+	ScrollPanel scrolledPanel;
+	
+	@UiField
 	HTMLPanel messageContainer;
 	
 	@UiField (provided = true)
@@ -483,6 +489,8 @@ public abstract class EmployeeDraft extends Composite {
 		employee.hideClearEmployee();
 		
 		onSaved = this::onSavedNoop;
+		
+		scrolledPanel.setHeight((Window.getClientHeight() - 200) + "px");
 				
 	}
 		
@@ -677,8 +685,24 @@ public abstract class EmployeeDraft extends Composite {
 			}, f -> {});
 		}
 		
+		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		
 		setSelectedValueLB(employee.journeyType, (null == contractData.getJourneyType() || contractData.getJourneyType() == 0) ? "false" : "true");
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
+		
+		if(null != contractData.getContractJourneyDuration() && null != contractData.getContractJourneyDuration().getContractJourneyDuration() && 
+				!contractData.getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
+			employee.journeyDuration.clear();
+			employee.journeyDuration.add(new Label(contractData.getContractJourneyDuration().getJourneyText()));
+		}
+			
+		Double partialityCoef = contractData.getPartialityCoef();
+		if( (null == partialityCoef || partialityCoef == 0.00)) {
+			partialityCoef = calculatePartialityCoef();
+			contractData.setPartialityCoef(partialityCoef);
+		}
+		employee.partialityCoef.setValue(contractData.getPartialityCoef());
+		
 	}
 
 	private void fillContractTable(ContractInfo contractData) {
@@ -733,6 +757,7 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		setSelectedValueLB(employee.journeyType, null != contractData.getJourneyType() && contractData.getJourneyType() == (byte)1 ? "true" : "false");
 		
 		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
 			Double partialityCoef = contractData.getPartialityCoef();

@@ -19,12 +19,13 @@ import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
-import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
@@ -120,7 +121,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API COMPANY SERVLET - POST METHOD");
+		LOGGER.info("AON API COMPANY SERVLET - PUT METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
@@ -137,27 +138,36 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveCompany(AonApiData api) throws Exception {
 		Company company = CompanyJSON.fromJSON(api.getData());
+		checkCompany(api, company);
+		company.setLegalPerson(AonDocumentUtil.isValidCIF(company.getDocument()));
 		if(company.getId() == null) {
-			checkCompany(api, company);
-			Domain domain = new Domain()
-				.setName(company.getDocument() + "-" + api.getDomain().getName())
+			String domainName = company.getDocument() + "-" + api.getDomain().getName();
+			Domain d = new Domain()
+				.setName(domainName.toLowerCase())
 				.setDescription(company.getName())
 				.setOwner(api.getDomain().getOwner())
 				.setParentId(api.getDomain().getId())
 				.setActive(true)
 				.setDomainType(DomainType.ENTERPRISE)
-				.setEnableHeredity(false)
+				.setEnableHeredity(true)
 				.setDomainManagement(false);
-			Domain d = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), domain, company);
-			Company c = AON.getCompany(d.getName(), d.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(d.getId()));
+			Domain domain = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), d, company);
+			Company c = AON.getCompany(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 			RegistryServlet.saveRegistryAdditionalInfo(api, c.getId(), c.getDomain().getId());
-			// String mail = saveMedias(api, d, api.getUser(), c);
-			// saveAddress(api, d, api.getUser(), c);
-			String mail = AON.getRMedia(c.getDomain().getName(), c.getDomain().getId(), "", f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).getValue();
+			String mail = AON.getRMedia(domain.getName(), domain.getId(), "", f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).getValue();
 			Auth auth = createAuth(c, mail);
-			User user = createUser(d, auth, c);
+			User user = createUser(domain, auth, c);
 			createUserScopes(api, domain, user);
-			createUserRoles(api, d, user, false);
+			createUserRoles(api, domain, user, false);
+			
+			RegistryAddress address = AON.getMain(domain, user, c.getId());
+			Workplace workplace = new Workplace()
+					.setActive((byte) 1)
+					.setAddress(address.getId())
+					.setDescription("PRINCIPAL")
+					.setDomain(domain.getId())
+					.setEnterprise(c.getId());
+			workplace = AON.saveWorkplace(domain, user, workplace);
 			return CompanyJSON.toJSON(c);
 		} else {	
 			RegistryServlet.saveRegistry(api);
@@ -334,9 +344,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 		Company company =  api.getParams().opt("id") != null
 			? AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getIdProperty().eq(api.getParams().optInt("id"))) 
-			:AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+			: AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getDomainProperty().eq(api.getDomain().getId()));
-		JSONObject json = RegistryJSON.toJSON(company);
+		JSONObject json = CompanyJSON.toJSON(company);
 		
 		LinkedList<RegistryAdditionalInfo> list = new LinkedList<>();
 		list.add(RegistryAdditionalInfo.ADDRESS);

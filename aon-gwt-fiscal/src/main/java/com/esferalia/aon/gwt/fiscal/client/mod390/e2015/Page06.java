@@ -1,221 +1,202 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.Model3902015Callback;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Page06 extends ResizeComposite implements RequiresResize , IMod3902015Page {
+class Page06 extends PageAbs {
 
-	interface PageBinder extends UiBinder<Widget, Page06> {
+	private AonDoubleBox box658 = new AonDoubleBox();
+	private AonDoubleBox box84 = new AonDoubleBox();
+	private AonDoubleBox box87 = new AonDoubleBox();
+	private AonDoubleBox box88 = new AonDoubleBox();
+	private AonDoubleBox box89 = new AonDoubleBox();
+	private AonDoubleBox box90 = new AonDoubleBox();
+	private AonDoubleBox box91 = new AonDoubleBox();
+	private AonDoubleBox box92 = new AonDoubleBox();
+	private AonDoubleBox box659 = new AonDoubleBox();
+	private AonDoubleBox box93 = new AonDoubleBox();
+	private AonDoubleBox box94 = new AonDoubleBox();
+
+	public Page06(Model3902015Callback callback) {
+		super(callback);
+		paint();
+		setValue();
 	}
 
-	private static final PageBinder BINDER = GWT
-			.create(PageBinder.class);
+	@Override
+	protected void setValue() {
+		box658.setValue(getModel().getBox658(), false);
+		box84.setValue(getModel().getBox84(), false);
+		box87.setValue(getModel().getBox87(), false);
+		box88.setValue(getModel().getBox88(), false);
+		box89.setValue(getModel().getBox89(), false);
+		box90.setValue(getModel().getBox90(), false);
+		box91.setValue(getModel().getBox91(), false);
+		box92.setValue(getModel().getBox92(), false);
+		box659.setValue(getModel().getBox659(), false);
+		box93.setValue(getModel().getBox93(), false);
+		box94.setValue(getModel().getBox94(), false);
+	}
 
-	IMod3902015CallBack cbk;
+	private void paint() {
+		ScrollPanel scroll = new ScrollPanel();
+		FlowPanel basePanel = new FlowPanel();
+		scroll.add(basePanel);
+		setWidget(scroll);
 
-	@UiField
-	DoubleBox box658;
-	@UiField
-	DoubleBox box84;
-	@UiField
-	DoubleBox box87;
-	@UiField
-	DoubleBox box88;
-	@UiField
-	DoubleBox box89;
-	@UiField
-	DoubleBox box90;
-	@UiField
-	DoubleBox box91;
-	@UiField
-	DoubleBox box92;
-	@UiField
-	DoubleBox box659;
-	@UiField
-	DoubleBox box93;
-	@UiField
-	DoubleBox box94;
+		Label msg = getTitle(AON.MSG.page8HelpText());
+		msg.addStyleName(AON.CSS.aonFontLarger());
+		msg.addStyleName(AON.CSS.aonBackgroundLigthBlue());
+		msg.addStyleName(AON.CSS.aonTextCenter());
+		msg.addStyleName(AON.CSS.aonBorder());
+		basePanel.add(msg);
+		
+		basePanel.add(getTitle(AON.MSG.taxByTerritory()));
 
-	public Page06(Mod3902015 m390) {
-		Widget ui = BINDER.createAndBindUi(this);
-		initWidget(ui);
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab);
+		
+		box658.addValueChangeHandler(event -> {
+			if (box658.getValue() == null) box658.setValue(0.0,false);
+			getModel().setBox658(box658.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.regQuotaArt80()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(658),AON.CSS.aonWidth40())
+			.addCell(box658,AON.CSS.aonWidth120());
+		
+		box84.setEnabled(false);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.resultSum()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(64),AON.CSS.aonWidth40())
+			.addCell(box84,AON.CSS.aonWidth120());
+		
 		box87.setMaxLength(6);
 		box87.setVisibleLength(6);
+		box87.addValueChangeHandler(event -> {
+			if (box87.getValue() == null) box87.setValue(0.0,false);
+			getModel().setBox87(box87.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		FlowPanel pp1 = new FlowPanel();
+		pp1.add(box87);
+		pp1.add(new InlineLabel("%"));
+		tab.addRow()
+			.addCell(new Label(AON.MSG.commonTerritory()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto(), AON.CSS.aonTextRight())
+			.addCell(new AonBoxLabel(87),AON.CSS.aonWidth40())
+			.addCell(pp1,AON.CSS.aonWidth120());
+	
 		
 		box88.setMaxLength(6);
 		box88.setVisibleLength(6);
+		box88.addValueChangeHandler(event -> {
+			if (box88.getValue() == null) box88.setValue(0.0,false);
+			getModel().setBox88(box88.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		FlowPanel pp2 = new FlowPanel();
+		pp2.add(box88);
+		pp2.add(new InlineLabel("%"));
+		tab.addRow()
+			.addCell(new Label(AON.MSG.alava()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto(), AON.CSS.aonTextRight())
+			.addCell(new AonBoxLabel(88),AON.CSS.aonWidth40())
+			.addCell(pp2,AON.CSS.aonWidth120());
 		
 		box89.setMaxLength(6);
 		box89.setVisibleLength(6);
+		box89.addValueChangeHandler(event -> {
+			if (box89.getValue() == null) box89.setValue(0.0,false);
+			getModel().setBox89(box89.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		FlowPanel pp3 = new FlowPanel();
+		pp3.add(box89);
+		pp3.add(new InlineLabel("%"));
+		tab.addRow()
+			.addCell(new Label(AON.MSG.gipuzkoa()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto(), AON.CSS.aonTextRight())
+			.addCell(new AonBoxLabel(89),AON.CSS.aonWidth40())
+			.addCell(pp3,AON.CSS.aonWidth120());
 		
 		box90.setMaxLength(6);
 		box90.setVisibleLength(6);
+		box90.addValueChangeHandler(event -> {
+			if (box90.getValue() == null) box90.setValue(0.0,false);
+			getModel().setBox90(box90.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		
+		FlowPanel pp4 = new FlowPanel();
+		pp4.add(box90);
+		pp4.add(new InlineLabel("%"));
+		tab.addRow()
+			.addCell(new Label(AON.MSG.bizkaia()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto(), AON.CSS.aonTextRight())
+			.addCell(new AonBoxLabel(90),AON.CSS.aonWidth40())
+			.addCell(pp4,AON.CSS.aonWidth120());
 		
 		box91.setMaxLength(6);
 		box91.setVisibleLength(6);
+		box91.addValueChangeHandler(event -> {
+			if (box91.getValue() == null) box91.setValue(0.0,false);
+			getModel().setBox91(box91.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		FlowPanel pp5 = new FlowPanel();
+		pp5.add(box91);
+		pp5.add(new InlineLabel("%"));
+		tab.addRow()
+			.addCell(new Label(AON.MSG.navarra()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto(), AON.CSS.aonTextRight())
+			.addCell(new AonBoxLabel(91),AON.CSS.aonWidth40())
+			.addCell(pp5,AON.CSS.aonWidth120());
 		
-		box84.setEnabled(false);
 		box92.setEnabled(false);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.commonTerritoryResult()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(92),AON.CSS.aonWidth40())
+			.addCell(box92,AON.CSS.aonWidth120());
+		
+		box659.addValueChangeHandler(event -> {
+			if (box659.getValue() == null) box659.setValue(0.0,false);
+			getModel().setBox659(box659.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.importIVACustoms()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(659),AON.CSS.aonWidth40())
+			.addCell(box659,AON.CSS.aonWidth120());
+
+		box93.addValueChangeHandler(event -> {
+			if (box93.getValue() == null) box93.setValue(0.0,false);
+			getModel().setBox93(box93.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.commonTerritoryQuotaCompensation()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(93),AON.CSS.aonWidth40())
+			.addCell(box93,AON.CSS.aonWidth120());
+		
 		box94.setEnabled(false);
-		setValue(m390);
-	}
-	
-	@UiHandler("box658")
-	void onChangeBox658 (ChangeEvent event) {
-		if (box658.getValue() == null) box658.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox658(box658.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.commonTerritoryDeclarationResult()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(94),AON.CSS.aonWidth40())
+			.addCell(box94,AON.CSS.aonWidth120());
 	}
 
-	@UiHandler("box87")
-	void onChangeBox87 (ChangeEvent event) {
-		if (box87.getValue() == null) box87.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox87(box87.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-	
-	@UiHandler("box88")
-	void onChangeBox88 (ChangeEvent event) {
-		if (box88.getValue() == null) box88.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox88(box88.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box89")
-	void onChangeBox89 (ChangeEvent event) {
-		if (box89.getValue() == null) box89.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox89(box89.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box90")
-	void onChangeBox90 (ChangeEvent event) {
-		if (box90.getValue() == null) box90.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox90(box90.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box91")
-	void onChangeBox91 (ChangeEvent event) {
-		if (box91.getValue() == null) box91.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox91(box91.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box659")
-	void onChangeBox659 (ChangeEvent event) {
-		if (box659.getValue() == null) box659.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox659(box659.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	@UiHandler("box93")
-	void onChangeBox93 (ChangeEvent event) {
-		if (box93.getValue() == null) box93.setValue(0.0,false);
-		Scheduler.get().scheduleDeferred( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				cbk.getMod390().setBox93(box93.getValue());
-				cbk.calculateAndRefresh();
-			}
-		});
-	}
-
-	private void setValue(Mod3902015 m390) {
-		box658.setValue(m390.getBox658());
-		box84.setValue(m390.getBox84());
-		box87.setValue(m390.getBox87());
-		box88.setValue(m390.getBox88());
-		box89.setValue(m390.getBox89());
-		box90.setValue(m390.getBox90());
-		box91.setValue(m390.getBox91());
-		box92.setValue(m390.getBox92());
-		box659.setValue(m390.getBox659());
-		box93.setValue(m390.getBox93());
-		box94.setValue(m390.getBox94());
-	}
-
-	@Override
-	public void populate(Mod3902015 mod390) {
-		mod390.setBox84(box84.getValue());
-		mod390.setBox87(box87.getValue());
-		mod390.setBox88(box88.getValue());
-		mod390.setBox89(box89.getValue());
-		mod390.setBox90(box90.getValue());
-		mod390.setBox91(box91.getValue());
-		mod390.setBox92(box92.getValue());
-		mod390.setBox93(box93.getValue());
-		mod390.setBox94(box94.getValue());
-		if (box87.getValue() != null && box87.getValue() > 0) {
-			mod390.setBox658(box658.getValue());
-			mod390.setBox659(box659.getValue());
-		}
-	}
-	
-	@Override
-	public void setCallback(IMod3902015CallBack callback) {
-		this.cbk = callback;
-	}
-	
-	@Override
-	public void refresh(Mod3902015 m390) {
-		if (!AonMathUtils.equals(box658.getValue(), m390.getBox658())) 
-			box658.setValue(m390.getBox658(),true,true);
-		if (!AonMathUtils.equals(box659.getValue(), m390.getBox659())) 
-			box659.setValue(m390.getBox659(),true,true);
-		if (!AonMathUtils.equals(box84.getValue(), m390.getBox84())) 
-			box84.setValue(m390.getBox84(),true,true);
-		if (!AonMathUtils.equals(box92.getValue(), m390.getBox92())) 
-			box92.setValue(m390.getBox92(),true,true);
-		if (!AonMathUtils.equals(box94.getValue(), m390.getBox94())) 
-			box94.setValue(m390.getBox94(),true,true);
-	}
 }

@@ -32,6 +32,10 @@
         //<![CDATA[
       	delete Array.prototype.toJSON;
         			
+		function isNewAONTheme (){
+			return #{userUtils.newAONTheme};
+		}
+
         function getCurrentUser() {
         	return '#{domainSwitcher.currentUser}';
         }
@@ -56,14 +60,14 @@
 
        	loadStylesSheet('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
+       	localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
 		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
 		localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
-        //]]>
+		localStorage.setItem('aon_session_id', "#{dur.token}");
+		//]]>
     </script>
     
     <script type="text/javascript">
-      	/* loadStylesSheet('dist/timecontrol.min.css'); */
       	loadStylesSheet('dist/aio.min.css');
     </script>
     

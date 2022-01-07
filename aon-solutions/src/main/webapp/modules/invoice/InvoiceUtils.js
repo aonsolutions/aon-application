@@ -18,7 +18,7 @@ export const uploadInvoice = (file) => {
     if (file) {
         const data = {
             file,
-            invoice: new Invoice('recibida')
+            invoice: new Invoice().setType('recibida')
         };
         if (data.file.contentType.indexOf("image") >= 0) {
             //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280

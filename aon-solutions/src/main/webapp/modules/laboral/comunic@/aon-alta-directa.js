@@ -315,9 +315,10 @@ export class AonAltaDirecta extends AonElement {
             if(resp && resp.cccs){
                 const groupedGeozone = this.groupBy(resp.cccs, ccc => ccc.geozone);
                 let geozones = [];
-                groupedGeozone.forEach((cccs, name)=>{
-                    if(cccs && cccs.length)
-                        cccs = cccs.filter( (value,index, self)=>self.findIndex((m) => m.ccc === value.ccc) === index );
+                groupedGeozone.forEach((cccsOld, name)=>{
+                    let cccs = [];
+                    if(cccsOld && cccsOld.length)
+                        cccs = cccsOld.filter( (value,index)=>cccsOld.findIndex((m) => m.ccc === value.ccc) === index );
                         
                     geozones.push({
                         cccs,
@@ -328,7 +329,9 @@ export class AonAltaDirecta extends AonElement {
                 let workplace = this.getElement('workplace');
                 workplace.setOptions(geozones);
             }
-        } catch (error) { }
+        } catch (error) { 
+            console.error(error);
+        }
     }
 
     listCtaCti({ detail }) {

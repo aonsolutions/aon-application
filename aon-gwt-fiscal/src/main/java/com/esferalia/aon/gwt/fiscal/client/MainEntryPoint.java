@@ -27,15 +27,10 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
-import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
-import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
@@ -86,22 +81,46 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.mod130.Model130.run();
 			}
 		},
-		Model303 {
-			@Override
-			void run() {
-				com.esferalia.aon.gwt.fiscal.client.mod303.Model303.run();
-			}
-		},
 		Model131 {
 			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.mod131.Model131.run();
 			}
 		},
+		Model180 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod180.Model180.run();
+			}
+		},
+		Model184 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod184.Model184.run();
+			}
+		},
+		Model190 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod190.Model190.run();
+			}
+		},
+		Model193 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod193.Model193.run();
+			}
+		},
 		Model202 {
 			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.mod202.Model202.run();
+			}
+		},
+		Model303 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod303.Model303.run();
 			}
 		},
 		Model390HF {
@@ -114,10 +133,6 @@ public class MainEntryPoint implements EntryPoint {
 		abstract void run();
 	}
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
-	private static final String FS_MOD190_ENTRY_POINT = "Model190";
-	private static final String FS_MOD193_ENTRY_POINT = "Model193";
-	private static final String FS_MOD180_ENTRY_POINT = "Model180";	
-	private static final String FS_MOD184_ENTRY_POINT = "Model184";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
 	private static final String FS_MOD347_ENTRY_POINT = "Model347";
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
@@ -215,96 +230,6 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD111_ENTRY_POINT)) {
-//			GWT.runAsync(Model111.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model111 model111 = new Model111();
-//					model111.onModuleLoad(aonConfiguration);
-//				}
-//				
-//			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD115_ENTRY_POINT)) {
-//			GWT.runAsync(Model115.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model115 model115 = new Model115();
-//					model115.onModuleLoad();
-//				}
-//				
-//			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD123_ENTRY_POINT)) {
-//			GWT.runAsync(Model123.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model123 model123 = new Model123();
-//					model123.onModuleLoad();
-//				}
-//				
-//			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD130_ENTRY_POINT)) {
-//			GWT.runAsync(Model130.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model130 model130 = new Model130();
-//					model130.onModuleLoad();
-//				}
-//				
-//			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD131_ENTRY_POINT)) {
-//			GWT.runAsync(Model131.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model131 model131 = new Model131();
-//					model131.onModuleLoad();
-//				}
-//				
-//			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD202_ENTRY_POINT)) {
-//			GWT.runAsync(Model202.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model202 model202 = new Model202();
-//					model202.onModuleLoad();
-//				}
-//				
-//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
 			GWT.runAsync(Model200.class, new RunAsyncCallback() {
 
@@ -320,81 +245,6 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD190_ENTRY_POINT)) {
-			GWT.runAsync(Model190.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model190 model190 = new Model190();
-					model190.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD193_ENTRY_POINT)) {
-			GWT.runAsync(Model193.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model193 model193 = new Model193();
-					model193.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD180_ENTRY_POINT)) {
-			GWT.runAsync(Model180.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model180 model180 = new Model180();
-					model180.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD184_ENTRY_POINT)) {
-			GWT.runAsync(Model184.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model184 model184 = new Model184();
-					model184.onModuleLoad();
-				}
-				
-			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD303_ENTRY_POINT)) {
-//			GWT.runAsync(Model303.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model303 model303 = new Model303();
-//					model303.onModuleLoad();
-//				}
-//				
-//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD347_ENTRY_POINT)) {
 			GWT.runAsync(Model347.class, new RunAsyncCallback() {
 
@@ -440,21 +290,6 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_HF_ENTRY_POINT)) {
-//			GWT.runAsync(Model390HF.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					Model390HF model390HF = new Model390HF();
-//					model390HF.onModuleLoad();
-//				}
-//				
-//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MODEL_MATRIX_ENTRY_POINT)) {
 			GWT.runAsync(ModelMatrix.class, new RunAsyncCallback() {
 
@@ -874,14 +709,12 @@ public class MainEntryPoint implements EntryPoint {
 	
 	public static native String getCurrentDomainName()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_name") : $wnd.getCurrentDomainName();
+		return $wnd.getCurrentDomainName();
 	}-*/;
 
 	public static native int getCurrentDomain()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_id") :  $wnd.getCurrentDomain();
+		return $wnd.getCurrentDomain();
 	}-*/;
 	
 	public static native String getRootPanel()
@@ -895,8 +728,7 @@ public class MainEntryPoint implements EntryPoint {
 	
 	public static native String getCurrentUserJs()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_login") : $wnd.getCurrentUser();
+		return $wnd.getCurrentUser();
 	}-*/;
 	/**
 	 * Fetches a parameter passed to the module's nocache script.

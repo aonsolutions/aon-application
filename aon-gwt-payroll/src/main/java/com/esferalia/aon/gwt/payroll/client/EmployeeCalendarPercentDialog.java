@@ -5,12 +5,9 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -23,9 +20,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 
+	// ------------------------------------ UiBinder
+	
 	interface Binder extends UiBinder<Widget, EmployeeCalendarPercentDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ------------------------------------ UiFields
 	
 	@UiField
 	ListBox typeDrop;
@@ -48,28 +49,24 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	@UiField
 	Button acceptButton;
 	
-	// -------------------------------------------------------------------------------
-	// --------------------------------- MAIN CLASS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Variables
 
 	private Double percent = 1.00;
 	private Date contractStartDate;
 	private Date contractEndDate;
 	
-	public EmployeeCalendarPercentDialog(String caption, List<Date> selectedDates, Date contractStartDate, Date contractEndDate) {
+	// ------------------------------------ Constructor
+	
+	protected EmployeeCalendarPercentDialog(String caption, List<Date> selectedDates, Date contractStartDate, Date contractEndDate) {
 		setCaption(caption);
-		
 		setWidget(binder.createAndBindUi(this));
-		
+		this.hideClose();
 		errorMessage.getElement().getStyle().setDisplay(Display.NONE);
 		acceptButton.setEnabled(false);
 		
 		typeDrop.clear();
 		typeDrop.addItem("Huelga");
 		typeDrop.addItem("Ausencia Injustificada");
-//		typeDrop.addItem("ERE");
-//		typeDrop.addItem("ERE Fuerza mayor");
-//		typeDrop.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
 		
 		if(!selectedDates.isEmpty()) {
 			selectedDates.sort(null);
@@ -80,78 +77,57 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
 		
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
+		cancelButton.addClickHandler(e -> hide());
+		acceptButton.addClickHandler(e -> {
+			if(null != startDateDB.getValue())
+				onAccept();
+			hide();
 		});
 		
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(null != startDateDB.getValue())
-					onAccept();
-				hide();
-			}
-		});
-		
-		percentBox.addBlurHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				try {
-					percent = Double.parseDouble(percentBox.getValue());
-					errorMessage.getElement().getStyle().setDisplay(Display.NONE);
-					acceptButton.setEnabled(true);
-					
-					if(percent == 0.00)
-						percent = 1.00;
-					else {
-						percent = percent / 100;
-					}
+		percentBox.addBlurHandler(e -> {
+			try {
+				percent = Double.parseDouble(percentBox.getValue());
+				errorMessage.getElement().getStyle().setDisplay(Display.NONE);
+				acceptButton.setEnabled(true);
 				
-				} catch (NumberFormatException e) {
-					errorMessage.getElement().getStyle().clearDisplay();
-					acceptButton.setEnabled(false);
-					percentBox.setValue("");
+				if(percent == 0.00)
 					percent = 1.00;
+				else {
+					percent = percent / 100;
 				}
+			
+			} catch (NumberFormatException ex) {
+				errorMessage.getElement().getStyle().clearDisplay();
+				acceptButton.setEnabled(false);
+				percentBox.setValue("");
+				percent = 1.00;
 			}
 		});
+		
+		showDialog();
 	}
 	
-	// -------------------------------------------------------------------------------
-	// ------------------------------ ABSTRACT METHODS -------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Abstract methods
 
 	protected abstract void onAccept();
 	
-	// -------------------------------------------------------------------------------
-	// --------------------------------- UI HANDLERS ---------------------------------
-	// -------------------------------------------------------------------------------
-
+	// ------------------------------------ UiHandlers
 	
 	@UiHandler("startDateDB")
 	public void onStartDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date) {
-			if(date.before(contractStartDate))
-				startDateDB.setValue(contractStartDate);
-		}
+		if(null != date && date.before(contractStartDate))
+			startDateDB.setValue(contractStartDate);
 	}
 	
 	@UiHandler("endDateDB")
 	public void onEndDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date && null != contractEndDate) {
-			if(date.after(contractEndDate))
-				endDateDB.setValue(contractEndDate);
-		}
+		if(null != date && null != contractEndDate && date.after(contractEndDate))
+			endDateDB.setValue(contractEndDate);
 	}
 	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- AUX METHODS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Auxiliar methods
 	
 	public Integer getTypeDrop(){
 		return typeDrop.getSelectedIndex();
@@ -175,6 +151,16 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	
 	public void setEndDate(Date date) {
 		this.endDateDB.setValue(date);
+	}
+	
+	// ------------------------------------ Show dialog
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 
 }

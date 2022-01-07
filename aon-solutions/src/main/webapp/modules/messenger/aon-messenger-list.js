@@ -222,16 +222,17 @@ export class AonMessengerList extends AonElement {
 
   async getData(){
     let data = []
-    try {
+    // try {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
       this.setFilter(filter);
       let tasks = await getTasks(filter);
+    
       if(tasks.length == 0)
         this.MORE = false;
       else {
         data = tasks
-        .filter((v,idx, self)=>self.findIndex((m) => m.id === v.id) === idx )
+        .filter((v,idx)=>tasks.findIndex((m) => m.id === v.id) === idx)
         .map(task=>({
             ...task,
             date:task.start_date,
@@ -239,10 +240,10 @@ export class AonMessengerList extends AonElement {
         }));
       }
       data = sortBy(data, 'id','desc');
-    } catch (error) {
-      console.log("error>>",error);
-      this.showError(error);
-    }
+    // } catch (error) {
+    //   console.log("error>>",error);
+    //   this.showError(error);
+    // }
     return data;
   }
 

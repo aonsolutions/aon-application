@@ -2,70 +2,23 @@ import { post, get, remove, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
 
-export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
 export const saveTimeControlDetail = (data) => post(`${API_URL}/timecontrol/save`, data);
+
 export const deleteTimeControl = (data) => remove(`${API_URL}/timecontrol`, data);
+
+export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
+export const getTimeControlHistoric = (data) => get(`${API_URL}/timecontrol/historic`, data);
 export const getTimeControlDetail = (data) => get(`${API_URL}/timecontrol/list-holder-detail`, data);
 export const getTimeControlExcel = (data) => openFile(`${API_URL}/timecontrol/excel`, data);
 export const getTimeControlPdf = (data) => openFile(`${API_URL}/timecontrol/pdf`, data);
-
-export const getStatus = (data) => {
-  let jsonValues = [
-    {
-      name: "Entrada",
-      value: "in",
-    },
-    {
-      name: "Salida",
-      value: "out",
-    },
-    {
-      name: "Pausa",
-      value: "pause",
-    },
-  ];
-  if (data) {
-    jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
-  }
-  return jsonValues;
-}
-
-
-export const getTimeControlList = (data) =>
-  get(`${API_URL}/timecontrol/list`, data);
-
-export const getTaskHolderTimeControl = (data) =>
-  get(`${API_URL}/timecontrol/list-holder`, data);
-
-export const getGroups = (data) => {
-    let jsonValues = [
-      {
-        name: "DIA",
-        value: "DAY",
-      },
-      {
-        name: "SEMANA",
-        value: "WEEK",
-      },
-      {
-        name: "MES",
-        value: "MONTH",
-      },
-      {
-        name: "AÑO",
-        value: "YEAR",
-      },
-    ];
-
-    if (data) jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
-    return jsonValues;
-};
+export const getTimeControlList = (data) => get(`${API_URL}/timecontrol/list`, data);
+export const getTaskHolderTimeControl = (data) => get(`${API_URL}/timecontrol/list-holder`, data);
 
 const getWeekDayObj = () =>  ({
-    now: new Date(),
-    dayWeekFirst: new Date().getFirstDayOfWeek(),
-    dayWeekLast: new Date().getLastDayOfWeek()
+  now: new Date(),
+  dayWeekFirst: new Date().getFirstDayOfWeek(),
+  dayWeekLast: new Date().getLastDayOfWeek()
 });
 
 /**
@@ -134,5 +87,26 @@ export const getPeriod = (data) => {
 
   if (data) jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
   
+  return jsonValues;
+}
+
+export const getStatus = (data) => {
+  let jsonValues = [
+    {
+      name: "Entrada",
+      value: "in",
+    },
+    {
+      name: "Salida",
+      value: "out",
+    },
+    {
+      name: "Pausa",
+      value: "pause",
+    },
+  ];
+  if (data) {
+    jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+  }
   return jsonValues;
 }

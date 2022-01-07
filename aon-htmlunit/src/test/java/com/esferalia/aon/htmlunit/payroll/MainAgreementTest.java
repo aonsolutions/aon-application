@@ -479,10 +479,12 @@ public class MainAgreementTest {
 
 		wait4(htmlPage,
 				htmlPage -> "PAGAS EXTRAS ANULAES, SEMESTRALES Y TRIMESTREALES".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
-
+		
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		
 		for ( int i = 1; i < 8; i++ ) {
-			Assert.assertTrue(((HtmlInput) getElementById("endDateBox" + i)).getValueAttribute().endsWith("2021"));
-			Assert.assertTrue(((HtmlInput) getElementById("startDateBox" + i)).getValueAttribute().endsWith("2021"));
+			Assert.assertTrue(((HtmlInput) getElementById("endDateBox" + i)).getValueAttribute().endsWith(Integer.toString(year)));
+			Assert.assertTrue(((HtmlInput) getElementById("startDateBox" + i)).getValueAttribute().endsWith(Integer.toString(year)));
 		}
 	}
 

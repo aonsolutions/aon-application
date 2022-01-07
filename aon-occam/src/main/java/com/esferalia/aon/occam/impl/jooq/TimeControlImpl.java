@@ -41,6 +41,12 @@ public class TimeControlImpl implements ITimeControl {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TimeControlDAO.getTimeControlDetailStream(ctx, filter));
 	}
+	
+	@Override
+	public Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TimeControlDAO.getTimeControlHistoric(ctx, filter));
+	}
 
 	@Override
 	public LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter) {

@@ -38,12 +38,21 @@ public class ObjectFactory {
     private final static QName _ConsultaInmueblesAdicionales_QNAME = new QName("http://www.bizkaia.eus/ogasuna/sii/documentos/ConsultaLR.xsd", "ConsultaInmueblesAdicionales");
     private final static QName _ConsultaPagos_QNAME = new QName("http://www.bizkaia.eus/ogasuna/sii/documentos/ConsultaLR.xsd", "ConsultaPagos");
     private final static QName _ConsultaLROperacionesSeguros_QNAME = new QName("http://www.bizkaia.eus/ogasuna/sii/documentos/ConsultaLR.xsd", "ConsultaLROperacionesSeguros");
+    private final static QName _ConsultaLRConsultaVentaBienesConsigna_QNAME = new QName("http://www.bizkaia.eus/ogasuna/sii/documentos/ConsultaLR.xsd", "ConsultaLRConsultaVentaBienesConsigna");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: eus.bizkaia.ogasuna.sii.documentos.consultalr
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link LRFiltroVentaBienesConsignaType }
+     * 
+     */
+    public LRFiltroVentaBienesConsignaType createLRFiltroVentaBienesConsignaType() {
+        return new LRFiltroVentaBienesConsignaType();
     }
 
     /**
@@ -183,6 +192,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LRConsultaVentaBienesConsignaType }
+     * 
+     */
+    public LRConsultaVentaBienesConsignaType createLRConsultaVentaBienesConsignaType() {
+        return new LRConsultaVentaBienesConsignaType();
+    }
+
+    /**
      * Create an instance of {@link LRFiltroEmitidasType }
      * 
      */
@@ -268,6 +285,14 @@ public class ObjectFactory {
      */
     public LRFiltroPagosType createLRFiltroPagosType() {
         return new LRFiltroPagosType();
+    }
+
+    /**
+     * Create an instance of {@link LRFiltroVentaBienesConsignaType.ClavePaginacion }
+     * 
+     */
+    public LRFiltroVentaBienesConsignaType.ClavePaginacion createLRFiltroVentaBienesConsignaTypeClavePaginacion() {
+        return new LRFiltroVentaBienesConsignaType.ClavePaginacion();
     }
 
     /**
@@ -474,6 +499,19 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.bizkaia.eus/ogasuna/sii/documentos/ConsultaLR.xsd", name = "ConsultaLROperacionesSeguros")
     public JAXBElement<LRConsultaLROperacionesSegurosType> createConsultaLROperacionesSeguros(LRConsultaLROperacionesSegurosType value) {
         return new JAXBElement<LRConsultaLROperacionesSegurosType>(_ConsultaLROperacionesSeguros_QNAME, LRConsultaLROperacionesSegurosType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LRConsultaVentaBienesConsignaType }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link LRConsultaVentaBienesConsignaType }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://www.bizkaia.eus/ogasuna/sii/documentos/ConsultaLR.xsd", name = "ConsultaLRConsultaVentaBienesConsigna")
+    public JAXBElement<LRConsultaVentaBienesConsignaType> createConsultaLRConsultaVentaBienesConsigna(LRConsultaVentaBienesConsignaType value) {
+        return new JAXBElement<LRConsultaVentaBienesConsignaType>(_ConsultaLRConsultaVentaBienesConsigna_QNAME, LRConsultaVentaBienesConsignaType.class, null, value);
     }
 
 }

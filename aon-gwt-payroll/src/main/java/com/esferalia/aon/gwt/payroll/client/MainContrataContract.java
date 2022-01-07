@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -23,7 +22,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -72,8 +70,6 @@ public class MainContrataContract extends MainEntryPoint {
 
 	private class ContrataEmployeeImpl extends ContrataEmployee {
 
-		Task syncTask;
-
 		@Override
 		protected void onListShow(boolean reloadEmployees) {
 			if (reloadEmployees)
@@ -82,28 +78,6 @@ public class MainContrataContract extends MainEntryPoint {
 				employeeDataGrid.redraw();
 
 			deckPanel.showWidget(0);
-		}
-
-		@Override
-		protected void getContractBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
-
-			syncTask = new Task();
-			syncTask.setDescription("Comprobando bonificaciones...");
-			MainContrataContract.this.progressPanel.showTask(syncTask);
-
-			dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
-
-			InlineLabel tab = new InlineLabel("Progreso");
-			tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
-			tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-			footTabPanel.add(progressPanel, tab);
-			footTabPanel.selectTab(progressPanel);
-
-			super.getContractBonus(l -> {
-				success.accept(l);
-				syncTask.messageChanged("Bonificaciones actualizadas :-)");
-				syncTask.finished();
-			}, failure);
 		}
 
 		@Override

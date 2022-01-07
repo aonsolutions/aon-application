@@ -8,25 +8,13 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -40,7 +28,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
 public interface IFiscal {
 	// 			        IRPF
@@ -61,79 +48,6 @@ public interface IFiscal {
 	public FiscalModel save(AONContext ctx, FiscalModel fm);
 	public void delete(AONContext ctx, FiscalModel fm);
 	public FiscalModel getModel(AONContext ctx, int id);
-	
-	// 				   		  MOD180
-	public LinkedList<Mod180> getMod180s(AONContext ctx,int domain);
-	public Mod180 getMod180(AONContext ctx,Integer id);
-	public Mod180 initializeMod180(AONContext ctx, int year);
-	public Mod180 saveMod180(AONContext ctx,Mod180 mod180);
-	public void deleteMod180(AONContext ctx,Mod180 mod180);
-	public Mod180Detail getMod180Detail(AONContext ctx,Integer id);
-	public Mod180 saveCommentsMod180(AONContext ctx, Mod180 mod180);
-	public Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus);
-	public Mod180 duplicateMod180(AONContext ctx, Mod180 mod180);
-	
-	// 				   		  MOD190
-	public LinkedList<Mod190> getMod190s(AONContext ctx,int domain);
-	public Mod190 getMod190(AONContext ctx,Integer id);
-	public Mod190 initializeMod190(AONContext ctx, int year);
-	public Mod190 saveMod190(AONContext ctx,Mod190 mod190);
-	public void deleteMod190(AONContext ctx,Mod190 mod190);
-	public Mod190Detail getMod190Detail(AONContext ctx,Integer id);
-	public Mod190 saveCommentsMod190(AONContext ctx, Mod190 mod190);
-	public Mod190 changeStatusMod190(AONContext ctx, Mod190 mod190, FiscalStatus newStatus);
-	public Mod190 duplicateMod190(AONContext ctx, Mod190 mod190);
-
-	// 				   		  	MOD193
-	public LinkedList<Mod193> getMod193s(AONContext ctx,int domain);
-	public Mod193 getMod193(AONContext ctx,Integer id);
-	public Mod193 initializeMod193(AONContext ctx, int year);
-	public Mod193 saveMod193(AONContext ctx,Mod193 mod193);
-	public void deleteMod193(AONContext ctx,Mod193 mod193);
-	public Mod193 saveCommentsMod193(AONContext ctx, Mod193 mod193);
-	public Mod193 changeStatusMod193(AONContext ctx, Mod193 mod193, FiscalStatus newStatus);
-	public Mod193 duplicateMod193(AONContext ctx, Mod193 mod193);
-	
-	// 				   		  MOD184
-	public LinkedList<Mod184> getMod184s(AONContext ctx,int domain);
-	public Mod184 getMod184(AONContext ctx,Integer id);
-	public Mod184 initializeMod184(AONContext ctx, int year);
-	public Mod184 saveMod184(AONContext ctx,Mod184 mod184);
-	public void deleteMod184(AONContext ctx,Mod184 mod184);
-	public Mod184 saveCommentsMod184(AONContext ctx, Mod184 mod184);
-	public Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus);
-	public Mod184 duplicateMod184(AONContext ctx, Mod184 mod184);
-
-	// 				   		  	MOD390
-	public Mod390 getMod390(AONContext ctx, int domain, Integer id);
-	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);
-	public Mod390 initialize(AONContext ctx, int year);
-	public Mod390 create(AONContext ctx, Mod390 mod390);
-	public Mod390 saveComments(AONContext ctx, Mod390 mod390);
-	public void deleteMod390(AONContext ctx, Mod390 mod390);
-
-	// 							MOD390 -- 2014
-	public Mod3902014 getMod3902014(AONContext ctx,Mod390 mod390);
-	public Mod3902014 getMod3902014(AONContext ctx,Integer id);
-	public String getMod3902014XML(AONContext aonContext, int id);
-	public Mod3902014 saveMod3902014(AONContext ctx,Mod3902014 mod390);
-	public void deleteMod3902014(AONContext ctx,Mod3902014 mod390);
-
-	// 							MOD390 -- 2015
-	public Mod3902015 getMod3902015(AONContext ctx,Mod390 mod390);
-	public Mod3902015 getMod3902015(AONContext ctx,Integer id);
-	public String getMod3902015XML(AONContext aonContext, int id);
-	public Mod3902015 saveMod3902015(AONContext ctx, Mod3902015 mod390);
-	public void deleteMod3902015(AONContext ctx,Mod3902015 mod390);
-	public Mod3902015 changeStatusMod3902015(AONContext ctx, Mod3902015 mod184, FiscalStatus newStatus);
-	
-	// 							MOD390 -- 2018
-	public Mod3902018 getMod3902018(AONContext ctx,Mod390 mod390);
-	public Mod3902018 getMod3902018(AONContext ctx,Integer id);
-	public String getMod3902018XML(AONContext aonContext, int id);
-	public Mod3902018 saveMod3902018(AONContext ctx, Mod3902018 mod390);
-	public void deleteMod3902018(AONContext ctx,Mod3902018 mod390);
-	public Mod3902018 changeStatusMod3902018(AONContext ctx, Mod3902018 mod184, FiscalStatus newStatus);
 
 	//		  					MOD200 
 	public Mod200 getMod200(AONContext ctx, int domainId, Integer id);

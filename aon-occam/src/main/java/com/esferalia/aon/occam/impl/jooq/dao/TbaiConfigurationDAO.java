@@ -52,7 +52,7 @@ public class TbaiConfigurationDAO {
 		if(tc.isActive()) {
 			AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM.toString(),
-				"saleInvoice");
+				"default");
 		}
 		
 		return tc;

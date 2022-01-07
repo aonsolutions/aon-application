@@ -74,7 +74,8 @@ export class AonMessengerChat extends AonElement {
   }
 
   setTask(){
-    let data = {...this.data};
+
+    let data = {...this.data, domainCompany:this.getDur().domain};
 
     const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
     if(myTaskHolder && myTaskHolder.id) 
@@ -82,7 +83,7 @@ export class AonMessengerChat extends AonElement {
       
     if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email)  
       data.auth = this.applicationParentEl.cauData.auth;
-
+      
     this.setData(data); 
     this.task = new Task(this.getData());
   }
@@ -173,15 +174,12 @@ export class AonMessengerChat extends AonElement {
   async save() {
     this.applicationEl.startLoading();
     this.autoComplete();
-    // let btnInternal = this.getElement(MESSENGER_IDS.EXTERNAL_TASK);
-    // if(btnInternal && btnInternal.isChecked() && !this.task.project.id){
-    //   this.showError({message:"Proyecto requerido", type:CONSTANT.ERROR});
-    // } else {
-      if(this.task.source === TASK_SOURCE.REQUEST)
-        await this.saveSourceRequest();
-      else 
-        await this.saveSourceQuery();
-    // }
+    
+    if(this.task.source === TASK_SOURCE.REQUEST)
+      await this.saveSourceRequest();
+    else 
+      await this.saveSourceQuery();
+
     this.applicationParentEl.updateCount();
     this.applicationEl.stopLoading();    
   }

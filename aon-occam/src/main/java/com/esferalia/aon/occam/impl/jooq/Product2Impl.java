@@ -5,10 +5,13 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IProduct2;
+import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 
@@ -75,6 +78,32 @@ public class Product2Impl implements IProduct2{
 	public void deleteItem(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction( configuration -> 
 			ItemDAO.delete(ctx, id));
+	}
+
+	// ------------------------------------- INVEST ASSET
+	
+	@Override
+	public InvestAsset getInvestAsset(AONContext ctx, InvestAssetFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			InvestAssetDAO.get(ctx, filter));	
+	}
+
+	@Override
+	public Stream<InvestAsset> getInvestAssetStream(AONContext ctx, InvestAssetFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			InvestAssetDAO.getStream(ctx, filter));	
+	}
+
+	@Override
+	public InvestAsset saveInvestAsset(AONContext ctx, InvestAsset investAsset) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			InvestAssetDAO.save(ctx, investAsset));
+	}
+
+	@Override
+	public void deleteInvestAsset(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> 
+			InvestAssetDAO.delete(ctx, id));
 	}
 
 }

@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.AgreementDraft.ContextProvider;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -21,14 +22,12 @@ import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.regexp.shared.RegExp;
@@ -40,12 +39,13 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
@@ -53,6 +53,8 @@ import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 
 public abstract class AgreementPaymentWizard extends AonCustomDialog {
+	
+	// -------------------------------------------- GtzdoWizard implementation
 	
 	private class GtzdoWizardImplementation extends GtzdoWizard{
 
@@ -99,8 +101,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			Integer pos = paymentDescriptionPos.getValue();
 			if(null != pos) pos += row;
 			
-			String description = null == paymentDescriptionPos.getValue() ? paymentDescription.getValue() : "[" + pos  + "] " +  paymentDescription.getValue();
-			return description;
+			return null == paymentDescriptionPos.getValue() ? paymentDescription.getValue() : "[" + pos  + "] " +  paymentDescription.getValue();
 		}
 		
 	}
@@ -110,8 +111,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	interface AgreementPaymentDialogBinder extends UiBinder<Widget, AgreementPaymentWizard> {}
 
 	private static final AgreementPaymentDialogBinder binder = GWT.create(AgreementPaymentDialogBinder.class);
-	
-	// -------------------------------------------- PaymentSelectionModel
 	
 	// -------------------------------------------- PaymentsSelectionModel
 	
@@ -136,38 +135,38 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			if ( AonStringUtils.isBlank(expression))
 				return false;
 
-			String var = getVariableName(payment);
+			String variable = getVariableName(payment);
 			
-			if ( AonStringUtils.isBlank(var))
+			if ( AonStringUtils.isBlank(variable))
 				return false;
 			
-			return expression.contains(var);
+			return expression.contains(variable);
 		}
 
 		@Override
 		public void setSelected(Payment payment, boolean selected) {
 			String expression = paymentExpression.getValue();
 			
-			String var = getVariableName(payment);
-			if ( AonStringUtils.isBlank(var))
+			String variable = getVariableName(payment);
+			if ( AonStringUtils.isBlank(variable))
 				return;
 			
 			if ( selected ) {
 				if(AonStringUtils.isBlank(expression))
-					expression += var;
+					expression += variable;
 				else
-					expression += " + " + var;
+					expression += " + " + variable;
 			} else {
 				// first of all remove variable.
-				if(expression.contains(var + " + "))
-					expression = expression.replace(var + " + ", ""); 
-				else if(expression.contains(" + " + var))
-					expression = expression.replace(" + " + var, ""); 
+				if(expression.contains(variable + " + "))
+					expression = expression.replace(variable + " + ", ""); 
+				else if(expression.contains(" + " + variable))
+					expression = expression.replace(" + " + variable, ""); 
 				else
-					expression = expression.replace(var, ""); 
+					expression = expression.replace(variable, ""); 
 				
 				if(AonStringUtils.isNotBlank(expression))
-					expression.trim();
+					expression = expression.trim();
 			}
 			
 			paymentExpression.setValue(expression, true);
@@ -181,7 +180,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	// -------------------------------------------- PaymentsSelectionModel.Methods
 	
-	
 	private static String getVariableName(Payment payment) {
 		String name = payment.getName();
 		if ( AonStringUtils.isNotBlank(name))
@@ -191,19 +189,17 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		if ( AonStringUtils.isNotBlank(description) )
 			return description.toUpperCase()
 					.replaceAll("\\s", "_")
-					.replaceAll("\u00c1", "A")
-					.replaceAll("\u00c9", "E")
-					.replaceAll("\u00cd", "I")
-					.replaceAll("\u00d3", "O")
-					.replaceAll("\u00da", "U")
-					.replaceAll("\u00dc", "U")
-
-					.replaceAll("\u00d1", "N")
+					.replaceAll("[\u00c1]*", "A")
+					.replaceAll("[\u00c9]*", "E")
+					.replaceAll("[\u00cd]*", "I")
+					.replaceAll("[\u00d3]*", "O")
+					.replaceAll("[\u00da]*", "U")
+					.replaceAll("[\u00dc]*", "U")
+					.replaceAll("[\u00d1]*", "N")
 					.replaceAll("\\W", "")
 					;
 		return null;
 	}
-	
 	
 	// -------------------------------------------- UiField
 	
@@ -211,13 +207,11 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String buttonFillPage();
-		String lineFill();
 		String visibilityDisabled();
 	}
 	
 	@UiField
-	DockLayoutPanel dockLayoutPanel;
+	HTMLPanel container;
 	
 	@UiField
 	HTMLPanel firstPage;
@@ -270,6 +264,30 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	@UiField
 	Button partialityButton;
 	
+	@UiField
+	HTMLPanel weekDaysPanel;
+	
+	@UiField
+	CheckBox mondayCB;
+	
+	@UiField
+	CheckBox tuesdayCB;
+	
+	@UiField
+	CheckBox wednesdayCB;
+	
+	@UiField
+	CheckBox thursdayCB;
+	
+	@UiField
+	CheckBox fridayCB;
+	
+	@UiField
+	CheckBox saturdayCB;
+	
+	@UiField
+	CheckBox sundayCB;
+	
 	@UiField (provided = true)
 	GtzdoWizard gtzdoWizard;
 	
@@ -298,11 +316,34 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	TextBox paymentExpression;
 	
 	@UiField
-	HTMLPanel buttonsAcceptCancelPanel;
+	HTMLPanel taxedPanel;
+	
+	@UiField
+	ListBox taxedTypeLB;
+	
+	@UiField
+	TextBox taxedExpression;
+	
+	@UiField
+	Button taxedFxButton;
+	
+	@UiField
+	HTMLPanel quotePanel;
+	
+	@UiField
+	ListBox quoteTypeLB;
+	
+	@UiField
+	TextBox quoteExpression;
+	
+	@UiField
+	Button quoteFxButton;
+	
+	@UiField
+	HTMLPanel buttonsPanel;
 	
 	// -------------------------------------------- Variables
 	
-	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 	
 	private Payment payment;
@@ -315,15 +356,16 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	private List<Payment> payments = Collections.emptyList();
 	private PaymentsSelectionModel paymentsSelectionModel;
+	private ContextProvider contextProvider;
 	
 	// -------------------------------------------- Constructor
 	
-	public AgreementPaymentWizard(Set<Payment> aviablePayments) {
+	protected AgreementPaymentWizard(Set<Payment> aviablePayments, ContextProvider contextProvider) {
 		setCaption("Asistente Conceptos");
 		
 		paymentExpression = new TextBox();
 		paymentExpression.setEnabled(false);
-		paymentsDataGrid = providePaymentsDataGrid();
+		providePaymentsDataGrid();
 		
 		gtzdoWizard = new GtzdoWizardImplementation();
 		
@@ -332,8 +374,19 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		setAvailablePayments(aviablePayments);
 		initFooterButtons();
 		
+		this.contextProvider = contextProvider;
+		
 		// Hide extra default
 		extraPanel.getElement().getStyle().setDisplay(Display.NONE);
+		
+		// Hide taxed defaul
+		UIObject.setVisible(taxedPanel.getElement(), false );
+		
+		// Hide quote defaul
+		UIObject.setVisible(quotePanel.getElement(), false );
+		
+		// Hide weekDays panel default
+		UIObject.setVisible(weekDaysPanel.getElement(), false );
 		
 		// Init Payment
 		payment = new Payment();
@@ -348,23 +401,23 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		initExtraPayType();
 		initPartialityButton();
 		initPaymentCRAType();
+		initTaxedAndQuoteLB();
 		showFirstPage();
 		
 		// Fire SALARIO_BASE
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentType);
 		
+		showDialog();
 	}
-	
-	
-	// -------------------------------------------- ProvidePaymentsDataGrid
 
 	// -------------------------------------------- ProvidePaymentsDataGrid
 	
-	protected CustomDataGrid<Payment> providePaymentsDataGrid() {
+	
+	protected void providePaymentsDataGrid() {
 		payments = Collections.emptyList();
 		
 		ProvidesKey<Payment> keyProvider = HasIdKeyProvider.getKeyProvider();
-		CustomDataGrid<Payment> paymentsDataGrid = new CustomDataGrid<Payment>(10, keyProvider);
+		paymentsDataGrid = new CustomDataGrid<>(10, keyProvider);
 
 		paymentsDataGrid.setAutoHeaderRefreshDisabled(true);
 		
@@ -397,8 +450,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentsDataGrid.setWidth("100%");
 			
 		new ListDataProvider<Payment>(Collections.emptyList()).addDataDisplay(paymentsDataGrid);
-		
-		return paymentsDataGrid;
 	}
 	
 	
@@ -408,8 +459,11 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		payments = paymentsIn.stream().collect(Collectors.toList());
 	}
 
+	// -------------------------------------------- Initialize view
+	
 	private void initPaymentListBox() {
 		paymentType.clear();
+		paymentType.addItem("MANUAL", "MANUAL");
 		paymentType.addItem("SALARIO_BASE", "SALARIO_BASE");
 		paymentType.addItem("PLUS_SALARIAL", "PLUS_SALARIAL");
 		paymentType.addItem("PLUS_EXTRA_SALARIAL", "PLUS_EXTRA_SALARIAL");
@@ -457,16 +511,197 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			periodicityType.addItem("ANUAL", "ANUAL");
 			periodicityType.addItem("PRORRATEO", "PRORRATEO");
 		}
+		
+		if(AonStringUtils.equalsIgnoreCase(paymentType, "MANUAL")) {
+			periodicityType.clear();
+			periodicityType.addItem("ANUAL", " / PAGAS * DIAS_TRABAJADOS / DIAS_MES");
+			periodicityType.addItem("MENSUAL", " * DIAS_TRABAJADOS / DIAS_MES");
+			periodicityType.addItem("DIARIO", " * DIAS_TRABAJADOS");
+			periodicityType.addItem("HORAS", " * HORAS_TRABAJADAS");
+			periodicityType.addItem("PEONADAS", " * JORNADAS_REALES");
+			periodicityType.addItem("DIAS EFECTIVOS", " * DIAS_EFECTIVOS");
+			periodicityType.addItem("DIAS SEMANA", " * DIAS_SEMANA");
+			periodicityType.addItem("FIJO", "FIJO");
+		}
 	}
 	
 	private void initPaymentCRAType() {
-		paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
+		paymentTypeListBox = new TypeListBox<>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(Payment.Type.DEFAULT);
 		paymentTypeListBox.addStyleName("aon-selectOneMenu");
 		paymentTypeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 		paymentTypeListBox.setEnabled(false);
 		paymentTypeListBox.addStyleName(style.visibilityDisabled());
+		paymentTypeListBox.addChangeHandler(e -> enableOrDisableTaxAndQuote());
 		paymentCRAPanel.add(paymentTypeListBox);
+	}
+	
+	private void enableOrDisableTaxAndQuote() {
+		if ( taxEditableAndQuoteNone() ) {
+			UIObject.setVisible(taxedPanel.getElement(), true );
+			UIObject.setVisible(quotePanel.getElement(), true );
+			showCRA0000();
+		} else {
+			if ( taxEditableAndQuoteFull() ) {
+				UIObject.setVisible(taxedPanel.getElement(), true );
+				UIObject.setVisible(quotePanel.getElement(), false );
+				showCRA0013();
+			} else  if ( taxAndQuoteFull() || taxAndQuoteNone() ) {
+				UIObject.setVisible(taxedPanel.getElement(), false );
+				UIObject.setVisible(quotePanel.getElement(), false );
+				showCRADefault();
+			} else {
+				UIObject.setVisible(taxedPanel.getElement(), true );
+				UIObject.setVisible(quotePanel.getElement(), true );
+				showCRADefault();
+			}
+		}
+	}
+
+	private void showCRA0000() {
+		quoteTypeLB.setEnabled(false);
+		quoteExpression.setEnabled(false);
+		quoteFxButton.setVisible(false);
+		quoteTypeLB.setSelectedIndex(1);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), quoteTypeLB);
+		quoteExpression.setValue("0,00");
+	}
+	
+	private void showCRA0013() {
+		taxedTypeLB.setEnabled(false);
+		taxedExpression.setEnabled(false);
+		taxedFxButton.setVisible(false);
+		taxedTypeLB.setSelectedIndex(1);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), taxedTypeLB);
+		taxedExpression.setValue("0,00");
+	}
+	
+	private void showCRADefault() {
+		quoteTypeLB.setEnabled(true);
+		quoteExpression.setEnabled(true);
+		quoteFxButton.setVisible(true);
+		quoteTypeLB.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), quoteTypeLB);
+		taxedTypeLB.setEnabled(true);
+		taxedExpression.setEnabled(true);
+		taxedFxButton.setVisible(true);
+		taxedTypeLB.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), quoteTypeLB);
+		
+	}
+	
+	private boolean taxEditableAndQuoteFull() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0013 );
+	}
+	
+	private boolean taxEditableAndQuoteNone() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0000 );
+	}
+
+	private boolean taxAndQuoteFull() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( type.isBBCCIncluded() && !type.isBBCCExcluded() );
+	}
+	
+	private boolean taxAndQuoteNone() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( !type.isBBCCIncluded() && type.isBBCCExcluded() );
+	}
+	
+	private void initTaxedAndQuoteLB() {
+		taxedTypeLB.clear();
+		taxedTypeLB.addItem("Importe integro", "FULL");
+		taxedTypeLB.addItem("Exento", "NONE");
+		taxedTypeLB.addItem("Personalizado", "CUSTOM");
+		
+		taxedTypeLB.addChangeHandler(e -> {
+			int selected = taxedTypeLB.getSelectedIndex();
+			switch (selected) {
+			case 0:
+				taxedFxButton.setVisible(false);
+				taxedExpression.setEnabled(false);
+				taxedExpression.setValue("_P");
+				break;
+			case 1:
+				taxedFxButton.setVisible(false);
+				taxedExpression.setEnabled(false);
+				taxedExpression.setValue("0.00");
+				break;
+			default:
+				taxedFxButton.setVisible(true);
+				taxedExpression.setEnabled(true);
+				taxedExpression.setValue("");
+				break;
+			}
+		});
+		
+		taxedFxButton.addClickHandler(e -> {
+			final FxDialog fxDialog = new FxDialog(contextProvider);
+			fxDialog.setExpression(taxedExpression.getValue());
+			fxDialog.center();
+			fxDialog.show();
+
+			fxDialog.addCloseHandler(ev -> {
+				taxedExpression.setFocus(true);
+				if (fxDialog.isAccepted()) {
+					taxedExpression.setText(fxDialog.getExpression());
+				}
+			});
+		});
+		
+		quoteTypeLB.clear();
+		quoteTypeLB.addItem("Importe integro", "FULL");
+		quoteTypeLB.addItem("Exento", "NONE");
+		quoteTypeLB.addItem("Prorratear", "PRORRAT");
+		quoteTypeLB.addItem("Personalizado", "CUSTOM");
+		
+		quoteTypeLB.addChangeHandler(e -> {
+			int selected = quoteTypeLB.getSelectedIndex();
+			switch (selected) {
+			case 0:
+				quoteFxButton.setVisible(false);
+				quoteExpression.setEnabled(false);
+				quoteExpression.setValue("_P");
+				break;
+			case 1:
+				quoteFxButton.setVisible(false);
+				quoteExpression.setEnabled(false);
+				quoteExpression.setValue("0.00");
+				break;
+			case 2:
+				quoteFxButton.setVisible(false);
+				quoteExpression.setEnabled(false);
+				quoteExpression.setValue("PRORRATEAR()");
+				break;
+			default:
+				quoteFxButton.setVisible(true);
+				quoteExpression.setEnabled(true);
+				quoteExpression.setValue("");
+				break;
+			}
+		});
+		
+		quoteFxButton.addClickHandler(e -> {
+			final FxDialog fxDialog = new FxDialog(contextProvider);
+			fxDialog.setExpression(quoteExpression.getValue());
+			fxDialog.center();
+			fxDialog.show();
+
+			fxDialog.addCloseHandler(ev -> {
+				quoteExpression.setFocus(true);
+				if (fxDialog.isAccepted()) {
+					quoteExpression.setText(fxDialog.getExpression());
+				}
+			});
+		});
+		
+		taxedTypeLB.setSelectedIndex(0);
+		quoteTypeLB.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), taxedTypeLB);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), quoteTypeLB);
+		
 	}
 	
 	private void initPartialityButton() {
@@ -499,6 +734,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	@UiHandler("paymentType")
 	void onPaymentTypeChange(ChangeEvent event) {
+		paymentTypeListBox.setEnabled(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "MANUAL"));
+		
 		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "MEJORA_IT")) {
 			showGtzdoPage();
 			gtzdoWizard.setPaymentType(paymentType.getSelectedValue());
@@ -515,18 +752,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			paymentExpressionTitle.setText("Expresion");
 			
 			showFirstPage();
-			
-			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA")) {
-				paymentTypeListBox.setSelected(Payment.Type.CRA_0004);
-				setExtraPayFieldsVisible(true);
-				periodicityType.setEnabled(false);
-				paymentExpression.setEnabled(true);
-			} else {
-				paymentTypeListBox.setSelected(Payment.Type.CRA_0001);
-				setExtraPayFieldsVisible(false);
-				periodicityType.setEnabled(true);
-				paymentExpression.setEnabled(false);
-			}
+			checIfExtra();
 			
 			// ExtraPayType
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraPayType);
@@ -536,36 +762,27 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			initPeriodicityType(paymentType.getSelectedValue());
 			
 			// Extra panel
-			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "SALARIO_BASE"))
-				extraPanel.getElement().getStyle().setDisplay(Display.NONE);
-			else {
-				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_SALARIAL"))
-					extraLabel.setText("Descripci\u00F3n plus salarial");
-				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_EXTRA_SALARIAL"))
-					extraLabel.setText("Descripci\u00F3n plus extra salarial");
-				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA"))
-					extraLabel.setText("Descripci\u00F3n paga extra");
-				
-				extraPanel.getElement().getStyle().clearDisplay();
-			}
+			checkExtraPanel();
 			
 			createUpdatePayment();
 			checkPartialityButton();
 		}
 	}
-	
-	@UiHandler("periodicityType")
+
+	@UiHandler({"periodicityType", "extraName"})
 	void onPeriodicityTypeChange(ChangeEvent event) {
 		createUpdatePayment();
 		checkPartialityButton();
+		checkIfWeekDays();
 	}
 	
-	@UiHandler("extraName")
-	void onExtraNameChange(ChangeEvent event) {
+	@UiHandler({"mondayCB", "tuesdayCB", "wednesdayCB", "thursdayCB", "fridayCB", "saturdayCB", "sundayCB"})
+	void onWeekDaysValueChange(ValueChangeEvent<Boolean> event) {
 		createUpdatePayment();
 		checkPartialityButton();
 	}
 	
+
 	@UiHandler("extraPayDate")
 	void onExtraPayDateChange(ChangeEvent event) {
 		String issueValue = extraPayDate.getValue();
@@ -600,7 +817,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			partialityButton.removeStyleName(style.visibilityDisabled());
 			
 			String extraNameValue = extraName.getValue();
-			paymentExpression.setValue(AonStringUtils.isNotBlank(extraNameValue) ? extraNameValue.replaceAll(" ", "_").toUpperCase() : "SIN_DEFINIR", true);
+			paymentExpression.setValue(AonStringUtils.isNotBlank(extraNameValue) ? extraNameValue.replaceAll("\\s", "_").toUpperCase() : "SIN_DEFINIR", true);
 			
 		} else {
 			paymentsDataGridPanel.getElement().getStyle().clearDisplay();
@@ -629,22 +846,64 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		}
 	}
 	
+	
+	// -------------------------------------------- UiHandler auxiliar method
+	
+	private void checIfExtra() {
+		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA")) {
+			paymentTypeListBox.setSelected(Payment.Type.CRA_0004);
+			setExtraPayFieldsVisible(true);
+			periodicityType.setEnabled(false);
+			paymentExpression.setEnabled(true);
+		} else {
+			paymentTypeListBox.setSelected(Payment.Type.CRA_0001);
+			setExtraPayFieldsVisible(false);
+			periodicityType.setEnabled(true);
+			paymentExpression.setEnabled(false);
+		}
+	}
+
+	private void checkIfWeekDays() {
+		String periodicityTypeValue = periodicityType.getSelectedValue();
+		if(AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA"))
+			UIObject.setVisible(weekDaysPanel.getElement(), true );
+		else
+			UIObject.setVisible(weekDaysPanel.getElement(), false );
+	}
+	
+	private void checkExtraPanel() {
+		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "SALARIO_BASE"))
+			extraPanel.getElement().getStyle().setDisplay(Display.NONE);
+		else {
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "MANUAL"))
+				extraLabel.setText("Descripci\u00F3n");
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_SALARIAL"))
+				extraLabel.setText("Descripci\u00F3n plus salarial");
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_EXTRA_SALARIAL"))
+				extraLabel.setText("Descripci\u00F3n plus extra salarial");
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA"))
+				extraLabel.setText("Descripci\u00F3n paga extra");
+			
+			extraPanel.getElement().getStyle().clearDisplay();
+		}
+	}
+	
+	
 	// -------------------------------------------- DeckPanel.Methods
 
 	private void showFirstPage() {
 		firstPage.setVisible(true);
 		gtzdoWizard.setVisible(false);
-		dockLayoutPanel.setHeight("420px");
+		container.setHeight("430px");
 		centerDialog();
 	}
 	
 	private void showGtzdoPage() {
 		firstPage.setVisible(false);
 		gtzdoWizard.setVisible(true);
-		dockLayoutPanel.setHeight("500px");
+		container.setHeight("580px");
 		centerDialog();
 	}
-
 	
 	// -------------------------------------------- Payment
 	
@@ -664,21 +923,32 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	private String getConceptName() {
 		String paymentTypeValue = paymentType.getSelectedValue();
+		
 		if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE"))
 			return "SALARIO_BASE";
-		else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS_EXTRA")) {
-			String extraNameValue = extraName.getValue();
+		else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL")) {
+			String nameValue = getParsedConcept();
+			return AonStringUtils.isNotBlank(nameValue) ? nameValue.toUpperCase() : "SIN_DEFINIR";
+		} else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS_EXTRA")) {
+			String extraNameValue = getParsedConcept();
 			return AonStringUtils.isNotBlank(extraNameValue) ? "PLUS_XS_" + extraNameValue.toUpperCase() : "PLUS_XS_SIN_DEFINIR";
-		} if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")) {
-			String extraNameValue = extraName.getValue();
+		} else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")) {
+			String extraNameValue = getParsedConcept();
 			return AonStringUtils.isNotBlank(extraNameValue) ? "PLUS_" + extraNameValue.toUpperCase() : "PLUS_SIN_DEFINIR";
-		} if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PAGA_EXTRA")) {
-			String extraNameValue = extraName.getValue();
-			return AonStringUtils.isNotBlank(extraNameValue) ? "EXTRA_" + extraNameValue.replaceAll(" ", "_").toUpperCase() : "EXTRA_SIN_DEFINIR";
+		} else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PAGA_EXTRA")) {
+			String extraNameValue = getParsedConcept();
+			return AonStringUtils.isNotBlank(extraNameValue) ? "EXTRA_" + extraNameValue.replaceAll("\\s", "_").toUpperCase() : "EXTRA_SIN_DEFINIR";
 		} else
 			return "SIN_DEFINIR";
 	}
 	
+	private String getParsedConcept() {
+		String nameValue = extraName.getValue();
+		if(AonStringUtils.isNotBlank(nameValue))
+			nameValue = nameValue.replaceAll("\\s", "_");
+		return nameValue;
+	}
+
 	private void createPaymentDescriptionPos() {
 		String paymenteDescriptionPosValue = "";
 		
@@ -741,6 +1011,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			}	
 		} else if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "PAGA_EXTRA")) {
 			paymenteDescriptionPosValue = "93";
+		} else if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "MANUAL")) {
+			paymenteDescriptionPosValue = "99";
 		}
 			
 		
@@ -748,7 +1020,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	}
 
 	private void createPaymentDescription() {
-		String paymentDescription = "";
+		String paymentDescriptionText = "";
 		
 		String paymentTypeValue = paymentType.getSelectedValue();
 		paymentTypeValue = paymentTypeValue.replaceAll("_", " ");
@@ -757,6 +1029,10 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			String extraNameValue = extraName.getValue();
 			if(AonStringUtils.isNotBlank(extraNameValue))
 				paymentTypeValue = "PLUS EXTRA SALARIAL " + extraNameValue.toUpperCase();
+		} else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL")) {
+			String extraNameValue = extraName.getValue();
+			if(AonStringUtils.isNotBlank(extraNameValue))
+				paymentTypeValue = extraNameValue.toUpperCase();
 		} else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")) {
 			String extraNameValue = extraName.getValue();
 			if(AonStringUtils.isNotBlank(extraNameValue))
@@ -769,23 +1045,23 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 		String periodicityTypeValue = periodicityType.getSelectedItemText();
 		periodicityTypeValue = periodicityTypeValue.replaceAll("_", " ");
-		
-		paymentDescription = paymentTypeValue + " (" + periodicityTypeValue + ")";
-		this.paymentDescription.setValue(paymentDescription);
+	
+		paymentDescriptionText = paymentTypeValue + " (" + periodicityTypeValue + ")";
+		this.paymentDescription.setValue(paymentDescriptionText);
 	}
 
 	private void createPaymentExpression() {
-		String paymentExpression = "";
+		String paymentExpressionText = "";
 		
 		String paymentTypeValue = paymentType.getSelectedValue();
 		
 		if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE"))
-			paymentExpression = createBaseSalaryExpression();
+			paymentExpressionText = createBaseSalaryExpression();
 		
-		if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS"))
-			paymentExpression = createPlusExpression();
+		if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS") || AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL"))
+			paymentExpressionText = createPlusExpression();
 		
-		this.paymentExpression.setValue(paymentExpression, true);
+		this.paymentExpression.setValue(paymentExpressionText, true);
 	}
 
 	private String createBaseSalaryExpression() {
@@ -807,11 +1083,15 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		variable = (AonStringUtils.isBlank(extraName.getValue()) ? "SIN_DEFINIR" : extraName.getValue().toUpperCase());
 		
 		expression = variable;
+		if(AonStringUtils.isNotBlank(expression))
+			expression = expression.replaceAll("\\s", "_");
 		
 		String periodicityTypeValue = periodicityType.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
 			String newExpression = "FRACCIONAR(" + expression + ")";
 			expression = newExpression;
+		} if(AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
+			expression += checkWeekDaysExpression();
 		} else {
 			expression += periodicityTypeValue;
 		}
@@ -819,13 +1099,34 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		return expression;
 	}
 	
+	private String checkWeekDaysExpression() {
+		List<String> selectedWeekDays = new ArrayList<>();
+		if(Boolean.TRUE.equals(mondayCB.getValue())) selectedWeekDays.add("DIAS_LUNES");
+		if(Boolean.TRUE.equals(tuesdayCB.getValue())) selectedWeekDays.add("DIAS_MARTES");
+		if(Boolean.TRUE.equals(wednesdayCB.getValue())) selectedWeekDays.add("DIAS_MIERCOLES");
+		if(Boolean.TRUE.equals(thursdayCB.getValue())) selectedWeekDays.add("DIAS_JUEVES");
+		if(Boolean.TRUE.equals(fridayCB.getValue())) selectedWeekDays.add("DIAS_VIERNES");
+		if(Boolean.TRUE.equals(saturdayCB.getValue())) selectedWeekDays.add("DIAS_SABADO");
+		if(Boolean.TRUE.equals(sundayCB.getValue())) selectedWeekDays.add("DIAS_DOMINGO");
+		
+		String weekDaysExpression = "";
+		if(!selectedWeekDays.isEmpty()) {
+			weekDaysExpression = " * (";
+			for(int i=0; i<selectedWeekDays.size()-1; i++)
+				weekDaysExpression += selectedWeekDays.get(i) + " + ";
+			weekDaysExpression += selectedWeekDays.get(selectedWeekDays.size()-1) + ")";
+		}
+		return weekDaysExpression;
+	}
+	
 	private void checkPartialityButton() {
+		String periodicityTypeValue = periodicityType.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA") && !AonStringUtils.equalsIgnoreCase(periodicityType.getSelectedValue(), "PRORRATEO")) {
 			partialityPanel.getElement().getStyle().setDisplay(Display.NONE);
 		} else {
 			partialityPanel.getElement().getStyle().clearDisplay();
 			String expression = paymentExpression.getValue();
-			if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR")) {
+			if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR") || AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
 				hasPartiality = false;
 				partialityButton.setEnabled(true);
 				getEnableDisableButton(partialityButton, hasPartiality);
@@ -877,8 +1178,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	}
 	
 	private String parseIssueValue(String issueValue) {
-		issueValue = issueValue.replaceAll("-", "");
-		issueValue = issueValue.replaceAll("/", "");
+		issueValue = issueValue.replaceAll("[-]*", "");
+		issueValue = issueValue.replaceAll("[/]*", "");
 		
 		if(isRealDate(issueValue))
 			return issueValue.substring(0, 2) + "/" + issueValue.substring(2, 4);
@@ -911,43 +1212,35 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	// -------------------------------------------- FooterButtons
 	
 	private void initFooterButtons() {
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
 		closeBtnDialog.setAccessKey('C');
-		closeBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
+		closeBtnDialog.addClickHandler(e -> hide());
 		
 		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
 		
-		buttonsAcceptCancelPanel.add(closeBtnDialog);
+		buttonsPanel.add(closeBtnDialog);
 		
 		acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText( AON.MSG.accept());
 		acceptBtnDialog.setAccessKey('A');
-		acceptBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "PAGA_EXTRA")) {
-					createExtraPayment();
-					onExtraAccept(paymentExtra, extra);
-				} else if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "MEJORA_IT")) {
-					List<Payment> gtzdoPayments = gtzdoWizard.createPayments();
-					onGtzdoAccept(gtzdoPayments);
-				} else {
-					createPayment();
-					onAccept(payment);
-				}
-				hide();
+		acceptBtnDialog.addClickHandler(e -> {
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "PAGA_EXTRA")) {
+				createExtraPayment();
+				onExtraAccept(paymentExtra, extra);
+			} else if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "MEJORA_IT")) {
+				List<Payment> gtzdoPayments = gtzdoWizard.createPayments();
+				onGtzdoAccept(gtzdoPayments);
+			} else {
+				createPayment();
+				onAccept(payment);
 			}
+			hide();
 		});
 		
-		buttonsAcceptCancelPanel.add(acceptBtnDialog);
+		buttonsPanel.add(acceptBtnDialog);
 	}
 	
 	private void createPayment() {
@@ -956,11 +1249,35 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		payment.setId(-1);
 		payment.setDescription(description);
 		payment.setExpression(createExpression());
-		payment.setIrpfExpression("_P");
-		payment.setQuoteExpression("_P");
+		payment.setIrpfExpression(getTaxedExpression());
+		payment.setQuoteExpression(getQuoteExpression());
 		payment.setType(paymentTypeListBox.getSelected());
 		payment.setSalaryType(Salary.Type.SALARY);
 		payment.setName(paymentConcept.getValue());
+	}
+	
+	public String getTaxedExpression() {
+		String selected = taxedTypeLB.getSelectedValue();
+		return getExpression(selected, taxedExpression.getValue());
+	}
+	
+	public String getQuoteExpression() {
+		String selected = quoteTypeLB.getSelectedValue();
+		return getExpression(selected, quoteExpression.getValue());
+	}
+	
+	public String getExpression(String lbValue, String src) {
+		if (AonStringUtils.equalsIgnoreCase(lbValue, "NONE")) {
+			return "0.00"; // Avoid null' 
+		}
+		if (AonStringUtils.equalsIgnoreCase(lbValue, "FULL")) {
+			return "_P";
+		}
+		if (AonStringUtils.equalsIgnoreCase(lbValue, "PRORRAT")) {
+			return "PRORRATEAR()";
+		}
+		// It must be CUSTOM
+		return src;
 	}
 	
 	private String createExpression() {
@@ -972,7 +1289,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 		if(paymentType.getSelectedIndex() == 0)
 			expression =  "/*read-only*/" + expression + "/**/";
-		else if((paymentType.getSelectedIndex() == 1 || paymentType.getSelectedIndex() == 2) && periodicityTypeValue == "FIJO") {
+		else if((paymentType.getSelectedIndex() == 1 || paymentType.getSelectedIndex() == 2) && AonStringUtils.equalsIgnoreCase(periodicityTypeValue,"FIJO")) {
 			String extraNameValue = extraName.getValue();
 			expression =  "/*user*/" + extraNameValue + "/**/";
 		} else
@@ -981,7 +1298,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
 			String newExpression = "FRACCIONAR(" + expression + ")";
 			expression = newExpression;
-		} else {
+		} else if(!AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
 			expression += periodicityTypeValue;
 		}
 		
@@ -997,7 +1314,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentExtra.setIrpfExpression("_P");
 		paymentExtra.setQuoteExpression("_P");
 		paymentExtra.setType(paymentTypeListBox.getSelected());
-		paymentExtra.setSalaryType(Salary.Type.SALARY);
+		paymentExtra.setSalaryType(Salary.Type.EXTRA);
 		paymentExtra.setName(paymentConcept.getValue());
 		
 		try {
@@ -1093,7 +1410,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	public Payment.Type getType() {
 		int index = paymentTypeListBox.getSelectedIndex();
-		int code = Integer.valueOf(paymentTypeListBox.getValue(index));
+		int code = Integer.parseInt(paymentTypeListBox.getValue(index));
 		return Payment.Type.getByCode(code);
 	}
 	
@@ -1109,9 +1426,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	private List<Payment> filterAvailablePayments(List<Payment> availablePayments) {
 		List<Payment> availablePaymentsResult = new ArrayList<>();
 		
-		for(Payment payment : availablePayments){
-			if(availablePaymentsResult.isEmpty() || !availablePaymentsContainsType(payment.getName(), availablePaymentsResult))
-				availablePaymentsResult.add(payment);
+		for(Payment paymentIt : availablePayments){
+			if(availablePaymentsResult.isEmpty() || !availablePaymentsContainsType(paymentIt.getName(), availablePaymentsResult))
+				availablePaymentsResult.add(paymentIt);
 		}
 		
 		return availablePaymentsResult;
@@ -1120,8 +1437,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	private boolean availablePaymentsContainsType(String searchName,
 			List<Payment> availablePaymentsResult) {
 		
-		for(Payment payment : availablePaymentsResult){
-			if(payment.getName() == searchName)
+		for(Payment paymentIt : availablePaymentsResult){
+			if(AonStringUtils.equalsIgnoreCase(paymentIt.getName(), searchName))
 				return true;
 		}
 		
@@ -1132,23 +1449,15 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	public void showDialog() {
 		// Show center
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			@Override
-			public void execute() {
-				center();
-				show();
-			}
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
 		});
 	}
 	
-	private void centerDialog() {
+	public void centerDialog() {
 		// Show center
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			@Override
-			public void execute() {
-				center();
-			}
-		});
+		Scheduler.get().scheduleDeferred(() -> center());
 	}
 
 }

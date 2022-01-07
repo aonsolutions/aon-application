@@ -5,6 +5,8 @@ import { AonBasicTable } from "../../components/aon-basic-table.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { AonSelect} from "../../components/aon-select.js";
 import { AonDate} from "../../components/aon-date.js";
+import { AonInput } from "../../components/aon-input.js";
+import { AonDialog } from "../../components/aon-dialog.js";
 
 export class AonInvoiceCommunication extends AonElement {
     
@@ -110,20 +112,22 @@ export class AonInvoiceCommunication extends AonElement {
  		active.title = MSG.TICKETBAI;
     	active.checked = this.configuration.tbai.active;
         active.addEventListener(EVENT.CHANGE, () => {
-            if(active.isChecked()) this.getElement(this.TBAI_TEST).classList.remove(CSS.AON_NONE);
-            else this.getElement(this.TBAI_TEST).classList.add(CSS.AON_NONE);
+            if(active.isChecked()) {
+                if(this.configuration.administration === 'BIZKAIA' && !this.configuration.company.legalPerson){
+                    this.buildPerson();
+                }
+                this.getElement(this.TBAI_TEST).classList.remove(CSS.AON_NONE);
+            } else this.getElement(this.TBAI_TEST).classList.add(CSS.AON_NONE);
       	    this.configuration.tbai.active = active.isChecked();
             this.dispatchEvent(new Event(EVENT.CHANGE));
 	    });
     	table.addCell(active, 1).style.height = '50px';
         active.setWidth('110px');
 
-        this.configuration.tbai.test = true;
         let test = new AonSwitch();
         test.id = this.TBAI_TEST;
 		test.title = MSG.TEST_ENVIRONMENT;
 	    test.checked = this.configuration.tbai.test;
-        test.disabled = true;
         if(!this.configuration.tbai.active) {
             test.classList.add(CSS.AON_NONE);
         }
@@ -164,7 +168,7 @@ export class AonInvoiceCommunication extends AonElement {
         siiTest.id = this.SII_TEST;
 		siiTest.title = MSG.TEST_ENVIRONMENT;
 		siiTest.checked = this.configuration.sii.test;
-        siiTest.disabled = true;
+        siiTest.disabled = !this.isBeta();
         if(!this.configuration.sii.active) {
             siiTest.classList.add(CSS.AON_NONE);
         }
@@ -246,6 +250,45 @@ export class AonInvoiceCommunication extends AonElement {
     setConfiguration(configuration) {
         this.configuration = configuration;
     }
+
+    buildPerson() {
+        let div = this.createElement(TAG.DIV);
+        let name = new AonInput();
+		name.id = this.id + 'personName';
+		name.title = MSG.NAME;
+        name.description = MSG.NAME;
+		name.value = this.configuration.company.name;
+        div.appendChild(name);
+
+        let surname1 = new AonInput();
+		surname1.id = this.id + 'personSurname1';
+		surname1.title = MSG.SURNAME + ' 1';
+        surname1.description = MSG.SURNAME + ' 1';
+        div.appendChild(surname1);
+        
+        let surname2 = new AonInput();
+		surname2.id = this.id + 'personSurname2';
+		surname2.title = MSG.SURNAME + ' 2';
+        surname2.description = MSG.SURNAME + ' 2';
+        div.appendChild(surname2);
+
+        let d = new AonDialog();
+        d.id = this.id + 'PersonDialog';
+        this.appendChild(d);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.CHANGE_TYPE);
+		d.setContent(div);
+		d.addAcceptAction(() => {
+            this.configuration.company.person = {
+                name: name.value,
+                surname1: surname1.value,
+                surname2: surname2.value
+            };
+			if(this.autosave) this.save();
+		});
+		d.open();
+	}
 }
 if(!window.customElements.get(TAG.AON_INVOICE_COMMUNICATION)){
 	window.customElements.define(TAG.AON_INVOICE_COMMUNICATION, AonInvoiceCommunication);

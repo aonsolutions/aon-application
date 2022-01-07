@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -1063,7 +1064,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 	}
 
-	private class ContextProvider implements IContextProvider {
+	public class ContextProvider implements IContextProvider {
 
 		@Override
 		public boolean isEditable(String name) {
@@ -1312,6 +1313,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	ScrollPanel draftScrollPane;
 	
 	@UiField
+	HTMLPanel messageContainer;
+	
+	@UiField
 	TextBox ssNumberTextBox;
 	
 	@UiField
@@ -1394,6 +1398,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private AonToolbarButton fxButton;
 	private AonExpandButton addPaymentButton;
 	private AonToolbarButton printPreviewButton;
+	private AonToolbarButton serviAgreementUpdateButton;
 	private AonToolbarButton serviAgreementPDFButton;
 	private AonToolbarButton serviAgreementXLSButton;
 	
@@ -2131,6 +2136,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		else {
 			createSalaryTable();
 			agreementDraftObject.showValueVariables();
+			if(agreementDraftObject.getShownVariables().isEmpty())
+				agreementDraftObject.showNoValueVariables();
 			reloadSalaryTable();
 		}
 		
@@ -2163,6 +2170,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		// ServiAgreements Buttons
 		boolean isServiAgreement = this.agreementDraftObject.isServiAgreement();
 		setVisible(serviAgreementPanel.getElement(), isServiAgreement);
+		setVisible(serviAgreementUpdateButton.getElement(), isServiAgreement);
 		
 	}
 
@@ -2453,11 +2461,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 	
 	private void setSSNumber() {
-		// TODO: When null it will be desirable warn user.
 		String ssNumber = this.agreementDraftObject.getSSNumber();
 		ssNumberTextBox.setText(ssNumber == null ? "" : ssNumber);
-		// descriptionTextBox.setEnabled(isEditable());
-
 	}
 
 	private void dumpEvents() {
@@ -4782,90 +4787,66 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		AonToolbar toolbar = new AonToolbar("Convenio");
 		
 		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAllButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.clearDrafts();
-				agreementDraftObject.clearNewDatesWithChanges();
-				agreementDraftObject.clearDeleteDatesWithChanges();
-				agreementDraftObject.calculate(AgreementDraft.this);
-			}
+		undoAllButton.addClickHandler(e -> {
+			agreementDraftObject.clearDrafts();
+			agreementDraftObject.clearNewDatesWithChanges();
+			agreementDraftObject.clearDeleteDatesWithChanges();
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(undoAllButton);
 		
 		undoButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.undo();
-				agreementDraftObject.calculate(AgreementDraft.this);
-//				calculate();
-			}
+		undoButton.addClickHandler(e -> {
+			agreementDraftObject.undo();
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(undoButton);
 		undoButton.setVisible(false);
 		
 		redoButton = new AonToolbarButton("Rehacer", AON.CSS.aonIconRedo() );
-		redoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.redo();
-				agreementDraftObject.calculate(AgreementDraft.this);
-//				calculate();
-			}
+		redoButton.addClickHandler(e -> {
+			agreementDraftObject.redo();
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(redoButton);
 		redoButton.setVisible(false);
 		
 		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.save(AgreementDraft.this);
-			}
-		});
+		acceptButton.addClickHandler(e -> agreementDraftObject.save(AgreementDraft.this));
 		toolbar.add(acceptButton);
 		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
-		printPreviewButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showPreview();
-
-				initTypeListBox();
-				initLevelListBox();
-				initPreviewMonthListBox();
-
-				printPreview();
-			}
+		printPreviewButton.addClickHandler(e -> {
+			showPreview();
+			initTypeListBox();
+			initLevelListBox();
+			initPreviewMonthListBox();
+			printPreview();
 		});
 		toolbar.add(printPreviewButton);
 		
 		fxButton = new AonToolbarButton("fx", AON.CSS.aonIconFx() );
-		fxButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(null == contextProvider)
-					contextProvider = new ContextProvider();
-				
-				FxDialog fxDialog = new FxDialog(contextProvider) {
-					@Override
-					void onAcceptButtonClick(ClickEvent event) {
-						super.onAcceptButtonClick(event);
-						fxhasValue.setValue(getExpression(), true);
-						((Focusable) fxhasValue).setFocus(true);
-					}
-				};
+		fxButton.addClickHandler(e -> {
+			if(null == contextProvider)
+				contextProvider = new ContextProvider();
+			
+			FxDialog fxDialog = new FxDialog(contextProvider) {
+				@Override
+				void onAcceptButtonClick(ClickEvent event) {
+					super.onAcceptButtonClick(event);
+					fxhasValue.setValue(getExpression(), true);
+					((Focusable) fxhasValue).setFocus(true);
+				}
+			};
 
-				fxDialog.setExpression(fxhasValue.getValue());
-				fxDialog.center();
-				fxDialog.show();
-			}
+			fxDialog.setExpression(fxhasValue.getValue());
+			fxDialog.center();
+			fxDialog.show();
 		});
 		toolbar.add(fxButton);
 		fxButton.setEnabled(false);
 		
-		addPaymentButton = new AonExpandButton("A" + String.valueOf("\u00F1") + "adir Pago", AON.CSS.aonIconAddBlock()) {
+		addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {
 			
 			@Override
 			public void onExpandClick(ClickEvent event) {
@@ -4876,7 +4857,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			
 			@Override
 			public void onDefaultClick(ClickEvent evet) {
-				AgreementPaymentWizard wizard = new AgreementPaymentWizard(agreementDraftObject.getPayments()) {
+				new AgreementPaymentWizard(agreementDraftObject.getPayments(), contextProvider) {
 					@Override
 					protected void onAccept(Payment payment) {
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
@@ -4901,11 +4882,37 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						}
 					}
 				};
-				
-				wizard.showDialog();
 			}
 		};
 		toolbar.add(addPaymentButton);
+		
+		serviAgreementUpdateButton = new AonToolbarButton("Actualizar Convenio", AON.CSS.aonIconCloudImport());
+		serviAgreementUpdateButton.addClickHandler(e -> {
+			showLoading("Actualizando convenio");
+			agreementDraftObject.checkAndUpdateServiAgreement(
+					newDate -> {
+						showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
+						if(null != newDate) {
+							AgreementDraftObject agreementDraftObjectNew = agreementDraftObject.createAgreementDraftObject();
+							agreementDraftObject.getChanges(
+									agreementDraftObjectNew, 
+									s -> {
+										this.setAgreementDraftObject(agreementDraftObjectNew);
+										calculate();
+									}, f -> {});
+						}
+					}, 
+					f -> showError("Error actualizaci\u00F3n", f.getMessage()));
+		});
+		toolbar.add(serviAgreementUpdateButton);
+		
+		AonToolbarButton agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
+		agreementInfoButton.addClickHandler(e -> 
+			agreementDraftObject.getAgreementInfo(message -> {
+				AonDialog dialog = new AonDialog(agreementDraftObject.getDescription(), new HTML(message));
+				dialog.info();
+			}, f -> {}));
+		toolbar.add(agreementInfoButton);
 		
 		CheckBox changesCheck = new CheckBox();
 		changesCheck.setText("Cambios");
@@ -4918,6 +4925,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		undoAllButton.ensureDebugId("undoAllButton");
 		acceptButton.ensureDebugId("acceptButton");
 		printPreviewButton.ensureDebugId("printPreviewButton");
+		serviAgreementUpdateButton.ensureDebugId("serviAgreementUpdateButton");
 		
 		return toolbar;
 	}
@@ -4951,6 +4959,34 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		serviAgreementXLSButton.ensureDebugId("serviAgreementXLSButton");
 		
 		serviAgreementPanel.setVisible(false);
+	}
+	
+	// ------------------------------------------------- Aon Messages panel
+
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messageContainer, successMap);
+	}
+	
+	private void showInfo(String title, String message) {
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put(title, message);
+		AonMessagePanel.showInfo(messageContainer, infoMap);
+	}
+	
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messageContainer, errorMap);
+	}
+	
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messageContainer, message);
+	}
+	
+	private void hideMessage() {
+		AonMessagePanel.hideMessage(messageContainer);
 	}
 	
 }

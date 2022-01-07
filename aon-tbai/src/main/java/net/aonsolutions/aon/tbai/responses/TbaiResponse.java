@@ -21,6 +21,7 @@ public class TbaiResponse {
 	private String responseStatus;
 	private boolean ok; 
 	private byte[] data;
+	private JSONObject jsonInfo;
 	
 	public String getTbaiId() {
 		return tbaiId;
@@ -129,6 +130,14 @@ public class TbaiResponse {
 	public TbaiResponse setSign(String sign) {
 		this.sign = sign;
 		return this;
+	}
+	
+	public JSONObject getJsonInfo() {
+		return jsonInfo;
+	}
+	
+	public void setJsonInfo(JSONObject jsonInfo) {
+		this.jsonInfo = jsonInfo;
 	}
 	
 	public JSONObject toJSON() {

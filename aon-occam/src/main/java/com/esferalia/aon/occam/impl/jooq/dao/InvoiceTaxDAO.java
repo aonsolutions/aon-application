@@ -16,6 +16,8 @@ import com.esferalia.aon.occam.api.model.Filter.InvoiceTaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceTaxProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class InvoiceTaxDAO {
 	
@@ -124,7 +126,19 @@ public class InvoiceTaxDAO {
 
 		@Override
 		public InvoiceTax apply(Record r) {
-			return new InvoiceTax();
+			return build(r);
+		}
+		
+		public static InvoiceTax build(Record r) {
+			return new InvoiceTax()
+					.setId(r.getValue(INVOICE_TAX.ID))
+					.setTaxType(TaxType.values()[r.getValue(INVOICE_TAX.TAX_TYPE)])
+					.setPercentage(r.getValue(INVOICE_TAX.PERCENTAGE))
+					.setBase(r.getValue(INVOICE_TAX.BASE))
+					.setSurcharge(r.getValue(INVOICE_TAX.SURCHARGE))
+					.setQuota(r.getValue(INVOICE_TAX.QUOTA))
+					.setSurchargeQuota(r.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
+					.setWithholdingType(WithholdingType.safeValueOf(r.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));
 		}
 	}
 }

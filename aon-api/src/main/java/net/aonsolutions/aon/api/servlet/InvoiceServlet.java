@@ -3,6 +3,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import org.xml.sax.SAXException;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -35,6 +37,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -46,11 +49,14 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -68,7 +74,7 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
-import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -459,24 +465,63 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
-		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
-		if(invoice.isSales() && tbaiConfiguration.isActive()) invoice.setIssueDate(new Date());
-		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
-		acceptCommunication(api, invoice);
-		return InvoiceJSON.toJSON(invoice);
-	}
-	
-	public static void acceptCommunication(AonApiData api, Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
+	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		if(tbaiConfiguration.isActive()) {
-			tbaiConfiguration.setCertificate(AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name()));
+		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
+		if(invoice.isSales() && tbaiConfiguration.isActive()) {
+			invoice.setIssueDate(new Date());
+			tbaiConfiguration.setCertificate(checkCertificate(api));
+		}
+		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
+		acceptTbai(tbaiConfiguration, company, invoice);
+		JSONObject json = InvoiceJSON.toJSON(invoice);
+		if(invoice.isSales() && tbaiConfiguration.isActive()) {	
+			String tbaiUrl = TbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+			if(!AonStringUtils.isBlank(tbaiUrl)) {
+				json.put("tbai", true);
+				json.put("tbaiUrl", tbaiUrl);
+			}
+		}
+		return json;
+	}
+	
+	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
+		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
 		}
+	}
+	
+	private static Certificate checkCertificate(AonApiData api) {
+		Certificate cert = new Certificate();
+		try {
+			cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());
+		} catch (Exception e) {
+			throw new AonApiException("Error al obtener el certificado.");
+		}
+		try {
+			if(!checkCert(cert.getCertificate(), cert.getPassword())) {
+				throw new AonApiException("El certificado o la contraseña no son correctos.");
+			}
+		} catch (Exception e) {
+			throw new AonApiException("El certificado o la contraseña no son correctos.");			
+		}		
+		if(cert.isEmpty()) {
+			throw new AonApiException("El certificado no existe.");
+		}
+		return cert;
 		
-		// SII
+	}
+	
+	public static boolean checkCert(byte[] cert, String password) {
+		try {
+			ByteArrayInputStream is = new ByteArrayInputStream(cert);
+			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keystore.load(is, password.toCharArray());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public static JSONObject setInvoice(AonApiData api) {
@@ -586,6 +631,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		JSONObject json = new JSONObject();
 		json.put("print", getPrintConfiguration(api));
+		json.put("company", CompanyJSON.toJSON(company));
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
 		json.put("tbai", getTbaiConfiguration(api));
 		json.put("sii", getSiiConfiguration(api));
@@ -596,7 +642,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private JSONObject saveConfiguration(AonApiData api) {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		company.seteInvoice(JsonUtils.getboolean(api.getData(), IJsonNames.E_INVOICE));
-		
+		JSONObject cJson = api.getData().getJSONObject(IJsonNames.COMPANY);
+		if(cJson.opt(IJsonNames.PERSON) != null) {
+			JSONObject pJson = cJson.getJSONObject(IJsonNames.PERSON);
+			String name = JsonUtils.getString(pJson, IJsonNames.NAME);
+			String surname1 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "1");
+			String surname2 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "2");
+			Person person = AON.getPerson(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(company.getId()));
+			person.setFirstName(name);
+			person.setFirstSurname(surname1);
+			person.setSecondSurname(surname2);
+			person.setDomain(company.getDomain());
+			person.setGender(Gender.UNKNOWN);
+			person.setMaritalStatus(MaritalStatus.UNKNOWN);
+			person.setId(company.getId());
+			AON.savePerson(api.getDomain(), api.getUser().getLogin(), person);
+		}
 		AON.saveCompany(api.getDomain(), api.getUser(), company);
 
 		Administration administration = saveAdministration(api, JsonUtils.getString(api.getData(), IJsonNames.ADMINISTRATION));

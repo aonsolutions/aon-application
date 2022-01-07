@@ -813,11 +813,13 @@ public class SQLAgreementDraft {
 			// @formatter:off
 			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT + " ( " + AgreementColumns.DOMAIN
-					+ ", " + AgreementColumns.DESCRIPTION + ")"
-					+ " VALUES ( ?,?)", new String[] { AgreementColumns.ID });
+					+ ", " + AgreementColumns.DESCRIPTION 
+					+ ", " + AgreementColumns.SS_NUMBER + ")"
+					+ " VALUES ( ?,?,?)", new String[] { AgreementColumns.ID });
 			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setString(2, draft.getDescription());
+			stmt.setString(3, draft.getSSNumber());
 			stmt.executeUpdate();
 			rs = stmt.getGeneratedKeys();
 			rs.next();
@@ -839,11 +841,13 @@ public class SQLAgreementDraft {
 
 			// @formatter:off
 			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT
-					+ " SET " + AgreementColumns.DESCRIPTION + " = ? "
+					+ " SET " + AgreementColumns.DESCRIPTION + " = ?" + " ,"
+					+ AgreementColumns.SS_NUMBER + " = ? "
 					+ " WHERE " + AgreementColumns.ID + " = ? ");
 			// @formatter:on
 			stmt.setString(1, draft.getDescription());
-			stmt.setInt(2, draft.getId());
+			stmt.setString(2, draft.getSSNumber());
+			stmt.setInt(3, draft.getId());
 			stmt.executeUpdate();
 			stmt.close();
 			

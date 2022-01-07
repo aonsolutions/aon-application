@@ -216,12 +216,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId);
 
-	EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId);
+	EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
-	String setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-			EmployeeCalendarInfo employeeCalendarInfo);
+	void setEmployeeCalendarInfo(String currentDomainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo) throws IllegalArgumentException;
 
-	String resetEmployeeCalendarInfo(String currentDomainName, Integer contractId);
+	void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 	EmployeeEventsData setEmployeeEvents(String currentDomainName, Integer idEmployee,
 			EmployeeEventsData employeeEventsData);
@@ -250,7 +249,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
-	List<ContractAttach> fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl);
+	List<ContractAttach> fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
@@ -321,9 +320,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- EmployeeIrpf
 	
-	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate);
+	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) throws IllegalArgumentException;
 
-	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs);
+	void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException;
 
 	// ------------------------------------------------- ContractVariables
 	

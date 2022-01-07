@@ -6,6 +6,7 @@ export const UNDEFINED = 'undefined';
 export const ACCEPT = 'accept';
 export const ACCOUNTING = 'accounting';
 export const ACTIVITY = 'activity';
+export const ACTIVITY_NAME = 'activityName';
 export const ADD = 'add';
 export const ADD_FILE = 'addFile';
 export const ADD_INVOICE = 'addInvoice'
@@ -14,6 +15,8 @@ export const ALIAS = 'alias';
 export const AMOUNT = 'amount';
 export const AON_APPLICATION = 'aonApplication';
 export const AON_ACCOUNTING = 'aonAccounting';
+export const AON_INVEST = 'aonInvest';
+export const AON_INVEST_LIST = 'aonInvestList';
 export const AON_INVOICE = 'aonInvoice';
 export const AON_INVOICE_DETAIL = 'aonInvoiceDetail';
 export const AON_INVOICE_FINANCE = 'aonInvoiceFinance';
@@ -22,6 +25,7 @@ export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
 export const AON_MOBILE_PROFILE = 'aonMobileProfile';
 export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
+export const AON_USER_LIST = 'aonUserList';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';
@@ -73,6 +77,7 @@ export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
 export const DIV = 'div';
 export const DRAFT = 'draft';
+export const DOCUMENT = 'document';
 export const DOCUMENTAL = 'documental';
 export const DOWNLOAD = 'download';
 export const DOWNLOAD_FILE = 'downloadFile';
@@ -85,6 +90,7 @@ export const DUPLICATE_INVOICE = 'duplicateInvoice';
 
 export const EDIT = 'edit';
 export const EDIT_FILE = 'editFile';
+export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
 export const ERROR = "error";
 export const EXPENSES = "expenses";
@@ -112,6 +118,7 @@ export const IBAN = 'iban';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';
+export const INVEST_ASSET = 'investAsset';
 export const INVESTMENT = 'investment';
 export const INVOICE = 'invoice';
 export const INVOICE_ISSUED = 'invoiceIssued';
@@ -186,6 +193,8 @@ export const RECTIFY = 'rectify';
 export const RECTIFY_INVOICE = 'rectifyInvoice';
 export const REFERENCE = 'reference';
 export const REFUSED = 'refused';
+export const REGIME = 'regime';
+export const REGIME_NAME = 'regimeName';
 export const REGISTRY = 'registry';
 export const REGISTRY_CREDITOR = 'registryCreditor';
 export const REGISTRY_CUSTOMER = 'registryCustomer';
@@ -196,6 +205,7 @@ export const REJECT_INVOICE = 'rejectInvoice';
 export const REJECTED = 'rejected';
 export const REMARKS = 'remarks';
 export const RENTING = 'renting';
+export const RETENTION_PERCENT = 'retentionPercent';
 export const REQUIRED = 'required';
 export const RESTORE = 'restore';
 export const RESTORE_INVOICE = 'restoreInvoice';
@@ -224,6 +234,7 @@ export const STATUS = 'status';
 export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
+export const SURNAME = 'surname';
 
 // ----- T
 
@@ -238,6 +249,7 @@ export const TRANSPORT_OPERATOR = 'transportOperator';
 export const TRASH = 'trash';
 export const TRUE = 'true';
 export const TYPE = 'type';
+export const TYPE_NAME = 'typeName';
 
 // ----- U
 
@@ -250,6 +262,7 @@ export const USERS = 'users';
 
 export const VALUE = 'value';
 export const VAT = 'vat';
+export const VAT_PERCENT = 'vatPercent';
 export const VAT_ACCRUAL_PAYMENT = 'vatAccrualPayment';
 export const VISIBLE = 'visible';
 
@@ -266,28 +279,6 @@ export const HTML_ELEMENT = 'htmlElement';
 
 // ----- Z
 
-export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
-
-export const URL_MAP = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
-export const URL_MAP_EMBED = `https://www.google.com/maps/embed/v1/place?key=${API_KEY_MAP}`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
+// export const URL_MAP = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
+// export const URL_MAP_EMBED = `https://www.google.com/maps/embed/v1/place?key=${API_KEY_MAP}`;

@@ -1,0 +1,584 @@
+package com.esferalia.aon.payroll.agreement;
+
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.jooq.DSLContext;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevel;
+import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevelData;
+import com.esferalia.aon.payroll.agreement.ServiAgreement.Extension;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class AgreementUpdate {
+	
+	// ---------------------------------------------------------- Variables
+	
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	private static Integer domainId = 0;
+	
+	// ---------------------------------------------------------- Constructor
+	
+	private AgreementUpdate() {
+		super();
+	}
+	
+	// ---------------------------------------------------------- Get Agreement Years
+	
+	public static List<Integer> getAgreementYears(String agreementCode) throws IllegalArgumentException {
+		
+		InputStream is = null;
+		
+		if(AonStringUtils.contains(agreementCode, 'a'))
+			is = AgreementUpdate.class.getResourceAsStream(agreementCode + ".xml");
+		else
+			is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
+		
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder documentBuilder;
+		
+	    try {
+			
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.parse(is);
+			
+			return getAgreementYears(document);
+			
+		} catch (IllegalArgumentException | ParserConfigurationException | IOException | SAXException e) {
+			if(e instanceof IllegalArgumentException)
+				throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
+			
+			e.printStackTrace();
+			
+			return Collections.emptyList();
+		}
+	}
+
+	private static List<Integer> getAgreementYears(Document document) {
+		List<Integer> agreementDates = new ArrayList<>();
+		
+		NodeList list = document.getElementsByTagName("DATOS_GENERALES");
+		
+		for(int i=0; i<list.getLength(); i++) {
+			Node node = list.item(i);
+
+	        if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+	            Element element = (Element) node;
+	            
+	            // From year
+				String startDateYear = element.getElementsByTagName("AÑO_APLIC_DESDE").item(0).getTextContent();
+				Integer startYear = Integer.parseInt(startDateYear);
+				
+				 // To year
+				String endDateYear = element.getElementsByTagName("AÑO_APLIC_HASTA").item(0).getTextContent();
+				Integer endYear = Integer.parseInt(endDateYear);
+				
+				Integer iteratorYear = startYear;
+				while (iteratorYear <= endYear) {
+					agreementDates.add(iteratorYear);
+					iteratorYear++;
+				}
+				
+	        }
+		}
+		
+		return agreementDates;
+	}
+
+	// ---------------------------------------------------------- Get Agreement
+
+	public static Date checkAndUpdateServiAgreement(Connection connection, Integer domainIdIn, Integer agreementId, String ssNumber, Integer lastDateYear) throws IllegalArgumentException {
+		domainId = domainIdIn;
+		
+		String agreementCode = getServiAgreementCode(ssNumber, ServiAgreementsFilter.getServiAgreementsMap(true));
+		
+		if(AonStringUtils.isBlank(agreementCode))
+			throw new IllegalArgumentException("No se ha podido localizar el convenio que se desea actualizar");
+		
+		List<Integer> agreementYears = getAgreementYears(agreementCode);
+		Integer lastServiAgreementYear = agreementYears.get(agreementYears.size() - 1);
+		
+		if(lastDateYear.equals(lastServiAgreementYear))
+			return null;
+		
+		List<Integer> agreementImportYears = getAgreementImportYears(lastDateYear, agreementYears);
+		
+		// Get dslContext for given connection
+		AONContext ctx = new AONContext(connection);
+		DSLContext dslContext = ctx.getDslContext();
+		
+		InputStream is = null;
+		
+		if(AonStringUtils.contains(agreementCode, 'a'))
+			is = AgreementUpdate.class.getResourceAsStream(agreementCode + ".xml");
+		else
+			is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
+		
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder documentBuilder;
+		
+	    try {
+			
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.parse(is);
+			
+			// Agreement general info
+			Agreement agreement = getAgreementInfo(document);
+			
+			// Agreement Concepts
+			getAgreementConcepts(document, agreement);
+			
+			// Agreement levels and categories
+			getAgreementLevelAndCategory(document, agreement);
+			
+			// Agreement levels data
+			getAgreementLevelData(dslContext, document, agreement, agreementImportYears);
+			
+			// Parse agreement to group leves
+			agreement = parseAgreement(agreement);
+
+			// Update Agreement to DataBase
+			updateAgreementDB(dslContext, agreement, agreementId, agreementCode, agreementImportYears);
+			
+			return new Date(agreementImportYears.get(0)-1900, 0, 1);
+
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
+		} catch (ParserConfigurationException | IOException | SAXException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
+		}
+	}
+
+	private static String getServiAgreementCode(String ssNumber, Map<String, String> serviAgreementsMap) {
+		for(Entry<String, String> entry : serviAgreementsMap.entrySet())
+			if(AonStringUtils.containsIgnoreCase(entry.getKey(), ssNumber))
+				return entry.getValue();
+			
+		return null;
+	}
+	
+	private static List<Integer> getAgreementImportYears(Integer lastDateYear, List<Integer> agreementYears) {
+		return agreementYears.stream().filter(date -> date > lastDateYear).collect(Collectors.toList());
+	}
+	
+	// ------------------------------------------------------------ AGREEMENT INFO
+
+	private static Agreement getAgreementInfo(Document document) {
+		Agreement agreement = null;
+		NodeList list = document.getElementsByTagName("DATOS_GENERALES");
+		
+		for(int i=0; i<list.getLength(); i++) {
+			Node node = list.item(i);
+
+	        if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+	            Element element = (Element) node;
+	            
+	            String description = element.getElementsByTagName("NOMBRE").item(0).getTextContent();
+	            String ssCode = element.getElementsByTagName("CODIGO_SS").item(0).getTextContent();
+	            String serviAgreementCode = element.getElementsByTagName("FICHEROS").item(0).getTextContent();
+	            
+	            Date lastUpdate = null;
+				try {
+					lastUpdate = dateFormat.parse(element.getElementsByTagName("FECHA_ULT_ACT").item(0).getTextContent());
+				} catch (DOMException | ParseException e) {
+					e.printStackTrace();
+				}
+				
+				String startDateYear = element.getElementsByTagName("AÑO_APLIC_DESDE").item(0).getTextContent();
+				Calendar startDateCal = Calendar.getInstance();
+				startDateCal.set(Calendar.YEAR, Integer.parseInt(startDateYear));
+				startDateCal.set(Calendar.MONTH, 0);
+				startDateCal.set(Calendar.DAY_OF_MONTH, 1);
+				Date startDate = startDateCal.getTime();
+				
+	            agreement = new Agreement(description, ssCode, serviAgreementCode, lastUpdate, startDate);
+	     
+	        }
+		}
+		
+		return agreement;
+	}
+	
+	private static void getAgreementConcepts(Document document, Agreement agreement) {
+		NodeList listCPR = document.getElementsByTagName("CATALOGO_CPTOS_RETRIB");
+		
+		for(int i=0; i<listCPR.getLength(); i++) {
+			Node nodeCPR = listCPR.item(i);
+
+	        if (nodeCPR.getNodeType() == Node.ELEMENT_NODE) {
+
+	            Element elementCPR = (Element) nodeCPR;
+	            
+	            NodeList listCI = elementCPR.getElementsByTagName("CPTO_IT");
+	            
+	            for(int j=0; j<listCI.getLength(); j++) {
+	    			Node nodeCI = listCI.item(j);
+
+	    	        if (nodeCI.getNodeType() == Node.ELEMENT_NODE) {
+	    	        	Element elementCI = (Element) nodeCI;
+	    	        	
+	    	        	String name = elementCI.getElementsByTagName("NOMBRE").item(0).getTextContent();
+	    	            String type = elementCI.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
+	    	            
+	    	            String realName = getParseName(name, type);
+	    	            
+	    	            agreement.addAgreementConcept(realName);
+	    	        }
+	            }   
+	        }
+		}
+	}
+
+	private static void getAgreementLevelAndCategory(Document document, Agreement agreement) {
+		NodeList list = document.getElementsByTagName("CATALOGO_CAT_PROF");
+		for(int i=0; i<list.getLength(); i++) {
+			Node node = list.item(i);
+
+	        if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+	            Element element = (Element) node;
+	            
+	            NodeList listCatProfIt = element.getElementsByTagName("CAT_PROF_IT");
+	            
+	            for(int j=0; j<listCatProfIt.getLength(); j++) {
+	    			Node nodeCatProfIt = listCatProfIt.item(j);
+
+	    	        if (nodeCatProfIt.getNodeType() == Node.ELEMENT_NODE) {
+
+	    	            Element elementCatProfIt = (Element) nodeCatProfIt;
+	    	            
+	    	            String code = elementCatProfIt.getElementsByTagName("CODIGO").item(0).getTextContent();
+	    	            
+	    	            NodeList listdescriptions = elementCatProfIt.getElementsByTagName("GRUPO");
+	    	            String description = "";
+	    	            
+	    	            if(listdescriptions.getLength() == 0) {
+	    	            	description = "NIVEL " + (j+1);
+	    	            } else {
+		    	            for(int b=0; b<listdescriptions.getLength(); b++)
+		    	            	description += listdescriptions.item(b).getTextContent() + " ";
+		    	            description = description.trim();
+	    	            }
+	    	            
+	    	            String category = elementCatProfIt.getElementsByTagName("NOMBRE").item(0).getTextContent();
+	    	            
+	    	            agreement.addAgreementLevel(code, description, category);
+	    	            
+	    	        }
+	    		}
+	        }
+		}
+	}
+	
+	private static void getAgreementLevelData(DSLContext dslContext, Document document, Agreement agreement, List<Integer> selectedDates) {
+		NodeList listTS = document.getElementsByTagName("TABLAS_SALARIALES");
+		for(int i=0; i<listTS.getLength(); i++) {
+			Node nodeTS = listTS.item(i);
+
+	        if (nodeTS.getNodeType() == Node.ELEMENT_NODE) {
+
+	            Element elementTS = (Element) nodeTS;
+	            
+	            NodeList listTSI = elementTS.getElementsByTagName("TAB_SAL_IT");
+	            
+	            for(int j=0; j<listTSI.getLength(); j++) {
+	    			Node nodeTSI = listTSI.item(j);
+
+	    	        if (nodeTSI.getNodeType() == Node.ELEMENT_NODE) {
+
+	    	            Element elementTSI = (Element) nodeTSI;
+	    	            
+	    	            String yearStr = elementTSI.getElementsByTagName("AÑO").item(0).getTextContent();
+	    	            Integer year = Integer.parseInt(yearStr);
+	    	            
+	    	            if(!selectedDates.contains(year))
+	    	            	continue;
+	    	            
+	    	            // Calendar StartDate
+	    	            Calendar startDate = Calendar.getInstance();
+	    	            startDate.set(Calendar.YEAR, year);
+	    	            startDate.set(Calendar.MONTH, 0);
+	    	            startDate.set(Calendar.DAY_OF_MONTH, 1);
+	    	            
+	    	            // EndDate
+	    	            Calendar endDate = Calendar.getInstance();
+	    	            endDate.set(Calendar.YEAR, year-1);
+	    	            endDate.set(Calendar.MONTH, 11);
+	    	            endDate.set(Calendar.DAY_OF_MONTH, 31);
+	    	            
+	    	            agreement.setEndDateToExistingLevelData(endDate.getTime());
+	    	            
+	    	            NodeList listCP = elementTSI.getElementsByTagName("CATEGORIAS_PROFESIONALES");
+	    	            
+	    	            for(int k=0; k<listCP.getLength(); k++) {
+	    	            	Node nodeCP = listCP.item(k);
+	    	            	
+	    	            	if (nodeCP.getNodeType() == Node.ELEMENT_NODE) {
+	    	            		Element elementCP = (Element) nodeCP;
+	    	     	            
+	    	     	            NodeList listCPI = elementCP.getElementsByTagName("CAT_PROF_IT");
+	    	     	            
+	    	     	            for(int l=0; l<listCPI.getLength(); l++) {
+	    	     	            	Node nodeCPI = listCPI.item(l);
+	    	     	            	
+	    	     	            	if (nodeCPI.getNodeType() == Node.ELEMENT_NODE) {
+	    	    	            		Element elementCPI = (Element) nodeCPI;
+
+		    	     	            	NodeList listdescriptions = elementCPI.getElementsByTagName("GRUPO");
+		    		    	            String description = "";
+		    		    	            
+		    		    	            if(listdescriptions.getLength() == 0)
+		    		    	            	description = "NIVEL " + (l+1);
+		    		    	            else {
+			    		    	            for(int b=0; b<listdescriptions.getLength(); b++)
+			    		    	            	description += listdescriptions.item(b).getTextContent() + " ";
+			    		    	            description = description.trim();
+		    		    	            }
+		    		    	            
+			   	    	            	String category = elementCPI.getElementsByTagName("NOMBRE").item(0).getTextContent();
+			   	    	            	
+				   	    	            AgreementLevel agreementLevel = agreement.getAgreementLevel(description, category);
+			   	    	            	
+			   	    	            	Node nodeConcept = elementCPI.getElementsByTagName("CONCEPTOS").item(0);
+			   	    	            	if (null != nodeConcept && nodeConcept.getNodeType() == Node.ELEMENT_NODE) {
+			   	    	            		Element elementConcept = (Element) nodeConcept;
+			   	    	            		
+			   	    	            		NodeList listCPTO = elementConcept.getElementsByTagName("CPTO_IT");
+				   	    	            	
+				   	    	            	for(int b=0; b<listCPTO.getLength(); b++) {
+				    	     	            	Node nodeCPTO = listCPTO.item(b);
+				    	     	            	
+				    	     	            	if (nodeCPTO.getNodeType() == Node.ELEMENT_NODE) {
+				    	     	            		Element elementCPTO = (Element) nodeCPTO;
+				    	     	            		
+				    	     	            		String name = elementCPTO.getElementsByTagName("NOMBRE").item(0).getTextContent();
+						   	    	            	String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
+						   	    	            	String type = elementCPTO.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
+						   	    	            	
+						   	    	            	String realName = getParseName(name, type);
+						   	    	            	
+						   	    	            	agreementLevel.addLevelData(realName, value, startDate.getTime());
+				    	     	            	}
+				   	    	            	}
+			   	    	            	}
+	    	     	            	}
+	    	     	            } 
+	    	            	}
+	    	            }
+	    	        }
+	    		}
+	        }
+		}
+	}
+	
+	// ------------------------------------------------------------ PARSE AGREEMENT
+	
+	private static Agreement parseAgreement(Agreement agreement) {
+		Agreement parsedAgreement = new Agreement(
+				agreement.getAgreementDescription(), 
+				agreement.getSSCode(), 
+				agreement.getServiAgreementCode(), 
+				agreement.getLastUpdate(), 
+				agreement.getStartDate());
+		
+		parsedAgreement.setAgreementConcepts(agreement.getAgreementConcepts());
+		
+		List<AgreementLevel> analizedAgreementLevels = new ArrayList<>();
+		
+		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
+		
+			List<AgreementLevel> duplicateAgreementLevels = getDuplicateAgreementLevels(agreement, agreementLevel, analizedAgreementLevels);
+			analizedAgreementLevels.addAll(duplicateAgreementLevels);
+			
+			AgreementLevel newAgreementLevel = parsedAgreement.createAgreementLevel(agreementLevel.getCode(), agreementLevel.getDescription());
+			newAgreementLevel.setLevelDatas(agreementLevel.getLevelDatas());
+			List<String> categories = new ArrayList<>();
+			
+			for(AgreementLevel duplicateAgreementLevel : duplicateAgreementLevels)
+				categories.addAll(duplicateAgreementLevel.getCategories());
+				
+			newAgreementLevel.setCategories(categories);
+			
+			if(!categories.isEmpty())
+				parsedAgreement.addAgreementLevel(newAgreementLevel);
+		}
+		
+		return parsedAgreement;
+	}
+	
+	private static List<AgreementLevel> getDuplicateAgreementLevels(Agreement agreement, AgreementLevel checkedAgreementLevel, List<AgreementLevel> analizedAgreementLevels) {
+		List<AgreementLevel> duplicateAgreementLevels = new ArrayList<>();
+		
+		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
+			if(!analizedAgreementLevels.contains(agreementLevel) && isSameLevelAndValues(agreementLevel, checkedAgreementLevel))
+				duplicateAgreementLevels.add(agreementLevel);
+		}
+		
+		return duplicateAgreementLevels;
+	}
+
+	private static boolean isSameLevelAndValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
+		return AonStringUtils.equalsIgnoreCase(checkedAgreementLevel.getDescription(), agreementLevel.getDescription()) && haveSameValues(agreementLevel, checkedAgreementLevel);
+	}
+
+	private static boolean haveSameValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
+		for(AgreementLevelData levelData : checkedAgreementLevel.getLevelDatas()) {
+			if(!containsLevelData(levelData, agreementLevel))
+				return false;
+		}
+		
+		return true;
+	}
+
+	private static boolean containsLevelData(AgreementLevelData cehckedlevelData, AgreementLevel agreementLevel) {
+		for(AgreementLevelData levelData : agreementLevel.getLevelDatas()) {
+			if(AonStringUtils.equalsIgnoreCase(cehckedlevelData.getName(), levelData.getName()) && 
+				AonStringUtils.equalsIgnoreCase(cehckedlevelData.getValue(), levelData.getValue()) && 
+				cehckedlevelData.getStartDate().equals(levelData.getStartDate()) &&
+				((null == cehckedlevelData.getEndDate() && null == levelData.getEndDate()) || cehckedlevelData.getEndDate().equals(levelData.getEndDate())))
+				return true;
+		}
+		return false;
+	}
+	
+	// ------------------------------------------------------------ INSERT AGREEMENT 
+
+	private static void updateAgreementDB(DSLContext dslContext, Agreement agreement, Integer agreementId, String agreementCode, List<Integer> selectedDates) {
+		selectedDates.sort((o1, o2) -> o1.compareTo(o2));
+		Integer startYear = selectedDates.get(0);
+		Calendar startDateCal = Calendar.getInstance();
+		startDateCal.set(Calendar.DAY_OF_MONTH, 1);
+		startDateCal.set(Calendar.MONTH, 0);
+		startDateCal.set(Calendar.YEAR, startYear);
+		
+		VariablesMap variablesMap = new VariablesMap();
+		
+		// Agreement Level / Agreement Level Category / Agreement Level Data
+		
+		String oldLevelDescription = null;
+		Integer count = 1;
+		
+		for(AgreementLevel lvl : agreement.getAgreementLevels()) {
+			
+			// Agreement Level
+			
+			String levelDescription = parseLevelDescription(lvl.getDescription());
+			
+			if(null != oldLevelDescription && AonStringUtils.equalsIgnoreCase(oldLevelDescription, levelDescription)) {
+				if(count > 99 && levelDescription.length() >= 60)
+					levelDescription = levelDescription.substring(0, 60);
+				else if(count >= 10 && levelDescription.length() >= 61)
+					levelDescription = levelDescription.substring(0, 61);
+				else if(levelDescription.length() >= 62)
+					levelDescription = levelDescription.substring(0, 61);
+				levelDescription = levelDescription + "_" + count;
+				count++;
+			} else {
+				oldLevelDescription = levelDescription;
+				count = 1;
+			}
+			
+			AgreementLevelRecord agreementLevelRecord  = dslContext.selectFrom(AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
+					.and(AGREEMENT_LEVEL.DESCRIPTION.eq(levelDescription))
+					.fetchOne();
+			
+			Integer agreementLevelId = agreementLevelRecord.getId();
+			
+			// Agreement Level Data
+			
+			for(AgreementLevelData lvlData : lvl.getLevelDatas()) {
+				String realName = variablesMap.getVariablesMap().getOrDefault(lvlData.getName(), null);
+				
+				if(null != realName) {
+					dslContext.insertInto(AGREEMENT_LEVEL_DATA)
+						.set(AGREEMENT_LEVEL_DATA.DOMAIN, domainId)
+						.set(AGREEMENT_LEVEL_DATA.NAME, realName)
+						.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, agreementLevelId)
+						.set(AGREEMENT_LEVEL_DATA.EXPRESSION, lvlData.getValue())
+						.set(AGREEMENT_LEVEL_DATA.START_DATE, parseDateToSql(lvlData.getStartDate()))
+						.set(AGREEMENT_LEVEL_DATA.END_DATE, parseDateToSql(lvlData.getEndDate()))
+						.execute();
+				}
+			}
+			
+		}
+		
+	}
+	
+	private static String parseLevelDescription(String description) {
+		if(description.length() > 64)
+			return description.substring(0, 61).trim();
+		return description.trim();
+	}
+	
+	private static java.sql.Date parseDateToSql(Date date) {
+		if(null == date)
+			return null;
+		
+		return new java.sql.Date(date.getTime());
+	}
+	
+	private static String getParseName(String name, String type) {
+		String realName = "";
+		
+		name = name.replaceAll(" ", "_");
+		name = name.replaceAll(",", "");
+		name = name.replaceAll("\\.", "_");
+		name = name.replaceAll("\\*", "");
+		name = name.replaceAll("/", "_");
+		name = name.replaceAll(":", "_");
+		name = name.replaceAll("º", "");
+		
+		switch (type) {
+		case "A":
+			realName = name + "_" + "ANUAL";
+			break;
+		case "M":
+			realName = name + "_" + "MENSUAL";
+			break;
+		case "D":
+			realName = name + "_" + "DIARIO";
+			break;
+		case "H":
+			realName = name + "_" + "HORAS";
+			break;
+		default:
+			realName = name + "_" + "ANUAL";
+			break;
+		}
+		
+		return realName;
+	}
+
+}

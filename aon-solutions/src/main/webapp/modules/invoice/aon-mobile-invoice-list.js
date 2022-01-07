@@ -91,8 +91,7 @@ export class AonMobileInvoiceList extends AonMobileList {
   }
 
   addRow(invoice, i) {
-    let inv = new Invoice();
-    inv.createInvoice(invoice);
+    let inv = new Invoice(invoice);
 
     let icon = MATERIAL_ICONS.ARCHIVE;
     if(inv.isEmitida()) icon = MATERIAL_ICONS.UNARCHIVE;

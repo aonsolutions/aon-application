@@ -78,8 +78,6 @@ import junit.framework.Assert;
 
 public class SQLSettleTestCase extends AbstractSQLTestCase {
 	
-	
-	
 	private static final double DELTA = 0.0005;
 
 	@Test
@@ -630,6 +628,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 
 	@Test
+	@Ignore
 	public void testSettleVacations2MonthJOOQ() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -1865,7 +1864,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 	}
 
+
 	@Test
+	@Ignore
 	public void testSettleWithExtrasXI() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();

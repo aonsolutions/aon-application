@@ -11,8 +11,10 @@ public class Model390ScriptProvider {
 		if (mod390.getYear() >= 2017) {
 			if (mod390.isAraba()) {
 				ms = Model3902017PrintARABAScript.values();
-			} else if (mod390.isGipuzkoa()) {
+			} else if (mod390.isGipuzkoa() && mod390.getYear() < 2021) {
 				ms = Model3902017PrintGIPUZKOAScript.values();
+			} else if (mod390.isGipuzkoa() && mod390.getYear() >= 2021) {
+				ms = Model3902021PrintGIPUZKOAScript.values();
 			} else if (mod390.isBizkaia()) {
 				ms = Model3902017PrintBIZKAIAScript.values();
 			}

@@ -1,334 +1,127 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2018;
 
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.IMod3902018CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.IMod3902018Page;
-import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel;
-import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel.SelectionCallBack;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.Model3902018Callback;
+import com.esferalia.aon.gwt.fiscal.client.widget.AonActivityPanel;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Page01 extends ResizeComposite implements IMod3902018Page {
+class Page01 extends PageAbs {
 
-	interface PageBinder extends UiBinder<Widget, Page01> {
-	}
-
-	private static final PageBinder BINDER = GWT.create(PageBinder.class);
-
-	IMod3902018CallBack callback;
+	private Label mainActivityDescription = new Label();
+	private Label mainActivityKey = new Label();
+	private Label mainActivityEpigraph = new Label();
 	
-	@UiField
-	Button mainActivityButton;
-	@UiField
-	Button mainActivityDeleteButton;
-	@UiField
-	Label mainActivityDescription;
-	@UiField
-	Label mainActivityKey;
-	@UiField
-	Label mainActivityEpigraph;
+	private Label activity1Description = new Label();
+	private Label activity1Key = new Label();
+	private Label activity1Epigraph = new Label();
+
+	private Label activity2Description = new Label();
+	private Label activity2Key = new Label();
+	private Label activity2Epigraph = new Label();
+
+	private Label activity3Description = new Label();
+	private Label activity3Key = new Label();
+	private Label activity3Epigraph = new Label();
+
+	private Label activity4Description = new Label();
+	private Label activity4Key = new Label();
+	private Label activity4Epigraph = new Label();
+
+	private Label activity5Description = new Label();
+	private Label activity5Key = new Label();
+	private Label activity5Epigraph = new Label();
 	
-	@UiField
-	Button activity1Button;
-	@UiField
-	Button activity1DeleteButton;
-	@UiField
-	Label activity1Description;
-	@UiField
-	Label activity1Key;
-	@UiField
-	Label activity1Epigraph;
-
-	@UiField
-	Button activity2Button;
-	@UiField
-	Button activity2DeleteButton;
-	@UiField
-	Label activity2Description;
-	@UiField
-	Label activity2Key;
-	@UiField
-	Label activity2Epigraph;
-
-	@UiField
-	Button activity3Button;
-	@UiField
-	Button activity3DeleteButton;
-	@UiField
-	Label activity3Description;
-	@UiField
-	Label activity3Key;
-	@UiField
-	Label activity3Epigraph;
-
-	@UiField
-	Button activity4Button;
-	@UiField
-	Button activity4DeleteButton;
-	@UiField
-	Label activity4Description;
-	@UiField
-	Label activity4Key;
-	@UiField
-	Label activity4Epigraph;
-
-	@UiField
-	Button activity5Button;
-	@UiField
-	Button activity5DeleteButton;
-	@UiField
-	Label activity5Description;
-	@UiField
-	Label activity5Key;
-	@UiField
-	Label activity5Epigraph;
+	private CheckBox mod347 = new CheckBox(AON.MSG.mod347Check());
+	private AonDocumentTextBox mergedDeclarationDocument = new AonDocumentTextBox();
+	private AonTextBox mergedDeclarationName = new AonTextBox();
 	
-	ActivityPanel activityPanel;
-	
-	@UiField
-	CheckBox mod347;
-	
-	@UiField
-	DocumentTextBox mergedDeclarationDocument;
-
-	@UiField
-	TextBox mergedDeclarationName;
-
-	
-	public Page01(Mod3902018 m390) {
-		activityPanel = new ActivityPanel();
-		Widget ui = BINDER.createAndBindUi(this);
-		initWidget(ui);
-		setValue(m390);
+	public Page01(Model3902018Callback callback) {
+		super(callback);
+		paint();
+		setValue();
 	}
 	
-	@UiHandler("mainActivityButton")
-	void onMainActivityClick(ClickEvent event) {
-		activityPanel.setCallback(new SelectionCallBack() {
-			@Override
-			public void onSelect(Activity activity) {
-				mainActivityDescription.setText( activity.getDescription() );
-				mainActivityKey.setText( activity.getKey() );
-				mainActivityEpigraph.setText( activity.getEpigraph() );
-			}
-			
-			@Override
-			public void onClose() {
-				
-			}
-		});
-		activityPanel.center();
-		activityPanel.show();
-	}
-	@UiHandler("activity1Button")
-	void onActivity1ButtonClick(ClickEvent event) {
-		activityPanel.setCallback(new SelectionCallBack() {
-			@Override
-			public void onSelect(Activity activity) {
-				activity1Description.setText( activity.getDescription() );
-				activity1Key.setText( activity.getKey() );
-				activity1Epigraph.setText( activity.getEpigraph() );
-			}
-			
-			@Override
-			public void onClose() {
-				
-			}
-		});
-		activityPanel.center();
-		activityPanel.show();
-	}
-	@UiHandler("activity2Button")
-	void onActivity2ButtonClick(ClickEvent event) {
-		activityPanel.setCallback(new SelectionCallBack() {
-			@Override
-			public void onSelect(Activity activity) {
-				activity2Description.setText( activity.getDescription() );
-				activity2Key.setText( activity.getKey() );
-				activity2Epigraph.setText( activity.getEpigraph() );
-			}
-			
-			@Override
-			public void onClose() {
-				
-			}
-		});
-		activityPanel.center();
-		activityPanel.show();
-	}
-	@UiHandler("activity3Button")
-	void onActivity3ButtonClick(ClickEvent event) {
-		activityPanel.setCallback(new SelectionCallBack() {
-			@Override
-			public void onSelect(Activity activity) {
-				activity3Description.setText( activity.getDescription() );
-				activity3Key.setText( activity.getKey() );
-				activity3Epigraph.setText( activity.getEpigraph() );
-			}
-			
-			@Override
-			public void onClose() {
-				
-			}
-		});
-		activityPanel.center();
-		activityPanel.show();
-	}
-	@UiHandler("activity4Button")
-	void onActivity4ButtonClick(ClickEvent event) {
-		activityPanel.setCallback(new SelectionCallBack() {
-			@Override
-			public void onSelect(Activity activity) {
-				activity4Description.setText( activity.getDescription() );
-				activity4Key.setText( activity.getKey() );
-				activity4Epigraph.setText( activity.getEpigraph() );
-			}
-			
-			@Override
-			public void onClose() {
-				
-			}
-		});
-		activityPanel.center();
-		activityPanel.show();
-	}
-	@UiHandler("activity5Button")
-	void onActivity5ButtonClick(ClickEvent event) {
-		activityPanel.setCallback(new SelectionCallBack() {
-			@Override
-			public void onSelect(Activity activity) {
-				activity5Description.setText( activity.getDescription() );
-				activity5Key.setText( activity.getKey() );
-				activity5Epigraph.setText( activity.getEpigraph() );
-			}
-			
-			@Override
-			public void onClose() {
-				
-			}
-		});
-		activityPanel.center();
-		activityPanel.show();
-	}
-	@UiHandler("mainActivityDeleteButton")
-	void onMainActivityDeleteButtonClick(ClickEvent event) {
-		mainActivityDescription.setText(null);	
-		mainActivityKey.setText(null);
-		mainActivityEpigraph.setText(null);
-	}
-	@UiHandler("activity1DeleteButton")
-	void onActivity1DeleteButtonClick(ClickEvent event) {
-		activity1Description.setText(null);	
-		activity1Key.setText(null);
-		activity1Epigraph.setText(null);
-	}
-	@UiHandler("activity2DeleteButton")
-	void onActivity2DeleteButtonClick(ClickEvent event) {
-		activity2Description.setText(null);	
-		activity2Key.setText(null);
-		activity2Epigraph.setText(null);
-	}
-	@UiHandler("activity3DeleteButton")
-	void onActivity3DeleteButtonClick(ClickEvent event) {
-		activity3Description.setText(null);	
-		activity3Key.setText(null);
-		activity3Epigraph.setText(null);
-	}
-	@UiHandler("activity4DeleteButton")
-	void onActivity4DeleteButtonClick(ClickEvent event) {
-		activity4Description.setText(null);	
-		activity4Key.setText(null);
-		activity4Epigraph.setText(null);
-	}
-	@UiHandler("activity5DeleteButton")
-	void onActivity5DeleteButtonClick(ClickEvent event) {
-		activity5Description.setText(null);	
-		activity5Key.setText(null);
-		activity5Epigraph.setText(null);
-	}
-
-	private void setValue(Mod3902018 m390) {
-		if (m390.getMainActivity() != null) {
-			mainActivityDescription.setText(m390.getMainActivity().getDescription());	
-			mainActivityKey.setText(m390.getMainActivity().getKey());
-			mainActivityEpigraph.setText(m390.getMainActivity().getEpigraph());
+	@Override
+	protected void setValue() {
+		if (getModel().getMainActivity() != null) {
+			mainActivityDescription.setText(getModel().getMainActivity().getDescription());	
+			mainActivityKey.setText(getModel().getMainActivity().getKey());
+			mainActivityEpigraph.setText(getModel().getMainActivity().getEpigraph());
 		} else {
 			mainActivityDescription.setText(null);	
 			mainActivityKey.setText(null);
 			mainActivityEpigraph.setText(null);
 		}
-		if (m390.getActivity1() != null) {
-			activity1Description.setText(m390.getActivity1().getDescription());	
-			activity1Key.setText(m390.getActivity1().getKey());
-			activity1Epigraph.setText(m390.getActivity1().getEpigraph());
+		if (getModel().getActivity1() != null) {
+			activity1Description.setText(getModel().getActivity1().getDescription());	
+			activity1Key.setText(getModel().getActivity1().getKey());
+			activity1Epigraph.setText(getModel().getActivity1().getEpigraph());
 		} else {
 			activity1Description.setText(null);	
 			activity1Key.setText(null);
 			activity1Epigraph.setText(null);
 		}
-		if (m390.getActivity2() != null) {
-			activity2Description.setText(m390.getActivity2().getDescription());	
-			activity2Key.setText(m390.getActivity2().getKey());
-			activity2Epigraph.setText(m390.getActivity2().getEpigraph());
+		if (getModel().getActivity2() != null) {
+			activity2Description.setText(getModel().getActivity2().getDescription());	
+			activity2Key.setText(getModel().getActivity2().getKey());
+			activity2Epigraph.setText(getModel().getActivity2().getEpigraph());
 		} else {
 			activity2Description.setText(null);	
 			activity2Key.setText(null);
 			activity2Epigraph.setText(null);
 		}
-		if (m390.getActivity3() != null) {
-			activity3Description.setText(m390.getActivity3().getDescription());	
-			activity3Key.setText(m390.getActivity3().getKey());
-			activity3Epigraph.setText(m390.getActivity3().getEpigraph());
+		if (getModel().getActivity3() != null) {
+			activity3Description.setText(getModel().getActivity3().getDescription());	
+			activity3Key.setText(getModel().getActivity3().getKey());
+			activity3Epigraph.setText(getModel().getActivity3().getEpigraph());
 		} else {
 			activity3Description.setText(null);	
 			activity3Key.setText(null);
 			activity3Epigraph.setText(null);
 		}
-		if (m390.getActivity4() != null) {
-			activity4Description.setText(m390.getActivity4().getDescription());	
-			activity4Key.setText(m390.getActivity4().getKey());
-			activity4Epigraph.setText(m390.getActivity4().getEpigraph());
+		if (getModel().getActivity4() != null) {
+			activity4Description.setText(getModel().getActivity4().getDescription());	
+			activity4Key.setText(getModel().getActivity4().getKey());
+			activity4Epigraph.setText(getModel().getActivity4().getEpigraph());
 		} else {
 			activity4Description.setText(null);	
 			activity4Key.setText(null);
 			activity4Epigraph.setText(null);
 		}
-		if (m390.getActivity5() != null) {
-			activity5Description.setText(m390.getActivity5().getDescription());	
-			activity5Key.setText(m390.getActivity5().getKey());
-			activity5Epigraph.setText(m390.getActivity5().getEpigraph());
+		if (getModel().getActivity5() != null) {
+			activity5Description.setText(getModel().getActivity5().getDescription());	
+			activity5Key.setText(getModel().getActivity5().getKey());
+			activity5Epigraph.setText(getModel().getActivity5().getEpigraph());
 		} else {
 			activity5Description.setText(null);	
 			activity5Key.setText(null);
 			activity5Epigraph.setText(null);
 		}
-		mod347.setValue(m390.isMod347());
-		mergedDeclarationDocument.setValue(m390.getMergedDeclarationDocument());
-		mergedDeclarationName.setValue(m390.getMergedDeclarationName());
+		mod347.setValue(getModel().isMod347(),false);
+		mergedDeclarationDocument.setValue(getModel().getMergedDeclarationDocument(),false);
+		mergedDeclarationName.setValue(getModel().getMergedDeclarationName(),false);
 	}
 
-	@Override
-	public void populate(Mod3902018 mod390) {
+	protected void populate() {
 		if (!AonStringUtils.isEmpty( mainActivityKey.getText() ) ) {
 			Activity mainActivity = new Activity();
 			mainActivity.setKey(mainActivityKey.getText());
 			mainActivity.setDescription(mainActivityDescription.getText());
 			mainActivity.setEpigraph(mainActivityEpigraph.getText());
-			mod390.setMainActivity(mainActivity);
+			getModel().setMainActivity(mainActivity);
 		} else {
-			mod390.setMainActivity(null);
+			getModel().setMainActivity(null);
 		}
 		
 		if (!AonStringUtils.isEmpty( activity1Key.getText() ) ) {
@@ -336,9 +129,9 @@ public class Page01 extends ResizeComposite implements IMod3902018Page {
 			activity1.setKey(activity1Key.getText());
 			activity1.setDescription(activity1Description.getText());
 			activity1.setEpigraph(activity1Epigraph.getText());
-			mod390.setActivity1(activity1);
+			getModel().setActivity1(activity1);
 		} else {
-			mod390.setActivity1(null);
+			getModel().setActivity1(null);
 		}
 		
 		if (!AonStringUtils.isEmpty( activity2Key.getText() ) ) {
@@ -346,9 +139,9 @@ public class Page01 extends ResizeComposite implements IMod3902018Page {
 			activity2.setKey(activity2Key.getText());
 			activity2.setDescription(activity2Description.getText());
 			activity2.setEpigraph(activity2Epigraph.getText());
-			mod390.setActivity2(activity2);
+			getModel().setActivity2(activity2);
 		} else {
-			mod390.setActivity2(null);
+			getModel().setActivity2(null);
 		}
 		
 		if (!AonStringUtils.isEmpty( activity3Key.getText() ) ) {
@@ -356,9 +149,9 @@ public class Page01 extends ResizeComposite implements IMod3902018Page {
 			activity3.setKey(activity3Key.getText());
 			activity3.setDescription(activity3Description.getText());
 			activity3.setEpigraph(activity3Epigraph.getText());
-			mod390.setActivity3(activity3);
+			getModel().setActivity3(activity3);
 		} else {
-			mod390.setActivity3(null);
+			getModel().setActivity3(null);
 		}
 		
 		if (!AonStringUtils.isEmpty( activity4Key.getText() ) ) {
@@ -366,9 +159,9 @@ public class Page01 extends ResizeComposite implements IMod3902018Page {
 			activity4.setKey(activity4Key.getText());
 			activity4.setDescription(activity4Description.getText());
 			activity4.setEpigraph(activity4Epigraph.getText());
-			mod390.setActivity4(activity4);
+			getModel().setActivity4(activity4);
 		} else {
-			mod390.setActivity4(null);
+			getModel().setActivity4(null);
 		}
 		
 		if (!AonStringUtils.isEmpty( activity5Key.getText() ) ) {
@@ -376,23 +169,253 @@ public class Page01 extends ResizeComposite implements IMod3902018Page {
 			activity5.setKey(activity5Key.getText());
 			activity5.setDescription(activity5Description.getText());
 			activity5.setEpigraph(activity5Epigraph.getText());
-			mod390.setActivity5(activity5);
+			getModel().setActivity5(activity5);
 		} else {
-			mod390.setActivity5(null);
+			getModel().setActivity5(null);
 		}
 		
-		mod390.setMod347(mod347.getValue());
-		mod390.setMergedDeclarationDocument(mergedDeclarationDocument.getValue());
-		mod390.setMergedDeclarationName(mergedDeclarationName.getValue());
+		getModel().setMod347(mod347.getValue());
+		getModel().setMergedDeclarationDocument(mergedDeclarationDocument.getValue());
+		getModel().setMergedDeclarationName(mergedDeclarationName.getValue());
 	}
 
-	@Override
-	public void setCallback(IMod3902018CallBack callback) {
-		this.callback = callback;
-	}
-	@Override
-	public void refresh(Mod3902018 m390) {
-		setValue(m390);
-	}
+	private void paint() {
+		ScrollPanel scroll = new ScrollPanel();
+		FlowPanel basePanel = new FlowPanel();
+		scroll.add(basePanel);
+		setWidget(scroll);
+		
+		basePanel.add(getTitle(AON.MSG.stadisticalData()));
+		basePanel.add(getSubtitle(AON.MSG.activities() + " " + AON.MSG.activitiesNote()));
+		basePanel.add(getSubsubtitle(AON.MSG.mainActivity()));
+		
+		AonDisplayGrid grid0 = new AonDisplayGrid();
+		grid0.addStyleName(AON.CSS.aonWidthAlmostAll());
+		grid0.addStyleName(AON.CSS.aonBlockCenter());
+		grid0.addStyleName(AON.CSS.aonMarginTop());
+		basePanel.add(grid0);
+		
+		grid0.addHeaderRow()
+			.addCell(new Label(AON.MSG.epigraph()),AON.CSS.aonWidth100())
+			.addCell(new Label(AON.MSG.key()),AON.CSS.aonWidth80())
+			.addCell(new Label(AON.MSG.description()),AON.CSS.aonWidthAuto())
+			.addCell(new Label(""),AON.CSS.aonWidth20());
+		
+		AonTableButton mainActivityDeleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		mainActivityDeleteButton.addClickHandler(event -> {
+			mainActivityDescription.setText(null);	
+			mainActivityKey.setText(null);
+			mainActivityEpigraph.setText(null);
+			getModel().setMainActivity(null);
+			markAsDirty();
+			event.stopPropagation();
+		});
+		AonDisplayGridRow row = grid0.addRow()
+			.addCell(mainActivityEpigraph)
+			.addCell(mainActivityKey)
+			.addCell(mainActivityDescription)
+			.addCell(mainActivityDeleteButton);
+		row.addClickHandler( evenmt -> {
+			AonActivityPanel activityPanel = new AonActivityPanel();
+			activityPanel.addSelectionHandler(event ->  {
+					Activity activity = event.getSelectedItem();
+					mainActivityDescription.setText( activity.getDescription() );
+					mainActivityKey.setText( activity.getKey() );
+					mainActivityEpigraph.setText( activity.getEpigraph() );
+					getModel().setMainActivity(activity);
+					markAsDirty();
+			});
+			activityPanel.center();
+			activityPanel.show();
+		});
+		
+		basePanel.add(getSubsubtitle(AON.MSG.otherActivities()));
+		
+		AonDisplayGrid grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+		grid.addStyleName(AON.CSS.aonBlockCenter());
+		grid.addStyleName(AON.CSS.aonMarginTop());
+		basePanel.add(grid);
+		
+		grid.addHeaderRow()
+			.addCell(new Label(AON.MSG.epigraph()),AON.CSS.aonWidth100())
+			.addCell(new Label(AON.MSG.key()),AON.CSS.aonWidth80())
+			.addCell(new Label(AON.MSG.description()),AON.CSS.aonWidthAuto())
+			.addCell(new Label(""),AON.CSS.aonWidth20());
+		
+		AonTableButton activity1DeleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		activity1DeleteButton.addClickHandler(event -> {
+			activity1Description.setText(null);	
+			activity1Key.setText(null);
+			activity1Epigraph.setText(null);
+			getModel().setActivity1(null);
+			markAsDirty();
+			event.stopPropagation();
+		});
+		AonDisplayGridRow row1 = grid.addRow()
+			.addCell(activity1Epigraph)
+			.addCell(activity1Key)
+			.addCell(activity1Description)
+			.addCell(activity1DeleteButton);
+		row1.addClickHandler( evenmt -> {
+			AonActivityPanel activityPanel = new AonActivityPanel();
+			activityPanel.addSelectionHandler(event ->  {
+				Activity activity = event.getSelectedItem();
+				activity1Description.setText( activity.getDescription() );
+				activity1Key.setText( activity.getKey() );
+				activity1Epigraph.setText( activity.getEpigraph() );
+				getModel().setActivity1(activity);
+				markAsDirty();
+			});
+			activityPanel.center();
+			activityPanel.show();
+		});
+		
+		AonTableButton activity2DeleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		activity2DeleteButton.addClickHandler(event -> {
+			activity2Description.setText(null);	
+			activity2Key.setText(null);
+			activity2Epigraph.setText(null);
+			getModel().setActivity2(null);
+			markAsDirty();
+			event.stopPropagation();
+		});
+		AonDisplayGridRow row2 = grid.addRow()
+			.addCell(activity2Epigraph)
+			.addCell(activity2Key)
+			.addCell(activity2Description)
+			.addCell(activity2DeleteButton);
+		row2.addClickHandler( evenmt -> {
+			AonActivityPanel activityPanel = new AonActivityPanel();
+			activityPanel.addSelectionHandler(event ->  {
+				Activity activity = event.getSelectedItem();
+				activity2Description.setText( activity.getDescription() );
+				activity2Key.setText( activity.getKey() );
+				activity2Epigraph.setText( activity.getEpigraph() );
+				getModel().setActivity2(activity);
+				markAsDirty();
+			});
+			activityPanel.center();
+			activityPanel.show();
+		});
 
+		AonTableButton activity3DeleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		activity3DeleteButton.addClickHandler(event -> {
+			activity3Description.setText(null);	
+			activity3Key.setText(null);
+			activity3Epigraph.setText(null);
+			getModel().setActivity3(null);
+			markAsDirty();
+			event.stopPropagation();
+		});
+		AonDisplayGridRow row3 = grid.addRow()
+			.addCell(activity3Epigraph)
+			.addCell(activity3Key)
+			.addCell(activity3Description)
+			.addCell(activity3DeleteButton);
+		row3.addClickHandler( evenmt -> {
+			AonActivityPanel activityPanel = new AonActivityPanel();
+			activityPanel.addSelectionHandler(event ->  {
+				Activity activity = event.getSelectedItem();
+				activity3Description.setText( activity.getDescription() );
+				activity3Key.setText( activity.getKey() );
+				activity3Epigraph.setText( activity.getEpigraph() );
+				getModel().setActivity3(activity);
+				markAsDirty();
+			});
+			activityPanel.center();
+			activityPanel.show();
+		});
+
+		AonTableButton activity4DeleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		activity4DeleteButton.addClickHandler(event -> {
+			activity4Description.setText(null);	
+			activity4Key.setText(null);
+			activity4Epigraph.setText(null);
+			getModel().setActivity4(null);
+			markAsDirty();
+			event.stopPropagation();
+		});
+		AonDisplayGridRow row4 = grid.addRow()
+			.addCell(activity4Epigraph)
+			.addCell(activity4Key)
+			.addCell(activity4Description)
+			.addCell(activity4DeleteButton);
+		row4.addClickHandler( evenmt -> {
+			AonActivityPanel activityPanel = new AonActivityPanel();
+			activityPanel.addSelectionHandler(event ->  {
+				Activity activity = event.getSelectedItem();
+				activity4Description.setText( activity.getDescription() );
+				activity4Key.setText( activity.getKey() );
+				activity4Epigraph.setText( activity.getEpigraph() );
+				getModel().setActivity4(activity);
+				markAsDirty();
+			});
+			activityPanel.center();
+			activityPanel.show();
+		});
+
+		AonTableButton activity5DeleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		activity5DeleteButton.addClickHandler(event -> {
+			activity5Description.setText(null);	
+			activity5Key.setText(null);
+			activity5Epigraph.setText(null);
+			getModel().setActivity5(null);
+			markAsDirty();
+			event.stopPropagation();
+		});
+		AonDisplayGridRow row5 = grid.addRow()
+			.addCell(activity5Epigraph)
+			.addCell(activity5Key)
+			.addCell(activity5Description)
+			.addCell(activity5DeleteButton);
+		row5.addClickHandler( evenmt -> {
+			AonActivityPanel activityPanel = new AonActivityPanel();
+			activityPanel.addSelectionHandler(event ->  {
+				Activity activity = event.getSelectedItem();
+				activity5Description.setText( activity.getDescription() );
+				activity5Key.setText( activity.getKey() );
+				activity5Epigraph.setText( activity.getEpigraph() );
+				getModel().setActivity5(activity);
+				markAsDirty();
+			});
+			activityPanel.center();
+			activityPanel.show();
+		});
+		
+		FlowPanel m347 = new FlowPanel();
+		m347.setStyleName(AON.CSS.aonMarginTop());
+		m347.add(mod347);
+		basePanel.add(m347);
+
+		basePanel.add(getTitle(AON.MSG.mergedDeclarationLabel()));
+		
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab);
+
+		tab.addRow()
+			.addCell(new Label(AON.MSG.document()), AON.CSS.aonTableLabel() )
+			.addCell(mergedDeclarationDocument);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.companyName()), AON.CSS.aonTableLabel())
+			.addCell(mergedDeclarationName);
+		
+		mod347.addClickHandler(event -> {
+			mod347.setValue(getModel().isMod347());
+			markAsDirty();
+		});
+		
+		mergedDeclarationDocument.addValueChangeHandler(event -> {
+			mergedDeclarationDocument.setValue(getModel().getMergedDeclarationDocument());
+			markAsDirty();
+		});
+		
+		mergedDeclarationName.addValueChangeHandler(event -> {
+			mergedDeclarationName.setValue(getModel().getMergedDeclarationName());
+			markAsDirty();
+		});
+		
+	}
 }

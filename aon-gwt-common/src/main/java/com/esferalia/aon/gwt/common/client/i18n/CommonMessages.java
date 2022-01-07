@@ -521,10 +521,22 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Impresi\u00F3n del borrador")
 	String draftPrint();
-
-	@DefaultMessage("La impresi\u00F3n del borrador se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")	
-	String draftPrintNote();
 	
+	@DefaultMessage("La impresi\u00F3n del borrador se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")
+	String draftPrintNote();
+
+	@DefaultMessage("Impresi\u00F3n del certificado de IRPF.")
+	String mod190CertificatePrint();
+
+	@DefaultMessage("La impresi\u00F3n del certificado de retenciones e ingresos a cuenta del I.R.P.F. se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")	
+	String mod190CertificatePrintNote();
+
+	@DefaultMessage("Impresi\u00F3n del certificado de IRPF.")
+	String mod180CertificatePrint();
+
+	@DefaultMessage("La impresi\u00F3n del certificado de retenciones e ingresos a cuenta del I.R.P.F. se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")	
+	String mod180CertificatePrintNote();
+
 	@DefaultMessage("La impresi\u00F3n se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n.")	
 	String printNote();
 
@@ -1260,6 +1272,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas en R\u00E9gimen simplificado")
 	String simplifiedRegimeOperations();
 
+	@DefaultMessage("Actividades en r\u00E9gimen simplificado (excepto agr\u00EDcolas, ganaderas y forestales)")
+	String noFarmerActivity();
+	
 	@DefaultMessage("N\u00BA Unidades de m\u00F3dulo")
 	String moduleUnits();
 

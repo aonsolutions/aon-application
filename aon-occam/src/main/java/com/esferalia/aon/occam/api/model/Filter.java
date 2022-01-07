@@ -585,4 +585,9 @@ public interface Filter {
 	public interface InvoiceTaxFilter{
 		Filter filter(InvoiceTaxProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface InvestAssetFilter{
+		Filter filter(InvestAssetProperties properties);
+	}
 }

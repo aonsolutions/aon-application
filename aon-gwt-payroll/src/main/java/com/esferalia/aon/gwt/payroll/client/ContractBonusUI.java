@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -19,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -45,6 +48,12 @@ public class ContractBonusUI extends ResizeComposite {
 		String maxWidthTB();
 		String maxWidthLB();
 	}
+	
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField (provided = true)
+	AonToolbar toolbar;
 
 	@UiField
 	VerticalPanel contractBonusTable;
@@ -67,17 +76,19 @@ public class ContractBonusUI extends ResizeComposite {
 	// ------------------------------------------------------ Variables
 
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private ContractBonusObject contractBonusObject;
 	private Map<String, String> t50QUOTA;
 	
 	// ------------------------------------------------------ Constructor
 	
 	public ContractBonusUI() {
+		createToolbar();
 		initWidget(uiBinder.createAndBindUi(this));
 		initt50QUOTA();
 		initializeView();
 		deckPanel.showWidget(0);
 	}
-	
+
 	// ------------------------------------------------------ t50QUOTA.Methods
 	
 	private void initt50QUOTA() {
@@ -215,19 +226,22 @@ public class ContractBonusUI extends ResizeComposite {
 	
 	// ------------------------------------------------------ setEmployeeContractInfo
 	
-	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfo) {
+	public void setContractBonusObject(ContractBonusObject contractBonusObject) {
+		this.contractBonusObject = contractBonusObject;
+		this.contractBonusObject.getSSBonus(
+			s -> loadView(), 
+			f -> showError("Bonificaciones", f.getMessage())
+		);
+	}
+	
+	private void loadView() {
 		resetAttachDataTableStructure();
 		
-		if(!employeeContractInfo.getContractBonus().isEmpty())
+		if(!this.contractBonusObject.getSSBonusList().isEmpty())
 			deckPanel.showWidget(1);
 		
-		for(SSBonusData contractBonus : employeeContractInfo.getContractBonus())
+		for(SSBonusData contractBonus : this.contractBonusObject.getSSBonusList())
 			paintContractBonus(contractBonus);
-		
-		// Footer
-		Map<String, String> infoMap = new HashMap<>();
-		infoMap.put("Actualizado", "Bonificaciones actualizadas a " + formatFullDate.format(new Date()));
-		AonMessagePanel.showInfo(messagePanel, infoMap);
 	}
 	
 	// ------------------------------------------------------ setEmployeeContractInfo.Methods
@@ -269,6 +283,45 @@ public class ContractBonusUI extends ResizeComposite {
 		RegExp.compile("quota:([0-9]+)")
 		.exec(bonus.getFormula());
 		return t50QUOTA.getOrDefault(matchResult.getGroup(1), "");
+	}
+	
+	// -------------------------------------------------- Toolbar
+	
+	private void createToolbar() {
+		toolbar = new AonToolbar("Bonificaciones");
+		
+		AonToolbarButton checkBonus = new AonToolbarButton("Actualizar Bonificaciones", AON.CSS.aonIconTgss());
+		checkBonus.addClickHandler(e -> checkBonus());
+		toolbar.add(checkBonus);
+	}
+
+	private void checkBonus() {
+		showLoading("Obteniendo bonificaciones del contrato");
+		this.contractBonusObject.syncSSBonus(
+			s -> {
+				showSuccess("Bonificaciones", "Bonificaciones actualizadas a " + formatFullDate.format(new Date()));
+				loadView();
+			},
+			f -> showError("Obtenci\u00F3n Bonificaciones", f.getMessage())
+		);
+	}
+	
+	// -------------------------------------------------- MessagesPanel
+	
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+	
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messagePanel, errorMap);
+	}
+	
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
 	}
 	
 }

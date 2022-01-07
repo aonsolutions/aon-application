@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL131;
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -62,16 +63,18 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902021;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -83,8 +86,10 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod190Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod3902021Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -298,7 +303,7 @@ public class ModelAdmonUtils {
 		return response;
 	}
 
-	public static synchronized  void giveDataResponseDataBack( HttpServletResponse resp, AEATParams params, FiscalModel model)  {
+	public static synchronized  void giveDataResponseDataBack( HttpServletResponse resp, AEATParams params, IFiscalModel model)  {
 		Pair<DataResponseSource,DataAttachSource> pair = getDataResponseData( model );
 		Attach attach = AON.getAttach(params.getDomainName(), params.getDomainId(), params.getUser(), 
 				f -> f.getDomainProperty().eq( model.getDomain())
@@ -381,29 +386,32 @@ public class ModelAdmonUtils {
 		return buff;
 	}
 	
-	private static Mod111 getMod111(FiscalModel fm) {
+	private static Mod111 getMod111(IFiscalModel fm) {
 		return (fm instanceof Mod111)?(Mod111)fm:null;
 	}
-	private static Mod115 getMod115(FiscalModel fm) {
+	private static Mod115 getMod115(IFiscalModel fm) {
 		return (fm instanceof Mod115)?(Mod115)fm:null;
 	}
-	private static Mod123 getMod123(FiscalModel fm) {
+	private static Mod123 getMod123(IFiscalModel fm) {
 		return (fm instanceof Mod123)?(Mod123)fm:null;
 	}
-	private static Mod130 getMod130(FiscalModel fm) {
+	private static Mod130 getMod130(IFiscalModel fm) {
 		return (fm instanceof Mod130)?(Mod130)fm:null;
 	}
-	private static Mod131 getMod131(FiscalModel fm) {
+	private static Mod131 getMod131(IFiscalModel fm) {
 		return (fm instanceof Mod131)?(Mod131)fm:null;
 	}
-	private static Mod202 getMod202(FiscalModel fm) {
+	private static Mod190 getMod190(IFiscalModel fm) {
+		return (fm instanceof Mod190)?(Mod190)fm:null;
+	}
+	private static Mod202 getMod202(IFiscalModel fm) {
 		return (fm instanceof Mod202)?(Mod202)fm:null;
 	}
-	private static Mod303 getMod303(FiscalModel fm) {
+	private static Mod303 getMod303(IFiscalModel fm) {
 		return (fm instanceof Mod303)?(Mod303)fm:null;
 	}
 	
-	private static byte[] getModelFile(FiscalModel fm) throws AonCoreException {
+	private static byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
 		fm.getModel().visit(new IFiscalModelTypeVisitor() {
@@ -464,20 +472,38 @@ public class ModelAdmonUtils {
 					throw new AonCoreException(e);
 				}
 			}
+			@Override 
+			public void visitM190() { 
+				try {
+					Mod190Writer.fillWriter( getMod190(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override 
+			public void visitM390() { 
+				try {
+					if (fm instanceof Mod3902021) {
+						Mod3902021 mod = (Mod3902021) fm;
+						Mod3902021Writer.fillWriter( mod , writer);
+					}
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM390() { /* Auto-generated method stub */}
 			@Override public void visitM349() { /* Auto-generated method stub */}
 			@Override public void visitM347() { /* Auto-generated method stub */}
 			@Override public void visitM200() { /* Auto-generated method stub */}
 			@Override public void visitM193() { /* Auto-generated method stub */}
-			@Override public void visitM190() { /* ODO Auto-generated method stub */}
 			@Override public void visitM184() { /* Auto-generated method stub */}
 			@Override public void visitM180() { /* Auto-generated method stub */}
 		});
 		return output.toByteArray();
 	}
 
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, FiscalModel fm, byte[] body) {
+	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel fm, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
 		if (response.isCorrect()) {
 			manageRightResponse(resp,aeatParams,fm,new String(body));		
@@ -485,7 +511,7 @@ public class ModelAdmonUtils {
 			manageWrongResponse(resp, response);
 		}
 	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, FiscalModel fm, String aeatResponse) {
+	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel fm, String aeatResponse) {
 		Occam occam = new Occam()
 				.setDomainName(aeatParams.getDomainName())
 				.setDomain(aeatParams.getDomainId())
@@ -520,8 +546,14 @@ public class ModelAdmonUtils {
 			public void visitM303() { 
 				MODEL303.aeatPresentationMod303(occam, getMod303(fm) , aeatResponse);
 			}
+			@Override 
+			public void visitM390() { 
+				if (fm instanceof Mod3902021) {
+					Mod3902021 mod = (Mod3902021) fm;
+					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
+				}
+			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM390() { /* Auto-generated method stub */}
 			@Override public void visitM349() { /* Auto-generated method stub */}
 			@Override public void visitM347() { /* Auto-generated method stub */}
 			@Override public void visitM200() { /* Auto-generated method stub */}
@@ -533,7 +565,7 @@ public class ModelAdmonUtils {
 		giveDataResponseDataBack(resp, aeatParams, fm);
 	}
 
-	public static void send(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model ) {
+	public static void send(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
 		try {
 			String period = model.getPeriod().getName();
 			if ( model.getModel() == FiscalModelType.M202) {
@@ -596,7 +628,7 @@ public class ModelAdmonUtils {
 		}
 	}
 
-	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model) {
+	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
 		try {
 			String year = AonNumberUtils.toString(model.getYear());
 			

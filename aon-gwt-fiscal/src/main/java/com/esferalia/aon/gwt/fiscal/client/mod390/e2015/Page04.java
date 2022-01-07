@@ -1,149 +1,177 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
-import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.Model3902015Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.SimpliedRegimeActivity;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Page04 extends ResizeComposite implements RequiresResize , IMod3902015Page {
+class Page04 extends PageAbs {
 
-	interface PageBinder extends UiBinder<Widget, Page04> {
+	private AonTextBox f01A = new AonTextBox(); 
+	private AonDoubleBox f01B = new AonDoubleBox();
+	private AonDoubleBox f01C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
+	private AonDoubleBox f01D = new AonDoubleBox();
+	private AonDoubleBox f01E = new AonDoubleBox();
+	private AonDoubleBox f01K = new AonDoubleBox();
+	
+	private AonTextBox f02A = new AonTextBox();
+	private AonDoubleBox f02B = new AonDoubleBox();
+	private AonDoubleBox f02C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
+	private AonDoubleBox f02D = new AonDoubleBox();
+	private AonDoubleBox f02E = new AonDoubleBox();
+	private AonDoubleBox f02K = new AonDoubleBox();
+
+	private AonTextBox f03A = new AonTextBox();
+	private AonDoubleBox f03B = new AonDoubleBox();
+	private AonDoubleBox f03C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
+	private AonDoubleBox f03D = new AonDoubleBox();
+	private AonDoubleBox f03E = new AonDoubleBox();
+	private AonDoubleBox f03K = new AonDoubleBox();
+
+	private AonTextBox f04A = new AonTextBox();
+	private AonDoubleBox f04B = new AonDoubleBox();
+	private AonDoubleBox f04C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
+	private AonDoubleBox f04D = new AonDoubleBox();
+	private AonDoubleBox f04E = new AonDoubleBox();
+	private AonDoubleBox f04K = new AonDoubleBox();
+
+	private AonTextBox f05A = new AonTextBox();
+	private AonDoubleBox f05B = new AonDoubleBox();
+	private AonDoubleBox f05C = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH, 4);
+	private AonDoubleBox f05D = new AonDoubleBox();
+	private AonDoubleBox f05E = new AonDoubleBox();
+	private AonDoubleBox f05K = new AonDoubleBox();
+
+	private AonDoubleBox box74 = new AonDoubleBox();
+	private AonDoubleBox box75 = new AonDoubleBox();
+	private AonDoubleBox box76 = new AonDoubleBox();
+	private AonDoubleBox box77 = new AonDoubleBox();
+	private AonDoubleBox box78 = new AonDoubleBox();
+	private AonDoubleBox box79 = new AonDoubleBox();
+	private AonDoubleBox box80 = new AonDoubleBox();
+	private AonDoubleBox box81 = new AonDoubleBox();
+	private AonDoubleBox box82 = new AonDoubleBox();
+	private AonDoubleBox box83 = new AonDoubleBox();
+	
+	public Page04(Model3902015Callback callback) {
+		super(callback);
+		paint();
+		setValue();
+	}
+	
+	@Override
+	protected void setValue() {
+		FarmerRegimeActivity farmer = getModel().getFarmerRegime1();
+		if (farmer != null) {
+			f01A.setValue(farmer.getCodigo(),false);
+			f01B.setValue(farmer.getIncomes(),false);
+			f01C.setValue(farmer.getQuotaIndex(),false);
+			f01D.setValue(farmer.getAccrualQuota(),false);
+			f01E.setValue(farmer.getInputQuotas(),false);
+			f01K.setValue(farmer.getQuota(),false);
+		} else {
+			f01K.setValue(0.0,false);
+		}
+		farmer = getModel().getFarmerRegime2();
+		if (farmer != null) {
+			f02A.setValue(farmer.getCodigo(),false);
+			f02B.setValue(farmer.getIncomes(),false);
+			f02C.setValue(farmer.getQuotaIndex(),false);
+			f02D.setValue(farmer.getAccrualQuota(),false);
+			f02E.setValue(farmer.getInputQuotas(),false);
+			f02K.setValue(farmer.getQuota(),false);
+		} else {
+			f02K.setValue(0.0,false);
+		}
+		farmer = getModel().getFarmerRegime3();
+		if (farmer != null) {
+			f03A.setValue(farmer.getCodigo(),false);
+			f03B.setValue(farmer.getIncomes(),false);
+			f03C.setValue(farmer.getQuotaIndex(),false);
+			f03D.setValue(farmer.getAccrualQuota(),false);
+			f03E.setValue(farmer.getInputQuotas(),false);
+			f03K.setValue(farmer.getQuota(),false);
+		} else {
+			f03K.setValue(0.0,false);
+		}
+		farmer = getModel().getFarmerRegime4();
+		if (farmer != null) {
+			f04A.setValue(farmer.getCodigo(),false);
+			f04B.setValue(farmer.getIncomes(),false);
+			f04C.setValue(farmer.getQuotaIndex(),false);
+			f04D.setValue(farmer.getAccrualQuota(),false);
+			f04E.setValue(farmer.getInputQuotas(),false);
+			f04K.setValue(farmer.getQuota(),false);
+		} else {
+			f04K.setValue(0.0,false);
+		}
+		farmer = getModel().getFarmerRegime5();
+		if (farmer != null) {
+			f05A.setValue(farmer.getCodigo(),false);
+			f05B.setValue(farmer.getIncomes(),false);
+			f05C.setValue(farmer.getQuotaIndex(),false);
+			f05D.setValue(farmer.getAccrualQuota(),false);
+			f05E.setValue(farmer.getInputQuotas(),false);
+			f05K.setValue(farmer.getQuota(),false);
+		} else {
+			f05K.setValue(0.0,false);
+		}
+		
+		box74.setValue(getModel().getBox74(),false);
+		box75.setValue(getModel().getBox75(),false);
+		box76.setValue(getModel().getBox76(),false);
+		box77.setValue(getModel().getBox77(),false);
+		box78.setValue(getModel().getBox78(),false);
+		box79.setValue(getModel().getBox79(),false);
+		box80.setValue(getModel().getBox80(),false);
+		box81.setValue(getModel().getBox81(),false);
+		box82.setValue(getModel().getBox82(),false);
+		box83.setValue(getModel().getBox83(),false);
 	}
 
-	private static final PageBinder BINDER = GWT
-			.create(PageBinder.class);
-
-	IMod3902015CallBack callback;
-
-	@UiField
-	SimplifiedRegimePanel activity1;
-
-	@UiField
-	SimplifiedRegimePanel activity2;
-
-	@UiField
-	TextBox f01A;
-	@UiField
-	DoubleBox f01B;
-	@UiField(provided=true)
-	DoubleBox f01C;
-	@UiField
-	DoubleBox f01D;
-	@UiField
-	DoubleBox f01E;
-	@UiField
-	DoubleBox f01K;
-	
-	@UiField
-	TextBox f02A;
-	@UiField
-	DoubleBox f02B;
-	@UiField(provided=true)
-	DoubleBox f02C;
-	@UiField
-	DoubleBox f02D;
-	@UiField
-	DoubleBox f02E;
-	@UiField
-	DoubleBox f02K;
-
-	@UiField
-	TextBox f03A;
-	@UiField
-	DoubleBox f03B;
-	@UiField(provided=true)
-	DoubleBox f03C;
-	@UiField
-	DoubleBox f03D;
-	@UiField
-	DoubleBox f03E;
-	@UiField
-	DoubleBox f03K;
-
-	@UiField
-	TextBox f04A;
-	@UiField
-	DoubleBox f04B;
-	@UiField(provided=true)
-	DoubleBox f04C;
-	@UiField
-	DoubleBox f04D;
-	@UiField
-	DoubleBox f04E;
-	@UiField
-	DoubleBox f04K;
-
-	@UiField
-	TextBox f05A;
-	@UiField
-	DoubleBox f05B;
-	@UiField(provided=true)
-	DoubleBox f05C;
-	@UiField
-	DoubleBox f05D;
-	@UiField
-	DoubleBox f05E;
-	@UiField
-	DoubleBox f05K;
-
-	@UiField
-	DoubleBox box74;
-	
-	@UiField
-	DoubleBox box75;
-
-	@UiField
-	DoubleBox box76;
-	
-	@UiField
-	DoubleBox box77;
-	
-	@UiField
-	DoubleBox box78;
-	
-	@UiField
-	DoubleBox box79;
-	
-	@UiField
-	DoubleBox box80;
-	
-	@UiField
-	DoubleBox box81;
-	
-	@UiField
-	DoubleBox box82;
-
-	@UiField
-	DoubleBox box83;
-	
-	public Page04(Mod3902015 m390) {
-		f01C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
-		f02C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
-		f03C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
-		f04C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
-		f05C = new DoubleBox(DoubleBox.VISIBLE_LENGTH, 4);
+	private void paint() {
+		ScrollPanel scroll = new ScrollPanel();
+		FlowPanel basePanel = new FlowPanel();
+		scroll.add(basePanel);
+		setWidget(scroll);
 		
-		Widget ui = BINDER.createAndBindUi(this);
-		initWidget(ui);
-		box74.setEnabled(false);
-		box75.setEnabled(false);
-		box79.setEnabled(false);
-		box82.setEnabled(false);
-		box83.setEnabled(false);
+		basePanel.add(getTitle(AON.MSG.simplifiedRegimeOperations()));
+		basePanel.add(getSubtitle(AON.MSG.noFarmerActivity()));
+		
+		SimplifiedRegimePanel activity1 = new SimplifiedRegimePanel(getModel().getSimpRegime1());
+		activity1.addValueChangeHandler(event -> {
+			getModel().setSimpRegime1(event.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		
+		SimplifiedRegimePanel activity2 = new SimplifiedRegimePanel(getModel().getSimpRegime2());
+		activity2.addValueChangeHandler(event -> {
+			getModel().setSimpRegime2(event.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+
+		AonDisplayTable tab0 = new AonDisplayTable();
+		tab0.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab0.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab0);
+		tab0.addRow()
+			.addCell(activity1)
+			.addCell(activity2);
+		
+		basePanel.add(getSubtitle(AON.MSG.farmerActivity()));
+		
+		AonDisplayTable tab1 = new AonDisplayTable();
+		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab1.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab1);
 		
 		f01A.setVisibleLength(3);
 		f02A.setVisibleLength(3);
@@ -155,277 +183,322 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 		f03C.setVisibleLength(5);
 		f04C.setVisibleLength(5);
 		f05C.setVisibleLength(5);
-		setValue(m390);
-	}
 
-	private void setValue(Mod3902015 m390) {
-		SimpliedRegimeActivity regime = m390.getSimpRegime1();
-		if (regime != null) {
-			activity1.setValue(regime);
-		} else {
-			activity1.empty();
-		}
-		regime = m390.getSimpRegime2();
-		if (regime != null) {
-			activity2.setValue(regime);
-		} else {
-			activity2.empty();
-		}
-		FarmerRegimeActivity farmer = m390.getFarmerRegime1();
-		if (farmer != null) {
-			f01A.setValue(farmer.getCodigo());
-			f01B.setValue(farmer.getIncomes());
-			f01C.setValue(farmer.getQuotaIndex());
-			f01D.setValue(farmer.getAccrualQuota());
-			f01E.setValue(farmer.getInputQuotas());
-			f01K.setValue(farmer.getQuota());
-		} else {
-			f01K.setValue(0.0);
-		}
-		farmer = m390.getFarmerRegime2();
-		if (farmer != null) {
-			f02A.setValue(farmer.getCodigo());
-			f02B.setValue(farmer.getIncomes());
-			f02C.setValue(farmer.getQuotaIndex());
-			f02D.setValue(farmer.getAccrualQuota());
-			f02E.setValue(farmer.getInputQuotas());
-			f02K.setValue(farmer.getQuota());
-		} else {
-			f02K.setValue(0.0);
-		}
-		farmer = m390.getFarmerRegime3();
-		if (farmer != null) {
-			f03A.setValue(farmer.getCodigo());
-			f03B.setValue(farmer.getIncomes());
-			f03C.setValue(farmer.getQuotaIndex());
-			f03D.setValue(farmer.getAccrualQuota());
-			f03E.setValue(farmer.getInputQuotas());
-			f03K.setValue(farmer.getQuota());
-		} else {
-			f03K.setValue(0.0);
-		}
-		farmer = m390.getFarmerRegime4();
-		if (farmer != null) {
-			f04A.setValue(farmer.getCodigo());
-			f04B.setValue(farmer.getIncomes());
-			f04C.setValue(farmer.getQuotaIndex());
-			f04D.setValue(farmer.getAccrualQuota());
-			f04E.setValue(farmer.getInputQuotas());
-			f04K.setValue(farmer.getQuota());
-		} else {
-			f04K.setValue(0.0);
-		}
-		farmer = m390.getFarmerRegime5();
-		if (farmer != null) {
-			f05A.setValue(farmer.getCodigo());
-			f05B.setValue(farmer.getIncomes());
-			f05C.setValue(farmer.getQuotaIndex());
-			f05D.setValue(farmer.getAccrualQuota());
-			f05E.setValue(farmer.getInputQuotas());
-			f05K.setValue(farmer.getQuota());
-		} else {
-			f05K.setValue(0.0);
-		}
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.code()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
+			.addCell(new Label (AON.MSG.f02Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
+			.addCell(new Label (AON.MSG.f03Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
+			.addCell(new Label (AON.MSG.f04Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
+			.addCell(new Label (AON.MSG.f05Msg()), AON.CSS.aonBold(), AON.CSS.aonWidth80())
+			.addCell(new Label (AON.MSG.page6J()), AON.CSS.aonBold(), AON.CSS.aonWidthAuto());
+		tab1.addRow()
+			.addCell(f01A)
+			.addCell(f01B)
+			.addCell(f01C)
+			.addCell(f01D)
+			.addCell(f01E)
+			.addCell(f01K);
+		tab1.addRow()
+			.addCell(f02A)
+			.addCell(f02B)
+			.addCell(f02C)
+			.addCell(f02D)
+			.addCell(f02E)
+			.addCell(f02K);
+		tab1.addRow()
+			.addCell(f03A)
+			.addCell(f03B)
+			.addCell(f03C)
+			.addCell(f03D)
+			.addCell(f03E)
+			.addCell(f03K);
+		tab1.addRow()
+			.addCell(f04A)
+			.addCell(f04B)
+			.addCell(f04C)
+			.addCell(f04D)
+			.addCell(f04E)
+			.addCell(f04K);
+		tab1.addRow()
+			.addCell(f05A)
+			.addCell(f05B)
+			.addCell(f05C)
+			.addCell(f05D)
+			.addCell(f05E)
+			.addCell(f05K);
+
+		basePanel.add(getSubtitle(AON.MSG.outputVat()));
 		
-		box74.setValue(m390.getBox74());
-		box75.setValue(m390.getBox75());
-		box76.setValue(m390.getBox76());
-		box77.setValue(m390.getBox77());
-		box78.setValue(m390.getBox78());
-		box79.setValue(m390.getBox79());
-		box80.setValue(m390.getBox80());
-		box81.setValue(m390.getBox81());
-		box82.setValue(m390.getBox82());
-		box83.setValue(m390.getBox83());
-		refresh();
-	}
-
-	void refresh() {
-		box74.setValue(AonMathUtils.round(activity1.getBoxJ() + activity2.getBoxJ()));
-		box75.setValue(AonMathUtils.round(
-				  f01K.getValue()
-				+ f02K.getValue()
-				+ f03K.getValue()				
-				+ f04K.getValue()				
-				+ f05K.getValue()				
-				));
-		box79.setValue(AonMathUtils.round(
-				box74.getValue() +
-				box75.getValue() +
-				box76.getValue() +
-				box77.getValue() +
-				box78.getValue()
-				));
-		box82.setValue(AonMathUtils.round(
-				box80.getValue() +
-				box81.getValue() 
-				));
-		box83.setValue(AonMathUtils.round(
-				box79.getValue() -
-				box82.getValue() 
-				));
-	}
-	
-	@UiHandler("box74")
-	void onChangeBox74(ChangeEvent event) {
-		refresh();
-	}
-	@UiHandler("box75")
-	void onChangeBox75(ChangeEvent event) {
-		refresh();
-	}
-	@UiHandler("box76")
-	void onChangeBox76(ChangeEvent event) {
-		refresh();
-	}
-	@UiHandler("box77")
-	void onChangeBox77(ChangeEvent event) {
-		refresh();
-	}
-	@UiHandler("box78")
-	void onChangeBox78(ChangeEvent event) {
-		refresh();
-	}
-	@UiHandler("box80")
-	void onChangeBox80(ChangeEvent event) {
-		refresh();
-	}
-	@UiHandler("box81")
-	void onChangeBox81(ChangeEvent event) {
-		refresh();
-	}
+		AonDisplayTable tab2 = new AonDisplayTable();
+		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab2.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab2);
 		
+		box74.setEnabled(false);
+		box75.setEnabled(false);
+		box79.setEnabled(false);
+		tab2.addRow()
+			.addCell(new Label(AON.MSG.box74Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(74),AON.CSS.aonWidth40())
+			.addCell(box74,AON.CSS.aonWidth120());
+		tab2.addRow()
+			.addCell(new Label(AON.MSG.box75Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(75),AON.CSS.aonWidth40())
+			.addCell(box75,AON.CSS.aonWidth120());
+		tab2.addRow()
+			.addCell(new Label(AON.MSG.box76Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(76),AON.CSS.aonWidth40())
+			.addCell(box76,AON.CSS.aonWidth120());
+		tab2.addRow()
+			.addCell(new Label(AON.MSG.box77Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(77),AON.CSS.aonWidth40())
+			.addCell(box77,AON.CSS.aonWidth120());
+		tab2.addRow()
+			.addCell(new Label(AON.MSG.box78Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(78),AON.CSS.aonWidth40())
+			.addCell(box78,AON.CSS.aonWidth120());
+		tab2.addRow()
+			.addCell(new Label(AON.MSG.box79Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(79),AON.CSS.aonWidth40())
+			.addCell(box79,AON.CSS.aonWidth120());
+
+		basePanel.add(getSubtitle(AON.MSG.inputVat()));
 		
-	@Override
-	public void populate(Mod3902015 mod390) {
-		SimpliedRegimeActivity regime = activity1.populate();
-		mod390.setSimpRegime1((regime != null)?regime:null);
-		regime = activity2.populate();
-		mod390.setSimpRegime2((regime != null)?regime:null);
-		FarmerRegimeActivity farmer = null;
-		if (!AonStringUtils.isEmpty(f01A.getValue()) ) {
-			farmer = new FarmerRegimeActivity();
-			farmer.setCodigo(f01A.getValue());
-			farmer.setIncomes(f01B.getValue());
-			farmer.setQuotaIndex(f01C.getValue());
-			farmer.setAccrualQuota(f01D.getValue());
-			farmer.setInputQuotas(f01E.getValue());
-			farmer.setQuota(f01K.getValue());
-			mod390.setFarmerRegime1(farmer);
-		}
-		if (!AonStringUtils.isEmpty(f02A.getValue()) ) {
-			farmer = new FarmerRegimeActivity();
-			farmer.setCodigo(f02A.getValue());
-			farmer.setIncomes(f02B.getValue());
-			farmer.setQuotaIndex(f02C.getValue());
-			farmer.setAccrualQuota(f02D.getValue());
-			farmer.setInputQuotas(f02E.getValue());
-			farmer.setQuota(f02K.getValue());
-			mod390.setFarmerRegime2(farmer);
-		}
-		if (!AonStringUtils.isEmpty(f03A.getValue()) ) {
-			farmer = new FarmerRegimeActivity();
-			farmer.setCodigo(f03A.getValue());
-			farmer.setIncomes(f03B.getValue());
-			farmer.setQuotaIndex(f03C.getValue());
-			farmer.setAccrualQuota(f03D.getValue());
-			farmer.setInputQuotas(f03E.getValue());
-			farmer.setQuota(f03K.getValue());
-			mod390.setFarmerRegime3(farmer);
-		}
-		if (!AonStringUtils.isEmpty(f04A.getValue()) ) {
-			farmer = new FarmerRegimeActivity();
-			farmer.setCodigo(f04A.getValue());
-			farmer.setIncomes(f04B.getValue());
-			farmer.setQuotaIndex(f04C.getValue());
-			farmer.setAccrualQuota(f04D.getValue());
-			farmer.setInputQuotas(f04E.getValue());
-			farmer.setQuota(f04K.getValue());
-			mod390.setFarmerRegime4(farmer);
-		}
-		if (!AonStringUtils.isEmpty(f05A.getValue()) ) {
-			farmer = new FarmerRegimeActivity();
-			farmer.setCodigo(f05A.getValue());
-			farmer.setIncomes(f05B.getValue());
-			farmer.setQuotaIndex(f05C.getValue());
-			farmer.setAccrualQuota(f05D.getValue());
-			farmer.setInputQuotas(f05E.getValue());
-			farmer.setQuota(f05K.getValue());
-			mod390.setFarmerRegime5(farmer);
-		}
-		mod390.setBox74(box74.getValue());
-		mod390.setBox75(box75.getValue());
-		mod390.setBox76(box76.getValue());
-		mod390.setBox77(box77.getValue());
-		mod390.setBox78(box78.getValue());
-		mod390.setBox79(box79.getValue());
-		mod390.setBox80(box80.getValue());
-		mod390.setBox81(box81.getValue());
-		mod390.setBox82(box82.getValue());
-		mod390.setBox83(box83.getValue());
-	}
+		AonDisplayTable tab3 = new AonDisplayTable();
+		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab3.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab3);
 
-	public double getBox83() {
-		return box83.getValue();
-	}
+		box82.setEnabled(false);
+		
+		tab3.addRow()
+			.addCell(new Label(AON.MSG.box80Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(80),AON.CSS.aonWidth40())
+			.addCell(box80,AON.CSS.aonWidth120());
+		tab3.addRow()
+			.addCell(new Label(AON.MSG.investAssetRegularization()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(81),AON.CSS.aonWidth40())
+			.addCell(box81,AON.CSS.aonWidth120());
+		tab3.addRow()
+			.addCell(new Label(AON.MSG.deductionSum()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(82),AON.CSS.aonWidth40())
+			.addCell(box82,AON.CSS.aonWidth120());
 
-	SimplifiedRegimePanel getActivity1() {
-		return activity1;
-	}
-	SimplifiedRegimePanel getActivity2() {
-		return activity2;
-	}
+		AonDisplayTable tab4 = new AonDisplayTable();
+		tab4.addStyleName(AON.CSS.aonMarginTop());
+		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab4.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab4);
+		box83.setEnabled(false);
+		tab4.addRow()
+			.addCell(new Label(AON.MSG.box83Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(82),AON.CSS.aonWidth40())
+			.addCell(box82,AON.CSS.aonWidth120());
 
-	public void setFarmerValue(int f, Mod311Results farmer) {
-		if (f==0) {
-			f01A.setValue(farmer.getCodigo());
-			f01B.setValue(farmer.getIncomes());
-			f01C.setValue(farmer.getQuotaIndex());
-			f01D.setValue(farmer.getAccrualQuota());
-			f01E.setValue(farmer.getInputQuotas());
-			f01K.setValue(farmer.getQuota());
-		}
-		if (f==1) {
-			f02A.setValue(farmer.getCodigo());
-			f02B.setValue(farmer.getIncomes());
-			f02C.setValue(farmer.getQuotaIndex());
-			f02D.setValue(farmer.getAccrualQuota());
-			f02E.setValue(farmer.getInputQuotas());
-			f02K.setValue(farmer.getQuota());
-		}
-		if (f==2) {
-			f03A.setValue(farmer.getCodigo());
-			f03B.setValue(farmer.getIncomes());
-			f03C.setValue(farmer.getQuotaIndex());
-			f03D.setValue(farmer.getAccrualQuota());
-			f03E.setValue(farmer.getInputQuotas());
-			f03K.setValue(farmer.getQuota());
-		}
-		if (f==3) {
-			f04A.setValue(farmer.getCodigo());
-			f04B.setValue(farmer.getIncomes());
-			f04C.setValue(farmer.getQuotaIndex());
-			f04D.setValue(farmer.getAccrualQuota());
-			f04E.setValue(farmer.getInputQuotas());
-			f04K.setValue(farmer.getQuota());
-		}
-		if (f==4) {
-			f05A.setValue(farmer.getCodigo());
-			f05B.setValue(farmer.getIncomes());
-			f05C.setValue(farmer.getQuotaIndex());
-			f05D.setValue(farmer.getAccrualQuota());
-			f05E.setValue(farmer.getInputQuotas());
-			f05K.setValue(farmer.getQuota());
-		}
-	}
-	
-	@Override
-	public void setCallback(IMod3902015CallBack callback) {
-		this.callback = callback;
-	}
-	
-	@Override
-	public void refresh(Mod3902015 m390) {
-		setValue(m390);
+		f01A.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime1().setCodigo(f01A.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f01B.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime1().setIncomes(f01B.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f01C.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime1().setQuotaIndex(f01C.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f01D.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime1().setAccrualQuota(f01D.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f01E.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime1().setInputQuotas(f01E.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f01K.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime1().setQuota(f01K.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		
+		f02A.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime2().setCodigo(f02A.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f02B.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime2().setIncomes(f02B.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f02C.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime2().setQuotaIndex(f02C.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f02D.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime2().setAccrualQuota(f02D.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f02E.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime2().setInputQuotas(f02E.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f02K.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime2().setQuota(f02K.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+
+		f03A.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime3().setCodigo(f03A.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f03B.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime3().setIncomes(f03B.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f03C.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime3().setQuotaIndex(f03C.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f03D.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime3().setAccrualQuota(f03D.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f03E.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime3().setInputQuotas(f03E.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f03K.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime3().setQuota(f03K.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+
+		f04A.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime4().setCodigo(f04A.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f04B.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime4().setIncomes(f04B.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f04C.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime4().setQuotaIndex(f04C.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f04D.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime4().setAccrualQuota(f04D.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f04E.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime4().setInputQuotas(f04E.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f04K.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime4().setQuota(f04K.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+
+		f05A.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime5().setCodigo(f05A.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f05B.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime5().setIncomes(f05B.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f05C.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime5().setQuotaIndex(f05C.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f05D.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime5().setAccrualQuota(f05D.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f05E.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime5().setInputQuotas(f05E.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		f05K.addValueChangeHandler(event -> {
+			getModel().ensureFarmerRegime5().setQuota(f05K.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+
+		box74.addValueChangeHandler(event -> {
+			getModel().setBox74(box74.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box75.addValueChangeHandler(event -> {
+			getModel().setBox75(box75.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box76.addValueChangeHandler(event -> {
+			getModel().setBox76(box76.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box77.addValueChangeHandler(event -> {
+			getModel().setBox77(box77.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box78.addValueChangeHandler(event -> {
+			getModel().setBox78(box78.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box79.addValueChangeHandler(event -> {
+			getModel().setBox79(box79.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box80.addValueChangeHandler(event -> {
+			getModel().setBox80(box80.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box81.addValueChangeHandler(event -> {
+			getModel().setBox81(box81.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box82.addValueChangeHandler(event -> {
+			getModel().setBox82(box82.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		box83.addValueChangeHandler(event -> {
+			getModel().setBox83(box83.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
 	}
 }

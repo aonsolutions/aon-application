@@ -127,7 +127,7 @@ public class Mod390DAO {
 		
 		@Override
 		public Mod390 apply(Record record) {
-			return new Mod390()
+			Mod390 mod390 = new Mod390()
 				.setId(record.getValue(FS_MODEL390.ID))
 				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL390.ADMINISTRATION)))
 				.setReplacement( record.getValue(FS_MODEL390.REPLACEMENT)==1 )
@@ -141,17 +141,19 @@ public class Mod390DAO {
 				.setName(record.getValue(FS_MODEL390.NAME))
 				.setEnterpriseName(record.getValue(FS_MODEL390.NAME))
 				;
+			if (mod390.getYear() < 2015) mod390.setStatus(FiscalStatus.BLOCKED); 
+			return mod390;
 		}
 		
 	}
 
 	public static Mod390 create(AONContext ctx, Mod390 mod390) {
-		if (mod390.getYear() < 2014) {
+		if (mod390.getYear() < 2015) {
 			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2014 no est\u00E1 soportada");
-		} else if (mod390.getYear() == 2014) {
-			return Mod3902014DAO.create(ctx, mod390);
 		} else if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
 			return Mod3902015DAO.create(ctx, mod390);
+		} else if (mod390.getYear() == 2018 || mod390.getYear() == 2019 || mod390.getYear() == 2020) {
+			return Mod3902018DAO.create(ctx, mod390);
 		} 
 		return Mod3902018DAO.create(ctx, mod390);
 	}

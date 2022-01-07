@@ -30,6 +30,8 @@ public enum DataResponseSource implements Serializable{
 	IMPORTATION,
 	NOTIFICATION_TOKEN,
 	MOD202,
+	MOD190,
+	LROE
 	;
 
 

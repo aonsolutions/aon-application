@@ -75,6 +75,8 @@ public interface EnterprisesService extends RemoteService {
 	void updateAgreementId(String domain, Agreement agreement);
 	
 	String getDeleteAgreementMessage(String domain, Agreement agreement);
+	
+	String getAgreementUsedInfo(String currentDomainName, Agreement agreement) throws IllegalArgumentException;
 
 	void deleteBonusConcept(String domain, Bonus bonus);
 
@@ -157,8 +159,6 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId);
 
-	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId)  throws IllegalArgumentException;
-
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
 	List<SSBonusData> setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses);
@@ -217,9 +217,9 @@ public interface EnterprisesService extends RemoteService {
 	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData);
 	
-	ContractSpecificData getContractSpecificData(String currentDomainName, Integer contractId);
+	ContractSpecificData getContractSpecificData(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
-	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData);	
+	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;	
 	
 	Map<String, CNO> getCNOs(String currentDomainName);
 
@@ -326,5 +326,8 @@ public interface EnterprisesService extends RemoteService {
 
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf) throws IllegalArgumentException;
 
-	
+	List<SSBonusData> syncSSBonus(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+
+	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) throws IllegalArgumentException;
+
 }

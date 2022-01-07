@@ -30,7 +30,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -94,10 +93,12 @@ public class DataResponseDAO {
 				DATA_RESPONSE.CODE, DATA_RESPONSE.RESPONSE_DATE, 
 				DATA_RESPONSE.SOURCE, DATA_RESPONSE.SOURCE_ID,
 				DATA_RESPONSE.CREATION_DATE, DATA_RESPONSE.CREATION_USER,
-				DATA_RESPONSE.MODIFICATION_DATE, DATA_RESPONSE.MODIFICATION_USER)
+				DATA_RESPONSE.MODIFICATION_DATE, DATA_RESPONSE.MODIFICATION_USER,
+				DATA_RESPONSE.DATA_REQUEST)
 		.values(dataResponse.getDomain(), dataResponse.getCode(), AonDateUtils.toSql(dataResponse.getResponseDate()),
 				dataResponse.getSource().value(), dataResponse.getSourceId(),
-				AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser())
+				AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser(),
+				dataResponse.getDataRequest())
 		.returning().fetch().stream().map(new DataResponseFiller()).findFirst().orElse(dataResponse);
 	}
 	
@@ -110,6 +111,7 @@ public class DataResponseDAO {
 			.set(DATA_RESPONSE.SOURCE_ID, dataResponse.getSourceId())
 			.set(DATA_RESPONSE.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 			.set(DATA_RESPONSE.MODIFICATION_USER, ctx.getUser())
+			.set(DATA_RESPONSE.DATA_REQUEST, dataResponse.getDataRequest())
 			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
 			.execute();
 	}
@@ -190,7 +192,7 @@ public class DataResponseDAO {
 	}
 	
 	/// -------------------------------------------------------
-	public static DataResponse insertAEATResponse(AONContext ctx, FiscalModel fm, String aeatResponse ){
+	public static DataResponse insertAEATResponse(AONContext ctx, IFiscalModel fm, String aeatResponse ){
 		final Pair<DataResponseSource,DataAttachSource> pair = getDataResponseData( fm );
 		if (pair.getLeft() == null || pair.getRight() == null) {
 			throw new AonCoreException(" Modelo no soportado en la grabación de la respuesta");
@@ -256,14 +258,20 @@ public class DataResponseDAO {
 			public void visitM202() {
 				pair.setLeft( DataResponseSource.MOD202 ).setRight(DataAttachSource.MOD202);
 			}
+			@Override 
+			public void visitM190() { 
+				pair.setLeft( DataResponseSource.MOD190 ).setRight(DataAttachSource.MOD190);
+			}
+			@Override 
+			public void visitM390() { 
+				pair.setLeft( DataResponseSource.MOD390 ).setRight(DataAttachSource.MOD390);
+			}
 			@Override public void visitM390HF() { /* nothing */ }
-			@Override public void visitM390() { /* nothing */ }
 			@Override public void visitM349() { /* nothing */ }
 			@Override public void visitM347() { /* nothing */ }
 			
 			@Override public void visitM200() { /* nothing */ }
 			@Override public void visitM193() { /* nothing */ }
-			@Override public void visitM190() { /* nothing */ }
 			@Override public void visitM184() { /* nothing */ }
 			@Override public void visitM180() { /* nothing */ }
 			

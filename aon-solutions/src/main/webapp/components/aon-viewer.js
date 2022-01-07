@@ -8,6 +8,7 @@ export class AonViewer extends AonElement {
 	_scale;
 	AON_VIEWER_DIV;
 	AON_CANVAS_DIV;
+	PDF;
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -106,15 +107,17 @@ export class AonViewer extends AonElement {
 		mail.appendChild(aibm);
 		div.appendChild(mail);
 
-		let print = this.createElement(TAG.SPAN);
-		print.style.marginTop = "4px";
-		let aibp = new AonIconButton();
-		aibp.id = "aonViewerButtonsDivPrint";
-		aibp.icon = "print";
-		aibp.background = "#f1f1f1";
-		aibp.addEventListener(EVENT.CLICK, () => {});
-		print.appendChild(aibp);
-		div.appendChild(print);
+		if (this.type.includes('pdf')) {
+			let print = this.createElement(TAG.SPAN);
+			print.style.marginTop = "4px";
+			let aibp = new AonIconButton();
+			aibp.id = "aonViewerButtonsDivPrint";
+			aibp.icon = "print";
+			aibp.background = "#f1f1f1";
+			aibp.addEventListener(EVENT.CLICK, () => this.printDocument());
+			print.appendChild(aibp);
+			div.appendChild(print);
+		}
 
 		let download = this.createElement(TAG.SPAN);
 		download.style.marginTop =  "4px";
@@ -228,7 +231,6 @@ export class AonViewer extends AonElement {
 
 		const pdfjsLib = window['pdfjs-dist/build/pdf'];
 		pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
-
 		// Asynchronous download of PDF
 		//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
 		// this.file = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
@@ -245,6 +247,7 @@ export class AonViewer extends AonElement {
 		});
 
 		loadingTask.promise.then( (pdf) =>  {
+			this.PDF = pdf;
 			console.log('PDF loaded');
 			// Fetch the first page
 			// let pageNumber = 1;
@@ -303,6 +306,26 @@ export class AonViewer extends AonElement {
 		iframe.style.height = "100%";
 		iframe.src = this.file+"#zoom=FitH";
 		div.appendChild(iframe);
+	}
+
+	printDocument(){
+		if(this.PDF && this.type){
+			this.PDF.getData().then(data=>{
+				const pdfUrl = URL.createObjectURL(new Blob([data], {type: this.type }));
+				const iframeId = this.id+"iframeTmp";
+				let iframe = this.querySelector('#'+iframeId) || this.createElement('iframe'); //load content in an iframe to print later
+				iframe.id = iframeId;
+				iframe.src = pdfUrl;
+				iframe.style.display = 'none';
+				this.appendChild(iframe);
+				iframe.onload = () =>{
+				  setTimeout(() =>{
+					iframe.focus();
+					iframe.contentWindow.print();
+				  }, 1);
+				};
+			});
+		}
 	}
 
 	onScale(element) {

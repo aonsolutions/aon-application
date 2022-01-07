@@ -518,6 +518,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+
+	@Override
+	public String getAgreementUsedInfo(String domain, Agreement agreement) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			return JooqAgreement.getAgreementUsedInfo(connection, agreement);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	
 	@Override
 	public Agreement copyAgreement(String domain, Agreement agreement) {
 		
@@ -1934,19 +1945,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			syncWithIdcs(domainName, userLogin, contractId, connection);
-			return JooqSSBonus.getSSBonus(connection, contractId);
-		} catch (SQLException | CertificateNotFoundException e) {
-			if(e instanceof CertificateNotFoundException)
-				throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
-			else
-				throw new IllegalArgumentException(e);
-		}
-	}
-
 
 	@Override
 	public List<SSBonusData> getBonusConcepts(String currentDomainName) {
@@ -2346,21 +2344,21 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public ContractSpecificData getContractSpecificData(String domainName, Integer contractId) {
+	public ContractSpecificData getContractSpecificData(String domainName, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContractSEPE.getContractSpecificData(connection, contractId);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) {
+	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqContractSEPE.setContractSpecificData(connection, domainId, employeeContractData);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -3493,6 +3491,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData) {
 		// TODO Auto-generated method stub
+	}
+	
+	// ------------------------------------------------ SSBonus
+	
+	@Override
+	public List<SSBonusData> syncSSBonus(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			syncWithIdcs(domainName, userLogin, contractId, connection);
+			return JooqSSBonus.getSSBonus(connection, contractId);
+		} catch (CertificateNotFoundException e) {
+			throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public List<SSBonusData> getEmployeeSSBonuses (String domainName, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqSSBonus.getSSBonus(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 	
 }

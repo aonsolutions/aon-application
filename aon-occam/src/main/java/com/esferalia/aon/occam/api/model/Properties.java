@@ -1354,6 +1354,10 @@ public interface Properties {
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
 		Property<Integer> getWorkgroupProperty();
+		Property<String> getAuthNameProperty();
+		Property<String> getAuthEmailProperty();
+		Property<String> getAuthDocumentProperty();
+		Property<Integer> getScopeProperty();
 	}
 
 	public interface TimeControlProperties {
@@ -1361,6 +1365,7 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Timestamp> getDateProperty();
 		Property<Integer> getTaskHolderProperty();
+		Property<Integer> getModificatedTimeControlProperty();
 	}
 
 	public interface LocationProperties {
@@ -1540,4 +1545,16 @@ public interface Properties {
 		Property<Double> getDeductibleQuotaProperty();
 	}
 	
+	public interface InvestAssetProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getActivityProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getRegimeProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Double> getVatPercentProperty();
+		Property<Double> getRetentionPercentProperty();
+	}	
 }

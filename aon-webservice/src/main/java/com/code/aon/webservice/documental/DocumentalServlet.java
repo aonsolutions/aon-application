@@ -275,12 +275,15 @@ public class DocumentalServlet extends HttpServlet{
 		Integer[] d = {domain.getId()};
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
 		LinkedList<Integer> list = new LinkedList<>();
-		
+
 		Company cp = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		list.add(cp.getId());
 		if(domain.getParentId() != null) {
 			Company parentCp = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getParentId()));
 			list.add(parentCp.getId());
+		}
+		if(user.getRegistry() != null) {
+			list.add(user.getRegistry());
 		}
 		Integer[] arr = new Integer[list.size()];
 		list.toArray(arr);
@@ -292,9 +295,9 @@ public class DocumentalServlet extends HttpServlet{
 				.perPage(30)
 			), AttachType.REGISTRY, false).map(r -> {
 				String description = r.getDescription();
-				if(RegistryAttachmentType.safeValueOf(r.getType()).equals(RegistryAttachmentType.DIGITAL_CERTIFICATE) && description.contains("HIDE")) {
+				if(description != null && RegistryAttachmentType.safeValueOf(r.getType()).equals(RegistryAttachmentType.DIGITAL_CERTIFICATE) && description.contains("HIDE")) {
 					Integer i = description.indexOf("HIDE");
-					r.setDescription(description);
+					r.setDescription(description.substring(0, i));
 				}
 				return r;
 			}).forEach(a -> {

@@ -1,7 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries} from '../../services/service.js';
-import { Invoice } from './Invoice.js';
+import { getCompany } from '../../services/companyService.js';
+	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
 
@@ -13,7 +14,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
 import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
-import { getItems} from '../../services/productService.js';
+import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonDate } from '../../components/aon-date.js';
@@ -77,25 +78,28 @@ export class AonInvoice extends AonElement {
 		this.buildDur().then(r => {
 			this.build();
 		});
+		getCompany().then(company => {
+			const registry = this.getInvoice().isEmitida()
+				? this.getInvoice().getRegistry().id 
+				: company.id;
 
-		let registry = this.getInvoice().isEmitida()
-			? this.getInvoice().getRegistry().id : LS.getCompany().registry;
+			if(registry) {
+				let data = {
+					id: registry,
+					registry: registry,
+					additional_info: ['banks', 'paymethods']
+				};
 
-		if(registry) {
-			let data = {
-				id: registry,
-				registry: registry,
-				additional_info: ['banks', 'paymethods']
-			};
-
-			getRegistry(data).then(r => {
-				this.rbanks = r.banks;
-				this.rpaymethods = r.paymethods;
-			});
-		} 
+				getRegistry(data).then(r => {
+					this.rbanks = r.banks;
+					this.rpaymethods = r.paymethods;
+				});
+			}
+		});
 	}
 
 	initialize(){
+		this.accept = true;
 		this.rbanks = [];
 		this.fileOpened = false;
 		this.id = this.id || 'aonInvoiceSheet';
@@ -109,7 +113,7 @@ export class AonInvoice extends AonElement {
 		this.REMARKS_CARD = this.DATA + 'RemarksCard';
 		this.FILE = this.id + 'File';
 		this.INPUT_FILE = this.id + 'InputFile'
-		this.invoice = this.invoice || new Invoice(this.getAttribute('type'));
+		this.invoice = this.invoice || new Invoice().setType(this.type);
 
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
@@ -181,8 +185,9 @@ export class AonInvoice extends AonElement {
 	}
 
 	setInvoice(invoice) {
-		this.invoice = this.invoice || new Invoice(this.getAttribute('type'));
-		this.invoice.createInvoice(invoice);
+		this.invoice = new Invoice(invoice);
+		if(!invoice)
+			this.invoice.setType(this.type);
 	}
 
 	setType(type) {
@@ -280,7 +285,7 @@ export class AonInvoice extends AonElement {
 			aonInvoice.startLoader();
 			insertInvoice(data).then((r) => {
 				aonInvoice.stopLoader();
-				this.invoice.createInvoice(r);
+				this.invoice = new Invoice(r);
 				this.reload();
 			});
 		}
@@ -1282,18 +1287,20 @@ export class AonInvoice extends AonElement {
 		bienAfecto.id = 'aonInvoiceDetailBienAfecto';
 		bienAfecto.title = 'Bien Afecto'; //MSG.CATEGORY;
 		bienAfecto.autocomplete = true;
+		bienAfecto.setAlias('id', 'description');
 		bienAfecto.readonly = this.invoice.isReadonly();
+
 		bienAfecto.addEventListener(EVENT.SELECT, () => {
-			// detail.category = bienAfecto.value;
-			// this.invoice.setDetail(detail, i);
-			// if(this.autosave) this.save();
+			detail.investAsset = bienAfecto.value;
+			this.invoice.setDetail(detail, i);
+			if(this.autosave) this.save();
 		});
 		div.appendChild(bienAfecto);
-		// getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-		// 	let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
-		// 	category.options = JSON.stringify(accs);
-		// 	category.value = detail.category || this.invoice.getCategory();
-		// });
+		getInvestAssets({}).then(investAssets => {
+			bienAfecto.options = JSON.stringify(investAssets);
+			if(detail.investAsset)
+				bienAfecto.value = detail.investAsset;		
+		});
 
 		const top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
@@ -1533,8 +1540,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	changeInvoice(invoice) {
-		let inv = new Invoice();
-		inv.createInvoice(invoice);
+		let inv = new Invoice(invoice);
 
 		if(invoice && inv && !inv.isRawdoc()){
 			getInvoice(invoice.id).then((inv) => {
@@ -1547,10 +1553,19 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		acceptInvoice(this.getInvoice()).then(r => {
-			this.invoice.createInvoice(r);
-			this.reload();
-		}).catch(e => this.showError(e));
+		if(this.accept) {
+			this.getApplication().startLoader();
+			this.accept = false;
+			acceptInvoice(this.getInvoice()).then(r => {
+				this.invoice = new Invoice(r);
+				this.getApplication().stopLoader(); 
+				this.reload();
+			}).catch(e => {
+				this.accept = true;
+				this.getApplication().stopLoader(); 
+				this.showError(e)
+			});
+		}
 	}
 
 	recordInvoice() {

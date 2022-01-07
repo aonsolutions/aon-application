@@ -8,7 +8,7 @@ public class Certificate implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String type;
 	private String password;
 	private byte [] certificate;
@@ -40,4 +40,7 @@ public class Certificate implements Serializable {
 		return this;
 	}
 
+	public boolean isEmpty() {
+		return getCertificate() == null && getPassword() == null;
+	}
 }

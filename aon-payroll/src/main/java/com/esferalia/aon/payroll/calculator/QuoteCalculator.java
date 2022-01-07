@@ -304,6 +304,15 @@ public abstract class QuoteCalculator {
 			}
 			return cgpBase;
 		}
+		
+		@Override
+		public Double getRawCgpBase() {
+			try {
+				return getSum(CGP_BASE_RAW, context, salaryStart, salaryEnd);
+			} catch (ExpressionException e) {
+				return super.getRawCgpBase();
+			}
+		}
 
 		@Override
 		public Double getEreBase() throws AonException {

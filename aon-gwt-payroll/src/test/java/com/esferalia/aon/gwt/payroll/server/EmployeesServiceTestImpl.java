@@ -692,25 +692,23 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId) {
+	public EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
-	public String setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-			EmployeeCalendarInfo employeeCalendarInfo) {
+	public void setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
+			EmployeeCalendarInfo employeeCalendarInfo) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
-		return null;
 	}
 
 	@Override
-	public String resetEmployeeCalendarInfo(String currentDomainName, Integer contractId) {
+	public void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
-		return null;
 	}
 
 	@Override
@@ -955,13 +953,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) {
+	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
 	}
@@ -989,6 +987,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			String ctaCti, String nss, Date fecha, Integer contractId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Date checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

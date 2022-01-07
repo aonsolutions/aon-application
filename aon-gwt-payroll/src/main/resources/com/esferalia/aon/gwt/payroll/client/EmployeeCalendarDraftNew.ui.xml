@@ -73,7 +73,21 @@
 			padding: 0 0.5rem 0 1.8rem;
 		}
 		
+		.aon-toolbar-button {
+		    height: 24px;
+		    padding-left: 25px;
+		    background-position: .2rem;
+		    background-repeat: no-repeat;
+		    background-color: #f6f6f6;
+		    background-size: 20px;
+		}
+		
 		/* ------------------- Color Days Type Panel ------------------- */
+		
+		.workingColor {
+			background-color: #f6f6f6;
+			color: black;
+		}
 		
 		.noWorkingColor{
 			background-color: salmon;
@@ -288,7 +302,7 @@
 			    
 				<g:HTMLPanel ui:field="daysTypePanel" styleName="{style.daysTypePanel}">
 					<g:HTMLPanel>
-						<g:Button styleName="{style.aonButtonStyle} {style.aonButtonStyleWithOutIcon}" ui:field="workingDayButton">Laborable</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.workingColor}" ui:field="workingDayButton">Laborable</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton">No Laborables</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.effectiveColor}" ui:field="effectiveDayButton">Efectivos</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton">Inactividad</g:Button>
@@ -297,12 +311,12 @@
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.leaveColor}" ui:field="leaveDayButton">Baja IT</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor}" ui:field="partialityDayButton">Parcialidad</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton">Peonadas</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} aon-icon-time" ui:field="hourButton">Horas</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} aon-icon-time" ui:field="extraHoursButton">H. Extras</g:Button>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="hourButton">Horas</g:Button>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="extraHoursButton">H. Extras</g:Button>
 					</g:HTMLPanel>
 					<g:HTMLPanel>
-						<g:Button styleName="{style.aonButtonStyle} {style.eraseEventStyle} aon-icon-close2" ui:field="eraseEventButton">Limpiar</g:Button>
-						<g:Button styleName="{style.aonButtonStyle} aon-icon-help" ui:field="leyendButton">Leyenda</g:Button>
+						<g:Button styleName="{style.aonButtonStyle} {style.eraseEventStyle} {style.aon-toolbar-button} aon_icon_close" ui:field="eraseEventButton">Limpiar</g:Button>
+						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_help" ui:field="leyendButton">Leyenda</g:Button>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				

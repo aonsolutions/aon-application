@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -124,10 +125,12 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -1008,6 +1011,12 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static EnterpriseActivity getEnterpriseActivity(String domainName, Integer domainId, String login, Integer id) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getEnterpriseActivity(ctx, id);
+		}
+	}
 	
 	public static Stream<EnterpriseActivity> getEnterpriseActivities(String domainName, Integer domainId, String login) { //, EnterpriseActivityFilter filter) {
 		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
@@ -1149,9 +1158,40 @@ public class AON {
 		}
 	}	
 
+	public static Workplace saveWorkplace(Domain domain, User user, Workplace workplace) {
+		return saveWorkplace(domain.getName(), domain.getId(), user.getLogin(), workplace);
+	}
+	
+	public static Workplace saveWorkplace(Domain domain, String login, Workplace workplace) {
+		return saveWorkplace(domain.getName(), domain.getId(), login, workplace);
+	}
+	
+	public static Workplace saveWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().saveWorkplace(ctx, workplace);
+		} 
+	}
+	
+	@Deprecated
 	public static void updateWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getCommon().updateWorkplace(ctx, workplace);
+		} 
+	}
+	
+	// ---------- 	PAYROLL WORKPLACE
+	
+	public static PayrollWorkplace savePayrollWorkplace(Domain domain, User user, PayrollWorkplace payrollWorkplace) {
+		return savePayrollWorkplace(domain.getName(), domain.getId(), user.getLogin(), payrollWorkplace);
+	}
+	
+	public static PayrollWorkplace savePayrollWorkplace(Domain domain, String login, PayrollWorkplace payrollWorkplace) {
+		return savePayrollWorkplace(domain.getName(), domain.getId(), login, payrollWorkplace);
+	}
+	
+	public static PayrollWorkplace savePayrollWorkplace(String domainName, Integer domainId, String login, PayrollWorkplace payrollWorkplace) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().savePayrollWorkplace(ctx, payrollWorkplace);
 		} 
 	}
 	
@@ -2558,6 +2598,12 @@ public class AON {
 	public static Stream<User> getDomainUserStream(String domainName, Integer domainId, String userName, UserFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
 			return getSecurity().getDomainUserStream(ctx, filter);
+		} 
+	}
+	
+	public static Stream<User> getDomainUserStream(Domain domain, User user, Integer page, Integer perPage, UserFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getSecurity().getDomainUserStream(ctx, page, perPage, filter);
 		} 
 	}
 	
@@ -6958,6 +7004,32 @@ public class AON {
 	public static void deleteEnterpriseCCC(Domain domain, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			getEnterprise().deleteEnterpriseCCC(ctx, id);
+		}
+	}
+	
+	// INVEST ASSET
+	
+	public static InvestAsset getInvestAsset(Domain domain, User user, InvestAssetFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getInvestAsset(ctx, filter);
+		}
+	}
+	
+	public static Stream<InvestAsset> getInvestAssetStream(Domain domain, User user, InvestAssetFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNewProduct().getInvestAssetStream(ctx, filter);
+		}
+	}
+	
+	public static InvestAsset saveInvestAsset(Domain domain, User user, InvestAsset investAsset) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNewProduct().saveInvestAsset(ctx, investAsset);
+		}
+	}
+	
+	public static void deleteInvestAsset(Domain domain, User user, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getNewProduct().deleteInvestAsset(ctx, id);
 		}
 	}
 }

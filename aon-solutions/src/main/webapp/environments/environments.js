@@ -1,5 +1,5 @@
 
-export const API_URL = "ms/api";
+export const API_URL = 'ms/api';
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
 export const SIG_URL = "https://aonsolutions.org/ms/api";
@@ -28,5 +28,6 @@ import * as COLORS from './colors.js';
 import * as MATERIAL_ICONS from './materialIcons.js';
 import * as AON_ICONS from './aonIcons.js';
 import * as CONSTANT from './constants.js';
+import * as API from './aonApi.js';
 
-export {MSG, EVENT, TAG, CSS, COLORS, MATERIAL_ICONS, AON_ICONS, CONSTANT};
+export {MSG, EVENT, TAG, CSS, COLORS, MATERIAL_ICONS, AON_ICONS, CONSTANT, API};

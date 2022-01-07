@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
@@ -60,6 +62,16 @@ public class UserUtils implements Serializable {
 		return getLoggedUser().getToolbar() == Toolbar.AON_SOLUTIONS;
 	}
 	
+	public void disableNewAONTheme(ActionEvent event) {
+		getLoggedUser().setToolbar(Toolbar.GOOGLE);
+		updateUser(getLoggedUser());
+	}
+
+	public void enableNewAONTheme(ActionEvent event) {
+		getLoggedUser().setToolbar(Toolbar.AON_SOLUTIONS);
+		updateUser(getLoggedUser());
+	}
+	
 	public boolean isAonNewSuite() {
 		return getLoggedUser().getToolbar() == Toolbar.ARSYS;
 	}
@@ -78,12 +90,12 @@ public class UserUtils implements Serializable {
 	public User getLoggedUser() {
 		if (this.loggedUser == null) {
 			this.loggedUser = resolveUser();
-			updateUser(this.loggedUser);
+			fixEsferaliaWebmailToolBar(this.loggedUser);
 		}
 		return loggedUser;
 	}
 
-	private void updateUser(User user) {
+	private void fixEsferaliaWebmailToolBar(User user) {
 		if (user.getToolbar() == Toolbar.ESFERALIA_WEBMAIL) {
 			user.setToolbar(Toolbar.ACENS);
 			try {
@@ -94,6 +106,15 @@ public class UserUtils implements Serializable {
 			}
 		}		
 		this.userScopeIds = getUserScopeIds(false);
+	}
+
+	private void updateUser(User user) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(User.class);
+			bean.update(user);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	private User resolveUser() {
@@ -324,5 +345,6 @@ public class UserUtils implements Serializable {
 	public boolean isAddScopeExpression() {
 		return this.addScopeExpression;
 	}	
+	
 	
 }

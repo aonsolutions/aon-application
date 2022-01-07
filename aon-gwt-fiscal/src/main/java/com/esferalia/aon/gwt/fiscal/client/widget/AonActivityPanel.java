@@ -134,7 +134,7 @@ public class AonActivityPanel extends AonCustomDialog implements HasSelectionHan
 				   .addCell( new Label(act.getDescription()), AON.CSS.aonFlexGrow1(), AON.CSS.aonWrap());
 				row.addClickHandler(event -> {
 					hide();
-					SelectionEvent.fire(AonActivityPanel.this, act );
+					SelectionEvent.fire(AonActivityPanel.this, act.setKey(ag.getKey()) );
 				});	
 			}
 		} else {

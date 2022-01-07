@@ -18,12 +18,13 @@
 						value="#{bundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!saleInvoice.nevv}" />
-					<ui:param name="skipSaveButton" value="#{saleInvoice.registryReadOnly}" />
+					<ui:param name="skipSaveButton" value="#{saleInvoice.tediReadOnly or saleInvoice.tbaiInvoice}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
+					<ui:param name="removeConfirmMessage" value="#{saleInvoice.removeConfirmMessage}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:if test="#{saleInvoice.to.number le 0}"> 
+						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and saleInvoice.to.number le 0}"> 
 							<aon:commandButton id="accept"	
 								value="#{bundle.aon_accept}"
 								action="#{saleInvoice.issueInvoice}"
@@ -31,6 +32,32 @@
 								styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
 						</aon:if>
 						
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}"> 
+							<a id="tbaiUrl"	
+								href="#{saleInvoice.tbaiUrl}"
+								target="_blank" 
+								class="aon-finding-toolbar-item aon-icon-araba">
+								Ticket Bai
+							</a>
+						</aon:if>
+						
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.gipuzkoa}"> 
+							<a id="tbaiUrl"	
+								href="#{saleInvoice.tbaiUrl}"
+								target="_blank" 
+								class="aon-finding-toolbar-item aon-icon-gipuzkoa">
+								Ticket Bai
+							</a>
+						</aon:if>
+						
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}"> 
+							<a id="tbaiUrl"	
+								href="#{saleInvoice.tbaiUrl}"
+								target="_blank" 
+								class="aon-finding-toolbar-item aon-icon-bizkaia">
+								Ticket Bai
+								</a>
+						</aon:if>
 					
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
@@ -55,13 +82,13 @@
 		
 						<aon:outputLink id="saleInvoice-downloadPdf"
 							target="_blank" value="#{saleInvoice.downloadURL}" 
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.tbai}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and (saleInvoice.tbai or printParams.saleInvoiceDefault) }"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 					    </aon:outputLink>
 
 						<aon:htmlCommandLink id="saleInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.tbai}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.tbai and !printParams.saleInvoiceDefault}"
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -228,6 +255,16 @@
 								iconClass="aon-icon-info"
 								reRender="showFiscalInformationWindow">
 								<f:setPropertyActionListener target="#{saleInvoice.showFiscalInformationWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator2" />
+							<aon:menuItem id="lroe"
+								value="LROE"
+								iconClass="aon-icon-bizkaia"
+								reRender="showLroeWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showLroeWindow}"
 									value="#{true}" />							
 							</aon:menuItem>
 						</aon:if>
@@ -407,6 +444,9 @@
 			<ui:param name="auditableController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalLroe.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">

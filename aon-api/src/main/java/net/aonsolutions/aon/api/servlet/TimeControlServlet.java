@@ -6,11 +6,14 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqTimeControlTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
@@ -30,6 +33,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -53,6 +57,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				break;
 			case "/list":
 				response(req, resp, getTimeControlList(api));
+				break;
+			case "/historic":
+				response(req, resp, getTimeControlHistoric(api));
 				break;
 			case "/list-holder":
 				response(req, resp, getTaskHolderTimeControlStream(api));
@@ -173,13 +180,18 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return tc.toJSON();
 	}
 	
-	private Object getTimeControlList(AonApiData api) {
+	private JSONArray getTimeControlList(AonApiData api) {
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		Boolean active = !api.getParams().optString("active").isEmpty() ?  api.getParams().getBoolean("active") : true;
-		if(!api.getParams().optString("startDate").isEmpty()) startDate =  AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE);
+		
+		if(!api.getParams().optString("startDate").isEmpty()) 
+			startDate =  AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
+		
+		if(!api.getParams().optString("endDate").isEmpty()) 
+			endDate = AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE);
+		
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getTimeControlStream(api.getDomain(), "", startDate, endDate)
 		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
@@ -190,7 +202,21 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
-	private Object getTaskHolderTimeControlStream(AonApiData api) {		
+	private JSONArray getTimeControlHistoric(AonApiData api) {
+		Integer id = api.getParams().optInt("id");
+		JSONArray array = new JSONArray();
+		
+		AON_SOLUTIONS.getTimeControlHistoric(api.getDomain(), api.getUser().getLogin(), 
+				f->f.getDomainProperty().eq(api.getDomain().getId())
+				.and( f.getIdProperty().eq(id).or( f.getModificatedTimeControlProperty().eq(id)) )
+		)
+		.forEach(tc -> 
+			array.put(tc.toJSON())
+		);
+		return array;
+	}
+	
+	private JSONArray getTaskHolderTimeControlStream(AonApiData api) {		
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
@@ -208,7 +234,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
-	private Object getTimeControlDetailStream(AonApiData api) {		
+	private JSONArray getTimeControlDetailStream(AonApiData api) {		
 		Date startDate = null;
 		Date endDate = null;
 		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
@@ -300,7 +326,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setLocation(lc)
 				.setStatus(TimeControlStatus.safeValueOf(api.getData().optString("status")));
 		
-		return AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), "", tcd).toJSON();
+		return AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), api.getUser().getLogin(), tcd).toJSON();
 	}
 	
 	private File getTimeControlExcel(HttpServletRequest req, AonApiData api) throws Exception {

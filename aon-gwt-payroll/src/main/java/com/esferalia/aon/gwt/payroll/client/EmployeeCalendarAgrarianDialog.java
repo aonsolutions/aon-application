@@ -5,31 +5,25 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
 
+	// ------------------------------------ UiBinder
+	
 	interface Binder extends UiBinder<Widget, EmployeeCalendarAgrarianDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ------------------------------------ UiFields
 	
 	@UiField
 	ListBox typeListBox;
@@ -46,19 +40,18 @@ public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
 	@UiField
 	Button acceptButton;
 	
-	// -------------------------------------------------------------------------------
-	// --------------------------------- MAIN CLASS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Variables
 	
 	private Double percent = 1.00;
 	private Date contractStartDate;
 	private Date contractEndDate;
+	
+	// ------------------------------------ Constructor
 
-	public EmployeeCalendarAgrarianDialog(String caption, List<Date> selectedDates, Date contractStartDate, Date contractEndDate) {
+	protected EmployeeCalendarAgrarianDialog(String caption, List<Date> selectedDates, Date contractStartDate, Date contractEndDate) {
 		setCaption(caption);
-		
 		setWidget(binder.createAndBindUi(this));
-		
+		this.hideClose();
 		typeListBox.clear();
 		typeListBox.addItem("Jornadas Reales", "JORNADAS_REALES");
 		typeListBox.addItem("Jornadas Te\u00f3ricas", "JORNADAS_TEORICAS");
@@ -72,69 +65,40 @@ public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
 		
-		startDateDB.getTextBox().addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				startDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
-			}
+		startDateDB.getTextBox().addClickHandler(e -> startDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; "));
+		endDateDB.getTextBox().addClickHandler(e -> endDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; "));
+		
+		cancelButton.addClickHandler(e -> hide());
+		acceptButton.addClickHandler(e -> {
+			if(null != startDateDB.getValue())
+				onAccept();
+			hide();
 		});
-		
-		endDateDB.getTextBox().addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				endDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
-			}
-		});
-		
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
-		
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(null != startDateDB.getValue())
-					onAccept();
-				hide();
-			}
-		});	
-		
+	
+		showDialog();
 	}
 	
-	// -------------------------------------------------------------------------------
-	// ------------------------------ ABSTRACT METHODS -------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Abstract methods
 	
 	protected abstract void onAccept();
 	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- UI HANDLERS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ UiHandlers
 
 	@UiHandler("startDateDB")
 	public void onStartDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date) {
-			if(date.before(contractStartDate))
-				startDateDB.setValue(contractStartDate);
-		}
+		if(null != date && date.before(contractStartDate))
+			startDateDB.setValue(contractStartDate);
 	}
 	
 	@UiHandler("endDateDB")
 	public void onEndDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date && null != contractEndDate) {
-			if(date.after(contractEndDate))
-				endDateDB.setValue(contractEndDate);
-		}
+		if(null != date && null != contractEndDate && date.after(contractEndDate))
+			endDateDB.setValue(contractEndDate);
 	}
 	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- AUX METHODS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Auxiliar methods
 	
 	public Integer getTypeIdx(){
 		return typeListBox.getSelectedIndex();
@@ -164,5 +128,14 @@ public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
 		return typeListBox.getSelectedValue();
 	}
 	
+	// ------------------------------------ Show dialog
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
+	}
 
 }

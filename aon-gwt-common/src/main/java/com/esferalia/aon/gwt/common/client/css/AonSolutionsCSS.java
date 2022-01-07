@@ -282,6 +282,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
 	
+	@ClassName("aon_icon_schedule")
+	String aonIconSchedule();
+	
 	@ClassName("aon_icon_receipt")
 	String aonIconReceipt();
 	
@@ -562,11 +565,20 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_width_auto_important")
 	String aonWidthAutoImportant();
 	
+	@ClassName("aon_width_20")
+	String aonWidth20();
+
+	@ClassName("aon_width_40")
+	String aonWidth40();
+	
 	@ClassName("aon_width_80")
 	String aonWidth80();
-	
+
 	@ClassName("aon_width_100")
 	String aonWidth100();
+	
+	@ClassName("aon_width_120")
+	String aonWidth120();
 	
 	@ClassName("aon_width_150")
 	String aonWidth150();

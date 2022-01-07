@@ -79,29 +79,33 @@ public class JooqContractPDF {
 	
 	// ---------------------------------------------------- Contract PDF (fill)
 	
-	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode) {
+	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode) throws IllegalArgumentException {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 				
-			Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
-			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
-			
-			Map<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
-			
-			FormativeLevel formativeLevel = new FormativeLevel();
-			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
-			contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
-			
-			return ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
+			try {
+				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
+				Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
+				
+				Map<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
+				
+				FormativeLevel formativeLevel = new FormativeLevel();
+				contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
+				contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
+				
+				return ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException(e.getMessage());
+			}
 	}
 
-	public static byte[] contractFill(String domainName, Integer contractId, String contractTypeStr, String formativeLevelCode) {
+	public static byte[] contractFill(String domainName, Integer contractId, String contractTypeStr, String formativeLevelCode) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer contractType = Integer.parseInt(contractTypeStr);
 			return contractFill(connection, domainId, parentDomainId, contractId, contractType, formativeLevelCode);
-		}catch (SQLException | NumberFormatException e) {
-			throw new RuntimeException(e);
+		}catch (SQLException  | IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 	
@@ -115,7 +119,7 @@ public class JooqContractPDF {
 	
 	// ---------------------------------------------------- Contract PDF (fill - info)
 
-	private static Map<String, String> getContractFillInfoDB(DSLContext dslContext, Integer contractId) {
+	private static Map<String, String> getContractFillInfoDB(DSLContext dslContext, Integer contractId) throws IllegalArgumentException {
 		Map<String, String> contractFillData = new HashMap<>();
 		
 		Municipalities municipalities = new Municipalities();
@@ -173,9 +177,13 @@ public class JooqContractPDF {
 			contractFillData.put("ENTERPRISE_CCC_REG", getCCCRegimeCode(entepriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
 			
 			String cccAcount = entepriseCCCRecord.get(ENTERPRISE_CCC.CCC);
+			try {
 			contractFillData.put("ENTERPRISE_CCC_PRV", cccAcount.substring(0, 2));
 			contractFillData.put("ENTERPRISE_CCC_NUM", cccAcount.substring(2, 9));
 			contractFillData.put("ENTERPRISE_CCC_DC", cccAcount.substring(9, 11));
+			} catch (IndexOutOfBoundsException e) {
+				throw new IllegalArgumentException("La cuenta de cotizaci\u00F3n no tiene el formato correcto (recuerde longuitud 11)");
+			}
 			
 			contractFillData.put("ENTERPRISE_ACTIVITY", entepriseCCCRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
 			contractFillData.put("ENTERPRISE_ACTIVITY_CODE", "");

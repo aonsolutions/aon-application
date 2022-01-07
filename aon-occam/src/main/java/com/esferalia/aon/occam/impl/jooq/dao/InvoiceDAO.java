@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceAddress.INVOICE_ADDRESS;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
@@ -91,6 +92,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -265,6 +267,7 @@ public class InvoiceDAO {
 				.from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
 				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
+				.leftOuterJoin(INVOICE_ADDRESS).on(INVOICE_ADDRESS.INVOICE.eq(INVOICE.ID))
 				.where(INVOICE.ID.eq(id))
 				.fetch()
 				.stream()
@@ -362,6 +365,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.WAREHOUSE
 				,INVOICE_DETAIL.WORKPLACE
 				,INVOICE_DETAIL.SOURCE
+				,INVOICE_DETAIL.INVEST_ASSET
 				,SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
@@ -621,6 +625,15 @@ public class InvoiceDAO {
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
 						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
 						: new InvoiceFiscal())
+				.setAddress(getValue(r, INVOICE_ADDRESS.ADDRESS) 
+					+ " " + getValue(r, INVOICE_ADDRESS.NUMBER)
+					+ " " + getValue(r, INVOICE_ADDRESS.ADDRESS2))
+				.setAddressNumber(getValue(r, INVOICE_ADDRESS.NUMBER))
+				.setAddressProvince(getValue(r, INVOICE_ADDRESS.PROVINCE))
+				.setAddressStreetType(StreetType.safeValueOf(getValue(r, INVOICE_ADDRESS.STREET_TYPE)))
+				.setAddressTown(getValue(r, INVOICE_ADDRESS.CITY))
+				.setAddressZIP(getValue(r, INVOICE_ADDRESS.ZIP))
+				.setAddressGeozone(getValue(r, INVOICE_ADDRESS.GEOZONE))
 				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
 				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
 				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
@@ -707,6 +720,7 @@ public class InvoiceDAO {
 					.setAddressZIP(record.getValue(RADDRESS.ZIP))
 					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				)
+				.setInvestAsset(record.getValue(INVOICE_DETAIL.INVEST_ASSET))
 				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
 				.setProjectName( record.getValue( PROJECT.NAME ))
 				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
@@ -902,6 +916,7 @@ public class InvoiceDAO {
 					: 0)
 			.findFirst()
 			.orElse(0);
+		if(next < 0) next = 0;
 		return ++next;
 	}
 	

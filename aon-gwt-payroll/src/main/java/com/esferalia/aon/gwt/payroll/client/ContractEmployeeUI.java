@@ -528,8 +528,23 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			}, f -> {});
 		}
 		
+		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		
 		setSelectedValueLB(employee.journeyType, (null == contractData.getJourneyType() || contractData.getJourneyType() == 0) ? "false" : "true");
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType);
+		
+		if(null != contractData.getContractJourneyDuration() && null != contractData.getContractJourneyDuration().getContractJourneyDuration() && 
+				!contractData.getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
+			employee.journeyDuration.clear();
+			employee.journeyDuration.add(new Label(contractData.getContractJourneyDuration().getJourneyText()));
+		}
+			
+		Double partialityCoef = contractData.getPartialityCoef();
+		if( (null == partialityCoef || partialityCoef == 0.00)) {
+			partialityCoef = calculatePartialityCoef();
+			contractData.setPartialityCoef(partialityCoef);
+		}
+		employee.partialityCoef.setValue(contractData.getPartialityCoef());
 	}
 	
 	private void fillContractTable(ContractInfo contractData) {

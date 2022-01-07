@@ -2,6 +2,8 @@
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
@@ -53,10 +55,14 @@ public class FiscalMenuDAO {
 						,APP_PARAM.VALUE
 						,DOMAIN.ID
 						,DOMAIN.DESCRIPTION
+						,REGISTRY.DOCUMENT
+						,REGISTRY.NAME
 						,admonAppParam.VALUE
 						)
 				.from(APP_PARAM)
 				.join(DOMAIN).on( APP_PARAM.DOMAIN.equal(DOMAIN.ID))
+				.join(COMPANY).on( APP_PARAM.DOMAIN.equal(COMPANY.DOMAIN))
+				.join(REGISTRY).on( REGISTRY.ID.equal(COMPANY.REGISTRY))
 				.leftOuterJoin(admonAppParam).on( APP_PARAM.DOMAIN.equal(admonAppParam.DOMAIN)
 						.and(admonAppParam.NAME.eq(com.esferalia.aon.occam.api.model.type.AppParam.FS_DEFAULT_ADMINISTRATION.toString())))
 				.where(APP_PARAM.DOMAIN.equal(domain.getId()).or(DOMAIN.PARENT.equal(domain.getId())))
@@ -71,7 +77,8 @@ public class FiscalMenuDAO {
 						.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
 						.setAdministration( AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)))
 						.setModel( fromAppParamName(rec.getValue(APP_PARAM.NAME)) )
-						.setName(rec.getValue(DOMAIN.DESCRIPTION))
+						.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+						.setName(rec.getValue(REGISTRY.NAME))
 						.setStatus( FiscalStatus.MISSING)
 						.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01)
 				)

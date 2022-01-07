@@ -55,12 +55,12 @@ export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => {
  * @param {string} selector selector html
  * @returns element
  */
-export const waitEl = (selector)=> new Promise((resolve,reject)=>{
+export const waitEl = (selector, doc = undefined)=> new Promise((resolve,reject)=>{
   let i = 0;
   let element = null;
   let interval = setInterval(()=> {
     i++;
-    element = document.querySelector(selector);
+    element = (doc || document).querySelector(selector);
     if (element) {
       clearInterval(interval);
       resolve(element);

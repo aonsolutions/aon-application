@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDetailJSON {
 	
@@ -26,6 +27,7 @@ public class InvoiceDetailJSON {
 	}
 	
 	public static InvoiceDetail fromJSON(JSONObject json) {
+		String discount = JsonUtils.getString(json, IJsonNames.DISCOUNT);
 		InvoiceDetail detail =  new InvoiceDetail()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
@@ -34,12 +36,13 @@ public class InvoiceDetailJSON {
 			.setAccountCode(json.optString(IJsonNames.CATEGORY))
 			.setQuantity(JsonUtils.getdouble(json, IJsonNames.QUANTITY))
 			.setPrice(JsonUtils.getdouble(json, IJsonNames.PRICE))
-			.setDiscountExpression(json.optString(IJsonNames.DISCOUNT))
+			.setDiscountExpression(AonStringUtils.isBlank(discount) ? "0.0" : discount)
 			.setTaxableBase(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 			.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
 			.setSource(InvoiceSource.TEDI)
-			.setInvoiceTaxes(new LinkedList<InvoiceTax>());
+			.setInvoiceTaxes(new LinkedList<InvoiceTax>())
+			.setInvestAsset(JsonUtils.getInteger(json, IJsonNames.INVEST_ASSET));
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
 			InvoiceTax tax = new InvoiceTax()
@@ -82,6 +85,7 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.DOMAIN, detail.getDomain())
 				.put(IJsonNames.DESCRIPTION, detail.getDescription())
 				.put(IJsonNames.ITEM, detail.getItem() != null? detail.getItem().getId(): null)
+				.put(IJsonNames.INVEST_ASSET, detail.getInvestAsset())
 				.put(IJsonNames.QUANTITY, detail.getQuantity())
 				.put(IJsonNames.PRICE, detail.getPrice())
 				.put(IJsonNames.AMOUNT, detail.getTaxableBase())

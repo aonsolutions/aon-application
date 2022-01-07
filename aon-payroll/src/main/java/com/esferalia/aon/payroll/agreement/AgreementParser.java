@@ -662,6 +662,11 @@ public class AgreementParser {
 					if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_")) && (AonStringUtils.containsIgnoreCase(realName, "NAVIDAD") || AonStringUtils.containsIgnoreCase(realName, "DICIEMBRE")))
 						hasWinterPay = true;
 					
+					if(AonStringUtils.equalsIgnoreCase(realName, "PAGA_EXTRA_MENSUAL") || AonStringUtils.equalsIgnoreCase(realName, "VACACIONES")) {
+						hasSummerPay = true;
+						hasWinterPay = true;
+					}
+					
 					dslContext.insertInto(AGREEMENT_LEVEL_DATA)
 						.set(AGREEMENT_LEVEL_DATA.DOMAIN, domainId)
 						.set(AGREEMENT_LEVEL_DATA.NAME, realName)
@@ -766,6 +771,7 @@ public class AgreementParser {
 						
 						dslContext.update(AGREEMENT_PAYMENT)
 							.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte)1)
 							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
 							.execute();
 					}
@@ -783,6 +789,7 @@ public class AgreementParser {
 						
 						dslContext.update(AGREEMENT_PAYMENT)
 							.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte)1)
 							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
 							.execute();
 					}
@@ -823,7 +830,7 @@ public class AgreementParser {
 				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 				.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
-				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
 				.returning(AGREEMENT_PAYMENT.ID)
@@ -854,7 +861,7 @@ public class AgreementParser {
 				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 				.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
-				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
 				.returning(AGREEMENT_PAYMENT.ID)

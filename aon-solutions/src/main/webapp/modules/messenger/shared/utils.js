@@ -298,14 +298,15 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
     if(task.id && aonMessengerChat.getDur().isMessengerManager()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
-             if(d){
+            if(d){
                 d.clear();
-                if (!aonMessengerChat.isMobile()) d.width = '400px';
+                if (!aonMessengerChat.isMobile()) 
+                    d.width = '400px';
                 d.setTitle("JSON");
                 d.setContent(jsonDiv());
                 d.addAcceptAction(() => {});
                 d.open();
-              }
+            }
         });
     }
 
@@ -398,7 +399,7 @@ export const buildForm = (div, aonMessengerChat) => {
         createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
         fillSelectAppCau(aonMessengerChat);
     } else //if(   (!task.id || task.isExternal()) && !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) ))
-    if(!task.id || task.isExternal()){
+    if((!task.id || task.isExternal()) && !aonMessengerChat.getDur().isEmployee()){
 
         let initText = !task.id || task.isExternal() ? 'Para' : 'De';
         let titleBtn = isAdvisoryCompany ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;

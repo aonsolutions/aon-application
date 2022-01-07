@@ -76,5 +76,8 @@ public interface IFiscalModel extends Serializable {
 	public default boolean isBlocked() {
 		return getStatus() == FiscalStatus.BLOCKED;
 	}
+	public default boolean isStrictToDeposit() {
+		return false;
+	};
 	
 }

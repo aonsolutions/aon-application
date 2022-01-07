@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
@@ -68,6 +69,7 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -417,10 +419,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(payment, start, end, amount);
 			}
 
-			if ( !type.isBBCCIncluded() 
-				&& type.isBBCCExcluded() ) {
-				return Collections.emptyList();
-			}
 
 			if ( AonStringUtils.equals(PREST_IT, payment.getName())) {
 				double ereFactor = getEreFactor(expressionContext, new Period(start, end));
@@ -448,6 +446,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					return delegate.quote(payment, start, end, amount);
 			}
 
+			if ( !type.isBBCCIncluded() 
+				&& type.isBBCCExcluded() ) {
+				return Collections.emptyList();
+			}
 
 			if (payment.getMonth() != null 
 				&&( type == PaymentType.CRA_0004 
@@ -608,7 +610,15 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				// so we'll subtract the proportional part of IT.
 
 				return subtractITPart(results, its, expressionContext);
-			} else if (
+			} 
+			else if (results.size() == 1 
+					&& results.get(0).getContext().isEmpty()  
+					&& isPermanentPayment(contractPayment, start, end, expressionContext)
+					) {
+				
+				return subtractITPart(results, its, expressionContext);
+			} 
+			else if (
 					results.size() == 1 
 					&& AonStringUtils.equals(contractPayment.getName(), TEMP_PAYMENT)) {
 				return moveITPart(results, its, contractPayment);
@@ -972,7 +982,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.setSalaryType(salaryType)
 			.setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
 			.setQuoteExpression("/*fixBaseCgcMin*/_A=BASE_CGP;_B=BASE_CGP_BRUTA;MAX(_P,(BASE_CGC - BASE_CGC_BRUTA))" )
-			.setIrpfExpression("/*fixBaseCgcMin*/BASE_CGP=MAX(_B,_A);_P" )
+			.setIrpfExpression("/*fixBaseCgcMin*/BASE_CGP_BRUTA=BASE_CGP=MAX(_B,_A);_P" )
 			, 
 			start, 
 			end, 
@@ -1034,6 +1044,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			} catch (UndefinedVariablesException e) {
 			} catch (ExpressionException e) {
 			}
+		} 
+
+		if (results.size() == 1
+				&& isWholeMonth(results.get(0))	
+				&& results.get(0).getContext().size() == 0
+				&& isPermanentPayment(contractPayment, results.get(0).getPeriod(), expressionContext) ) {
+				try {
+					return subtractOFFPart(results, strikes, expressionContext);
+				} catch (UndefinedVariablesException e) {
+				} catch (ExpressionException e) {
+				}
 		} 
 
 		List<Period> worked = expressionContext.getPeriods(ContextVariable.WORKED_DAYS);
@@ -1194,17 +1215,41 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					, AonDateUtils.get(issueDate, YEAR)			//year
 					, issueDate									//chargeDate
 					, criteria);
+			
+
 			if ( !extraCtx.next() )
 				throw new NotNowException();
 				//return 0.00;
 			
-			return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
+			
+			extraCtx.setListener(new IContractSalaryCalculatorContext.IListener() {
+				
+				@Override
+				public void onIrpf(IrpfOutcome irpfOutcome) {
+				}
+				
+				@Override
+				public void onUndefinedData(IExpression expression, String variableName, String message, Date start,
+						Date end) {
+					if ( ctx.getListener() == null ) 
+						return;
+					if ( AonStringUtils.startsWith(variableName, "PAGA_EXTRA_")) {
+						ctx.getListener().onUndefinedData(expression, variableName, message, start, end);
+					}
+				}
+			});
+
+			Salary extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() ) {
+					
 					@Override
 					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 						return TaxCalculator.getTaxCalculator(ctx);
 					}
 			}
-			.calculate(extraCtx).getSalary().getTotalPayment();
+			.calculate(extraCtx);
+			
+			return extra.getTotalPayment();
+			
 		} catch (NotNowException e) {
 			throw e;
 		} catch (Exception e) {
