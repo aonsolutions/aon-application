@@ -188,6 +188,10 @@ public class CretaListener implements IdcParserListener {
 				b.clear();
 				addIncapacidadTemporal15PrimerosDiasEstandar(b);
 				return;
+			case "31": //31 MATERN/PATERN.T.COMP
+				b.clear();
+				addMaternidadPaternidadTiempoCompleto(b);
+				return;
 
 			default:
 				break;
@@ -427,4 +431,17 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
 	
+	private static void addMaternidadPaternidadTiempoCompleto(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Base de contingencias comunes en situación de Maternidad/Paternidad
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("509");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo en situación de Maternidad/Paternidad
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("603");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
 }
