@@ -16,7 +16,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
-import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -26,8 +25,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -46,6 +43,9 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -196,17 +196,24 @@ public interface EnterprisesServiceAsync {
 	void getComunicaEnterpriseSettings(String currentDomainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> asyncCallback);
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback);
 	void getEnterpriseId(String currentDomainName, AsyncCallback<Integer> asyncCallback);
-	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void verifyCertificate(String currentDomainName, String currentUser, com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeITInfo(String currentDomainName, Integer contractId, AsyncCallback<List<ITEmployee>> asyncCallback);
 	void getAllConcepts(String currentDomainName, String currentUser, AsyncCallback<ContractConcepts> asyncCallback);
-	void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificateNew>> asyncCallback) throws IllegalArgumentException;
-	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
-	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
-	void validateCertJava(String currentDomainName, Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback) throws IllegalArgumentException ;
-	void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> asyncCallback);
+	
+	// --------------------------- Certificates
+	
+	void getCertificates(String domain, String login, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException;
+	void deleteCertificate(String domain, String login, Certificate certificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> asyncCallback) throws IllegalArgumentException ;
+	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	// --------------------------- Enterprise Context
+	
+	void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> asyncCallback);
+	
 	void syncSSBonus(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeSSBonuses(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	

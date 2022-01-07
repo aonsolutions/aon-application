@@ -16,7 +16,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
-import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -26,8 +25,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -46,6 +43,9 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
@@ -534,7 +534,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterpriseId(getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void verifyCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+	public void verifyCertificate(com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType certificateType, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), certificateType, asyncCallback);
 	}
 	
@@ -542,26 +542,22 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getAllConcepts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	// ------------------------------------------------ DigitalCertificates (New)
+	// --------------------------- Certificates
 	
-	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificateNew>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	public void getCertificates(AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	public void deleteDigitalCertificate(DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), digitalCertificate, asyncCallback);
+	public void deleteCertificate(Certificate certificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.deleteCertificate(getCurrentDomainName(), getCurrentUser(), certificate, asyncCallback);
 	}
 	
-	public void verifyCertificate(Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+	public void getCertificateInfo(Integer certificateId, AsyncCallback<CertificateInfo> asyncCallback)  throws IllegalArgumentException  {
+		enterprisesServiceAsync.getCertificateInfo(getCurrentDomainName(), getCurrentUser(), certificateId, asyncCallback);
+	}
+	
+	public void verifyCertificate(Integer rattachId, List<CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), rattachId, tags, asyncCallback);
-	}
-	
-	public void validateCertJava(Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback)  throws IllegalArgumentException  {
-		enterprisesServiceAsync.validateCertJava(getCurrentDomainName(), rattachId, asyncCallback);
-	}
-	
-	public void getEnterpriseContext(AsyncCallback<EnterpriseContext> asyncCallback) {
-		enterprisesServiceAsync.getEnterpriseContext(getCurrentDomainName(), asyncCallback);
 	}
 
 	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException {
@@ -574,6 +570,12 @@ public class DomainEnterprisesServiceAsync {
 
 	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, naf, asyncCallback);
+	}
+	
+	// --------------------------- Enterprise Context
+	
+	public void getEnterpriseContext(AsyncCallback<EnterpriseContext> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseContext(getCurrentDomainName(), asyncCallback);
 	}
 	
 	// ------------------------------------------------ SSBonus

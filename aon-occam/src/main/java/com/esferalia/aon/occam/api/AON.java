@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.CommercialActivity;
 import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
@@ -6019,6 +6020,38 @@ public class AON {
 			return getRegistry().getRegistryProfileStream(ctx, registry, question);
 		} finally {
 			if (ctx != null) ctx.close();
+		}
+	}
+	
+	// ------------------- CERTIFICATES
+	
+	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCertificates(ctx, domainId, userId);
+		}
+	}
+	
+	public static com.esferalia.aon.occam.api.model.Certificate getCertificate(String domainName, Integer domainId, String login, AttachFilter attachFilter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCertificate(ctx, attachFilter);
+		}
+	}
+	
+	public static CertificateInfo getCertificateInfo(String domainName, Integer domainId, String login, AttachFilter attachFilter) throws IllegalArgumentException {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCertificateInfo(ctx, attachFilter);
+		}
+	}
+	
+	public static void deleteCertificate(String domainName, Integer domainId, String login, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommon().deleteCertificate(ctx, attachId, attachFilter, raddinfoFilter);
+		}
+	}
+	
+	public static void saveCertificate(String domainName, Integer domainId, String login, Integer userId, com.esferalia.aon.occam.api.model.Certificate certificate){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommon().saveCertificate(ctx, domainId, userId, certificate);
 		}
 	}
 	
