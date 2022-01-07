@@ -897,6 +897,7 @@ public class InvoiceTemplate {
 				drawBox(contents, 450, y, 100f, -bdSize, theme.getBoxBodyBackgroundColor());
 			}
 			
+			float initiaruY = y - 12;
 			
 			for (InvoiceBreakdown tax : invoice.getBreakdown()) {
 				
@@ -928,7 +929,14 @@ public class InvoiceTemplate {
 				
 				i++;
 			}
-			drawTextRight(contents, new PDRectangle(x, bottom + 107 + bottomExtra + legalSize, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getTextColor(), boldFont, 8, 5, -14, INVOICE_TOTAL);
+			if ((invoice.getBreakdown() != null && !invoice.getBreakdown().isEmpty())) {
+				float middle = (invoice.getBreakdown().size() % 2 != 0 ? invoice.getBreakdown().size() / 2 : invoice.getBreakdown().size() / 2 - 0.5f) * 10;
+				middle = initiaruY - middle;
+				drawTextRight(contents, new PDRectangle(x, /*bottom + 107 + bottomExtra + legalSize*/middle, 99, 8), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getTextColor(), boldFont, 8, 5, -.5f, INVOICE_TOTAL);
+			} else {
+				drawTextRight(contents, new PDRectangle(x, initiaruY, 99, 8), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getTextColor(), boldFont, 8, 5, -.5f, INVOICE_TOTAL);
+				y	-= 10;
+			}
 			
 			float finalY = y -10;
 			float backHeight = initY - finalY;
