@@ -55,6 +55,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
@@ -73,6 +74,7 @@ import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -106,8 +108,12 @@ public class PrintParametersController implements Serializable {
 	}
 	
 	public boolean isSaleInvoiceDefault() {
-		return getSaleInvoiceParams().getSaleInvoiceTemplate() == null 
-			|| SaleInvoiceTemplate.DEFAULT.equals(getSaleInvoiceParams().getSaleInvoiceTemplate());
+		Integer domainId = DomainManager.getCurrentDomain();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
+		
+		return appParam.getValue() == null || "default".equalsIgnoreCase(appParam.getValue());
 	}
 	
 	public SaleInvoiceFooter getSaleInvoiceFooter() {

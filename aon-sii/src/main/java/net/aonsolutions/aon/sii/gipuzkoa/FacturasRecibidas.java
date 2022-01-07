@@ -620,7 +620,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		contraparte.setNombreRazon(vat.getRegistryName());
 	
 		if((vat.getRegistryDocumentCountry() == null || vat.getRegistryDocumentCountry().equals(Country.ES))
-				&& (!isPersonaFisica(vat.getRegistryDocument()) ||  validateNif(vat.getRegistryDocument(), vat.getRegistryName(), vat.getRegistryDocumentType()))){
+				&& (!vat.getInvoiceType().equals(InvoiceType.SALES) || !isPersonaFisica(vat.getRegistryDocument()) ||  validateNif(vat.getRegistryDocument(), vat.getRegistryName(), vat.getRegistryDocumentType()))){
 			contraparte.setNIF(vat.getRegistryDocument());
 		} else {
 			IDOtroType otro = new IDOtroType();

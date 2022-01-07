@@ -510,11 +510,12 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public String getDownloadURL() {
 		Invoice invoice = (Invoice) getTo();
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		JSONObject json = new JSONObject()
 				.put(IJsonNames.ID, invoice.getId())
 				.put(IJsonNames.SOURCE, "invoice")
-				.put("domain_id", DomainManager.getCurrentDomain())
-				.put("domain_name", AonUtil.getDomainName())
+				.put("domain_id", domain.getId())
+				.put("domain_name", domain.getName())
 				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
 		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}

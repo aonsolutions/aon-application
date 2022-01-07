@@ -1580,29 +1580,26 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 	
 	
-	public IAttachment generateInvoiceAttachment(ITransferObject to) {
+	public IAttachment generateInvoiceAttachment(Domain domain, Invoice inv, ITransferObject to) {
 		IAttachment attachment = null;
 		try {
-			Invoice inv = (Invoice) this.getTo();
-			String domainName = AonUtil.getDomainName();
-			Integer domainId = DomainManager.getCurrentDomain();
 			String login = "";
-			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
-			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, inv.getId());
+
+			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), login, true);
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, inv.getId());
 		
-			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
+			CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), login);
 			Attach logo = new Attach();
 		
 			if(config.isLogo()) {
 				Integer logoId = company.getRegistry().getId();
-				logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(logoId)
+				logo = AON.getAttach(domain.getName(), domain.getId(), login, f-> f.getAttachModuleProperty().eq(logoId)
 						.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
-
-			String qrUrl = domainName + "/dip?source=invoice&id=" + inv.getId() ;  
-			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
+			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
+			TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), login);
 			if(tbai.isActive()) {	
-				String tbaiUrl = TbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
+				String tbaiUrl = TbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 			}
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1625,11 +1622,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Invoice invoice = (Invoice) to;
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domainName, domainId, "",
+		Domain domain = AON.getDomain(domainName, domainId, "");
+		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "",
 				com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
 
 		if("default".equalsIgnoreCase(appParam.getValue())){
-			return generateInvoiceAttachment(to);
+			return generateInvoiceAttachment(domain, invoice, to);
 		} else if ( type == MimeType.MIME_PDF ) {
 			return generateReportAttachment(to);	
 		} else if ( type == MimeType.MIME_XML && isIncludeFacturae(invoice) ) {
