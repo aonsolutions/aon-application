@@ -3,15 +3,16 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 
 import java.time.Month;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
@@ -21,23 +22,36 @@ import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class CretaListener implements IdcParserListener {
 	
-	private static final class SetTramoBuilder extends TramoBuilder {
-		HashSet<String> added = new HashSet();
+	private static final class CretaTramoBuilder extends TramoBuilder {
+		Map<String, DatoSolicitado> datosMap = new HashMap<>();
 
+		public void clear() {
+			datosMap.clear();
+		}
+
+		public boolean isEmpty() {
+			return datosMap.isEmpty();
+		}
+		
 		@Override
 		public void addDato(DatoSolicitado dato) {
-			if ( add(dato) ) {
-				super.addDato(dato);
-			}
+			datosMap.putIfAbsent(getKey(dato), dato);
 		}
 
-		private boolean add(DatoSolicitado dato) {
-			return added.add(dato.getTipoDato()+dato.getCodigo());
+		@Override
+		public Tramo create() {
+			datosMap.values().forEach(super::addDato);
+			return super.create();
 		}
+
+		private String getKey(DatoSolicitado dato) {
+			return dato.getTipoDato() + dato.getCodigo();
+		}
+		
 	}
 
 	Optional<String> cnae = Optional.empty();
-	Optional<TramoBuilder> tramoBuilder = Optional.empty();
+	Optional<CretaTramoBuilder> tramoBuilder = Optional.empty();
 	Optional<TrabajadorBuilder> trabajadorBuilder = Optional.empty();
 	LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
 	TrabajadoresTramosBuilder trabajadoresTramosBuilder = new TrabajadoresTramosBuilder();
@@ -125,7 +139,7 @@ public class CretaListener implements IdcParserListener {
 	public void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate) {
 		tramoBuilder.ifPresent(b -> trabajadorBuilder.get().addTramo(b.create()));
 
-		TramoBuilder builder = new SetTramoBuilder();
+		CretaTramoBuilder builder = new CretaTramoBuilder();
 		
 		setDesdeHasta(startDate, endDate, builder);
 		
@@ -155,15 +169,16 @@ public class CretaListener implements IdcParserListener {
 			switch (code) {
 			case "22": //IT.CC.PAGO DIRECTO
 				addIncapacidadTemporalCCPagoDirectoEstandar(b);
-				
+				return;
 			case "23": //IT.AT.PAGO DELEGADO
+				b.clear();
 				if ( isScholarEmployee(ssNum, ccc, start, end))
 					addIncapacidadTemporalATEPPagoDelegadoBecario(b);
 				else if ( isTraining421Employee(ssNum, ccc, start, end))
 					addIncapacidadTemporalATEPPagoDelegadoFormacion(b);
 				else 
 					addIncapacidadTemporalATEPPagoDelegadoEstandar(b);
-				break;
+				return;
 
 			default:
 				break;
