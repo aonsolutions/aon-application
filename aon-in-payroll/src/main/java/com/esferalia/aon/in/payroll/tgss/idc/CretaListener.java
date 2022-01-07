@@ -167,7 +167,12 @@ public class CretaListener implements IdcParserListener {
 			String quota, Date start, Date end) {
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
+			case "21": //IT.CC.PAGO DELEGADO
+				b.clear();
+				addIncapacidadTemporalPagoDelegadoEstandar(b);
+				return;
 			case "22": //IT.CC.PAGO DIRECTO
+				b.clear();
 				addIncapacidadTemporalCCPagoDirectoEstandar(b);
 				return;
 			case "23": //IT.AT.PAGO DELEGADO
@@ -178,6 +183,10 @@ public class CretaListener implements IdcParserListener {
 					addIncapacidadTemporalATEPPagoDelegadoFormacion(b);
 				else 
 					addIncapacidadTemporalATEPPagoDelegadoEstandar(b);
+				return;
+			case "29": //IT.CC.COLAB.EXCL.15D
+				b.clear();
+				addIncapacidadTemporal15PrimerosDiasEstandar(b);
 				return;
 
 			default:
@@ -390,6 +399,30 @@ public class CretaListener implements IdcParserListener {
 		// Base de Accidentes de Trabajo en situación de IT
 		dataSolicitadoBuilder.setTipo("C");
 		dataSolicitadoBuilder.setCodigo("603");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+	private static void addIncapacidadTemporal15PrimerosDiasEstandar(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Base de contingencias comunes en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("500");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("603");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+	private static void addIncapacidadTemporalPagoDelegadoEstandar(TramoBuilder tramoBuilder) {
+		addIncapacidadTemporal15PrimerosDiasEstandar(tramoBuilder);
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Compensación IT Contingencias Comunes
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("563");
 		dataSolicitadoBuilder.setObligatorio(true);
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
