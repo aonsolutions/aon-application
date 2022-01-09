@@ -481,7 +481,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		employeeEventsDraft.initializeDBEventsVariables(actualYear,
 				r -> {
 					initializeYearLB(this.yearLB);
-					hideYearLBOptions();
+					syncYearLBOptions();
 					setSelectedValueLB(yearLB, (year+1900)+"");
 					initializeVariablesToShow();
 					showEvents();
@@ -504,12 +504,14 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		yearLB.clear();
 		
 		Integer yearAux = DateUtils.getYear();
+		Integer previusYearII = year - 2;
 		Integer previusYear = year - 1;
 		Integer nextYear = year + 1;
 		
 		yearLB.addItem(nextYear.toString(), nextYear.toString());
 		yearLB.addItem(yearAux.toString(), yearAux.toString());
 		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		yearLB.addItem(previusYearII.toString(), previusYearII.toString());
 		
 		yearLB.addChangeHandler(e -> {
 			changeYear();
@@ -525,7 +527,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		visibilityButton.setVisible(employeeEventsDraft.isEmployeeEvents());
 	}
 	
-	private void hideYearLBOptions() {
+	private void syncYearLBOptions() {
 		for(int i= this.yearLB.getItemCount() -1 ; i >= 0; i--) {
 			Integer year = Integer.parseInt(this.yearLB.getValue(i));
 			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
@@ -533,6 +535,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			if(isOutOfContractPeriod(firstDayOfYear, lastDayOfYear)) {
 				this.yearLB.removeItem(i);
 			}
+		}
+		if ( this.yearLB.getItemCount() == 0 ) {
+			Date contractEndDate = this.employeeEventsDraft.getContractEndDate();
+			Integer contractEndYear = DateUtils.getYear(contractEndDate);
+			this.yearLB.addItem(contractEndYear.toString(), contractEndYear.toString());
 		}
 	}
 	
