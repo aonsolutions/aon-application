@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod390HFWriter.IPropertyFill
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod390HFWriterARABA2019 implements IMod390HFWriter {
+public class Mod390HFWriterARABA2021 implements IMod390HFWriter {
 
 	private static enum Mod390HFFile {
 		ARABA_2019_RC ( mod -> true ,new IPropertyFiller[] {
@@ -257,24 +257,29 @@ public class Mod390HFWriterARABA2019 implements IMod390HFWriter {
 				// Informacion adicional
 				,(wr, mod) -> wr.append("153" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C153),18))
 				,(wr, mod) -> wr.append("252" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C252),18))
-				,(wr, mod) -> wr.append("154" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C154),18))			
-				,(wr, mod) -> wr.append("155" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C155),18))			
 				,(wr, mod) -> wr.append("156" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C156),18))			
 				,(wr, mod) -> wr.append("157" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C157),18))			
-				,(wr, mod) -> wr.append("158" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C158),18))			
-				,(wr, mod) -> wr.append("210" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C210),18))			
-				,(wr, mod) -> wr.append("211" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C211),18))			
+				,(wr, mod) -> wr.append("158" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C158),18))
+				,(wr, mod) -> wr.append("214" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C214),18))
+				,(wr, mod) -> wr.append("215" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C215),18))
+				,(wr, mod) -> wr.append("216" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C216),18))
+				,(wr, mod) -> wr.append("217" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C217),18))
+				,(wr, mod) -> wr.append("218" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C218),18))
+				,(wr, mod) -> wr.append("219" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C219),18))
+				,(wr, mod) -> wr.append("154" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C154),18))
+				,(wr, mod) -> wr.append("155" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C155),18))
+				,(wr, mod) -> wr.append("220" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C220),18))
+				,(wr, mod) -> wr.append("221" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C221),18))
 				,(wr, mod) -> wr.append("212" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C212),18))
 				,(wr, mod) -> wr.append("161" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C161),18))
 				,(wr, mod) -> wr.append("162" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C162),18))
 				,(wr, mod) -> wr.append("163" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C163),18))
 				,(wr, mod) -> wr.append("167" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod390Key.AR_C167),18))
-
-
-				// Resto de casillas hasta completar las 200 (total 41, ya que hasta ahora van 160)
+				
+				// Resto de casillas hasta completar las 200 (total 31, ya que hasta ahora van 170)
 				
 				,(wr, mod) -> {
-					for (int i=0;i<41;i++)
+					for (int i=0;i<33;i++)
 						wr.append("000" + AonFiscalFileUtils.signedSpace(0.0,18));
 				}
 					

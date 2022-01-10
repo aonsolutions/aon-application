@@ -13,9 +13,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class ARABA_2017_Declaration extends Mod390HFDeclaration {
+public class ARABA_2021_Declaration extends Mod390HFDeclaration {
 	
-	protected ARABA_2017_Declaration() {
+	protected ARABA_2021_Declaration() {
 		
 	}
 	
@@ -28,7 +28,7 @@ public class ARABA_2017_Declaration extends Mod390HFDeclaration {
 	public static final double SURCHARGE_PERCENT4 = 5.2;
 	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isAraba() && mod.getYear() >= 2017 && mod.getYear() < 2021;
+		return  mod.isAraba() && mod.getYear() >= 2021;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
@@ -581,13 +581,24 @@ public class ARABA_2017_Declaration extends Mod390HFDeclaration {
 			,null,null,null)
 		// Entregas de bienes inmuebles y operaciones financieras no habituales
 		,AR_C212	(Mod390Key.AR_C212)
+		
+		,AR_C214	(Mod390Key.AR_C214)	
+		,AR_C215	(Mod390Key.AR_C215)
+		,AR_C216	(Mod390Key.AR_C216)
+		,AR_C217	(Mod390Key.AR_C217)
+		,AR_C218	(Mod390Key.AR_C218)
+		,AR_C219	(Mod390Key.AR_C219)
+		,AR_C220	(Mod390Key.AR_C220)
+		,AR_C221	(Mod390Key.AR_C221)
+		
 		// Entregas de bienes de inversi\u00F3n
 		,AR_C161	(Mod390Key.AR_C161
 			,(mod,vat) -> vat.isNationalSales() && vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.AR_C161,mod,vat.getBase())
 			,null,null,null)
 		// Total volumen de operaciones
-		,AR_C162	(Mod390Key.AR_C162,null,null,null,"AR_C153+AR_C252+AR_C154+AR_C155+AR_C156+AR_C157+AR_C158+AR_C210+AR_C211+AR_C212+AR_C161",null)
+		,AR_C162	(Mod390Key.AR_C162,null,null,null,"AR_C153+AR_C252+AR_C156+AR_C157+AR_C158+AR_C214+AR_C215+AR_C216+AR_C217+AR_C218+AR_C219+AR_C154+AR_C155+AR_C220+AR_C221-AR_C212-AR_C161",null)
+		
 		// Adquisiciones intracomunitarias de bienes exentas
 		,AR_C163	(Mod390Key.AR_C163)
 		// Entregas interiores de bienes devengadas por inversión del sujeto pasivo como consecuencia de operaciones triangulares
