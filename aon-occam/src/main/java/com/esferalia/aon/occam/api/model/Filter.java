@@ -419,6 +419,12 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface ContractLeaveFilter{
+		Filter filter(ContractLeaveProperties properties);
+	}
+	
+	
+	@FunctionalInterface
 	public interface ContractAttachFilter{
 		Filter filter(ContractAttachProperties properties);
 	}

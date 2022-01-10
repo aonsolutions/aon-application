@@ -23,7 +23,8 @@ public class LocationDAO {
     }
 	
 	private static final LocationPropertiesDAO LOCATION_PROPERTIES = new LocationPropertiesDAO();
-//	 LocationFilter filter
+
+	//	 LocationFilter filter
 	public static Stream<Location> getStream(AONContext ctx, LocationFilter filter) {
 		ctx.checkRead();
 		return ctx.getDslContext()
