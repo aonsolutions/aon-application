@@ -510,7 +510,12 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 					for ( Integer aYear: years ) {
 						yearLB.addItem(aYear.toString(), aYear.toString());
 					}
+					yearLB.addChangeHandler(e -> {
+						changeYear();
+					});
 					yearLB.setSelectedIndex(0);
+					this.year = years[0] - 1900;
+					
 					initializeVariablesToShow();
 					showEvents();
 					
@@ -717,7 +722,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 				}
 			});
 			
-			if (employeeEventsDraft.isCalendarVariable(var) || (null != varList && !varList.isEmpty() && !isBeforeLastDate(actualMonth, Integer.parseInt(yearLB.getSelectedItemText()), varList))){
+			if (employeeEventsDraft.isCalendarVariable(var) /*|| (null != varList && !varList.isEmpty() && !isBeforeLastDate(actualMonth, Integer.parseInt(yearLB.getSelectedItemText()), varList))*/ ){
 				eventCell.setBlockVariableStyle();
 				eventCell.setEnabled(false);
 			}else{
@@ -962,6 +967,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		visibilityButton.ensureDebugId("show_variables_menu_item");
 		
 		this.yearLB = new ListBox();
+		yearLB.ensureDebugId("employeeEventsDraftYearListBox"); 
 		toolbar.add(this.yearLB);
 		
 		return toolbar;
