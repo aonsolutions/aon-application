@@ -573,6 +573,9 @@ public class ModelAdmonUtils {
 				else if ( model.getPeriod() == Period.T2) period = "2P";
 				else if ( model.getPeriod() == Period.T3) period = "3P";
 			}
+			if ( model.getModel() == FiscalModelType.M390) {
+				period = "0A";	
+			}
 			byte[] fileContent = getModelFile(model);
 			JSONObject params = new JSONObject();
 			params.put("MODELO", FiscalModelUtils.getModelName(model));
