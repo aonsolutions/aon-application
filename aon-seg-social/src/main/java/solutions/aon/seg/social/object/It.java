@@ -1,16 +1,27 @@
 package solutions.aon.seg.social.object;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import solutions.aon.seg.social.object.ITPart.Visitor;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class It {
 	private ITPart start;
 	private ITPart end;
 	private ArrayList<ITPart> confirmations;
 	private It() {}
+	
+	public ITPart getStart() {
+		return start;
+	}
+	
+	public ITPart getEnd() {
+		return end;
+	}
+	
+	public ArrayList<ITPart> getConfirmations() {
+		return confirmations;
+	}
+	
 	
 	public void accept(Visitor visitor) {
 		if(start != null) visitor.visitStart(start);
@@ -25,32 +36,13 @@ public class It {
 	}
 		
 	public String toString() {
-		StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append('{');
-		accept(new Visitor() {
-			
-			@Override
-			public void visitStart(ITPart start) {
-				stringBuffer.append(String.format(" start : \"%s\" ", start));
-			}
-			
-			@Override
-			public void visitEnd(ITPart end) {
-				stringBuffer.append(String.format(" end : \"%s\" ", end));
-			}
-			
-			@Override
-			public void visitConfirmations(ArrayList<ITPart> confirmations) {
-				stringBuffer.append('[');
-					for(ITPart part : confirmations) 
-						if(part != null) 
-							stringBuffer.append(String.format(" end : \"%s\" ", part.toString()));
-				stringBuffer.append(']');
-			}
-		});
-		
-		stringBuffer.append('}');
-		return stringBuffer.toString();
+	    for (Field field : getClass().getDeclaredFields()) {
+	        field.setAccessible(true);   
+	        try {
+				return field.getName() + " = " + field.get(this) + ", ";
+			} catch (Exception e) {}
+	    }
+		return null;
 	}
 	
 	public static class ItBuilder {
@@ -58,8 +50,6 @@ public class It {
 		private ITPart start;
 		private ITPart end;
 		private ArrayList<ITPart> confirmations;
-		
-		private void ItBuilder() {}
 		
 		public ItBuilder setStart(ITPart start) {
 			this.start = start;
@@ -78,13 +68,12 @@ public class It {
 		
 		public It build() {
 			It it = new It();
-			
 			it.confirmations = this.confirmations;
-			it.end = this.end;
 			it.start = this.start;
-			
+			it.end = this.end;
 			return it;
 		}
 		
 	}
 }
+
