@@ -1314,6 +1314,76 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestATRASO() throws Exception {
+		
+		if (!isDisplayed("atrasos_redefinidos,_manualmente"))
+			open("atrasos");
+
+		wait4Id("atrasos_redefinidos,_manualmente");
+
+		draft("ATRASOS REDEFINIDOS, MANUALMENTE");
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		
+		calendar.set(Calendar.YEAR,2020);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.set(Calendar.MONTH,Calendar.JANUARY);
+
+		Date startDate = calendar.getTime();
+
+		calendar.set(Calendar.DAY_OF_MONTH,31);
+		calendar.set(Calendar.MONTH,Calendar.DECEMBER);
+		Date endDate = calendar.getTime();
+		
+		
+		delay(startDate, endDate);
+		assertValue("totalPaymentsLabel", 0.00, 0.00);
+		assertValue("totalLiquidLabel", 00.00, 0.00);
+		
+		click("button-atraso");
+		wait4Id("employeeEventsDraftSaveButton");
+		
+		setValue("atraso_1", "11.11");
+		setValue("atraso_2", "22.22");
+		setValue("atraso_3", "33.33");
+		
+		click("employeeEventsDraftSaveButton");
+		wait4Disabled("employeeEventsDraftSaveButton", true);
+		assertValue("atraso_1", "11.11");
+		assertValue("atraso_2", "22.22");
+		assertValue("atraso_3", "33.33");
+		
+		draft("ATRASOS REDEFINIDOS, MANUALMENTE");
+		delay(startDate, endDate);
+		
+		double totalPayment = 11.11+22.22+33.33;
+		assertValue("totalPaymentsLabel", totalPayment, 0.00);
+		
+		click("button-atraso");
+		wait4Id("employeeEventsDraftSaveButton");
+		assertValue("atraso_1", "11.11");
+		assertValue("atraso_2", "22.22");
+		assertValue("atraso_3", "33.33");
+		
+		setValue("atraso_6", "66.66");
+
+		click("employeeEventsDraftSaveButton");
+		wait4Disabled("employeeEventsDraftSaveButton", true);
+		assertValue("atraso_6", "66.66");
+
+		draft("ATRASOS REDEFINIDOS, MANUALMENTE");
+		delay(startDate, endDate);
+		
+		totalPayment += 66.66;
+		assertValue("totalPaymentsLabel", totalPayment, 0.00);
+	}
+
+	@Test
 	public void TestSonny() throws Exception {
 
 		if (!isDisplayed("constantes,_i"))

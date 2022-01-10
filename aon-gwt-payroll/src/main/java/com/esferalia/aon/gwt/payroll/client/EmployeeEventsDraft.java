@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -491,6 +492,33 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		initializeToolBar();
 	}
 	
+	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraft, int [] years) {
+		
+		clearEventsGrid();
+		
+		this.employeeEventsDraft = employeeEventsDraft;
+		
+		showLoading();
+		
+		//Descargar Variables actualizadas
+		employeeEventsDraft.initializeDBEventsVariables(years[0],
+				r -> {
+					//initializeYearLB(this.yearLB);
+					//syncYearLBOptions();
+					//setSelectedValueLB(yearLB, (aYear+1900)+"");
+					yearLB.clear();
+					for ( Integer aYear: years ) {
+						yearLB.addItem(aYear.toString(), aYear.toString());
+					}
+					yearLB.setSelectedIndex(0);
+					initializeVariablesToShow();
+					showEvents();
+					
+				},t -> {});
+		
+		initializeToolBar();
+	}
+
 	// ----------------------------------------------- setEmployeeEventsDraftObject.Methods
 	
 	private void clearEventsGrid() {
@@ -911,6 +939,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		toolbar.add(undoAllButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton.ensureDebugId("employeeEventsDraftSaveButton");
 		saveButton.addClickHandler(e -> {
 			onSave();
 		});
@@ -949,7 +978,8 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		employeeEventsDraft.updateDBCalendar(
 				r -> {
 					//Descargar Variables actualizadas
-					Integer actualYear = DateUtils.getYear();
+					String selectedYear = this.yearLB.getSelectedValue();
+					Integer actualYear = Integer.parseInt(selectedYear);
 					employeeEventsDraft.initializeDBEventsVariables(actualYear,
 							s -> {
 								initializeVariablesToShow();

@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -675,15 +676,23 @@ public class SalaryDraft extends ResizeComposite
 				if ( RegExp.compile(pattern).test(variable.getName()) )
 					return true;
 			
+			
 			return false;
 		}
 		
 		@Override
 		public EventConstantLabel create(Variable variable) {
 			EventConstantLabel constantLabel = new EventConstantLabel();
-			constantLabel.ensureDebugId("editor-" + variable.getName().toLowerCase());
-			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeEvents(variable.getName()));
+			constantLabel.ensureDebugId(variable.getName().toLowerCase());
+			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeEvents(variable.getName(), getYears(variable)));
 			return constantLabel;
+		}
+		
+		private static int [] getYears(Variable variable) {
+			Integer startYear = DateUtils.getYear(variable.getStartDate());
+			Integer endYear = DateUtils.getYear(variable.getEndDate());
+			return IntStream.rangeClosed(startYear, endYear).toArray();
+			
 		}
 	}
 
