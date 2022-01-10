@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -552,6 +553,11 @@ public class SalaryDraft extends ResizeComposite
 		T create(Variable variable);
 
 		boolean accept(Variable variable);
+
+		default T create(Variable variable, SalaryDraftObject salaryDraftObject) {
+			return create(variable);
+		}
+
 	}
 	
 	static interface VariableEditorFactory<T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled>
@@ -663,6 +669,7 @@ public class SalaryDraft extends ResizeComposite
 	static class EventConstantEditorFactory implements VariableEditorFactory<EventConstantLabel> {
 		
 		private String patterns [];
+		private SalaryDraft salaryDraft;
 		
 		
 		public EventConstantEditorFactory(String... patterns ) {
@@ -675,15 +682,36 @@ public class SalaryDraft extends ResizeComposite
 				if ( RegExp.compile(pattern).test(variable.getName()) )
 					return true;
 			
+			
 			return false;
 		}
 		
 		@Override
 		public EventConstantLabel create(Variable variable) {
 			EventConstantLabel constantLabel = new EventConstantLabel();
-			constantLabel.ensureDebugId("editor-" + variable.getName().toLowerCase());
-			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeEvents(variable.getName()));
+			constantLabel.ensureDebugId(variable.getName().toLowerCase());
+			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeEvents(variable.getName(), getYears(variable)));
 			return constantLabel;
+		}
+		
+		@Override
+		public EventConstantLabel create(Variable variable, SalaryDraftObject salaryDraftObject) {
+			EventConstantLabel constantLabel = new EventConstantLabel();
+			constantLabel.ensureDebugId(variable.getName().toLowerCase());
+			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeEvents(variable.getName(), getYears(salaryDraftObject)));
+			return constantLabel;
+		}
+		
+		protected int [] getYears(Variable variable) {
+			Integer startYear = DateUtils.getYear(variable.getStartDate());
+			Integer endYear = DateUtils.getYear(variable.getEndDate());
+			return IntStream.rangeClosed(startYear, endYear).toArray();
+		}
+
+		protected int [] getYears(SalaryDraftObject salaryDraftObject) {
+			Integer startYear = DateUtils.getYear(salaryDraftObject.getStartDate());
+			Integer endYear = DateUtils.getYear(salaryDraftObject.getEndDate());
+			return IntStream.rangeClosed(startYear, endYear).toArray();
 		}
 	}
 
@@ -6265,12 +6293,12 @@ public class SalaryDraft extends ResizeComposite
 		
 		for (VariableEditorFactory<T> factory : QUOTE_VARIABLE_EDITOR_FACTORIES.getOrDefault(quoteGroup, empty)) {
 			if (factory.accept(variable))
-				return factory.create(variable);
+				return factory.create(variable, salaryDraftObject);
 		}
 
 		for (VariableEditorFactory<T> factory : COMMON_VARIABLE_EDITOR_FACTORIES) {
 			if (factory.accept(variable))
-				return factory.create(variable);
+				return factory.create(variable, salaryDraftObject);
 		}
 		return null;
 	}

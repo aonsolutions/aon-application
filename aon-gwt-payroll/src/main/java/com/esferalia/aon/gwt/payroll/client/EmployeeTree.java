@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.payroll.client.MainEntryPoint.getParameter;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -3832,12 +3833,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	}
 
-	protected static void showEmployeeEvents(String ...variables) {
+	protected static void showEmployeeEvents(String variable, int [] years) {
+		showEmployeeEvents(new String [] {variable}, years);
+	}
+
+	protected static void showEmployeeEvents(String []variables, int [] years) {
 		EmployeeTree employeeTree = getEmployeeTree();
 		EmployeeEventsDraftObject events = employeeTree.getSalaryDraft().getSalaryDraftObject()
 				.getEmployeeEventsDraftObjecta();
 		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeEventsDraft());
-		employeeTree.getEmployeeEventsDraft().setEmployeeEventsDraftObject(events.getEmployeeEventsDraftObject(variables));
+		employeeTree.getEmployeeEventsDraft().setEmployeeEventsDraftObject(events.getEmployeeEventsDraftObject(variables), years);
 	}
 
 	protected static void showEmployeeCalendar() {
