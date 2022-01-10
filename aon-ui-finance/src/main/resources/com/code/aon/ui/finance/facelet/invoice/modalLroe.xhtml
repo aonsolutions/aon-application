@@ -37,7 +37,7 @@
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="lroeaccept"	
-											value="#{bundle.aon_accept}"
+											value="Enviar"
 											action="#{saleInvoice.issueInvoiceLroe}"
 											styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
 									</aon:div>
@@ -77,21 +77,24 @@
 														styleClass="aon-editDataTable-button aon-icon-check-black aon-nowrap aon-margin-left"
 														value="&#160;"
 														rendered="#{ch1.response.ok}" />
+														
 													<aon:outputText title="#{ch1.response.errorMessage}"
 														styleClass="aon-editDataTable-button aon-icon-wrong aon-nowrap aon-margin-left"
 														value="&#160;"
 														rendered="#{ch1.response.error}" />
 
-													<aon:outputText title="Descargar Request"
-														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left"
-														value="&#160;"
-													/>
+													<aon:outputLink id="lroeDownloadRequest"
+														title="Descargar Request"
+														target="_blank" value="#{ch1.requestUrl}" 
+														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
+												    </aon:outputLink>
 													
-													<aon:outputText title="Descargar Response"
-														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left"
-														value="&#160;"
-													/>
-													
+													<aon:outputLink id="lroeDownloadResponse"
+														title="Descargar Response"
+														target="_blank" value="#{ch1.responseUrl}" 
+														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
+												    </aon:outputLink>
+
 												</aon:column>
 												
 											</aon:dataTable>

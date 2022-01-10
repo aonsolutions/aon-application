@@ -73,7 +73,7 @@ public class TbaiMain {
 
 	public static void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws TbaiException {
 		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
-		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {
+		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 			byte[] xml = TbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
 			LROEResponse lroeResponse = null;
 			LROEInfo info = null;
@@ -86,7 +86,7 @@ public class TbaiMain {
 						company.getDomain().getId(), "", invoice.getActivity());
 				if(ea == null || ea.getId() == null) {
 					ea = AON.getEnterpriseActivities(company.getDomain().getName(),
-						company.getDomain().getId(), "").filter(f ->f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
 				}
 				invoice.setEpigraph(ea.getIae().getFullEpigraph());
 				info = LROE140_1_1.buildInfo(OperacionEnum.A_00);

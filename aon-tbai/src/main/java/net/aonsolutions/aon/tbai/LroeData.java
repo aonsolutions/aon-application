@@ -1,7 +1,9 @@
 package net.aonsolutions.aon.tbai;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -57,6 +59,32 @@ public class LroeData {
 					JSONObject jsonJson = new JSONObject(json.getDataValue());
 					request.setResponse(new LROEResponse(jsonJson));
 				}
+				
+				Attach requestAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
+						.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
+						.and(f.getSourceBatchProperty().eq(r.getDataRequest())), AttachType.DATA, false);
+
+				Attach responseAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.LROE.value())
+						.and(f.getTypeProperty().eq(DataAttachType.RESPONSE_OK.value())
+							.or(f.getTypeProperty().eq(DataAttachType.RESPONSE_ERROR.value())))
+						.and(f.getSourceBatchProperty().eq(r.getId())), AttachType.DATA, false);
+					
+				JSONObject requestData = new JSONObject();
+				requestData.put("domain_name", domain.getName());
+				requestData.put("domain_id", domain.getId());
+				requestData.put("id", requestAttach.getId());
+				requestData.put("attach_type", AttachType.DATA.getName());
+				String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
+				request.setRequestUrl("ms/api/file/" +  result);
+				
+				JSONObject responseData = new JSONObject();
+				responseData.put("domain_name", domain.getName());
+				responseData.put("domain_id", domain.getId());
+				responseData.put("id", responseAttach.getId());
+				responseData.put("attach_type", AttachType.DATA.getName());
+				String responseResult = Base64.getEncoder().encodeToString(responseData.toString().getBytes(StandardCharsets.UTF_8));
+				request.setResponseUrl("ms/api/file/" +  responseResult);
+				
 				if("1".equals(request.getInfo().getCapitulo())) {
 					lroe.getChapter1().addRequest(request);
 				} else if("2".equals(request.getInfo().getCapitulo())) {
@@ -165,4 +193,5 @@ public class LroeData {
 	    }       
         return sb.toString();
 	}
+
 }

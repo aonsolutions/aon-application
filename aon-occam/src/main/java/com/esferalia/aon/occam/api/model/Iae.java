@@ -51,6 +51,9 @@ public class Iae implements Serializable{
 	}
 	
 	public String getFullEpigraph() {
+		if(getSection() == null && getEpigraph() == null) {
+			return "";
+		}
 		String str = getSection() + getEpigraph().replace(".", "");
 		while (str.length() < 6) {
 			str = str + "0";

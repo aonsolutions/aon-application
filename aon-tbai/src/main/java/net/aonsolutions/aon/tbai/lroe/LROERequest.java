@@ -11,6 +11,8 @@ public class LROERequest {
 	DataResponse dataResponse;
 	LROEInfo info;
 	LROEResponse response;
+	String requestUrl;
+	String responseUrl;
 	
 	public LROERequest() {
 	
@@ -51,8 +53,22 @@ public class LROERequest {
 		this.response = response;
 		return this;
 	}
+
+	public String getRequestUrl() {
+		return requestUrl;
+	}
 	
-	public String getPrueba() {
-		return "PRUEBA";
+	public LROERequest setRequestUrl(String requestUrl) {
+		this.requestUrl = requestUrl;
+		return this;
+	}
+	
+	public String getResponseUrl() {
+		return responseUrl;
+	}
+	
+	public LROERequest setResponseUrl(String responseUrl) {
+		this.responseUrl = responseUrl;
+		return this;
 	}
 }
