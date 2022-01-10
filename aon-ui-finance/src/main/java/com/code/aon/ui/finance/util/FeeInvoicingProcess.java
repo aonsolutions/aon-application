@@ -136,7 +136,8 @@ public class FeeInvoicingProcess implements ILongProcess {
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), user.getLogin());
 			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), user.getLogin(), user.getId(), CertificateType.AEAT.name()));
 			try {
-				TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 			} catch (Exception e ) {
 				e.printStackTrace();
 			}

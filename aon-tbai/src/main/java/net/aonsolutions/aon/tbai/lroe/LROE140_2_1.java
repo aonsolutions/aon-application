@@ -46,7 +46,7 @@ public class LROE140_2_1 extends LROE140 {
 	private static final String CAPITULO = "2";
 	private static final String SUBCAPITULO = "2.1";
 	
-	private static LROEPF140GastosConFacturaAltaModifPeticion build(Person person, List<Invoice> invoices, LROEInfo info) {
+	private LROEPF140GastosConFacturaAltaModifPeticion build(Person person, List<Invoice> invoices, LROEInfo info) {
 		LROEPF140GastosConFacturaAltaModifPeticion lroe =  new LROEPF140GastosConFacturaAltaModifPeticion();
 		lroe.setCabecera(buildCabecera(person, info));
 
@@ -58,7 +58,7 @@ public class LROE140_2_1 extends LROE140 {
 		return lroe;
 	}
 		
-	private static GastoConFacturaType buildGasto(Invoice invoice) {
+	private GastoConFacturaType buildGasto(Invoice invoice) {
 		GastoConFacturaType gasto = new GastoConFacturaType();
 		gasto.setEmisorFacturaRecibida(buildEmisor(invoice));
 		gasto.setCabeceraFactura(buildInvoiceCabecera(invoice));
@@ -67,7 +67,7 @@ public class LROE140_2_1 extends LROE140 {
 		return gasto;
 	}
 	
-	private static DocumentoPersonaType buildEmisor(Invoice invoice) {
+	private DocumentoPersonaType buildEmisor(Invoice invoice) {
 		DocumentoPersonaType emisor = new DocumentoPersonaType();
 		emisor.setApellidosNombreRazonSocial(invoice.getRegistryName());
 		
@@ -93,7 +93,7 @@ public class LROE140_2_1 extends LROE140 {
 		return emisor;
 	}
 	
-	private static CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(Invoice invoice) {
+	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(Invoice invoice) {
 		CabeceraFacturaGastosRecibidasType cabecera = new CabeceraFacturaGastosRecibidasType();
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
 		cabecera.setNumFactura(invoice.getReferenceCode());
@@ -116,7 +116,7 @@ public class LROE140_2_1 extends LROE140 {
 		return cabecera;
 	}
 	
-	private static DatosFacturaGastoType buildFactura(Invoice invoice) {
+	private DatosFacturaGastoType buildFactura(Invoice invoice) {
 		DatosFacturaGastoType factura = new DatosFacturaGastoType();
 		Double total = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 		.mapToDouble(r -> {
@@ -136,7 +136,7 @@ public class LROE140_2_1 extends LROE140 {
 		return factura;
 	}
 	
-	private static RentaIVAGastoType buildRenta(Invoice invoice) {
+	private RentaIVAGastoType buildRenta(Invoice invoice) {
 		RentaIVAGastoType renta = new RentaIVAGastoType();
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
@@ -173,13 +173,13 @@ public class LROE140_2_1 extends LROE140 {
 		return renta;
 	}
 
-	public static LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
+	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
 		return alta(tbaiConfiguration, person, invoices);
 	}
 	
-	public static LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices) {
+	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices) {
 		try {
 			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00);
 			final LROEPF140GastosConFacturaAltaModifPeticion p140 = build(person, invoices, info); 

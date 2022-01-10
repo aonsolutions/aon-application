@@ -488,7 +488,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
-			TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			TbaiMain tbai = new TbaiMain();
+			tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 		}
 	}
 	

@@ -30,14 +30,14 @@ public class LROE140_3_1 extends LROE140 {
 	private static final String CAPITULO = "3";
 	private static final String SUBCAPITULO = "3.1";
 	
-	private static LROEPF140BienesAltaAltaModifPeticion build(Person person, Invoice invoice, LROEInfo info) {
+	private LROEPF140BienesAltaAltaModifPeticion build(Person person, Invoice invoice, LROEInfo info) {
 		LROEPF140BienesAltaAltaModifPeticion lroe =  new LROEPF140BienesAltaAltaModifPeticion();
 		lroe.setCabecera(buildCabecera(person, info));
 		lroe.setBienesAlta(buildBienes(invoice));
 		return lroe;
 	}
 	
-	private static BienesAltaType buildBienes(Invoice invoice) {
+	private BienesAltaType buildBienes(Invoice invoice) {
 		BienesAltaType bienes = new BienesAltaType();
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			if(detail.getInvestAsset() != null) {
@@ -62,7 +62,7 @@ public class LROE140_3_1 extends LROE140 {
 		return bienes;
 	}
 	
-	private static TipoBienEnum getTipoBien(InvestAssetType type) {
+	private TipoBienEnum getTipoBien(InvestAssetType type) {
 		if(InvestAssetType.PREMISES.equals(type))
 			return TipoBienEnum.A;
 		else if(InvestAssetType.OTHER_BUILDING.equals(type))
@@ -92,7 +92,7 @@ public class LROE140_3_1 extends LROE140 {
 		return null;
 	}
 	
-	private static TituloEnum getTitulo(InvestAssetRegime regime) {
+	private TituloEnum getTitulo(InvestAssetRegime regime) {
 		if(InvestAssetRegime.PROPERTY.equals(regime))
 			return TituloEnum.P;
 		else if(InvestAssetRegime.RENTING.equals(regime))
@@ -104,7 +104,7 @@ public class LROE140_3_1 extends LROE140 {
 		return null;
 	}
 	
-	public static LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) throws StatusCodeException {
+	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) throws StatusCodeException {
 		try {
 			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00);
 			final LROEPF140BienesAltaAltaModifPeticion p140 = build(person, invoice, info); 
@@ -122,11 +122,11 @@ public class LROE140_3_1 extends LROE140 {
 		}
 	}
 	
-	public static void modificacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
+	public void modificacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
 
 	}
 	
-	public static void anulacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
+	public void anulacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
 
 	}
 }

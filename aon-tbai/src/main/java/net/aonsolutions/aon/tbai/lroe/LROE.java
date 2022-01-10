@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
@@ -32,18 +33,22 @@ import net.aonsolutions.aon.tbai.TbaiUri;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 
-public class LROE {
+public class LROE implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	protected static final String LROE = "LROE";
 	
-	public static LROEResponse send(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
+	public LROEResponse send(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
 		JSONObject responseJSON = new JSONObject();
 		URL url;
 		try {
 			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
-			
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
    			kmf.init(keyStore, tbaiConfiguration.getCertificate().getPassword().toCharArray());
    	        
@@ -52,8 +57,13 @@ public class LROE {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			SSLContext.setDefault(sslContext);
-          
-			url = new URL(TbaiUri.getUrlEmision(tbaiConfiguration));
+			String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
+			url = new URL(uri);
+			System.out.println("***** REQUEST *****");
+			System.out.println("[POST] " + uri);
+			System.out.println(json.toString());
+			String contentLength = Integer.toString(xml.length);
+			System.out.println("Content-Length: " + contentLength);
 			URLConnection con = url.openConnection();
 			HttpsURLConnection https = (HttpsURLConnection)con;
 			
@@ -61,7 +71,7 @@ public class LROE {
 	        https.setRequestMethod("POST"); 
 			https.setRequestProperty("Accept-Encoding", "gzip");
 			https.setRequestProperty("Content-Encoding", "gzip");
-			https.setRequestProperty("Content-Length", Integer.toString(xml.length));
+			https.setRequestProperty("Content-Length", contentLength);
 			https.setRequestProperty("Content-Type", "application/octet-stream");
 			https.setRequestProperty("eus-bizkaia-n3-version", "1.0");
 			https.setRequestProperty("eus-bizkaia-n3-content-type", "application/xml");
@@ -74,12 +84,16 @@ public class LROE {
 			os.close();
 
 			responseJSON.put("responseCode", https.getResponseCode());
+			System.out.println(https.getResponseCode());
 			responseJSON.put("responseMessage", https.getResponseMessage());
+			System.out.println(https.getResponseMessage());
 			responseJSON.put("responseContentType", https.getContentType());
 			responseJSON.put("responseContentLength", https.getContentLength());
 			for (String key2 : https.getHeaderFields().keySet()) {
-				if(key2 != null)
+				if(key2 != null) {
 					responseJSON.put(key2, https.getHeaderField(key2));
+					System.out.println( key2 + " - " + https.getHeaderField(key2));
+				}
 			} 
 			
 			byte[] responseData = null;
@@ -87,8 +101,10 @@ public class LROE {
 				InputStream respons = https.getInputStream();
 				byte[] bytes = respons.readAllBytes();
 				responseData = decompress(bytes);
-				Document d = XMLUtils.getDocument(responseData);
-				System.out.println(XMLUtils.documentToString(d));
+				if(responseData != null) {
+					Document d = XMLUtils.getDocument(responseData);
+					System.out.println(XMLUtils.documentToString(d));
+				}
 			} catch (ParserConfigurationException | SAXException e) {
 				e.printStackTrace();
 			}
@@ -103,7 +119,7 @@ public class LROE {
 	
 	
 	
-	private static class TrustAllCertificates implements X509TrustManager {
+	private class TrustAllCertificates implements X509TrustManager {
 	    public void checkClientTrusted(X509Certificate[] certs, String authType) {
 	    }
 	 
@@ -115,13 +131,13 @@ public class LROE {
 	    }
 	}
 	
-	private static class TrustAllHosts implements HostnameVerifier {
+	private class TrustAllHosts implements HostnameVerifier {
 	    public boolean verify(String hostname, SSLSession session) {
 	        return true;
 	    }
 	}
 	
-	public static byte[] decompress(byte[] file) {
+	public byte[] decompress(byte[] file) {
 	         byte[] buffer = new byte[1024];
 	        try
 	        {
@@ -149,7 +165,7 @@ public class LROE {
 	          
 	    }
 	
-	public static byte[] toGzip(byte[] data) throws IOException {
+	public byte[] toGzip(byte[] data) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length);
 		GZIPOutputStream gzipStream = new GZIPOutputStream(baos);
 		try {
@@ -161,7 +177,7 @@ public class LROE {
 		return baos.toByteArray();
 	}
 	
-	protected static LROEResponse error(Exception e) {
+	protected LROEResponse error(Exception e) {
 		e.printStackTrace();
 		JSONObject responseJSON = new JSONObject();
 		responseJSON.put("error", true);

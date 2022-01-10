@@ -52,7 +52,7 @@ public class LROE240_1_1 extends LROE240 {
 		return proba;
 	} 
 	
-	public static LROEResponse alta(Company company, TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] tbai) throws StatusCodeException {
+	public LROEResponse alta(Company company, TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.A_00);
 			final LROEPJ240FacturasEmitidasConSGAltaPeticion p240 = build(company, invoice, info, tbai); 
@@ -72,11 +72,11 @@ public class LROE240_1_1 extends LROE240 {
 		}
 	}
 	
-	public static LROEInfo buildInfo(OperacionEnum operacion) {
+	public LROEInfo buildInfo(OperacionEnum operacion) {
 		return new LROEInfo(MODEL_240, CAPITULO, SUBCAPITULO, operacion);
 	}
 	
-	private static LROEPJ240FacturasEmitidasConSGAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info, byte[] data) {	
+	private LROEPJ240FacturasEmitidasConSGAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info, byte[] data) {	
 		LROEPJ240FacturasEmitidasConSGAnulacionPeticion lroe = new LROEPJ240FacturasEmitidasConSGAnulacionPeticion();
 		lroe.setCabecera(buildCabecera(company, info));
 		AnulacionesFacturasEmitidasConSGType anulaciones = new AnulacionesFacturasEmitidasConSGType();
@@ -87,7 +87,7 @@ public class LROE240_1_1 extends LROE240 {
 		return lroe;
 	}
 	
-	public static LROEResponse anulacion(Company company, TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] tbai) throws StatusCodeException {
+	public LROEResponse anulacion(Company company, TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.AN_0);
 			final LROEPJ240FacturasEmitidasConSGAnulacionPeticion p240 = buildBaja(company, invoice, info, tbai); 

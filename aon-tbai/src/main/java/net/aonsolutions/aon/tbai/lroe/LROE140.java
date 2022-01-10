@@ -11,7 +11,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFPersonaType;
 
-public class LROE140 extends LROE{
+public class LROE140 extends LROE {
 	
 	protected final static String MODEL_140 = "140";
 	private final static String TEST_NIF_140 = "99980200M";
@@ -19,7 +19,7 @@ public class LROE140 extends LROE{
 	private final static String TEST_SURNAME1_140 = "Vux9anjAES"; 
 	private final static String TEST_SURNAME2_140 = "EMPTmw3fmi";
 	
-	protected static Cabecera140Type buildCabecera(Person person, LROEInfo info) {
+	protected Cabecera140Type buildCabecera(Person person, LROEInfo info) {
 		Cabecera140Type cabecera = new Cabecera140Type();
 		cabecera.setModelo(info.getModelo());
 		NIFPersonaType nif = new NIFPersonaType();
@@ -34,7 +34,7 @@ public class LROE140 extends LROE{
 		return cabecera;
 	}
 	
-	protected static JSONObject buildJSON(Person person, LROEInfo info) {
+	protected JSONObject buildJSON(Person person, LROEInfo info) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.CON, "LROE");
 		json.put(IJsonNames.APA, info.getSubcapitulo());

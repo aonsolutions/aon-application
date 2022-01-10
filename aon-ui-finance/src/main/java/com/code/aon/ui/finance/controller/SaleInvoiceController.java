@@ -545,7 +545,8 @@ public class SaleInvoiceController extends InvoiceController {
 			
 			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
 			if(tbaiConfiguration.isActive()) {
-				TbaiMain.createEmisionLROE(company, invoice, tbaiConfiguration);
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -578,7 +579,8 @@ public class SaleInvoiceController extends InvoiceController {
 			
 			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
 			if(tbaiConfiguration.isActive()) {
-				TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 			}
 		
 			// SII
@@ -641,7 +643,8 @@ public class SaleInvoiceController extends InvoiceController {
 				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
 				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
 				tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
-				TbaiMain.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+				TbaiMain tbai = new TbaiMain();
+				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
 			}
 			super.onRemove(event);
 		} catch (Exception e) {

@@ -30,7 +30,7 @@ public class LROE140_1_1 extends LROE140 {
 	private static final String CAPITULO = "1";
 	private static final String SUBCAPITULO = "1.1";
 	
-	private static LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice,LROEInfo info, byte[] data) {
+	private LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice,LROEInfo info, byte[] data) {
 		LROEPF140IngresosConFacturaConSGAltaPeticion proba = new LROEPF140IngresosConFacturaConSGAltaPeticion();
 		proba.setCabecera(buildCabecera(person, info));
 
@@ -52,7 +52,7 @@ public class LROE140_1_1 extends LROE140 {
 		return proba;
 	}
 	
-	public static LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
+	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.A_00);
 			final LROEPF140IngresosConFacturaConSGAltaPeticion p140 = build(person, invoice, info, tbai); 
@@ -72,11 +72,11 @@ public class LROE140_1_1 extends LROE140 {
 		}
 	}
 	
-	public static LROEInfo buildInfo(OperacionEnum operacion) {
+	public LROEInfo buildInfo(OperacionEnum operacion) {
 		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
 	}
 	
-	private static LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
+	private LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
 		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
 		lroe.setCabecera(buildCabecera(person, info));
 		AnulacionesIngresosConSGType anulaciones = new AnulacionesIngresosConSGType();
@@ -88,7 +88,7 @@ public class LROE140_1_1 extends LROE140 {
 		return lroe;
 	}
 	
-	public static LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai)  {
+	public LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai)  {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.AN_0);
 			final LROEPF140IngresosConFacturaConSGAnulacionPeticion p140 = buildBaja(person, invoice, info, tbai); 

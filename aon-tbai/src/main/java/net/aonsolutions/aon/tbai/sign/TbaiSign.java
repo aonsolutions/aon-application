@@ -2,6 +2,7 @@ package net.aonsolutions.aon.tbai.sign;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -14,6 +15,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -29,15 +32,10 @@ import es.gob.afirma.core.signers.AOSigner;
 import es.gob.afirma.core.signers.AdESPolicy;
 import es.gob.afirma.signers.xades.AOXAdESSigner;
 import net.aonsolutions.aon.tbai.CRC8;
-import net.aonsolutions.aon.tbai.TbaiMain;
 import ticketbai.emision.TicketBai;
 
 
 public class TbaiSign {
-	
-	private TbaiSign() {
-	
-	}
 	
 	private static final String SHA_256 = "SHA256";
 
@@ -64,7 +62,7 @@ public class TbaiSign {
 
     private static final AOSigner XADES_SIGNER = new AOXAdESSigner();
 	
-	public static byte[] sign(TbaiConfiguration tbai, byte[] data) {
+	public byte[] sign(TbaiConfiguration tbai, byte[] data) {
 		try {
 			KeyStore keyStore = getKeyStore(tbai.getCertificate());
 			String alias = getAlias(keyStore);
@@ -81,22 +79,22 @@ public class TbaiSign {
 		return null;
 	}
 
-	private static PrivateKey getPrivateKey(KeyStore keyStore, Certificate cert, String alias) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+	private PrivateKey getPrivateKey(KeyStore keyStore, Certificate cert, String alias) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
 		return (PrivateKey) keyStore.getKey(alias, cert.getPassword().toCharArray());
 	}
 	
-	private static java.security.cert.Certificate[] getCertificateChain(KeyStore keyStore, String alias) throws KeyStoreException{
+	private java.security.cert.Certificate[] getCertificateChain(KeyStore keyStore, String alias) throws KeyStoreException{
 		return keyStore.getCertificateChain(alias);
 	}
 	
-	private static KeyStore getKeyStore(Certificate cert) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	private KeyStore getKeyStore(Certificate cert) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		ByteArrayInputStream keyData = new ByteArrayInputStream(cert.getCertificate());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 		keyStore.load(keyData, cert.getPassword().toCharArray());
 		return keyStore;
 	}
 	
-	private static String getAlias(KeyStore keyStore) throws KeyStoreException {
+	private String getAlias(KeyStore keyStore) throws KeyStoreException {
 		Enumeration enumas = keyStore.aliases();
 		String alias = null;
 		while (enumas.hasMoreElements()) {
@@ -105,7 +103,7 @@ public class TbaiSign {
 		return alias;
 	}
 
-    public static Properties getTbaiExtraParams(TbaiConfiguration tbai) {
+    public Properties getTbaiExtraParams(TbaiConfiguration tbai) {
     	final Properties xParams = new Properties();
     	xParams.setProperty(AonXAdESExtraParams.FORMAT, AOSignConstants.SIGN_FORMAT_XADES_ENVELOPED);
     	xParams.setProperty(AonXAdESExtraParams.SIGNER_CLAIMED_ROLES, "emisor");
@@ -113,7 +111,7 @@ public class TbaiSign {
     	return xParams;
     }
 	
-    private static AdESPolicy getPolicyTbai(TbaiConfiguration tbai) {
+    private AdESPolicy getPolicyTbai(TbaiConfiguration tbai) {
     	if(tbai.isAraba()) {
     		return POLICY_TBAI_ARABA;
     	} else if(tbai.isBizkaia()) {
@@ -121,7 +119,7 @@ public class TbaiSign {
     	} else return POLICY_TBAI_GIPUZKOA;    		
 	}
     
-    public static String buildTbaiId(TicketBai tbai, String sign) throws UnsupportedEncodingException {
+    public String buildTbaiId(TicketBai tbai, String sign) throws UnsupportedEncodingException {
     	String dateStr = tbai.getFactura().getCabeceraFactura().getFechaExpedicionFactura();
     	Date date = AonDateUtils.parse(dateStr, "dd-MM-yyyy");
     	String tbaiId = "TBAI-" + tbai.getSujetos().getEmisor().getNIF() 
@@ -132,8 +130,17 @@ public class TbaiSign {
     	return tbaiId + crc;
     }
     
-    public static String getSign(byte[] data) throws ParserConfigurationException, SAXException, IOException {
-		Document doc = TbaiMain.getDocument(data);
+    public String getSign(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+		Document doc = getDocument(data);
 		return doc.getElementsByTagName("ds:SignatureValue").item(0).getTextContent();
     }
+    
+    public Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+		InputStream is = new ByteArrayInputStream(data);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(is);
+		return doc;
+	}
+
 }
