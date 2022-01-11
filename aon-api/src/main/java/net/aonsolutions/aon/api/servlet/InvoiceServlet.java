@@ -373,7 +373,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		TbaiConfiguration tbai = AON.getTbaiConfiguration(domain, login);
 		if(tbai.isActive()) {	
-			String tbaiUrl = TbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
+			String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 			if(!AonStringUtils.isBlank(tbaiUrl)) {
 				json.put("tbai", true);
 				json.put("tbaiUrl", tbaiUrl);
@@ -477,7 +477,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		acceptTbai(tbaiConfiguration, company, invoice);
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {	
-			String tbaiUrl = TbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+			String tbaiUrl = TbaiData.getInstance(tbaiConfiguration).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 			if(!AonStringUtils.isBlank(tbaiUrl)) {
 				json.put("tbai", true);
 				json.put("tbaiUrl", tbaiUrl);
