@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -935,6 +936,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private static String getIrpfName( PaymentType type ) {
 		return String.format("%s_IRPF", type.name());
 	}
+
+	private static String getBaseName( PaymentType type ) {
+		return String.format("%s_BASE", type.name());
+	}
 	
 	private static Map<String, BigDecimal> getIrpfQuotas(BigDecimal totalIrpfBase, BigDecimal totalIrpfQuota, Payments payments, UnaryOperator<BigDecimal> f ) {
 		
@@ -956,18 +961,31 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 					paymentIrpfBase
 					.multiply(totalIrpfQuota)
 					.divide(totalIrpfBase,MathContext.DECIMAL128));
-			
+			BigDecimal irpfBase = f.apply(paymentIrpfBase);
+
 			irpfQuotasMap.put(getIrpfName(paymentIrpfType), irpfQuota);
+			irpfQuotasMap.put(getBaseName(paymentIrpfType), irpfBase);
 		}
 		
 		// last payment by difference .
 		for ( int i = paymentsIrpfs.size()-1; i < paymentsIrpfs.size() ; i++ ) {
 			Payments.Irpf paymentIrpf = paymentsIrpfs.get(i);
 			PaymentType paymentIrpfType = paymentIrpf.type;
-			BigDecimal sumIrpfQuota = irpfQuotasMap.values().stream()
-					.reduce(ZERO, RoundSalaryBuilder::add); 
+			BigDecimal sumIrpfQuota = irpfQuotasMap
+					.entrySet().stream()
+					.filter(entry -> entry.getKey().endsWith("IRPF"))
+					.map(Entry::getValue).reduce(ZERO, RoundSalaryBuilder::add); 
+			
 			BigDecimal irpfQuota = add(totalIrpfQuota, sumIrpfQuota.negate()); 
 			irpfQuotasMap.put(getIrpfName(paymentIrpfType), irpfQuota);
+			
+			BigDecimal sumIrpfBase = irpfQuotasMap
+					.entrySet().stream()
+					.filter(entry -> entry.getKey().endsWith("BASE"))
+					.map(Entry::getValue).reduce(ZERO, RoundSalaryBuilder::add); 
+			
+			BigDecimal irpfBase = add(totalIrpfBase, sumIrpfBase.negate()); 
+			irpfQuotasMap.put(getBaseName(paymentIrpfType), irpfBase);
 		}
 		
 		return irpfQuotasMap;

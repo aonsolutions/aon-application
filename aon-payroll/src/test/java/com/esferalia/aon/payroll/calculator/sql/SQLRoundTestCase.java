@@ -420,6 +420,20 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		);
 	}
 
+	@Test
+	public void testIrpfQuotasIII()
+			throws ExpressionException, SQLException, SalaryException {
+		testIrpfQuotas(
+			new Payment() { 
+				{ 
+					type = PaymentType.CRA_0000; 
+					description = "SALARIO BASE"; 
+					expression = "0.00 * DIAS_TRABAJADOS / DIAS_MES";
+				}
+			}
+		);
+	}
+
 	public void testIrpfQuotas(Payment ...payments)
 			throws ExpressionException, SQLException, SalaryException {
 		
@@ -447,7 +461,8 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		Map<String, Double> irpfQuotas =
 		salary.getSalaryDatas()
 		.stream()
-		.filter(d -> d.getName().startsWith("CRA_"))
+		.filter(d -> d.getName().startsWith("CRA"))
+		.filter(d -> d.getName().endsWith("_IRPF"))
 		.peek(d -> System.out.println(d.getName() + " = " + d.getExpression() ))
 		.collect(Collectors.toMap( d -> d.getName(), d -> {
 			try {
@@ -459,9 +474,26 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		;
 		
 		double totalIrpf = irpfQuotas.values().stream().collect( Collectors.summingDouble( d -> d ));
-
 		Assert.assertEquals(salary.getTotalIrpf(), totalIrpf ,FLOATING_POINT_ERROR);
 		
+		Map<String, Double> irpfBases =
+		salary.getSalaryDatas()
+		.stream()
+		.filter(d -> d.getName().startsWith("CRA"))
+		.filter(d -> d.getName().endsWith("_BASE"))
+		.peek(d -> System.out.println(d.getName() + " = " + d.getExpression() ))
+		.collect(Collectors.toMap( d -> d.getName(), d -> {
+			try {
+				return Double.parseDouble(d.getExpression());
+			} catch ( Throwable t) {
+				return 0.00;
+			}
+		} ))
+		;
+
+		double irpfBase = irpfBases.values().stream().collect( Collectors.summingDouble( d -> d ));
+		Assert.assertEquals(salary.getIrpfBase(), irpfBase ,FLOATING_POINT_ERROR);
+
 		} finally {
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
