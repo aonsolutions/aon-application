@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 
@@ -97,7 +98,7 @@ public class InvoiceTest {
 		
 		String address = "Calle de los tejeros alados en la roca veraz de los paramos";
 		String addressNumber  = "12";
-		String addressProvince = "Almeria";
+		String addressProvince = "Almería";
 		String addressTown = "Andrajosía de vera";
 		String addressZIP = "191238";
 		
@@ -121,7 +122,8 @@ public class InvoiceTest {
 		
 		
 		/** INVOICE BASIC DATA */
-		Invoice invoice = new Invoice();		
+		Invoice invoice = new Invoice();
+		invoice.setRectificationType(RectificationType.RECTIFIED);
 		invoice.setAddress(address);
 		invoice.setAddressNumber(addressNumber);
 		invoice.setAddressProvince(addressProvince);
@@ -461,10 +463,10 @@ public class InvoiceTest {
 		    "mi ley, la fuerza y el viento,\n" + 
 		    "mi única patria la mar»."
 		);
-		detailFour.setPrice(0);
-		detailFour.setDiscountExpression("30");
-		detailFour.setQuantity(0);
-		detailFour.setTaxableBase(0);
+		detailFour.setPrice(2);
+		detailFour.setDiscountExpression("0,00");
+		detailFour.setQuantity(288);
+		detailFour.setTaxableBase(288*2);
 		
 		InvoiceDetail detailFive= new InvoiceDetail();
 		detailFive.setAccountCode("0192831010");
@@ -480,6 +482,50 @@ public class InvoiceTest {
 		detailFive.setQuantity(0);
 		detailFive.setTaxableBase(0);
 		
+		
+		
+		
+		InvoiceDetail shortDetail1= new InvoiceDetail();
+		shortDetail1.setAccountCode("0192831010");
+		shortDetail1.setDescription("detalle 1");
+		shortDetail1.setPrice(0);
+		shortDetail1.setDiscountExpression("30");
+		shortDetail1.setQuantity(1);
+		shortDetail1.setTaxableBase(0);
+		
+		InvoiceDetail shortDetail2= new InvoiceDetail();
+		shortDetail2.setAccountCode("0192831010");
+		shortDetail2.setDescription("detalle 2");
+		shortDetail2.setPrice(1);
+		shortDetail2.setDiscountExpression("30");
+		shortDetail2.setQuantity(0);
+		shortDetail2.setTaxableBase(0);
+		
+		InvoiceDetail shortDetail3= new InvoiceDetail();
+		shortDetail3.setAccountCode("0192831010");
+		shortDetail3.setDescription("detalle 3");
+		shortDetail3.setPrice(1);
+		shortDetail3.setDiscountExpression("30");
+		shortDetail3.setQuantity(1);
+		shortDetail3.setTaxableBase(1);
+		
+		InvoiceDetail shortDetail4= new InvoiceDetail();
+		shortDetail4.setAccountCode("0192831010");
+		shortDetail4.setDescription("detalle 4");
+		shortDetail4.setPrice(1);
+		shortDetail4.setDiscountExpression("0");
+		shortDetail4.setQuantity(1);
+		shortDetail4.setTaxableBase(1);
+		
+		InvoiceDetail shortDetail5= new InvoiceDetail();
+		shortDetail5.setAccountCode("0192831010");
+		shortDetail5.setDescription("detalle 5");
+		shortDetail5.setPrice(1);
+		shortDetail5.setDiscountExpression("NO");
+		shortDetail5.setQuantity(1);
+		shortDetail5.setTaxableBase(0);
+		
+		
 		InvoiceDetail detailX= new InvoiceDetail();
 		detailX.setAccountCode("0192831010");
 		
@@ -493,13 +539,21 @@ public class InvoiceTest {
 		detailX.setDiscountExpression("30");
 		detailX.setQuantity(0);
 		detailX.setTaxableBase(0);
-		details.add(detailX);
+//		details.add(detailX);
 //		details.add(detailOne);
 //		details.add(detailTwo);
 //		details.add(detailThree);
 //		details.add(detailThreeAndAHalf);
 //		details.add(detailFour);
 //		details.add(detailFive);
+		
+		
+		details.add(shortDetail1);
+		details.add(shortDetail2);
+		details.add(shortDetail3);
+		details.add(shortDetail4);
+		details.add(shortDetail5);		
+		
 		invoice.setDetails(details);
 		
 		/** PRINT CONFIGURATIONS */
@@ -516,12 +570,12 @@ public class InvoiceTest {
 			
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-			config.setDetailed(true);
+			config.setDetailed(false);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
 			config.setCompany(true);
-			config.setBorder(0);
+			config.setBorder(2);
 			config.setContactData(true);
 			config.setRecordData(true);
 			config.setLegal("Rodrigo Díaz nació, según afirma una tradición constante, aunque sin corroboración documental, en Vivar, hoy Vivar del Cid, un lugar perteneciente al ayuntamiento de Quintanilla de Vivar y situado en el valle del río Ubierna, a diez kilómetros al norte de Burgos.\n"
@@ -550,7 +604,7 @@ public class InvoiceTest {
 			themeconf.setBoxTitleBackgroundColor("#ffd700");
 //			themeconf.setCustomerBackgroundColor("#caa9e6");
 //			themeconf.setBoxTitleTextColor("#f025c8");
-//			themeconf.setBoxBodyBackgroundColor("#d0d793");
+			themeconf.setBoxBodyBackgroundColor("#d0d793");
 			themeconf.setTextColor("#ff6400");
 			themeconf.setBoxTitleTextColor("#00ff00");
 			themeconf.setBorderColor("#0893ff");
@@ -563,33 +617,33 @@ public class InvoiceTest {
 					.setMedia(MediaType.FIXED_PHONE)
 					.setValue("699969633"));
 			
-//			rmediaList.add(new RegistryMedia()
-//					.setMedia(MediaType.FIXED_PHONE)
-//					.setValue("888888888"));
+			rmediaList.add(new RegistryMedia()
+					.setMedia(MediaType.FIXED_PHONE)
+					.setValue("888888888"));
 			
-//			rmediaList.add(new RegistryMedia()
-//					.setMedia(MediaType.FIXED_PHONE)
-//					.setValue("777777777"));
+			rmediaList.add(new RegistryMedia()
+					.setMedia(MediaType.FIXED_PHONE)
+					.setValue("777777777"));
 			
-//			rmediaList.add(new RegistryMedia()
-//					.setMedia(MediaType.FIXED_PHONE)
-//					.setValue("666666666"));
-//			
-//			rmediaList.add(new RegistryMedia()
-//					.setMedia(MediaType.FIXED_PHONE)
-//					.setValue("555555555"));
+			rmediaList.add(new RegistryMedia()
+					.setMedia(MediaType.FIXED_PHONE)
+					.setValue("666666666"));
+			
+			rmediaList.add(new RegistryMedia()
+					.setMedia(MediaType.FIXED_PHONE)
+					.setValue("555555555"));
 			
 			rmediaList.add(new RegistryMedia()
 					.setMedia(MediaType.EMAIL)
 					.setValue("karyuu_no_tekken@fairytail.jp"));
-//			rmediaList.add(new RegistryMedia()
-//					.setMedia(MediaType.WEB)
-//					.setValue("https://www.mazda.com"));
+			rmediaList.add(new RegistryMedia()
+					.setMedia(MediaType.WEB)
+					.setValue("https://www.mazda.com"));
 
 			rmediaList.add(new RegistryMedia()
 					.setMedia(MediaType.WEB)
 					.setValue("https://www.google.es"));
-//			
+			
 //			rmediaList.add(new RegistryMedia()
 //					.setMedia(MediaType.WEB)
 //					.setValue("https://www.youtube.com"));
