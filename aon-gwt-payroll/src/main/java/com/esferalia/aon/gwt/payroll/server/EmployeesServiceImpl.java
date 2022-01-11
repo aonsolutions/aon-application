@@ -183,9 +183,9 @@ import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
-import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.gwt.payroll.util.SettleBuilder;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
+import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -813,6 +813,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException {
 		try {
+			com.esferalia.aon.occam.api.model.type.SalaryType[] occamTypes = null;
+			if (types != null) {				
+				occamTypes = new com.esferalia.aon.occam.api.model.type.SalaryType[types.length];
+				for(int i=0; i<types.length; i++) {
+					if (types[i] != null)
+						occamTypes[i] = com.esferalia.aon.occam.api.model.type.SalaryType.valueOf(types[i].toString());
+					else
+						occamTypes[i] = null;
+				}
+			} 
+			
 			ByteArrayOutputStream oos = new ByteArrayOutputStream();
 
 			Calendar calendar = Calendar.getInstance();
@@ -826,7 +837,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Date endDate = calendar.getTime();
 
 			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, "", startDate, endDate,
-					cost.getEnterpriseId(), cost.getWorkplaceId(), types);
+					cost.getEnterpriseId(), cost.getWorkplaceId(), occamTypes);
 
 			byte bytes[] = oos.toByteArray();
 			InputStream data = new ByteArrayInputStream(bytes);
