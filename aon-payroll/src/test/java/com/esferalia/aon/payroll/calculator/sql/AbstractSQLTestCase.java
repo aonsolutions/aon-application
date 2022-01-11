@@ -144,6 +144,9 @@ public abstract class AbstractSQLTestCase {
 		public Integer concept;
 		public String expression;
 		public SalaryType salary = SalaryType.SALARY;
+
+		public PaymentType type;
+		public String description;
 	}
 
 	private Connection connection;

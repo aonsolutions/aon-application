@@ -23,6 +23,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
@@ -41,6 +42,7 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -51,6 +53,9 @@ import com.sun.xml.ws.api.addressing.WSEndpointReference.EPRExtension;
  *
  */
 public class SQLRoundTestCase extends AbstractSQLTestCase {
+
+	private static final double FLOATING_POINT_ERROR = 0.0000000001;
+
 
 	@Test
 	public void testRoundDeductionsAndCostsI()
@@ -352,6 +357,118 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIrpfQuotasI()
+			throws ExpressionException, SQLException, SalaryException {
+		testIrpfQuotas(
+			new Payment() { 
+				{ 
+					type = PaymentType.CRA_0000; 
+					description = "SALARIO BASE"; 
+					expression = "1111.23456681 * DIAS_TRABAJADOS / DIAS_MES";
+				}
+			}
+		);
+	}
+
+	@Test
+	public void testIrpfQuotasII()
+			throws ExpressionException, SQLException, SalaryException {
+		testIrpfQuotas(
+			new Payment() { 
+				{ 
+					type = PaymentType.CRA_0001; 
+					description = "SALARIO BASE"; 
+					expression = "1111.1111111234 * DIAS_TRABAJADOS / DIAS_MES";
+				}
+			},
+			new Payment() { 
+				{ 
+					description = "PLUS TRANSPORTE Y DISTANCIA"; 
+					expression =  "33.33334567 * DIAS_TRABAJADOS / DIAS_MES"; 
+					type =  PaymentType.CRA_0032;
+				}
+			},
+			new Payment() { 
+				{ 
+					description = "PRORRATEO PAGA EXTRAORDINARIA"; 
+					expression =  "SALARIO_BASE / 12.00 * 2.00"; 
+					type =  PaymentType.CRA_0004;
+				}
+			},
+			new Payment() { 
+				{ 
+					description = "RETRIBUCIÓN EN ESPECIE"; 
+					expression =  "SALARIO_BASE * 0.10"; 
+					type =  PaymentType.CRA_0013;
+				}
+			},
+			new Payment() { 
+				{ 
+					description = "HORAS COMPLEMENTARIAS PACTADAS"; 
+					expression =  "22.22335445546"; 
+					type =  PaymentType.CRA_0016;
+				}
+			},
+			new Payment() { 
+				{ 
+					description = "GASTOS DE LOCMOCIÓN Y DISTANCIA"; 
+					expression =  "69.6969696"; 
+					type =  PaymentType.CRA_0042;
+				}
+			}
+		);
+	}
+
+	public void testIrpfQuotas(Payment ...payments)
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		ContractRecord contract = newContract(aonContext, getFirstDayOfMonth(getToday()), Collections.EMPTY_MAP);
+		
+		for (Payment payment : payments)
+			addPayment(aonContext, contract, payment.description, payment.expression, "_P", "_P", payment.type);
+		
+		Salary salary = calculate(connection, aonContext, contract);
+		
+		salary.getSalaryPayments().forEach( p -> System.out.println( "[" + p.getType().name() + "] " + p.getDescription() + "\t\t:" + p.getIrpf() ));
+		
+		System.out.println( salary.getIrpfBase() + " = " + salary.getMoneyIrpfBase() + "+" + salary.getInkindIrpfBase());
+		
+		Assert.assertEquals(salary.getIrpfBase(), salary.getMoneyIrpfBase() + salary.getInkindIrpfBase() ,FLOATING_POINT_ERROR);
+		
+		Map<String, Double> irpfQuotas =
+		salary.getSalaryDatas()
+		.stream()
+		.filter(d -> d.getName().startsWith("CRA_"))
+		.peek(d -> System.out.println(d.getName() + " = " + d.getExpression() ))
+		.collect(Collectors.toMap( d -> d.getName(), d -> {
+			try {
+				return Double.parseDouble(d.getExpression());
+			} catch ( Throwable t) {
+				return 0.00;
+			}
+		} ))
+		;
+		
+		double totalIrpf = irpfQuotas.values().stream().collect( Collectors.summingDouble( d -> d ));
+
+		Assert.assertEquals(salary.getTotalIrpf(), totalIrpf ,FLOATING_POINT_ERROR);
+		
+		} finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		}
+	}
+
 	private Salary calculate(
 			String[] payments,
 			Connection connection, 
@@ -375,6 +492,15 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		for (String embargo : embargos) {
 			addEmbargo(aonContext, contract, embargo);
 		}
+		
+		return calculate(connection, aonContext, contract);
+	}
+
+	private Salary calculate(
+			Connection connection, 
+			AONContext aonContext,
+			ContractRecord contract)
+			throws SalaryException, ExpressionException, SQLException {
 		
 		Date firstDayOfYear = AonDateUtils.getFirstDayOfYear(contract.getStartDate());
 		
