@@ -6050,6 +6050,10 @@ public class AON {
 		}
 	}
 	
+	public static CertificateInfo getCertificateInfo(byte[] data, String password) throws IllegalArgumentException {
+		return getCommon().getCertificateInfo(data, password);
+	}
+	
 	public static void deleteCertificate(String domainName, Integer domainId, String login, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter){
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getCommon().deleteCertificate(ctx, attachId, attachFilter, raddinfoFilter);

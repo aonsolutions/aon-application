@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -34,7 +33,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -279,11 +277,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void resetPreview(Grid dataTableHeader, Grid dataTable) {
 		dataTableHeader.clear();
 		dataTableHeader.resize(0, 0);
-		dataTableHeader.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 6 :7);
+		dataTableHeader.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 8 :9);
 		
 		dataTable.clear();
 		dataTable.resize(0, 0);
-		dataTable.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 6 :7);
+		dataTable.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 8 :9);
 		
 		paintHeader(dataTableHeader);
 		setColumnWidth(dataTableHeader, dataTable);
@@ -301,66 +299,59 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void paintHeader(Grid dataTableHeader) {
 		int row = dataTableHeader.insertRow(dataTableHeader.getRowCount());
 		
-		Label password = new Label("CONTRASE\u00D1A");
-		Label certificate = new Label("CERTIFICADO");
+		Label certificateFor = new Label("EMITIDO PARA");
+		Label representation = new Label("REPRESENTACION");
+		Label type = new Label("TIPO");
+		Label alias = new Label("ALIAS");
 		AonToolbarSmallButton security = new AonToolbarSmallButton("", AON.CSS.aonIconLock());
 		Label tgss = new Label("TGSS");
 		Label sepe = new Label("SEPE");
 		Label aeat = new Label("AEAT");
 		Label buttons = new Label("");
 		
-		password.addStyleName(style.headerStyle());
-		certificate.addStyleName(style.headerStyle());
+		certificateFor.addStyleName(style.headerStyle());
+		representation.addStyleName(style.headerStyle());
+		type.addStyleName(style.headerStyle());
+		alias.addStyleName(style.headerStyle());
 		tgss.addStyleName(style.headerStyle());
 		sepe.addStyleName(style.headerStyle());
 		aeat.addStyleName(style.headerStyle());
 		
-		dataTableHeader.setWidget(row, 0, password);
-		dataTableHeader.setWidget(row, 1, certificate);
+		dataTableHeader.setWidget(row, 0, certificateFor);
+		dataTableHeader.setWidget(row, 1, representation);
+		dataTableHeader.setWidget(row, 2, type);
+		dataTableHeader.setWidget(row, 3, alias);
 		if(tabLayoutPanel.getSelectedIndex() == 0) {
-			dataTableHeader.setWidget(row, 2, tgss);
-			dataTableHeader.setWidget(row, 3, sepe);
-			dataTableHeader.setWidget(row, 4, aeat);
-			dataTableHeader.setWidget(row, 5, buttons);
+			dataTableHeader.setWidget(row, 4, tgss);
+			dataTableHeader.setWidget(row, 5, sepe);
+			dataTableHeader.setWidget(row, 6, aeat);
+			dataTableHeader.setWidget(row, 7, buttons);
 		} else {
-			dataTableHeader.setWidget(row, 2, security);
-			dataTableHeader.setWidget(row, 3, tgss);
-			dataTableHeader.setWidget(row, 4, sepe);
-			dataTableHeader.setWidget(row, 5, aeat);
-			dataTableHeader.setWidget(row, 6, buttons);
+			dataTableHeader.setWidget(row, 4, security);
+			dataTableHeader.setWidget(row, 5, tgss);
+			dataTableHeader.setWidget(row, 6, sepe);
+			dataTableHeader.setWidget(row, 7, aeat);
+			dataTableHeader.setWidget(row, 8, buttons);
 		}
 	}
 	
 	private void setColumnWidth(Grid dataTableHeader, Grid dataTable) {
 		//MaxWidth 750px
-		dataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(180, Unit.PX);
-		dataTable.getColumnFormatter().getElement(0).getStyle().setWidth(180, Unit.PX);
+		dataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(240, Unit.PX);
+		dataTable.getColumnFormatter().getElement(0).getStyle().setWidth(240, Unit.PX);
 		
-		dataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(230, Unit.PX);
-		dataTable.getColumnFormatter().getElement(1).getStyle().setWidth(230, Unit.PX);
+		dataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(240, Unit.PX);
+		dataTable.getColumnFormatter().getElement(1).getStyle().setWidth(240, Unit.PX);
+		
+		dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(100, Unit.PX);
+		dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
+		dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(100, Unit.PX);
+		
+		dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
+		dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
+		dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
 		
 		if(tabLayoutPanel.getSelectedIndex() == 0) {
-			dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-			
-		} else {
-			dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
-			
-			dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-			dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
-			dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-			
 			dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
 			dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
 			dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
@@ -368,6 +359,27 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 			dataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
 			dataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setTextAlign(TextAlign.CENTER);
 			dataTable.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
+			
+		} else {
+			dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(6).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(7).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 7).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(7).getStyle().setWidth(50, Unit.PX);
 		}
 		
 	}
@@ -487,7 +499,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		// Create Form Panel
 		FormPanel formPanel = new FormPanel();
-		formPanel.setAction(GWT.getModuleBaseURL()+ "certificate_new/");
+		formPanel.setAction(GWT.getModuleBaseURL() + "certificate_check/create/");
 		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		formPanel.addSubmitCompleteHandler(e -> {
@@ -496,11 +508,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 			loadDigitalCertificates();
 		});
 		
-		Hidden rattachIdHidden = new Hidden("rattachId", "");
-		Hidden raddinfoIdHidden = new Hidden("raddinfoId", "");
+		Hidden rattachIdHidden = new Hidden("rattachId", certificate.getId().toString());
+		Hidden raddinfoIdHidden = new Hidden("raddinfoId", null == certificate.getPasswordId() ? "" : certificate.getPasswordId().toString());
 		Hidden extensionHidden = new Hidden("extension", "");
-		Hidden fileNameHidden = new Hidden("filename", "");
-		Hidden passwordHidden = new Hidden("password", "");
+		Hidden fileNameHidden = new Hidden("filename", certificate.getDescription());
+		Hidden passwordHidden = new Hidden("password", certificate.getPassword());
 		Hidden userLoginHidden = new Hidden("currentUser", Wnd.getCurrentUser());
 		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
 		Hidden tokenHidden = new Hidden("token", Wnd.getToken());
@@ -510,63 +522,20 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(certificate) ? "aeat" : "");
 		Hidden ownerHidden = new Hidden("owner", certificate.getOwner().name());
 		
-		// Password Panel
-		HTMLPanel passwordPanel = new HTMLPanel("");
-		passwordPanel.addStyleName(style.flex());
+		String certificateFor = "(" + certificate.getCertificateInfo().getDocument() + ") " + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
+		Label certificateForL = new Label(certificateFor);
 		
-		PasswordTextBox passwordTB = new PasswordTextBox();
-		passwordTB.setStyleName("aon-inputText");
-		passwordTB.addValueChangeHandler(e -> {
-			passwordHidden.setValue(e.getValue());
-			
-			if(AonStringUtils.isBlank(passwordTB.getValue())) {
-				addWarningIcon(passwordPanel, passwordTB, null);
-				saveButton.setEnabled(false);
-			} else {
-				if(hasWarningIcon(passwordPanel))
-					removeWarningIcon(passwordPanel, passwordTB);
-				saveButton.setEnabled(true);
-			}
-		});
+		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "" : 
+			"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
+		Label representationL = new Label(representation);
 		
-		passwordPanel.add(passwordTB);
+		String type = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "EMPRESA" : "PERSONAL";
+		Label typeL = new Label(type);
 		
-		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
-			AonTableButton showPassBtn = createShowPassButton(passwordTB);
-			passwordPanel.add(showPassBtn);
-		} else if(certificate.getOwner() == CertificateOwner.ENTERPRISE){
-			passwordTB.setEnabled(false);
-		}
-		
-		// File Panel
-		TextBox fileNameTB = new TextBox();
-		fileNameTB.setStyleName("aon-inputText");
-		fileNameTB.getElement().getStyle().setWidth(200, Unit.PX);
-		fileNameTB.addValueChangeHandler(e -> fileNameHidden.setValue(e.getValue()));
-		
-		FileUpload fileU = new FileUpload();
-		fileU.setName("uploader");
-		fileU.getElement().setPropertyString("multiple", "multiple");
-		fileU.getElement().setPropertyString("accept", ".p12");
-		fileU.getElement().getStyle().setDisplay(Display.NONE);
-		
-		fileU.addChangeHandler(e -> {
-			String filename = getFileName(fileU.getFilename());
-			String fileExt = getFileExtension(fileU.getFilename());
-
-            if(filename.length() == 0)
-            	 Window.alert("Cant upload file - Try again");
-            else {
-            	extensionHidden.setValue(fileExt);
-            	fileNameHidden.setValue(filename);
-            	fileNameTB.setValue(filename);
-            }
-		});
-		
-		AonTableButton fileButton = new AonTableButton("Subir Cert", AON.CSS.aonIconAttach());
-		fileButton.addClickHandler(e -> fileU.click());
-		
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
+		TextBox alias = new TextBox();
+		alias.setStyleName("aon-inputText");
+		alias.setValue(certificate.getDescription());
+		alias.addValueChangeHandler(e -> fileNameHidden.setValue(e.getValue()));
 		
 		CheckBox securityCB = new CheckBox();
 		securityCB.addStyleName(style.checkBox());
@@ -580,6 +549,8 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 				securityHidden.setValue("public");
 			}
 		});
+		
+		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
 		
 		CheckBox tgssCB = new CheckBox();
 		tgssCB.addStyleName(style.checkBox());
@@ -674,13 +645,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		// Buttons visibility
 		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
-			fileButton.setVisible(true);
 			deleteButton.setVisible(false);
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
 			checkCertificateButton.setVisible(false);
 		} else {
-			fileButton.setVisible(false);
 			deleteButton.setVisible(true);
 			if(hasTGSSCertificate(certificate))
 				secondaryUsersButton.setVisible(true);
@@ -706,8 +675,6 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		flowPanel.add(sepeHidden);
 		flowPanel.add(aeatHidden);
 		flowPanel.add(ownerHidden);
-		flowPanel.add(fileU);
-		flowPanel.add(fileButton);
 		
 		formPanel.add(flowPanel);
 		
@@ -717,47 +684,33 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		buttonsPanel.add(secondaryUsersButton);
 		buttonsPanel.add(checkCertificateButton);
 		buttonsPanel.add(deleteButton);
-			
-		// Fill fields
-		rattachIdHidden.setValue(certificate.getId()+"");
-		raddinfoIdHidden.setValue(certificate.getPasswordId()+"");
 		
-		String password = certificate.getPassword();
-		
-		if(AonStringUtils.isBlank(password))
-			passwordTB.setEnabled(true);
-		
-		passwordTB.setValue(certificate.getPassword());
-		passwordHidden.setValue(passwordTB.getValue());
-		
-		String description = "No existe certficado";
-		if(Boolean.TRUE.equals(certificate.getHasCertificate()))
-			description = AonStringUtils.isBlank(certificate.getDescription()) ? "Certficado sin nombre" : certificate.getDescription();
-		fileNameTB.setValue(description);
-		fileNameHidden.setValue(description);
-		
-		table.setWidget(row, 0, passwordPanel);
-		table.setWidget(row, 1, fileNameTB);
+		table.setWidget(row, 0, certificateForL);
+		table.setWidget(row, 1, representationL);
+		table.setWidget(row, 2, typeL);
+		table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
+		table.setWidget(row, 3, alias);
+		table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
 		if(tabLayoutPanel.getSelectedIndex() == 0) {
-			table.setWidget(row, 2, tgssCB);
-			table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 3, sepeCB);
-			table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 4, aeatCB);
+			table.setWidget(row, 4, tgssCB);
 			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 5, buttonsPanel);
-			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.RIGHT);
-		} else {
-			table.setWidget(row, 2, securityCB);
-			table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 3, tgssCB);
-			table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 4, sepeCB);
-			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 5, aeatCB);
+			table.setWidget(row, 5, sepeCB);
 			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-			table.setWidget(row, 6, buttonsPanel);
-			table.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.RIGHT);
+			table.setWidget(row, 6, aeatCB);
+			table.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 7, buttonsPanel);
+			table.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.RIGHT);
+		} else {
+			table.setWidget(row, 4, securityCB);
+			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 5, tgssCB);
+			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 6, sepeCB);
+			table.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 7, aeatCB);
+			table.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 8, buttonsPanel);
+			table.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.RIGHT);
 		}
 	}
 	
@@ -1141,13 +1094,13 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	}
 	
 	private void createNewCertificate() {
-		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-		this.mainDigitalCertificatesObject.createCertificate(owner);
-		Integer tab = tabLayoutPanel.getSelectedIndex();
-		if(tab == 0)
-			createUserCertDataTable();
-		else if(tab == 1)
-			createEntepriseCertDataTable();
+		new CertificateDialog() {
+			
+			@Override
+			public void onAccept() {
+				loadDigitalCertificates();
+			}
+		};
 	}
 
 	// ------------------------------------------------------ Toolbar.Methods
