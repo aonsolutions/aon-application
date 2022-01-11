@@ -54,9 +54,11 @@ public class LROE implements Serializable {
    	        
             TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
 
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
             sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			SSLContext.setDefault(sslContext);
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+           
 			String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
 			url = new URL(uri);
 			System.out.println("***** REQUEST *****");
@@ -64,9 +66,9 @@ public class LROE implements Serializable {
 			System.out.println(json.toString());
 			String contentLength = Integer.toString(xml.length);
 			System.out.println("Content-Length: " + contentLength);
-			URLConnection con = url.openConnection();
-			HttpsURLConnection https = (HttpsURLConnection)con;
 			
+			HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+
 	        https.setHostnameVerifier(new TrustAllHosts());
 	        https.setRequestMethod("POST"); 
 			https.setRequestProperty("Accept-Encoding", "gzip");

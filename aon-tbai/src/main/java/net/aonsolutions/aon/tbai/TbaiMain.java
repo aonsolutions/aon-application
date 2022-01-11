@@ -134,7 +134,7 @@ public class TbaiMain {
 			response = sendXML(uri, tbaiConfiguration, xml);
 			TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
 			HandleTbaiResponse(response);
-		} else if (tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {
+		} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 			LROEResponse lroeResponse = null;
 			LROEInfo info = null;
 			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
@@ -147,7 +147,7 @@ public class TbaiMain {
 						company.getDomain().getId(), "", invoice.getActivity());
 				if(ea == null || ea.getId() == null) {
 					ea = AON.getEnterpriseActivities(company.getDomain().getName(),
-						company.getDomain().getId(), "").filter(f ->f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
 				}
 				invoice.setEpigraph(ea.getIae().getFullEpigraph());
 				LROE140_1_1 lroe140 = new LROE140_1_1();
