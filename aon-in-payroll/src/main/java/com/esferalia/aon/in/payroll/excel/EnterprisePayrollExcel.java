@@ -495,7 +495,7 @@ public class EnterprisePayrollExcel {
 				 * employees 
 				 */
 				
-				if (completeEmployeeData.containsKey(p.getEmployeeNaf())) {
+				/*if (completeEmployeeData.containsKey(p.getEmployeeNaf())) {
 					Map<String, Map<SalaryType, IEnterprisePayroll>> workplaceData = completeEmployeeData.get(p.getEmployeeNaf());
 					
 					if (workplaceData.containsKey(dateKey)) {
@@ -519,7 +519,7 @@ public class EnterprisePayrollExcel {
 					dateData.put(p.getSalaryType(), p);
 					workplaceData.put(dateKey, dateData);
 					completeEmployeeData.put(p.getEmployeeNaf(), workplaceData);
-				}
+				}*/
 				
 				
 				/**
@@ -560,7 +560,7 @@ public class EnterprisePayrollExcel {
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			writeComplete(outputStream
 					, completeWorkplaceData
-					, completeEmployeeData
+					/*, completeEmployeeData*/
 					, Optional.empty()
 					, enterpriseName
 					, startDate
@@ -723,7 +723,7 @@ public class EnterprisePayrollExcel {
 	
 	
 	public static void writeComplete(OutputStream outputStream, Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData,
-			Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeEmployeeData, Optional<LinkedHashMap<String, String>> header,
+			/*Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeEmployeeData,*/ Optional<LinkedHashMap<String, String>> header,
 			String enterpriseName, Date startDate, Date endDate)
 			throws IOException {
 		
