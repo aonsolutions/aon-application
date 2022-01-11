@@ -43,6 +43,8 @@ public class Certificate implements Serializable {
 	
 	private List<CertificateType> tags;
 	
+	private CertificateInfo certificateInfo;
+	
 	// ----------------------------- Constructor
 	
 	public Certificate() {
@@ -159,6 +161,15 @@ public class Certificate implements Serializable {
 	public void removeTag(CertificateType tag) {
 		if(this.tags != null)
 			this.tags.remove(tag);
+	}
+
+	public CertificateInfo getCertificateInfo() {
+		return certificateInfo;
+	}
+
+	public Certificate setCertificateInfo(CertificateInfo certificateInfo) {
+		this.certificateInfo = certificateInfo;
+		return this;
 	}
 	
 }

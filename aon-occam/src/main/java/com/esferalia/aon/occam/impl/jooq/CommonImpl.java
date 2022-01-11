@@ -508,6 +508,11 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
+	public CertificateInfo getCertificateInfo(byte[] data, String password) throws IllegalArgumentException {
+		return CertificateDAO.verifyCertificate(data, password);
+	}
+	
+	@Override
 	public void deleteCertificate(AONContext ctx, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter) {
 		ctx.getDslContext().transaction(configuration -> 
 		CertificateDAO.delete(ctx, attachId, attachFilter, raddinfoFilter));

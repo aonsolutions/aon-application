@@ -190,6 +190,7 @@ public interface ICommon {
 	public List<Certificate> getCertificates(AONContext ctx, Integer domainId, Integer userId);
 	public Certificate getCertificate(AONContext ctx, AttachFilter attachFilter);
 	public CertificateInfo getCertificateInfo(AONContext ctx, AttachFilter attachFilter) throws IllegalArgumentException;
+	public CertificateInfo getCertificateInfo(byte[] data, String password) throws IllegalArgumentException;
 	public void deleteCertificate(AONContext ctx, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter);
 	public void saveCertificate(AONContext ctx, Integer domainId, Integer userId, Certificate certificate);
 

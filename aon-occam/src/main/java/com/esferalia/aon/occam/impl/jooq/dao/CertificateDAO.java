@@ -34,7 +34,6 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
-import com.esferalia.aon.occam.api.model.Properties.TagProperties;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -126,7 +125,7 @@ public class CertificateDAO {
 
 	public static CertificateInfo getInfo(AONContext ctx, AttachFilter attachFilter) throws IllegalArgumentException {
 		Certificate certificate = get(ctx, attachFilter);
-		return null != certificate ? verifyCertificate(certificate) : new CertificateInfo();
+		return null != certificate ? verifyCertificate(certificate.getData(), certificate.getPassword()) : new CertificateInfo();
 	}
 
 	public static void delete(AONContext ctx, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter) {
@@ -175,6 +174,7 @@ public class CertificateDAO {
 			certificate.setUpdateDate(updateDate);
 			parsePassword(ctx, registryUserId, description, certificate);
 			getCertificateTags(ctx, certificate);
+			getCertificateInfo(ctx, certificate);
 			
 			certificateList.add(certificate);
 		}
@@ -205,6 +205,7 @@ public class CertificateDAO {
 			certificate.setUpdateDate(updateDate);
 			parsePassword(ctx, registryEnterpriseId, description, certificate);
 			getCertificateTags(ctx, certificate);
+			getCertificateInfo(ctx, certificate);
 			
 			certificateList.add(certificate);
 		}
@@ -212,11 +213,11 @@ public class CertificateDAO {
 	
 	// -------------------------- Methods auxiliar methods (getInfo)
 	
-	private static CertificateInfo verifyCertificate(Certificate certificate) throws IllegalArgumentException {
-		try (InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData())) {	
+	public static CertificateInfo verifyCertificate(byte[] data, String password) throws IllegalArgumentException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(data)) {	
 			
 			KeyStore keyStore = KeyStore.getInstance(MimeType.PKCS12.name());
-	        keyStore.load(certificateInputStream, certificate.getPassword().toCharArray());
+	        keyStore.load(certificateInputStream, password.toCharArray());
 	        Enumeration<String> enums = keyStore.aliases();
 	        
 	        while (enums.hasMoreElements()) {
@@ -247,7 +248,7 @@ public class CertificateDAO {
 		            String document = "";
 		           
 		            try {
-		            	document = subjectDN.split("SERIALNUMBER=IDCES-")[1].split(" ")[0];
+		            	document = subjectDN.split("SERIALNUMBER=IDCES-")[1].split(",")[0];
 		            } catch (Exception e) {
 						try {
 							document = subjectDN.split("SERIALNUMBER=")[1].split(",")[0];
@@ -275,6 +276,8 @@ public class CertificateDAO {
 				}
 	        }
 		} catch (Exception e) {
+			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "keystore password was incorrect"))
+				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
 			throw new IllegalArgumentException(e.getMessage());
 		}
 		return null;
@@ -439,6 +442,10 @@ public class CertificateDAO {
 		}
 		certificate.setTags(tags);
 		
+	}
+	
+	private static void getCertificateInfo(AONContext ctx, Certificate certificate) {
+		certificate.setCertificateInfo(getInfo(ctx, f -> f.getIdProperty().eq(certificate.getId())));
 	}
 
 	private static Integer createRegistryForUser(AONContext ctx, Record userRecord, Integer domainId) {
