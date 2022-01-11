@@ -23,6 +23,7 @@ import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.ibm.icu.util.Calendar;
 
 public class EnterpriseSalaryReportController implements Serializable {
 
@@ -30,6 +31,7 @@ public class EnterpriseSalaryReportController implements Serializable {
 	private Date startDate;
 	private Person person;
 	private String[] salaryTypes = {"SALARY", "EXTRA", "DELAY", "SETTLE"};
+	private int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 	private boolean groupByPerson;
 	
 	
@@ -73,6 +75,14 @@ public class EnterpriseSalaryReportController implements Serializable {
 
 	public void setGroupByPerson(boolean groupByPerson) {
 		this.groupByPerson = groupByPerson;
+	}
+	
+	public int getCurrentYear() {
+		return Calendar.getInstance().get(Calendar.YEAR);
+	}
+	
+	public void setCurrentYear(int currentYear) {
+		this.currentYear = currentYear;
 	}
 
 	public String onPDF() throws IOException {
