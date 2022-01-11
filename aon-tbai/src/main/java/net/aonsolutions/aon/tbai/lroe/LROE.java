@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -78,8 +77,14 @@ public class LROE implements Serializable {
 			https.setRequestProperty("eus-bizkaia-n3-version", "1.0");
 			https.setRequestProperty("eus-bizkaia-n3-content-type", "application/xml");
 			https.setRequestProperty("eus-bizkaia-n3-data", json.toString());
+			
 			https.setDoOutput(true);
 			https.setDoInput(true);
+			https.setUseCaches(false);
+			for( String str : https.getRequestProperties().keySet()) {
+				System.out.println(str + ": " + https.getRequestProperty(str));
+			}
+
 			
 			OutputStream os = https.getOutputStream();
 			os.write(xml);

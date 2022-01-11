@@ -108,12 +108,16 @@ public class PrintParametersController implements Serializable {
 	}
 	
 	public boolean isSaleInvoiceDefault() {
+		
+		
 		Integer domainId = DomainManager.getCurrentDomain();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
+
+		com.esferalia.aon.occam.api.model.ApplicationParameter personalized = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.REPORT_saleInvoice);
 		
-		return appParam.getValue() == null || "default".equalsIgnoreCase(appParam.getValue());
+		return personalized.isEmpty() && ( appParam.getValue() == null || "default".equalsIgnoreCase(appParam.getValue()));
 	}
 	
 	public SaleInvoiceFooter getSaleInvoiceFooter() {

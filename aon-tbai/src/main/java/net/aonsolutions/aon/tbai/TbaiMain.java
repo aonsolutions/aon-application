@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -123,6 +124,8 @@ public class TbaiMain {
 		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s="
 				+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 				+ tbai.getFactura().getDatosFactura().getImporteTotalFactura();
+		if(tbaiConfiguration.isBizkaia())
+			qrUrl = URLEncoder.encode(qrUrl);
 		String crc = CRC8.calculate(qrUrl);
 		qrUrl = qrUrl + "&cr=" + crc;
 
@@ -227,6 +230,7 @@ public class TbaiMain {
 			https.setRequestProperty("Content-Type", "application/xml; charset=utf-8;");
 			https.setDoOutput(true);
 			https.setDoInput(true);
+			https.setUseCaches(false);
 
 			System.out.println(
 					"\n\t-------------------------------------------------------------------------------------------------------------------------------------------------");
