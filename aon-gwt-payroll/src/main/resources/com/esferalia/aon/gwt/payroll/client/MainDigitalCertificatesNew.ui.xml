@@ -32,9 +32,8 @@
 		}
 		
 		.scrollStyle {
-			margin-left: 10px;
 			width: 750px;
-			margin-bottom: 10px;
+			max-height: 200px;
 		}
 		
 		.gridStyle{
@@ -124,15 +123,7 @@
 		.header{
 			min-height: 2rem;
 			background-color: #eee;
-			padding: 0 10px;
-		}
-		
-		.userTableWidth{
-			width: 700px;
-		}
-		
-		.enterpriseTableWidth{
-			width: 750px;
+			padding-left: 5px;
 		}
 		
 		.flex{
@@ -167,9 +158,9 @@
 					<g:tab>
 				    	<g:header size='7'>Cert. Usuario</g:header>
 			    		<g:HTMLPanel styleName="{style.heightAll} {style.alignCenter} {style.centerColumn}">
-			    			<g:HTMLPanel styleName="{style.userTableWidth} {style.heightAll} {style.centerColumn}">
+			    			<g:HTMLPanel styleName="{style.heightAll} {style.centerColumn}">
 				    			<g:Grid ui:field="userCertDataTableHeader" styleName="{style.header}" />
-				    			<g:DeckPanel ui:field="userCertDataTableDeckPanel" styleName="{style.userTableWidth} {style.heightAll}">
+				    			<g:DeckPanel ui:field="userCertDataTableDeckPanel" styleName="{style.heightAll}">
 				    				<g:HTMLPanel ui:field="userCertLoadingPanel" styleName="{style.message}" />
 				    				<g:ScrollPanel ui:field="userCertTableScrollPanel" styleName="{style.scrollStyle}">
 						    			<g:Grid ui:field="userCertDataTable" />
@@ -177,7 +168,7 @@
 						    		<g:Label styleName="{style.message}">No existen certificados</g:Label>
 				    			</g:DeckPanel>
 					    	</g:HTMLPanel>
-						    <g:HTMLPanel styleName="{style.enterpriseTableWidth} {style.heightAll} {style.centerColumn}" ui:field="userSecondayUsersPanel">
+						    <g:HTMLPanel styleName="{style.heightAll} {style.centerColumn}" ui:field="userSecondayUsersPanel">
 				    			<g:Grid ui:field="userSecondaryUserDataTableHeader"  styleName="{style.header}" />
 				    			<g:ScrollPanel ui:field="userSecondaryUserScrollPanel" styleName="{style.scrollStyle}">
 					    			<g:DeckPanel ui:field="userSecondaryUserDeckPanel">
@@ -197,9 +188,9 @@
 				  	<g:tab>
 				  		<g:header size='7'>Cert. Empresa</g:header>
 			  			<g:HTMLPanel styleName="{style.heightAll} {style.alignCenter} {style.centerColumn}">
-				    		<g:HTMLPanel styleName="{style.enterpriseTableWidth} {style.heightAll} {style.centerColumn}">
+				    		<g:HTMLPanel styleName="{style.heightAll} {style.centerColumn}">
 				    			<g:Grid ui:field="enterpriseCertDataTableHeader" styleName="{style.header}" />
-				    			<g:DeckPanel ui:field="enterpriseCertDataTablDeckPanel" styleName="{style.enterpriseTableWidth} {style.heightAll}">
+				    			<g:DeckPanel ui:field="enterpriseCertDataTablDeckPanel" styleName="{style.heightAll}">
 					    			<g:HTMLPanel ui:field="enterpriseCertLoadingPanel" styleName="{style.message}" />
 					    			<g:ScrollPanel ui:field="enterpriseCertTableScrollPanel" styleName="{style.scrollStyle}">
 						    			<g:Grid ui:field="enterpriseCertDataTable" />
@@ -207,7 +198,7 @@
 						    		<g:Label styleName="{style.message}">No existen certificados</g:Label>
 					    		</g:DeckPanel>
 					    	</g:HTMLPanel>
-					    	<g:HTMLPanel styleName="{style.enterpriseTableWidth} {style.heightAll} {style.centerColumn}" ui:field="enterpriseSecondayUsersPanel">
+					    	<g:HTMLPanel styleName="{style.heightAll} {style.centerColumn}" ui:field="enterpriseSecondayUsersPanel">
 				    			<g:Grid ui:field="enterpriseSecondaryUserDataTableHeader"  styleName="{style.header}" />
 				    			<g:ScrollPanel ui:field="enterpriseSecondaryUserScrollPanel" styleName="{style.scrollStyle}">
 					    			<g:DeckPanel ui:field="enterpriseSecondaryUserDeckPanel">
