@@ -57,7 +57,8 @@ public class Invoice2tbai {
 	}
 	
 	private static final String TBAI_VERSION = "1.2";
-	private static final String DEVICE_NUMBER = "TBAIGIPRE00000000131";
+	private static final String DEVICE_NUMBER = "TBAIGI447FC22512252C";
+	private static final String DEVICE_NUMBER_GIPUZKOA_TEST = "TBAIGIPRE00000000131";
 	private static final String DEVICE_NUMBER_ARABA_TEST = "TBAIARbjlCHFMFK00416";
 	private static final String SOFTWARE_NAME = "aonSolutions";
 	private static final String SOFTWARE_VERSION = "9.23" ;
@@ -134,13 +135,14 @@ public class Invoice2tbai {
 		ticketbai.anulacion.EntidadDesarrolladoraType entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
 		entidad.setNIF("B01487271");
 		software.setEntidadDesarrolladora(entidad);
-		if(tbai.isAraba() && tbai.isTest())
-			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
-		else software.setLicenciaTBAI(DEVICE_NUMBER);
+		software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
-	
-		if(tbai.isBizkaia() && tbai.isTest()) {
+		if(tbai.isAraba() && tbai.isTest()) {
+			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
+		} else if(tbai.isGipuzkoa() && tbai.isTest()) {
+			software.setLicenciaTBAI(DEVICE_NUMBER_GIPUZKOA_TEST);
+		} else if(tbai.isBizkaia() && tbai.isTest()) {
 			entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
 			entidad.setNIF(NIF_BIZKAIA_TEST);
 			software.setEntidadDesarrolladora(entidad);
