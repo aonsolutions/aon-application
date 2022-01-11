@@ -102,11 +102,7 @@ public abstract class Mod303Declaration {
 					dupl.setDiffCalculationDisabled(false);
 					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod303.getProratePercent() );
 					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod303.getPreviousProratePercent() );
-//					
-//					mod303.getProratePercent( )
 					Mod303DAO.create(ctx, dupl);
-//					Mod303DAO.getVatBreakdown(ctx,dupl)
-//					.forEach( vat -> initialize(ctx, dupl, vat) );
 					FiscalModelDetail c72 = dupl.ensureDetail(Mod303Key.CM_072);
 					double amount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
 					mod303.ensureDetail(Mod303Key.CM_072).setAmount( amount );

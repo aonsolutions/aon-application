@@ -690,12 +690,13 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 
 	public static Mod303 calculateProrrate(Mod303 mod303) {
-		if (mod303.hasProrate()) {
+		if (mod303.hasProrate() || mod303.hasPreviousProrate()) {
 			double c70 = mod303.ensureDetail(Mod303Key.CM_070).getAmount();
 			double c71 = mod303.ensureDetail(Mod303Key.CM_071).getAmount();
 			if (AonMathUtils.isNotZero(c71)) {
 				double prorrate = (c70 * 100 / c71);
 				prorrate = AonMathUtils.ceil(prorrate,0);
+				if (AonMathUtils.isGreatherThan(prorrate,100.0)) prorrate = 100.0;
 				mod303.ensureDetail(mod303.getProrateKey()).setAmount( prorrate );
 			}
 		}
