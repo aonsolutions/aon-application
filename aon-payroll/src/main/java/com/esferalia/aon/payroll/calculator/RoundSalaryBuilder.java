@@ -2,15 +2,20 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
+import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -24,6 +29,7 @@ import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -34,8 +40,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
-	
-	private static final BigDecimal ZERO = new BigDecimal(0); 
 	
 
 	private static class Deductions {
@@ -182,6 +186,59 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 	}
 
+	private static class Payments {
+		
+		private static class Irpf{
+			private BigDecimal base;
+			private PaymentType type; 
+		}
+		
+		private ArrayList<Irpf> irpfs = new ArrayList<>();
+		
+		public List<Irpf> getIrpfs() {
+			return irpfs;
+		}
+		
+		private void tryAddPayment(PaymentType type, BigDecimal irpf) {
+			try {
+				addPayment(type, irpf);
+			} catch ( Throwable t ) {
+				
+			}
+		}
+
+		private void addPayment(PaymentType type, BigDecimal irpf) {
+			if ( isZero(irpf)) 
+				return;
+			
+			PaymentType finalType = Objects.requireNonNullElse(type, PaymentType.CRA_0000);
+			
+			getPayment(finalType)
+			.ifPresentOrElse( 
+			payment -> payment.base = add(payment.base,irpf), 
+			() -> irpfs.add(newPayment(finalType, irpf))
+			)
+			;
+		}
+		
+		private Irpf newPayment(PaymentType type, BigDecimal base) {
+			Irpf irpf = new Irpf();
+			irpf.base = base;
+			irpf.type = type;
+			return irpf;
+		}
+
+
+		private Optional<Irpf> getPayment(PaymentType type) {
+			for (Irpf irpf : irpfs) {
+				if (AonUtils.equals(irpf.type,type))
+					return Optional.of(irpf);
+			}
+			return Optional.empty();
+		}
+		
+	}
+
 	protected UnaryOperator<BigDecimal> f;
 	protected ISalaryBuilder<T> salaryBuilder;
 
@@ -269,11 +326,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	@Override
 	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 		salaryBuilder.setStartDate(startDate);
 	}
 
 	@Override
 	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 		salaryBuilder.setEndDate(endDate);
 	}
 
@@ -297,6 +356,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	// ------------------------------------------------------------------------
+	
+	private Date endDate;
+	private Date startDate;
+	
 
 	private BigDecimal remuneration;
 	private BigDecimal proExtBase;
@@ -317,6 +380,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	
 	private Costs costs;
 	private Bonuses bonuses;
+	private Payments payments;
 	private Embargos embargos;
 	private Deductions deductions;
 	
@@ -345,6 +409,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		this.costs = new Costs();
 		this.bonuses = new Bonuses();
 		this.embargos = new Embargos();
+		this.payments = new Payments();
 		this.deductions = new Deductions();
 		
 		salaryBuilder.createNewSalary();
@@ -599,12 +664,14 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void addPayment(Double amount, Double quote, Double tax, String description, Date start, Date end,
 			IPayment payment, Map<String, ITimedVariable<?>> context) {
+		payments.tryAddPayment(payment.getType(), bigDecimalValue(tax));
 		salaryBuilder.addPayment(amount, quote, tax, description, start, end, payment, context);
 	}
 
 	@Override
 	public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
+		payments.tryAddPayment(payment.getType(), bigDecimalValue(tax));		
 		salaryBuilder.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 	}
 
@@ -658,8 +725,15 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		if ( AonStringUtils.endsWith(code, "_E"))
 			code = AonStringUtils.removeEnd(code, "_E");
 		return deductions.getDeduction(code, type, startDate, endDate).map(d -> d.amount).orElse(ZERO);
-	}
+	}	
 
+	protected void addIrpfQuotas() {
+		try {
+			getIrpfQuotas(irpfBase, totalIrpf, payments, f).forEach((name, quota) -> salaryBuilder.addData(name, new TimedObject<>(quota, startDate, endDate)));
+		} catch ( Throwable t) {
+		}
+	}
+	
 	private void round() {
 		
 		totalEnterprise = add(getTotalEnterprise(), getTotalBonuses().negate());
@@ -679,10 +753,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setTotalPayment(doubleValue(totalPayment));
 		salaryBuilder.setTotalLiquid(doubleValue(totalLiquid));
 
-		moneyIrpfBase = f.apply(moneyIrpfBase);
+		irpfBase = f.apply(irpfBase);
 		inkindIrpfBase = f.apply(inkindIrpfBase);
+		moneyIrpfBase = add(irpfBase, inkindIrpfBase.negate());
 		remuneration = f.apply(remuneration);
-		irpfBase = add(moneyIrpfBase, inkindIrpfBase);
 		salaryBuilder.setIrpfBase(doubleValue(irpfBase));
 		salaryBuilder.setMoneyIrpfBase(doubleValue(moneyIrpfBase));
 		salaryBuilder.setInkindIrpfBase(doubleValue(inkindIrpfBase));
@@ -707,8 +781,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		totalEnterprise = f.apply(totalEnterprise);
 		salaryBuilder.setTotalEnterprise(doubleValue(totalEnterprise));
 		
+		addIrpfQuotas();
+		
 	}
-	
+
 	protected double round(double d) {
 		return doubleValue(f.apply(bigDecimalValue(d)));
 	}
@@ -787,6 +863,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		return false;
 	}
 	
+	private static boolean isZero(BigDecimal val) {
+		return val == null || val.compareTo(ZERO) == 0;
+	}
+	
 	private static double doubleValue(BigDecimal val) {
 		return val.doubleValue();
 	}
@@ -805,7 +885,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			add = add.add(val);
 		return add;
 	}
-	
+
 	private static double add(Object ...vals) {
 		BigDecimal decimals [] = new BigDecimal[vals.length];
 		for (int i = 0; i < vals.length; i++ )
@@ -853,5 +933,62 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 	}
 	
+	private static String getIrpfName( PaymentType type ) {
+		return String.format("%s_IRPF", type.name());
+	}
+
+	private static String getBaseName( PaymentType type ) {
+		return String.format("%s_BASE", type.name());
+	}
+	
+	private static Map<String, BigDecimal> getIrpfQuotas(BigDecimal totalIrpfBase, BigDecimal totalIrpfQuota, Payments payments, UnaryOperator<BigDecimal> f ) {
+		
+		if ( isZero(totalIrpfBase))
+			return Collections.emptyMap();
+		if ( isZero(totalIrpfQuota))
+			return Collections.emptyMap();
+		
+		Map<String, BigDecimal> irpfQuotasMap = new HashMap<>();
+		
+		List<Payments.Irpf> paymentsIrpfs = payments.getIrpfs();		
+		
+		for ( int i = 0; i < paymentsIrpfs.size() -1 ; i++ ) {
+			Payments.Irpf paymentIrpf = paymentsIrpfs.get(i);
+			BigDecimal paymentIrpfBase = paymentIrpf.base;
+			PaymentType paymentIrpfType = paymentIrpf.type;
+			
+			BigDecimal irpfQuota = f.apply(
+					paymentIrpfBase
+					.multiply(totalIrpfQuota)
+					.divide(totalIrpfBase,MathContext.DECIMAL128));
+			BigDecimal irpfBase = f.apply(paymentIrpfBase);
+
+			irpfQuotasMap.put(getIrpfName(paymentIrpfType), irpfQuota);
+			irpfQuotasMap.put(getBaseName(paymentIrpfType), irpfBase);
+		}
+		
+		// last payment by difference .
+		for ( int i = paymentsIrpfs.size()-1; i < paymentsIrpfs.size() ; i++ ) {
+			Payments.Irpf paymentIrpf = paymentsIrpfs.get(i);
+			PaymentType paymentIrpfType = paymentIrpf.type;
+			BigDecimal sumIrpfQuota = irpfQuotasMap
+					.entrySet().stream()
+					.filter(entry -> entry.getKey().endsWith("IRPF"))
+					.map(Entry::getValue).reduce(ZERO, RoundSalaryBuilder::add); 
+			
+			BigDecimal irpfQuota = add(totalIrpfQuota, sumIrpfQuota.negate()); 
+			irpfQuotasMap.put(getIrpfName(paymentIrpfType), irpfQuota);
+			
+			BigDecimal sumIrpfBase = irpfQuotasMap
+					.entrySet().stream()
+					.filter(entry -> entry.getKey().endsWith("BASE"))
+					.map(Entry::getValue).reduce(ZERO, RoundSalaryBuilder::add); 
+			
+			BigDecimal irpfBase = add(totalIrpfBase, sumIrpfBase.negate()); 
+			irpfQuotasMap.put(getBaseName(paymentIrpfType), irpfBase);
+		}
+		
+		return irpfQuotasMap;
+	}
 
 }
