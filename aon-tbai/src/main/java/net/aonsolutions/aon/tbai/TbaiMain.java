@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.tbai;
 
-import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleStatusCode;
+import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleLroeResponse;
+import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleTbaiResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,6 +11,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -51,21 +53,51 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
-import net.aonsolutions.aon.tbai.lroe.LROE140;
-import net.aonsolutions.aon.tbai.lroe.LROE240;
+import net.aonsolutions.aon.tbai.lroe.LROE140_1_1;
+import net.aonsolutions.aon.tbai.lroe.LROE240_1_1;
+import net.aonsolutions.aon.tbai.lroe.LROEInfo;
+import net.aonsolutions.aon.tbai.lroe.LROEInformation;
+import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
+import ticketbai.anulacion.AnulaTicketBai;
 import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
 
-	private TbaiMain() {
-
+	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws TbaiException {
+		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
+		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
+			byte[] xml = TbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
+			LROEResponse lroeResponse = null;
+			LROEInfo info = null;
+			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
+				LROE240_1_1 lroe240 = new LROE240_1_1();
+				info = lroe240.buildInfo(OperacionEnum.A_00);
+				lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
+			} else {
+				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+				EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+						company.getDomain().getId(), "", invoice.getActivity());
+				if(ea == null || ea.getId() == null) {
+					ea = AON.getEnterpriseActivities(company.getDomain().getName(),
+						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+				}
+				invoice.setEpigraph(ea.getIae().getFullEpigraph());
+				LROE140_1_1 lroe140 = new LROE140_1_1();
+				info = lroe140.buildInfo(OperacionEnum.A_00);
+				lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
+			}
+			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
+			HandleLroeResponse(lroeResponse);
+		}
 	}
 
-	public static void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
-			throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
+	public void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
+			throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
 		TbaiBlockchain blockchain = TbaiData.getBlockchain(company.getDomain(), new User().setLogin(""));
 		final TicketBai tbai = Invoice2tbai.build(company, invoice, tbaiConfiguration, blockchain);
 
@@ -77,11 +109,11 @@ public class TbaiMain {
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		jaxbMarshaller.marshal(tbai, bos);
 		byte[] data = bos.toByteArray();
-
-		byte[] xml = TbaiSign.sign(tbaiConfiguration, data);
-		String sign = TbaiSign.getSign(xml);
+		TbaiSign tbaiSign = new TbaiSign();
+		byte[] xml = tbaiSign.sign(tbaiConfiguration, data);
+		String sign = tbaiSign.getSign(xml);
 		TbaiResponse response = new TbaiResponse().setResponseStatus("pending").setSign(sign)
-				.setTbaiId(TbaiSign.buildTbaiId(tbai, sign));
+				.setTbaiId(tbaiSign.buildTbaiId(tbai, sign));
 
 		TbaiBlockchain bc = new TbaiBlockchain().setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
 				.setNumber(Integer.toString(invoice.getNumber())).setSerie(invoice.getSeries())
@@ -92,6 +124,8 @@ public class TbaiMain {
 		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s="
 				+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 				+ tbai.getFactura().getDatosFactura().getImporteTotalFactura();
+		if(tbaiConfiguration.isBizkaia())
+			qrUrl = URLEncoder.encode(qrUrl);
 		String crc = CRC8.calculate(qrUrl);
 		qrUrl = qrUrl + "&cr=" + crc;
 
@@ -99,34 +133,76 @@ public class TbaiMain {
 				bc, request, qrUrl);
 
 		if (!tbaiConfiguration.isBizkaia()) {
-			response = sendXML(tbaiConfiguration, xml);
+			String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
+			response = sendXML(uri, tbaiConfiguration, xml);
 			TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
-			HandleStatusCode(response.getStatus().get());
-		} else if (tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {
+			HandleTbaiResponse(response);
+		} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
+			LROEResponse lroeResponse = null;
+			LROEInfo info = null;
 			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
-				response = LROE240.alta(company, tbaiConfiguration, invoice, xml);
+				LROE240_1_1 lroe240 = new LROE240_1_1();
+				info = lroe240.buildInfo(OperacionEnum.A_00);
+				lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
 			} else {
 				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 				EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
 						company.getDomain().getId(), "", invoice.getActivity());
 				if(ea == null || ea.getId() == null) {
 					ea = AON.getEnterpriseActivities(company.getDomain().getName(),
-						company.getDomain().getId(), "").filter(f ->f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
 				}
-				String str = ea.getSection() + ea.getEpigraph().replace(".", "");
-				while (str.length() < 6) {
-					str = str + "0";
-				}
-				invoice.setEpigraph(str);
-
-				response = LROE140.alta(tbaiConfiguration, person, invoice, xml);
+				invoice.setEpigraph(ea.getIae().getFullEpigraph());
+				LROE140_1_1 lroe140 = new LROE140_1_1();
+				info = lroe140.buildInfo(OperacionEnum.A_00);
+				lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
 			}
-			TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
-			HandleStatusCode(response.getStatus().get());
+			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
+			HandleLroeResponse(lroeResponse);
+		}
+	}
+	
+	public void createAnulacionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
+			throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
+		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, tbaiConfiguration);
+
+		final JAXBContext jaxbContext = JAXBContext.newInstance(AnulaTicketBai.class);
+		final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		jaxbMarshaller.marshal(tbai, bos);
+		byte[] data = bos.toByteArray();
+
+		TbaiSign tbaiSign = new TbaiSign();
+		byte[] xml = tbaiSign.sign(tbaiConfiguration, data);
+		
+		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
+		if (!tbaiConfiguration.isBizkaia()) {
+			String uri = TbaiUri.getUrlAnulacion(tbaiConfiguration);
+			TbaiResponse response = sendXML(uri, tbaiConfiguration, xml);
+			TbaiData.saveResponseAnulacion(company.getDomain(), new User().setLogin(""), invoice, response, request);
+			HandleTbaiResponse(response);
+		} else if (tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {
+			LROEResponse lroeResponse = null;
+			LROEInfo info = null;
+			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
+				LROE240_1_1 lroe240 = new LROE240_1_1();
+				info = lroe240.buildInfo(OperacionEnum.AN_0);
+				lroeResponse = lroe240.anulacion(company, tbaiConfiguration, invoice, xml);
+			} else {
+				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+				LROE140_1_1 lroe140 = new LROE140_1_1();
+				info = lroe140.buildInfo(OperacionEnum.AN_0);
+				lroeResponse = lroe140.anulacion(tbaiConfiguration, person, invoice, xml);
+			}
+			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
+			HandleLroeResponse(lroeResponse);
 		}
 	}
 
-	public static TbaiResponse sendXML(TbaiConfiguration tbaiConfiguration, byte[] xml) throws StatusCodeException {
+	public TbaiResponse sendXML(String uri, TbaiConfiguration tbaiConfiguration, byte[] xml) throws StatusCodeException {
 		URL url;
 		try {
 			Document doc = getDocument(xml);
@@ -145,7 +221,7 @@ public class TbaiMain {
 			sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			SSLContext.setDefault(sslContext);
 
-			url = new URL(TbaiUri.getUrlEmision(tbaiConfiguration));
+			url = new URL(uri);
 			URLConnection con = url.openConnection();
 			HttpsURLConnection https = (HttpsURLConnection) con;
 
@@ -154,6 +230,7 @@ public class TbaiMain {
 			https.setRequestProperty("Content-Type", "application/xml; charset=utf-8;");
 			https.setDoOutput(true);
 			https.setDoInput(true);
+			https.setUseCaches(false);
 
 			System.out.println(
 					"\n\t-------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -208,7 +285,7 @@ public class TbaiMain {
 		return null;
 	}
 
-	private static class TrustAllCertificates implements X509TrustManager {
+	private class TrustAllCertificates implements X509TrustManager {
 		public void checkClientTrusted(X509Certificate[] certs, String authType) {
 		}
 
@@ -220,13 +297,13 @@ public class TbaiMain {
 		}
 	}
 
-	private static class TrustAllHosts implements HostnameVerifier {
+	private class TrustAllHosts implements HostnameVerifier {
 		public boolean verify(String hostname, SSLSession session) {
 			return true;
 		}
 	}
 
-	public static Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+	public Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
 		InputStream is = new ByteArrayInputStream(data);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -234,7 +311,7 @@ public class TbaiMain {
 		return doc;
 	}
 
-	public static TbaiResponse getTbaiResponse(byte[] bytes, String sign) {
+	public TbaiResponse getTbaiResponse(byte[] bytes, String sign) {
 		try {
 			System.out.println("\t Parsing XML response.... ");
 
@@ -316,7 +393,7 @@ public class TbaiMain {
 		return null;
 	}
 
-	public static String toString(Document doc) {
+	public String toString(Document doc) {
 		try {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			javax.xml.transform.TransformerFactory tf = javax.xml.transform.TransformerFactory.newInstance();
@@ -333,7 +410,4 @@ public class TbaiMain {
 			throw new RuntimeException("Error converting to String", ex);
 		}
 	}
-
-	public static void createAnulacionTBAI() {
-		/* TO DO uwu */}
 }

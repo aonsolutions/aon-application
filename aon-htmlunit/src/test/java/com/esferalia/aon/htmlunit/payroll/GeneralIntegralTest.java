@@ -435,10 +435,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("SALARIO, MÍNIMO");
 		calculate(Calendar.JANUARY,2019);
 		assertText("totalPaymentLabel", 900.00);
+		calculate(Calendar.SEPTEMBER,2021);
+		assertText("totalPaymentLabel", 965.00);
 
 		draft("INDICADOR, PÚBLICO DE RENTA DE EFECTOS MÚLTIPLES");
 		calculate(Calendar.JANUARY,2019);
 		assertText("totalPaymentLabel", 537.84);
+		calculate(Calendar.JANUARY,2022);
+		assertText("totalPaymentLabel", 579.02);
 	}
 	
 	@Test
@@ -467,6 +471,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2019);
 		assertValue("cgcBaseLabel", 4070.10);
 		assertValue("cgpBaseLabel", 4070.10);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 4139.40);
+		assertValue("cgpBaseLabel", 4139.40);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 //		calculate(Calendar.DECEMBER,2016);
@@ -837,7 +844,44 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("I.R.P.F ARABA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
 		assertValue("irpfPercentTexTBox", "2,00 %");
+		
+		calculate(Calendar.JANUARY, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
 
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14790.01/12)");
+		wait4Value("db-amount-label-1", 14790.01/12);
+		assertValue("irpfPercentTexTBox", "6,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(15530.01/12)");
+		wait4Value("db-amount-label-1", 15530.01/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(16460.01/12)");
+		wait4Value("db-amount-label-1", 16460.01/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(17700.01/12)");
+		wait4Value("db-amount-label-1", 17700.01/12);
+		assertValue("irpfPercentTexTBox", "9,00 %");
+		
+		//....
+		
+		setValue("db-amount-label-1", "BRUTO(43840.01/12)");
+		wait4Value("db-amount-label-1", 43840.01/12);
+		assertValue("irpfPercentTexTBox", "20,00 %");		
+
+		//...
+		
+		
+		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+		wait4Value("db-amount-label-1", 213160.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
 	@Test
@@ -851,6 +895,26 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
 		assertValue("irpfPercentTexTBox", "39,00 %");
 
+		calculate(Calendar.JANUARY, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(63080.01/12)");
+		wait4Value("db-amount-label-1", 63080.01/12);
+		assertValue("irpfPercentTexTBox", "25,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+		wait4Value("db-amount-label-1", 213160.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
 	@Test
@@ -864,6 +928,26 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY);
 		assertValue("irpfPercentTexTBox", "0,00 %");
 
+		calculate(Calendar.JANUARY, 2022);
+		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+		wait4Value("db-amount-label-1", 14000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+		wait4Value("db-amount-label-1", 14000.01/12);
+		assertValue("irpfPercentTexTBox", "5,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(72700.01/12)");
+		wait4Value("db-amount-label-1", 72700.01/12);
+		assertValue("irpfPercentTexTBox", "27,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+		wait4Value("db-amount-label-1", 213160.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
 
@@ -987,6 +1071,127 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals(paga2, salarioBase/12.00, 0.005);
 		Assert.assertEquals(paga3, salarioBase/12.00, 0.005);
 
+	}
+
+
+	@Test
+	public void TestPAGA_EXTRA_() throws Exception {
+		if ( !isDisplayed("extras_redefinidas,_manualmente"))
+		open("extras");
+
+		wait4Id("extras_redefinidas,_manualmente");
+
+		draft("EXTRAS REDEFINIDAS, MANUALMENTE");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2021, Calendar.JULY, 15);
+		Date issueDate = calendar.getTime();
+		calendar.set(2021, Calendar.JUNE, 30);
+		Date endDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
+		assertValue("totalPaymentsLabel", 27.44 * 6 );
+		
+		click("button-paga_extra_15_7");
+		wait4Id("employeeEventsDraftSaveButton");
+		
+		setValue("paga_extra_15_7_1", "50.00");
+		setValue("paga_extra_15_7_2", "50.00");
+		setValue("paga_extra_15_7_3", "50.00");
+		setValue("paga_extra_15_7_4", "50.00");
+		setValue("paga_extra_15_7_5", "50.00");
+		setValue("paga_extra_15_7_6", "50.00");
+		
+		click("employeeEventsDraftSaveButton");
+		wait4Disabled("employeeEventsDraftSaveButton", true);
+		assertValue("paga_extra_15_7_1", "50");
+		assertValue("paga_extra_15_7_2", "50");
+		assertValue("paga_extra_15_7_3", "50");
+		assertValue("paga_extra_15_7_4", "50");
+		assertValue("paga_extra_15_7_5", "50");
+		assertValue("paga_extra_15_7_6", "50");
+		
+		draft("EXTRAS REDEFINIDAS, MANUALMENTE");
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
+		assertValue("totalPaymentsLabel", 50.00 * 6 );
+
+
+		draft("EXTRAS REDEFINIDAS, MANUALMENTE ANUALES");
+		
+		calendar.set(2021, Calendar.JUNE, 15);
+		issueDate = calendar.getTime();
+		calendar.set(2021, Calendar.JUNE, 30);
+		endDate = calendar.getTime();
+
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
+		assertValue("totalPaymentsLabel", 79.17 * 12 );
+		
+		click("button-paga_extra_15_6");
+		wait4Id("employeeEventsDraftSaveButton");
+
+		selectOption("employeeEventsDraftYearListBox", "2021");
+		setValue("paga_extra_15_6_1", "75.00");
+		setValue("paga_extra_15_6_2", "75.00");
+		setValue("paga_extra_15_6_3", "75.00");
+		setValue("paga_extra_15_6_4", "75.00");
+		setValue("paga_extra_15_6_5", "75.00");
+		setValue("paga_extra_15_6_6", "75.00");
+		click("employeeEventsDraftSaveButton");
+		wait4Disabled("employeeEventsDraftSaveButton", true);
+		assertValue("paga_extra_15_6_1", "75");
+		assertValue("paga_extra_15_6_2", "75");
+		assertValue("paga_extra_15_6_3", "75");
+		assertValue("paga_extra_15_6_4", "75");
+		assertValue("paga_extra_15_6_5", "75");
+		assertValue("paga_extra_15_6_6", "75");
+		
+		selectOption("employeeEventsDraftYearListBox", "2020");
+		setValue("paga_extra_15_6_7", "85.00");
+		setValue("paga_extra_15_6_8", "85.00");
+		setValue("paga_extra_15_6_9", "85.00");
+		setValue("paga_extra_15_6_10", "85.00");
+		setValue("paga_extra_15_6_11", "85.00");
+		setValue("paga_extra_15_6_12", "85.00");
+		click("employeeEventsDraftSaveButton");
+		wait4Disabled("employeeEventsDraftSaveButton", true);
+		assertValue("paga_extra_15_6_7", "85");
+		assertValue("paga_extra_15_6_8", "85");
+		assertValue("paga_extra_15_6_9", "85");
+		assertValue("paga_extra_15_6_10", "85");
+		assertValue("paga_extra_15_6_11", "85");
+		assertValue("paga_extra_15_6_12", "85");
+		
+		
+		draft("EXTRAS REDEFINIDAS, MANUALMENTE ANUALES");
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
+		assertValue("totalPaymentsLabel", 75.00 * 6 + 85.00 * 6 );
+		
+		click("button-paga_extra_15_6");
+		wait4Id("employeeEventsDraftSaveButton");
+		selectOption("employeeEventsDraftYearListBox", "2021");
+		setValue("paga_extra_15_6_1", "75.00");
+		setValue("paga_extra_15_6_2", "75.00");
+		setValue("paga_extra_15_6_3", "75.00");
+		setValue("paga_extra_15_6_4", "75.00");
+		setValue("paga_extra_15_6_5", "75.00");
+		setValue("paga_extra_15_6_6", "75.00");
+		selectOption("employeeEventsDraftYearListBox", "2020");
+		assertValue("paga_extra_15_6_7", "85");
+		assertValue("paga_extra_15_6_8", "85");
+		assertValue("paga_extra_15_6_9", "85");
+		assertValue("paga_extra_15_6_10", "85");
+		assertValue("paga_extra_15_6_11", "85");
+		assertValue("paga_extra_15_6_12", "85");
+
+		
+		
 	}
 
 	public void TestNomina() throws Exception {
@@ -1227,6 +1432,76 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", 0.00);
 		assertValue("totalLiquidLabel", 0.00);
 		
+	}
+
+	@Test
+	public void TestATRASO() throws Exception {
+		
+		if (!isDisplayed("atrasos_redefinidos,_manualmente"))
+			open("atrasos");
+
+		wait4Id("atrasos_redefinidos,_manualmente");
+
+		draft("ATRASOS REDEFINIDOS, MANUALMENTE");
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		
+		calendar.set(Calendar.YEAR,2020);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.set(Calendar.MONTH,Calendar.JANUARY);
+
+		Date startDate = calendar.getTime();
+
+		calendar.set(Calendar.DAY_OF_MONTH,31);
+		calendar.set(Calendar.MONTH,Calendar.DECEMBER);
+		Date endDate = calendar.getTime();
+		
+		
+		delay(startDate, endDate);
+		assertValue("totalPaymentsLabel", 0.00, 0.00);
+		assertValue("totalLiquidLabel", 00.00, 0.00);
+		
+		click("button-atraso");
+		wait4Id("employeeEventsDraftSaveButton");
+		
+		setValue("atraso_1", "11.11");
+		setValue("atraso_2", "22.22");
+		setValue("atraso_3", "33.33");
+		
+		click("employeeEventsDraftSaveButton");
+		wait4Disabled("employeeEventsDraftSaveButton", true);
+		assertValue("atraso_1", "11.11");
+		assertValue("atraso_2", "22.22");
+		assertValue("atraso_3", "33.33");
+		
+		draft("ATRASOS REDEFINIDOS, MANUALMENTE");
+		delay(startDate, endDate);
+		
+		double totalPayment = 11.11+22.22+33.33;
+		assertValue("totalPaymentsLabel", totalPayment, 0.00);
+		
+		click("button-atraso");
+		wait4Id("employeeEventsDraftSaveButton");
+		assertValue("atraso_1", "11.11");
+		assertValue("atraso_2", "22.22");
+		assertValue("atraso_3", "33.33");
+		
+		setValue("atraso_6", "66.66");
+
+		click("employeeEventsDraftSaveButton");
+		wait4Disabled("employeeEventsDraftSaveButton", true);
+		assertValue("atraso_6", "66.66");
+
+		draft("ATRASOS REDEFINIDOS, MANUALMENTE");
+		delay(startDate, endDate);
+		
+		totalPayment += 66.66;
+		assertValue("totalPaymentsLabel", totalPayment, 0.00);
 	}
 
 	@Test

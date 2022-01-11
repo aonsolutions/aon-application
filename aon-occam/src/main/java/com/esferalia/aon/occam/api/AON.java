@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
@@ -52,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
@@ -261,6 +263,7 @@ import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommissionImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.EmployeeITImpl;
 import com.esferalia.aon.occam.impl.jooq.EnterpriseImpl;
 import com.esferalia.aon.occam.impl.jooq.ExpedientImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
@@ -382,6 +385,10 @@ public class AON {
 	
 	private static IEnterprise getEnterprise() {
 		return new EnterpriseImpl();
+	}
+	
+	private static IEmployeeIT getEmployeeIT() {
+		return new EmployeeITImpl();
 	}
 
 	// ********************************************
@@ -7067,6 +7074,25 @@ public class AON {
 	public static void deleteInvestAsset(Domain domain, User user, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			getNewProduct().deleteInvestAsset(ctx, id);
+		}
+	}
+	
+	//--------------EMPLOYEE IT
+	public static Optional<EmployeeIT> getEmployeeIT(Domain domain, User user, ContractLeaveFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEmployeeIT().getEmployeeIT(ctx, filter);
+		}
+	}
+	
+	public static Stream<EmployeeIT> getEmployeesIT(Domain domain, User user, ContractLeaveFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEmployeeIT().getEmployeesIT(ctx, filter);
+		}
+	}
+	
+	public static EmployeeIT[] setEmployeeIT(Domain domain, User user, EmployeeIT... employeeITs) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEmployeeIT().setEmployeeIT(ctx, employeeITs);
 		}
 	}
 }

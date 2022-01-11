@@ -74,7 +74,7 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
-import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -465,7 +465,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
+	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
@@ -486,9 +486,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
+	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
-			TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			TbaiMain tbai = new TbaiMain();
+			tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 		}
 	}
 	

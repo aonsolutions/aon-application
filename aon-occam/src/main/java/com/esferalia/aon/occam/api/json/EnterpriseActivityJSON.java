@@ -5,8 +5,10 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonEnterpriseActivityFromJSON;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonEnterpriseActivityToJSON;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Iae;
 
 public enum EnterpriseActivityJSON {
+	
 	ID(
 		(activity, json) -> activity.setId(JsonUtils.getInteger(json, IJsonNames.ID)),
 		(activity, json) -> json.put(IJsonNames.ID, activity.getId())
@@ -20,8 +22,8 @@ public enum EnterpriseActivityJSON {
 		(activity, json) -> json.put(IJsonNames.PRINCIPAL, activity.isPrincipal())
 	),
 	IAE(
-		(activity, json) -> activity.setIae(JsonUtils.getInteger(json, IJsonNames.IAE)),
-		(activity, json) -> json.put(IJsonNames.IAE, activity.getIae())
+		(activity, json) -> activity.setIae(new Iae().setId(JsonUtils.getInteger(json, IJsonNames.IAE))),
+		(activity, json) -> json.put(IJsonNames.IAE, activity.getIae().getId())
 	),
 	EPIGRAPH(
 		(activity, json) -> activity.setEpigraph(JsonUtils.getString(json, IJsonNames.EPIGRAPH)),

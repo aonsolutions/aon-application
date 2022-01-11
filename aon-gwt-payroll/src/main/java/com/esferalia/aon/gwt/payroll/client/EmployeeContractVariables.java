@@ -107,6 +107,11 @@ public class EmployeeContractVariables extends Composite {
 		saveButton.setEnabled(false);
 	}
 	
+	
+	public void setSaveEnabled(boolean enabled) {
+		saveButton.setEnabled(enabled);
+	}
+	
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
 	
 	private void setScrollPanelHeight() {
@@ -338,6 +343,10 @@ public class EmployeeContractVariables extends Composite {
 	
 	// ----------------------------------------------- setEmployeeContractPaymentsObject.Methods
 	
+	public void initializeYearLB() {
+		initializeYearLB(this.yearLB);
+	}
+
 	public void initializeYearLB(ListBox yearLB) {
 		Integer year = DateUtils.getYear();
 		Integer yearAux = DateUtils.getYear();
@@ -350,6 +359,9 @@ public class EmployeeContractVariables extends Composite {
 		yearLB.addChangeHandler(e -> changeYear());
 		
 		setSelectedValueLB(yearLB, year.toString());
+	}
+	public void initializeVariableTypeLB() {
+		initializeVariableTypeLB(this.variableTypeLB);
 	}
 	
 	public void initializeVariableTypeLB(ListBox variableTypeLB) {

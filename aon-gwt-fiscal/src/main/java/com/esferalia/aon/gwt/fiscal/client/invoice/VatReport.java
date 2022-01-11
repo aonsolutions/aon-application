@@ -386,7 +386,7 @@ public class VatReport extends MainEntryPoint {
 			activity.setSelectedIndex(0);
 			int i = 1;
 			for (EnterpriseActivity ea : configuration.getActivities()) {
-				activity.addItem(ea.getDescription() + (ea.getIae() == null?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
+				activity.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
 				}

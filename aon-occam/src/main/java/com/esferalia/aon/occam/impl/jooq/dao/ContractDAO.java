@@ -95,7 +95,6 @@ public class ContractDAO {
 			.from(AGREEMENT_LEVEL_CATEGORY), filter).fetch().stream().map(new AgreementLevelCategoryFiller());		
 	}
 	
-	
 	public static void delete(AONContext ctx, Integer ...contractIds){
 		ctx.checkWrite();
 		DSLContext dslContext = ctx.getDslContext();

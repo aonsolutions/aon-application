@@ -3,15 +3,16 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 
 import java.time.Month;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
@@ -21,23 +22,36 @@ import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class CretaListener implements IdcParserListener {
 	
-	private static final class SetTramoBuilder extends TramoBuilder {
-		HashSet<String> added = new HashSet();
+	private static final class CretaTramoBuilder extends TramoBuilder {
+		Map<String, DatoSolicitado> datosMap = new HashMap<>();
 
+		public void clear() {
+			datosMap.clear();
+		}
+
+		public boolean isEmpty() {
+			return datosMap.isEmpty();
+		}
+		
 		@Override
 		public void addDato(DatoSolicitado dato) {
-			if ( add(dato) ) {
-				super.addDato(dato);
-			}
+			datosMap.putIfAbsent(getKey(dato), dato);
 		}
 
-		private boolean add(DatoSolicitado dato) {
-			return added.add(dato.getTipoDato()+dato.getCodigo());
+		@Override
+		public Tramo create() {
+			datosMap.values().forEach(super::addDato);
+			return super.create();
 		}
+
+		private String getKey(DatoSolicitado dato) {
+			return dato.getTipoDato() + dato.getCodigo();
+		}
+		
 	}
 
 	Optional<String> cnae = Optional.empty();
-	Optional<TramoBuilder> tramoBuilder = Optional.empty();
+	Optional<CretaTramoBuilder> tramoBuilder = Optional.empty();
 	Optional<TrabajadorBuilder> trabajadorBuilder = Optional.empty();
 	LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
 	TrabajadoresTramosBuilder trabajadoresTramosBuilder = new TrabajadoresTramosBuilder();
@@ -125,7 +139,7 @@ public class CretaListener implements IdcParserListener {
 	public void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate) {
 		tramoBuilder.ifPresent(b -> trabajadorBuilder.get().addTramo(b.create()));
 
-		TramoBuilder builder = new SetTramoBuilder();
+		CretaTramoBuilder builder = new CretaTramoBuilder();
 		
 		setDesdeHasta(startDate, endDate, builder);
 		
@@ -153,17 +167,31 @@ public class CretaListener implements IdcParserListener {
 			String quota, Date start, Date end) {
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
+			case "21": //IT.CC.PAGO DELEGADO
+				b.clear();
+				addIncapacidadTemporalPagoDelegadoEstandar(b);
+				return;
 			case "22": //IT.CC.PAGO DIRECTO
+				b.clear();
 				addIncapacidadTemporalCCPagoDirectoEstandar(b);
-				
+				return;
 			case "23": //IT.AT.PAGO DELEGADO
+				b.clear();
 				if ( isScholarEmployee(ssNum, ccc, start, end))
 					addIncapacidadTemporalATEPPagoDelegadoBecario(b);
 				else if ( isTraining421Employee(ssNum, ccc, start, end))
 					addIncapacidadTemporalATEPPagoDelegadoFormacion(b);
 				else 
 					addIncapacidadTemporalATEPPagoDelegadoEstandar(b);
-				break;
+				return;
+			case "29": //IT.CC.COLAB.EXCL.15D
+				b.clear();
+				addIncapacidadTemporal15PrimerosDiasEstandar(b);
+				return;
+			case "31": //31 MATERN/PATERN.T.COMP
+				b.clear();
+				addMaternidadPaternidadTiempoCompleto(b);
+				return;
 
 			default:
 				break;
@@ -379,4 +407,41 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
 	
+	private static void addIncapacidadTemporal15PrimerosDiasEstandar(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Base de contingencias comunes en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("500");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("603");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+	private static void addIncapacidadTemporalPagoDelegadoEstandar(TramoBuilder tramoBuilder) {
+		addIncapacidadTemporal15PrimerosDiasEstandar(tramoBuilder);
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Compensación IT Contingencias Comunes
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("563");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+	private static void addMaternidadPaternidadTiempoCompleto(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Base de contingencias comunes en situación de Maternidad/Paternidad
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("509");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo en situación de Maternidad/Paternidad
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("603");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
 }

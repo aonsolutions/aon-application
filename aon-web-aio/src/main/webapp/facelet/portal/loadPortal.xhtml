@@ -32,6 +32,10 @@
         //<![CDATA[
       	delete Array.prototype.toJSON;
         			
+		function isNewAONTheme (){
+			return #{userUtils.newAONTheme};
+		}
+
         function getCurrentUser() {
         	return '#{domainSwitcher.currentUser}';
         }

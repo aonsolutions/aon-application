@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.pdf.maker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -49,6 +50,12 @@ public class PdfMaker {
 	public static void printEnterprisePayroll(EnterprisePayroll payroll, OutputStream out, Optional<Locale> locale)
 			throws IOException, CanNotCreatePdfException {
 		EnterprisePayrollTemplate.print(payroll, out, locale);
+	}
+	
+	
+	public static void printEnterprisePayroll(EnterprisePayroll payroll, OutputStream out, Optional<Locale> locale, Date startDate, Date endDate)
+			throws IOException, CanNotCreatePdfException {
+		EnterprisePayrollTemplate.print(payroll, out, locale, startDate, endDate, true);
 	}
 
 	/**

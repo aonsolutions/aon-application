@@ -10,6 +10,10 @@
 	<script type="text/javascript">
         //<![CDATA[
         
+		function isNewAONTheme (){
+			return #{userUtils.newAONTheme};
+		}
+
         function getCurrentUser() {
         	return '#{domainSwitcher.currentUser}';
         }

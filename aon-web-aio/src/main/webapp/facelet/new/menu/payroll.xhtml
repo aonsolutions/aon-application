@@ -13,6 +13,9 @@
 
 		<script type="text/javascript">
 	          	//<![CDATA[
+				isNewAONTheme = function(){
+		        	return #{userUtils.newAONTheme};
+				}
 				getCurrentUser = function(){
 		        	return '#{domainSwitcher.currentUser}';
 				}

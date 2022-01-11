@@ -14,6 +14,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import ticketbai.anulacion.AnulaTicketBai;
+import ticketbai.anulacion.IDFactura;
 import ticketbai.emision.Cabecera;
 import ticketbai.emision.CabeceraFacturaType;
 import ticketbai.emision.ClaveTipoFacturaType;
@@ -82,10 +84,72 @@ public class Invoice2tbai {
 		return tbai;
 	}
 	
+	public static AnulaTicketBai buildBaja(Company company, Invoice invoice, TbaiConfiguration config) {
+		AnulaTicketBai tbai = new AnulaTicketBai();
+		tbai.setCabecera(getCabeceraAnulacion());
+		tbai.setIDFactura(getFacturaAnulacion(company, invoice));
+		tbai.setHuellaTBAI(getHuellaAnulacion(config));
+		return tbai;
+	}
+	
 	private static Cabecera getCabecera() { 
 		final Cabecera c = new Cabecera();
 		c.setIDVersionTBAI(TBAI_VERSION);
 		return c; 
+	}
+	
+	private static ticketbai.anulacion.Cabecera getCabeceraAnulacion() { 
+		final ticketbai.anulacion.Cabecera c = new ticketbai.anulacion.Cabecera();
+		c.setIDVersionTBAI(TBAI_VERSION);
+		return c; 
+	}
+	
+	private static IDFactura getFacturaAnulacion(Company company, Invoice invoice) {
+		IDFactura factura = new IDFactura();
+		factura.setCabeceraFactura(buildCabeceraInvoiceAnulacion(invoice));
+		factura.setEmisor(buildEmisorInvoiceAnulacion(company));
+		return factura;
+	}
+	
+	private static ticketbai.anulacion.CabeceraFacturaType buildCabeceraInvoiceAnulacion(Invoice invoice) {
+		ticketbai.anulacion.CabeceraFacturaType cabecera = new ticketbai.anulacion.CabeceraFacturaType();
+		if(!AonStringUtils.isBlank(invoice.getSeries()))
+			cabecera.setSerieFactura(invoice.getSeries());
+		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "dd-MM-yyyy"));
+		return cabecera;
+	}
+	
+	private static ticketbai.anulacion.Emisor buildEmisorInvoiceAnulacion(Company company) {
+		ticketbai.anulacion.Emisor emisor = new ticketbai.anulacion.Emisor();
+		emisor.setApellidosNombreRazonSocial(company.getName());
+		emisor.setNIF(company.getDocument());
+		return emisor;
+	}
+
+	private static ticketbai.anulacion.HuellaTBAI getHuellaAnulacion(TbaiConfiguration tbai) {
+		ticketbai.anulacion.HuellaTBAI huella = new ticketbai.anulacion.HuellaTBAI();
+
+		ticketbai.anulacion.SoftwareFacturacionType software = new ticketbai.anulacion.SoftwareFacturacionType();
+		ticketbai.anulacion.EntidadDesarrolladoraType entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
+		entidad.setNIF("B01487271");
+		software.setEntidadDesarrolladora(entidad);
+		if(tbai.isAraba() && tbai.isTest())
+			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
+		else software.setLicenciaTBAI(DEVICE_NUMBER);
+		software.setNombre(SOFTWARE_NAME);
+		software.setVersion(SOFTWARE_VERSION);
+	
+		if(tbai.isBizkaia() && tbai.isTest()) {
+			entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
+			entidad.setNIF(NIF_BIZKAIA_TEST);
+			software.setEntidadDesarrolladora(entidad);
+			software.setLicenciaTBAI(DEVICE_NUMBER_BIZKAIA_TEST);
+			software.setNombre(SOFTWARE_NAME_BIZKAIA_TEST);
+			software.setVersion(SOFTWARE_VERSION_BIZKAIA_TEST);
+		}
+		huella.setSoftware(software);
+		return huella;
 	}
 	
 	private static HuellaTBAI getHuella(TbaiConfiguration tbai, TbaiBlockchain blockchain) {
@@ -173,7 +237,8 @@ public class Invoice2tbai {
 		}
 		Factura factura = new Factura();
 		CabeceraFacturaType cabecera = new CabeceraFacturaType();
-		cabecera.setSerieFactura(invoice.getSeries());
+		if(!AonStringUtils.isBlank(invoice.getSeries()))
+			cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "dd-MM-yyyy"));
 		cabecera.setHoraExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "HH:mm:ss"));

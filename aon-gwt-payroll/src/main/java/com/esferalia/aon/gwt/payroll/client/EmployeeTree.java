@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.payroll.client.MainEntryPoint.getParameter;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -108,6 +109,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ProvidesResize;
@@ -2170,19 +2172,23 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
 		private EmployeeDraftObject employee;
 		
+               	private Map<Integer, ContractBonusObject> contractBonusMap ;  
 		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
-		private Map<Integer, ContractBonusObject> contractBonusMap ;  
+		private Map<Integer, EmployeeContractVariablesObject> contractVariablesMap ;  
 		
 		public EmployeeTabLayoutPanel() {
-			contractPaymentsMap = new HashMap<>();
 			contractBonusMap = new HashMap<>();
+			contractPaymentsMap = new HashMap<>();
+			contractVariablesMap = new HashMap<>();
 			add("Empleado", getEmployeeDraft(), this::onEmployeeSelected);
 			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
 			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
-			add("Variables de C\u00e1lculo", getEmployeeEventsDraft(), this::onEventsSelected);
+			add("Variables", getEmployeeEventsDraft(), this::onEventsSelected);
 			add("Conceptos de C\u00e1lculo", getEmployeeContractPayments(), this::onPaymentsSelected);
+			if ( Wnd.isSysAdmin() )
+				add("Variables de C\u00e1lculo", getEmployeeContractVariables(), this::onVariablesSelected);
 		}
 
 		void onDraftSelected() {
@@ -2201,7 +2207,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			ContractBonusObject contractBonusObject = 
 					contractBonusMap.computeIfAbsent(employee.getContractId(), ContractBonusObject::new );
 			getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
-//			employees.getEmployeeSSBonus(employee, o -> getEmployeeSSBonus().setContractBonusObject(o));
 		}
 
 		void onSalariesSelected() {
@@ -2214,12 +2219,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getEmployeeContractPayments().setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
 		}
 
+		void onVariablesSelected() {
+			EmployeeContractVariablesObject employeeContractVariablesObject = 
+					contractVariablesMap.computeIfAbsent(employee.getContractId(), this::newEmployeeContractVariablesObject );
+			getEmployeeContractVariables().setEmployeeContractVariablesObject(employeeContractVariablesObject);
+		}
+
 		void onEmployeeSelected() {
 		 //NOOP	
 		}
 		
 		public void setEmployee(EmployeeDraftObject employee) {
 			this.employee = employee;
+		}
+		
+		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
+			EmployeeContractVariablesObject employeeContractVariablesObject = 
+			new EmployeeContractVariablesObject(contractId);
+			
+			employeeContractVariables.initializeYearLB();
+			employeeContractVariables.initializeVariableTypeLB();
+			employeeContractVariables.setSaveEnabled(true);
+			
+			return employeeContractVariablesObject;
 		}
 		
 	}
@@ -2235,7 +2257,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			add("Calendario", getCalendarDraft(), this::onCalendarSelected);
 			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
 			add("Partes IT", getWorkplceIT(), this::onITsSelected);
-			add("Variables de C\u00e1lculo", getEventsDraft(), this::onEventsSelected);
+			if ( Wnd.isSysAdmin() ) {
+				add("Variables de C\u00e1lculo", getEventsDraft(), this::onEventsSelected);
+			}
 		}
 
 		void onITsSelected() {
@@ -2289,6 +2313,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onCostsSelected() {
 			employees.getEnterpriseCost(enterprise, o -> getCost().setCostDocuments(o));
+			
 			
 		}
 
@@ -2355,6 +2380,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
 	private ContractBonusUI employeeSSBonus;
 	private EmployeeContractPayments employeeContractPayments; 
+	private EmployeeContractVariables employeeContractVariables; 
 	private EmployeeSalary employeeSalary;
 	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
@@ -2416,8 +2442,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
 		logEvent("richStylesInjected");
-
-		employees = new Employees(true, true) {
+		
+		if ( !Wnd.isSysAdmin() )
+			employees = new Employees(true, true) {
+				@Override
+				public void onEnterprise(Enterprise enterprise) {
+					super.onEnterprise(enterprise);
+					String employeeSearch = 
+					getParameter(GWT.getModuleName(), EMPLOYEE_SEARCH_PARAM);
+					if ( AonStringUtils.isNotBlank(employeeSearch) )
+						employees.search(employeeSearch);
+				}
+			};
+		else 
+			employees = new Workers(true, true) {
 			@Override
 			public void onEnterprise(Enterprise enterprise) {
 				super.onEnterprise(enterprise);
@@ -2865,11 +2903,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			refreshWorkplace();
 		});
 		employeeDetail.setWidget(getEmployeePanel());
+
 		getEmployeePanel().setEmployee(employeeDraftObject);
 		getEmployeePanel().selectWidget(getEmployeeDraft());
+		if ( Wnd.isSysAdmin() ) {
+			getEmployeePanel().selectWidget(getSalaryDraft());
+			employees.getEmployeeSalaryDraft(employeeDraftObject, o -> {
+				getSalaryDraft().setSalaryDraftObject(o);
+			});
+		}
+		
 		employeeDraftObject.setEnterpriseContext(employees.getEnterpriseContext());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
+		
+		
 	}
 
 	@Override
@@ -3165,6 +3213,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		return cccCretaDetail;
+	}
+
+	private EmployeeContractVariables getEmployeeContractVariables() {
+		if (employeeContractVariables == null) {
+			employeeContractVariables = new EmployeeContractVariables() ;
+		}
+		return employeeContractVariables;
 	}
 
 	private EmployeeContractPayments getEmployeeContractPayments() {
@@ -3778,12 +3833,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	}
 
-	protected static void showEmployeeEvents(String ...variables) {
+	protected static void showEmployeeEvents(String variable, int [] years) {
+		showEmployeeEvents(new String [] {variable}, years);
+	}
+
+	protected static void showEmployeeEvents(String []variables, int [] years) {
 		EmployeeTree employeeTree = getEmployeeTree();
 		EmployeeEventsDraftObject events = employeeTree.getSalaryDraft().getSalaryDraftObject()
 				.getEmployeeEventsDraftObjecta();
 		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeEventsDraft());
-		employeeTree.getEmployeeEventsDraft().setEmployeeEventsDraftObject(events.getEmployeeEventsDraftObject(variables));
+		employeeTree.getEmployeeEventsDraft().setEmployeeEventsDraftObject(events.getEmployeeEventsDraftObject(variables), years);
 	}
 
 	protected static void showEmployeeCalendar() {

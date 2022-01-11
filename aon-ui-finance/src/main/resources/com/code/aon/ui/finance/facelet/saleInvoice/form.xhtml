@@ -258,6 +258,16 @@
 									value="#{true}" />							
 							</aon:menuItem>
 						</aon:if>
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator2" />
+							<aon:menuItem id="lroe"
+								value="LROE"
+								iconClass="aon-icon-bizkaia"
+								reRender="showLroeWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showLroeWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
 						<aon:if test="#{company.ediSupportEnabled}">
 							<rich:menuSeparator />
 							<aon:menuItem iconClass="aon-icon-file-download">
@@ -434,6 +444,9 @@
 			<ui:param name="auditableController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalLroe.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
