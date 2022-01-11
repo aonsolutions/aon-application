@@ -133,7 +133,8 @@ public class EventConstantLabel implements IsWidget , HasValue<String> , HasAllF
 	}
 	
 	public void ensureDebugId(String id){
-		textBox.ensureDebugId(id);
+		button.ensureDebugId("button-" + id);
+		textBox.ensureDebugId("editor-" + id);
 	}
 
 	public HandlerRegistration addClickHandler(ClickHandler handler) {

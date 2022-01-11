@@ -9,17 +9,17 @@ public class TbaiUri {
 	
 	}
 	
-	private static final String URL_ARABA_EMISION = "";
+	private static final String URL_ARABA_EMISION = "https://ticketbai.araba.eus/TicketBAI/v1/facturas/";
 	private static final String URL_ARABA_EMISION_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/facturas/";
-	private static final String URL_ARABA_ANULACION = "";
+	private static final String URL_ARABA_ANULACION = "https://ticketbai.araba.eus/TicketBAI/v1/anulaciones/";
 	private static final String URL_ARABA_ANULACION_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/anulaciones/";
-	private static final String URL_ARABA_QR = "https://ticketbai.araba.eus/TBAI/QRTBAI";
+	private static final String URL_ARABA_QR = "https://ticketbai.araba.eus/tbai/qrtbai/";
 	private static final String URL_ARABA_QR_TEST = "https://pruebas-ticketbai.araba.eus/tbai/qrtbai/";
 	
-	private static final String URL_BIZKAIA_EMISION = "https://sarrerak.bizkaia.eus/N3B4000M/aurkezpena";
-	private static final String URL_BIZKAIA_EMISION_TEST = "https://pruesarrerak.bizkaia.eus/N3B4000M/aurkezpena";
-	private static final String URL_BIZKAIA_ANULACION = "https://sarrerak.bizkaia.eus/N3B4000M/aurkezpena";
-	private static final String URL_BIZKAIA_ANULACION_TEST = "https://pruesarrerak.bizkaia.eus/N3B4000M/aurkezpena";
+	private static final String URL_BIZKAIA = "https://sarrerak.bizkaia.eus/N3B4000M/aurkezpena";
+	private static final String URL_BIZKAIA_TEST = "https://pruesarrerak.bizkaia.eus/N3B4000M/aurkezpena";
+	private static final String URL_BIZKAIA_CONSULTA = "https://sarrerak.bizkaia.eus/N3B4001M/kontsulta";
+	private static final String URL_BIZKAIA_CONSULTA_TEST = "https://pruesarrerak.bizkaia.eus/N3B4001M/kontsulta";
 	private static final String URL_BIZKAIA_QR = "https://batuz.eus/QRTBAI/";
 	private static final String URL_BIZKAIA_QR_TEST = "https://batuz.eus/QRTBAI/";
 	
@@ -35,7 +35,7 @@ public class TbaiUri {
 		if(Administration.ALAVA.equals(tbai.getAdministration()))
 			return tbai.isTest() ? URL_ARABA_EMISION_TEST : URL_ARABA_EMISION;
 		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_EMISION_TEST : URL_BIZKAIA_EMISION;
+			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
 			return tbai.isTest() ? URL_GIPUZKOA_EMISION_TEST : URL_GIPUZKOA_EMISION;
 		return "";
@@ -45,9 +45,15 @@ public class TbaiUri {
 		if(Administration.ALAVA.equals(tbai.getAdministration()))
 			return tbai.isTest() ? URL_ARABA_ANULACION_TEST : URL_ARABA_ANULACION;
 		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
-			return tbai.isTest() ? URL_BIZKAIA_ANULACION_TEST : URL_BIZKAIA_ANULACION;
+			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
 			return tbai.isTest() ? URL_GIPUZKOA_ANULACION_TEST : URL_GIPUZKOA_ANULACION;
+		return "";
+	}
+	
+	public static String getUrlConsulta(TbaiConfiguration  tbai) {
+		if(Administration.BIZKAIA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_BIZKAIA_CONSULTA_TEST : URL_BIZKAIA_CONSULTA;
 		return "";
 	}
 	

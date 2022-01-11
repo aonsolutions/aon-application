@@ -100,7 +100,10 @@ public class ModelMatrixPanel extends FlowPanel {
 										break;
 									}
 								}
-								fm.setName((firstItem == null)?domainName:firstItem.getName());	
+								String n = firstItem.getName();
+								String s = firstItem.getSurname();
+								String name = AonStringUtils.join(new String[]{s,n}, AonStringUtils.isBlank(s)?"":", ");
+								fm.setName((firstItem == null)?domainName:name);	
 							}
 							
 							AonDisplayTable periodTable = paintFiscalModelRow(options,fm,admKey,perKey,docKey,table);

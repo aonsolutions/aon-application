@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
-import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -30,8 +29,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -50,6 +47,9 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -846,7 +846,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void verifyCertificate(String domainName, String currentUser, CertificateType certificateType, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void verifyCertificate(String domainName, String currentUser, com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType certificateType, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.verifyCertificate(domainName, currentUser, certificateType, new AsyncCallbackWrapper<Void>(callback));
 	}
@@ -857,32 +857,30 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getAllConcepts(domainName, currentUser, new AsyncCallbackWrapper<>(callback));
 	}
 
-	// ------------------------------------------------ DigitalCertificates (New)
+	// --------------------------- Certificates
 
 	@Override
-	public void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificateNew>> callback) throws IllegalArgumentException {
+	public void getCertificates(String domain, String login, AsyncCallback<List<Certificate>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getDigitalCertificates(currentDomainName, currentUser, new AsyncCallbackWrapper<>(callback));
+		enterprisesServiceAsync.getCertificates(domain, login, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void deleteCertificate(String domain, String login, Certificate certificate, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, digitalCertificate, new AsyncCallbackWrapper<>(callback));
+		enterprisesServiceAsync.deleteCertificate(domain, login, certificate, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId,
-			List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags,
-			AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCertificateInfo(domain, login, certitificateId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<CertificateType> tags, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.verifyCertificate(currentDomainName, currentUser, rattachId, tags, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void validateCertJava(String currentDomainName, Integer rattachId, AsyncCallback<CertificateInfo> callback) throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.validateCertJava(currentDomainName, rattachId, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

@@ -32,8 +32,8 @@ import eus.bizkaia.ogasuna.sii.documentos.suministrolr.LROperacionIntracomunitar
 @XmlSeeAlso({
     eus.bizkaia.ogasuna.sii.documentos.respuestasuministro.ObjectFactory.class,
     eus.bizkaia.ogasuna.sii.documentos.respuestaconsultalr.ObjectFactory.class,
-    eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.ObjectFactory.class,
     eus.bizkaia.ogasuna.sii.documentos.consultalr.ObjectFactory.class,
+    eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.ObjectFactory.class,
     eus.bizkaia.ogasuna.sii.documentos.suministrolr.ObjectFactory.class
 })
 public interface SiiSOAP {

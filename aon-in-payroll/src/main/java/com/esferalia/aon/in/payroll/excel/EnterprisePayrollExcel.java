@@ -4,14 +4,17 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.watson.util.AonNumberUtils.zeroIfNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
@@ -23,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -48,6 +52,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jooq.Condition;
 
+import com.code.aon.person.Person;
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -64,11 +69,24 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EnterprisePayrollExcel {
 
+	private static final List<String> IMPORTANT_CELLS;
 	private static final LinkedHashMap<String, String> DEFAULT_HEADER;
 	private static final LinkedHashMap<String, String> DEFAULT_HEADER_SUMMARY;
+	private static final LinkedHashMap<String, String> DEFAULT_HEADER_NO_TYPE;
+	private static final LinkedHashMap<String, String> DEFAULT_HEADER_NO_TYPE_SUMMARY;
+	private static final LinkedHashMap<String, String> COMPLETE_HEADER;
+	private static final LinkedHashMap<String, String> COMPLETE_TOTALS_HEADER;
 
 	static {
-		//-------------------------COMPLETE-------------------------
+		
+		//-------------------------IMPORTANT------------------------
+			IMPORTANT_CELLS = new LinkedList<>();
+			IMPORTANT_CELLS.add("raw");
+			IMPORTANT_CELLS.add("totalCost");
+			IMPORTANT_CELLS.add("liquid");
+			IMPORTANT_CELLS.add("totalSS");
+		
+		//-------------------------COMPLETE NORMAL-------------------------
 		
 			DEFAULT_HEADER = new LinkedHashMap<>();
 			DEFAULT_HEADER.put("employee", "NOMBRE");
@@ -119,6 +137,114 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER.put("inKindIrpfBase", "IRPF ESP.");
 		//---------------------------------------------------------
 		
+		//-------------------------COMPLETE------------------------
+			COMPLETE_HEADER = new LinkedHashMap<>();
+			COMPLETE_HEADER.put("employee", "PERÍODO");
+			COMPLETE_HEADER.put("joint0", "");
+			COMPLETE_HEADER.put("type", "TIPO");
+			COMPLETE_HEADER.put("raw", "BRUTO");
+			COMPLETE_HEADER.put("enterpriseSS", "COTIZAC.");
+			COMPLETE_HEADER.put("totalCost", "COSTE TOTAL");
+			
+			COMPLETE_HEADER.put("joint1", "");
+			
+			COMPLETE_HEADER.put("employeeSS", "COTIZAC.");
+			COMPLETE_HEADER.put("irpf", "IRPF");
+			COMPLETE_HEADER.put("other", "DEDUC.");
+			COMPLETE_HEADER.put("liquid", "LÍQUIDO");
+			
+			COMPLETE_HEADER.put("joint2", "");
+			
+			COMPLETE_HEADER.put("totalSS", "TOTAL S.S.");
+			
+			COMPLETE_HEADER.put("joint3", "");
+			
+			COMPLETE_HEADER.put("cgcEnterprise", "C. COMUN.");
+			COMPLETE_HEADER.put("cgpEnterprise", "C. PROFES.");
+			COMPLETE_HEADER.put("unemploymentEnterprise", "DESEMP.");
+			COMPLETE_HEADER.put("jobTrainingEnterprise", "F.P.");
+			COMPLETE_HEADER.put("fogasaEnterprise", "FOGASA");
+			COMPLETE_HEADER.put("extraHEnterprise", "H. EXTRAS");
+			COMPLETE_HEADER.put("bonuses", "BONIF.");
+			
+			COMPLETE_HEADER.put("joint4", "");
+			
+			COMPLETE_HEADER.put("cgc", "C. COMUN.");
+			COMPLETE_HEADER.put("cgp", "C. PROFES.");
+			COMPLETE_HEADER.put("unemployment", "DESEMP.");
+			COMPLETE_HEADER.put("jobTraining", "F.P.");
+			COMPLETE_HEADER.put("extraH", "H. EXTRAS");
+			
+			COMPLETE_HEADER.put("advancedPayments", "ANTICIPOS");
+			COMPLETE_HEADER.put("embargos", "EMBARGOS");
+			COMPLETE_HEADER.put("otherDeductions", "OTR. DEDUC.");
+			
+			COMPLETE_HEADER.put("joint5", "");
+			
+			COMPLETE_HEADER.put("cgcBase", "BASE C.C.");
+			COMPLETE_HEADER.put("irpfBase", "BASE IRPF");
+			COMPLETE_HEADER.put("joint6", "");
+			COMPLETE_HEADER.put("moneyIrpfBase", "IRPF MON.");
+			COMPLETE_HEADER.put("inKindIrpfBase", "IRPF ESP.");
+			//---------------------------------------------------------
+			
+			
+		//-------------------------COMPLETE TOTALS-----------------
+			
+			COMPLETE_TOTALS_HEADER = new LinkedHashMap<>();
+			COMPLETE_TOTALS_HEADER.put("employee", "PERÍODO");
+			
+			COMPLETE_TOTALS_HEADER.put("joint0", "");
+			
+			COMPLETE_TOTALS_HEADER.put("workplace", "CENTRO DE TRABAJO");
+			COMPLETE_TOTALS_HEADER.put("raw", "BRUTO");
+			COMPLETE_TOTALS_HEADER.put("enterpriseSS", "COTIZAC.");
+			COMPLETE_TOTALS_HEADER.put("totalCost", "COSTE TOTAL");
+			
+			COMPLETE_TOTALS_HEADER.put("joint1", "");
+			
+			COMPLETE_TOTALS_HEADER.put("employeeSS", "COTIZAC.");
+			COMPLETE_TOTALS_HEADER.put("irpf", "IRPF");
+			COMPLETE_TOTALS_HEADER.put("other", "DEDUC.");
+			COMPLETE_TOTALS_HEADER.put("liquid", "LÍQUIDO");
+			
+			COMPLETE_TOTALS_HEADER.put("joint2", "");
+			
+			COMPLETE_TOTALS_HEADER.put("totalSS", "TOTAL S.S.");
+			
+			COMPLETE_TOTALS_HEADER.put("joint3", "");
+			
+			COMPLETE_TOTALS_HEADER.put("cgcEnterprise", "C. COMUN.");
+			COMPLETE_TOTALS_HEADER.put("cgpEnterprise", "C. PROFES.");
+			COMPLETE_TOTALS_HEADER.put("unemploymentEnterprise", "DESEMP.");
+			COMPLETE_TOTALS_HEADER.put("jobTrainingEnterprise", "F.P.");
+			COMPLETE_TOTALS_HEADER.put("fogasaEnterprise", "FOGASA");
+			COMPLETE_TOTALS_HEADER.put("extraHEnterprise", "H. EXTRAS");
+			COMPLETE_TOTALS_HEADER.put("bonuses", "BONIF.");
+			
+			COMPLETE_TOTALS_HEADER.put("joint4", "");
+			
+			COMPLETE_TOTALS_HEADER.put("cgc", "C. COMUN.");
+			COMPLETE_TOTALS_HEADER.put("cgp", "C. PROFES.");
+			COMPLETE_TOTALS_HEADER.put("unemployment", "DESEMP.");
+			COMPLETE_TOTALS_HEADER.put("jobTraining", "F.P.");
+			COMPLETE_TOTALS_HEADER.put("extraH", "H. EXTRAS");
+			
+			COMPLETE_TOTALS_HEADER.put("advancedPayments", "ANTICIPOS");
+			COMPLETE_TOTALS_HEADER.put("embargos", "EMBARGOS");
+			COMPLETE_TOTALS_HEADER.put("otherDeductions", "OTR. DEDUC.");
+			
+			COMPLETE_TOTALS_HEADER.put("joint5", "");
+			
+			COMPLETE_TOTALS_HEADER.put("cgcBase", "BASE C.C.");
+			COMPLETE_TOTALS_HEADER.put("irpfBase", "BASE IRPF");
+			COMPLETE_TOTALS_HEADER.put("joint6", "");
+			COMPLETE_TOTALS_HEADER.put("moneyIrpfBase", "IRPF MON.");
+			COMPLETE_TOTALS_HEADER.put("inKindIrpfBase", "IRPF ESP.");
+		//---------------------------------------------------------
+			
+			
+		
 		//-------------------------SUMMARY-------------------------
 		
 			DEFAULT_HEADER_SUMMARY = new LinkedHashMap<>();
@@ -140,7 +266,341 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER_SUMMARY.put("totalSS", "TOTAL S.S.");
 			
 		//---------------------------------------------------------
+		//--------------------EMPLOYEE_SUMMARY---------------------
+			
+			DEFAULT_HEADER_NO_TYPE_SUMMARY = new LinkedHashMap<>();
+			DEFAULT_HEADER_NO_TYPE_SUMMARY.putAll(DEFAULT_HEADER_SUMMARY);
+			DEFAULT_HEADER_NO_TYPE_SUMMARY.remove("type");
+			
+		//---------------------------------------------------------
+		//------------------------EMPLOYEE-------------------------
+		
+		DEFAULT_HEADER_NO_TYPE = new LinkedHashMap<>();
+		DEFAULT_HEADER_NO_TYPE.putAll(DEFAULT_HEADER);
+		DEFAULT_HEADER_NO_TYPE.remove("type");
+		
+		//---------------------------------------------------------
+			
 	}
+	
+	private static Double sumThings(Double ...numbers) {
+		if (numbers == null)
+			return null;
+		
+		if (Arrays.stream(numbers).allMatch(Objects::isNull))
+			return null;
+		else {
+			Double acum = 0.0;
+			for (Double number : numbers) {
+				acum += zeroIfNull(number);
+			}
+			return acum;
+		}
+	}
+	
+	public static void enterprisePayrollGeneratorByEmployee (String domainName, String user, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType, SalaryType[] salaryFilter, Person ...persons) {
+		List<String> filteredNafs = new LinkedList<>();
+		List<SalaryType> typesList = Arrays.asList(salaryFilter != null ? salaryFilter : new SalaryType[0]);
+		
+		if (persons != null) {
+			for (Person person : persons) {
+				if (person != null && person.getSocialSecurityNumber() != null)
+					filteredNafs.add(person.getSocialSecurityNumber());
+			}
+		}
+		
+		Integer wId = null;
+		Integer eId = null;
+		if (workplaceId.isPresent())
+			wId = workplaceId.get();
+		if (enterpriseId.isPresent())
+			eId = enterpriseId.get();
+		
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+			
+			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+			if (eId == null || eId == 0)
+				eId = AON.getWorkplace(aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser()
+					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+					.getEnterprise();
+			
+			List<IEnterprisePayroll> payrolls = new LinkedList<>();
+			
+			getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId)
+				.filter(p -> filteredNafs.isEmpty() || filteredNafs.contains(p.getEmployeeNaf()))
+				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeNaf() != null)
+				.forEach(p -> {
+					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> pa.getEmployeeNaf().equals(p.getEmployeeNaf())).findFirst();
+					EnterprisePayroll enterprisePayroll = null;
+					if (optPayroll.isPresent()) {
+						enterprisePayroll = (EnterprisePayroll) optPayroll.get();
+						
+						
+						sumPayrolls(enterprisePayroll, p);
+						
+						
+					} else {
+						p.salaryType = null;
+						p.startDate = null;
+						p.endDate = null;
+						payrolls.add(p);
+					}
+				});
+					
+					
+			
+			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
+			write(outputStream
+					, payrolls
+					, Optional.empty()
+					, enterpriseName
+					, startDate
+					, endDate
+					, excelType);	
+		} catch (IOException e) {}
+		
+	}
+	
+	private static String getMonthYearName(Date endDate) {
+		if (endDate == null)
+			return "FECHA INDEFINIDA";
+		Locale esLocale = new Locale("es", "ES");
+		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' YYYY", esLocale);
+		return df.format(endDate).toUpperCase(esLocale);
+	}
+	
+	public static void enterprisePayrollGeneratorByPeriod (String domainName, String user, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType, SalaryType[] salaryFilter, Person ...persons) {
+		
+		List<String> filteredNafs = new LinkedList<>();
+		List<SalaryType> typesList = Arrays.asList(salaryFilter != null ? salaryFilter : new SalaryType[0]);
+		
+		if (persons != null) {
+			for (Person person : persons) {
+				if (person != null && person.getSocialSecurityNumber() != null)
+					filteredNafs.add(person.getSocialSecurityNumber());
+			}
+		}
+		
+		Integer wId = null;
+		Integer eId = null;
+		if (workplaceId.isPresent())
+			wId = workplaceId.get();
+		if (enterpriseId.isPresent())
+			eId = enterpriseId.get();
+		
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+			
+			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+			if (eId == null || eId == 0)
+				eId = AON.getWorkplace(aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser()
+					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+					.getEnterprise();
+			
+			List<IEnterprisePayroll> payrolls = new LinkedList<>();
+			
+			getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId)
+				.filter(p -> filteredNafs.isEmpty() || filteredNafs.contains(p.getEmployeeNaf()))
+				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeNaf() != null)
+				.forEach(p -> {
+					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> {
+						String nameKey = getMonthYearName(p.getEndDate());
+						return (pa.getEmployee().equalsIgnoreCase(nameKey));
+					}).findFirst();
+					EnterprisePayroll enterprisePayroll = null;
+					if (optPayroll.isPresent()) {
+						enterprisePayroll = (EnterprisePayroll) optPayroll.get();
+						
+						sumPayrolls(enterprisePayroll, p);
+						
+						
+					} else {
+						
+						if (p.endDate != null) {							
+							Calendar cal = Calendar.getInstance(new Locale("es", "ES"));
+							cal.setTime(p.endDate);
+							cal.set(Calendar.MILLISECOND, 0);
+							cal.set(Calendar.SECOND, 0);
+							cal.set(Calendar.MINUTE, 0);
+							cal.set(Calendar.HOUR, 0);
+							cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+							p.endDate = cal.getTime();
+							cal.set(Calendar.DAY_OF_MONTH, 1);							
+							p.startDate = cal.getTime();
+						}
+						p.salaryType = null;
+						p.employee = getMonthYearName(p.getEndDate());
+						payrolls.add(p);
+					}
+				});
+					
+					
+			
+			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
+			write(outputStream
+					, payrolls
+					, Optional.empty()
+					, enterpriseName
+					, startDate
+					, endDate
+					, excelType);	
+		} catch (IOException e) {}
+		
+	}
+	
+	public static void completeEnterprisePayrollGenerator (String domainName, String user, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, SalaryType[] salaryFilter, Person ...persons) {
+		
+		List<String> filteredNafs = new LinkedList<>();
+		List<SalaryType> typesList = Arrays.asList(salaryFilter != null ? salaryFilter : new SalaryType[0]);
+		
+		if (persons != null) {
+			for (Person person : persons) {
+				if (person != null && person.getSocialSecurityNumber() != null)
+					filteredNafs.add(person.getSocialSecurityNumber());
+			}
+		}
+		
+		Integer wId = null;
+		Integer eId = null;
+		if (workplaceId.isPresent())
+			wId = workplaceId.get();
+		if (enterpriseId.isPresent())
+			eId = enterpriseId.get();
+		
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+			
+			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+			if (eId == null || eId == 0)
+				eId = AON.getWorkplace(aonContext.getDomainName()
+						, aonContext.getDomainId()
+						, aonContext.getUser()
+						, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+				.getEnterprise();
+			
+			
+			Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData = new LinkedHashMap<>();
+			Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeEmployeeData = new LinkedHashMap<>();
+			
+			getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId)
+			.filter(p -> filteredNafs.isEmpty() || filteredNafs.contains(p.getEmployeeNaf()))
+			.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeNaf() != null)
+			.forEach(p -> {
+				
+				String dateKey = getMonthYearName(p.getEndDate());
+				
+				/**
+				 * employees 
+				 */
+				
+				/*if (completeEmployeeData.containsKey(p.getEmployeeNaf())) {
+					Map<String, Map<SalaryType, IEnterprisePayroll>> workplaceData = completeEmployeeData.get(p.getEmployeeNaf());
+					
+					if (workplaceData.containsKey(dateKey)) {
+						Map<SalaryType, IEnterprisePayroll> dateData = workplaceData.get(dateKey);
+						
+						if (dateData.containsKey(p.getSalaryType())) {
+							EnterprisePayroll prl = (EnterprisePayroll) dateData.get(p.getSalaryType());
+							sumPayrolls(prl, p);
+						} else {
+							dateData.put(p.getSalaryType(), p);
+						}
+						
+					} else {
+						LinkedHashMap<SalaryType, IEnterprisePayroll> dateData = new LinkedHashMap<>();
+						dateData.put(p.getSalaryType(), p);
+						workplaceData.put(dateKey, dateData);
+					}
+				} else {
+					Map<String, Map<SalaryType, IEnterprisePayroll>> workplaceData = new LinkedHashMap<>();
+					LinkedHashMap<SalaryType, IEnterprisePayroll> dateData = new LinkedHashMap<>();
+					dateData.put(p.getSalaryType(), p);
+					workplaceData.put(dateKey, dateData);
+					completeEmployeeData.put(p.getEmployeeNaf(), workplaceData);
+				}*/
+				
+				
+				/**
+				 * workplaces
+				 */
+				if (completeWorkplaceData.containsKey(p.getWorkplace())) {
+					Map<String, Map<SalaryType, IEnterprisePayroll>> workplaceData = completeWorkplaceData.get(p.getWorkplace());
+					
+					if (workplaceData.containsKey(dateKey)) {
+						Map<SalaryType, IEnterprisePayroll> dateData = workplaceData.get(dateKey);
+						
+						if (dateData.containsKey(p.getSalaryType())) {
+							
+							EnterprisePayroll prl = (EnterprisePayroll) dateData.get(p.getSalaryType());
+							
+							sumPayrolls(prl, p);
+							
+						} else {
+							dateData.put(p.getSalaryType(), p);
+						}
+						
+					} else {
+						LinkedHashMap<SalaryType, IEnterprisePayroll> dateData = new LinkedHashMap<>();
+						dateData.put(p.getSalaryType(), p);
+						workplaceData.put(dateKey, dateData);
+					}
+				} else {
+					Map<String, Map<SalaryType, IEnterprisePayroll>> workplaceData = new LinkedHashMap<>();
+					LinkedHashMap<SalaryType, IEnterprisePayroll> dateData = new LinkedHashMap<>();
+					dateData.put(p.getSalaryType(), p);
+					workplaceData.put(dateKey, dateData);
+					completeWorkplaceData.put(p.getWorkplace(), workplaceData);
+				}
+			});
+			
+			
+			
+			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
+			writeComplete(outputStream
+					, completeWorkplaceData
+					/*, completeEmployeeData*/
+					, Optional.empty()
+					, enterpriseName
+					, startDate
+					, endDate);	
+		} catch (IOException e) {}
+		
+	}
+
+	private static void sumPayrolls(EnterprisePayroll originalPayroll, EnterprisePayroll newPayroll) {
+		originalPayroll.irpf = sumThings(originalPayroll.getIrpf(), newPayroll.getIrpf());
+		originalPayroll.cgcBase = sumThings(originalPayroll.getCgcBase(), newPayroll.getCgcBase());
+		originalPayroll.irpfBase = sumThings(originalPayroll.getIrpfBase(), newPayroll.getIrpfBase());
+		originalPayroll.inKindIrpfBase = sumThings(originalPayroll.getInkindIrpfBase(), newPayroll.getInkindIrpfBase());
+		originalPayroll.moneyIrpfBase = sumThings(originalPayroll.getMoneyIrpfBase(), newPayroll.getMoneyIrpfBase());
+		originalPayroll.raw = sumThings(originalPayroll.getRaw(), newPayroll.getRaw());
+		originalPayroll.liquid = sumThings(originalPayroll.getLiquid(), newPayroll.getLiquid());
+		originalPayroll.employeeSS = sumThings(originalPayroll.getEmployeeSS(), newPayroll.getEmployeeSS());
+		originalPayroll.enterpriseSS = sumThings(originalPayroll.getEnterpriseSS(), newPayroll.getEnterpriseSS());
+		originalPayroll.totalSS = sumThings(originalPayroll.getTotalSS(), newPayroll.getTotalSS());
+		originalPayroll.totalCost = sumThings(originalPayroll.getTotalCost(), newPayroll.getTotalCost());
+		originalPayroll.bonuses = sumThings(originalPayroll.getBonuses(), newPayroll.getBonuses());
+		originalPayroll.cgc = sumThings(originalPayroll.getCgc(), newPayroll.getCgc());
+		originalPayroll.cgp = sumThings(originalPayroll.getCgp(), newPayroll.getCgp());
+		originalPayroll.unemployment = sumThings(originalPayroll.getUnemployment(), newPayroll.getUnemployment());
+		originalPayroll.jobTraining = sumThings(originalPayroll.getJobTraining(), newPayroll.getJobTraining());
+		originalPayroll.advancedPayment = sumThings(originalPayroll.getAdvancedPayment(), newPayroll.getAdvancedPayment());
+		originalPayroll.otherDeductions = sumThings(originalPayroll.getOtherDeductions(), newPayroll.getOtherDeductions());
+		originalPayroll.estruc = sumThings(originalPayroll.getEstruc(), newPayroll.getEstruc());
+		originalPayroll.noEstruct = sumThings(originalPayroll.getNoEstruct(), newPayroll.getNoEstruct());
+		originalPayroll.cgcEnterprise = sumThings(originalPayroll.getCgcEnterprise(), newPayroll.getCgcEnterprise());
+		originalPayroll.cgpEnterprise = sumThings(originalPayroll.getCgpEnterprise(), newPayroll.getCgpEnterprise());
+		originalPayroll.unemploymentEnterprise = sumThings(originalPayroll.getUnemploymentEnterprise(), newPayroll.getUnemploymentEnterprise());
+		originalPayroll.jobTrainingEnterprise = sumThings(originalPayroll.getJobTrainingEnterprise(), newPayroll.getJobTrainingEnterprise());
+		originalPayroll.fogasaEnterprise = sumThings(originalPayroll.getFogasaEnterprise(), newPayroll.getFogasaEnterprise());
+		originalPayroll.estrucEnterprise = sumThings(originalPayroll.getEstrucEnterprise(), newPayroll.getEstrucEnterprise());
+		originalPayroll.noEstructEnterprise = sumThings(originalPayroll.getNoEstructEnterprise(), newPayroll.getNoEstructEnterprise());
+		originalPayroll.embargos = sumThings(originalPayroll.getEmbargos(), newPayroll.getEmbargos());
+	}
+	
+	
 	
 	public static void simpleEnterprisePayrollGenerator (String domainName, String user, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType) {
 		
@@ -214,7 +674,7 @@ public class EnterprisePayrollExcel {
 					, Optional.empty()
 					, enterpriseName
 					, getDateString(month, year)
-					, excelType);	
+					, excelType);
 		} catch (IOException e) {}
 	}
 	
@@ -262,29 +722,21 @@ public class EnterprisePayrollExcel {
 	}
 	
 	
-	
-	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
-			Optional<LinkedHashMap<String, String>> header, String enterpriseName, Date startDate, Date endDate, ExcelType excelType)
+	public static void writeComplete(OutputStream outputStream, Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData,
+			/*Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeEmployeeData,*/ Optional<LinkedHashMap<String, String>> header,
+			String enterpriseName, Date startDate, Date endDate)
 			throws IOException {
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("es"));
-		String strStartDate = df.format(startDate);
-		String strEndDate = df.format(endDate);
 		
-		String dateString = "del " + strStartDate + " al " + strEndDate;
 		
-		write(outputStream, payrolls, header, enterpriseName, dateString, excelType);
-	}
-
-	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
-			Optional<LinkedHashMap<String, String>> header, String enterpriseName, String dateString, ExcelType excelType)
-			throws IOException {
+		ExcelType excelType = ExcelType.COMPLETE;
 		
 		Workbook wb = new XSSFWorkbook();
 
 		DataFormat format = wb.createDataFormat();
+		
+		String dateString = getAppropiatePeriodString(startDate, endDate);
 
 		Map<PayrollCellStyle, CellStyle> stylesMap = PayrollCellStyle.getStyles(wb, format);
-		HashSet<Integer> totalsSSRows = new HashSet<>();
 		
 		final int completeLength = 34;
 		final int summaryLength = 11;
@@ -293,48 +745,31 @@ public class EnterprisePayrollExcel {
 
 		Sheet totals = null;
 		
+		List<String> keys = completeWorkplaceData.keySet().stream().collect(Collectors.toList());
 		
-		List<IEnterprisePayroll> normal = payrolls.stream().filter(s -> s.getSalaryType() == null || s.getSalaryType().ordinal() <= SalaryType.DELAY.ordinal()).collect(Collectors.toList());
-		List<IEnterprisePayroll> diff = payrolls.stream().filter(s -> s.getSalaryType() != null && s.getSalaryType().ordinal() > SalaryType.DELAY.ordinal()).collect(Collectors.toList());
+		totals = initializeCompleteTotalsSheet(enterpriseName, dateString, excelType, wb, stylesMap, completeLength,
+				summaryLength, totals, keys);
 		
-		totals = initializeTotalsSheet(header, enterpriseName, dateString, excelType, wb, stylesMap, completeLength,
-				summaryLength, totals, normal);
+		List<String> orderedMonths = getInnerPeriodStrings(startDate, endDate);
+		
+		Map<String, List<TotalsReferences>> totalsSchema = new LinkedHashMap<>();
 
-		Iterator<String> it = payrolls.stream().map(IEnterprisePayroll::getWorkplace).distinct().iterator();
 
-		while (it.hasNext()) {
+		for(String sheetKey : keys) {
 			try {
-				String workplace = it.next();
-				LinkedList<IEnterprisePayroll> ordered = new LinkedList<>();
-				List<IEnterprisePayroll> spare = diff.stream()
-					.filter(p -> p.getWorkplace().equals(workplace))
-					.filter(p -> !(normal.stream().anyMatch(np ->(np.getStartDate() != null && np.getStartDate().equals(p.getStartDate()) 
-					&& (np.getEndDate() != null && np.getEndDate().equals(p.getEndDate())) 
-					&& (np.getEmployeeNaf() != null && np.getEmployeeNaf().equals(p.getEmployeeNaf()))
-					&& (p.getCcc() != null && p.getCcc().equals(np.getCcc()))
-					&& isRelatedSalaryType(np.getSalaryType(), p.getSalaryType()))
-					)
-					)).collect(Collectors.toList());
 				
-				normal.stream()
-						.filter(payroll -> payroll.getWorkplace().equals(workplace))
-						.forEach(pay -> {
-							ordered.add(pay);
-							diff.stream().filter(p -> 
-							(p.getStartDate() != null && p.getStartDate().equals(pay.getStartDate()) 
-							&& (p.getEndDate() != null && p.getEndDate().equals(pay.getEndDate())) 
-							&& (p.getEmployeeNaf() != null && p.getEmployeeNaf().equals(pay.getEmployeeNaf())))
-							&& (p.getCcc() != null && p.getCcc().equals(pay.getCcc()))
-							&& isRelatedSalaryType(pay.getSalaryType(), p.getSalaryType()))
-							.forEach(p -> ordered.add(p.setOriginalPayroll(pay)));
-							
-						});
-
+				int numberOfColumns = 0;
 				
-				ordered.addAll(spare);
+				List<IEnterprisePayroll> allPayrolls = new LinkedList<>();
 				
-				Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(workplace));
-				EnterprisePayrollExcelChecks checks = new EnterprisePayrollExcelChecks(ordered);
+				
+				completeWorkplaceData.get(sheetKey).forEach((k2, v2) -> v2.forEach((k3, v3) -> allPayrolls.add(v3)));
+				
+				Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(sheetKey));
+				
+				sheet.createFreezePane(1, 3);
+				
+				EnterprisePayrollExcelChecks checks = new EnterprisePayrollExcelChecks(allPayrolls);
 				
 				LinkedHashMap<String, String> finalHeader = new LinkedHashMap<>();
 
@@ -342,16 +777,12 @@ public class EnterprisePayrollExcel {
 					LinkedHashMap<String, String> customHeader = header.get();
 					finalHeader.putAll(customHeader);
 				} else {
-					if (excelType == ExcelType.COMPLETE)
-						finalHeader.putAll(DEFAULT_HEADER);
-					else if (excelType == ExcelType.SUMMARY)
-						finalHeader.putAll(DEFAULT_HEADER_SUMMARY);
+						finalHeader.putAll(COMPLETE_HEADER);
 				}
 
 				String rawColumn = null;
 				String enterpriseSSColumn = null;
 				String employeeSSColumn = null;
-//				String bonusColumn = null;
 				String otherDecutionsColumn = null;
 				String advancedPaymentsColumn = null;
 				
@@ -359,9 +790,9 @@ public class EnterprisePayrollExcel {
 				ArrayList<Integer> importantCells = new ArrayList<>(3);
 				
 				
-				int empFirstCell = 3;
-				int entFirstCell = 2;
-				int tgssCell = 4;
+				int empFirstCell = 4;
+				int entFirstCell = 3;
+				int tgssCell = 5;
 				int entQuoteFirstCell;
 				int empQuoteFirstCell;
 				
@@ -407,7 +838,682 @@ public class EnterprisePayrollExcel {
 					
 					entQuoteFirstCell= tgssCell+2;
 					empQuoteFirstCell = entQuoteFirstCell+1;
-					if (excelType == ExcelType.COMPLETE) {
+					if (excelType.isComplete()) {
+						if (!checks.isCgcEnterprise())
+						finalHeader.remove("cgcEnterprise");
+						else
+							empQuoteFirstCell++;
+						if (!checks.isCgpEnterprise())
+							finalHeader.remove("cgpEnterprise");
+						else
+							empQuoteFirstCell++;
+						if (!checks.isUnemploymentEnterprise())
+							finalHeader.remove("unemploymentEnterprise");
+						else
+							empQuoteFirstCell++;
+						if (!checks.isJobTrainingEnterprise())
+							finalHeader.remove("jobTrainingEnterprise");
+						else
+							empQuoteFirstCell++;
+						if (!checks.isFogasaEnterprise())
+							finalHeader.remove("fogasaEnterprise");
+						else
+							empQuoteFirstCell++;
+						if (!checks.isExtraHEnterprise())
+							finalHeader.remove("extraHEnterprise");
+						else
+							empQuoteFirstCell++;
+						if (!checks.isBonuses())
+							finalHeader.remove("bonuses");
+						else
+							empQuoteFirstCell++;
+						
+						
+						if (!checks.isCgcBase())
+							finalHeader.remove("cgcBase");
+						if (!checks.isIrpfBase())
+							finalHeader.remove("irpfBase");
+						if (!checks.isMoneyIrpfBase())
+							finalHeader.remove("moneyIrpfBase");
+						if (!checks.isInKindIrpfBase())
+							finalHeader.remove("inKindIrpfBase");
+						
+						
+						
+						if (!checks.isCgc())
+							finalHeader.remove("cgc");
+	
+						if (!checks.isCgp())
+							finalHeader.remove("cgp");
+	
+						if (!checks.isUnemployment())
+							finalHeader.remove("unemployment");
+	
+						if (!checks.isJobTraining())
+							finalHeader.remove("jobTraining");
+	
+						if (!checks.isAdvancedPayment())
+							finalHeader.remove("advancedPayments");
+	
+						if (!checks.isOtherDeductions())
+							finalHeader.remove("otherDeductions");
+						if (!checks.isExtraH())
+							finalHeader.remove("extraH");
+						
+						
+						if (!checks.isEmbargos())
+							finalHeader.remove("embargos");
+					}
+					
+
+					row = sheet.createRow(2);
+
+					Iterator<String> headersIt = finalHeader.keySet().iterator();
+
+					int c = 0;
+
+					while (headersIt.hasNext()) {
+						Cell cell = row.createCell(c);
+						String key = headersIt.next();
+						String cellValue = finalHeader.get(key);
+
+						if (key.equals("raw"))
+							rawColumn = CellReference.convertNumToColString(c);
+						else if (key.equals("enterpriseSS"))
+							enterpriseSSColumn = CellReference.convertNumToColString(c);
+//						else if (key.equals("bonuses"))
+//							bonusColumn = CellReference.convertNumToColString(c);
+						else if (key.equals("employeeSS"))
+							employeeSSColumn = CellReference.convertNumToColString(c);
+						else if (key.equals("otherDeductions"))
+							otherDecutionsColumn = CellReference.convertNumToColString(c); 
+						else if (key.equals("advancedPayments"))
+							advancedPaymentsColumn= CellReference.convertNumToColString(c);
+
+						cell.setCellValue(cellValue);
+						if (AonStringUtils.containsIgnoreCase(key, "joint")) {
+							cell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+							joints.add(c);
+						}
+						else if (key.equals("totalCost") || key.equals("liquid") || key.equals("totalSS")) {
+							importantCells.add(c);
+							cell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+						}
+						else
+							cell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+						
+						c++;
+					}
+
+				
+
+				LinkedList<Integer> normalRows = new LinkedList<>();
+				HashSet<Integer> ssCols = new HashSet<>();
+				
+				Map<String, Map<SalaryType, IEnterprisePayroll>> dataByPeriod = completeWorkplaceData.get(sheetKey);
+				
+				
+				for (String month : orderedMonths) {
+					List<Integer> rowsForMonthTotal = new LinkedList<>();
+					row = sheet.createRow(sheet.getLastRowNum() + 1);
+					int monthRowInd = row.getRowNum();
+					Cell nameCell = row.createCell(0);
+					nameCell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE));
+					nameCell.setCellValue(month);
+					
+					if (dataByPeriod.containsKey(month)) {
+						
+						Map<SalaryType, IEnterprisePayroll> dataByType = dataByPeriod.get(month);
+						
+						for (SalaryType salaryType : dataByType.keySet()) {
+							IEnterprisePayroll payroll = dataByType.get(salaryType);
+							row = sheet.createRow(sheet.getLastRowNum() + 1);
+							rowsForMonthTotal.add(row.getRowNum() + 1);
+							Cell leftCell = row.createCell(0);
+							leftCell.setCellValue(month);
+							leftCell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE_WHITE_BACK));
+							
+							leftCell = row.createCell(1);
+							leftCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+							
+							
+							Cell typeCell = row.createCell(2);
+							typeCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+							typeCell.setCellValue(getSalaryTypeName(salaryType));
+							
+							int column = 0;
+							
+							normalRows.add(row.getRowNum() + 1);
+							//EMPLOYEE NAME
+//							writeEmployee(stylesMap, row, column++, payroll, excelType);
+							column++;
+							column++;
+							column++;
+							//SALARY TYPE
+							
+							PayrollCellStyle style = PayrollCellStyle.DOUBLE_CELL_STYLE;
+							if (checks.isRaw()) {
+								createDoubleCell(row, column++, payroll.getRaw(), stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+									
+							}
+							
+							if (checks.isEnterpriseSS()) {
+								CellStyle sti = stylesMap.get(style);
+								ssCols.add(column);
+								createDoubleCell(row, column++, payroll.getEnterpriseSS(), sti);
+							
+								
+							}
+
+							if (checks.isTotalCost()) {
+								int rowNum = row.getRowNum() + 1;
+								Cell totalCostCell = row.createCell(column++);
+								totalCostCell.setCellType(CellType.FORMULA);
+								if (!checks.isRaw())
+									totalCostCell.setCellFormula(enterpriseSSColumn + rowNum);
+								else if (!checks.isEnterpriseSS())
+									totalCostCell.setCellFormula(rawColumn + rowNum);
+								else
+									totalCostCell.setCellFormula(rawColumn + rowNum + "+" + enterpriseSSColumn + rowNum);
+								totalCostCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+							}
+							
+							writeJoint(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE), row, column++);
+							
+							if (checks.isEmployeeSS()) {
+								
+								CellStyle sti = stylesMap.get(style);
+								ssCols.add(column);
+								if (column == entFirstCell - 1) {
+									style = PayrollCellStyle.BOUND_CELL_STYLE_PREV;
+									sti = stylesMap.get(style);
+								}
+									createDoubleCell(row, column++, payroll.getEmployeeSS(), sti);
+							}
+							
+							if (checks.isIrpf()) {
+								if (column == entFirstCell - 1)
+									style = PayrollCellStyle.BOUND_CELL_STYLE_PREV;
+								createDoubleCell(row, column++, payroll.getIrpf(), stylesMap.get(style));
+							}
+							
+							if (checks.isOther()) {
+								int rowNum = row.getRowNum() + 1;
+								Cell otherCell = row.createCell(column++, CellType.FORMULA);
+								String formula = "";
+								if (excelType.isComplete())
+									formula = (advancedPaymentsColumn!=null?advancedPaymentsColumn+rowNum+"+":"")
+										+(otherDecutionsColumn!=null?otherDecutionsColumn+rowNum:"0");
+								else if (!excelType.isComplete())
+									formula = (payroll.getAdvancedPayment()!=null?payroll.getAdvancedPayment()+"+":"")
+									+(payroll.getOtherDeductions()!=null?payroll.getOtherDeductions():"0");
+								otherCell.setCellFormula(formula);
+								otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+							}
+							
+							if (checks.isLiquid()) {
+								if (column == entFirstCell - 1)
+									style = PayrollCellStyle.BOUND_CELL_STYLE_PREV;
+								createDoubleCell(row, column++, payroll.getLiquid(), stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+									
+							}
+							
+							//JOINT
+							writeJoint(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE), row, column++);
+							
+							if (checks.isTotalSS()) {
+								
+								int rowNum = row.getRowNum() + 1;
+								Cell totalCostCell;
+								ssCols.add(column);
+								
+								totalCostCell = row.createCell(column++, CellType.FORMULA);
+								String formula = "";
+								if (checks.isEnterpriseSS() && !checks.isEmployeeSS())
+									formula += enterpriseSSColumn + rowNum;
+								else if (!checks.isEnterpriseSS() && checks.isEmployeeSS())
+									formula += employeeSSColumn + rowNum;
+								else if (checks.isEnterpriseSS() && checks.isEmployeeSS())
+									formula += employeeSSColumn + rowNum + "+" + enterpriseSSColumn + rowNum;
+								
+								totalCostCell.setCellFormula(formula);
+								
+								totalCostCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+
+							}
+							if (excelType.isComplete()) {
+								writeCompleteDetails(stylesMap, row, checks, payroll, column, false, style, ssCols);
+							}
+							
+							numberOfColumns = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
+							
+						}
+						
+						
+						
+					}
+					
+					if (!rowsForMonthTotal.isEmpty()) {
+						row = sheet.getRow(monthRowInd);
+						writeMonthTotals(stylesMap, sheet, joints, importantCells, rowsForMonthTotal, row, month);
+					} else {
+						row = sheet.getRow(monthRowInd);
+						
+						Cell otherCell = row.createCell(1);
+						otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+						
+						otherCell = row.createCell(2);
+						otherCell.setCellType(CellType.BLANK);
+						otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE));
+						
+						int cellInd = 3;
+						
+						for (; cellInd<finalHeader.size(); cellInd++) {
+							List<String> hList = new LinkedList<>();
+							hList.addAll(finalHeader.keySet());
+							
+							if (!hList.get(cellInd).contains("join")) {
+								Cell totCell = row.createCell(cellInd);
+								totCell.setCellType(CellType.FORMULA);
+								totCell.setCellFormula("0");
+								if (!IMPORTANT_CELLS.contains(hList.get(cellInd)) || hList.get(cellInd).equals("raw"))
+									totCell.setCellStyle(stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE));
+								else
+									totCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_TOTAL_CELL_STYLE));
+									
+							} else {
+								Cell totCell = row.createCell(cellInd);
+								totCell.setCellType(CellType.BLANK);
+								totCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+							}
+						}
+						otherCell = row.createCell(cellInd);
+						otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
+						
+						
+					}
+					
+					
+					
+					TotalsReferences refs = new TotalsReferences(checks, sheetKey, (dataByPeriod.containsKey(month)) ? row.getRowNum() : null);
+					
+					if (totalsSchema.containsKey(month)) {
+						List<TotalsReferences> referenceList = totalsSchema.get(month);
+						referenceList.add(refs);
+					} else {
+						List<TotalsReferences> referenceList = new LinkedList<>();
+						referenceList.add(refs);						
+						totalsSchema.put(month, referenceList);
+					}
+					
+				}
+				
+				
+				Integer lastCell = numberOfColumns - 1;
+
+				sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, lastCell));
+				row = sheet.createRow(0);
+				Cell enterpriseCell = row.createCell(0);
+				enterpriseCell.setCellType(CellType.STRING);
+				enterpriseCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+				enterpriseCell.setCellValue(enterpriseName + " - " + dateString);
+				//WORKPLACE'S 2ND HEADER ROW 
+				
+				row = sheet.createRow(1);
+//				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, entFirstCell-1));
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, entFirstCell, empFirstCell - 2));
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, empFirstCell, tgssCell - 2));
+				
+				
+				Cell entCell = row.createCell(entFirstCell, CellType.STRING);
+				entCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+				entCell.setCellValue("EMPRESA");
+				
+				Cell jointCell = row.createCell(empFirstCell-1, CellType.STRING);
+				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+				
+				Cell epCell = row.createCell(empFirstCell, CellType.STRING);
+				epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+				epCell.setCellValue("EMPLEADO");
+				
+				jointCell = row.createCell(tgssCell-1, CellType.STRING);
+				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+				
+				if (checks.isTotalSS()) {
+					Cell tgCell = row.createCell(tgssCell, CellType.STRING);
+					tgCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+					tgCell .setCellValue("TGSS");
+				}
+				
+				if (excelType.isComplete()) {
+					jointCell = row.createCell(empFirstCell-1, CellType.STRING);
+					jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+					
+					if(empQuoteFirstCell-2 > entQuoteFirstCell) {
+						sheet.addMergedRegion(new CellRangeAddress(1, 1, entQuoteFirstCell, empQuoteFirstCell-2));
+						Cell entQuoteCell = row.createCell(entQuoteFirstCell, CellType.STRING);
+						entQuoteCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+						entQuoteCell.setCellValue("COTIZACIÓN EMPRESA");
+					} else if (empQuoteFirstCell-2 == entQuoteFirstCell) {
+						Cell entQuoteCell = row.createCell(entQuoteFirstCell, CellType.STRING);
+						entQuoteCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+						entQuoteCell.setCellValue("COTIZACIÓN EMPRESA");
+					}
+					
+					jointCell = row.createCell(empQuoteFirstCell-1, CellType.STRING);
+					jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+					
+					sheet.addMergedRegion(new CellRangeAddress(1, 1, empQuoteFirstCell, lastCell));
+					
+					Cell empQuoteCell = row.createCell(empQuoteFirstCell, CellType.STRING);
+					empQuoteCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+					empQuoteCell.setCellValue("COTIZACIÓN EMPLEADO");
+				}
+					
+
+					
+
+				
+				//WORKPLACE'S TOTALS
+				writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType, true);
+
+				for (int i = 0; i < finalHeader.size(); i++) {
+					sheet.autoSizeColumn(i);
+				}
+				
+				//WORKPLACE'S FINAL BORDER
+				for (int i = 0; i<=sheet.getLastRowNum(); i++) {
+					Row r = sheet.getRow(i);
+					Cell borderCell = r.createCell(finalHeader.size());
+					borderCell.setCellStyle(wb.createCellStyle());
+					borderCell.getCellStyle().setBorderLeft(BorderStyle.THIN);
+				}
+				
+			} catch (java.lang.IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (totals != null) {
+			
+			
+			for (String month : totalsSchema.keySet()) {
+				
+				List<Integer> totalOfTotals = new LinkedList<>();
+				
+				row = totals.createRow(totals.getLastRowNum() + 1);
+				
+				Cell cell = row.createCell(0);
+				cell.setCellValue(month);
+				cell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE));
+				
+				cell = row.createCell(1);
+				CellStyle leftBorder = wb.createCellStyle();
+				leftBorder.setBorderLeft(BorderStyle.THIN);
+				cell.setCellStyle(leftBorder);
+				
+				
+				List<TotalsReferences> references = totalsSchema.get(month);
+				for (TotalsReferences ref : references) {
+					if (ref.getRowNum() != null)
+						totalOfTotals.add(writeCompleteTotals(excelType, wb, stylesMap, totals, ref.getWorkplace(), ref.getChecks(), ref.getRowNum(), month) + 1);					
+				}
+				
+			
+				Cell otherCell = row.createCell(1);
+				otherCell.setCellType(CellType.BLANK);
+				otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+				
+				
+				otherCell = row.createCell(2);
+				otherCell.setCellType(CellType.BLANK);
+				otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE));
+				
+				int cellInd = 3;
+				for (; cellInd<COMPLETE_TOTALS_HEADER.size(); cellInd++) {
+					List<String> hList = new LinkedList<>();
+					hList.addAll(COMPLETE_TOTALS_HEADER.keySet());
+					
+					
+					if (!hList.get(cellInd).contains("join")) {
+						Cell totCell = row.createCell(cellInd);
+						totCell.setCellType(CellType.FORMULA);
+						
+						String colLetter = CellReference.convertNumToColString(cellInd);
+						String formula = "0";
+						for (Integer t : totalOfTotals) {
+							formula += "+" + colLetter + t;
+						}
+						
+						totCell.setCellFormula(formula);
+						if(!IMPORTANT_CELLS.contains(hList.get(cellInd))) {							
+							totCell.setCellStyle(stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE));
+						} else {							
+							totCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_TOTAL_CELL_STYLE));
+						}
+					} else {
+						Cell totCell = row.createCell(cellInd);
+						totCell.setCellType(CellType.BLANK);
+						totCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+					}
+				}
+				
+				otherCell = row.createCell(cellInd);
+				otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
+			}
+			
+			
+			
+			
+			
+			
+			FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+			evaluator.evaluateAll();
+			
+			int length = -1;
+			if (excelType.isComplete())
+				length = completeLength;
+			else
+				length = summaryLength;
+			
+			for (int i = 0; i <= length; i++) {
+				totals.autoSizeColumn(i);
+				if (totals.getColumnWidth(i) > 256)
+					totals.setColumnWidth(i, totals.getColumnWidth(i) + 256);
+			}
+
+			
+			Row prev = totals.getRow(totals.getLastRowNum());
+			Row finale = totals.createRow(totals.getLastRowNum() + 1);
+			CellStyle closingStyle = wb.createCellStyle();
+			closingStyle.setBorderTop(BorderStyle.THIN);
+			for (int i = 2; i <= (!excelType.isComplete() ? summaryLength : completeLength); i++) {
+				if (prev.getCell(i) == null || (prev.getCell(i) != null && !prev.getCell(i).getCellStyle().equals(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE))))
+					finale.createCell(i).setCellStyle(closingStyle);
+			}
+			
+		}
+		wb.write(outputStream);
+		outputStream.close();
+		wb.close();
+	}
+	
+	
+	
+	
+	
+	
+	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
+			Optional<LinkedHashMap<String, String>> header, String enterpriseName, Date startDate, Date endDate, ExcelType excelType)
+			throws IOException {
+		
+		String dateString = getAppropiatePeriodString(startDate, endDate);
+		write(outputStream, payrolls, header, enterpriseName, dateString, excelType);
+	}
+
+	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
+			Optional<LinkedHashMap<String, String>> header, String enterpriseName, String dateString, ExcelType excelType)
+			throws IOException {
+		
+		Workbook wb = new XSSFWorkbook();
+
+		DataFormat format = wb.createDataFormat();
+
+		Map<PayrollCellStyle, CellStyle> stylesMap = PayrollCellStyle.getStyles(wb, format);
+		HashSet<Integer> totalsSSRows = new HashSet<>();
+		
+		final int completeLength = 34;
+		final int summaryLength = 11;
+
+		Row row = null;
+
+		Sheet totals = null;
+		
+		
+		List<IEnterprisePayroll> normal = payrolls.stream().filter(s -> s.getSalaryType() == null || s.getSalaryType().ordinal() <= SalaryType.DELAY.ordinal()).collect(Collectors.toList());
+		List<IEnterprisePayroll> diff = payrolls.stream().filter(s -> s.getSalaryType() != null && s.getSalaryType().ordinal() > SalaryType.DELAY.ordinal()).collect(Collectors.toList());
+		
+		
+		List<String> workplaces = normal.stream().map(IEnterprisePayroll::getWorkplace).distinct().collect(Collectors.toList());
+		
+		totals = initializeTotalsSheet(header, enterpriseName, dateString, excelType, wb, stylesMap, completeLength,
+				summaryLength, totals, workplaces);
+
+		Iterator<String> it = payrolls.stream().map(IEnterprisePayroll::getWorkplace).distinct().sorted((w1, w2) -> {
+			String str1 = w1 != null ? w1 : "";
+			String str2 = w2 != null ? w2 : "";
+			return str1.compareTo(str2);
+		}).iterator();
+
+		while (it.hasNext()) {
+			try {
+				String workplace = it.next();
+				LinkedList<IEnterprisePayroll> ordered = new LinkedList<>();
+				List<IEnterprisePayroll> spare = diff.stream()
+					.filter(p -> p.getWorkplace().equals(workplace))
+					.filter(p -> !(normal.stream().anyMatch(np ->(np.getStartDate() != null && np.getStartDate().equals(p.getStartDate()) 
+						&& (np.getEndDate() != null && np.getEndDate().equals(p.getEndDate())) 
+						&& (np.getEmployeeNaf() != null && np.getEmployeeNaf().equals(p.getEmployeeNaf()))
+						&& (p.getCcc() != null && p.getCcc().equals(np.getCcc()))
+						&& isRelatedSalaryType(np.getSalaryType(), p.getSalaryType()))
+					)
+					)).collect(Collectors.toList());
+				
+				normal.stream()
+						.filter(payroll -> payroll.getWorkplace().equals(workplace))
+						.forEach(pay -> {
+							ordered.add(pay);
+							diff.stream().filter(p -> 
+							(p.getStartDate() != null && p.getStartDate().equals(pay.getStartDate()) 
+							&& (p.getEndDate() != null && p.getEndDate().equals(pay.getEndDate())) 
+							&& (p.getEmployeeNaf() != null && p.getEmployeeNaf().equals(pay.getEmployeeNaf())))
+							&& (p.getCcc() != null && p.getCcc().equals(pay.getCcc()))
+							&& isRelatedSalaryType(pay.getSalaryType(), p.getSalaryType()))
+							.forEach(p -> ordered.add(p.setOriginalPayroll(pay)));
+							
+						});
+
+				
+				ordered.addAll(spare);
+				
+				
+				if (excelType.equals(ExcelType.EMPLOYEE_COMPLETE) || excelType.equals(ExcelType.EMPLOYEE_SUMMARY)) {					
+					ordered.sort((e1, e2) -> e1.getEmployee().compareTo(e2.getEmployee()));
+				} else if (excelType.equals(ExcelType.PERIOD_COMPLETE) || excelType.equals(ExcelType.PERIOD_SUMMARY) ) {
+					ordered.sort((e1, e2) -> {
+						Date d1 = e1.getEndDate();
+						Date d2 = e2.getEndDate();
+						if (d1 == null && d2 == null)
+							return 0;
+						else if (d1 == null)
+							return -1;
+						else if (d2 == null)
+							return 1;
+						else {
+							return d1.compareTo(d2);
+						}
+					});					
+				}
+				
+				Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(workplace));
+				EnterprisePayrollExcelChecks checks = new EnterprisePayrollExcelChecks(ordered);
+				
+				LinkedHashMap<String, String> finalHeader = new LinkedHashMap<>();
+
+				if (header.isPresent()) {
+					LinkedHashMap<String, String> customHeader = header.get();
+					finalHeader.putAll(customHeader);
+				} else {
+					if (excelType == ExcelType.COMPLETE)
+						finalHeader.putAll(DEFAULT_HEADER);
+					else if (excelType == ExcelType.SUMMARY)
+						finalHeader.putAll(DEFAULT_HEADER_SUMMARY);
+					else if (excelType == ExcelType.EMPLOYEE_SUMMARY || excelType == ExcelType.PERIOD_SUMMARY)
+						finalHeader.putAll(DEFAULT_HEADER_NO_TYPE_SUMMARY);
+					else if (excelType == ExcelType.EMPLOYEE_COMPLETE || excelType == ExcelType.PERIOD_COMPLETE)
+						finalHeader.putAll(DEFAULT_HEADER_NO_TYPE);
+				}
+
+				String rawColumn = null;
+				String enterpriseSSColumn = null;
+				String employeeSSColumn = null;
+//				String bonusColumn = null;
+				String otherDecutionsColumn = null;
+				String advancedPaymentsColumn = null;
+				
+				ArrayList<Integer> joints = new ArrayList<>(5);
+				ArrayList<Integer> importantCells = new ArrayList<>(3);
+				
+				
+				int empFirstCell = excelType.isWithType() ? 3 : 2;
+				int entFirstCell = excelType.isWithType() ? 2 : 1;
+				int tgssCell = excelType.isWithType() ? 4 : 3;
+				int entQuoteFirstCell;
+				int empQuoteFirstCell;
+				
+
+					if (!checks.isRaw())
+						finalHeader.remove("raw");
+					else {
+						empFirstCell++;
+						tgssCell++;
+					}
+					if (!checks.isEnterpriseSS())
+						finalHeader.remove("enterpriseSS");
+					else {
+						empFirstCell++;
+						tgssCell++;
+					}
+					if (!checks.isTotalCost())
+						finalHeader.remove("totalCost");
+					else {
+						empFirstCell++;
+						tgssCell++;
+					}
+					
+					if (!checks.isEmployeeSS())
+						finalHeader.remove("employeeSS");
+					else
+						tgssCell++;
+					if (!checks.isIrpf())
+						finalHeader.remove("irpf");
+					else
+						tgssCell++;
+					if (!checks.isOther())
+						finalHeader.remove("other");
+					else
+						tgssCell++;
+					if (!checks.isLiquid())
+						finalHeader.remove("liquid");
+					else
+						tgssCell++;
+					
+					if (!checks.isTotalSS())
+						finalHeader.remove("totalSS");
+					
+					entQuoteFirstCell= tgssCell+2;
+					empQuoteFirstCell = entQuoteFirstCell+1;
+					if (excelType.isComplete()) {
 						if (!checks.isCgcEnterprise())
 						finalHeader.remove("cgcEnterprise");
 						else
@@ -538,14 +1644,16 @@ public class EnterprisePayrollExcel {
 						ssRows.add(row.getRowNum() + 1);						
 					}
 					//EMPLOYEE NAME
-					writeEmployee(stylesMap, row, column++, payroll);
+					writeEmployee(stylesMap, row, column++, payroll, excelType);
 					//SALARY TYPE
-					writeSalaryType(
-							isDiff
-							, stylesMap
-							, row
-							, column++
-							, payroll);
+					if (excelType.isWithType()) {						
+						writeSalaryType(
+								isDiff
+								, stylesMap
+								, row
+								, column++
+								, payroll);
+					}
 					
 					PayrollCellStyle style = PayrollCellStyle.DOUBLE_CELL_STYLE;
 					if (checks.isRaw()) {
@@ -645,10 +1753,10 @@ public class EnterprisePayrollExcel {
 						int rowNum = row.getRowNum() + 1;
 						Cell otherCell = row.createCell(column++, CellType.FORMULA);
 						String formula = "";
-						if (excelType == ExcelType.COMPLETE)
+						if (excelType.isComplete())
 							formula = (advancedPaymentsColumn!=null?advancedPaymentsColumn+rowNum+"+":"")
 								+(otherDecutionsColumn!=null?otherDecutionsColumn+rowNum:"0");
-						else if (excelType == ExcelType.SUMMARY)
+						else if (!excelType.isComplete())
 							formula = (payroll.getAdvancedPayment()!=null?payroll.getAdvancedPayment()+"+":"")
 							+(payroll.getOtherDeductions()!=null?payroll.getOtherDeductions():"0");
 						otherCell.setCellFormula(formula);
@@ -707,7 +1815,7 @@ public class EnterprisePayrollExcel {
 						}
 
 					}
-					if (excelType == ExcelType.COMPLETE) {
+					if (excelType.isComplete()) {
 						writeCompleteDetails(stylesMap, row, checks, payroll, column, isDiff, style, ssCols);
 					}
 					
@@ -724,12 +1832,12 @@ public class EnterprisePayrollExcel {
 				//WORKPLACE'S 2ND HEADER ROW 
 				
 				row = sheet.createRow(1);
-				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, entFirstCell-1));
+//				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, entFirstCell-1));
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, entFirstCell, empFirstCell - 2));
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, empFirstCell, tgssCell-2));
 				
 				
-				Cell entCell = row.createCell(2, CellType.STRING);
+				Cell entCell = row.createCell(entFirstCell, CellType.STRING);
 				entCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				entCell.setCellValue("EMPRESA");
 				
@@ -749,7 +1857,7 @@ public class EnterprisePayrollExcel {
 					tgCell .setCellValue("TGSS");
 				}
 				
-				if (excelType == ExcelType.COMPLETE) {
+				if (excelType.isComplete()) {
 					jointCell = row.createCell(empFirstCell-1, CellType.STRING);
 					jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 					
@@ -779,7 +1887,7 @@ public class EnterprisePayrollExcel {
 
 				
 				//WORKPLACE'S TOTALS
-				int totalsRow = writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows);
+				int totalsRow = writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType);
 
 				//WORKPLACE'S SS TOTALS
 				if (ssRows != null && !ssRows.isEmpty())
@@ -799,7 +1907,7 @@ public class EnterprisePayrollExcel {
 					for (int i = 0; i<=totals.getLastRowNum(); i++) {
 //						if (!totalsSSRows.contains(i)) {
 							Row r = totals.getRow(i);
-							int lCell = (excelType == ExcelType.COMPLETE) ? completeLength + 1 : summaryLength +1;
+							int lCell = excelType.isComplete() ? completeLength + 1 : summaryLength +1;
 							Cell borderCell = r.createCell(lCell);
 							borderCell.setCellStyle(wb.createCellStyle());
 							borderCell.getCellStyle().setBorderLeft(BorderStyle.THIN);							
@@ -830,9 +1938,9 @@ public class EnterprisePayrollExcel {
 			});
 			
 			int length = -1;
-			if (excelType == ExcelType.COMPLETE)
+			if (excelType.isComplete())
 				length = completeLength;
-			else if (excelType == ExcelType.SUMMARY)
+			else
 				length = summaryLength;
 			
 			for (int i = 0; i <= length; i++) {
@@ -853,7 +1961,7 @@ public class EnterprisePayrollExcel {
 			Row finale = totals.createRow(totals.getLastRowNum() + 1);
 			CellStyle closingStyle = wb.createCellStyle();
 			closingStyle.setBorderTop(BorderStyle.THIN);
-			for (int i = 2; i <= ((excelType == ExcelType.SUMMARY) ? summaryLength : completeLength); i++) {
+			for (int i = 2; i <= (!excelType.isComplete() ? summaryLength : completeLength); i++) {
 				if (prev.getCell(i) == null || (prev.getCell(i) != null && !prev.getCell(i).getCellStyle().equals(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE))))
 					finale.createCell(i).setCellStyle(closingStyle);
 			}
@@ -866,9 +1974,9 @@ public class EnterprisePayrollExcel {
 
 	private static Sheet initializeTotalsSheet(Optional<LinkedHashMap<String, String>> header, String enterpriseName,
 			String dateString, ExcelType excelType, Workbook wb, Map<PayrollCellStyle, CellStyle> stylesMap,
-			final int completeLength, final int summaryLength, Sheet totals, List<IEnterprisePayroll> normal) {
+			final int completeLength, final int summaryLength, Sheet totals, List<String> workplaces) {
 		Row row;
-		if (normal.stream().map(IEnterprisePayroll::getWorkplace).distinct().count() > 1) {
+		if (workplaces.size() > 1) {
 			totals = wb.createSheet(WorkbookUtil.createSafeSheetName("TOTALES"));
 			// Sheet of total amounts by workplace
 
@@ -878,9 +1986,9 @@ public class EnterprisePayrollExcel {
 				LinkedHashMap<String, String> customHeader = header.get();
 				finalHeader.putAll(customHeader);
 			} else {
-				if (excelType == ExcelType.COMPLETE)
+				if (excelType.isComplete())
 					finalHeader.putAll(DEFAULT_HEADER);
-				else if (excelType == ExcelType.SUMMARY)
+				else
 					finalHeader.putAll(DEFAULT_HEADER_SUMMARY);
 			}
 
@@ -888,7 +1996,7 @@ public class EnterprisePayrollExcel {
 
 			Iterator<String> itHead = finalHeader.keySet().iterator();
 			
-			int lCell = excelType == ExcelType.COMPLETE ? completeLength : summaryLength;
+			int lCell = excelType.isComplete() ? completeLength : summaryLength;
 			
 			totals.addMergedRegion(new CellRangeAddress(0, 0, 0, lCell));
 			row = totals.createRow(0);
@@ -937,7 +2045,7 @@ public class EnterprisePayrollExcel {
 			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			epCell.setCellValue("TGSS");
 			
-			if (excelType == ExcelType.COMPLETE) {
+			if (excelType.isComplete()) {
 				jointCell = row.createCell(12, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
@@ -958,6 +2066,102 @@ public class EnterprisePayrollExcel {
 				
 			
 
+		}
+		return totals;
+	}
+	
+	private static Sheet initializeCompleteTotalsSheet(String enterpriseName,
+			String dateString, ExcelType excelType, Workbook wb, Map<PayrollCellStyle, CellStyle> stylesMap,
+			final int completeLength, final int summaryLength, Sheet totals, List<String> workplaces) {
+		Row row;
+		if (workplaces.size() > 1) {
+			totals = wb.createSheet(WorkbookUtil.createSafeSheetName("TOTALES"));
+			// Sheet of total amounts by workplace
+			
+			LinkedHashMap<String, String> finalHeader = new LinkedHashMap<>();
+			
+			finalHeader = COMPLETE_TOTALS_HEADER;
+			
+			
+			Iterator<String> itHead = finalHeader.keySet().iterator();
+			
+			int lCell = excelType.isComplete() ? completeLength + 1 : summaryLength + 1;
+			
+			totals.addMergedRegion(new CellRangeAddress(0, 0, 0, lCell));
+			row = totals.createRow(0);
+			Cell enterpriseCell = row.createCell(0);
+			enterpriseCell.setCellType(CellType.STRING);
+			enterpriseCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+			enterpriseCell.setCellValue(enterpriseName + " - " + dateString);
+			
+			row = totals.createRow(2);
+			
+			int cellCount = 0;
+			
+			while (itHead.hasNext()) {
+				Cell cell = row.createCell(cellCount++);
+				cell.setCellType(CellType.STRING);
+				String value = itHead.next();
+				if (AonStringUtils.containsIgnoreCase(value, "join"))
+					cell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+				else {
+					cell.setCellValue(finalHeader.get(value));
+					cell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+				}
+			}
+			
+			
+			int lastCell = row.getLastCellNum() - 1;
+			row = totals.createRow(1);
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 0, 1));
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 3, 5));
+			Cell epCell = row.createCell(3, CellType.STRING);
+			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+			epCell.setCellValue("EMPRESA");
+			
+			Cell jointCell = row.createCell(6, CellType.STRING);
+			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+			
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 7, 10));
+			epCell = row.createCell(7, CellType.STRING);
+			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+			epCell.setCellValue("EMPLEADO");
+			
+			jointCell = row.createCell(11, CellType.STRING);
+			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+			
+			epCell = row.createCell(summaryLength + 1, CellType.STRING);
+			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+			epCell.setCellValue("TGSS");
+			
+			Cell closingCell = totals.getRow(0).createCell(lCell + 1);
+			closingCell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
+			closingCell = totals.getRow(1).createCell(lCell + 1);
+			closingCell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
+			
+			
+			if (excelType.isComplete()) {
+				jointCell = row.createCell(13, CellType.STRING);
+				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+				
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 14, 20));
+				Cell entCell = row.createCell(14, CellType.STRING);
+				entCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+				entCell.setCellValue("COTIZACIÓN EMPRESA");
+				
+				jointCell = row.createCell(20, CellType.STRING);
+				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+				
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 22, lastCell));
+				epCell= row.createCell(22, CellType.STRING);
+				epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+				epCell.setCellValue("COTIZACIÓN EMPLEADO");
+			}
+			
+			
+			totals.createFreezePane(1, 3);
+
+			
 		}
 		return totals;
 	}
@@ -1207,21 +2411,100 @@ public class EnterprisePayrollExcel {
 				createDoubleCell(row, column, null, stylesMap.get(style));
 		}
 	}
+	
+	
+	private static int writeMonthTotals(Map<PayrollCellStyle, CellStyle> stylesMap, Sheet sheet, ArrayList<Integer> joints,
+			List<Integer> importantCells, List<Integer> rowsForFormula, Row row, String month) {
+		
+//		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
+		
+		int[] numberOfColumns = new int[1];
+		
+		sheet.rowIterator().forEachRemaining(r -> {
+			if (r.getLastCellNum() > numberOfColumns[0]){
+				numberOfColumns[0] = r.getLastCellNum();
+			}
+		});
+		
+		int lastColumn = numberOfColumns[0];
+		
+		int ind = 3;
+		
+		Cell firstTotalsCell = row.createCell(1);
+		firstTotalsCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+		
+		firstTotalsCell = row.createCell(2);
+		firstTotalsCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_TOTAL_CELL_STYLE));
+
+		for (int i = ind; i < lastColumn; i++) {
+			
+			CellStyle style = stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE);
+			StringBuilder fsb = new StringBuilder("0");
+			for (Integer r : rowsForFormula) {
+				fsb.append("+" + CellReference.convertNumToColString(i) + r);
+				
+			}
+			Cell cell = row.createCell(i);
+			if (joints.contains(i))
+				style = stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE);
+			else if (importantCells.contains(i)) {
+				style = stylesMap.get(PayrollCellStyle.IMPORTANT_TOTAL_CELL_STYLE);
+				cell.setCellFormula(fsb.toString());
+				cell.setCellType(CellType.FORMULA);
+			} else {
+				cell.setCellFormula(fsb.toString());
+				cell.setCellType(CellType.FORMULA);
+			}
+				
+			cell.setCellStyle(style);
+		}
+		return row.getRowNum();
+		
+	}
 
 	private static int writeWorkplaceTotals(Map<PayrollCellStyle, CellStyle> stylesMap, Sheet sheet, ArrayList<Integer> joints,
-			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows) {
+			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType) {
+		return writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType, false);
+	}
+	
+	private static int writeWorkplaceTotals(Map<PayrollCellStyle, CellStyle> stylesMap, Sheet sheet, ArrayList<Integer> joints,
+			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType, boolean completeWorkplace) {
 		Row row;
 		
-		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
+//		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
+		
+		int[] numberOfColumns = new int[1];
+		
+		sheet.rowIterator().forEachRemaining(r -> {
+			if (r.getLastCellNum() > numberOfColumns[0]){
+				numberOfColumns[0] = r.getLastCellNum();
+			}
+		});
+		
+		int lastColumn = numberOfColumns[0];
+		
 		row = sheet.createRow(sheet.getLastRowNum() + 1);
 		
+		int ind = 1;
 		
-		Cell totalCell = row.createCell(1);
-		totalCell.setCellType(CellType.STRING);
-		totalCell.setCellValue("TOTALES:");
-		totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+		if (completeWorkplace) {
+			Cell totalCell = row.createCell(2);
+			totalCell.setCellType(CellType.STRING);
+			totalCell.setCellValue("TOTALES:");
+			totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+			ind = 3;
+		} else if (excelType.isWithType()) {			
+			Cell totalCell = row.createCell(1);
+			totalCell.setCellType(CellType.STRING);
+			totalCell.setCellValue("TOTALES:");
+			totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+			ind = 2;
+		} else {
+			Cell firstTotalsCell = row.createCell(0);
+			firstTotalsCell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_RIGHT_CELL_STYLE));
+		}
 
-		for (int i = 2; i < lastColumn; i++) {
+		for (int i = ind; i < lastColumn; i++) {
 			
 			CellStyle style = stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE);
 			StringBuilder fsb = new StringBuilder("0");
@@ -1324,7 +2607,8 @@ public class EnterprisePayrollExcel {
 			tCell.setCellValue(workplace);
 			tCell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE));
 
-			int column = 2;
+			
+			int column = excelType.isWithType() ? 2 : 1;
 			int cell = 2;
 			
 			Cell jCell = row.createCell(1, CellType.STRING);
@@ -1461,7 +2745,7 @@ public class EnterprisePayrollExcel {
 				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
 			}
 			
-			if (excelType == ExcelType.COMPLETE) {
+			if (excelType.isComplete()) {
 				//JOINT
 				drawTotalsJoint(stylesMap, row, diffRow, cell);
 				cell++;
@@ -1779,20 +3063,12 @@ public class EnterprisePayrollExcel {
 					tCell = row.createCell(cell++);
 					tCell.setCellType(CellType.FORMULA);
 					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
-					CellStyle finalCellStyle = wb.createCellStyle();
-					finalCellStyle.setBorderRight(BorderStyle.THIN);
-					finalCellStyle.setBorderTop(BorderStyle.THIN);
-					finalCellStyle.setBorderBottom(BorderStyle.THIN);
-					tCell.setCellStyle(finalCellStyle);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
 					column++;
 				} else {
 					tCell = row.createCell(cell++);
 					tCell.setCellType(CellType.FORMULA);
-					CellStyle finalCellStyle = wb.createCellStyle();
-					finalCellStyle.setBorderRight(BorderStyle.THIN);
-					finalCellStyle.setBorderTop(BorderStyle.THIN);
-					finalCellStyle.setBorderBottom(BorderStyle.THIN);
-					tCell.setCellStyle(finalCellStyle);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
 				}
 				
 				//JOINT
@@ -1805,39 +3081,23 @@ public class EnterprisePayrollExcel {
 					tCell = row.createCell(cell++);
 					tCell.setCellType(CellType.FORMULA);
 					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
-					CellStyle finalCellStyle = wb.createCellStyle();
-					finalCellStyle.setBorderRight(BorderStyle.THIN);
-					finalCellStyle.setBorderBottom(BorderStyle.THIN);
-					finalCellStyle.setBorderTop(BorderStyle.THIN);
-					tCell.setCellStyle(finalCellStyle);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
 					column++;
 				} else {
 					tCell = row.createCell(cell++);
 					tCell.setCellType(CellType.FORMULA);
-					CellStyle finalCellStyle = wb.createCellStyle();
-					finalCellStyle.setBorderRight(BorderStyle.THIN);
-					finalCellStyle.setBorderBottom(BorderStyle.THIN);
-					finalCellStyle.setBorderTop(BorderStyle.THIN);
-					tCell.setCellStyle(finalCellStyle);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
 				}
 				
 				if (checks.isInKindIrpfBase()) {
 					tCell = row.createCell(cell);
 					tCell.setCellType(CellType.FORMULA);
 					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
-					CellStyle finalCellStyle = wb.createCellStyle();
-					finalCellStyle.setBorderRight(BorderStyle.THIN);
-					finalCellStyle.setBorderBottom(BorderStyle.THIN);
-					finalCellStyle.setBorderTop(BorderStyle.THIN);
-					tCell.setCellStyle(finalCellStyle);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
 				} else {
 					tCell = row.createCell(cell);
 					tCell.setCellType(CellType.FORMULA);
-					CellStyle finalCellStyle = wb.createCellStyle();
-					finalCellStyle.setBorderRight(BorderStyle.THIN);
-					finalCellStyle.setBorderBottom(BorderStyle.THIN);
-					finalCellStyle.setBorderTop(BorderStyle.THIN);
-					tCell.setCellStyle(finalCellStyle);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
 				}
 				
 			}					
@@ -1848,6 +3108,415 @@ public class EnterprisePayrollExcel {
 		else return -1;
 	}
 
+	
+	private static Integer writeCompleteTotals(ExcelType excelType, Workbook wb, Map<PayrollCellStyle, CellStyle> stylesMap, Sheet totals,
+			String workplace, EnterprisePayrollExcelChecks checks, int totalsRow, String month) {
+		Row row;
+		Row diffRow = null;
+		if (totals != null) {
+			row = totals.createRow(totals.getLastRowNum() + 1);
+
+			Cell tCell = row.createCell(0);			
+			tCell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE_WHITE_BACK));
+			tCell.setCellValue(month);
+			
+			
+			int column = 2;
+			int cell = 2;
+			
+			Cell jCell = row.createCell(1, CellType.STRING);
+			jCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+			
+			
+			tCell = row.createCell(cell++);
+			tCell.setCellType(CellType.STRING);
+			tCell.setCellValue(workplace);
+			tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+			column++;
+			
+			if (checks.isRaw()) {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+			}
+			
+			if (checks.isEnterpriseSS()) {
+				tCell = row.createCell(cell);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				
+				cell++;
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+			}
+
+			if (checks.isTotalCost()) {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+			}
+			
+			//JOINT
+			drawTotalsJoint(stylesMap, row, diffRow, cell);
+			cell++;
+			column++;
+			
+			if (checks.isEmployeeSS()) {
+				tCell = row.createCell(cell);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				cell++;
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+			}
+			
+			if (checks.isIrpf()) {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+			}
+			
+			if (checks.isOther()) {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+			}
+			
+			if (checks.isLiquid()) {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV));
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV));
+			}
+			
+			//JOINT
+			drawTotalsJoint(stylesMap, row, diffRow, cell);
+			cell++;
+			column++;
+			
+			
+			if (checks.isTotalSS()) {
+				tCell = row.createCell(cell);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+				cell++;
+				column++;
+			} else {
+				tCell = row.createCell(cell++);
+				tCell.setCellType(CellType.FORMULA);
+				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE));
+			}
+			
+			if (excelType.isComplete()) {
+				//JOINT
+				drawTotalsJoint(stylesMap, row, diffRow, cell);
+				cell++;
+				column++;
+				
+				
+				if (checks.isCgcEnterprise()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isCgpEnterprise()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isUnemploymentEnterprise()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isJobTrainingEnterprise()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isFogasaEnterprise()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				if (checks.isExtraHEnterprise()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				if (checks.isBonuses()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				//JOINT
+				drawTotalsJoint(stylesMap, row, diffRow, cell);
+				cell++;
+				column++;
+
+				if (checks.isCgc()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				if (checks.isCgp()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isUnemployment()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isJobTraining()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				if (checks.isExtraH()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isAdvancedPayment()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				if (checks.isEmbargos()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+
+				if (checks.isOtherDeductions()) {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				//JOINT
+				drawTotalsJoint(stylesMap, row, diffRow, cell);
+				cell++;
+				column++;
+				
+				if (checks.isCgcBase()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					cell++;
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				if (checks.isIrpfBase()) {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
+				}
+				
+				//JOINT
+				drawTotalsJoint(stylesMap, row, diffRow, cell);
+				cell++;
+				column++;
+				
+				
+				if (checks.isMoneyIrpfBase()) {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					column++;
+				} else {
+					tCell = row.createCell(cell++);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+				}
+				
+				if (checks.isInKindIrpfBase()) {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
+				} else {
+					tCell = row.createCell(cell);
+					tCell.setCellType(CellType.FORMULA);
+					tCell.setCellStyle(stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE));
+				}
+				
+			}					
+			return row.getRowNum();
+		}
+		return null;
+	}
+	
+	
 	private static void drawTotalsJoint(Map<PayrollCellStyle, CellStyle> stylesMap, Row row, Row diffRow, int cell) {
 		Cell jointCell;
 		jointCell = row.createCell(cell, CellType.STRING);
@@ -1888,6 +3557,7 @@ public class EnterprisePayrollExcel {
 	private enum PayrollCellStyle {
 		HEADER_CELL_STYLE,
 		STRING_CELL_STYLE,
+		STRING_CELL_STYLE_WHITE_BACK,
 		BLANK_DIFF_CELL_STYLE,
 		RED_STRING_CELL_STYLE,
 		DOUBLE_CELL_STYLE,
@@ -1916,7 +3586,10 @@ public class EnterprisePayrollExcel {
 		RED_FORMULA_CELL_STYLE,
 		GREEN_FORMULA_CELL_STYLE,
 		ORANGE_FORMULA_CELL_STYLE,		
-		JOINT_CELL_STYLE;
+		JOINT_CELL_STYLE,
+		BORDER_RIGHT_CELL_STYLE,
+		BORDER_LEFT_CELL_STYLE,
+		FINAL_CELL_STYLE;
 		
 		private static final String DATA_FORMAT = "#,###,##0.#0";
 
@@ -1970,6 +3643,13 @@ public class EnterprisePayrollExcel {
 			stringCellStyle.setBorderBottom(BorderStyle.THIN);
 			stringCellStyle.setBorderTop(BorderStyle.THIN);
 			stylesMap.put(PayrollCellStyle.STRING_CELL_STYLE, stringCellStyle);
+			
+			CellStyle stringCellStyleWhiteBack = wb.createCellStyle();
+			stringCellStyleWhiteBack.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+			stringCellStyleWhiteBack.setFillPattern(FillPatternType.FINE_DOTS);
+			stringCellStyleWhiteBack.setBorderBottom(BorderStyle.THIN);
+			stringCellStyleWhiteBack.setBorderTop(BorderStyle.THIN);
+			stylesMap.put(PayrollCellStyle.STRING_CELL_STYLE_WHITE_BACK, stringCellStyleWhiteBack);
 			
 			CellStyle redStringCellStyle = wb.createCellStyle();
 			redStringCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
@@ -2213,6 +3893,23 @@ public class EnterprisePayrollExcel {
 			jointCellStyle.setBorderLeft(BorderStyle.THIN);
 			jointCellStyle.setBorderRight(BorderStyle.THIN);
 			stylesMap.put(PayrollCellStyle.JOINT_CELL_STYLE, jointCellStyle);
+			
+			CellStyle borderRightCellStyle = wb.createCellStyle();
+			borderRightCellStyle.setBorderRight(BorderStyle.THIN);
+			stylesMap.put(PayrollCellStyle.BORDER_RIGHT_CELL_STYLE, borderRightCellStyle);
+			
+			CellStyle borderLeftCellStyle = wb.createCellStyle();
+			borderLeftCellStyle.setBorderLeft(BorderStyle.THIN);
+			stylesMap.put(PayrollCellStyle.BORDER_LEFT_CELL_STYLE, borderLeftCellStyle);
+			
+			CellStyle finalCellStyle = wb.createCellStyle();
+			finalCellStyle.setDataFormat(format.getFormat(DATA_FORMAT));
+			finalCellStyle.setBorderRight(BorderStyle.THIN);
+			finalCellStyle.setBorderBottom(BorderStyle.THIN);
+			finalCellStyle.setBorderTop(BorderStyle.THIN);
+			stylesMap.put(PayrollCellStyle.FINAL_CELL_STYLE, finalCellStyle);
+			
+			
 			return stylesMap;
 		}
 	}
@@ -2264,6 +3961,57 @@ public class EnterprisePayrollExcel {
 	private static void writeJoint(CellStyle jointCellStyle, Row row, int column) {
 		Cell jointCell = row.createCell(column, CellType.STRING);
 		jointCell.setCellStyle(jointCellStyle);
+	}
+	
+	private static String getSalaryTypeName(SalaryType salaryType) {
+		if (salaryType != null) {
+			return salaryType.accept(new SalaryType.TypeVisitor<String>() {
+
+				@Override
+				public String visitSalary(SalaryType type) {
+					return "NÓMINA";
+				}
+
+				@Override
+				public String visitExtra(SalaryType type) {
+					return "EXTRA";
+				}
+
+				@Override
+				public String visitSettle(SalaryType type) {
+					return "FINIQUITO";
+				}
+
+				@Override
+				public String visitDelay(SalaryType type) {
+					return "ATRASOS";
+				}
+
+				@Override
+				public String visitL00(SalaryType type) {
+					return "L00";
+				}
+
+				@Override
+				public String visitL03(SalaryType type) {
+					return "L03";
+				}
+
+				@Override
+				public String visitL13(SalaryType type) {
+					return "L13";
+				}
+
+				@Override
+				public String visitM190(SalaryType type) {
+					return "M190";
+				}
+				
+				
+			});
+		} else {
+			return "DESCONOCIDO";
+		}
 	}
 
 	private static void writeSalaryType(boolean isDiff, Map<PayrollCellStyle, CellStyle> stylesMap, Row row, int column, IEnterprisePayroll payroll) {
@@ -2322,12 +4070,18 @@ public class EnterprisePayrollExcel {
 			cell.setCellStyle(sti);
 	}
 
-	private static void writeEmployee(Map<PayrollCellStyle, CellStyle> stylesMap, Row row, int column, IEnterprisePayroll payroll) {
+	private static void writeEmployee(Map<PayrollCellStyle, CellStyle> stylesMap, Row row, int column, IEnterprisePayroll payroll, ExcelType excelType) {
 		Cell cell = row.createCell(column);
 		if(payroll.getOriginalPayroll() == null) {			
 			cell.setCellValue(payroll.getEmployee());
 			if (payroll.getSalaryType() == null || payroll.getSalaryType().ordinal() > SalaryType.DELAY.ordinal())
-				cell.setCellStyle(stylesMap.get(PayrollCellStyle.RED_STRING_CELL_STYLE));
+				
+				if (payroll.getSalaryType() == null && !excelType.isWithType()) {
+					cell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE));					
+				} else {					
+					cell.setCellStyle(stylesMap.get(PayrollCellStyle.RED_STRING_CELL_STYLE));
+				}
+				
 			else
 				cell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE));
 				
@@ -2398,7 +4152,7 @@ public class EnterprisePayrollExcel {
 					+ enterprisePayroll.raw;
 			
 			
-
+			
 			enterprisePayroll.bonuses = s.getBonuses().stream().mapToDouble(Bonus::getAmount).sum();
 			// PICKING UP DEDUCTIONS
 			Double cgc = s.getDeductions().stream()
@@ -2477,7 +4231,6 @@ public class EnterprisePayrollExcel {
 		});
 	}
 	
-	
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
 			final int year, Integer enterpriseId, Integer workplaceId) throws IOException {
 		
@@ -2510,7 +4263,43 @@ public class EnterprisePayrollExcel {
 					r -> r.getIdProperty().eq(eId.get())).getName();
 	}
 	
-	public static class EnterprisePayroll implements IEnterprisePayroll {
+	public static class TotalsReferences {
+		private EnterprisePayrollExcelChecks checks;
+		private String workplace;
+		private Integer rowNum;
+				
+		public TotalsReferences(EnterprisePayrollExcelChecks checks, String workplace, Integer rowNum) {
+			super();
+			this.checks = checks;
+			this.workplace = workplace;
+			this.rowNum = rowNum;
+		}
+		
+		public EnterprisePayrollExcelChecks getChecks() {
+			return checks;
+		}
+		public TotalsReferences setChecks(EnterprisePayrollExcelChecks checks) {
+			this.checks = checks;
+			return this;
+		}
+		public String getWorkplace() {
+			return workplace;
+		}
+		public TotalsReferences setWorkplace(String workplace) {
+			this.workplace = workplace;
+			return this;
+		}
+		public Integer getRowNum() {
+			return rowNum;
+		}
+		public TotalsReferences setRowNum(Integer rowNum) {
+			this.rowNum = rowNum;
+			return this;
+		}
+			
+	}
+	
+	public static class EnterprisePayroll implements IEnterprisePayroll, Cloneable {
 		
 		private Date startDate;
 		private Date endDate;
@@ -2741,6 +4530,101 @@ public class EnterprisePayrollExcel {
 			return ccc;
 		}
 
+		@Override
+		protected EnterprisePayroll clone() throws CloneNotSupportedException {
+			EnterprisePayroll cloned = new EnterprisePayroll();
+			cloned.startDate = this.startDate;
+			cloned.endDate = this.endDate;
+			
+			cloned.employee = this.employee;
+			cloned.employeeNaf = this.employeeNaf;
+			cloned.ccc = this.ccc;
+			cloned.workplace = this.workplace;
+			cloned.salaryType = this.salaryType;
+
+			cloned.raw = this.raw;
+			cloned.employeeSS = this.employeeSS;
+			cloned.irpf = this.irpf;
+			cloned.liquid = this.liquid;
+			cloned.enterpriseSS = this.enterpriseSS;
+			cloned.totalCost = this.totalCost;
+			cloned.totalSS = this.totalSS;
+			cloned.bonuses = this.bonuses;
+
+			cloned.cgcBase = this.cgcBase;
+			cloned.irpfBase = this.irpfBase;
+			cloned.moneyIrpfBase = this.moneyIrpfBase;
+			cloned.inKindIrpfBase = this.inKindIrpfBase;
+
+			cloned.cgc = this.cgc;
+			cloned.cgp = this.cgp;
+			cloned.unemployment = this.cgp;
+			cloned.jobTraining = this.jobTraining;
+			cloned.advancedPayment = this.advancedPayment;
+			cloned.otherDeductions = this.otherDeductions;
+			cloned.estruc = this.estruc;
+			cloned.noEstruct = this.noEstruct;
+			cloned.embargos = this.embargos;
+
+			cloned.cgcEnterprise = cgcEnterprise;
+			cloned.cgpEnterprise = this.cgpEnterprise;
+			cloned.unemploymentEnterprise = this.unemploymentEnterprise;
+			cloned.jobTrainingEnterprise = this.jobTrainingEnterprise;
+			cloned.fogasaEnterprise = this.fogasaEnterprise;
+			cloned.estrucEnterprise = this.estrucEnterprise;
+			cloned.noEstructEnterprise = this.noEstructEnterprise;
+			return cloned;
+		}
+		
+		
+
+	}
+	
+	private static String getAppropiatePeriodString(Date startDate, Date endDate) {
+		if (startDate == null || endDate == null)
+			return "";
+		Calendar cal1 = Calendar.getInstance();
+		cal1.setTime(startDate);
+		Calendar cal2 = Calendar.getInstance();
+		cal2.setTime(endDate);
+		
+		boolean sameYear = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+		boolean sameMonth = cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
+		boolean fromStartToEnd = cal1.get(Calendar.DAY_OF_MONTH) == 1 && cal2.get(Calendar.DAY_OF_MONTH) == cal2.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		
+		if (sameYear && sameMonth && fromStartToEnd) {
+			return getDateString(cal1.get(Calendar.MONTH) + 1, cal1.get(Calendar.YEAR));
+		} else {
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("es"));
+			String strStartDate = df.format(startDate);
+			String strEndDate = df.format(endDate);
+			
+			return "del " + strStartDate + " al " + strEndDate;
+		}
+		
+	}
+	
+	private static List<String> getInnerPeriodStrings(Date startDate, Date endDate) {
+		if (startDate == null || endDate == null)
+			return Collections.emptyList();
+		
+		Calendar cal1 = Calendar.getInstance();
+		cal1.setTime(startDate);
+		Calendar cal2 = Calendar.getInstance();
+		cal2.setTime(endDate);
+		
+		List<String> periods = new LinkedList<>();
+		
+		while(cal1.get(Calendar.YEAR) <= cal2.get(Calendar.YEAR) && cal1.get(Calendar.MONTH) <= cal2.get(Calendar.MONTH)) {
+			
+			periods.add(getDateString(cal1.get(Calendar.MONTH) + 1, cal1.get(Calendar.YEAR)).toUpperCase(new Locale("es", "ES")));
+			
+			cal1.add(Calendar.MONTH, 1);
+		}
+		
+		return periods;
+		
 	}
 	
 	

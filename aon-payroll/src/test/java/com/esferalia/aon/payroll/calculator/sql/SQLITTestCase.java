@@ -490,10 +490,11 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate,
 				null, 100.00);
 
-		addPayment(aonContext, contract, getFirstDayOfMonth(startITDate), "1000.00");
-		
 		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
 		Date endDate = getLastDayOfMonth(startDate);
+		
+		addPayment(aonContext, contract, startDate,endDate, "1000.00");
+		
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
@@ -5853,11 +5854,63 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
 	}
 	
+	@Test
+	public void testWrongDirectPayStart() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		addPrestITs(aonContext, contract);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, Calendar.DAY_OF_MONTH, 10);
+
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT,
+				null, null);
+		
+		int year = get(startDate, Calendar.YEAR);
+		addData(aonContext, contract, startIT, null, ContextVariable.DIRECT_PAY_START, "FECHA(2020,1,1)");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+
+		Assert.assertEquals(1750.00, salary.getCommonBase());
+
+	}
+
 	// ------------------------------------------------------------------------
 	
 
 	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)

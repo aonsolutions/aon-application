@@ -18,6 +18,7 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
+import solutions.aon.seg.social.object.It;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SituationType;
@@ -600,6 +601,16 @@ public class SistemaRED {
 	//												IT PARTS
 	// --------------------------------------------------------------------------------------------------------------
 
+
+	public static Collection<It> getIts(final byte[] certificateData, final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final Date startDate, final Date endDate, final Optional<String> naf) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaREDITParts.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
+		} catch (IOException | SegSocialException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
 	public static void registerITBaja(final byte[] certificateData, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final String naf, final SistemaRED.Contingencies contingency, final SistemaRED.SituationEmployee situation_employee, 
 			final Optional<String> licenseNumber, final Optional<String> cias, final Optional<String> occupation, final Date startdate,

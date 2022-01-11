@@ -510,6 +510,54 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IdRegistroExpInicialType }
+     * 
+     */
+    public IdRegistroExpInicialType createIdRegistroExpInicialType() {
+        return new IdRegistroExpInicialType();
+    }
+
+    /**
+     * Create an instance of {@link DepositoType }
+     * 
+     */
+    public DepositoType createDepositoType() {
+        return new DepositoType();
+    }
+
+    /**
+     * Create an instance of {@link VentaBienesConsignaType }
+     * 
+     */
+    public VentaBienesConsignaType createVentaBienesConsignaType() {
+        return new VentaBienesConsignaType();
+    }
+
+    /**
+     * Create an instance of {@link InfoExpedicionRecepcionType }
+     * 
+     */
+    public InfoExpedicionRecepcionType createInfoExpedicionRecepcionType() {
+        return new InfoExpedicionRecepcionType();
+    }
+
+    /**
+     * Create an instance of {@link IdRegistroDeclaradoType }
+     * 
+     */
+    public IdRegistroDeclaradoType createIdRegistroDeclaradoType() {
+        return new IdRegistroDeclaradoType();
+    }
+
+    /**
+     * Create an instance of {@link DestinoFinalExpedRecepType }
+     * 
+     */
+    public DestinoFinalExpedRecepType createDestinoFinalExpedRecepType() {
+        return new DestinoFinalExpedRecepType();
+    }
+
+    /**
      * Create an instance of {@link RangoFechaPresentacionType }
      * 
      */

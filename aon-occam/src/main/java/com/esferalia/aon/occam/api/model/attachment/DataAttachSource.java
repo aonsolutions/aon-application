@@ -25,7 +25,8 @@ public enum DataAttachSource implements Serializable {
 	INVOICE_PRINT_CONFIGURATION,
 	TBAI,
 	MOD202,
-	MOD190
+	MOD190,
+	LROE
 	;
 
 	public byte value() {

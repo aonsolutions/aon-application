@@ -92,6 +92,8 @@ export const AON_PRODUCT = 'aon-product';
 export const AON_GROUP_LIST = 'aon-group-list';
 export const AON_WORKGROUP = 'aon-workgroup';
 
+export const AON_INVEST = 'aon-invest';
+export const AON_INVEST_LIST = 'aon-invest-list';
 
 export const AON_INVOICE = 'aon-invoice';
 export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';

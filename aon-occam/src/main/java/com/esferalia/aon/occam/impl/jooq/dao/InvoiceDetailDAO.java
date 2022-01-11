@@ -194,6 +194,10 @@ public class InvoiceDetailDAO {
 
 		@Override
 		public InvoiceDetail apply(Record r) {
+			return build(r);
+		}
+		
+		public static InvoiceDetail build(Record r) {
 			return new InvoiceDetail()
 					.setId(r.getValue(INVOICE_DETAIL.ID))
 					.setInvoice(checkField(r, INVOICE.ID)

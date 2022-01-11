@@ -329,10 +329,21 @@ public class Model390HF extends MainEntryPoint {
 	}
 	
 	enum Mod390HFDeclarations {
+		ARABA_2021 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isAraba() && mod390HF.getYear() >= 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model3902021ARABA(cbk,mod390HF);
+			}
+		},
 		ARABA_2017 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isAraba());
+				return (mod390HF.isAraba() && mod390HF.getYear() >= 2017 && mod390HF.getYear() < 2021 );
 			}
 
 			@Override
@@ -351,10 +362,21 @@ public class Model390HF extends MainEntryPoint {
 				return new Model3902017BIZKAIA(cbk,mod390HF);
 			}
 		},
+		GIPUZKOA_2021 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isGipuzkoa() && mod390HF.getYear() >= 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model3902021GIPUZKOA(cbk,mod390HF);
+			}
+		},
 		GIPUZKOA_2017 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isGipuzkoa());
+				return (mod390HF.isGipuzkoa() && mod390HF.getYear() >= 2017 && mod390HF.getYear() < 2021);
 			}
 
 			@Override

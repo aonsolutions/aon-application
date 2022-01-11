@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -116,6 +117,9 @@ public class RegistryServlet extends AonApiHttpServlet {
 	
 	public static JSONObject saveRegistry(AonApiData api) {
 		Registry registry = RegistryJSON.fromJSON(api.getData());
+		if(AonDocumentUtil.isValid(registry.getDocument())) {
+			registry.setLegalPerson(AonDocumentUtil.isValidCIF(registry.getDocument()));
+		}
 		registry = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registry);
 		saveRegistryAdditionalInfo(api, registry.getId(), registry.getDomain().getId());
 		return new JSONObject();
@@ -132,35 +136,35 @@ public class RegistryServlet extends AonApiHttpServlet {
 		}
 		if(registryId != null) {
 			rais.stream().forEach(rai -> {
-				if(rai.equals(RegistryAdditionalInfo.ADDRESS)) {
+				if(RegistryAdditionalInfo.ADDRESS.equals(rai)) {
 					RegistryAddress address = AON.getMain(api.getDomain(), api.getUser(), registryId);
 					object.put(rai.name().toLowerCase(), RegistryAddressJSON.toJSON(address));
 				}
 			
-				if(rai.equals(RegistryAdditionalInfo.ADDRESSES)) {
+				if(RegistryAdditionalInfo.ADDRESSES.equals(rai)) {
 					RegistryAddressFilter filter = f -> f.getRegistryProperty().eq(registryId);
 					Stream<RegistryAddress> addresses = AON.getStream(api.getDomain(), api.getUser(), filter);
 					object.put(rai.name().toLowerCase(), RegistryAddressJSON.toJSON(addresses));
 				}
 			
-				if(rai.equals(RegistryAdditionalInfo.BANKS)) {
+				if(RegistryAdditionalInfo.BANKS.equals(rai)) {
 					object.put(rai.name().toLowerCase(), RegistryBankJSON.toJSON(
 						AON.getRegistryBankStream(api.getDomain(), api.getUser().getLogin(), f -> f.getRegistryProperty().eq(registryId))));
 				}
 			
-				if(rai.equals(RegistryAdditionalInfo.PAYMETHOD)) {
+				if(RegistryAdditionalInfo.PAYMETHOD.equals(rai)) {
 					RegistryPayMethod rpm = AON.getRPayMethod(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 						f.getRegistryProperty().eq(registryId));
 					object.put(rai.name().toLowerCase(), RegistryPaymethodJSON.toJSON(rpm));
 				}
 			
-				if(rai.equals(RegistryAdditionalInfo.MEDIA)) {
+				if(RegistryAdditionalInfo.MEDIA.equals(rai)) {
 					RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(registryId);
 					object.put(rai.name().toLowerCase(),
 						RegistryMediaJSON.toJSON(AON.getStream(api.getDomain(), api.getUser(), filter)));
 				}
 				
-				if(rai.equals(RegistryAdditionalInfo.RECORD_DATA)) {
+				if(RegistryAdditionalInfo.RECORD_DATA.equals(rai)) {
 					object.put(rai.name().toLowerCase(),
 						RecordDataJSON.toJSON(
 							AON.getRecordData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 

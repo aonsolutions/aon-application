@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateOwner;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -22,7 +22,7 @@ public class MainDigitalCertificatesObjectNew {
 	
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
-	private List<DigitalCertificateNew> digitalCertificateList;
+	private List<Certificate> certificateList;
 	private List<SecondaryUserCertificate> secondaryUsers;
 	
 	private Integer enterpriseId;
@@ -31,7 +31,7 @@ public class MainDigitalCertificatesObjectNew {
 	
 	public MainDigitalCertificatesObjectNew() {
 		super();
-		this.digitalCertificateList = new ArrayList<>();
+		this.certificateList = new ArrayList<>();
 		this.secondaryUsers = new ArrayList<>();
 		this.enterpriseId = null;
 	}
@@ -73,14 +73,14 @@ public class MainDigitalCertificatesObjectNew {
 	
 	// -------------------------------------------------- DataBase methods (DigitalCertificate)
 	
-	public void getDigitalCertificates(Consumer<List<DigitalCertificateNew>> success, Consumer<Throwable> failure){
+	public void getCertificates(Consumer<List<Certificate>> success, Consumer<Throwable> failure){
 		
-		impl.getDigitalCertificates(new AsyncCallback<List<DigitalCertificateNew>>() {
+		impl.getCertificates(new AsyncCallback<List<Certificate>>() {
 			
 			@Override
-			public void onSuccess(List<DigitalCertificateNew> digitalCertificateListDB) {
-				digitalCertificateList = digitalCertificateListDB;
-				success.accept(digitalCertificateListDB);	
+			public void onSuccess(List<Certificate> certificateListDB) {
+				certificateList = certificateListDB;
+				success.accept(certificateListDB);	
 			}
 
 			@Override
@@ -91,8 +91,8 @@ public class MainDigitalCertificatesObjectNew {
 		
 	}
 	
-	public void deleteDigitalCertificate(DigitalCertificateNew digitalCertificate, Consumer<Void> success, Consumer<Throwable> failure){
-		impl.deleteDigitalCertificate(digitalCertificate, new AsyncCallback<Void>() {
+	public void deleteCertificate(Certificate certificate, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.deleteCertificate(certificate, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -107,9 +107,9 @@ public class MainDigitalCertificatesObjectNew {
 		
 	}
 	
-	public void verifyCertificate(Integer rattachId, List<CertificateType> tags, Consumer<Void> success, Consumer<Throwable> failure){
+	public void verifyCertificate(Integer certificateId, List<CertificateType> tags, Consumer<Void> success, Consumer<Throwable> failure){
 		
-		impl.verifyCertificate(rattachId, tags, new AsyncCallback<Void>() {
+		impl.verifyCertificate(certificateId, tags, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -124,9 +124,9 @@ public class MainDigitalCertificatesObjectNew {
 		
 	}
 	
-	public void validateCertJava(Integer rattachId, Consumer<CertificateInfo> success, Consumer<Throwable> failure){
+	public void getCertificateInfo(Integer certificateId, Consumer<CertificateInfo> success, Consumer<Throwable> failure){
 		
-		impl.validateCertJava(rattachId, new AsyncCallback<CertificateInfo>() {
+		impl.getCertificateInfo(certificateId, new AsyncCallback<CertificateInfo>() {
 			
 			@Override
 			public void onSuccess(CertificateInfo result) {
@@ -275,41 +275,42 @@ public class MainDigitalCertificatesObjectNew {
 	
 	// -------------------------------------------------- Getter methods
 	
-	public List<DigitalCertificateNew> getDigitalCertificateList(){
-		return this.digitalCertificateList;
+	public List<Certificate> getCertificateList(){
+		return this.certificateList;
 	}
 
-	public List<DigitalCertificateNew> getUserCertificateList() {
-		List<DigitalCertificateNew> certificateList = new ArrayList<>();
+	public List<Certificate> getUserCertificateList() {
+		List<Certificate> certificateUserList = new ArrayList<>();
 		
-		for(DigitalCertificateNew digitalCertificate : digitalCertificateList)
-			if(digitalCertificate.getOwner() == CertificateOwner.USER)
-				certificateList.add(digitalCertificate);
+		for(Certificate certificate : certificateList)
+			if(certificate.getOwner() == CertificateOwner.USER)
+				certificateUserList.add(certificate);
 		
-		return certificateList;
+		return certificateUserList;
 	}
 
-	public List<DigitalCertificateNew> getEnterpriseCertificateList() {
-		List<DigitalCertificateNew> certificateList = new ArrayList<>();
+	public List<Certificate> getEnterpriseCertificateList() {
+		List<Certificate> certificateEnterpriseList = new ArrayList<>();
 		
-		for(DigitalCertificateNew digitalCertificate : digitalCertificateList)
-			if(digitalCertificate.getOwner() == CertificateOwner.ENTERPRISE)
-				certificateList.add(digitalCertificate);
+		for(Certificate certificate : certificateList)
+			if(certificate.getOwner() == CertificateOwner.ENTERPRISE)
+				certificateEnterpriseList.add(certificate);
 		
-		return certificateList;
+		return certificateEnterpriseList;
 	}
 
-	public void createNewCertificate(CertificateOwner owner) {
-		DigitalCertificateNew digitalCertificate = new DigitalCertificateNew();
-		digitalCertificate.setOwner(owner);
-		digitalCertificate.setHasCertificate(false);
-		digitalCertificateList.add(digitalCertificate);
+	public void createCertificate(CertificateOwner owner) {
+		Certificate certificate = new Certificate()
+			.setOwner(owner)
+			.setHasCertificate(false);
+		
+		certificateList.add(certificate);
 	}
 
 	public boolean hasOtherHasType(CertificateType type, CertificateOwner owner) {
-		for(DigitalCertificateNew digitalCertificate : digitalCertificateList)
-			if(null != digitalCertificate.getTags() && digitalCertificate.getOwner().equals(owner))
-				for(CertificateType certificateType : digitalCertificate.getTags())
+		for(Certificate certificate : certificateList)
+			if(null != certificate.getTags() && certificate.getOwner().equals(owner))
+				for(CertificateType certificateType : certificate.getTags())
 					if(certificateType == type)
 						return true;
 				
@@ -317,11 +318,11 @@ public class MainDigitalCertificatesObjectNew {
 	}
 
 	public Integer getCertificateTGSSId(CertificateOwner owner) {
-		for(DigitalCertificateNew digitalCertificate : digitalCertificateList)
-			if(digitalCertificate.getOwner().equals(owner))
-				for(CertificateType tag : digitalCertificate.getTags())
+		for(Certificate certificate : certificateList)
+			if(certificate.getOwner().equals(owner))
+				for(CertificateType tag : certificate.getTags())
 					if(tag.equals(CertificateType.TGSS))
-						return digitalCertificate.getRattachId();
+						return certificate.getId();
 		return null;
 	}
 

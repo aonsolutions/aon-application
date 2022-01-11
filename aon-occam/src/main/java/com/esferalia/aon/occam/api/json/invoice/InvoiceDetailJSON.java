@@ -41,7 +41,8 @@ public class InvoiceDetailJSON {
 			.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
 			.setSource(InvoiceSource.TEDI)
-			.setInvoiceTaxes(new LinkedList<InvoiceTax>());
+			.setInvoiceTaxes(new LinkedList<InvoiceTax>())
+			.setInvestAsset(JsonUtils.getInteger(json, IJsonNames.INVEST_ASSET));
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
 			InvoiceTax tax = new InvoiceTax()
@@ -84,6 +85,7 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.DOMAIN, detail.getDomain())
 				.put(IJsonNames.DESCRIPTION, detail.getDescription())
 				.put(IJsonNames.ITEM, detail.getItem() != null? detail.getItem().getId(): null)
+				.put(IJsonNames.INVEST_ASSET, detail.getInvestAsset())
 				.put(IJsonNames.QUANTITY, detail.getQuantity())
 				.put(IJsonNames.PRICE, detail.getPrice())
 				.put(IJsonNames.AMOUNT, detail.getTaxableBase())

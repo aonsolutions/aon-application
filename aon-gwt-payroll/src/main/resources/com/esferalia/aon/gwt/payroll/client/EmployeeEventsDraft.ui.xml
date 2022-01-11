@@ -203,6 +203,11 @@
 		    }
 		}
 		
+		button[disabled]{
+    		display: initial;
+    		visibility: initial;
+		}
+		
 	</ui:style>
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />

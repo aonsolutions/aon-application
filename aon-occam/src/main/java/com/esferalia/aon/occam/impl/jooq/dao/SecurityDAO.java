@@ -1471,7 +1471,7 @@ public class SecurityDAO {
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		
 		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
-		
+		user.setRoles(getUserRoles(ctx, userId));
 		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1)))
 				.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new));
 		LinkedList<AonApp> parentDomainApps = domain.getParentId() != null

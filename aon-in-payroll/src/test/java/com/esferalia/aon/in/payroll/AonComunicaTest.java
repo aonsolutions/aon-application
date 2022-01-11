@@ -12,11 +12,44 @@ import org.junit.Test;
 
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 
 import solutions.aon.seg.social.TestSistemaREDI;
 
 public class AonComunicaTest {
+	
+	@Test
+	@Ignore
+	public void syncUpITs() {
+		try (final InputStream is = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
+			
+				Optional<String> nss = Optional.empty();
+				Domain domain = new Domain().setName("w3319674b-ayudat.rvasquez.net").setId(9122);
+				
+				AonComunica.syncUpITs(is.readAllBytes(), "123456", "pkcs12", domain, nss);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private EmployeeITPart buildPartIt(ContractLeaveDetailType type, ContractLeaveDetailStatus status, Date date,
+			Optional<String> collegiateNumber, Optional<String> cias) {
+		 EmployeeITPart itPart = new EmployeeITPart()
+		 .setType(type)
+		 .setStatus(status)
+		 .setDate(date);
+		 collegiateNumber.ifPresent(itPart::setCollegeNumber);
+		 
+		 cias.ifPresent(itPart::setCias);
+				 
+		return itPart;
+	}
+
+
 	
 	@Test
 	@Ignore

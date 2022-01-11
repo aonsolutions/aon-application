@@ -14,7 +14,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
 import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
-import { getItems} from '../../services/productService.js';
+import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonDate } from '../../components/aon-date.js';
@@ -1287,18 +1287,20 @@ export class AonInvoice extends AonElement {
 		bienAfecto.id = 'aonInvoiceDetailBienAfecto';
 		bienAfecto.title = 'Bien Afecto'; //MSG.CATEGORY;
 		bienAfecto.autocomplete = true;
+		bienAfecto.setAlias('id', 'description');
 		bienAfecto.readonly = this.invoice.isReadonly();
+
 		bienAfecto.addEventListener(EVENT.SELECT, () => {
-			// detail.category = bienAfecto.value;
-			// this.invoice.setDetail(detail, i);
-			// if(this.autosave) this.save();
+			detail.investAsset = bienAfecto.value;
+			this.invoice.setDetail(detail, i);
+			if(this.autosave) this.save();
 		});
 		div.appendChild(bienAfecto);
-		// getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
-		// 	let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
-		// 	category.options = JSON.stringify(accs);
-		// 	category.value = detail.category || this.invoice.getCategory();
-		// });
+		getInvestAssets({}).then(investAssets => {
+			bienAfecto.options = JSON.stringify(investAssets);
+			if(detail.investAsset)
+				bienAfecto.value = detail.investAsset;		
+		});
 
 		const top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;

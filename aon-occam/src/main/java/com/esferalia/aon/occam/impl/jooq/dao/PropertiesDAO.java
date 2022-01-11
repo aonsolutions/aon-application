@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
@@ -80,6 +81,7 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
@@ -130,6 +132,7 @@ import com.esferalia.aon.occam.api.model.Properties.CommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.ContractLeaveProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
@@ -1052,6 +1055,33 @@ public class PropertiesDAO {
 		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.START_DATE);}
 		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.END_DATE);}
 	}
+	
+	protected static class ContractLeavePropertiesDAO implements ContractLeaveProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, ContractLeaveFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ContractLeaveFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.TYPE);}
+		@Override public Property<Integer> getContractProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.CONTRACT);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.DESCRIPTION);}
+		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.START_DATE);}
+		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.END_DATE);}
+		@Override public Property<Byte> getDischargeCauseProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.DISCHARGE_CAUSE);}
+		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.PARENT);}
+
+	}
+	
 	
 	protected static class IrpfDataPropertiesDAO implements IrpfDataProperties{
 		protected Select<Record> build(SelectJoinStep<Record> select, IrpfDataFilter filter) {

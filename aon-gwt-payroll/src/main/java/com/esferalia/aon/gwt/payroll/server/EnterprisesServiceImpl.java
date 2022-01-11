@@ -49,7 +49,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqContractOtherInfo;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractSEPE;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
-import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
@@ -74,7 +73,6 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
-import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -84,8 +82,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -115,6 +111,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -3283,7 +3281,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public void verifyCertificate(String domainName, String userLogin, CertificateType certificateType) throws IllegalArgumentException {
+	public void verifyCertificate(String domainName, String userLogin, com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType certificateType) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -3291,13 +3289,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = null;
 			
-			if(certificateType == CertificateType.TGSS) {
+			if(certificateType == com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType.TGSS) {
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 				SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
-			if(certificateType == CertificateType.SEPE) {
+			if(certificateType == com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType.SEPE) {
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
@@ -3336,43 +3334,60 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} 
 	}
 	
-	// ----------------------------------------------------------------- DigitalCertificates (New)
+	// --------------------------- Certificates
 
 	@Override
-	public List<DigitalCertificateNew> getDigitalCertificates(String domainName, String userLogin) throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-			return JooqDigitalCertificateNew.getDigitalCertificates(connection, domainId, userId);
+	public List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domain, String login) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
+			
+			return AON.getCertificates(domain, domainId, login, userId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public void deleteDigitalCertificate(String domainName, DigitalCertificateNew digitalCertificate) throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqDigitalCertificateNew.deleteDigitalCertificate(connection, digitalCertificate);
+	public void deleteCertificate(String domain, String login, com.esferalia.aon.occam.api.model.Certificate certificate) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			AON.deleteCertificate(domain, domainId, login, 
+					certificate.getId(),
+					f -> f.getIdProperty().eq(certificate.getId()), 
+					r -> r.getIdProperty().eq(certificate.getPasswordId()));
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	@Override
+	public CertificateInfo getCertificateInfo(String domain, String login, Integer certitificateId)  throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			return AON.getCertificateInfo(domain, domainId, login, f -> f.getIdProperty().eq(certitificateId));
+		} catch (SQLException | IllegalArgumentException e) {
+			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "keystore password was incorrect"))
+				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
-	public void verifyCertificate(String domainName, String userLogin, Integer rattachId,
-			List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags) throws IllegalArgumentException {
+	public void verifyCertificate(String domainName, String login, Integer rattachId, List<CertificateType> tags) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {	
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
-
-			for(com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType tag : tags) {
-				if(tag == com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.TGSS) {
-					InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			com.esferalia.aon.occam.api.model.Certificate certificate = AON.getCertificate(domainName, domainId, login, f -> f.getIdProperty().eq(rattachId));
+			
+			for(CertificateType tag : tags) {
+				if(tag == CertificateType.TGSS) {
+					InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 					SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 				}
 
-				if(tag == com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.SEPE) {
-					InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+				if(tag == CertificateType.SEPE) {
+					InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 					Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 				}
 			}
@@ -3385,20 +3400,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} 
 	}
 
-
 	@Override
 	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin, Integer rattachId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)){
 			Certificate certificate = null;
+			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			if(rattachId == null) {
-				Integer domainId = AonServletUtils.getDomainID(domainName);
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
-				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
@@ -3433,19 +3447,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	private Certificate parseCertificate(com.esferalia.aon.occam.api.model.Certificate certificate) {
+		return new Certificate()
+				.setCertificate(certificate.getData())
+				.setPassword(certificate.getPassword())
+				.setType(certificate.getType());
+	}
+
 	@Override
 	public void deleteSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Certificate certificate = null;
+			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			if(rattachId == null) {
-				Integer domainId = AonServletUtils.getDomainID(domainName);
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
-				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
+			
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
@@ -3459,15 +3481,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void createSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf, String naf) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Certificate certificate = null;
+			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			if(rattachId == null) {
-				Integer domainId = AonServletUtils.getDomainID(domainName);
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
-				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
+				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
@@ -3477,23 +3499,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	@Override
-	public CertificateInfo validateCertJava(String domainName, Integer rattachId)  throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqDigitalCertificateNew.validateCertJava(connection, rattachId);
-		} catch (SQLException | IllegalArgumentException e) {
-			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "keystore password was incorrect"))
-				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
-			throw new IllegalArgumentException(e.getMessage());
-		}
-	}
-
-	@Override
-	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData) {
-		// TODO Auto-generated method stub
-	}
-	
 	// ------------------------------------------------ SSBonus
+	
+	@Override
+	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData) {}
 	
 	@Override
 	public List<SSBonusData> syncSSBonus(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {

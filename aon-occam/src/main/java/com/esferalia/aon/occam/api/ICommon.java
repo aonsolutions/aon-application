@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.DataRequest;
@@ -20,6 +22,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
+import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
@@ -27,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
@@ -77,7 +81,8 @@ public interface ICommon {
 	// --------------------------------------------
 	// ENTERPRISE ACTIVITY
 	// --------------------------------------------
-	
+
+	public EnterpriseActivity getEnterpriseActivity(AONContext ctx, Integer id);
 	public Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx, Integer domainId, Date atDate);
 	
 	// --------------------------------------------
@@ -177,4 +182,15 @@ public interface ICommon {
 	public List<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter);
 	public Workgroup saveWorkgroup(AONContext ctx, Workgroup workgroup);
 	public void deleteWorkgroup(AONContext ctx, Integer id);
+	
+	// --------------------------------------------
+	// CERTIFICATE
+	// --------------------------------------------
+	
+	public List<Certificate> getCertificates(AONContext ctx, Integer domainId, Integer userId);
+	public Certificate getCertificate(AONContext ctx, AttachFilter attachFilter);
+	public CertificateInfo getCertificateInfo(AONContext ctx, AttachFilter attachFilter) throws IllegalArgumentException;
+	public void deleteCertificate(AONContext ctx, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter);
+	public void saveCertificate(AONContext ctx, Integer domainId, Integer userId, Certificate certificate);
+
 }

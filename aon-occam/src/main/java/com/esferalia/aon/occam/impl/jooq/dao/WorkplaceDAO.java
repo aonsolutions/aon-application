@@ -27,15 +27,15 @@ public class WorkplaceDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKPLACE.ID);} 
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(WORKPLACE.ACTIVE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKPLACE.DOMAIN);}
-		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKPLACE.ADDRESS);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKPLACE.CUSTOMER);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(WORKPLACE.DESCRIPTION);}
-		@Override public Property<Byte> getEconomicagreementProperty() {return new FilterDAO.PropertyDAO<Byte>(WORKPLACE.ECONOMICAGREEMENT);}
-		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKPLACE.ENTERPRISE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKPLACE.SCOPE);}	
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ID);} 
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ACTIVE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.DOMAIN);}
+		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ADDRESS);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.CUSTOMER);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.DESCRIPTION);}
+		@Override public Property<Byte> getEconomicagreementProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ECONOMICAGREEMENT);}
+		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ENTERPRISE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.SCOPE);}	
 	}
 	
 	public static Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter){

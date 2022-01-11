@@ -78,8 +78,6 @@ import junit.framework.Assert;
 
 public class SQLSettleTestCase extends AbstractSQLTestCase {
 	
-	
-	
 	private static final double DELTA = 0.0005;
 
 	@Test
@@ -120,7 +118,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double fix29Feb = 0;//Math.min(1, Math.abs(get(seniority, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
 		Assert.assertEquals(seniority, ctx.getStartDate());
-		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("AﾑOS_TRABAJADOS", seniority, getToday()))
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("Aﾃ前S_TRABAJADOS", seniority, getToday()))
 			Assert.assertEquals( (2.00 + 2/12.00 + fix29Feb/12.00), result.getValue());
 
 		double br = (1750.00) * 12.00 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
@@ -131,7 +129,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		}
 
 
-		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("12.00 * AﾑOS_TRABAJADOS * SALARIO_DIA", seniority, getToday())) {
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("12.00 * Aﾃ前S_TRABAJADOS * SALARIO_DIA", seniority, getToday())) {
 			Assert.assertEquals( seniority, result.getPeriod().getStart());
 			Assert.assertEquals( 12.00 * (2.00 + 2/12.00+ fix29Feb/12.00) * br , result.getValue());
 		}
@@ -144,7 +142,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			Assert.assertEquals( seniority, result.getPeriod().getStart());
 		}
 
-		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("(CAUSA_INDEMNIZACION == FIN) ? 12.00 * AﾑOS_TRABAJADOS * SALARIO_DIA: 0.00", seniority, getToday()))
+		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("(CAUSA_INDEMNIZACION == FIN) ? 12.00 * Aﾃ前S_TRABAJADOS * SALARIO_DIA: 0.00", seniority, getToday()))
 			System.out.println(result.getPeriod().getStart() + ".." + result.getPeriod().getEnd() + " = " + result.getValue() );
 			//Assert.assertEquals( 12.00 * (2.00 + 2/12.00) * br , result.getValue());
 
@@ -501,7 +499,6 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testSettleVacations2Month() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -3138,7 +3135,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				startDate, 
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION == FIN_OBRA) ? DIAS_INDEMNIZACION_FIN(INICIO_CONTRATO) * AﾑOS_TRABAJADOS * SALARIO_DIA : REMOVE()",
+				"(CAUSA_INDEMNIZACION == FIN_OBRA) ? DIAS_INDEMNIZACION_FIN(INICIO_CONTRATO) * Aﾃ前S_TRABAJADOS * SALARIO_DIA : REMOVE()",
 				null ,
 				"_P", 
 				SalaryType.SETTLE);
@@ -3148,7 +3145,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				startDate, 
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION == FIN) ? DIAS_INDEMNIZACION_FIN(FIN_CONTRATO) * AﾑOS_TRABAJADOS * SALARIO_DIA : REMOVE()",
+				"(CAUSA_INDEMNIZACION == FIN) ? DIAS_INDEMNIZACION_FIN(FIN_CONTRATO) * Aﾃ前S_TRABAJADOS * SALARIO_DIA : REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);
@@ -3158,7 +3155,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				add(getFirstDayOfYear(getToday()),Calendar.YEAR,-1), 
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION == IMPROCEDENTE) ? MIN(45 * AﾑOS_TRABAJADOS * SALARIO_DIA,SALARIO_DIA * 365 / 12 * 42 ): REMOVE()",
+				"(CAUSA_INDEMNIZACION == IMPROCEDENTE) ? MIN(45 * Aﾃ前S_TRABAJADOS * SALARIO_DIA,SALARIO_DIA * 365 / 12 * 42 ): REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);
@@ -3168,7 +3165,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				startDate, 
 				PaymentType.CRA_0054, 
-				"(CAUSA_INDEMNIZACION==IMPROCEDENTE)?MIN(33*AﾑOS_TRABAJADOS*SALARIO_DIA,ABS(SALARIO_DIA*365/12*24-INDEMNIZACION)):REMOVE()",
+				"(CAUSA_INDEMNIZACION==IMPROCEDENTE)?MIN(33*Aﾃ前S_TRABAJADOS*SALARIO_DIA,ABS(SALARIO_DIA*365/12*24-INDEMNIZACION)):REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);
@@ -3178,7 +3175,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				startDate, 
 				PaymentType.CRA_0054, 
-				" (CAUSA_INDEMNIZACION == PROCEDENTE ) ? MIN(20 * AﾑOS_TRABAJADOS * SALARIO_DIA, SALARIO_DIA * 365 / 12 * 12 ) : REMOVE()",
+				" (CAUSA_INDEMNIZACION == PROCEDENTE ) ? MIN(20 * Aﾃ前S_TRABAJADOS * SALARIO_DIA, SALARIO_DIA * 365 / 12 * 12 ) : REMOVE()",
 				null ,
 				null, 
 				SalaryType.SETTLE);

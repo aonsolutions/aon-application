@@ -14,12 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificateNew;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateOwner;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils; 
 
 @MultipartConfig
@@ -60,15 +61,12 @@ public class CertificatesServletNew extends HttpServlet {
 		// Get currentUser
 		String domainName = req.getParameter("currentDomain");
 		
-		if(AonStringUtils.isEmpty(currentUser)) {
-			String token = req.getParameter("token");
-			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-			currentUser = AON_SOLUTIONS.getUser(domain, token).getLogin();
-		}
+		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+		User user = AON.getUser(domainName, domain.getId(), currentUser);
 		
 		// Get Security
 		String securityStr = req.getParameter("security");
-		byte security = AonStringUtils.equalsIgnoreCase(securityStr, "public") ? (byte)0 : (byte)1;
+		CertificateSecurity security = AonStringUtils.equalsIgnoreCase(securityStr, "public") ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE;
 		
 		// Get tags type
 		List<CertificateType> tagTypes = new ArrayList<>();
@@ -90,7 +88,17 @@ public class CertificatesServletNew extends HttpServlet {
 			InputStream is = filePart.getInputStream();
 			data = readAllBytes(is);
 			
-			JooqDigitalCertificateNew.setDigitalCertificateData(domainName, currentUser, fileName, tagTypes, owner, data, password, security, rattachId, raddinfoId);
+			Certificate certificate = new Certificate()
+					.setDescription(fileName)
+					.setTags(tagTypes)
+					.setOwner(owner)
+					.setData(data)
+					.setPassword(password)
+					.setId(rattachId)
+					.setPasswordId(raddinfoId)
+					.setConfidential(security);
+			
+			AON.saveCertificate(domainName, domain.getId(), currentUser, user.getId(), certificate);
 			
 		} catch (IOException | ServletException e) {
 			try {

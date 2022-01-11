@@ -28,7 +28,7 @@ public class ARABA_2017_Declaration extends Mod390HFDeclaration {
 	public static final double SURCHARGE_PERCENT4 = 5.2;
 	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isAraba() && mod.getYear() >= 2017;
+		return  mod.isAraba() && mod.getYear() >= 2017 && mod.getYear() < 2021;
 	}
 	
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{

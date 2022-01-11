@@ -969,6 +969,18 @@ public class Toolkit {
 		return null;
 	}
 	
+	public static String getTagXmlFirst(String body, String tag) {
+		
+		String regex = "\\<("+tag+")[^<>]*\\>[^<>\\s]*\\<[^<>]*\\>";
+
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		if (matcher.find()) {
+			return matcher.group();
+		}
+		return null;
+	}
+	
 	public static String getCleanAttribute(String element, String attributeName) {
 		String raw = getAttribute(element, attributeName);
 		if (raw == null)

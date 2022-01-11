@@ -12,6 +12,12 @@
 
 		<script type="text/javascript">
 	          	//<![CDATA[
+				isSysAdmin = function(){
+		        	return #{aonRole.sysAdmin};
+				}
+				isNewAONTheme = function(){
+		        	return #{userUtils.newAONTheme};
+				}
 				getCurrentUser = function(){
 		        	return '#{domainSwitcher.currentUser}';
 				}

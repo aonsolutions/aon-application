@@ -794,6 +794,7 @@ public class FillerDAO {
 					.setCode(r.getValue(DATA_RESPONSE.CODE))
 					.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
 					.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
+					.setDataRequest(r.getValue(DATA_RESPONSE.DATA_REQUEST))
 					.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
 					.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
 					.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))

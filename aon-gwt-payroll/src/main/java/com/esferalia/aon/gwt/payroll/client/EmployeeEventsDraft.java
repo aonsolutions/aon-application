@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -481,7 +482,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		employeeEventsDraft.initializeDBEventsVariables(actualYear,
 				r -> {
 					initializeYearLB(this.yearLB);
-					hideYearLBOptions();
+					syncYearLBOptions();
 					setSelectedValueLB(yearLB, (year+1900)+"");
 					initializeVariablesToShow();
 					showEvents();
@@ -491,6 +492,38 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		initializeToolBar();
 	}
 	
+	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraft, int [] years) {
+		
+		clearEventsGrid();
+		
+		this.employeeEventsDraft = employeeEventsDraft;
+		
+		showLoading();
+		
+		//Descargar Variables actualizadas
+		employeeEventsDraft.initializeDBEventsVariables(years[0],
+				r -> {
+					//initializeYearLB(this.yearLB);
+					//syncYearLBOptions();
+					//setSelectedValueLB(yearLB, (aYear+1900)+"");
+					yearLB.clear();
+					for ( Integer aYear: years ) {
+						yearLB.addItem(aYear.toString(), aYear.toString());
+					}
+					yearLB.addChangeHandler(e -> {
+						changeYear();
+					});
+					yearLB.setSelectedIndex(0);
+					this.year = years[0] - 1900;
+					
+					initializeVariablesToShow();
+					showEvents();
+					
+				},t -> {});
+		
+		initializeToolBar();
+	}
+
 	// ----------------------------------------------- setEmployeeEventsDraftObject.Methods
 	
 	private void clearEventsGrid() {
@@ -504,12 +537,14 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		yearLB.clear();
 		
 		Integer yearAux = DateUtils.getYear();
+		Integer previusYearII = year - 2;
 		Integer previusYear = year - 1;
 		Integer nextYear = year + 1;
 		
 		yearLB.addItem(nextYear.toString(), nextYear.toString());
 		yearLB.addItem(yearAux.toString(), yearAux.toString());
 		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		yearLB.addItem(previusYearII.toString(), previusYearII.toString());
 		
 		yearLB.addChangeHandler(e -> {
 			changeYear();
@@ -525,36 +560,28 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		visibilityButton.setVisible(employeeEventsDraft.isEmployeeEvents());
 	}
 	
-	private void hideYearLBOptions() {
-		ArrayList<Integer> idxsToDelete = new ArrayList<Integer>();
-		for(int i=0; i<this.yearLB.getItemCount(); i++) {
+	private void syncYearLBOptions() {
+		for(int i= this.yearLB.getItemCount() -1 ; i >= 0; i--) {
 			Integer year = Integer.parseInt(this.yearLB.getValue(i));
 			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
-			if(isOutOfContractPeriod(lastDayOfYear)) {
-				idxsToDelete.add(i);
+			Date firstDayOfYear = DateUtils.getFirstDayOfYear(year-1900);
+			if(isOutOfContractPeriod(firstDayOfYear, lastDayOfYear)) {
+				this.yearLB.removeItem(i);
 			}
 		}
-		hideOptionYearLB(idxsToDelete);
-	}
-	
-	private void hideOptionYearLB(ArrayList<Integer> idxsToDelete) {
-		for(Integer idx : idxsToDelete)
-			try {
-				this.yearLB.removeItem(idx);
-			} catch (IndexOutOfBoundsException e) {}
-			
-	}
-	
-	private boolean isOutOfContractPeriod(Date date) {
-		Date newEndDate = this.employeeEventsDraft.getContractEndDate();
-		if(null == newEndDate) {
-			Integer nextYear = DateUtils.getYear() + 1;
-			newEndDate = DateUtils.getLastDayOfYear(nextYear);
+		if ( this.yearLB.getItemCount() == 0 ) {
+			Date contractEndDate = this.employeeEventsDraft.getContractEndDate();
+			Integer contractEndYear = DateUtils.getYear(contractEndDate);
+			this.yearLB.addItem(contractEndYear.toString(), contractEndYear.toString());
 		}
+	}
+	
+	private boolean isOutOfContractPeriod(Date firstDayOfYear, Date lastDayOfYear) {
+		Date contractEndDate = this.employeeEventsDraft.getContractEndDate();
 		
-		Date startDate = DateUtils.copyDateOnly(this.employeeEventsDraft.getContractStartDate());
+		Date contractStartDate = DateUtils.copyDateOnly(this.employeeEventsDraft.getContractStartDate());
 		
-		return date.before(startDate) || date.after(newEndDate);
+		return contractStartDate.after(lastDayOfYear) || ( contractEndDate != null && contractEndDate.before(firstDayOfYear) );
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
@@ -695,7 +722,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 				}
 			});
 			
-			if (employeeEventsDraft.isCalendarVariable(var) || (null != varList && !varList.isEmpty() && !isBeforeLastDate(actualMonth, Integer.parseInt(yearLB.getSelectedItemText()), varList))){
+			if (employeeEventsDraft.isCalendarVariable(var) /*|| (null != varList && !varList.isEmpty() && !isBeforeLastDate(actualMonth, Integer.parseInt(yearLB.getSelectedItemText()), varList))*/ ){
 				eventCell.setBlockVariableStyle();
 				eventCell.setEnabled(false);
 			}else{
@@ -917,6 +944,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		toolbar.add(undoAllButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton.ensureDebugId("employeeEventsDraftSaveButton");
 		saveButton.addClickHandler(e -> {
 			onSave();
 		});
@@ -939,6 +967,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		visibilityButton.ensureDebugId("show_variables_menu_item");
 		
 		this.yearLB = new ListBox();
+		yearLB.ensureDebugId("employeeEventsDraftYearListBox"); 
 		toolbar.add(this.yearLB);
 		
 		return toolbar;
@@ -955,7 +984,8 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		employeeEventsDraft.updateDBCalendar(
 				r -> {
 					//Descargar Variables actualizadas
-					Integer actualYear = DateUtils.getYear();
+					String selectedYear = this.yearLB.getSelectedValue();
+					Integer actualYear = Integer.parseInt(selectedYear);
 					employeeEventsDraft.initializeDBEventsVariables(actualYear,
 							s -> {
 								initializeVariablesToShow();

@@ -13,6 +13,7 @@ import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ER
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,9 +113,23 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.TbaiData;
+import net.aonsolutions.aon.tbai.lroe.LROEInformation;
 
 public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
 
@@ -149,6 +164,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean showRemarksWindow;
 	private boolean showAuditInfoWindow;
 	private boolean showFiscalInformationWindow;
+	private boolean showLroeWindow;
 	private boolean showAmortizationWindow;
 	private boolean showRectificationWindow;
 	private String rectificationSeries;
@@ -666,6 +682,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 	public void setShowFiscalInformationWindow(boolean showFiscalInformationWindow) {
 		this.showFiscalInformationWindow = showFiscalInformationWindow;
+	}
+	
+	public boolean isShowLroeWindow() {
+		return showLroeWindow;
+	}
+
+	public void setShowLroeWindow(boolean showLroeWindow) {
+		this.showLroeWindow = showLroeWindow;
 	}
 	
 	public boolean isShowAmortizationWindow() {
@@ -1555,10 +1579,56 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return getSignerController().getReport(to);
 	}
 	
+	
+	public IAttachment generateInvoiceAttachment(Domain domain, Invoice inv, ITransferObject to) {
+		IAttachment attachment = null;
+		try {
+			String login = "";
+
+			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), login, true);
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, inv.getId());
+		
+			CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), login);
+			Attach logo = new Attach();
+		
+			if(config.isLogo()) {
+				Integer logoId = company.getRegistry().getId();
+				logo = AON.getAttach(domain.getName(), domain.getId(), login, f-> f.getAttachModuleProperty().eq(logoId)
+						.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+			}
+			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
+			TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), login);
+			if(tbai.isActive()) {	
+				String tbaiUrl = TbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
+				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+			}
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData());
+			byte[] data = out.toByteArray();
+			attachment = newAttachment(to, MimeType.MIME_PDF);
+			attachment.setData(data);
+			attachment.setMimeType(MimeType.MIME_PDF);
+			attachment.setDescription("Factura");
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onReport " + e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}			
+		return attachment;
+	}
+	
 	@Override
 	public IAttachment getUnsignedAttachment(ITransferObject to, MimeType type) {
 		Invoice invoice = (Invoice) to;
-		if ( type == MimeType.MIME_PDF ) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		Domain domain = AON.getDomain(domainName, domainId, "");
+		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "",
+				com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
+
+		if("default".equalsIgnoreCase(appParam.getValue())){
+			return generateInvoiceAttachment(domain, invoice, to);
+		} else if ( type == MimeType.MIME_PDF ) {
 			return generateReportAttachment(to);	
 		} else if ( type == MimeType.MIME_XML && isIncludeFacturae(invoice) ) {
 			return getUnsignedFacturae(to);	
@@ -1965,5 +2035,13 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
 		this.tbaiConfiguration = tbaiConfiguration;
 	}
-
+	
+	public LROEInformation getLroe() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		User user = new User().setLogin(login);
+		return LroeData.get(domain, user, getInvoice().getId());		
+	}
 }

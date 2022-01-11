@@ -15,11 +15,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateOwner;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateSecurity;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
@@ -221,6 +221,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Label loadingL = new Label("Verificando certificado sistema RED...");
 		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		
+		userLoadingPanel.clear();
 		userLoadingPanel.add(loadingBtn);
 		userLoadingPanel.add(loadingL);
 		
@@ -240,6 +241,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Label loadingL = new Label("Verificando certificado sistema RED...");
 		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		
+		enterpriseLoadingPanel.clear();
 		enterpriseLoadingPanel.add(loadingBtn);
 		enterpriseLoadingPanel.add(loadingL);
 		
@@ -447,38 +449,38 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	}
 	
 	private void createUserCertDataTableRows() {
-		List<DigitalCertificateNew> userCertificateList = mainDigitalCertificatesObject.getUserCertificateList();
+		List<Certificate> userCertificateList = mainDigitalCertificatesObject.getUserCertificateList();
 		if(userCertificateList.isEmpty())
 			userCertDataTableDeckPanel.showWidget(2);
 		else {
 			userCertDataTableDeckPanel.showWidget(1);
-			for(DigitalCertificateNew digitalCertificate : userCertificateList)
-				insertCertificateRow(digitalCertificate, userCertDataTable);
+			for(Certificate certificate : userCertificateList)
+				insertCertificateRow(certificate, userCertDataTable);
 		}
 	}
 	
 	private void createEnterpriseCertDataTableRows() {
-		List<DigitalCertificateNew> enterpriseCertificateList = mainDigitalCertificatesObject.getEnterpriseCertificateList();
+		List<Certificate> enterpriseCertificateList = mainDigitalCertificatesObject.getEnterpriseCertificateList();
 		if(enterpriseCertificateList.isEmpty())
 			enterpriseCertDataTablDeckPanel.showWidget(2);
 		else {
 			enterpriseCertDataTablDeckPanel.showWidget(1);
-			for(DigitalCertificateNew digitalCertificate : enterpriseCertificateList)
-				insertCertificateRow(digitalCertificate, enterpriseCertDataTable);
+			for(Certificate certificate : enterpriseCertificateList)
+				insertCertificateRow(certificate, enterpriseCertDataTable);
 		}
 	}
 	
 	// ------------------------------------------------------ Insert Rows
 	
-	private void insertCertificateRow(DigitalCertificateNew digitalCertificate, Grid dataTable) {
+	private void insertCertificateRow(Certificate certificate, Grid dataTable) {
 		// Insert new row
 		int row = dataTable.insertRow(dataTable.getRowCount());
 		
 		// Form Panel
-		createFormPanel(dataTable, row, digitalCertificate);
+		createFormPanel(dataTable, row, certificate);
 	}
 
-	private void createFormPanel(Grid table, int row, DigitalCertificateNew digitalCertificate) {
+	private void createFormPanel(Grid table, int row, Certificate certificate) {
 		
 		// Save Button
 		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
@@ -502,11 +504,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Hidden userLoginHidden = new Hidden("currentUser", Wnd.getCurrentUser());
 		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
 		Hidden tokenHidden = new Hidden("token", Wnd.getToken());
-		Hidden securityHidden = new Hidden("security", digitalCertificate.getConfidential() != null && digitalCertificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "private" : "public");
-		Hidden tgssHidden = new Hidden("tgss", hasTGSSCertificate(digitalCertificate) ? "tgss" : "");
-		Hidden sepeHidden = new Hidden("sepe", hasSEPECertificate(digitalCertificate) ? "sepe" : "");
-		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(digitalCertificate) ? "aeat" : "");
-		Hidden ownerHidden = new Hidden("owner", digitalCertificate.getOwner().name());
+		Hidden securityHidden = new Hidden("security", certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "private" : "public");
+		Hidden tgssHidden = new Hidden("tgss", hasTGSSCertificate(certificate) ? "tgss" : "");
+		Hidden sepeHidden = new Hidden("sepe", hasSEPECertificate(certificate) ? "sepe" : "");
+		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(certificate) ? "aeat" : "");
+		Hidden ownerHidden = new Hidden("owner", certificate.getOwner().name());
 		
 		// Password Panel
 		HTMLPanel passwordPanel = new HTMLPanel("");
@@ -529,10 +531,10 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		passwordPanel.add(passwordTB);
 		
-		if(Boolean.FALSE.equals(digitalCertificate.getHasCertificate())) {
+		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
 			AonTableButton showPassBtn = createShowPassButton(passwordTB);
 			passwordPanel.add(showPassBtn);
-		} else if(digitalCertificate.getOwner() == CertificateOwner.ENTERPRISE){
+		} else if(certificate.getOwner() == CertificateOwner.ENTERPRISE){
 			passwordTB.setEnabled(false);
 		}
 		
@@ -568,67 +570,67 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		CheckBox securityCB = new CheckBox();
 		securityCB.addStyleName(style.checkBox());
-		securityCB.setValue(digitalCertificate.getConfidential() != null && digitalCertificate.getConfidential().equals(CertificateSecurity.PRIVATE));
+		securityCB.setValue(certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE));
 		securityCB.addValueChangeHandler(e -> {
 			if(Boolean.TRUE.equals(e.getValue())) {
-				digitalCertificate.setConfidential(CertificateSecurity.PRIVATE);
+				certificate.setConfidential(CertificateSecurity.PRIVATE);
 				securityHidden.setValue("private");
 			} else {
-				digitalCertificate.setConfidential(CertificateSecurity.PUBLIC);
+				certificate.setConfidential(CertificateSecurity.PUBLIC);
 				securityHidden.setValue("public");
 			}
 		});
 		
 		CheckBox tgssCB = new CheckBox();
 		tgssCB.addStyleName(style.checkBox());
-		tgssCB.setValue(hasTGSSCertificate(digitalCertificate));
+		tgssCB.setValue(hasTGSSCertificate(certificate));
 		tgssCB.addValueChangeHandler(e -> {
 			if(Boolean.TRUE.equals(e.getValue())) {
 				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.TGSS, owner)) {
 					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.TGSS.name() + " ya existe");
 					tgssCB.setValue(false);
 				} else {
-					digitalCertificate.addTag(CertificateType.TGSS);
+					certificate.addTag(CertificateType.TGSS);
 					tgssHidden.setValue("tgss");
 				}
 			} else {
-				digitalCertificate.removeTag(CertificateType.TGSS);
+				certificate.removeTag(CertificateType.TGSS);
 				tgssHidden.setValue("");
 			}
 		});
 		
 		CheckBox sepeCB = new CheckBox();
 		sepeCB.addStyleName(style.checkBox());
-		sepeCB.setValue(hasSEPECertificate(digitalCertificate));
+		sepeCB.setValue(hasSEPECertificate(certificate));
 		sepeCB.addValueChangeHandler(e -> {
 			if(Boolean.TRUE.equals(e.getValue())) {
 				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.SEPE, owner)) {
 					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.SEPE.name() + " ya existe");
 					sepeCB.setValue(false);
 				} else{
-					digitalCertificate.addTag(CertificateType.SEPE);
+					certificate.addTag(CertificateType.SEPE);
 					sepeHidden.setValue("sepe");
 				}
 			} else {
-				digitalCertificate.removeTag(CertificateType.SEPE);
+				certificate.removeTag(CertificateType.SEPE);
 				sepeHidden.setValue("");
 			}
 		});
 		
 		CheckBox aeatCB = new CheckBox();
 		aeatCB.addStyleName(style.checkBox());
-		aeatCB.setValue(hasAEATCertificate(digitalCertificate));
+		aeatCB.setValue(hasAEATCertificate(certificate));
 		aeatCB.addValueChangeHandler(e -> {
 			if(Boolean.TRUE.equals(e.getValue())) {
 				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.AEAT, owner)) {
 					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.AEAT.name() + " ya existe");
 					aeatCB.setValue(false);
 				} else {
-					digitalCertificate.addTag(CertificateType.AEAT);
+					certificate.addTag(CertificateType.AEAT);
 					aeatHidden.setValue("aeat");
 				}
 			} else {
-				digitalCertificate.removeTag(CertificateType.AEAT);
+				certificate.removeTag(CertificateType.AEAT);
 				aeatHidden.setValue("");
 			}
 		});
@@ -638,7 +640,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		buttonsPanel.addStyleName(style.flex());
 		
 		saveButton.addClickHandler(e -> {
-			if(hasTGSSCertificate(digitalCertificate) || hasSEPECertificate(digitalCertificate) || hasAEATCertificate(digitalCertificate)) {
+			if(hasTGSSCertificate(certificate) || hasSEPECertificate(certificate) || hasAEATCertificate(certificate)) {
 				saveButton.setEnabled(false);
 				AonMessagePanel.showLoading(messagePanel, "Guardando certificado digital...");
 				formPanel.submit();
@@ -648,10 +650,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		AonTableButton verifyButton = new AonTableButton("Verificar Certificado", AON.CSS.aonIconVerify());
 		verifyButton.addClickHandler(e ->  {
+			showLoading("Validando certificado SEPE...");
 			hideSecondaryUsers();
 			mainDigitalCertificatesObject.verifyCertificate(
-				digitalCertificate.getRattachId(), 
-				digitalCertificate.getTags(), 
+				certificate.getId(), 
+				certificate.getTags(), 
 				s -> showSuccess("Certificado", "Certificado validado correctamente"), 
 				f -> showWarning("Error verificaci\u00F3n", f.getMessage())
 			);
@@ -659,18 +662,18 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		verifyButton.setVisible(false);
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
-		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(digitalCertificate.getRattachId(), digitalCertificate.getTags()));
+		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(certificate.getId(), certificate.getTags()));
 		
 		secondaryUsersButton.setVisible(false);
 		
 		AonTableButton deleteButton = new AonTableButton("Borrar", AON.CSS.aonIconDelete());
-		deleteButton.addClickHandler(e -> deleteCertificate(digitalCertificate));
+		deleteButton.addClickHandler(e -> deleteCertificate(certificate));
 		
 		AonTableButton checkCertificateButton = new AonTableButton("Informaci\u00F3n", AON.CSS.aonIconInfo());
-		checkCertificateButton.addClickHandler(e -> getCertificateInfo(digitalCertificate));
+		checkCertificateButton.addClickHandler(e -> getCertificateInfo(certificate));
 		
 		// Buttons visibility
-		if(Boolean.FALSE.equals(digitalCertificate.getHasCertificate())) {
+		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
 			fileButton.setVisible(true);
 			deleteButton.setVisible(false);
 			verifyButton.setVisible(false);
@@ -679,9 +682,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		} else {
 			fileButton.setVisible(false);
 			deleteButton.setVisible(true);
-			if(hasTGSSCertificate(digitalCertificate))
+			if(hasTGSSCertificate(certificate))
 				secondaryUsersButton.setVisible(true);
-			if(hasSEPECertificate(digitalCertificate))
+			if(hasSEPECertificate(certificate))
 				verifyButton.setVisible(true);
 			checkCertificateButton.setVisible(true);
 		}
@@ -716,20 +719,20 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		buttonsPanel.add(deleteButton);
 			
 		// Fill fields
-		rattachIdHidden.setValue(digitalCertificate.getRattachId()+"");
-		raddinfoIdHidden.setValue(digitalCertificate.getRaddinfoId()+"");
+		rattachIdHidden.setValue(certificate.getId()+"");
+		raddinfoIdHidden.setValue(certificate.getPasswordId()+"");
 		
-		String password = digitalCertificate.getPassword();
+		String password = certificate.getPassword();
 		
 		if(AonStringUtils.isBlank(password))
 			passwordTB.setEnabled(true);
 		
-		passwordTB.setValue(digitalCertificate.getPassword());
+		passwordTB.setValue(certificate.getPassword());
 		passwordHidden.setValue(passwordTB.getValue());
 		
 		String description = "No existe certficado";
-		if(Boolean.TRUE.equals(digitalCertificate.getHasCertificate()))
-			description = AonStringUtils.isBlank(digitalCertificate.getDescription()) ? "Certficado sin nombre" : digitalCertificate.getDescription();
+		if(Boolean.TRUE.equals(certificate.getHasCertificate()))
+			description = AonStringUtils.isBlank(certificate.getDescription()) ? "Certficado sin nombre" : certificate.getDescription();
 		fileNameTB.setValue(description);
 		fileNameHidden.setValue(description);
 		
@@ -758,9 +761,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		}
 	}
 	
-	private void getCertificateInfo(DigitalCertificateNew digitalCertificate) {
-		mainDigitalCertificatesObject.validateCertJava(
-				digitalCertificate.getRattachId(), 
+	private void getCertificateInfo(Certificate certificate) {
+		mainDigitalCertificatesObject.getCertificateInfo(
+				certificate.getId(), 
 				certificateInfo -> {
 					hideSecondaryUsers();
 					String certificateInfoStr = certificateInfo.toString();
@@ -774,10 +777,13 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void onSecondaryUser(Integer rattachId, List<CertificateType> tags) {
 		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
 		
-		if(CertificateOwner.USER.equals(owner))
+		if(CertificateOwner.USER.equals(owner)) {
+			initUserSecondaryTable();
 			userSecondayUsersPanel.setVisible(true);
-		else
+		} else {
+			initEnterpriseSecondaryTable();
 			enterpriseSecondayUsersPanel.setVisible(true);
+		}
 		
 		mainDigitalCertificatesObject.verifyCertificate(
 			rattachId, 
@@ -822,7 +828,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 
 	private void loadDigitalCertificates() {
 		updateLoadingPanelStatus();
-		this.mainDigitalCertificatesObject.getDigitalCertificates(
+		this.mainDigitalCertificatesObject.getCertificates(
 				s -> {
 					Integer index = tabLayoutPanel.getSelectedIndex();
 					if(index == 0) 
@@ -848,33 +854,33 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		loadingL.setText("Cargando certificados...");
 	}
 
-	private boolean hasTGSSCertificate(DigitalCertificateNew digitalCertificate) {
-		if(null == digitalCertificate.getTags())
+	private boolean hasTGSSCertificate(Certificate certificate) {
+		if(null == certificate.getTags())
 			return false;
 		
-		for(CertificateType tag : digitalCertificate.getTags())
+		for(CertificateType tag : certificate.getTags())
 			if(tag.equals(CertificateType.TGSS))
 				return true;
 		
 		return false;
 	}
 	
-	private boolean hasSEPECertificate(DigitalCertificateNew digitalCertificate) {
-		if(null == digitalCertificate.getTags())
+	private boolean hasSEPECertificate(Certificate certificate) {
+		if(null == certificate.getTags())
 			return false;
 		
-		for(CertificateType tag : digitalCertificate.getTags())
+		for(CertificateType tag : certificate.getTags())
 			if(tag.equals(CertificateType.SEPE))
 				return true;
 		
 		return false;
 	}
 	
-	private boolean hasAEATCertificate(DigitalCertificateNew digitalCertificate) {
-		if(null == digitalCertificate.getTags())
+	private boolean hasAEATCertificate(Certificate certificate) {
+		if(null == certificate.getTags())
 			return false;
 		
-		for(CertificateType tag : digitalCertificate.getTags())
+		for(CertificateType tag : certificate.getTags())
 			if(tag.equals(CertificateType.AEAT))
 				return true;
 		
@@ -901,7 +907,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 
 	// ------------------------------------------------------ Delete Certificate Methods
 
-	private void deleteCertificate(DigitalCertificateNew digitalCertificate) {
+	private void deleteCertificate(Certificate certificate) {
 		AonDialog deleteDialog = new AonDialog("Eliminar certificado", new HTML("\u00BFDesea eliminar este certificado\u003F"));
 		deleteDialog.confirm(new AonAcceptDialogCallback() {
 			
@@ -912,8 +918,8 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 			
 			@Override
 			public void onAccept() {
-				mainDigitalCertificatesObject.deleteDigitalCertificate(
-						digitalCertificate, 
+				mainDigitalCertificatesObject.deleteCertificate(
+						certificate, 
 						s -> loadDigitalCertificates(), 
 						f -> {});
 			}
@@ -1136,7 +1142,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	private void createNewCertificate() {
 		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
-		this.mainDigitalCertificatesObject.createNewCertificate(owner);
+		this.mainDigitalCertificatesObject.createCertificate(owner);
 		Integer tab = tabLayoutPanel.getSelectedIndex();
 		if(tab == 0)
 			createUserCertDataTable();
@@ -1183,6 +1189,10 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(messagePanel, errorMap);
+	}
+	
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
 	}
 	
 }
