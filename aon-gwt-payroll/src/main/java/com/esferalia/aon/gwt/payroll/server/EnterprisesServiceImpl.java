@@ -3368,8 +3368,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			return AON.getCertificateInfo(domain, domainId, login, f -> f.getIdProperty().eq(certitificateId));
 		} catch (SQLException | IllegalArgumentException e) {
-			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "keystore password was incorrect"))
-				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
