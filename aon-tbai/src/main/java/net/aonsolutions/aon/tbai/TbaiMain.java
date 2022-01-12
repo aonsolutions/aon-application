@@ -126,12 +126,13 @@ public class TbaiMain {
 				.setSignature(response.getSign().substring(0, 100));
 
 		DataRequest request = tbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
-
-		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s="
+		
+		String tbaiId = tbaiConfiguration.isBizkaia() ? URLEncoder.encode(response.getTbaiId()) : response.getTbaiId();
+		
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + tbaiId + "&s="
 				+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 				+ tbai.getFactura().getDatosFactura().getImporteTotalFactura();
-		if(tbaiConfiguration.isBizkaia())
-			qrUrl = URLEncoder.encode(qrUrl);
+		
 		String crc = CRC8.calculate(qrUrl);
 		qrUrl = qrUrl + "&cr=" + crc;
 
