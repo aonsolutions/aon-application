@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Cursor;
+import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -653,6 +654,8 @@ public class SalaryDAO {
 		;
 			
 	}
+	
+	
 
 	public static Stream<Salary> getSalaryData(AONContext ctx,
 			SalaryFilter filter, Supplier<Salary> supplier) {
@@ -664,7 +667,6 @@ public class SalaryDAO {
 			return emptyList.stream();
 		}
 
-
 		//@formatter:off
 		Cursor<Record> rootCursor = 
 		ctx.getDslContext()
@@ -673,8 +675,8 @@ public class SalaryDAO {
 		.innerJoin(CONTRACT).onKey()
 		.leftJoin(ENTERPRISE_CCC).onKey()
 		.where(conditions)
-		.groupBy(SALARY.EMPLOYEE_DOCUMENT)
-		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.groupBy(EMPLOYEE_DOCUMENT)
+		.orderBy(EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
 
@@ -687,7 +689,7 @@ public class SalaryDAO {
 		.onKey(FK_SALARY_DATA_SALARY)
 		.where(conditions)
 		.orderBy(
-		SALARY.EMPLOYEE_DOCUMENT)
+		EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
 
@@ -708,7 +710,7 @@ public class SalaryDAO {
 		.and(CONTRACT_DATA.END_DATE.isNull()
 			.or(CONTRACT_DATA.END_DATE.ge(CONTRACT_DATA.START_DATE))
 		)
-		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.orderBy(EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
 
@@ -720,7 +722,7 @@ public class SalaryDAO {
 		.innerJoin(CONTRACT).onKey()
 		.leftJoin(ENTERPRISE_CCC).onKey()
 		.where(conditions)
-		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.orderBy(EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
 
@@ -733,10 +735,10 @@ public class SalaryDAO {
 				.map(rootRecord-> {
 					
 					
-					String employeeDocument = rootRecord.get(SALARY.EMPLOYEE_DOCUMENT);	
+					String employeeDocument = getEmployeeDocument(rootRecord);	
 
 					Salary salary = supplier.get()
-					.setEmployeeDocument(employeeDocument)
+					.setEmployeeDocument(rootRecord.get(SALARY.EMPLOYEE_DOCUMENT))
 					.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
 					.setEmployeeSSNumber(rootRecord.get(SALARY.SOCIAL_SECURITY_NUMBER))
 					.setEnterpriseDocument(rootRecord.get(SALARY.ENTERPRISE_DOCUMENT))
@@ -750,8 +752,8 @@ public class SalaryDAO {
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryDataIter), 
-					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
-					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
+					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) ),
+					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) )
 					.forEachOrdered(salaryDataRecord->
 						salary.setContextData(
 						salaryDataRecord.get(SALARY_DATA.NAME), 
@@ -763,8 +765,8 @@ public class SalaryDAO {
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(contractDataIter), 
-					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
-					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
+					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) ),
+					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) )
 					.forEachOrdered(contractDataRecord->
 						salary.addContextData(
 						contractDataRecord.get(CONTRACT_DATA.NAME), 
@@ -777,8 +779,8 @@ public class SalaryDAO {
 
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryImlicitDataIter), 
-					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
-					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
+					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) ),
+					r -> AonStringUtils.equalsIgnoreCase(getEmployeeDocument(r), employeeDocument) )
 					.forEachOrdered(salaryRecord-> {
 						Optional.ofNullable(salaryRecord.get(SALARY.TOTAL_PAYMENT))
 						.ifPresent( d ->  {
@@ -812,8 +814,7 @@ public class SalaryDAO {
 		//@formatter:on
 
 	}
-	
-	
+
 	public static Collection<Salary> saveSalaries(AONContext ctx, Integer domainId, Collection<Salary> salaries ) {
 		salaries.forEach( salary -> {
 			removeSalary(ctx, domainId, salary);
@@ -1222,6 +1223,13 @@ public class SalaryDAO {
 		calendar.add(Calendar.YEAR, 100);
 		return new java.sql.Date(calendar.getTimeInMillis());
 	}
+	
+	private  static final Field<String> EMPLOYEE_DOCUMENT = DSL.lpad(DSL.trim(SALARY.EMPLOYEE_DOCUMENT), 16, '0');
+	
+	private static String getEmployeeDocument(Record record) {
+		return AonStringUtils.leftPad(AonStringUtils.trim(record.get(SALARY.EMPLOYEE_DOCUMENT)), 16, '0');
+	}
+	
 	
 
 }
