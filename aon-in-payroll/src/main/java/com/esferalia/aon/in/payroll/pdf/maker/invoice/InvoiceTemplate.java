@@ -794,7 +794,7 @@ public class InvoiceTemplate {
 				Country transmitterCountry = transmitterAddr.getCountry();
 				if (!transmitterCountry.equals(address.getCountry())) {
 					float textWidth = PDFToolkit.fontWidth(province + transmitterAddr.getCountry().getName(), 9, regularFont);
-					province += textWidth <= 230 ? transmitterAddr.getCountry().getName() : transmitterAddr.getCountry().getIso3();
+					province += textWidth <= 230 ? address.getCountry().getName() : address.getCountry().getIso3();
 				}
 			}
 			
