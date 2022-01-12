@@ -163,6 +163,7 @@ public interface EnterprisesServiceAsync {
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days, AsyncCallback<Boolean> asyncCallback);
 	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback);
+	void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
 	void getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException;

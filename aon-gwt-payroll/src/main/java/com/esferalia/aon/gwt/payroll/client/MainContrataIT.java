@@ -128,6 +128,13 @@ public class MainContrataIT extends MainEntryPoint {
 				f -> {}
 			);
 		}
+		
+		@Override
+		protected void syncITs(Consumer<Void> success, Consumer<Throwable> failure) {
+			mainContrataITObject.syncITs( 
+					success::accept, 
+					f -> {});
+		}
 
 	}
 	

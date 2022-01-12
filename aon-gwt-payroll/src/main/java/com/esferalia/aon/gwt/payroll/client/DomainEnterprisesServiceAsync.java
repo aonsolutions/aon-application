@@ -454,6 +454,10 @@ public class DomainEnterprisesServiceAsync {
 				startDate, asyncCallback);
 	}
 	
+	public void syncITs(AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.syncITs(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
 	public void setComunicationIT(ITEmployee itEmployee, IT it, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.setComunicationIT(getCurrentDomainName(), getCurrentUser(), itEmployee, it, asyncCallback);
 	}
