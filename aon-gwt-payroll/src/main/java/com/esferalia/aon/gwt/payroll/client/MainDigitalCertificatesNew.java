@@ -299,9 +299,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void paintHeader(Grid dataTableHeader) {
 		int row = dataTableHeader.insertRow(dataTableHeader.getRowCount());
 		
-		Label certificateFor = new Label("EMITIDO PARA");
-		Label representation = new Label("REPRESENTACION");
-		Label type = new Label("TIPO");
+		Label certificateFor = new Label("TITULAR");
+		Label representation = new Label("REPRESENTACI\u00d3N");
+		Label type = new Label("F. EXPIRACI\u00d3N");
 		Label alias = new Label("ALIAS");
 		AonToolbarSmallButton security = new AonToolbarSmallButton("", AON.CSS.aonIconLock());
 		Label tgss = new Label("TGSS");
@@ -532,13 +532,13 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Label certificateForL = new Label(parseStringLenght(certificateFor));
 		certificateForL.setTitle(certificateFor);
 		
-		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "" : 
+		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
 			"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
 		Label representationL = new Label(parseStringLenght(representation));
 		representationL.setTitle(representation);
 		
-		String type = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONAL" : "EMPRESA";
-		Label typeL = new Label(type);
+		String expirationDate = null == certificate.getCertificateInfo().getToDate() ? "" : formatFullDate.format(certificate.getCertificateInfo().getToDate());
+		Label expirationDateL = new Label(expirationDate);
 		
 		TextBox alias = new TextBox();
 		alias.setStyleName("aon-inputText");
@@ -695,7 +695,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		table.setWidget(row, 0, certificateForL);
 		table.setWidget(row, 1, representationL);
-		table.setWidget(row, 2, typeL);
+		table.setWidget(row, 2, expirationDateL);
 		table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
 		table.setWidget(row, 3, alias);
 		table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
