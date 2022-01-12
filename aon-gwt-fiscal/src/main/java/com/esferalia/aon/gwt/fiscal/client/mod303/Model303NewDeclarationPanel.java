@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
@@ -192,7 +193,8 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		}
 
 		// PORCENTAJE DE PRORRATA
-		FlowPanel proratePanel = new FlowPanel(); 
+		FlowPanel proratePanel = new FlowPanel();
+		proratePanel.setStyleName(AON.CSS.aonFlexBlock());
 		prorate.addValueChangeHandler(event -> {
 			if (prorate.getValue() == null) prorate.setValue(100.0,false); 
 			model.ensureDetail(model.getProrateKey()).setAmount(prorate.getValue());
@@ -219,10 +221,32 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		proratePanel.add(specialProrate);
 		
 		if ((model.hasProrate() || model.hasPreviousProrate()) && model.getPeriod().isLastPeriod() ) {
-			paintCalculateProratePanel(model,callback);
-		} else {
-			calculateProratePanel.clear();	
+			AonTableButton showProrrateInfo = new AonTableButton("Mostrar informaci\u00F3n sobre el c\u00E1lculo",AON.CSS.aonIconInfo());
+			showProrrateInfo.addStyleName(AON.CSS.aonMarginLeft());
+			AonTableButton hideProrrateInfo = new AonTableButton("Ocultar informaci\u00F3n sobre el c\u00E1lculo",AON.CSS.aonIconClose());
+			hideProrrateInfo.addStyleName(AON.CSS.aonMarginLeft());
+			hideProrrateInfo.setVisible(false);
+			
+			hideProrrateInfo.addClickHandler(event -> {
+				showProrrateInfo.setVisible(true);
+				hideProrrateInfo.setVisible(false);
+				calculateProratePanel.clear();
+			});
+			showProrrateInfo.addClickHandler(event -> {
+				showProrrateInfo.setVisible(false);
+				hideProrrateInfo.setVisible(true);
+				paintCalculateProratePanel(model,callback);
+			});
+			
+			proratePanel.add(showProrrateInfo);	
+			proratePanel.add(hideProrrateInfo);
 		}
+		
+//		if ((model.hasProrate() || model.hasPreviousProrate()) && model.getPeriod().isLastPeriod() ) {
+//			paintCalculateProratePanel(model,callback);
+//		} else {
+//			calculateProratePanel.clear();	
+//		}
 		
 		tab.addLabelWidgetRow( model.getPeriod().isLastPeriod()
 				?AON.MSG.prorrataFinalPercent()
@@ -247,6 +271,21 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		fillRow(model,callback,proTab.addRow(),Mod303Key.CM_070);
 		fillRow(model,callback,proTab.addRow(),Mod303Key.CM_071);
 		calculateProratePanel.add(proTab);
+		Label calcLabel = new Label();
+		calcLabel.setStyleName(AON.CSS.aonMarginTop());
+		calcLabel.addStyleName(AON.CSS.aonBorderTop());
+		calcLabel.addStyleName(AON.CSS.aonTextCenter());
+		calcLabel.addStyleName(AON.CSS.aonBold());
+		double c70 = model.ensureDetail(Mod303Key.CM_070).getAmount();
+		double c71 = model.ensureDetail(Mod303Key.CM_071).getAmount();
+		String calc =  AON.FMT.format(c70) 
+			+ " * " 
+			+ AON.FMT.format(c71)
+			+ " / 100 = "
+			+ AON.FMT.format(model.getProratePercent())
+			+ " % ";
+		calcLabel.setText(calc);
+		calculateProratePanel.add(calcLabel);
 	}
 	
 	private void fillRow(Mod303 model,Model303Callback callback, AonDisplayTableRow row, Mod303Key key) {

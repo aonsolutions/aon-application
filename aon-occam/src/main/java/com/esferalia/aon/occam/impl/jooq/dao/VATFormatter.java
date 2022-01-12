@@ -198,7 +198,7 @@ public class VATFormatter {
 		buf.append(AonStringUtils.repeat(" ", 2));
 		buf.append(AonStringUtils.repeat(" ", 6));
 		buf.append(AonStringUtils.repeat(" ", 6));
-		buf.append(AonStringUtils.repeat(" ", 10));
+		buf.append(AonStringUtils.repeat(" ", 14));
 		buf.append(AonStringUtils.repeat(" ", 8));
 		buf.append(AonStringUtils.repeat(" ", 15));
 		buf.append(AonStringUtils.repeat(" ", 15));
@@ -228,12 +228,12 @@ public class VATFormatter {
 		if ( mod303 != null && mod303.hasProrate() && !mod303.isSpecialProrate()) {
 			double proratedQuota = AonMathUtils.round(sumDedQuota * mod303.getProratePercent() / 100);
 			buf.append(OP_DIV_BOLD);
-			buf.append(AonStringUtils.repeat(" ", 102));
+			buf.append(AonStringUtils.repeat(" ", 106));
+			buf.append(AonStringUtils.leftPad(" ",25));
+			buf.append(AonStringUtils.leftPad(" ",23));
 			buf.append(AonStringUtils.SPACE);
 			buf.append(AonStringUtils.rightPad("PRORRATA GENERAL:",20));				
 			buf.append(AonStringUtils.leftPad(DEC.format(mod303.getProratePercent()) + AonStringUtils.PERCENT,8));
-			buf.append(AonStringUtils.leftPad(" ",25));
-			buf.append(AonStringUtils.leftPad(" ",23));
 			buf.append(AonStringUtils.leftPad(" ",15));
 			buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(proratedQuota)? " " : DEC.format(proratedQuota),15));
 			buf.append(AonStringUtils.SPACE);

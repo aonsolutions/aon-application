@@ -25,7 +25,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AEAT_2021_2_Declaration extends Mod303Declaration {
-
+	
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
 		void fill(Mod303 mod);
@@ -254,9 +254,9 @@ public class AEAT_2021_2_Declaration extends Mod303Declaration {
 				  +"<li>IVA deducible con prorrata definitiva (@{CM_003}%) de los periodos anteriores: "
 				  + "@{CM_072} * @{CM_003} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}  </li>"
 				  +"<li>Resultado: "
-				  + "  @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}"
-				  + " - @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}"
-				  + " = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100) - com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}</li>"
+				  + "  @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}"
+				  + " - @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}"
+				  + " = @{com.esferalia.aon.watson.util.AonMathUtils.round(com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100) - com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100))}</li>"
 		)
 
 		// Total a deducir
