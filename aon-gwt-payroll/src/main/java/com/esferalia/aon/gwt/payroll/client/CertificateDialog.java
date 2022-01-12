@@ -246,7 +246,7 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		fileUpload = new FileUpload();
 		fileUpload.setName("uploader");
 		fileUpload.getElement().setPropertyString("multiple", "multiple");
-		fileUpload.getElement().setPropertyString("accept", ".p12");
+		fileUpload.getElement().setPropertyString("accept", ".p12,.pfx");
 		fileUpload.getElement().getStyle().setDisplay(Display.NONE);
 		
 		fileUpload.addChangeHandler(e -> {

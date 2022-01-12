@@ -132,7 +132,7 @@ public class EnterpriseIT extends Composite {
 		protected void syncITs(Consumer<Void> success, Consumer<Throwable> failure) {
 			enterpriseITObject.syncITs( 
 					success::accept, 
-					f -> {});
+					failure::accept);
 		}
 
 	}

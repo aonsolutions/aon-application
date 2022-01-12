@@ -20,11 +20,11 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.CertificateInfo;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -42,7 +42,7 @@ public class CertificateServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API ACCOUNTING SERVLET - GET METHOD");
+		LOGGER.info("AON API CERTIFICATE SERVLET - GET METHOD");
 		try {
 			manage( req, resp );
 		} catch (Exception e) {
@@ -52,7 +52,7 @@ public class CertificateServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API ACCOUNTING SERVLET - POST METHOD");
+		LOGGER.info("AON API CERTIFICATE SERVLET - POST METHOD");
 		try {
 			manage( req, resp );
 		} catch (Exception e) {
@@ -61,8 +61,6 @@ public class CertificateServlet extends AonApiHttpServlet {
 	}
 		
 	private void manage(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-//		AonApiData api = initialize(req, resp);
-		
 		switch (req.getPathInfo()) {
 			case "/check/":
 				response(req, resp, getCertificateInfo(req));
@@ -76,8 +74,6 @@ public class CertificateServlet extends AonApiHttpServlet {
 	}
 
 	private JSONObject getCertificateInfo(HttpServletRequest req) {
-		req.getParameterMap().keySet().forEach(e -> LOGGER.info(e));
-		
 		// Get extension and parse to MimeType
 		String password = req.getParameter("password");
 		
@@ -107,7 +103,7 @@ public class CertificateServlet extends AonApiHttpServlet {
 		// Get extension and parse to MimeType
 		String fileName = req.getParameter("filename");
 		
-		// Get extension and parse to MimeType
+		// Get password
 		String password = req.getParameter("password");
 		
 		// Get currentUser
