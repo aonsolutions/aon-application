@@ -128,6 +128,13 @@ public class EnterpriseIT extends Composite {
 					f -> {});
 		}
 
+		@Override
+		protected void syncITs(Consumer<Void> success, Consumer<Throwable> failure) {
+			enterpriseITObject.syncITs( 
+					success::accept, 
+					f -> {});
+		}
+
 	}
 	
 	// --------------------------------------------------- Binder

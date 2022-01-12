@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -50,6 +51,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
@@ -97,6 +99,43 @@ public abstract class ITWidget extends ResizeComposite {
 	private static ITWidgetUiBinder uiBinder = GWT.create(ITWidgetUiBinder.class);
 
 	interface ITWidgetUiBinder extends UiBinder<Widget, ITWidget> {}
+	
+	// ------------------------------------------------- ScheduledCommand (TGSS)
+	
+	class MsjFIECommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onFIE();
+		}
+	}
+	
+	class SyncITCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onSyncIT();
+		}
+	}
+	
+	class TGSSContextMenu extends ContextMenu {
+		
+		private MenuItem fie;
+		private MenuItem sync;
+		
+		public TGSSContextMenu() {
+			
+			fie = addItem("Mensaje del INSS Empresa (FIE)", new MsjFIECommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			fie.ensureDebugId("fie");
+			
+			sync = addItem("Sincronizar partes IT (TGSS)", new SyncITCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			sync.ensureDebugId("sync");
+			
+		}
+
+	}
 
 	// --------------------------------------------------- UiFields
 
@@ -171,6 +210,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private AonToolbar toolbar;
 	private MultiFileUpload msjFIEFileUpload;
+	private TGSSContextMenu tgssContextMenu;
 
 	// --------------------------------------------------- Constructor
 
@@ -182,6 +222,7 @@ public abstract class ITWidget extends ResizeComposite {
 		
 		getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		tgssContextMenu = new TGSSContextMenu();
 	}
 
 	// --------------------------------------------------- TimeLineChart.MouseEventsHandlers
@@ -1322,10 +1363,21 @@ public abstract class ITWidget extends ResizeComposite {
 		addIT.addClickHandler(e -> onAddIT());
 		toolbar.add(addIT);
 		
-		AonToolbarButton msjFIE = new AonToolbarButton( "Mensaje del INSS Empresa (FIE)", AON.CSS.aonIconTgssFie() );
-		msjFIE.setAccessKey('F');
-		msjFIE.addClickHandler(e -> onFIE());
-		toolbar.add(msjFIE);
+		AonExpandButton tgssExpand = new AonExpandButton("Seguridad Social", AON.CSS.aonIconTgss()) {
+			
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				tgssContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				tgssContextMenu.show();
+			}
+			
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				onFIE();
+			}
+		};
+		toolbar.add(tgssExpand);
 		
 		AonToolbarButton leyend = new AonToolbarButton( "Leyenda", AON.CSS.aonIconInfo() );
 		leyend.addClickHandler(e -> onLeyend());
@@ -1341,6 +1393,13 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private void onFIE() {
 		msjFIEFileUpload.click();
+	}
+	
+	private void onSyncIT() {
+		syncITs(s -> {
+			loadITWidget();
+			showSyncMessage();
+		}, f -> {});
 	}
 	
 	private void onLeyend() {
@@ -1484,6 +1543,12 @@ public abstract class ITWidget extends ResizeComposite {
 		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
+	private void showSyncMessage() {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Sincronizaci\u00f3n ITs", "Los partes IT se han sincronizaco correctamente con la TGSS");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+	
 	private void cominicateIT(ITEmployee itEmployee, IT it) {
 		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
 		comunicateDialog.confirm(
@@ -1565,6 +1630,8 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	// --------------------------------------------------- Abstract Methdos
+	
+	protected abstract void syncITs(Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void getITEmployeeListDB(Consumer<List<ITEmployee>> success, Consumer<Throwable> failure);
 	
