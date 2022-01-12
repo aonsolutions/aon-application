@@ -1599,7 +1599,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), login);
 			if(tbai.isActive()) {	
-				String tbaiUrl = TbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
+				String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 			}
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

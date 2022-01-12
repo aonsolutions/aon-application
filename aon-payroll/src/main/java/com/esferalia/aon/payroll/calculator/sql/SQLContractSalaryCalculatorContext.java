@@ -4377,7 +4377,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							try {
 								return getDaySalary();
 							} catch (Exception e) {
-								throw new ExpressionExceptionWrapper(new InvalidVariables(e.getMessage(), getName()));
+								//throw new ExpressionExceptionWrapper(new InvalidVariables(e.getMessage(), getName()));
+								throw new ExpressionExceptionWrapper(new UndefinedVariablesException(getName()));
 							}
 						}
 					});
