@@ -134,7 +134,7 @@ public class WorkplaceIT extends Composite {
 		protected void syncITs(Consumer<Void> success, Consumer<Throwable> failure) {
 			workplaceITObject.syncITs( 
 					success::accept, 
-					f -> {});
+					failure::accept);
 		}
 
 	}

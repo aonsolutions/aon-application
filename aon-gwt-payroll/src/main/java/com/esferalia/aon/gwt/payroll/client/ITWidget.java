@@ -1396,10 +1396,15 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private void onSyncIT() {
+		showLoading("Descargando partes IT desde la Seguridad Social (TGSS)");
 		syncITs(s -> {
 			loadITWidget();
 			showSyncMessage();
-		}, f -> {});
+		}, f -> {
+			Map<String, String> errorMap = new HashMap<>();
+			errorMap.put("Sincronizaci\u00f3n ITs", f.getMessage());
+			AonMessagePanel.showError(messagePanel, errorMap);
+		});
 	}
 	
 	private void onLeyend() {
@@ -1627,6 +1632,12 @@ public abstract class ITWidget extends ResizeComposite {
 			
 			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
 		}, f -> {});
+	}
+	
+	// --------------------------------------------------- MessagePanel
+	
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
 	}
 	
 	// --------------------------------------------------- Abstract Methdos
