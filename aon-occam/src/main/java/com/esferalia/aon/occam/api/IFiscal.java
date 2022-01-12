@@ -155,18 +155,6 @@ public interface IFiscal {
 	public String dumpAEATMod2002020(Mod2002020 mod200);
 	public Mod2002020 importMod2002019(AONContext ctx, Mod2002020 mod200);
 	
-	// 				   		  MOD349
-	public LinkedList<Mod349> getMod349s(AONContext ctx,int domain);
-	public Mod349 getMod349(AONContext ctx,Integer id);
-	public Mod349 initializeMod349(AONContext ctx);
-	public Mod349 saveMod349(AONContext ctx,Mod349 mod349);
-	public void deleteMod349(AONContext ctx,Mod349 mod349);
-	public Mod349Detail getMod349Detail(AONContext ctx, Integer id);
-	public Mod349 saveCommentsMod349(AONContext ctx, Mod349 mod349);
-	public Mod349 changeStatusMod349(AONContext ctx, Mod349 mod349, FiscalStatus newStatus);
-	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey);
-	public Mod349 duplicateMod349(AONContext ctx,Mod349 mod349);
-
 	// 						SII
 	Stream<VatContext> getSiiVatContext(AONContext ctx, AccountingReportParams params, String sii);
 	

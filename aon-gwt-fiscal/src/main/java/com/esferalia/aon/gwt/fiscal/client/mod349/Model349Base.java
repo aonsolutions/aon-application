@@ -243,7 +243,7 @@ abstract class Model349Base extends DockLayoutPanel {
 				popup.setGlassEnabled(true);
 				popup.setAnimationEnabled(true);
 				popup.center();
-				Model349.SERVICE.saveMod349(options.getDomainName(),options.getUser(),options.getDomain(),
+				Model349.SERVICE.save(options.getOccam(),
 						getMod349(), new AsyncCallback<Mod349>() {
 							@Override
 							public void onSuccess(Mod349 result) {
@@ -318,7 +318,7 @@ abstract class Model349Base extends DockLayoutPanel {
 
 					@Override
 					public void onAccept() {
-						Model349.SERVICE.deleteMod349(options.getDomainName(),options.getUser(),options.getDomain(), getMod349(), new AsyncCallback<Void>() {
+						Model349.SERVICE.delete(options.getOccam(), getMod349(), new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
@@ -366,7 +366,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(options.getDomainName(),options.getUser(),getMod349(), FiscalStatus.FINISHED, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatus(options.getOccam(),getMod349(), FiscalStatus.FINISHED, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
 						callback.onSelect(options,result , detailManager.getSelectedOperatorIndex() ); 
@@ -392,7 +392,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(options.getDomainName(),options.getUser(), getMod349(), FiscalStatus.SENT, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatus(options.getOccam(), getMod349(), FiscalStatus.SENT, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
 						callback.onSelect(options,result, detailManager.getSelectedOperatorIndex());
@@ -418,7 +418,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(options.getDomainName(),options.getUser(), getMod349(), FiscalStatus.PENDING, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatus(options.getOccam(), getMod349(), FiscalStatus.PENDING, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
 						callback.onSelect(options,result, detailManager.getSelectedOperatorIndex());
@@ -832,7 +832,7 @@ abstract class Model349Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod349().setComments(event.getValue());
 						styleCommentsButton();
-						Model349.SERVICE.saveCommentsMod349(options.getDomainName(),options.getUser(), getMod349(), new AsyncCallback<Mod349>() {
+						Model349.SERVICE.saveComments(options.getOccam(), getMod349(), new AsyncCallback<Mod349>() {
 							@Override
 							public void onSuccess(Mod349 result) {
 								toast.hide();

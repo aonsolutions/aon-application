@@ -6,7 +6,8 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349Service;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL349;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
@@ -23,53 +24,53 @@ public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public Mod349 initializeMod349(String domainName, String user, Integer domain) {
-		return FISCAL.initializeMod349(domainName, domain, user);
+	public Mod349 initialize(Occam occam) {
+		return MODEL349.initialize(occam);
 	}
 
 	@Override
-	public LinkedList<Mod349> getMod349s(String domainName, String user, int domain) {
-		return FISCAL.getMod349s(domainName, domain, user);
+	public LinkedList<Mod349> getMod349s(Occam occam) {
+		return MODEL349.getMod349s(occam);
 	}
 
 	@Override
-	public void deleteMod349(String domainName, String user, int domain, Mod349 mod349){
-		FISCAL.deleteMod349(domainName, domain, user, mod349);
+	public void delete(Occam occam, Mod349 mod349){
+		MODEL349.delete(occam, mod349);
 	}
 
 	@Override
-	public Mod349 saveMod349(String domainName, String user, int domain,Mod349 mod349) {
-		return FISCAL.saveMod349(domainName, domain, user, mod349);
+	public Mod349 save(Occam occam,Mod349 mod349) {
+		return MODEL349.save(occam, mod349);
 	}
 
 	@Override
-	public Mod349 getMod349(String domainName, String user, int domain, Integer id) {
-		return FISCAL.getMod349(domainName, domain, user, id);
+	public Mod349 get(Occam occam, Integer id) {
+		return MODEL349.get(occam, id);
 	}
 
 	@Override
-	public Mod349Detail getMod349Detail(String domainName, String user, int domain, Integer id) {
-		return FISCAL.getMod349Detail(domainName, domain, user, id);
+	public Mod349Detail getDetail(Occam occam, Integer id) {
+		return MODEL349.getDetail(occam, id);
 	}
 
 	@Override
-	public Mod349 saveCommentsMod349(String domainName, String user, Mod349 mod349) {
-		return FISCAL.saveComments(domainName, user, mod349);
+	public Mod349 saveComments(Occam occam, Mod349 mod349) {
+		return MODEL349.saveComments(occam, mod349);
 	}
 
 	@Override
-	public Mod349 changeStatusMod349(String domainName, String user, Mod349 mod349, FiscalStatus newStatus) throws AonCoreException {
-		return FISCAL.changeStatusMod349(domainName, user, mod349, newStatus);
+	public Mod349 changeStatus(Occam occam, Mod349 mod349, FiscalStatus newStatus) throws AonCoreException {
+		return MODEL349.changeStatus(occam, mod349, newStatus);
 	}
 	
 	@Override
-	public String getInfo(String domainName, String user, int domain, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) throws AonCoreException {
-		return FISCAL.getMod349Info(domainName, domain, user, mod349, detail, infoKey);
+	public String getInfo(Occam occam, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) throws AonCoreException {
+		return MODEL349.getInfo(occam, mod349, detail, infoKey);
 	}
 	
 	@Override
-	public Mod349 duplicateMod349(String domainName, String user, int domain, Mod349 mod349) {
-		return FISCAL.duplicateMod349(domainName, domain, user, mod349);
+	public Mod349 duplicate(Occam occam, Mod349 mod349) {
+		return MODEL349.duplicate(occam, mod349);
 	}
 
 }

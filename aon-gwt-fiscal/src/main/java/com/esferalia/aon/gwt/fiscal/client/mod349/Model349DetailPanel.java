@@ -209,7 +209,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				Model349.SERVICE.getInfo(options.getDomainName(),options.getUser(),options.getDomain(),
+				Model349.SERVICE.getInfo(options.getOccam(),
 						   callbackM349.getMod349(), detail, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
 
 							@Override
@@ -239,7 +239,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				Model349.SERVICE.getInfo(options.getDomainName(), options.getUser(), options.getDomain(),
+				Model349.SERVICE.getInfo(options.getOccam(),
 						   callbackM349.getMod349(), detail, FiscalModelKeyInfo.DIFF_INVOICE, new AsyncCallback<String>() {
 
 							@Override

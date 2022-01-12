@@ -211,7 +211,7 @@ public class Model349 extends MainEntryPoint {
 
 	private void onSelect(Model349ModuleOptions options, Integer id ) {
 		LOGGER.info("OnSelect Model349 with a ID: " + options.getFiscalModelId());
-		SERVICE.getMod349(options.getDomainName(), options.getUser(), options.getDomain(), id , new AsyncCallback<Mod349>() {
+		SERVICE.get(options.getOccam(), id , new AsyncCallback<Mod349>() {
 			@Override
 			public void onSuccess(Mod349 selected) {
 				if (selected == null) {
@@ -230,7 +230,7 @@ public class Model349 extends MainEntryPoint {
 
 	private void onSelectionChange(Model349ModuleOptions options, SelectionEvent<Mod349> event) {
 		Mod349 sel = event.getSelectedItem();
-		SERVICE.getMod349(options.getDomainName(), options.getUser(), options.getDomain(),
+		SERVICE.get(options.getOccam(),
 				sel.getId(), new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 selected) {
@@ -268,7 +268,7 @@ public class Model349 extends MainEntryPoint {
 
 	private void newModel(Model349ModuleOptions options) {
 		cleanErrorPanel();
-		SERVICE.initializeMod349(options.getDomainName(), options.getUser(), options.getDomain(),
+		SERVICE.initialize(options.getOccam(),
 				new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 m349) {
@@ -287,7 +287,7 @@ public class Model349 extends MainEntryPoint {
 	
 	private void resetModel(Model349ModuleOptions options, Mod349 oldMod349) {
 		cleanErrorPanel();
-		SERVICE.initializeMod349(options.getDomainName(), options.getUser(), options.getDomain(),
+		SERVICE.initialize(options.getOccam(),
 				new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 newMod349) {
@@ -313,7 +313,7 @@ public class Model349 extends MainEntryPoint {
 	
 	private void duplicateModel(Model349ModuleOptions options, int id) {
 		cleanErrorPanel();
-		SERVICE.getMod349(options.getDomainName(),options.getUser(),options.getDomain(), id,
+		SERVICE.get(options.getOccam(), id,
 				new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 m349) {
@@ -428,7 +428,7 @@ public class Model349 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.saveMod349(options.getDomainName(), options.getUser(), options.getDomain(),model,
+						SERVICE.save(options.getOccam(),model,
 								new AsyncCallback<Mod349>() {
 									@Override
 									public void onSuccess(Mod349 model) {
@@ -464,13 +464,12 @@ public class Model349 extends MainEntryPoint {
 						popup.center();
 						
 						// Primero se borra la declaración actual
-						SERVICE.deleteMod349(options.getDomainName(), options.getUser(), options.getDomain(), oldMod349,
+						SERVICE.delete(options.getOccam(), oldMod349,
 								new AsyncCallback<Void>() {
 									
 									@Override
 									public void onSuccess(Void result) {
-										// Si todo ha ido bien, se añade la declaración nueva
-										SERVICE.saveMod349(options.getDomainName(), options.getUser(), options.getDomain(), model,
+										SERVICE.save(options.getOccam(), model,
 												new AsyncCallback<Mod349>() {
 													@Override
 													public void onSuccess(Mod349 model) {
@@ -518,7 +517,7 @@ public class Model349 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.duplicateMod349(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
+						SERVICE.duplicate(options.getOccam(), model,
 								new AsyncCallback<Mod349>() {
 									@Override
 									public void onSuccess(Mod349 model) {
