@@ -223,7 +223,7 @@ public class Up2Date {
     		//AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
     		//IPREM2022Update.IPREM2022UPDATE,
     		IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT,
-    		DataResponseTBAI.DATA_RESPONSE_TBAI
+    		//DataResponseTBAI.DATA_RESPONSE_TBAI,
     		
     };
     
