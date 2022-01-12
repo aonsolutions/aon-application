@@ -106,6 +106,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.in.payroll.AonComunica;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -113,6 +114,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -2959,6 +2961,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public void syncITs(String domainName, String userLogin) throws IllegalArgumentException {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Domain domain = new Domain().setName(domainName).setId(domainId).setParentId(parentDomainId);
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			AonComunica.syncUpITs(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), domain, Optional.empty());
+			
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

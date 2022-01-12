@@ -163,7 +163,7 @@ public class AonComunica {
 	//SINCRONIZAR ITS
 	
 	public static void syncUpITs(final byte certificateData[], final String certificatePassword,
-			final String certificateType, Domain domain, Optional<String> nss) {
+			final String certificateType, Domain domain, Optional<String> nss) throws IllegalArgumentException {
 		
 		    List<CCCInfo> cccs = PAYROLL.getCCCStream(domain.getName(), domain.getId(), "")
 		    		.filter(distinctByKey(CCCInfo::getCccAccount))
@@ -255,6 +255,7 @@ public class AonComunica {
 					AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new) );
 				} catch (Exception e) {
 					e.printStackTrace();
+					throw new IllegalArgumentException(e);
 				}
 			}
 	

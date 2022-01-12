@@ -255,6 +255,8 @@ public interface EnterprisesService extends RemoteService {
 	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
 
+	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
+
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
 	int getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates);
@@ -334,4 +336,5 @@ public interface EnterprisesService extends RemoteService {
 
 	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
+	
 }

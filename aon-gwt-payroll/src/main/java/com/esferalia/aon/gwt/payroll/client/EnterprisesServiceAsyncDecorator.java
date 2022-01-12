@@ -718,6 +718,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.deleteComunicateIT(currentDomainName, currentUser, affiliationNumber,
 				regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.syncITs(currentDomainName, currentUser, new AsyncCallbackWrapper<Void>(callback));
+	}
 
 	@Override
 	public void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
