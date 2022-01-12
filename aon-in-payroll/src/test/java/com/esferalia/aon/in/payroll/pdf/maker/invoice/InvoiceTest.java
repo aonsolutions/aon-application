@@ -130,6 +130,15 @@ public class InvoiceTest {
 		invoice.setAddressTown(addressTown);
 		invoice.setAddressZIP(addressZIP);
 		
+		RegistryAddress raddress = new RegistryAddress();
+		raddress.setAddress(address);
+		raddress.setCountry(Country.KP);
+		raddress.setProvince("PYONGYANG");
+		raddress.setZip("01002");
+		raddress.setCity("PYONGYANG");
+		
+		invoice.setRegistryAddressData(raddress);
+		
 		invoice.setRegistryName(registryName);
 		
 		invoice.setTotal(total);
@@ -487,7 +496,7 @@ public class InvoiceTest {
 		
 		InvoiceDetail shortDetail1= new InvoiceDetail();
 		shortDetail1.setAccountCode("0192831010");
-		shortDetail1.setDescription("detalle 1");
+		shortDetail1.setDescription("DETALLE 1");
 		shortDetail1.setPrice(0);
 		shortDetail1.setDiscountExpression("30");
 		shortDetail1.setQuantity(1);
@@ -495,7 +504,7 @@ public class InvoiceTest {
 		
 		InvoiceDetail shortDetail2= new InvoiceDetail();
 		shortDetail2.setAccountCode("0192831010");
-		shortDetail2.setDescription("detalle 2");
+		shortDetail2.setDescription("DETALLE 2");
 		shortDetail2.setPrice(1);
 		shortDetail2.setDiscountExpression("30");
 		shortDetail2.setQuantity(0);
@@ -503,7 +512,7 @@ public class InvoiceTest {
 		
 		InvoiceDetail shortDetail3= new InvoiceDetail();
 		shortDetail3.setAccountCode("0192831010");
-		shortDetail3.setDescription("detalle 3");
+		shortDetail3.setDescription("DETALLE 3");
 		shortDetail3.setPrice(1);
 		shortDetail3.setDiscountExpression("30");
 		shortDetail3.setQuantity(1);
@@ -511,7 +520,7 @@ public class InvoiceTest {
 		
 		InvoiceDetail shortDetail4= new InvoiceDetail();
 		shortDetail4.setAccountCode("0192831010");
-		shortDetail4.setDescription("detalle 4");
+		shortDetail4.setDescription("DETALLE 4");
 		shortDetail4.setPrice(1);
 		shortDetail4.setDiscountExpression("0");
 		shortDetail4.setQuantity(1);
@@ -519,7 +528,7 @@ public class InvoiceTest {
 		
 		InvoiceDetail shortDetail5= new InvoiceDetail();
 		shortDetail5.setAccountCode("0192831010");
-		shortDetail5.setDescription("detalle 5");
+		shortDetail5.setDescription("DETALLE 5");
 		shortDetail5.setPrice(1);
 		shortDetail5.setDiscountExpression("NO");
 		shortDetail5.setQuantity(1);
@@ -570,7 +579,7 @@ public class InvoiceTest {
 			
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-			config.setDetailed(false);
+			config.setDetailed(true);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
