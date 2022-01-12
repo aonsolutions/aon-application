@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class NewDeclarationPopup extends CustomDialog {
+public class Model349NewDeclarationPopup extends CustomDialog {
 	
 	protected int row = 0;
 	private AdministrationListBox admonList = new AdministrationListBox();
@@ -34,11 +34,11 @@ public class NewDeclarationPopup extends CustomDialog {
 	private TextBox replacedReceiptBox = new TextBox();
 	private CheckBox diffCalculation = new CheckBox();
 	
-	public NewDeclarationPopup(final Mod349 mod349, final Model349Callback callback) {
+	public Model349NewDeclarationPopup(final Mod349 mod349, final Model349Callback callback) {
 		this(mod349, false, false, callback);		
 	}
 	
-	public NewDeclarationPopup(final Mod349 mod349, final boolean duplicate, final boolean reset, final Model349Callback callback) {
+	public Model349NewDeclarationPopup(final Mod349 mod349, final boolean duplicate, final boolean reset, final Model349Callback callback) {
 		
 		// Cuando se duplica, por defecto el ejercicio es el siguiente y 
 		// complementaria y sustitutiva están desmarcados
@@ -297,7 +297,7 @@ public class NewDeclarationPopup extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				callback.onCancel();
+				callback.onCancel(mod349);
 			}
 			
 		});
