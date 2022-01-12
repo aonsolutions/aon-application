@@ -433,17 +433,23 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	private void setSecondaryUserColumnWidth(Grid dataTableHeader, Grid dataTable) {
 		//MaxWidth 750px
-		dataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(230, Unit.PX);
-		dataTable.getColumnFormatter().getElement(0).getStyle().setWidth(230, Unit.PX);
+		dataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
+		dataTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
 		
-		dataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(150, Unit.PX);
-		dataTable.getColumnFormatter().getElement(1).getStyle().setWidth(150, Unit.PX);
+		dataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
+		dataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setTextAlign(TextAlign.CENTER);
+		dataTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
 		
-		dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(150, Unit.PX);
-		dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(150, Unit.PX);
+		dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(200, Unit.PX);
+		dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
+		dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(200, Unit.PX);
 		
-		dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
-		dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
+		dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(200, Unit.PX);
+		dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
+		dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(200, Unit.PX);
+		
+		dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(90, Unit.PX);
+		dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(90, Unit.PX);
 	}
 	
 	// ------------------------------------------------------ Create certificate tables
@@ -523,13 +529,15 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Hidden ownerHidden = new Hidden("owner", certificate.getOwner().name());
 		
 		String certificateFor = "(" + certificate.getCertificateInfo().getDocument() + ") " + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
-		Label certificateForL = new Label(certificateFor);
+		Label certificateForL = new Label(parseStringLenght(certificateFor));
+		certificateForL.setTitle(certificateFor);
 		
 		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "" : 
 			"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
-		Label representationL = new Label(representation);
+		Label representationL = new Label(parseStringLenght(representation));
+		representationL.setTitle(representation);
 		
-		String type = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "EMPRESA" : "PERSONAL";
+		String type = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONAL" : "EMPRESA";
 		Label typeL = new Label(type);
 		
 		TextBox alias = new TextBox();
@@ -714,6 +722,10 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		}
 	}
 	
+	private String parseStringLenght(String input) {
+		return (AonStringUtils.isBlank(input) || input.length() < 35) ? input : AonStringUtils.substring(input, 0, 32) + "...";
+	}
+
 	private void getCertificateInfo(Certificate certificate) {
 		mainDigitalCertificatesObject.getCertificateInfo(
 				certificate.getId(), 
@@ -991,8 +1003,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		//Add to table
 		dataTable.setWidget(row, 0, nameL);
 		dataTable.setWidget(row, 1, nafL);
+		dataTable.getCellFormatter().getElement(row, 1).getStyle().setTextAlign(TextAlign.CENTER);
 		dataTable.setWidget(row, 2, statusL);
+		dataTable.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
 		dataTable.setWidget(row, 3, dateL);
+		dataTable.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
 		dataTable.setWidget(row, 4, comunicateBtn);
 		dataTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 	}
