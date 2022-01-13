@@ -1,10 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-	<ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainCertificates.MyStyle">
 		
@@ -15,31 +15,31 @@
 		
 		.styleBorder{
 			border-style: solid; 
-			width: 825px; 
-			border-width: 1px; 
-			margin: 60px 10px 0 10px;
+			width: 82.5rem; 
+			border-width: .1rem; 
+			margin: 6rem 1rem 0 1rem;
 		}
 		
 		.tittle{
 			top: -1.2em;
-			font-size: 12px;
-			margin-left: 10px;
+			font-size: 1.2rem;
+			margin-left: 1rem;
 			position: relative;
-			width: 150px;
+			width: 15rem;
 			background-color: white;
-			padding: 5px;
+			padding: .5rem;
 			text-align: center;
 		}
 		
 		.scrollStyle {
-			margin-left: 10px;
-			width: 800px;
-			margin-bottom: 10px;
+			max-height: 9rem;
+			padding-left: .5rem;
+			min-height: 7rem;
 		}
 		
 		.gridStyle{
-			margin-left: 10px;
-			width: 800px;
+			margin-left: .1rem;
+			width: 80rem;
 		}
 		
 		.center{
@@ -50,11 +50,12 @@
 		.centerColumn{
 			display: flex;
 			flex-direction: column;
+			gap: 1rem;
 		}
 		
 		.headerStyle{
 			font-weight: bold;
-			padding-left: 5px;
+			
 		}
 		
 		.widthAll{
@@ -67,13 +68,13 @@
 		
 		.message{
 			display: flex;
-			width: 100%;
 			justify-content: center;
-			align-items: center;
+			text-transform: uppercase;
+			margin-top: 1rem;
 		}
 		
 		.secondaryUserToolbar{
-			padding: 10px;
+			padding: 1rem;
 			display: flex;
 		    align-items: center;
 		    justify-content: space-between;
@@ -118,72 +119,110 @@
 		
 		.alignCenter{
 			align-items: center;
+			margin-top: 1.5rem;
+		}
+		
+		.header{
+			min-height: 2rem;
+			background-color: #eee;
+			padding-left: .5rem;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+		}
+		
+		.checkBox input{
+			width: 1rem;
+			height: 1rem;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			height: 100%;
+		}
+		
+		.mt2 {
+			margin-top: 2rem;
 		}
 		
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+		<g:north size="50">
+			<c:AonToolbar ui:field="toolbar"/>
+		</g:north>
 		<g:center>
-			<g:DeckPanel ui:field="deckPanel" styleName="{style.widthAll} {style.heightAll}">
-			
-				<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.alignCenter} {style.centerColumn}">
-	    		
-	    			<g:HTMLPanel styleName="{style.styleBorder} {style.centerColumn}">
-	    				<g:Label styleName='{style.tittle}'>Cert. TGSS</g:Label>
-				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.centerColumn}" debugId="paymetDialogHTMLPanel">
-			    			<g:Grid ui:field="certificateTGSSDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-			    			<g:HTMLPanel>
-			    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-			    			</g:HTMLPanel>
-				    		<g:ScrollPanel ui:field="certificateTGSSScrollPanel" styleName="{style.scrollStyle}">
-				    			<g:Grid ui:field="certificateTGSSDataTable"></g:Grid>
-				    		</g:ScrollPanel>
-				    	</g:HTMLPanel>
-				    </g:HTMLPanel>
-				    
-				    <g:HTMLPanel ui:field="secondayUsersPanel" styleName="{style.styleBorder} {style.centerColumn}">
-			    		<g:Label styleName='{style.tittle}'>Usr. Secundarios</g:Label>
-				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.centerColumn}" debugId="paymetDialogHTMLPanel">
-			    			<g:Grid ui:field="secondaryUserDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-			    			<g:HTMLPanel>
-			    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-			    			</g:HTMLPanel>
-				    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle}">
-				    			<g:DeckPanel ui:field="secondaryUserDeckPanel">
-				    				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
-				    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
-				    				<g:Grid ui:field="secondaryUserDataTable"></g:Grid>
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel ui:field="messagePanel" />
+				<g:TabLayoutPanel ui:field="tabLayoutPanel" barUnit='EM' barHeight='3'>
+				
+					<g:tab>
+				    	<g:header size='7'>Personal</g:header>
+			    		<g:HTMLPanel styleName="{style.alignCenter} {style.centerColumn}">
+			    			<g:HTMLPanel styleName="{style.centerColumn}">
+				    			<g:Grid ui:field="userCertDataTableHeader" styleName="{style.header}" />
+				    			<g:DeckPanel ui:field="userCertDataTableDeckPanel" styleName="{style.heightAll}">
+				    				<g:HTMLPanel ui:field="userCertLoadingPanel" styleName="{style.message}" />
+				    				<g:ScrollPanel ui:field="userCertTableScrollPanel" styleName="{style.scrollStyle}">
+						    			<g:Grid ui:field="userCertDataTable" />
+						    		</g:ScrollPanel>
+						    		<g:Label styleName="{style.message}">No existen certificados</g:Label>
 				    			</g:DeckPanel>
-				    		</g:ScrollPanel>
-				    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="secondaryUserToolbar">
-				    			<g:HTMLPanel styleName="{style.addSecondaryUserToolbar}" ui:field="addSecondaryUserToolbar"></g:HTMLPanel>
-				    			<g:HTMLPanel styleName="{style.showSecondaryUserToolbar}" ui:field="showSecondaryUserToolbar"></g:HTMLPanel>
-				    		</g:HTMLPanel>
+					    	</g:HTMLPanel>
+						    <g:HTMLPanel styleName="{style.centerColumn} {style.mt2}" ui:field="userSecondayUsersPanel">
+				    			<g:Grid ui:field="userSecondaryUserDataTableHeader"  styleName="{style.header}" />
+				    			<g:ScrollPanel ui:field="userSecondaryUserScrollPanel" styleName="{style.scrollStyle}">
+					    			<g:DeckPanel ui:field="userSecondaryUserDeckPanel">
+					    				<g:HTMLPanel ui:field="userLoadingPanel" styleName="{style.message}"></g:HTMLPanel>
+					    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
+					    				<g:Grid ui:field="userSecondaryUserDataTable"></g:Grid>
+					    			</g:DeckPanel>
+					    		</g:ScrollPanel>
+					    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="userSecondaryUserToolbar">
+					    			<g:HTMLPanel styleName="{style.addSecondaryUserToolbar}" ui:field="addUserSecondaryUserToolbar" />
+					    			<g:HTMLPanel styleName="{style.showSecondaryUserToolbar}" ui:field="showUserSecondaryUserToolbar" />
+					    		</g:HTMLPanel>
+					    	</g:HTMLPanel>
 				    	</g:HTMLPanel>
-				   </g:HTMLPanel>
-		    		
-		    	</g:HTMLPanel>
-		    	
-		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.alignCenter} {style.centerColumn}">
-	    		
-		    		<g:HTMLPanel styleName="{style.styleBorder} {style.centerColumn}">
-			    		<g:Label styleName='{style.tittle}'>Cert SEPE</g:Label>
-				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.centerColumn}">
-			    			<g:Grid ui:field="certificateSEPEDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-			    			<g:HTMLPanel>
-			    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-			    			</g:HTMLPanel>
-				    		<g:ScrollPanel ui:field="certificateSEPEScrollPanel" styleName="{style.scrollStyle}">
-				    			<g:Grid ui:field="certificateSEPEDataTable"></g:Grid>
-				    		</g:ScrollPanel>
+				  	</g:tab>
+				  	
+				  	<g:tab>
+				  		<g:header size='7'>Compartido</g:header>
+			  			<g:HTMLPanel styleName="{style.alignCenter} {style.centerColumn}">
+				    		<g:HTMLPanel styleName="{style.centerColumn}">
+				    			<g:Grid ui:field="enterpriseCertDataTableHeader" styleName="{style.header}" />
+				    			<g:DeckPanel ui:field="enterpriseCertDataTablDeckPanel" styleName="{style.heightAll}">
+					    			<g:HTMLPanel ui:field="enterpriseCertLoadingPanel" styleName="{style.message}" />
+					    			<g:ScrollPanel ui:field="enterpriseCertTableScrollPanel" styleName="{style.scrollStyle}">
+						    			<g:Grid ui:field="enterpriseCertDataTable" />
+						    		</g:ScrollPanel>
+						    		<g:Label styleName="{style.message}">No existen certificados</g:Label>
+					    		</g:DeckPanel>
+					    	</g:HTMLPanel>
+					    	<g:HTMLPanel styleName="{style.centerColumn} {style.mt2}" ui:field="enterpriseSecondayUsersPanel">
+				    			<g:Grid ui:field="enterpriseSecondaryUserDataTableHeader"  styleName="{style.header}" />
+				    			<g:ScrollPanel ui:field="enterpriseSecondaryUserScrollPanel" styleName="{style.scrollStyle}">
+					    			<g:DeckPanel ui:field="enterpriseSecondaryUserDeckPanel">
+					    				<g:HTMLPanel ui:field="enterpriseLoadingPanel" styleName="{style.message}"></g:HTMLPanel>
+					    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
+					    				<g:Grid ui:field="enterpriseSecondaryUserDataTable"></g:Grid>
+					    			</g:DeckPanel>
+					    		</g:ScrollPanel>
+					    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="enterpriseSecondaryUserToolbar">
+					    			<g:HTMLPanel styleName="{style.addSecondaryUserToolbar}" ui:field="addEnterpriseSecondaryUserToolbar" />
+					    			<g:HTMLPanel styleName="{style.showSecondaryUserToolbar}" ui:field="showEnterpriseSecondaryUserToolbar" />
+					    		</g:HTMLPanel>
+					    	</g:HTMLPanel>
 				    	</g:HTMLPanel>
-				    </g:HTMLPanel>
-		    		
-		    	</g:HTMLPanel>
-			
-			</g:DeckPanel>
-			
+				  	</g:tab>
+				  	
+				</g:TabLayoutPanel>	
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
-
