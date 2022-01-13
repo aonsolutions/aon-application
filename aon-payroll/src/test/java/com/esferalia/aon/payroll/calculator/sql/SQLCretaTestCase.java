@@ -2156,6 +2156,108 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaArtistas0DNIV()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		Date startDateI = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 4);
+		Date endDateI = startDateI;
+		
+		Date startDateII = add(endDateI, Calendar.DAY_OF_MONTH, 5);
+		Date endDateII = startDateII;
+		
+		Date startDateIII = add(endDateII, Calendar.DAY_OF_MONTH, 5);
+		Date endDateIII = startDateIII;
+
+		Date startDateIV = add(endDateIII, Calendar.DAY_OF_MONTH, 5);
+		Date endDateIV = startDateIV;
+
+		Date startDateV = add(endDateIV, Calendar.DAY_OF_MONTH, 5);
+		Date endDateV = startDateV;
+
+		String dni = Integer.toString((int)(Math.random() * 1000000000.00));
+		String zeroDni = "0" + dni;
+		String zeroZeroDni = "00" + dni;
+		String whiteSpaceDni = " " + dni;
+		String whiteSpaceDniWhiteSapce = " " + dni + " ";
+
+		@SuppressWarnings("serial")
+		ContractRecord contractI = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateI, endDateI, dni );
+		ContractRecord contractII = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateII, endDateII, zeroZeroDni);
+		ContractRecord contractIII = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateIII, endDateIII, zeroDni);
+		ContractRecord contractIV = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateIV, endDateIV, whiteSpaceDni);
+		ContractRecord contractV = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateV, endDateV, whiteSpaceDniWhiteSapce);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		 net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = getTrabajadoresTramos(connection, getFirstDayOfMonth(startDateI), getLastDayOfMonth(startDateI), ccc, contractI, contractII, contractIII, contractIV, contractV);
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getBases(connection, trabajadoresTramos);
+		
+		Assert.assertEquals(5, tramos.size());
+		
+		{
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoI = tramos.get(0); 
+		Assert.assertEquals(get(startDateI, DAY_OF_MONTH), Integer.parseInt(tramoI.getFechaDesde().getDia()));
+		Assert.assertEquals(get(endDateI, DAY_OF_MONTH), Integer.parseInt(tramoI.getFechaHasta().getDia()));
+		double _300 =
+		tramoI.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("300")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_300, (int)((1750.00 / 30.00 ) * 100.00), DELTA);
+		}
+		{
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoII = tramos.get(1); 
+		Assert.assertEquals(get(startDateII, DAY_OF_MONTH), Integer.parseInt(tramoII.getFechaDesde().getDia()));
+		Assert.assertEquals(get(endDateII, DAY_OF_MONTH), Integer.parseInt(tramoII.getFechaHasta().getDia()));
+		double _300 =
+		tramoII.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("300")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00 ) * 100.00), DELTA);
+		}
+		
+		{
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoIII = tramos.get(2); 
+		Assert.assertEquals(get(startDateIII, DAY_OF_MONTH), Integer.parseInt(tramoIII.getFechaDesde().getDia()));
+		Assert.assertEquals(get(endDateIII, DAY_OF_MONTH), Integer.parseInt(tramoIII.getFechaHasta().getDia()));
+		double _300 =
+		tramoIII.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("300")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00 ) * 100.00), DELTA);
+		}
+
+		{
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoIV = tramos.get(3); 
+		Assert.assertEquals(get(startDateIV, DAY_OF_MONTH), Integer.parseInt(tramoIV.getFechaDesde().getDia()));
+		Assert.assertEquals(get(endDateIV, DAY_OF_MONTH), Integer.parseInt(tramoIV.getFechaHasta().getDia()));
+		double _300 =
+		tramoIV.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("300")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00 ) * 100.00), DELTA);
+		}
+
+		{
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoV = tramos.get(4); 
+		Assert.assertEquals(get(startDateV, DAY_OF_MONTH), Integer.parseInt(tramoV.getFechaDesde().getDia()));
+		Assert.assertEquals(get(endDateV, DAY_OF_MONTH), Integer.parseInt(tramoV.getFechaHasta().getDia()));
+		double _300 =
+		tramoV.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("300")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_300, (int) ((1750.00 / 30.00 ) * 100.00), DELTA);
+		}
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosNormal()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();

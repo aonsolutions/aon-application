@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -94,7 +95,10 @@ public class SIIServlet extends HttpServlet{
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
-
+			
+			if(AonStringUtils.isBlank(pass)) {
+				pass = attach.getDescription().split("HIDE\\(")[1].split("\\)")[0];
+			}
 			SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
 			siiConfiguration.setCertificate(new Certificate()
 					.setCertificate(attach.getData())

@@ -319,6 +319,23 @@ public class RegistryAddressDAO {
 		ctx.log().debug("DELETE REGISTRY ADDRESS registry: {0} ({1} rows)",registry,count);
 		return count;
 	}
+	
+	public static Integer getMainAddressProvince(AONContext ctx, Integer registry) {
+		return ctx.getDslContext()
+			.select(GEOZONE.CODE)
+			.from(RADDRESS)
+			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
+			.where(RADDRESS.REGISTRY.equal(registry))
+			.and(RADDRESS.TYPE.equal( MAIN_ADDRESS ))
+			.limit(1)
+			.fetch()
+			.stream()
+			.mapToInt(rec -> AonNumberUtils.toint(rec.getValue(GEOZONE.CODE) ))
+			.findFirst()
+			.orElse(0);
+	}
+	
+	
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

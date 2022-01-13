@@ -3,11 +3,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
 import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -138,7 +136,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.DOMAIN,mod180.getDomain())
 			.set(FS_MODEL180.ENTERPRISE,mod180.getEnterprise())
 			.set(FS_MODEL180.YEAR,mod180.getYear())
-			.set(FS_MODEL180.ADMINISTRATION, mod180.getAdministration().getValue())
+			.set(FS_MODEL180.ADMINISTRATION, mod180.getAdministration().value())
 			.set(FS_MODEL180.STATUS, ZERO_BYTE )
 			.set(FS_MODEL180.SECURITY_LEVEL,AonEnumUtils.getByte(mod180.isConfidential()) ) 
 			.set(FS_MODEL180.DOCUMENT,mod180.getDocument())
@@ -168,7 +166,7 @@ public class Mod180DAO {
 	private static Mod180 update(AONContext ctx, Mod180 mod180) {
 		ctx.getDslContext().update(FS_MODEL180)
 			.set(FS_MODEL180.YEAR,mod180.getYear())
-			.set(FS_MODEL180.ADMINISTRATION,mod180.getAdministration().getValue())
+			.set(FS_MODEL180.ADMINISTRATION,mod180.getAdministration().value())
 			.set(FS_MODEL180.STATUS,AonEnumUtils.getByte( mod180.getStatus()  ))
 			.set(FS_MODEL180.SECURITY_LEVEL,AonEnumUtils.getByte(mod180.isConfidential()) ) 
 			.set(FS_MODEL180.DOCUMENT,mod180.getDocument())
@@ -205,7 +203,7 @@ public class Mod180DAO {
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL180)
 					.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-					.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().getValue()))
+					.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().value()))
 					.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise())))
 					.fetch()
 					.stream()
@@ -218,7 +216,7 @@ public class Mod180DAO {
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MODEL180)
 				.where(FS_MODEL180.YEAR.equal(mod180.getYear())
-				.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().getValue()))
+				.and(FS_MODEL180.ADMINISTRATION.equal(mod180.getAdministration().value()))
 				.and(FS_MODEL180.ENTERPRISE.equal(mod180.getEnterprise()))
 				.and(FS_MODEL180.REPLACEMENT.equal(ZERO_BYTE))
 				.and(FS_MODEL180.COMPLEMENTARY.equal(ZERO_BYTE)))
@@ -388,7 +386,7 @@ public class Mod180DAO {
 				.setPerception(rec.getValue(sumBase).doubleValue())
 				.setRetention(rec.getValue(quotaOp).doubleValue())
 				.setPercent(AonNumberUtils.toDouble(percent))
-				.setProvince( getRegistryMainAddressProvince(ctx, rec.getValue(minRegistry)) );
+				.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
 			})
 		.forEach(detail -> insertDetail(ctx,detail));
 	}
@@ -482,21 +480,6 @@ public class Mod180DAO {
 				.setProvinceCode(record.getValue(FS_MODEL180_DETAIL.PROVINCE_CODE))
 				.setZip(record.getValue(FS_MODEL180_DETAIL.ZIP));
 		}
-	}
-
-	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
-		return ctx.getDslContext()
-			.select(GEOZONE.CODE)
-			.from(RADDRESS)
-			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-			.where(RADDRESS.REGISTRY.equal(registry))
-			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
-			.limit(1)
-			.fetch()
-			.stream()
-			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
-			.findFirst()
-			.orElse(0);
 	}
 
 	public static Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus) {

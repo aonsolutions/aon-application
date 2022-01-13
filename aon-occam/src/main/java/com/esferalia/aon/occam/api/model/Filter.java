@@ -512,6 +512,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface CertificateFilter{
+		Filter filter(CertificateProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface TimeControlFilter{
 		Filter filter(TimeControlProperties properties);
 	}

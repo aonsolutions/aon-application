@@ -4,11 +4,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel193.FS_MODEL193;
 import static com.esferalia.aon.jooq.tables.FsModel193Detail.FS_MODEL193_DETAIL;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -488,7 +486,7 @@ public class Mod193DAO {
 					.setRetentionBase(rec.getValue(sumBase).doubleValue())
 					.setPercent(rec.getValue(INVOICE_TAX.PERCENTAGE))
 					.setRetention(rec.getValue(quotaOp).doubleValue())
-					.setProvince( getRegistryMainAddressProvince(ctx, rec.getValue(minRegistry)) ))
+					.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) ))
 			.forEach(detail -> insertDetail(ctx,detail));
 	}
 
@@ -506,21 +504,6 @@ public class Mod193DAO {
 		mod193.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),FS_MODEL193.CONTACT_PHONE.getDataType().length()));
 		mod193.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),FS_MODEL193.CONTACT_MAIL.getDataType().length()));
 		return mod193;
-	}
-
-	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
-		return ctx.getDslContext()
-			.select(GEOZONE.CODE)
-			.from(RADDRESS)
-			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-			.where(RADDRESS.REGISTRY.equal(registry))
-			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
-			.limit(1)
-			.fetch()
-			.stream()
-			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
-			.findFirst()
-			.orElse(0);
 	}
 
 	public static Mod193 duplicate(AONContext ctx, Mod193 mod193) {

@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
@@ -616,6 +617,14 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	// ---------- CERTIFICATES
+	
+	public static Stream<Certificate> getCertificates(Domain domain, User user, CertificateFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getSecurity().getCertificates(ctx, filter);
 		}
 	}
 	
@@ -2511,6 +2520,10 @@ public class AON {
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
+	
+	public static Stream<Salary> getSalaries(Domain domain, String login, SalaryFilter filter) {
+		return getSalary().getSalaries(AONContext.getAONContext(domain, login), filter, Salary::new);
+	}
 
 	public static Collection<Salary> saveSalaries(AONContext ctx, 
 			Integer domainId, Collection<Salary> salaries) {
@@ -2520,6 +2533,10 @@ public class AON {
 	public static Stream<Salary> getSalaryData(AONContext ctx,
 			SalaryFilter filter) {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);
+	}
+	
+	public static Stream<Salary> getSalaryData(Domain domain, String login, SalaryFilter filter) {
+		return getSalary().getSalaryData(AONContext.getAONContext(domain, login), filter, Salary::new);
 	}
 
 	public static Stream<Salary> getContractData(AONContext ctx,

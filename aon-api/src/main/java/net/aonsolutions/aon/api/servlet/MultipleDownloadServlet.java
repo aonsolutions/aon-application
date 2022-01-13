@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -50,6 +51,7 @@ import com.google.api.services.drive.model.FileList;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
+import net.aonsolutions.aon.tbai.TbaiData;
 
 @WebServlet(name = "MultipleDownloadServlet", urlPatterns = {"/ms/api/multiple_download/*"})
 public class MultipleDownloadServlet extends HttpServlet{
@@ -168,7 +170,14 @@ public class MultipleDownloadServlet extends HttpServlet{
     						}
     						File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
     						FileOutputStream out = new FileOutputStream(file);
-    						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData());
+    						
+    						String qrUrl = domain.getName() + "/dip?source=invoice&id=" + id;  
+    						TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
+    						if(tbai.isActive()) {	
+    							String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
+    							qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+    						}
+    						PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData());
     						list.add(file);	
     					}
     				}

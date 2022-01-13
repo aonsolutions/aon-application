@@ -17,7 +17,7 @@ public class SecurityUtils {
 			String[] values = parameter.split("=");
 			if(map.containsKey(values[0])){
 				map.put(values[0], map.get(values[0]) + "," + values[1]);
-			} else map.put(values[0], values[1]);
+			} else map.put(values[0], values.length > 1 ? values[1] : "");
 		}
 		return map;
 	}

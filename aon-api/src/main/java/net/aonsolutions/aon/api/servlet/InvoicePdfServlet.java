@@ -46,9 +46,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediRegistry;
 import net.aonsolutions.aon.api.ewok.IConstants;
-import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
-import net.aonsolutions.aon.tbai.TbaiUri;
 
 
 @SuppressWarnings("serial")

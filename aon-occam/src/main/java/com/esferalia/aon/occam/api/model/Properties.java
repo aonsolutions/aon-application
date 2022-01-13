@@ -1371,6 +1371,14 @@ public interface Properties {
 		Property<String> getAuthDocumentProperty();
 		Property<Integer> getScopeProperty();
 	}
+	
+	public interface CertificateProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<String> getTypeProperty();
+		
+	}
 
 	public interface TimeControlProperties {
 		Property<Integer> getIdProperty();

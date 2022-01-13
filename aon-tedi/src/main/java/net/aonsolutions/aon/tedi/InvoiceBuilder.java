@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -284,16 +285,12 @@ public class InvoiceBuilder {
 		),
 		ADDRESS( (ctx, aonCtx,result) -> {
 			if (result.getTedi().getRegistry() != null && result.getTedi().getRegistry().getAddress() != null) {
-				result.getInvoice().setAddress(result.getTedi().getRegistry().getAddress().getAddress());
-				result.getInvoice().setAddressTown(result.getTedi().getRegistry().getAddress().getCity());
-				result.getInvoice().setAddressZIP(result.getTedi().getRegistry().getAddress().getPostalCode());
-				result.getInvoice().setAddressProvince(result.getTedi().getRegistry().getAddress().getProvince());
-
-				// *************************************************************************
-				// TODO Soporte en OCCAM -> Invoice para el pais de la dirección. !!!! IMPORTANTE!!!
-				result.getInvoice().setAddressProvinceCode(result.getTedi().getRegistry().getAddress().getCountry());
-				// *************************************************************************
-
+				result.getInvoice().setAddress(new RegistryAddress()
+					.setAddress(result.getTedi().getRegistry().getAddress().getAddress())
+					.setCity(result.getTedi().getRegistry().getAddress().getCity())
+					.setZip(result.getTedi().getRegistry().getAddress().getPostalCode())
+					.setProvince(result.getTedi().getRegistry().getAddress().getProvince())
+					.setCountry(Country.safeValueOf(result.getTedi().getRegistry().getAddress().getCountry())));
 			}
 		}),
 		DETAILS( (ctx, aonCtx,result) -> {

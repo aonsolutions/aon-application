@@ -236,7 +236,7 @@ ar						if (reg == null) {
 	}
 	
 	private static final double IVA_PERCENTS [] = {21.0, 10.0, 4.0};
-	private static final double IRPF_PERCENTS [] = {19.0};
+	private static final double IRPF_PERCENTS [] = {19.0,15.0};
 	
 	public static BiConsumer<TediContext,TediInvoice> SUPER_SIMPLE_21_IVA = (ctx,inv) -> {
 		if (inv.getTotal() != null 

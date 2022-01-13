@@ -39,15 +39,12 @@ public class RegistryAddress implements Serializable {
 	private boolean removed;
 	private boolean global;
 	
-	public RegistryAddress() {
-
-	}
-
 	public Integer getId() {
 		return id;
 	}
+	
 	public RegistryAddress setId(Integer id) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.id , id) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.id , id));
 		this.id = id;
 		return this;
 	}
@@ -55,8 +52,9 @@ public class RegistryAddress implements Serializable {
 	public Integer getDomain() {
 		return domain;
 	}
+
 	public RegistryAddress setDomain(Integer domain) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.domain , domain) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.domain , domain));
 		this.domain = domain;
 		return this;
 	}
@@ -64,8 +62,9 @@ public class RegistryAddress implements Serializable {
 	public Integer getRegistry() {
 		return registry;
 	}
+	
 	public RegistryAddress setRegistry(Integer registry) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registry, registry) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.registry, registry));
 		this.registry = registry;
 		return this;
 	}
@@ -73,8 +72,9 @@ public class RegistryAddress implements Serializable {
 	public boolean isMain() {
 		return main;
 	}
+	
 	public RegistryAddress setMain(boolean main) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.main, main) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.main, main));
 		this.main = main;
 		return this;
 	}
@@ -82,8 +82,9 @@ public class RegistryAddress implements Serializable {
 	public String getRecipient() {
 		return recipient;
 	}
+	
 	public RegistryAddress setRecipient(String recipient) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.recipient, recipient) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.recipient, recipient));
 		this.recipient = recipient;
 		return this;
 	}
@@ -91,8 +92,9 @@ public class RegistryAddress implements Serializable {
 	public StreetType getStreetType() {
 		return streetType;
 	}
+	
 	public RegistryAddress setStreetType(StreetType streetType) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.streetType, streetType) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.streetType, streetType));
 		this.streetType = streetType;
 		return this;
 	}
@@ -100,8 +102,9 @@ public class RegistryAddress implements Serializable {
 	public String getAddress() {
 		return address;
 	}
+	
 	public RegistryAddress setAddress(String address) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.address, address) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.address, address));
 		this.address = address;
 		return this;
 	}
@@ -109,8 +112,9 @@ public class RegistryAddress implements Serializable {
 	public String getNumber() {
 		return number;
 	}
+	
 	public RegistryAddress setNumber(String number) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.number, number) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.number, number));
 		this.number = number;
 		return this;
 	}
@@ -118,8 +122,9 @@ public class RegistryAddress implements Serializable {
 	public String getAddress2() {
 		return address2;
 	}
+	
 	public RegistryAddress setAddress2(String address2) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.address2, address2) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.address2, address2));
 		this.address2 = address2;
 		return this;
 	}
@@ -127,8 +132,9 @@ public class RegistryAddress implements Serializable {
 	public String getAddress3() {
 		return address3;
 	}
+	
 	public RegistryAddress setAddress3(String address3) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.address3, address3) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.address3, address3));
 		this.address3 = address3;
 		return this;
 	}
@@ -136,8 +142,9 @@ public class RegistryAddress implements Serializable {
 	public String getZip() {
 		return zip;
 	}
+	
 	public RegistryAddress setZip(String zip) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.zip, zip) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.zip, zip));
 		this.zip = zip;
 		return this;
 	}
@@ -145,8 +152,9 @@ public class RegistryAddress implements Serializable {
 	public String getCity() {
 		return city;
 	}
+	
 	public RegistryAddress setCity(String city) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.city, city) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.city, city));
 		this.city = city;
 		return this;
 	}
@@ -154,8 +162,9 @@ public class RegistryAddress implements Serializable {
 	public Integer getGeozone() {
 		return geozone;
 	}
+	
 	public RegistryAddress setGeozone(Integer geozone) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.geozone, geozone) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.geozone, geozone));
 		this.geozone = geozone;
 		return this;
 	}
@@ -163,8 +172,9 @@ public class RegistryAddress implements Serializable {
 	public String getAlias() {
 		return alias;
 	}
+	
 	public RegistryAddress setAlias(String alias) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.alias, alias) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.alias, alias));
 		this.alias = alias;
 		return this;
 	}
@@ -172,8 +182,9 @@ public class RegistryAddress implements Serializable {
 	public String getMunicipalityCode() {
 		return municipalityCode;
 	}
+	
 	public RegistryAddress setMunicipalityCode(String municipalityCode) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.municipalityCode, municipalityCode) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.municipalityCode, municipalityCode));
 		this.municipalityCode = municipalityCode;
 		return this;
 	}
@@ -181,8 +192,9 @@ public class RegistryAddress implements Serializable {
 	public String getGeozoneCode() {
 		return geozoneCode;
 	}
+	
 	public RegistryAddress setGeozoneCode(String geozoneCode) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.geozoneCode, geozoneCode) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.geozoneCode, geozoneCode));
 		this.geozoneCode = geozoneCode;
 		return this;
 	}
@@ -190,8 +202,10 @@ public class RegistryAddress implements Serializable {
 	public String getGeozoneName() {
 		return geozoneName;
 	}
+	
 	public RegistryAddress setGeozoneName(String geozoneName) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.geozoneName, geozoneName) );
+		this.setDirty(isDirty() || AonUtils.notEquals(this.geozoneName, geozoneName));
+		setProvince(geozoneName);
 		this.geozoneName = geozoneName;
 		return this;
 	}
@@ -201,6 +215,7 @@ public class RegistryAddress implements Serializable {
 	}
 
 	public RegistryAddress setChild(GeoZone child) {
+		setProvince(child.getName());
 		this.child = child;
 		return this;
 	}
@@ -210,6 +225,7 @@ public class RegistryAddress implements Serializable {
 	}
 
 	public RegistryAddress setParent(GeoZone parent) {
+		setCountry(Country.safeValueOf(parent.getCode()));
 		this.parent = parent;
 		return this;
 	}
@@ -235,6 +251,7 @@ public class RegistryAddress implements Serializable {
 	public boolean isDirty() {
 		return dirty;
 	}
+	
 	public RegistryAddress setDirty(boolean dirty) {
 		this.dirty = dirty;
 		return this;
@@ -243,21 +260,20 @@ public class RegistryAddress implements Serializable {
 	public boolean isRemoved() {
 		return removed;
 	}
+	
 	public RegistryAddress setRemoved(boolean removed) {
 		this.removed = removed;
 		return this;
 	}
 	
 	public String getFullAddress() {
-		String streetType = getStreetType()==null?"": getStreetType().getDescription().substring(0, 1) + getStreetType().getDescription().substring(1).toLowerCase();
-		if(getStreetType() == null 
-			|| getStreetType() == StreetType.XX 		// TODO ????????????
-			|| getStreetType() == StreetType.ZZ) { 		// TODO ????????????
-			streetType = "";
-		}
-    	StringBuffer buf = new StringBuffer();
-    	buf.append(AonStringUtils.defaultString(streetType));
-    	buf.append(!AonStringUtils.isBlank(streetType) ? ". " : "");
+		String st = getStreetType() == null 
+				|| StreetType.XX.equals(getStreetType())
+				|| StreetType.ZZ.equals(getStreetType())
+			? "": getStreetType().getDescription().substring(0, 1) + getStreetType().getDescription().substring(1).toLowerCase();
+    	StringBuilder buf = new StringBuilder();
+    	buf.append(AonStringUtils.defaultString(st));
+    	buf.append(!AonStringUtils.isBlank(st) ? ". " : "");
     	buf.append(AonStringUtils.isEmpty(getAddress())? "":getAddress());
     	buf.append(AonStringUtils.isEmpty(getNumber())?"":" ");
     	buf.append(AonStringUtils.isEmpty(getNumber())?"":getNumber());
@@ -269,7 +285,7 @@ public class RegistryAddress implements Serializable {
     	return buf.toString();
     }
 
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return id == null && domain == null && registry == null
 			&&  AonStringUtils.isBlank(recipient) && streetType == null && AonStringUtils.isBlank(address)
 			&&  AonStringUtils.isBlank(zip) &&  AonStringUtils.isBlank(city) && geozone == null;

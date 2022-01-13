@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 
@@ -26,18 +29,23 @@ public class EmployeeIT implements Serializable {
 	String description;
 	Date startDate;
 	Date endDate;
+	Integer parent;
+	ContractLeaveDischargeCause dischargeCause;
+	List<EmployeeITPart> itParts;
+	
 	Double dailyCgcBase;	
 	Double dailyCgpBase;	
-	Integer parent;
 	Double dailyRegBase;	
-	ContractLeaveDischargeCause dischargeCause;
 	
-	List<EmployeeITPart> itParts;
+
+	Integer quoteDays;
+	String regime;
+	String ccc;
+	String nss;
 	
 	public EmployeeIT() {
 		this.itParts = new ArrayList<>();
 	}
-	
 	
 	public Integer getId() {
 		return id;
@@ -123,7 +131,43 @@ public class EmployeeIT implements Serializable {
 	public Optional<Double> getDailyRegBase() {
 		return Optional.ofNullable(dailyRegBase);
 	}
+	
+	public EmployeeIT setQuoteDays(Integer quoteDays) {
+		this.quoteDays = quoteDays;
+		return this;
+	}
 
+	public Integer getQuoteDays() {
+		return quoteDays;
+	}
+	
+	public EmployeeIT setRegime(String regime) {
+		this.regime = regime;
+		return this;
+	}
+
+	public String getRegime() {
+		return regime;
+	}
+
+	public EmployeeIT setCcc(String ccc) {
+		this.ccc = ccc;
+		return this;
+	}
+
+	public String getCcc() {
+		return ccc;
+	}
+	
+	public EmployeeIT setNss(String nss) {
+		this.nss = nss;
+		return this;
+	}
+
+	public String getNss() {
+		return nss;
+	}
+	
 	public EmployeeIT setDailyCgpBase(Double dailyCgpBase) {
 		this.dailyCgpBase = dailyCgpBase;
 		return this;
@@ -151,6 +195,7 @@ public class EmployeeIT implements Serializable {
 		return itParts;
 	}
 
+
 	public EmployeeIT setITParts(List<EmployeeITPart> itParts) {
 		this.itParts = itParts;
 		return this;
@@ -160,9 +205,23 @@ public class EmployeeIT implements Serializable {
 		this.itParts.add(itPart);
 	}
 	
-	  @Override
+	
+	public Optional<EmployeeITPart> getItBaja(){
+		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.BAJA)).findFirst();
+	}
+	
+	public Optional<EmployeeITPart> getItAlta(){
+		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.ALTA)).findFirst();
+	}
+
+	public List<EmployeeITPart> getItConfirmations(){
+		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.CONFIRMACION)).collect(Collectors.toList());
+	}
+	
+	 @Override
     public String toString() {
         return "EmployeeIT{"
+        		+ "id=" + id +","
         		+ "domain=" + domain +","
         		+ "type=" + type +","
         		+ "contract=" + contract +","
@@ -178,22 +237,19 @@ public class EmployeeIT implements Serializable {
         +  "}";
     }
 
-	
-	
-//	@Override
-//	public int hashCode() {
-//		return Objects.hashCode(id);
-//	}
-//	
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (!(obj instanceof EmployeeIT ) )
-//			return false;
-//		
-//		EmployeeIT employeeIt = (EmployeeIT) obj;
-//		
-//		return Objects.equals(id, employeeIt.id);
-//	}
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof EmployeeIT ) )
+			return false;
+		
+		EmployeeIT employeeIt = (EmployeeIT) obj;
+		
+		return Objects.equals(id, employeeIt.id);
+	}
 	
 
 }

@@ -2,13 +2,10 @@ package net.aonsolutions.aon.tbai;
 
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -207,16 +204,11 @@ public class Invoice2tbai {
 		entities.setEmisor(sender);
 			
 		Destinatarios receivers = new Destinatarios();
-		if(AonStringUtils.isBlank(invoice.getAddressZIP())) {
-			RegistryAddressFilter filter = f -> f.getIdProperty().eq(invoice.getRegistryAddress());
-			RegistryAddress a = AON.get(company.getDomain().getName(), company.getDomain().getId(), "", filter);
-			invoice.setAddressZIP(a.getZip());
-			invoice.setAddress(a.getFullAddress());
-		}
+		
 		IDDestinatario receiver = new IDDestinatario();
 		receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
-		receiver.setCodigoPostal(invoice.getAddressZIP());
-		receiver.setDireccion(invoice.getAddress()); // TODO
+		receiver.setCodigoPostal(invoice.getAddress().getZip());
+		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
 		receiver.setNIF(invoice.getRegistryDocument());
 		
 		// TODO if(not spain!)
@@ -248,9 +240,9 @@ public class Invoice2tbai {
 		cabecera.setFacturaSimplificada(SiNoType.N);
 		cabecera.setFacturaEmitidaSustitucionSimplificada(SiNoType.N);
 
-		if(invoice.isRectified()) {
+		if(invoice.isRectifier()) {
 			FacturaRectificativaType rectificativa = new FacturaRectificativaType(); 
-			rectificativa.setCodigo(ClaveTipoFacturaType.R_1); 
+			rectificativa.setCodigo(ClaveTipoFacturaType.R_1);
 			rectificativa.setTipo(ClaveTipoRectificativaType.I); // por diferencia o por sustitucion
 			cabecera.setFacturaRectificativa(rectificativa);
 			
