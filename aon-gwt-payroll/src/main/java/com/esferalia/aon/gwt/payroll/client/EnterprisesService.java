@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -223,10 +222,6 @@ public interface EnterprisesService extends RemoteService {
 	
 	Map<String, CNO> getCNOs(String currentDomainName);
 
-	DigitalCertificate getDigitalCertificateTGSS(String currentDomainName, String currentUser);
-
-	List<DigitalCertificate> getDigitalCertificatesSEPE(String currentDomainName);
-
 	MainCCCInfo getMainCCCInfoDataBase(String currentDomainName, String currentUser);
 
 	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo);
@@ -234,8 +229,6 @@ public interface EnterprisesService extends RemoteService {
 	List<SSBonusData> getContractBonus(String currentDomainName, Integer contractId);
 
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData);
-
-	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
 
