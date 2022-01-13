@@ -725,7 +725,7 @@ public class InvoiceTemplate {
 		}
 		
 		String invoiceTitle = "";
-		if (invoice.isRectified())
+		if (invoice.isRectifier())
 			invoiceTitle = getMsg().rectifiedInvoice();
 		else
 			invoiceTitle = invoice.isSimplified() ? getMsg().simplifiedInvoice() : getMsg().invoice().toUpperCase();
