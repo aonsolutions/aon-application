@@ -19,6 +19,7 @@ public interface Model349Service extends RemoteService {
 	Mod349Detail getDetail(Occam occam, Integer id) throws AonCoreException;
 	void delete(Occam occam,Mod349 mod349) throws AonCoreException;
 	Mod349 save(Occam occam,Mod349 mod349) throws AonCoreException;
+	Mod349 reset(Occam occam,Mod349 mod349) throws AonCoreException;
 	Mod349 initialize(Occam occam) throws AonCoreException;
 	Mod349 saveComments(Occam occam, Mod349 mod349) throws AonCoreException;
 	Mod349 changeStatus(Occam occam, Mod349 mod349, FiscalStatus newStatus) throws AonCoreException;

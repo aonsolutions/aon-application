@@ -134,7 +134,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> getCallback().onReset(getCallback().getOptions(),getModel()));
+		resetButton.addClickHandler( event -> reset());
 		toolbarPanel.add(resetButton);		
 		
 		duplicateButton.addClickHandler( event -> getCallback().onDuplicate(getCallback().getOptions(),getModel().getId()));
@@ -240,6 +240,37 @@ abstract class Model349Base extends DockLayoutPanel {
 				getCallback().onCancel( getModel() );
 			}
 		}
+	}
+
+	
+
+	private void reset() {
+		resetButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				Model349.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
+						new AsyncCallback<Mod349>() {
+							@Override
+							public void onSuccess(Mod349 m349) {
+								setDirty( true );
+								getCallback().onSelect( m349, detailManager.getSelectedOperatorIndex() );
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+								
+							}
+						});
+			}
+			@Override
+			public void onCancel() {
+				resetButton.setEnabled(true);
+			}
+		});
 	}
 
 	

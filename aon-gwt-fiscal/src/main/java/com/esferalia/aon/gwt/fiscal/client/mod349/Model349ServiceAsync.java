@@ -11,11 +11,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface Model349ServiceAsync {
 	
-	void delete(Occam occam, Mod349 mod349,AsyncCallback<Void> callback);
-	void save(Occam occam, Mod349 mod349, AsyncCallback<Mod349> callback);
 	void getMod349s(Occam occam, AsyncCallback<LinkedList<Mod349>> callback);
 	void get(Occam occam, Integer id, AsyncCallback<Mod349> callback);
 	void getDetail(Occam occam, Integer id, AsyncCallback<Mod349Detail> callback);
+	void delete(Occam occam, Mod349 mod349,AsyncCallback<Void> callback);
+	void save(Occam occam, Mod349 mod349, AsyncCallback<Mod349> callback);
+	void reset(Occam occam, Mod349 mod349, AsyncCallback<Mod349> callback);
 	void initialize(Occam occam, AsyncCallback<Mod349> callback);
 	void saveComments(Occam occam, Mod349 mod349,AsyncCallback<Mod349> asyncCallback);
 	void changeStatus(Occam occam, Mod349 mod349, FiscalStatus newStatus, AsyncCallback<Mod349> callback);

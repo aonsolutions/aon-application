@@ -32,6 +32,12 @@ public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
 	}
 
 	@Override
+	public void reset(Occam occam, Mod349 mod349, AsyncCallback<Mod349> callback) {
+		AON.start();
+		fsa.reset(occam, mod349,new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getMod349s(Occam occam, AsyncCallback<LinkedList<Mod349>> callback) {
 		AON.start();
 		fsa.getMod349s(occam, new AsyncCallbackWrapper<>(callback));

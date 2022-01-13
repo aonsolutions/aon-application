@@ -44,6 +44,11 @@ public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
+	public Mod349 reset(Occam occam,Mod349 mod349) {
+		return MODEL349.reset(occam, mod349);
+	}
+
+	@Override
 	public Mod349 get(Occam occam, Integer id) {
 		return MODEL349.get(occam, id);
 	}

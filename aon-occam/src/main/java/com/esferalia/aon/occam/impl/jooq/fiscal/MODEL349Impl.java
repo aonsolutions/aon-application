@@ -34,6 +34,12 @@ public class MODEL349Impl implements IMODEL349 {
 	}
 
 	@Override
+	public Mod349 reset(AONContext ctx, Mod349 mod349) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod349DAO.reset(ctx, mod349));
+	}
+
+	@Override
 	public void delete(AONContext ctx, Mod349 mod349) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod349DAO.delete(ctx, mod349));

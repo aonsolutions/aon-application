@@ -22,7 +22,6 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -114,30 +113,6 @@ public class Model349 extends MainEntryPoint {
 			select(mod349, selectedIndex);
 		}
 		// ----------------------------------------------------
-		// ----------------------------------------------------
-
-		public void onReset(Model349ModuleOptions options, Mod349 mod349) {
-			cleanErrorMessage();
-			SERVICE.initialize(options.getOccam(), new AsyncCallback<Mod349>() {
-				@Override
-				public void onSuccess(Mod349 newMod349) {
-					cleanAndClose();
-					newMod349.setAdministration(mod349.getAdministration());
-					newMod349.setYear(mod349.getYear());
-					newMod349.setPeriod(mod349.getPeriod());
-					newMod349.setComplementary(mod349.isComplementary());
-					newMod349.setReplacement(mod349.isReplacement());
-					newMod349.setReplacedNumber(mod349.getReplacedNumber());						
-					showResetDeclarationPopup(options, newMod349, mod349);
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-				}
-			});
-		}
-		
 		public void onDuplicate(Model349ModuleOptions options, int id) {
 			cleanErrorMessage();
 			SERVICE.get(options.getOccam(), id, new AsyncCallback<Mod349>() {
@@ -154,56 +129,8 @@ public class Model349 extends MainEntryPoint {
 			});
 		}
 
-		private void showResetDeclarationPopup(Model349ModuleOptions options, Mod349 newMod349, Mod349 oldMod349) {
-			Model349NewDeclarationPopup newDialog = new Model349NewDeclarationPopup( newMod349, false, true,
-				new Model349Callback() {
-
-						@Override
-						public void onAccept(Mod349 model) {
-							final PopupPanel popup = new PopupPanel(false, true);
-							popup.add( new AonSplash() );
-							popup.setGlassEnabled(true);
-							popup.setAnimationEnabled(true);
-							popup.center();
-							
-							SERVICE.delete(options.getOccam(), oldMod349, 
-									new AsyncCallback<Void>() {
-										
-										@Override
-										public void onSuccess(Void result) {
-											SERVICE.save(options.getOccam(),model,
-													new AsyncCallback<Mod349>() {
-														@Override
-														public void onSuccess(Mod349 model) {
-															popup.hide();
-															select(model, null);
-														}
-
-														@Override
-														public void onFailure(Throwable caught) {
-															popup.hide();
-															showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-														}
-													});
-										}
-										
-										@Override
-										public void onFailure(Throwable caught) {
-											popup.hide();
-											showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-										}
-									});
-						}
-						
-					}
-				); 
-				newDialog.center();
-				newDialog.show();
-		}
-		
 		private void showDuplicateDeclarationPopup(Model349ModuleOptions options, Mod349 model) {
-			Model349NewDeclarationPopup newDialog = new Model349NewDeclarationPopup(model, true, false, 
-				new Model349Callback() {
+			Model349NewDeclarationPopup newDeclarationPanel = new Model349NewDeclarationPopup(model, new Model349Callback() {
 
 						@Override
 						public void onAccept(Mod349 model) {
@@ -230,9 +157,12 @@ public class Model349 extends MainEntryPoint {
 						}
 						
 					}
-				); 
-				newDialog.center();
-				newDialog.show();
+				);
+				newDeclarationPanel.setCaption(AON.MSG.duplicate());
+				declarationContainer.setWidget(newDeclarationPanel);
+				model349Table.refresh( new Model349Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
 		}
 	}
 	
@@ -424,14 +354,12 @@ public class Model349 extends MainEntryPoint {
 	}
 
 	private void showNewDeclarationPopup(Model349ModuleOptions options, Mod349 model) {
-		Model349NewDeclarationPopup newDialog = new Model349NewDeclarationPopup( model, new Model349Callback() {
+		Model349NewDeclarationPopup newDeclarationPanel = new Model349NewDeclarationPopup( model, new Model349Callback() {
 
 				@Override
 				public void onAccept(Mod349 model) {
 					final PopupPanel popup = new PopupPanel(false, true);
-					Label label = new Label(AON.MSG.processing());
-					label.addStyleName(AON.AON_CSS.aonTimer());
-					popup.add(label);
+					popup.add( new AonSplash());
 					popup.setGlassEnabled(true);
 					popup.setAnimationEnabled(true);
 					popup.center();
@@ -460,8 +388,10 @@ public class Model349 extends MainEntryPoint {
 				
 			}
 		); 
-		newDialog.center();
-		newDialog.show();
+		declarationContainer.setWidget(newDeclarationPanel);
+		model349Table.refresh( new Model349Callback() );
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 	
 	public static void run() {

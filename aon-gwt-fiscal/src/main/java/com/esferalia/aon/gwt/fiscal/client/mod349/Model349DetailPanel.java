@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.Model349Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349Detail.IModel349DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
@@ -11,7 +12,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -24,10 +24,10 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 	
 	private static final String WIDTH_100PX = "100px";
 
-	private static class MediumLabel extends InlineLabel {
-		private MediumLabel(String label) {
+	private static class Model349Smaller extends InlineLabel {
+		private Model349Smaller(String label) {
 			super(label);
-			setStyleName(AON.AON_CSS.aonFontMedium());
+			setStyleName(AON.CSS.aonFontSmaller());
 		}
 	}
 	private int tabIndex;
@@ -38,23 +38,23 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		boolean isDiffEnabled = mod349.isDiffEnabled();
 				
 		ScrollPanel scroll = new ScrollPanel();
-		scroll.setStyleName(AON.AON_CSS.aonWidthAll());
+		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.setStyleName(AON.CSS.aonScrollArea());
 		
 		// Clave 		
 		FlexTable tab1 = new FlexTable();		
 		tab1.getColumnFormatter().setWidth(0, "auto");
 		
-		tab1.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab1.addStyleName(AON.AON_CSS.aonNowrap());
+		tab1.setStyleName(AON.CSS.aonWidthAll());
+		tab1.addStyleName(AON.CSS.aonNowrap());
 		
-		tab1.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab1.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab1.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab1.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab1.getFlexCellFormatter().setColSpan(0, 0, 4);
 		tab1.setWidget(0, 0, new InlineLabel(AON.MSG.operationData()));
 		
- 		tab1.setWidget(1, 0, new MediumLabel(AON.MSG.key()));
+ 		tab1.setWidget(1, 0, new Model349Smaller(AON.MSG.key()));
  		
  		Mod349KeyListBox key = new Mod349KeyListBox();
  		key.setValue(detail.getType());
@@ -72,12 +72,12 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		tab2.getColumnFormatter().setWidth(1, WIDTH_100PX);
 		tab2.getColumnFormatter().setWidth(2, "auto");
 		
-		tab2.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab2.addStyleName(AON.AON_CSS.aonNowrap());
+		tab2.setStyleName(AON.CSS.aonWidthAll());
+		tab2.addStyleName(AON.CSS.aonNowrap());
 
-		tab2.setWidget(0, 0, new MediumLabel(AON.MSG.country()));
-		tab2.setWidget(0, 1, new MediumLabel(AON.MSG.document()));
-		tab2.setWidget(0, 2, new MediumLabel(AON.MSG.fullName()));
+		tab2.setWidget(0, 0, new Model349Smaller(AON.MSG.country()));
+		tab2.setWidget(0, 1, new Model349Smaller(AON.MSG.document()));
+		tab2.setWidget(0, 2, new Model349Smaller(AON.MSG.fullName()));
 		
 		Mod349CountryListBox country = new Mod349CountryListBox();
 		country.setValue(detail.getCountry());
@@ -90,7 +90,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		TextBox document = new TextBox();		
 		document.setVisibleLength(isGipuzkoa?12:15);		
 		document.setMaxLength(isGipuzkoa?12:15);
-		document.setStyleName(AON.AON_CSS.aonInputText());
+		document.setStyleName(AON.CSS.aonInputText());
 		document.setValue(detail.getDocument());
 		document.addValueChangeHandler(event -> {
 			detail.setDocument(document.getValue());
@@ -101,7 +101,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		TextBox name = new TextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
-		name.setStyleName(AON.AON_CSS.aonInputText());		
+		name.setStyleName(AON.CSS.aonInputText());		
 		name.setValue(detail.getName());
 		name.addValueChangeHandler(event -> {
 			detail.setName(name.getValue());
@@ -118,13 +118,13 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		tab3.getColumnFormatter().setWidth(2, WIDTH_100PX);
 		tab3.getColumnFormatter().setWidth(3, "auto");
 		
-		tab3.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab3.addStyleName(AON.AON_CSS.aonNowrap());
+		tab3.setStyleName(AON.CSS.aonWidthAll());
+		tab3.addStyleName(AON.CSS.aonNowrap());
 		
- 		tab3.setWidget(0, 0, new MediumLabel("Acumulado"));
-		tab3.setWidget(0, 1, new MediumLabel("Declarado"));
-		tab3.setWidget(0, 2, new MediumLabel(isGipuzkoa ? "Base imponible / Importe rectificaci\u00F3n" : "Base imponible / Base imponible rectificada"));
-		tab3.setWidget(0, 3, new MediumLabel(""));
+ 		tab3.setWidget(0, 0, new Model349Smaller("Acumulado"));
+		tab3.setWidget(0, 1, new Model349Smaller("Declarado"));
+		tab3.setWidget(0, 2, new Model349Smaller(isGipuzkoa ? "Base imponible / Importe rectificaci\u00F3n" : "Base imponible / Base imponible rectificada"));
+		tab3.setWidget(0, 3, new Model349Smaller(""));
 		
 		DoubleBox amount = new DoubleBox();
 		DoubleBox declared = new DoubleBox();
@@ -156,12 +156,9 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		tab3.setWidget(1, 2, amount);
 				
 		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
+		buttonContainer.setStyleName(AON.CSS.aonNowrap());
 		
-		Button button = new Button("");
-		button.setTitle(FiscalModelKeyInfo.INVOICE.getLabel());
-		button.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		button.addStyleName(AON.AON_CSS.aonIconInvoice());
+		AonTableButton button = new AonTableButton(FiscalModelKeyInfo.INVOICE.getLabel(), AON.CSS.aonIconData());
 		button.setTabIndex(-2); // NO FOCUS
 		button.addClickHandler(event -> 
 			Model349.SERVICE.getInfo(callbackM349.getOptions().getOccam(),
@@ -181,10 +178,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 			));
 		buttonContainer.add(button);
 		
-		Button buttonDiff = new Button("");
-		buttonDiff.setTitle(FiscalModelKeyInfo.DIFF_INVOICE.getLabel());
-		buttonDiff.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		buttonDiff.addStyleName(AON.AON_CSS.aonIconDiff());
+		AonTableButton buttonDiff = new AonTableButton(FiscalModelKeyInfo.DIFF_INVOICE.getLabel(), AON.CSS.aonIconDiff());
 		buttonDiff.setTabIndex(-2); // NO FOCUS
 		buttonDiff.setVisible(isDiffEnabled);
 		buttonDiff.addClickHandler(event -> 
@@ -220,18 +214,18 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		tab4.getColumnFormatter().setWidth(1, WIDTH_100PX);		
 		tab4.getColumnFormatter().setWidth(2, "auto");
 		
-		tab4.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab4.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab4.addStyleName(AON.AON_CSS.aonNowrap());
+		tab4.setStyleName(AON.CSS.aonWidthAll());
+		tab4.addStyleName(AON.CSS.aonMarginTop());
+		tab4.addStyleName(AON.CSS.aonNowrap());
 		
-		tab4.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab4.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab4.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab4.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab4.getFlexCellFormatter().setColSpan(0, 0, 3);
 		tab4.setWidget(0, 0, new InlineLabel("Rectificaciones"));
 
-		tab4.setWidget(1, 0, new MediumLabel(AON.MSG.year()));
-		tab4.setWidget(1, 1, new MediumLabel(AON.MSG.period()));
-		tab4.setWidget(1, 2, new MediumLabel(isGipuzkoa ? "" :  "Importe declarado anteriormente"));
+		tab4.setWidget(1, 0, new Model349Smaller(AON.MSG.year()));
+		tab4.setWidget(1, 1, new Model349Smaller(AON.MSG.period()));
+		tab4.setWidget(1, 2, new Model349Smaller(isGipuzkoa ? "" :  "Importe declarado anteriormente"));
 		
 		IntegerBox rectifiedYear = new IntegerBox();
 		rectifiedYear.setMaxLength(4);

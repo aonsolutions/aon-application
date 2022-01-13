@@ -14,6 +14,7 @@ public interface IMODEL349 {
 	public Mod349 get(AONContext ctx,Integer id);
 	public Mod349 initialize(AONContext ctx);
 	public Mod349 save(AONContext ctx,Mod349 mod349);
+	public Mod349 reset(AONContext ctx,Mod349 mod349);
 	public void delete(AONContext ctx,Mod349 mod349);
 	public Mod349Detail getDetail(AONContext ctx, Integer id);
 	public Mod349 saveComments(AONContext ctx, Mod349 mod349);

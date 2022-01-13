@@ -43,6 +43,12 @@ public class MODEL349 {
 		}
 	}
 
+	public static Mod349 reset(Occam occam, Mod349 mod349) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().reset(ctx, mod349);
+		}
+	}
+
 	public static void delete(Occam occam, Mod349 mod349) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod349);
