@@ -43,11 +43,11 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MainDigitalCertificatesNew extends MainEntryPoint{
+public class MainCertificates extends MainEntryPoint{
 
 	// ------------------------------------------------------ UiBinder
 	
-	interface Binder extends UiBinder<Widget, MainDigitalCertificatesNew> {}
+	interface Binder extends UiBinder<Widget, MainCertificates> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
@@ -163,14 +163,14 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	// ------------------------------------------------------ Variables
 	
-	private MainDigitalCertificatesObjectNew mainDigitalCertificatesObject;
+	private MainCertificatesObject mainDigitalCertificatesObject;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private boolean showInactives = false;
 	
 	// ------------------------------------------------------ Constructor
 
-	public MainDigitalCertificatesNew() {	
+	public MainCertificates() {	
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
@@ -386,10 +386,10 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	@Override
 	public void onModuleLoad() {
-		onModuleLoad(new MainDigitalCertificatesObjectNew());
+		onModuleLoad(new MainCertificatesObject());
 	}
 	
-	public void onModuleLoad(MainDigitalCertificatesObjectNew mainDigitalCertificatesObject) {
+	public void onModuleLoad(MainCertificatesObject mainDigitalCertificatesObject) {
 		this.mainDigitalCertificatesObject = mainDigitalCertificatesObject;
 		this.mainDigitalCertificatesObject.getEnterpriseId(
 				s -> {
@@ -503,7 +503,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		// Create Form Panel
 		FormPanel formPanel = new FormPanel();
-		formPanel.setAction(GWT.getModuleBaseURL() + "certificate_check/create/");
+		formPanel.setAction(GWT.getModuleBaseURL() + "certificate/create/");
 		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		formPanel.addSubmitCompleteHandler(e -> {

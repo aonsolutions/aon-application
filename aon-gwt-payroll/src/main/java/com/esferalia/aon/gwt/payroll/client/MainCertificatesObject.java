@@ -16,7 +16,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class MainDigitalCertificatesObjectNew {
+public class MainCertificatesObject {
 	
 	// -------------------------------------------------- Variables
 	
@@ -29,7 +29,7 @@ public class MainDigitalCertificatesObjectNew {
 	
 	// -------------------------------------------------- Constructor
 	
-	public MainDigitalCertificatesObjectNew() {
+	public MainCertificatesObject() {
 		super();
 		this.certificateList = new ArrayList<>();
 		this.secondaryUsers = new ArrayList<>();

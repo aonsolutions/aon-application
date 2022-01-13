@@ -34,7 +34,7 @@ import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
 @MultipartConfig
 @SuppressWarnings("serial")
-@WebServlet(name = "CERTIFICATE-CHECK", urlPatterns = { "/aon_gwt_payroll/certificate_check/*" })
+@WebServlet(name = "CERTIFICATE", urlPatterns = { "/aon_gwt_payroll/certificate/*" })
 public class CertificateServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(CertificateServlet.class.getName());

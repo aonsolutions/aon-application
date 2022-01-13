@@ -6,7 +6,7 @@
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainDigitalCertificates.MyStyle">
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainCertificates.MyStyle">
 		
 		.warningColor{
 			font-weight: bold;
