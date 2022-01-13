@@ -75,6 +75,10 @@
 			background-size: cover;
 		}
 		
+		.pl1{
+			padding-left: 1rem;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel ui:field="mainPanel" styleName="{style.form}">
@@ -104,15 +108,11 @@
 				<g:HTMLPanel styleName="{style.flexColumn}">
 					<g:HTMLPanel ui:field="certificateInfoPanel" styleName="{style.widthAll}" />
 					<g:HTMLPanel styleName="{style.input}">
-						<g:Label text="Tipo de almacén" styleName="{style.title}" />
-						<g:ListBox ui:field="storeLB" styleName="{style.widthAll}" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="securityPanel" styleName="{style.input}">
-						<g:Label text="Seguridad certificado" styleName="{style.title}" />
-						<g:HTMLPanel styleName="{style.flex} {style.noGap}">
-							<c:AonToolbarSmallButton ui:field="securityBtn" />
-							<g:CheckBox ui:field="securityCB" styleName="{style.checkBox}" />
-						</g:HTMLPanel>
+						<g:Label text="Uso del certificado" styleName="{style.title}" />
+						<g:RadioButton name="ownerCert" text="Uso personal de mi usuario" ui:field="userRB" />
+						<g:RadioButton name="ownerCert" text="Uso compartido" ui:field="enterpriseRB" />
+						<g:RadioButton name="securityCert" ui:field="publicRB" styleName="{style.pl1}" ><b>Publico:</b> Todos los usuarios</g:RadioButton>
+						<g:RadioButton name="securityCert" ui:field="privateRB" styleName="{style.pl1}" ><b>Privado:</b> Solo usuarios de la empresa</g:RadioButton>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.input}">
 						<g:Label text="Tipo certificado" styleName="{style.title}" />
