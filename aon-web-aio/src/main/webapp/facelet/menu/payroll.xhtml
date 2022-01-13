@@ -578,16 +578,6 @@
 										actionListener="#{craBatch.onEditSearch}"
 										value="#{bundle.payroll_craBatch_module}" />
 								</aon:div>
-								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_main_digital_certificates" 
-											action="gwt_main_digital_certificates"
-											title="#{bundle.user_authoritation_menu}"
-											value="#{bundle.user_authoritation_menu}" 
-											target="gwt">
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
