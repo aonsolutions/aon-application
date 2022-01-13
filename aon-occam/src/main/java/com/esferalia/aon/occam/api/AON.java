@@ -2511,6 +2511,10 @@ public class AON {
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
+	
+	public static Stream<Salary> getSalaries(Domain domain, String login, SalaryFilter filter) {
+		return getSalary().getSalaries(AONContext.getAONContext(domain, login), filter, Salary::new);
+	}
 
 	public static Collection<Salary> saveSalaries(AONContext ctx, 
 			Integer domainId, Collection<Salary> salaries) {
@@ -2520,6 +2524,10 @@ public class AON {
 	public static Stream<Salary> getSalaryData(AONContext ctx,
 			SalaryFilter filter) {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);
+	}
+	
+	public static Stream<Salary> getSalaryData(Domain domain, String login, SalaryFilter filter) {
+		return getSalary().getSalaryData(AONContext.getAONContext(domain, login), filter, Salary::new);
 	}
 
 	public static Stream<Salary> getContractData(AONContext ctx,
