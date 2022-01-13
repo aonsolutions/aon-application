@@ -58,6 +58,7 @@ import org.junit.rules.TestName;
 
 import com.esferalia.aon.in.payroll.pdf.maker.Logger;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -68,6 +69,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -123,12 +125,13 @@ public class InvoiceTest {
 		
 		/** INVOICE BASIC DATA */
 		Invoice invoice = new Invoice();
-		invoice.setRectificationType(RectificationType.RECTIFIED);
+		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		invoice.setAddress(address);
 		invoice.setAddressNumber(addressNumber);
 		invoice.setAddressProvince(addressProvince);
 		invoice.setAddressTown(addressTown);
 		invoice.setAddressZIP(addressZIP);
+//		invoice.setAddressGeozone(52216);
 		
 		RegistryAddress raddress = new RegistryAddress();
 		raddress.setAddress(address);
@@ -136,6 +139,7 @@ public class InvoiceTest {
 		raddress.setProvince("PYONGYANG");
 		raddress.setZip("01002");
 		raddress.setCity("PYONGYANG");
+//		raddress.setGeozone(52216);
 		
 		invoice.setRegistryAddressData(raddress);
 		
