@@ -227,7 +227,7 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		
 		// Create Form Panel
 		form = new FormPanel();
-		form.setAction(GWT.getModuleBaseURL() + "certificate_check/check/");
+		form.setAction(GWT.getModuleBaseURL() + "certificate/check/");
 		form.setEncoding(FormPanel.ENCODING_MULTIPART);
 		form.setMethod(FormPanel.METHOD_POST);
 		form.addSubmitCompleteHandler(e -> {

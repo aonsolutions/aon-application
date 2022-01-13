@@ -105,8 +105,8 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_IT_ENTRY_POINT)) {
 			runAsync( MainContrataIT.class, new MainContrataIT() );
 		} else if (entryPoint
-				.equalsIgnoreCase(Constants.MAIN_DIGITAL_CERTIFICATES_NEW_ENTRY_POINT)) {
-			runAsync(MainDigitalCertificatesNew.class, new MainDigitalCertificatesNew());
+				.equalsIgnoreCase(Constants.MAIN_CERTIFICATES_ENTRY_POINT)) {
+			runAsync(MainCertificates.class, new MainCertificates());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
 			runAsync(MainCCC.class, new MainCCC());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CONFIG_COMUNICA_ENTRY_POINT)) {
@@ -249,8 +249,8 @@ public class MainEntryPoint implements EntryPoint {
 	                Window.alert("Error al cargar");
 				}
 			});
-		} else if (name == MainDigitalCertificatesNew.class ) {
-			GWT.runAsync(MainDigitalCertificatesNew.class, new RunAsyncCallback() {
+		} else if (name == MainCertificates.class ) {
+			GWT.runAsync(MainCertificates.class, new RunAsyncCallback() {
 				
 				@Override
 				public void onSuccess() {
