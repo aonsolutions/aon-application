@@ -315,6 +315,10 @@ public class FiscalParametersController implements Serializable {
 			adm = Administration.values()[v];
 		} catch (NumberFormatException e) {
 			
+		} catch (IndexOutOfBoundsException e) {
+			
+		} catch (Exception e) {
+			
 		}
 		return adm; 
 	}
