@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ICommon;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.DataRequest;
@@ -22,6 +24,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
+import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
@@ -29,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
@@ -47,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
@@ -476,10 +481,47 @@ public class CommonImpl implements ICommon {
 		WorkgroupDAO.save(ctx, workgroup));
 	}
 
-	
 	@Override
 	public void deleteWorkgroup(AONContext ctx, Integer id) {
 		 ctx.getDslContext().transaction(configuration -> 
 		 WorkgroupDAO.delete(ctx, id));
 	}
+	
+	// -------------------- Certificate
+	
+	@Override
+	public List<Certificate> getCertificates(AONContext ctx, Integer domainId, Integer userId) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		CertificateDAO.getList(ctx, domainId, userId));
+	}
+	
+	@Override
+	public Certificate getCertificate(AONContext ctx, AttachFilter attachFilter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		CertificateDAO.get(ctx, attachFilter));
+	}
+	
+	@Override
+	public CertificateInfo getCertificateInfo(AONContext ctx, AttachFilter attachFilter) throws IllegalArgumentException {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		CertificateDAO.getInfo(ctx, attachFilter));
+	}
+	
+	@Override
+	public CertificateInfo getCertificateInfo(byte[] data, String password) throws IllegalArgumentException {
+		return CertificateDAO.verifyCertificate(data, password);
+	}
+	
+	@Override
+	public void deleteCertificate(AONContext ctx, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter) {
+		ctx.getDslContext().transaction(configuration -> 
+		CertificateDAO.delete(ctx, attachId, attachFilter, raddinfoFilter));
+	}
+	
+	@Override
+	public void saveCertificate(AONContext ctx, Integer domainId, Integer userId, Certificate certificate) {
+		ctx.getDslContext().transaction(configuration -> 
+		CertificateDAO.save(ctx, domainId, userId, certificate));
+	}
+	
 }

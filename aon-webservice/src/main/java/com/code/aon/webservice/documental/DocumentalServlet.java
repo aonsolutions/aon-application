@@ -275,12 +275,15 @@ public class DocumentalServlet extends HttpServlet{
 		Integer[] d = {domain.getId()};
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
 		LinkedList<Integer> list = new LinkedList<>();
-		
+
 		Company cp = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		list.add(cp.getId());
 		if(domain.getParentId() != null) {
 			Company parentCp = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getParentId()));
 			list.add(parentCp.getId());
+		}
+		if(user.getRegistry() != null) {
+			list.add(user.getRegistry());
 		}
 		Integer[] arr = new Integer[list.size()];
 		list.toArray(arr);

@@ -29,9 +29,12 @@ public enum DataResponseSource implements IResourceable {
 	INGENET_SALES,
 	PATURPAT_QUALITY,
 	ANALYTIC_ACCOUNTING,
-	INVOICE, // NOT IN USE.
+	TBAI_TEST,
 	IMPORTATION,
-	NOTIFICATION_TOKEN;
+	NOTIFICATION_TOKEN,
+	MOD202,
+	MOD190,
+	LROE;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_response_source_";

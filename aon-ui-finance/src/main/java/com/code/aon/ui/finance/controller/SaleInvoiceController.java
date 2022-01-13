@@ -127,12 +127,17 @@ public class SaleInvoiceController extends InvoiceController {
 		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
 	}
 	
+	public boolean isTbaiLroe() {
+		Invoice invoice = (Invoice) this.getTo();
+		return isTbai() && isBizkaia() && invoice.getNumber() > 0;
+	}
+	
 	public String getTbaiUrl() {
 		Invoice invoice = (Invoice) this.getTo();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		return TbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
+		return TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
 	}
 
 	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
@@ -510,15 +515,50 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public String getDownloadURL() {
 		Invoice invoice = (Invoice) getTo();
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		JSONObject json = new JSONObject()
 				.put(IJsonNames.ID, invoice.getId())
 				.put(IJsonNames.SOURCE, "invoice")
-				.put("domain_id", DomainManager.getCurrentDomain())
-				.put("domain_name", AonUtil.getDomainName())
+				.put("domain_id", domain.getId())
+				.put("domain_name", domain.getName())
 				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
 		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
 
+	@Transient
+	public synchronized void issueInvoiceLroe() {
+		try {
+			checkCertificate();		
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
+			
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+
+			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+			if(invoice.getNumber() < 1) {
+				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+				invoice.setNumber(number);
+				invoice.setReferenceCode(null);
+				invoice.setIssueDate(new Date());
+				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+			}
+
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+			
+			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
+			if(tbaiConfiguration.isActive()) {
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
 	@Transient
 	public synchronized void issueInvoice() {
 		try {
@@ -531,10 +571,12 @@ public class SaleInvoiceController extends InvoiceController {
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
-			Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
-			invoice.setNumber(number);
-			invoice.setReferenceCode(null);
-			invoice.setIssueDate(new Date());
+			if(invoice.getNumber() < 1) {
+				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+				invoice.setNumber(number);
+				invoice.setReferenceCode(null);
+				invoice.setIssueDate(new Date());
+			}
 			
 			AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
@@ -542,15 +584,13 @@ public class SaleInvoiceController extends InvoiceController {
 			
 			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
 			if(tbaiConfiguration.isActive()) {
-				try {
-					TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
-				} catch (Exception e ) {
-					e.printStackTrace();
-				}
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 			}
 		
 			// SII
 		} catch (Exception e) {
+			e.printStackTrace();
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
@@ -594,9 +634,32 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 	
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		try {
+			if(isTbaiInvoice()) {
+				checkCertificate();
+				Invoice inv = (Invoice) getTo();
+				String domainName = AonUtil.getDomainName();
+				String login = UserUtils.getInstance().getLoggedUser().getLogin();
+				Integer userId = UserUtils.getInstance().getLoggedUser().getId();
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+				tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
+				TbaiMain tbai = new TbaiMain();
+				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+			}
+			super.onRemove(event);
+		} catch (Exception e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
 	public String getRemoveConfirmMessage() {
 		return this.isTbaiInvoice() 
-			? "La factura está enviada a Ticket Bai. Solo se permitirá borrarla en el periodo de pruebas"
+			? "La factura está enviada a TicketBAI. Al borrarla quedará anulada en TicketBai."
 			: "¿Borrar?";
 				
 	}

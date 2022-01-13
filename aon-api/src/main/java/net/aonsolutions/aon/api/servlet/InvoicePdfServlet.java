@@ -46,9 +46,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediRegistry;
 import net.aonsolutions.aon.api.ewok.IConstants;
-import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
-import net.aonsolutions.aon.tbai.TbaiUri;
 
 
 @SuppressWarnings("serial")
@@ -107,7 +105,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			String qrUrl = domainName + "/dip?source=" + source + "&id=" + id;  
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
 			if(tbai.isActive()) {	
-				String tbaiUrl = TbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
+				String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domainName, domainId, login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 			}
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData());

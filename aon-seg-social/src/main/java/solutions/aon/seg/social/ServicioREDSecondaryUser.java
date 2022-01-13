@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
@@ -19,7 +20,6 @@ import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -27,7 +27,7 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 	
 	public static List<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType) throws SegSocialException{
-		List<SecondaryUser> list = null;
+		List<SecondaryUser> list =  new  LinkedList<>();
 		SSLContext sslContext = null;
 		try {
 			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
@@ -41,9 +41,20 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			String body = Toolkit.getBodyGET(httpClient, IServicioRedConstants.BASE_URL_TGSS+"/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
 			Toolkit.checkProsaError(body);
 			checkAuthorization(body);
-			link = IServicioRedConstants.BASE_URL_TGSS+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "FORMULARIO_1"), "action");
-
 			ticket = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "name", IServicioRedConstants.TICKET), "value");
+			String moreAut = Toolkit.getElementByAttribute(body, "class", "pr_enlaceLocal");
+			if(null!=moreAut) {
+				String newUrl =  Toolkit.getAttribute(moreAut, "href").replace("&amp;", "&");
+				body = Toolkit.getBodyGET(httpClient, IServicioRedConstants.BASE_URL_TGSS+newUrl);
+				String sessionStr = Toolkit.getElementByAttribute(body, "id", "SPM.IDSESSION");
+				link = IServicioRedConstants.BASE_URL_TGSS+"/ProsaInternet/OnlineAccessUtf8"+Toolkit.getAttribute(sessionStr, "innerText");
+			} else {
+				link = IServicioRedConstants.BASE_URL_TGSS+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "FORMULARIO_1"), "action");
+			}				
+		
+			Boolean more = false;
+			String paramNameSearch = "SPM.ACC.ACC_BUSCAR_CRITERIOS";
+			String paramNameNext = "SPM.ACC.ACC_SIGUIENTE_USUARIO";
 			List<NameValuePair> params = new ArrayList<>();
 			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
 			params.add(new BasicNameValuePair(IServicioRedConstants.SPM_CONTEXT, IServicioRedConstants.INTERNET));
@@ -52,14 +63,33 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("situacion", "T"));
 			params.add(new BasicNameValuePair("sitActUsuari", "T"));
 			params.add(new BasicNameValuePair("tipoImpresion", "O"));
-			params.add(new BasicNameValuePair("SPM.ACC.ACC_GENERAR_INFORME", "ACC_GENERAR_INFORME"));
+			params.add(new BasicNameValuePair(paramNameSearch, "ACC_BUSCAR_CRITERIOS"));
 			
-			httpPost = new HttpPost(link);
-			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));	
-			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			Toolkit.checkProsaError(body);
-			
-			list = ServicioREDRegeXML.extractSecondaryUsers(body);
+			do {
+	
+				httpPost = new HttpPost(link);
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));	
+				body = Toolkit.getBodyPOST(httpClient, httpPost);
+				ServicioREDRegeXML.checkErrors(body);
+		
+				more = false;
+				params.removeIf(param-> param.getName().equals(paramNameNext));
+				
+				List<SecondaryUser> users = ServicioREDRegeXML.extractSecondaryUsers(body);
+	
+				if(users.size()>0) {
+					list.addAll(users);
+					String elementSig = Toolkit.getTagXmlFirst(body, "pagSiguiente");
+					if(null!=elementSig) {
+						String nextStr = Toolkit.getAttribute(elementSig, "innerText");
+						if(null!=nextStr && nextStr.equals("true")) {
+							more = true;
+							params.add(new BasicNameValuePair(paramNameNext, "ACC_SIGUIENTE_USUARIO"));
+							params.removeIf(param-> param.getName().equals(paramNameSearch));
+						}
+					}
+				}
+			} while(Boolean.TRUE.equals(more));
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();

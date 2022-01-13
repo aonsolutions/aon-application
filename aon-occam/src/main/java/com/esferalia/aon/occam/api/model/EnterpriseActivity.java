@@ -11,8 +11,7 @@ public class EnterpriseActivity implements Serializable {
 	private Integer id;
 	private String description;
 	private boolean principal;
-	private Integer iae;
-	private String epigraph;
+	private Iae iae;
 	private Integer cnae;
 	private String cnaeCode;
 	private String cnaeDescription;
@@ -35,27 +34,37 @@ public class EnterpriseActivity implements Serializable {
 		this.description = description;
 		return this;
 	}
+	
 	public boolean isPrincipal() {
 		return principal;
 	}
+	
 	public EnterpriseActivity setPrincipal(boolean principal) {
 		this.principal = principal;
 		return this;		
 	}
-	public Integer getIae() {
+	
+	public Iae getIae() {
+		if(iae == null) {
+			iae = new Iae();
+		}
 		return iae;
 	}
-	public EnterpriseActivity setIae(Integer iae) {
+	
+	public EnterpriseActivity setIae(Iae iae) {
 		this.iae = iae;
 		return this;
 	}
+	
 	public String getEpigraph() {
-		return epigraph;
+		return getIae().getEpigraph();
 	}
+
 	public EnterpriseActivity setEpigraph(String epigraph) {
-		this.epigraph = epigraph;
+		getIae().setEpigraph(epigraph);
 		return this;
 	}
+
 	public Integer getCnae() {
 		return cnae;
 	}

@@ -16,7 +16,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
-import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -26,8 +25,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -46,6 +43,9 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -255,6 +255,8 @@ public interface EnterprisesService extends RemoteService {
 	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
 
+	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
+
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
 	int getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates);
@@ -304,21 +306,21 @@ public interface EnterprisesService extends RemoteService {
 
 	Integer getEnterpriseId(String currentDomainName);
 
-	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType) throws IllegalArgumentException;
+	void verifyCertificate(String currentDomainName, String currentUser, com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType certificateType) throws IllegalArgumentException;
 
 	List<ITEmployee> getEmployeeITInfo(String currentDomainName, Integer contractId);
 
 	ContractConcepts getAllConcepts(String currentDomainName, String currentUser);
+	
+	// --------------------------- Certificates
 
-	List<DigitalCertificateNew> getDigitalCertificates(String currentDomainName, String currentUser) throws IllegalArgumentException;
+	List<Certificate> getCertificates(String domain, String login) throws IllegalArgumentException;
 
-	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate) throws IllegalArgumentException;
+	void deleteCertificate(String domain, String login, Certificate certificate) throws IllegalArgumentException;
 
-	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags) throws IllegalArgumentException;
+	CertificateInfo getCertificateInfo(String domain, String login, Integer certitificateId) throws IllegalArgumentException ;
 
-	CertificateInfo validateCertJava(String currentDomainName, Integer rattachId) throws IllegalArgumentException ;
-
-	EnterpriseContext getEnterpriseContext(String currentDomainName);
+	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<CertificateType> tags) throws IllegalArgumentException;
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
@@ -326,8 +328,13 @@ public interface EnterprisesService extends RemoteService {
 
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf) throws IllegalArgumentException;
 
+	// --------------------------- Enterprise Context
+	
+	EnterpriseContext getEnterpriseContext(String currentDomainName);
+
 	List<SSBonusData> syncSSBonus(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 
 	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
+	
 }

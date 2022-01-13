@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.CommercialActivity;
 import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
@@ -44,6 +46,7 @@ import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
@@ -51,6 +54,7 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
@@ -260,6 +264,7 @@ import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommissionImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.EmployeeITImpl;
 import com.esferalia.aon.occam.impl.jooq.EnterpriseImpl;
 import com.esferalia.aon.occam.impl.jooq.ExpedientImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
@@ -381,6 +386,10 @@ public class AON {
 	
 	private static IEnterprise getEnterprise() {
 		return new EnterpriseImpl();
+	}
+	
+	private static IEmployeeIT getEmployeeIT() {
+		return new EmployeeITImpl();
 	}
 
 	// ********************************************
@@ -608,6 +617,14 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	// ---------- CERTIFICATES
+	
+	public static Stream<Certificate> getCertificates(Domain domain, User user, CertificateFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getSecurity().getCertificates(ctx, filter);
 		}
 	}
 	
@@ -2503,6 +2520,10 @@ public class AON {
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
 	}
+	
+	public static Stream<Salary> getSalaries(Domain domain, String login, SalaryFilter filter) {
+		return getSalary().getSalaries(AONContext.getAONContext(domain, login), filter, Salary::new);
+	}
 
 	public static Collection<Salary> saveSalaries(AONContext ctx, 
 			Integer domainId, Collection<Salary> salaries) {
@@ -2512,6 +2533,10 @@ public class AON {
 	public static Stream<Salary> getSalaryData(AONContext ctx,
 			SalaryFilter filter) {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);
+	}
+	
+	public static Stream<Salary> getSalaryData(Domain domain, String login, SalaryFilter filter) {
+		return getSalary().getSalaryData(AONContext.getAONContext(domain, login), filter, Salary::new);
 	}
 
 	public static Stream<Salary> getContractData(AONContext ctx,
@@ -6022,6 +6047,42 @@ public class AON {
 		}
 	}
 	
+	// ------------------- CERTIFICATES
+	
+	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCertificates(ctx, domainId, userId);
+		}
+	}
+	
+	public static com.esferalia.aon.occam.api.model.Certificate getCertificate(String domainName, Integer domainId, String login, AttachFilter attachFilter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCertificate(ctx, attachFilter);
+		}
+	}
+	
+	public static CertificateInfo getCertificateInfo(String domainName, Integer domainId, String login, AttachFilter attachFilter) throws IllegalArgumentException {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getCertificateInfo(ctx, attachFilter);
+		}
+	}
+	
+	public static CertificateInfo getCertificateInfo(byte[] data, String password) throws IllegalArgumentException {
+		return getCommon().getCertificateInfo(data, password);
+	}
+	
+	public static void deleteCertificate(String domainName, Integer domainId, String login, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommon().deleteCertificate(ctx, attachId, attachFilter, raddinfoFilter);
+		}
+	}
+	
+	public static void saveCertificate(String domainName, Integer domainId, String login, Integer userId, com.esferalia.aon.occam.api.model.Certificate certificate){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommon().saveCertificate(ctx, domainId, userId, certificate);
+		}
+	}
+	
 	// ---------- DATA REQUEST
 	
 	public static Stream<DataRequest> getDataRequestStream(String domainName, Integer domainId, String login, DataRequestFilter filter){
@@ -7030,6 +7091,25 @@ public class AON {
 	public static void deleteInvestAsset(Domain domain, User user, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			getNewProduct().deleteInvestAsset(ctx, id);
+		}
+	}
+	
+	//--------------EMPLOYEE IT
+	public static Optional<EmployeeIT> getEmployeeIT(Domain domain, User user, ContractLeaveFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEmployeeIT().getEmployeeIT(ctx, filter);
+		}
+	}
+	
+	public static Stream<EmployeeIT> getEmployeesIT(Domain domain, User user, ContractLeaveFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEmployeeIT().getEmployeesIT(ctx, filter);
+		}
+	}
+	
+	public static EmployeeIT[] setEmployeeIT(Domain domain, User user, EmployeeIT... employeeITs) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getEmployeeIT().setEmployeeIT(ctx, employeeITs);
 		}
 	}
 }

@@ -14,11 +14,27 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.watson.server.AonDateUtils;
 
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 
 public class ResponseHandler {
 
+	public static void HandleLroeResponse(LROEResponse response) throws TbaiException {
+		if(response.isError()) {
+			throw new TbaiException(response.getErrorMessage());
+		}
+		HandleStatusCode(response.getCode());
+	}
+	
+	public static void HandleTbaiResponse(TbaiResponse response) throws TbaiException {
+		if(!response.isOk()) {
+			throw new TbaiException(response.getDescription());
+		}
+		HandleStatusCode(response.getStatus().get());
+	}
+
+	
 	public static void HandleStatusCode(int code) throws StatusCodeException {
 		switch (code) {
 			case 400: throw new StatusCodeException(code,"Bad request");

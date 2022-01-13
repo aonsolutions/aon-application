@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractCleanUpdate;
 import net.aonsolutions.db.up2date.data.DataRequestUpdate;
+import net.aonsolutions.db.up2date.data.DataResponseTBAI;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2022Insert;
 import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
 import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;

@@ -750,74 +750,78 @@ public class JooqContrata {
 		return AonStringUtils.isBlank(duracion)?null:duracion.substring(4,6);
 	}
 	
-	public static IContratoType createContratoModel(String code) {
-		com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory factory = new com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory();
-		if (code.equals(ContractCode.C100.getValue())) {
-			return factory.createCONTRATO100TYPE();
-		} else if (code.equals(ContractCode.C130.getValue())) {
-			return factory.createCONTRATO130TYPE();
-		} else if (code.equals(ContractCode.C150.getValue())) {
-			return factory.createCONTRATO150TYPE();
-		} else if (code.equals(ContractCode.C200.getValue())) {
-			return factory.createCONTRATO200TYPE();
-		} else if (code.equals(ContractCode.C230.getValue())) {
-			return factory.createCONTRATO230TYPE();
-		} else if (code.equals(ContractCode.C250.getValue())) {
-			return factory.createCONTRATO250TYPE();
-		} else if (code.equals(ContractCode.C300.getValue())) {
-			return factory.createCONTRATO300TYPE();
-		} else if (code.equals(ContractCode.C330.getValue())) {
-			return factory.createCONTRATO330TYPE();
-		} else if (code.equals(ContractCode.C350.getValue())) {
-			return factory.createCONTRATO350TYPE();
-		} else if (code.equals(ContractCode.C401.getValue())) {
-			return factory.createCONTRATO401TYPE();
-		} else if (code.equals(ContractCode.C402.getValue())) {
-			return factory.createCONTRATO402TYPE();
-		} else if (code.equals(ContractCode.C403.getValue())) {
-			return factory.createCONTRATO403TYPE();
-		} else if (code.equals(ContractCode.C410.getValue())) {
-			return factory.createCONTRATO410TYPE();
-		} else if (code.equals(ContractCode.C420.getValue())) {
-			return factory.createCONTRATO420TYPE();
-		} else if (code.equals(ContractCode.C421.getValue())) {
-			return factory.createCONTRATO421TYPE();
-		} else if (code.equals(ContractCode.C430.getValue())) {
-			return factory.createCONTRATO430TYPE();
-		} else if (code.equals(ContractCode.C441.getValue())) {
-			return factory.createCONTRATO441TYPE();
-		} else if (code.equals(ContractCode.C450.getValue())) {
-			return factory.createCONTRATO450TYPE();
-		} else if (code.equals(ContractCode.C452.getValue())) {
-			return factory.createCONTRATO452TYPE();
-		} else if (code.equals(ContractCode.C501.getValue())) {
-			return factory.createCONTRATO501TYPE();
-		} else if (code.equals(ContractCode.C502.getValue())) {
-			return factory.createCONTRATO502TYPE();
-		} else if (code.equals(ContractCode.C503.getValue())) {
-			return factory.createCONTRATO503TYPE();
-		} else if (code.equals(ContractCode.C510.getValue())) {
-			return factory.createCONTRATO510TYPE();
-		} else if (code.equals(ContractCode.C520.getValue())) {
-			return factory.createCONTRATO520TYPE();
-		} else if (code.equals(ContractCode.C530.getValue())) {
-			return factory.createCONTRATO530TYPE();
-		} else if (code.equals(ContractCode.C540.getValue())) {
-			return factory.createCONTRATO540TYPE();
-		} else if (code.equals(ContractCode.C541.getValue())) {
-			return factory.createCONTRATO541TYPE();
-		} else if (code.equals(ContractCode.C550.getValue())) {
-			return factory.createCONTRATO550TYPE();
-		} else if (code.equals(ContractCode.C552.getValue())) {
-			return factory.createCONTRATO552TYPE();
-		} else if (code.equals(ContractCode.C970.getValue())) {
-			return factory.createCONTRATO970TYPE();
-		} else if (code.equals(ContractCode.C980.getValue())) {
-			return factory.createCONTRATO980TYPE();
-		} else if (code.equals(ContractCode.C990.getValue())) {
-			return factory.createCONTRATO990TYPE();
+	public static IContratoType createContratoModel(String code) throws IllegalArgumentException {
+		try {
+			com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory factory = new com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory();
+			if (code.equals(ContractCode.C100.getValue())) {
+				return factory.createCONTRATO100TYPE();
+			} else if (code.equals(ContractCode.C130.getValue())) {
+				return factory.createCONTRATO130TYPE();
+			} else if (code.equals(ContractCode.C150.getValue())) {
+				return factory.createCONTRATO150TYPE();
+			} else if (code.equals(ContractCode.C200.getValue())) {
+				return factory.createCONTRATO200TYPE();
+			} else if (code.equals(ContractCode.C230.getValue())) {
+				return factory.createCONTRATO230TYPE();
+			} else if (code.equals(ContractCode.C250.getValue())) {
+				return factory.createCONTRATO250TYPE();
+			} else if (code.equals(ContractCode.C300.getValue())) {
+				return factory.createCONTRATO300TYPE();
+			} else if (code.equals(ContractCode.C330.getValue())) {
+				return factory.createCONTRATO330TYPE();
+			} else if (code.equals(ContractCode.C350.getValue())) {
+				return factory.createCONTRATO350TYPE();
+			} else if (code.equals(ContractCode.C401.getValue())) {
+				return factory.createCONTRATO401TYPE();
+			} else if (code.equals(ContractCode.C402.getValue())) {
+				return factory.createCONTRATO402TYPE();
+			} else if (code.equals(ContractCode.C403.getValue())) {
+				return factory.createCONTRATO403TYPE();
+			} else if (code.equals(ContractCode.C410.getValue())) {
+				return factory.createCONTRATO410TYPE();
+			} else if (code.equals(ContractCode.C420.getValue())) {
+				return factory.createCONTRATO420TYPE();
+			} else if (code.equals(ContractCode.C421.getValue())) {
+				return factory.createCONTRATO421TYPE();
+			} else if (code.equals(ContractCode.C430.getValue())) {
+				return factory.createCONTRATO430TYPE();
+			} else if (code.equals(ContractCode.C441.getValue())) {
+				return factory.createCONTRATO441TYPE();
+			} else if (code.equals(ContractCode.C450.getValue())) {
+				return factory.createCONTRATO450TYPE();
+			} else if (code.equals(ContractCode.C452.getValue())) {
+				return factory.createCONTRATO452TYPE();
+			} else if (code.equals(ContractCode.C501.getValue())) {
+				return factory.createCONTRATO501TYPE();
+			} else if (code.equals(ContractCode.C502.getValue())) {
+				return factory.createCONTRATO502TYPE();
+			} else if (code.equals(ContractCode.C503.getValue())) {
+				return factory.createCONTRATO503TYPE();
+			} else if (code.equals(ContractCode.C510.getValue())) {
+				return factory.createCONTRATO510TYPE();
+			} else if (code.equals(ContractCode.C520.getValue())) {
+				return factory.createCONTRATO520TYPE();
+			} else if (code.equals(ContractCode.C530.getValue())) {
+				return factory.createCONTRATO530TYPE();
+			} else if (code.equals(ContractCode.C540.getValue())) {
+				return factory.createCONTRATO540TYPE();
+			} else if (code.equals(ContractCode.C541.getValue())) {
+				return factory.createCONTRATO541TYPE();
+			} else if (code.equals(ContractCode.C550.getValue())) {
+				return factory.createCONTRATO550TYPE();
+			} else if (code.equals(ContractCode.C552.getValue())) {
+				return factory.createCONTRATO552TYPE();
+			} else if (code.equals(ContractCode.C970.getValue())) {
+				return factory.createCONTRATO970TYPE();
+			} else if (code.equals(ContractCode.C980.getValue())) {
+				return factory.createCONTRATO980TYPE();
+			} else if (code.equals(ContractCode.C990.getValue())) {
+				return factory.createCONTRATO990TYPE();
+			}
+			return null;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		return null;
 	}
 
 	public static IContratoType createCONTRATOS(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
@@ -901,15 +905,19 @@ public class JooqContrata {
 		}
 	}
 	
-	private static void writeContratosMainData(IContratoType contratos, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
-		contratos.setDATOSEMPRESA(createDatosEmpresa(employeeContractInfo));
-		contratos.setDATOSTRABAJADOR(createDatosTrabajador(employeeContractInfo));
-		contratos.setDATOSGENERALESCONTRATO(createDatosGeneralesContrato(employeeContractInfo)); 
-		if(employeeContractInfo.getContractSpecificData().getTemporalWorkEnterprise()){
-			contratos.setDATOSETT(createDatosEtt(employeeContractInfo));
+	private static void writeContratosMainData(IContratoType contratos, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException{
+		try {
+			contratos.setDATOSEMPRESA(createDatosEmpresa(employeeContractInfo));
+			contratos.setDATOSTRABAJADOR(createDatosTrabajador(employeeContractInfo));
+			contratos.setDATOSGENERALESCONTRATO(createDatosGeneralesContrato(employeeContractInfo)); 
+			if(employeeContractInfo.getContractSpecificData().getTemporalWorkEnterprise()){
+				contratos.setDATOSETT(createDatosEtt(employeeContractInfo));
+			}
+			contratos.setDATOSCOMUNICACOPIABASICA(createDatosComunicacionCopiaBasica(employeeContractInfo)); 
+			contratos.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(employeeContractInfo));
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		contratos.setDATOSCOMUNICACOPIABASICA(createDatosComunicacionCopiaBasica(employeeContractInfo)); 
-		contratos.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(employeeContractInfo));
 	}
 	
 	private static DATOSTRABAJADORTYPE createDatosTrabajador(EmployeeContractInfo employeeContractInfo) throws ManagerBeanException {
@@ -980,85 +988,94 @@ public class JooqContrata {
 		return datos;
 	}
 	
-	private static DATOSGENERALESCONTRATOTYPE createDatosGeneralesContrato(EmployeeContractInfo employeeContractInfo) throws ManagerBeanException {
-		String tc2 = employeeContractInfo.getContractInfo().getContractType();
-		DATOSGENERALESCONTRATOTYPE datos = new DATOSGENERALESCONTRATOTYPE();
-		datos.setFECHAINICIO(getFormatedDate(employeeContractInfo.getContractInfo().getStartDate()));
-		if( employeeContractInfo.getContractInfo().getEndDate()==null 
-				&& (tc2.equals("402") || tc2.equals("502") || tc2.equals("430") 
-				|| tc2.equals("530") || tc2.equals("420") || tc2.equals("520")  
-				|| tc2.equals("421") || tc2.equals("441") || tc2.equals("541") 
-				|| tc2.equals("452") || tc2.equals("552") || tc2.equals("970") ) ){
-//			AonUtil.addErrorMessage("La fecha final es necesaria para este tipo de contrato.");
-		} else {
-			datos.setFECHATERMINO(getFormatedDate(employeeContractInfo.getContractInfo().getEndDate()));
-		}
-
-//		if(employeeContractInfo.getContractInfo().getEndDate()!=null){
-//			Integer durationInMonths = getMonthsBetweenDates(employeeContractInfo.getContractInfo().getStartDate(), employeeContractInfo.getContractInfo().getEndDate());
-//			if( ((tc2.equals("402") || tc2.equals("502")) && durationInMonths>=6 && durationInMonths<=12) 
-//					|| (tc2.equals("421") && durationInMonths>=24 && durationInMonths<=36) 
-//					|| ((tc2.equals("401") || tc2.equals("501") || tc2.equals("450") || tc2.equals("550")) && durationInMonths>=36 && durationInMonths<=48)  
-//					){
-//				datos.setINDCONVENIOCOLECTIVO(params.isCollectiveAgreement()?"S":"N");
+	private static DATOSGENERALESCONTRATOTYPE createDatosGeneralesContrato(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			String tc2 = employeeContractInfo.getContractInfo().getContractType();
+			DATOSGENERALESCONTRATOTYPE datos = new DATOSGENERALESCONTRATOTYPE();
+			datos.setFECHAINICIO(getFormatedDate(employeeContractInfo.getContractInfo().getStartDate()));
+			if(null != employeeContractInfo.getContractInfo().getEndDate())
+				datos.setFECHATERMINO(getFormatedDate(employeeContractInfo.getContractInfo().getEndDate()));
+			
+			// TODO: mirar esto el dia de mañana para ver si es necesario
+//			if( employeeContractInfo.getContractInfo().getEndDate()==null 
+//					&& (tc2.equals("402") || tc2.equals("502") || tc2.equals("430") 
+//					|| tc2.equals("530") || tc2.equals("420") || tc2.equals("520")  
+//					|| tc2.equals("421") || tc2.equals("441") || tc2.equals("541") 
+//					|| tc2.equals("452") || tc2.equals("552") || tc2.equals("970") ) ){
+//				throw new IllegalArgumentException("La fecha final es necesaria para este tipo de contrato");
+//	//			AonUtil.addErrorMessage("La fecha final es necesaria para este tipo de contrato.");
+//			} else {
+//				datos.setFECHATERMINO(getFormatedDate(employeeContractInfo.getContractInfo().getEndDate()));
 //			}
-//		}
-		
-		ContractSpecificData contractSpecificData = employeeContractInfo.getContractSpecificData();
-		
-		datos.setNIVELFORMATIVO(contractSpecificData.getFormativeLevel() != null ? contractSpecificData.getFormativeLevel() : null);
-		if(contractSpecificData.getDisabilityB()){
-			datos.setINDDISCAPACIDAD(contractSpecificData.getDisability() != null ? contractSpecificData.getDisability() : null);
+	
+	//		if(employeeContractInfo.getContractInfo().getEndDate()!=null){
+	//			Integer durationInMonths = getMonthsBetweenDates(employeeContractInfo.getContractInfo().getStartDate(), employeeContractInfo.getContractInfo().getEndDate());
+	//			if( ((tc2.equals("402") || tc2.equals("502")) && durationInMonths>=6 && durationInMonths<=12) 
+	//					|| (tc2.equals("421") && durationInMonths>=24 && durationInMonths<=36) 
+	//					|| ((tc2.equals("401") || tc2.equals("501") || tc2.equals("450") || tc2.equals("550")) && durationInMonths>=36 && durationInMonths<=48)  
+	//					){
+	//				datos.setINDCONVENIOCOLECTIVO(params.isCollectiveAgreement()?"S":"N");
+	//			}
+	//		}
+			
+			ContractSpecificData contractSpecificData = employeeContractInfo.getContractSpecificData();
+			
+			datos.setNIVELFORMATIVO(contractSpecificData.getFormativeLevel() != null ? contractSpecificData.getFormativeLevel() : null);
+			if(contractSpecificData.getDisabilityB()){
+				datos.setINDDISCAPACIDAD(contractSpecificData.getDisability() != null ? contractSpecificData.getDisability() : null);
+			}
+			
+			String cno = contractSpecificData.getCno();
+			if(AonStringUtils.isEmpty(cno)){
+	//			AonUtil.addErrorMessage("El trabajador no tiene definido el cdigo de ocupacion (CNO).");
+			} else {
+				datos.setCODIGOOCUPACION(completeLength(cno, 8,  " ", true));
+			}
+			
+			if(contractSpecificData.getOfferWorkData()){
+				datos.setIDOFERTA(contractSpecificData.getOffer());
+			}
+			
+			if(contractSpecificData.getWorkProgramData()){
+				datos.setCODIGOPROGRAMAEMPLEO(contractSpecificData.getWorkProgram() != null ? contractSpecificData.getWorkProgram() : null);
+			}
+			
+			datos.setNACIONALIDADCT("724");
+			
+			datos.setMUNICIPIOCT(employeeContractInfo.getContractInfo().getWorkplaceZIP());
+			
+	//		if(params.isOlderThan52Data()){
+	//			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getCode():null);
+	//		}
+			
+			//TODO: MIRAR ESTO PARA 430
+	//		if( tc2.equals("430") || ( tc2.equals("530") && datos!=null && datos.getINDDISCAPACIDAD()!=null && !datos.getINDDISCAPACIDAD().equals("C") ) ){
+	//			String subsidized = SEPEUtils.getInstance().getContractDataMap(employeeContractInfo.getContractInfo().getContractId()).get(ContextVariable.SUBSIDIZED.getName());
+	//			datos.setTEMPORALMINUSVBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
+	//		}
+			
+	//		Calendar formationStart = Calendar.getInstance();
+	//		formationStart.set(2010, 5, 18);
+	//		Calendar formationEnd = Calendar.getInstance();
+	//		formationEnd.set(2011, 7, 30);
+	//		if(tc2.equals("421") 
+	//				&& getContract().getStartDate().after(formationStart.getTime()) 
+	//				&& getContract().getStartDate().before(formationEnd.getTime())){
+	//			String subsidized = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.SUBSIDIZED.getName());
+	//			datos.setFORMACIONBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
+	//		}
+			
+			if(contractSpecificData.getCampaigns()){
+				datos.setDATOSCAMPAÑAS(contractSpecificData.getCpCampaign()+contractSpecificData.getCodeCampaign()+contractSpecificData.getYearCampaign());
+			}
+	
+			if(tc2.equals("401") || tc2.equals("501") || tc2.equals("450") || tc2.equals("550")){
+				datos.setINDEMPRESAAAPPUNIVERSIDAD("N");
+			}
+			return datos;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		
-		String cno = contractSpecificData.getCno();
-		if(AonStringUtils.isEmpty(cno)){
-//			AonUtil.addErrorMessage("El trabajador no tiene definido el cdigo de ocupacion (CNO).");
-		} else {
-			datos.setCODIGOOCUPACION(completeLength(cno, 8,  " ", true));
-		}
-		
-		if(contractSpecificData.getOfferWorkData()){
-			datos.setIDOFERTA(contractSpecificData.getOffer());
-		}
-		
-		if(contractSpecificData.getWorkProgramData()){
-			datos.setCODIGOPROGRAMAEMPLEO(contractSpecificData.getWorkProgram() != null ? contractSpecificData.getWorkProgram() : null);
-		}
-		
-		datos.setNACIONALIDADCT("724");
-		
-		datos.setMUNICIPIOCT(employeeContractInfo.getContractInfo().getWorkplaceZIP());
-		
-//		if(params.isOlderThan52Data()){
-//			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getCode():null);
-//		}
-		
-		//TODO: MIRAR ESTO PARA 430
-//		if( tc2.equals("430") || ( tc2.equals("530") && datos!=null && datos.getINDDISCAPACIDAD()!=null && !datos.getINDDISCAPACIDAD().equals("C") ) ){
-//			String subsidized = SEPEUtils.getInstance().getContractDataMap(employeeContractInfo.getContractInfo().getContractId()).get(ContextVariable.SUBSIDIZED.getName());
-//			datos.setTEMPORALMINUSVBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
-//		}
-		
-//		Calendar formationStart = Calendar.getInstance();
-//		formationStart.set(2010, 5, 18);
-//		Calendar formationEnd = Calendar.getInstance();
-//		formationEnd.set(2011, 7, 30);
-//		if(tc2.equals("421") 
-//				&& getContract().getStartDate().after(formationStart.getTime()) 
-//				&& getContract().getStartDate().before(formationEnd.getTime())){
-//			String subsidized = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.SUBSIDIZED.getName());
-//			datos.setFORMACIONBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
-//		}
-		
-		if(contractSpecificData.getCampaigns()){
-			datos.setDATOSCAMPAÑAS(contractSpecificData.getCpCampaign()+contractSpecificData.getCodeCampaign()+contractSpecificData.getYearCampaign());
-		}
-
-		if(tc2.equals("401") || tc2.equals("501") || tc2.equals("450") || tc2.equals("550")){
-			datos.setINDEMPRESAAAPPUNIVERSIDAD("N");
-		}
-		return datos;
 	}
 	
 	private static DATOSETTTYPE createDatosEtt(EmployeeContractInfo employeeContractInfo) {
@@ -1122,14 +1139,18 @@ public class JooqContrata {
 		return c;
 	}
 	
-	private static DATOSCONTRATOEXTRANJEROTYPE createDatosContratoExtranjero(EmployeeContractInfo employeeContractInfo) {
-		if(employeeContractInfo.getContractSpecificData().getAnnexedB()){
-			DATOSCONTRATOEXTRANJEROTYPE datos = new DATOSCONTRATOEXTRANJEROTYPE();
-			datos.setINDCARACTEROFERTA(employeeContractInfo.getContractSpecificData().getAnnexed() ? "E" : "T");
-			datos.setAÑOCONTINGENTE(employeeContractInfo.getContractSpecificData().getSourceYear());
-			return datos;
+	private static DATOSCONTRATOEXTRANJEROTYPE createDatosContratoExtranjero(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			if(employeeContractInfo.getContractSpecificData().getAnnexedB()){
+				DATOSCONTRATOEXTRANJEROTYPE datos = new DATOSCONTRATOEXTRANJEROTYPE();
+				datos.setINDCARACTEROFERTA(employeeContractInfo.getContractSpecificData().getAnnexed() ? "E" : "T");
+				datos.setAÑOCONTINGENTE(employeeContractInfo.getContractSpecificData().getSourceYear());
+				return datos;
+			}
+			return null;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		return null;
 	}
 	
 	private static DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(EmployeeContractInfo employeeContractInfo) {
@@ -1172,13 +1193,17 @@ public class JooqContrata {
 		return datos;
 	}
 	
-	private static DATOSETCOTYPE createDatosEtCote(EmployeeContractInfo employeeContractInfo) {
-		if(employeeContractInfo.getContractSpecificData().getWorkshopSchoolB()){
-			DATOSETCOTYPE datos = new DATOSETCOTYPE();
-			datos.setCODIGOETCOTE(employeeContractInfo.getContractSpecificData().getWorkshopSchool());
-			return datos;
+	private static DATOSETCOTYPE createDatosEtCote(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			if(employeeContractInfo.getContractSpecificData().getWorkshopSchoolB()){
+				DATOSETCOTYPE datos = new DATOSETCOTYPE();
+				datos.setCODIGOETCOTE(employeeContractInfo.getContractSpecificData().getWorkshopSchool());
+				return datos;
+			}
+			return null;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		return null;
 	}
 	
 	private static CONTRATO130TYPE createContract130(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
@@ -1383,45 +1408,53 @@ public class JooqContrata {
 		return null;
 	}
 	
-	private static CONTRATO402TYPE createContract402(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{
-		CONTRATO402TYPE c = (CONTRATO402TYPE) contratoType;
-		c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
-		c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
-		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
-		c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
-		return c;
-	}
-	
-	private static DATOSPROGEMPLEOPUBLICOTYPE createDatosProgramaEmpleoPublico(EmployeeContractInfo employeeContractInfo) {
-		// TODO
-//		if(params.isEmploymentProgramData()){
-		DATOSPROGEMPLEOPUBLICOTYPE datos = new DATOSPROGEMPLEOPUBLICOTYPE();
-		datos.setACTUACION("");
-		datos.setCORPORACIONLOCAL("");
-		datos.setEJERCICIOPRESUPUESTARIO("");
-		datos.setGRUPOCOTIZACIONCORPORACIONLOCAL("");
-		return datos;
-//		}
-	}
-	
-	private static DATOSCOPIABASICATYPE createDatosCopiaBasica(EmployeeContractInfo employeeContractInfo) {
-		// TODO: consultar en pantalla si el contrato es escrito
-		DATOSCOPIABASICATYPE datos = null;
-		SEPEUtils utils = SEPEUtils.getInstance();
-		String tc2 = employeeContractInfo.getContractInfo().getContractType();
-		if( tc2.equals("402") || tc2.equals("990") ){
-			if( tc2.equals("990") ){
-				datos = datos==null?new DATOSCOPIABASICATYPE():datos;
-				datos.setINDCONTRATOALTADIRECCION("S");
-			}
-			Date start = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getStartDate(),true);
-			Date end = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getEndDate(), false);
-			if( tc2.equals("402") && end!=null && CommonUtil.getDaysBetweenDates(start, end) <= 28){
-				datos = datos==null?new DATOSCOPIABASICATYPE():datos;
-				datos.setINDCONTRATOESCRITO("S");
-			}
+	private static CONTRATO402TYPE createContract402(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException{
+		try {
+			CONTRATO402TYPE c = (CONTRATO402TYPE) contratoType;
+//			c.setDATOSETCOTE(createDatosEtCote(employeeContractInfo));
+//			c.setDATOSCOPIABASICA(createDatosCopiaBasica(employeeContractInfo));
+//			c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(employeeContractInfo));
+//			c.setDATOSCONTRATOEXTRANJERO(createDatosContratoExtranjero(employeeContractInfo));
+			return c;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
-		return datos;
+	}
+	
+	private static DATOSPROGEMPLEOPUBLICOTYPE createDatosProgramaEmpleoPublico(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			DATOSPROGEMPLEOPUBLICOTYPE datos = new DATOSPROGEMPLEOPUBLICOTYPE();
+			datos.setACTUACION("");
+			datos.setCORPORACIONLOCAL("");
+			datos.setEJERCICIOPRESUPUESTARIO("");
+			datos.setGRUPOCOTIZACIONCORPORACIONLOCAL("");
+			return datos;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	private static DATOSCOPIABASICATYPE createDatosCopiaBasica(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try {
+			DATOSCOPIABASICATYPE datos = null;
+			SEPEUtils utils = SEPEUtils.getInstance();
+			String tc2 = employeeContractInfo.getContractInfo().getContractType();
+			if( tc2.equals("402") || tc2.equals("990") ){
+				if( tc2.equals("990") ){
+					datos = datos==null?new DATOSCOPIABASICATYPE():datos;
+					datos.setINDCONTRATOALTADIRECCION("S");
+				}
+				Date start = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getStartDate(),true);
+				Date end = utils.getDateWithResettedHours(employeeContractInfo.getContractInfo().getEndDate(), false);
+				if( tc2.equals("402") && end!=null && CommonUtil.getDaysBetweenDates(start, end) <= 28){
+					datos = datos==null?new DATOSCOPIABASICATYPE():datos;
+					datos.setINDCONTRATOESCRITO("S");
+				}
+			}
+			return datos;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 	
 	private static CONTRATO403TYPE createContract403(IContratoType contratoType, EmployeeContractInfo employeeContractInfo) throws ManagerBeanException{

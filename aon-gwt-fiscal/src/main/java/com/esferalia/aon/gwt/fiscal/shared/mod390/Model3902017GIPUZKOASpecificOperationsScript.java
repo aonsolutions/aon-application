@@ -40,7 +40,7 @@ public enum Model3902017GIPUZKOASpecificOperationsScript implements IModelScript
 		"especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida "+
 		"en el art\u00EDculo 75 NFIVA"		,new Mod390Key[]{Mod390Key.GP_C101,Mod390Key.GP_C102},OUT_ACCRUAL_INVOICE)	
 	,ADC02 ("Importes de las adquisiciones de bienes y servicios a las que sea aplicable o afecte el r\u00E9gimen "+
-		"especial del criterio de caja"		,new Mod390Key[]{Mod390Key.GP_C103,Mod390Key.GP_C103},IN_ACCRUAL_INVOICE)
+		"especial del criterio de caja"		,new Mod390Key[]{Mod390Key.GP_C103,Mod390Key.GP_C104},IN_ACCRUAL_INVOICE)
 	
 	;
 	

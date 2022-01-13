@@ -48,7 +48,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -225,7 +224,9 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 						.setRegistryAccountDescription(last.getRegistryAccountDescription())
 					;
 				}
-				authFinanceCalculation.setValue(false);
+				if (authFinanceCalculation != null) {
+					authFinanceCalculation.setValue(false);
+				}
 				callback.getInvoice().setAuthFinanceCalculation(false);
 				fin.setAmount(AonMathUtils.round( amount ));
 				callback.getInvoice().getInvoice().addFinance( fin );

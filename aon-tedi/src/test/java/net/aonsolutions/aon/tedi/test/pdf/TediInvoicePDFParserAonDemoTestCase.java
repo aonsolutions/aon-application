@@ -82,6 +82,11 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		testTemplate(TestTemplates.AON_2019_01_02_UDAPA);
 	}
 
+	@Test
+	public void testAON_2021_11_03_LEIRE() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplateNoAON(TestTemplates.AON_2021_11_03_LEIRE);
+	}
+
 	private void testTemplate(TestTemplates template) throws IOException, UnknownInvoiceException, ClassNotFoundException {
 		testTemplate(template, false);
 	}
@@ -163,77 +168,9 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 			assertNotNull(file + " Invoice has no receiver!",invoice.getReceiver());
 			assertNotNull(file + " Invoice has no document receiver!",invoice.getReceiver().getDocument());
 			assertEquals(file + " Receiver document does not match!", template.getReceiverDocument(), invoice.getReceiver().getDocument());
-			// TAXES
-			assertNotNull(file + " Invoice has no taxes!",invoice.getTaxes());
-			assertEquals(file + " Invoice taxes number does not match!", template.getTaxNumber(), invoice.getTaxes().size());
-
-			// BASE AL 0%
-			if (template.getTaxBase0() == null) {
-				assertNull(file + " Invoice has 0% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 0 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 0% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 0 ));
-				assertEquals(file + " Invoice 0% VAT base not match: ",template.getTaxBase0() , getTaxBase(invoice, TediTaxType.IVA, 0 ),0);
-			}
-
-			// CUOTA AL 0%
-			if (template.getTaxQuota0() == null) {
-				assertNull(file + " Invoice has 0% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 0 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 0% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 0 ));
-				assertEquals(file + " Invoice 0% VAT quota not match: ",template.getTaxQuota0() , getTaxQuota(invoice, TediTaxType.IVA, 0 ),0);
-			}
-
-			// BASE AL 4%
-			if (template.getTaxBase4() == null) {
-				assertNull(file + " Invoice has 4% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 4 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 4% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 4 ));
-				assertEquals(file + " Invoice 4% VAT base not match: ",template.getTaxBase4() , getTaxBase(invoice, TediTaxType.IVA, 4 ),0);
-			}
-
-			// CUOTA AL 4%
-			if (template.getTaxQuota4() == null) {
-				assertNull(file + " Invoice has 4% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 4 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 4% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 4 ));
-				assertEquals(file + " Invoice 4% VAT quota not match: ",template.getTaxQuota4() , getTaxQuota(invoice, TediTaxType.IVA, 4 ),0);
-			}
-
-			// BASE AL 10%
-			if (template.getTaxBase10() == null) {
-				assertNull(file + " Invoice has 10% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 10 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 10% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 10 ));
-				assertEquals(file + " Invoice 10% VAT base not match: ",template.getTaxBase10() , getTaxBase(invoice, TediTaxType.IVA, 10 ),0);
-			}
-
-			// CUOTA AL 10%
-			if (template.getTaxQuota10() == null) {
-				assertNull(file + " Invoice has 10% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 10 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 10% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 10 ));
-				assertEquals(file + " Invoice 10% VAT quota not match: ",template.getTaxQuota10() , getTaxQuota(invoice, TediTaxType.IVA, 10 ),0);
-			}
-
-			// BASE AL 21%
-			if (template.getTaxBase21() == null) {
-				assertNull(file + " Invoice has 21% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 21 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 21% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 21 ));
-				assertEquals(file + " Invoice 21% VAT base not match: ",template.getTaxBase21() , getTaxBase(invoice, TediTaxType.IVA, 21 ),0);
-			}
 			
-			// CUOTA AL 21%
-			if (template.getTaxQuota21() == null) {
-				assertNull(file + " Invoice has 21% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 21 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 21% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 21 ));
-				assertEquals(file + " Invoice 21% VAT quota not match: ",template.getTaxQuota21() , getTaxQuota(invoice, TediTaxType.IVA, 21 ),0);
-			}
-			
-			// TOTAL
-			assertNotNull(file + " Invoice has no total!",invoice.getTotal());
-			assertEquals(file + " Invoice total not match: ",template.getTotal() , invoice.getTotal().doubleValue(),0);
+			checkNumericData(template, file, invoice);
+
 		} finally {
 			Date end = new Date();
 			out.append("*  ");
@@ -248,6 +185,104 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		System.out.println( out.toString() );
 	}
 	
+	private void checkNumericData(TestTemplates template, String file, TediInvoice invoice) {
+		// TAXES
+		assertNotNull(file + " Invoice has no taxes!",invoice.getTaxes());
+		assertEquals(file + " Invoice taxes number does not match!", template.getTaxNumber(), invoice.getTaxes().size());
+
+		// BASE AL 0%
+		if (template.getTaxBase0() == null) {
+			assertNull(file + " Invoice has 0% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 0 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 0% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 0 ));
+			assertEquals(file + " Invoice 0% VAT base not match: ",template.getTaxBase0() , getTaxBase(invoice, TediTaxType.IVA, 0 ),0);
+		}
+
+		// CUOTA AL 0%
+		if (template.getTaxQuota0() == null) {
+			assertNull(file + " Invoice has 0% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 0 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 0% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 0 ));
+			assertEquals(file + " Invoice 0% VAT quota not match: ",template.getTaxQuota0() , getTaxQuota(invoice, TediTaxType.IVA, 0 ),0);
+		}
+
+		// BASE AL 4%
+		if (template.getTaxBase4() == null) {
+			assertNull(file + " Invoice has 4% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 4 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 4% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 4 ));
+			assertEquals(file + " Invoice 4% VAT base not match: ",template.getTaxBase4() , getTaxBase(invoice, TediTaxType.IVA, 4 ),0);
+		}
+
+		// CUOTA AL 4%
+		if (template.getTaxQuota4() == null) {
+			assertNull(file + " Invoice has 4% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 4 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 4% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 4 ));
+			assertEquals(file + " Invoice 4% VAT quota not match: ",template.getTaxQuota4() , getTaxQuota(invoice, TediTaxType.IVA, 4 ),0);
+		}
+
+		// BASE AL 10%
+		if (template.getTaxBase10() == null) {
+			assertNull(file + " Invoice has 10% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 10 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 10% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 10 ));
+			assertEquals(file + " Invoice 10% VAT base not match: ",template.getTaxBase10() , getTaxBase(invoice, TediTaxType.IVA, 10 ),0);
+		}
+
+		// CUOTA AL 10%
+		if (template.getTaxQuota10() == null) {
+			assertNull(file + " Invoice has 10% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 10 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 10% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 10 ));
+			assertEquals(file + " Invoice 10% VAT quota not match: ",template.getTaxQuota10() , getTaxQuota(invoice, TediTaxType.IVA, 10 ),0);
+		}
+
+		// BASE AL 21%
+		if (template.getTaxBase21() == null) {
+			assertNull(file + " Invoice has 21% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 21 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 21% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 21 ));
+			assertEquals(file + " Invoice 21% VAT base not match: ",template.getTaxBase21() , getTaxBase(invoice, TediTaxType.IVA, 21 ),0);
+		}
+		
+		// CUOTA AL 21%
+		if (template.getTaxQuota21() == null) {
+			assertNull(file + " Invoice has 21% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 21 ));	
+		} else {
+			assertNotNull(file + " Invoice has no 21% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 21 ));
+			assertEquals(file + " Invoice 21% VAT quota not match: ",template.getTaxQuota21() , getTaxQuota(invoice, TediTaxType.IVA, 21 ),0);
+		}
+		
+		// IRPF PERCENT
+		if (template.getIRPFPercent() == null) {
+			assertNull(file + " Invoice has IRPF Percent!", getIRPFPercent(invoice));	
+		} else {
+			assertNotNull(file + " Invoice IRPF percent quota!", getIRPFPercent(invoice));
+			assertEquals(file + " Invoice IRPF percent not match: ", template.getIRPFPercent() , getIRPFPercent(invoice) ,0);
+		}
+
+		// IRPF BASE 
+		if (template.getIRPFBase() == null) {
+			assertNull(file + " Invoice has IRPF Base!", getIRPFBase(invoice));	
+		} else {
+			assertNotNull(file + " Invoice IRPF base!", getIRPFBase(invoice));
+			assertEquals(file + " Invoice IRPF base not match: ", template.getIRPFBase() , getIRPFBase(invoice) ,0);
+		}
+		
+		// IRPF Quota
+		if (template.getIRPFQuota() == null) {
+			assertNull(file + " Invoice has IRPF Quota!", getIRPFQuota(invoice));	
+		} else {
+			assertNotNull(file + " Invoice IRPF quota!", getIRPFQuota(invoice));
+			assertEquals(file + " Invoice IRPF Quota: ", template.getIRPFQuota() , getIRPFQuota(invoice) ,0);
+		}
+
+		// TOTAL
+		assertNotNull(file + " Invoice has no total!",invoice.getTotal());
+		assertEquals(file + " Invoice total not match: ",template.getTotal() , invoice.getTotal().doubleValue(),0);
+	}
+
 	private TediInvoiceTax getTax(TediInvoice invoice, TediTaxType taxType, double percent) {
 		if ( invoice.getTaxes() != null) {
 			for ( TediInvoiceTax tax : invoice.getTaxes()) {
@@ -259,6 +294,17 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		return null;
 	}
 	
+	private TediInvoiceTax getIRPFTax(TediInvoice invoice) {
+		if ( invoice.getTaxes() != null) {
+			for ( TediInvoiceTax tax : invoice.getTaxes()) {
+				if (tax.getTaxType() == TediTaxType.IRPF) {
+					return tax;
+				}
+			}
+		}
+		return null;
+	}
+
 	private Double getTaxBase(TediInvoice invoice, TediTaxType taxType, double percent) {
 		TediInvoiceTax tax = getTax(invoice, taxType, percent);
 		return tax == null? null : tax.getBase();
@@ -267,5 +313,71 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		TediInvoiceTax tax = getTax(invoice, taxType, percent);
 		return tax == null? null : tax.getQuota();
 	}
+	private Double getIRPFPercent(TediInvoice invoice) {
+		TediInvoiceTax tax = getIRPFTax(invoice);
+		return tax == null? null : tax.getPercentage();
+	}
+	private Double getIRPFBase(TediInvoice invoice) {
+		TediInvoiceTax tax = getIRPFTax(invoice);
+		return tax == null? null : tax.getBase();
+	}
+	private Double getIRPFQuota(TediInvoice invoice) {
+		TediInvoiceTax tax = getIRPFTax(invoice);
+		return tax == null? null : tax.getQuota();
+	}
+	
+	
+	
+	private void testTemplateNoAON(TestTemplates template) throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		StringBuilder out = new StringBuilder();
+		out.append("-----------------");
+		out.append("\n");
+		out.append("TIEMPOS DE PARSEO");
+		out.append("\n");
+		out.append("-----------------");
+		out.append("\n");
+		
+		TediContext tctx = new TediContext()
+				.setDomain(DOMAIN_ID)
+				.setDomainName(DOMAIN_NAME)
+				.setAONContext ( ctx )
+				;
+		AonConfiguration configuration = ConfigurationDAO.getConfiguration(tctx.getAONContext()); 
+		tctx.setAonConfiguration(configuration);
+		//tctx.getAonConfiguration().getCompany().setDocument(sales?template.getReceiverDocument():template.getReceiverDocument());
+		
+		Date start = new Date();
+		try (InputStream is = TediInvoicePDFParserAonDemoTestCase.class.getResourceAsStream(template.getFile())) {
+			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
+			InvoicePDFParser.parse(is , tediInvoiceBuilder);
+			String file = "["+ template.getFile() +"]. ";
+			System.out.println( file );
+			TediInvoice invoice = tediInvoiceBuilder.get();
+			
+			invoice.setInsight(null);
+			System.out.println( TediInvoiceJSON.toJSON( tediInvoiceBuilder.get() ).toString(2) );
+
+			assertNotNull(file + "Invoice not parsed!", invoice);
+
+			// FECHA DE EMISIÓN
+			assertNotNull(file + " Invoice has no date!",invoice.getDate());
+			assertEquals(file + " Date does not match!", template.getDate(), invoice.getDate());
+
+			checkNumericData(template, file, invoice);
+			
+		} finally {
+			Date end = new Date();
+			out.append("*  ");
+			out.append(end.getTime() - start.getTime());
+			out.append(" ms.\t");
+			out.append(template.getFile());
+			out.append("\n");
+		}
+		
+		out.append("-----------------");
+		out.append("\n");
+		System.out.println( out.toString() );
+	}
+	
 	
 }

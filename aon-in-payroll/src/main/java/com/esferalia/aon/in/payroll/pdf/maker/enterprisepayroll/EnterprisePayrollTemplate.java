@@ -20,7 +20,10 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -46,13 +50,19 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class EnterprisePayrollTemplate extends PdfFile {
 
-	private EnterprisePayroll payroll;
-	private ColManager		  mg;
-	private byte[]	  		logoB;
+	private EnterprisePayroll 	payroll;
+	private ColManager		  	mg;
+	private byte[]	  			logoB;
+	private String				periodStr;
+	private boolean 			byPeriod;
 
 	public static void print(EnterprisePayroll payroll, OutputStream out, Optional<Locale> language)
 			throws CanNotCreatePdfException {
-
+		print(payroll, out, language, null, null, false);
+	}
+	
+	public static void print(EnterprisePayroll payroll, OutputStream out, Optional<Locale> language, Date startDate, Date endDate, boolean byPeriod)
+			throws CanNotCreatePdfException {
 		/*
 		 * TODO - THINGS TO FIX
 		 * 
@@ -69,6 +79,16 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			template = new EnterprisePayrollTemplate(7.5f, 500, new PDDocument(), words, out, payroll, 75f);
 			template.setDefaults(HELVETICA, 10f, BLACK, GRAY);
 			template.newPage(HORIZONTAL);
+			
+			template.byPeriod = byPeriod;
+			template.periodStr = null;
+			if (startDate != null && endDate != null) {
+				template.periodStr = getAppropiatePeriodString(startDate, endDate);
+			} else {
+				template.periodStr = PdfFormats.formatDate(template.payroll.getMonth().orElse(null), "MMMM, yyyy").orElse("");				
+			}
+			
+			
 			PdfTable table = calculateColums(template);
 			template.limitY = 80;
 
@@ -82,15 +102,15 @@ public class EnterprisePayrollTemplate extends PdfFile {
 					return null;
 				}
 			}).orElse(null);
-
+			
 			drawHeader(template);
-			drawEntries(template, table);
+			drawEntries(template, table, template.byPeriod);
 			if (table.hasColumn(0))
 				drawTotals(template, table);
 			else
 				drawError(template);
 
-			new PdfText(720, 20, 100, 20, template.contents, template.text("PAGE") + " " + template.page, GRAY,
+			new PdfText(720, 8, 100, 20, template.contents, template.text("PAGE") + " " + template.page, GRAY,
 					HELVETICA, template.fontsize, RIGHT).draw();
 			template.print();
 			template.close();
@@ -104,6 +124,35 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			throw new CanNotCreatePdfException(e);
 		}
 	}
+	
+	
+	private static String getAppropiatePeriodString(Date startDate, Date endDate) {
+		if (startDate == null || endDate == null)
+			return "";
+		Calendar cal1 = Calendar.getInstance();
+		cal1.setTime(startDate);
+		Calendar cal2 = Calendar.getInstance();
+		cal2.setTime(endDate);
+		
+		boolean sameYear = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+		boolean sameMonth = cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
+		boolean fromStartToEnd = cal1.get(Calendar.DAY_OF_MONTH) == 1 && cal2.get(Calendar.DAY_OF_MONTH) == cal2.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		Locale locale = new Locale("es", "ES");
+		
+		if (sameYear && sameMonth && fromStartToEnd) {
+			return new SimpleDateFormat("MMMMMMMMMM 'de' yyyy", locale).format(startDate);
+		} else {
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy", locale);
+			String strStartDate = df.format(startDate);
+			String strEndDate = df.format(endDate);
+			
+			return String.format("%1$s - %2$s", strStartDate, strEndDate);
+			
+		}
+		
+	}
+	
 
 	private static void drawError(EnterprisePayrollTemplate t) {
 		PdfText msg = new PdfText(t.x() + 15, t.y() - 215, 800, 50, t.contents, "No hay datos disponibles", BLACK, HELVETICA, 24f, CENTER);
@@ -129,7 +178,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		template.down(20);
 
 		PdfText	subheader = new PdfText(template.x(), template.y(), 600, 20, 5, 5, template.contents, subheaderTxt, BLACK, HELVETICA_BOLD,12f, LEFT);
-		PdfText	date	  = new PdfText(template.x() - 62, 22, 130, 20, 5, 5, template.contents, dateTxt, GRAY, HELVETICA, 9f, RIGHT);
+		PdfText	date	  = new PdfText(template.x() - 62, 8, 130, 20, 5, 5, template.contents, dateTxt, GRAY, HELVETICA, 9f, RIGHT);
 		template.down(30);
 
 		try
@@ -246,15 +295,14 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		return table;
 	}
 
-	private static void drawEntries(EnterprisePayrollTemplate t, PdfTable table) {
+	private static void drawEntries(EnterprisePayrollTemplate t, PdfTable table, boolean byPeriod) {
 
 		Map<String, Map<String, EnterprisePayrollEntry>> entries = t.payroll.getEntries().orElse(new HashMap<>());
 		entries.entrySet().stream().forEach(category ->
 		{
 
 			PdfText	categoryTitle = new PdfText(t.x() + 100, table.y(), 100, 20, 5, 6, t.contents, category.getKey(),	BLACK, HELVETICA_BOLD, 9f, RIGHT);
-			PdfText	monthTitle	   = new PdfText(t.x(), table.y(), 100, 20, 5, 6, t.contents,PdfFormats.formatDate(t.payroll.getMonth().orElse(null), "MMMM, yyyy").orElse(""),
-									BLACK,HELVETICA_BOLD, 9f, LEFT);
+			PdfText	monthTitle	   = new PdfText(t.x(), table.y(), 110, 20, 5, 6, t.contents,t.periodStr, BLACK,HELVETICA_BOLD, 9f, LEFT);
 
 			categoryTitle.draw();
 			monthTitle.draw();
@@ -263,8 +311,16 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			{
 				check(t, table);
 			} catch (IOException e){}
-
-			category.getValue().entrySet().stream().forEach(entry ->
+			
+			Stream<Entry<String, EnterprisePayrollEntry>> values = null;
+			
+			if (!byPeriod) {
+				values = category.getValue().entrySet().stream();
+			} else {
+				values = category.getValue().entrySet().stream().sorted((w1,w2) -> w1.getKey().compareTo(w2.getKey()));
+			}
+			
+			values.forEach(entry ->
 			{
 				try
 				{
@@ -297,8 +353,9 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		if (subtotalAon.stream().mapToDouble(p -> p).sum() != 0)
 		{
 			table.fillCell(0, "CENTRO DE TRABAJO");
-			table.fillCell(1, "SUBTOTAL");
-			for (int i = 2; i < subtotalAon.size(); i++)
+			if(t.mg.isActive("tipo"))
+				table.fillCell(1, "SUBTOTAL");
+			for (int i = t.mg.isActive("tipo") ? 2 : 1; i < subtotalAon.size(); i++)
 				table.fillCell(i, toLatinNumber(subtotalAon.get(i)));
 			table.newRow();
 			painted = !painted;
@@ -562,7 +619,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	private static void check(EnterprisePayrollTemplate t, PdfTable table) throws IOException {
 		if (t.jump())
 		{
-			new PdfText(720, 20, 100, 20, t.contents, t.text("PAGE") + " " + t.page, GRAY, HELVETICA, t.fontsize, RIGHT).draw();
+			new PdfText(720, 8, 100, 20, t.contents, t.text("PAGE") + " " + t.page, GRAY, HELVETICA, t.fontsize, RIGHT).draw();
 			t.newPage(HORIZONTAL);
 			table.stream(t.contents);
 

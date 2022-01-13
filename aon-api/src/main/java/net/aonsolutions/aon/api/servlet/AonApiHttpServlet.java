@@ -63,14 +63,20 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	protected AonApiData initialize(HttpServletRequest req, HttpServletResponse resp) {
 		AonApiData api = new AonApiData();
+		api.setParams(getParamsJSON(req));
+		api.setData(getRequestJSON(req));
+		
 		api.setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
 				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
 		
+		
 		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
-				? req.getServerName() : req.getHeader(IConstants.DOMAIN_NAME);
+				? (api.getParams().opt("domain_name") != null ? api.getParams().getString("domain_name") :req.getServerName()) 
+				: req.getHeader(IConstants.DOMAIN_NAME);
 		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
-				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) : 0;
+				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
+				: (api.getParams().opt("domain_id") != null ? api.getParams().getInt("domain_id") : 0);
 
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		try {
@@ -97,8 +103,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		}
 		api.setUser(user);
 		
-		api.setParams(getParamsJSON(req));
-		api.setData(getRequestJSON(req));
+
 		
 		api.setPath(req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR);
 		try {

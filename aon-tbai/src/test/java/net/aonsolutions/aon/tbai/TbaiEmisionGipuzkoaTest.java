@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -39,7 +40,10 @@ public class TbaiEmisionGipuzkoaTest {
 		.setRegistryDocumentType(DocumentType.CIF)
 		.setRegistryDocumentCountry(Country.ES)
 		.setRegistryName("TRANSLOGIA DEVELOPMENT, S.L.")
-		.setAddress("CL. DUQUE DE WELLINGTON 52, BAJO")
+		.setAddress(new RegistryAddress()
+				.setAddress("ASDASDASDAS")
+				.setNumber("2")
+				.setZip("01010"))
 		.setRectificationType(RectificationType.NONE)	
 		.setTransaction(InvoiceTransactionType.NATIONAL)
 		.setSurcharge(false)

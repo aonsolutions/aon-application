@@ -32,7 +32,6 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
@@ -1870,18 +1869,19 @@ public class CheckItModule extends MainEntryPoint {
 		FlexTable tab = new FlexTable();
 		
 		List<CheckItBankStatement> statements = all ? checkItBankAccount.getAllMovements() : checkItBankAccount.getPending();
-		Stream<String> dates = statements.stream().map(pm -> pm != null ? dtf.format(pm.getOperationDate()).toUpperCase() : "").distinct()
-				.sorted((o1, o2) -> {
-						if (o1 == null || o1.isEmpty() || o2 == null || o2.isEmpty())
-							return -1;
-						Date d1 = dtf.parse(o1);
-						Date d2 = dtf.parse(o2);
-						return d2.compareTo(d1);
-					});
 		
-		dates.forEach(dte -> {
+		Stream<Date> orderedDates = statements.stream().map(pm -> pm.getOperationDate()).sorted((d1, d2) -> {
+			if (d1 == null || d2 == null)
+				return -1;
+			return d2.compareTo(d1);
+		}).distinct();
+		
+		orderedDates.forEach(dte -> {
+			
+			String parsedDate = dte != null ? dtf.format(dte).toUpperCase() : "";
+			
 			int nextRow = tab.getRowCount();
-			Label dateLabel = new Label(dte);
+			Label dateLabel = new Label(parsedDate);
 			dateLabel.addStyleName(AON.CSS.aonFontMedium());
 			dateLabel.addStyleName(AON.CSS.aonBold());
 			dateLabel.getElement().getStyle().setColor("#002469");
@@ -1893,7 +1893,13 @@ public class CheckItModule extends MainEntryPoint {
 			tab.getElement().setAttribute("cellSpacing", "0");
 			
 			List<CheckItBankStatement> st = statements.stream()
-			.filter(pen -> dte.equals(pen.getOperationDate() != null ? dtf.format(pen.getOperationDate()).toUpperCase() : ""))
+			.filter(pen -> {
+				if (pen != null && dte != null)
+					return dte.equals(pen.getOperationDate());
+				else {
+					return pen == null && dte == null;
+				}
+			})
 			.sorted((o1, o2) -> o1.getCheckitMovementId().compareTo(o2.getCheckitMovementId()))
 			.collect(Collectors.toList());
 			

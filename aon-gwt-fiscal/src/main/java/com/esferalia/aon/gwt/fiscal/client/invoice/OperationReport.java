@@ -385,7 +385,7 @@ public class OperationReport extends MainEntryPoint {
 			int i = 0;
 			for (EnterpriseActivity ea : configuration.getActivities()) {
 				
-				activity.addItem(ea.getDescription() + (ea.getIae() == null?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
+				activity.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
 					indexMainActivity = i; // Se quedará marcada la actividad principal, por defecto

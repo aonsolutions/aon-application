@@ -403,17 +403,17 @@ class Page01 extends PageAbs {
 			.addCell(mergedDeclarationName);
 		
 		mod347.addClickHandler(event -> {
-			mod347.setValue(getModel().isMod347());
+			getModel().setMod347( mod347.getValue() );
 			markAsDirty();
 		});
 		
 		mergedDeclarationDocument.addValueChangeHandler(event -> {
-			mergedDeclarationDocument.setValue(getModel().getMergedDeclarationDocument());
+			getModel().setMergedDeclarationDocument(mergedDeclarationDocument.getValue());
 			markAsDirty();
 		});
 		
 		mergedDeclarationName.addValueChangeHandler(event -> {
-			mergedDeclarationName.setValue(getModel().getMergedDeclarationName());
+			getModel().setMergedDeclarationName(mergedDeclarationName.getValue());
 			markAsDirty();
 		});
 		

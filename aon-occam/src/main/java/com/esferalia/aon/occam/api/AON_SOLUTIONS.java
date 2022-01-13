@@ -654,9 +654,6 @@ public class AON_SOLUTIONS {
 	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
-			if(invoice.getRegistryAddressData().getId() == null) {
-				invoice.setRegistryAddressData(getRegistry().getMain(ctx, invoice.getRegistry()));
-			}
 			return invoice;
 		}
 	}

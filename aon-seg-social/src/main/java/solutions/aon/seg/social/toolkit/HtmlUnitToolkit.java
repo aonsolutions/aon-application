@@ -266,7 +266,7 @@ public class HtmlUnitToolkit {
 	}
 
 	public static HtmlAnchor setUrlParse(HtmlPage htmlPage, HtmlAnchor anchor) throws IOException {
-		String newUrl = htmlPage.getFullyQualifiedUrl(anchor.getHrefAttribute()).toString().replaceAll("\\s", "");
+		String newUrl = htmlPage.getFullyQualifiedUrl(anchor.getHrefAttribute()).toString().replaceAll("\\s+", "");
 		anchor.setAttribute("href", newUrl);
 		return anchor;
 	}

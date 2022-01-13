@@ -52,4 +52,8 @@ public class ApplicationParameter implements Serializable {
 		return this;
 	}
 
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null 
+			&& getName() == null && getValue() == null;
+	}
 }

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
+
 import com.esferalia.aon.in.payroll.utils.EmployeeParse;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -11,6 +12,7 @@ import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -27,7 +29,7 @@ public class AonComunica {
 	public static Employee addContract(final byte certificateData[], final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee, Boolean communicateTGSS) throws Exception {
 			
-		   Optional<Employee> exist = contractExist(domain, employee);
+		   Optional<Employee> exist = contractExist(domain, employee.getCcc(), employee.getNaf(), employee.getStartDate(), employee.getEndDate());
 		   if(exist.isEmpty()) 
 			   addContract(domain, employee);
 		   else
@@ -40,9 +42,19 @@ public class AonComunica {
 		  return employee;
 	}
 	
-	//DELETE CONTRACT
+	/**
+	 * deleteContract AON and TGSS
+	 * @param certificateData
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param domain
+	 * @param employee( startDate, naf, ccc, regimen, endDate(Optional) )
+	 * @param communicateTGSS true communicate (TGSS, AON) or false (AON)
+	 * @throws SegSocialException
+	 */
 	public static void deleteContract(final byte certificateData[], final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee, Boolean communicateTGSS) throws SegSocialException {
+		
 		SituationType situationType = SituationType.ALTA;
 		Date date = employee.getStartDate();
 		
@@ -53,7 +65,7 @@ public class AonComunica {
 		}
 	
 		//---------------DELETE CONTRACT AON
-		Optional<Employee> exist = contractExist(domain, employee);
+		Optional<Employee> exist = contractExist(domain, employee.getCcc(), employee.getNaf(), employee.getStartDate(), employee.getEndDate());
 		if(!exist.isEmpty())  {
 			System.out.println("--------DELETE CONTRACT ID: "+ exist.get().getEmployeeId());
 			PAYROLL.deleteContracts(domain, "", exist.get().getEmployeeId());
@@ -73,16 +85,21 @@ public class AonComunica {
 		 }
 	}
 	
-	//---CONTRACT EXISTS
-	public static Optional<Employee> contractExist(Domain domain, Employee employee) {
+	/**
+	 * 
+	 * @param domain
+	 * @param employee (ccc, naf, startDate, endDate(Optional))
+	 * @return employee( contract exist)
+	 */
+	public static Optional<Employee> contractExist(Domain domain, String ccc, String nss, Date startDate, Optional<Date>endDate) {
 		Optional<Employee> exist = PAYROLL.getEmployee(domain.getName(), domain.getId(), "", 
 				f->f.getDomainProperty().eq(domain.getId())
-				.and(f.getCCCProperty().eq(employee.getCcc()))
-				.and(f.getNafProperty().eq(employee.getNaf()))
+				.and(f.getCCCProperty().eq(ccc))
+				.and(f.getNafProperty().eq(nss))
 				.and( 
-						employee.getEndDate().isPresent() ?
-						f.getStartDateProperty().eq( new java.sql.Date(employee.getStartDate().getTime()) ).and(f.getEndDateProperty().eq( new java.sql.Date(employee.getEndDate().get().getTime()) ) )  :
-						f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(employee.getStartDate().getTime()))) 
+						endDate.isPresent() ?
+						f.getStartDateProperty().eq( new java.sql.Date(startDate.getTime()) ).and(f.getEndDateProperty().eq( new java.sql.Date(endDate.get().getTime()) ) )  :
+						f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime()))) 
 				)
 			
 		);
@@ -90,7 +107,17 @@ public class AonComunica {
 			System.out.println("--------EXISTING CONTRACT ID "+exist.get().getEmployeeId()+"--------");
 		return exist;
 	}
-	
+		
+	/**
+	 * communicate MOV TGSS 
+	 * @param certificateData
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param domain
+	 * @param employee
+	 * @throws SegSocialException
+	 * @throws Exception
+	 */
 	public static void communicateAlta(final byte certificateData[], final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee) throws SegSocialException, Exception {
 		

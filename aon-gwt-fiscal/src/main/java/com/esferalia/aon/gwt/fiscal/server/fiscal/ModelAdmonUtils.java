@@ -573,6 +573,9 @@ public class ModelAdmonUtils {
 				else if ( model.getPeriod() == Period.T2) period = "2P";
 				else if ( model.getPeriod() == Period.T3) period = "3P";
 			}
+			if ( model.getModel() == FiscalModelType.M390) {
+				period = "0A";	
+			}
 			byte[] fileContent = getModelFile(model);
 			JSONObject params = new JSONObject();
 			params.put("MODELO", FiscalModelUtils.getModelName(model));
@@ -587,7 +590,7 @@ public class ModelAdmonUtils {
 			
 			String url = aeatParams.isTest() 
 				? "https://prewww1.aeat.es/wlpl/PFTW-PICW/PresBasicaDos"
-				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
+				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasicaDos";
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),

@@ -54,7 +54,9 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -72,7 +74,7 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
-import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -371,7 +373,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		TbaiConfiguration tbai = AON.getTbaiConfiguration(domain, login);
 		if(tbai.isActive()) {	
-			String tbaiUrl = TbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
+			String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 			if(!AonStringUtils.isBlank(tbaiUrl)) {
 				json.put("tbai", true);
 				json.put("tbaiUrl", tbaiUrl);
@@ -463,7 +465,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
+	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
@@ -475,7 +477,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		acceptTbai(tbaiConfiguration, company, invoice);
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {	
-			String tbaiUrl = TbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+			String tbaiUrl = TbaiData.getInstance(tbaiConfiguration).getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
 			if(!AonStringUtils.isBlank(tbaiUrl)) {
 				json.put("tbai", true);
 				json.put("tbaiUrl", tbaiUrl);
@@ -484,9 +486,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
+	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
-			TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			TbaiMain tbai = new TbaiMain();
+			tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 		}
 	}
 	
@@ -647,10 +650,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			String surname1 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "1");
 			String surname2 = JsonUtils.getString(pJson, IJsonNames.SURNAME + "2");
 			Person person = AON.getPerson(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(company.getId()));
-			person.setName(name);
+			person.setFirstName(name);
 			person.setFirstSurname(surname1);
 			person.setSecondSurname(surname2);
 			person.setDomain(company.getDomain());
+			person.setGender(Gender.UNKNOWN);
+			person.setMaritalStatus(MaritalStatus.UNKNOWN);
 			person.setId(company.getId());
 			AON.savePerson(api.getDomain(), api.getUser().getLogin(), person);
 		}

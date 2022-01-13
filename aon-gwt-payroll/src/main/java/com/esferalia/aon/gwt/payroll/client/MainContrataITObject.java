@@ -354,6 +354,21 @@ public class MainContrataITObject {
 				});
 	}
 	
+	public void syncITs(Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.syncITs(new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}}
+		);
+	}
+	
 	// --------------------------------------------------- DataBase Auxiliar Methods
 	
 	public boolean isUserComunica() {

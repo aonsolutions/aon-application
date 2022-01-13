@@ -25,7 +25,10 @@ public enum DataAttachmentSource implements IResourceable {
 	IMPORTATION,
 	SISTEMA_RED,
 	INVOICE_PRINT_CONFIGURATION,
-	TBAI;
+	TBAI,
+	MOD202,
+	MOD190,
+	LROE;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_attachment_source_";

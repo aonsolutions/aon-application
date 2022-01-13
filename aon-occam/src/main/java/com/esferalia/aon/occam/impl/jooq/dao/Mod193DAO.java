@@ -4,11 +4,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel193.FS_MODEL193;
 import static com.esferalia.aon.jooq.tables.FsModel193Detail.FS_MODEL193_DETAIL;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,6 +37,10 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod193DAO {
+	
+	private Mod193DAO() {
+		
+	}
 
 	private static byte ZERO_BYTE = 0;
 
@@ -110,7 +112,7 @@ public class Mod193DAO {
 			return fm;
 		} catch (DataAccessException t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
@@ -119,10 +121,9 @@ public class Mod193DAO {
 		ctx.checkWrite();
 		if (mod193.getId() == null) {
 			mod193 = insert(ctx, mod193);
-			//insertDetails(ctx, mod193);
 		} else {
 			mod193 = update(ctx, mod193);
-			ArrayList<Mod193Detail> details = new ArrayList<Mod193Detail>();
+			ArrayList<Mod193Detail> details = new ArrayList<>();
 			details.addAll(mod193.getDetails());
 			details.addAll(mod193.getExpenses());
 			for (Mod193Detail detail : details) {
@@ -145,7 +146,7 @@ public class Mod193DAO {
 			return mod193;
 		} catch (DataAccessException t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
@@ -155,13 +156,13 @@ public class Mod193DAO {
 
 	private static Mod193 insert(AONContext ctx, Mod193 mod193, boolean generateDetails) {
 		validate(ctx, mod193);
-		FsModel193Record record = ctx
+		FsModel193Record rec = ctx
 				.getDslContext()
 				.insertInto(FS_MODEL193)
 				.set(FS_MODEL193.DOMAIN, mod193.getDomain())
 				.set(FS_MODEL193.ENTERPRISE, mod193.getEnterprise())
 				.set(FS_MODEL193.YEAR, mod193.getYear())
-				.set(FS_MODEL193.ADMINISTRATION,mod193.getAdministration().getValue())
+				.set(FS_MODEL193.ADMINISTRATION,mod193.getAdministration().value())
 				.set(FS_MODEL193.STATUS, (byte) 0)
 				.set(FS_MODEL193.SECURITY_LEVEL,AonEnumUtils.getByte(mod193.isConfidential()))
 				.set(FS_MODEL193.DOCUMENT, mod193.getDocument())
@@ -180,7 +181,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.DEPOSIT_RETENTION_TOTAL, mod193.getDepositRetentionTotal())
 				.set(FS_MODEL193.EXPENSES_TOTAL, mod193.getExpensesTotal())
 				.returning(FS_MODEL193.ID).fetchOne();
-		mod193.setId(record.getId());
+		mod193.setId(rec.getId());
 		if (generateDetails) {
 			insertDetailsFromInvoice(ctx, mod193);
 		}
@@ -191,7 +192,7 @@ public class Mod193DAO {
 		ctx.getDslContext()
 				.update(FS_MODEL193)
 				.set(FS_MODEL193.YEAR, mod193.getYear())
-				.set(FS_MODEL193.ADMINISTRATION,mod193.getAdministration().getValue())
+				.set(FS_MODEL193.ADMINISTRATION,mod193.getAdministration().value())
 				.set(FS_MODEL193.STATUS, (byte) 0)
 				.set(FS_MODEL193.SECURITY_LEVEL,AonEnumUtils.getByte(mod193.isConfidential()))
 				.set(FS_MODEL193.DOCUMENT, mod193.getDocument())
@@ -212,85 +213,6 @@ public class Mod193DAO {
 				.where(FS_MODEL193.ID.equal(mod193.getId())).execute();
 		return mod193;
 	}
-
-//	private static void insertDetails(AONContext ctx, Mod193 mod193) {
-//		BatchBindStep batch = ctx
-//				.getDslContext()
-//				.batch(ctx
-//						.getDslContext()
-//						.insertInto(
-//								FS_MODEL193_DETAIL,
-//								FS_MODEL193_DETAIL.DOMAIN,
-//								FS_MODEL193_DETAIL.FS_MODEL193,
-//								FS_MODEL193_DETAIL.TYPE,
-//								FS_MODEL193_DETAIL.DOCUMENT,
-//								FS_MODEL193_DETAIL.NAME,
-//								FS_MODEL193_DETAIL.REPRESENTATIVE_DOCUMENT,
-//								FS_MODEL193_DETAIL.INTERMEDIARY_PAYMENT,
-//								FS_MODEL193_DETAIL.PROVINCE,
-//								FS_MODEL193_DETAIL.KEY_CODE,
-//								FS_MODEL193_DETAIL.ISSUING_CODE,
-//								FS_MODEL193_DETAIL.KEY,
-//								FS_MODEL193_DETAIL.NATURE,
-//								FS_MODEL193_DETAIL.PAYMENT,
-//								FS_MODEL193_DETAIL.CODE_TYPE,
-//								FS_MODEL193_DETAIL.ACCOUNT_CODE,
-//								FS_MODEL193_DETAIL.PENDING,
-//								FS_MODEL193_DETAIL.ACCRUAL_YEAR,
-//								FS_MODEL193_DETAIL.IN_KIND,
-//								FS_MODEL193_DETAIL.PERCEPTION,
-//								FS_MODEL193_DETAIL.REDUCTION,
-//								FS_MODEL193_DETAIL.RETENTION_BASE,
-//								FS_MODEL193_DETAIL.PERCENT,
-//								FS_MODEL193_DETAIL.RETENTION,
-//								FS_MODEL193_DETAIL.DEPONENT_NATURE,
-//								FS_MODEL193_DETAIL.LOAN_START_DATE,
-//								FS_MODEL193_DETAIL.LOAN_DUE_DATE,
-//								FS_MODEL193_DETAIL.COMPENSATION,
-//								FS_MODEL193_DETAIL.GUARANTEE,
-//								FS_MODEL193_DETAIL.EXPENSES
-//								)
-//						.values(null, null, null, null, null, null, null, null,
-//								null, null, null, null, null, null, null, null,
-//								null, null, null, null, null, null, null, null,
-//								null, null, null, null, null));
-//		ArrayList<Mod193Detail> details = new ArrayList<Mod193Detail>();
-//		details.addAll(mod193.getDetails());
-//		details.addAll(mod193.getExpenses());
-//		for (Mod193Detail detail : details) {
-//			batch.bind(detail.getDomain()
-//					 , detail.getMod193()
-//					 , detail.getType()
-//					 , AonStringUtils.substring(detail.getDocument(), 0, 9)
-//					 , AonStringUtils.substring(detail.getName(), 0, 40)
-//					 , AonStringUtils.substring(detail.getRepresentativeDocument(), 0, 9)
-//					 , detail.isIntermediaryPayment()
-//					 , detail.getProvince()
-//					 , detail.getKeyCode()
-//					 , detail.getIssuingCode()
-//					 , detail.getKey()
-//					 , detail.getNature()
-//					 , detail.getPayment()
-//					 , detail.getCodeType()
-//					 , detail.getAccountCode()
-//					 , detail.isPending()
-//					 , detail.getAccrualYear()
-//					 , detail.isInKind()
-//					 , detail.getPerception()
-//					 , detail.getReduction()
-//					 , detail.getRetentionBase()
-//					 , detail.getPercent()
-//					 , detail.getRetention()
-//					 , detail.isDeponentNature()
-//					 , detail.getLoanStartDate()
-//					 , detail.getLoanDueDate()
-//					 , detail.getCompensation()
-//					 , detail.getGuarantee()
-//					 , detail.getExpenses()
-//					);
-//		}
-//		batch.execute();
-//	}
 
 	public static void saveDetail(AONContext ctx, Mod193 mod193, Mod193Detail detail) {
 		ctx.checkWrite();
@@ -436,30 +358,30 @@ public class Mod193DAO {
 	private static class Mod193Filler implements Function<Record, Mod193> {
 
 		@Override
-		public Mod193 apply(Record record) {
+		public Mod193 apply(Record rec) {
 			return new Mod193()
-				.setId(record.getValue(FS_MODEL193.ID))
-				.setDomain(record.getValue(FS_MODEL193.DOMAIN))
-				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-				.setEnterprise(record.getValue(FS_MODEL193.ENTERPRISE))
-				.setYear(record.getValue(FS_MODEL193.YEAR))
-				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL193.ADMINISTRATION)))
-				.setReplacement(record.getValue(FS_MODEL193.REPLACEMENT) == 1)
-				.setComplementary(record.getValue(FS_MODEL193.COMPLEMENTARY)==1 )
-				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL193.STATUS)))
-				.setDocument(record.getValue(FS_MODEL193.DOCUMENT))
-				.setName(record.getValue(FS_MODEL193.NAME))
-				.setContactPerson(record.getValue(FS_MODEL193.CONTACT_PERSON))
-				.setContactPhone(record.getValue(FS_MODEL193.CONTACT_PHONE))
-				.setContactMail(record.getValue(FS_MODEL193.CONTACT_MAIL))
-				.setReceipt(record.getValue(FS_MODEL193.RECEIPT))
-				.setReplacedReceipt(record.getValue(FS_MODEL193.REPLACED_RECEIPT))
-				.setReceiverCountTotal(record.getValue(FS_MODEL193.RECEIVER_COUNT_TOTAL))
-				.setRetentionBaseTotal(record.getValue(FS_MODEL193.RETENTION_BASE_TOTAL))
-				.setRetentionTotal(record.getValue(FS_MODEL193.RETENTION_TOTAL))
-				.setDepositRetentionTotal(record.getValue(FS_MODEL193.DEPOSIT_RETENTION_TOTAL))
-				.setExpensesTotal(record.getValue(FS_MODEL193.EXPENSES_TOTAL))
-				.setComments(record.getValue(FS_MODEL193.COMMENTS));
+				.setId(rec.getValue(FS_MODEL193.ID))
+				.setDomain(rec.getValue(FS_MODEL193.DOMAIN))
+				.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+				.setEnterprise(rec.getValue(FS_MODEL193.ENTERPRISE))
+				.setYear(rec.getValue(FS_MODEL193.YEAR))
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,rec.getValue(FS_MODEL193.ADMINISTRATION)))
+				.setReplacement(rec.getValue(FS_MODEL193.REPLACEMENT) == 1)
+				.setComplementary(rec.getValue(FS_MODEL193.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,rec.getValue(FS_MODEL193.STATUS)))
+				.setDocument(rec.getValue(FS_MODEL193.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL193.NAME))
+				.setContactPerson(rec.getValue(FS_MODEL193.CONTACT_PERSON))
+				.setContactPhone(rec.getValue(FS_MODEL193.CONTACT_PHONE))
+				.setContactMail(rec.getValue(FS_MODEL193.CONTACT_MAIL))
+				.setReceipt(rec.getValue(FS_MODEL193.RECEIPT))
+				.setReplacedReceipt(rec.getValue(FS_MODEL193.REPLACED_RECEIPT))
+				.setReceiverCountTotal(rec.getValue(FS_MODEL193.RECEIVER_COUNT_TOTAL))
+				.setRetentionBaseTotal(rec.getValue(FS_MODEL193.RETENTION_BASE_TOTAL))
+				.setRetentionTotal(rec.getValue(FS_MODEL193.RETENTION_TOTAL))
+				.setDepositRetentionTotal(rec.getValue(FS_MODEL193.DEPOSIT_RETENTION_TOTAL))
+				.setExpensesTotal(rec.getValue(FS_MODEL193.EXPENSES_TOTAL))
+				.setComments(rec.getValue(FS_MODEL193.COMMENTS));
 			
 		}
 	}
@@ -492,39 +414,39 @@ public class Mod193DAO {
 	private static class Mod193DetailFiller implements Function<Record, Mod193Detail> {
 
 		@Override
-		public Mod193Detail apply(Record record) {
+		public Mod193Detail apply(Record rec) {
 			return new Mod193Detail()
-				.setId(record.getValue(FS_MODEL193_DETAIL.ID))
-				.setType(record.getValue(FS_MODEL193_DETAIL.TYPE))
-				.setDocument(record.getValue(FS_MODEL193_DETAIL.DOCUMENT))
-				.setName(record.getValue(FS_MODEL193_DETAIL.NAME))
-				.setRepresentativeDocument(record.getValue(FS_MODEL193_DETAIL.REPRESENTATIVE_DOCUMENT))
-				.setIntermediaryPayment(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.INTERMEDIARY_PAYMENT)))
-				.setProvince(record.getValue(FS_MODEL193_DETAIL.PROVINCE))
-				.setKeyCode(record.getValue(FS_MODEL193_DETAIL.KEY_CODE))
-				.setIssuingCode(record.getValue(FS_MODEL193_DETAIL.ISSUING_CODE))
-				.setKey(record.getValue(FS_MODEL193_DETAIL.KEY))
-				.setNature(record.getValue(FS_MODEL193_DETAIL.NATURE))
-				.setPayment(record.getValue(FS_MODEL193_DETAIL.PAYMENT))
-				.setCodeType(record.getValue(FS_MODEL193_DETAIL.CODE_TYPE))
-				.setLenderAmount(record.getValue(FS_MODEL193_DETAIL.LENDER_AMOUNT))
-				.setAccountCode(record.getValue(FS_MODEL193_DETAIL.ACCOUNT_CODE))
-				.setPending(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.PENDING)))
-				.setAccrualYear(record.getValue(FS_MODEL193_DETAIL.ACCRUAL_YEAR))
-				.setInKind(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.IN_KIND)))
-				.setPerception(record.getValue(FS_MODEL193_DETAIL.PERCEPTION))
-				.setReduction(record.getValue(FS_MODEL193_DETAIL.REDUCTION))
-				.setRetentionBase(record.getValue(FS_MODEL193_DETAIL.RETENTION_BASE))
-				.setPercent(record.getValue(FS_MODEL193_DETAIL.PERCENT))
-				.setRetention(record.getValue(FS_MODEL193_DETAIL.RETENTION))
-				.setDeponentNature(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.DEPONENT_NATURE)))
-				.setLoanStartDate(record.getValue(FS_MODEL193_DETAIL.LOAN_START_DATE))
-				.setLoanDueDate(record.getValue(FS_MODEL193_DETAIL.LOAN_DUE_DATE))
-				.setCompensation(record.getValue(FS_MODEL193_DETAIL.COMPENSATION))
-				.setGuarantee(record.getValue(FS_MODEL193_DETAIL.GUARANTEE))
-				.setExpenses(record.getValue(FS_MODEL193_DETAIL.EXPENSES))
-				.setPenalization(record.getValue(FS_MODEL193_DETAIL.PENALIZATION))
-				.setDeclarantNature(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.DECLARANT_NATURE)));
+				.setId(rec.getValue(FS_MODEL193_DETAIL.ID))
+				.setType(rec.getValue(FS_MODEL193_DETAIL.TYPE))
+				.setDocument(rec.getValue(FS_MODEL193_DETAIL.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL193_DETAIL.NAME))
+				.setRepresentativeDocument(rec.getValue(FS_MODEL193_DETAIL.REPRESENTATIVE_DOCUMENT))
+				.setIntermediaryPayment(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.INTERMEDIARY_PAYMENT)))
+				.setProvince(rec.getValue(FS_MODEL193_DETAIL.PROVINCE))
+				.setKeyCode(rec.getValue(FS_MODEL193_DETAIL.KEY_CODE))
+				.setIssuingCode(rec.getValue(FS_MODEL193_DETAIL.ISSUING_CODE))
+				.setKey(rec.getValue(FS_MODEL193_DETAIL.KEY))
+				.setNature(rec.getValue(FS_MODEL193_DETAIL.NATURE))
+				.setPayment(rec.getValue(FS_MODEL193_DETAIL.PAYMENT))
+				.setCodeType(rec.getValue(FS_MODEL193_DETAIL.CODE_TYPE))
+				.setLenderAmount(rec.getValue(FS_MODEL193_DETAIL.LENDER_AMOUNT))
+				.setAccountCode(rec.getValue(FS_MODEL193_DETAIL.ACCOUNT_CODE))
+				.setPending(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.PENDING)))
+				.setAccrualYear(rec.getValue(FS_MODEL193_DETAIL.ACCRUAL_YEAR))
+				.setInKind(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.IN_KIND)))
+				.setPerception(rec.getValue(FS_MODEL193_DETAIL.PERCEPTION))
+				.setReduction(rec.getValue(FS_MODEL193_DETAIL.REDUCTION))
+				.setRetentionBase(rec.getValue(FS_MODEL193_DETAIL.RETENTION_BASE))
+				.setPercent(rec.getValue(FS_MODEL193_DETAIL.PERCENT))
+				.setRetention(rec.getValue(FS_MODEL193_DETAIL.RETENTION))
+				.setDeponentNature(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.DEPONENT_NATURE)))
+				.setLoanStartDate(rec.getValue(FS_MODEL193_DETAIL.LOAN_START_DATE))
+				.setLoanDueDate(rec.getValue(FS_MODEL193_DETAIL.LOAN_DUE_DATE))
+				.setCompensation(rec.getValue(FS_MODEL193_DETAIL.COMPENSATION))
+				.setGuarantee(rec.getValue(FS_MODEL193_DETAIL.GUARANTEE))
+				.setExpenses(rec.getValue(FS_MODEL193_DETAIL.EXPENSES))
+				.setPenalization(rec.getValue(FS_MODEL193_DETAIL.PENALIZATION))
+				.setDeclarantNature(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL193_DETAIL.DECLARANT_NATURE)));
 		}
 	}
 
@@ -539,8 +461,9 @@ public class Mod193DAO {
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum)
 				.as(INVOICE_TAX.QUOTA.getName()));
+		
 		ctx.getDslContext()
-			.select(INVOICE.RDOCUMENT,INVOICE.RNAME,minRegistry,sumBase,quotaOp)
+			.select(INVOICE.RDOCUMENT,INVOICE.RNAME,minRegistry,sumBase,quotaOp,INVOICE_TAX.PERCENTAGE)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -549,19 +472,21 @@ public class Mod193DAO {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.RETENTION.value() )) // IRPF
 			.and(INVOICE_TAX.WITHHOLDING_TYPE.equal( WithholdingType.MOVABLE_CAPITAL.value() ))	// IRPF de Capital Mobiliario
 			.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
-			.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE)
+			.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE,INVOICE_TAX.PERCENTAGE)
 			.fetch()
 			.stream()
-			.map(record -> new Mod193Detail()
+			.map(rec -> new Mod193Detail()
 					.setDomain(mod193.getDomain())
 					.setType(Mod193Detail.DETAIL_TYPE)
 					.setMod193(mod193.getId())
-					.setDocument(record.getValue(INVOICE.RDOCUMENT))
-					.setName(record.getValue(INVOICE.RNAME))
+					.setDocument(rec.getValue(INVOICE.RDOCUMENT))
+					.setName(rec.getValue(INVOICE.RNAME))
 					.setKey("A")
-					.setPerception(record.getValue(sumBase).doubleValue())
-					.setRetention(record.getValue(quotaOp).doubleValue())
-					.setProvince( getRegistryMainAddressProvince(ctx, record.getValue(minRegistry)) ))
+					.setNature("01")
+					.setRetentionBase(rec.getValue(sumBase).doubleValue())
+					.setPercent(rec.getValue(INVOICE_TAX.PERCENTAGE))
+					.setRetention(rec.getValue(quotaOp).doubleValue())
+					.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) ))
 			.forEach(detail -> insertDetail(ctx,detail));
 	}
 
@@ -581,35 +506,6 @@ public class Mod193DAO {
 		return mod193;
 	}
 
-	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
-		return ctx.getDslContext()
-			.select(GEOZONE.CODE)
-			.from(RADDRESS)
-			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-			.where(RADDRESS.REGISTRY.equal(registry))
-			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
-			.limit(1)
-			.fetch()
-			.stream()
-			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
-			.findFirst()
-			.orElse(0);
-	}
-
-//	public static Mod193 duplicateNextYear(AONContext ctx, int id) {
-//		Mod193 mod193 = getById(ctx, id);
-//		mod193.setYear( mod193.getYear() + 1 );
-//		mod193.setId(null);
-//		mod193 = insert(ctx, mod193, false);
-//		Mod193 original = getById(ctx, id);
-//		for (Mod193Detail detail : original.getDetails()) {
-//			detail.setId(null);
-//			detail.setMod193(mod193.getId());
-//			saveDetail(ctx,mod193,detail);
-//		}
-//		return getById(ctx, mod193 .getId());
-//	}
-	
 	public static Mod193 duplicate(AONContext ctx, Mod193 mod193) {
 		
 		int id = mod193.getId();

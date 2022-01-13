@@ -159,7 +159,7 @@ public class Asserts {
 			assertEquals("Id", expected.getId(), actual.getId());
 			assertEquals("Description", expected.getDescription(), actual.getDescription());
 			assertEquals("Principal",expected.isPrincipal(), actual.isPrincipal());
-			assertEquals("Iae",expected.getIae(), actual.getIae());
+			assertEquals("Iae",expected.getIae().getId(), actual.getIae().getId());
 			assertEquals("Epigraph",expected.getEpigraph(), actual.getEpigraph());
 			assertEquals("Cnae",expected.getCnae(), actual.getCnae());
 			assertEquals("CnaeCode",expected.getCnaeCode(), actual.getCnaeCode());

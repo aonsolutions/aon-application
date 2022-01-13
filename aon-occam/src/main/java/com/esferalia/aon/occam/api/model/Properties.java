@@ -1151,6 +1151,18 @@ public interface Properties {
 		Property<Date> getEndDateProperty();
 	}
 	
+	public interface ContractLeaveProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getContractProperty();
+		Property<String> getDescriptionProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Byte> getDischargeCauseProperty();
+		Property<Integer> getParentProperty();
+	}
+	
 	public interface IrpfDataProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -1358,6 +1370,14 @@ public interface Properties {
 		Property<String> getAuthEmailProperty();
 		Property<String> getAuthDocumentProperty();
 		Property<Integer> getScopeProperty();
+	}
+	
+	public interface CertificateProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<String> getTypeProperty();
+		
 	}
 
 	public interface TimeControlProperties {

@@ -1,6 +1,7 @@
 package solutions.aon.seg.social.object;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class ITPart {
 
@@ -11,8 +12,6 @@ public class ITPart {
 	private Date partDate;
 	private Integer partNum;
 	private String partType;
-	private Boolean canceled;
-	private Boolean wrong;
 	private String ccc;
 	private Integer numberHealth;
 	private String typeProcess;
@@ -31,14 +30,14 @@ public class ITPart {
 	private String  cias;
 	private String  contingency;
 	private String  causeRestart;
-	private Date    dateConfirmation;
+	private Date    confirmationDate;
 	private Integer durationDays;
-	private Date    dateAcc;
-	private Date    dateBjPrev;
-	private Date    dateBjInit;
+	private Date    accDate;
+	private Date    bjPrevDate;
+	private Date    bjInitDate;
 	private String  typeAcc;
 	private String  typeAssist;
-	private Date    dateNextMedical;
+	private Date    nextMedicalDate;
 	private Boolean relapse;
 	
 	private Float  	baseCtz;
@@ -52,131 +51,412 @@ public class ITPart {
 	private String  typeCto;
 	private Integer  lack;
 
-	private ITPart() {}
+	public ITPart() {}
+	
+	public ITPart setBaseCtz(Float baseCtz) {
+		this.baseCtz = baseCtz;
+		return this;
+	}
+
+	public ITPart setDaysCtz(Integer daysCtz) {
+		this.daysCtz = daysCtz;
+		return this;
+	}
+
+	public ITPart setHoursCtzExtr(Float hoursCtzExtr) {
+		this.hoursCtzExtr = hoursCtzExtr;
+		return this;
+	}
+
+	public ITPart setSumBCtz(Float sumBCtz) {
+		this.sumBCtz = sumBCtz;
+		return this;
+	}
+
+	public ITPart setDaysSumCtz(Integer daysSumCtz) {
+		this.daysSumCtz = daysSumCtz;
+		return this;
+	}
+
+	public ITPart setHoursCrzOther(Float hoursCrzOther) {
+		this.hoursCrzOther = hoursCrzOther;
+		return this;
+	}
+
+	public ITPart setGpCtz(String gpCtz) {
+		this.gpCtz = gpCtz;
+		return this;
+	}
+
+	public ITPart setCatProf(String catProf) {
+		this.catProf = catProf;
+		return this;
+	}
+
+	public ITPart setTypeCto(String typeCto) {
+		this.typeCto = typeCto;
+		return this;
+	}
+
+	public ITPart setLack(Integer lack) {
+		this.lack = lack;
+		return this;
+	}
+	
+	public ITPart setCias(String cias) {
+		this.cias = cias;
+		return this;
+	}
+
+	public ITPart setCauseRestart(String causeRestart) {
+		this.causeRestart = causeRestart;
+		return this;
+	}
+	
+	public ITPart setCollegiateNumber(String collegiateNumber) {
+		this.collegiateNumber = collegiateNumber;
+		return this;
+	}
+
+	public ITPart  setContingency(String contingency) {
+		this.contingency = contingency;
+		return this;
+	}
+
+	public ITPart  setConfirmationDate(Date confirmationDate) {
+		this.confirmationDate = confirmationDate;
+		return this;
+	}
+	
+	public ITPart  setRelapse(Boolean relapse) {
+		this.relapse = relapse;
+		return this;
+	}
+	
+	public ITPart  setDurationDays(Integer durationDays) {
+		this.durationDays = durationDays;
+		return this;
+	}
+
+	public ITPart setAccDate(Date accDate) {
+		this.accDate = accDate;
+		return this;
+	}
+
+	public ITPart setBjPrevDate(Date bjPrevDate) {
+		this.bjPrevDate = bjPrevDate;
+		return this;
+	}
+
+	public ITPart  setBjInitDate(Date bjInitDate) {
+		this.bjInitDate = bjInitDate;
+		return this;
+	}
+
+	public ITPart setTypeAcc(String typeAcc) {
+		this.typeAcc = typeAcc;
+		return this;
+	}
+
+	public ITPart setTypeAssist(String typeAssist) {
+		this.typeAssist = typeAssist;
+		return this;
+	}
+
+	public ITPart setNextMedicalDate(Date nextMedicalDate) {
+		this.nextMedicalDate = nextMedicalDate;
+		return this;
+	}
+	
+	public ITPart setReceptionDate(Date receptionDate) {
+		this.receptionDate = receptionDate;
+		return this;
+	}
+	
+	public ITPart setNaf(String naf) {
+		if(naf != null && !naf.trim().equals("")) this.naf = naf;
+		else this.naf =null; 
+		return this;
+	}
+	
+	public ITPart setWorkLeaveDate(Date workLeaveDate) {
+		this.workLeaveDate = workLeaveDate;
+		return this;
+	}
+	
+	public ITPart setWorkRestartDate(Date workRestartDate) {
+		this.workRestartDate = workRestartDate;
+		return this;
+	}
+	
+	public ITPart setPartDate(Date partDate) {
+		this.partDate = partDate;
+		return this;
+	}
+	
+	public ITPart setPartNum(Integer partNum) {
+		this.partNum = partNum;
+		return this;
+	}
+	
+	public ITPart setPartType(String partType) {
+		if(partType != null && !partType.trim().equals("")) this.partType = partType;
+		else this.partType =null; 
+		return this;
+	}
+
+	public ITPart setCcc(String d) {
+		this.ccc = d;
+		return this;
+	}
+
+	public ITPart setTypeProcess(String d) {
+		this.typeProcess = d;
+		return this;
+	}
+
+	public ITPart setEntity(String d) {
+		this.entity = d;
+		return this;
+	}
+	
+	public ITPart setSituation(String d) {
+		this.situation = d;
+		return this;
+	}
+	
+	public ITPart setNumberHealth(Integer d) {
+		this.numberHealth = d;
+		return this;
+	}
+	
+	public ITPart setNameEmployee(String d) {
+		this.nameEmployee = d;
+		return this;
+	}
+
+	public ITPart setIpf(String d) {
+		this.ipf = d;
+		return this;
+	}
+
+	public ITPart setDirectionEmployee(String d) {
+		this.directionEmployee = d;
+		return this;
+	}
+
+	public ITPart setOccupation(String d) {
+		this.occupation = d;
+		return this;
+	}
+
+	public ITPart setDirectionEnterprise(String d) {
+		this.directionEnterprise = d;
+		return this;
+	}
+
+	public ITPart setNameEnterprise(String d) {
+		this.nameEnterprise = d;
+		return this;
+	}
+	
+	public Date getReceptionDate() {
+		return receptionDate;
+	}
+	
+	public Optional<String> getNaf() {
+		return Optional.ofNullable(naf);
+	}
+	
+	public String getCcc() {
+		return ccc;
+	}
+	
+	public Optional<Date> getWorkLeaveDate() {
+		return Optional.ofNullable(workLeaveDate);
+	}
+	
+	public String getPartType() {
+		return partType;
+	}
+	
+	public Optional<Integer> getNumberHealth() {
+		return Optional.ofNullable(numberHealth);
+	}
+	
+	
+	public Optional<String> getTypeProcess() {
+		return Optional.ofNullable(typeProcess);
+	}
+	
+	public Optional<String> getEntity() {
+		return Optional.ofNullable(entity);
+	}
+	
+	public Optional<String> getSituation() {
+		return Optional.ofNullable(situation);
+	}
+
+	public Optional<String> getNameEmployee() {
+		return Optional.ofNullable(nameEmployee);
+	}
+	
+	public String getIpf() {
+		return ipf;
+	}
+	
+	public Optional<String> getDirectionEmployee() {
+		return Optional.ofNullable(directionEmployee);
+	}
+	
+	public Optional<String> getOccupation() {
+		return Optional.ofNullable(occupation);
+	}
+
+	public Optional<String> getNameEnterprise() {
+		return Optional.ofNullable(nameEnterprise);
+	}
+	
+	public Optional<String> getDirectionEnterprise() {
+		return Optional.ofNullable(directionEnterprise);
+	}
+	
+	public Optional<Date> getPartDate() {
+		return Optional.ofNullable(partDate);
+	}
+	
+	public Optional<Integer> getPartNum() {
+		return Optional.ofNullable(partNum);
+	}
+	
+	public Optional<String> getCollegiateNumber() {
+		return Optional.ofNullable(collegiateNumber);
+	}
+	
+	public Optional<String> getCias() {
+		return Optional.ofNullable(cias);
+	}
+	
+	public Optional<String> getContingency() {
+		return Optional.ofNullable(contingency);
+	}
+	
+	public Optional<Date> getConfirmationDate() {
+		return Optional.ofNullable(confirmationDate);
+	}
+	
+	public Integer getDurationDays() {
+		return durationDays;
+	}
+	
+	public Optional<Date> getAccDate() {
+		return Optional.ofNullable(accDate);
+	}
+	
+	public Optional<Date> getBjPrevDate() {
+		return Optional.ofNullable(bjPrevDate);
+	}
+	
+	public Optional<Date> getBjInitDate() {
+		return Optional.ofNullable(bjInitDate);
+	}
+	
+	public Optional<Date> getNextMedicalDate() {
+		return Optional.ofNullable(nextMedicalDate);
+	}
+	
+	public Optional<String> getCauseRestart() {
+		return Optional.ofNullable(causeRestart);
+	}
+	
+	public Optional<String> getTypeAcc() {
+		return Optional.ofNullable(typeAcc); // Leve, Grave, Muy grave
+	}
+	
+	public Optional<String> getTypeAssist() {
+		return Optional.ofNullable(typeAssist); // Ambulatorio, Hospitalario
+	}
+	
+	public Optional<Date> getWorkRestartDate() {
+		return Optional.ofNullable(workRestartDate);
+	}
+
+	public Boolean getRelapse() {
+		return relapse;
+	}
+	
+	public Optional<Float> getBaseCtz() {
+		return Optional.ofNullable(baseCtz);
+	}
+	
+	public Integer getDaysCtz() {
+		return daysCtz;
+	}
+	
+	public Optional<Float> getHoursCtzExtr() {
+		return Optional.ofNullable(hoursCtzExtr);
+	}
+	
+	public Optional<Float> getSumBCtz() {
+		return Optional.ofNullable(sumBCtz);
+	}
+	
+	public Integer getDaysSumCtz() {
+		return daysSumCtz;
+	}
+	
+	public Optional<Float> getHoursCrzOther() {
+		return Optional.ofNullable(hoursCrzOther);
+	}
+	
+	public Optional<String> getGpCtz() {
+		return Optional.ofNullable(gpCtz);
+	}
+	
+	public Optional<String> getCatProf() {
+		return Optional.ofNullable(catProf);
+	}
+	
+	public Optional<String> getTypeCto() {
+		return Optional.ofNullable(typeCto); //Fijos discontinuo/Tiempo parcial, Resto
+	}
+	
+	public Optional<Integer> getLack() {
+		return Optional.ofNullable(lack);
+	}
+	
+	public Integer getCauseNumber() {
+		String cause = null;
+		if(getPartType().contains("baja") && getContingency().isPresent())
+			cause = getContingency().get();
+		else if(getCauseRestart().isPresent()) 
+			cause = getCauseRestart().get();
+		
+		if(null!=cause)
+			return Integer.parseInt(cause.replaceAll("[^\\d]", ""));
+		return 0;
+	}
+
 	public void accept(Visitor visitor) {
 		if(receptionDate != null) visitor.visitReceptionDate(receptionDate);
 		if(naf != null) visitor.visitNaf(naf);
 		if(workLeaveDate != null) visitor.visitWorkLeaveDate(workLeaveDate);
 		if(workRestartDate != null) visitor.visitWorkRestartDate(workRestartDate);
+		if(confirmationDate != null) visitor.visitConfirmationDate(confirmationDate);
 		if(partDate != null) visitor.visitPartDate(partDate);
 		if(partNum != null) visitor.visitPartNum(partNum);
 		if(partType != null) visitor.visitPartType(partType);
-		if(canceled != null) visitor.visitCanceled(canceled);
-		if(wrong != null) visitor.visitWrong(wrong);
 	}
 	
 	public static interface Visitor{
 		void visitReceptionDate(Date receptionDate);
+		void visitConfirmationDate(Date confirmationDate);
 		void visitNaf(String naf);
 		void visitWorkLeaveDate(Date workLeaveDate);
 		void visitWorkRestartDate(Date workRestartDate);
 		void visitPartDate(Date partDate);
 		void visitPartNum(Integer partNum);
 		void visitPartType(String partType);
-		void visitCanceled(Boolean canceled);
-		void visitWrong(Boolean wrong);
-	}
-	
-	public Date getReceptionDate() {return receptionDate;}
-	public String getNaf() {return naf;}
-	public String getCcc() {return ccc;}
-	public Date getWorkLeaveDate() {return workLeaveDate;}
-	public String getPartType() {return partType;}
-	public Integer getNumberHealth() {return numberHealth;}
-	public String getTypeProcess() {return typeProcess;}
-	public String getEntity() {return entity;}
-	public String getSituation() {return situation;}
-
-	public String getNameEmployee() {return nameEmployee;}
-	public String getIpf() {return ipf;}
-	public String getDirectionEmployee() {return directionEmployee;}
-	public String getOccupation() {return occupation;}
-
-	public String getNameEnterprise() {return nameEnterprise;}
-	public String getDirectionEnterprise() {return directionEnterprise;}
-	public Date getPartDate() {
-		return partDate;
-	}
-	public Integer getPartNum() {
-		return partNum;
-	}
-	public String getCollegiateNumber() {
-		return collegiateNumber;
-	}
-	public String getCias() {
-		return cias;
-	}
-	public String getContingency() {
-		return contingency;
-	}
-	public Date getDateConfirmation() {
-		return dateConfirmation;
-	}
-	public Integer getDurationDays() {
-		return durationDays;
-	}
-	public Date getDateAcc() {
-		return dateAcc;
-	}
-	public Date getDateBjPrev() {
-		return dateBjPrev;
-	}
-	public Date getDateBjInit() {
-		return dateBjInit;
-	}
-	public Date getDateNextMedical() {
-		return dateNextMedical;
-	}
-	public String getCauseRestart() {
-		return causeRestart;
-	}
-	public String getTypeAcc() {
-		return typeAcc;
-	}
-	public String getTypeAssist() {
-		return typeAssist;
-	}
-	public Date getWorkRestartDate() {
-		return workRestartDate;
-	}
-	public Boolean getCanceled() {
-		return canceled;
-	}
-	public Boolean getWrong() {
-		return wrong;
-	}
-	public Boolean getRelapse() {
-		return relapse;
-	}
-	public Float getBaseCtz() {
-		return baseCtz;
-	}
-	public Integer getDaysCtz() {
-		return daysCtz;
-	}
-	public Float getHoursCtzExtr() {
-		return hoursCtzExtr;
-	}
-	public Float getSumBCtz() {
-		return sumBCtz;
-	}
-	public Integer getDaysSumCtz() {
-		return daysSumCtz;
-	}
-	public Float getHoursCrzOther() {
-		return hoursCrzOther;
-	}
-	public String getGpCtz() {
-		return gpCtz;
-	}
-	public String getCatProf() {
-		return catProf;
-	}
-	public String getTypeCto() {
-		return typeCto;
-	}
-	public Integer getLack() {
-		return lack;
 	}
 	
 	@Override
@@ -186,8 +466,8 @@ public class ITPart {
 		accept(new Visitor() {
 			
 			@Override
-			public void visitWrong(Boolean wrong) {
-				stringBuffer.append(String.format(" wrong : \"%s\" ", wrong));
+			public void visitConfirmationDate(Date confirmationDate) {
+				stringBuffer.append(String.format(" confirmationDate : \"%s\" ", confirmationDate));
 			}
 			
 			@Override
@@ -224,12 +504,16 @@ public class ITPart {
 			public void visitNaf(String naf) {
 				stringBuffer.append(String.format(" naf : \"%s\" ", naf));
 			}
-			
-			@Override
-			public void visitCanceled(Boolean canceled) {
-				stringBuffer.append(String.format(" canceled : \"%s\" ", canceled));
-			}
 		});
+		
+		getContingency().ifPresent(c-> stringBuffer.append(String.format(" contingency : \"%s\" ", c)) );
+		
+		getCauseRestart().ifPresent(c-> stringBuffer.append(String.format(" causeRestart : \"%s\" ",c)) );
+		
+		getBaseCtz().ifPresent(base->  stringBuffer.append(String.format(" baseCtz : \"%s\" ",base)) );
+		
+		getSumBCtz().ifPresent(base->  stringBuffer.append(String.format(" sumaBCtz : \"%s\" ",base)) );
+
 		stringBuffer.append('}');
 		return stringBuffer.toString();
 	}
@@ -238,7 +522,6 @@ public class ITPart {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((canceled == null) ? 0 : canceled.hashCode());
 		result = prime * result + ((naf == null) ? 0 : naf.hashCode());
 		result = prime * result + ((partDate == null) ? 0 : partDate.hashCode());
 		result = prime * result + ((partNum == null) ? 0 : partNum.hashCode());
@@ -246,7 +529,6 @@ public class ITPart {
 		result = prime * result + ((receptionDate == null) ? 0 : receptionDate.hashCode());
 		result = prime * result + ((workLeaveDate == null) ? 0 : workLeaveDate.hashCode());
 		result = prime * result + ((workRestartDate == null) ? 0 : workRestartDate.hashCode());
-		result = prime * result + ((wrong == null) ? 0 : wrong.hashCode());
 		return result;
 	}
 	@Override
@@ -258,11 +540,6 @@ public class ITPart {
 		if (getClass() != obj.getClass())
 			return false;
 		ITPart other = (ITPart) obj;
-		if (canceled == null) {
-			if (other.canceled != null)
-				return false;
-		} else if (!canceled.equals(other.canceled))
-			return false;
 		if (naf == null) {
 			if (other.naf != null)
 				return false;
@@ -298,334 +575,8 @@ public class ITPart {
 				return false;
 		} else if (!workRestartDate.equals(other.workRestartDate))
 			return false;
-		if (wrong == null) {
-			if (other.wrong != null)
-				return false;
-		} else if (!wrong.equals(other.wrong))
-			return false;
 		return true;
 	}
-
-	public static class ITPartBuilder {
-		
-		private Date receptionDate;
-		private String naf;
-		private Date workLeaveDate;
-		private Date workRestartDate;
-		private Date partDate;
-		private Integer partNum;
-		private String partType;
-		private Boolean canceled;
-		private Boolean wrong;
-		private String ccc;
-		private Integer numberHealth;
-		private String typeProcess;
-		private String entity;
-		private String situation;
-
-		private String nameEmployee;
-		private String ipf;
-		private String directionEmployee;
-		private String occupation;
-
-		private String nameEnterprise;
-		private String directionEnterprise;
-
-		private String collegiateNumber;
-		private String  cias;
-		private String  contingency;
-		private String  causeRestart;
-		private Date    dateConfirmation;
-		private Boolean relapse;
-		private Integer durationDays;
-		private Date    dateAcc;
-		private Date    dateBjPrev;
-		private Date    dateBjInit;
-		private String  typeAcc;
-		private String  typeAssist;
-		private Date    dateNextMedical;
-
-		private Float  	baseCtz;
-		private Integer daysCtz;
-		private Float   hoursCtzExtr;
-		private Float   sumBCtz;
-		private Integer daysSumCtz;
-		private Float   hoursCrzOther;
-		private String  gpCtz;
-		private String  catProf;
-		private String  typeCto;
-		private Integer  lack;
-
-		public ITPartBuilder setBaseCtz(Float baseCtz) {
-			this.baseCtz = baseCtz;
-			return this;
-		}
-
-		public ITPartBuilder setDaysCtz(Integer daysCtz) {
-			this.daysCtz = daysCtz;
-			return this;
-		}
-
-		public ITPartBuilder setHoursCtzExtr(Float hoursCtzExtr) {
-			this.hoursCtzExtr = hoursCtzExtr;
-			return this;
-		}
-
-		public ITPartBuilder setSumBCtz(Float sumBCtz) {
-			this.sumBCtz = sumBCtz;
-			return this;
-		}
-
-		public ITPartBuilder setDaysSumCtz(Integer daysSumCtz) {
-			this.daysSumCtz = daysSumCtz;
-			return this;
-		}
-
-		public ITPartBuilder setHoursCrzOther(Float hoursCrzOther) {
-			this.hoursCrzOther = hoursCrzOther;
-			return this;
-		}
-
-		public ITPartBuilder setGpCtz(String gpCtz) {
-			this.gpCtz = gpCtz;
-			return this;
-		}
-
-		public ITPartBuilder setCatProf(String catProf) {
-			this.catProf = catProf;
-			return this;
-		}
-
-		public ITPartBuilder setTypeCto(String typeCto) {
-			this.typeCto = typeCto;
-			return this;
-		}
-
-		public ITPartBuilder setLack(Integer lack) {
-			this.lack = lack;
-			return this;
-		}
-		
-		public ITPartBuilder setCias(String cias) {
-			this.cias = cias;
-			return this;
-		}
-
-		public ITPartBuilder setCauseRestart(String causeRestart) {
-			this.causeRestart = causeRestart;
-			return this;
-		}
-		
-		public ITPartBuilder  setCollegiateNumber(String collegiateNumber) {
-			this.collegiateNumber = collegiateNumber;
-			return this;
-		}
-
-		public ITPartBuilder  setContingency(String contingency) {
-			this.contingency = contingency;
-			return this;
-		}
-
-		public ITPartBuilder  setDateConfirmation(Date dateConfirmation) {
-			this.dateConfirmation = dateConfirmation;
-			return this;
-		}
-		
-		public ITPartBuilder  setRelapse(Boolean relapse) {
-			this.relapse = relapse;
-			return this;
-		}
-		
-		public ITPartBuilder  setDurationDays(Integer durationDays) {
-			this.durationDays = durationDays;
-			return this;
-		}
-
-		public ITPartBuilder  setDateAcc(Date dateAcc) {
-			this.dateAcc = dateAcc;
-			return this;
-		}
-
-		public ITPartBuilder  setDateBjPrev(Date dateBjPrev) {
-			this.dateBjPrev = dateBjPrev;
-			return this;
-		}
-
-		public ITPartBuilder  setDateBjInit(Date dateBjInit) {
-			this.dateBjInit = dateBjInit;
-			return this;
-		}
-
-		public ITPartBuilder setTypeAcc(String typeAcc) {
-			this.typeAcc = typeAcc;
-			return this;
-		}
-
-		public ITPartBuilder setTypeAssist(String typeAssist) {
-			this.typeAssist = typeAssist;
-			return this;
-		}
-
-		public ITPartBuilder setDateNextMedical(Date dateNextMedical) {
-			this.dateNextMedical = dateNextMedical;
-			return this;
-		}
-		
-		public ITPartBuilder setReceptionDate(Date receptionDate) {
-			this.receptionDate = receptionDate;
-			return this;
-		}
-		
-		public ITPartBuilder setNaf(String naf) {
-			if(naf != null && !naf.trim().equals("")) this.naf = naf;
-			else this.naf =null; 
-			return this;
-		}
-		
-		public ITPartBuilder setWorkLeaveDate(Date workLeaveDate) {
-			this.workLeaveDate = workLeaveDate;
-			return this;
-		}
-		
-		public ITPartBuilder setWorkRestartDate(Date workRestartDate) {
-			this.workRestartDate = workRestartDate;
-			return this;
-		}
-		
-		public ITPartBuilder setPartDate(Date partDate) {
-			this.partDate = partDate;
-			return this;
-		}
-		
-		public ITPartBuilder setPartNum(Integer partNum) {
-			this.partNum = partNum;
-			return this;
-		}
-		
-		public ITPartBuilder setPartType(String partType) {
-			if(partType != null && !partType.trim().equals("")) this.partType = partType;
-			else this.partType =null; 
-			return this;
-		}
-		
-		public ITPartBuilder setCanceled(Boolean canceled) {
-			this.canceled = canceled;
-			return this;
-		}
-		
-		public ITPartBuilder setWrong(Boolean wrong) {
-			this.wrong = wrong;
-			return this;
-		}
-
-		public ITPartBuilder setCcc(String d) {
-			this.ccc = d;
-			return this;
-		}
-
-		public ITPartBuilder setTypeProcess(String d) {
-			this.typeProcess = d;
-			return this;
-		}
-
-		public ITPartBuilder setEntity(String d) {
-			this.entity = d;
-			return this;
-		}
-		
-		public ITPartBuilder setSituation(String d) {
-			this.situation = d;
-			return this;
-		}
-		
-		public ITPartBuilder setNumberHealth(Integer d) {
-			this.numberHealth = d;
-			return this;
-		}
-		
-		public ITPartBuilder setNameEmployee(String d) {
-			this.nameEmployee = d;
-			return this;
-		}
-
-		public ITPartBuilder setIpf(String d) {
-			this.ipf = d;
-			return this;
-		}
-
-		public ITPartBuilder setDirectionEmployee(String d) {
-			this.directionEmployee = d;
-			return this;
-		}
-
-		public ITPartBuilder setOccupation(String d) {
-			this.occupation = d;
-			return this;
-		}
-
-		public ITPartBuilder setDirectionEnterprise(String d) {
-			this.directionEnterprise = d;
-			return this;
-		}
-
-		public ITPartBuilder setNameEnterprise(String d) {
-			this.nameEnterprise = d;
-			return this;
-		}
-
-		public ITPart build() {
-			
-			ITPart it = new ITPart();
-			
-			it.receptionDate = this.receptionDate;
-			it.naf = this.naf;
-			it.workLeaveDate = this.workLeaveDate;
-			it.workRestartDate = this.workRestartDate;
-			it.partDate = this.partDate;
-			it.partNum = this.partNum;
-			it.partType = this.partType;
-			it.canceled = this.canceled;
-			it.wrong = this.wrong;
-			it.ccc = this.ccc;
-			it.numberHealth = this.numberHealth;
-			it.typeProcess = this.typeProcess;
-			it.entity = this.entity;
-			it.situation = this.situation;
-			it.nameEmployee = this.nameEmployee;
-			it.ipf = this.ipf;
-			it.directionEmployee = this.directionEmployee;
-			it.occupation = this.occupation;
-			it.directionEnterprise = this.directionEnterprise;
-			it.nameEnterprise = this.nameEnterprise;
-			
-			it.collegiateNumber = this.collegiateNumber;
-			it.cias = this.cias;
-			it.contingency = this.contingency;
-			it.causeRestart = this.causeRestart;
-			it.dateConfirmation = this.dateConfirmation;
-			it.relapse = this.relapse;
-			it.durationDays = this.durationDays;
-			it.dateAcc = this.dateAcc;
-			it.dateBjPrev = this.dateBjPrev;
-			it.dateBjInit = this.dateBjInit;
-			it.typeAcc = this.typeAcc;
-			it.typeAssist = this.typeAssist;
-			it.dateNextMedical  = this.dateNextMedical;
-
-			it.baseCtz = this.baseCtz;
-			it.daysCtz = this.daysCtz;
-			it.hoursCtzExtr = this.hoursCtzExtr;
-			it.sumBCtz = this.sumBCtz;
-			it.daysSumCtz = this.daysSumCtz;
-			it.hoursCrzOther = this.hoursCrzOther;
-			it.gpCtz = this.gpCtz;
-			it.catProf = this.catProf;
-			it.typeCto = this.typeCto;
-			it.lack = this.lack;
-			return it;
-		}
-		
-	}
-
 }
+
 

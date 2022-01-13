@@ -90,7 +90,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 					int recordingInvoice = 0;
 					AccountEntryInvoiceWriter accountWriter = new AccountEntryInvoiceWriter();
 					for (Invoice invoice : invoicedList) {
-						ticketbai(invoice);
+						invoice = ticketbai(invoice);
 						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
 						accountWriter.recordAndUpdateInvoice(invoice);
 						recordingInvoice++;
@@ -125,18 +125,20 @@ public class FeeInvoicingProcess implements ILongProcess {
 		}
 	}
 	
-	private void ticketbai(Invoice inv) {
+	private Invoice ticketbai(Invoice inv) {
 		String domainName = AonUtil.getDomainName();
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, inv.getDomain(), user.getLogin());
 		if(tbaiConfiguration.isActive()) {
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
 			invoice.setIssueDate(new Date());
+			inv.setIssueDate(new Date());
 
 			AON.updateInvoice(domainName, invoice.getDomain(), user.getLogin(), invoice, true);
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), user.getLogin());
 			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), user.getLogin(), user.getId(), CertificateType.AEAT.name()));
 			try {
-				TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
 			} catch (Exception e ) {
 				e.printStackTrace();
 			}
@@ -144,6 +146,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 
 		
 		// SII
+		return inv;
 	}
 
 	private class InvoicingFeedBack implements IInvoicingFeedBack {

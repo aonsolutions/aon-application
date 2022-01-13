@@ -34,8 +34,8 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
+import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 @SuppressWarnings("serial")
@@ -56,7 +56,7 @@ public class CostPDFServlet extends HttpServlet {
 				: req.getServerName();
 		String user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		Integer[] salaryIds = getSalaryIds(req, selectedSalaries);
-		LinkedList<Salary.Type> typeList = new LinkedList<Salary.Type>();
+		LinkedList<com.esferalia.aon.occam.api.model.type.SalaryType> typeList = new LinkedList<>();
 
 		Iterator<String> it = req.getParameterMap().keySet().iterator();
 		while (it.hasNext()) {
@@ -65,15 +65,15 @@ public class CostPDFServlet extends HttpServlet {
 		}
 
 		if (req.getParameter("salary") != null && req.getParameter("salary").equals("1"))
-			typeList.add(Salary.Type.SALARY);
+			typeList.add(com.esferalia.aon.occam.api.model.type.SalaryType.SALARY);
 		if (req.getParameter("extra") != null && req.getParameter("extra").equals("1"))
-			typeList.add(Salary.Type.EXTRA);
+			typeList.add(com.esferalia.aon.occam.api.model.type.SalaryType.EXTRA);
 		if (req.getParameter("settle") != null && req.getParameter("settle").equals("1"))
-			typeList.add(Salary.Type.SETTLE);
+			typeList.add(com.esferalia.aon.occam.api.model.type.SalaryType.SETTLE);
 		if (req.getParameter("delay") != null && req.getParameter("delay").equals("1"))
-			typeList.add(Salary.Type.DELAY);
+			typeList.add(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY);
 
-		Type[] types = typeList.toArray(new Salary.Type[typeList.size()]);
+		com.esferalia.aon.occam.api.model.type.SalaryType[] types = typeList.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[typeList.size()]);
 
 		if (salaryIds.length > 0) {
 
@@ -96,18 +96,18 @@ public class CostPDFServlet extends HttpServlet {
 		Integer year;
 		String domainName;
 		String user;
-		Salary.Type[] types;
+		com.esferalia.aon.occam.api.model.type.SalaryType[] types;
 
 		// Picking up the parameters
 		{
 			if (req.getParameterValues("filter") != null)
 				types = Arrays.stream(req.getParameterValues("filter")).map(str -> {
 					Integer ordinal = Integer.parseInt(str);
-					Salary.Type type = Utilities.typeOf(ordinal.byteValue(), Salary.Type.class);
+					com.esferalia.aon.occam.api.model.type.SalaryType type = Utilities.typeOf(ordinal.byteValue(), com.esferalia.aon.occam.api.model.type.SalaryType.class);
 					return type;
-				}).toArray(Salary.Type[]::new);
+				}).toArray(com.esferalia.aon.occam.api.model.type.SalaryType[]::new);
 			else
-				types = new Salary.Type[0];
+				types = new com.esferalia.aon.occam.api.model.type.SalaryType[0];
 
 			enterpriseId = req.getParameter(ENTERPRISE.getName()) != null
 					? Integer.parseInt(req.getParameter(ENTERPRISE.getName()))
@@ -182,7 +182,7 @@ public class CostPDFServlet extends HttpServlet {
 	}
 
 	private static void noIds(OutputStream outputStream, String domainName, String user, String request,
-			Salary.Type[] types) {
+			com.esferalia.aon.occam.api.model.type.SalaryType[] types) {
 
 		Matcher matcher = MONTH_PATTERN.matcher(request);
 		if (matcher.matches()) {

@@ -834,7 +834,7 @@
 /* MESSAGE PANEL */
 
 .aon_message_close_panel{
-    padding: 1em 1em 0 0;
+    padding-right: 1rem;
 }
 
 .aon_message_close{
@@ -846,18 +846,21 @@
 }
 
 .aon_message_panel{
+	height: 2rem;
+	align-items: center;
 	border-radius: 0.5em;
     display: flex;
     margin: 0 1em;
     width: auto;
     justify-content: space-between;
+    margin-top: .5rem;
 }
 
 .aon_message_container{
 	display: flex;
 	flex-direction: column;
 	gap: 1em;
-	padding: 1em;
+	padding: .8em;
 }
 
 .aon_message_row{
@@ -865,6 +868,7 @@
 	gap: 1em;
 	padding: 0 1em;
 	font-size: 13px;
+	align-items: center;
 }
 
 .aon_spin{
