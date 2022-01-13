@@ -234,7 +234,7 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		form.setMethod(FormPanel.METHOD_POST);
 		form.addSubmitCompleteHandler(e -> {
 			try {
-				String jsonStr = e.getResults().split("<pre>")[1].split("</pre>")[0];
+				String jsonStr = e.getResults().split(">")[1].split("<")[0];
 				JSONValue json = JSONParser.parseStrict(jsonStr);
 				parseJSON(json.isObject());
 			} catch (NullPointerException | IllegalArgumentException err){
