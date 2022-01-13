@@ -73,7 +73,7 @@ public class InvoiceFormatter {
 								:det.getInvoice().getRegistryDocument()
 							,10)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(det.getInvoice().getRegistryName(),29),30)
-					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getInvoice().getAddressProvince()),0,5),6)
+					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getInvoice().getAddress().getProvince()),0,5),6)
 					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getInvoice().getScope().getDescription()),0,5),6)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate( (det.getSeller()!=null? det.getSeller().getName():AonStringUtils.SPACE) ,14),15)
 					+ AonStringUtils.SPACE

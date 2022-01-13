@@ -110,8 +110,6 @@ public class RegistryImport extends Import {
 		
 	}
 	
-
-
  	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
  		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;

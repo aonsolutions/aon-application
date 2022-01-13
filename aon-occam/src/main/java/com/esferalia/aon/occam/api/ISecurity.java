@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
+import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -106,6 +107,7 @@ public interface ISecurity {
 	
 	
 	// CERTIFICATE
+	public Stream<Certificate> getCertificates(AONContext ctx, CertificateFilter filter);
 	public Certificate getCertificate(AONContext ctx, Integer userId, String certificateType);
 	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) ;
 	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ;

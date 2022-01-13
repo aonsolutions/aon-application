@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
@@ -80,6 +81,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -97,6 +99,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO.GeoZoneFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
@@ -115,7 +118,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;;
 
 public class InvoiceDAO {
 	
-	private static String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
+	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
@@ -128,51 +131,18 @@ public class InvoiceDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(REGISTRY.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(REGISTRY.DOMAIN);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.DOCUMENT_TYPE);}
-		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT_COUNTRY);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.TYPE);}
-		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NATIONALITY);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOMAIN);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
+		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 	}
 
-//	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
-//	private static class ProductPropertiesDAO implements ProductProperties {
-//		private Condition[] getConditions(ProductFilter filter) {
-//			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-//			if (filterDAO == null) return new Condition[0];
-//			return new Condition[] { filterDAO.getCondition() };
-//		}
-//		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.ID);} 
-//		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.DOMAIN);}
-//		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-//		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
-//		@Override public Property<Byte> getKindProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.KIND);}
-//		@Override public Property<Integer> getBrandProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.BRAND);}
-//		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
-//		@Override public Property<Byte> getInventoriableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.INVENTORIABLE);}
-//		@Override public Property<Byte> getSerializableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.SERIALIZABLE);}
-//		@Override public Property<Byte> getLotableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.LOTABLE);}
-//		@Override public Property<Byte> getStatusProperty() { return new FilterDAO.PropertyDAO<Byte>(PRODUCT.STATUS);}
-//		@Override public Property<Integer> getVatProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.VAT);}
-//		@Override public Property<Integer> getRetentionProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.RETENTION);}
-//		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
-//		@Override public Property<Byte> getManufacturedProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.MANUFACTURED);}
-//		@Override public Property<Byte> getCompositionProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION);}
-//		@Override public Property<Byte> getCompositionPriceProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION_PRICE);}
-//		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.SALES_ACCOUNT);}
-//		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.PURCHASE_ACCOUNT);}
-//		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
-//		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
-//		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-//		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
-//	}
-
-	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	private static final InvoicingGroupPropertiesDAO INVOICING_GROUP_PROPERTIES = new InvoicingGroupPropertiesDAO();
 	private static class InvoicingGroupPropertiesDAO implements InvoicingGroupProperties {
@@ -183,15 +153,15 @@ public class InvoiceDAO {
 				return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(INVOICING_GROUP.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.CREATION_USER);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.CUSTOMER);}
-		@Override public Property<Byte> getCustomerGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICING_GROUP.CUSTOMER_GROUPED);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.DESCRIPTION);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.DOMAIN);}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.ID);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(INVOICING_GROUP.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CREATION_USER);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CUSTOMER);}
+		@Override public Property<Byte> getCustomerGroupedProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CUSTOMER_GROUPED);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.DESCRIPTION);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.ID);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.MODIFICATION_USER);}
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
@@ -205,7 +175,7 @@ public class InvoiceDAO {
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter, ItemFilter iFilter){
 		ctx.checkRead();
 		
-		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		Collection<Condition> whereConditions = new ArrayList<>();
 		whereConditions.addAll(Arrays.asList(INVOICE_PROPERTIES.getConditions(filter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(pFilter)));
 		whereConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(iFilter)));
@@ -267,7 +237,6 @@ public class InvoiceDAO {
 				.from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
 				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
-				.leftOuterJoin(INVOICE_ADDRESS).on(INVOICE_ADDRESS.INVOICE.eq(INVOICE.ID))
 				.where(INVOICE.ID.eq(id))
 				.fetch()
 				.stream()
@@ -451,8 +420,8 @@ public class InvoiceDAO {
 		Invoice invoice = getInvoice(ctx, id);
 		if(invoice != null) {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
-			invoice.setRegistryAddressData(RegistryAddressDAO.get(ctx, invoice.getRegistryAddress()));			
-			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id) )
+			invoice.setAddress(getInvoiceAddress(ctx, invoice));
+			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
 				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, invoice.getDetails().get(i).getId())
@@ -473,7 +442,56 @@ public class InvoiceDAO {
 		}
 		return invoice;
 	}
+	
+	public static RegistryAddress getInvoiceAddress(AONContext ctx, Invoice invoice) {
+		com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
+		com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
 
+		RegistryAddress invoiceAddress = ctx.getDslContext()
+			.select()
+			.from(INVOICE_ADDRESS)
+			.leftOuterJoin(child).on(child.ID.eq(INVOICE_ADDRESS.GEOZONE))
+			.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(INVOICE_ADDRESS.GEOZONE))
+			.leftOuterJoin(parent).on(parent.ID.eq(GEOTREE.PARENT))
+			.where(INVOICE_ADDRESS.INVOICE.eq(invoice.getId()))
+			.limit(1).fetch().stream().map(new InvoiceAddressFiller())
+			.findFirst().orElse(new RegistryAddress());
+		
+		return invoiceAddress.isEmpty() 
+			? RegistryAddressDAO.get(ctx, invoice.getRegistryAddress())
+			: invoiceAddress;
+	}
+	
+	public static class InvoiceAddressFiller implements Function<Record, RegistryAddress> {
+
+		@Override
+		public RegistryAddress apply(Record r) {
+			return build(r);
+		}
+		
+		public static RegistryAddress build(Record r) {
+			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
+			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
+			return new RegistryAddress()
+					.setId(r.getValue(INVOICE_ADDRESS.ID))
+					.setDomain(r.getValue(INVOICE_ADDRESS.DOMAIN))
+					.setStreetType(StreetType.safeValueOf(r.getValue(INVOICE_ADDRESS.STREET_TYPE)))
+					.setAddress(r.getValue(INVOICE_ADDRESS.ADDRESS))
+					.setNumber(r.getValue(INVOICE_ADDRESS.NUMBER))
+					.setAddress2(r.getValue(INVOICE_ADDRESS.ADDRESS2))
+					.setZip(r.getValue(INVOICE_ADDRESS.ZIP))
+					.setCity(r.getValue(INVOICE_ADDRESS.CITY))
+					.setProvince(r.getValue(INVOICE_ADDRESS.PROVINCE))
+					.setGeozone(r.getValue(INVOICE_ADDRESS.GEOZONE))
+					.setGeozoneCode(r.getValue(child.CODE))
+					.setGeozoneName(r.getValue(child.NAME))
+					.setChild(GeoZoneFiller.build(r, child))
+					.setParent(GeoZoneFiller.build(r, parent))
+					.setDirty(false);
+		}
+		
+	}
+	
 	public static List<InvoiceSeries> getSalesSeries(AONContext ctx) {
 		return ctx.getDslContext()
 			.select(INVOICE.SERIES, DSL.max(INVOICE.ISSUE_DATE), DSL.count(INVOICE.ID))
@@ -625,15 +643,6 @@ public class InvoiceDAO {
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
 						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
 						: new InvoiceFiscal())
-				.setAddress(getValue(r, INVOICE_ADDRESS.ADDRESS) 
-					+ " " + getValue(r, INVOICE_ADDRESS.NUMBER)
-					+ " " + getValue(r, INVOICE_ADDRESS.ADDRESS2))
-				.setAddressNumber(getValue(r, INVOICE_ADDRESS.NUMBER))
-				.setAddressProvince(getValue(r, INVOICE_ADDRESS.PROVINCE))
-				.setAddressStreetType(StreetType.safeValueOf(getValue(r, INVOICE_ADDRESS.STREET_TYPE)))
-				.setAddressTown(getValue(r, INVOICE_ADDRESS.CITY))
-				.setAddressZIP(getValue(r, INVOICE_ADDRESS.ZIP))
-				.setAddressGeozone(getValue(r, INVOICE_ADDRESS.GEOZONE))
 				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
 				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
 				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
@@ -641,105 +650,67 @@ public class InvoiceDAO {
 		}
 	}
 	
-	public static class SiiInvoiceFiller  implements Function<Record,Invoice> {
+	public static class SiiInvoiceFiller extends InvoiceFiller implements Function<Record,Invoice> {
 		Boolean pending;
 		public SiiInvoiceFiller(Boolean pending) {
 			this.pending = pending;
 		}
 		
 		@Override
-		public Invoice apply(Record record) {
-			return new Invoice()
-				.setId(record.getValue(INVOICE.ID))
-				.setDomain(record.getValue(INVOICE.DOMAIN))
-				.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
-				.setSeries(record.getValue(INVOICE.SERIES))
-				.setNumber(record.getValue(INVOICE.NUMBER))
-				.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(record.getValue(INVOICE.TAX_DATE))
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
-				.setRegistry(record.getValue(INVOICE.REGISTRY))
-				.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(record.getValue(INVOICE.RNAME))
-				.setScope(new Scope().setId(record.getValue(INVOICE.SCOPE)))
-				.setActivity(record.getValue(INVOICE.ACTIVITY))	
-				.setInvestAsset(record.getValue(INVOICE.INVEST_ASSET))
-				.setProject(record.getValue(INVOICE.PROJECT))
-				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,record.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(record.getValue(INVOICE.RECTIFICATION_INVOICE))	
-				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,record.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(record.getValue(INVOICE.STATUS) != null && record.getValue(INVOICE.STATUS) == 1 )	
-				.setSurcharge(record.getValue(INVOICE.SURCHARGE) == 1 )	
-				.setWithholding(record.getValue(INVOICE.WITHHOLDING) == 1 )	
-				.setWithholdingFarmer(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
-				.setVatAccrualPayment(record.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
-				.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1 )	
-				.setService(record.getValue(INVOICE.SERVICE) == 1 )	
-				.setAdvance(record.getValue(INVOICE.ADVANCE) == 1 )	
-				.setTaxableBase(record.getValue(INVOICE.TAXABLE_BASE))	
-				.setVatQuota(record.getValue(INVOICE.VAT_QUOTA))	
-				.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA))	
-				.setTotal(record.getValue(INVOICE.TOTAL))	
-				.setComments(record.getValue(INVOICE.COMMENTS))
-				.setStatus(record.getValue(INVOICE.STATUS))
-				.setSiiStatus(pending ? "Pendiente" : record.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE))
-				.setCreationDate(record.getValue(INVOICE.CREATION_DATE))
-				.setCreationUser(record.getValue(INVOICE.CREATION_USER))
-				.setModificationDate(record.getValue(INVOICE.MODIFICATION_DATE))
-				.setModificationUser(record.getValue(INVOICE.MODIFICATION_USER));
+		public Invoice apply(Record r) {
+			return buildInvoice(r)
+				.setSiiStatus(pending ? "Pendiente" : r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE));				
 		}	
 	}
 
 	private static class FullInvoiceDetailFiller extends Filler implements Function<Record,InvoiceDetail> {
 
 		@Override
-		public InvoiceDetail apply(Record record) {
+		public InvoiceDetail apply(Record r) {
 			return new InvoiceDetail()
-				.setId(record.getValue(INVOICE_DETAIL.ID))
+				.setId(r.getValue(INVOICE_DETAIL.ID))
 				.setInvoice(new Invoice()
-					.setId(record.getValue(INVOICE.ID))
-					.setDomain(record.getValue(INVOICE.DOMAIN))
-					.setType(AonEnumUtils.enumValue(InvoiceType.class, record.getValue(INVOICE.TYPE)))
-					.setSeries(record.getValue(INVOICE.SERIES))
-					.setNumber(record.getValue(INVOICE.NUMBER))
-					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
-					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, record.getValue(INVOICE.SECURITY_LEVEL)))
-					.setRegistry(record.getValue(INVOICE.REGISTRY))
-					.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
-					.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class, record.getValue(INVOICE.RDOCUMENT_TYPE)))
-					.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-					.setRegistryName(record.getValue(INVOICE.RNAME))
-					.setAddressProvinceCode(record.getValue(GEOZONE.CODE))
-					.setAddressProvince(record.getValue(GEOZONE.NAME))
-					.setAddressTown(record.getValue(RADDRESS.CITY))
-					.setAddressZIP(record.getValue(RADDRESS.ZIP))
-					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
+					.setId(r.getValue(INVOICE.ID))
+					.setDomain(r.getValue(INVOICE.DOMAIN))
+					.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(INVOICE.TYPE)))
+					.setSeries(r.getValue(INVOICE.SERIES))
+					.setNumber(r.getValue(INVOICE.NUMBER))
+					.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+					.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+					.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(INVOICE.SECURITY_LEVEL)))
+					.setRegistry(r.getValue(INVOICE.REGISTRY))
+					.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
+					.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class, r.getValue(INVOICE.RDOCUMENT_TYPE)))
+					.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+					.setRegistryName(r.getValue(INVOICE.RNAME))
+					.setAddress(new RegistryAddress()
+							.setGeozoneCode(r.getValue(GEOZONE.CODE))
+							.setGeozoneName(r.getValue(GEOZONE.NAME))
+							.setCity(r.getValue(RADDRESS.CITY))
+							.setZip(r.getValue(RADDRESS.ZIP)))
+					.setScope(new Scope().setId(r.getValue(SCOPE.ID)).setDescription(r.getValue(SCOPE.DESCRIPTION)))
 				)
-				.setInvestAsset(record.getValue(INVOICE_DETAIL.INVEST_ASSET))
-				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
-				.setProjectName( record.getValue( PROJECT.NAME ))
-				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
-				.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))
-				.setQuantity(record.getValue(INVOICE_DETAIL.QUANTITY))
-				.setPrice(record.getValue(INVOICE_DETAIL.PRICE))
-				.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
-				.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE))
-				.setItem(checkField(record, ITEM.ID)
-					? ItemFiller.build(record)
-					: new Item().setId(record.getValue(INVOICE_DETAIL.ITEM)))
-				.setSeller(checkField(record, SELLER_ALIAS.ID)
-					? new Seller().copy(RegistryFiller.build(record, SELLER_ALIAS))
-					: new Seller().setId(record.getValue(INVOICE_DETAIL.SELLER)))
-				.setWorkPlace(record.getValue(INVOICE_DETAIL.WORKPLACE))
-				.setWorkPlaceName(record.getValue(WORKPLACE.DESCRIPTION))
-				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
-				.setWarehouseName(record.getValue(WAREHOUSE.NAME))
-				.setSource(InvoiceSource.safeValueOf(record.getValue(INVOICE_DETAIL.SOURCE)))
+				.setInvestAsset(r.getValue(INVOICE_DETAIL.INVEST_ASSET))
+				.setProject( r.getValue( INVOICE_DETAIL.PROJECT ))
+				.setProjectName( r.getValue( PROJECT.NAME ))
+				.setLine(r.getValue( INVOICE_DETAIL.LINE ))
+				.setDescription(r.getValue( INVOICE_DETAIL.DESCRIPTION ))
+				.setQuantity(r.getValue(INVOICE_DETAIL.QUANTITY))
+				.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
+				.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
+				.setTaxableBase(r.getValue(INVOICE_DETAIL.TAXABLE_BASE))
+				.setItem(checkField(r, ITEM.ID)
+					? ItemFiller.build(r)
+					: new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
+				.setSeller(checkField(r, SELLER_ALIAS.ID)
+					? new Seller().copy(RegistryFiller.build(r, SELLER_ALIAS))
+					: new Seller().setId(r.getValue(INVOICE_DETAIL.SELLER)))
+				.setWorkPlace(r.getValue(INVOICE_DETAIL.WORKPLACE))
+				.setWorkPlaceName(r.getValue(WORKPLACE.DESCRIPTION))
+				.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
+				.setWarehouseName(r.getValue(WAREHOUSE.NAME))
+				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
 				;
 		}
 		
@@ -789,7 +760,7 @@ public class InvoiceDAO {
 		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);
 		AggregateFunction<Integer> max = DSL.max(INVOICE.NUMBER);
 		AggregateFunction<Integer> records = DSL.count();
-		LinkedList<InvoiceSeries> list = new LinkedList<InvoiceSeries>(); 
+		LinkedList<InvoiceSeries> list = new LinkedList<>(); 
 		ctx.getDslContext()
 		.select(orderedType,INVOICE.SERIES,min,max,records)
 		.from(INVOICE)
@@ -1465,7 +1436,7 @@ public class InvoiceDAO {
 			if(detail.getDomain() == null) detail.setDomain(invoice.getDomain());
 			insertInvoiceTaxes(ctx,detail);
 		} else {
-			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
+			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(detail.isPrepayment()? "PREPAYMENT": "UNDEDUCTIBLE INVOICE"));
 		}
 		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 			

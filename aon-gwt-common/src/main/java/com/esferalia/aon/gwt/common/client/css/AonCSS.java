@@ -1325,6 +1325,12 @@ public interface AonCSS extends CssResource {
 	@ClassName("custom-dialog-close")
 	String customDialogClose();
 
+	@ClassName("aon-dialog")
+	String aonDialog();
+	
+	@ClassName("aon-dialog-button")
+	String aonDialogButton();
+	
 	@ClassName("aon-dialog-box-shadow")
 	String aonDialogBoxShadow();
 	

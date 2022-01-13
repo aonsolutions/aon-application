@@ -125,13 +125,15 @@ public class InvoiceTest {
 		
 		/** INVOICE BASIC DATA */
 		Invoice invoice = new Invoice();
+
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
-		invoice.setAddress(address);
-		invoice.setAddressNumber(addressNumber);
-		invoice.setAddressProvince(addressProvince);
-		invoice.setAddressTown(addressTown);
-		invoice.setAddressZIP(addressZIP);
-//		invoice.setAddressGeozone(52216);
+		invoice.setAddress(new RegistryAddress()
+				.setAddress(address)
+				.setNumber(addressNumber)
+				.setProvince(addressProvince)
+				.setCity(addressTown)
+				.setZip(addressZIP)
+		);
 		
 		RegistryAddress raddress = new RegistryAddress();
 		raddress.setAddress(address);
@@ -141,7 +143,7 @@ public class InvoiceTest {
 		raddress.setCity("PYONGYANG");
 //		raddress.setGeozone(52216);
 		
-		invoice.setRegistryAddressData(raddress);
+		invoice.setAddress(raddress);
 		
 		invoice.setRegistryName(registryName);
 		

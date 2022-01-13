@@ -3170,6 +3170,28 @@ input:disabled+label {
 		gwt-image: "aon_icon_disable";
 	}
 
+	.aon-dialog {
+		z-index: 69;
+		background-color: #fff;
+		border-radius: 4px;
+	}
+	
+	.aon-dialog-button {
+		-webkit-appearance: none;
+    	-moz-appearance: none;
+    	background: #002469;
+    	border: none;
+    	border-radius: 6px;
+    	color: #fff;
+   		cursor: pointer;
+    	font-weight: 700;
+	    margin: 1px;
+	    outline: none!important;
+	    padding: 8px;
+	    text-align: center;
+	    text-decoration: none;
+	}
+
 	.aon-dialog-box-shadow {
 		box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
 	}

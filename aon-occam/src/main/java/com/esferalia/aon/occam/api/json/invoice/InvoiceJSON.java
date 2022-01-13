@@ -66,14 +66,7 @@ public class InvoiceJSON {
 				.setRegistryDocumentType(registry.getDocumentType())
 				.setRegistryName(registry.getName())
 				.setRegistryAddress(raddress.getId())
-				.setRegistryAddressData(raddress)
-				.setAddress(raddress.getAddress())
-				.setAddressGeozone(raddress.getGeozone())
-				.setAddressNumber(raddress.getNumber())
-				.setAddressProvince(raddress.getProvince())
-				.setAddressStreetType(raddress.getStreetType())
-				.setAddressTown(raddress.getCity())
-				.setAddressZIP(raddress.getZip())
+				.setAddress(raddress)
 				.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
 				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
@@ -118,8 +111,8 @@ public class InvoiceJSON {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
 		}
 			
-		if(invoice.getRegistryAddressData() != null) {
-			JSONObject address = RegistryAddressJSON.toJSON(invoice.getRegistryAddressData());
+		if(invoice.getAddress() != null) {
+			JSONObject address = RegistryAddressJSON.toJSON(invoice.getAddress());
 			JSONObject registry = InvoiceType.SALES.equals(invoice.getType()) 
 					? json.optJSONObject(IJsonNames.RECEIVER)
 					: json.optJSONObject(IJsonNames.SENDER);

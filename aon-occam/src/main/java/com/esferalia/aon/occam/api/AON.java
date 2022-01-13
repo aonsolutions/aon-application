@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
@@ -616,6 +617,14 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	// ---------- CERTIFICATES
+	
+	public static Stream<Certificate> getCertificates(Domain domain, User user, CertificateFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getSecurity().getCertificates(ctx, filter);
 		}
 	}
 	

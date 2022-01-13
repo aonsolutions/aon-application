@@ -224,8 +224,8 @@ public class InvoiceAutoComplete {
 							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
-							if(!inv.getRegistryAddressData().isEmpty())
-								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+							if(!inv.getAddress().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
 									.setDomain(c.getDomain().getId())
 									.setRegistry(c.getId()));
@@ -242,8 +242,8 @@ public class InvoiceAutoComplete {
 							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
-							if ( !inv.getRegistryAddressData().isEmpty() ) {
-								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+							if ( !inv.getAddress().isEmpty() ) {
+								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 										.setId(null)
 										.setDomain(s.getDomain().getId())
 										.setRegistry(s.getId()));
@@ -262,8 +262,8 @@ public class InvoiceAutoComplete {
 							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
-							if(!inv.getRegistryAddressData().isEmpty())
-								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+							if(!inv.getAddress().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
 									.setDomain(c.getDomain().getId())
 									.setRegistry(c.getId()));
@@ -295,24 +295,24 @@ public class InvoiceAutoComplete {
 	 * Aseguramos el nombre del titular de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS_DATA = (inv,ctx) -> {
-		if(inv.getRegistryAddressData().isGlobal()) {
+		if(inv.getAddress().isGlobal()) {
 			inv.setRegistryAddress(null);
-			inv.getRegistryAddressData().setId(null);
+			inv.getAddress().setId(null);
 		}
-		if(inv.getRegistryAddressData().getId() != null) {
-			RegistryAddressFilter filter = f -> f.getDomainProperty().eq(inv.getDomain()).and(f.getIdProperty().eq(inv.getRegistryAddressData().getId()));
+		if(inv.getAddress().getId() != null) {
+			RegistryAddressFilter filter = f -> f.getDomainProperty().eq(inv.getDomain()).and(f.getIdProperty().eq(inv.getAddress().getId()));
 			RegistryAddress ra = RegistryAddressDAO.get(ctx.getContext(), filter);
 			if(ra.getId() == null) {
 				inv.setRegistryAddress(null);
-				inv.getRegistryAddressData().setId(null);
+				inv.getAddress().setId(null);
 			}
 		}
 		
-		if(inv.getRegistryAddressData() != null && inv.getRegistryAddressData().getId() == null) {
-			inv.getRegistryAddressData().setRegistry(inv.getRegistry());
-			RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData());
+		if(inv.getAddress() != null && inv.getAddress().getId() == null) {
+			inv.getAddress().setRegistry(inv.getRegistry());
+			RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getAddress());
 			inv.setRegistryAddress(raddress.getId());
-			inv.setRegistryAddressData(raddress);
+			inv.setAddress(raddress);
 		}
 		
 	};
