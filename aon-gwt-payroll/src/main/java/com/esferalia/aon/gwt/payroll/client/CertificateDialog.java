@@ -439,7 +439,7 @@ public abstract class CertificateDialog extends AonCustomDialog {
 			showLoading("Verificando certificado");
 			form.submit();
 		} else {
-			form.setAction(GWT.getModuleBaseURL() + "certificate_check/create/");
+			form.setAction(GWT.getModuleBaseURL() + "certificate/create/");
 			form.submit();
 		}
 	}
