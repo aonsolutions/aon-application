@@ -5,6 +5,8 @@ import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NA
 import static com.code.aon.ui.stat.controller.IStatConstants.SALES_CONTROLLER_NAME;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import javax.faces.model.DataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.json.JSONObject;
 
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
@@ -34,12 +37,15 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 
 public class RegistryStatEngineController implements Serializable {
 	
@@ -489,6 +495,17 @@ public class RegistryStatEngineController implements Serializable {
 		Integer offerId = ((Offer) this.getPendingOfferModel().getRowData()).getId();
 		BasicController controller = (BasicController) FormUtil.getController(OFFER_CONTROLLER_NAME);
 		controller.select(event, offerId);
+	}
+
+	public String getDownloadURL(Integer id) {
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		JSONObject json = new JSONObject()
+				.put(IJsonNames.ID, id)
+				.put(IJsonNames.SOURCE, "invoice")
+				.put("domain_id", domain.getId())
+				.put("domain_name", domain.getName())
+				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
+		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
 	
 }

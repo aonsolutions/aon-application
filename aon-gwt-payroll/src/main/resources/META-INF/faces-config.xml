@@ -69,19 +69,11 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Main Digital Certificates  ========================== -->
+	<!-- =================== Main Certificates  ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_main_digital_certificates</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/digital_certificates.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Main Digital Certificates New  ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_main_digital_certificates_new</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/digital_certificates_new.xhtml</to-view-id>
+			<from-outcome>gwt_main_certificates</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/certificates.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

@@ -236,8 +236,8 @@ public class TediValidator {
 	 * La dirección de la factura no debe superar caracters definido en BD.
 	 */
 	public static Consumer<ValidationContext> OVERFLOW_ADDRESS = (ctx) -> {
-		if (AonStringUtils.isNotBlank(ctx.getInvoice().getAddress())) {
-			if (willOverflow(RADDRESS.ADDRESS, ctx.getInvoice().getAddress())) {
+		if (AonStringUtils.isNotBlank(ctx.getInvoice().getAddress().getAddress())) {
+			if (willOverflow(RADDRESS.ADDRESS, ctx.getInvoice().getAddress().getAddress())) {
 				ctx.add( TediErrorMessages.C002.err(TediContextKey.ADDRESS, TediContextKey.ADDRESS.getDescription(), RADDRESS.ADDRESS.getDataType().length()));
 			}
 		}

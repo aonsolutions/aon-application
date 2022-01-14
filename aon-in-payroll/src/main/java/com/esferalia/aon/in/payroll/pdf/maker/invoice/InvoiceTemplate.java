@@ -725,7 +725,7 @@ public class InvoiceTemplate {
 		}
 		
 		String invoiceTitle = "";
-		if (invoice.isRectified())
+		if (invoice.isRectifier())
 			invoiceTitle = getMsg().rectifiedInvoice();
 		else
 			invoiceTitle = invoice.isSimplified() ? getMsg().simplifiedInvoice() : getMsg().invoice().toUpperCase();
@@ -781,8 +781,8 @@ public class InvoiceTemplate {
 		String zipCity = "";
 		String province = "";
 		
-		if (invoice.getRegistryAddressData() != null && !invoice.getRegistryAddressData().isEmpty()) {
-			RegistryAddress address = invoice.getRegistryAddressData();
+		if (invoice.getAddress() != null && !invoice.getAddress().isEmpty()) {
+			RegistryAddress address = invoice.getAddress();
 			fullAddress = safeString(address.getFullAddress());
 			boolean isProvince = address.getProvince() != null && !address.getProvince().isEmpty() && !AonStringUtils.equalsIgnoreCase(address.getProvince(), address.getCity());
 			if (isProvince) {
@@ -794,18 +794,9 @@ public class InvoiceTemplate {
 				Country transmitterCountry = transmitterAddr.getCountry();
 				if (!transmitterCountry.equals(address.getCountry())) {
 					float textWidth = PDFToolkit.fontWidth(province + transmitterAddr.getCountry().getName(), 9, regularFont);
-					province += textWidth <= 230 ? transmitterAddr.getCountry().getName() : transmitterAddr.getCountry().getIso3();
+					province += textWidth <= 230 ? address.getCountry().getName() : address.getCountry().getIso3();
 				}
-			}
-			
-		} else {
-			fullAddress = safeString(invoice.getAddress());
-			boolean isProvince = invoice.getAddressProvince() != null && !invoice.getAddressProvince().isEmpty() && !AonStringUtils.equalsIgnoreCase(invoice.getAddressProvince(), invoice.getAddressTown());
-			if (isProvince) {
-				province = "(" + invoice.getAddressProvince().trim() + ") ";
-			}
-			zipCity =  safeString(invoice.getAddressZIP()) + " "+  safeString(invoice.getAddressTown());
-			
+			}		
 		}
 		
 		List<String> addressLines = PDFToolkit.getLines(fullAddress, 230, regularFont, 9);

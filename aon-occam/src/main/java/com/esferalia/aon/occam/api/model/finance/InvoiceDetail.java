@@ -186,6 +186,9 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	public String getDiscountExpression() {
+		if(discountExpression == null) {
+			discountExpression = "0.0";
+		}
 		return discountExpression;
 	}
 	public InvoiceDetail setDiscountExpression(String discountExpression) {

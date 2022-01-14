@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.tgss.creta;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CCC_TYPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
@@ -291,45 +292,47 @@ public class TrabajadoresTramos {
 					
 					List<Period> cgcBasePeriods = new LinkedList<Period>();
 					
-					ContextVariable contextVariable = visit(tipo, new TypeVisitor<ContextVariable>() {
+					ContextVariable [] contextVariables = visit(tipo, new TypeVisitor<ContextVariable []>() {
 
 						@Override
-						public ContextVariable visitL03() {
-							return CGC_BASE;
+						public ContextVariable [] visitL03() {
+							return new ContextVariable [] { CGC_BASE, CGP_BASE };
 						}
 
 						@Override
-						public ContextVariable visitL00() {
-							return CGC_BASE;
+						public ContextVariable [] visitL00() {
+							return new ContextVariable [] { CGC_BASE, CGP_BASE };
 						}
 
 						@Override
-						public ContextVariable visitL02() {
-							return CGC_BASE;
+						public ContextVariable [] visitL02() {
+							return new ContextVariable [] { CGC_BASE, CGP_BASE };
 						}
 
 						@Override
-						public ContextVariable visitL13() {
-							return NO_HOLIDAYS;
+						public ContextVariable [] visitL13() {
+							return new ContextVariable [] { NO_HOLIDAYS };
 						}
 
 						@Override
-						public ContextVariable visitL91() {
-							return CGC_BASE;
+						public ContextVariable [] visitL91() {
+							return new ContextVariable [] { CGC_BASE, CGP_BASE };
 						}
 
 						@Override
-						public ContextVariable visitL90() {
-							return CGC_BASE;
+						public ContextVariable [] visitL90() {
+							return new ContextVariable [] { CGC_BASE, CGP_BASE };
 						}
 						
 					});
 					
-					for ( ContextData cgcData: salary.getContextData().getOrDefault(contextVariable.getName(), Collections.emptyList()) ) {
-						cgcBasePeriods.add( new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+					for ( ContextVariable contextVariable : contextVariables ) {
+						for ( ContextData cgcData: salary.getContextData().getOrDefault(contextVariable.getName(), Collections.emptyList()) ) {
+							cgcBasePeriods = insert(cgcBasePeriods,  new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+						}
 					}
 
-					Collections.sort(cgcBasePeriods); // sort & sort & sort again .
+					//Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
 					
 					for ( ContextData cgcData: salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList()) )

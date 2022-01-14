@@ -223,6 +223,14 @@ public class Toolkit {
 		cal.add(Calendar.DATE, days);
 		return cal.getTime();
 	}
+	
+	// ADD DAYS TO A DATE
+	public static Date addMonth(Date date, int month) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MONTH, month);
+		return cal.getTime();
+	}
 
 	// GET AN UREACHABLE DATE
 	public static Date getUnreachableDate() {

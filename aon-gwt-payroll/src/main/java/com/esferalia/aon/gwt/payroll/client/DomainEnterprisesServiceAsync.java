@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -399,19 +398,7 @@ public class DomainEnterprisesServiceAsync {
 	public void getCNOs(AsyncCallback<Map<String, CNO>> asyncCallback) {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
-	
-	public void getDigitalCertificateTGSS(AsyncCallback<DigitalCertificate> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificateTGSS(getCurrentDomainName(), getCurrentUser(), asyncCallback);
-	}
-	
-	public void getDigitalCertificatesSEPE(AsyncCallback<List<DigitalCertificate>> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificatesSEPE(getCurrentDomainName(), asyncCallback);
-	}
-
-	public void deleteDigitalCertificate(DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), digitalCertificate, asyncCallback);
-	}
-	
+		
 	public void getMainCCCInfoDataBase(AsyncCallback<MainCCCInfo> asyncCallback) {
 		enterprisesServiceAsync.getMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
@@ -452,6 +439,10 @@ public class DomainEnterprisesServiceAsync {
 			Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.deleteComunicateIT(getCurrentDomainName(), getCurrentUser(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo,
 				startDate, asyncCallback);
+	}
+	
+	public void syncITs(AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.syncITs(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
 	public void setComunicationIT(ITEmployee itEmployee, IT it, AsyncCallback<Void> asyncCallback) {

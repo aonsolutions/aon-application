@@ -1599,7 +1599,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			String qrUrl = domain.getName() + "/dip?source=invoice&id=" + inv.getId() ;  
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), login);
 			if(tbai.isActive()) {	
-				String tbaiUrl = TbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
+				String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 			}
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1623,10 +1623,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		Domain domain = AON.getDomain(domainName, domainId, "");
-		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "",
-				com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
 
-		if("default".equalsIgnoreCase(appParam.getValue())){
+		if(isSaleInvoiceDefault()){
 			return generateInvoiceAttachment(domain, invoice, to);
 		} else if ( type == MimeType.MIME_PDF ) {
 			return generateReportAttachment(to);	
@@ -1635,6 +1633,17 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 		return null;
 	}	
+	
+	public boolean isSaleInvoiceDefault() {
+		Integer domainId = DomainManager.getCurrentDomain();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
+
+		com.esferalia.aon.occam.api.model.ApplicationParameter personalized = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.REPORT_saleInvoice);
+		
+		return personalized.isEmpty() && ( appParam.getValue() == null || "default".equalsIgnoreCase(appParam.getValue()));
+	}
 	
 	@Override
 	public String getDescription(ITransferObject parent) {

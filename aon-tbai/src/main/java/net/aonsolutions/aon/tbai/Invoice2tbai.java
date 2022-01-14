@@ -2,13 +2,10 @@ package net.aonsolutions.aon.tbai;
 
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -57,7 +54,8 @@ public class Invoice2tbai {
 	}
 	
 	private static final String TBAI_VERSION = "1.2";
-	private static final String DEVICE_NUMBER = "TBAIGIPRE00000000131";
+	private static final String DEVICE_NUMBER = "TBAIGI447FC22512252C";
+	private static final String DEVICE_NUMBER_GIPUZKOA_TEST = "TBAIGIPRE00000000131";
 	private static final String DEVICE_NUMBER_ARABA_TEST = "TBAIARbjlCHFMFK00416";
 	private static final String SOFTWARE_NAME = "aonSolutions";
 	private static final String SOFTWARE_VERSION = "9.23" ;
@@ -134,13 +132,14 @@ public class Invoice2tbai {
 		ticketbai.anulacion.EntidadDesarrolladoraType entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
 		entidad.setNIF("B01487271");
 		software.setEntidadDesarrolladora(entidad);
-		if(tbai.isAraba() && tbai.isTest())
-			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
-		else software.setLicenciaTBAI(DEVICE_NUMBER);
+		software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
-	
-		if(tbai.isBizkaia() && tbai.isTest()) {
+		if(tbai.isAraba() && tbai.isTest()) {
+			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
+		} else if(tbai.isGipuzkoa() && tbai.isTest()) {
+			software.setLicenciaTBAI(DEVICE_NUMBER_GIPUZKOA_TEST);
+		} else if(tbai.isBizkaia() && tbai.isTest()) {
 			entidad = new ticketbai.anulacion.EntidadDesarrolladoraType();
 			entidad.setNIF(NIF_BIZKAIA_TEST);
 			software.setEntidadDesarrolladora(entidad);
@@ -205,16 +204,11 @@ public class Invoice2tbai {
 		entities.setEmisor(sender);
 			
 		Destinatarios receivers = new Destinatarios();
-		if(AonStringUtils.isBlank(invoice.getAddressZIP())) {
-			RegistryAddressFilter filter = f -> f.getIdProperty().eq(invoice.getRegistryAddress());
-			RegistryAddress a = AON.get(company.getDomain().getName(), company.getDomain().getId(), "", filter);
-			invoice.setAddressZIP(a.getZip());
-			invoice.setAddress(a.getFullAddress());
-		}
+		
 		IDDestinatario receiver = new IDDestinatario();
 		receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
-		receiver.setCodigoPostal(invoice.getAddressZIP());
-		receiver.setDireccion(invoice.getAddress()); // TODO
+		receiver.setCodigoPostal(invoice.getAddress().getZip());
+		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
 		receiver.setNIF(invoice.getRegistryDocument());
 		
 		// TODO if(not spain!)
@@ -246,9 +240,9 @@ public class Invoice2tbai {
 		cabecera.setFacturaSimplificada(SiNoType.N);
 		cabecera.setFacturaEmitidaSustitucionSimplificada(SiNoType.N);
 
-		if(invoice.isRectified()) {
+		if(invoice.isRectifier()) {
 			FacturaRectificativaType rectificativa = new FacturaRectificativaType(); 
-			rectificativa.setCodigo(ClaveTipoFacturaType.R_1); 
+			rectificativa.setCodigo(ClaveTipoFacturaType.R_1);
 			rectificativa.setTipo(ClaveTipoRectificativaType.I); // por diferencia o por sustitucion
 			cabecera.setFacturaRectificativa(rectificativa);
 			

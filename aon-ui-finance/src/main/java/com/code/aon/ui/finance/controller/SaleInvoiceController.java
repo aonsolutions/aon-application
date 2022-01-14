@@ -127,12 +127,17 @@ public class SaleInvoiceController extends InvoiceController {
 		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
 	}
 	
+	public boolean isTbaiLroe() {
+		Invoice invoice = (Invoice) this.getTo();
+		return isTbai() && isBizkaia() && invoice.getNumber() > 0;
+	}
+	
 	public String getTbaiUrl() {
 		Invoice invoice = (Invoice) this.getTo();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		return TbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
+		return TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
 	}
 
 	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {

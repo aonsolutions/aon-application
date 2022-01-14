@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -628,18 +627,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getDigitalCertificateTGSS(String currentDomainName, String currentUser, AsyncCallback<DigitalCertificate> callback) {
-		AON.start();
-		enterprisesServiceAsync.getDigitalCertificateTGSS(currentDomainName, currentUser, new AsyncCallbackWrapper<DigitalCertificate>(callback));
-	}
-
-	@Override
-	public void getDigitalCertificatesSEPE(String currentDomainName, AsyncCallback<List<DigitalCertificate>> callback) {
-		AON.start();
-		enterprisesServiceAsync.getDigitalCertificatesSEPE(currentDomainName, new AsyncCallbackWrapper<List<DigitalCertificate>>(callback));
-	}
-
-	@Override
 	public void getMainCCCInfoDataBase(String currentDomainName, String currentUser, AsyncCallback<MainCCCInfo> callback) {
 		AON.start();
 		enterprisesServiceAsync.getMainCCCInfoDataBase(currentDomainName, currentUser, new AsyncCallbackWrapper<MainCCCInfo>(callback));
@@ -661,12 +648,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.setContractBonus(currentDomainName, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, digitalCertificate, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -717,6 +698,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deleteComunicateIT(currentDomainName, currentUser, affiliationNumber,
 				regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void syncITs(String currentDomainName, String currentUser, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.syncITs(currentDomainName, currentUser, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

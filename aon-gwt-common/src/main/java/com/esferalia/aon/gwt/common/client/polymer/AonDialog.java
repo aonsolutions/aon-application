@@ -6,11 +6,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.polymer.paper.widget.PaperButton;
 
 public abstract class AonDialog extends PopupPanel  {
 	
@@ -20,9 +20,9 @@ public abstract class AonDialog extends PopupPanel  {
 
 	@UiField Label title;
 	@UiField HTMLPanel content;
-	@UiField PaperButton close;
-	@UiField PaperButton accept;
-	@UiField PaperButton cancel;
+	@UiField Button close;
+	@UiField Button accept;
+	@UiField Button cancel;
 
 	public AonDialog(String title, Widget widget) {
 		setWidget(binder.createAndBindUi(this));
@@ -31,9 +31,9 @@ public abstract class AonDialog extends PopupPanel  {
     	setContent(widget);
 		setGlassEnabled(true);
 		setAutoHideEnabled(true);
+		
 		setStyleName(AON.AON_CSS.aonDialogBoxShadow());
-		getElement().getStyle().setZIndex(69);
-		getElement().getStyle().setBackgroundColor("#FFF");
+		addStyleName(AON.AON_CSS.aonDialog());
 	}
 	
 	protected abstract void onAccept();
@@ -52,15 +52,15 @@ public abstract class AonDialog extends PopupPanel  {
 		return content;
 	}
 	
-	public PaperButton getAccept(){
+	public Button getAccept(){
 		return accept;
 	}
 	
-	public PaperButton getCancel(){
+	public Button getCancel(){
 		return cancel;
 	}
 	
-	public PaperButton getClose(){
+	public Button getClose(){
 		return close;
 	}
 	

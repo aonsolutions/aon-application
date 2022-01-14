@@ -662,24 +662,9 @@ public class Mod190DAO {
 							}
 							detail.setPerception(record.getValue(sumBase).doubleValue());
 							detail.setRetention(record.getValue(quotaOp).doubleValue());
-							detail.setProvince( getRegistryMainAddressProvince(ctx, record.getValue(minRegistry)) );
+							detail.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, record.getValue(minRegistry)) );
 							mod190.getDetails().add(detail);
 						});
-	}
-
-	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
-		return ctx.getDslContext()
-			.select(GEOZONE.CODE)
-			.from(RADDRESS)
-			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-			.where(RADDRESS.REGISTRY.equal(registry))
-			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
-			.limit(1)
-			.fetch()
-			.stream()
-			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
-			.findFirst()
-			.orElse(0);
 	}
 
 	private static void fillLastIrpfDataByPerson(AONContext ctx, int person,

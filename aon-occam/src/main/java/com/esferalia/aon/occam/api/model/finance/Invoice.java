@@ -36,6 +36,9 @@ public class Invoice implements Serializable, HasAudit {
 	private RectificationType rectificationType;
 	private SecurityLevel securityLevel;
 	
+	private Integer registryAddress;
+	private RegistryAddress address;
+	
 	private Integer rectificationInvoice;
 	private String rectificationInvoiceSeries;
 	private Integer rectificationInvoiceNumber;
@@ -46,17 +49,7 @@ public class Invoice implements Serializable, HasAudit {
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryName;
-	
-	private Integer registryAddress;		//**
-	private RegistryAddress registryAddressData;
-	private StreetType addressStreetType;	//**
-	private String address;					//**
-	private String addressNumber;			//**
-	private String addressTown;
-	private String addressZIP;
-	private Integer addressGeozone;			//**
-	private String addressProvinceCode;
-	private String addressProvince;
+
 	private Scope scope;
 	private InvoiceType type;
 	private InvoiceTransactionType transaction;
@@ -273,79 +266,29 @@ public class Invoice implements Serializable, HasAudit {
 		this.registryName = registryName;
 		return this;
 	}
+
+	public RegistryAddress getAddress() {
+		if(address == null) {
+			address = new RegistryAddress();
+		}
+		return address;
+	}
+	public Invoice setAddress(RegistryAddress address) {
+		this.address = address;
+		return this;
+	}
+
 	public Integer getRegistryAddress() {
 		return registryAddress;
 	}
+	
 	public Invoice setRegistryAddress(Integer registryAddress) {
 		this.registryAddress = registryAddress;
 		return this;
 	}
-	public RegistryAddress getRegistryAddressData() {
-		if(registryAddressData == null) {
-			registryAddressData = new RegistryAddress();
-		}
-		return registryAddressData;
-	}
-	public Invoice setRegistryAddressData(RegistryAddress registryAddressData) {
-		this.registryAddressData = registryAddressData;
-		return this;
-	}
-	public StreetType getAddressStreetType() {
-		return addressStreetType;
-	}
-	public Invoice setAddressStreetType(StreetType addressStreetType) {
-		this.addressStreetType = addressStreetType;
-		return this;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public Invoice setAddress(String address) {
-		this.address = address;
-		return this;
-	}
-	public String getAddressNumber() {
-		return addressNumber;
-	}
-	public Invoice setAddressNumber(String addressNumber) {
-		this.addressNumber = addressNumber;
-		return this;
-	}
-	public String getAddressTown() {
-		return addressTown;
-	}
-	public Invoice setAddressTown(String addressTown) {
-		this.addressTown = addressTown;
-		return this;
-	}
-	public String getAddressZIP() {
-		return addressZIP;
-	}
-	public Invoice setAddressZIP(String addressZIP) {
-		this.addressZIP = addressZIP;
-		return this;
-	}
-	public Integer getAddressGeozone() {
-		return addressGeozone;
-	}
-	public Invoice setAddressGeozone(Integer addressGeozone) {
-		this.addressGeozone = addressGeozone;
-		return this;
-	}
-	public String getAddressProvinceCode() {
-		return addressProvinceCode;
-	}
-	public Invoice setAddressProvinceCode(String addressProvinceCode) {
-		this.addressProvinceCode = addressProvinceCode;
-		return this;
-	}
-	public String getAddressProvince() {
-		return addressProvince;
-	}
-	public Invoice setAddressProvince(String addressProvince) {
-		this.addressProvince = addressProvince;
-		return this;
-	}
+	
+	
+	
 	public Scope getScope() {
 		return scope;
 	}
@@ -711,8 +654,7 @@ public class Invoice implements Serializable, HasAudit {
 	
 	public boolean isSimplified() {
 		return AonStringUtils.isBlank(getRegistryDocument()) || AonStringUtils.isBlank(getRegistryName())
-				|| (AonStringUtils.isBlank(getAddressZIP()) && getRegistryAddress() == null)
-				;
+				|| (AonStringUtils.isBlank(getAddress().getZip()) && getRegistryAddress() == null);
 	}
 	
 	public boolean isProforma() {

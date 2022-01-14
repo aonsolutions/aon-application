@@ -48,7 +48,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqContractClauses;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractOtherInfo;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractSEPE;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
-import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
@@ -81,7 +80,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -107,12 +105,14 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
+import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -2369,51 +2369,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	
-//	public List<DigitalCertificate> getDigitalCertificatesToken(String domainName, String token) {
-//		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-//		User user = AON_SOLUTIONS.getUser(domain, token);
-//		try(Connection connection = AonServletUtils.getConnection(domain.getName())) {
-//			return JooqDigitalCertificate.getDigitalCertificates(connection, domain.getId(), user.getId());
-//		} catch (SQLException e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
-	
-	@Override
-	public DigitalCertificate getDigitalCertificateTGSS(String domainName, String userLogin) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-			return JooqDigitalCertificate.getDigitalCertificateTGSS(connection, domainId, userId);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public List<DigitalCertificate> getDigitalCertificatesSEPE(String domainName) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqDigitalCertificate.getDigitalCertificatesSEPE(connection, domainId);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-		
-		//TODO: if token is empty call getDigitalCertificatesToken
-	}
-	
-	@Override
-	public void deleteDigitalCertificate(String domainName, DigitalCertificate digitalCertificate) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			JooqDigitalCertificate.deleteDigitalCertificate(connection, domainId, digitalCertificate);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Override
 	public MainCCCInfo getMainCCCInfoDataBase(String domainName, String userLogin) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -2961,6 +2916,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public void syncITs(String domainName, String userLogin) throws IllegalArgumentException {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Domain domain = new Domain().setName(domainName).setId(domainId).setParentId(parentDomainId);
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			ITComunica.syncUpITs(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), domain, Optional.empty());
+			
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void setComunicationIT(String domainName, String userLogin, ITEmployee itEmployee, IT it) {
@@ -3043,15 +3017,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					naf, 
 					SistemaRED.Contingencies.valueOf(contingency), 
 					SistemaRED.SituationEmployee.valueOf(situation_employee), 
-					Optional.of(licenseNumber), 
-					Optional.of(cias), 
-					Optional.of(occupation), 
 					startdate, 
 					SistemaRED.ContractType.valueOf(contractType), 
 					baseCot, 
 					cotDays,
 					Optional.of(fATEP), 
-					Optional.of(SistemaRED.AccidentType.valueOf(accidentType)));
+					Optional.of(SistemaRED.AccidentType.valueOf(accidentType)),
+					Optional.of(licenseNumber), 
+					Optional.of(cias),
+					Optional.of(occupation));
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -3113,13 +3087,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					naf, 
 					SistemaRED.Contingencies.values()[Integer.parseInt(contingency)], 
 					SistemaRED.SituationEmployee.values()[Integer.parseInt(situation_employee)], 
-					Optional.of(licenseNumber), 
-					Optional.of(cias), 
 					fbaja, 
 					falta, 
 					Optional.of(fATEP), 
 					Optional.of(SistemaRED.AccidentType.values()[Integer.parseInt(accidentType)]), 
-					SistemaRED.CauseType.values()[Integer.parseInt(causeType)]);
+					SistemaRED.CauseType.values()[Integer.parseInt(causeType)],
+					Optional.of(licenseNumber), 
+					Optional.of(cias));
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -3368,8 +3342,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			return AON.getCertificateInfo(domain, domainId, login, f -> f.getIdProperty().eq(certitificateId));
 		} catch (SQLException | IllegalArgumentException e) {
-			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "keystore password was incorrect"))
-				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}

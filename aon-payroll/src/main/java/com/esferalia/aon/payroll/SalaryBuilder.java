@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -203,7 +204,9 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 
 	@Override
 	public void setItBase(Double itBase) {
-		this.salary.setIrpfBase(itBase);
+		if (Objects.isNull(itBase) )
+			return;
+		this.salary.setItBase(itBase);
 	}
 
 	@Override

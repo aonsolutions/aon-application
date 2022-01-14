@@ -331,10 +331,6 @@ public class SalaryDraft extends ResizeComposite
 			"BONIFICACION_TUTORIA",
 			"BONIFICACION_FORMACION_CONTINUA"
 			
-			
-			
-			
-			
 	};
 
 	// @formatter:off
@@ -6253,7 +6249,10 @@ public class SalaryDraft extends ResizeComposite
 		// super private, insane
 		if ( AonStringUtils.startsWith(name, "__"))
 			return true;
-		
+		// IRPF quotas & bases
+		if ( AonStringUtils.startsWith(name, "CRA_00"))
+			return true;
+
 		for (String skip : SKIP_VARIABLES) {
 			if (skip.equals(name))
 				return true;

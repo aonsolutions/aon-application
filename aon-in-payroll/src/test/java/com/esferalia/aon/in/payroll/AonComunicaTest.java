@@ -10,13 +10,13 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.EmployeeITPart;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 
+import solutions.aon.seg.social.TestItRegister;
 import solutions.aon.seg.social.TestSistemaREDI;
 
 public class AonComunicaTest {
@@ -29,27 +29,11 @@ public class AonComunicaTest {
 				Optional<String> nss = Optional.empty();
 				Domain domain = new Domain().setName("w3319674b-ayudat.rvasquez.net").setId(9122);
 				
-				AonComunica.syncUpITs(is.readAllBytes(), "123456", "pkcs12", domain, nss);
+				ITComunica.syncUpITs(is.readAllBytes(), "123456", "pkcs12", domain, nss);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	private EmployeeITPart buildPartIt(ContractLeaveDetailType type, ContractLeaveDetailStatus status, Date date,
-			Optional<String> collegiateNumber, Optional<String> cias) {
-		 EmployeeITPart itPart = new EmployeeITPart()
-		 .setType(type)
-		 .setStatus(status)
-		 .setDate(date);
-		 collegiateNumber.ifPresent(itPart::setCollegeNumber);
-		 
-		 cias.ifPresent(itPart::setCias);
-				 
-		return itPart;
-	}
-
-
 	
 	@Test
 	@Ignore
@@ -119,6 +103,20 @@ public class AonComunicaTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void registerItBaja() {
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			Domain domain = new Domain().setName("w3319674b-ayudat.rvasquez.net").setId(9122);
+			EmployeeIT employeeIt =  new EmployeeIT();
+			
+			ITComunica.communicateIT(certificateInputStream.readAllBytes(), "jg@FNMT","pkcs12", employeeIt);
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

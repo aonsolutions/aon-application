@@ -112,6 +112,7 @@ public class EmployeeITPart implements Serializable {
 	@Override
     public String toString() {
         return "EmployeeITPart{"
+        		+ "id=" + id +","
         		+ "type=" + type +","
         		+ "contractLeave=" + contractLeave +","
         		+ "collegeNumber=" + collegeNumber +","

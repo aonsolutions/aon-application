@@ -35,7 +35,6 @@ public class EmployeeITDAO {
 	
 	public static Optional<EmployeeIT> get(AONContext aonContext, ContractLeaveFilter filter ) {
 		List<EmployeeIT> employeeIts = getStream(aonContext, filter).collect(Collectors.toList());
-		
 		if ( employeeIts.isEmpty() )
 			return Optional.empty();
 		else if ( employeeIts.size() == 1 )
@@ -77,7 +76,7 @@ public class EmployeeITDAO {
 				.setDate(r.get(CONTRACT_LEAVE_DETAIL.DATE))
 				.setStatus(ContractLeaveDetailStatus.safeValueOf(r.get(CONTRACT_LEAVE_DETAIL.STATUS)))
 		);
-
+		employeeITMap.forEach((it, details) -> details.forEach( detail -> it.addITPart(detail)) );
 		return employeeITMap.keySet().stream();
 	}
 
@@ -105,10 +104,15 @@ public class EmployeeITDAO {
 			SelectConditionStep<Record> condition = dslContext
 			.select()
 			.from(CONTRACT_LEAVE)
-			.where(CONTRACT_LEAVE.DOMAIN.eq(employeeIt.getDomain()))
-			.and(CONTRACT_LEAVE.START_DATE.eq(toSql(employeeIt.getStartDate())))
-			.and(CONTRACT_LEAVE.CONTRACT.eq(employeeIt.getContract()));
+			.where(CONTRACT_LEAVE.DOMAIN.eq(employeeIt.getDomain()));
 			
+			if(null!=employeeIt.getId()) {
+				condition.and(CONTRACT_LEAVE.ID.eq(employeeIt.getId()));
+			} else {
+				condition.and(CONTRACT_LEAVE.START_DATE.eq(toSql(employeeIt.getStartDate())))
+				.and(CONTRACT_LEAVE.CONTRACT.eq(employeeIt.getContract()));
+			}
+
 			employeeIt.getEndDate().ifPresent(end-> condition.and(CONTRACT_LEAVE.END_DATE.le(toSql(end)) ) );
 		
 			ContractLeaveRecord contractLeaveRecord  = condition.fetchOptionalInto(CONTRACT_LEAVE)
@@ -199,7 +203,6 @@ public class EmployeeITDAO {
 		}	
 		
 		if(null!=insertContractLeaveDetail) insertContractLeaveDetail.execute();
-		
 	}
 	
 	

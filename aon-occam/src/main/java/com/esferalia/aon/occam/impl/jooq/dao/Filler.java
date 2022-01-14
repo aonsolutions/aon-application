@@ -21,6 +21,12 @@ public class Filler {
 			: null;
 	}
 
+	protected static String getString(Record r, Field<String> field) {
+		return checkField(r, field) && r.getValue(field) != null
+			? r.getValue(field)
+			: "";
+	}
+	
 	protected static int getInteger(Record r, Field<Integer> field) {
 		return checkField(r, field) && r.getValue(field) != null
 			? r.getValue(field)

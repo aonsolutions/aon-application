@@ -108,8 +108,6 @@ public class PrintParametersController implements Serializable {
 	}
 	
 	public boolean isSaleInvoiceDefault() {
-		
-		
 		Integer domainId = DomainManager.getCurrentDomain();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
@@ -319,7 +317,7 @@ public class PrintParametersController implements Serializable {
 		}
 		
 		public String getSaleInvoiceTemplateValue(){
-			return saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue();
+			return saleInvoiceTemplate==null ? SaleInvoiceTemplate.STANDARD.getValue() : saleInvoiceTemplate.getValue();
 		}
 		
 		public String getInvoicePrintTemplateValue(){

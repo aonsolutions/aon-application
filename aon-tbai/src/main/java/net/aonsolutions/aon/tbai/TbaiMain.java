@@ -68,37 +68,43 @@ import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
 
-	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws TbaiException {
+	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
 		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
 		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
-			byte[] xml = TbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
-			LROEResponse lroeResponse = null;
-			LROEInfo info = null;
-			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
-				LROE240_1_1 lroe240 = new LROE240_1_1();
-				info = lroe240.buildInfo(OperacionEnum.A_00);
-				lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
+			TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
+			byte[] xml = tbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
+			if(xml == null) {
+				createEmisionTBAI(company, invoice, tbaiConfiguration);
 			} else {
-				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
-				EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+				LROEResponse lroeResponse = null;
+				LROEInfo info = null;
+				if (AonDocumentUtil.isValidCIF(company.getDocument())) {
+					LROE240_1_1 lroe240 = new LROE240_1_1();
+					info = lroe240.buildInfo(OperacionEnum.A_00);
+					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
+				} else {
+					Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
+					EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
 						company.getDomain().getId(), "", invoice.getActivity());
-				if(ea == null || ea.getId() == null) {
-					ea = AON.getEnterpriseActivities(company.getDomain().getName(),
-						company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+					if(ea == null || ea.getId() == null) {
+						ea = AON.getEnterpriseActivities(company.getDomain().getName(),
+								company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+					}
+					invoice.setEpigraph(ea.getIae().getFullEpigraph());
+					LROE140_1_1 lroe140 = new LROE140_1_1();
+					info = lroe140.buildInfo(OperacionEnum.A_00);
+					lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
 				}
-				invoice.setEpigraph(ea.getIae().getFullEpigraph());
-				LROE140_1_1 lroe140 = new LROE140_1_1();
-				info = lroe140.buildInfo(OperacionEnum.A_00);
-				lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
+				LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
+				HandleLroeResponse(lroeResponse);
 			}
-			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
-			HandleLroeResponse(lroeResponse);
 		}
 	}
 
 	public void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
 			throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
-		TbaiBlockchain blockchain = TbaiData.getBlockchain(company.getDomain(), new User().setLogin(""));
+		TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
+		TbaiBlockchain blockchain = tbaiData.getBlockchain(company.getDomain(), new User().setLogin(""));
 		final TicketBai tbai = Invoice2tbai.build(company, invoice, tbaiConfiguration, blockchain);
 
 		final JAXBContext jaxbContext = JAXBContext.newInstance(TicketBai.class);
@@ -119,23 +125,24 @@ public class TbaiMain {
 				.setNumber(Integer.toString(invoice.getNumber())).setSerie(invoice.getSeries())
 				.setSignature(response.getSign().substring(0, 100));
 
-		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
-
-		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s="
+		DataRequest request = tbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
+		
+		String tbaiId = tbaiConfiguration.isBizkaia() ? URLEncoder.encode(response.getTbaiId()) : response.getTbaiId();
+		
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + tbaiId + "&s="
 				+ (invoice.getSeries() != null ? invoice.getSeries() : "") + "&nf=" + invoice.getNumber() + "&i="
 				+ tbai.getFactura().getDatosFactura().getImporteTotalFactura();
-		if(tbaiConfiguration.isBizkaia())
-			qrUrl = URLEncoder.encode(qrUrl);
+		
 		String crc = CRC8.calculate(qrUrl);
 		qrUrl = qrUrl + "&cr=" + crc;
 
-		DataResponse dr = TbaiData.saveResponsePending(company.getDomain(), new User().setLogin(""), invoice, response,
+		DataResponse dr = tbaiData.saveResponsePending(company.getDomain(), new User().setLogin(""), invoice, response,
 				bc, request, qrUrl);
 
 		if (!tbaiConfiguration.isBizkaia()) {
 			String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
 			response = sendXML(uri, tbaiConfiguration, xml);
-			TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
+			tbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
 			HandleTbaiResponse(response);
 		} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 			LROEResponse lroeResponse = null;
@@ -164,6 +171,7 @@ public class TbaiMain {
 	
 	public void createAnulacionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
 			throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
+		TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
 		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, tbaiConfiguration);
 
 		final JAXBContext jaxbContext = JAXBContext.newInstance(AnulaTicketBai.class);
@@ -178,11 +186,11 @@ public class TbaiMain {
 		TbaiSign tbaiSign = new TbaiSign();
 		byte[] xml = tbaiSign.sign(tbaiConfiguration, data);
 		
-		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
+		DataRequest request = tbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
 		if (!tbaiConfiguration.isBizkaia()) {
 			String uri = TbaiUri.getUrlAnulacion(tbaiConfiguration);
 			TbaiResponse response = sendXML(uri, tbaiConfiguration, xml);
-			TbaiData.saveResponseAnulacion(company.getDomain(), new User().setLogin(""), invoice, response, request);
+			tbaiData.saveResponseAnulacion(company.getDomain(), new User().setLogin(""), invoice, response, request);
 			HandleTbaiResponse(response);
 		} else if (tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {
 			LROEResponse lroeResponse = null;
