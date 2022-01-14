@@ -61,7 +61,7 @@ public class CertificateServlet extends AonApiHttpServlet {
 			String type = JsonUtils.getString(api.getParams(), IJsonNames.TYPE);
 			CertificateType certificateType = CertificateType.safeValueOf(type);
 			if(certificateType != null)
-				filter = filter.and(f.getTypeProperty().eq(certificateType.name()));
+				filter = filter.and(f.getTypeProperty().eq(certificateType.name()).or(f.getTypeProperty().isNull()));
 		}
 		
     	return filter;

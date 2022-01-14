@@ -79,8 +79,15 @@ public class Certificate implements Serializable {
 	}
 	
 	public Certificate setDescription(String description) {
-		this.name = description.split("HIDE")[0];
-		this.password = description.split("HIDE\\(")[1].split("\\)")[0];
+		if(description != null && description.contains("HIDE")) {
+			String[] hide = description.split("HIDE\\(");
+			String[] hidePass = hide[1].split("\\)");
+			this.name = hide[0];
+			this.password = hidePass.length > 0 ? hidePass[0] : "";
+		} else {
+			this.name = description != null ? description : "";
+			this.password = "";
+		}
 		return this;
 	}
 
