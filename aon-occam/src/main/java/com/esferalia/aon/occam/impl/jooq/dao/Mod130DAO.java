@@ -206,7 +206,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C15, getInitialC15(ctx,mod))
 			,null
 			,"<li>Trimestres anteriores:<ul style=\"padding-left: 20px;\">" 
-			+"<li>cantidades negtivas [019] y deducidas [015]:<ul style=\"padding-left: 20px;\">"
+			+"<li>cantidades negotivas [019] y deducidas [015]:<ul style=\"padding-left: 20px;\">"
 			+"@code{c19Sum = 0.0;c15Sum = 0.0;}"
 			+"@foreach{fm : previousModels}" 
 				+"@code{X19 =  fm.getAmount('"+Mod130Key.C19.getValue()+"');"
