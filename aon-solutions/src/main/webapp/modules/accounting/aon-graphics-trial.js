@@ -151,7 +151,7 @@ export class AonGraphicsTrial extends AonElement {
   }
 
   async draw() {
-    this.getApplication().startLoader();
+    // this.getApplication().startLoader();
 
     let id = "chart_div";
 
@@ -223,7 +223,7 @@ export class AonGraphicsTrial extends AonElement {
           );
         });
     }
-    this.getApplication().stopLoader();
+    // this.getApplication().stopLoader();
   }
 
   getData = async () => {

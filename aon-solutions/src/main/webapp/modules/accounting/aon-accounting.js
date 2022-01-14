@@ -15,6 +15,7 @@ import Apps from '../../services/app.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import { waitEl } from '../../services/utils.js';
+import { AonApplication } from '../../components/aon-application.js';
 
 export class AonAccounting extends AonElement {
 
@@ -23,12 +24,10 @@ export class AonAccounting extends AonElement {
 	constructor() {
 		super();
 	}
+
 	connectedCallback () {
 		this.initialize();
-
-		this.innerHTML = `
-			<aon-application id="${this.AON_ACCOUNTING}" title="${MSG.ACCOUNTING}"></aon-application>
-		`;
+		this.createApplication(this.AON_ACCOUNTING, MSG.ACCOUNTING, new AonApplication());
 
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
@@ -44,6 +43,8 @@ export class AonAccounting extends AonElement {
 		let application = this.getApplication();
 
 		this.aonGraphicsTrialView();
+		this.loader(`#chart_div`);
+
 
 		if(this.isMobile()){
 			application.addMobileSidenavHeader(Apps.ACCOUNTING);
@@ -78,9 +79,9 @@ export class AonAccounting extends AonElement {
 			fn: () => {
 				application.removeSidenavById("Opciones");
 				application.addSidenavOptions(MSG.OPTIONS , options2);
-				this.getApplication().stopLoader();
-				this.getApplication().startLoader();
+				this.clearElementById(this.getApplication().getContent().id);
 				this.aonGraphicsTrialView ();
+				this.loader(`#chart_div`);
 			}
 		}];
 		
@@ -90,38 +91,29 @@ export class AonAccounting extends AonElement {
 				name: MSG.BANKS,
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 				fn: () => {
-					// this.getApplication().startLoader();
-					/*application.removeSidenavById("Opciones");
-					this.getApplication().stopLoader();
-					this.getApplication().startLoader();
-					GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);*/
-					this.go2CheckIt();
+					this.getApplication().removeSidenavById("Opciones");
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
 
 		application.addSidenavOptions(MSG.ACCOUNTING, options);
-
-
-		
 		application.addSidenavOptions(MSG.OPTIONS , options2);
 	}
 
-	async go2CheckIt () {
-		this.getApplication().removeSidenavById("Opciones");
-		this.clearElementById(this.getApplication().getContent().id);
+	async loader (selector) {
 		this.getApplication().startLoader();
-		GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
-		waitEl(`#${this.getApplication().getContent().id} .aon_toolbar`)
-		.catch(e => console.log(e))
-		.finally(() => this.getApplication().stopLoader());
+		try {
+			await waitEl(selector);
+		} catch (e) {}
+		this.getApplication().stopLoader();
 	}
-
+	
 	aonGraphicsTrialView () {
 		const aonGraphicsTrial = new AonGraphicsTrial();
 		this.getApplication().setContent(aonGraphicsTrial);
 	}
-
-
 }
 if(!window.customElements.get('aon-accounting')){
 	window.customElements.define('aon-accounting', AonAccounting);
