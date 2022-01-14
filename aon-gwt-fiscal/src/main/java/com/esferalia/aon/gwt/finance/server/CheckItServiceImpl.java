@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.finance.server;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,9 +68,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		if (checkitAccounts != null) {
 			checkitAccounts.forEach(acc -> {
 				try {
-					List<CheckItBankStatement> allMovs = CheckItAPI.getAllMovements(domainName, domain, user, empresaId, acc.getCcc());
 					List<CheckItBankStatement> movs = CheckItAPI.getNewMovements(domainName, domain, user, empresaId, acc.getCcc());
-					acc.setAllMovements(allMovs);
 					acc.setPending(movs);
 				} catch (CheckItException e) {
 					throw new AonCoreException(e.getMessage());
@@ -328,6 +327,18 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 					.setUserID(userID)
 					.setUserPassword(userPassword)
 					.setUserPIN(userPIN);
+		} catch (Exception e) {
+			throwException(e);
+			return null;
+		}
+	}
+
+
+	@Override
+	public List<CheckItBankStatement> getMovements(String domainName, int domain, String user, Integer empresaId,
+			CheckItBankAccount checkItBankAccount, Date startDate, Date endDate) throws IllegalArgumentException {
+		try {
+			return CheckItAPI.getBankStatementsFromTo(empresaId, checkItBankAccount.getBankAccountId(), startDate, endDate);
 		} catch (Exception e) {
 			throwException(e);
 			return null;

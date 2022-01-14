@@ -90,6 +90,7 @@ export class AonAccounting extends AonElement {
 				name: MSG.BANKS,
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 				fn: () => {
+					// this.getApplication().startLoader();
 					/*application.removeSidenavById("Opciones");
 					this.getApplication().stopLoader();
 					this.getApplication().startLoader();
@@ -106,9 +107,10 @@ export class AonAccounting extends AonElement {
 	}
 
 	async go2CheckIt () {
+		this.getApplication().removeSidenavById("Opciones");
 		this.clearElementById(this.getApplication().getContent().id);
 		this.getApplication().startLoader();
-			GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
+		GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
 		waitEl(`#${this.getApplication().getContent().id} .aon_toolbar`)
 		.catch(e => console.log(e))
 		.finally(() => this.getApplication().stopLoader());
