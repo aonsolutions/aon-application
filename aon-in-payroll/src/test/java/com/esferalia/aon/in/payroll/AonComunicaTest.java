@@ -10,31 +10,14 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 
-import solutions.aon.seg.social.TestItRegister;
 import solutions.aon.seg.social.TestSistemaREDI;
 
 public class AonComunicaTest {
-	
-	@Test
-	@Ignore
-	public void syncUpITs() {
-		try (final InputStream is = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
-			
-				Optional<String> nss = Optional.empty();
-				Domain domain = new Domain().setName("w3319674b-ayudat.rvasquez.net").setId(9122);
-				
-				ITComunica.syncUpITs(is.readAllBytes(), "123456", "pkcs12", domain, nss);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
+
 	@Test
 	@Ignore
 	public void addContractAndCommunicate() {
@@ -103,20 +86,6 @@ public class AonComunicaTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
-		}
-	}
-	
-	@Test
-	@Ignore
-	public void registerItBaja() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			Domain domain = new Domain().setName("w3319674b-ayudat.rvasquez.net").setId(9122);
-			EmployeeIT employeeIt =  new EmployeeIT();
-			
-			ITComunica.communicateIT(certificateInputStream.readAllBytes(), "jg@FNMT","pkcs12", employeeIt);
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	

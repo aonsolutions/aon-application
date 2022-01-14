@@ -201,6 +201,28 @@ class SistemaREDITParts {
 		}
 	}
 	
+	// remove IT
+	public static void removeIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
+			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
+			throws IOException, InterruptedException, SegSocialException {
+		Toolkit.verifyData(new Object[] { regime, ccc, naf, dateBj });
+		try {
+			removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType,
+					dateBj, dateProcess);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e);
+		}
+	}
+
+	
 	// HANDLE GETFULLITPARTS EXCEPTIONS
 	private static Collection<ITPart> getFullItParts(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String ccc, Date from,
@@ -221,111 +243,6 @@ class SistemaREDITParts {
 		}
 
 	}
-
-	// GET ALL THE ITPARTS
-	private static Collection<ITPart> getFullItPartsImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss)
-			throws FailingHttpStatusCodeException, IOException, InterruptedException, InvalidCertificateException,
-			InvalidDataException {
-
-		Toolkit.verifyData(new Object[] { regime, ccc, from, to });
-		checkCertificate(certificateInputStream);
-
-		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			webClient.getOptions().setJavaScriptEnabled(false);
-
-			if (Toolkit.isFuture(to))
-				throw new InvalidDateException();
-
-			ArrayList<ITPart> itParts = new ArrayList<>();
-			
-			HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
-			HtmlPage document = wait4(origen, p -> p.getAnchorByHref(URL_BASE)).orElseThrow().click();
-			
-			document = document.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
-			
-			HtmlForm formularioPartes = document.getFormByName("BuscaPartesForm");
-			formularioPartes.getInputByName("regimen").setValueAttribute(regime);
-			document.getElementById("ccc1").setAttribute("value", ccc.substring(0, 2));
-			formularioPartes.getInputByName("ccc2").setValueAttribute(ccc.substring(2));
-
-			Integer[] fromArray = Toolkit.getDateArray(from);
-			Integer[] toArray = Toolkit.getDateArray(to);
-			
-			if(nss.isPresent()) {
-				String naf = nss.get();
-				formularioPartes.getInputByName("naf1").setValueAttribute(naf.substring(0, 2));
-				formularioPartes.getInputByName("naf2").setValueAttribute(naf.substring(2));
-			}
-
-			formularioPartes.getInputByName("fechaDesde_dd").setValueAttribute(fromArray[0].toString());
-			formularioPartes.getInputByName("fechaDesde_mm").setValueAttribute(fromArray[1].toString());
-			formularioPartes.getInputByName("fechaDesde_aa").setValueAttribute(fromArray[2].toString());
-
-			formularioPartes.getInputByName("fechaHasta_dd").setValueAttribute(toArray[0].toString());
-			formularioPartes.getInputByName("fechaHasta_mm").setValueAttribute(toArray[1].toString());
-			formularioPartes.getInputByName("fechaHasta_aa").setValueAttribute(toArray[2].toString());
-
-			webClient.getOptions().setJavaScriptEnabled(true);
-			HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
-			document = show.click();
-			handleItPartErrors(document);
-			
-			boolean last = false;
-			
-			while (!last) {
-				DomNode node = document.querySelector(".resultados");
-				if(node instanceof HtmlTable) {
-					HtmlTable table = (HtmlTable)node;
-					int i = 0;
-					for (final HtmlTableRow row : table.getRows()) {
-						if(i>0) {
-							int cellSize = row.getCells().size();
-		
-							Boolean cancelled = Toolkit.toBoolean(row.getCell(cellSize-2).getVisibleText());
-							Boolean wrong = Toolkit.toBoolean(row.getCell(cellSize-1).getVisibleText());
-
-							if(Boolean.FALSE.equals(cancelled) && Boolean.FALSE.equals(wrong)) {
-
-								HtmlAnchor desc = (HtmlAnchor) row.getCell(0).getFirstElementChild();
-								HtmlPage htmlPage = HtmlUnitToolkit.setUrlParse(document, desc).click();
-						
-								handleItPartErrors(htmlPage);
-								ITPart part = infoPart(htmlPage);
-								if (!itParts.contains(part))
-									itParts.add(part);
-							}
-						}
-						i++;
-					}
-				}
-
-				DomNode next = HtmlUnitToolkit.getElConstains(document, ".derecha a", "Siguiente");
-	
-				if(next instanceof HtmlAnchor) {
-					
-					HtmlAnchor anchor = (HtmlAnchor)next;
-
-					String urlBase = "/isincaA/buscaPartes.do?";
-					String query = anchor.getHrefAttribute().replace(urlBase, "");
-
-				    String decodedQuery = Arrays.stream(query.split("&"))
-		    	    .map(param -> {
-		    	    	param = param.trim();
-		    	    	return param.isEmpty() ? "" : param.split("=")[0] + "=" + 
-				    	    	(param.split("=").length>1 ? encode(param.split("=")[1]): "");
-		    	    })
-		    	    .collect(Collectors.joining("&"));
-				    
-					anchor.setAttribute("href", "https://w2.seg-social.es"+urlBase+decodedQuery);
-					document = anchor.click();
-				}  else
-					last = true;
-			}
-			return itParts;
-		}
-	}
-
 	// REGISTER IT START
 	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
@@ -362,7 +279,8 @@ class SistemaREDITParts {
 				cotDaysInput = form.getInputByName("diasCot");
 			}
 			
-			if(null!=contractTypeOption) contractTypeOption.click();
+			if(null!=contractTypeOption) 
+				contractTypeOption.click();
 
 			form.getInputByName("fechaBaja_dd").setValueAttribute(startDateArray[0]);
 			form.getInputByName("fechaBaja_mm").setValueAttribute(startDateArray[1]);
@@ -372,10 +290,8 @@ class SistemaREDITParts {
 			cotBaseInput2.setValueAttribute(baseCotArray[1]);
 			cotDaysInput.setValueAttribute(cotDays + "");
 
-			if (occupation.isPresent()) {
-				HtmlSelect ocup = form.querySelector("#ocupacion");
-				ocup.setSelectedAttribute(occupation.get(), true);
-			}
+			if (occupation.isPresent()) 
+				 ((HtmlSelect) form.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
 
 			if (licenseNumber.isPresent()) {
 				ArrayList<String> colegiateNumberList = Toolkit.splitStringMultiple(licenseNumber.get(), new int[] { 2, 4 });
@@ -414,15 +330,13 @@ class SistemaREDITParts {
 			htmlPage = validate.click();
 			handleItPartErrors(htmlPage);
 
-//			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
-//			htmlPage = confim.click();
-//			handleItPartErrors(htmlPage);
+			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
+			htmlPage = confim.click();
+			handleItPartErrors(htmlPage);
 
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
 			if(null!=elem) 
 				System.out.println(elem.asText());
-			
-			System.out.println(htmlPage.asXml());
 		}
 	}
 
@@ -602,29 +516,8 @@ class SistemaREDITParts {
 
 		return htmlPage;
 	}
-
-	// remove IT
-	public static void removeIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
-			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
-			throws IOException, InterruptedException, SegSocialException {
-		Toolkit.verifyData(new Object[] { regime, ccc, naf, dateBj });
-		try {
-			removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType,
-					dateBj, dateProcess);
-		} catch (FailingHttpStatusCodeException e) {
-			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
-		} catch (IOException e) {
-			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
-		} catch (Exception e) {
-			throw new SegSocialException(e);
-		}
-	}
-
-	// remove IT
+	
+	// remove ITImpl
 	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException,
@@ -741,6 +634,109 @@ class SistemaREDITParts {
 			return null;
 		}
 	}
+	
+	// GET ALL THE ITPARTS
+	private static Collection<ITPart> getFullItPartsImpl(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss)
+			throws FailingHttpStatusCodeException, IOException, InterruptedException, InvalidCertificateException,
+			InvalidDataException {
+
+		Toolkit.verifyData(new Object[] { regime, ccc, from, to });
+		checkCertificate(certificateInputStream);
+
+		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setJavaScriptEnabled(false);
+
+			if (Toolkit.isFuture(to))
+				throw new InvalidDateException();
+
+			ArrayList<ITPart> itParts = new ArrayList<>();
+			
+			HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
+			HtmlPage document = wait4(origen, p -> p.getAnchorByHref(URL_BASE)).orElseThrow().click();
+			
+			document = document.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
+			
+			HtmlForm formularioPartes = document.getFormByName("BuscaPartesForm");
+			formularioPartes.getInputByName("regimen").setValueAttribute(regime);
+			document.getElementById("ccc1").setAttribute("value", ccc.substring(0, 2));
+			formularioPartes.getInputByName("ccc2").setValueAttribute(ccc.substring(2));
+
+			Integer[] fromArray = Toolkit.getDateArray(from);
+			Integer[] toArray = Toolkit.getDateArray(to);
+			
+			if(nss.isPresent()) {
+				String naf = nss.get();
+				formularioPartes.getInputByName("naf1").setValueAttribute(naf.substring(0, 2));
+				formularioPartes.getInputByName("naf2").setValueAttribute(naf.substring(2));
+			}
+
+			formularioPartes.getInputByName("fechaDesde_dd").setValueAttribute(fromArray[0].toString());
+			formularioPartes.getInputByName("fechaDesde_mm").setValueAttribute(fromArray[1].toString());
+			formularioPartes.getInputByName("fechaDesde_aa").setValueAttribute(fromArray[2].toString());
+
+			formularioPartes.getInputByName("fechaHasta_dd").setValueAttribute(toArray[0].toString());
+			formularioPartes.getInputByName("fechaHasta_mm").setValueAttribute(toArray[1].toString());
+			formularioPartes.getInputByName("fechaHasta_aa").setValueAttribute(toArray[2].toString());
+
+			webClient.getOptions().setJavaScriptEnabled(true);
+			HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
+			document = show.click();
+			handleItPartErrors(document);
+			
+			boolean last = false;
+			
+			while (!last) {
+				DomNode node = document.querySelector(".resultados");
+				if(node instanceof HtmlTable) {
+					HtmlTable table = (HtmlTable)node;
+					int i = 0;
+					for (final HtmlTableRow row : table.getRows()) {
+						if(i>0) {
+							int cellSize = row.getCells().size();
+		
+							Boolean cancelled = Toolkit.toBoolean(row.getCell(cellSize-2).getVisibleText());
+							Boolean wrong = Toolkit.toBoolean(row.getCell(cellSize-1).getVisibleText());
+
+							if(Boolean.FALSE.equals(cancelled) && Boolean.FALSE.equals(wrong)) {
+
+								HtmlAnchor desc = (HtmlAnchor) row.getCell(0).getFirstElementChild();
+								HtmlPage htmlPage = HtmlUnitToolkit.setUrlParse(document, desc).click();
+						
+								handleItPartErrors(htmlPage);
+								ITPart part = infoPart(htmlPage);
+								if (!itParts.contains(part))
+									itParts.add(part);
+							}
+						}
+						i++;
+					}
+				}
+
+				DomNode next = HtmlUnitToolkit.getElConstains(document, ".derecha a", "Siguiente");
+	
+				if(next instanceof HtmlAnchor) {
+					
+					HtmlAnchor anchor = (HtmlAnchor)next;
+
+					String urlBase = "/isincaA/buscaPartes.do?";
+					String query = anchor.getHrefAttribute().replace(urlBase, "");
+
+				    String decodedQuery = Arrays.stream(query.split("&"))
+		    	    .map(param -> {
+		    	    	param = param.trim();
+		    	    	return param.isEmpty() ? "" : param.split("=")[0] + "=" + 
+				    	    	(param.split("=").length>1 ? encode(param.split("=")[1]): "");
+		    	    }) .collect(Collectors.joining("&"));
+				    
+					anchor.setAttribute("href", "https://w2.seg-social.es"+urlBase+decodedQuery);
+					document = anchor.click();
+				}  else
+					last = true;
+			}
+			return itParts;
+		}
+	}
 
 	// report IT
 	public static ITPart getDataIt(InputStream certificateInputStream, String certificatePassword,
@@ -813,26 +809,28 @@ class SistemaREDITParts {
 
 	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, SistemaRED.PartType partType, String fecha)
 			throws IOException {
-		String anulado = "No";
-		HtmlAnchor next = null;
-		boolean last = false;
-		HtmlAnchor firstColumn = null;
+		
 		HtmlTable table = (HtmlTable) htmlPage.querySelector("#datos2 > fieldset > table");
-		int numberCell = 0;
+		HtmlAnchor next = null;		
+		HtmlAnchor firstColumn = null;
 		String partTypeStr = null;
+		boolean last = false;
+		int numberCell = 0;
+		String anulado = "No";
+		
 		switch (partType) {
-		case BAJA:
-			numberCell = 2;
-			partTypeStr = "Baja";
-			break;
-		case ALTA:
-			numberCell = 3;
-			partTypeStr = "Alta";
-			break;
-		case CONFIRMACION:
-			numberCell = 4;
-			partTypeStr = "Confirmaci\u00F3n";
-			break;
+			case BAJA:
+				numberCell = 2;
+				partTypeStr = "Baja";
+				break;
+			case ALTA:
+				numberCell = 3;
+				partTypeStr = "Alta";
+				break;
+			case CONFIRMACION:
+				numberCell = 4;
+				partTypeStr = "Confirmaci\u00F3n";
+				break;
 		}
 		if (table != null) {
 			while (!last) {
@@ -848,12 +846,11 @@ class SistemaREDITParts {
 						break;
 					}
 				}
-
-				if (firstColumn == null && next != null) {
+				
+				if (firstColumn == null && next != null) 
 					htmlPage = setUrlParse(htmlPage, next).click();
-				} else {
+				else 
 					last = true;
-				}
 			}
 		}
 		return firstColumn;
@@ -996,7 +993,7 @@ class SistemaREDITParts {
 	       } catch (Exception e) {
 	          return "Issue while encoding" + e.getMessage();
 	       }
-	  }
+	 }
 	 
 	// HANDLE IT PART ERRORS
 	private static void handleItPartErrors(HtmlPage htmlPage) throws InvalidDataException {

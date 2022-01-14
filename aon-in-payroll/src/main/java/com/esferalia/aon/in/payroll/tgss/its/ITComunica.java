@@ -21,7 +21,6 @@ import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.SistemaRED;
@@ -29,6 +28,7 @@ import solutions.aon.seg.social.SistemaRED.AccidentType;
 import solutions.aon.seg.social.SistemaRED.CauseType;
 import solutions.aon.seg.social.SistemaRED.Contingencies;
 import solutions.aon.seg.social.SistemaRED.ContractType;
+import solutions.aon.seg.social.SistemaRED.PartType;
 import solutions.aon.seg.social.SistemaRED.SituationEmployee;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
@@ -36,7 +36,9 @@ import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.object.It;
 
 public class ITComunica {
-
+	
+	private static String SUCCESS = "success";
+	
 	private ITComunica() {
 		throw new IllegalStateException("Utility class");
 	}
@@ -86,70 +88,98 @@ public class ITComunica {
 		}
 	}
 	
-	public static void communicateIT(final byte certificateData[], final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt) throws SegSocialException {
+	public static List<String> communicateITs(final byte certificateData[], final String certificatePassword,
+			final String certificateType, EmployeeIT employeeIt) {
+		 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
+		 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
+		 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
+
+		 List<String> messages = new ArrayList<>();
+		 
+		 if(baja.isPresent()) 
+			 registerITBaja(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
+		 
+		 if(!confirmations.isEmpty()) {
+			 confirmations.forEach(itPart-> 
+				registerITConfirmation(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
+			 );
+		 }
+		 if(alta.isPresent()) 
+			 registerITAlta(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
+		 
+		 return messages;
+	}
+	
+	public static List<String> removeITs(final byte certificateData[], final String certificatePassword,
+			final String certificateType, EmployeeIT employeeIt) {
+		
+		 List<String> messages = new ArrayList<>();
 		 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
 		 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
 		 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
 		 
 		 if(baja.isPresent()) 
-			 registerITBaja(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get());
+			 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
 		 
 		 if(!confirmations.isEmpty()) {
-			 confirmations.forEach(itPart-> {
-				try {
-					registerITConfirmation(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart);
-				} catch (SegSocialException e) {
-					e.printStackTrace();
-				}
-			});
+			 confirmations.forEach(itPart-> 
+			 	removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
+			 );
 		 }
 	
 		 if(alta.isPresent()) 
-			 registerITAlta(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get());
+			 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
+		 
+		 return messages;
 	}
 	
 	private static void registerITBaja(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart) throws SegSocialException {
-		
-			verifyData(new Object[] { 
-					 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getDailyCgcBase().get(), employeeIt.getType(),  itPart.getDate(),
-			});
-
-			Double base = employeeIt.getDailyCgcBase().get();
-			float baseCgc   = base.floatValue();
-			int quoteDays = employeeIt.getQuoteDays();
-			String regime = employeeIt.getRegime();
-			String ccc = employeeIt.getCcc();
-			String nss = employeeIt.getNss();
-			ContractLeaveType causeBj = employeeIt.getType();
-			Date date = itPart.getDate();
-		
-			Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(causeBj.getValueTGSS()-1); 
-			SituationEmployee situation = SituationEmployee.ACTIVO;
-			ContractType contractType =  ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL;
+			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart,  List<String> messages) {
+			try {
+				verifyData(new Object[] { 
+						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
+						 employeeIt.getType(),  itPart.getDate(),
+				});    
+	
+				Double base = employeeIt.getDailyCgcBase().get();
+				float baseCgc   = base.floatValue();
+				int quoteDays = employeeIt.getQuoteDays();
+				String regime = employeeIt.getRegime();
+				String ccc = employeeIt.getCcc();
+				String nss = employeeIt.getNss();
+				Date date = itPart.getDate();
 			
-			Optional<AccidentType> accidentType = Optional.of(AccidentType.LEVE);
-			Optional<Date> fATEP = Optional.empty();
-			Optional<String> occupation = Optional.empty();
-			Optional<String> cias = itPart.getCias();
-			Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
-			Optional<String> collegeNumber = itPartCollegeNumber.isPresent() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
-
-			SistemaRED.registerITBaja(
-					byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
-					regime, ccc, nss, 
-					contingencie, situation,  
-					date, contractType, 
-					baseCgc, quoteDays, 
-					fATEP, accidentType,
-					collegeNumber, cias, occupation
-			);
+				Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
+		
+				SituationEmployee situation = SituationEmployee.ACTIVO;
+				ContractType contractType =  ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL;
+				
+				Optional<AccidentType> accidentType = Optional.empty();
+				Optional<Date> fATEP = Optional.empty();
+				Optional<String> occupation = Optional.empty();
+				Optional<String> cias = itPart.getCias();
+				Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
+				Optional<String> collegeNumber = itPartCollegeNumber.isPresent() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
+	
+				SistemaRED.registerITBaja(
+						byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
+						regime, ccc, nss, 
+						contingencie, situation,  
+						date, contractType, 
+						baseCgc, quoteDays, 
+						fATEP, accidentType,
+						collegeNumber, cias, occupation
+				);
+				messages.add(SUCCESS);
+			} catch (SegSocialException e) {
+				messages.add(e.getMessage());
+			}
 	}
 	
 	private static void registerITConfirmation(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart) throws SegSocialException {
-
+			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart, List<String> messages) {
+		
+		try {
 			verifyData(new Object[] { 
 					employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getType(), 
 					employeeIt.getStartDate(), itPart.getDate(), itPart.getConfirmOrder().get()
@@ -163,9 +193,8 @@ public class ITComunica {
 			Optional<Byte> confirm = itPart.getConfirmOrder();
 			Optional<String> npartConfimation = confirm.isPresent() ? Optional.of(confirm.get().intValue()+"") : Optional.empty();
 			
-			ContractLeaveType causeBj = employeeIt.getType();
-		
-			Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(causeBj.getValueTGSS()-1); 
+
+			Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
 			SituationEmployee situation = SituationEmployee.ACTIVO;
 	
 			Optional<String> cias = itPart.getCias();
@@ -174,11 +203,17 @@ public class ITComunica {
 
 			SistemaRED.registerITConfirmation(byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
 					regime, ccc, nss, contingencie, situation, collegeNumber, cias, fbaja, fconfirmation, npartConfimation);
+			
+			messages.add(SUCCESS);
+		} catch (SegSocialException e) {
+			messages.add(e.getMessage());
+		}
 	}
 	
 	private static void registerITAlta(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart) throws SegSocialException {
-		
+			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart,  List<String> messages) {
+		try {
+
 			verifyData(new Object[] { 
 					employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getType(), 
 					employeeIt.getDischargeCause(), employeeIt.getStartDate(), itPart.getDate() 
@@ -189,17 +224,16 @@ public class ITComunica {
 			String regime = employeeIt.getRegime();
 			String ccc = employeeIt.getCcc();
 			String nss = employeeIt.getNss();
-			
-			ContractLeaveType causeBj = employeeIt.getType();
+
 			ContractLeaveDischargeCause causeAl = employeeIt.getDischargeCause();
 			
-			Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(causeBj.getValueTGSS()-1);
+			Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1);
 			
 			CauseType causeType = SistemaRED.CauseType.safeValueOf(causeAl.value()); 
 			
 			SituationEmployee situation = SituationEmployee.ACTIVO;
 
-			Optional<AccidentType> accidentType = Optional.of(AccidentType.LEVE);
+			Optional<AccidentType> accidentType = Optional.empty();
 			Optional<Date> fATEP = Optional.empty();
 			Optional<String> cias = itPart.getCias();
 			Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
@@ -213,8 +247,45 @@ public class ITComunica {
 					fATEP, accidentType, 
 					causeType, collegeNumber, cias);
 			
+			messages.add(SUCCESS);
+		} catch (SegSocialException e) {
+			messages.add(e.getMessage());
+		}
 	}
 
+	private static void removeIt(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
+			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart, List<String> messages) {
+		try {
+			verifyData(new Object[] { 
+					 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getStartDate(), 
+					 itPart.getDate(), itPart.getType()
+			});    
+			
+			PartType partType = null;
+			switch (itPart.getType()) {
+				case ALTA:
+					partType = PartType.ALTA;
+				break;
+				case CONFIRMACION:
+					partType = PartType.CONFIRMACION;
+				break;
+				default:
+					partType = PartType.BAJA;
+				break;
+			}
+		
+			SistemaRED.removeIT(
+					byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
+					employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), 
+					partType, employeeIt.getStartDate(), itPart.getDate()
+			);
+			
+			messages.add(SUCCESS);
+		} catch (SegSocialException e) {
+			messages.add(e.getMessage());
+		}
+	}
+	
 	private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
 		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
 		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
@@ -247,9 +318,8 @@ public class ITComunica {
 				);
 	}
 
-	
 	// HANDLES EMPTY DATA
-	public static void verifyData(Object[] data) throws InvalidDataException {
+	private static void verifyData(Object[] data) throws InvalidDataException {
 		for (Object o : data)
 			if (o == null || (o instanceof String && ((String) o).trim().equals("")))
 				throw new UnfilledMandatory();
