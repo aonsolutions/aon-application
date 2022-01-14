@@ -62,6 +62,8 @@ public class Methods {
 		if (getDomainName() != null) url += prefix + "domain_name=" + getDomainName();
 		if (url.contains("?")) prefix = "&";
 		if (getDomainId() != null) url += prefix + "domain_id=" + getDomainId();
+		if (url.contains("?")) prefix = "&";
+		if (getDomainId() != null) url += prefix + "domain_login=" + getUserName();
 		return addScheme(url);
 	}
 	
