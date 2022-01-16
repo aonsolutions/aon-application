@@ -496,6 +496,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void createContractPayment(String currentDomainName, Integer contractId,
+				List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 		
 
@@ -979,6 +986,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear,
 							AsyncCallback<Date> asyncCallback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void createContractPayment(String currentDomainName, Integer contractId,
+							List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}

@@ -618,6 +618,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.createContractPayment(getCurrentDomainName(), contractId, contractConceptCalc, callback);
 	}
 	
+	public void createContractPayment(Integer contractId, List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+		employeesServiceAsync.createContractPayment(getCurrentDomainName(), contractId, contractConceptCalcList, callback);
+	}
+	
 	// ------------------------------------------------- ContractExtension
 	
 	public void contractExtension(ContractExtension contractExtension, AsyncCallback<Void> callback) {

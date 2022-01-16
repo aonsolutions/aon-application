@@ -600,6 +600,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void createContractPayment(String currentDomainName, Integer contractId,
+					List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 		
