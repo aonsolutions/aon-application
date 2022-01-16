@@ -409,9 +409,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				+ " AND ( contract_leave.end_date  IS NULL OR contract_data.start_date <= contract_leave.end_date )"
 				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= contract_leave.start_date ) "
 				+ ")"
-			+ " WHERE contract_leave.contract = ? " 
+			+ " LEFT JOIN contract ON ( contract_leave.contract = contract.id ) "
+			+ " WHERE"
+			+ " ( contract.person IN ( SELECT person FROM contract WHERE id = ? ) )" 
 			+ " AND contract_leave.start_date <= ? "
-			+ " AND ( contract_leave.end_date IS NULL " + " OR contract_leave.end_date >= ? )";
+			+ " AND ( contract_leave.end_date IS NULL " + " OR contract_leave.end_date >= ? )"
+			+ " AND contract_leave.id >= 0 "
+			;
 
 	private static final int CACHE_SIZE = 25;
 

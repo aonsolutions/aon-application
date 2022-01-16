@@ -55,7 +55,13 @@ import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
@@ -63,12 +69,12 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator4Dummies;
 //import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -5904,6 +5910,157 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		Assert.assertEquals(1750.00, salary.getCommonBase());
 
+	}
+
+
+	@Test
+	public void testSurrogateITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		DomainRecord domain = 
+				newDomain(aonContext);
+		ScopeRecord scope = 
+				newScope(aonContext, domain.getId());
+		EnterpriseActivityRecord enterpriseActivity = 
+				newEnterpriseActivity(
+				aonContext, 
+				domain.getId(),
+				scope.getId(), 
+				SSRegimeType.GENERAL);
+
+		EnterpriseCccRecord enterpriseCcc = 
+				newEnterpriseCcc(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(),
+				enterpriseActivity.getId(), 
+				CCCType.PRINCIPAL, 
+				"231546798");
+
+		WorkplaceRecord workplace = 
+				newWorkplace(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(),
+				enterpriseActivity.getEnterprise(), 
+				null );
+
+		RegistryRecord person = 
+				newPerson(aonContext, 
+				domain.getId(), 
+				"33568418N", 
+				"864297531");
+
+		Date startContractDateI = getFirstDayOfMonth(getToday()); 
+		Date endContractDateI = add(startContractDateI, Calendar.DAY_OF_MONTH, 10);
+		
+		//@formatter:off
+		ContractRecord contractI = 
+		newContract(aonContext,
+				SSRegimeType.GENERAL,  
+				CCCType.PRINCIPAL, 
+				startContractDateI,
+				endContractDateI,
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null, 
+				domain.getId(),  
+				person.getId(),  
+				workplace.getId(),  
+				enterpriseCcc.getId(),  
+				enterpriseActivity.getId() 
+				);
+		
+		addPrestITs(aonContext, contractI);
+
+		Date startContractDateII = add(endContractDateI, Calendar.DAY_OF_MONTH, 1);	; 
+
+		ContractRecord contractII =
+		newContract(aonContext, 
+				SSRegimeType.GENERAL,  
+				CCCType.PRINCIPAL, 
+				startContractDateII, 
+				null, 
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String [] {}, 
+				null, 
+				domain.getId(),  
+				person.getId(),  
+				workplace.getId(),  
+				enterpriseCcc.getId(),  
+				enterpriseActivity.getId() 
+		);
+		//@formatter:on
+		
+		addPrestITs(aonContext, contractII);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, Calendar.DAY_OF_MONTH, 2);
+
+		addIT(aonContext, contractI, LeaveType.COMMON_DISEASE, startIT,null, null);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contractI);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+//			System.out.println(payment.getName() + " = " + payment.getAmount()
+//					+ " (" + payment.getExpression() + ")");
+		}
+		
+		long prestIt1_3 =
+		salary.getSalaryPayments().stream().filter( p -> p.getExpression().contains("_1_3")).count();
+		long prestIt4_15 =
+		salary.getSalaryPayments().stream().filter( p -> p.getExpression().contains("_4_15")).count();
+		
+		org.junit.Assert.assertEquals(1, prestIt1_3);
+		org.junit.Assert.assertEquals(1, prestIt4_15);
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contractII);
+		calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		prestIt1_3 =
+		salary.getSalaryPayments().stream().filter( p -> p.getExpression().contains("_1_3")).count();
+		prestIt4_15 =
+		salary.getSalaryPayments().stream().filter( p -> p.getExpression().contains("_4_15")).count();
+		
+		org.junit.Assert.assertEquals(0, prestIt1_3);
+		org.junit.Assert.assertEquals(1, prestIt4_15);
 	}
 
 	// ------------------------------------------------------------------------
