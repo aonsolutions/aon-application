@@ -149,6 +149,7 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		getButtonsPanel();
 		
 		deckPanel.showWidget(0);
+		acceptBtnDialog.setVisible(false);
 		
 		enterprisesService.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 			
@@ -199,7 +200,10 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		});
 		
 		// Password TB
-		passwordTB.addValueChangeHandler(e -> passwordHidden.setValue(e.getValue()));
+		passwordTB.addValueChangeHandler(e -> {
+			passwordHidden.setValue(e.getValue());
+			checkCertificate();
+		});
 		
 		// Owner
 		userRB.addValueChangeHandler(e -> {
@@ -257,6 +261,7 @@ public abstract class CertificateDialog extends AonCustomDialog {
             	extensionHidden.setValue(fileExt);
             	fileNameHidden.setValue(filename);
             	fileNameTB.setValue(filename);
+            	checkCertificate();
             }
 		});
 		
@@ -288,6 +293,13 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		formPanel.add(form);
 	}
 	
+	private void checkCertificate() {
+    	if(AonStringUtils.isNotBlank(fileUpload.getFilename()) && AonStringUtils.isNotBlank(passwordTB.getValue())) {
+			showLoading("Verificando certificado");
+			form.submit();
+    	}
+	}
+
 	// ------------------------------------------------- Parse JSON
 	
 	private void parseJSON(JSONObject json) {
@@ -296,9 +308,8 @@ public abstract class CertificateDialog extends AonCustomDialog {
 			// CertificateInfo
 			parseCertificateInfo(json);
 			createCertificateInfoPanel();
-			hideMessage();
-			deckPanel.showWidget(1);
-			acceptBtnDialog.setText("Grabar");
+			showSuccess("Validaci\u00f3n", "Certificado validado correctamente");
+			acceptBtnDialog.setVisible(true);
 		} else {
 			if(AonStringUtils.containsIgnoreCase(type.toString(), "create")) {
 				hide();
@@ -383,6 +394,9 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		tgssCB.setEnabled(true);
 		sepeCB.setEnabled(true);
 		aeatCB.setEnabled(true);
+		tgssCB.setValue(false, true);
+		sepeCB.setValue(false, true);
+		aeatCB.setValue(false, true);
 		String owner = ownerHidden.getValue();
 		for(Certificate certificate: certificates)
 			if(AonStringUtils.equalsIgnoreCase(certificate.getOwner().name(), owner))
@@ -436,8 +450,8 @@ public abstract class CertificateDialog extends AonCustomDialog {
 
 	private void accept() {
 		if(deckPanel.getVisibleWidget() == 0) {
-			showLoading("Verificando certificado");
-			form.submit();
+			deckPanel.showWidget(1);
+			acceptBtnDialog.setText("Grabar");
 		} else {
 			form.setAction(GWT.getModuleBaseURL() + "certificate/create/");
 			form.submit();
@@ -456,12 +470,14 @@ public abstract class CertificateDialog extends AonCustomDialog {
 		AonMessagePanel.showError(messagePanel, errorMap);
 	}
 	
-	private void showLoading(String message) {
-		AonMessagePanel.showLoading(messagePanel, message);
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
-	private void hideMessage() {
-		AonMessagePanel.hideMessage(messagePanel);
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
 	}
 	
 }
