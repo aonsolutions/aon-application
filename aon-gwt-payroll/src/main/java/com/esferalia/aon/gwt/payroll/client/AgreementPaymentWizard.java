@@ -340,6 +340,12 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	Button quoteFxButton;
 	
 	@UiField
+	HTMLPanel monthPanel;
+	
+	@UiField
+	ListBox monthLB;
+	
+	@UiField
 	HTMLPanel buttonsPanel;
 	
 	// -------------------------------------------- Variables
@@ -385,6 +391,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		// Hide quote defaul
 		UIObject.setVisible(quotePanel.getElement(), false );
 		
+		// Hide month defaul
+		UIObject.setVisible(monthPanel.getElement(), false );
+		
 		// Hide weekDays panel default
 		UIObject.setVisible(weekDaysPanel.getElement(), false );
 		
@@ -402,6 +411,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		initPartialityButton();
 		initPaymentCRAType();
 		initTaxedAndQuoteLB();
+		initMonthLB();
 		showFirstPage();
 		
 		// Fire SALARIO_BASE
@@ -532,10 +542,18 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentTypeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 		paymentTypeListBox.setEnabled(false);
 		paymentTypeListBox.addStyleName(style.visibilityDisabled());
-		paymentTypeListBox.addChangeHandler(e -> enableOrDisableTaxAndQuote());
+		paymentTypeListBox.addChangeHandler(e -> {
+			enableOrDisableTaxAndQuote();
+			enableOrDisableMonth();
+		});
 		paymentCRAPanel.add(paymentTypeListBox);
 	}
 	
+	private void enableOrDisableMonth() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		UIObject.setVisible(monthPanel.getElement(), type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0005 );
+	}
+
 	private void enableOrDisableTaxAndQuote() {
 		if ( taxEditableAndQuoteNone() ) {
 			UIObject.setVisible(taxedPanel.getElement(), true );
@@ -704,6 +722,29 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 	}
 	
+	private void initMonthLB() {
+		monthLB.clear();
+		monthLB.addItem("-");
+		monthLB.addItem("Enero", "0");
+		monthLB.addItem("Febrero", "1");
+		monthLB.addItem("Marzo", "2");
+		monthLB.addItem("Abril", "3");
+		monthLB.addItem("Mayo", "4");
+		monthLB.addItem("Junio", "5");
+		monthLB.addItem("Julio", "6");
+		monthLB.addItem("Agosto", "7");
+		monthLB.addItem("Septiembre", "8");
+		monthLB.addItem("Octubre", "9");
+		monthLB.addItem("Noviembre", "10");
+		monthLB.addItem("Diciembre", "11");
+	}
+	
+	private short getMonth() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0005 && monthLB.getSelectedIndex() != 0 ? 
+				Short.parseShort(monthLB.getSelectedValue()) : null;
+	}
+	
 	private void initPartialityButton() {
 		getEnableDisableButton(partialityButton, hasPartiality);
 	}
@@ -865,10 +906,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	private void checkIfWeekDays() {
 		String periodicityTypeValue = periodicityType.getSelectedValue();
-		if(AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA"))
-			UIObject.setVisible(weekDaysPanel.getElement(), true );
-		else
-			UIObject.setVisible(weekDaysPanel.getElement(), false );
+		UIObject.setVisible(weekDaysPanel.getElement(), AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA") );
 	}
 	
 	private void checkExtraPanel() {
@@ -1090,11 +1128,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
 			String newExpression = "FRACCIONAR(" + expression + ")";
 			expression = newExpression;
-		} if(AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
-			expression += checkWeekDaysExpression();
-		} else {
-			expression += periodicityTypeValue;
-		}
+		} else
+			expression += AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA") ? checkWeekDaysExpression() : periodicityTypeValue;
 		
 		return expression;
 	}
@@ -1254,6 +1289,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		payment.setType(paymentTypeListBox.getSelected());
 		payment.setSalaryType(Salary.Type.SALARY);
 		payment.setName(paymentConcept.getValue());
+		payment.setMonth(getMonth());
 	}
 	
 	public String getTaxedExpression() {

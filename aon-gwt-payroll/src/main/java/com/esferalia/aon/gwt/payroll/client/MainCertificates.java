@@ -543,7 +543,7 @@ public class MainCertificates extends MainEntryPoint{
 		alias.setValue(certificate.getDescription());
 		alias.addValueChangeHandler(e -> fileNameHidden.setValue(e.getValue()));
 		
-		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Uso personal" : "Uso compartido";
+		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
 		String securityIcon = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
 		AonTableButton security = new AonTableButton(securityTitle, securityIcon);
 		security.addClickHandler(e -> {
@@ -796,8 +796,14 @@ public class MainCertificates extends MainEntryPoint{
 						createUserCertDataTable();
 					else if(index == 1)
 						createEntepriseCertDataTable();
+					updateTabTitle();
 				}, 
 				f -> {});
+	}
+
+	private void updateTabTitle() {
+		tabLayoutPanel.setTabText(0, "Parsonales (" + this.mainDigitalCertificatesObject.getUserCertificateList().size() + ")");
+		tabLayoutPanel.setTabText(1, "Compartidos (" + this.mainDigitalCertificatesObject.getEnterpriseCertificateList().size() + ")");
 	}
 
 	private void updateLoadingPanelStatus() {
@@ -1115,7 +1121,7 @@ public class MainCertificates extends MainEntryPoint{
 	private void getEnableDisableButton(Button button, boolean disabled) {
 		button.removeStyleName(disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock());
 		button.addStyleName(!disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock() );
-		button.setTitle(!disabled ? "Uso compartido" : "Uso personal");
+		button.setTitle(!disabled ? "P\u00fablico: Visible para todos los usuarios" : "Privado: S\u00f3lo visible para usuarios de la empresa");
 	}
 	
 	private boolean isActiveToggleButton(Button button) {

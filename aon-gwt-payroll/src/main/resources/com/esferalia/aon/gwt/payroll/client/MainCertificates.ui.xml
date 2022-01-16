@@ -162,7 +162,7 @@
 				<g:TabLayoutPanel ui:field="tabLayoutPanel" barUnit='EM' barHeight='3'>
 				
 					<g:tab>
-				    	<g:header size='7'>Personal</g:header>
+				    	<g:header size='7'>Personales</g:header>
 			    		<g:HTMLPanel styleName="{style.alignCenter} {style.centerColumn}">
 			    			<g:HTMLPanel styleName="{style.centerColumn}">
 				    			<g:Grid ui:field="userCertDataTableHeader" styleName="{style.header}" />
@@ -192,7 +192,7 @@
 				  	</g:tab>
 				  	
 				  	<g:tab>
-				  		<g:header size='7'>Compartido</g:header>
+				  		<g:header size='7'>Compartidos</g:header>
 			  			<g:HTMLPanel styleName="{style.alignCenter} {style.centerColumn}">
 				    		<g:HTMLPanel styleName="{style.centerColumn}">
 				    			<g:Grid ui:field="enterpriseCertDataTableHeader" styleName="{style.header}" />

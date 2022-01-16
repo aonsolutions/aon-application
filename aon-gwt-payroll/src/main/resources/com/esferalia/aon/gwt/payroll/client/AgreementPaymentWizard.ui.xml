@@ -198,6 +198,10 @@
 						<g:Button styleName="{style.aon-toolbar-button} aon_icon_fx" ui:field="quoteFxButton"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="monthPanel" styleName="{style.element}">
+					<g:Label ui:field="monthTitle" styleName="{style.title}">Mes</g:Label>
+					<g:ListBox ui:field="monthLB"/>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
 		</g:HTMLPanel>
