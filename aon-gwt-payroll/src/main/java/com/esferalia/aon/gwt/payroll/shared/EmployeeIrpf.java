@@ -71,6 +71,7 @@ public class EmployeeIrpf implements Serializable {
 	}
 
 	public Double getMoneyBase() {
+		if(moneyBase != null && moneyBase <= 0.01) return 0.00;
 		return null != moneyBase ? round(moneyBase, 2) : moneyBase;
 	}
 
@@ -89,6 +90,7 @@ public class EmployeeIrpf implements Serializable {
 //	}
 
 	public Double getMoneyQuote() {
+		if(moneyQuote != null && moneyQuote <= 0.01) return 0.00;
 		return null != moneyQuote ? round(moneyQuote, 2) : moneyQuote;
 	}
 
@@ -98,6 +100,7 @@ public class EmployeeIrpf implements Serializable {
 	}
 
 	public Double getInkindBase() {
+		if(inkindBase != null && inkindBase <= 0.01) return 0.00;
 		return null != inkindBase ? round(inkindBase, 2) : inkindBase;
 	}
 
@@ -116,6 +119,7 @@ public class EmployeeIrpf implements Serializable {
 //	}
 
 	public Double getInkindQuote() {
+		if(inkindQuote != null && inkindQuote <= 0.01) return 0.00;
 		return null != inkindQuote ? round(inkindQuote, 2) : inkindQuote;
 	}
 
@@ -134,6 +138,7 @@ public class EmployeeIrpf implements Serializable {
 	}
 
 	public Double getEmployeeSSQuote() {
+		if(employeeSSQuote != null && employeeSSQuote <= 0.01) return 0.00;
 		return null != employeeSSQuote ? round(employeeSSQuote, 2) : employeeSSQuote;
 	}
 
@@ -143,6 +148,7 @@ public class EmployeeIrpf implements Serializable {
 	}
 
 	public Double getTotalIrpf() {
+		if(totalIrpf != null && totalIrpf <= 0.01) return 0.00;
 		return null != totalIrpf ? round(totalIrpf, 2) : totalIrpf;
 	}
 
