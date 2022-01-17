@@ -83,7 +83,7 @@ public class Model180AEAT extends Model180Base {
 
 					@Override
 					public String getModelInformationURL() {
-						return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GI10.shtml";
+						return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GI00.shtml";
 					}
 			};
 			admonPanel = new FiscalModelAdmonPanel<>(cbk);
