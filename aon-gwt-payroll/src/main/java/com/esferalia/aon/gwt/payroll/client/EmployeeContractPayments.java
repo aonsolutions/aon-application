@@ -135,19 +135,19 @@ public class EmployeeContractPayments extends Composite {
 		public AddContextMenu() {
 			
 			payment = addItem("A\u00f1adir pago", new AddPaymentCommand(), 
-					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			payment.ensureDebugId("payment");
 			
 			dedcution = addItem("A\u00f1adir deduci\u00f3n", new AddDeductionCommand(), 
-					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			dedcution.ensureDebugId("dedcution");
 			
 			cost = addItem("A\u00f1adir coste", new AddCostCommand(), 
-					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			cost.ensureDebugId("cost");
 			
 			bonus = addItem("A\u00f1adir bonificaci\u00f3n", new AddBonusCommand(), 
-					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			bonus.ensureDebugId("bonus");
 			
 		}
@@ -524,7 +524,7 @@ public class EmployeeContractPayments extends Composite {
 		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
-		AonExpandButton addExpand = new AonExpandButton("A\u00f1adir pagos", AON.CSS.aonIconAdd()) {
+		AonExpandButton addExpand = new AonExpandButton("A\u00f1adir pagos", AON.CSS.aonIconAddBlock()) {
 			
 			@Override
 			public void onExpandClick(ClickEvent event) {
