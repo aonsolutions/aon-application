@@ -3,12 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
 import static com.esferalia.aon.jooq.tables.FsMod347Detail.FS_MOD347_DETAIL;
-//import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
-//import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
-//import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
-//import static com.esferalia.aon.jooq.tables.FsModel190Detail.FS_MODEL190_DETAIL;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.sql.Timestamp;
 import java.text.MessageFormat;
@@ -282,7 +276,7 @@ public class Mod347DAO {
 		FsMod347Record record = ctx.getDslContext().insertInto(FS_MOD347)
 			.set(FS_MOD347.DOMAIN,mod347.getDomain())
 			.set(FS_MOD347.YEAR,mod347.getYear())
-			.set(FS_MOD347.ADMINISTRATION, mod347.getAdministration().getValue())
+			.set(FS_MOD347.ADMINISTRATION, mod347.getAdministration().value())
 			.set(FS_MOD347.COMMENTS,comments)
 			.set(FS_MOD347.STATUS, ZERO_BYTE )
 			.set(FS_MOD347.SECURITY_LEVEL, AonEnumUtils.getByte(mod347.isConfidential()) )			
@@ -320,7 +314,7 @@ public class Mod347DAO {
 		
 		ctx.getDslContext().update(FS_MOD347)			
 			.set(FS_MOD347.YEAR,mod347.getYear())
-			.set(FS_MOD347.ADMINISTRATION, mod347.getAdministration().getValue())
+			.set(FS_MOD347.ADMINISTRATION, mod347.getAdministration().value())
 			.set(FS_MOD347.COMMENTS,comments)
 			.set(FS_MOD347.STATUS, AonEnumUtils.getByte( mod347.getStatus() ) )
 			.set(FS_MOD347.SECURITY_LEVEL,AonEnumUtils.getByte(mod347.isConfidential()) )			
@@ -372,7 +366,7 @@ public class Mod347DAO {
 				.from(FS_MOD347)
 				.where(FS_MOD347.DOMAIN.equal(mod347.getDomain())
 						.and(FS_MOD347.YEAR.equal(mod347.getYear()))
-						.and(FS_MOD347.ADMINISTRATION.equal(mod347.getAdministration().getValue()))
+						.and(FS_MOD347.ADMINISTRATION.equal(mod347.getAdministration().value()))
 						.and(FS_MOD347.REPLACEMENT.equal(ONE_BYTE))
 						.and(FS_MOD347.REPLACED_NUMBER.equal(mod347.getReplacedNumber()))
 						)
@@ -388,7 +382,7 @@ public class Mod347DAO {
 				.from(FS_MOD347)
 				.where(FS_MOD347.DOMAIN.equal(mod347.getDomain())
 						.and(FS_MOD347.YEAR.equal(mod347.getYear()))
-						.and(FS_MOD347.ADMINISTRATION.equal((byte) mod347.getAdministration().getValue()))
+						.and(FS_MOD347.ADMINISTRATION.equal((byte) mod347.getAdministration().value()))
 						.and(FS_MOD347.REPLACEMENT.equal(ZERO_BYTE))
 						.and(FS_MOD347.COMPLEMENTARY.equal(ZERO_BYTE)))				
 				.fetch()
@@ -769,7 +763,9 @@ public class Mod347DAO {
 								declared.setDocument(document);
 									
 								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
-								declared.setProvince(Province.safeValueOf(getRegistryMainAddressProvince(ctx, vat.getRegistry())));
+								declared.setProvince(Province.safeValueOf(
+									RegistryAddressDAO.getMainAddressProvince(ctx, vat.getRegistry()))
+								);
 	
 							} else {
 								
@@ -884,29 +880,6 @@ public class Mod347DAO {
 			}
 		}		
 			
-	}
-	
-	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
-		
-		// Obtenemos la provincia de la direccion principal de registry
-		return ctx.getDslContext()
-			.select(GEOZONE.CODE)
-			.from(RADDRESS)
-			.join(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
-			.where(RADDRESS.REGISTRY.equal(registry))
-			.and(RADDRESS.TYPE.equal( ZERO_BYTE ))		// Dirección principal.
-			.limit(1)
-			.fetch()
-			.stream()
-			.mapToInt(rec -> {
-				try {
-					return Integer.parseInt(rec.getValue(GEOZONE.CODE) );	
-				} catch (NumberFormatException e) {
-					return 0;
-				}
-			})
-			.findFirst()
-			.orElse(0);
 	}
 	
 	// --------------- INVOICES INFO --------------- 

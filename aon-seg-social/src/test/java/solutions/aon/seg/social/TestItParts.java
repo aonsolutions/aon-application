@@ -5,9 +5,16 @@ import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,7 +25,10 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.InvalidDateException;
+import solutions.aon.seg.social.object.Calc;
+import solutions.aon.seg.social.object.ITPart;
 import solutions.aon.seg.social.object.It;
+import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class TestItParts {
@@ -41,12 +51,139 @@ public class TestItParts {
 				System.out.println("CONFIRMACION >> "+it.getConfirmations().toString());
 			}
 		}
-//		catch (StatusCodeException | InvalidCertificateException e) {} catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
-//		catch (FileNotFoundException e) {fail("File not found");}
-//		catch (IOException e) {fail("IOException");}
 		catch (Exception e) {e.printStackTrace();}
-
 	}
+	
+	@Test
+	@Ignore
+	public void testGetCalc() {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {	
+			Date dateFrom = Toolkit.addMonth(new Date(), -1);
+			Date dateTo =  dateFrom;
+			List<Period> periods = new ArrayList<>();
+			
+			ServicioRED.workersCalculationByCCCandNAFsPOST(
+				certificateInputStream, "jg@FNMT", "pkcs12", 
+				"01105360062", SistemaRED.Regime.GENERAL, dateFrom, dateTo, SistemaRED.LiquidationType.L00_NORMAL, 
+				SistemaRED.LiquidationOrigin.TODAS, "291136796369" 
+				)
+			.values().stream().filter(x->null!=x)
+			.forEach(v->v.values().stream().filter(x->null!=x)
+			.forEach( p->{
+				List<Period> list = p.keySet().stream().filter(x->null!=x).collect(Collectors.toList());
+				if(list.size()>0)
+					periods.addAll(list);
+			}));
+	
+			int periodsSize = periods.size();
+			Double quoteDays = 0.00;
+			Double baseCc = 0.00;
+			Double baseAt = 0.00;
+			
+//			Period [startDate=Wed Dec 01 00:00:00 CET 2021, endDate=Fri Dec 31 00:00:00 CET 2021, hours=null, baseCC=2245.0, baseAT=2245.0, quoteDays=30.0]
+//
+			for (Period period : periods) {
+				if(null!=period.getQuoteDays())
+					quoteDays += period.getQuoteDays();
+				if(null!=period.getBaseCC())
+					baseCc += period.getBaseCC();
+				if(null!=period.getBaseAT())
+					baseAt += period.getBaseAT();
+			}
+			
+			quoteDays = quoteDays / periodsSize;
+			baseCc = baseCc / periodsSize;
+			baseAt = baseAt / periodsSize;
+			
+			System.out.println("quoteDays: "+quoteDays+" baseCc: "+baseCc+" baseAt: "+ baseAt);
+		
+		}
+		catch (Exception e) {e.printStackTrace();}
+	}
+	
+	@Test
+	@Ignore
+	public void registerItBaja() {
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			SistemaREDITParts.registerItBaja(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "011011187190", 
+					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO,
+					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 2.3, 23, Optional.of(new Date()), Optional.empty(),
+					Optional.empty(), Optional.empty(), Optional.of("9490"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@Test
+	@Ignore
+	public void registerItConfirmation() {
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			SistemaREDITParts.registerItConfirmation(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "011011187190", 
+					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO, Optional.empty(), Optional.empty(),
+					 Toolkit.addDays(new Date(), -1), new Date(), Optional.empty());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void registerItAlta() {
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			SistemaREDITParts.registerItAlta(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "011011187190", 
+					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO,
+					new Date(), new Date(), Optional.empty(), Optional.empty(),  SistemaRED.CauseType.CURACION, Optional.empty(), Optional.empty());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@Test
+	@Ignore
+	public void removeIt() {
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			SistemaREDITParts.removeIt(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "011011187190", SistemaRED.PartType.ALTA, new Date(), new Date());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@Ignore
+	public void pdfIt() {
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			@SuppressWarnings("deprecation")
+			byte[] pdf = SistemaREDITParts.pdfIt(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "011011187190", SistemaRED.PartType.BAJA, new Date("2021/01/12"), new Date("2021/01/12"));
+			System.out.println( new String(Base64.getEncoder().encode(pdf)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void getDataIt() {
+//		 new Date("2016/04/23")
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			 @SuppressWarnings("deprecation")
+			Date fecha_baja = new Date("2016/04/20");
+			 @SuppressWarnings("deprecation")
+			Date fecha_proceso = new Date("2016/04/20");
+			 ITPart itPart = SistemaREDITParts.getDataIt(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "011011187190", SistemaRED.PartType.BAJA, fecha_baja, fecha_proceso);
+			 System.out.println(itPart);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	@Test
 	@Ignore

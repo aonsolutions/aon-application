@@ -31,7 +31,7 @@ public class Methods {
 	protected  String accessToken = "";
 	protected  String scheme = "";	
 	public boolean authorized = false;
-	
+		
 	protected <T extends JavaScriptObject> void get(String url, AsyncCallback<T> callback) {
 		String requestUrl = makeRequestUrl(url);
 		JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
@@ -58,6 +58,12 @@ public class Methods {
 		String prefix = "?";
 		if (url.contains("?")) prefix = "&";
 		if (accessToken != null) url += prefix + "access_token=" + accessToken;
+		if (url.contains("?")) prefix = "&";
+		if (getDomainName() != null) url += prefix + "domain_name=" + getDomainName();
+		if (url.contains("?")) prefix = "&";
+		if (getDomainId() != null) url += prefix + "domain_id=" + getDomainId();
+		if (url.contains("?")) prefix = "&";
+		if (getDomainId() != null) url += prefix + "domain_login=" + getUserName();
 		return addScheme(url);
 	}
 	

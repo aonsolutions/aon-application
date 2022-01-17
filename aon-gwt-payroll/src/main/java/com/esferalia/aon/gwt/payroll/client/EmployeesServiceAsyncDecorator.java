@@ -932,6 +932,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.createContractPayment(currentDomainName, contractId, contractConceptCalc, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
+	@Override
+	public void createContractPayment(String currentDomainName, Integer contractId, List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.createContractPayment(currentDomainName, contractId, contractConceptCalcList, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
 	// ------------------------------------------------- Contract Extension
 
 	@Override

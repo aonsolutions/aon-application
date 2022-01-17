@@ -308,6 +308,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc);
 
+	void createContractPayment(String currentDomainName, Integer contractId, List<ContractConceptCalc> contractConceptCalcList);
+	
 	// ------------------------------------------------- ContractExtension
 	
 	void contractExtension(String currentDomainName, ContractExtension contractExtension);

@@ -516,7 +516,7 @@ public class CommunicationServlet extends HttpServlet {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, invoice.getId());
 		json.put("registry_name", invoice.getRegistryName());
-		json.put("address", invoice.getAddress());
+		json.put("address", invoice.getAddress().getFullAddress());
 		json.put("reference_code", invoice.getReferenceCode());
 		json.put("date", AonDateUtils.format(invoice.getTaxDate(), "dd-MM-yyyy"));
 		

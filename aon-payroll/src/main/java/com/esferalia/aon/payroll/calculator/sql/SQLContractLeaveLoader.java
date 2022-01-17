@@ -11,10 +11,12 @@ import java.util.Date;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -41,12 +43,20 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 		final Date start = Period.max(leaveStart, startDate);
 		Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
 		
+
 		final Date end = Period.min(leaveEnd, endDate);
+
+		final ITimedVariable<?> contractStartVar = 
+		exprCtx.getVariable(ContextVariable.CONTRACT_START, startDate, endDate);
+		Date contractStart = (Date) contractStartVar.getValue(contractStartVar.getPeriod());
 
 		final long parentDays = rs
 				.getLong(SQLContractSalaryCalculatorContext.CLEAVE_SQL_PARENT_DAYS)
 				+ (leaveStart.before(startDate) ? CommonUtil
-						.getDaysBetweenDates(leaveStart, startDate) : 0);
+						.getDaysBetweenDates(leaveStart, startDate) : 0)
+				+ (leaveStart.before(contractStart) ? CommonUtil
+						.getDaysBetweenDates(leaveStart, contractStart) : 0);
+		
 		LeaveType type = LeaveType.values()[rs
 				.getInt(ContractLeaveColumns.TYPE)];
 

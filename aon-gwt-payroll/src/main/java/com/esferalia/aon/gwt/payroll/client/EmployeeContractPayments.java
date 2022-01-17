@@ -3,14 +3,19 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptCalcType;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ActionCell;
@@ -18,7 +23,11 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -34,6 +43,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
@@ -81,7 +91,77 @@ public class EmployeeContractPayments extends Composite {
 		}
 	  }
 	
+	// ------------------------------------------------- ScheduledCommand (TGSS)
+	
+	class AddPaymentCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onPayment();
+		}
+	}
+	
+	class AddDeductionCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onDeduction();
+		}
+	}
+	
+	class AddCostCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onCost();
+		}
+	}
+	
+	class AddBonusCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onBonus();
+		}
+	}
+	
+	class AddContextMenu extends ContextMenu {
+		
+		private MenuItem payment;
+		private MenuItem dedcution;
+		private MenuItem cost;
+		private MenuItem bonus;
+		
+		public AddContextMenu() {
+			
+			payment = addItem("A\u00f1adir pago", new AddPaymentCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			payment.ensureDebugId("payment");
+			
+			dedcution = addItem("A\u00f1adir deduci\u00f3n", new AddDeductionCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			dedcution.ensureDebugId("dedcution");
+			
+			cost = addItem("A\u00f1adir coste", new AddCostCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			cost.ensureDebugId("cost");
+			
+			bonus = addItem("A\u00f1adir bonificaci\u00f3n", new AddBonusCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			bonus.ensureDebugId("bonus");
+			
+		}
+
+	}
+	
 	// ----------------------------------------------- UiField 
+	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String cmdBtn();
+	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -97,8 +177,9 @@ public class EmployeeContractPayments extends Composite {
 	private EmployeeContractPaymentsObject employeeContractPaymentsObject;
 	private List<ContractConceptCalc> contractConceptCalcList;
 	
-	private AonToolbarButton saveButton;
 	private ListBox yearLB;
+	
+	private AddContextMenu addContextMenu;
 	
 	// ----------------------------------------------- Constructor 
 	
@@ -107,9 +188,8 @@ public class EmployeeContractPayments extends Composite {
 		provideContractConceptCalcDG();
 		initWidget(uiBinder.createAndBindUi(this));
 		this.getElement().getStyle().setHeight(100, Unit.PCT);
-		//dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		setScrollPanelHeight();
-		//saveButton.setEnabled(false);
+		this.addContextMenu = new AddContextMenu();
 	}
 	
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
@@ -181,7 +261,7 @@ public class EmployeeContractPayments extends Composite {
 		Column<ContractConceptCalc, String> codeColumn = new Column<ContractConceptCalc, String>(new TextCell()) {
 			@Override
 	        public String getValue(ContractConceptCalc contractConceptCalc) {
-				return contractConceptCalc.getCode();
+				return contractConceptCalc.getType().ordinal()+"";
 	        }
 		};
 
@@ -356,7 +436,7 @@ public class EmployeeContractPayments extends Composite {
 			(o1, o2) -> compareString(o1, o2, getContractConceptCalcTypeShort(o1.getContractConceptCalcType()), getContractConceptCalcTypeShort(o2.getContractConceptCalcType())));
 			
 	    columnSortHandler.setComparator(contractConceptCalcDG.getColumn(1), 
-	    	(o1, o2) -> compareString(o1, o2, o1.getCode(), o2.getCode()));
+	    	(o1, o2) -> compareString(o1, o2, o1.getType().ordinal()+"", o2.getType().ordinal()+""));
 	    
 	    columnSortHandler.setComparator(contractConceptCalcDG.getColumn(2), 
 	    	(o1, o2) -> compareString(o1, o2, o1.getDescription(), o2.getDescription()));
@@ -440,13 +520,25 @@ public class EmployeeContractPayments extends Composite {
 		
 		this.toolbar = new AonToolbar("Conceptos Calculo");
 		
-		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
-		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		addButton.addClickHandler(e -> openEditor());
-		toolbar.add(addButton);
+		AonExpandButton addExpand = new AonExpandButton("A\u00f1adir pagos", AON.CSS.aonIconAddBlock()) {
+			
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				addContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				addContextMenu.show();
+			}
+			
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				onPayment();
+			}
+		};
+		toolbar.add(addExpand);
 		
 		this.yearLB = new ListBox();
 		initializeYearLB(this.yearLB);
@@ -461,8 +553,93 @@ public class EmployeeContractPayments extends Composite {
 				t -> {});
 	}
 	
-	public void openEditor() {
-		new EmployeeContractPaymentEditor() {
+	private void onPayment() {
+		employeeContractPaymentsObject.getAvailablePayments(s -> {
+			Set<Payment> availablePayments = filterPayments(s);
+			
+			new SalaryPaymentWizard(availablePayments, null) {
+				
+				@Override
+				protected void onGtzdoAccept(List<Payment> payments) {
+					List<ContractConceptCalc> contractConceptCalcListAux = Collections.emptyList();
+					for(Payment payment : payments) {
+						ContractConceptCalc contractConceptCalc = (ContractConceptCalc)payment;
+						contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
+						contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
+						contractConceptCalcListAux.add(contractConceptCalc);
+					}
+					employeeContractPaymentsObject.createContractPayment(
+							contractConceptCalcListAux, 
+							s ->
+								employeeContractPaymentsObject.getContractPayements(
+										r -> initContractConceptCalcsTable()
+										,t -> {})
+							, 
+							f -> {});
+				}
+				
+				@Override
+				protected void onExtraAccept(Payment payment, Extra extra) {
+					ContractConceptCalc contractConceptCalc = (ContractConceptCalc)payment;
+					contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
+					contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
+					employeeContractPaymentsObject.createContractPayment(
+							contractConceptCalc, 
+							s ->
+								employeeContractPaymentsObject.getContractPayements(
+										r -> initContractConceptCalcsTable()
+										,t -> {})
+							, 
+							f -> {});
+				}
+				
+				@Override
+				protected void onAccept(Payment payment) {
+					ContractConceptCalc contractConceptCalc = new ContractConceptCalc(payment);
+					contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
+					contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
+					employeeContractPaymentsObject.createContractPayment(
+							contractConceptCalc, 
+							s ->
+								employeeContractPaymentsObject.getContractPayements(
+										r -> initContractConceptCalcsTable()
+										,t -> {})
+							, 
+							f -> {});
+				}
+			};
+			
+		}, f -> {});
+	}
+	
+	private Set<Payment> filterPayments(List<Payment> payments) {
+		Set<String> names = 
+				payments.stream()
+				.map(p -> p.getName() )
+				.filter ( n -> n != null)
+				.collect(Collectors.toSet())
+				;
+		
+		return  
+		payments.stream()
+		.filter(p -> AonStringUtils.isNotBlank(p.getName()) && names.contains(p.getName()))
+		.collect(Collectors.toSet());
+	}
+
+	private void onDeduction() {
+		openEditor("DEDUCIONES");
+	}
+
+	private void onCost() {
+		openEditor("COSTES");
+	}
+
+	private void onBonus() {
+		openEditor("BONUS");
+	}
+	
+	public void openEditor(String paymentType) {
+		new EmployeeContractPaymentEditor(paymentType) {
 			@Override
 			protected void onAccept(ContractConceptCalc contractConceptCalc) {
 				employeeContractPaymentsObject.createContractPayment(

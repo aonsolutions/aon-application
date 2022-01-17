@@ -88,6 +88,9 @@ public enum TestTemplates {
 			@Override public int getTaxNumber() {return 2;}
 			@Override public Double getTaxBase21() {return 2050.0;}
 			@Override public Double getTaxQuota21() {return 430.50;}
+			@Override public Double getIRPFPercent() {return 19.0;}
+			@Override public Double getIRPFBase() {return 2050.0;}
+			@Override public Double getIRPFQuota() {return 389.5;}
 			@Override public Double getTotal() {return 2091.00;}
 			// -------------------
 			@Override public InvoiceType getInvoiceType() {return InvoiceType.EXPENSES;}
@@ -176,6 +179,24 @@ public enum TestTemplates {
 			// -------------------
 			@Override public InvoiceType getInvoiceType() {return InvoiceType.SALES;}
 		},
+		AON_2021_11_03_LEIRE ("/net/aonsolutions/aon/tedi/test/pdf/AON_2021_11_03_LEIRE.pdf") {
+			@Override public Date getDate() {return Date.from(LocalDateTime.of(2021, 11, 03, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+			@Override public String getReference(){ return null; }
+			@Override public String getSenderDocument() {return "78919924R";}
+			@Override public String getSenderName() {return "Leire Borrachero García";}
+			@Override public String getReceiverDocument() {return "47812786H";}
+			@Override public String getReceiverName() {return "Jessica Santiago Coto";}
+			@Override public int getTaxNumber() {return 2;}
+			@Override public Double getTaxBase21() {return 385.68;}
+			@Override public Double getTaxQuota21() {return 80.99;}
+			@Override public Double getIRPFBase() {return 385.68;}
+			@Override public Double getIRPFPercent() {return 15.0;}
+			@Override public Double getIRPFQuota() {return 57.85;}
+			@Override public Double getTotal(){ return 408.82; }
+			
+			// -------------------
+			@Override public InvoiceType getInvoiceType() {return null;}
+		},
 		;
 
 		private String file;
@@ -205,6 +226,10 @@ public enum TestTemplates {
 		public Double getTaxQuota4() {return null;}
 		public Double getTaxBase0() {return null;}
 		public Double getTaxQuota0() {return null;}
+
+		public Double getIRPFBase() {return null;}
+		public Double getIRPFPercent() {return null;}
+		public Double getIRPFQuota() {return null;}
 
 		public InvoiceType  getInvoiceType() {return null;}
 		public String getSeries() {return null;}

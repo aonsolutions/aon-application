@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -399,19 +398,7 @@ public class DomainEnterprisesServiceAsync {
 	public void getCNOs(AsyncCallback<Map<String, CNO>> asyncCallback) {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
-	
-	public void getDigitalCertificateTGSS(AsyncCallback<DigitalCertificate> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificateTGSS(getCurrentDomainName(), getCurrentUser(), asyncCallback);
-	}
-	
-	public void getDigitalCertificatesSEPE(AsyncCallback<List<DigitalCertificate>> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificatesSEPE(getCurrentDomainName(), asyncCallback);
-	}
-
-	public void deleteDigitalCertificate(DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), digitalCertificate, asyncCallback);
-	}
-	
+		
 	public void getMainCCCInfoDataBase(AsyncCallback<MainCCCInfo> asyncCallback) {
 		enterprisesServiceAsync.getMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}

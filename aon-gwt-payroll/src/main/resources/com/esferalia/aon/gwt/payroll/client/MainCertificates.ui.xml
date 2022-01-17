@@ -6,7 +6,7 @@
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainDigitalCertificatesNew.MyStyle">
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainCertificates.MyStyle">
 		
 		.warningColor{
 			font-weight: bold;
@@ -15,31 +15,31 @@
 		
 		.styleBorder{
 			border-style: solid; 
-			width: 825px; 
-			border-width: 1px; 
-			margin: 60px 10px 0 10px;
+			width: 82.5rem; 
+			border-width: .1rem; 
+			margin: 6rem 1rem 0 1rem;
 		}
 		
 		.tittle{
 			top: -1.2em;
-			font-size: 12px;
-			margin-left: 10px;
+			font-size: 1.2rem;
+			margin-left: 1rem;
 			position: relative;
-			width: 150px;
+			width: 15rem;
 			background-color: white;
-			padding: 5px;
+			padding: .5rem;
 			text-align: center;
 		}
 		
 		.scrollStyle {
-			max-height: 200px;
-			padding-left: 5px;
-			min-height: 120px;
+			max-height: 9rem;
+			padding-left: .5rem;
+			min-height: 7rem;
 		}
 		
 		.gridStyle{
-			margin-left: 10px;
-			width: 800px;
+			margin-left: .1rem;
+			width: 80rem;
 		}
 		
 		.center{
@@ -70,11 +70,11 @@
 			display: flex;
 			justify-content: center;
 			text-transform: uppercase;
-			margin-top: 10px;
+			margin-top: 1rem;
 		}
 		
 		.secondaryUserToolbar{
-			padding: 10px;
+			padding: 1rem;
 			display: flex;
 		    align-items: center;
 		    justify-content: space-between;
@@ -119,24 +119,24 @@
 		
 		.alignCenter{
 			align-items: center;
-			margin-top: 15px;
+			margin-top: 1.5rem;
 		}
 		
 		.header{
 			min-height: 2rem;
 			background-color: #eee;
-			padding-left: 5px;
+			padding-left: .5rem;
 		}
 		
 		.flex{
 			display: flex;
 			align-items: center;
-			gap: 5px;
+			gap: .5rem;
 		}
 		
 		.checkBox input{
-			width: 15px;
-			height: 15px;
+			width: 1rem;
+			height: 1rem;
 		}
 		
 		.flexColumn{
@@ -162,7 +162,7 @@
 				<g:TabLayoutPanel ui:field="tabLayoutPanel" barUnit='EM' barHeight='3'>
 				
 					<g:tab>
-				    	<g:header size='7'>Cert. Usuario</g:header>
+				    	<g:header size='7'>Personales</g:header>
 			    		<g:HTMLPanel styleName="{style.alignCenter} {style.centerColumn}">
 			    			<g:HTMLPanel styleName="{style.centerColumn}">
 				    			<g:Grid ui:field="userCertDataTableHeader" styleName="{style.header}" />
@@ -192,7 +192,7 @@
 				  	</g:tab>
 				  	
 				  	<g:tab>
-				  		<g:header size='7'>Cert. Empresa</g:header>
+				  		<g:header size='7'>Compartidos</g:header>
 			  			<g:HTMLPanel styleName="{style.alignCenter} {style.centerColumn}">
 				    		<g:HTMLPanel styleName="{style.centerColumn}">
 				    			<g:Grid ui:field="enterpriseCertDataTableHeader" styleName="{style.header}" />

@@ -206,7 +206,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C15, getInitialC15(ctx,mod))
 			,null
 			,"<li>Trimestres anteriores:<ul style=\"padding-left: 20px;\">" 
-			+"<li>cantidades negtivas [019] y deducidas [015]:<ul style=\"padding-left: 20px;\">"
+			+"<li>cantidades negativas [019] y deducidas [015]:<ul style=\"padding-left: 20px;\">"
 			+"@code{c19Sum = 0.0;c15Sum = 0.0;}"
 			+"@foreach{fm : previousModels}" 
 				+"@code{X19 =  fm.getAmount('"+Mod130Key.C19.getValue()+"');"
@@ -221,6 +221,13 @@ public class Mod130DAO extends FiscalModelDAO {
 			+"</ul></li>"
 			+"<li>Sumatorio de las casillas [019] --> @{c19Sum}</li>"
 			+"<li>Sumatorio de las casillas [015] --> @{c15Sum}</li>"
+			+"@code{c15Pre = com.esferalia.aon.watson.util.AonMathUtils.absRounded(c19Sum - c15Sum);}"
+			+"<li>Valor calcula de los modelos anteriores. Valor absoluto del sumatoria de las casillas [019] menos las casillas [015]: @{c15Pre}</li>"
+			+"@if{ c15Pre > C14}"
+				+"<li>Al ser el c\u00E1lculo mayor que [014] se asigna el valor de [014]</li>"
+			+"@else{}"
+				+"<li>Al no ser el c\u00E1lculo mayor que [014] se asigna el valor.</li>"
+		 	+"@end{}"
 			+"<li>Resultado: <b>@{C15}</b></li>")
 
 		,C16 (Mod130Key.C16 , (mod -> mod.isAEAT()),null

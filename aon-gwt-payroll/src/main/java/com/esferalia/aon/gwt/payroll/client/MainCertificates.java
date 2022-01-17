@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
@@ -39,17 +38,16 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MainDigitalCertificatesNew extends MainEntryPoint{
+public class MainCertificates extends MainEntryPoint{
 
 	// ------------------------------------------------------ UiBinder
 	
-	interface Binder extends UiBinder<Widget, MainDigitalCertificatesNew> {}
+	interface Binder extends UiBinder<Widget, MainCertificates> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
@@ -165,14 +163,14 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	// ------------------------------------------------------ Variables
 	
-	private MainDigitalCertificatesObjectNew mainDigitalCertificatesObject;
+	private MainCertificatesObject mainDigitalCertificatesObject;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private boolean showInactives = false;
 	
 	// ------------------------------------------------------ Constructor
 
-	public MainDigitalCertificatesNew() {	
+	public MainCertificates() {	
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
@@ -299,11 +297,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void paintHeader(Grid dataTableHeader) {
 		int row = dataTableHeader.insertRow(dataTableHeader.getRowCount());
 		
-		Label certificateFor = new Label("EMITIDO PARA");
-		Label representation = new Label("REPRESENTACION");
-		Label type = new Label("TIPO");
+		Label certificateFor = new Label("TITULAR");
+		Label representation = new Label("REPRESENTACI\u00d3N");
+		Label type = new Label("F. EXPIRACI\u00d3N");
 		Label alias = new Label("ALIAS");
-		AonToolbarSmallButton security = new AonToolbarSmallButton("", AON.CSS.aonIconLock());
+		Label security = new Label("");
 		Label tgss = new Label("TGSS");
 		Label sepe = new Label("SEPE");
 		Label aeat = new Label("AEAT");
@@ -388,10 +386,10 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	@Override
 	public void onModuleLoad() {
-		onModuleLoad(new MainDigitalCertificatesObjectNew());
+		onModuleLoad(new MainCertificatesObject());
 	}
 	
-	public void onModuleLoad(MainDigitalCertificatesObjectNew mainDigitalCertificatesObject) {
+	public void onModuleLoad(MainCertificatesObject mainDigitalCertificatesObject) {
 		this.mainDigitalCertificatesObject = mainDigitalCertificatesObject;
 		this.mainDigitalCertificatesObject.getEnterpriseId(
 				s -> {
@@ -505,7 +503,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		// Create Form Panel
 		FormPanel formPanel = new FormPanel();
-		formPanel.setAction(GWT.getModuleBaseURL() + "certificate_check/create/");
+		formPanel.setAction(GWT.getModuleBaseURL() + "certificate/create/");
 		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		formPanel.addSubmitCompleteHandler(e -> {
@@ -532,30 +530,28 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Label certificateForL = new Label(parseStringLenght(certificateFor));
 		certificateForL.setTitle(certificateFor);
 		
-		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "" : 
+		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
 			"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
 		Label representationL = new Label(parseStringLenght(representation));
 		representationL.setTitle(representation);
 		
-		String type = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONAL" : "EMPRESA";
-		Label typeL = new Label(type);
+		String expirationDate = null == certificate.getCertificateInfo().getToDate() ? "" : formatFullDate.format(certificate.getCertificateInfo().getToDate());
+		Label expirationDateL = new Label(expirationDate);
 		
 		TextBox alias = new TextBox();
 		alias.setStyleName("aon-inputText");
 		alias.setValue(certificate.getDescription());
 		alias.addValueChangeHandler(e -> fileNameHidden.setValue(e.getValue()));
 		
-		CheckBox securityCB = new CheckBox();
-		securityCB.addStyleName(style.checkBox());
-		securityCB.setValue(certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE));
-		securityCB.addValueChangeHandler(e -> {
-			if(Boolean.TRUE.equals(e.getValue())) {
-				certificate.setConfidential(CertificateSecurity.PRIVATE);
-				securityHidden.setValue("private");
-			} else {
-				certificate.setConfidential(CertificateSecurity.PUBLIC);
-				securityHidden.setValue("public");
-			}
+		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
+		String securityIcon = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
+		AonTableButton security = new AonTableButton(securityTitle, securityIcon);
+		security.addClickHandler(e -> {
+			Boolean oldValue = isActiveToggleButton(security);
+			Boolean value = !oldValue;
+			getEnableDisableButton(security, value);
+			certificate.setConfidential(Boolean.TRUE.equals(value) ? CertificateSecurity.PRIVATE : CertificateSecurity.PUBLIC);
+			securityHidden.setValue(Boolean.TRUE.equals(value) ? "private" : "public");
 		});
 		
 		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
@@ -695,7 +691,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		table.setWidget(row, 0, certificateForL);
 		table.setWidget(row, 1, representationL);
-		table.setWidget(row, 2, typeL);
+		table.setWidget(row, 2, expirationDateL);
 		table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
 		table.setWidget(row, 3, alias);
 		table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
@@ -709,7 +705,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 			table.setWidget(row, 7, buttonsPanel);
 			table.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.RIGHT);
 		} else {
-			table.setWidget(row, 4, securityCB);
+			table.setWidget(row, 4, security);
 			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 			table.setWidget(row, 5, tgssCB);
 			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
@@ -800,8 +796,14 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 						createUserCertDataTable();
 					else if(index == 1)
 						createEntepriseCertDataTable();
+					updateTabTitle();
 				}, 
 				f -> {});
+	}
+
+	private void updateTabTitle() {
+		tabLayoutPanel.setTabText(0, "Personales (" + this.mainDigitalCertificatesObject.getUserCertificateList().size() + ")");
+		tabLayoutPanel.setTabText(1, "Compartidos (" + this.mainDigitalCertificatesObject.getEnterpriseCertificateList().size() + ")");
 	}
 
 	private void updateLoadingPanelStatus() {
@@ -850,24 +852,6 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 				return true;
 		
 		return false;
-	}
-
-	// ------------------------------------------------------ Insert Rows.Auxiliar Methods
-	
-	private AonTableButton createShowPassButton(PasswordTextBox passwordTB) {
-		AonTableButton showPassBtn = new AonTableButton("Mostrar", AON.CSS.aonIconShowPass());
-		showPassBtn.addClickHandler(e -> {
-			String type = passwordTB.getElement().getAttribute("type");
-			if(AonStringUtils.isBlank(type) || !type.equals("text"))
-				passwordTB.getElement().setAttribute("type", "text");
-			else
-				passwordTB.getElement().setAttribute("type", "password");
-		});
-		
-		showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
-		
-		return showPassBtn;
 	}
 
 	// ------------------------------------------------------ Delete Certificate Methods
@@ -1088,16 +1072,6 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		return showInactiveUserBtn;
 	}
 
-	private String getFileName(String filename) {
-		String[] splits = filename.split("\\\\");
-		return splits[splits.length-1].contains("\\.") ? splits[splits.length-1].split("\\.")[0] : splits[splits.length-1];
-	}
-	
-	private String getFileExtension(String filename) {
-		String[] splits = filename.split("\\.");
-		return splits[splits.length-1];
-	}
-	
 	// ------------------------------------------------------ Toolbar
 	
 	private void initToolbar() {
@@ -1118,27 +1092,6 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		};
 	}
 
-	// ------------------------------------------------------ Toolbar.Methods
-	
-	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
-		message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
-		panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
-		widget.addStyleName(style.warningTB());
-		widget.addStyleName(style.flexGrow());
-	}
-	
-	private boolean hasWarningIcon(HTMLPanel panel) {
-		Widget widget = panel.getWidget(panel.getWidgetCount()-1);
-		return widget instanceof AonToolbarSmallButton;
-	}
-	
-	private void removeWarningIcon(HTMLPanel panel, Widget widget) {
-		if(panel.getWidgetCount() > 2)
-			panel.remove(panel.getWidgetCount() - 1);
-		
-		widget.removeStyleName(style.warningTB());
-	}
-	
 	// ------------------------------------------------- Aon Messages panel
 
 	private void showSuccess(String title, String message) {
@@ -1161,6 +1114,18 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	private void showLoading(String message) {
 		AonMessagePanel.showLoading(messagePanel, message);
+	}
+	
+	// ------------------------------------------------- SecurityButton
+	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock());
+		button.addStyleName(!disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock() );
+		button.setTitle(!disabled ? "P\u00fablico: Visible para todos los usuarios" : "Privado: S\u00f3lo visible para usuarios de la empresa");
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.CSS.aonIconLock());
 	}
 	
 }

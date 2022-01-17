@@ -445,7 +445,11 @@ public class CertificateDAO {
 	}
 	
 	private static void getCertificateInfo(AONContext ctx, Certificate certificate) {
-		certificate.setCertificateInfo(getInfo(ctx, f -> f.getIdProperty().eq(certificate.getId())));
+		try {
+			certificate.setCertificateInfo(getInfo(ctx, f -> f.getIdProperty().eq(certificate.getId())));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static Integer createRegistryForUser(AONContext ctx, Record userRecord, Integer domainId) {

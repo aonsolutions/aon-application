@@ -23,6 +23,8 @@ import net.aonsolutions.db.up2date.payroll.ContractCleanUpdate;
 import net.aonsolutions.db.up2date.data.DataRequestUpdate;
 import net.aonsolutions.db.up2date.data.DataResponseTBAI;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2022Insert;
+import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
+import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;
 import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
 import net.aonsolutions.db.up2date.payroll.IrpfM190Update;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
@@ -221,10 +223,10 @@ public class Up2Date {
     		//Bases2022Update.BASES2022UPDATE,
     		//AgriculturalBases2022Update.AGRICULTURALBASES2022UPDATE,
     		//AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
-    		//IPREM2022Update.IPREM2022UPDATE,
-    		IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT,
-    		DataResponseTBAI.DATA_RESPONSE_TBAI
-    		
+    		//IPREM2022Update.IPREM2022UPDATE
+    		//IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT
+    		IrpfQuotasInsert.IRPFQUOTASINSERT,
+    		IrpfQuotasCheck.IRPFQUOTASCHECK
     };
     
 

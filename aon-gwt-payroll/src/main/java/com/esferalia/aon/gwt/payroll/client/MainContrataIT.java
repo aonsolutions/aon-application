@@ -133,7 +133,7 @@ public class MainContrataIT extends MainEntryPoint {
 		protected void syncITs(Consumer<Void> success, Consumer<Throwable> failure) {
 			mainContrataITObject.syncITs( 
 					success::accept, 
-					f -> {});
+					failure::accept);
 		}
 
 	}

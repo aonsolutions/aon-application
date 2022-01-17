@@ -56,6 +56,10 @@ public class Attachment extends Methods{
 		get(url + "ms/attachment/" + getDomainName() + "/" + getUserName() + "/certificates", callback);
 	}
 	
+	public void getAeatCertificates( AsyncCallback<JSON<JsCertificate>> callback){
+		get(url + "ms/api/cert?type=AEAT", callback);
+	}
+	
 	public void getCategories(AsyncCallback<JSON<JsLabel>> callback){
 		get(url + "ms/attachment/" + getDomainName() + "/" + getUserName() + "/category", callback);
 	}	

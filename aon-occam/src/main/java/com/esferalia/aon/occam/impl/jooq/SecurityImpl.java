@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
+import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -335,6 +336,11 @@ public class SecurityImpl implements ISecurity {
 	public Stream<Module> getDomainModules(AONContext ctx) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getDomainModules(ctx));
+	}
+	
+	@Override
+	public Stream<Certificate> getCertificates(AONContext ctx, CertificateFilter filter) {
+		return SecurityDAO.getCertificates(ctx, filter);
 	}
 	
 	@Override

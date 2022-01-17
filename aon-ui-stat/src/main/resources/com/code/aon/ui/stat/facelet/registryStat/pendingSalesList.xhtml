@@ -56,8 +56,14 @@
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
+				<aon:outputLink id="saleInvoice-downloadPdf"
+					target="_blank" value="#{registryStat.getDownloadURL(to.id)}" 
+					rendered="#{saleInvoice.tbai or printParams.saleInvoiceDefault}"
+					styleClass="aon-finding-toolbar-item aon-icon-pdf">
+			    </aon:outputLink>
 				<aon:htmlCommandLink id="invoicePrint-report" title="Ver Factura"
 					value="&#160;&#160;&#160;&#160;&#160;&#160;" target="_blank"
+					rendered="#{!saleInvoice.tbai and !printParams.saleInvoiceDefault }"	
 					action="#{report.onExecute}"
 					actionListener="#{registryStat.onSalesPdf}"
 					styleClass="aon-icon-pdf">

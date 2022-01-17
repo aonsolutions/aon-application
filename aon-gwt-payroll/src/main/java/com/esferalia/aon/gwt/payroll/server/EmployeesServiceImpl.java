@@ -1875,7 +1875,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			payments.addAll(paymentConcepts);
 			payments.addAll(employeePayments);
 			payments.addAll(enterprisePayments);
-
+			
 			return payments;
 
 		} catch (SQLException e) {
@@ -6660,6 +6660,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get domain id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqEmployeeContractPayments.createContractPayment(connection, domainId, contractId, contractConceptCalc);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void createContractPayment(String domainName, Integer contractId, List<ContractConceptCalc> contractConceptCalcList) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqEmployeeContractPayments.createContractPayment(connection, domainId, contractId, contractConceptCalcList);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

@@ -2328,6 +2328,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		redoButton.setEnabled(!readOnly);
 		undoAllButton.setEnabled(!readOnly);
 		acceptButton.setEnabled(!readOnly);
+		addPaymentButton.setVisible(!readOnly);
+		serviAgreementUpdateButton.setEnabled(!readOnly);
 //		deleteButton.setEnabled(!readOnly);
 		
 		if(readOnly)

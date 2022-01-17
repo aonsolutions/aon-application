@@ -27,21 +27,22 @@ public static final DataResponseTBAI DATA_RESPONSE_TBAI = new DataResponseTBAI()
 	
 	@Override
 	public void upgrade(Connection connection) {
-		Settings settings = new Settings();
-		settings.setRenderSchema(false);
-		settings.setParamType(ParamType.INLINED);
-		
-		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
-		
-		LOGGER.info("[START]");
-		LOGGER.info("Update `data_response` source TBAI(6) TO TBAI_TEST(22)");
-
-		dslContext.update(DataResponse.DATA_RESPONSE)
-		.set(DataResponse.DATA_RESPONSE.SOURCE, (byte) 22)
-		.where(DataResponse.DATA_RESPONSE.SOURCE.eq((byte) 6))
-		.execute();
-		
-		LOGGER.info("[END]");
+		LOGGER.info("Nothing to do.");
+//		Settings settings = new Settings();
+//		settings.setRenderSchema(false);
+//		settings.setParamType(ParamType.INLINED);
+//		
+//		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
+//		
+//		LOGGER.info("[START]");
+//		LOGGER.info("Update `data_response` source TBAI(6) TO TBAI_TEST(22)");
+//
+//		dslContext.update(DataResponse.DATA_RESPONSE)
+//		.set(DataResponse.DATA_RESPONSE.SOURCE, (byte) 22)
+//		.where(DataResponse.DATA_RESPONSE.SOURCE.eq((byte) 6))
+//		.execute();
+//		
+//		LOGGER.info("[END]");
 	}
 
 }

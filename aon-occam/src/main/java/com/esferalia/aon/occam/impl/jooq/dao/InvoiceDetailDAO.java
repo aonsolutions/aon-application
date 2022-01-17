@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
@@ -201,12 +202,12 @@ public class InvoiceDetailDAO {
 			return new InvoiceDetail()
 					.setId(r.getValue(INVOICE_DETAIL.ID))
 					.setInvoice(checkField(r, INVOICE.ID)
-							? InvoiceFiller.buildInvoice(r)
-							: new Invoice().setId(r.getValue(INVOICE_DETAIL.ID)))
-					.setProject(r.getValue( INVOICE_DETAIL.PROJECT ))
-					.setProjectName( r.getValue( PROJECT.NAME ))
-					.setLine(r.getValue( INVOICE_DETAIL.LINE ))
-					.setDescription(r.getValue( INVOICE_DETAIL.DESCRIPTION ))
+						? InvoiceFiller.buildInvoice(r)
+						: new Invoice().setId(r.getValue(INVOICE_DETAIL.ID)))
+					.setProject(r.getValue(INVOICE_DETAIL.PROJECT))
+					.setProjectName(getValue(r, PROJECT.NAME))
+					.setLine(r.getValue(INVOICE_DETAIL.LINE))
+					.setDescription(r.getValue(INVOICE_DETAIL.DESCRIPTION ))
 					.setQuantity(r.getValue(INVOICE_DETAIL.QUANTITY))
 					.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
 					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
@@ -221,10 +222,12 @@ public class InvoiceDetailDAO {
 							? WorkplaceFiller.buildWorkplace(r)
 							: new Workplace().setId(r.getValue(INVOICE_DETAIL.WORKPLACE)))
 					.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
-					.setWarehouseName(r.get(WAREHOUSE.NAME) != null ? r.getValue(WAREHOUSE.NAME) : "")
-					.setAccount(r.get(ACCOUNT.ID) != null ? r.getValue(ACCOUNT.ID) : null)
-					.setAccountCode(r.get(ACCOUNT.CODE) != null ? r.getValue(ACCOUNT.CODE) : null)
-					.setAccountDescription(r.get(ACCOUNT.DESCRIPTION) != null ? r.getValue(ACCOUNT.DESCRIPTION) : null);
+					.setWarehouseName(getString(r, WAREHOUSE.NAME))
+					.setAccount(getValue(r,ACCOUNT.ID))
+					.setAccountCode(getValue(r, ACCOUNT.CODE))
+					.setAccountDescription(getValue(r, ACCOUNT.DESCRIPTION))
+					.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
+					.setSourceId(r.getValue(INVOICE_DETAIL.SOURCE_ID));
 		}
 	}
 }
