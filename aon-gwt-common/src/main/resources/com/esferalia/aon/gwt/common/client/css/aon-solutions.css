@@ -1791,3 +1791,18 @@
 .aon_floating_message_content {
 	padding: 3px 20px;
 }
+
+.aon_custom_scroll::-webkit-scrollbar {
+ 	width: 7.5px;
+}
+.aon_custom_scroll::-webkit-scrollbar-track {
+ 	background: transparent; 
+}
+.aon_custom_scroll::-webkit-scrollbar-thumb {
+ 	border-radius: 5px;
+ 	background: #002469; 
+}
+.aon_custom_scroll::-webkit-scrollbar-thumb:hover {
+	border-radius: 5px;
+ 	background: #7A9AD7; 
+}

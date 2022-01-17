@@ -78,6 +78,7 @@ public class CheckItModule extends MainEntryPoint {
 	private static final String EURO = "\u20AC";
 	private static final DateTimeFormat DATE_HOURS = DateTimeFormat.getFormat("hh:mm");
 	private static final String AON_BLUE = "#002469";
+	private static final String HOVER_COLOR = "#7A9AD7";
 	
 	
 	private static CheckItServiceAsync CHECKIT_SERVICE;
@@ -553,8 +554,8 @@ public class CheckItModule extends MainEntryPoint {
 //				Button close = new Button(AON.MSG.close());
 //				close.setStyleName(AON.CSS.aonMarginRight());
 //				close.addClickHandler(e -> dialog.hide());
-				Button importBtn = new Button("Importar");
-				importBtn.setStyleName(AON.CSS.aonMarginLeft());
+				Button importBtn = aonImportButton();
+				
 				
 				CustomDialog dial = dialog;
 				importBtn.addClickHandler(e ->
@@ -636,6 +637,7 @@ public class CheckItModule extends MainEntryPoint {
 						
 				}
 				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
+				movementsPanel.addStyleName(AON.CSS.aonCustomScroll());
 				if (isMobile()) {
 					movementsPanel.setWidth("100%");
 				} else {
@@ -1098,6 +1100,8 @@ public class CheckItModule extends MainEntryPoint {
 						Button hai = new Button(AON.MSG.accept());
 						if (isMobile()) {
 							mobileAcceptButton(hai);
+						} else {
+							desktopAcceptButton(hai);
 						}
 						
 						Button iie = new Button(AON.MSG.cancelAction());
@@ -1105,8 +1109,11 @@ public class CheckItModule extends MainEntryPoint {
 						hp.addStyleName(AON.CSS.aonBlockCenter());
 						hp.addStyleName(AON.CSS.aonMarginTop());
 						hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-						if (!isMobile())
+						if (!isMobile()) {
+							desktopCancelButton(iie);	
 							hp.add(iie);
+						}
+						
 						hp.add(hai);
 						flow.add(hp);
 						if (dialog != null)
@@ -1191,8 +1198,7 @@ public class CheckItModule extends MainEntryPoint {
 				closeImport.addStyleName(AON.CSS.aonPaddingBottom());
 				
 				
-				Button importBtn = new Button("Importar");
-				importBtn.setStyleName(AON.CSS.aonMarginLeft());
+				Button importBtn = aonImportButton();
 				
 				CustomDialog dial = dialog;
 				importBtn.addClickHandler(e ->
@@ -1266,6 +1272,7 @@ public class CheckItModule extends MainEntryPoint {
 				movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
 				movementsPanel.addStyleName(AON.CSS.aonMarginTop());
 				movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
+				movementsPanel.addStyleName(AON.CSS.aonCustomScroll());
 				
 				panel.add(movementsPanel);
 				dialog.add(panel);
@@ -1283,6 +1290,35 @@ public class CheckItModule extends MainEntryPoint {
 			if (!isMobile())
 				getMenuPanel().add(allMovementsButton);
 			
+		}
+
+		private Button aonImportButton() {
+			Button importBtn = new Button("Importar");
+//			importBtn.setStyleName(AON.CSS.aonMarginLeft());
+			
+			importBtn.setWidth("100px");
+			importBtn.setHeight("30px");
+			
+			Style style = importBtn.getElement().getStyle();
+			style.setProperty("padding", "2px");
+			style.setProperty("text-transform", "none");
+			style.setProperty("background", AON_BLUE);
+			style.setProperty("color", "white");
+			style.setProperty("fontSize", "1rem");
+			style.setProperty("fontWeight", "700");
+			style.setProperty("border", "none");
+			style.setProperty("borderRadius", "6px");
+			style.setProperty("transition", "background .25s ease-in-out,transform .15s ease");
+			
+			importBtn.addMouseOverHandler(ev -> {
+				style.setProperty("background", HOVER_COLOR);				
+			});
+			
+			importBtn.addMouseOutHandler(ev -> {
+				style.setProperty("background", AON_BLUE);								
+			});
+			
+			return importBtn;
 		}
 		
 	}
@@ -1843,13 +1879,17 @@ public class CheckItModule extends MainEntryPoint {
 			
 			if (isMobile()) {
 				mobileAcceptButton(hai);
+			} else {
+				desktopAcceptButton(hai);
 			}
 			
 			Button iie = new Button(AON.MSG.cancelAction());
 			hp.setWidth("50%");
 			hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			if (!isMobile())
+			if (!isMobile()) {
+				desktopCancelButton(iie);
 				hp.add(iie);
+			}
 			hp.add(hai);
 			registrationTable.setWidget(3, 0, hp);
 			errLabel.setStyleName(AON.CSS.aonColorRed());
@@ -2226,6 +2266,60 @@ public class CheckItModule extends MainEntryPoint {
 		table.setWidget(nextRow + 1, 0, euskoLabel);
 		table.getFlexCellFormatter().setColSpan(nextRow + 1, 0, 2);
 		
+	}
+	
+	private void desktopCancelButton(Button iie) {
+		iie.setWidth("100px");
+		iie.setHeight("30px");
+		
+		Style style = iie.getElement().getStyle();
+		style.setProperty("padding", "2px");
+		style.setProperty("text-transform", "none");
+		style.setProperty("background", "white");
+		style.setProperty("color", AON_BLUE);
+		style.setProperty("fontSize", "1rem");
+		style.setProperty("fontWeight", "700");
+		style.setProperty("border", "2px solid " + AON_BLUE);
+		style.setProperty("borderRadius", "6px");
+		style.setProperty("transition", "background .25s ease-in-out,transform .15s ease");
+		style.setProperty("margin-right", "2.5px");
+		
+		iie.addMouseOverHandler(ev -> {
+			style.setProperty("background", HOVER_COLOR);
+			style.setProperty("color", "white");
+			style.setProperty("border", "none");
+		});
+		
+		iie.addMouseOutHandler(ev -> {
+			style.setProperty("background", "white");
+			style.setProperty("color", AON_BLUE);
+			style.setProperty("border", "2px solid " + AON_BLUE);
+		});
+	}
+
+	private void desktopAcceptButton(Button hai) {
+		hai.setWidth("100px");
+		hai.setHeight("30px");
+		
+		Style style = hai.getElement().getStyle();
+		style.setProperty("padding", "2px");
+		style.setProperty("text-transform", "none");
+		style.setProperty("background", AON_BLUE);
+		style.setProperty("color", "white");
+		style.setProperty("fontSize", "1rem");
+		style.setProperty("fontWeight", "700");
+		style.setProperty("border", "none");
+		style.setProperty("borderRadius", "6px");
+		style.setProperty("transition", "background .25s ease-in-out,transform .15s ease");
+		style.setProperty("margin-left", "2.5px");
+		
+		hai.addMouseOverHandler(ev -> {
+			style.setProperty("background", HOVER_COLOR);
+		});
+		
+		hai.addMouseOutHandler(ev -> {
+			style.setProperty("background", AON_BLUE);
+		});
 	}
 	
 	private String formatIban(String iban) {
