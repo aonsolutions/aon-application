@@ -241,6 +241,9 @@ public class ModelAdmonUtils {
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
+		if(AonStringUtils.isBlank(params.getPass())) {
+			params.setPass(attach.getDescription().split("HIDE\\(")[1].split("\\)")[0]);
+		}
 		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 	    keyStore.load(key, params.getPass().toCharArray());
