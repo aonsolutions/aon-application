@@ -569,6 +569,10 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 				UIObject.setVisible(taxedPanel.getElement(), true);
 				UIObject.setVisible(quotePanel.getElement(), false);
 				showCRA0013();
+			} else if (quoteEditable()) {
+				UIObject.setVisible(taxedPanel.getElement(), false);
+				UIObject.setVisible(quotePanel.getElement(), true);
+				showCRADefault();
 			} else if (taxAndQuoteFull() || taxAndQuoteNone()) {
 				UIObject.setVisible(taxedPanel.getElement(), false);
 				UIObject.setVisible(quotePanel.getElement(), false);
@@ -621,6 +625,11 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 	private boolean taxEditableAndQuoteNone() {
 		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
 		return (type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0000);
+	}
+	
+	private boolean quoteEditable() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return (type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0005);
 	}
 
 	private boolean taxAndQuoteFull() {

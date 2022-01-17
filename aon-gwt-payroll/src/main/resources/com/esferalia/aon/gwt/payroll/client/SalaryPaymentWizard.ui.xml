@@ -63,7 +63,7 @@
 		}
 		
 		.tbHeight{
-			height: 1.2rem;
+			height: 1.2rem !important;
 		}
 		
 		.paymentPos{
@@ -193,13 +193,17 @@
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel styleName="{style.between}">
-					<g:HTMLPanel styleName="{style.element} {style.maxWidth}">
-						<g:Label styleName="{style.title}">Fecha inicio</g:Label>
-						<a:DateBoxEx ui:field="startDateBx" styleName="{style.widthAuto}" />
+					<g:HTMLPanel ui:field="monthPanel" styleName="{style.element} {style.maxWidth}">
+						<g:Label ui:field="monthTitle" styleName="{style.title}">Mes</g:Label>
+						<g:ListBox ui:field="monthLB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element} {style.maxWidth}">
 						<g:Label styleName="{style.title}">Fecha inicio</g:Label>
-						<a:DateBoxEx ui:field="endDateBx" styleName="{style.widthAuto}" />
+						<a:DateBoxEx ui:field="startDateBx" styleName="{style.widthAuto} {style.tbHeight}" />
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element} {style.maxWidth}">
+						<g:Label styleName="{style.title}">Fecha fin</g:Label>
+						<a:DateBoxEx ui:field="endDateBx" styleName="{style.widthAuto} {style.tbHeight}" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				
@@ -218,10 +222,6 @@
 						<g:TextBox ui:field="quoteExpression" styleName="{style.maxWidth}"/>
 						<g:Button styleName="{style.aon-toolbar-button} aon_icon_fx" ui:field="quoteFxButton"/>
 					</g:HTMLPanel>
-				</g:HTMLPanel>
-				<g:HTMLPanel ui:field="monthPanel" styleName="{style.element}">
-					<g:Label ui:field="monthTitle" styleName="{style.title}">Mes</g:Label>
-					<g:ListBox ui:field="monthLB"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
