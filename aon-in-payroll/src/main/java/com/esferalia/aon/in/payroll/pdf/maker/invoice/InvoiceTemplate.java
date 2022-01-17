@@ -32,6 +32,7 @@ import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.TAX_QUOTE;
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.TAX_TYPE;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -123,11 +124,8 @@ public class InvoiceTemplate {
 	List<String> legalLines;
 	
 	// THE PDF DOCUMENT
-	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo) throws IOException, CanNotCreatePdfException {
-		try (PDDocument doc = new PDDocument())
-		{
-			
-
+	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws IOException, CanNotCreatePdfException {
+		try (PDDocument doc = new PDDocument()) {
 			InvoiceTemplate template = new InvoiceTemplate();
 			
 //			template.regularFont = PDType0Font.load(doc, InvoiceTemplate.class.getResourceAsStream("fonts/OpenSans-Regular.ttf"));
@@ -172,7 +170,7 @@ public class InvoiceTemplate {
 			else
 				template.drawSimplifiedEntries(doc, company, invoice, config);
 
-			template.drawBottomInfo(doc, invoice, qrUrl, config.getTheme());
+			template.drawBottomInfo(doc, invoice, qrUrl, config.getTheme(), tbaiId);
 			template.drawJail(template.limit);
 			
 			template.contents.close();
@@ -898,13 +896,14 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW BOTTOM INFO
-	private void drawBottomInfo(PDDocument doc, Invoice invoice, String qrUrl, PrintInvoiceThemeConfiguration theme) throws IOException, WriterException {
+	private void drawBottomInfo(PDDocument doc, Invoice invoice, String qrUrl, PrintInvoiceThemeConfiguration theme, String tbaiId) throws IOException, WriterException {
 		x = 50;
 		float legalSize = legalLines.size() * LEGAL_TEXT_SIZE;
 		y = bottom + 10 + bottomExtra + legalSize;
 		if(qrUrl != null && !invoice.isProforma()) {
 			byte[] qrCode = createQR(qrUrl, 300, 300);
 			drawImage(doc, contents, qrCode, x, y, 120, 120);
+			drawText(contents, tbaiId, x + 5f, y + 2f, Color.BLACK, regularFont, 5);
 		}
 		drawTaxes(invoice, theme);
 		drawFinances(invoice, theme);

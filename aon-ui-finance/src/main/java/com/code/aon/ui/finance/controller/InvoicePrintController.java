@@ -253,11 +253,14 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 					
 					String qrUrl = domain.getName() + "/dip?source=invoice&id=" + id;  
 					TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), login);
-					if(tbai.isActive()) {	
-						String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
+					String tbaiId = "";
+					if(tbai.isActive()) {
+						TbaiData tbaiData = TbaiData.getInstance(tbai);
+						String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), login, invoice.getId());
 						qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+						tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), login, invoice.getId());
 					}
-					PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData());
+					PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
 					list.add(file);	
 				}
 			} catch (IOException e) {
