@@ -243,7 +243,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		tabLayoutPanel.add(modulesPanel, AON.MSG.modules());
 
 		ScrollPanel resultPanel = new ScrollPanel();
-		resultPanel.setWidget(getResultPanel());
+		resultPanel.setWidget(getResultPanel(callback));
 		tabLayoutPanel.add(resultPanel, AON.MSG.irpfActivityRpf());
 
 		add(tabLayoutPanel);
@@ -441,7 +441,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		return table;
 	}
 	
-	private Widget getResultPanel() {
+	private Widget getResultPanel(IMod131ActivityCallback callback) {
 		AonDisplayTable table = new AonDisplayTable();
 		table.addStyleName(AON.CSS.aonWidthAlmostAll());
 		table.addStyleName(AON.CSS.aonBlockCenter());
@@ -461,6 +461,9 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		net.setEnabled(false);
 		por.setEnabled(false);
 		res.setEnabled(false);
+		
+		iin.addValueChangeHandler(event -> onFieldChange(callback));
+		dia.addValueChangeHandler(event -> onFieldChange(callback));
 		
 		table
 			.addLabelWidgetRow(AON.MSG.irpfActivityRnp(), rnp)
