@@ -802,7 +802,7 @@ public class MainCertificates extends MainEntryPoint{
 	}
 
 	private void updateTabTitle() {
-		tabLayoutPanel.setTabText(0, "Parsonales (" + this.mainDigitalCertificatesObject.getUserCertificateList().size() + ")");
+		tabLayoutPanel.setTabText(0, "Personales (" + this.mainDigitalCertificatesObject.getUserCertificateList().size() + ")");
 		tabLayoutPanel.setTabText(1, "Compartidos (" + this.mainDigitalCertificatesObject.getEnterpriseCertificateList().size() + ")");
 	}
 
