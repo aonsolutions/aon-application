@@ -237,7 +237,6 @@ public class CretaServlet extends HttpServlet
 								// Try with IDC first
 								trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req, part));
 							} catch ( Throwable t ) {
-								t.printStackTrace();
 								trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
 							}
 						}
@@ -252,7 +251,6 @@ public class CretaServlet extends HttpServlet
 					// Try with IDC first
 					trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
 				} catch ( Throwable t ) {
-					t.printStackTrace();
 					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 				}
 				
@@ -706,6 +704,10 @@ public class CretaServlet extends HttpServlet
 			Certificate certificate = getCertificate(ctx);
 			
 			String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
+			if ( !AonStringUtils.contains("L00", tipo)) {
+				throw new IOException("Unsupported type '" + tipo + "' from IDC. Comming soon :-(");
+			}
+			
 			String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
 			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS .name());
 			String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());

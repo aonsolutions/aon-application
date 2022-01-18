@@ -451,12 +451,33 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return Collections.emptyList();
 			}
 
-			if (payment.getMonth() != null 
-				&&( type == PaymentType.CRA_0004 
-				|| type == PaymentType.CRA_0005)) {
-				return delegate.quote(new PRORATIONContractPayment(payment), start, end, amount);
+			if (amount > 0.0 
+				&& payment.getMonth() != null 
+				&& type == PaymentType.CRA_0005) {
+				
+				List<ITimedResult<Double>> delegated = quote(payment, start, end);
+				
+				try {
+					if ( delegated.stream().anyMatch(r -> r.getContext().containsKey(ContextFunctions._PRORATION)))
+						return delegate.quote(payment, start, end, amount);
+				} catch ( Exception e) {
+					
+				}
+				
+				double summ = delegated.stream().collect(Collectors.summingDouble(ITimedResult::getValue));
+				for (int months : new int [] {3,6,12} ) {
+					if ( amount / months == summ ) { 
+						return delegate.quote(payment, start, end, amount);
+					}
+				}
 			}
 			
+			if (payment.getMonth() != null 
+					&&( type == PaymentType.CRA_0004 
+					||  type == PaymentType.CRA_0005)) {
+					return delegate.quote(new PRORATIONContractPayment(payment), start, end, amount);
+			}
+
 			if ( type == PaymentType.CRA_0057 
 				|| type == PaymentType.CRA_0058 ) {				
 				payment = new AdditionalHoursContractPayment(payment);
@@ -476,6 +497,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public Double qu0te(IContractPayment payment, Date start, Date end, double amount) throws AonException {
 			return delegate.qu0te(payment, start, end, amount);
 		}
+		
+		protected List<ITimedResult<Double>> quote(IContractPayment payment,
+				Date start, Date end) throws UndefinedVariablesException,
+						ExpressionException {
+			String quoteExpr = payment.getQuoteExpression();
+			if (quoteExpr == null) {
+				return Collections.emptyList();
+			}
+			return expressionContext.eval(quoteExpr, start, end, Double.class);
+		}
+		
 
 	}
 	

@@ -1242,6 +1242,35 @@ public abstract class AbstractSQLTestCase {
 			String expression,
 			String irpfExpression,
 			String quoteExpression,
+			PaymentType type,
+			Month month ) {
+		return 
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+				.set(CONTRACT_PAYMENT.START_DATE, startDate)
+				.set(CONTRACT_PAYMENT.END_DATE, endDate)
+				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(CONTRACT_PAYMENT.TYPE, type != null ? (byte) type.ordinal(): null)
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
+				.set(CONTRACT_PAYMENT.MONTH, (byte)month.ordinal() )
+				.returning()
+				.fetchOne()
+				;
+
+	}
+
+	public static final ContractPaymentRecord addPayment(AONContext aonContext,
+			ContractRecord contract,
+			Date startDate,
+			Date endDate,
+			String description,
+			String expression,
+			String irpfExpression,
+			String quoteExpression,
 			PaymentType type
 			) {
 		return 
