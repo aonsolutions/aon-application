@@ -3,6 +3,10 @@ package com.esferalia.aon.gwt.payroll.util;
 import static com.esferalia.aon.gwt.payroll.util.Utilities.separateString;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
@@ -17,7 +21,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,16 +29,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -44,13 +46,9 @@ import com.esferalia.aon.occam.api.model.Salary.Cost;
 import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
-import com.esferalia.aon.occam.api.model.type.SalaryType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
@@ -149,47 +147,54 @@ public class JooqPayrollBuilder {
 				payrollBuilder.setEnterprise(salary.getEnterpriseName());
 				
 				// ADDRESS FITTING
-				Registry registry = AON.getRegistry(
-						aonContext.getDomainName(), 
-						aonContext.getDomainId(), 
-						"",
-						p -> p.getDocumentProperty().eq(salary.getEnterpriseDocument()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
-				);
+				
+				
+				RaddressRecord registryAddress = aonContext.getDslContext().select(RADDRESS.asterisk()).from(SALARY)
+					.innerJoin(CONTRACT).on(SALARY.CONTRACT.eq(CONTRACT.ID))
+					.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+					.innerJoin(RADDRESS).on(WORKPLACE.ADDRESS.eq(RADDRESS.ID))
+					.where(SALARY.ID.eq(salary.getId())).fetchOneInto(RADDRESS);
+				
+//				Registry registry = AON.getRegistry(
+//						aonContext.getDomainName(), 
+//						aonContext.getDomainId(), 
+//						"",
+//						p -> p.getDocumentProperty().eq(salary.getEnterpriseDocument()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
+//				);
 
 				RAddress raddress = AON.getRAddress(
 							aonContext.getDomainName(), 
 							aonContext.getDomainId(),
 							aonContext.getUser(), 
-							p -> p.getRegistryProperty().eq(registry.getId()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
+							p -> p.getRegistryProperty().eq(registryAddress.getRegistry()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
 						);
 				
-				String add = raddress.getFullAddress() != null ? raddress.getFullAddress() : salary.getEnterpriseAddress();
+				String add = !isEmpty(raddress.getFullAddress()) ? raddress.getFullAddress() : salary.getEnterpriseAddress();
 
 				String streetType = safeValue(raddress.getStreet_type());
 				String number = safeValue(raddress.getNumber());
 				
 				String address1 = safeValue(raddress.getAddress());
-				String address2 = isEmpty(raddress.getAddress2()) ? ", " + raddress.getAddress2(): "";
+				String address2 = !isEmpty(raddress.getAddress2()) ? ", " + raddress.getAddress2(): "";
 				String address3 = safeValue(raddress.getAddress3());
 
 				String zip = safeValue(raddress.getZip());
 				String city = safeValue(raddress.getCity());
 				
-				String firstLine = "";
+				String firstLine = streetType + " " + address1 + " " + number + " " + address3;
 				
-				if (firstLine.length() > 45) {
-					firstLine = streetType + " " + address1 + " " + number + " " + address3;
-				}
-				else {
+				if (firstLine.length() <= 45) {
 					firstLine = streetType + " " + address1 + " " + number + " " + address2 + address3;
 				}
 
 				String sekandoRain = zip + " " + city;
 
 				if (add != null) {
-					if (firstLine.length() < 45 && sekandoRain.length() < 45) {
-						payrollBuilder.setAddress(firstLine);
-						payrollBuilder.setAddress2(sekandoRain);
+					if (!isEmpty(firstLine != null ? firstLine.trim() : "") && firstLine.length() < 45 && sekandoRain.length() < 45) {
+						if (!isEmpty(firstLine))
+							payrollBuilder.setAddress(firstLine);
+						if (!isEmpty(sekandoRain))
+							payrollBuilder.setAddress2(sekandoRain);
 					} else {
 						
 						String[] address = separateString(add, 40);
