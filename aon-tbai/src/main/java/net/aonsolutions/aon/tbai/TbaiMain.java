@@ -225,9 +225,10 @@ public class TbaiMain {
 
 			TrustManager[] trustAll = new TrustManager[] { new TrustAllCertificates() };
 
-			SSLContext sslContext = SSLContext.getInstance("TLS");
-			sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			SSLContext.setDefault(sslContext);
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 
 			url = new URL(uri);
 			URLConnection con = url.openConnection();
