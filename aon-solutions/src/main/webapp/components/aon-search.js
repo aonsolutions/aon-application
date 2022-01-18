@@ -73,7 +73,7 @@ export class AonSearch extends AonElement {
 	}
 
 	build() {
-		
+		let isMobile = this.isMobile();
 		let span = this.createElement(TAG.SPAN);
 		span.id = this.SPAN;
 		span.style.display = 'inline-flex';
@@ -107,7 +107,7 @@ export class AonSearch extends AonElement {
 
 		searchButton.addEventListener(EVENT.CLICK, () => {
 			if(input.style.display === 'none'){
-				if(this.isMobile()) {
+				if(isMobile) {
 					this.style.position = 'absolute';
 					this.style.width = '100%';
 					this.style.background = 'white';
@@ -123,7 +123,7 @@ export class AonSearch extends AonElement {
 				else 
 					input.focus();
 			} else {
-				if(this.isMobile()) {
+				if(isMobile) {
 					this.style.position = null;
 					this.style.width = null;
 					this.style.background = 'transparent';
@@ -146,6 +146,8 @@ export class AonSearch extends AonElement {
 		divOpts.style.maxHeight = "none";
 		divOpts.style.padding = "10px";
 		divOpts.style.display = "none";
+		if(!isMobile)
+			divOpts.style.width = "292px";
 
 		this.appendChild(divOpts);
 
