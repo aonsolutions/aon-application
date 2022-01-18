@@ -245,7 +245,8 @@ public class Payment extends ResizeComposite {
 		}
 
 		void eval(boolean fire) {
-			contextProvider.eval(getParentExpression() + expression, EMPTY_VARS,this);
+			if(null != contextProvider)
+				contextProvider.eval(getParentExpression() + expression, EMPTY_VARS,this);
 			if (fire) {
 				for (MyExpressionBox child : childs) {
 					child.eval(fire);
@@ -444,6 +445,17 @@ public class Payment extends ResizeComposite {
 		boolean notZero = !SpecialExpresion.isZero(payment);
 		boolean notReadOnly = !SpecialExpresion.isReadOnly(payment);
 		paymentTextBox.setExpression(payment);
+		paymentTextBox.enable(notReadOnly);
+		showOrHideFxPaymentButton();
+		showOrHideResetPaymentButton();
+		paymentTextBox.setVisible(notReadOnly || notZero);
+	}
+	
+	public void setExpression(String payment, String text) {
+		boolean notZero = !SpecialExpresion.isZero(payment);
+		boolean notReadOnly = !SpecialExpresion.isReadOnly(payment);
+		paymentTextBox.setExpression(payment);
+		paymentTextBox.setText(text);
 		paymentTextBox.enable(notReadOnly);
 		showOrHideFxPaymentButton();
 		showOrHideResetPaymentButton();

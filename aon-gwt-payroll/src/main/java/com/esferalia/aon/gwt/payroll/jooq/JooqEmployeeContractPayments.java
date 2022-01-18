@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptC
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 
 public class JooqEmployeeContractPayments {
 
@@ -123,6 +124,7 @@ public class JooqEmployeeContractPayments {
 				contractPayment.setId(contractPaymentRecord.get(CONTRACT_PAYMENT.ID));
 				contractPayment.setCodeType(code);
 				contractPayment.setType(Payment.Type.getByCode(paymentCRA.intValue()));
+				contractPayment.setSalaryType(Salary.Type.SALARY);
 				contractPayment.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
 				contractPayment.setDescription(contractPaymentRecord.get(CONTRACT_PAYMENT.DESCRIPTION));
 				contractPayment.setExpression(contractPaymentRecord.get(CONTRACT_PAYMENT.EXPRESSION));
@@ -158,6 +160,7 @@ public class JooqEmployeeContractPayments {
 				contractDeduction.setId(contractDeductionRecord.get(CONTRACT_PAYMENT.ID));
 				contractDeduction.setCodeType(code);
 				contractDeduction.setType(Payment.Type.CRA_0009);
+				contractDeduction.setSalaryType(Salary.Type.SALARY);
 				contractDeduction.setContractConceptCalcType(ContractConceptCalcType.DEDUCTION);
 				contractDeduction.setDescription(contractDeductionRecord.get(CONTRACT_PAYMENT.DESCRIPTION));
 				contractDeduction.setExpression(contractDeductionRecord.get(CONTRACT_PAYMENT.EXPRESSION));
@@ -190,6 +193,7 @@ public class JooqEmployeeContractPayments {
 				contractBonus.setId(contractBonusRecord.get(CONTRACT_BONUS.ID));
 				contractBonus.setCodeType(code);
 				contractBonus.setType(Payment.Type.CRA_0001);
+				contractBonus.setSalaryType(Salary.Type.SALARY);
 				contractBonus.setContractConceptCalcType(ContractConceptCalcType.BONUS);
 				contractBonus.setDescription(contractBonusRecord.get(CONTRACT_BONUS.DESCRIPTION));
 				contractBonus.setExpression(contractBonusRecord.get(CONTRACT_BONUS.EXPRESSION));
@@ -220,6 +224,7 @@ public class JooqEmployeeContractPayments {
 				contractCost.setId(contractCostRecord.get(CONTRACT_COST.ID));
 				contractCost.setCodeType(contractCostRecord.get(CONTRACT_COST.CODE));
 				contractCost.setType(Payment.Type.CRA_0001);
+				contractCost.setSalaryType(Salary.Type.SALARY);
 				contractCost.setContractConceptCalcType(ContractConceptCalcType.COST);
 				contractCost.setDescription(contractCostRecord.get(CONTRACT_COST.DESCRIPTION));
 				contractCost.setExpression(contractCostRecord.get(CONTRACT_COST.EXPRESSION));
@@ -269,6 +274,8 @@ public class JooqEmployeeContractPayments {
 				.set(CONTRACT_PAYMENT.EXPRESSION, contractConceptCalc.getExpression())
 				.set(CONTRACT_PAYMENT.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
 				.set(CONTRACT_PAYMENT.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, contractConceptCalc.getIrpfExpression())
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, contractConceptCalc.getQuoteExpression())
 				.where(CONTRACT_PAYMENT.ID.eq(contractConceptCalc.getId()))
 				.execute();
 	}
@@ -393,6 +400,8 @@ public class JooqEmployeeContractPayments {
 			.set(CONTRACT_PAYMENT.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 			.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte)0)
 			.set(CONTRACT_PAYMENT.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
+			.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, contractConceptCalc.getIrpfExpression())
+			.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, contractConceptCalc.getQuoteExpression())
 			.execute();
 	}
 

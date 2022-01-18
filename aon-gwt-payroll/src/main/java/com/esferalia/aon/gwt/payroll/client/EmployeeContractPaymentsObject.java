@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
-import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptCalcType;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -142,12 +142,17 @@ public class EmployeeContractPaymentsObject {
 
 	public void showHideContractConceptCalc(ContractConceptCalc contractConceptCalc) {
 		String expression = contractConceptCalc.getExpression();
+		ContractConceptCalcType type = contractConceptCalc.getContractConceptCalcType();
 		
-		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE"))
-			expression = expression.replace("HIDE\\(.*\\); ", "");
-		else
-			expression = "HIDE(\"<div>" + contractConceptCalc.getDescription() + " oculto desde Conceptos de c\u00E1lculo</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
-		
+		if(type == ContractConceptCalcType.PAYMENT) {
+			expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") ?
+					expression.replaceAll("HIDE.*; ", "") :
+					"HIDE(\"<div>" + contractConceptCalc.getDescription() + " oculto desde Conceptos de c\u00E1lculo</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
+		} else {
+			expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") ?
+					expression.replaceAll("HIDE.*; ", "") :
+					"HIDE(\"<div>Oculto desde Conceptos de c\u00E1lculo</div><div>&nbsp;</div>\"); " + expression;
+		}
 		
 		contractConceptCalc.setExpression(expression);
 	}
