@@ -73,7 +73,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AggregatedAnnualSummary {
 	
-	public static enum SummaryType {
+	public enum SummaryType {
 		MONTHLY,
 		QUARTERLY;
 	}
@@ -84,53 +84,67 @@ public class AggregatedAnnualSummary {
 	private static final String[] QUARTERS = {"1º TRIM", "2º TRIM", "3º TRIM", "4º TRIM"};
 	private static final String[]  CRA1_CONCEPT_ORDER= {"Salario Base", "Pluses Salariales", "Otros Conceptos Salariales"};
 	private static final Visitor<String> DEDUCTION_VISITOR = new DeductionType.Visitor<String>() {
+		@Override
 		public String visitCommonContigency(DeductionType deductionType) {
 			return "CONTNGENCIAS COMUNES";
 		}
 
+		@Override
 		public String visitProfessionalContigency(DeductionType deductionType) {
 			return "CONTINGENCIAS PROFESIONALES";
 		}
 
+		@Override
 		public String visitUnemployent(DeductionType deductionType) {
 			return "DESEMPLEO";
 		}
 
+		@Override
 		public String visitJobTraining(DeductionType deductionType) {
 			return "FORMACIÓN PROFESIONAL";
 		}
 
+		@Override
 		public String visitStructuralOvertime(DeductionType deductionType) {
 			return "HORAS ESTRUCTURALES";
 		}
 
+		@Override
 		public String visitNonStructuralOvertime(DeductionType deductionType) {
 			return "HORAS NO ESTRUCTURALES";
 		}
 
+		@Override
 		public String visitIrpf(DeductionType deductionType) {
 			return "IRPF";
 		}
 
+		@Override
 		public String visitAdvancePayment(DeductionType deductionType) {
 			return "ADELANTOS";
 		}
 
+		@Override
 		public String visitInkind(DeductionType deductionType) {
 			return "EN ESPECIE";
 		}
 
+		@Override
 		public String visitOther(DeductionType deductionType) {
 			return "OTRAS DEDUCCIONES";
 		}
 
+		@Override
 		public String visitFogasa(DeductionType deductionType) {
 			return "FOGASA";
 		}
 
+		@Override
 		public String visitIT(DeductionType deductionType) {
 			return "INCAPACIDAD TEMPORAL";
 		}
+		
+		@Override
 		public String visitIMS(DeductionType deductionType) {
 			return "IMS";
 		}
@@ -197,17 +211,17 @@ public class AggregatedAnnualSummary {
 			//STYLES
 			Map<String, CellStyle> stylesMap = getCellStyles(wb);
 			
-			LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totalsFormulas = new LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>>();
-			LinkedHashMap<String, LinkedHashMap<String, String>> totalSheetFormulas = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+			LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totalsFormulas = new LinkedHashMap<>();
+			LinkedHashMap<String, LinkedHashMap<String, String>> totalSheetFormulas = new LinkedHashMap<>();
 			
 			totalsFormulas.put(TOTAL_NAME, totalSheetFormulas);
 			
 			
-			LinkedHashMap<String, LinkedHashSet<String>> orderedConcepts = new LinkedHashMap<String, LinkedHashSet<String>>();
+			LinkedHashMap<String, LinkedHashSet<String>> orderedConcepts = new LinkedHashMap<>();
 				
-			orderedConcepts.put("payments", new LinkedHashSet<String>());
-			orderedConcepts.put("deductions", new LinkedHashSet<String>());
-			orderedConcepts.put("daysAndHours", new LinkedHashSet<String>());
+			orderedConcepts.put("payments", new LinkedHashSet<>());
+			orderedConcepts.put("deductions", new LinkedHashSet<>());
+			orderedConcepts.put("daysAndHours", new LinkedHashSet<>());
 
 			Collection<String> workplaces = null;
 			if (complete) {
@@ -219,7 +233,7 @@ public class AggregatedAnnualSummary {
 				
 				if (workplaces != null) {
 					workplaces.forEach(w -> {
-						totalsFormulas.put(w, new LinkedHashMap<String, LinkedHashMap<String, String>>());
+						totalsFormulas.put(w, new LinkedHashMap<>());
 						Sheet sh = wb.createSheet(WorkbookUtil.createSafeSheetName(w));
 						((XSSFSheet)sh).setTabColor(new XSSFColor(Color.LIGHT_GRAY));
 					});
@@ -283,16 +297,16 @@ public class AggregatedAnnualSummary {
 				
 				row = sheet.createRow(6);
 				//ORGANIZING INFO
-				LinkedHashSet<String> paymentConceptsSet = new LinkedHashSet<String>();
-				LinkedHashSet<String> deductionConceptsSet = new LinkedHashSet<String>();
+				LinkedHashSet<String> paymentConceptsSet = new LinkedHashSet<>();
+				LinkedHashSet<String> deductionConceptsSet = new LinkedHashSet<>();
 				
-				paymentConceptsSet = getOrderedPaymentConcepts(entry);
+				paymentConceptsSet = getOrderedPaymentConcepts(entry);				
 				
 				
-				entry.getMonthlyEntries().values().stream().map(e -> e.getDeductions()).forEach(deductions-> {
+				entry.getMonthlyEntries().values().stream().map(AggregatedAnnualEntry::getDeductions).forEach(deductions-> {
 					if (deductions != null) {
 						deductions.stream()
-						.filter(d -> d != null)
+						.filter(Objects::nonNull)
 						.sorted(Comparator.comparing(d -> d.getDeductionType() != null ? d.getDeductionType() : DeductionType.values()[DeductionType.values().length-1], Comparator.naturalOrder()))
 						.forEach(deduction -> {
 							String name = deduction.getDescription() != null ? deduction.getDescription() : deduction.getDeductionType().name();
@@ -301,8 +315,8 @@ public class AggregatedAnnualSummary {
 					}
 				});
 				
-				LinkedList<String> paymentConcepts = new LinkedList<String>();
-				paymentConceptsSet.forEach(c -> paymentConcepts.add(c));
+				LinkedList<String> paymentConcepts = new LinkedList<>();
+				paymentConceptsSet.forEach(paymentConcepts::add);
 				Pattern pattern = Pattern.compile(".*salario.*base.*", Pattern.CASE_INSENSITIVE);
 				Optional<String> optBaseSalary = paymentConcepts.stream().filter(p -> {
 					Matcher matcher = pattern.matcher(p);
@@ -375,7 +389,6 @@ public class AggregatedAnnualSummary {
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IRPF TOTAL BASE
 				putDataRow("BASE IRPF TOTAL", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
-//				row = sheet.createRow(sheet.getLastRowNum() +1);
 
 				//DAYS AND HOURS
 				writeDaysAndHours(sheet, stylesMap, orderedConcepts, totalsFormulas, entry, identifier, periods, complete);
@@ -652,6 +665,7 @@ public class AggregatedAnnualSummary {
 			LinkedHashSet<String> paymentConceptsSet, LinkedHashMap<String, LinkedHashSet<String>> orderedConcepts,
 			LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totalsFormulas,
 			AggregatedAnnualYearlyEntry entry, String nif, String[] periods, boolean complete) {
+		
 		LinkedHashSet<String> conceptSet = orderedConcepts.get("payments");
 		Pattern noWords = Pattern.compile("[A-Za-z]+");
 		paymentConceptsSet.forEach(concept -> {
@@ -659,6 +673,7 @@ public class AggregatedAnnualSummary {
 			sheet.addMergedRegion(new CellRangeAddress(paymentRow.getRowNum(), paymentRow.getRowNum(), 0, 2));
 			Cell paymentCell = paymentRow.createCell(0);
 			paymentCell.setCellType(CellType.STRING);
+			//WRITE PAYMENT NAME
 			if (concept != null) {
 				String definitive = getDefinitivePaymentConcept(concept);
 				
@@ -681,6 +696,7 @@ public class AggregatedAnnualSummary {
 				if (entry.getMonthlyEntries().get(period) != null) {
 					amountCell.setCellType(CellType.NUMERIC);
 					Collection<Payment> paym = entry.getMonthlyEntries().get(period).getPayments();
+					
 					double amount = paym.stream().filter(p -> {
 						if (p != null) {
 							String desc = choosePaymentName(p);
@@ -740,10 +756,10 @@ public class AggregatedAnnualSummary {
 		Row row;
 		Cell cell;
 		{
-			LinkedHashSet<String> dahNames = new LinkedHashSet<String>();
-			entry.getMonthlyEntries().values().stream().map(ent -> ent.getDaysAndHours()).forEach(dah -> {
+			LinkedHashSet<String> dahNames = new LinkedHashSet<>();
+			entry.getMonthlyEntries().values().stream().map(AggregatedAnnualEntry::getDaysAndHours).forEach(dah -> {
 				if (dah != null)
-					dah.keySet().forEach(key -> dahNames.add(key));
+					dah.keySet().forEach(dahNames::add);
 			});
 			
 			if (!dahNames.isEmpty()) {
@@ -777,17 +793,19 @@ public class AggregatedAnnualSummary {
 	}
 	
 	private static int assignNumber (String str) {
+		
 		if (str.equals(CRA1_CONCEPT_ORDER[0]))
-			return 0;
-		else if (str.equals(CRA1_CONCEPT_ORDER[1]))
 			return 1;
-		else if (str.equals(CRA1_CONCEPT_ORDER[2]))
+		else if (str.equals(CRA1_CONCEPT_ORDER[1]))
 			return 2;
+		else if (str.equals(CRA1_CONCEPT_ORDER[2]))
+			return 3;
 		else {
 			try {
-				return PaymentType.valueOf(str).ordinal() + 2;
+				int ordinal = PaymentType.valueOf(str).ordinal();
+				return ordinal > 0 ? ordinal + 3 : ordinal;
 			} catch (Exception e) {
-				return PaymentType.values().length + 2;
+				return PaymentType.values().length + 3;
 			}
 		}
 	}
@@ -815,7 +833,7 @@ public class AggregatedAnnualSummary {
 	}
 	
 	private static void orderSet(LinkedHashSet<String> paymentsSet) {
-		TreeMap<Integer, String> withOrder = new TreeMap<Integer, String>();
+		TreeMap<Integer, String> withOrder = new TreeMap<>();
 		paymentsSet.forEach(str -> withOrder.put(assignNumber(str), str));
 		paymentsSet.clear();
 		paymentsSet.addAll(withOrder.values());
@@ -871,18 +889,18 @@ public class AggregatedAnnualSummary {
 	}
 
 	private static LinkedHashSet<String> getOrderedPaymentConcepts(AggregatedAnnualYearlyEntry entry) {
-		LinkedHashSet<String> paymentConceptsSet = new LinkedHashSet<String>();
+		LinkedHashSet<String> paymentConceptsSet = new LinkedHashSet<>();
 		
-		entry.getMonthlyEntries().values().stream().map(e -> e.getPayments()).forEach(payments -> {
+		entry.getMonthlyEntries().values().stream().map(AggregatedAnnualEntry::getPayments).forEach(payments -> {
 			payments.stream()
-			.filter(p -> p != null)
+			.filter(Objects::nonNull)
 			.map(p -> {
 				if (p.getPaymentType() != null) {
 					return choosePaymentName(p);
 				} else
 					return p.getName();
 			})
-			.forEach(name -> paymentConceptsSet.add(name));
+			.forEach(paymentConceptsSet::add);
 		});
 		
 		orderSet(paymentConceptsSet);
@@ -1007,7 +1025,7 @@ public class AggregatedAnnualSummary {
 					monthly.put(month, formula);
 				}
 			} else {
-				LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+				LinkedHashMap<String, String> monthly = new LinkedHashMap<>();
 				monthly.put(month, formula);
 				totalsFormulas.get(sheetName).put(concept, monthly);
 			}
@@ -1022,7 +1040,7 @@ public class AggregatedAnnualSummary {
 				monthly.put(month, formula);
 			}
 		} else {
-			LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+			LinkedHashMap<String, String> monthly = new LinkedHashMap<>();
 			monthly.put(month, formula);
 			totalsFormulas.get(TOTAL_NAME).put(concept, monthly);
 		}
@@ -1041,7 +1059,7 @@ public class AggregatedAnnualSummary {
 					monthly.put(month, formula);
 				}
 			} else {
-				LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+				LinkedHashMap<String, String> monthly = new LinkedHashMap<>();
 				monthly.put(month, formula);
 				totalsFormulas.get(sheetName).put(spaDeduction(concept), monthly);
 			}
@@ -1056,7 +1074,7 @@ public class AggregatedAnnualSummary {
 				monthly.put(month, formula);
 			}
 		} else {
-			LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+			LinkedHashMap<String, String> monthly = new LinkedHashMap<>();
 			monthly.put(month, formula);
 			totalsFormulas.get(TOTAL_NAME).put(spaDeduction(concept), monthly);
 		}
@@ -1075,7 +1093,7 @@ public class AggregatedAnnualSummary {
 					monthly.put(month, formula);
 				}
 			} else {
-				LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+				LinkedHashMap<String, String> monthly = new LinkedHashMap<>();
 				monthly.put(month, formula);
 				totalsFormulas.get(sheetName).put(concept, monthly);
 			}
@@ -1090,17 +1108,16 @@ public class AggregatedAnnualSummary {
 				monthly.put(month, formula);
 			}
 		} else {
-			LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+			LinkedHashMap<String, String> monthly = new LinkedHashMap<>();
 			monthly.put(month, formula);
 			totalsFormulas.get(TOTAL_NAME).put(concept, monthly);
 		}
 	}
 
 	private static void resizeSheet(int firstDataRow, Map<String, CellStyle> stylesMap, Sheet sheet) {
-//		int maxCells[] = {0};
 		int[] firstDataRowArr = {firstDataRow};
 		Row referenceRow = getHeaderRow(sheet);
-		int max = referenceRow.getLastCellNum() - 1;
+		int max = referenceRow != null ? referenceRow.getLastCellNum() - 1 : 0;
 		sheet.rowIterator().forEachRemaining(r -> {
 			CellStyle left = stylesMap.get("leftBorderCellStyle");
 			CellStyle right = stylesMap.get("rightBorderCellStyle");
@@ -1139,12 +1156,7 @@ public class AggregatedAnnualSummary {
 				cel.setCellStyle(r.getRowNum() > firstDataRowArr[0] - 1 ? conceptStyle : cel.getCellStyle());
 			}
 			
-//			int cellCount[] = {0};
-//			r.forEach(c -> {
-//				cellCount[0]++;
-//			});
-//			maxCells[0] = maxCells[0] < cellCount[0] ? cellCount[0] : maxCells[0];
-			});
+		});
 		sheet.setColumnWidth(0, 3500);
 		for(int i=1;i<=max;i++) {
 			sheet.setColumnWidth(i, 3000);
@@ -1242,7 +1254,7 @@ public class AggregatedAnnualSummary {
 			Map<String, AggregatedAnnualEntry> monthlyEntries = yearlyEntry.getMonthlyEntries();
 			
 			AggregatedAnnualEntry entry = monthlyEntries.get(month) != null ? monthlyEntries.get(month) : new AggregatedAnnualEntry();
-		
+			
 			fillEntry(s, entry);
 			
 			monthlyEntries.put(month, entry);
@@ -1363,12 +1375,12 @@ public class AggregatedAnnualSummary {
 			entry.setInKindIrpfBase(safeSum(entry.getInKindIrpfBase(), s.getInkindIrpfBase()));
 		
 		if (s.getPayments() != null) {
-			Collection<Payment> payments = entry.getPayments() != null ? entry.getPayments() : new LinkedList<Payment>(); 
+			Collection<Payment> payments = entry.getPayments() != null ? entry.getPayments() : new LinkedList<>(); 
 			payments.addAll(s.getPayments());
 			entry.setPayments(payments);
 		}
 		if (s.getDeductions() != null) {
-			Collection<Deduction> deductions =entry.getDeductions() != null ? entry.getDeductions() : new LinkedList<Deduction>();
+			Collection<Deduction> deductions =entry.getDeductions() != null ? entry.getDeductions() : new LinkedList<>();
 			deductions.addAll(s.getDeductions());
 			entry.setDeductions(deductions);
 		}
@@ -1380,7 +1392,7 @@ public class AggregatedAnnualSummary {
 		if (s.getTotalPayment() != null)
 			entry.setTotalRaw(safeSum(entry.getTotalRaw(), s.getTotalPayment()));
 		if (s.getContextData() != null) {
-			Map<String, Double> data = entry.getDaysAndHours() != null ? entry.getDaysAndHours() : new LinkedHashMap<String, Double>();
+			Map<String, Double> data = entry.getDaysAndHours() != null ? entry.getDaysAndHours() : new LinkedHashMap<>();
 			s.getContextData().keySet().stream()
 			.filter(key -> AonStringUtils.containsIgnoreCase(key, "dias") || AonStringUtils.containsIgnoreCase(key, "horas"))
 			.forEach(key -> {
@@ -1420,22 +1432,23 @@ public class AggregatedAnnualSummary {
 		if (str == null)
 			return null;
 		else {
-			return str.replaceAll("_", " ");
+			return str.replace("_", " ");
 		}
 	}
 	
 	private static String spaDeduction (String dedName) {
-		
 		try {
 			DeductionType type = DeductionType.valueOf(dedName);
 			return type.accept(DEDUCTION_VISITOR);
 			
-		} catch (IllegalArgumentException e) {}
-		return dedName;
+		} catch (IllegalArgumentException e) {			
+			return dedName;
+		}
 	}
 	
 	private static Map<String, CellStyle> getCellStyles(Workbook wb) {
-		LinkedHashMap<String, CellStyle> stylesMap = new LinkedHashMap<String, CellStyle>();
+		String numberFormat = "#,###,##0.#0";
+		LinkedHashMap<String, CellStyle> stylesMap = new LinkedHashMap<>();
 		
 		DataFormat format = wb.createDataFormat();
 		
@@ -1448,7 +1461,7 @@ public class AggregatedAnnualSummary {
 		
 		CellStyle rightBorderCellStyle = wb.createCellStyle();
 		rightBorderCellStyle.setBorderRight(BorderStyle.THIN);
-		rightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		rightBorderCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("rightBorderCellStyle", rightBorderCellStyle);
 		
 		CellStyle topRightBorderCellStyle = wb.createCellStyle();
@@ -1457,7 +1470,7 @@ public class AggregatedAnnualSummary {
 		topRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
 		topRightBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		topRightBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
-		topRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		topRightBorderCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("topRightBorderCellStyle", topRightBorderCellStyle);
 		
 		CellStyle topLeftBorderCellStyle = wb.createCellStyle();
@@ -1466,39 +1479,39 @@ public class AggregatedAnnualSummary {
 		topLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
 		topLeftBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		topLeftBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
-		topLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		topLeftBorderCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("topLeftBorderCellStyle", topLeftBorderCellStyle);
 		
 		CellStyle topLeftBorderCellStyleNoBottom = wb.createCellStyle();
 		topLeftBorderCellStyleNoBottom.setBorderLeft(BorderStyle.THIN);
 		topLeftBorderCellStyleNoBottom.setBorderTop(BorderStyle.THIN);
-		topLeftBorderCellStyleNoBottom.setDataFormat(format.getFormat("#,###,##0.#0"));
+		topLeftBorderCellStyleNoBottom.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("topLeftBorderCellStyleNoBottom", topLeftBorderCellStyleNoBottom);
 		
 		CellStyle leftBorderCellStyle = wb.createCellStyle();
 		leftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
-		leftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		leftBorderCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("leftBorderCellStyle", leftBorderCellStyle);
 		
 		CellStyle bottomBorderCellStyle = wb.createCellStyle();
 		bottomBorderCellStyle.setBorderBottom(BorderStyle.THIN);
-		bottomBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		bottomBorderCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("bottomBorderCellStyle", bottomBorderCellStyle);
 		
 		CellStyle bottomLeftBorderCellStyle = wb.createCellStyle();
 		bottomLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
 		bottomLeftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
-		bottomLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		bottomLeftBorderCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("bottomLeftBorderCellStyle", bottomLeftBorderCellStyle);
 		
 		CellStyle bottomRightBorderCellStyle = wb.createCellStyle();
 		bottomRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
 		bottomRightBorderCellStyle.setBorderRight(BorderStyle.THIN);
-		bottomRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		bottomRightBorderCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("bottomRightBorderCellStyle", bottomRightBorderCellStyle);
 		
 		CellStyle numberCellStyle = wb.createCellStyle();
-		numberCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		numberCellStyle.setDataFormat(format.getFormat(numberFormat));
 		stylesMap.put("numberCellStyle", numberCellStyle);
 		
 		Font boldFont = wb.createFont();
@@ -1506,24 +1519,24 @@ public class AggregatedAnnualSummary {
 		
 		CellStyle leftBorderCellStyleBold = wb.createCellStyle();
 		leftBorderCellStyleBold.setBorderLeft(BorderStyle.THIN);
-		leftBorderCellStyleBold.setDataFormat(format.getFormat("#,###,##0.#0"));
+		leftBorderCellStyleBold.setDataFormat(format.getFormat(numberFormat));
 		leftBorderCellStyleBold.setFont(boldFont);
 		stylesMap.put("leftBorderCellStyleBold", leftBorderCellStyleBold);
 		
 		CellStyle rightBorderCellStyleBold = wb.createCellStyle();
 		rightBorderCellStyleBold.setBorderRight(BorderStyle.THIN);
-		rightBorderCellStyleBold.setDataFormat(format.getFormat("#,###,##0.#0"));
+		rightBorderCellStyleBold.setDataFormat(format.getFormat(numberFormat));
 		rightBorderCellStyleBold.setFont(boldFont);
 		stylesMap.put("rightBorderCellStyleBold", rightBorderCellStyleBold);
 		
 		CellStyle boldNumberCellStyle = wb.createCellStyle();
-		boldNumberCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		boldNumberCellStyle.setDataFormat(format.getFormat(numberFormat));
 		boldNumberCellStyle.setFont(boldFont);
 		stylesMap.put("boldNumberCellStyle", boldNumberCellStyle);
 		
 		CellStyle importantCellStyle = wb.createCellStyle();
 		importantCellStyle.setBorderLeft(BorderStyle.THIN);
-		importantCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		importantCellStyle.setDataFormat(format.getFormat(numberFormat));
 		importantCellStyle.setFont(boldFont);
 		stylesMap.put("importantCellStyle", importantCellStyle);
 		
