@@ -33,6 +33,8 @@ public class ITParse {
 				.setNss(nss)
 				.setType(ContractLeaveType.valueOfTGSS(startIT.getCauseNumber()))
 				.setStartDate(startDateIT);
+		
+		startIT.getDailyBaseCgc().ifPresent(d-> employeeIT.setDailyCgcBase(d.doubleValue()));
 
 		ContractLeaveDetailStatus status = ContractLeaveDetailStatus.PROCESSED;
 

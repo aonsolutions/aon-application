@@ -37,9 +37,11 @@ import org.jooq.Result;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.in.payroll.tgss.fie.FieListener;
 import com.esferalia.aon.in.payroll.tgss.fie.FieParser;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
@@ -114,7 +116,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			Fie2AON fie2AON = new Fie2AON() {
 				@Override
 				public void endDIT() {
-					try {
+					try {					
 						ids.add(addIT(ctx, domainId, getIt()));
 					} catch ( EmployeeNotFoundexception e) {
 						
@@ -452,7 +454,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 
 	
 	}
-	
+
 	public static void addIT(String domainName, Integer domainId, String userLogin, IT it) {
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, userLogin)) {
 			addIT(aonContext.getDslContext(), domainId, it);
@@ -461,7 +463,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 	}
 	
 	public static Integer addIT(DSLContext ctx , Integer domainId, IT it) throws EmployeeNotFoundexception, TooManyEmployeesException {
-		java.sql.Date itStartDate = new java.sql.Date(it.getStartDate().getTime());
+		java.sql.Date startDateO = new java.sql.Date(it.getStartDate().getTime());
+		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
 		java.sql.Date itEndDate = it.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
 		
 		try {
@@ -513,7 +516,6 @@ public class FIEServlet extends HttpServlet implements FIEService {
 					return r;
 				});
 				;
-				
 				contractLeaveRecord.setStartDate(itStartDate);
 				contractLeaveRecord.setType(it.getContingency().value());
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
@@ -534,7 +536,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
 						.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)0)
 						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
-						.set(CONTRACT_LEAVE_DETAIL.DATE,itStartDate)
+						.set(CONTRACT_LEAVE_DETAIL.DATE,startDateO)
 						.returning(CONTRACT_LEAVE_DETAIL.ID)
 						.fetchOne();
 				else
@@ -666,5 +668,13 @@ public class FIEServlet extends HttpServlet implements FIEService {
 	}
 	
 
+	private static java.sql.Date normalizeStartDateToSave(Contingency contingency, Date date) {
+		if(contingency!=null && contingency.equals(Contingency.OCCUPATIONAL_DISEASE)) 
+			date = DateUtils.addDays2Date(date, 1);
+		
+		
+		return new java.sql.Date(date.getTime());
+	}
+	
 
 }
