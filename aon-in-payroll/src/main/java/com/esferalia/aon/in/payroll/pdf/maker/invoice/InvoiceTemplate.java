@@ -903,7 +903,8 @@ public class InvoiceTemplate {
 		if(qrUrl != null && !invoice.isProforma()) {
 			byte[] qrCode = createQR(qrUrl, 300, 300);
 			drawImage(doc, contents, qrCode, x, y, 120, 120);
-			drawText(contents, tbaiId, x + 5f, y + 2f, Color.BLACK, regularFont, 5);
+			if(tbaiId != null)
+				drawText(contents, tbaiId, x + 5f, y + 2f, Color.BLACK, regularFont, 5);
 		}
 		drawTaxes(invoice, theme);
 		drawFinances(invoice, theme);
