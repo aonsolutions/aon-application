@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
@@ -49,12 +51,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContextFunctions {
 
-	private static final String _OLD = "_OLD";
-	private static final String _GROSS = "_BRUTO";
-	private static final String _SECTION = "_SECTION";
-	private static final String _PRORATION = "_PRORATION";
-	private static final String _FRACTIONATE = "_FRACC";
-	private static final String MONTHS_IMPL = "MESESIMPL";
+	public static final String _OLD = "_OLD";
+	public static final String _GROSS = "_BRUTO";
+	public static final String _SECTION = "_SECTION";
+	public static final String _PRORATION = "_PRORATION";
+	public static final String _FRACTIONATE = "_FRACC";
+	public static final String MONTHS_IMPL = "MESESIMPL";
 
 	public static class UselessGuaranteeException extends CheckException {
 
@@ -555,6 +557,25 @@ public class ContextFunctions {
 		};
 	}
 
+	public static Double proration(int start, int end) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s, _P,", _PRORATION, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+	public static Double proration(Double amount, int start, int end) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s,", _PRORATION, ContextVariable.CONTEXT));
+			}
+		};
+	}
 
 	public static Double proration(ExpressionContext context, Double amount) {
 		
@@ -607,6 +628,27 @@ public class ContextFunctions {
 		return amount / extraMonths.size()  ;
 	}
 	
+	public static Double proration(ExpressionContext context, Double amount, int start, int end) {
+		
+		Number guarenteed = ExpressionContext.getCurrentBindings().get(GUARENTEED, v -> (Number)v , 0.00);
+		amount -= guarenteed.doubleValue();
+		
+		if ( amount <= 0.00 )
+			return 0.00;
+
+		Period currentPeriod = ExpressionContext.getCurrentBindings().getPeriod();
+		Date currentDate = currentPeriod.getEnd();
+		
+		int currentMonth = AonDateUtils.get(currentDate, Calendar.MONTH) +1 ;
+		
+		if ( currentMonth < start || currentMonth > end)
+			return 0.00;
+		
+		int months = ( end - start ) +1 ;
+		
+		return amount / months   ;
+	}
+
 	public static Double fractionate(Double amount) throws MacroException{ 
 		throw new MacroException() {
 			@Override

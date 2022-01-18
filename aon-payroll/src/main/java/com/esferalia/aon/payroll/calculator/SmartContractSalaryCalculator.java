@@ -452,11 +452,31 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 
 			if (payment.getMonth() != null 
-				&&( type == PaymentType.CRA_0004 
-				|| type == PaymentType.CRA_0005)) {
-				return delegate.quote(new PRORATIONContractPayment(payment), start, end, amount);
+				&& type == PaymentType.CRA_0005) {
+				
+				List<ITimedResult<Double>> delegated = delegate.quote(payment, start, end, amount);
+				
+				try {
+					if ( delegated.stream().anyMatch(r -> r.getContext().containsKey(ContextFunctions._PRORATION)))
+						return delegated;
+				} catch ( Exception e) {
+					
+				}
+				
+				double summ = delegated.stream().collect(Collectors.summingDouble(ITimedResult::getValue));
+				for (int months : new int [] {3,6,12} ) {
+					if ( amount / months == summ ) { 
+						return delegated;
+					}
+				}
 			}
 			
+			if (payment.getMonth() != null 
+					&&( type == PaymentType.CRA_0004 
+					||  type == PaymentType.CRA_0005)) {
+					return delegate.quote(new PRORATIONContractPayment(payment), start, end, amount);
+			}
+
 			if ( type == PaymentType.CRA_0057 
 				|| type == PaymentType.CRA_0058 ) {				
 				payment = new AdditionalHoursContractPayment(payment);
