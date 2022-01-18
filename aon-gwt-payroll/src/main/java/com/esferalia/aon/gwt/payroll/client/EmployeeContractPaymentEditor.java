@@ -101,8 +101,42 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		});
 	}
 	
-	// ----------------------------------------- ViewMethods
+	public EmployeeContractPaymentEditor(ContractConceptCalc selectedPayment, String paymentType) {
+		setCaption("Creador Pagos");
+		setWidget(binder.createAndBindUi(this));
+		this.showCloseButton(true);
+		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
+			
+			@Override
+			public void onSuccess(ContractConcepts contractConceptsIn) {
+				contractConcepts = contractConceptsIn;
+				paymentExpressionTB.setReadOnly(false);
+				createPaymentType();
+				getFooterButtons();
+				setSelectedValueLB(paymentTypeLB, paymentType);
+				paymentTypeLB.setEnabled(false);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
+				fillInfo();
+				showDialog();
+			}
+			
+			private void fillInfo() {
+				paymentDescriptionTB.setValue(selectedPayment.getDescription());
+				paymentExpressionTB.setValue(selectedPayment.getExpression());
+				startDateBx.setValue(selectedPayment.getStartDate());
+				endDateBx.setValue(selectedPayment.getEndDate());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// Failure
+			}
+			
+		});
+	}
 	
+	// ----------------------------------------- ViewMethods
+
 	private void createPaymentType() {
 		paymentTypeLB.clear();
 //		paymentTypeLB.addItem(PAYMENT);
