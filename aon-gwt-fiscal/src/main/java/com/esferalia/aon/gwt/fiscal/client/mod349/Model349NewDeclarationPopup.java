@@ -2,9 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod349;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.Model349Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
@@ -17,7 +18,6 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model349NewDeclarationPopup extends DockLayoutPanel {
@@ -26,11 +26,11 @@ public class Model349NewDeclarationPopup extends DockLayoutPanel {
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
 
 	private AdministrationListBox admonList = new AdministrationListBox();
-	private IntegerBox yearBox = new IntegerBox();
+	private AonIntegerBox yearBox = new AonIntegerBox();
 	private PeriodListBox periodList = new PeriodListBox();
 	private CheckBox complementary = new CheckBox(AON.MSG.complementary());
 	private CheckBox replacement = new CheckBox(AON.MSG.replacement());
-	private TextBox replacedReceiptBox = new TextBox();
+	private AonTextBox replacedReceiptBox = new AonTextBox();
 	private CheckBox diffCalculation = new CheckBox();
 	private AonToolbar toolbar;
 	

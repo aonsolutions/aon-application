@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod347;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL347;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -39,7 +40,11 @@ public class Mod347MergeMail extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod347 mod347 = FISCAL.getMod347(domainName, domainId, user,id);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+			Mod347 mod347 = MODEL347.get(occam,id);
 
 // ----
 

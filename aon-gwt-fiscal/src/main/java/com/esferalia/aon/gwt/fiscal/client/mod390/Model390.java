@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -386,4 +387,19 @@ public class Model390 extends MainEntryPoint {
 			newDialog.show();
 	}
 	
+	public static void run() {
+		GWT.runAsync(Model390.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("Modelo 390"));
+			}
+			
+			@Override
+			public void onSuccess() {
+				Model390 model390 = new Model390();
+				model390.onModuleLoad();
+			}
+		});
+	}
 }

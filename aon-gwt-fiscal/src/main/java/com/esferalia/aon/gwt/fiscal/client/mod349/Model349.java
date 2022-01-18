@@ -301,24 +301,8 @@ public class Model349 extends MainEntryPoint {
 
 	private void onSelectionChange(Model349ModuleOptions options, SelectionEvent<Mod349> event) {
 		Mod349 sel = event.getSelectedItem();
-		SERVICE.get(options.getOccam(),
-				sel.getId(), new AsyncCallback<Mod349>() {
-					@Override
-					public void onSuccess(Mod349 selected) {
-						if (selected == null) {
-							showErrorMessage(AON.MSG.unableToFindDeclaration());
-						} else {
-							select(selected, null);
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-					}
-				} );
+		onSelect(options, sel.getId());
 	}
-	
 
 	private void select(Mod349 selected, Integer selectedIndex) {
 		cleanErrorMessage();

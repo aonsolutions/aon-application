@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod347;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL347;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -31,7 +32,11 @@ public class Mod347Print extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod347 mod347 = FISCAL.getMod347(domainName, domainId, user,id);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+			Mod347 mod347 = MODEL347.get(occam,id);
 
 			Mod347ExcelAction action = new Mod347ExcelAction(mod347);
 			action.initialize(FiscalModelUtils.getModelName(mod347));

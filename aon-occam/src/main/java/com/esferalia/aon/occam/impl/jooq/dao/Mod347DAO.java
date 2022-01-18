@@ -219,7 +219,7 @@ public class Mod347DAO {
 		}
 	}
 	
-	public static Mod347 changeStatusMod347(AONContext ctx, Mod347 mod347, FiscalStatus newStatus) {
+	public static Mod347 changeStatus(AONContext ctx, Mod347 mod347, FiscalStatus newStatus) {
 		try {
 			ctx.checkWrite();
 			if (mod347.getId() != null) {
@@ -884,7 +884,7 @@ public class Mod347DAO {
 	
 	// --------------- INVOICES INFO --------------- 
 	
-	public static String getMod347Info(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
+	public static String getInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
 		
 		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
 		
@@ -966,34 +966,12 @@ public class Mod347DAO {
 		
 	}
 	
-	// --------------- DUPLICAR MODELO ---------------
-	
-//	public static Mod347 duplicateNextYear(AONContext ctx, int id) {
-//		
-//		Mod347 mod347 = getById(ctx, id);
-//		mod347.setYear( mod347.getYear() + 1 );
-//		mod347.setId(null);
-//		// mod347 = save(ctx, mod347);
-//		mod347 = insert(ctx, mod347,false);
-//		Mod347 original = getById(ctx, id);
-//		for (Mod347Declared declared : original.getDeclared()) {
-//			declared.setId(null);
-//			declared.setMod347(mod347.getId());
-//			mod347.getDeclared().add(declared);
-//		}
-//		for (Mod347Asset asset : original.getAssets()) {
-//			asset.setId(null);
-//			asset.setMod347(mod347.getId());
-//			mod347.getAssets().add(asset);
-//		}
-//		return save(ctx, mod347);		
-//	
-//	}
-
 	public static Mod347 duplicate(AONContext ctx, Mod347 mod347) {
 		
 		int id = mod347.getId();
 		mod347.setId(null);
+		mod347.setStatus(FiscalStatus.PENDING);
+		mod347.setNumber(null);
 		mod347 = insert(ctx, mod347, false);
 		
 		if (!mod347.isComplementary()) {
@@ -1013,52 +991,10 @@ public class Mod347DAO {
 	
 	}
 	
-	
-	
-//	private static boolean excludeIfPresentInMod180(AONContext ctx, Mod347 mod347,VatContext vat) {
-//		if (vat.hasRetention() && mod347.isExcludeMod180Declared()) { 
-//			AggregateFunction<Integer> count = DSL.count();
-//			int c = ctx.getDslContext()
-//				.select( count )
-//				.from(FS_MODEL180)
-//				.innerJoin(FS_MODEL180_DETAIL).on(FS_MODEL180.ID.eq(FS_MODEL180_DETAIL.FS_MODEL180))
-//				.where(FS_MODEL180.DOMAIN.eq(mod347.getDomain()))
-//				.and(FS_MODEL180.YEAR.eq(mod347.getYear()))
-//				.and(FS_MODEL180_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
-//				.fetch()
-//				.stream()
-//				.mapToInt( rec -> rec.get(count) )
-//				.findFirst()
-//				.orElse( 0 )
-//				;
-//			return (c==0);
-//		}
-//		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
-//				? true
-//				: !vat.hasRetention();
-//	}
-	
-//	private static boolean excludeIfPresentInMod190(AONContext ctx, Mod347 mod347,VatContext vat) { 
-//		if (vat.hasRetention() && mod347.isExcludeMod190Declared()) { 
-//			AggregateFunction<Integer> count = DSL.count();
-//			int c = ctx.getDslContext()
-//				.select( count )
-//				.from(FS_MODEL190)
-//				.innerJoin(FS_MODEL190_DETAIL).on(FS_MODEL190.ID.eq(FS_MODEL190_DETAIL.FS_MODEL190))
-//				.where(FS_MODEL190.DOMAIN.eq(mod347.getDomain()))
-//				.and(FS_MODEL190.YEAR.eq(mod347.getYear()))
-//				.and(FS_MODEL190_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
-//				.fetch()
-//				.stream()
-//				.mapToInt( rec -> rec.get(count) )
-//				.findFirst()
-//				.orElse( 0 )
-//				;
-//			return (c==0);
-//		}
-//		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
-//				? true
-//				: !vat.hasRetention();
-//	}
+	public static Mod347 reset(AONContext ctx, Mod347 mod347) {
+		deleteDetails(ctx, mod347);		
+		insertDetailsFromInvoice(ctx, mod347);
+		return getById(ctx, mod347.getId()) ;
+	}
 	
 }

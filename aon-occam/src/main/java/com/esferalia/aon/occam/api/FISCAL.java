@@ -5,13 +5,10 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.Mod347;
-import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -25,7 +22,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 
 public class FISCAL {
@@ -960,110 +956,6 @@ public class FISCAL {
 		}
 	}
 	
-	// ----------------------------------MODELO 347
-		public static LinkedList<Mod347> getMod347s(String domainName, int domainId,
-				String user) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, user);
-				return getFiscal().getMod347s(ctx, domainId);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-
-		public static Mod347 getMod347(String domainName, int domainId, String user,
-				Integer id) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, user);
-				return getFiscal().getMod347(ctx, id);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-
-		public static Mod347 initializeMod347(String domainName, int domainId,
-				String user) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, user);
-				return getFiscal().initializeMod347(ctx);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-
-		public static Mod347 saveMod347(String domainName, int domainId,
-				String user, Mod347 mod347) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, user);
-				return getFiscal().saveMod347(ctx, mod347);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-
-		public static void deleteMod347(String domainName, int domainId,
-				String user, Mod347 mod347) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, user);
-				getFiscal().deleteMod347(ctx, mod347);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-		
-		public static Mod347 saveComments(String domainName, String user, Mod347 mod347) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, mod347.getDomain(),user);
-				return getFiscal().saveCommentsMod347(ctx, mod347);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-
-		public static Mod347 changeStatusMod347(String domainName, String user, Mod347 mod347, FiscalStatus newStatus) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, mod347.getDomain(),user);
-				return getFiscal().changeStatusMod347(ctx, mod347, newStatus);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-		
-		public static String getMod347Info(String domainName, int domain, String user, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domain,user);
-				return getFiscal().getMod347Info(ctx, mod347, declared, infoKey);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-		
-		public static Mod347 duplicateMod347(String domainName, Integer domain, String userLogin, Mod347 mod347) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domain,userLogin);
-				return getFiscal().duplicateMod347(ctx, mod347);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
 		
 		public static Stream<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain,IRPFParams params) {
 			AONContext ctx = null;
