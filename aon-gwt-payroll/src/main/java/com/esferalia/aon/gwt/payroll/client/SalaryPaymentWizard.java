@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.ContextProvider;
@@ -311,12 +310,21 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
 	@UiField(provided = true)
 	TextBox paymentExpression;
+	
+	@UiField
+	HTMLPanel monthPanel;
 
 	@UiField
-	DateBoxEx startDateBx;
+	ListBox monthLB;
 
 	@UiField
-	DateBoxEx endDateBx;
+	ListBox monthStartLB;
+	
+	@UiField
+	ListBox monthEndLB;
+	
+	@UiField
+	ListBox yearLB;
 
 	@UiField
 	HTMLPanel taxedPanel;
@@ -341,12 +349,6 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
 	@UiField
 	Button quoteFxButton;
-
-	@UiField
-	HTMLPanel monthPanel;
-
-	@UiField
-	ListBox monthLB;
 
 	@UiField
 	HTMLPanel buttonsPanel;
@@ -547,10 +549,24 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		paymentTypeListBox.setEnabled(false);
 		paymentTypeListBox.addStyleName(style.visibilityDisabled());
 		paymentTypeListBox.addChangeHandler(e -> {
+			checkPeriodicityValues();
 			enableOrDisableTaxAndQuote();
 			enableOrDisableMonth();
+			createUpdatePayment();
 		});
 		paymentCRAPanel.add(paymentTypeListBox);
+	}
+	
+	private void checkPeriodicityValues() {
+		if(AonStringUtils.equalsIgnoreCase("MANUAL", paymentType.getSelectedValue())) {
+			com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+			int periodicityCount = periodicityType.getItemCount();
+			
+			if(type != com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0005 && periodicityCount > 8)
+				periodicityType.removeItem(periodicityType.getItemCount()-1);
+			else if(type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0005 && periodicityCount == 8)
+				periodicityType.addItem("PRORRATEAR", "PRORRATEAR");
+	    }
 	}
 
 	private void enableOrDisableMonth() {
@@ -751,6 +767,43 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		monthLB.addItem("Octubre", "9");
 		monthLB.addItem("Noviembre", "10");
 		monthLB.addItem("Diciembre", "11");
+		
+		monthStartLB.clear();
+		monthStartLB.addItem("Enero", "ENERO");
+		monthStartLB.addItem("Febrero", "FEBRERO");
+		monthStartLB.addItem("Marzo", "MARZO");
+		monthStartLB.addItem("Abril", "ABRIL");
+		monthStartLB.addItem("Mayo", "MAYO");
+		monthStartLB.addItem("Junio", "JUNIO");
+		monthStartLB.addItem("Julio", "JULIO");
+		monthStartLB.addItem("Agosto", "AGOSTO");
+		monthStartLB.addItem("Septiembre", "SEPTIEMBRE");
+		monthStartLB.addItem("Octubre", "OCTUBRE");
+		monthStartLB.addItem("Noviembre", "NOVIEMBRE");
+		monthStartLB.addItem("Diciembre", "DICIEMBRE");
+		monthStartLB.addChangeHandler(e -> createUpdatePayment());
+		
+		monthEndLB.clear();
+		monthEndLB.addItem("Enero", "ENERO");
+		monthEndLB.addItem("Febrero", "FEBRERO");
+		monthEndLB.addItem("Marzo", "MARZO");
+		monthEndLB.addItem("Abril", "ABRIL");
+		monthEndLB.addItem("Mayo", "MAYO");
+		monthEndLB.addItem("Junio", "JUNIO");
+		monthEndLB.addItem("Julio", "JULIO");
+		monthEndLB.addItem("Agosto", "AGOSTO");
+		monthEndLB.addItem("Septiembre", "SEPTIEMBRE");
+		monthEndLB.addItem("Octubre", "OCTUBRE");
+		monthEndLB.addItem("Noviembre", "NOVIEMBRE");
+		monthEndLB.addItem("Diciembre", "DICIEMBRE");
+		monthEndLB.addChangeHandler(e -> createUpdatePayment());
+		
+		int year = DateUtils.getYear();
+		yearLB.clear();
+		yearLB.addItem(year+1 + "", year+1 + "");
+		yearLB.addItem(year + "", year + "");
+		yearLB.addItem(year-1 + "", year-1 + "");
+		yearLB.setSelectedIndex(1);
 	}
 
 	private Short getMonth() {
@@ -966,6 +1019,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		createPaymentDescriptionPos();
 		createPaymentDescription();
 		createPaymentExpression();
+		createQuoteExpression();
 	}
 
 	private void createPaymentConcept() {
@@ -1111,15 +1165,31 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		String paymentExpressionText = "";
 
 		String paymentTypeValue = paymentType.getSelectedValue();
+		String periodicity = periodicityType.getSelectedValue();
 
 		if (AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE"))
 			paymentExpressionText = createBaseSalaryExpression();
 
-		if (AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")
-				|| AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL"))
+		if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL") && AonStringUtils.containsIgnoreCase(periodicity, "PRORRATEAR"))
+			 paymentExpressionText = createProrratExpression();
+		else if (AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS") || AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL"))
 			paymentExpressionText = createPlusExpression();
 
 		this.paymentExpression.setValue(paymentExpressionText, true);
+	}
+	
+	private void createQuoteExpression() {
+		String paymentTypeValue = paymentType.getSelectedValue();
+		String periodicity = periodicityType.getSelectedValue();
+            
+		if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL") && AonStringUtils.containsIgnoreCase(periodicity, "PRORRATEAR")) {
+			quoteTypeLB.setEnabled(false);
+			quoteTypeLB.setSelectedIndex(3);
+			quoteExpression.setValue("PRORRATEAR(" + monthStartLB.getSelectedValue() + "," + monthEndLB.getSelectedValue() + ")");
+		} else {
+			quoteTypeLB.setEnabled(true);
+			quoteExpression.setValue("");
+		}                       
 	}
 
 	private String createBaseSalaryExpression() {
@@ -1134,6 +1204,21 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
 		return expression;
 	}
+	
+	 private String createProrratExpression() {
+		 String expression = "";
+		 String variable = "";               
+		 variable = (AonStringUtils.isBlank(extraName.getValue()) ? "SIN_DEFINIR" : extraName.getValue().toUpperCase());              
+		 expression = variable;
+		 
+		 if(AonStringUtils.isNotBlank(expression))
+			 expression = expression.replaceAll("\\s", "_");
+		                
+		 String newExpression = "PRORRATEAR(" + expression + "," + monthStartLB.getSelectedValue() + "," + monthEndLB.getSelectedValue() + ")";
+		 expression = newExpression;
+		
+		 return expression;
+	 }
 
 	private String createPlusExpression() {
 		String expression = "";
@@ -1305,8 +1390,8 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 			} else if (AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "MEJORA_IT")) {
 				List<Payment> gtzdoPayments = gtzdoWizard.createPayments();
 				for (Payment gtzdoPayment : gtzdoPayments) {
-					gtzdoPayment.setStartDate(startDateBx.getValue());
-					gtzdoPayment.setEndDate(endDateBx.getValue());
+					gtzdoPayment.setStartDate(createStartDate());
+					gtzdoPayment.setEndDate(createEndDate());
 				}
 				onGtzdoAccept(gtzdoPayments);
 			} else {
@@ -1332,8 +1417,8 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		payment.setSalaryType(Salary.Type.SALARY);
 		payment.setName(paymentConcept.getValue());
 		payment.setMonth(getMonth());
-		payment.setStartDate(startDateBx.getValue());
-		payment.setEndDate(endDateBx.getValue());
+		payment.setStartDate(createStartDate());
+		payment.setEndDate(createEndDate());
 	}
 
 	public String getTaxedExpression() {
@@ -1364,6 +1449,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		String expression = "";
 		String paymentExpressionValue = paymentExpression.getValue();
 		String periodicityTypeValue = periodicityType.getSelectedValue();
+		String extraNameValue = extraName.getValue();
 		expression = paymentExpressionValue.replace(periodicityTypeValue, "");
 		expression = expression.trim();
 
@@ -1371,17 +1457,19 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 			expression = "/*read-only*/" + expression + "/**/";
 		else if ((paymentType.getSelectedIndex() == 1 || paymentType.getSelectedIndex() == 2)
 				&& AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
-			String extraNameValue = extraName.getValue();
 			expression = "/*user*/" + extraNameValue + "/**/";
 		} else
 			expression = "/*user*/" + expression + "/**/";
 
 		if (AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
-			String newExpression = "FRACCIONAR(" + expression + ")";
+			String newExpression = "FRACCIONAR(/*read-only*/" + extraNameValue + "/**/)";
 			expression = newExpression;
 		} else if (!AonStringUtils.containsIgnoreCase(periodicityTypeValue, "DIAS_SEMANA")) {
 			expression += periodicityTypeValue;
 		}
+		
+		if(AonStringUtils.containsIgnoreCase(paymentType.getSelectedValue(), "MANUAL") && AonStringUtils.containsIgnoreCase(periodicityTypeValue, "PRORRATEAR"))
+			expression = createProrratExpression();
 
 		return "/*wizard*/" + expression;
 	}
@@ -1398,8 +1486,8 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		paymentExtra.setType(paymentTypeListBox.getSelected());
 		paymentExtra.setSalaryType(Salary.Type.EXTRA);
 		paymentExtra.setName(paymentConcept.getValue());
-		paymentExtra.setStartDate(startDateBx.getValue());
-		paymentExtra.setEndDate(endDateBx.getValue());
+		paymentExtra.setStartDate(createStartDate());
+		paymentExtra.setEndDate(createEndDate());
 
 		try {
 			String monthIssueDate = extraPayDate.getValue().split("/")[1];
@@ -1457,6 +1545,20 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		extra.setStartDate("01/" + monthStr + " -1");
 		extra.setEndDate(lastDayOfPreviusMonthIssueDate.getDate() + "/"
 				+ (DateUtils.getMonth(lastDayOfPreviusMonthIssueDate) + 1));
+	}
+	
+	private Date createStartDate() {
+		int startMonth = monthStartLB.getSelectedIndex();
+		int year = Integer.parseInt(yearLB.getSelectedValue());
+		
+		return DateUtils.getFirstDayOfMonth(DateUtils.getDate(startMonth, year));
+	}
+	
+	private Date createEndDate() {
+		int endMonth = monthEndLB.getSelectedIndex();
+		int year = Integer.parseInt(yearLB.getSelectedValue());
+		
+		return DateUtils.getLastDayOfMonth(DateUtils.getDate(endMonth, year));
 	}
 
 	// -------------------------------------------- Auxiliar Methods
