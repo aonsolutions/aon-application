@@ -5306,6 +5306,99 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testCretaZeroAdditionalHoursIT()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+					}
+				}
+				);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		PaymentConceptRecord concept = addConcept(aonContext, "HORAS_COMPL");
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				concept, 
+				"HORAS COMPLEMENTARIAS PACTADAS", 
+				"/*read-only*/HORAS_COMPLEMENTARIAS * IMPORTE_HORA_COMPLEMENTARIA/**/", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0057);
+		
+		concept = addConcept(aonContext, "HORAS_NOMINA_FIX");
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				concept, 
+				"HORAS NOMINA", 
+				"/*read-only*/HORAS_NOMINA=HORAS_TRABAJADAS/**/", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001);
+		
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put("DIAS_MES", "30.00");
+						put("HORAS_COMPLEMENTARIAS", "0.00");
+						put("IMPORTE_HORA_COMPLEMENTARIA", "69.00");
+					}
+				}
+				);
+		
+		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 20); 
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+		getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+		
+		List<Tramo> tramosTrabajadores = trabajadoresTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
+		
+		assertEquals(2, tramosTrabajadores.size() );
+		
+		assertTramoActivoNormalTiempoParcial(tramosTrabajadores.get(0));
+		assertTramoIT15PrimerosDiasDiario(tramosTrabajadores.get(1));
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getTramosBases(connection, startDate, endDate, ccc, contract);
+		
+		assertEquals(2, tramosBases.size() );
+		
+		assertDato(tramosBases.get(0).getDatosTramo().getDato(), "H", "01");
+
+
+	}
 	
 	@Test
 	public void testCretaAdditionalHoursSection()
