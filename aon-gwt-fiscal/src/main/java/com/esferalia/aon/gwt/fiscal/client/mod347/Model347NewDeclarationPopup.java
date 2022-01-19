@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347.Model347Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -35,13 +36,17 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 	private CheckBox excludeIntracommunity = new CheckBox("Excluir facturas intracomunitarias.");
 	private AonToolbar toolbar;
 
-	public Model347NewDeclarationPopup(final Mod347 model, final Model347Callback callback) {
+	public Model347NewDeclarationPopup(final Mod347 model, boolean duplicate, final Model347Callback callback) {
 		super(Unit.PX);
 
 		addNorth(headerPanel, AonFiscalModelHeader.HEIGTH);
 
 		String title = AON.MSG.newDeclaration();
 		toolbar = new AonToolbar(title);
+		AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.backAction(),AON.CSS.aonIconBack());
+		cancelButton.addClickHandler(event ->  callback.onCancel(model) );
+		toolbar.add(cancelButton);
+		
 		addNorth(toolbar, AonToolbar.HEIGTH);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
@@ -52,14 +57,14 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 
-		paint(model, callback);
+		paint(model, callback, duplicate);
 	}
 
 	protected void setCaption(String caption) {
 		toolbar.setTitle(caption);
 	}
 
-	private void paint(Mod347 model, Model347Callback callback) {
+	private void paint(Mod347 model, Model347Callback callback, boolean duplicate) {
 
 		headerPanel.setWidget(new AonFiscalModelHeader(model));
 
@@ -72,16 +77,19 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 		rootPanel.add(tab);
 
 		populate(model);
-		paintAdministration(model, callback, tab);
+		paintAdministration(model, duplicate, callback, tab);
 		paintYear(model, tab);
-		paintComplementary(model, callback, tab);
-		paintReplacement(model, callback, tab);
+		paintComplementary(model, duplicate, callback, tab);
+		paintReplacement(model, duplicate, callback, tab);
 		paintReplacedReceipt(model, tab);
-		paintChecksLabel(tab);
-		paintExcludeOutputNationalZero(model, tab);
-		paintExcludeInputNationalZero(model, tab);
-		paintExcludeRetention(model, tab);
-		paintExcludeIntracommunity(model, tab);
+		
+		if (!duplicate) {
+			paintChecksLabel(tab);
+			paintExcludeOutputNationalZero(model, tab);
+			paintExcludeInputNationalZero(model, tab);
+			paintExcludeRetention(model, tab);
+			paintExcludeIntracommunity(model, tab);
+		}
 
 		rootPanel.add(getButtonsPanel(model, callback));
 	}
@@ -98,10 +106,10 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 		excludeIntracommunity.setValue(model.isExcludeIntracommunity());
 	}
 
-	private void paintAdministration(Mod347 model, Model347Callback callback, AonDisplayTable tab) {
+	private void paintAdministration(Mod347 model, boolean duplicate, Model347Callback callback, AonDisplayTable tab) {
 		admonList.addChangeHandler(event -> {
 			model.setAdministration(admonList.getValue());
-			paint(model, callback);
+			paint(model, callback, duplicate);
 		});
 		tab.addLabelWidgetRow(AON.MSG.administration(), admonList);
 	}
@@ -113,7 +121,7 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 		tab.addLabelWidgetRow(AON.MSG.year(), yearBox);
 	}
 
-	private void paintComplementary(Mod347 model, Model347Callback callback, AonDisplayTable tab) {
+	private void paintComplementary(Mod347 model, boolean duplicate, Model347Callback callback, AonDisplayTable tab) {
 		if (model.isGipuzkoa() || model.isBizkaia()) {
 			complementary.setValue(false);
 		} else {
@@ -126,13 +134,13 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 				if (!model.isComplementary() && !model.isReplacement()) {
 					replacedReceiptBox.setValue(null, true);
 				}
-				paint(model, callback);
+				paint(model, callback, duplicate);
 			});
 			tab.addLabelWidgetRow("", complementary);
 		}
 	}
 
-	private void paintReplacement(Mod347 model, Model347Callback callback, AonDisplayTable tab) {
+	private void paintReplacement(Mod347 model, boolean duplicate, Model347Callback callback, AonDisplayTable tab) {
 		if (model.isGipuzkoa()) {
 			replacement.setValue(false);
 		} else {
@@ -145,7 +153,7 @@ public class Model347NewDeclarationPopup extends DockLayoutPanel {
 				if (!model.isComplementary() && !model.isReplacement()) {
 					replacedReceiptBox.setValue(null, true);
 				}
-				paint(model, callback);
+				paint(model, callback, duplicate);
 			});
 			tab.addLabelWidgetRow("", replacement);
 		}

@@ -22,7 +22,6 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -65,7 +64,7 @@ public class Model347 extends MainEntryPoint {
 		@Override
 		public void onRemove(Mod347 model) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(model);
+				getOptions().getExternalCallback().onRemove(model);
 			} else {
 				onCancel(model);
 			}
@@ -73,10 +72,14 @@ public class Model347 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod347 mod347) {
-			cleanErrorMessage();
-			declarationContainer.setWidget(model347Table);
-			model347Table.refresh( new Model347Callback() );
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(mod347);
+			} else {
+				cleanErrorMessage();
+				declarationContainer.setWidget(model347Table);
+				model347Table.refresh( new Model347Callback() );
+				closeFootPanel();
+			}
 		}
 		
 		@Override
@@ -124,6 +127,7 @@ public class Model347 extends MainEntryPoint {
 				@Override
 				public void onSuccess(Mod347 m347) {
 					cleanAndClose();
+					m347.setYear(m347.getYear() + 1);
 					showDuplicateDeclarationPopup(options, m347);
 				}
 
@@ -135,7 +139,7 @@ public class Model347 extends MainEntryPoint {
 		}
 
 		private void showDuplicateDeclarationPopup(Model347ModuleOptions options, Mod347 model) {
-			Model347NewDeclarationPopup newDeclarationPanel = new Model347NewDeclarationPopup(model, new Model347Callback() {
+			Model347NewDeclarationPopup newDeclarationPanel = new Model347NewDeclarationPopup(model,true, new Model347Callback() {
 
 					@Override
 					public void onAccept(Mod347 model) {
@@ -348,13 +352,11 @@ public class Model347 extends MainEntryPoint {
 	}
 	
 	private void showNewDeclarationPopup(Model347ModuleOptions options, Mod347 model) {
-		Model347NewDeclarationPopup newDeclarationPanel = new Model347NewDeclarationPopup( model, new Model347Callback() {
+		Model347NewDeclarationPopup newDeclarationPanel = new Model347NewDeclarationPopup( model, false, new Model347Callback() {
 				@Override
 				public void onAccept(Mod347 model) {
 					final PopupPanel popup = new PopupPanel(false, true);
-					Label label = new Label(AON.MSG.processing());
-					label.addStyleName(AON.AON_CSS.aonTimer());
-					popup.add(label);
+					popup.add(new AonSplash());
 					popup.setGlassEnabled(true);
 					popup.setAnimationEnabled(true);
 					popup.center();

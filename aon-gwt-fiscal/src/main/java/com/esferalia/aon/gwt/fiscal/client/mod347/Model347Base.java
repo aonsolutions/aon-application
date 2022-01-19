@@ -211,11 +211,7 @@ abstract class Model347Base extends DockLayoutPanel {
 				
 				@Override
 				public void onAccept() {
-					if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
-						getCallback().getOptions().getExternalCallback().onExit(mod347);
-					} else {
-						getCallback().onCancel( getModel() );
-					}
+					getCallback().onCancel( getModel() );
 				}
 				
 				@Override
@@ -224,11 +220,7 @@ abstract class Model347Base extends DockLayoutPanel {
 				}
 			});
 		} else {
-			if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
-				getCallback().getOptions().getExternalCallback().onExit(mod347);
-			} else {
-				getCallback().onCancel( getModel() );
-			}
+			getCallback().onCancel( getModel() );
 		}
 	}
 	protected void save() {
