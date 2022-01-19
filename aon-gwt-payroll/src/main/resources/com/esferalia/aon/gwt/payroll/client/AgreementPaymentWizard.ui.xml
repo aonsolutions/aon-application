@@ -93,6 +93,12 @@
 			gap: .5rem;
 		}
 		
+		.between {
+			display: flex;
+			justify-content: space-between;
+			gap: .5rem;
+		}
+		
 	</ui:style>
 	
 	<g:HTMLPanel ui:field="container" styleName="{style.container}">
@@ -196,6 +202,20 @@
 						<g:ListBox ui:field="quoteTypeLB"/>
 						<g:TextBox ui:field="quoteExpression" styleName="{style.maxWidth}"/>
 						<g:Button styleName="{style.aon-toolbar-button} aon_icon_fx" ui:field="quoteFxButton"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel  styleName="{style.between}">
+					<g:HTMLPanel ui:field="monthPanel" styleName="{style.element} {style.maxWidth}">
+						<g:Label ui:field="monthTitle" styleName="{style.title}">Mes</g:Label>
+						<g:ListBox ui:field="monthLB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="monthStartPanel" styleName="{style.element} {style.maxWidth}">
+						<g:Label styleName="{style.title}">Mes inicio</g:Label>
+						<g:ListBox ui:field="monthStartLB"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="monthEndPanel" styleName="{style.element} {style.maxWidth}">
+						<g:Label styleName="{style.title}">Mes fin</g:Label>
+						<g:ListBox ui:field="monthEndLB"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:HTMLPanel>

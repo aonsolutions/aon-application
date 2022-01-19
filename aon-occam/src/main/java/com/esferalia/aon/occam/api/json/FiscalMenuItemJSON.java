@@ -28,7 +28,7 @@ public enum FiscalMenuItemJSON {
 	ADMINISTRATION{
 		@Override
 		public JSONObject to(IFiscalModel model, JSONObject json) {
-			return json.put(IJsonNames.ADMINISTRATION, model.getAdministration() == null?null:model.getAdministration().toString());
+			return json.put(IJsonNames.ADMINISTRATION, model.getAdministration() == null?"":model.getAdministration().toString());
 		}
 	},
 	MODEL{

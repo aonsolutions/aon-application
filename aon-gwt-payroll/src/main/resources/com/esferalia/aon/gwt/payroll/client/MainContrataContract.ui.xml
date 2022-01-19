@@ -39,6 +39,21 @@
 			margin-left: 11px;
 		}
 		
+		.inactive {
+			font-weight: bold;
+			color: red;
+		}
+		
+		.prevAlta {
+			font-weight: bold;
+			color: green;
+		}
+		
+		.closeEnd {
+			font-weight: bold;
+			color: orange;
+		}
+		
 	</ui:style>
 
 	<g:DeckPanel ui:field="deckPanel">

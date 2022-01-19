@@ -39,6 +39,31 @@ public class AonConstants {
 	@Variable(ContextVariable.NOT_PAID_PERMISSION)
 	public static OffType NOT_PAID_PERMISSION = OffType.NOT_PAID_PERMISSION;
 
+	@Variable(ContextVariable.JANUARY)
+	public static Integer JANUARY = 1;
+	@Variable(ContextVariable.FEBRUARY)
+	public static Integer FEBRUARY = 2;
+	@Variable(ContextVariable.MARCH)
+	public static Integer MARCH = 3;
+	@Variable(ContextVariable.APRIL)
+	public static Integer APRIL = 4;
+	@Variable(ContextVariable.MAY)
+	public static Integer MAY = 5;
+	@Variable(ContextVariable.JUNE)
+	public static Integer JUNE = 6;
+	@Variable(ContextVariable.JULY)
+	public static Integer JULY = 7;
+	@Variable(ContextVariable.AUGUST)
+	public static Integer AUGUST = 8;
+	@Variable(ContextVariable.SEPTEMBER)
+	public static Integer SEPTEMBER = 9;
+	@Variable(ContextVariable.OCTOBER)
+	public static Integer OCTOBER = 10;
+	@Variable(ContextVariable.NOVEMBER)
+	public static Integer NOVEMBER = 11;
+	@Variable(ContextVariable.DECEMBER)
+	public static Integer DECEMBER = 12;
+
 	// ------------------------------------------------------------------------
 	// 
 	// ------------------------------------------------------------------------

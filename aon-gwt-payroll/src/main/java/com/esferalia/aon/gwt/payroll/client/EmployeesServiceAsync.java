@@ -328,6 +328,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void updateContractPayments(String currentDomainName, Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback);
 
 	void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback);
+	
+	void createContractPayment(String currentDomainName, Integer contractId, List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback);
 
 	// ------------------------------------------------- ContractExtension
 	

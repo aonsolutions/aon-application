@@ -425,6 +425,10 @@ public class ITPart {
 		return Optional.ofNullable(lack);
 	}
 	
+	public Optional<Float> getDailyBaseCgc() {
+		return Optional.ofNullable(null!=baseCtz && baseCtz>0 ? baseCtz : sumBCtz);
+	}
+	
 	public Integer getCauseNumber() {
 		String cause = null;
 		if(getPartType().contains("baja") && getContingency().isPresent())

@@ -1108,6 +1108,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_floating_message_content")
 	String aonFloatingMessageContent();
+	
+	@ClassName("aon_custom_scroll")
+	String aonCustomScroll();
 
 }
 

@@ -11,6 +11,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.tbai.lroe.IDType;
 import ticketbai.anulacion.AnulaTicketBai;
 import ticketbai.anulacion.IDFactura;
 import ticketbai.emision.Cabecera;
@@ -18,6 +19,7 @@ import ticketbai.emision.CabeceraFacturaType;
 import ticketbai.emision.ClaveTipoFacturaType;
 import ticketbai.emision.ClaveTipoRectificativaType;
 import ticketbai.emision.ClavesType;
+import ticketbai.emision.CountryType2;
 import ticketbai.emision.DatosFacturaType;
 import ticketbai.emision.DesgloseFacturaType;
 import ticketbai.emision.DesgloseIVAType;
@@ -38,6 +40,7 @@ import ticketbai.emision.IDClaveType;
 import ticketbai.emision.IDDestinatario;
 import ticketbai.emision.IDDetalleFacturaType;
 import ticketbai.emision.IDFacturaRectificadaSustituidaType;
+import ticketbai.emision.IDOtro;
 import ticketbai.emision.NoExentaType;
 import ticketbai.emision.SiNoType;
 import ticketbai.emision.SoftwareFacturacionType;
@@ -209,14 +212,16 @@ public class Invoice2tbai {
 		receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
 		receiver.setCodigoPostal(invoice.getAddress().getZip());
 		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
-		receiver.setNIF(invoice.getRegistryDocument());
-		
-		// TODO if(not spain!)
-//		IDOtro other = new IDOtro();
-//		other.setCodigoPais(countryToCountryType2(invoice.getRegistryDocumentCountry()));
-//		other.setIDType(IDtype.OTHER.getCode());
-//		other.setID(invoice.getRegistryDocument());
-//		receiver.setIDOtro(other);
+		if(invoice.isNational()) {
+			receiver.setNIF(invoice.getRegistryDocument());			
+		} else {
+			IDOtro other = new IDOtro();
+			other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			other.setIDType(IDType.OTRO.getName());
+			other.setID(invoice.getRegistryDocument());
+			receiver.setIDOtro(other);
+		}
+
 			
 		receivers.getIDDestinatario().add(receiver);
 		entities.setDestinatarios(receivers);

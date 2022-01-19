@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards;
@@ -37,6 +38,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -75,6 +77,8 @@ public class CheckItModule extends MainEntryPoint {
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	private static final String EURO = "\u20AC";
 	private static final DateTimeFormat DATE_HOURS = DateTimeFormat.getFormat("hh:mm");
+	private static final String AON_BLUE = "#002469";
+	private static final String HOVER_COLOR = "#7A9AD7";
 	
 	
 	private static CheckItServiceAsync CHECKIT_SERVICE;
@@ -448,7 +452,7 @@ public class CheckItModule extends MainEntryPoint {
 				updateErrorLbl2.addStyleName(AON.CSS.aonMarginLeft());
 				updateErrorPanel.add(updateErrorLbl);
 				updateErrorPanel.add(updateErrorLbl2);
-				if (!isMobile()) {					
+				if (!isMobile()) {
 					sessionLog.add(updateErrorPanel);
 					openFootPanel();
 				}
@@ -550,8 +554,8 @@ public class CheckItModule extends MainEntryPoint {
 //				Button close = new Button(AON.MSG.close());
 //				close.setStyleName(AON.CSS.aonMarginRight());
 //				close.addClickHandler(e -> dialog.hide());
-				Button importBtn = new Button("Importar");
-				importBtn.setStyleName(AON.CSS.aonMarginLeft());
+				Button importBtn = aonImportButton();
+				
 				
 				CustomDialog dial = dialog;
 				importBtn.addClickHandler(e ->
@@ -609,7 +613,7 @@ public class CheckItModule extends MainEntryPoint {
 				logoImg.setHeight("40px");
 				logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
 				logoImg.addStyleName(AON.CSS.aonBlockCenter());
-				Label ibanLbl = new Label(checkItBankAccount.getCcc());
+				Label ibanLbl = new Label(formatIban(checkItBankAccount.getCcc()));
 				ibanLbl.addStyleName(AON.CSS.aonTextCenter());
 				topInfo.add(logoImg);
 				topInfo.add(ibanLbl);
@@ -618,7 +622,13 @@ public class CheckItModule extends MainEntryPoint {
 				movementsFlow.add(topInfo);
 				
 				if (isMobile() || (checkItBankAccount.getPending() != null && !checkItBankAccount.getPending().isEmpty())) {
-					movementsFlow.add(getMovements(checkItBankAccount, isMobile()));
+					FlowPanel periodMovContainer = new FlowPanel();
+					if (isMobile())
+						buildCustomMovementsPanel(periodMovContainer, opt, checkItBankAccount);
+					else
+						periodMovContainer.add(getMovements(checkItBankAccount));
+					movementsFlow.add(periodMovContainer);
+//					movementsFlow.add(getMovements(checkItBankAccount, isMobile()));
 				} else {
 					Label noMovLbl = new Label("No hay movimientos pendientes");
 					noMovLbl.setWidth("100%");
@@ -627,6 +637,7 @@ public class CheckItModule extends MainEntryPoint {
 						
 				}
 				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
+				movementsPanel.addStyleName(AON.CSS.aonCustomScroll());
 				if (isMobile()) {
 					movementsPanel.setWidth("100%");
 				} else {
@@ -784,7 +795,7 @@ public class CheckItModule extends MainEntryPoint {
 							logoImg.setHeight("40px");
 							logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
 							logoImg.addStyleName(AON.CSS.aonBlockCenter());
-							Label ibanLbl = new Label(checkItBankAccount.getCcc());
+							Label ibanLbl = new Label(formatIban(checkItBankAccount.getCcc()));
 							ibanLbl.addStyleName(AON.CSS.aonTextCenter());
 							topInfo.add(logoImg);
 							topInfo.add(ibanLbl);
@@ -989,7 +1000,7 @@ public class CheckItModule extends MainEntryPoint {
 							logoImg.setHeight("40px");
 							logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
 							logoImg.addStyleName(AON.CSS.aonBlockCenter());
-							Label ibanLbl = new Label(checkItBankAccount.getCcc());
+							Label ibanLbl = new Label(formatIban(checkItBankAccount.getCcc()));
 							ibanLbl.addStyleName(AON.CSS.aonTextCenter());
 							topInfo.add(logoImg);
 							topInfo.add(ibanLbl);
@@ -1089,6 +1100,8 @@ public class CheckItModule extends MainEntryPoint {
 						Button hai = new Button(AON.MSG.accept());
 						if (isMobile()) {
 							mobileAcceptButton(hai);
+						} else {
+							desktopAcceptButton(hai);
 						}
 						
 						Button iie = new Button(AON.MSG.cancelAction());
@@ -1096,8 +1109,11 @@ public class CheckItModule extends MainEntryPoint {
 						hp.addStyleName(AON.CSS.aonBlockCenter());
 						hp.addStyleName(AON.CSS.aonMarginTop());
 						hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-						if (!isMobile())
+						if (!isMobile()) {
+							desktopCancelButton(iie);	
 							hp.add(iie);
+						}
+						
 						hp.add(hai);
 						flow.add(hp);
 						if (dialog != null)
@@ -1182,8 +1198,7 @@ public class CheckItModule extends MainEntryPoint {
 				closeImport.addStyleName(AON.CSS.aonPaddingBottom());
 				
 				
-				Button importBtn = new Button("Importar");
-				importBtn.setStyleName(AON.CSS.aonMarginLeft());
+				Button importBtn = aonImportButton();
 				
 				CustomDialog dial = dialog;
 				importBtn.addClickHandler(e ->
@@ -1235,7 +1250,7 @@ public class CheckItModule extends MainEntryPoint {
 				logoImg.setHeight("40px");
 				logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
 				logoImg.addStyleName(AON.CSS.aonBlockCenter());
-				Label ibanLbl = new Label(checkItBankAccount.getCcc());
+				Label ibanLbl = new Label(formatIban(checkItBankAccount.getCcc()));
 				ibanLbl.addStyleName(AON.CSS.aonTextCenter());
 				topInfo.add(logoImg);
 				topInfo.add(ibanLbl);
@@ -1243,21 +1258,21 @@ public class CheckItModule extends MainEntryPoint {
 				
 				movementsFlow.add(topInfo);
 				
-				movementsFlow.add(getMovements(checkItBankAccount, true));
 				
-//				if (isMobile() || (checkItBankAccount.getPending() != null && !checkItBankAccount.getPending().isEmpty())) {
-//					
-//				} else {
-//					Label noMovLbl = new Label("No hay movimientos pendientes");
-//					noMovLbl.setWidth("100%");
-//					noMovLbl.setStyleName(AON.CSS.aonTextCenter());
-//					movementsFlow.add(noMovLbl);
-//						
-//				}
+				/**Filtros de fecha**/
+				
+				FlowPanel periodMovContainer = new FlowPanel();
+				
+				buildCustomMovementsPanel(periodMovContainer, opt, checkItBankAccount, dialog);
+				
+				
+				movementsFlow.add(periodMovContainer);
+				
 				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
 				movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
 				movementsPanel.addStyleName(AON.CSS.aonMarginTop());
 				movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
+				movementsPanel.addStyleName(AON.CSS.aonCustomScroll());
 				
 				panel.add(movementsPanel);
 				dialog.add(panel);
@@ -1276,9 +1291,212 @@ public class CheckItModule extends MainEntryPoint {
 				getMenuPanel().add(allMovementsButton);
 			
 		}
+
+		private Button aonImportButton() {
+			Button importBtn = new Button("Importar");
+//			importBtn.setStyleName(AON.CSS.aonMarginLeft());
+			
+			importBtn.setWidth("100px");
+			importBtn.setHeight("30px");
+			
+			Style style = importBtn.getElement().getStyle();
+			style.setProperty("padding", "2px");
+			style.setProperty("text-transform", "none");
+			style.setProperty("background", AON_BLUE);
+			style.setProperty("color", "white");
+			style.setProperty("fontSize", "1rem");
+			style.setProperty("fontWeight", "700");
+			style.setProperty("border", "none");
+			style.setProperty("borderRadius", "6px");
+			style.setProperty("transition", "background .25s ease-in-out,transform .15s ease");
+			
+			importBtn.addMouseOverHandler(ev -> {
+				style.setProperty("background", HOVER_COLOR);				
+			});
+			
+			importBtn.addMouseOutHandler(ev -> {
+				style.setProperty("background", AON_BLUE);								
+			});
+			
+			return importBtn;
+		}
 		
 	}
 	
+	private static void periodDropdownStyle(ListBox listBox) {
+		listBox.getElement().getStyle().setProperty("borderRadius", "5px");
+		listBox.getElement().getStyle().setBorderColor(AON_BLUE);
+		listBox.getElement().getStyle().setBorderWidth(2, Unit.PX);
+		listBox.getElement().getStyle().setColor(AON_BLUE);
+		listBox.getElement().getStyle().setPadding(2.5, Unit.PX);
+		listBox.addStyleName(AON.CSS.aonFontSmall());
+	}
+	
+	private void buildCustomMovementsPanel(FlowPanel container, CheckItModuleOptions opt, CheckItBankAccount checkItBankAccount, CustomDialog ...dialog) {
+		int firstYear = 2020;
+		
+		
+		FlowPanel perTopFlow = new FlowPanel();
+		Label perLbl = new InlineLabel("PER\u00CDODO: ");
+		perLbl.addStyleName(AON.CSS.aonFontSmall());
+		perLbl.addStyleName(AON.CSS.aonBold());
+		perLbl.getElement().getStyle().setColor(AON_BLUE);
+		perTopFlow.add(perLbl);
+		ListBox periodSelector = new ListBox();
+		periodSelector.addItem("\u00DAltimos 10 d\u00EDas", "10");
+		periodSelector.addItem("\u00DAltimos 30 d\u00EDas", "30");
+		periodSelector.addItem("\u00DAltimos 60 d\u00EDas", "60");
+		periodSelector.addItem("Personalizado", "0");
+		periodSelector.setSelectedIndex(0);
+		periodDropdownStyle(periodSelector);
+		
+		perTopFlow.add(periodSelector);
+		perTopFlow.addStyleName(AON.AON_CSS.aonDisplayBlock());
+		perTopFlow.addStyleName(AON.AON_CSS.aonBlockCenter());
+		perTopFlow.addStyleName(AON.AON_CSS.aonTextCenter());
+		
+		
+		int currentYear = AonDateUtils.getCurrentYear();
+		String[] monthNames = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		
+		ListBox listBoxYearFrom = new ListBox();
+		for (int year=currentYear; year>=firstYear; year--) {
+			listBoxYearFrom.addItem(String.valueOf(year), String.valueOf(year));
+		}
+		ListBox listBoxYearTo = new ListBox();
+		for (int year=currentYear; year>=firstYear; year--) {
+			listBoxYearTo.addItem(String.valueOf(year), String.valueOf(year));
+		}
+		
+		Date thisMonth = new Date();
+		
+		ListBox listBoxMonthFrom = new ListBox();
+		for (int month=0; month<=thisMonth.getMonth(); month++) {
+			listBoxMonthFrom.addItem(monthNames[month], String.valueOf(month));
+		}
+		ListBox listBoxMonthTo = new ListBox();
+		for (int month=0; month<12; month++) {
+			listBoxMonthTo.addItem(monthNames[month], String.valueOf(month));
+		}
+		listBoxMonthFrom.setSelectedIndex(thisMonth.getMonth());
+		listBoxMonthFrom.setWidth("100px");
+		listBoxMonthTo.setSelectedIndex(thisMonth.getMonth());
+		listBoxMonthTo.setWidth("100px");
+		
+		
+		FlexTable movementContainer = new FlexTable();
+		
+		FlexTable customPeriod = new FlexTable();
+		Label desdeLbl = new Label("DESDE:");
+		desdeLbl.addStyleName(AON.CSS.aonFontSmall());
+		desdeLbl.addStyleName(AON.CSS.aonBold());
+		desdeLbl.getElement().getStyle().setColor(AON_BLUE);
+		
+		customPeriod.setWidget(0, 0, desdeLbl);
+		customPeriod.setWidget(0, 1, listBoxMonthFrom);
+		customPeriod.setWidget(0, 2, listBoxYearFrom);
+
+		Label hastaLbl = new Label("HASTA:");
+		hastaLbl.addStyleName(AON.CSS.aonFontSmall());
+		hastaLbl.addStyleName(AON.CSS.aonBold());
+		hastaLbl.getElement().getStyle().setColor(AON_BLUE);
+		
+		customPeriod.setWidget(1, 0, hastaLbl);
+		customPeriod.setWidget(1, 1, listBoxMonthTo);
+		customPeriod.setWidget(1, 2, listBoxYearTo);
+		
+		customPeriod.getElement().getStyle().setProperty("marginLeft", "auto");
+		customPeriod.getElement().getStyle().setProperty("marginRight", "auto");
+		
+		FlowPanel periodFlow = new FlowPanel();
+		periodFlow.add(perTopFlow);
+		
+		periodSelector.addChangeHandler(ev -> {
+			if (periodSelector.getSelectedIndex() == periodSelector.getItemCount() - 1) {
+				periodFlow.add(customPeriod);				
+				customMovChange(movementContainer, opt, checkItBankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, dialog);
+			} else {
+				if (periodFlow.getWidgetCount() > 1)
+					periodFlow.remove(1);
+				int days = Integer.parseInt(periodSelector.getSelectedValue());
+				Date from = new Date();
+				CalendarUtil.addDaysToDate(from, -days);
+				
+				String periodStr = "en los \u00FAltimos " + days + "d\u00EDas";
+				
+				getMovements(movementContainer, opt, checkItBankAccount, from, new Date(), periodStr, dialog);
+			}
+		});
+		
+		
+		int days = Integer.parseInt(periodSelector.getSelectedValue());
+		Date from = new Date();
+		CalendarUtil.addDaysToDate(from, -days);
+		String periodStr = "en los \u00FAltimos " + days + "d\u00EDas";
+		getMovements(movementContainer, opt, checkItBankAccount, from, new Date(), periodStr, dialog);
+		
+		ChangeHandler onDateChange = ev -> customMovChange(movementContainer, opt, checkItBankAccount, listBoxMonthFrom, listBoxYearFrom, listBoxMonthTo, listBoxYearTo, firstYear, monthNames, dialog);
+		listBoxMonthFrom.addChangeHandler(onDateChange);
+		listBoxYearFrom.addChangeHandler(onDateChange);
+		listBoxMonthTo.addChangeHandler(onDateChange);
+		listBoxYearTo.addChangeHandler(onDateChange);
+		
+		periodDropdownStyle(listBoxMonthFrom);
+		periodDropdownStyle(listBoxYearFrom);
+		periodDropdownStyle(listBoxMonthTo);
+		periodDropdownStyle(listBoxYearTo);
+		
+		
+		container.clear();
+		container.add(periodFlow);
+		
+		container.add(movementContainer);
+	}
+	
+	
+	private void customMovChange(FlexTable movementContainer, CheckItModuleOptions opt, CheckItBankAccount checkItBankAccount, ListBox listBoxMonthFrom, ListBox listBoxYearFrom, ListBox listBoxMonthTo, ListBox listBoxYearTo, int firstYear, String[] monthNames, CustomDialog ...dialog) {
+		int fromMonth = Integer.parseInt(listBoxMonthFrom.getSelectedValue());
+		int fromYear = Integer.parseInt(listBoxYearFrom.getSelectedValue());
+		
+		int toMonth = Integer.parseInt(listBoxMonthTo.getSelectedValue());
+		int toYear = Integer.parseInt(listBoxYearTo.getSelectedValue());
+		Date dateTo = new Date(toYear - 1900, toMonth, 1);
+		CalendarUtil.addMonthsToDate(dateTo, 1);
+		CalendarUtil.addDaysToDate(dateTo, -1);
+		
+		
+		listBoxYearFrom.clear();
+		for (int year=toYear; year>=firstYear; year--) {
+			listBoxYearFrom.addItem(String.valueOf(year), String.valueOf(year));
+		}
+		int selectedIndex = (listBoxYearFrom.getItemCount() - 1) - (fromYear - firstYear);
+		listBoxYearFrom.setSelectedIndex(selectedIndex > 0 ? selectedIndex : 0);
+		
+		fromYear = Integer.parseInt(listBoxYearFrom.getSelectedValue());
+		
+		if (fromYear == toYear) {
+			listBoxMonthFrom.clear();
+			for (int month=0; month<=toMonth; month++) {
+				listBoxMonthFrom.addItem(monthNames[month], String.valueOf(month));
+			}
+		} else if (listBoxMonthFrom.getItemCount() != 12) {
+			listBoxMonthFrom.clear();
+			for (int month=0; month<12; month++) {
+				listBoxMonthFrom.addItem(monthNames[month], String.valueOf(month));
+			}
+		}
+		
+		listBoxMonthFrom.setSelectedIndex(fromMonth < listBoxMonthFrom.getItemCount() ? fromMonth : toMonth);
+		fromMonth = Integer.parseInt(listBoxMonthFrom.getSelectedValue());
+		
+		Date dateFrom = new Date(fromYear - 1900, fromMonth, 1);
+		
+		DateTimeFormat dtf = DateTimeFormat.getFormat("dd/MM/yyyy");
+		
+		String periodStr = "del " + dtf.format(dateFrom) + " al " + dtf.format(dateTo);
+		
+		getMovements(movementContainer, opt, checkItBankAccount, dateFrom, dateTo, periodStr, dialog);
+	}
 	
 	private void drawBankLoginFields(AonTextBox userID, AonTextBox userPassword,
 			AonTextBox userPIN, CheckitUnlinkedBankAccount bankAccount, FlexTable fieldsTable, CheckItModuleOptions opt) {
@@ -1661,13 +1879,17 @@ public class CheckItModule extends MainEntryPoint {
 			
 			if (isMobile()) {
 				mobileAcceptButton(hai);
+			} else {
+				desktopAcceptButton(hai);
 			}
 			
 			Button iie = new Button(AON.MSG.cancelAction());
 			hp.setWidth("50%");
 			hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			if (!isMobile())
+			if (!isMobile()) {
+				desktopCancelButton(iie);
 				hp.add(iie);
+			}
 			hp.add(hai);
 			registrationTable.setWidget(3, 0, hp);
 			errLabel.setStyleName(AON.CSS.aonColorRed());
@@ -1692,7 +1914,7 @@ public class CheckItModule extends MainEntryPoint {
 						Label errorLabel = new Label("Se ha producido un error al a\u00F1adir la cuenta: \"" + error + "\"");
 						errorLabel.setStyleName(AON.CSS.aonColorRed());
 						if (!isMobile()) {
-							sessionLog.add(errorLabel);							
+							sessionLog.add(errorLabel);
 							openFootPanel();
 						}
 					}
@@ -1781,7 +2003,7 @@ public class CheckItModule extends MainEntryPoint {
 		hai.setHeight("35px");
 		
 		Style style = hai.getElement().getStyle();
-		style.setProperty("background", "#002469");
+		style.setProperty("background", AON_BLUE);
 		style.setProperty("color", "white");
 		style.setProperty("fontSize", "1rem");
 		style.setProperty("fontWeight", "700");
@@ -1862,58 +2084,97 @@ public class CheckItModule extends MainEntryPoint {
 		centerLayoutPanel.animate(500);
 	}
 	
-	
-	private FlexTable getMovements(CheckItBankAccount checkItBankAccount, boolean all) {
-		DateTimeFormat dtf = DateTimeFormat.getFormat("d MMM | EEEE");
-		
-		FlexTable tab = new FlexTable();
-		
-		List<CheckItBankStatement> statements = all ? checkItBankAccount.getAllMovements() : checkItBankAccount.getPending();
-		
-		Stream<Date> orderedDates = statements.stream().map(pm -> pm.getOperationDate()).sorted((d1, d2) -> {
-			if (d1 == null || d2 == null)
-				return -1;
-			return d2.compareTo(d1);
-		}).distinct();
-		
-		orderedDates.forEach(dte -> {
-			
-			String parsedDate = dte != null ? dtf.format(dte).toUpperCase() : "";
-			
-			int nextRow = tab.getRowCount();
-			Label dateLabel = new Label(parsedDate);
-			dateLabel.addStyleName(AON.CSS.aonFontMedium());
-			dateLabel.addStyleName(AON.CSS.aonBold());
-			dateLabel.getElement().getStyle().setColor("#002469");
-			dateLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
-			dateLabel.setWidth("100%");
-			dateLabel.getElement().getStyle().setMarginTop(12, Unit.PX);
-			dateLabel.getElement().getStyle().setMarginBottom(8, Unit.PX);
-			tab.setWidget(nextRow, 0, dateLabel);
-			tab.getElement().setAttribute("cellSpacing", "0");
-			
-			List<CheckItBankStatement> st = statements.stream()
-			.filter(pen -> {
-				if (pen != null && dte != null)
-					return dte.equals(pen.getOperationDate());
-				else {
-					return pen == null && dte == null;
+	private void getMovements(FlexTable tab, CheckItModuleOptions opt, CheckItBankAccount checkItBankAccount, Date startDate, Date endDate, String periodStr, CustomDialog ...dialog) {
+		CHECKIT_SERVICE.getMovements(opt.getDomainName(), opt.getDomain(), opt.getUser(), opt.getConfiguration().getEnterpriseId(), checkItBankAccount, startDate, endDate, new AsyncCallback<List<CheckItBankStatement>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				if (!isMobile()) {
+					Label errorLabel = new Label("Se produjo un error al obtener los movimientos " + (periodStr != null ? periodStr : ""));
+					errorLabel.addStyleName(AON.CSS.aonColorRed());
+					sessionLog.add(errorLabel);
+					openFootPanel();
 				}
-			})
-			.sorted((o1, o2) -> o1.getCheckitMovementId().compareTo(o2.getCheckitMovementId()))
-			.collect(Collectors.toList());
-			
-			for (int i=0; i< st.size(); i++) {
-				CheckItBankStatement mov = st.get(i);
-				getPendingMovementTag(tab, mov, i == st.size() - 1);
+			}
+
+			@Override
+			public void onSuccess(List<CheckItBankStatement> result) {
+				tab.removeAllRows();
+				completeMovementsTable(tab, result, periodStr);
+				if (dialog != null && dialog.length > 0) {
+					for (CustomDialog dial : dialog) {
+						dial.center();
+					}
+				}
 			}
 		});
+	}
+	
+	private void completeMovementsTable(FlexTable tab, List<CheckItBankStatement> statements, String periodStr) {
+		periodStr = periodStr != null ? periodStr : "";
+		if (statements != null && !statements.isEmpty()) {
+			DateTimeFormat dtf = DateTimeFormat.getFormat("d MMM | EEEE");
+			
+			Stream<Date> orderedDates = statements.stream().map(CheckItBankStatement::getOperationDate).sorted((d1, d2) -> {
+				if (d1 == null || d2 == null)
+					return -1;
+				return d2.compareTo(d1);
+			}).distinct();
+			
+			orderedDates.forEach(dte -> {
+				
+				String parsedDate = dte != null ? dtf.format(dte).toUpperCase() : "";
+				
+				int nextRow = tab.getRowCount();
+				Label dateLabel = new Label(parsedDate);
+				dateLabel.addStyleName(AON.CSS.aonFontMedium());
+				dateLabel.addStyleName(AON.CSS.aonBold());
+				dateLabel.getElement().getStyle().setColor(AON_BLUE);
+				dateLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
+				dateLabel.setWidth("100%");
+				dateLabel.getElement().getStyle().setMarginTop(12, Unit.PX);
+				dateLabel.getElement().getStyle().setMarginBottom(8, Unit.PX);
+				tab.setWidget(nextRow, 0, dateLabel);
+				tab.getElement().setAttribute("cellSpacing", "0");
+				
+				List<CheckItBankStatement> st = statements.stream()
+				.filter(pen -> {
+					if (pen != null && dte != null)
+						return dte.equals(pen.getOperationDate());
+					else {
+						return pen == null && dte == null;
+					}
+				})
+				.sorted((o1, o2) -> o1.getCheckitMovementId().compareTo(o2.getCheckitMovementId()))
+				.collect(Collectors.toList());
+				
+				for (int i=0; i< st.size(); i++) {
+					CheckItBankStatement mov = st.get(i);
+					getPendingMovementTag(tab, mov, i == st.size() - 1);
+				}
+			});
+			
+			boolean sugoiChiisai = Window.getClientWidth() < 350;
+			
+			tab.setWidth("100%");
+			tab.getColumnFormatter().setWidth(0, sugoiChiisai ? "55%" : "60%");
+			tab.getColumnFormatter().setWidth(1, sugoiChiisai ? "45" : "40%");
+		} else {
+			Label lbl = new Label("No hay movimientos disponibles " + periodStr);
+			lbl.addStyleName(AON.CSS.aonTextCenter());
+			lbl.addStyleName(AON.CSS.aonFontMedium());			
+			lbl.addStyleName(AON.CSS.aonMargin());
+			lbl.getElement().getStyle().setColor(AON_BLUE);
+			tab.getFlexCellFormatter().setColSpan(0, 0, 2);
+			tab.setWidget(0, 0, lbl);
+		}
 		
-		boolean sugoiChiisai = Window.getClientWidth() < 350;
-		
-		tab.setWidth("100%");
-		tab.getColumnFormatter().setWidth(0, sugoiChiisai ? "55%" : "60%");
-		tab.getColumnFormatter().setWidth(1, sugoiChiisai ? "45" : "40%");
+	}
+	
+	private FlexTable getMovements(CheckItBankAccount checkItBankAccount) {
+		FlexTable tab = new FlexTable();
+		List<CheckItBankStatement> statements = checkItBankAccount.getPending();
+		completeMovementsTable(tab, statements, null);
 		return tab;
 	}
 	
@@ -2005,6 +2266,60 @@ public class CheckItModule extends MainEntryPoint {
 		table.setWidget(nextRow + 1, 0, euskoLabel);
 		table.getFlexCellFormatter().setColSpan(nextRow + 1, 0, 2);
 		
+	}
+	
+	private void desktopCancelButton(Button iie) {
+		iie.setWidth("100px");
+		iie.setHeight("30px");
+		
+		Style style = iie.getElement().getStyle();
+		style.setProperty("padding", "2px");
+		style.setProperty("text-transform", "none");
+		style.setProperty("background", "white");
+		style.setProperty("color", AON_BLUE);
+		style.setProperty("fontSize", "1rem");
+		style.setProperty("fontWeight", "700");
+		style.setProperty("border", "2px solid " + AON_BLUE);
+		style.setProperty("borderRadius", "6px");
+		style.setProperty("transition", "background .25s ease-in-out,transform .15s ease");
+		style.setProperty("margin-right", "2.5px");
+		
+		iie.addMouseOverHandler(ev -> {
+			style.setProperty("background", HOVER_COLOR);
+			style.setProperty("color", "white");
+			style.setProperty("border", "none");
+		});
+		
+		iie.addMouseOutHandler(ev -> {
+			style.setProperty("background", "white");
+			style.setProperty("color", AON_BLUE);
+			style.setProperty("border", "2px solid " + AON_BLUE);
+		});
+	}
+
+	private void desktopAcceptButton(Button hai) {
+		hai.setWidth("100px");
+		hai.setHeight("30px");
+		
+		Style style = hai.getElement().getStyle();
+		style.setProperty("padding", "2px");
+		style.setProperty("text-transform", "none");
+		style.setProperty("background", AON_BLUE);
+		style.setProperty("color", "white");
+		style.setProperty("fontSize", "1rem");
+		style.setProperty("fontWeight", "700");
+		style.setProperty("border", "none");
+		style.setProperty("borderRadius", "6px");
+		style.setProperty("transition", "background .25s ease-in-out,transform .15s ease");
+		style.setProperty("margin-left", "2.5px");
+		
+		hai.addMouseOverHandler(ev -> {
+			style.setProperty("background", HOVER_COLOR);
+		});
+		
+		hai.addMouseOutHandler(ev -> {
+			style.setProperty("background", AON_BLUE);
+		});
 	}
 	
 	private String formatIban(String iban) {

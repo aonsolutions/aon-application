@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.model;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
@@ -249,13 +251,24 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 					
 					@Override
 					protected void onAccept( AEATParams params) {
-						params
-							.setDomainName(getCallback().getOptions().getDomainName())
-							.setDomainId(getCallback().getOptions().getDomain())
-							.setUser(getCallback().getOptions().getUser())
-							.setMod(getCallback().getModel().getId())
-						;
-						sendAEAT(params);
+						AonConfirmDialog cd = new AonConfirmDialog();
+						cd.confirm(AON.MSG.confirmDeclarationsendAction(), new AonConfirmDialogCallback() {
+
+							@Override
+							public void onAccept() {
+								params
+								.setDomainName(getCallback().getOptions().getDomainName())
+								.setDomainId(getCallback().getOptions().getDomain())
+								.setUser(getCallback().getOptions().getUser())
+								.setMod(getCallback().getModel().getId());
+								sendAEAT(params);
+							}
+
+							@Override
+							public void onCancel() {
+							
+							}
+						});
 					}
 				};
 				certPopup.center();
@@ -316,13 +329,24 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 					
 					@Override
 					protected void onAccept( AEATParams params) {
-						params
-						.setDomainName(getCallback().getOptions().getDomainName())
-						.setDomainId(getCallback().getOptions().getDomain())
-						.setUser(getCallback().getOptions().getUser())
-						.setMod(getCallback().getModel().getId())
-						;
-						checkAEAT(params);
+						AonConfirmDialog cd = new AonConfirmDialog();
+						cd.confirm(AON.MSG.confirmDeclarationsendAction(), new AonConfirmDialogCallback() {
+
+							@Override
+							public void onAccept() {
+								params
+								.setDomainName(getCallback().getOptions().getDomainName())
+								.setDomainId(getCallback().getOptions().getDomain())
+								.setUser(getCallback().getOptions().getUser())
+								.setMod(getCallback().getModel().getId());
+								checkAEAT(params);
+							}
+
+							@Override
+							public void onCancel() {
+							
+							}
+						});
 					}
 				};
 				certPopup.center();

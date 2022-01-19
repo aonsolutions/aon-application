@@ -1,10 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.documental.JsAttach;
+import com.esferalia.aon.gwt.api.client.documental.JsCertificate;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -15,6 +16,8 @@ import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -103,15 +106,14 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		rootPanel.add(new AonSplash());
 		add(rootPanel);
 		
-		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
+		getAPI().getAttachment().getAeatCertificates(new AsyncCallback<JSON<JsCertificate>>() {
 			
 			@Override
-			public void onSuccess(JSON<JsAttach> result) {
+			public void onSuccess(JSON<JsCertificate> result) {
 				if ( result == null || result.getData() == null || result.getData().length() == 0 ) {
 					paintError("No se han encontrado certificados");
 				} else {
 					paintPanel(params, result);
-					
 				}
 			}
 
@@ -157,7 +159,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		rootPanel.add(buttonsPanel);
 	}
 	
-	private void paintPanel(AonCertificationPopupParams params, JSON<JsAttach> result) {
+	private void paintPanel(AonCertificationPopupParams params, JSON<JsCertificate> result) {
 		rootPanel.clear();
 		if (AonStringUtils.isNotBlank( params.getInfoMessage())) {
 			FlowPanel messagePanel = new FlowPanel(); 
@@ -196,25 +198,30 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		AonDisplayTable table = new AonDisplayTable();
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		table.addStyleName(AON.CSS.aonMarginTop());
-		
+
 		Label l1 = new Label("Certificado");
 		l1.addStyleName(AON.CSS.aonTableLabel());
 		certificates.setWidth("350px");
 		certificates.addItem("-- Seleccione --");
+		HashMap<Integer, Boolean> showPasswordMap = new HashMap<>();
+
 		certificates.addChangeHandler(event -> certificates.removeStyleName(AON.CSS.aonInputTextError()));
-		result.getData().stream().forEach(a -> certificates.addItem(a.getTitle(), a.getId() + ""));
-		
+		result.getData().stream().forEach(a -> {
+			certificates.addItem(a.getName(), a.getId() + "");
+			showPasswordMap.put(a.getId(), a.hasPassword());
+		});
+
 		table.addRow()
 			.addCell(l1)
 			.addCell(certificates);
-
+		
 		Label ldc = new Label("Datos del certificado");
 		ldc.setStyleName(AON.CSS.aonInnerLabel());
 		ldc.addStyleName(AON.CSS.aonTextUnderline());
 		table.addRow()
 			.addCell(ldc)
 			.addCell(new Label());
-
+		
 		Label l = new Label("Raz\u00F3n Social / Nombre");
 		l.addStyleName(AON.CSS.aonTableLabel());
 		name.setVisibleLength(45);
@@ -223,7 +230,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		table.addRow()
 			.addCell(l)
 			.addCell(name);
-		
+
 		Label l0 = new Label("DNI/NIF");
 		l0.addStyleName(AON.CSS.aonTableLabel());
 		document.setText(params.getDocument());
@@ -232,15 +239,25 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		table.addRow()
 			.addCell(l0)
 			.addCell(document);
-	
+
 		Label l2 = new Label("Contrase\u00f1a");
 		l2.addStyleName(AON.CSS.aonTableLabel());
 		password.setStyleName(AON.CSS.aonInputText());
 		password.addKeyUpHandler(event -> password.removeStyleName(AON.CSS.aonInputTextError()));
+
+		certificates.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				l2.setVisible(!showPasswordMap.get(Integer.parseInt(certificates.getSelectedValue())));
+				password.setVisible(!showPasswordMap.get(Integer.parseInt(certificates.getSelectedValue())));
+			}
+		});
+
 		table.addRow()
 			.addCell(l2)
 			.addCell(password);
-		
+
 		if (params.isShowNRC()) {
 			Label lx = new Label("NRC");
 			lx.addStyleName(AON.CSS.aonTableLabel());
@@ -270,7 +287,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 				document.decorateAsError();
 				document.selectAll();
 				document.setFocus(true);
-			} else if (AonStringUtils.isBlank(password.getValue())) {
+			} else if (password.isVisible() && AonStringUtils.isBlank(password.getValue())) {
 				password.addStyleName(AON.CSS.aonInputTextError());
 				password.selectAll();
 				password.setFocus(true);

@@ -996,4 +996,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public void createContractPayment(String currentDomainName, Integer contractId,
+			List<ContractConceptCalc> contractConceptCalcList) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

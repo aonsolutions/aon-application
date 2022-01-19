@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptCalcType;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
@@ -64,7 +65,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	
 	// ----------------------------------------- Variables
 	
-	private static final String PAYMENT = "PAGOS";
+//	private static final String PAYMENT = "PAGOS";
 	private static final String DEDUCTION = "DEDUCIONES";
 	private static final String COST = "COSTES";
 	private static final String BONUS = "BONUS";
@@ -75,7 +76,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	
 	// ----------------------------------------- Constructor
 	
-	protected EmployeeContractPaymentEditor() {
+	protected EmployeeContractPaymentEditor(String paymentType) {
 		setCaption("Creador Pagos");
 		setWidget(binder.createAndBindUi(this));
 		this.showCloseButton(true);
@@ -87,6 +88,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 				paymentExpressionTB.setReadOnly(false);
 				createPaymentType();
 				getFooterButtons();
+				setSelectedValueLB(paymentTypeLB, paymentType);
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
 				showDialog();
 			}
@@ -99,11 +101,45 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		});
 	}
 	
-	// ----------------------------------------- ViewMethods
+	public EmployeeContractPaymentEditor(ContractConceptCalc selectedPayment, String paymentType) {
+		setCaption("Creador Pagos");
+		setWidget(binder.createAndBindUi(this));
+		this.showCloseButton(true);
+		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
+			
+			@Override
+			public void onSuccess(ContractConcepts contractConceptsIn) {
+				contractConcepts = contractConceptsIn;
+				paymentExpressionTB.setReadOnly(false);
+				createPaymentType();
+				getFooterButtons();
+				setSelectedValueLB(paymentTypeLB, paymentType);
+				paymentTypeLB.setEnabled(false);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
+				fillInfo();
+				showDialog();
+			}
+			
+			private void fillInfo() {
+				paymentDescriptionTB.setValue(selectedPayment.getDescription());
+				paymentExpressionTB.setValue(selectedPayment.getExpression());
+				startDateBx.setValue(selectedPayment.getStartDate());
+				endDateBx.setValue(selectedPayment.getEndDate());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// Failure
+			}
+			
+		});
+	}
 	
+	// ----------------------------------------- ViewMethods
+
 	private void createPaymentType() {
 		paymentTypeLB.clear();
-		paymentTypeLB.addItem(PAYMENT);
+//		paymentTypeLB.addItem(PAYMENT);
 		paymentTypeLB.addItem(DEDUCTION);
 		paymentTypeLB.addItem(COST);
 		paymentTypeLB.addItem(BONUS);
@@ -114,9 +150,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	private void redrawView() {
 		clearView();
 		switch (paymentTypeLB.getSelectedValue()) {
-			case PAYMENT:
-				createPaymentConcept(contractConcepts.getPaymentConcepts());
-				break;
+//			case PAYMENT:
+//				createPaymentConcept(contractConcepts.getPaymentConcepts());
+//				break;
 			case DEDUCTION:
 				createPaymentConcept(contractConcepts.getDeductionConcepts());	
 				break;
@@ -202,8 +238,8 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private Set<ContractConcept> getConcepts() {
 		switch (paymentTypeLB.getSelectedValue()) {
-			case PAYMENT:
-				return contractConcepts.getPaymentConcepts();
+//			case PAYMENT:
+//				return contractConcepts.getPaymentConcepts();
 			case DEDUCTION:
 				return contractConcepts.getDeductionConcepts();
 			case COST:
@@ -244,36 +280,36 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		ContractConceptCalc contractConceptCalc = new ContractConceptCalc();
 		
 		if(null != selectedConcept) { 
-			contractConceptCalc.setConceptId(selectedConcept.getId())
-								.setType(selectedConcept.getType())
-								.setContractConceptCalcType(getContractConceptCalcType())
-								.setDescription(paymentDescriptionTB.getValue())
-								.setExpression(paymentExpressionTB.getValue())
-								.setStartDate(startDateBx.getValue())
-								.setEndDate(endDateBx.getValue());
+			contractConceptCalc.setConceptId(selectedConcept.getId());
+			contractConceptCalc.setType(Payment.Type.valueOf(selectedConcept.getType()+""));
+			contractConceptCalc.setContractConceptCalcType(getContractConceptCalcType());
+			contractConceptCalc.setDescription(paymentDescriptionTB.getValue());
+			contractConceptCalc.setExpression(paymentExpressionTB.getValue());
+			contractConceptCalc.setStartDate(startDateBx.getValue());
+			contractConceptCalc.setEndDate(endDateBx.getValue());
 		} else {
-			contractConceptCalc.setCode(paymentConceptSB.getValue())
-								.setType(getType())
-								.setContractConceptCalcType(getContractConceptCalcType())
-								.setDescription(paymentDescriptionTB.getValue())
-								.setExpression(paymentExpressionTB.getValue())
-								.setStartDate(startDateBx.getValue())
-								.setEndDate(endDateBx.getValue());
+			contractConceptCalc.setCodeType(paymentConceptSB.getValue());
+			contractConceptCalc.setType(getType());
+			contractConceptCalc.setContractConceptCalcType(getContractConceptCalcType());
+			contractConceptCalc.setDescription(paymentDescriptionTB.getValue());
+			contractConceptCalc.setExpression(paymentExpressionTB.getValue());
+			contractConceptCalc.setStartDate(startDateBx.getValue());
+			contractConceptCalc.setEndDate(endDateBx.getValue());
 		}
 		
 		return contractConceptCalc;
 	}
 
-	private Byte getType() {
+	private Payment.Type getType() {
 		switch (paymentTypeLB.getSelectedValue()) {
-		case PAYMENT:
-			return (byte)1;
+//		case PAYMENT:
+//			return Payment.Type.CRA_0001;
 		case DEDUCTION:
-			return (byte)9;
+			return Payment.Type.CRA_0009;
 		case COST:
-			return (byte)1;
+			return Payment.Type.CRA_0001;
 		case BONUS:
-			return (byte)1;
+			return Payment.Type.CRA_0001;
 		default:
 			return null;
 	}
@@ -281,8 +317,8 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private ContractConceptCalcType getContractConceptCalcType() {
 		switch (paymentTypeLB.getSelectedValue()) {
-			case PAYMENT:
-				return ContractConceptCalcType.PAYMENT;
+//			case PAYMENT:
+//				return ContractConceptCalcType.PAYMENT;
 			case DEDUCTION:
 				return ContractConceptCalcType.DEDUCTION;
 			case COST:
@@ -292,6 +328,18 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 			default:
 				return null;
 		}
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
 	}
 
 	// ----------------------------------------- AbstractMehtods

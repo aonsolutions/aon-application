@@ -88,9 +88,9 @@ public class Mod3902021DAO {
 
 	public enum DetailKey implements Serializable {
 		
-		  K00_04 (Mod3902021DetailKey.C0002, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent1(vc))
-		 ,K00_10 (Mod3902021DetailKey.C0004, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent2(vc))
-		 ,K00_21 (Mod3902021DetailKey.C0006, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent3(vc))
+		  K00_04 (Mod3902021DetailKey.C0002, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent1(vc))
+		 ,K00_10 (Mod3902021DetailKey.C0004, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent2(vc))
+		 ,K00_21 (Mod3902021DetailKey.C0006, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent3(vc))
 		 ,K01_04 (Mod3902021DetailKey.C0501, null)
 		 ,K01_10 (Mod3902021DetailKey.C0503, null)
 		 ,K01_21 (Mod3902021DetailKey.C0505, null)

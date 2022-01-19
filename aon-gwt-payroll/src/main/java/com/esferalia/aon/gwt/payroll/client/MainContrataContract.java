@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
@@ -19,6 +18,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
@@ -205,6 +205,9 @@ public class MainContrataContract extends MainEntryPoint {
 		String suggestBox();
 		String filterPanel();
 		String flexPanel();
+		String inactive();
+		String prevAlta();
+		String closeEnd();
 	}
 	
 	@UiField
@@ -267,7 +270,6 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-
 	private MainContrataContractObject mainContrataContractObject;
 	private EnterpriseSalaryObject enterpriseSalaryObject;
 	
@@ -355,6 +357,17 @@ public class MainContrataContract extends MainEntryPoint {
 			public String getValue(EmployeeContractInfo employeeContractInfo) {
 				return employeeContractInfo.getEmployeeInfo().getFullName();
 			}
+			
+			@Override
+			public void render(Context context, EmployeeContractInfo employeeContractInfo, SafeHtmlBuilder sb) {
+				if (null != employeeContractInfo) {
+					if(checkInactive(employeeContractInfo)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: red;\" title=\"Inactivo\">" + employeeContractInfo.getEmployeeInfo().getFullName() + "</div>");
+					else if(checkPrevAlta(employeeContractInfo)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: green;\" title=\"Alta previa\">" + employeeContractInfo.getEmployeeInfo().getFullName() + "</div>");
+					else if(checkCloseEnd(employeeContractInfo)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: orange;\" title=\"Contrato cerca de finalizar\">" + employeeContractInfo.getEmployeeInfo().getFullName() + "</div>");
+					else super.render(context, employeeContractInfo, sb);
+				} else
+					super.render(context, employeeContractInfo, sb);
+			}
 		};
 
 		employeeNameColumn.setSortable(true);
@@ -426,6 +439,15 @@ public class MainContrataContract extends MainEntryPoint {
 			public String getValue(EmployeeContractInfo employeeContractInfo) {
 				return formatFullDate.format(employeeContractInfo.getContractInfo().getStartDate());
 			}
+			
+			@Override
+			public void render(Context context, EmployeeContractInfo employeeContractInfo, SafeHtmlBuilder sb) {
+				if (null != employeeContractInfo && null != employeeContractInfo.getContractInfo().getStartDate()) {
+					if(checkPrevAlta(employeeContractInfo)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: green;\" title=\"Alta previa\">" + formatFullDate.format(employeeContractInfo.getContractInfo().getStartDate()) + "</div>");
+					else super.render(context, employeeContractInfo, sb);
+				} else
+					super.render(context, employeeContractInfo, sb);
+			}
 		};
 
 		startDateColumn.setSortable(true);
@@ -439,6 +461,17 @@ public class MainContrataContract extends MainEntryPoint {
 					return formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate());
 
 				return "";
+			}
+			
+			@Override
+			public void render(Context context, EmployeeContractInfo employeeContractInfo, SafeHtmlBuilder sb) {
+				if (null != employeeContractInfo && null != employeeContractInfo.getContractInfo().getEndDate()) {
+					if(checkInactive(employeeContractInfo)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: red;\" title=\"Inactivo\">" + formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate()) + "</div>");
+					else if(checkPrevAlta(employeeContractInfo)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: green;\" title=\"Alta previa\">" + formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate()) + "</div>");
+					else if(checkCloseEnd(employeeContractInfo)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: orange;\" title=\"Contrato cerca de finalizar\">" + formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate()) + "</div>");
+					else super.render(context, employeeContractInfo, sb);
+				} else
+					super.render(context, employeeContractInfo, sb);
 			}
 		};
 
@@ -575,9 +608,9 @@ public class MainContrataContract extends MainEntryPoint {
 		TextColumn<EmployeeContractInfo> endDateColumn = new TextColumn<EmployeeContractInfo>() {
 			@Override
 			public String getValue(EmployeeContractInfo employeeContractInfo) {
-				if (null != employeeContractInfo.getContractInfo().getEndDate())
+				if (null != employeeContractInfo.getContractInfo().getEndDate()) {
 					return formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate());
-
+				}
 				return "";
 			}
 		};
@@ -720,6 +753,24 @@ public class MainContrataContract extends MainEntryPoint {
 		trashEmployeeDataGrid.setPageSize(trashEmployeesList.size());
 
 		addSortColums(trashEmployeeDataGrid, trashEmployeeContractInfoList);
+	}
+	
+	private boolean checkInactive(EmployeeContractInfo employeeContractInfo) {
+		Date currentDate = new Date();
+		Date endDate = employeeContractInfo.getContractInfo().getEndDate();
+		return null != endDate && DateUtils.isBeforeOrEquals(endDate, currentDate) && !DateUtils.equals(endDate, currentDate);
+	}
+
+	private boolean checkPrevAlta(EmployeeContractInfo employeeContractInfo) {
+		Date currentDate = new Date();
+		Date startDate = employeeContractInfo.getContractInfo().getStartDate();
+		return DateUtils.isAfterOrEquals(startDate, currentDate) && !DateUtils.equals(startDate, currentDate);
+	}
+
+	private boolean checkCloseEnd(EmployeeContractInfo employeeContractInfo) {
+		Date currentDate = new Date();
+		Date endDate = employeeContractInfo.getContractInfo().getEndDate();
+		return null != endDate && DateUtils.isBeforeOrEquals(currentDate, endDate) && DateUtils.getDaysBetween(currentDate, endDate) < 30;
 	}
 	
 	// ------------------------------------------ OnModuleLoad
@@ -901,9 +952,7 @@ public class MainContrataContract extends MainEntryPoint {
 		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
 		formPanel.add(flowPanel);
 		
-		formPanel.addSubmitCompleteHandler(e1 -> {
-			employeeToolbar.remove(formPanel);
-		});
+		formPanel.addSubmitCompleteHandler(e1 -> employeeToolbar.remove(formPanel));
 		
 		employeeToolbar.add(formPanel);
 		

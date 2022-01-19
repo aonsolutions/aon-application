@@ -525,13 +525,18 @@ public class MainCertificates extends MainEntryPoint{
 		Hidden sepeHidden = new Hidden("sepe", hasSEPECertificate(certificate) ? "sepe" : "");
 		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(certificate) ? "aeat" : "");
 		Hidden ownerHidden = new Hidden("owner", certificate.getOwner().name());
-		
-		String certificateFor = "(" + certificate.getCertificateInfo().getDocument() + ") " + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
+		String certificateFor = "-";
+		if(!certificate.getCertificateInfo().isEmpty()) {
+			certificateFor = "(" + certificate.getCertificateInfo().getDocument() + ") " + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
+		}
+
 		Label certificateForL = new Label(parseStringLenght(certificateFor));
 		certificateForL.setTitle(certificateFor);
-		
-		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
-			"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
+
+		String representation = "-";
+		if(!certificate.getCertificateInfo().isEmpty())
+			representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
+				"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
 		Label representationL = new Label(parseStringLenght(representation));
 		representationL.setTitle(representation);
 		
@@ -543,7 +548,7 @@ public class MainCertificates extends MainEntryPoint{
 		alias.setValue(certificate.getDescription());
 		alias.addValueChangeHandler(e -> fileNameHidden.setValue(e.getValue()));
 		
-		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Uso personal" : "Uso compartido";
+		String securityTitle = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
 		String securityIcon = certificate.getConfidential() != null && certificate.getConfidential().equals(CertificateSecurity.PRIVATE) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
 		AonTableButton security = new AonTableButton(securityTitle, securityIcon);
 		security.addClickHandler(e -> {
@@ -796,8 +801,14 @@ public class MainCertificates extends MainEntryPoint{
 						createUserCertDataTable();
 					else if(index == 1)
 						createEntepriseCertDataTable();
+					updateTabTitle();
 				}, 
 				f -> {});
+	}
+
+	private void updateTabTitle() {
+		tabLayoutPanel.setTabText(0, "Personales (" + this.mainDigitalCertificatesObject.getUserCertificateList().size() + ")");
+		tabLayoutPanel.setTabText(1, "Compartidos (" + this.mainDigitalCertificatesObject.getEnterpriseCertificateList().size() + ")");
 	}
 
 	private void updateLoadingPanelStatus() {
@@ -1115,7 +1126,7 @@ public class MainCertificates extends MainEntryPoint{
 	private void getEnableDisableButton(Button button, boolean disabled) {
 		button.removeStyleName(disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock());
 		button.addStyleName(!disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock() );
-		button.setTitle(!disabled ? "Uso compartido" : "Uso personal");
+		button.setTitle(!disabled ? "P\u00fablico: Visible para todos los usuarios" : "Privado: S\u00f3lo visible para usuarios de la empresa");
 	}
 	
 	private boolean isActiveToggleButton(Button button) {

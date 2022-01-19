@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0000;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,6 +71,10 @@ public class PaymentDialog extends CustomDialog {
 	public void setPaymentExpression(String expression) {
 		payment.setExpression(expression);
 	}
+	
+	public void setPaymentExpression(String expression, String text) {
+		payment.setExpression(expression, text);
+	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Payment.Type getType() {
 		return payment.getType();
@@ -123,7 +125,8 @@ public class PaymentDialog extends CustomDialog {
 	}
 	
 	public void setContextProvider(IContextProvider contextProvider) {
-		payment.setContextProvider(contextProvider);
+		if(null != contextProvider)
+			payment.setContextProvider(contextProvider);
 	}
 	
 	public void setNumberFormat(NumberFormat numberFormat) {
@@ -161,7 +164,6 @@ public class PaymentDialog extends CustomDialog {
 		this.cb = cb;
 		super.show();
 	}
-	
 	
 	
 	// ------------------------------------------------------------------------

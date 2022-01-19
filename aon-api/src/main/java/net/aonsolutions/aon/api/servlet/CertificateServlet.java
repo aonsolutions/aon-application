@@ -21,7 +21,8 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCertificateServlet", urlPatterns = {"/ms/api/cert/*",
-														  "/aon_gwt_aio/ms/api/cert/*"})
+														  "/aon_gwt_aio/ms/api/cert/*",
+														  "/aon_gwt_fiscal/ms/api/cert/*"})
 public class CertificateServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(CertificateServlet.class.getName());
@@ -45,23 +46,32 @@ public class CertificateServlet extends AonApiHttpServlet {
 	
 	public static Filter certificateFilter(AonApiData api, CertificateProperties f) {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-
+		
 		Filter filter;
 		if(api.getDomain().getParentId() != null) {
 			Integer[] domains = {api.getDomain().getId(), api.getDomain().getParentId()};
 			filter = f.getDomainProperty().in(domains);
 		} else filter = f.getDomainProperty().eq(api.getDomain().getId());
     	
-		if(api.getUser().getRegistry() != null) {
+		if(api.getUser().getRegistry() != null && api.getDomain().getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin());
+			Integer[] registries = {api.getUser().getRegistry(), company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(api.getUser().getRegistry() != null) {
 			Integer[] registries = {api.getUser().getRegistry(), company.getId()};
 			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(api.getDomain().getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin());
+			Integer[] registries = {company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
 		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
+		
 		
 		if(api.getParams().opt(IJsonNames.TYPE) != null) {
 			String type = JsonUtils.getString(api.getParams(), IJsonNames.TYPE);
 			CertificateType certificateType = CertificateType.safeValueOf(type);
 			if(certificateType != null)
-				filter = filter.and(f.getTypeProperty().eq(certificateType.name()));
+				filter = filter.and(f.getTypeProperty().eq(certificateType.name()).or(f.getTypeProperty().isNull()));
 		}
 		
     	return filter;

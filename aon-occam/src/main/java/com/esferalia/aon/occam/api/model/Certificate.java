@@ -164,6 +164,9 @@ public class Certificate implements Serializable {
 	}
 
 	public CertificateInfo getCertificateInfo() {
+		if(certificateInfo == null) {
+			certificateInfo = new CertificateInfo();
+		}
 		return certificateInfo;
 	}
 

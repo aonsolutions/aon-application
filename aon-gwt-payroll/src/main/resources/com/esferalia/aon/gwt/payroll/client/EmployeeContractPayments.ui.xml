@@ -4,7 +4,14 @@
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeContractPayments.MyStyle">
+
+		.cmdBtn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
 
 	</ui:style>
 
