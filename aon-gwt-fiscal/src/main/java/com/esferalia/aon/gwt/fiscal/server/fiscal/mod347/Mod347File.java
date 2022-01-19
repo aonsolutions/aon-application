@@ -30,7 +30,7 @@ public class Mod347File extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("mod347"));
+			int id = Integer.parseInt(req.getParameter("modelID"));
 			String domainName = req.getParameter("domainName");
 			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));

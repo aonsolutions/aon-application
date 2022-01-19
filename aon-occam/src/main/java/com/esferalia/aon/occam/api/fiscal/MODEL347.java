@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.fiscal;
 
+import java.io.Writer;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -76,6 +77,12 @@ public class MODEL347 {
 	public static Mod347 duplicate(Occam occam, Mod347 mod347) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().duplicate(ctx, mod347);
+		}
+	}
+
+	public static void writeMailMergeReport(Occam occam, Mod347 mod347, Writer writer) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			getImpl().writeMailMergeReport(ctx, mod347, writer);
 		}
 	}
 

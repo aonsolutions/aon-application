@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.fiscal;
 
+import java.io.Writer;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -20,5 +21,6 @@ public interface IMODEL347 {
 	public Mod347 changeStatus(AONContext ctx, Mod347 mod347, FiscalStatus newStatus);
 	public String getInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey);
 	public Mod347 duplicate(AONContext ctx, Mod347 mod347);
+	public void writeMailMergeReport(AONContext ctx, Mod347 mod347, Writer writer);
 	
 }

@@ -4,21 +4,22 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
 import static com.esferalia.aon.jooq.tables.FsMod347Detail.FS_MOD347_DETAIL;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//import org.jooq.AggregateFunction;
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
-//import org.jooq.impl.DSL;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsMod347Record;
@@ -30,6 +31,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -42,6 +46,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod347DAO {
@@ -995,6 +1000,115 @@ public class Mod347DAO {
 		deleteDetails(ctx, mod347);		
 		insertDetailsFromInvoice(ctx, mod347);
 		return getById(ctx, mod347.getId()) ;
+	}
+	
+    private static final char CSV_DELIMITER = ',';
+    private static final char CSV_QUOTE = '"';
+    private static final String CSV_QUOTE_STR = String.valueOf(CSV_QUOTE);
+    private static final char[] CSV_SEARCH_CHARS = new char[] {CSV_DELIMITER, CSV_QUOTE, '\r', '\n'};
+    
+    private static void write(final Writer out, final CharSequence input) throws IOException {
+        if (AonStringUtils.containsNone(input.toString(), CSV_SEARCH_CHARS)) {
+            out.write(input.toString());
+        } else {
+            out.write(CSV_QUOTE);
+            out.write(AonStringUtils.replace(input.toString(), CSV_QUOTE_STR, CSV_QUOTE_STR + CSV_QUOTE_STR));
+            out.write(CSV_QUOTE);
+        }
+    }
+    
+	public static void writeMailMergeReport(AONContext ctx, Mod347 mod347, Writer wr) {
+		try {
+			String[] headers = new String[] { "id", "tipo", "documento", "razon_social", "importe_trimestre_1",
+					"importe_trimestre_2", "importe_trimestre_3", "importe_trimestre_4", "importe_anual", "email",
+					"direccion_tipo", "direccion", "direccion_numero", "direccion_complemento1",
+					"direccion_complemento2", "direccion_codigo_postal", "direccion_ciudad", "direccion_provincia" };
+			for (String header : headers) {
+				wr.append(header);
+				wr.append(CSV_DELIMITER);
+			}
+			wr.append(System.lineSeparator());
+			RegistryFull<?> registry = null;
+			String type = null;
+			for (Mod347Declared declared : mod347.getDeclared()) {
+				if (Mod347Key.B == declared.getType()) {
+					registry = CustomerDAO.getStream(ctx, 
+							p -> p.getDocumentProperty().eq(declared.getDocument())
+							.and(p.getDomainProperty().eq(mod347.getDomain())))
+						.map(cust -> cust.getId())
+						.map(id -> CustomerDAO.getFull(ctx, id))
+						.findFirst()
+						.orElse(null);
+					type = "Cliente";
+				} else if (Mod347Key.A == declared.getType()) {
+					registry = CreditorDAO.getStream(ctx, 
+							p -> p.getDocumentProperty().eq(declared.getDocument())
+							.and(p.getDomainProperty().eq(mod347.getDomain())))
+						.map(cred -> cred.getId())
+						.map(id -> CreditorDAO.getFull(ctx, id))
+						.findFirst()
+						.orElse(null);
+					if ( registry != null ) {
+						type = "Acreedor";
+					} else {
+						registry = SupplierDAO.getStream(ctx, 
+								p -> p.getDocumentProperty().eq(declared.getDocument())
+								.and(p.getDomainProperty().eq(mod347.getDomain())))
+							.map(supp -> supp.getId())
+							.map(id -> SupplierDAO.getFull(ctx, id))
+							.findFirst()
+							.orElse(null);
+						type = "Proveedor";	
+					}
+				}
+				if ( registry != null ) {
+					RegistryAddress address = registry.getMainAddress();
+					List<RegistryMedia> emails = registry.getEmailMedias();
+					RegistryMedia email = (emails != null && !emails.isEmpty())
+							?emails.get(0)
+							:null;
+					wr.append( AonNumberUtils.toString( registry.getId() ));
+					wr.append(CSV_DELIMITER);
+					write(wr,type);
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(declared.getDocument()));
+					wr.append(CSV_DELIMITER);
+					write(wr,declared.getName());
+					wr.append(CSV_DELIMITER);
+					wr.append( AonNumberUtils.toString( declared.getFirstQuarterAmount() ));
+					wr.append(CSV_DELIMITER);
+					wr.append( AonNumberUtils.toString( declared.getSecondQuarterAmount() ));
+					wr.append(CSV_DELIMITER);
+					wr.append( AonNumberUtils.toString( declared.getThirdQuarterAmount() ));
+					wr.append(CSV_DELIMITER);
+					wr.append( AonNumberUtils.toString( declared.getFourthQuarterAmount() ));
+					wr.append(CSV_DELIMITER);
+					wr.append( AonNumberUtils.toString( declared.getAmount() ));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(email == null?null:email.getValue()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString((address == null || address.getStreetType()==null)?null:address.getStreetType().getDescription()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(address == null?null:address.getAddress()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(address == null?null:address.getNumber()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(address == null?null:address.getAddress2()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(address == null?null:address.getAddress3()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(address == null?null:address.getZip()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(address == null?null:address.getCity()));
+					wr.append(CSV_DELIMITER);
+					write(wr,AonStringUtils.defaultString(address == null?null:address.getGeozoneName()));
+					wr.append(System.lineSeparator());
+				}
+			}
+			
+		} catch (IOException e) {
+			throw new AonCoreException(e);
+		}
 	}
 	
 }

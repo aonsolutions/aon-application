@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.fiscal;
 
+import java.io.Writer;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -62,6 +63,11 @@ public class MODEL347Impl implements IMODEL347 {
 	public Mod347 duplicate(AONContext ctx, Mod347 mod347) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod347DAO.duplicate(ctx, mod347));		
-	}		
+	}
 
+	@Override
+	public void writeMailMergeReport(AONContext ctx, Mod347 mod347, Writer writer) {
+		Mod347DAO.writeMailMergeReport(ctx, mod347,writer);
+	}		
+	
 }
