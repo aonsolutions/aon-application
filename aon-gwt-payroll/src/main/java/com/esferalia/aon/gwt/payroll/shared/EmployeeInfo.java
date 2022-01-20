@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EmployeeInfo implements Serializable{
 	
@@ -168,18 +169,28 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public String getNationality() {
-		return nationality != null ? Country.valueOf(nationality).getName() : "";
+		String nationalityName = nationality != null ? getCountryName(nationality) : "";
+//		Window.alert("nationality : " + nationality + ", nationality name : " + nationalityName);
+		return nationalityName;
 	}
 	
+	private String getCountryName(String iso2) {
+		for(Country country : Country.values())
+			if(AonStringUtils.equalsIgnoreCase(country.getIso2(), iso2))
+					return country.getName();
+		
+		return "";
+	}
+
 	public String getNationalityCode() {
 		return nationality;
 	}
 
-	public void setNationality(String nationality) {
-		if(null == nationality)
+	public void setNationality(String nationalityIso2) {
+		if(null == nationalityIso2)
 			this.nationality = "ES";
 		else
-			this.nationality = nationality;
+			this.nationality = nationalityIso2;
 	}
 
 	public Byte getDocumentType() {
