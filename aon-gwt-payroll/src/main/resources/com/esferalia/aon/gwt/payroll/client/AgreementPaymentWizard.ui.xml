@@ -166,7 +166,7 @@
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.element}">
 					<g:Label styleName="{style.title}">Concepto</g:Label>
-					<g:TextBox ui:field="paymentConcept" />
+					<g:TextBox ui:field="paymentConcept" maxLength="25" styleName="{style.uppercase}" />
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="paymentCRATypePanel" styleName="{style.element}">
 					<g:Label styleName="{style.title}">Tipo CRA</g:Label>
@@ -206,7 +206,7 @@
 				</g:HTMLPanel>
 				<g:HTMLPanel  styleName="{style.between}">
 					<g:HTMLPanel ui:field="monthPanel" styleName="{style.element} {style.maxWidth}">
-						<g:Label ui:field="monthTitle" styleName="{style.title}">Mes</g:Label>
+						<g:Label ui:field="monthTitle" styleName="{style.title}">Mes de pago</g:Label>
 						<g:ListBox ui:field="monthLB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="monthStartPanel" styleName="{style.element} {style.maxWidth}">
