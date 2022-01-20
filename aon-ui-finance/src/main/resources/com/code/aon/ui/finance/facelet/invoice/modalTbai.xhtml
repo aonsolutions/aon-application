@@ -8,24 +8,24 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showLroeWindow">
-		<aon:if test="#{invoiceController.showLroeWindow}">
-			<rich:modalPanel id="fiscalLroeModalPanel"
+	<aon:panelGroup id="showTbaiWindow">
+		<aon:if test="#{invoiceController.showTbaiWindow}">
+			<rich:modalPanel id="fiscalTbaiModalPanel"
 				minWidth="740" minHeight="450" zindex="90"
-				showWhenRendered="#{invoiceController.showLroeWindow}" >
+				showWhenRendered="#{invoiceController.showTbaiWindow}" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="LROE" />
+						<aon:outputText value="TicketBAI" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showLroeWindow" immediate="true">
+							reRender="showTbaiWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{invoiceController.showLroeWindow}"
+								target="#{invoiceController.showTbaiWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -36,37 +36,30 @@
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
-										<aon:commandButton id="lroeaccept"	
+										<aon:commandButton id="tbaiaccept"	
 											value="Enviar"
-											action="#{saleInvoice.issueInvoiceLroe}"
+											action="#{saleInvoice.issueInvoice}"
 											styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
 									</aon:div>
 									
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:panel>
 											<f:facet name="header">
-												<aon:outputText value="Capitulo 1" />
+												<aon:outputText value="Envíos" />
 											</f:facet>
-											<aon:dataTable id="LroeChapter1Table"  value="#{invoiceController.lroe.chapter1.requests}" var="ch1">
+											<aon:dataTable id="tbaiSendTable"  value="#{invoiceController.tbaiInfo.requests}" var="tb">
 												<aon:column>
 													<f:facet name="header">
 														<aon:outputText value="Fecha" />
 													</f:facet>
-													<aon:outputText value="#{ch1.dataResponse.responseDate}" />
+													<aon:outputText value="#{tb.dataResponse.responseDate}" />
 												</aon:column>
 												
 												<aon:column>
 													<f:facet name="header">
 														<aon:outputText value="Operación" />
 													</f:facet>
-													<aon:outputText value="#{ch1.info.operacionStr}" />
-												</aon:column>
-												
-												<aon:column>
-													<f:facet name="header">
-														<aon:outputText value="Subcapítulo" />
-													</f:facet>
-													<aon:outputText value="#{ch1.info.subcapitulo}" />
+													<aon:outputText value="#{tb.operacion}" />
 												</aon:column>
 												
 												<aon:column>
@@ -76,22 +69,22 @@
 													<aon:outputText title="Estado"
 														styleClass="aon-editDataTable-button aon-icon-check-black aon-nowrap aon-margin-left"
 														value="&#160;"
-														rendered="#{ch1.response.ok}" />
+														rendered="#{tb.response.ok}" />
 														
-													<aon:outputText title="#{ch1.response.errorMessage}"
+													<aon:outputText title="#{tb.response.validationDescription}"
 														styleClass="aon-editDataTable-button aon-icon-wrong aon-nowrap aon-margin-left"
 														value="&#160;"
-														rendered="#{ch1.response.error}" />
+														rendered="#{tb.response.error}" />
 
-													<aon:outputLink id="lroeDownloadRequest"
+													<aon:outputLink id="tbaiDownloadRequest"
 														title="Descargar Petición"
-														target="_blank" value="#{ch1.requestUrl}" 
+														target="_blank" value="#{tb.requestUrl}" 
 														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
 												    </aon:outputLink>
 													
-													<aon:outputLink id="lroeDownloadResponse"
+													<aon:outputLink id="tbaiDownloadResponse"
 														title="Descargar Respuesta"
-														target="_blank" value="#{ch1.responseUrl}" 
+														target="_blank" value="#{tb.responseUrl}" 
 														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
 												    </aon:outputLink>
 

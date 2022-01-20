@@ -128,6 +128,7 @@ import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.lroe.LROEInformation;
 
@@ -2066,5 +2067,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
 		return LroeData.get(domain, user, getInvoice().getId());		
+	}
+	
+	public TBAIInformation getTbaiInfo() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		User user = new User().setLogin(login);
+		return TbaiData.getInstance(getTbaiConfiguration()).get(domain, user, getInvoice().getId());		
 	}
 }

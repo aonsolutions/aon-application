@@ -268,6 +268,26 @@
 									value="#{true}" />							
 							</aon:menuItem>
 						</aon:if>
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator2" />
+							<aon:menuItem id="ticket-bai-araba"
+								value="Envíos TicketBAI"
+								iconClass="aon-icon-araba"
+								reRender="showTbaiWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showTbaiWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.gipuzkoa}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator2" />
+							<aon:menuItem id="ticket-bai-gipuzkoa"
+								value="Envíos TicketBAI"
+								iconClass="aon-icon-gipuzkoa"
+								reRender="showTbaiWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showTbaiWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
 						<aon:if test="#{company.ediSupportEnabled}">
 							<rich:menuSeparator />
 							<aon:menuItem iconClass="aon-icon-file-download">
@@ -447,6 +467,9 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalLroe.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalTbai.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">

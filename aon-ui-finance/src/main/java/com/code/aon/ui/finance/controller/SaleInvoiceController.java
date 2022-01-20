@@ -94,6 +94,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private DeliveryTransferManager deliveryTransferManager;
 	private boolean showDeliveryTransferWindow;
 	private boolean showDeliveryFilterWindow;
+	private boolean showTbaiWindow;
 	
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
@@ -158,6 +159,14 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowDeliveryFilterWindow(boolean showDeliveryFilterWindow) {
 		this.showDeliveryFilterWindow = showDeliveryFilterWindow;
+	}
+	
+	public boolean isShowTbaiWindow() {
+		return showTbaiWindow;
+	}
+
+	public void setShowTbaiWindow(boolean showTbaiWindow) {
+		this.showTbaiWindow = showTbaiWindow;
 	}
 	
 	public EdiInvoiceImporterHandler getEdiImporter() {
@@ -558,7 +567,7 @@ public class SaleInvoiceController extends InvoiceController {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
-	
+		
 	@Transient
 	public synchronized void issueInvoice() {
 		try {

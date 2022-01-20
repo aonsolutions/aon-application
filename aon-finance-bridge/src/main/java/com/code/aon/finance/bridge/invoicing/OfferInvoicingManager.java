@@ -60,7 +60,7 @@ public class OfferInvoicingManager {
 		return financeGenerator;
 	}
 
-	public Invoice invoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
+	public Invoice invoice(Offer offer, String series, int number, Date issueDate, boolean tbai) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -70,7 +70,7 @@ public class OfferInvoicingManager {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			Invoice invoice = createInvoice(offer, series, number, issueDate);
+			Invoice invoice = createInvoice(offer, series, number, issueDate, tbai);
 			createInvoiceDetails(sessionName, invoice, offer);
 			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
 			if (invoiceTotal != 0) {
@@ -102,13 +102,13 @@ public class OfferInvoicingManager {
 		}
 	}
 
-	private Invoice createInvoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
+	private Invoice createInvoice(Offer offer, String series, int number, Date issueDate, boolean tbai) throws ManagerBeanException {
 		Customer customer = getSalesBridgeUtil().obtainCustomer(offer);
 
 		Invoice invoice = new Invoice();
 		invoice.setProject(offer.getProject());
 		invoice.setSeries(StringUtils.isNotBlank(series) ? series : null);
-		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
+		invoice.setNumber((number > 0 || tbai) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(customer.getRegistry());
 		invoice.setRegistryDocument(customer.getRegistry().getDocument());
 		invoice.setRegistryDocumentType(customer.getRegistry().getDocumentType());

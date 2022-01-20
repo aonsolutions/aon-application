@@ -66,7 +66,7 @@
 											<ui:param name="sfc_editable" value="#{true}" />
 											<ui:param name="sfc_seriesProperty" value="#{offer.invoiceSeries}" />
 											<ui:param name="sfc_numberProperty" value="#{offer.invoiceNumber}" />
-											<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai}"/>
+											<ui:param name="sfc_showNumberEditable" value="#{!offer.tbai}"/>
 											<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
 												value="#{offer.onInvoiceSeriesChanged}" />
 											<aon:methodParam name="sfc_onNumberEditable" type="actionListener"

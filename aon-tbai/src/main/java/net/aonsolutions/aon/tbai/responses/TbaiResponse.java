@@ -1,13 +1,17 @@
 package net.aonsolutions.aon.tbai.responses;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class TbaiResponse {
+public class TbaiResponse implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String tbaiId;
 	private Date receptionDate;
@@ -22,6 +26,21 @@ public class TbaiResponse {
 	private boolean ok; 
 	private byte[] data;
 	private JSONObject jsonInfo;
+	
+	public TbaiResponse() {
+	
+	}
+	
+	public TbaiResponse(JSONObject json) {
+		setTbaiId(JsonUtils.getString(json, "tbaiId"));
+//		setReceptionDate(JsonUtils.getDate(json, "receptionDate"));
+//		setStatus(JsonUtils.getString(json, "status"))
+		setDescription(JsonUtils.getString(json, "description"));
+		setDescriptionEUS(JsonUtils.getString(json, "descriptionEUS"));
+		setValidationCode(JsonUtils.getInteger(json, "validationCode"));
+		setValidationDescription(JsonUtils.getString(json, "validationDescription"));
+		setValidationDescriptionEUS(JsonUtils.getString(json, "validationDescriptionEUS"));
+	}
 	
 	public String getTbaiId() {
 		return tbaiId;
@@ -94,6 +113,10 @@ public class TbaiResponse {
 		return this;
 	}
 
+	public boolean isError() {
+		return !isOk();
+	}
+	
 	public boolean isOk() {
 		return ok;
 	}
