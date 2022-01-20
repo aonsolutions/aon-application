@@ -176,7 +176,12 @@ public class SIIServlet extends HttpServlet{
 	
 	private void saveCertificate(Domain domain, Certificate certificate, Attach attach) {
 		if(!attach.getDescription().contains("HIDE") && checkCert(attach.getData(), certificate.getPassword())) {
-			attach.setDescription(attach.getDescription() + "HIDE(" + certificate.getPassword() + ")");
+			String desc = attach.getDescription() + "HIDE(" + certificate.getPassword() + ")";
+			if(desc.length() >= 64) {
+				Integer len = desc.length() - 64;
+				desc = attach.getDescription().subSequence(0, attach.getDescription().length() - len) + "HIDE(" + certificate.getPassword() + ")";
+			}
+			attach.setDescription(desc);
 		} else if(attach.getDescription().contains("HIDE")){
 			String password = attach.getDescription().split("HIDE\\(")[1].split("\\)")[0];
 			Integer index = attach.getDescription().indexOf("HIDE");
@@ -190,6 +195,7 @@ public class SIIServlet extends HttpServlet{
 				attach.setDescription(attach.getDescription().substring(0, index));
 			}
 		}
+
 		AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 	}
 
