@@ -148,12 +148,12 @@ public class JooqEmployeeIrpf {
 								.where(SALARY_DEDUCTION.SALARY.eq(salaryId))
 								.and(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("EN_ESPECIE")).fetchOne(SALARY_DEDUCTION.AMOUNT);
 						
-						String baseCgcStr = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+						List<String> baseCgcStr = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
 								.where(SALARY_DATA.NAME.eq("BASE_CGC"))
 								.and(SALARY_DATA.SALARY.eq(salaryId))
-								.fetchOne(SALARY_DATA.EXPRESSION);
-						if(null != value && AonStringUtils.isNotBlank(baseCgcStr))
-							inkindBase = Double.parseDouble(baseCgcStr) - value;
+								.fetch(SALARY_DATA.EXPRESSION);
+						if(null != value && !baseCgcStr.isEmpty())
+							inkindBase = Double.parseDouble(baseCgcStr.get(0)) - value;
 					}
 					
 					Double moneyBase = salaryRecord.get(SALARY.MONEY_IRPF_BASE);
