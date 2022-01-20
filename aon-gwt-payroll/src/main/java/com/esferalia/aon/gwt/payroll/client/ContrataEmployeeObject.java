@@ -104,8 +104,6 @@ public class ContrataEmployeeObject {
 				employeeContractData = result;
 				employeeData = result.getEmployeeInfo();
 				contractData = result.getContractInfo();
-				employeeContractData.setEmployeeInfo(employeeData);
-				employeeContractData.setContractInfo(contractData);
 				success.accept(result);
 			}
 
