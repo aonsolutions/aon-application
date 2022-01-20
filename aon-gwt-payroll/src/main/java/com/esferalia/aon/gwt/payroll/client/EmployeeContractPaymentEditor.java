@@ -24,7 +24,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -541,7 +540,6 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	}
 
 	private void fillPayment() {
-		Window.alert(this.payment.toString());
 		paymentTypeLB.setSelected(this.payment.getType());
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
