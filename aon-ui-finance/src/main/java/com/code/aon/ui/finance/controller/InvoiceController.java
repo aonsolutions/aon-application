@@ -803,13 +803,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			if (getRectificationNumber() == 0) {
 				updateRectificationNumber(getRectificationSeries());
 			}
+			if(isTbai()) {
+				String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getRectificationSeries());
+				setRectificationNumber(number);
+			}
 			rectifier = manager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
-													getRectificationCause(), getRectificationSettleFinance());
+													getRectificationCause(), getRectificationSettleFinance(), isTbai());
 		} else {
 			rectifier = manager.rectifyReceivedInvoice(getInvoice(), getRectificationReferenceCode(), getRectificationDate(), getRectificationCause(), 
-															getRectificationSettleFinance());
+															getRectificationSettleFinance(), isTbai());
 		}
-
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());
 		onSearch(event);
@@ -946,6 +951,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	        if (getDuplicationNumber() == 0) {
 	        	updateDuplicationNumber(getDuplicationSeries());
 			}		
+	        if(isTbai()) {
+				String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getRectificationSeries());
+				setDuplicationNumber(number);
+	        }
 		}
 		this.getManagerBean().restoreNullSubPOJOs(to);
 		InvoiceImportManager manager = new InvoiceImportManager();

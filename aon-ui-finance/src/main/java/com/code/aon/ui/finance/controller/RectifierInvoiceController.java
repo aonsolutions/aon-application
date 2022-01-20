@@ -23,6 +23,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
@@ -35,10 +36,13 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 
 public class RectifierInvoiceController implements IFinanceConstants, Serializable {
 	
@@ -274,9 +278,16 @@ public class RectifierInvoiceController implements IFinanceConstants, Serializab
 			for (InvoiceWrapper iw : getInvoiceList()) {
 				if (iw.isEnabled()) {
 					Invoice invoice = iw.getInvoice(); 
+					
+					String domainName = AonUtil.getDomainName();
+					Integer domainId = DomainManager.getCurrentDomain();
+					String login = UserUtils.getInstance().getLoggedUser().getLogin();
+					TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, domainId, login);
+					
 					RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
 					rectifier = rectificationManager.specialRectifyInvoice(invoice, getRectificationSeries(), rectificationNumber++, 
-																			getRectificationDate(),	getRectificationCause(), iw.getPercent());
+																			getRectificationDate(),	getRectificationCause(), iw.getPercent(),
+																			tbaiConfiguration.isActive());
 					firstRectifierId = (firstRectifierId == 0) ? rectifier.getId() : firstRectifierId;
 				}
 			}
