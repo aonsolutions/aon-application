@@ -71,6 +71,12 @@ public class Model190ServiceAsyncDecorator implements Model190ServiceAsync {
 		AON.start();
 		fsa.duplicate(occam, mod190, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void validateSalaries(Occam occam, Mod190 mod190, AsyncCallback<LinkedList<Mod190Detail>> callback) {
+		AON.start();
+		fsa.validateSalaries(occam, mod190, new AsyncCallbackWrapper<>(callback));
+	}
 	
 
 }

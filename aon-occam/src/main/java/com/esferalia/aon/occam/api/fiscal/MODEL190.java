@@ -73,4 +73,10 @@ public class MODEL190 {
 		}
 	}
 
+	public static LinkedList<Mod190Detail> validateSalaries(Occam occam, Mod190 mod190) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().validateSalaries(ctx, mod190);
+		}
+	}
+
 }

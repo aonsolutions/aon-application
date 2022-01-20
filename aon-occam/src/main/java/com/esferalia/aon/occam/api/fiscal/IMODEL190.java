@@ -18,5 +18,6 @@ public interface IMODEL190 {
 	public Mod190 saveComments(AONContext ctx, Mod190 mod190);
 	public Mod190 changeStatus(AONContext ctx, Mod190 mod190, FiscalStatus newStatus);
 	public Mod190 duplicate(AONContext ctx, Mod190 mod190);
+	public LinkedList<Mod190Detail> validateSalaries(AONContext ctx, Mod190 mod190);
 	
 }

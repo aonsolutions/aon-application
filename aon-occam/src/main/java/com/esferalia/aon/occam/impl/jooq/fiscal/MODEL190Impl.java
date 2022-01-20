@@ -58,4 +58,10 @@ public class MODEL190Impl implements IMODEL190 {
 				configuration -> Mod190DAO.duplicate(ctx, mod190));		
 	}
 
+	@Override
+	public LinkedList<Mod190Detail> validateSalaries(AONContext ctx, Mod190 mod190) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod190DAO.validateSalaries(ctx, mod190));		
+	}
+
 }
