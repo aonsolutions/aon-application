@@ -378,7 +378,6 @@ public class Model347 extends MainEntryPoint {
 			}
 		); 
 		declarationContainer.setWidget(newDeclarationPanel);
-		model347Table.refresh( new Model347Callback() );
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
 	}

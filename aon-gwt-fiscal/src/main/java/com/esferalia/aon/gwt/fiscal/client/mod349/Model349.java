@@ -63,7 +63,7 @@ public class Model349 extends MainEntryPoint {
 		@Override
 		public void onRemove(Mod349 model) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(model);
+				getOptions().getExternalCallback().onRemove(model);
 			} else {
 				onCancel(model);
 			}
@@ -71,10 +71,14 @@ public class Model349 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod349 mod349) {
-			cleanErrorMessage();
-			declarationContainer.setWidget(model349Table);
-			model349Table.refresh( new Model349Callback() );
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(mod349);
+			} else {
+				cleanErrorMessage();
+				declarationContainer.setWidget(model349Table);
+				model349Table.refresh( new Model349Callback() );
+				closeFootPanel();
+			}
 		}
 		
 		@Override
@@ -363,17 +367,9 @@ public class Model349 extends MainEntryPoint {
 					});
 				}
 				
-				@Override
-				public void onCancel(Mod349 model) {
-					if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-						getOptions().getExternalCallback().onExit(model);
-					}						
-				}
-				
 			}
 		); 
 		declarationContainer.setWidget(newDeclarationPanel);
-		model349Table.refresh( new Model349Callback() );
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
 	}
