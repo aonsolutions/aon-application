@@ -210,7 +210,7 @@ public class ModelMatrixPanel extends FlowPanel {
 
 			@Override
 			public void onRemove(IFiscalModel removed) {
-				ModelMatrixPanel.this.paintNewModelCell(options,cell,removed);
+				ModelMatrixPanel.this.paintNewModelCell(options,cell,cloneModel( removed ));
 			}
 
 			@Override
@@ -382,7 +382,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		Window.alert("ERROR:" + message);
 	}
 
-	private FiscalModel cloneModel( FiscalModel fm) {
+	private FiscalModel cloneModel( IFiscalModel fm) {
 		return new FiscalModel()
 				.setYear(fm.getYear())
 				.setAdministration(fm.getAdministration())

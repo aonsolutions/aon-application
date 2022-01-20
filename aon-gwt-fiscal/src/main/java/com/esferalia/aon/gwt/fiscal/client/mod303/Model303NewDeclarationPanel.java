@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -54,6 +55,9 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		addNorth(headerPanel, AonFiscalModelHeader.HEIGTH);
 
 		AonToolbar toolbar = new AonToolbar(AON.MSG.newDeclaration());
+		AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.backAction(),AON.CSS.aonIconBack());
+		cancelButton.addClickHandler(event ->  callback.onCancel(model) );
+		toolbar.add(cancelButton);
 		addNorth(toolbar, AonToolbar.HEIGTH);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();

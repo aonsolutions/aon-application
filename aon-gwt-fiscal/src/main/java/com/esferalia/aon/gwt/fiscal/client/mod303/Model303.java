@@ -67,7 +67,7 @@ public class Model303 extends MainEntryPoint {
 		@Override
 		public void onRemove(Mod303 mod303) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(mod303);
+				getOptions().getExternalCallback().onRemove(mod303);
 			} else {
 				onCancel(mod303);
 			}
@@ -75,7 +75,15 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod303 mod303) {
-			cancel( );
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(mod303);
+			} else {
+				cleanInfoPanel();
+				declarationContainer.setWidget(model303Table);
+				model303Table.refresh( new Model303Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 		
 		@Override
@@ -251,14 +259,6 @@ public class Model303 extends MainEntryPoint {
 		}
 	}
 
-	private void cancel() {
-		cleanInfoPanel();
-		declarationContainer.setWidget(model303Table);
-		model303Table.refresh( new Model303Callback() );
-		tabLayout.selectTab(INFORMATION_TAB);
-		closeFootPanel();
-	}
-	
 	private void showNewDeclarationPanel(Mod303 m303) {
 		Model303NewDeclarationPanel newDeclarationPanel = new Model303NewDeclarationPanel( m303,
 			new Model303Callback() {
@@ -288,18 +288,9 @@ public class Model303 extends MainEntryPoint {
 								});
 
 					}
-					@Override
-					public void onCancel(Mod303 model) {
-						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-							getOptions().getExternalCallback().onExit(model);
-						} else {
-							cancel();
-						}
-					}
 				}
 			); 
 		declarationContainer.setWidget(newDeclarationPanel);
-		model303Table.refresh( new Model303Callback() );
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
 	}
