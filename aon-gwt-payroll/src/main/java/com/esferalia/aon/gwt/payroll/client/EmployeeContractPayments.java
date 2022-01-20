@@ -247,24 +247,7 @@ public class EmployeeContractPayments extends Composite {
 	
 	private void addContractConceptCalcColumns() {
 		// Edit column.
-	    ActionCell<ContractConceptCalc> editActionCell = new ActionCell<>("", selectedPayment -> {
-	    	switch (selectedPayment.getContractConceptCalcType()) {
-		    	case PAYMENT:
-					openPaymentDialog(selectedPayment);
-					break;
-				case DEDUCTION:
-					openDialog(selectedPayment, "DEDUCIONES");
-					break;
-				case BONUS:
-					openDialog(selectedPayment, "BONUS");
-					break;
-				case COST:
-					openDialog(selectedPayment, "COSTES");
-					break;
-				default:
-					break;
-			}
-	    }); 
+	    ActionCell<ContractConceptCalc> editActionCell = new ActionCell<>("", selectedPayment -> openDialog(selectedPayment));
 	    
 	    Column<ContractConceptCalc, ContractConceptCalc> editColumn = new Column<ContractConceptCalc, ContractConceptCalc>(editActionCell) {
 
@@ -300,7 +283,7 @@ public class EmployeeContractPayments extends Composite {
 		Column<ContractConceptCalc, String> codeColumn = new Column<ContractConceptCalc, String>(new TextCell()) {
 			@Override
 	        public String getValue(ContractConceptCalc contractConceptCalc) {
-				return contractConceptCalc.getType().ordinal()+"";
+				return null == contractConceptCalc.getType() ? "" : contractConceptCalc.getType().ordinal()+"";
 	        }
 		};
 
@@ -368,13 +351,9 @@ public class EmployeeContractPayments extends Composite {
 	    
 	    // Visibility column.
 	    ActionCell<ContractConceptCalc> visibilityActionCell = new ActionCell<>("", contractConceptCalc -> {
-	    	Window.alert("isHideExpression(contractConceptCalc) : " + isHideExpression(contractConceptCalc));
-	    	Window.alert(contractConceptCalc.toString());
 	    	employeeContractPaymentsObject.showHideContractConceptCalc(contractConceptCalc);
-	    	Window.alert(contractConceptCalc.toString());
-    		contractConceptCalc.setHasChange(true);
-    		contractConceptCalcDG.redraw();
-//    		onSave();
+	    	contractConceptCalc.setHasChange(true);
+    		onSave();
 	    });
 	    
 	    Column<ContractConceptCalc, ContractConceptCalc> visibilityColumn = new Column<ContractConceptCalc, ContractConceptCalc>(visibilityActionCell) {
@@ -425,7 +404,7 @@ public class EmployeeContractPayments extends Composite {
 	    // Add the columns.
 		contractConceptCalcDG.addColumn(editColumn, "");
 		contractConceptCalcDG.addColumn(typeColumn, "Tipo");
-		contractConceptCalcDG.addColumn(codeColumn, "C\u00F3digo");
+		contractConceptCalcDG.addColumn(codeColumn, "CRA");
 		contractConceptCalcDG.addColumn(descriptionColumn, "Descripci\u00F3n");
 	 
 		contractConceptCalcDG.addColumn(expressionColumn, "Expresi\u00F3n");
@@ -436,83 +415,95 @@ public class EmployeeContractPayments extends Composite {
 		contractConceptCalcDG.addColumn(deleteColumn, "");  
 	}
 	
-	private void openPaymentDialog(ContractConceptCalc selectedPayment) {
+	private void openDialog(ContractConceptCalc selectedPayment) {
 		boolean isHide = AonStringUtils.isNotBlank(selectedPayment.getExpression()) && AonStringUtils.containsIgnoreCase(selectedPayment.getExpression(), "HIDE");
-    	PaymentDialog paymentDialog = new PaymentDialog();
-		
-		if(availablePayments.isEmpty()) {
-			employeeContractPaymentsObject.getAvailablePayments(s -> {
-				availablePayments = filterPayments(s);
-				paymentDialog.setAvailablePayments(availablePayments);
-			}, f -> {});
-		} else
-			paymentDialog.setAvailablePayments(availablePayments);
-		
-		paymentDialog.setTypeListVisible();
-		paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
-		paymentDialog.setContextProvider(null);
-		paymentDialog.setConcept(getConcept(selectedPayment));
-		paymentDialog.setMonth(selectedPayment.getMonth());
-		paymentDialog.setType(selectedPayment.getType());
-		paymentDialog.setReceiptType(selectedPayment.getSalaryType());
-		paymentDialog.setDescription(selectedPayment.getDescription());
-		if(Boolean.TRUE.equals(isHide))
-			paymentDialog.setPaymentExpression(
-					showHideContractConceptCalc(selectedPayment.getDescription(), selectedPayment.getExpression(), "PAGOS"), 
-					showHideContractConceptCalc(selectedPayment.getDescription(), selectedPayment.getExpression(), "PAGOS"));
-		else
-			paymentDialog.setPaymentExpression(selectedPayment.getExpression(), selectedPayment.getExpression());
-		paymentDialog.setIrpfExpression(selectedPayment.getIrpfExpression());
-		paymentDialog.setQuoteExpression(selectedPayment.getQuoteExpression());
-		paymentDialog.center();
-		paymentDialog.show(dialog -> {
+    	new EmployeeContractPaymentEditor(selectedPayment.getContractConceptCalcType(), selectedPayment) {
+			@Override
+			protected void onAccept(ContractConceptCalc updatedPayment) {
+				switch (updatedPayment.getContractConceptCalcType()) {
+				case PAYMENT:
+					updatePayment(isHide, selectedPayment, updatedPayment);
+					break;
+				case DEDUCTION:
+					updateDeduction(isHide, selectedPayment, updatedPayment);
+					break;
+				case COST:
+					updateCost(isHide, selectedPayment, updatedPayment);
+					break;
+				case BONUS:
+					updateBonus(isHide, selectedPayment, updatedPayment);
+					break;
+				default:
+					break;
+				}
+			}
+
+			private void updatePayment(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
+				selectedPayment.setType(updatedPayment.getType());
+				selectedPayment.setConceptId(updatedPayment.getConceptId());
+				selectedPayment.setName(updatedPayment.getName());
+				selectedPayment.setDescription(updatedPayment.getDescription());
+				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHideContractConceptCalc(updatedPayment.getDescription(), updatedPayment.getExpression(), updatedPayment.getContractConceptCalcType()) : updatedPayment.getExpression());
+				selectedPayment.setIrpfExpression(updatedPayment.getIrpfExpression());
+				selectedPayment.setQuoteExpression(updatedPayment.getQuoteExpression());
+				selectedPayment.setMonth(updatedPayment.getMonth());
+				selectedPayment.setStartDate(updatedPayment.getStartDate());
+				selectedPayment.setEndDate(updatedPayment.getEndDate());
+				selectedPayment.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
 				selectedPayment.setScope(Scope.SALARY);
-				selectedPayment.setType(dialog.getType());
-				selectedPayment.setMonth(dialog.getMonth());
-				selectedPayment.setName(dialog.getName());
-				selectedPayment.setDescription(dialog.getDescription());
-				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHideContractConceptCalc(dialog.getDescription(), dialog.getPaymentExpression(), "PAGOS") : dialog.getPaymentExpression());
-				selectedPayment.setIrpfExpression(dialog.getIrpfExpression());
-				selectedPayment.setQuoteExpression(dialog.getQuoteExpression());
 				selectedPayment.setSalaryType(Type.SALARY);
 				selectedPayment.setHasChange(true);
 				contractConceptCalcDG.redraw();
-		});
-	}
-	
-	private void openDialog(ContractConceptCalc selectedPayment, String paymentType) {
-		boolean isHide = AonStringUtils.isNotBlank(selectedPayment.getExpression()) && AonStringUtils.containsIgnoreCase(selectedPayment.getExpression(), "HIDE");
-    	new EmployeeContractPaymentEditor(selectedPayment, paymentType) {
-			@Override
-			protected void onAccept(ContractConceptCalc contractConceptCalc) {
+			}
+
+			private void updateDeduction(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
+				selectedPayment.setConceptId(updatedPayment.getConceptId());
+				selectedPayment.setCodeType(updatedPayment.getCodeType());
+				selectedPayment.setName(updatedPayment.getName());
+				selectedPayment.setDescription(updatedPayment.getDescription());
+				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHideContractConceptCalc(updatedPayment.getDescription(), updatedPayment.getExpression(), updatedPayment.getContractConceptCalcType()) : updatedPayment.getExpression());
+				selectedPayment.setMonth(updatedPayment.getMonth());
+				selectedPayment.setStartDate(updatedPayment.getStartDate());
+				selectedPayment.setEndDate(updatedPayment.getEndDate());
+				selectedPayment.setContractConceptCalcType(ContractConceptCalcType.DEDUCTION);
 				selectedPayment.setScope(Scope.SALARY);
-				selectedPayment.setType(contractConceptCalc.getType());
-				selectedPayment.setMonth(contractConceptCalc.getMonth());
-				selectedPayment.setName(contractConceptCalc.getName());
-				selectedPayment.setDescription(contractConceptCalc.getDescription());
-				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHideContractConceptCalc(contractConceptCalc.getDescription(), contractConceptCalc.getExpression(), paymentType) : contractConceptCalc.getExpression());
-				selectedPayment.setIrpfExpression(contractConceptCalc.getIrpfExpression());
-				selectedPayment.setQuoteExpression(contractConceptCalc.getQuoteExpression());
 				selectedPayment.setSalaryType(Type.SALARY);
-				selectedPayment.setStartDate(contractConceptCalc.getStartDate());
-				selectedPayment.setEndDate(contractConceptCalc.getEndDate());
+				selectedPayment.setHasChange(true);
+				contractConceptCalcDG.redraw();
+			}
+
+			private void updateCost(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
+				selectedPayment.setCodeType(updatedPayment.getCodeType());
+				selectedPayment.setName(updatedPayment.getName());
+				selectedPayment.setDescription(updatedPayment.getDescription());
+				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHideContractConceptCalc(updatedPayment.getDescription(), updatedPayment.getExpression(), updatedPayment.getContractConceptCalcType()) : updatedPayment.getExpression());
+				selectedPayment.setStartDate(updatedPayment.getStartDate());
+				selectedPayment.setEndDate(updatedPayment.getEndDate());
+				selectedPayment.setContractConceptCalcType(ContractConceptCalcType.COST);
+				selectedPayment.setScope(Scope.SALARY);
+				selectedPayment.setSalaryType(Type.SALARY);
+				selectedPayment.setHasChange(true);
+				contractConceptCalcDG.redraw();
+			}
+
+			private void updateBonus(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
+				selectedPayment.setConceptId(updatedPayment.getConceptId());
+				selectedPayment.setCodeType(updatedPayment.getCodeType());
+				selectedPayment.setDescription(updatedPayment.getDescription());
+				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHideContractConceptCalc(updatedPayment.getDescription(), updatedPayment.getExpression(), updatedPayment.getContractConceptCalcType()) : updatedPayment.getExpression());
+				selectedPayment.setStartDate(updatedPayment.getStartDate());
+				selectedPayment.setEndDate(updatedPayment.getEndDate());
+				selectedPayment.setContractConceptCalcType(ContractConceptCalcType.BONUS);
+				selectedPayment.setScope(Scope.SALARY);
+				selectedPayment.setSalaryType(Type.SALARY);
 				selectedPayment.setHasChange(true);
 				contractConceptCalcDG.redraw();
 			}
 		};
 	}
-
-	private Payment getConcept(ContractConceptCalc item) {
-		if (item.getName() == null)
-			return null;
-		for (Payment payment : availablePayments)
-			if (AonStringUtils.equalsIgnoreCase(payment.getName(), item.getName()))
-				return payment;
-		return null;
-	}
 	
-	public String showHideContractConceptCalc(String description, String expression, String paymentType) {
-		if(AonStringUtils.equals(paymentType, "PAGOS")) {
+	public String showHideContractConceptCalc(String description, String expression, ContractConceptCalcType paymentType) {
+		if(paymentType == ContractConceptCalcType.PAYMENT) {
 			if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE"))
 				expression = expression.replaceAll("HIDE.*; ", "");
 			else
@@ -661,7 +652,7 @@ public class EmployeeContractPayments extends Composite {
 			
 			@Override
 			public void onDefaultClick(ClickEvent evet) {
-				onPayment();
+				onPaymentWizard();
 			}
 		};
 		toolbar.add(addExpand);
@@ -679,7 +670,7 @@ public class EmployeeContractPayments extends Composite {
 				t -> {});
 	}
 	
-	private void onPayment() {
+	private void onPaymentWizard() {
 		employeeContractPaymentsObject.getAvailablePayments(s -> {
 			availablePayments = filterPayments(s);
 			
@@ -751,21 +742,25 @@ public class EmployeeContractPayments extends Composite {
 		.filter(p -> AonStringUtils.isNotBlank(p.getName()) && names.contains(p.getName()))
 		.collect(Collectors.toSet());
 	}
+	
+	private void onPayment() {
+		openEditor(ContractConceptCalcType.PAYMENT);
+	}
 
 	private void onDeduction() {
-		openEditor("DEDUCIONES");
+		openEditor(ContractConceptCalcType.DEDUCTION);
 	}
 
 	private void onCost() {
-		openEditor("COSTES");
+		openEditor(ContractConceptCalcType.COST);
 	}
 
 	private void onBonus() {
-		openEditor("BONUS");
+		openEditor(ContractConceptCalcType.BONUS);
 	}
 	
-	public void openEditor(String paymentType) {
-		new EmployeeContractPaymentEditor(paymentType) {
+	public void openEditor(ContractConceptCalcType type) {
+		new EmployeeContractPaymentEditor(type) {
 			@Override
 			protected void onAccept(ContractConceptCalc contractConceptCalc) {
 				employeeContractPaymentsObject.createContractPayment(
