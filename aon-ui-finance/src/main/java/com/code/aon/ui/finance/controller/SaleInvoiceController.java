@@ -579,6 +579,10 @@ public class SaleInvoiceController extends InvoiceController {
 			
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 
+			if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+				throw new Exception("El Documento del cliente está vacio.");
+			}
+			
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			if(invoice.getNumber() < 1) {
 				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());

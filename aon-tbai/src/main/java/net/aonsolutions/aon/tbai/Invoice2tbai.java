@@ -212,16 +212,17 @@ public class Invoice2tbai {
 		receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
 		receiver.setCodigoPostal(invoice.getAddress().getZip());
 		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
-		if(invoice.isNational()) {
-			receiver.setNIF(invoice.getRegistryDocument());			
-		} else {
-			IDOtro other = new IDOtro();
-			other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-			other.setIDType(IDType.OTRO.getName());
-			other.setID(invoice.getRegistryDocument());
-			receiver.setIDOtro(other);
+		if(!AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+			if(invoice.isNational()) {
+				receiver.setNIF(invoice.getRegistryDocument());			
+			} else {
+				IDOtro other = new IDOtro();
+				other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+				other.setIDType(IDType.OTRO.getName());
+				other.setID(invoice.getRegistryDocument());
+				receiver.setIDOtro(other);
+			}
 		}
-
 			
 		receivers.getIDDestinatario().add(receiver);
 		entities.setDestinatarios(receivers);
@@ -242,7 +243,7 @@ public class Invoice2tbai {
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "dd-MM-yyyy"));
 		cabecera.setHoraExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "HH:mm:ss"));
 			
-		cabecera.setFacturaSimplificada(SiNoType.N);
+		cabecera.setFacturaSimplificada(invoice.isSimplified() ? SiNoType.S : SiNoType.N);
 		cabecera.setFacturaEmitidaSustitucionSimplificada(SiNoType.N);
 
 		if(invoice.isRectifier()) {

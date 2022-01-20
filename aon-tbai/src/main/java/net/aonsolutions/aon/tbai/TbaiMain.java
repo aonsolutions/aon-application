@@ -103,7 +103,6 @@ public class TbaiMain {
 
 	public void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
 			throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
-
 		TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
 		boolean send = true;
 		if(!tbaiConfiguration.isBizkaia()) {
@@ -111,6 +110,13 @@ public class TbaiMain {
 			send = !info.isAccepted();
 		}
 		if(send) {
+			if(invoice.isRectifier()) {
+				Invoice rectify = AON.getInvoice(company.getDomain().getName(), company.getDomain().getId(), "", invoice.getRectificationInvoice());
+				invoice.setRectificationInvoiceSeries(rectify.getSeries());
+				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
+				invoice.setRectificationInvoiceNumber(rectify.getNumber());
+				invoice.setRectificationType(rectify.getRectificationType());
+			}
 			TbaiBlockchain blockchain = tbaiData.getBlockchain(company.getDomain(), new User().setLogin(""), invoice.getId());
 			final TicketBai tbai = Invoice2tbai.build(company, invoice, tbaiConfiguration, blockchain);
 
