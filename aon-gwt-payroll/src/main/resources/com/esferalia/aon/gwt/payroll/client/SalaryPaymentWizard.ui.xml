@@ -170,7 +170,7 @@
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.element}">
 					<g:Label styleName="{style.title}">Concepto</g:Label>
-					<g:TextBox ui:field="paymentConcept" />
+					<g:TextBox ui:field="paymentConcept" maxLength="25" styleName="{style.uppercase}" />
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="paymentCRATypePanel" styleName="{style.element}">
 					<g:Label styleName="{style.title}">Tipo CRA</g:Label>
