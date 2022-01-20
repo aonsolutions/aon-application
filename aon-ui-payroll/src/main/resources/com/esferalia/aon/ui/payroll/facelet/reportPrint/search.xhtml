@@ -81,10 +81,10 @@
 					</aon:htmlCommandLink> -->
 				
 					<h:panelGrid columns="2" style="display:inline; vertical-align:bottom;">
-						<rich:dropDownMenu style="padding: 0 !important; border: none !important" mode="ajax">
+						<rich:dropDownMenu style="margin-left:2.5em; padding: 0 !important; border: none !important" mode="ajax">
 			                <f:facet name="label">
 			                    <h:panelGrid cellpadding="0" cellspacing="0" columns="2" style=" vertical-align:bottom; font-size: .95em;">
-			                        <h:outputText class="aon-icon-excel aon-finding-toolbar-item" style="font-size: .8em; border-right: none !important; color:dark-gray" value="LISTADOS ANUALES"/>
+			                        <h:outputText class="aon-icon-excel aon-finding-toolbar-item" style="margin-left:-2.5em; font-size: .8em; border-right: none !important; color:dark-gray" value="RESUMEN ANUAL"/>
 			                    </h:panelGrid>
 			                </f:facet>
 			                <rich:menuItem action="#{enterpriseSalaryReport.onDetailedExcel}">
@@ -95,7 +95,7 @@
 											style="font-size:1.5em; vertical-align: bottom" 
 										/>
            			      		</f:facet>
-			                    <h:outputText value="LISTADO DETALLADO" />
+			                    <h:outputText value="Listado de costes" />
 			                    <f:setPropertyActionListener
 								target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
 								<f:setPropertyActionListener
@@ -107,57 +107,50 @@
 								<f:setPropertyActionListener
 									target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 			                </rich:menuItem>
-			                 <rich:menuGroup label="resumen_anual_agregado" value="RESUMEN ANUAL AGREGADO" >
-            				 <f:facet name="icon">            			      		
-            			      		<h:outputText
-										value="chevron_right"  
-										styleClass="material-icons" 
-										style="font-size:1.5em; vertical-align: bottom" 
-									/>
+			                
+               			    <rich:menuItem action="#{enterpriseSalaryReport.onAggregatedMonthly}">
+				                <f:facet name="icon">            			      		
+	            			      		<h:outputText
+											value="chevron_right"  
+											styleClass="material-icons" 
+											style="font-size:1.5em; vertical-align: bottom" 
+										/>
            			      		</f:facet>
-			                 
-			                 
-			                    <rich:menuItem action="#{enterpriseSalaryReport.onAggregatedMonthly}" label="mensual">
-            			      		<f:facet name="icon">            			      		
+			                    <h:outputText value="Agregado mensual" />
+			                    <f:setPropertyActionListener
+								target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.salaryTypes}" value="#{enterpriseSalaryReport.salaryTypes}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+			                </rich:menuItem>
+			                
+               			    <rich:menuItem action="#{enterpriseSalaryReport.onAggregatedQuarterly}">
+				                <f:facet name="icon">            			      		
 	            			      		<h:outputText
-											value="calendar_month"  
+											value="chevron_right"  
 											styleClass="material-icons" 
 											style="font-size:1.5em; vertical-align: bottom" 
 										/>
-            			      		</f:facet>
-            			      		<h:outputText value="MENSUAL"/>
-			                    	<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.salaryTypes}" value="#{enterpriseSalaryReport.salaryTypes}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
-			                    </rich:menuItem>
-			                    <rich:menuItem action="#{enterpriseSalaryReport.onAggregatedQuarterly}" label="trimestral">
-			                    	<f:facet name="icon">            			      		
-	            			      		<h:outputText
-											value="date_range"  
-											styleClass="material-icons" 
-											style="font-size:1.5em; vertical-align: bottom" 
-										/>
-            			      		</f:facet>
-			                    	<h:outputText value="TRIMESTRAL"/>
-			                    	<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.salaryTypes}" value="#{enterpriseSalaryReport.salaryTypes}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
-									<f:setPropertyActionListener
-										target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
-			                    </rich:menuItem>
-			                </rich:menuGroup>
+           			      		</f:facet>
+			                    <h:outputText value="Agregado trimestral" />
+			                    <f:setPropertyActionListener
+								target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.salaryTypes}" value="#{enterpriseSalaryReport.salaryTypes}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+			                </rich:menuItem>
+			                
+			                 
 		            	</rich:dropDownMenu>
 						<aon:selectOneMenu id="reportPrint_yearly_year" value="#{enterpriseSalaryReport.yearlyYear}" >
 							<f:selectItems value="#{enterpriseSalaryReport.availableYears}"  />
