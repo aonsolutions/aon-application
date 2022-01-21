@@ -6714,7 +6714,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, String ssNumber, Date startDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqEmployeeIrpf.getEmployeeIrpf(connection, ssNumber, startDate);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqEmployeeIrpf.getEmployeeIrpf(connection, domainId, ssNumber, startDate);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
