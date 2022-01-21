@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -18,14 +20,17 @@ public class AonLoadingPanel extends FlowPanel{
 		super();
 		this.message = message;
 		
-		this.getElement().getStyle().setProperty("display", "none");
-		this.getElement().getStyle().setProperty("justify-content", "center");		
-		this.getElement().getStyle().setProperty("position", "fixed");
-		this.getElement().getStyle().setProperty("top", "0");
-		this.getElement().getStyle().setProperty("bottom", "0");
-		this.getElement().getStyle().setProperty("left", "0");
-		this.getElement().getStyle().setProperty("right", "0");
+		this.getElement().getStyle().setDisplay(Display.NONE);
+		this.getElement().getStyle().setProperty("justify-content", "center");
+		this.getElement().getStyle().setPosition(Position.FIXED);
+		this.getElement().getStyle().setTop(0, Unit.PX);
+		this.getElement().getStyle().setBottom(0, Unit.PX);
+		this.getElement().getStyle().setLeft(0, Unit.PX);
+		this.getElement().getStyle().setRight(0, Unit.PX);
+		this.getElement().getStyle().setZIndex(999);
 		this.getElement().getStyle().setProperty("background", "radial-gradient(rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8))");
+		
+		
 		
 		FlexTable loadingTable = new FlexTable();
 		loadingTable.getElement().getStyle().setProperty("margin", "auto");
@@ -44,11 +49,11 @@ public class AonLoadingPanel extends FlowPanel{
 	}
 	
 	public void show() {
-		this.getElement().getStyle().setProperty("display", "flex");
+		this.getElement().getStyle().setDisplay(Display.FLEX);
 	}
 	
 	public void hide() {
-		this.getElement().getStyle().setProperty("display", "none");
+		this.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	

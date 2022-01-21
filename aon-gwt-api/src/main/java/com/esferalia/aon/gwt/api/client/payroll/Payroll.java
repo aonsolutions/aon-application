@@ -9,7 +9,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -19,6 +21,12 @@ import com.google.gwt.user.client.ui.Hidden;
 public class Payroll extends Methods{
 
 	final IApiAsync impl = GWT.create(IApi.class);
+	
+	public interface UnsexedCallback {
+		
+		public void writeOnFootPanel(String nss, String name);
+		
+	}
 
 	public Payroll(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
@@ -100,7 +108,7 @@ public class Payroll extends Methods{
 //		Window.open(getUrl() + "remuneration_record/registro_retributivo_" + year + "?" + parameters, "_blank", null);
 //	}
 	
-	public void printRemunerationRecord(Integer year, FlowPanel formContainer){
+	public void printRemunerationRecord(Integer year, FlowPanel formContainer, UnsexedCallback unsexedCallback){
 		String printURL = URL.encode(getUrl() + "remuneration_record/Registro_Retributivo_" + year);
 		
 		FormPanel formPanel = new FormPanel(/*"_blank"*/);
@@ -109,12 +117,23 @@ public class Payroll extends Methods{
 		formPanel.addSubmitCompleteHandler(event -> {
 			
 			JSONObject json = new JSONObject(JsonUtils.safeEval(event.getResults()));
-			String base64Excel = json.get("excel").isString().stringValue();
 			
-//			if (base64Excel.charAt(0) == '\"' && base64Excel.charAt(base64Excel.length() - 1) == '\"') {
-//				base64Excel = base64Excel.substring(1, base64Excel.length() - 1);
-//			}
-//			
+			JSONValue noSex = json.get("noSex");
+			JSONArray noSexArr = new JSONArray(JsonUtils.safeEval(noSex.toString()));
+			
+			
+			for (int i=0; i<noSexArr.size(); i++) {
+				
+				JSONObject unsexed = new JSONObject(JsonUtils.safeEval(noSexArr.get(i).toString()));
+				
+				String name = unsexed.get("name").isString().stringValue();
+				String nss = unsexed.get("nss").isString().stringValue();
+				
+				unsexedCallback.writeOnFootPanel(nss, name);
+				
+			}
+			
+			String base64Excel = json.get("excel").isString().stringValue();
 			
 			String url = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," + base64Excel;
 			
