@@ -649,12 +649,10 @@ public class MainCertificates extends MainEntryPoint{
 		
 		// Buttons visibility
 		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
-			deleteButton.setVisible(false);
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
 			checkCertificateButton.setVisible(false);
 		} else {
-			deleteButton.setVisible(true);
 			if(hasTGSSCertificate(certificate))
 				secondaryUsersButton.setVisible(true);
 			if(hasSEPECertificate(certificate))
