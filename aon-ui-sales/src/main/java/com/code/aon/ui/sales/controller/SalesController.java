@@ -1069,7 +1069,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public TbaiConfiguration getTbaiConfiguration() {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		String login = ""; // UserUtils.getInstance().getLoggedUser().getLogin();
 		return AON.getTbaiConfiguration(domainName, domainId, login);
 	}
 }
