@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Button;
 
 public class ContractMediaPage extends AonTemplate2 {
 	
@@ -40,7 +41,7 @@ public class ContractMediaPage extends AonTemplate2 {
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Informe de personal asalariado");
-		setToolbar(toolbar);
+		setToolbar(toolbar);	
 	} 
 	
 	private void content(){
