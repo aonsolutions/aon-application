@@ -1338,8 +1338,8 @@ public class Mod190DAO {
 			double ret = AonMathUtils.round(detail.getRetention() + detail.getInKindDeposit() + detail.getRetentionIL() + detail.getInKindDepositIL());
 			double perDiff = AonMathUtils.round(detail.getSalaryPerception() - per);
 			double retDiff = AonMathUtils.round(detail.getSalaryRetention() - ret);
-			if ( (AonMathUtils.isNotZero(perDiff) && AonMathUtils.absRounded(perDiff) <=0.07)
- 			  || (AonMathUtils.isNotZero(retDiff) && AonMathUtils.absRounded(retDiff) <=0.07)) {
+			if ( (AonMathUtils.isNotZero(perDiff) && AonMathUtils.absRounded(perDiff) <=0.5)
+ 			  || (AonMathUtils.isNotZero(retDiff) && AonMathUtils.absRounded(retDiff) <=0.5)) {
 				LinkedList<Mod190Detail> selected = new LinkedList<>();
 				for (Mod190Detail det : mod190.getDetails() ) {
 					double tmpRet = AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL() + det.getInKindDepositIL());
