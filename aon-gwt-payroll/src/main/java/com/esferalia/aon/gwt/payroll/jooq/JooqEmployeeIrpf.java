@@ -52,11 +52,11 @@ public class JooqEmployeeIrpf {
 	
 	// --------------------------------------------- Methods. getEmployeeIrpf
 	
-	public static List<EmployeeIrpf> getEmployeeIrpf(Connection conn, String ssNumber, Date startDate) throws IllegalArgumentException {
-		return getEmployeeIrpf(DSL.using(conn, getDefaultSettings()), ssNumber, startDate);
+	public static List<EmployeeIrpf> getEmployeeIrpf(Connection conn, Integer domainId, String ssNumber, Date startDate) throws IllegalArgumentException {
+		return getEmployeeIrpf(DSL.using(conn, getDefaultSettings()), domainId, ssNumber, startDate);
 	}
 
-	private static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, String ssNumber, Date startDate) throws IllegalArgumentException {
+	private static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, Integer domainId, String ssNumber, Date startDate) throws IllegalArgumentException {
 		List<EmployeeIrpf> employeeIrpfList = new ArrayList<>();
 		
 		// Iterator Date
@@ -82,6 +82,7 @@ public class JooqEmployeeIrpf {
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.ISSUE_DATE.between(parseDateToSQL(iteratorDate), parseDateToSQL(endDate)).or(SALARY.ISSUE_DATE.eq(parseDateToSQL(iteratorDate)).or(SALARY.ISSUE_DATE.eq( parseDateToSQL(endDate)))))
 					.and(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNumber))
+					.and(SALARY.DOMAIN.eq(domainId))
 					.orderBy(SALARY.TYPE)
 					.fetch();
 			
