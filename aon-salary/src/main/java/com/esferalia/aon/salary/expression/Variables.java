@@ -595,8 +595,9 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	protected List<ITimedVariable<?>> remove(String var) {
 		List<ITimedVariable<?>> values = vars.remove(var);
-		return values;
+		return values == null ? Collections.emptyList() : values;
 	}
+
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
