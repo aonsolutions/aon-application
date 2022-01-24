@@ -96,7 +96,11 @@
 			</g:HTMLPanel>
 		</g:north>
 		<g:center>
-			<g:FlowPanel ui:field="centerFlow"></g:FlowPanel>
+		<g:SplitLayoutPanel ui:field="splitPanel">
+			<g:center>			
+				<g:FlowPanel ui:field="centerFlow"></g:FlowPanel>
+			</g:center>
+		</g:SplitLayoutPanel>
 		</g:center>
 
 	</g:DockLayoutPanel>
