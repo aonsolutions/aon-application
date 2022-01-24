@@ -635,7 +635,7 @@ public class Invoice implements Serializable, HasAudit {
 //				&& AonMathUtils.isLessThan(getTotal(), REG_IMPORT_MAX_VALUE0 ))	
 			|| mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
 	}
-	private boolean isVatImportationAmountValid() {
+	public boolean isVatImportationAmountValid() {
 		return getDetails() == null 
 			|| getDetails().isEmpty()
 			|| AonMathUtils.isLessThan( getDetails().stream().mapToDouble( InvoiceDetail::getTaxableBase ).sum() , REG_IMPORT_MAX_VALUE );
