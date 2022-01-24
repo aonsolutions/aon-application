@@ -33,12 +33,12 @@ public class EmployeeIT implements Serializable {
 	ContractLeaveDischargeCause dischargeCause;
 	List<EmployeeITPart> itParts;
 	
-	Double dailyCgcBase;	
 	Double dailyCgpBase;	
 	Double dailyRegBase;	
 	
-
-	Integer quoteDays;
+	Double dailyCgcBase;	//base TGSS
+	Integer quoteDays;	// day TGSS
+	
 	String regime;
 	String ccc;
 	String nss;
@@ -225,10 +225,14 @@ public class EmployeeIT implements Serializable {
         		+ "domain=" + domain +","
         		+ "type=" + type +","
         		+ "contract=" + contract +","
+        		+ "nss=" + nss +","
+        		+ "regime=" + regime +","
+        		+ "ccc=" + ccc +","
         		+ "description=" + description +","
         		+ "startDate=" + startDate +","
         		+ "endDate=" + endDate +","
         		+ "dailyCgcBase=" + dailyCgcBase +","
+        		+ "quoteDays=" + quoteDays +","
         		+ "dailyCgpBase=" + dailyCgpBase +","
         		+ "parent=" + parent +","
         		+ "dailyRegBase=" + dailyRegBase +","
