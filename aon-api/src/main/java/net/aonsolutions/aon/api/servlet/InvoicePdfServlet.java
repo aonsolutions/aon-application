@@ -104,11 +104,14 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 
 			String qrUrl = domainName + "/dip?source=" + source + "&id=" + id;  
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
-			if(tbai.isActive()) {	
-				String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domainName, domainId, login, invoice.getId());
+			String tbaiId = "";
+			if(tbai.isActive()) {
+				TbaiData tbaiData = TbaiData.getInstance(tbai);
+				String tbaiUrl = tbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
 				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+				tbaiId = tbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
 			}
-			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData());
+			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
 		
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {

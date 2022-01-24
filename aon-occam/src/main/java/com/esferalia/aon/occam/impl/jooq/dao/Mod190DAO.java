@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -59,6 +60,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod190DAO {
@@ -1217,23 +1219,9 @@ public class Mod190DAO {
 					
 				}); 
 		});
-		;
 		mod190.getDetails().addAll(map.values());
+		fixRoundProblems( ctx, mod190); 
 	}
-	
-//	public static Mod190 duplicateNextYear(AONContext ctx, int id) {
-//		Mod190 mod190 = getById(ctx, id);
-//		mod190.setYear( mod190.getYear() + 1 );
-//		mod190.setId(null);
-//		mod190 = insert(ctx, mod190, false);
-//		Mod190 original = getById(ctx, id);
-//		for (Mod190Detail detail : original.getDetails()) {
-//			detail.setId(null);
-//			detail.setMod190(mod190.getId());
-//			saveDetail(ctx,mod190,detail);
-//		}
-//		return getById(ctx, mod190 .getId());
-//	}
 	
 	public static Mod190 duplicate(AONContext ctx, Mod190 mod190) {
 		
@@ -1252,5 +1240,139 @@ public class Mod190DAO {
 		return getById(ctx, mod190 .getId());
 	}
 	
+	public static LinkedList<Mod190Detail> validateSalaries(AONContext ctx, Mod190 mod190) {
+		if (mod190 == null) return null; 
+		if (mod190.getDetails() == null || mod190.getDetails().isEmpty()) return null;		
+		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod190.getYear()));
+		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod190.getYear()));
+		LinkedHashMap<String,Mod190Detail> map = getUniqueMap( mod190 );	
+		for (Mod190Detail detail : map.values()) {
+			ctx.getDslContext().select(SALARY.IRPF_BASE,SALARY.TOTAL_IRPF)
+				.from(SALARY)
+				.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+				.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(SALARY.EMPLOYEE_DOCUMENT.eq(detail.getDocument()))
+				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+				.fetch()
+				.stream()
+				.forEach(rec -> {
+					double base = AonMathUtils.round(rec.getValue(SALARY.IRPF_BASE));
+					double quota = AonMathUtils.round(rec.getValue(SALARY.TOTAL_IRPF));
+					detail.setSalaryPerception(AonMathUtils.round(detail.getSalaryPerception() + base));				
+					detail.setSalaryRetention(AonMathUtils.round(detail.getSalaryRetention() + quota));
+				});
+		}
+		LinkedList<Mod190Detail> retList = new LinkedList<>();
+		for (Mod190Detail detail : map.values()) {
+			double per = AonMathUtils.round(detail.getPerception() + detail.getPerceptionIL() + detail.getInKindPerception() + detail.getInKindPerceptionIL());
+			double ret = AonMathUtils.round(detail.getRetention() + detail.getInKindDeposit() + detail.getRetentionIL() + detail.getInKindDepositIL());
+			if ( AonNumberUtils.notEquals(detail.getSalaryPerception(), per) || AonNumberUtils.notEquals(detail.getSalaryRetention(), ret)) {
+				retList.add(detail);
+			}
+		}
+		return retList;
+	}
+	
+	private static LinkedHashMap<String, Mod190Detail> getUniqueMap(Mod190 mod190) {
+		LinkedHashMap<String,Mod190Detail> map = new LinkedHashMap<>();	
+		for (Mod190Detail detail : mod190.getDetails()) {
+			double ret = AonMathUtils.round(detail.getRetention() + detail.getInKindDeposit() + detail.getRetentionIL() + detail.getInKindDepositIL());
+			if (!AonStringUtils.equals("G", detail.getKey()) &&
+				!AonStringUtils.equals("H", detail.getKey()) &&
+				AonMathUtils.isNotZero(ret)) {
+				
+				Mod190Detail det = null;
+				if (!map.containsKey(detail.getDocument())) {
+					det = new Mod190Detail();
+					det.setDocument(detail.getDocument());
+					det.setName(detail.getName());
+					map.put(detail.getDocument(), det);
+				} else {
+					det = map.get(detail.getDocument());
+				}
+				det.setPerception( AonMathUtils.round(det.getPerception() + detail.getPerception()));
+				det.setPerceptionIL( AonMathUtils.round(det.getPerceptionIL() + detail.getPerceptionIL()));
+				det.setInKindPerception( AonMathUtils.round(det.getInKindPerception() + detail.getInKindPerception())); 
+				det.setInKindPerceptionIL( AonMathUtils.round(det.getInKindPerceptionIL() + detail.getInKindPerceptionIL()));
+				det.setRetention( AonMathUtils.round(det.getRetention() + detail.getRetention()));
+				det.setRetentionIL( AonMathUtils.round(det.getRetentionIL() + detail.getRetentionIL()));
+				det.setInKindDeposit( AonMathUtils.round(det.getInKindDeposit() + detail.getInKindDeposit())); 
+				det.setInKindDepositIL( AonMathUtils.round(det.getInKindDepositIL() + detail.getInKindDepositIL()));
+			}
+		}
+		return map;
+	}
+
+	private static void fixRoundProblems(AONContext ctx, Mod190 mod190) {
+		if (mod190.getDetails() == null || mod190.getDetails().isEmpty()) return;		
+		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod190.getYear()));
+		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod190.getYear()));
+		LinkedHashMap<String,Mod190Detail> map = getUniqueMap( mod190 );	
+		for (Mod190Detail detail : map.values()) {
+			ctx.getDslContext().select(SALARY.IRPF_BASE,SALARY.TOTAL_IRPF)
+				.from(SALARY)
+				.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+				.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
+				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(SALARY.EMPLOYEE_DOCUMENT.eq(detail.getDocument()))
+				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+				.fetch()
+				.stream()
+				.forEach(rec -> {
+					double base = AonMathUtils.round(rec.getValue(SALARY.IRPF_BASE));
+					double quota = AonMathUtils.round(rec.getValue(SALARY.TOTAL_IRPF));
+					detail.setSalaryPerception(AonMathUtils.round(detail.getSalaryPerception() + base));				
+					detail.setSalaryRetention(AonMathUtils.round(detail.getSalaryRetention() + quota));
+				});
+		}
+		LinkedList<Mod190Detail> retList = new LinkedList<>();
+		for (Mod190Detail detail : map.values()) {
+			double per = AonMathUtils.round(detail.getPerception() + detail.getPerceptionIL() + detail.getInKindPerception() + detail.getInKindPerceptionIL());
+			double ret = AonMathUtils.round(detail.getRetention() + detail.getInKindDeposit() + detail.getRetentionIL() + detail.getInKindDepositIL());
+			double perDiff = AonMathUtils.round(detail.getSalaryPerception() - per);
+			double retDiff = AonMathUtils.round(detail.getSalaryRetention() - ret);
+			if ( (AonMathUtils.isNotZero(perDiff) && AonMathUtils.absRounded(perDiff) <=0.5)
+ 			  || (AonMathUtils.isNotZero(retDiff) && AonMathUtils.absRounded(retDiff) <=0.5)) {
+				LinkedList<Mod190Detail> selected = new LinkedList<>();
+				for (Mod190Detail det : mod190.getDetails() ) {
+					double tmpRet = AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL() + det.getInKindDepositIL());
+					if ( AonStringUtils.equals (detail.getDocument(),det.getDocument()) && AonMathUtils.isNotZero(tmpRet))  {
+						selected.add(det);		
+					}
+				}
+				if ( selected.size() == 1) {
+					if (AonMathUtils.isNotZero(per)) {
+						selected.get(0).setPerception(AonMathUtils.round( selected.get(0).getPerception() + getPercetionDiff(detail)));
+					}
+					if (AonMathUtils.isNotZero(ret)) {
+						selected.get(0).setRetention(AonMathUtils.round( selected.get(0).getRetention() + getRetentionDiff(detail)));
+					}
+				}
+				retList.add(detail);
+			}
+		}
+	}
+
+	private static double getPercetionDiff(Mod190Detail detail) {
+		return AonMathUtils.round(detail.getSalaryPerception() 
+				- detail.getPerception()
+				- detail.getPerceptionIL() 
+				- detail.getInKindPerception() 
+				- detail.getInKindPerceptionIL());
+	}
+	private static double getRetentionDiff(Mod190Detail detail) {
+		return AonMathUtils.round(detail.getSalaryRetention() 
+				- detail.getRetention()
+				- detail.getRetentionIL() 
+				- detail.getInKindDeposit() 
+				- detail.getInKindDepositIL());			
+	}
 	
 }

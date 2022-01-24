@@ -420,8 +420,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		);
 
 		// + CONCEPTO ANTIGUEDAD, DESCRIPCION ?
-		open("concepto_antiguedad,_descripcion");
-		select("concepto_antiguedad,_descripcion-draft");
+		draft("CONCEPTO ANTIGUEDAD, DESCRIPCION");
+		//open("concepto_antiguedad,_descripcion");
+		//select("concepto_antiguedad,_descripcion-draft");
 		wait4Text("employeeNameLabel", "CONCEPTO ANTIGUEDAD, DESCRIPCION");
 	}
 

@@ -525,13 +525,18 @@ public class MainCertificates extends MainEntryPoint{
 		Hidden sepeHidden = new Hidden("sepe", hasSEPECertificate(certificate) ? "sepe" : "");
 		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(certificate) ? "aeat" : "");
 		Hidden ownerHidden = new Hidden("owner", certificate.getOwner().name());
-		
-		String certificateFor = "(" + certificate.getCertificateInfo().getDocument() + ") " + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
+		String certificateFor = "-";
+		if(!certificate.getCertificateInfo().isEmpty()) {
+			certificateFor = "(" + certificate.getCertificateInfo().getDocument() + ") " + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
+		}
+
 		Label certificateForL = new Label(parseStringLenght(certificateFor));
 		certificateForL.setTitle(certificateFor);
-		
-		String representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
-			"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
+
+		String representation = "-";
+		if(!certificate.getCertificateInfo().isEmpty())
+			representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
+				"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
 		Label representationL = new Label(parseStringLenght(representation));
 		representationL.setTitle(representation);
 		
@@ -649,12 +654,10 @@ public class MainCertificates extends MainEntryPoint{
 		
 		// Buttons visibility
 		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
-			deleteButton.setVisible(false);
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
 			checkCertificateButton.setVisible(false);
 		} else {
-			deleteButton.setVisible(true);
 			if(hasTGSSCertificate(certificate))
 				secondaryUsersButton.setVisible(true);
 			if(hasSEPECertificate(certificate))

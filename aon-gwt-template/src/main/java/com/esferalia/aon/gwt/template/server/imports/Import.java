@@ -105,6 +105,7 @@ public class Import {
 		String val = object.toString();
 		return IConstants.TRUE.equalsIgnoreCase(val) 
 			|| IConstants.SI.equalsIgnoreCase(val)
+			|| IConstants.VERDADERO.equalsIgnoreCase(val)
 			|| "1".equals(val);
 		
 	}

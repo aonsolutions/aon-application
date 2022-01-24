@@ -1616,9 +1616,12 @@ public class Bases {
 
 				Period dataPeriod = new Period(data.getStartDate(),
 						data.getEndDate());
-
+				
 				Period intersect = p.intersect(dataPeriod);
 				if (intersect == null)
+					continue;
+
+				if ( 0.00 == ExpressionContext.eval(data.getExpression(), Double.class) ) 
 					continue;
 
 				if (data.getStartDate().before(p.getStart())

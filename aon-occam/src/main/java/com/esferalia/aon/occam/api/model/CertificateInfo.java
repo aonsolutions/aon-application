@@ -129,4 +129,10 @@ public class CertificateInfo implements Serializable {
 		return result;
 	}
 	
+	public boolean isEmpty() {
+		return getEnterprise() == null && getOcupation() == null && getCif() == null
+			&& getType() == null && getSurname() == null && getName() == null 
+			&& getDocument() == null && getFromDate() == null && getToDate() == null;
+	}
+	
 }

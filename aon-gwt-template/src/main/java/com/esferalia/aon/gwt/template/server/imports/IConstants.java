@@ -87,6 +87,7 @@ public interface IConstants {
 	String TÍTULO_DE_SUBCUENTA = "TÍTULO DE SUBCUENTA";
 	
 	String TRUE = "TRUE";
+	String VERDADERO = "VERDADERO";
 	String SI = "SI";
 
 	String CLIENTE = "CLIENTE";

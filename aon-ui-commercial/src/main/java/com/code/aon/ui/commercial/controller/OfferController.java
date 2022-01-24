@@ -30,6 +30,7 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.WorkPlace;
@@ -72,6 +73,7 @@ import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.SddMandateObject;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -87,6 +89,8 @@ import com.code.aon.ui.tas.controller.ProjectTasController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 
 public class OfferController extends HeaderObjectController implements ISignatureController, ICommercialConstants, IAuditableController {
 	
@@ -835,7 +839,14 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		Offer to = getOffer();
 		try {
 			OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+			boolean tbai = isTbai();
+		    if(tbai) {
+		        String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getInvoiceSeries());
+	        	setInvoiceNumber(number);
+	        }
+			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate(), tbai);
 			onLoadInvoice(event);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -843,6 +854,17 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		}
 	}
 
+	public boolean isTbai() {
+		return getTbaiConfiguration().isActive();
+	}
+	
+	public TbaiConfiguration getTbaiConfiguration() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return AON.getTbaiConfiguration(domainName, domainId, login);
+	}
+	
 	public Invoice getInvoice() throws ManagerBeanException {
 		Offer offer = getOffer();
 		if (offer != null && offer.getId() != null) {

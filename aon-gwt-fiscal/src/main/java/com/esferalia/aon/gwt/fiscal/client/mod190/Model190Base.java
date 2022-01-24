@@ -1,10 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -16,10 +21,13 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -57,6 +65,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	protected final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 	protected final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	protected final AonToolbarButton printButton = new AonToolbarButton(AON.MSG.draft(),AON.CSS.aonIconExcel());
+	protected final AonToolbarButton validateButton = new AonToolbarButton("Validar importes contra n\u00F3minas",AON.CSS.aonIconValid());
 	protected final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	protected final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
@@ -150,6 +159,9 @@ abstract class Model190Base extends DockLayoutPanel {
 
 		printButton.addClickHandler( event ->  print());
 		toolbarPanel.add(printButton);
+		
+		validateButton.addClickHandler( event ->  validate());
+		toolbarPanel.add(validateButton);
 		
 		certificateButton.addClickHandler( event ->  certificate());
 		toolbarPanel.add(certificateButton);
@@ -485,6 +497,8 @@ abstract class Model190Base extends DockLayoutPanel {
 		markAsSentButton.setVisible(!getModel().isNew() &&
 			(getModel().getStatus() == FiscalStatus.FINISHED));
 		duplicateButton.setVisible(!getModel().isNew());
+		printButton.setVisible(!getModel().isNew());
+		validateButton.setVisible(!getModel().isNew());
 		auditButton.setVisible(!getModel().isNew());
 	}
 	private void identificationLabelChanged() {
@@ -603,4 +617,288 @@ abstract class Model190Base extends DockLayoutPanel {
 		}
 	}
 	
+	private void validate() {
+		Model190.SERVICE.validateSalaries( getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<LinkedList<Mod190Detail>>() {
+			@Override
+			public void onSuccess(LinkedList<Mod190Detail> list) {
+				if (list == null || list.isEmpty()) {
+					Label noData = new Label( "No se han encontrado descuadres con lo declarado en n\u00F3minas");
+					noData.setStyleName(AON.CSS.aonTextCenter());
+					noData.addStyleName(AON.CSS.aonMarginTop());
+					noData.addStyleName(AON.CSS.aonBold());
+					getCallback().showInfoPanel(noData);
+				} else {
+					paintValidateSalaries( list);
+				}
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().showError(caught.getMessage());
+			}
+		});
+	}
+
+	private enum SettleField {
+		PERCEPTION {
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setPerception(AonMathUtils.round( target.getPerception() + getPercetionDiff(source)));
+			}
+		},
+		PERCEPTION_IL {
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setPerceptionIL(AonMathUtils.round( target.getPerceptionIL() + getPercetionDiff(source)));
+			}
+		}, 
+		IN_KIND_PERCEPTION {
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setInKindPerception(AonMathUtils.round( target.getInKindPerception() + getPercetionDiff(source)));
+			}
+		}, 
+		IN_KIND_PERCEPTION_IL{
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setInKindPerceptionIL(AonMathUtils.round( target.getInKindPerceptionIL() + getPercetionDiff(source)));
+			}
+		}, 
+		RETENTION{
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setRetention(AonMathUtils.round( target.getRetention() + getRetentionDiff(source)));
+			}
+		}, 
+		RETENTION_IL{
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setRetentionIL(AonMathUtils.round( target.getRetentionIL() + getRetentionDiff(source)));
+			}
+		},  
+		IN_KIND_DEPOSIT{
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setInKindDeposit(AonMathUtils.round( target.getInKindDeposit() + getRetentionDiff(source)));
+			}
+		},   
+		IN_KIND_DEPOSIT_IL{
+			@Override
+			void settle(Mod190Detail source,Mod190Detail target) {
+				target.setInKindDepositIL(AonMathUtils.round( target.getInKindDepositIL() + getRetentionDiff(source)));
+			}
+		},   
+		;
+		abstract void settle(Mod190Detail source,Mod190Detail target);
+		
+		private static double getPercetionDiff(Mod190Detail detail) {
+			return AonMathUtils.round(detail.getSalaryPerception() 
+					- detail.getPerception()
+					- detail.getPerceptionIL() 
+					- detail.getInKindPerception() 
+					- detail.getInKindPerceptionIL());
+		}
+		private static double getRetentionDiff(Mod190Detail detail) {
+			return AonMathUtils.round(detail.getSalaryRetention() 
+					- detail.getRetention()
+					- detail.getRetentionIL() 
+					- detail.getInKindDeposit() 
+					- detail.getInKindDepositIL());			
+		}
+		
+	}
+
+	private void paintValidateSalaries(LinkedList<Mod190Detail> list) {
+		AonDisplayGrid grid = new AonDisplayGrid();
+		grid.addStyleName( AON.CSS.aonBlockCenter());
+		grid.addStyleName( AON.CSS.aonMarginTop());
+		grid.addStyleName( AON.CSS.aonMarginBottom());
+		grid.addHeaderRow()
+		.addCell( new Label("Documento - Nombre"),AON.CSS.aonWidthAuto())
+		.addCell( new Label("Percep. N\u00F3minas"),AON.CSS.aonWidth80())
+		.addCell( new Label("Per. 190"),AON.CSS.aonWidth80())
+		.addCell( new Label("Per. IL"),AON.CSS.aonWidth80())
+		.addCell( new Label("Per. Esp."),AON.CSS.aonWidth80())
+		.addCell( new Label("Per. Esp. IL"),AON.CSS.aonWidth80())
+		.addCell( new Label("Percep. Dif."),AON.CSS.aonWidth80())
+		.addCell( new Label(),AON.CSS.aonWidth20())
+		.addCell( new Label("Retenc. N\u00F3minas"),AON.CSS.aonWidth80())
+		.addCell( new Label("Ret."),AON.CSS.aonWidth80())
+		.addCell( new Label("Ret. IL"),AON.CSS.aonWidth80())
+		.addCell( new Label("Ret. Esp."),AON.CSS.aonWidth80())
+		.addCell( new Label("Ret. Esp. IL"),AON.CSS.aonWidth80())
+		.addCell( new Label("Retenc. Dif."),AON.CSS.aonWidth80())
+		;
+		for (Mod190Detail detail : list) {
+			double perDif = AonMathUtils.round(detail.getSalaryPerception() 
+				- detail.getPerception()
+				- detail.getPerceptionIL() 
+				- detail.getInKindPerception() 
+				- detail.getInKindPerceptionIL());
+			
+			Label perceptionLabel = new Label(AON.FMT.format(detail.getPerception()));
+			Label perceptionILLabel = new Label(AON.FMT.format(detail.getPerceptionIL()));
+			Label inKindPerceptionLabel = new Label(AON.FMT.format(detail.getInKindPerception()));
+			Label inKindPerceptionILLabel = new Label(AON.FMT.format(detail.getInKindPerceptionIL()));
+			if (AonMathUtils.isNotZero(perDif)) {
+				
+				perceptionLabel.setTitle("Asignar diferencia a \"Percepciones \u00EDntegras\"");
+				perceptionLabel.setStyleName(AON.CSS.aonTextUnderline());
+				perceptionLabel.addStyleName(AON.CSS.aonClickable());
+				perceptionLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.PERCEPTION));
+				
+				perceptionILLabel.setTitle("Asignar diferencia a \"Percepciones \u00EDntegras incapacidad laboral\"");
+				perceptionILLabel.setStyleName(AON.CSS.aonTextUnderline());
+				perceptionILLabel.addStyleName(AON.CSS.aonClickable());
+				perceptionILLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.PERCEPTION_IL));
+				
+				inKindPerceptionLabel.setTitle("Asignar diferencia a \"Valoraci\u00F3n en especie\"");
+				inKindPerceptionLabel.setStyleName(AON.CSS.aonTextUnderline());
+				inKindPerceptionLabel.addStyleName(AON.CSS.aonClickable());
+				inKindPerceptionLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.IN_KIND_PERCEPTION));
+				
+				inKindPerceptionILLabel.setTitle("Asignar diferencia a \"Valoraci\u00F3n en especie incapacidad laboral\"");
+				inKindPerceptionILLabel.setStyleName(AON.CSS.aonTextUnderline());
+				inKindPerceptionILLabel.addStyleName(AON.CSS.aonClickable());
+				inKindPerceptionILLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.IN_KIND_PERCEPTION_IL));
+			}
+			
+			double retDif = AonMathUtils.round(detail.getSalaryRetention() 
+					- detail.getRetention()
+					- detail.getRetentionIL() 
+					- detail.getInKindDeposit() 
+					- detail.getInKindDepositIL());
+			Label retentionLabel = new Label(AON.FMT.format(detail.getRetention()));
+			Label retentionILLabel = new Label(AON.FMT.format(detail.getRetentionIL()));
+			Label inKindDepositLabel = new Label(AON.FMT.format(detail.getInKindDeposit()));
+			Label inKindDepositILLabel = new Label(AON.FMT.format(detail.getInKindDepositIL()));
+			if (AonMathUtils.isNotZero(retDif)) {
+				
+				retentionLabel.setTitle("Asignar diferencia a \"Retenciones\"");
+				retentionLabel.setStyleName(AON.CSS.aonTextUnderline());
+				retentionLabel.addStyleName(AON.CSS.aonClickable());
+				retentionLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.RETENTION));
+				
+				retentionILLabel.setTitle("Asignar diferencia a \"Retenciones incapacidad laboral\"");
+				retentionILLabel.setStyleName(AON.CSS.aonTextUnderline());
+				retentionILLabel.addStyleName(AON.CSS.aonClickable());
+				retentionILLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.RETENTION_IL));
+				
+				inKindDepositLabel.setTitle("Asignar diferencia a \"Ingr. a cta. efectuados en especie\"");
+				inKindDepositLabel.setStyleName(AON.CSS.aonTextUnderline());
+				inKindDepositLabel.addStyleName(AON.CSS.aonClickable());
+				inKindDepositLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.IN_KIND_DEPOSIT));
+				
+				inKindDepositILLabel.setTitle("Asignar diferencia a \"Ingr. a cta. efectuados en especie incapacidad laboral\"");
+				inKindDepositILLabel.setStyleName(AON.CSS.aonTextUnderline());
+				inKindDepositILLabel.addStyleName(AON.CSS.aonClickable());
+				inKindDepositILLabel.addClickHandler(event -> tryTochangeMod190Detail(detail,SettleField.IN_KIND_DEPOSIT_IL));
+			}
+
+			AonDisplayGridRow row = grid.addRow();
+			row.addCell( new Label(detail.getDocument() + " " + detail.getName()))
+				.addCell( new Label(AON.FMT.format(detail.getSalaryPerception())),AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthYellow())
+				.addCell( perceptionLabel, AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( perceptionILLabel, AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( inKindPerceptionLabel, AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( inKindPerceptionILLabel, AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( new Label(AON.FMT.format(perDif)),AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthGray()
+						,AonMathUtils.isNotZero(perDif)?AON.CSS.aonColorRed():AON.CSS.aonNowrap()
+						,AonMathUtils.isNotZero(perDif)?AON.CSS.aonBold():AON.CSS.aonNowrap())
+				.addCell( new Label() )
+				.addCell( new Label(AON.FMT.format(detail.getSalaryRetention())),AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthYellow())
+				.addCell( retentionLabel,AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( retentionILLabel,AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( inKindDepositLabel,AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( inKindDepositILLabel,AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthBlue())
+				.addCell( new Label(AON.FMT.format(retDif)),AON.CSS.aonTextRight(),AON.CSS.aonBackgroundLigthGray()
+					,AonMathUtils.isNotZero(retDif)?AON.CSS.aonColorRed():AON.CSS.aonNowrap()
+					,AonMathUtils.isNotZero(retDif)?AON.CSS.aonBold():AON.CSS.aonNowrap())
+				;
+		}
+		getCallback().showInfoPanel(grid);
+	}
+
+	private void tryTochangeMod190Detail(Mod190Detail detail, SettleField field) {
+		LinkedList<Mod190Detail> selected = new LinkedList<>();
+		for (Mod190Detail det : getModel().getDetails() ) {
+			double ret = AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL() + det.getInKindDepositIL());
+			if ( AonStringUtils.equals (detail.getDocument(),det.getDocument()) && AonMathUtils.isNotZero(ret))  {
+				selected.add(det);		
+			}
+		}
+		if ( selected.size() == 1) {
+			changeMod190Detail(detail,selected.get(0),field);
+		} else {
+			selectOne(detail,  selected , field); 
+		}
+	}
+
+	private void selectOne(Mod190Detail detail, LinkedList<Mod190Detail> selected, SettleField field) {
+		AonCustomPopup popup = new AonCustomPopup( );
+		popup.setWidth("500px");
+		popup.setHeight("500px");
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.setCaption("Seleccione la l\u00EDnea a que aplicar la correcci\u00F3n");
+
+		ScrollPanel selectionPanel = new ScrollPanel();
+		FlowPanel container = new FlowPanel();
+		selectionPanel.setWidget(container);
+		
+		AonDisplayGrid grid = new AonDisplayGrid();
+		grid.addStyleName( AON.CSS.aonBlockCenter());
+		grid.addStyleName( AON.CSS.aonMarginTop());
+		grid.addStyleName( AON.CSS.aonMarginBottom());
+		grid.addHeaderRow()
+			.addCell( new Label("Cl."),AON.CSS.aonWidth120())
+			.addCell( new Label("Sub."),AON.CSS.aonWidth120())
+			.addCell( new Label("Percep"),AON.CSS.aonWidth120())
+			.addCell( new Label("Retenc."),AON.CSS.aonWidth120())
+		;
+		for (Mod190Detail det : selected) {
+			AonDisplayGridRow row = grid.addRow();
+			row.addCell( new Label(det.getKey()))
+				.addCell( new Label(det.getSubKey()))
+				.addCell( new Label(AON.FMT.format(detail.getPerception())),AON.CSS.aonTextRight())
+				.addCell( new Label(AON.FMT.format(detail.getRetention())),AON.CSS.aonTextRight())
+			;
+			row.addClickHandler(event -> {
+				popup.hide();
+				changeMod190Detail(detail,det, field);
+			});
+		}
+		container.add(grid);
+		
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.CSS.aonPadding());
+		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
+		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
+		Button cancelBtn = new Button();
+    	cancelBtn.setStyleName(AON.CSS.aonCancelButton());
+    	cancelBtn.addStyleName(AON.CSS.aonMarginLeft());
+    	cancelBtn.setText( AON.MSG.cancelAction());
+    	cancelBtn.addClickHandler(event -> popup.hide() );
+		buttonsPanel.add(cancelBtn);
+		container.add(buttonsPanel);
+		
+		popup.add( selectionPanel );
+		popup.center();
+		popup.show();
+	}
+
+	private void changeMod190Detail(Mod190Detail detail, Mod190Detail toUpdate, SettleField field) {
+		field.settle(detail,toUpdate);
+		markAsDirty();
+		validate();
+	}
 }
+// Á --> \u00C1 á --> \u00E1
+// É --> \u00C9 é --> \u00E9
+// Í --> \u00CD í --> \u00ED
+// Ó --> \u00D3 ó --> \u00F3
+// Ú --> \u00DA ú --> \u00FA
+// Ñ --> \u00D1 ñ --> \u00F1
+// ª --> \u00AA º --> \u00BA
+// ¿ --> \u00BF

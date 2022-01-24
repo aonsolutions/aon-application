@@ -277,7 +277,7 @@ export class AonInvoiceCommunication extends AonElement {
         this.appendChild(d);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.CHANGE_TYPE);
+		d.setTitle(MSG.NAME);
 		d.setContent(div);
 		d.addAcceptAction(() => {
             this.configuration.company.person = {

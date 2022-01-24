@@ -80,6 +80,9 @@ public class Mod190Detail implements Serializable {
 
 	private boolean dirty;
 	private boolean deleted;
+	
+	private double salaryPerception;
+	private double salaryRetention;
 
 	public Integer getId() {
 		return id;
@@ -561,5 +564,22 @@ public class Mod190Detail implements Serializable {
 		this.thirdChildCalculation = thirdChildCalculation;
 		return this;
 	}
-	
+
+	public double getSalaryPerception() {
+		return salaryPerception;
+	}
+	public Mod190Detail setSalaryPerception(double salaryPerception) {
+		this.salaryPerception = salaryPerception;
+		return this;
+	}
+
+	public double getSalaryRetention() {
+		return salaryRetention;
+	}
+	public Mod190Detail setSalaryRetention(double salaryRetention) {
+		this.salaryRetention = salaryRetention;
+		return this;
+	}
+
+
 }

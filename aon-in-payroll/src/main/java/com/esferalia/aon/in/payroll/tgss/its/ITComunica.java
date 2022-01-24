@@ -58,7 +58,6 @@ public class ITComunica {
 				Date startDate = AonDateUtils.addYears(new Date(), -1);
 				Date endDate = new Date();
 
-		
 				Collection<It> its = SistemaRED.getIts(certificateData, certificatePassword, certificateType, regime,
 						ccc, startDate, endDate, nss);
 		
@@ -67,7 +66,7 @@ public class ITComunica {
 				for (It it : its) {
 					
 					EmployeeIT employeeIT = ITParse.parseTGSSToAon(it);
-					
+			
 					String naf = nss.isPresent() ? nss.get() : employeeIT.getNss();
 					Optional<Employee> contract = ITComunica.contractIts(domain, ccc, naf, employeeIT.getStartDate(), employeeIT.getEndDate());
 

@@ -301,7 +301,20 @@ public enum ContextVariable implements IResourceable {
 	NON_STRUCTURAL_OVERTIME_EMPLOYEE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE), 
 	NON_STRUCTURAL_OVERTIME_ENTERPRISE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE), 
 	
-	DELAY_AMOUNT("ATRASO", VariableType.DOUBLE, false )
+	DELAY_AMOUNT("ATRASO", VariableType.DOUBLE, false ),
+	
+	JANUARY("ENERO", VariableType.INTEGER),
+	FEBRUARY("FEBRERO", VariableType.INTEGER),
+	MARCH("MARZO", VariableType.INTEGER),
+	APRIL("ABRIL", VariableType.INTEGER),
+	MAY("MAYO", VariableType.INTEGER),
+	JUNE("JUNIO", VariableType.INTEGER),
+	JULY("JULIO", VariableType.INTEGER),
+	AUGUST("AGOSTO", VariableType.INTEGER),
+	SEPTEMBER("SEPTIEMBRE", VariableType.INTEGER),
+	OCTOBER("OCTUBRE", VariableType.INTEGER),
+	NOVEMBER("NOVIEMBRE", VariableType.INTEGER),
+	DECEMBER("DICIEMBRE", VariableType.INTEGER)
 	
 	;
 

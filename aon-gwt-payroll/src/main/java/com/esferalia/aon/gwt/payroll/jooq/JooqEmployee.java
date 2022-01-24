@@ -137,8 +137,8 @@ public class JooqEmployee {
 				.set(REGISTRY.DOMAIN, domain)
 				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
 				.set(REGISTRY.DOCUMENT_TYPE, null == employeeData.getDocumentType() ? (byte) 0 : employeeData.getDocumentType())
-				.set(REGISTRY.DOCUMENT_COUNTRY, AonStringUtils.isBlank(employeeData.getNationality()) ? "ES" : employeeData.getNationalityCode())
-				.set(REGISTRY.NATIONALITY, AonStringUtils.isBlank(employeeData.getNationality())  ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.DOCUMENT_COUNTRY, AonStringUtils.isBlank(employeeData.getNationalityCode()) ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.NATIONALITY, AonStringUtils.isBlank(employeeData.getNationalityCode())  ? "ES" : employeeData.getNationalityCode())
 				.set(REGISTRY.NAME, employeeData.getFullName())
 				.returning(REGISTRY.ID)
 				.fetchOne();
@@ -1106,8 +1106,8 @@ public class JooqEmployee {
 		dslContext.update(REGISTRY)
 			.set(REGISTRY.DOCUMENT, employeeData.getDocument())
 			.set(REGISTRY.DOCUMENT_TYPE, employeeData.getDocumentType())
-			.set(REGISTRY.DOCUMENT_COUNTRY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
-			.set(REGISTRY.NATIONALITY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
+			.set(REGISTRY.DOCUMENT_COUNTRY,  AonStringUtils.isBlank(employeeData.getNationalityCode()) ? "ES" : employeeData.getNationalityCode())
+			.set(REGISTRY.NATIONALITY,  AonStringUtils.isBlank(employeeData.getNationalityCode()) ? "ES" : employeeData.getNationalityCode())
 			.set(REGISTRY.NAME, (null == employeeData.getSurName() ? "" :  employeeData.getSurName() + " ") + 
 					(null == employeeData.getSecondSurName() ? "" : employeeData.getSecondSurName() + ", ") + 
 					employeeData.getName())

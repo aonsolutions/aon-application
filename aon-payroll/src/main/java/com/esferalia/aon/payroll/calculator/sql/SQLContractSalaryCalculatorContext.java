@@ -255,6 +255,7 @@ import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.NotFoundVariableError;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -4480,6 +4481,47 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		loadDaysContextVariables(contractExpressionContext);
 		
 		ContextFunctions.loadDaysFunctions(contractExpressionContext, contractStartDate, contractEndDate);
+		
+		autoFracionate(contractExpressionContext, contractStartDate, contractEndDate, ContextVariable.ADDITIONAL_HOURS);
+	}
+	
+	private static void autoFracionate(ExpressionContext context, Date contractStartDate, Date contractEndDate, ContextVariable ...contextVars) {
+		Period contractPeriod = new Period(contractStartDate, contractEndDate );
+		List<Period> workedPeriods = context.getPeriods(ContextVariable.WORKED_DAYS);
+		
+		//if ( workedPeriods.size() == 1 && workedPeriods.get(0).equals(contractPeriod))
+		//	return;
+			
+		for (ContextVariable contextVar : contextVars) {
+			
+			List<ITimedVariable<Object>> varVariables = context.getVariables(contextVar.getName());
+			if ( varVariables.isEmpty() )
+				continue;
+			
+			context.removeVariable(contextVar.getName());
+			
+			for (Period workedPeriod : workedPeriods) {
+				
+				context.putVariable(contextVar.getName(), new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return workedPeriod;
+					}
+					
+					@Override
+					public Double getValue(Period period) {
+						double amount = 
+						varVariables.stream()
+						.map( v -> v.getValue(v.getPeriod()))
+						.filter( v -> v != null && v instanceof Number)
+						.collect(Collectors.summingDouble( n -> AonNumberUtils.toDouble((Number)n)));
+						
+						return ContextFunctions.fractionate(context, amount);
+					}
+				});
+			}
+		}
+		
 	}
 	
 	

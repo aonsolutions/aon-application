@@ -1047,7 +1047,7 @@ public class SQLFunctionsTestCase extends
 		Date endDate = getLastDayOfMonth(getToday());
 		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
 		
-		addData(aonContext, contract, startDate, endDate, ContextVariable.ADDITIONAL_HOURS, "10.00");
+		addData(aonContext, contract, startDate, endDate, "KILOMETROS", "10.00");
 //		
 		
 		Date startOffDate = add(startDate, Calendar.DAY_OF_MONTH, 10);
@@ -1063,12 +1063,12 @@ public class SQLFunctionsTestCase extends
 				contract);
 		//@formatter:on
 		
-		ctx.getExpressionContext().eval("HORAS_COMPLEMENTARIAS=FRACCIONAR(CONTEXT,HORAS_COMPLEMENTARIAS)", 
+		ctx.getExpressionContext().eval("KILOMETROS=FRACCIONAR(CONTEXT,KILOMETROS)", 
 				startDate
 				,endDate, 
 				Double.class);
 	
-		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("HORAS_COMPLEMENTARIAS", 
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("KILOMETROS", 
 				startDate
 				,endDate, 
 				Double.class);

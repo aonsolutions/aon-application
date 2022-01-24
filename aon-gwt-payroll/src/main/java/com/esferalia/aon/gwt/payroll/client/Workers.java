@@ -216,7 +216,7 @@ public class Workers extends Employees {
 	private Map<Integer, EmployeeSalaryObject> employeeSalaryMap = new HashMap<>();
 	
 	@Override
-	public void getEmployeeSalary(EmployeeDraftObject employeeDraftObject, Consumer<EmployeeSalaryObject> consumer) {
+	public void getEmployeeSalary(SalaryDraftObject employeeDraftObject, Consumer<EmployeeSalaryObject> consumer) {
 		Employee employee = employeeDraftObject.getEmployee();
 		EmployeeSalaryObject employeeSalaryObject = 
 		employeeSalaryMap.computeIfAbsent(employee.getId(), id -> new EmployeeSalaryObject(id, employee.getFullname()));
@@ -226,7 +226,7 @@ public class Workers extends Employees {
 	private Map<Integer, EmployeeEventsDraftObject> employeeEventsMap = new HashMap<>();
 
 	@Override
-	public void getEmployeeEvents(EmployeeDraftObject employeeDraftObject, Consumer<EmployeeEventsDraftObject> consumer) {
+	public void getEmployeeEvents(SalaryDraftObject employeeDraftObject, Consumer<EmployeeEventsDraftObject> consumer) {
 		Employee employee = employeeDraftObject.getEmployee();
 		EmployeeEventsDraftObject employeeEventsDraftObject= 
 		employeeEventsMap .computeIfAbsent(employee.getId(), EmployeeEventsDraftObject::new);
@@ -235,7 +235,7 @@ public class Workers extends Employees {
 	
 	private Map<Integer, SalaryDraftObject> employeeSalaryDraftMap = new HashMap<>();
 
-	@Override
+//	@Override
 	public void getEmployeeSalaryDraft(EmployeeDraftObject employeeDraftObject, Consumer<SalaryDraftObject> consumer) {
 		Employee employee = employeeDraftObject.getEmployee();
 		SalaryDraftObject salaryDraftObject = 
@@ -246,10 +246,20 @@ public class Workers extends Employees {
 	private Map<Integer, EmployeeCalendarDraftObject> employeeCalendarMap = new HashMap<>();
 
 	@Override
-	public void getEmployeeCalendar(EmployeeDraftObject employeeDraftObject, Consumer<EmployeeCalendarDraftObject> consumer) {
+	public void getEmployeeCalendar(SalaryDraftObject employeeDraftObject, Consumer<EmployeeCalendarDraftObject> consumer) {
 		Employee employee = employeeDraftObject.getEmployee();
 		EmployeeCalendarDraftObject employeeCalendarDraftObject = 
 		employeeCalendarMap.computeIfAbsent(employee.getId(), EmployeeCalendarDraftObject::new);
 		consumer.accept(employeeCalendarDraftObject);
+	}
+	
+	private Map<Integer, EmployeeDraftObject> employeeDraftMap = new HashMap<>();
+
+	@Override
+	public void getEmployeeDraft(SalaryDraftObject salaryDraftObject, Consumer<EmployeeDraftObject> consumer) {
+		Employee employee = salaryDraftObject.getEmployee();
+		EmployeeDraftObject employeeDraftObject = 
+		employeeDraftMap.computeIfAbsent(employee.getId(), id -> super.newEmployeeDraftObject(employee));
+		consumer.accept(employeeDraftObject);
 	}
 }

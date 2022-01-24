@@ -125,6 +125,8 @@ public class InvoiceTest {
 		
 		/** INVOICE BASIC DATA */
 		Invoice invoice = new Invoice();
+		invoice.setSeries("2022");
+		invoice.setNumber(1);
 
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		invoice.setAddress(new RegistryAddress()
@@ -700,8 +702,8 @@ public class InvoiceTest {
 //			company = null;
 //			logo = null;
 			
-			InvoiceTemplate.create(os, company, invoice, config, "www.aonsolutions.es", logo);
-			InvoiceTemplate.create(dos, company, invoice, config, "www.aonsolutions.es", logo);
+			InvoiceTemplate.create(os, company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			InvoiceTemplate.create(dos, company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
 			PDDocument document = PDDocument.load(bis);
