@@ -26,6 +26,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
+import jdk.nashorn.internal.objects.annotations.Setter;
+
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
 
@@ -1559,6 +1561,20 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	
+	@Test
+	public void TestSearch() throws Exception {
+		
+		if (isDisplayed("constantes,_i"))
+			close("sonny");
+		
+		type("searchTextBox", "CONSTANTES");
+		
+		wait4Id("sonny");
+		wait4Id("constantes,_i");
+		assertDisplay("constantes,_i", true);
+		
+	}
+
 	@Test
 	public void TestPercepcionesDelSistema() throws Exception {
 
