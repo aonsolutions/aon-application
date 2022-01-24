@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.m190.Mod190Writer;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "Mod190 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model190File" })
@@ -33,6 +34,8 @@ public class Mod190File extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
+			String boeFormatParam = req.getParameter("boeFormat");
+			boolean boeFormat = AonEnumUtils.getAonBoolean(boeFormatParam);
 			Occam occam = new Occam()
 				.setDomainName(domainName)
 				.setDomain(domainId)
@@ -47,7 +50,7 @@ public class Mod190File extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod190Writer.fillWriter(mod190, writer);
+			Mod190Writer.fillWriter(mod190, writer, boeFormat);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
 			String s = mod190.getName();

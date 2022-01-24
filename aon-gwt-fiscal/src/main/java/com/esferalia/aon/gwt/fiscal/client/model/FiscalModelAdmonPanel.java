@@ -53,6 +53,9 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		void sendSuccessfully();
 		String getCheckAction();
 		String getCheckDataResponseDataAction();
+		default boolean isBoeFormatEnabled() {
+			return false;
+		}
 	}
 	
 	private API api;
@@ -63,6 +66,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 	private Hidden domainIdHidden = new Hidden("domainId");
 	private Hidden domainNameHidden = new Hidden("domainName");
 	private Hidden userHidden = new Hidden("user");
+	private Hidden boeFormatHidden = new Hidden("boeFormat");
 	
 	private DeckLayoutPanel deckLayoutPanel;
 	private SimpleLayoutPanel aeatPanel;
@@ -71,6 +75,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 	private AonLink modelInfoLinklink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconLink(), "Informaci\u00F3n de procedimiento del modelo.");
 	private AonLink downloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n");
+	private AonLink boeDownloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n. [Formato BOE]");
 
 	private AonLink validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
 	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Envio de la presentaci\u00F3n a la AEAT.");
@@ -97,6 +102,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		diskFormPanel.add(domainIdHidden);
 		diskFormPanel.add(domainNameHidden);
 		diskFormPanel.add(userHidden);
+		diskFormPanel.add(boeFormatHidden);
 		diskForm.setWidget(diskFormPanel);
 		
 		FlowPanel formContainer = new FlowPanel();
@@ -119,6 +125,9 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		downloadLink.addClickHandler(event -> downloadFile()); 
 		cards.add( downloadLink );
 		
+		boeDownloadLink.addClickHandler(event -> downloadFile(true)); 
+		cards.add( boeDownloadLink );
+
 		sendLink.addClickHandler(event -> sendToAdministration()); 
 		cards.add( sendLink );
 		
@@ -221,7 +230,12 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 	}
 	
 	private void downloadFile() {
+		downloadFile(false);	
+	}
+
+	private void downloadFile (boolean boeFormat) {
 		if (getCallback().getModel().isFinished() || getCallback().getModel().isSent()) {
+			boeFormatHidden.setValue(Boolean.toString(boeFormat));
 			submitForm(getCallback().getDownloadFileAction());
 		} else {
 			getCallback().showError(AON.MSG.mustFinishModel());
@@ -471,6 +485,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 	public void manageLinks() {
 		modelInfoLinklink.setVisible(true);
 		downloadLink.setVisible( getCallback().getModel().isFinished() );
+		boeDownloadLink.setVisible( getCallback().isBoeFormatEnabled() && getCallback().getModel().isFinished() );
 		if (getCallback().getModel().isAEAT() &&
 		   ((getCallback().getModel().getYear() > 2021)  
 		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
