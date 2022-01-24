@@ -32,13 +32,13 @@ const createStylePoint = (color) => {
   return div;
 };
 
-export const getTotal = (dataArray) => {
-  let total = 0;
-  for (let i = 0; i < dataArray.length; i++) {
-    total += dataArray[i][1];
-  }
-  return total;
-};
+// export const getTotal = (dataArray) => {
+//   let total = 0;
+//   for (let i = 0; i < dataArray.length; i++) {
+//     total += dataArray[i][1];
+//   }
+//   return total;
+// };
 
 export const pieChar = (div, data, opts, callBackClick) => {
   return new Promise((resolve) => {
