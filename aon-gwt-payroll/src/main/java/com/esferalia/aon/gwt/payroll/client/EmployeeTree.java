@@ -2180,7 +2180,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			contractBonusMap = new HashMap<>();
 			contractPaymentsMap = new HashMap<>();
 			contractVariablesMap = new HashMap<>();
-			add("Empleado", getEmployeeDraft(), this::onEmployeeSelected);
+			add("Contrato", getEmployeeDraft(), this::onEmployeeSelected);
 			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
 			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);

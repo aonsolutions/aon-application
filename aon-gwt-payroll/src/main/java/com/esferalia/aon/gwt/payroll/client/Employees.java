@@ -2133,6 +2133,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			Object userObject = childItem.getUserObject();
 			if (userObject instanceof EmployeeDraftObject)
 				return i;
+			if (userObject instanceof SalaryDraftObject)
+				return i;
 		}
 
 		return workplaceItem.getChildCount();
@@ -2552,14 +2554,19 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		int employeesOffset = getEmployeesOffset(workplaceItem);
 		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
 			TreeItem employeeItem = workplaceItem.getChild(i);
-
-			EmployeeDraftObject employee = (EmployeeDraftObject) employeeItem.getUserObject();
+			
+			Employee employee = null;
+			try {
+				employee = ((EmployeeDraftObject) employeeItem.getUserObject()).getEmployee();
+			} catch (Exception e ) {
+				employee = ((SalaryDraftObject) employeeItem.getUserObject()).getEmployee();
+			}
 			
 			boolean visible  = 
 			AonStringUtils.isBlank(pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getFullname(), pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getDocument(), pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getSocialSecurity(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getFullname(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getDocument(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getSocialSecurity(), pattern)
 			;
 			
 			employeeItem.setVisible(visible);

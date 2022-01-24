@@ -537,7 +537,14 @@ public abstract class BaseIntegralTestCase {
 		input.blur();
 	}
 
+	protected static void type(String id, String text) throws ParseException, IOException {
+		HtmlInput input = getElementById(id);
+		input.focus();
+		input.type(text);
+		input.blur();
+	}
 
+	
 	protected static void selectOption(String id, String value) throws IOException {
 		HtmlSelect htmlSelect = getElementById(id);
 		htmlSelect.focus();
