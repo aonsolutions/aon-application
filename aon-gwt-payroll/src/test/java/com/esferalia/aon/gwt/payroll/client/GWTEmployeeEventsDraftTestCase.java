@@ -604,6 +604,18 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate,
+					Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+
 			
 		};
 

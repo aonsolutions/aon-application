@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -213,6 +214,8 @@ public interface EnterprisesServiceAsync {
 	
 	void syncSSBonus(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeSSBonuses(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
+	
+	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 	
 }

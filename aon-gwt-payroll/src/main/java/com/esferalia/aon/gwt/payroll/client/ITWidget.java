@@ -1435,6 +1435,10 @@ public abstract class ITWidget extends ResizeComposite {
 			protected void onComunicateIT(IT it) {
 				// On new IT not comunicate
 			}
+
+			@Override
+			protected void onCommunicateITPart(IT it, ITPart part) {
+			}
     		
     	};
     	
@@ -1477,6 +1481,28 @@ public abstract class ITWidget extends ResizeComposite {
 				else
 					cominicateIT(itEmployee, it);
 			}
+
+			@Override
+			protected void onCommunicateITPart(IT it, ITPart part) {
+				startLoading(true);
+				communicateITPart(itEmployee, it, part, s->{		
+				
+					normalizeITToSave();
+				
+					acceptUpdate(itEmployee);
+					
+					hide();
+					
+					startLoading(false);
+					
+					showCommunicateIT();
+			
+				}, e->{
+					AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
+					dialog.warning();
+					startLoading(false);
+				});
+			}
 			
     	};
     	
@@ -1503,6 +1529,10 @@ public abstract class ITWidget extends ResizeComposite {
 		);
 	}
 	
+	private void acceptUpdate(ITEmployee itEmployee) {
+		setITEmployee(itEmployee, s -> {},f -> {});
+	}
+	
 	private void showCreateMessage() {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put("Creaci\u00F3n IT", "El parte ha sido creado correctamente");
@@ -1512,6 +1542,12 @@ public abstract class ITWidget extends ResizeComposite {
 	private void showUpdateMessage() {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put("Actualizaci\u00F3n IT", "El parte ha sido actualizado correctamente");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+	
+	private void showCommunicateIT() {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Comunicaci\\u00F3n", "Parte IT comunicada a la TGSS");
 		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
@@ -1665,5 +1701,7 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure);
+	
+	protected abstract void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure);
 
 }

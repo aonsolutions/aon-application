@@ -369,6 +369,21 @@ public class MainContrataITObject {
 		);
 	}
 	
+	public void communicateITPart(ITEmployee itEmployee, IT it, ITPart itPart, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.communicateITPart(itEmployee, it, itPart, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}}
+		);
+	}
+	
 	// --------------------------------------------------- DataBase Auxiliar Methods
 	
 	public boolean isUserComunica() {

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -133,6 +134,14 @@ public class EnterpriseIT extends Composite {
 			enterpriseITObject.syncITs( 
 					success::accept, 
 					failure::accept);
+		}
+
+		@Override
+		protected void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure) {
+			enterpriseITObject.communicateITPart( itEmployee, it, part,
+					success::accept, 
+					failure::accept
+			);
 		}
 
 	}

@@ -209,6 +209,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter);
 	
 	List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter);
+	
+	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate,
+			Date endDate);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids);
 

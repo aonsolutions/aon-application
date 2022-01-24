@@ -25,6 +25,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 import static com.esferalia.aon.watson.server.AonDateUtils.addMonths;
 import static com.esferalia.aon.watson.server.AonDateUtils.getMonthFirstDay;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static java.util.stream.Collectors.summingDouble;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,6 +39,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -192,6 +194,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -3607,7 +3610,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 //			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
 //					connection, agreementId, startDate, endDate,domainId, parentDomainId);
 //
-//			//¿Que variables se filtran aqui?
+//			//ï¿½Que variables se filtran aqui?
 //			Set<String> names = variables.keySet();
 //			for (Level level : levels) {
 //				Iterator<String> namesIt = names.iterator();
@@ -6878,4 +6881,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
+	@Override
+	public List<Certifica2Info> getSalariesOccam(String domainName, String login, Integer contractId, Date startDate, Date endDate) {
+		List<Certifica2Info> certs = new ArrayList<>();
+
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			AON.getSalaries(new Domain().setId(domainId).setName(domainName), login, f->f.getContractProperty().eq(contractId)
+				.and(f.getStartDateProperty().ge(startDate)).and(f.getEndDateProperty().le(endDate))
+			).sorted((o1, o2)-> o1.getStartDate().compareTo(o2.getStartDate())).forEach(salary->{
+				
+				Double baseCgc = salary.getContextData("BASE_CGC", summingDouble(Double::parseDouble));
+				Double baseCgp = salary.getContextData("BASE_CGP", summingDouble(Double::parseDouble));
+				Integer quoteDays = DateUtils.getDaysBetween(salary.getStartDate(), salary.getEndDate());
+				
+				if(quoteDays!=null && quoteDays>0) {
+					Certifica2Info cert = new Certifica2Info();
+					cert.setStartDate(salary.getStartDate());
+					cert.setBaseCgc(baseCgc!=null ? baseCgc : 0.0);
+					cert.setBaseUnemployment(baseCgp!=null ? baseCgp : 0.0);
+					cert.setSettleQuoteDays(quoteDays);
+					certs.add(cert);
+				}
+			});
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+		return certs;
+	}
 }

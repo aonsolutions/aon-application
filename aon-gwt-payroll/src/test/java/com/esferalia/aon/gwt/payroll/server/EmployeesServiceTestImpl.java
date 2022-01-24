@@ -1003,4 +1003,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		
 	}
 
+	@Override
+	public List<Certifica2Info> getSalariesOccam(String domainName, String login,
+			Integer contractId, Date startDate, Date endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

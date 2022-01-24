@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -906,6 +907,13 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getEmployeeSSBonuses(domain, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+	}
+
+	@Override
+	public void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part,
+			AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.communicateITPart(currentDomainName, currentUser, itEmployee, it, part, asyncCallback);
 	}
 	
 }

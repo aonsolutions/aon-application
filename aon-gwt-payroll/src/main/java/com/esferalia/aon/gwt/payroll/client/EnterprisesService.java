@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -249,6 +250,8 @@ public interface EnterprisesService extends RemoteService {
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
 
 	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
+	
+	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee ,IT it, ITPart part) throws IllegalArgumentException;
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 

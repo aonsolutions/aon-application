@@ -210,6 +210,10 @@ public class DomainEmployeesServiceAsync {
 	public void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getSalaries(getCurrentDomainName(), employee, callback);
 	}
+	
+	public void getSalariesOccam(Integer contractId, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), contractId, startDate, endDate, callback);
+	}
 
 	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getIrpfs(getCurrentDomainName(), employee, callback);

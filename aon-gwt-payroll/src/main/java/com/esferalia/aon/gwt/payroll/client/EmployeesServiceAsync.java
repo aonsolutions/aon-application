@@ -71,6 +71,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getSalaries(String domain, Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
 
+	
+	void getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate, Date endDate,
+			AsyncCallback<List<Certifica2Info>> callback);
+		
 	void getIrpfs(String domain, Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException;
 

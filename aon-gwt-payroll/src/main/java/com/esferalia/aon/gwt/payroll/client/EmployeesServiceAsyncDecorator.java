@@ -684,6 +684,13 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getSalaries(currentDomainName, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
 	}
+	
+	@Override
+	public void getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate, Date endDate,
+			AsyncCallback<List<Certifica2Info>> callback) {
+		AON.start();
+		employeesServiceAsync.getSalariesOccam(currentDomainName, login, contractId, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback) {
