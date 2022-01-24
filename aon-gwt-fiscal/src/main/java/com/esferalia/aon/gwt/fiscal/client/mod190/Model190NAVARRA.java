@@ -60,6 +60,10 @@ public class Model190NAVARRA extends Model190Base {
 				public String getDownloadFileAction() {
 					return Model190Base.MODEL190_FILE;
 				}
+				@Override
+				public boolean isBoeFormatEnabled() {
+					return true;
+				}
 
 				@Override
 				public String getSendAction() {
@@ -91,9 +95,7 @@ public class Model190NAVARRA extends Model190Base {
 	}
 
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		if ( getModel().getYear() >= 2021) {
-			setDetailManager( new Model190NAVARRADetail2021( getCallback() , getModel(), selectedIndex ));
-		}
+		setDetailManager( new Model190NAVARRADetail2021( getCallback() , getModel(), selectedIndex ));
 		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList());
 	}
 	
