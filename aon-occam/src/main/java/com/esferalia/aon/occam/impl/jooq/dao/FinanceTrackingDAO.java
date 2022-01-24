@@ -123,7 +123,7 @@ public class FinanceTrackingDAO {
 				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FINANCE_TRACKING.ID)
 				.fetchOne();
-		ctx.log().info("INSERT FINANCE_TRACKING id: " + record.getValue(FINANCE_TRACKING.ID) + " finance: " + ft.getFinance().getId());
+		ctx.log().debug("INSERT FINANCE_TRACKING id: " + record.getValue(FINANCE_TRACKING.ID) + " finance: " + ft.getFinance().getId());
 		return record.getValue(FINANCE_TRACKING.ID); 
 	}
 	
@@ -134,7 +134,7 @@ public class FinanceTrackingDAO {
 				.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.where(FINANCE.ID.equal( financeId))
 				.execute();
-		ctx.log().info("UPDATE FINANCE  ("+i+") id: " + financeId + " status: " + financeStatus.getDescription());
+		ctx.log().debug("UPDATE FINANCE  ("+i+") id: " + financeId + " status: " + financeStatus.getDescription());
 	}
 
 	public static void delete(AONContext ctx, FinanceTracking tracking) {
@@ -154,7 +154,7 @@ public class FinanceTrackingDAO {
 				.delete(FINANCE_TRACKING)
 				.where(FINANCE_TRACKING.ID.equal(tracking.getId()))
 				.execute();
-			ctx.log().info("DELETE FINANCE_TRACKING  ("+i+") id: " + tracking.getId());
+			ctx.log().debug("DELETE FINANCE_TRACKING  ("+i+") id: " + tracking.getId());
 			FinanceTracking previuosTracking = getLastTracking(ctx, tracking.getFinance().getId());
 			FinanceStatus newStatus = previuosTracking == null ? FinanceStatus.PENDING : previuosTracking.getType().getFinanceStatus(); 
 			updateFinanceStatus(ctx, tracking.getFinance().getId(), newStatus );
@@ -168,7 +168,7 @@ public class FinanceTrackingDAO {
 			.delete(ACCOUNT_ENTRY_FINANCE_TRACKING)
 			.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.equal(ft.getId()))
 			.execute();
-		ctx.log().info("DELETE ACCOUNT_ENTRY_FINANCE_TRACKING ("+i+") Tracking: " + ft.getId());
+		ctx.log().debug("DELETE ACCOUNT_ENTRY_FINANCE_TRACKING ("+i+") Tracking: " + ft.getId());
 	}
 	
 	
@@ -177,7 +177,7 @@ public class FinanceTrackingDAO {
 	// -------------------------------------------------------------
 	
 	public static Integer settle(AONContext ctx, Integer financeId) {
-		ctx.log().info(" ----- START FINANCE SETTLE ----- ");
+		ctx.log().debug(" ----- START FINANCE SETTLE ----- ");
 		try {
 			ctx.checkWrite();
 			Finance finance = FinanceValidation.validateSettleTracking(ctx, financeId);
@@ -195,10 +195,10 @@ public class FinanceTrackingDAO {
 			updateFinanceStatus(ctx,financeId,FinanceStatus.SETTLED);
 			return insert(ctx, ft);
 		} catch (Throwable t) {
-			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			ctx.log().debug(" ----- [ERROR] " + t.getMessage());
 			throw t;
 		} finally {
-			ctx.log().info(" ----- END FINANCE SETTLE ----- ");
+			ctx.log().debug(" ----- END FINANCE SETTLE ----- ");
 		}
 	}
 
@@ -206,7 +206,7 @@ public class FinanceTrackingDAO {
 	// ----------------- DESHACER UN VENCIMIENTO -------------------
 	// -------------------------------------------------------------
 	public static void undo(AONContext ctx, Integer financeId) {
-		ctx.log().info(" ----- START FINANCE UNDO ----- ");
+		ctx.log().debug(" ----- START FINANCE UNDO ----- ");
 		try {
 			ctx.checkWrite();
 			FinanceTracking financeTracking = FinanceValidation.validateUndoTracking(ctx, financeId);
@@ -240,10 +240,10 @@ public class FinanceTrackingDAO {
 				}
 			}
 		} catch (Throwable t) {
-			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			ctx.log().debug(" ----- [ERROR] " + t.getMessage());
 			throw t;
 		} finally {
-			ctx.log().info(" ----- END FINANCE UNDO ----- ");
+			ctx.log().debug(" ----- END FINANCE UNDO ----- ");
 		}
 	}
 	
@@ -251,14 +251,14 @@ public class FinanceTrackingDAO {
 	// ----------------- PAGO DEL VENCIMIENTO ----------------------
 	// -------------------------------------------------------------
 	public static FinanceTracking pay(AONContext ctx, FinanceTracking tracking) {
-		ctx.log().info(" ----- START FINANCE PAY ----- ");
+		ctx.log().debug(" ----- START FINANCE PAY ----- ");
 		try {
 			ctx.checkWrite();
 			Finance finance = tracking.getFinance();
 			FinanceValidation.validatePay(ctx, finance);
 			AccountEntry entry = null;
 			if (tracking.getPayAccount() != null && tracking.getPayAccount().getId() != null) {
-				ctx.log().info(" \t (pay + accounting) ----- ");
+				ctx.log().debug(" \t (pay + accounting) ----- ");
 				tracking.setDescription(AonStringUtils.abbreviate( 
 					tracking.getPayAccount().getFullName(),FINANCE_TRACKING.DESCRIPTION.getDataType().length()));
 				AccountEntry[] entries = FinanceEntryDAO.getPayFinanceEntry(ctx, tracking);
@@ -272,15 +272,15 @@ public class FinanceTrackingDAO {
 			} else {
 				tracking.setDomain(finance.getDomain())
 				  .setRecorded(false);
-				ctx.log().info(" \t (only pay) ----- ");
+				ctx.log().debug(" \t (only pay) ----- ");
 				Integer trackingId = _pay(ctx, tracking);		
 				return getFinanceTracking(ctx, trackingId);
 			}
 		} catch (Throwable t) {
-			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			ctx.log().debug(" ----- [ERROR] " + t.getMessage());
 			throw t;
 		} finally {
-			ctx.log().info(" ----- END FINANCE PAY ----- ");
+			ctx.log().debug(" ----- END FINANCE PAY ----- ");
 		}
 	}
 	
@@ -304,20 +304,20 @@ public class FinanceTrackingDAO {
 			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY,entry.getId())
 			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING,trackingId)
 			.execute();
-		ctx.log().info("ACCOUNT_ENTRY_FINANCE_TRACKING account_entry: " + entry.getId() + " tracking: " + trackingId);
+		ctx.log().debug("ACCOUNT_ENTRY_FINANCE_TRACKING account_entry: " + entry.getId() + " tracking: " + trackingId);
 	}
 	
 	// -------------------------------------------------------------
 	// ----------------- DEVOLUCION DEL VENCIMIENTO ----------------
 	// -------------------------------------------------------------
 	public static FinanceTracking returnFinance(AONContext ctx, FinanceTracking tracking) {
-		ctx.log().info(" ----- START FINANCE RETURN ----- ");
+		ctx.log().debug(" ----- START FINANCE RETURN ----- ");
 		try {
 			ctx.checkWrite();
 			FinanceValidation.validateReturn(ctx, tracking);
 			AccountEntry entry = null;
 			if (tracking.getPayAccount() != null && tracking.getPayAccount().getId() != null) {
-				ctx.log().info(" \t (pay + accounting) ----- ");
+				ctx.log().debug(" \t (pay + accounting) ----- ");
 				tracking.setDescription(AonStringUtils.abbreviate( 
 						tracking.getPayAccount().getFullName(),FINANCE_TRACKING.DESCRIPTION.getDataType().length()));
 				AccountEntry[] entries = FinanceEntryDAO.getReturnFinanceEntry(ctx, tracking);
@@ -329,7 +329,7 @@ public class FinanceTrackingDAO {
 				}
 				return tracking.setFinance(FinanceDAO.getFinance(ctx, tracking.getFinance().getId()));
 			} else {
-				ctx.log().info(" \t (only pay) ----- ");
+				ctx.log().debug(" \t (only pay) ----- ");
 				Finance fin = FinanceDAO.getFinance(ctx, tracking.getFinance().getId());
 				tracking.setDomain(fin.getDomain())
 					.setRecorded(false);
@@ -337,10 +337,10 @@ public class FinanceTrackingDAO {
 				return getFinanceTracking(ctx, trackingId);
 			}
 		} catch (Throwable t) {
-			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			ctx.log().debug(" ----- [ERROR] " + t.getMessage());
 			throw t;
 		} finally {
-			ctx.log().info(" ----- END FINANCE RETURN ----- ");
+			ctx.log().debug(" ----- END FINANCE RETURN ----- ");
 		}
 	}
 	
@@ -364,7 +364,7 @@ public class FinanceTrackingDAO {
 			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY,entry.getId())
 			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING,trackingId)
 			.execute();
-		ctx.log().info("ACCOUNT_ENTRY_FINANCE_TRACKING account_entry: " + entry.getId() + " tracking: " + trackingId);
+		ctx.log().debug("ACCOUNT_ENTRY_FINANCE_TRACKING account_entry: " + entry.getId() + " tracking: " + trackingId);
 		return getFinanceTracking(ctx, trackingId);
 	}
 	
@@ -373,7 +373,7 @@ public class FinanceTrackingDAO {
 	// --------------------------------------------------------------------------
 	
 	public static Integer fraction(AONContext ctx, Finance finance, String description,double originalAmount) {
-		ctx.log().info(" ----- START FINANCE FRACTION ----- ");
+		ctx.log().debug(" ----- START FINANCE FRACTION ----- ");
 		try {
 			ctx.checkWrite();
 			FinanceTracking ft = new FinanceTracking()
@@ -389,10 +389,10 @@ public class FinanceTrackingDAO {
 					.setRecorded(false);
 			return insert(ctx, ft);
 		} catch (Throwable t) {
-			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			ctx.log().debug(" ----- [ERROR] " + t.getMessage());
 			throw t;
 		} finally {
-			ctx.log().info(" ----- END FINANCE SETTLE ----- ");
+			ctx.log().debug(" ----- END FINANCE SETTLE ----- ");
 		}
 	}
 
