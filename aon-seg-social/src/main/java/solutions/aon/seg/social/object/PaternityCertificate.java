@@ -1,9 +1,8 @@
 package solutions.aon.seg.social.object;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
-import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
 
 public class PaternityCertificate {
 	//BUSINESS DATA
@@ -30,145 +29,190 @@ public class PaternityCertificate {
 	private Float workerPartialTimeCoef;
 	private String workerContractType;
 	private Boolean isPublicEmployee;
-	private Collection<String[]> registry;
+	private ArrayList<PaternityDetail> paternityDetail;
+	
+	public PaternityCertificate() {
+		this.paternityDetail = new ArrayList<>();
+	}
+	
 	private byte[] pdf;
+	
 	public String getCcc() {
 		return ccc;
 	}
-	public void setCcc(String ccc) {
+	public PaternityCertificate setCcc(String ccc) {
 		this.ccc = ccc;
+		return this;
 	}
 	public String getPostCode() {
 		return postCode;
 	}
-	public void setPostCode(String postCode) {
+	public PaternityCertificate setPostCode(String postCode) {
 		this.postCode = postCode;
+		return this;
 	}
 	public String getAddress() {
 		return address;
 	}
-	public void setAddress(String address) {
+	public PaternityCertificate setAddress(String address) {
 		this.address = address;
+		return this;
 	}
 	public String getProvince() {
 		return province;
 	}
-	public void setProvince(String province) {
+	public PaternityCertificate setProvince(String province) {
 		this.province = province;
+		return this;
 	}
 	public String getMunicipality() {
 		return municipality;
 	}
-	public void setMunicipality(String municipality) {
+	public PaternityCertificate setMunicipality(String municipality) {
 		this.municipality = municipality;
+		return this;
 	}
 	public String getReason() {
 		return reason;
 	}
-	public void setReason(String reason) {
+	public PaternityCertificate setReason(String reason) {
 		this.reason = reason;
+		return this;
 	}
 	public Date getReceptionDate() {
 		return receptionDate;
 	}
-	public void setReceptionDate(Date receptionDate) {
+	public PaternityCertificate setReceptionDate(Date receptionDate) {
 		this.receptionDate = receptionDate;
+		return this;
 	}
 	public Integer getPeriodNumber() {
 		return periodNumber;
 	}
-	public void setPeriodNumber(Integer periodNumber) {
+	public PaternityCertificate setPeriodNumber(Integer periodNumber) {
 		this.periodNumber = periodNumber;
+		return this;
 	}
 	public Date getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(Date startDate) {
+	public PaternityCertificate setStartDate(Date startDate) {
 		this.startDate = startDate;
+		return this;
 	}
 	public Date getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(Date endDate) {
+	public PaternityCertificate setEndDate(Date endDate) {
 		this.endDate = endDate;
+		return this;
 	}
 	public String getParciality() {
 		return parciality;
 	}
-	public void setParciality(String parciality) {
+	public PaternityCertificate setParciality(String parciality) {
 		this.parciality = parciality;
+		return this;
 	}
 	public String getWorkerName() {
 		return workerName;
 	}
-	public void setWorkerName(String workerName) {
+	public PaternityCertificate setWorkerName(String workerName) {
 		this.workerName = workerName;
+		return this;
 	}
 	public String getWorkerNif() {
 		return workerNif;
 	}
-	public void setWorkerNif(String workerNif) {
+	public PaternityCertificate setWorkerNif(String workerNif) {
 		this.workerNif = workerNif;
+		return this;
 	}
 	public String getWorkerNaf() {
 		return workerNaf;
 	}
-	public void setWorkerNaf(String workerNaf) {
+	public PaternityCertificate setWorkerNaf(String workerNaf) {
 		this.workerNaf = workerNaf;
+		return this;
 	}
 	public String getWorkerGroup() {
 		return workerGroup;
 	}
-	public void setWorkerGroup(String workerGroup) {
+	public PaternityCertificate setWorkerGroup(String workerGroup) {
 		this.workerGroup = workerGroup;
+		return this;
 	}
 	public Date getWorkerDischargeDate() {
 		return workerDischargeDate;
 	}
-	public void setWorkerDischargeDate(Date workerDischargeDate) {
+	public PaternityCertificate setWorkerDischargeDate(Date workerDischargeDate) {
 		this.workerDischargeDate = workerDischargeDate;
+		return this;
 	}
 	public Date getWorkerWithdrawalDate() {
 		return workerWithdrawalDate;
 	}
-	public void setWorkerWithdrawalDate(Date workerWithdrawalDate) {
+	public PaternityCertificate setWorkerWithdrawalDate(Date workerWithdrawalDate) {
 		this.workerWithdrawalDate = workerWithdrawalDate;
+		return this;
 	}
 	public String getWorkerContractCode() {
 		return workerContractCode;
 	}
-	public void setWorkerContractCode(String workerContractCode) {
+	public PaternityCertificate setWorkerContractCode(String workerContractCode) {
 		this.workerContractCode = workerContractCode;
+		return this;
 	}
 	public Float getWorkerPartialTimeCoef() {
 		return workerPartialTimeCoef;
 	}
-	public void setWorkerPartialTimeCoef(Float workerPartialTimeCoef) {
+	public PaternityCertificate setWorkerPartialTimeCoef(Float workerPartialTimeCoef) {
 		this.workerPartialTimeCoef = workerPartialTimeCoef;
+		return this;
 	}
 	public String getWorkerContractType() {
 		return workerContractType;
 	}
-	public void setWorkerContractType(String workerContractType) {
+	public PaternityCertificate setWorkerContractType(String workerContractType) {
 		this.workerContractType = workerContractType;
+		return this;
 	}
 	public Boolean getIsPublicEmployee() {
 		return isPublicEmployee;
 	}
-	public void setIsPublicEmployee(Boolean isPublicEmployee) {
+	public PaternityCertificate setIsPublicEmployee(Boolean isPublicEmployee) {
 		this.isPublicEmployee = isPublicEmployee;
+		return this;
 	}
-	public Collection<String[]> getRegistry() {
-		return registry;
+	public ArrayList<PaternityDetail> getPaternityDetail() {
+		return paternityDetail;
 	}
-	public void setRegistry(Collection<String[]> registry) {
-		this.registry = registry;
+	
+	public PaternityCertificate setPaternityDetail(ArrayList<PaternityDetail> paternityDetail) {
+		this.paternityDetail = paternityDetail;
+		return this;
 	}
+	
+	public void addPaternityDetail(PaternityDetail paternityDetail) {
+		this.paternityDetail.add(paternityDetail);
+	}
+	
+	public PaternityCertificate setPartiality(String parciality) {
+		if(!((parciality.equals(""))||(parciality==null)))
+			this.parciality = parciality;
+		else
+			this.parciality=null;
+		return this;
+	}
+	
+
 	public byte[] getPdf() {
 		return pdf;
 	}
-	public void setPdf(byte[] pdf2) {
+	
+	public PaternityCertificate setPdf(byte[] pdf2) {
 		this.pdf = pdf2;
+		return this;
 	}
 	
 	public static interface Visitor{
@@ -242,13 +286,13 @@ public class PaternityCertificate {
 			visitor.visitWorkerContractType(this.workerContractType);
 		if(isPublicEmployee!=null)
 			visitor.visitIsPublicEmployee(this.isPublicEmployee);
-		if(registry!=null)
-			visitor.visitRegistry(this.registry);
 		if(pdf!=null)
 			visitor.visitPdf(this.pdf);
 	}
+	
 	@Override
 	public String toString() {
+		
 		StringBuffer stringBuffer=new StringBuffer();
 		stringBuffer.append("Certificate data: \n");
 		
@@ -257,127 +301,106 @@ public class PaternityCertificate {
 			@Override
 			public void visitCcc(String ccc) {
 				stringBuffer.append(String.format("\tCCC: \"%S\"\n", ccc));
-				
 			}
 
 			@Override
 			public void visitPostCode(String postCode) {
 				stringBuffer.append(String.format("\tCP: \"%S\"\n", postCode));
-				
 			}
 
 			@Override
 			public void visitAddress(String address) {
 				stringBuffer.append(String.format("\tAddress: \"%S\"\n", address));
-				
 			}
 
 			@Override
 			public void visitProvince(String province) {
 				stringBuffer.append(String.format("\tProvince: \"%S\"\n", province));
-				
 			}
 
 			@Override
 			public void visitMunicipality(String municipality) {
 				stringBuffer.append(String.format("\tMunicipality: \"%S\"\n", municipality));
-				
 			}
 
 			@Override
 			public void visitReason(String reason) {
 				stringBuffer.append(String.format("\tReason: \"%S\"\n", reason));
-				
 			}
 
 			@Override
 			public void visitReceptionDate(Date receptionDate) {
 				stringBuffer.append(String.format("\tReception date: \"%S\"\n", receptionDate));
-				
 			}
 
 			@Override
 			public void visitPeriodNumber(Integer periodNumber) {
 				stringBuffer.append(String.format("\tPeriod number: \"%S\"\n", periodNumber));
-				
 			}
 
 			@Override
 			public void visitStartDate(Date startDate) {
 				stringBuffer.append(String.format("\tStart date: \"%S\"\n", startDate));
-				
 			}
 
 			@Override
 			public void visitEndDate(Date endDate) {
 				stringBuffer.append(String.format("\tEnd date: \"%S\"\n", endDate));
-				
 			}
 
 			@Override
 			public void visitParciality(String parciality) {
 				stringBuffer.append(String.format("\tPartiality: \"%S\"\n", parciality));
-				
 			}
 
 			@Override
 			public void visitWorkerName(String workerName) {
 				stringBuffer.append(String.format("\tWorker name: \"%S\"\n", workerName));
-				
 			}
 
 			@Override
 			public void visitWorkerNif(String workerNif) {
 				stringBuffer.append(String.format("\tWorker NIF: \"%S\"\n", workerNif));
-				
 			}
 
 			@Override
 			public void visitWorkerNaf(String workerNaf) {
 				stringBuffer.append(String.format("\tWorker NAF: \"%S\"\n", workerNaf));
-				
 			}
 
 			@Override
 			public void visitWorkerGroup(String workerGroup) {
 				stringBuffer.append(String.format("\tWorker group: \"%S\"\n", workerGroup));
-				
 			}
 
 			@Override
 			public void visitWorkerDischargeDate(Date workerDischargeDate) {
 				stringBuffer.append(String.format("\tWorker's discharge date: \"%S\"\n", workerDischargeDate));
-				
 			}
 
 			@Override
 			public void visitWorkerWithdrawalDate(Date workerWithdrawalDate) {
 				stringBuffer.append(String.format("\tWorker's withdrawal date: \"%S\"\n", workerWithdrawalDate));
-				
 			}
 
 			@Override
 			public void visitWorkerContractCode(String workerContractCode) {
 				stringBuffer.append(String.format("\tWorker's contract code: \"%S\"\n", workerContractCode));
-				
 			}
 
 			@Override
 			public void visitWorkerPartialTimeCoef(Float workerPartialTimeCoef) {
 				stringBuffer.append(String.format("\tWorker's partial time coef.: \"%S\"\n", workerPartialTimeCoef));
-				
 			}
 
 			@Override
 			public void visitWorkerContractType(String workerContractType) {
 				stringBuffer.append(String.format("\tWorker's contract type: \"%S\"\n", workerContractType));
-				
 			}
 
 			@Override
 			public void visitIsPublicEmployee(Boolean isPublicEmployee) {
 				stringBuffer.append(String.format("\tIs public employee?: \"%S\"\n", isPublicEmployee));
-				
 			}
 
 			@Override
@@ -392,236 +415,12 @@ public class PaternityCertificate {
 				}
 				
 			}
-
 			@Override
 			public void visitPdf(byte[] pdf) {
-				if(pdf!=null) {
-					if(pdf.length>0) {
-						stringBuffer.append(String.format("\tPDF DOWNLOADED"));
-					}
-				}
+				if(pdf!=null && pdf.length>0) 
+					stringBuffer.append(String.format("\tPDF DOWNLOADED"));
 			}
-			
-			
-
 		});
 		return stringBuffer.toString();
 	}
-	
-	
-	public static class PaternityCertificateBuilder{
-		
-		//BUSINESS DATA
-		private String ccc;
-		private String postCode;
-		private String address;
-		private String province;
-		private String municipality;
-		//BENEFIT DATA
-		private String reason;
-		private Date receptionDate;
-		private Integer periodNumber;
-		private Date startDate;
-		private Date endDate;
-		private String parciality;
-		//WORKER DATA
-		private String workerName;
-		private String workerNif;
-		private String workerNaf;
-		private String workerGroup;
-		private Date workerDischargeDate;
-		private Date workerWithdrawalDate;
-		private String workerContractCode;
-		private Float workerPartialTimeCoef;
-		private String workerContractType;
-		private Boolean isPublicEmployee;
-		private Collection<String[]> registry;
-		private byte[] pdf;
-		
-		public PaternityCertificateBuilder setCcc(String ccc) {
-			if(!((ccc.equals(""))||(ccc==null)))
-				this.ccc = ccc;
-			else
-				this.ccc=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setPostCode(String postCode) {
-			if(!((postCode.equals(""))||(postCode==null)))
-				this.postCode = postCode;
-			else
-				this.postCode=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setAddress(String address) {
-			if(!((address.equals(""))||(address==null)))
-				this.address = address;
-			else
-				this.address=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setProvince(String province) {
-			if(!((province.equals(""))||(province==null)))
-				this.province = province;
-			else
-				this.province=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setMunicipality(String municipality) {
-			if(!((municipality.equals(""))||(municipality==null)))
-				this.municipality = municipality;
-			else
-				this.municipality=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setReason(String reason) {
-			if(!((reason.equals(""))||(reason==null)))
-				this.reason = reason;
-			else
-				this.reason=null;
-			return this;
-		} 
-		
-		public PaternityCertificateBuilder setReceptionDate(Date receptionDate) {
-			this.receptionDate = receptionDate;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setPeriodNumber(Integer periodNumber) {
-			this.periodNumber = periodNumber;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setStartDate(Date startDate) {
-			this.startDate = startDate;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setEndDate(Date endDate) {
-			this.endDate = endDate;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setPartiality(String parciality) {
-			if(!((parciality.equals(""))||(parciality==null)))
-				this.parciality = parciality;
-			else
-				this.parciality=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerName(String workerName) {
-			if(!((workerName.equals(""))||(workerName==null)))
-				this.workerName = workerName;
-			else
-				this.workerName=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerNif(String workerNif) {
-			if(!((workerNif.equals(""))||(workerNif==null)))
-				this.workerNif = workerNif;
-			else
-				this.workerNif=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerNaf(String workerNaf) {
-			if(!((workerNaf.equals(""))||(workerNaf==null)))
-				this.workerNaf = workerNaf;
-			else
-				this.workerNaf=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerGroup(String workerGroup) {
-			if(!((workerGroup.equals(""))||(workerGroup==null)))
-				this.workerGroup = workerGroup;
-			else
-				this.workerGroup=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerDischargeDate(Date workerDischargDate) {
-			this.workerDischargeDate = workerDischargDate;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerWithdrawalDate(Date workerWithdrawalDate) {
-			this.workerWithdrawalDate = workerWithdrawalDate;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerContractCode(String workerContractCode) {
-			if(!((workerContractCode.equals(""))||(workerContractCode==null)))
-				this.workerContractCode = workerContractCode;
-			else
-				this.workerContractCode=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerPartialTimeCoef(Float workerPartialTimeCoef) {
-			this.workerPartialTimeCoef = workerPartialTimeCoef;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setWorkerContractType(String workerContractType) {
-			if(!((workerContractType.equals(""))||(workerContractType==null)))
-				this.workerContractType = workerContractType;
-			else
-				this.workerContractType=null;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setIsPublicEmployee(Boolean isPublicEmployee) {
-			this.isPublicEmployee = isPublicEmployee;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setRegistry(Collection<String[]> registry) {
-			this.registry = registry;
-			return this;
-		}
-		
-		public PaternityCertificateBuilder setPdf(byte[] pdf2) {
-			this.pdf = pdf2;
-			return this;
-		}
-		
-		public PaternityCertificate build() {
-			PaternityCertificate p=new PaternityCertificate();
-			p.setCcc(this.ccc);
-			p.setPostCode(this.postCode);
-			p.setAddress(this.address);
-			p.setProvince(this.province);
-			p.setMunicipality(this.municipality);
-			p.setReason(this.reason);
-			p.setReceptionDate(this.receptionDate);
-			p.setPeriodNumber(this.periodNumber);
-			p.setStartDate(this.startDate);
-			p.setEndDate(this.endDate);
-			p.setParciality(this.parciality);
-			p.setWorkerName(this.workerName);
-			p.setWorkerNif(this.workerNif);
-			p.setWorkerNaf(this.workerNaf);
-			p.setWorkerGroup(this.workerGroup);
-			p.setWorkerContractType(this.workerContractType);
-			p.setWorkerDischargeDate(this.workerDischargeDate);
-			p.setWorkerWithdrawalDate(this.workerWithdrawalDate);
-			p.setWorkerContractCode(this.workerContractCode);
-			p.setWorkerPartialTimeCoef(this.workerPartialTimeCoef);
-			p.setIsPublicEmployee(this.isPublicEmployee);
-			p.setRegistry(this.registry);
-			p.setPdf(this.pdf);
-			return p;
-			
-		}
-		
-	}
-	
-	
 }

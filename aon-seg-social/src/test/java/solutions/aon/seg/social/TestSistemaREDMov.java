@@ -19,6 +19,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
 import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 
 public class TestSistemaREDMov {
@@ -28,7 +29,7 @@ public class TestSistemaREDMov {
 	public void testSendAlta() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
-//			c.add(Calendar.DATE, 8);
+			c.add(Calendar.DATE, 8);
 			Date fecha=c.getTime();
 			EmployeeBuilder builder = new EmployeeBuilder();
 			Employee employee = builder
@@ -52,6 +53,36 @@ public class TestSistemaREDMov {
 		}
 	}
 
+	@Test
+	@Ignore
+	public void testRemoveMov() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			Calendar c=Calendar.getInstance();
+			c.add(Calendar.DATE, 8);
+			Date fecha=c.getTime();
+		    SistemaREDMov.movPrevDelete(certificateInputStream,"jg@FNMT", "pkcs12",
+		    		SituationType.ALTA, "0111", "01105360062", "010022757387", fecha);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
+	
+	@Test
+//	@Ignore
+	public void testRemoveMovConsolidated() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			Calendar c=Calendar.getInstance();
+			c.add(Calendar.DATE, 8);
+			Date fecha=c.getTime();
+		    SistemaREDMov.removeMovConsolidated(certificateInputStream,"jg@FNMT", "pkcs12",
+		    		SituationType.BAJA,  "0111", "01105360062", "010022757387", "16262835H", fecha);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
+
+
+	
 	@Test
 	@Ignore
 	public void ipfxnaf() {

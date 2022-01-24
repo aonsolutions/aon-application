@@ -532,20 +532,20 @@ public class SistemaRED {
 	}
 
 	public static void voidPaternity(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
+			final String certificateType, final String nss, final String regime,
+			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
-		Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime,
-				contributionAccount, dateFrom, dateTo, startDate);
+		Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, nss, regime,
+				ccc, dateFrom, dateTo, startDate);
 	}
 
 	public static void voidPaternity(final byte[] certificateData, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
+			final String certificateType, final String nss, final String regime,
+			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber,
-					regime, contributionAccount, dateFrom, dateTo, startDate);
+			Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, nss,
+					regime, ccc, dateFrom, dateTo, startDate);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
