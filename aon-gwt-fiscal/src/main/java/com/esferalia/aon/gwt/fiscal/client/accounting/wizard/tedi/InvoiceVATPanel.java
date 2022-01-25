@@ -698,7 +698,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 		private void enableInputVat(boolean enabled) {
 			inputVatLabelCell.setVisible(!isUndeductible() && enabled);
-			inputVatAccount.setVisible(!isUndeductible() && enabled);
+			inputVatAccountCell.setVisible(!isUndeductible() && enabled);
 			inputVatAccount.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
 		}
 		
