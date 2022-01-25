@@ -26,8 +26,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
-import jdk.nashorn.internal.objects.annotations.Setter;
-
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
 
