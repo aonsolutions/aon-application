@@ -131,13 +131,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveContractExport(
 								a -> {
-									showSuccess("Generaci\u00F3n Contrato", "El borrador de contrato se ha generado correctamente");
+									Map<String, String> successrMap = new HashMap<>();
+									successrMap.put("Generaci\u00F3n Contrato", "El borrador de contrato se ha generado correctamente");
+									AonMessagePanel.showSuccess(messageContainer, successrMap);
 									contractAttachUI.setContractAttachments(a);
 									this.refreshPage();
 								},
-								e -> showError("Generaci\u00F3n Contrato", e.getMessage())
+								e -> {
+									Map<String, String> errorMap = new HashMap<>();
+									errorMap.put("Generaci\u00F3n Contrato", e.getMessage());
+									AonMessagePanel.showError(messageContainer, errorMap);
+								}
 						);
-					}, f -> showError("Generaci\u00F3n Contrato", f.getMessage()));
+					}, f -> {
+						Map<String, String> errorMap = new HashMap<>();
+						errorMap.put("Generaci\u00F3n Contrato", f.getMessage());
+						AonMessagePanel.showError(messageContainer, errorMap);
+					});
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -150,6 +160,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					);
 				}
 			}, f -> {});
+		}
+
+		@Override
+		protected void showError(Map<String, String> errorMap) {
+			AonMessagePanel.showError(messageContainer, errorMap);
+		}
+
+		@Override
+		protected void showSuccess(Map<String, String> successMap) {
+			AonMessagePanel.showSuccess(messageContainer, successMap);
 		}
 	}
 	
@@ -281,7 +301,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
 			
-			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
+			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			

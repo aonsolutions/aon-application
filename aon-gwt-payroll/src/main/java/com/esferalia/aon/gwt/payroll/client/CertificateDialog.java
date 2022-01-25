@@ -388,6 +388,8 @@ public abstract class CertificateDialog extends AonCustomDialog {
 	private void disableEnterprise() {
 		enterpriseRB.setEnabled(false);
 		enterpriseRB.setTitle("Opci\u00f3n para usuarios administradores");
+		publicRB.getElement().getStyle().setDisplay(Display.NONE);
+		privateRB.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void initCertificateTypes() {

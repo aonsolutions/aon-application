@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -58,9 +57,6 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		String maxWidthLB();
 		String clauseTD();
 	}
-
-	@UiField
-	HTMLPanel messageContainer;
 	
 	@UiField
 	VerticalPanel attachmentsTable;
@@ -121,7 +117,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				s -> {
 					Map<String, String> errorMap = new HashMap<>();
 	            	errorMap.put("Documento creado", "El documento ha sido a\u00F1adido correctamente");
-	            	AonMessagePanel.showSuccess(messageContainer, errorMap);
+	            	showSuccess(errorMap);
 					
 					resetAttachDataTableStructure();
 					
@@ -253,7 +249,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 					s -> {
 						Map<String, String> errorMap = new HashMap<>();
 		            	errorMap.put("Borrado", "El documento ha sido eliminado correctamente");
-		            	AonMessagePanel.showSuccess(messageContainer, errorMap);
+		            	showSuccess(errorMap);
 						resetAttachDataTableStructure();
 						for(ContractAttach contractAttachIn : employeeContractInfo.getContractAttachments())
 							paintContractAttach(contractAttachIn);
@@ -353,7 +349,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
             if(filename.length() == 0) {
             	Map<String, String> errorMap = new HashMap<>();
             	errorMap.put("Carga fichero", "El archivo adjunto no se ha podido subir");
-            	AonMessagePanel.showError(messageContainer, errorMap);
+            	showError(errorMap);
             } else {
             	contractAttach.setMimeType(getMimeTypeToByte(fileExt));
             	contractAttach.setDescription(filename);
@@ -368,7 +364,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
             		fileNameL.setText("");
             		Map<String, String> errorMap = new HashMap<>();
                 	errorMap.put("Tama\u00F1o fichero", "El archivo adjunto no puede ser superior a 10 MB");
-                	AonMessagePanel.showError(messageContainer, errorMap);
+                	showError(errorMap);
             	}
             }
 		});
@@ -377,7 +373,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	        if(e.getResults().length() == 0) {
 	        	Map<String, String> errorMap = new HashMap<>();
             	errorMap.put("Error desconocido", "El archivo adjunto no se ha podido subir");
-            	AonMessagePanel.showError(messageContainer, errorMap);
+            	showError(errorMap);
             } else {
             	getContractAttachments( 
     					s -> {
@@ -546,6 +542,9 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	// ------------------------------------------------------ Abstract Methods
 
 	protected abstract void onExportPDF();
+	protected abstract void showError(Map<String, String> errorMap);
+	protected abstract void showSuccess(Map<String, String> errorMap);
+
 	
 	// ------------------------------------------------------ Abstract Methods.Callback
 	
