@@ -43,9 +43,9 @@ public class AonLoadingPanel extends FlowPanel{
 		loadingMsgLabel.getElement().getStyle().setFontSize(2, Unit.EM);
 		loadingMsgLabel.getElement().getStyle().setColor("white");
 		loadingTable.setWidget(0, 0, spinLabel);
-		loadingTable.setWidget(0, 1, loadingMsgLabel);		
+		loadingTable.setWidget(0, 1, loadingMsgLabel);	
 		this.add(loadingTable);
-		
+		this.ensureDebugId("LoadingPanel");
 	}
 	
 	public void show() {
