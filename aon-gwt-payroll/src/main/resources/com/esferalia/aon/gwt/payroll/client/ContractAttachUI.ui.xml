@@ -69,11 +69,11 @@
 			display: flex;
 			flex-direction: column;
 		}
+
 	</ui:style>
 
    	<g:HTMLPanel styleName="{style.flexColumn}">
-   		<g:HTMLPanel ui:field="messageContainer"/> 
-        <g:VerticalPanel ui:field="attachmentsTable" styleName="{style.styleBorder}"> 
+   		<g:VerticalPanel ui:field="attachmentsTable" styleName="{style.styleBorder}"> 
 	    	<g:Label styleName='{style.tittle}'>Documentos</g:Label>
 	    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
 	    		<g:VerticalPanel>
