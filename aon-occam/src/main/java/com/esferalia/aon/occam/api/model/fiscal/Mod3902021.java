@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Map;
 
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
-import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
-import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 

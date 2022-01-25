@@ -930,6 +930,12 @@ public class Mod3902021DAO {
 				 && (period == Period.M12 || period == Period.T4)) {
 					mod390.setBox97(  AonMathUtils.round( m303.getResult() * (-1) ));
 				}
+				if (m303.isFirstPeriod()) {
+					mod390.setBox85(  m303.getAmount( Mod303Key.CT_C110) );
+				}
+				if (m303.isLastPeriod()) {
+					mod390.setBox662(  m303.getAmount( Mod303Key.CT_C87) );
+				}
 			});
 		
 	}

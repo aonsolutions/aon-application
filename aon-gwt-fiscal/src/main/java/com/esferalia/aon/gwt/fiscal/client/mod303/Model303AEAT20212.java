@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -29,6 +30,7 @@ import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -183,6 +185,35 @@ class Model303AEAT20212 extends Model303AEAT {
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
 		paintDeclaration(table,Model3032021AEATResultScript.values(),3);
+		if (getModel().isLastPeriod() && AonMathUtils.isNotZero(getModel().getAmount(Mod303Key.CT_C110))) {
+			Widget c78 = table.getWidget(7, 0);
+			AonDisplayTable fp78 = new AonDisplayTable();
+			fp78.addStyleName(AON.CSS.aonWidthAll());
+			InlineLabel l780 =  new InlineLabel("REVISE CONTENIDO");
+			l780.setStyleName(AON.CSS.aonMarginLeft());
+			
+			InlineLabel l781 =  new InlineLabel("[Borrar Partida]");
+			l781.setStyleName(AON.CSS.aonClickableLabel());
+			l781.addStyleName(AON.CSS.aonMarginLeft());
+			l781.addClickHandler(event -> {
+				getFieldsMap().get(Mod303Key.CT_C78).setValue(0.0,true);
+			});
+			
+			InlineLabel l782 =  new InlineLabel("[Asignar M\u00E1x]");
+			l782.setStyleName(AON.CSS.aonClickableLabel());
+			l782.addStyleName(AON.CSS.aonMarginLeft());
+			l782.addClickHandler(event -> {
+				getFieldsMap().get(Mod303Key.CT_C78).setValue(getModel().getAmount(Mod303Key.CT_C110),true);
+			});
+
+			fp78.addRow()
+				.addCell(c78, AON.CSS.aonWidthAuto())
+				.addCell( l780, AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonBold(),AON.CSS.aonWidth80())
+				.addCell( l781, AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80())
+				.addCell( l782, AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80());
+			table.setWidget(7, 0, fp78);
+		}
+		
 	}
 
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
