@@ -82,10 +82,12 @@ public class SiiConfigurationDAO {
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.SII_AUTOSEND.toString(),
 				Boolean.toString(tc.isAutosend()));
-
-		AppParamDAO.insertApplicationParameter(ctx, 
+		
+		if(tc.getIncludeDate() != null) {
+			AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.SII_INCLUDE_DATE.toString(),
 				AonDateUtils.format(tc.getIncludeDate(), "yyyy-MM-dd"));
+		}
 		
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.SII_REGISTRY_DATE.toString(),
