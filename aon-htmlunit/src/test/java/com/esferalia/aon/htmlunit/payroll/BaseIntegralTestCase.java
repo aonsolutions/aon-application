@@ -407,6 +407,12 @@ public abstract class BaseIntegralTestCase {
 		return  el != null && el.isDisplayed();
 	}
 
+	protected static void wait(int timeoutMillis) throws InterruptedException {
+        synchronized (htmlPage) {
+    		htmlPage.wait(timeoutMillis);
+        }
+	}
+
 	protected static void wait4Id(String id) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);

@@ -1568,6 +1568,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		type("searchTextBox", "CONSTANTES");
 		
 		wait4Id("sonny");
+		wait(10000);
 		wait4Id("constantes,_i");
 		assertDisplay("constantes,_i", true);
 		
