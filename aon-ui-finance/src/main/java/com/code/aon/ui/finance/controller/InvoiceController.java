@@ -2030,6 +2030,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return null;
 	}
 	
+	public boolean isTbaiInvoice() {
+		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
+	}
+	
+	public String getTbaiUrl() {
+		Invoice invoice = (Invoice) this.getTo();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
+	}
+	
 	public boolean isTbai() {
 		return getTbaiConfiguration().isActive();
 	}

@@ -83,7 +83,6 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class SaleInvoiceController extends InvoiceController {
@@ -124,21 +123,9 @@ public class SaleInvoiceController extends InvoiceController {
 		return deliveryTransferManager;
 	}
 	
-	public boolean isTbaiInvoice() {
-		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
-	}
-	
 	public boolean isTbaiLroe() {
 		Invoice invoice = (Invoice) this.getTo();
 		return isTbai() && isBizkaia() && invoice.getNumber() > 0;
-	}
-	
-	public String getTbaiUrl() {
-		Invoice invoice = (Invoice) this.getTo();
-		Integer domainId = DomainManager.getCurrentDomain();
-		String domainName = AonUtil.getDomainName();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		return TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
 	}
 
 	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
