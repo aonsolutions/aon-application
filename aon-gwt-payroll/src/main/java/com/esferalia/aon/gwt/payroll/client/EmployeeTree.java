@@ -2227,7 +2227,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onEmployeeSelected() {
-			employees.getEmployeeDraft(salaryDraft, o -> getEmployeeDraft().setEmployeeDraftObject(o));	
+			employees.getEmployeeDraft(salaryDraft, o -> { 
+				o.setEnterpriseContext(employees.getEnterpriseContext());
+				getEmployeeDraft().setEmployeeDraftObject(o);
+				singlenton.employee = o.getEmployee();
+			});	
 		}
 		
 
