@@ -1,3 +1,4 @@
+import { waitEl } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import * as UTILS from "./accounting-utils.js";
@@ -41,18 +42,30 @@ function getArray(selectedColumn) {
   }
 }
 
+function getPositiveArraySum(array, isIncome) {
+  if (array) {
+    return array
+    .filter(inc => inc)
+    .map((inc) => isIncome ? inc.credit - inc.debit : inc.debit - inc.credit)
+    .filter(amt => amt > 0)
+    .reduce((a, b) => a + b, 0);
+  } else {
+    return 0;
+  }
+}
+
 function getTotalByColumn(selectedColumn) {
   switch (selectedColumn) {
     case 1:
-      return income;
+      return getPositiveArraySum(arrIncome, true);
     case 2:
-      return purchases;
+      return getPositiveArraySum(arrPurchases, false);
     case 3:
-      return outgoings;
+      return getPositiveArraySum(arrOutgoings, false);
     case 4:
-      return otherOutgoings;
+      return getPositiveArraySum(arrOtherOutgoings, false);
     case 6:
-      return amortizations;
+      return getPositiveArraySum(arrAmortizations, false);
     default:
       return null;
   }
@@ -396,7 +409,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           let percentTd = document.createElement("td");
           percentTd.id = "percentTd";
           let percent = (amount / getTotalByColumn(selectedColumn)) * 100;
-          percentTd.innerHTML = UTILS.formatNumber(percent) + "%";
+          percentTd.innerHTML = percent > 0 ? UTILS.formatNumber(percent) + "%" : "-";
           setStyles(percentTd, {textAlign : "right", width : "3em"});
           legendTr.appendChild(percentTd);
 
@@ -471,6 +484,8 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         }
 
         pieDiv.prepend(head);
+        if (pieDiv)
+          waitEl(`#${pieDiv.id} svg g:last-child`).then(el => el.style.pointerEvents = "none").catch(err => null);
       }
     }
 
