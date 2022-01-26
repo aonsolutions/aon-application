@@ -272,7 +272,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem idcPlNss;		
 		private MenuItem peculiarities = null;
 		
-		private MenuItem movPrevDelete = null;
+//		private MenuItem movPrevDelete = null;
 		private MenuItem altaConsolidadaDelete = null;
 		
 		public NewTGSSContextMenu() {
@@ -307,9 +307,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			addSeparator();
 			
-			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			movPrevDelete.ensureDebugId("movPrevDelete");
+//			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
+//					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+//			movPrevDelete.ensureDebugId("movPrevDelete");
 			
 			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
@@ -345,9 +345,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			return peculiarities;
 		}
 		
-		public MenuItem getMovPrevDelete() {
-			return movPrevDelete;
-		}
+//		public MenuItem getMovPrevDelete() {
+//			return movPrevDelete;
+//		}
 		
 		public MenuItem getAltaConsolidadaDelete() {
 			return altaConsolidadaDelete;
