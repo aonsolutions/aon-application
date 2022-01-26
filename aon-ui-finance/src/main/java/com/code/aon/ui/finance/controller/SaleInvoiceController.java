@@ -531,6 +531,16 @@ public class SaleInvoiceController extends InvoiceController {
 			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 			
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+			
+			long count = invoice.getDetails().stream().filter(r -> Double.toString(r.getQuantity())
+					.substring(Double.toString(r.getQuantity()).indexOf(".") + 1)
+					.length() > 2).count();
+			if(count > 0) {
+				throw new Exception("La cantidad no puede tener más de 2 decimales");
+			}
+			if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+				throw new Exception("El Documento del cliente está vacio.");
+			}
 
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			if(invoice.getNumber() < 1) {
@@ -565,7 +575,12 @@ public class SaleInvoiceController extends InvoiceController {
 			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 			
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-
+			long count = invoice.getDetails().stream().filter(r -> Double.toString(r.getQuantity())
+						.substring(Double.toString(r.getQuantity()).indexOf(".") + 1)
+						.length() > 2).count();
+			if(count > 0) {
+				throw new Exception("La cantidad no puede tener más de 2 decimales");
+			}
 			if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
 				throw new Exception("El Documento del cliente está vacio.");
 			}
