@@ -3576,5 +3576,4 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		.setCollegeNumber(part.getCollegeNumber())
 		.setConfirmOrder(part.getConfirmOrderNumber()!=null ? part.getConfirmOrderNumber(): null);
 	}
-	
 }

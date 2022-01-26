@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -72,9 +73,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			throws IllegalArgumentException;
 
 	
-	void getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate, Date endDate,
-			AsyncCallback<List<Certifica2Info>> callback);
-		
+	void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
+			AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException;
+	
 	void getIrpfs(String domain, Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException;
 

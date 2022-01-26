@@ -1547,7 +1547,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private void showCommunicateIT() {
 		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Comunicaci\\u00F3n", "Parte IT comunicada a la TGSS");
+		successMap.put("Comunicaci\u00F3n", "Parte IT comunicada a la TGSS");
 		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	

@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -506,7 +507,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate,
+		public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 				Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
 			// TODO Auto-generated method stub
 			
@@ -1005,7 +1006,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						
 					}
 					@Override
-					public void getSalariesOccam(String currentDomainName, String login, Integer contractId,
+					public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee,
 							Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
 						// TODO Auto-generated method stub
 						

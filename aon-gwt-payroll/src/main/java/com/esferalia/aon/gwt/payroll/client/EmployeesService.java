@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -210,7 +211,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter);
 	
-	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate,
+	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 			Date endDate);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids);

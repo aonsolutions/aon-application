@@ -94,6 +94,10 @@ public class ITDialogObject {
 		return this.itEmployee.getStatus() == (byte)0 ? true : false;
 	}
 
+	public ITEmployee getITEmployee(){
+		return this.itEmployee;
+	}
+
 	public String getEmployeeName() {
 		return getEmployeeinfo().getFullName();
 	}

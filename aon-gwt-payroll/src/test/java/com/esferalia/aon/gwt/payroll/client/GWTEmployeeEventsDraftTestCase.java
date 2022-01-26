@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -607,7 +608,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate,
+			public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 					Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
 				// TODO Auto-generated method stub
 				

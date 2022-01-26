@@ -237,9 +237,9 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
-	private Integer quoteDayDefaul = -30;
 
 	private DoubleBox baseCC;
+	private DoubleBox quoteDayInput;
 
 	private ITPart itPartTmp = null;
 	AonLoadingPanel loading = new AonLoadingPanel("Espere...");
@@ -936,9 +936,9 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<ITPart>();
 			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setDate(date);
+			ITPart itPart = new ITPart()
+			.setType((byte) 0) // BAJA
+			.setDate(date);
 			
 			itParts.add(itPart);
 			
@@ -969,11 +969,11 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<>();
 			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			itPart.setDate(date);
-			itPart.setCollegeNumber(collegiateNumberITPart.getValue());
-			itPart.setCias(ciasITPart.getValue());
+			ITPart itPart = new ITPart()
+			.setType((byte) 2) // ALTA
+			.setDate(date)
+			.setCollegeNumber(collegiateNumberITPart.getValue())
+			.setCias(ciasITPart.getValue());
 			
 			itParts.add(itPart);
 			
@@ -989,11 +989,11 @@ public abstract class ITDialog extends AonCustomDialog {
 				}
 			}
 			if(!added) {
-				ITPart itPart = new ITPart();
-				itPart.setType((byte) 2); // ALTA
-				itPart.setDate(date);
-				itPart.setCollegeNumber(collegiateNumberITPart.getValue());
-				itPart.setCias(ciasITPart.getValue());
+				ITPart itPart = new ITPart()
+				.setType((byte) 2) // ALTA
+				.setDate(date)
+				.setCollegeNumber(collegiateNumberITPart.getValue())
+				.setCias(ciasITPart.getValue());
 				
 				this.it.addITPart(itPart);
 			}
@@ -1001,25 +1001,43 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private void setCauseHighPart() {
-		Optional<ITPart> alta = this.itDialogObject.getITBaja(this.it);
-		if(!alta.isPresent()) {
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			itPart.setCollegeNumber(collegiateNumberITPart.getValue());
-			itPart.setCias(ciasITPart.getValue());
+		if(this.it.getITParts().isEmpty()) {
+			List<ITPart> itParts = new ArrayList<>();
 
-			this.it.addITPart(itPart);
-		} 
+			ITPart itPart = new ITPart()
+			.setType((byte) 2) // ALTA
+			.setCollegeNumber(collegiateNumberITPart.getValue())
+			.setCias(ciasITPart.getValue())
+			;
+
+			itParts.add(itPart);
+
+			this.it.setITParts(itParts);
+		} else {
+			boolean added = false;
+			for(ITPart itPart : this.it.getITParts()) {
+				if(itPart.getType() == (byte) 2) 
+					added = true;
+			}
+			if(!added) {
+				ITPart itPart = new ITPart();
+				itPart.setType((byte) 2); // ALTA
+				itPart.setCollegeNumber(collegiateNumberITPart.getValue());
+				itPart.setCias(ciasITPart.getValue());
+
+				this.it.addITPart(itPart);
+			}
+		}
 	}
 	
 	private void setCollegiateNumberITPart(String collegiateNumberLowPart) {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<>();
 			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setCollegeNumber(collegiateNumberLowPart);
-			itPart.setDate(itStartDate.getValue());
+			ITPart itPart = new ITPart()
+			.setType((byte) 0) // BAJA
+			.setCollegeNumber(collegiateNumberLowPart)
+			.setDate(itStartDate.getValue());
 			
 			itParts.add(itPart);
 			
@@ -1036,10 +1054,10 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<>();
 			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setCias(ciasLowPart);
-			itPart.setDate(itStartDate.getValue());
+			ITPart itPart = new ITPart()
+			.setType((byte) 0) // BAJA
+			.setCias(ciasLowPart)
+			.setDate(itStartDate.getValue());
 			
 			itParts.add(itPart);
 			
@@ -1662,6 +1680,21 @@ public abstract class ITDialog extends AonCustomDialog {
 		panel.setStyleName(style.buttonsPanel());
 		mainCommunicate.add(panel);
 		
+		closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		panel.add(closeBtnDialog);
+		
 		Button communicateDialog = new Button();
 		communicateDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		communicateDialog.setText("Comunicar");
@@ -1762,6 +1795,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void printBtnCommunicate(){
 		
+		LOGGER.info("IT_ID:"+ it.getId());
 		for(ITPart itPart : it.getITParts()) {
 			LOGGER.info("IT_PART:"+itPart.getId()+" TYPE:"+itPart.getType().toString());
 		}
@@ -1910,25 +1944,14 @@ public abstract class ITDialog extends AonCustomDialog {
 		Label quoteDayEl = new Label("D\u00EDas cotizados");
 		quoteDayEl.setStyleName(style.subTitle());
 		panel.add(quoteDayEl);
-
-		ListBox quoteDayList = new ListBox();
-		quoteDayList.setStyleName("aon-selectOneMenu");
-		panel.add(quoteDayList);
-
-		quoteDayList.clear();
-		quoteDayList.addItem("30", "-30");
-		quoteDayList.addItem("60", "-60");
-		quoteDayList.addItem("90", "-90");
-//		quoteDayList.addItem("900", "-900");
-
-		it.setQuoteDays(this.quoteDayDefaul * -1);
 		
-		quoteDayList.addChangeHandler(event->{
-			this.quoteDayDefaul = Integer.parseInt(quoteDayList.getSelectedValue());
-			it.setQuoteDays(this.quoteDayDefaul * -1);
-			getTramos();
+		quoteDayInput = new DoubleBox();
+		quoteDayInput.setStyleName("aon-inputText");
+		panel.add(quoteDayInput);
+		quoteDayInput.addChangeHandler(event->{
+			it.setQuoteDays(quoteDayInput.getValue().intValue());
 		});
-		
+
 		getTramos();
 	}
 	
@@ -1950,14 +1973,13 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void getTramos() {
 		tramos.clear();
-
-		LOGGER.info("CONTRACT_TYPE_ID: "+ this.itDialogObject.getContractInfo().getContracttypeId());
 		
-		Date startDate = DateUtils.getFirstDayOfMonth( DateUtils.addDays2Date(it.getStartDate(), quoteDayDefaul) );
-		Date endDate = DateUtils.getLastDayOfMonth( DateUtils.addDays2Date(it.getStartDate(), quoteDayDefaul*-1) );
+		LOGGER.info("CONTRACT_INFO: "+ this.itDialogObject.getContractInfo().toString());
+	
+		Date startDate = DateUtils.getFirstDayOfMonth( DateUtils.addMonths2Date(it.getStartDate(), -4) );
+		Date endDate = DateUtils.getLastDayOfMonth(  DateUtils.addMonths2Date(it.getStartDate(), -1)  );
 		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
-		
-		employeesService.getSalariesOccam(it.getContract(), startDate, endDate, new AsyncCallback<List<Certifica2Info>>() {
+		employeesService.getSalariesOccam(this.itDialogObject.getITEmployee(), startDate, endDate, new AsyncCallback<List<Certifica2Info>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1979,13 +2001,19 @@ public abstract class ITDialog extends AonCustomDialog {
 			lbl.setStyleName("aon-group-title "+ style.tittle());
 			tramos.add(lbl);
 
+			boolean isPartial = this.itDialogObject.getContractInfo().isPartial();
+			
 			HTMLPanel list = new HTMLPanel("");
 			list.setStyleName(style.flexColumn());
 			tramos.add(list);
 
 			Double base = 0.0;
-			Boolean cgp = this.it.getTypeLowPart()!=null && this.it.getTypeLowPart()==(byte)1 ? true : false;
-            for(Certifica2Info data : datas) {
+			Boolean cgp = this.it.getTypeLowPart()!=null && this.it.getTypeLowPart()==(byte)1 ? true : false; // si es accidente laboral
+			Integer quoteDay = 0;
+			
+			for (int i = 0; i < datas.size(); i++) {
+				Certifica2Info data = datas.get(i);
+				
                 HTMLPanel row = new HTMLPanel("");
 				row.setStyleName(style.flexCustom());
 	
@@ -2005,12 +2033,12 @@ public abstract class ITDialog extends AonCustomDialog {
 				Label cgcL = new Label("CGC: ");
 				cgcL.addStyleName(style.subTitle());
 				Double cgc = Math.round(data.getBaseCgc()*100.0)/100.0;
-				Label cgcValue = new Label(cgc.toString());
+				Label cgcValue = new Label( cgc.toString());
 				
 				Double baseUnEmployee  = Math.round(data.getBaseUnemployment()*100.0)/100.0;
 				Label unemploymentL = new Label("Desempleo: ");
 				unemploymentL.addStyleName(style.subTitle());
-				Label unemploymentValue = new Label(baseUnEmployee.toString());
+				Label unemploymentValue = new Label( baseUnEmployee.toString());
 				
 				row.add(monthL);
 				row.add(monthValue);
@@ -2025,11 +2053,17 @@ public abstract class ITDialog extends AonCustomDialog {
 				list.add(row);
 
 				base+= cgp ? data.getBaseUnemployment() : data.getBaseCgc();
-            }
+				quoteDay+=data.getSettleQuoteDays();
+				
+				if((isPartial && quoteDay>=84) || (!isPartial && quoteDay>=28)) 
+					break; 
+			}
             
             Double tmp = Math.round(base*100.0)/100.0;
             baseCC.setValue(tmp);
+            quoteDayInput.setValue(quoteDay.doubleValue());
         	it.setRegulationBase(tmp);
+    		it.setQuoteDays(quoteDay);
         }
 	}
 	

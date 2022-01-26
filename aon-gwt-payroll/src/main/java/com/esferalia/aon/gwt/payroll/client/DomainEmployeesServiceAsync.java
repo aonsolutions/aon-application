@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -211,8 +212,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getSalaries(getCurrentDomainName(), employee, callback);
 	}
 	
-	public void getSalariesOccam(Integer contractId, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
-		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), contractId, startDate, endDate, callback);
+	public void getSalariesOccam(ITEmployee itEmployee, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), itEmployee, startDate, endDate, callback);
 	}
 
 	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback) throws IllegalArgumentException {

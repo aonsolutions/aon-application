@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractInfo implements Serializable{
@@ -544,6 +545,16 @@ public class ContractInfo implements Serializable{
 	public void setHasExtension(boolean hasExtension) {
 		this.hasExtension = hasExtension;
 	}
+	
+	
+	public boolean isPartial() {
+		if(contractType!=null) {
+			int type = Integer.parseInt(contractType);
+			return AonNumberUtils.between(type, 200, 300) || AonNumberUtils.between(type, 500, 599) || AonNumberUtils.equals(type, 0);
+		}
+		return false;
+	}
+
 
 	public String toString(){
 		String result = "";

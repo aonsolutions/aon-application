@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -686,10 +687,10 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
-	public void getSalariesOccam(String currentDomainName, String login, Integer contractId, Date startDate, Date endDate,
+	public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
 			AsyncCallback<List<Certifica2Info>> callback) {
 		AON.start();
-		employeesServiceAsync.getSalariesOccam(currentDomainName, login, contractId, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+		employeesServiceAsync.getSalariesOccam(currentDomainName, login, itEmployee, startDate, endDate, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
