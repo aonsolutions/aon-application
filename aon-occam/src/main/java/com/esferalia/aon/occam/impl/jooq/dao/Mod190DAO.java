@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -55,6 +56,7 @@ import com.esferalia.aon.occam.api.model.type.Mod1902016Key;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -64,8 +66,8 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod190DAO {
-	private static byte ZERO_BYTE = 0;
-	private static String PREST_IT = "PREST_IT";
+	private static final byte ZERO_BYTE = 0;
+	private static final String PREST_IT = "PREST_IT";
 	
 	private Mod190DAO() {
 		
@@ -83,7 +85,7 @@ public class Mod190DAO {
 			return fm;
 		} catch (DataAccessException t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
@@ -117,7 +119,7 @@ public class Mod190DAO {
 			return mod190;
 		} catch (DataAccessException t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
@@ -128,7 +130,7 @@ public class Mod190DAO {
 
 	private static Mod190 insert(AONContext ctx, Mod190 mod190, boolean generateDetails) {
 		validate(ctx, mod190);
-		FsModel190Record record = ctx
+		FsModel190Record rec = ctx
 				.getDslContext()
 				.insertInto(FS_MODEL190)
 				.set(FS_MODEL190.DOMAIN, mod190.getDomain())
@@ -153,7 +155,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190.CREATION_USER,ctx.getUser())
 				.set(FS_MODEL190.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FS_MODEL190.ID).fetchOne();
-		mod190.setId(record.getId());
+		mod190.setId(rec.getId());
 		
 		if (generateDetails) {
 			insertDetailsFromInvoice(ctx, mod190);
@@ -552,7 +554,7 @@ public class Mod190DAO {
 				.fetch()
 				.stream()
 				.map(new Mod190Filler())
-				.peek( mod190 -> mod190.setDetails( getDetails(ctx, mod190.getId()) ))
+				.map( mod190 -> mod190.setDetails( getDetails(ctx, mod190.getId()) ))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -567,7 +569,7 @@ public class Mod190DAO {
 			.fetch()
 			.stream()
 			.map(new Mod190Filler())
-			.peek( mod190 -> mod190.setDetails( getDetails(ctx, mod190.getId()) ))
+			.map( mod190 -> mod190.setDetails( getDetails(ctx, mod190.getId()) ))
 			.findFirst()
 			.orElse(null);
 	}
@@ -607,8 +609,9 @@ public class Mod190DAO {
 		Field<BigDecimal> quotaOp = DSL.sum(DSL.decode()
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
+		Map<String,Mod190Detail> map = new LinkedHashMap<>();
 		ctx.getDslContext()
-				.select(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE, minRegistry, sumBase,quotaOp)
+				.select(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE, INVOICE_TAX.PERCENTAGE, minRegistry, sumBase,quotaOp)
 				.from(INVOICE)
 				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -617,60 +620,77 @@ public class Mod190DAO {
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 2))	// IRPF
 				.and(INVOICE_TAX.WITHHOLDING_TYPE.in((byte) 0, (byte) 3,(byte) 4)) 
 				.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
-				.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE)
+				.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE,INVOICE_TAX.PERCENTAGE)
 				.fetch()
 				.stream()
 				.forEach(
-						record -> {
-							Mod190Detail detail = new Mod190Detail();
-							detail.setDomain(mod190.getDomain());
-							detail.setMod190(mod190.getId());
-							detail.setDocument(record.getValue(INVOICE.RDOCUMENT));
-							detail.setName(record.getValue(INVOICE.RNAME));
-							byte withholding = record.getValue(INVOICE_TAX.WITHHOLDING_TYPE);
-							if (withholding == 0) { // PROFESIONALES - PROFESSIONAL
+						rec -> {
+							
+							String document = rec.getValue(INVOICE.RDOCUMENT);
+							String key = null;
+							String subKey = null;
+							
+							double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+							WithholdingType withholding = WithholdingType.safeValueOf(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE));
+							if (withholding == WithholdingType.PROFESSIONAL) {
 								if (mod190.getYear() == 2014) {
-									detail.setKey(Mod1902014Key.getDefaultKeyForProfessionalRetentions().getValue());
-									detail.setSubKey(Mod1902014Key.getDefaultSubkeyForProfessionalRetentions());
+									key = Mod1902014Key.getDefaultKeyForProfessionalRetentions().getValue();
+									subKey = Mod1902014Key.getDefaultSubkeyForProfessionalRetentions();
 								}else if (mod190.getYear() == 2015) {
-									detail.setKey(Mod1902015Key.getDefaultKeyForProfessionalRetentions().getValue());
-									detail.setSubKey(Mod1902015Key.getDefaultSubkeyForProfessionalRetentions());
+									key = Mod1902015Key.getDefaultKeyForProfessionalRetentions().getValue();
+									subKey = Mod1902015Key.getDefaultSubkeyForProfessionalRetentions();
 								} else{
-									detail.setKey(Mod1902016Key.getDefaultKeyForProfessionalRetentions().getValue());
-									detail.setSubKey(Mod1902016Key.getDefaultSubkeyForProfessionalRetentions());
+									key = Mod1902016Key.getDefaultKeyForProfessionalRetentions().getValue();
+									if (AonNumberUtils.equals(percent, 7.0) ) {
+										subKey = Mod1902016Key.getDefaultSubkeyForNewProfessionalRetentions();
+									} else {
+										subKey = Mod1902016Key.getDefaultSubkeyForProfessionalRetentions();
+									}
 								}
-							} else if (withholding == 3) { // AGRICULTOR - FARMER
+							} else if (withholding == WithholdingType.FARMER) { // AGRICULTOR - FARMER
 								if (mod190.getYear() == 2014) {
-									detail.setKey(Mod1902014Key.getDefaultKeyForFarmerRetentions().getValue());
-									detail.setSubKey(Mod1902014Key.getDefaultSubkeyForFarmerRetentions());
+									key = Mod1902014Key.getDefaultKeyForFarmerRetentions().getValue();
+									subKey = Mod1902014Key.getDefaultSubkeyForFarmerRetentions();
 								} else if (mod190.getYear() == 2015) {
-									detail.setKey(Mod1902015Key.getDefaultKeyForFarmerRetentions().getValue());
-									detail.setSubKey(Mod1902015Key.getDefaultSubkeyForFarmerRetentions());
+									key = Mod1902015Key.getDefaultKeyForFarmerRetentions().getValue();
+									subKey = Mod1902015Key.getDefaultSubkeyForFarmerRetentions();
 								} else {
-									detail.setKey(Mod1902016Key.getDefaultKeyForFarmerRetentions().getValue());
-									detail.setSubKey(Mod1902016Key.getDefaultSubkeyForFarmerRetentions());
+									key = Mod1902016Key.getDefaultKeyForFarmerRetentions().getValue();
+									subKey = Mod1902016Key.getDefaultSubkeyForFarmerRetentions();
 								}
-							} else if (withholding == 4) { // TRANSPORTISTAS Y ASIMILADOS - TRANSPORT_OPERATOR
+							} else if (withholding == WithholdingType.TRANSPORT_OPERATOR) { // TRANSPORTISTAS Y ASIMILADOS - TRANSPORT_OPERATOR
 								if (mod190.getYear() == 2015) {
-									detail.setKey(Mod1902014Key.getDefaultKeyForTransportRetentions().getValue());
-									detail.setSubKey(Mod1902014Key.getDefaultSubkeyForTransportRetentions());
+									key = Mod1902014Key.getDefaultKeyForTransportRetentions().getValue();
+									subKey = Mod1902014Key.getDefaultSubkeyForTransportRetentions();
 								} else if (mod190.getYear() == 2015) {
-									detail.setKey(Mod1902015Key.getDefaultKeyForTransportRetentions().getValue());
-									detail.setSubKey(Mod1902015Key.getDefaultSubkeyForTransportRetentions());
+									key = Mod1902015Key.getDefaultKeyForTransportRetentions().getValue();
+									subKey = Mod1902015Key.getDefaultSubkeyForTransportRetentions();
 								} else {
-									detail.setKey(Mod1902016Key.getDefaultKeyForTransportRetentions().getValue());
-									detail.setSubKey(Mod1902016Key.getDefaultSubkeyForTransportRetentions());
+									key = Mod1902016Key.getDefaultKeyForTransportRetentions().getValue();
+									subKey = Mod1902016Key.getDefaultSubkeyForTransportRetentions();
 								}
 							}
-							detail.setPerception(record.getValue(sumBase).doubleValue());
-							detail.setRetention(record.getValue(quotaOp).doubleValue());
-							detail.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, record.getValue(minRegistry)) );
-							mod190.getDetails().add(detail);
+							String mapKey = document + "|" + key + "|" + subKey;
+							Mod190Detail detail = null; 
+							if (!map.containsKey(mapKey)) {
+								detail = new Mod190Detail();
+								detail.setDomain(mod190.getDomain());
+								detail.setMod190(mod190.getId());
+								detail.setDocument(document);
+								detail.setName(rec.getValue(INVOICE.RNAME));
+								detail.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
+								detail.setKey(key);
+								detail.setSubKey(subKey);
+								map.put(mapKey, detail);
+							}
+							detail = map.get(mapKey);
+							detail.setPerception(AonMathUtils.round(detail.getPerception() + rec.getValue(sumBase).doubleValue()));
+							detail.setRetention(AonMathUtils.round(detail.getRetention() + rec.getValue(quotaOp).doubleValue()));
 						});
+		mod190.getDetails().addAll(map.values());
 	}
 
-	private static void fillLastIrpfDataByPerson(AONContext ctx, int person,
-			Date fromDate, Date toDate, Mod190Detail detail) {
+	private static void fillLastIrpfDataByPerson(AONContext ctx, int person, Date fromDate, Date toDate, Mod190Detail detail) {
 		ctx.checkRead();
 		List<IrpfDataRecord> list = ctx.getDslContext()
 				.select(IRPF_DATA.fields())
@@ -825,95 +845,95 @@ public class Mod190DAO {
 	private static class Mod190Filler implements Function<Record, Mod190> {
 
 		@Override
-		public Mod190 apply(Record record) {
+		public Mod190 apply(Record rec) {
 			return new Mod190()
-				.setId(record.getValue(FS_MODEL190.ID))
-				.setDomain(record.getValue(FS_MODEL190.DOMAIN))
-				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-				.setEnterprise(record.getValue(FS_MODEL190.ENTERPRISE))
-				.setYear(record.getValue(FS_MODEL190.YEAR))
-				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL190.ADMINISTRATION)))
-				.setReplacement( record.getValue(FS_MODEL190.REPLACEMENT)==1 )
-				.setComplementary(record.getValue(FS_MODEL190.COMPLEMENTARY)==1 )
-				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL190.STATUS)))
-				.setDocument(record.getValue(FS_MODEL190.DOCUMENT))
-				.setName(record.getValue(FS_MODEL190.NAME))
-				.setContactPerson(record.getValue(FS_MODEL190.CONTACT_PERSON))
-				.setContactPhone(record.getValue(FS_MODEL190.CONTACT_PHONE))
-				.setContactMail(record.getValue(FS_MODEL190.CONTACT_MAIL))
-				.setReceipt(record.getValue(FS_MODEL190.RECEIPT))
-				.setReplacedReceipt(record.getValue(FS_MODEL190.REPLACED_RECEIPT))
-				.setReceiverCountTotal(record.getValue(FS_MODEL190.RECEIVER_COUNT_TOTAL))
-				.setReceiptTotal(record.getValue(FS_MODEL190.RECEIPT_TOTAL))
-				.setRetentionTotal(record.getValue(FS_MODEL190.RETENTION_TOTAL))
-				.setComments(record.getValue(FS_MODEL190.COMMENTS))
-				.setCreationDate(record.getValue(FS_MODEL190.CREATION_DATE))
-				.setCreationUser(record.getValue(FS_MODEL190.CREATION_USER))
-				.setModificationDate(record.getValue(FS_MODEL190.MODIFICATION_DATE))
-				.setModificationUser(record.getValue(FS_MODEL190.MODIFICATION_USER));
+				.setId(rec.getValue(FS_MODEL190.ID))
+				.setDomain(rec.getValue(FS_MODEL190.DOMAIN))
+				.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+				.setEnterprise(rec.getValue(FS_MODEL190.ENTERPRISE))
+				.setYear(rec.getValue(FS_MODEL190.YEAR))
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,rec.getValue(FS_MODEL190.ADMINISTRATION)))
+				.setReplacement( rec.getValue(FS_MODEL190.REPLACEMENT)==1 )
+				.setComplementary(rec.getValue(FS_MODEL190.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,rec.getValue(FS_MODEL190.STATUS)))
+				.setDocument(rec.getValue(FS_MODEL190.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL190.NAME))
+				.setContactPerson(rec.getValue(FS_MODEL190.CONTACT_PERSON))
+				.setContactPhone(rec.getValue(FS_MODEL190.CONTACT_PHONE))
+				.setContactMail(rec.getValue(FS_MODEL190.CONTACT_MAIL))
+				.setReceipt(rec.getValue(FS_MODEL190.RECEIPT))
+				.setReplacedReceipt(rec.getValue(FS_MODEL190.REPLACED_RECEIPT))
+				.setReceiverCountTotal(rec.getValue(FS_MODEL190.RECEIVER_COUNT_TOTAL))
+				.setReceiptTotal(rec.getValue(FS_MODEL190.RECEIPT_TOTAL))
+				.setRetentionTotal(rec.getValue(FS_MODEL190.RETENTION_TOTAL))
+				.setComments(rec.getValue(FS_MODEL190.COMMENTS))
+				.setCreationDate(rec.getValue(FS_MODEL190.CREATION_DATE))
+				.setCreationUser(rec.getValue(FS_MODEL190.CREATION_USER))
+				.setModificationDate(rec.getValue(FS_MODEL190.MODIFICATION_DATE))
+				.setModificationUser(rec.getValue(FS_MODEL190.MODIFICATION_USER));
 		}
 	}
 	
 	private static class Mod190DetailFiller implements Function<Record, Mod190Detail> {
 
 		@Override
-		public Mod190Detail apply(Record record) {
+		public Mod190Detail apply(Record rec) {
 			return new Mod190Detail()
-				.setId(record.getValue(FS_MODEL190_DETAIL.ID))
-				.setDocument(record.getValue(FS_MODEL190_DETAIL.DOCUMENT))
-				.setName(record.getValue(FS_MODEL190_DETAIL.NAME))
-				.setRepresentativeDocument(record.getValue(FS_MODEL190_DETAIL.REPRESENTATIVE_DOCUMENT))
-				.setProvince(record.getValue(FS_MODEL190_DETAIL.PROVINCE))
-				.setKey(record.getValue(FS_MODEL190_DETAIL.KEY))
-				.setSubKey(record.getValue(FS_MODEL190_DETAIL.SUBKEY))
-				.setPerception(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.PERCEPTION)))
-				.setInKindPerception(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION)))
-				.setInKindDeposit(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT)))
-				.setInKindOutputDeposit(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT)))
-				.setAccrualYear(record.getValue(FS_MODEL190_DETAIL.ACCRUAL_YEAR))
-				.setRetention(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.RETENTION)))
-				.setPerceptionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.PERCEPTION_IL)))
-				.setRetentionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.RETENTION_IL)))
-				.setOutputRetentionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL)))
-				.setInKindPerceptionIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL)))
-				.setInKindDepositIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL)))
-				.setInKindOutputDepositIL(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL)))
-				.setBirthYear(record.getValue(FS_MODEL190_DETAIL.BIRTH_YEAR))
-				.setCeutaMelilla(AonEnumUtils.getBoolean(record.getValue(FS_MODEL190_DETAIL.CEUTA_MELILLA)))
-				.setFamilySituation(record.getValue(FS_MODEL190_DETAIL.FAMILY_SITUATION))
-				.setSpouseDocument(record.getValue(FS_MODEL190_DETAIL.SPOUSE_DOCUMENT))
-				.setDisability(record.getValue(FS_MODEL190_DETAIL.DISABILITY))
-				.setContract(record.getValue(FS_MODEL190_DETAIL.CONTRACT))
-				.setWorkActivityExtension(AonEnumUtils.getBoolean(record.getValue(FS_MODEL190_DETAIL.LABOUR_PROLONGATION)))
-				.setGeographicMobility(AonEnumUtils.getBoolean(record.getValue(FS_MODEL190_DETAIL.GEOGRAPHIC_MOBILITY)))
-				.setApplicableReduction(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.APPLICABLE_REDUCTION)))
-				.setDeducibleExpense(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.DEDUCIBLE_EXPENSES)))
-				.setCompensatoryPension(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.SPOUSAL_SUPPORT)))
-				.setFoodAnnuality(AonMathUtils.round(record.getValue(FS_MODEL190_DETAIL.FOOD_ANNUITY)))
-				.setHomeLoanCommunnication(AonEnumUtils.getBoolean(record.getValue(FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION)))
-				.setLessThan3Descendent(record.getValue(FS_MODEL190_DETAIL.LESS_THAN_3_DESCENDENT))
-				.setLessThan3DescendentRatio(record.getValue(FS_MODEL190_DETAIL.LESS_THAN_3_DESCENDENT_RATIO))
-				.setOtherDescendent(record.getValue(FS_MODEL190_DETAIL.OTHER_DESCENDENT))
-				.setOtherDescendentRatio(record.getValue(FS_MODEL190_DETAIL.OTHER_DESCENDENT_RATIO))
-				.setDisabilityDescendent33(record.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_33))
-				.setDisabilityDescendent33Ratio(record.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_33_RATIO))
-				.setDisabilityDescendentDependence(record.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_DEPENDENCE))
-				.setDisabilityDescendentDependenceRatio(record.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_DEPENDENCE_RATIO))
-				.setDisabilityDescendent65(record.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_65))
-				.setDisabilityDescendent65Ratio(record.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_65_RATIO))
-				.setLessThan75Ascendant(record.getValue(FS_MODEL190_DETAIL.LESS_THAN_75_ASCENDANT))
-				.setLessThan75AscendantRatio(record.getValue(FS_MODEL190_DETAIL.LESS_THAN_75_ASCENDANT_RATIO))
-				.setAscendant(record.getValue(FS_MODEL190_DETAIL.ASCENDANT))
-				.setAscendantRatio(record.getValue(FS_MODEL190_DETAIL.ASCENDANT_RATIO))
-				.setDisabilityAscendant33(record.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_33))
-				.setDisabilityAscendant33Ratio(record.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_33_RATIO))
-				.setDisabilityAscendantDependence(record.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_DEPENDENCE))
-				.setDisabilityAscendantDependenceRatio(record.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_DEPENDENCE_RATIO))
-				.setDisabilityAscendant65(record.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_65))
-				.setDisabilityAscendant65Ratio(record.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_65_RATIO))
-				.setFirstChildCalculation(record.getValue(FS_MODEL190_DETAIL.FIRST_CHILD_CALCULATION))
-				.setSecondChildCalculation(record.getValue(FS_MODEL190_DETAIL.SECOND_CHILD_CALCULATION))
-				.setThirdChildCalculation(record.getValue(FS_MODEL190_DETAIL.THIRD_CHILD_CALCULATION))
+				.setId(rec.getValue(FS_MODEL190_DETAIL.ID))
+				.setDocument(rec.getValue(FS_MODEL190_DETAIL.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL190_DETAIL.NAME))
+				.setRepresentativeDocument(rec.getValue(FS_MODEL190_DETAIL.REPRESENTATIVE_DOCUMENT))
+				.setProvince(rec.getValue(FS_MODEL190_DETAIL.PROVINCE))
+				.setKey(rec.getValue(FS_MODEL190_DETAIL.KEY))
+				.setSubKey(rec.getValue(FS_MODEL190_DETAIL.SUBKEY))
+				.setPerception(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.PERCEPTION)))
+				.setInKindPerception(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION)))
+				.setInKindDeposit(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT)))
+				.setInKindOutputDeposit(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT)))
+				.setAccrualYear(rec.getValue(FS_MODEL190_DETAIL.ACCRUAL_YEAR))
+				.setRetention(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.RETENTION)))
+				.setPerceptionIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.PERCEPTION_IL)))
+				.setRetentionIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.RETENTION_IL)))
+				.setOutputRetentionIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL)))
+				.setInKindPerceptionIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL)))
+				.setInKindDepositIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL)))
+				.setInKindOutputDepositIL(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL)))
+				.setBirthYear(rec.getValue(FS_MODEL190_DETAIL.BIRTH_YEAR))
+				.setCeutaMelilla(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.CEUTA_MELILLA)))
+				.setFamilySituation(rec.getValue(FS_MODEL190_DETAIL.FAMILY_SITUATION))
+				.setSpouseDocument(rec.getValue(FS_MODEL190_DETAIL.SPOUSE_DOCUMENT))
+				.setDisability(rec.getValue(FS_MODEL190_DETAIL.DISABILITY))
+				.setContract(rec.getValue(FS_MODEL190_DETAIL.CONTRACT))
+				.setWorkActivityExtension(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.LABOUR_PROLONGATION)))
+				.setGeographicMobility(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.GEOGRAPHIC_MOBILITY)))
+				.setApplicableReduction(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.APPLICABLE_REDUCTION)))
+				.setDeducibleExpense(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.DEDUCIBLE_EXPENSES)))
+				.setCompensatoryPension(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.SPOUSAL_SUPPORT)))
+				.setFoodAnnuality(AonMathUtils.round(rec.getValue(FS_MODEL190_DETAIL.FOOD_ANNUITY)))
+				.setHomeLoanCommunnication(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL190_DETAIL.HOME_LOAN_COMMUNNICATION)))
+				.setLessThan3Descendent(rec.getValue(FS_MODEL190_DETAIL.LESS_THAN_3_DESCENDENT))
+				.setLessThan3DescendentRatio(rec.getValue(FS_MODEL190_DETAIL.LESS_THAN_3_DESCENDENT_RATIO))
+				.setOtherDescendent(rec.getValue(FS_MODEL190_DETAIL.OTHER_DESCENDENT))
+				.setOtherDescendentRatio(rec.getValue(FS_MODEL190_DETAIL.OTHER_DESCENDENT_RATIO))
+				.setDisabilityDescendent33(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_33))
+				.setDisabilityDescendent33Ratio(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_33_RATIO))
+				.setDisabilityDescendentDependence(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_DEPENDENCE))
+				.setDisabilityDescendentDependenceRatio(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_DEPENDENCE_RATIO))
+				.setDisabilityDescendent65(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_65))
+				.setDisabilityDescendent65Ratio(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_DESCENDENT_65_RATIO))
+				.setLessThan75Ascendant(rec.getValue(FS_MODEL190_DETAIL.LESS_THAN_75_ASCENDANT))
+				.setLessThan75AscendantRatio(rec.getValue(FS_MODEL190_DETAIL.LESS_THAN_75_ASCENDANT_RATIO))
+				.setAscendant(rec.getValue(FS_MODEL190_DETAIL.ASCENDANT))
+				.setAscendantRatio(rec.getValue(FS_MODEL190_DETAIL.ASCENDANT_RATIO))
+				.setDisabilityAscendant33(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_33))
+				.setDisabilityAscendant33Ratio(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_33_RATIO))
+				.setDisabilityAscendantDependence(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_DEPENDENCE))
+				.setDisabilityAscendantDependenceRatio(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_DEPENDENCE_RATIO))
+				.setDisabilityAscendant65(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_65))
+				.setDisabilityAscendant65Ratio(rec.getValue(FS_MODEL190_DETAIL.DISABILITY_ASCENDANT_65_RATIO))
+				.setFirstChildCalculation(rec.getValue(FS_MODEL190_DETAIL.FIRST_CHILD_CALCULATION))
+				.setSecondChildCalculation(rec.getValue(FS_MODEL190_DETAIL.SECOND_CHILD_CALCULATION))
+				.setThirdChildCalculation(rec.getValue(FS_MODEL190_DETAIL.THIRD_CHILD_CALCULATION))
 				;
 		}
 	}
