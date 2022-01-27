@@ -606,7 +606,7 @@ public class Mod190DAO {
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
 		ctx.getDslContext()
-				.select(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE, minRegistry, sumBase,quotaOp)
+				.select(INVOICE.RDOCUMENT, INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE, minRegistry, sumBase,quotaOp)
 				.from(INVOICE)
 				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
