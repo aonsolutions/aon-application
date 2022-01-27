@@ -128,6 +128,7 @@ import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.lroe.LROEInformation;
 
@@ -803,13 +804,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			if (getRectificationNumber() == 0) {
 				updateRectificationNumber(getRectificationSeries());
 			}
+			if(isTbai()) {
+				String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getRectificationSeries());
+				setRectificationNumber(number);
+			}
 			rectifier = manager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
-													getRectificationCause(), getRectificationSettleFinance());
+													getRectificationCause(), getRectificationSettleFinance(), isTbai());
 		} else {
 			rectifier = manager.rectifyReceivedInvoice(getInvoice(), getRectificationReferenceCode(), getRectificationDate(), getRectificationCause(), 
-															getRectificationSettleFinance());
+															getRectificationSettleFinance(), isTbai());
 		}
-
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());
 		onSearch(event);
@@ -946,6 +952,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	        if (getDuplicationNumber() == 0) {
 	        	updateDuplicationNumber(getDuplicationSeries());
 			}		
+	        if(isTbai()) {
+				String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getRectificationSeries());
+				setDuplicationNumber(number);
+	        }
 		}
 		this.getManagerBean().restoreNullSubPOJOs(to);
 		InvoiceImportManager manager = new InvoiceImportManager();
@@ -2018,6 +2030,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return null;
 	}
 	
+	public boolean isTbaiInvoice() {
+		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
+	}
+	
+	public String getTbaiUrl() {
+		Invoice invoice = (Invoice) this.getTo();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
+	}
+	
 	public boolean isTbai() {
 		return getTbaiConfiguration().isActive();
 	}
@@ -2055,5 +2079,14 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		User user = new User().setLogin(login);
 		return LroeData.get(domain, user, getInvoice().getId());		
+	}
+	
+	public TBAIInformation getTbaiInfo() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		User user = new User().setLogin(login);
+		return TbaiData.getInstance(getTbaiConfiguration()).get(domain, user, getInvoice().getId());		
 	}
 }

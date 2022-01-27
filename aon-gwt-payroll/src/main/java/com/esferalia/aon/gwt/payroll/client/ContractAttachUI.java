@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,29 +9,34 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -57,112 +63,85 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		String maxWidthTB();
 		String maxWidthLB();
 		String clauseTD();
+		String flex();
+		String loading();
 	}
 
-	@UiField
-	HTMLPanel messageContainer;
-	
 	@UiField
 	VerticalPanel attachmentsTable;
 
 	@UiField
 	Grid attachmentsDataTableHeader;
-	
+
+	@UiField
+	DeckPanel deckPanel;
+
 	@UiField
 	ScrollPanel attachmentsScrollPanel;
-	
+
 	@UiField
 	Grid attachmentsDataTable;
 
 	@UiField
-	HTMLPanel footerOptionsToolbar;
-	
+	HTMLPanel loadingAttachPanel;
+
 	// ------------------------------------------------------ Variables
 
+	private static final String CREATEURL = GWT.getModuleBaseURL() + "attach/create/";
+	private static final String UPDATEURL = GWT.getModuleBaseURL() + "attach/update/";
+	private static final String DOWNLOADURL = GWT.getModuleBaseURL() + "attach/download/";
+
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private EmployeeContractInfo employeeContractInfo;
-	
+
 	// ------------------------------------------------------ Constructor
-	
+
 	protected ContractAttachUI() {
 		initWidget(uiBinder.createAndBindUi(this));
-		initFooterOptionsToolbar();
 	}
-	
-	// ------------------------------------------------------ initFooterOptionsToolbar
-	
-	private void initFooterOptionsToolbar() {
-		footerOptionsToolbar.clear();
-		
-		AonTableButton newAttachmentBtn = new AonTableButton(AON.MSG.newAction(),  AON.CSS.aonIconAdd());
-		newAttachmentBtn.addClickHandler(e -> onAddNewAttachment());
-		
-		Label newAttachmentL = new Label("A\u00F1adir Documento");
-		newAttachmentL.getElement().getStyle().setMarginRight(5, Unit.PX);
-		
-		footerOptionsToolbar.add(newAttachmentBtn);
-		footerOptionsToolbar.add(newAttachmentL);
-		
-		AonTableButton pdfExportBtn = new AonTableButton("Generar Borrador Contrato",  AON.CSS.aonIconPdf());
-		pdfExportBtn.addClickHandler(e -> onExportPDF());
-		
-		Label pdfExportL = new Label("Generar Contrato");
-		
-		footerOptionsToolbar.add(pdfExportBtn);
-		footerOptionsToolbar.add(pdfExportL);
-	}
-	
-	private void onAddNewAttachment() {
-		ContractAttach contractAttach = new ContractAttach();
-		contractAttach.setDomain(employeeContractInfo.getEmployeeInfo().getDomain());
-		contractAttach.setContract(employeeContractInfo.getContractInfo().getContractId());
-		
-		createContractAttach(contractAttach,
-				s -> {
-					Map<String, String> errorMap = new HashMap<>();
-	            	errorMap.put("Documento creado", "El documento ha sido a\u00F1adido correctamente");
-	            	AonMessagePanel.showSuccess(messageContainer, errorMap);
-					
-					resetAttachDataTableStructure();
-					
-					for(ContractAttach contractAttachIn : employeeContractInfo.getContractAttachments())
-						paintContractAttach(contractAttachIn);
-					
-				}, f -> {});
-	}
-	
+
 	// ------------------------------------------------------ setEmployeeContractInfo
-	
+
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
 		this.employeeContractInfo = employeeContractInfoIn;
 		initializeView();
-		
-		for(ContractAttach contractAttach : employeeContractInfo.getContractAttachments())
-			paintContractAttach(contractAttach);
+
+		getContractAttachments(s -> {
+			if(employeeContractInfo.getContractAttachments().isEmpty())
+				showEmptyTable();
+			else {
+				showMainTable();
+				for (Attach attach : employeeContractInfo.getContractAttachments())
+					paintContractAttach(attach);
+			}
+		}, f -> {});
 	}
-	
+
 	// ------------------------------------------------------ Initialize View
-	
+
 	private void initializeView() {
 		initAttachmentsTable();
 		paintHeaderAttachmentsTable();
-		
+
 		setScrollPanelsHeight();
 		setColumnsWidth();
+
+		showLoadingPanel();
 	}
-	
+
 	private void initAttachmentsTable() {
 		attachmentsDataTableHeader.clear();
 		attachmentsDataTableHeader.resize(0, 0);
-		attachmentsDataTableHeader.resizeColumns(7);
+		attachmentsDataTableHeader.resizeColumns(6);
 		attachmentsDataTable.clear();
 		attachmentsDataTable.resize(0, 0);
-		attachmentsDataTable.resizeColumns(7);
+		attachmentsDataTable.resizeColumns(6);
 	}
-	
+
 	private void paintHeaderAttachmentsTable() {
 		int row = attachmentsDataTableHeader.insertRow(attachmentsDataTableHeader.getRowCount());
-		
+
 		Label description = new Label("DESCRIPCI\u00D3N");
 		Label type = new Label("TIPO");
 		AonTableButton confidential = new AonTableButton("Confidencial", AON.CSS.aonIconLock());
@@ -170,134 +149,255 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		Label scope = new Label("\u00C1MBITO");
 		Label file = new Label("ARCHIVO");
 		Label action = new Label("");
-		
+
 		description.addStyleName(style.headerLabelStyle());
 		type.addStyleName(style.headerLabelStyle());
 		date.addStyleName(style.headerLabelStyle());
 		scope.addStyleName(style.headerLabelStyle());
 		file.addStyleName(style.headerLabelStyle());
-		
+
 		attachmentsDataTableHeader.setWidget(row, 0, description);
 		attachmentsDataTableHeader.setWidget(row, 1, type);
 		attachmentsDataTableHeader.setWidget(row, 2, confidential);
 		attachmentsDataTableHeader.setWidget(row, 3, date);
 		attachmentsDataTableHeader.setWidget(row, 4, scope);
-		attachmentsDataTableHeader.setWidget(row, 5, file);
-		attachmentsDataTableHeader.setWidget(row, 6, action);
+		attachmentsDataTableHeader.setWidget(row, 5, action);
 	}
-	
+
 	private void setScrollPanelsHeight() {
 		attachmentsScrollPanel.setHeight((Window.getClientHeight() - 390) + "px");
 	}
-	
+
 	private void setColumnsWidth() {
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(270, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(190, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(35, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(85, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_CENTER);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(95, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setWidth(225, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setWidth(20, Unit.PX);
-		
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setWidth(150, Unit.PX);
+
 		attachmentsDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(270, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(190, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(35, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(85, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(95, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(225, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(6).getStyle().setWidth(20, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(150, Unit.PX);
+	}
+
+	private void showLoadingPanel() {
+		AonToolbarSmallButton loadingBtn = new AonToolbarSmallButton("Cargando Documentos", AON.CSS.aonIconRenew());
+		loadingBtn.addStyleName(style.loading());
+		Label loadingLabel = new Label("Cargando documentos ...");
+
+		loadingAttachPanel.clear();
+		loadingAttachPanel.add(loadingBtn);
+		loadingAttachPanel.add(loadingLabel);
+
+		deckPanel.showWidget(1);
+	}
+
+	private void showMainTable() {
+		deckPanel.showWidget(0);
 	}
 	
-	// ------------------------------------------------------ paintContractAttach
-	
-	private void paintContractAttach(ContractAttach contractAttach) {
+	private void showEmptyTable() {
+		deckPanel.showWidget(2);
+	}
+
+	// ------------------------------------------------------ PaintContractAttach
+
+	private void paintContractAttach(Attach attach) {
+		
+		// Hiddens
+		Hidden userLoginHidden = new Hidden("login", Wnd.getCurrentUser());
+		Hidden currentDomainHidden = new Hidden("domain", Wnd.getCurrentDomainNameURL());
+		Hidden tokenHidden = new Hidden("token", Wnd.getToken());
+		Hidden attachIdHidden = new Hidden("attachId", attach.getId() + "");
+		Hidden contractIdHidden = new Hidden("contractId", employeeContractInfo.getContractInfo().getContractId() + "");
+		Hidden descriptionHidden = new Hidden("description", attach.getDescription());
+		Hidden typeHidden = new Hidden("type", attach.getType() + "");
+		Hidden securityHidden = new Hidden("security", attach.getConfidential() + "");
+		Hidden dateHidden = new Hidden("date", null == attach.getDate() ? "" : formatDate.format(attach.getDate()));
+		Hidden scopeHidden = new Hidden("scope", attach.getScope() + "");
+		Hidden mimeTypeHidden = new Hidden("mimeType", null == attach.getMimeType() ? "" : attach.getMimeType().getExtension());
+		
+		// Create Form Panel
+		FormPanel form = new FormPanel();
+		form.setAction(null == attach.getId() ? CREATEURL : UPDATEURL);
+		form.setEncoding(FormPanel.ENCODING_MULTIPART);
+		form.setMethod(FormPanel.METHOD_POST);
+		form.addSubmitCompleteHandler(e -> {
+			try {
+				String jsonStr = e.getResults().split(">")[1].split("<")[0];
+				JSONValue json = JSONParser.parseStrict(jsonStr);
+				parseJSON(json.isObject());
+			} catch (NullPointerException | IllegalArgumentException err){
+				showError("Formato", "Error formateando la informaci\u00f3n");
+			}
+		});
+
 		// Insert new row
 		int row = this.attachmentsDataTable.insertRow(attachmentsDataTable.getRowCount());
 		
 		// Description TextBox
 		TextBox descriptionTB = new TextBox();
-		descriptionTB.addValueChangeHandler(e -> contractAttach.setDescription(e.getValue()));
-		
+		descriptionTB.setValue(attach.getDescription());
+		descriptionTB.addValueChangeHandler(e -> descriptionHidden.setValue(e.getValue()));
+
 		// Type ListBox
-		ListBox typeLB = new ListBox();
-		initTypeListBox(typeLB);
-		typeLB.addChangeHandler(e -> contractAttach.setType(Byte.parseByte(typeLB.getSelectedValue())));
+		ListBox typeLB = initTypeListBox();
+		setSelectedValueLB(typeLB, attach.getType() + "");
+		typeLB.addChangeHandler(e -> typeHidden.setValue(typeLB.getSelectedValue()));
 		
 		// Confidential CheckBox
-		Button confidentialB = new Button();
-		getEnableDisableButton(confidentialB, false);
+		String securityTitle = attach.getConfidential() != null && Boolean.TRUE.equals(attach.getConfidential()) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
+		String securityIcon = attach.getConfidential() != null && Boolean.TRUE.equals(attach.getConfidential()) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
+		AonTableButton confidentialB = new AonTableButton(securityTitle, securityIcon);
 		confidentialB.addClickHandler(e -> {
 			Boolean oldValue = isActiveToggleButton(confidentialB);
 			Boolean value = !oldValue;
 			getEnableDisableButton(confidentialB, value);
-			contractAttach.setSecurityLevel(Boolean.TRUE.equals(value) ? (byte)1 : (byte)0);
+			securityHidden.setValue(Boolean.TRUE.equals(value) ? "true" : "false");
+			
 		});
-		
+
 		// Attach DateBoxEx
 		DateBoxEx dateBox = new DateBoxEx();
-		dateBox.addValueChangeHandler(e -> contractAttach.setAttachDate(e.getValue()));
+		dateBox.setValue(attach.getDate());
+		dateBox.addValueChangeHandler(e -> dateHidden.setValue(null == e.getValue() ? "" : formatDate.format(e.getValue())));
 		
 		// Scope ListBox
 		ListBox scopeLB = new ListBox();
 		initScopeListBox(scopeLB);
-		scopeLB.addChangeHandler(e -> contractAttach.setScope(Integer.parseInt(scopeLB.getSelectedValue())));
+		scopeLB.addChangeHandler(e -> scopeHidden.setValue(scopeLB.getSelectedValue()));
+
+		// FileUpload
+		FileUpload fileUpload = new FileUpload();
+		fileUpload.setName("uploader");
+		fileUpload.getElement().setPropertyString("multiple", "multiple");
+		fileUpload.getElement().getStyle().setDisplay(Display.NONE);
+
+		fileUpload.addChangeHandler(e -> {
+			String filename = getFileName(fileUpload.getFilename());
+			String fileExt = getFileExtension(fileUpload.getFilename());
+
+			if (filename.length() == 0)
+				Window.alert("Cant upload file - Try again");
+			else {
+				mimeTypeHidden.setValue(fileExt);
+				descriptionHidden.setValue(filename);
+				descriptionTB.setValue(filename);
+
+				final int size = getFileSize(fileUpload.getElement());
+				if (size > 15000000)
+					showError("Tama\u00F1o fichero", "El archivo adjunto no puede ser superior a 10 MB");
+
+			}
+		});
 		
-		// Upload & Download FormPanel
-		Widget formPanel = createFormPanel(contractAttach);
-		
+		// Attach File Button
+		AonTableButton fileAttach = new AonTableButton("Subir Documento", AON.CSS.aonIconAttach());
+		fileAttach.addClickHandler(e -> fileUpload.click());
+		fileAttach.setVisible(null == attach.getId());
+
+		// Attach Download Button
+		AonTableButton downloadAttach = new AonTableButton("Descargar Documento", AON.CSS.aonIconDownload());
+		downloadAttach.addClickHandler(e -> {
+			form.setAction(DOWNLOADURL);
+			form.submit();
+		});
+		downloadAttach.setVisible(null != attach.getId());
+
 		// Attach Delete Button
-		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
-		deleteBTN.getElement().getStyle().setMarginTop(5, Unit.PX);
-		deleteBTN.addClickHandler(e ->
-			deleteContractAttach(contractAttach, 
-					s -> {
-						Map<String, String> errorMap = new HashMap<>();
-		            	errorMap.put("Borrado", "El documento ha sido eliminado correctamente");
-		            	AonMessagePanel.showSuccess(messageContainer, errorMap);
-						resetAttachDataTableStructure();
-						for(ContractAttach contractAttachIn : employeeContractInfo.getContractAttachments())
-							paintContractAttach(contractAttachIn);
-					}, f -> {}));
+		AonTableButton deleteAttach = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
+		deleteAttach.addClickHandler(e ->  {
+			AonDialog dialog = new AonDialog("BORRADO DOCUMENTO", new Label("\u00bfDesea eliminar el documento " + (AonStringUtils.isBlank(attach.getDescription()) ? "" : attach.getDescription()) + "?"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here, only hide dialog
+				}
+				
+				@Override
+				public void onAccept() {
+					deleteContractAttach(attach.getId(), row,
+						s -> {
+							showSuccess("Borrado", "El documento ha sido eliminado correctamente");
+							refreshPage();
+						}, f -> {});
+				}
+			});
+		
+		});
+
+		// Attach Save Button
+		AonTableButton saveAttach = new AonTableButton("Guardar", AON.CSS.aonIconSave());
+		saveAttach.addClickHandler(e -> form.submit());
 		
 		// Add Styles
 		descriptionTB.addStyleName(style.maxWidthTB());
 		typeLB.addStyleName(style.maxWidthLB());
 		scopeLB.addStyleName(style.maxWidthLB());
+
+		// Buttons Panel
+		HTMLPanel buttonsPanel = new HTMLPanel("");
+		buttonsPanel.addStyleName(style.flex());
+
+		// Add all to FlowPanel to add to FormPanel
+		HTMLPanel flowFormPanel = new HTMLPanel("");
+		flowFormPanel.add(userLoginHidden);
+		flowFormPanel.add(currentDomainHidden);
+		flowFormPanel.add(tokenHidden);
+		flowFormPanel.add(contractIdHidden);
+		flowFormPanel.add(attachIdHidden);
+		flowFormPanel.add(descriptionHidden);
+		flowFormPanel.add(typeHidden);
+		flowFormPanel.add(mimeTypeHidden);
+		flowFormPanel.add(securityHidden);
+		flowFormPanel.add(dateHidden);
+		flowFormPanel.add(scopeHidden);
+		flowFormPanel.add(fileUpload);
+		form.add(flowFormPanel);
+		buttonsPanel.add(fileAttach);
+		buttonsPanel.add(downloadAttach);
+		buttonsPanel.add(deleteAttach);
+		buttonsPanel.add(saveAttach);
+		buttonsPanel.add(form);
 		
-		// If id != null exists then fill the fields
-		if(null != contractAttach.getId()) {
-			descriptionTB.setText(contractAttach.getDescription());
-			setSelectedValueLB(typeLB, contractAttach.getType().toString());
-			getEnableDisableButton(confidentialB, contractAttach.getSecurityLevel() == (byte)1);
-			dateBox.setValue(contractAttach.getAttachDate());
-			setSelectedValueLB(scopeLB, contractAttach.getScope().toString());
-		}
-		
-		// It null == contract ? global_attachs cant be deleted
-		if(null == contractAttach.getContract()) {
-			descriptionTB.setReadOnly(true);
-			typeLB.setEnabled(false);
-			confidentialB.setEnabled(false);
-			dateBox.setEnabled(false);
-			scopeLB.setEnabled(false);
-		}
-		
-		//Add to table
+		// Add to table
 		attachmentsDataTable.setWidget(row, 0, descriptionTB);
 		attachmentsDataTable.setWidget(row, 1, typeLB);
 		attachmentsDataTable.setWidget(row, 2, confidentialB);
+		attachmentsDataTable.getCellFormatter().setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_CENTER);
 		attachmentsDataTable.setWidget(row, 3, dateBox);
 		attachmentsDataTable.setWidget(row, 4, scopeLB);
-		attachmentsDataTable.setWidget(row, 5, formPanel);
-		if(null != contractAttach.getContract())
-			attachmentsDataTable.setWidget(row, 6, deleteBTN);
-		else
-			attachmentsDataTable.setWidget(row, 6, new Label());
-	}	
-	
+		attachmentsDataTable.setWidget(row, 5, buttonsPanel);
+		attachmentsDataTable.getCellFormatter().setHorizontalAlignment(row, 5, HasHorizontalAlignment.ALIGN_RIGHT);
+
+	}
+
 	// ------------------------------------------------------ Auxiliar Methods
+
+	private void parseJSON(JSONObject json) {
+		JSONValue type = json.get("type");
+		if(null != type && AonStringUtils.isNotBlank(type.toString())) {
+			if(AonStringUtils.containsIgnoreCase(type.toString(), "create")) {
+				showSuccess("Creaci\u00f3n documento", "El documento se ha generado correctamente");
+				refreshPage();
+			} else if(AonStringUtils.containsIgnoreCase(type.toString(), "update")) {
+				showSuccess("Actualizaci\u00f3n documento", "El documento se ha actualizado correctamente");
+				refreshPage();
+			} else {
+				JSONValue message = json.get("message");
+				showError("Certificado", message.toString());
+			}
+		}
+	}
 	
-	private void initTypeListBox(ListBox typeLB) {
+	private ListBox initTypeListBox() {
+		ListBox typeLB = new ListBox();
 		typeLB.addItem("-", "-1");
 		typeLB.addItem("Borrador del contrato", "0");
 		typeLB.addItem("Contrato laboral", "1");
@@ -311,227 +411,87 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("Borrador del certificado de empresa", "22");
 		typeLB.addItem("TA", "98");
 		typeLB.addItem("IDC", "99");
+		return typeLB;
 	}
-	
+
 	private void initScopeListBox(ListBox scopeLB) {
 		scopeLB.clear();
 		scopeLB.addItem("-", "-1");
-		for(Entry<String, String> entry : employeeContractInfo.getScopeMap().entrySet()) {
+		for (Entry<String, String> entry : employeeContractInfo.getScopeMap().entrySet()) {
 			scopeLB.addItem(entry.getKey(), entry.getValue());
 		}
 	}
 
-	private Widget createFormPanel(ContractAttach contractAttach) {
-		HorizontalPanel mainFlowPanel = new HorizontalPanel();
-		mainFlowPanel.getElement().getStyle().setPaddingLeft(10, Unit.PX);
-		mainFlowPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		
-		Label fileNameL = new Label();
-		fileNameL.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		
-		//Create formPanel to UploadFiles
-		FlowPanel flowPanel = new FlowPanel();
-		
-		FormPanel formPanel = new FormPanel();
-		formPanel.setAction(GWT.getModuleBaseURL()+ "attach/");
-		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
-		formPanel.setMethod(FormPanel.METHOD_POST);
-		
-		Hidden attachId = new Hidden("attachId", contractAttach.getId().toString());
-		Hidden extension = new Hidden("extension", "");
-		Hidden fileName = new Hidden("filename", "");
-		
-		FileUpload fileU = new FileUpload();
-		fileU.setName("uploader");
-		fileU.getElement().setPropertyString("multiple", "multiple");
-		fileU.getElement().setPropertyString("accept", ".pdf|image/*");
-		fileU.getElement().getStyle().setDisplay(Display.NONE);
-		fileU.addChangeHandler(e -> {
-			String filename = getFileName(fileU.getFilename());
-			String fileExt = getFileExtension(fileU.getFilename());
-
-            if(filename.length() == 0) {
-            	Map<String, String> errorMap = new HashMap<>();
-            	errorMap.put("Carga fichero", "El archivo adjunto no se ha podido subir");
-            	AonMessagePanel.showError(messageContainer, errorMap);
-            } else {
-            	contractAttach.setMimeType(getMimeTypeToByte(fileExt));
-            	contractAttach.setDescription(filename);
-            	extension.setValue(fileExt);
-            	fileName.setValue(filename);
-            	fileNameL.setText(filename);
-            	
-            	final int size = getFileSize(fileU.getElement());
-            	if(size < 15000000)
-            		formPanel.submit();
-            	else {
-            		fileNameL.setText("");
-            		Map<String, String> errorMap = new HashMap<>();
-                	errorMap.put("Tama\u00F1o fichero", "El archivo adjunto no puede ser superior a 10 MB");
-                	AonMessagePanel.showError(messageContainer, errorMap);
-            	}
-            }
-		});
-		
-		formPanel.addSubmitCompleteHandler(e -> {
-	        if(e.getResults().length() == 0) {
-	        	Map<String, String> errorMap = new HashMap<>();
-            	errorMap.put("Error desconocido", "El archivo adjunto no se ha podido subir");
-            	AonMessagePanel.showError(messageContainer, errorMap);
-            } else {
-            	getContractAttachments( 
-    					s -> {
-    						resetAttachDataTableStructure();
-    						for(ContractAttach contractAttachIn : employeeContractInfo.getContractAttachments())
-    							paintContractAttach(contractAttachIn);
-    					}, f -> {});
-            }
-	    });
-		
-		AonTableButton fileButton = new AonTableButton("Subir Documento", AON.CSS.aonIconAttach());
-		fileButton.addClickHandler(e -> fileU.click());
-	
-		flowPanel.add(attachId);
-		flowPanel.add(extension);
-		flowPanel.add(fileName);
-		flowPanel.add(fileButton);
-		flowPanel.add(fileU);
-		flowPanel.add(fileNameL);
-		
-		formPanel.add(flowPanel);
-			
-		mainFlowPanel.add(formPanel);
-		if(null != contractAttach.getData()) {
-			mainFlowPanel.add(getDownloadButton(contractAttach));
-			fileNameL.setText(contractAttach.getDescription());
-		}
-		mainFlowPanel.add(fileNameL);
-		return mainFlowPanel;
-	}
-
-	private Button getDownloadButton(ContractAttach contractAttach) {
-		AonTableButton downloadBtn = new AonTableButton("Descargar Documento", AON.CSS.aonIconDownload());
-		downloadBtn.addClickHandler(e -> {
-			String fileDownloadURL = GWT.getModuleBaseURL()+ "attach/"
-		            + "?attachId=" + contractAttach.getId() + "&extension=" + parseMimeTypeToString(contractAttach.getMimeType())
-		            + "$filename=" + contractAttach.getDescription();
-			
-			Window.open(fileDownloadURL, "_blank", null);
-		});
-		
-		return downloadBtn;
-	}
-	
 	private void setSelectedValueLB(ListBox lBox, String str) {
-	    String text = str;
-	    int indexToFind = 0;
-	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (lBox.getValue(i).equals(text)) {
-	            indexToFind = i;
-	            break;
-	        }
-	    }
-	    lBox.setSelectedIndex(indexToFind);
+		String text = str;
+		int indexToFind = 0;
+		for (int i = 0; i < lBox.getItemCount(); i++) {
+			if (lBox.getValue(i).equals(text)) {
+				indexToFind = i;
+				break;
+			}
+		}
+		lBox.setSelectedIndex(indexToFind);
 	}
-	
+
 	// ------------------------------------------------------ FileUpload.Methods
 
 	private String getFileName(String filename) {
 		String[] splits = filename.split("\\\\");
-		return splits[splits.length-1].contains("\\.") ? splits[splits.length-1].split("\\.")[0] : splits[splits.length-1];
+		return splits[splits.length - 1].contains("\\.") ? splits[splits.length - 1].split("\\.")[0]
+				: splits[splits.length - 1];
 	}
-	
+
 	private String getFileExtension(String filename) {
 		String[] splits = filename.split("\\.");
-		return splits[splits.length-1];
+		return splits[splits.length - 1];
 	}
-	
-	private String parseMimeTypeToString(Byte mimeType) {
-		switch (mimeType) {
-		case (byte)0:
-			return "jpg";
-		case (byte)6:
-			return "png";
-		case (byte)22:
-			return "pdf";
-		default:
-			return "pdf";
-		}
-	}
-	
-	private byte getMimeTypeToByte(String extension) {
-		if(extension.equals("pdf"))
-			return (byte)22;
-		else if(extension.equals("png")) {
-			return (byte)6;
-		} else if(extension.equals("jpg") || extension.equals("jpeg")) {
-			return (byte)0;
-		} else {
-			return (byte)22;
-		}
-	}
-	
+
 	private native int getFileSize(final Element data) /*-{
-    	return data.files[0].size;
+		return data.files[0].size;
 	}-*/;
-	
+
 	// ------------------------------------------------------ ToogleButton.Methods
-	
+
 	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
-		button.removeStyleName(AON.AON_NO_MARGIN);
-		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
-		
-		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		button.setStyleName(AON.AON_NO_MARGIN, true);
-		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		button.removeStyleName(disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock());
+		button.addStyleName(!disabled ? AON.CSS.aonIconUnLock() : AON.CSS.aonIconLock() );
+		button.setTitle(!disabled ? "P\u00fablico: Visible para todos los usuarios" : "Privado: S\u00f3lo visible para usuarios de la empresa");
 	}
-	
+
 	private boolean isActiveToggleButton(Button button) {
-		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
-	}
-	
-	// ------------------------------------------------------ ContractAttach.CRUD Methods
-	
-	private void createContractAttach(ContractAttach contractAttach, Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
-		impl.createContractAttach(contractAttach, new AsyncCallback<List<ContractAttach>>() {
-			
-			@Override
-			public void onSuccess(List<ContractAttach> contractAttachments) {
-				employeeContractInfo.setContractAttachments(contractAttachments);
-				success.accept(contractAttachments);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-		
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.CSS.aonIconLock());
 	}
 
-	private void deleteContractAttach(ContractAttach contractAttach, Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
-		impl.deleteContractAttach(contractAttach, new AsyncCallback<List<ContractAttach>>() {
-			
-			@Override
-			public void onSuccess(List<ContractAttach> contractAttachments) {
-				employeeContractInfo.setContractAttachments(contractAttachments);
-				success.accept(contractAttachments);
-			}
+	// ------------------------------------------------------ ContractAttach.CRUD
+	// Methods
 
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
+	private void deleteContractAttach(Integer attachId, Integer row, Consumer<Void> success, Consumer<Throwable> failure) {
+		if(null == attachId) {
+			attachmentsDataTable.removeRow(row);
+			success.accept(null);
+		} else {		
+			impl.deleteContractAttach(attachId, new AsyncCallback<Void>() {
 	
-	private void getContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+				@Override
+				public void onSuccess(Void result) {
+					success.accept(result);
+				}
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					failure.accept(caught);
+				}
+			});
+		}
+	}
+
+	private void getContractAttachments(Consumer<List<Attach>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractInfo.getContractInfo().getContractId();
-		impl.getContractAttachments(contractId, new AsyncCallback<List<ContractAttach>>() {
-			
+		impl.getContractAttachments(contractId, new AsyncCallback<List<Attach>>() {
+
 			@Override
-			public void onSuccess(List<ContractAttach> contractAttachments) {
+			public void onSuccess(List<Attach> contractAttachments) {
 				employeeContractInfo.setContractAttachments(contractAttachments);
 				success.accept(contractAttachments);
 			}
@@ -541,30 +501,67 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				failure.accept(caught);
 			}
 		});
+	}
+
+	// ------------------------------------------------------ Toolbar methods
+
+	public void newAttachment() {
+		showMainTable();
+		paintContractAttach(new Attach().setDate(new Date()));
+	}
+
+	public void exportContract() {
+		onExportPDF(e -> {
+			showSuccess("Contrato", "El contrato se ha generado correctamente");
+			refreshPage();
+		}, f -> showError("Contrato", f.getMessage()));
+	}
+
+	// ------------------------------------------------------ Messages Methods
+
+	private void showSuccess(String title, String description) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, description);
+		showSuccess(successMap);
+	}
+
+	private void showError(String title, String description) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, description);
+		showError(errorMap);
 	}
 
 	// ------------------------------------------------------ Abstract Methods
 
-	protected abstract void onExportPDF();
-	
-	// ------------------------------------------------------ Abstract Methods.Callback
-	
-	public void setContractAttachments(List<ContractAttach> contractAttachments) {
-		employeeContractInfo.setContractAttachments(contractAttachments);
-	}
-	
+	protected abstract void onExportPDF(Consumer<String> consumer, Consumer<Throwable> failure);
+
+	protected abstract void showError(Map<String, String> errorMap);
+
+	protected abstract void showSuccess(Map<String, String> errorMap);
+
+	// ------------------------------------------------------ Refresh table
+
 	public void refreshPage() {
 		resetAttachDataTableStructure();
-		
-		for(ContractAttach contractAttachIn : employeeContractInfo.getContractAttachments())
-			paintContractAttach(contractAttachIn);
+		showLoadingPanel();
+		getContractAttachments(s -> {
+			if(employeeContractInfo.getContractAttachments().isEmpty())
+				showEmptyTable();
+			else {
+				showMainTable();
+				for (Attach attach : employeeContractInfo.getContractAttachments())
+					paintContractAttach(attach);
+			}
+		}, f -> {});
+
 	}
-	
+
 	private void resetAttachDataTableStructure() {
 		attachmentsDataTable.clear();
 		attachmentsDataTable.resize(0, 0);
 		attachmentsDataTable.resizeColumns(7);
-		
+
 		setColumnsWidth();
 	}
+
 }

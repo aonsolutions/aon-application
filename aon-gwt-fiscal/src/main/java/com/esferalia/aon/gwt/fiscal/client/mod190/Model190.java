@@ -91,13 +91,16 @@ public class Model190 extends MainEntryPoint {
 		}
 		@Override
 		public void showInfoPanel(String htmlText) {
-			openFootPanelIfNeeded();
-			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
-			breakdownPanel.scrollToTop();
+			showInfoPanel( new HTMLPanel(htmlText) );
 		}
 		
+		public void showInfoPanel(Widget widget) {
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
+
 		@Override
 		public void cleanInfoPanel() {
 			Widget w = breakdownPanel.getWidget();

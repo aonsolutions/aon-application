@@ -31,6 +31,7 @@ public class IT implements Serializable {
 	private Byte maternityReason;
 	private Double baseReg;
 	private Double partialityCoef;
+	private Integer quoteDays;
 	
 	private String comunicationDate;
 	private Boolean isComunicate;
@@ -194,6 +195,14 @@ public class IT implements Serializable {
 	
 	public Double getRegulationBase() {
 		return this.baseReg;
+	}
+	
+	public void setQuoteDays(Integer quoteDays) {
+		this.quoteDays = quoteDays;
+	}
+	
+	public Integer getQuoteDays() {
+		return this.quoteDays;
 	}
 	
 	public void setPartialityCoef(Double partialityCoef) {

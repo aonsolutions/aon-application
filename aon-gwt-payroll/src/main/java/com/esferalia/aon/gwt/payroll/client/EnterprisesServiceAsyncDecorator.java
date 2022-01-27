@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -51,6 +52,7 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -549,9 +551,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getContractAttachments(String currentDomainName, Integer contractId, AsyncCallback<List<ContractAttach>> callback) {
+	public void getContractAttachments(String currentDomainName, String login, Integer contractId, AsyncCallback<List<Attach>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getContractAttachments(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+		enterprisesServiceAsync.getContractAttachments(currentDomainName, login, contractId, new AsyncCallbackWrapper<List<Attach>>(callback));
 	}
 	
 	@Override
@@ -567,9 +569,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void deleteContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> callback) {
+	public void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.deleteContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+		enterprisesServiceAsync.deleteContractAttach(currentDomainName, login, attachId, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
@@ -906,6 +908,13 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getEmployeeSSBonuses(domain, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+	}
+
+	@Override
+	public void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part,
+			AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.communicateITPart(currentDomainName, currentUser, itEmployee, it, part, asyncCallback);
 	}
 	
 }

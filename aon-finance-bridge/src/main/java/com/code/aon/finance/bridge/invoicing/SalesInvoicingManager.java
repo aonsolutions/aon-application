@@ -61,7 +61,7 @@ public class SalesInvoicingManager {
 		}
 	}
 	
-	public Invoice invoice(Sales sales, String series, int number, Date issueDate) throws ManagerBeanException {
+	public Invoice invoice(Sales sales, String series, int number, Date issueDate, boolean tbai) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -71,7 +71,7 @@ public class SalesInvoicingManager {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			Invoice invoice = createInvoice(sales, series, number, issueDate);
+			Invoice invoice = createInvoice(sales, series, number, issueDate, tbai);
 			createInvoiceDetails(invoice, sales);
 			double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
 			if (invoiceTotal != 0) {
@@ -103,11 +103,11 @@ public class SalesInvoicingManager {
 		}
 	}
 
-	private Invoice createInvoice(Sales sales, String series, int number, Date issueDate) throws ManagerBeanException {
+	private Invoice createInvoice(Sales sales, String series, int number, Date issueDate, boolean tbai) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
 		invoice.setProject(sales.getProject());
 		invoice.setSeries(StringUtils.isNotBlank(series) ? series : null);
-		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
+		invoice.setNumber((number > 0 || tbai) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(sales.getCustomer().getRegistry());
 		invoice.setRegistryDocument(sales.getCustomer().getRegistry().getDocument());
 		invoice.setRegistryDocumentType(sales.getCustomer().getRegistry().getDocumentType());

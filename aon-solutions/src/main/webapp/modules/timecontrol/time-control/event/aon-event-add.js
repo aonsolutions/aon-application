@@ -3,7 +3,7 @@ import { setValueName, serializeForm, isEmptyObject } from "../../../../services
 import { deleteTimeControl, getLocation, getStatus, saveTimeControlDetail, getTimeControlHistoric } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from "../../../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import { createFormEvent, createCardEvent } from "../../createComponent.js";
 import { createToolbar } from "../../../notification/createComponent.js";
 import { AonMessenger } from "../../../messenger/aon-messenger.js";
@@ -13,6 +13,7 @@ import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import { AonMap } from "../../../../components/aon-map.js";
 import * as ACTION from '../../../actions.js';
 import { setStyles } from "../../../../services/utilsComponents.js";
+import { AonBasicTable } from "../../../../components/aon-basic-table.js";
 
 
 export class AonEventAdd extends AonElement {
@@ -128,7 +129,7 @@ export class AonEventAdd extends AonElement {
           id: 'historic',
           name: MSG.HISTORIC,
           icon: MATERIAL_ICONS.ASSIGNMENT
-        }, () => this.historic());
+        }, () => this.paintHistoric());
         
         toolbarEl.addButton2(ACTION.DELETE, () => this.delete());
       }
@@ -246,55 +247,101 @@ export class AonEventAdd extends AonElement {
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
   }
 
-  async historic(){
+  async paintHistoric(){
     try {
-      const resp = await getTimeControlHistoric({id:this.data.id});
-      const r = resp.map((tm,idx)=> {
-        let obj = {};
-        if(idx===0){
-          if(tm.creation_date){
-            obj = { creation_user: tm.creation_user, creation_date: AonDateUtils.setDateTimestamp(new Date(tm.creation_date)) };
-
-            if(tm.modification_user) obj.last_modification_user = tm.modification_user;
-            if(tm.modification_date) obj.last_modification_date = AonDateUtils.setDateTimestamp(new Date(tm.modification_date));
-          }
-        } else {
-          obj = {
-            registration_date:  AonDateUtils.setDateTimestamp(new Date(tm.date)),
-            creation_user: tm.creation_user,
-            creation_date: AonDateUtils.setDateTimestamp(new Date(tm.creation_date)),
-            location: tm.location && tm.location.id ? tm.location.name : null,
-            status: getStatus(tm.status).name
-          }
-        }
-        return obj;
-      })
+      const historics = await this.getHistoric();
       let d = this.getApplication().getDialog();
       if(d){
-          const pre  = setStyles(document.createElement("pre"),{
-            backgroundColor: "ghostwhite",
-            border: "1px solid silver",
-            padding: "10px 20px",
-            margin: "20px",
-            whiteSpace: "pre-wrap"
-          });
-     
-          const code = document.createElement("code");
-          code.style.color = "brown";
-          pre.appendChild(code); 
-          code.textContent = JSON.stringify(r, undefined, 2);
+          const div = this.createElement("div");
+          const length = historics.length;
 
           d.clear();
           if (!this.isMobile()) 
-              d.width = '550px';
+              d.width = '70%';
           d.setTitle(MSG.HISTORIC);
-          d.setContent(pre);
+          d.setContent(div);
           d.addAcceptAction(() => {});
           d.open();
+
+          let table = new AonBasicTable();
+          div.appendChild(table);
+
+          if(length > 0 && historics[0] && historics[0].last_modification_date){
+            table.addRow();
+            table.addCell(this.lastModification(historics[0]), 5);
+          }
+
+          table.addRow();
+          table.addCell(this.creationHeader(MSG.USER));
+          table.addCell(this.creationHeader(MSG.LAST_MODIFICATION));
+          table.addCell(this.creationHeader("F. Registro anterior"));
+          table.addCell(this.creationHeader(MSG.LOCATION));
+          table.addCell(this.creationHeader(MSG.STATUS));
+          console.table(historics);
+
+          for(let i = length>1 ? 1 : 0; i < length; i++){
+            const historic = historics[i];
+            table.addRow();
+            table.addCell(this.creationTd(historic.creation_user));
+            table.addCell(this.creationTd(historic.creation_date));
+            table.addCell(this.creationTd(historic.registration_date));
+            table.addCell(this.creationTd(historic.location));
+            table.addCell(this.creationTd(historic.status));
+          }
       }
     } catch (error) {
       console.log(error);
     }
+  }
+
+  creationHeader(text){
+    return this.creationEle(text);
+  }
+
+  creationTd(text){
+    const td = this.creationEle(text);
+    td.style.fontWeight = 400;
+    return td;
+  }
+
+  creationEle(text){
+    const elem = setStyles(this.createElement(TAG.DIV),{
+      color: "#5f6368",
+      fontWeight: 500
+    });
+    elem.innerHTML = text ? text : "";
+    return elem;
+  }
+
+  lastModification(historic){
+    let div = this.creationEle(`<span style="color:#5f6368; font-weight: 500;">${MSG.LAST_MODIFICATION}</span> (${historic.last_modification_user}) ${historic.last_modification_date}`);
+    div.style.marginBottom="7px";
+    div.style.fontWeight=400;
+    return div;
+  }
+
+  async getHistoric(){
+    const resp = await getTimeControlHistoric({id:this.data.id});
+    return resp.map((tm,idx)=> {
+      let obj = {};
+      if(idx===0){
+        if(tm.creation_date){
+          obj = { creation_user: tm.creation_user, creation_date: AonDateUtils.setDateTimestamp(new Date(tm.creation_date)) };
+
+          if(tm.modification_user) obj.last_modification_user = tm.modification_user;
+          if(tm.modification_date) obj.last_modification_date = AonDateUtils.setDateTimestamp(new Date(tm.modification_date));
+        }
+      } else {
+        obj = {
+          registration_date:  AonDateUtils.setDateTimestamp(new Date(tm.date)),
+          creation_user: tm.creation_user,
+          creation_date: AonDateUtils.setDateTimestamp(new Date(tm.creation_date)),
+          location: tm.location && tm.location.id ? tm.location.name : null,
+          status: getStatus(tm.status).name
+        }
+      }
+      return obj;
+    });
   }
 
   goMessenger(){

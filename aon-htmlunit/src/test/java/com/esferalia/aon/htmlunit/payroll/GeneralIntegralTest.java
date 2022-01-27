@@ -420,8 +420,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		);
 
 		// + CONCEPTO ANTIGUEDAD, DESCRIPCION ?
-		open("concepto_antiguedad,_descripcion");
-		select("concepto_antiguedad,_descripcion-draft");
+		draft("CONCEPTO ANTIGUEDAD, DESCRIPCION");
+		//open("concepto_antiguedad,_descripcion");
+		//select("concepto_antiguedad,_descripcion-draft");
 		wait4Text("employeeNameLabel", "CONCEPTO ANTIGUEDAD, DESCRIPCION");
 	}
 
@@ -1558,6 +1559,21 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	
+	@Test
+	public void TestSearch() throws Exception {
+		
+		if (isDisplayed("constantes,_i"))
+			close("sonny");
+		
+		type("searchTextBox", "CONSTANTES");
+		
+		wait4Id("sonny");
+		wait(10000);
+		wait4Id("constantes,_i");
+		assertDisplay("constantes,_i", true);
+		
+	}
+
 	@Test
 	public void TestPercepcionesDelSistema() throws Exception {
 

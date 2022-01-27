@@ -1230,6 +1230,20 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return draftObject;
 	}
 
+	protected EmployeeDraftObject newEmployeeDraftObject(Employee employee) {
+		TreeItem employeeItem = 
+		getTreeItem(tree, t ->  
+		( t.getUserObject() instanceof SalaryDraftObject )
+		&& ((SalaryDraftObject) t.getUserObject() ).getEmployee() == employee
+		);
+		TreeItem workplaceItem = employeeItem.getParentItem();
+		while ( !( workplaceItem.getUserObject() instanceof Workplace ) )
+			workplaceItem = workplaceItem.getParentItem();
+		
+		Workplace workplace = ( Workplace ) workplaceItem.getUserObject();
+		return new EmployeeDraftObject(workplace, employee);
+	}
+
 	// ------------------------------------------------------------------------
 	private TreeItem loadWorkplace(Enterprise enterprise, final TreeItem workplaceItem, Workplace workplace) {
 
@@ -1796,6 +1810,19 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		employeeItem.ensureDebugId(getId(employee));
 
 		addWorkplaceEmployeeItems(workplaceItem, employeeItem, employee, employeeDraftObject);
+		
+		tryNewAONTheme(employeeItem, employeeDraftObject);
+	}
+
+	protected void tryNewAONTheme(TreeItem employeeItem, EmployeeDraftObject employeeDraftObject) {
+		if ( !Wnd.isNewAONTheme() )
+			return;
+		SalaryDraftObject salaryDraftObject = getUserObject(employeeDraftObject, SalaryDraftObject.class);
+		TreeItem salaryDraftItem = getTreeItem(salaryDraftObject);
+		employeeItem.setUserObject(salaryDraftObject);
+		salaryDraftItem.setUserObject(employeeDraftObject);
+		salaryDraftItem.setHTML(materialIconItemHTML("edit", "Contrato"));
+		salaryDraftItem.ensureDebugId(getId(employeeDraftObject.getEmployee())+"-contract");
 	}
 
 
@@ -2105,6 +2132,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			TreeItem childItem = workplaceItem.getChild(i);
 			Object userObject = childItem.getUserObject();
 			if (userObject instanceof EmployeeDraftObject)
+				return i;
+			if (userObject instanceof SalaryDraftObject)
 				return i;
 		}
 
@@ -2427,28 +2456,36 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		consumer.accept(getUserObject(workplace, EventsDraftObject.class));
 	}
 	
-	public void getEmployeeCalendar(EmployeeDraftObject employee, Consumer<EmployeeCalendarDraftObject> consumer) {
-		consumer.accept(getUserObject(employee, EmployeeCalendarDraftObject.class));
+	public void getEmployeeCalendar(SalaryDraftObject salaryDraft, Consumer<EmployeeCalendarDraftObject> consumer) {
+		consumer.accept(getUserObject(salaryDraft, EmployeeCalendarDraftObject.class));
 	}
 	
-	public void getEmployeeSSBonus(EmployeeDraftObject employee, Consumer<ContractBonusObject> consumer) {
-		consumer.accept(getUserObject(employee, ContractBonusObject.class));
+	public void getEmployeeSSBonus(SalaryDraftObject salaryDraft, Consumer<ContractBonusObject> consumer) {
+		consumer.accept(getUserObject(salaryDraft, ContractBonusObject.class));
 	}
 
-	public void getEmployeeSalaryDraft(EmployeeDraftObject employee, Consumer<SalaryDraftObject> consumer) {
-		consumer.accept(getUserObject(employee, SalaryDraftObject.class));
-	}
+//	public void getEmployeeSalaryDraft(SalaryDraftObject salaryDraft, Consumer<SalaryDraftObject> consumer) {
+//		consumer.accept(getUserObject(salaryDraft, SalaryDraftObject.class));
+//	}
 
-	public void getEmployeeEvents(EmployeeDraftObject employee, Consumer<EmployeeEventsDraftObject> consumer) {
-		consumer.accept(getUserObject(employee, EmployeeEventsDraftObject.class));
+	public void getEmployeeEvents(SalaryDraftObject salaryDraft, Consumer<EmployeeEventsDraftObject> consumer) {
+		consumer.accept(getUserObject(salaryDraft, EmployeeEventsDraftObject.class));
 	}
 	
-	public void getEmployeeSalary(EmployeeDraftObject employee, Consumer<EmployeeSalaryObject> consumer) {
+	public void getEmployeeSalary(SalaryDraftObject employee, Consumer<EmployeeSalaryObject> consumer) {
 		consumer.accept(getUserObject(employee, EmployeeSalaryObject.class));
 	}
 	
+	public void getEmployeeDraft(SalaryDraftObject salaryDraft, Consumer<EmployeeDraftObject> consumer) {
+		consumer.accept(getUserObject(salaryDraft, EmployeeDraftObject.class));
+	}
 	
 
+	public void getEmployeeSalaryDraft(Object userObject, Consumer<SalaryDraftObject> consumer) {
+		TreeItem treeItem = getTreeItem(userObject);
+		TreeItem parentItem = treeItem.getParentItem();
+		consumer.accept((SalaryDraftObject) parentItem.getUserObject());
+	}
 	// ------------------------------------------------------------------------
 
 	private void load() {
@@ -2517,14 +2554,19 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		int employeesOffset = getEmployeesOffset(workplaceItem);
 		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
 			TreeItem employeeItem = workplaceItem.getChild(i);
-
-			EmployeeDraftObject employee = (EmployeeDraftObject) employeeItem.getUserObject();
+			
+			Employee employee = null;
+			try {
+				employee = ((EmployeeDraftObject) employeeItem.getUserObject()).getEmployee();
+			} catch (Exception e ) {
+				employee = ((SalaryDraftObject) employeeItem.getUserObject()).getEmployee();
+			}
 			
 			boolean visible  = 
 			AonStringUtils.isBlank(pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getFullname(), pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getDocument(), pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getSocialSecurity(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getFullname(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getDocument(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getSocialSecurity(), pattern)
 			;
 			
 			employeeItem.setVisible(visible);
@@ -2633,6 +2675,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return getUserObject(employeeTreeItem, clazz);
 	}
 	
+	private <T> T getUserObject(SalaryDraftObject salary, Class<T> clazz) {
+		TreeItem employeeTreeItem = getTreeItem(salary);
+		return getUserObject(employeeTreeItem, clazz);
+	}
+
 	private <T> T getUserObject(Workplace workplace, Class<T> clazz) {
 		TreeItem workplaceTreeItem = getTreeItem(workplace);
 		return getUserObject(workplaceTreeItem, clazz);

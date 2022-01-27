@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -1001,6 +1002,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			List<ContractConceptCalc> contractConceptCalcList) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<Certifica2Info> getSalariesOccam(String domainName, String login,
+		ITEmployee itEmployee, Date startDate, Date endDate) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

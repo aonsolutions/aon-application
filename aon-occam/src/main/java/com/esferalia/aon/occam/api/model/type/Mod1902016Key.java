@@ -67,6 +67,9 @@ public enum Mod1902016Key {
 	public static String getDefaultSubkeyForProfessionalRetentions() {
 		return Mod1902016Key.G.subKeys[0];
 	}
+	public static String getDefaultSubkeyForNewProfessionalRetentions() {
+		return Mod1902016Key.G.subKeys[2];
+	}
 	public static Mod1902016Key getDefaultKeyForFarmerRetentions() {
 		return Mod1902016Key.H;
 	}

@@ -66,4 +66,8 @@ public class Mod190ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public Mod190 duplicate(Occam occam, Mod190 mod190) throws AonCoreException {
 		return MODEL190.duplicate(occam, mod190);
 	}
+	@Override
+	public LinkedList<Mod190Detail> validateSalaries(Occam occam, Mod190 mod190) throws AonCoreException {
+		return MODEL190.validateSalaries(occam, mod190);
+	}
 }

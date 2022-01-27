@@ -133,11 +133,11 @@ public abstract class BaseIntegralTestCase {
 	protected static void draft(String employeeName) throws IndexOutOfBoundsException, IOException, InterruptedException {
 		String employeeId = normalize(employeeName);
 		
-		DomElement draft = getElementById(employeeId + "-draft");
-		if ( draft == null || !draft.isDisplayed() )
-			open(employeeId);
+		DomElement draft = getElementById(employeeId /*+ "-draft"*/);
+		//if ( draft == null || !draft.isDisplayed() )
+		//	open(employeeId);
 		
-		select(employeeId + "-draft");
+		select(employeeId /*+ "-draft"*/);
 		wait4Text("employeeNameLabel", employeeName);
 	}
 	
@@ -407,6 +407,12 @@ public abstract class BaseIntegralTestCase {
 		return  el != null && el.isDisplayed();
 	}
 
+	protected static void wait(int timeoutMillis) throws InterruptedException {
+        synchronized (htmlPage) {
+    		htmlPage.wait(timeoutMillis);
+        }
+	}
+
 	protected static void wait4Id(String id) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
@@ -537,7 +543,14 @@ public abstract class BaseIntegralTestCase {
 		input.blur();
 	}
 
+	protected static void type(String id, String text) throws ParseException, IOException {
+		HtmlInput input = getElementById(id);
+		input.focus();
+		input.type(text);
+		input.blur();
+	}
 
+	
 	protected static void selectOption(String id, String value) throws IOException {
 		HtmlSelect htmlSelect = getElementById(id);
 		htmlSelect.focus();

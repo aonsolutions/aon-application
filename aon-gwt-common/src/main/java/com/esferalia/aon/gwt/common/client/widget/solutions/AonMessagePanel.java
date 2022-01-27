@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.animation.client.Animation;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -37,7 +39,7 @@ public class AonMessagePanel extends FlowPanel {
 		closePanel.addStyleName(AON.CSS.aonMessageClosePanel());
 		
 		AonButton closeButton = new AonButton("Cerrar", AON.CSS.aonIconCloseWhite());
-		closeButton.addClickHandler(e -> setVisible(false));
+		closeButton.addClickHandler(e -> fadeOut(this)/*setVisible(false)*/);
 		closeButton.addStyleName(AON.CSS.aonMessageClose());
 		closePanel.add(closeButton);
 		add(closePanel);
@@ -87,6 +89,7 @@ public class AonMessagePanel extends FlowPanel {
 	}
 	
 	// ------------------------------------------------ Show Info
+	
 	
 	public static void showInfo(HTMLPanel panel, String ...messages) {
 		clearEntryPanel(panel);
@@ -201,16 +204,9 @@ public class AonMessagePanel extends FlowPanel {
 	
 	public static void showLoading(HTMLPanel panel, String message) {
 		clearEntryPanel(panel);
-		AonMessagePanel aonMessagePanel = getAonLoadingMessagePanel();
+		AonMessagePanel aonMessagePanel = getAonInfoMessagePanel();
 		fillLoadingMessages(aonMessagePanel, message);
 		showAndAddMainPanel(panel, aonMessagePanel);
-	}
-	
-	private static AonMessagePanel getAonLoadingMessagePanel() {
-		AonMessagePanel aonMessagePanel = getMainPanel();
-		addInfoStyle(aonMessagePanel);
-		showClosePanel(aonMessagePanel, false);
-		return aonMessagePanel;
 	}
 	
 	// ------------------------------------------------ Hide Message
@@ -230,8 +226,8 @@ public class AonMessagePanel extends FlowPanel {
 	}
 	
 	private static void showAndAddMainPanel(HTMLPanel panel, AonMessagePanel aonMessagePanel) {
-		aonMessagePanel.setVisible(true);
 		panel.add(aonMessagePanel);
+		fadeIn(aonMessagePanel);
 	}
 	
 	private static void showClosePanel(AonMessagePanel aonMessagePanel, boolean visible) {
@@ -239,17 +235,47 @@ public class AonMessagePanel extends FlowPanel {
 	}
 	
 	private static void showAndAddMainPanelTimer(HTMLPanel panel, AonMessagePanel aonMessagePanel) {
-		aonMessagePanel.setVisible(true);
 		panel.add(aonMessagePanel);
+		fadeIn(aonMessagePanel);
 		Timer timer = new Timer() {
 		     @Override
 		     public void run() {
-		    	 aonMessagePanel.setVisible(false);
+		    	 fadeOut(aonMessagePanel);
 		     }
 		};
-		timer.schedule(4500);
+		timer.schedule(2500);
 	}
 	
+	private static void fadeOut(AonMessagePanel aonMessagePanel) {
+		new Animation() {
+
+	        @Override
+	        protected void onUpdate( double progress ) {
+	        	aonMessagePanel.getElement().getStyle().setOpacity( 1.0 - progress );
+	        }
+
+	        @Override
+	        protected void onComplete() {
+	        	aonMessagePanel.getElement().getStyle().setDisplay(Display.NONE);
+	        }
+	    }.run( 400 );
+	}
+	
+	private static void fadeIn(AonMessagePanel aonMessagePanel) {
+		new Animation() {
+
+	        @Override
+	        protected void onUpdate( double progress ) {
+	        	aonMessagePanel.getElement().getStyle().setOpacity( 0.0 + progress );
+	        }
+
+	        @Override
+	        protected void onComplete() {
+	        	aonMessagePanel.getElement().getStyle().setDisplay(Display.FLEX);
+	        }
+	    }.run( 400 );
+	}
+
 	// ------------------------------------------------ Fill Messages List
 		
 	private static void fillMessages(AonMessagePanel aonMessagePanel, String[] messages) {

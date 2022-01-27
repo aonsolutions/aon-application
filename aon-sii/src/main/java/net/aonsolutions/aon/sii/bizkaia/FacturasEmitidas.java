@@ -363,14 +363,30 @@ public class FacturasEmitidas extends SIIBuilt {
 					
 					SujetaPrestacionType st3 = new SujetaPrestacionType();
 					
-					Exenta exenta3 = new Exenta();
-					DetalleExentaType detalleExenta = new DetalleExentaType();
-					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
-					detalleExenta.setCausaExencion(CausaExencionType.E_6); //TODO  exencion otros a piñon fijo!!+
-					exenta3.getDetalleExenta().add(detalleExenta);
-					st3.setExenta(exenta3); 
+					NoExenta noExenta3 = new NoExenta();
+					DesgloseIVA diva3 = new DesgloseIVA();
+					if(AonMathUtils.isNotZero(exenta)) {
+						if(vat.isOtherISP()) {
+							DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
+							diet.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); 
+							diet.setCuotaRepercutida("0"); 
+							diet.setTipoImpositivo("0"); 
+							diva3.getDetalleIVA().add(diet);
+
+							noExenta3.setDesgloseIVA(diva3);
+							noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);		
+							st3.setNoExenta(noExenta3);
+						} else {
+							Exenta exenta3 = new Exenta();
+							DetalleExentaType detalleExenta = new DetalleExentaType();
+							detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+							detalleExenta.setCausaExencion(CausaExencionType.E_6);
+							exenta3.getDetalleExenta().add(detalleExenta);
+							st3.setExenta(exenta3);
+						}
+					}
+					
 					if(!noExenta.isEmpty()){
-						DesgloseIVA diva3 = new DesgloseIVA();
 						noExentaMap.keySet().stream().forEach(key -> {
 							DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
 							diet.setBaseImponible(Double.toString(AonMathUtils.round(noExentaMap.get(key).getBase()))); 
@@ -378,7 +394,6 @@ public class FacturasEmitidas extends SIIBuilt {
 							diet.setTipoImpositivo(Double.toString(AonMathUtils.round(key))); 
 							diva3.getDetalleIVA().add(diet);
 						});
-						NoExenta noExenta3 = new NoExenta();
 						noExenta3.setDesgloseIVA(diva3);
 						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
 						if(vat.isOtherISP()){
@@ -446,16 +461,31 @@ public class FacturasEmitidas extends SIIBuilt {
 					tsdt.setNoSujeta(nst);
 				}
 				SujetaType st = new SujetaType();
-			
-				eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta exenta1 = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta();
-				DetalleExentaType detalleExenta = new DetalleExentaType();
-				detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
-				detalleExenta.setCausaExencion(CausaExencionType.E_6);
-				exenta1.getDetalleExenta().add(detalleExenta);
-				st.setExenta(exenta1);
+				
+				eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta.DesgloseIVA diva = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta.DesgloseIVA();
+				eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta noExenta1 = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta();
+				if(AonMathUtils.isNotZero(exenta)) {
+					if(vat.isOtherISP()) {
+						DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
+						diet.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); 
+						diet.setCuotaRepercutida("0"); 
+						diet.setTipoImpositivo("0"); 
+						diva.getDetalleIVA().add(diet);
+
+						noExenta1.setDesgloseIVA(diva);
+						noExenta1.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);		
+						st.setNoExenta(noExenta1);
+					} else {
+						eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta exenta1 = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta();
+						DetalleExentaType detalleExenta = new DetalleExentaType();
+						detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+						detalleExenta.setCausaExencion(CausaExencionType.E_6);
+						exenta1.getDetalleExenta().add(detalleExenta);
+						st.setExenta(exenta1);
+					}
+				}
 				
 				if(!noExenta.isEmpty()){
-					eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta.DesgloseIVA diva = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta.DesgloseIVA();
 					
 					noExentaMap.keySet().stream().forEach(key -> {
 						DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
@@ -469,7 +499,6 @@ public class FacturasEmitidas extends SIIBuilt {
 						diva.getDetalleIVA().add(diet);
 					});
 
-					eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta noExenta1 = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.NoExenta();
 					noExenta1.setDesgloseIVA(diva);
 					TipoOperacionSujetaNoExentaType noExType = TipoOperacionSujetaNoExentaType.S_1;
 					// TODO inversion sujeto pasivo 

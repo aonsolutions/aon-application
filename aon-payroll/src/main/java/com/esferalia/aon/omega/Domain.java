@@ -15,6 +15,7 @@ public class Domain {
 	
 	List<Workplace> workplaces;	// Centros de trabajo
 	List<Activity> activities;	// Actividades
+	List<Contract> contracts;	// Contratos
 	
 	protected Domain() {
 		super();
@@ -100,5 +101,16 @@ public class Domain {
 		this.activities = activities;
 		return this;
 	}
+
+	public List<Contract> getContracts() {
+		return contracts;
+	}
+
+	public Domain setContracts(List<Contract> contracts) {
+		this.contracts = contracts;
+		return this;
+	}
+	
+	
 	
 }

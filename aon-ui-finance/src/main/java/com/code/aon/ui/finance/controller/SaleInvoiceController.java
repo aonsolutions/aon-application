@@ -83,7 +83,6 @@ import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class SaleInvoiceController extends InvoiceController {
@@ -94,6 +93,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private DeliveryTransferManager deliveryTransferManager;
 	private boolean showDeliveryTransferWindow;
 	private boolean showDeliveryFilterWindow;
+	private boolean showTbaiWindow;
 	
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
@@ -123,21 +123,9 @@ public class SaleInvoiceController extends InvoiceController {
 		return deliveryTransferManager;
 	}
 	
-	public boolean isTbaiInvoice() {
-		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
-	}
-	
 	public boolean isTbaiLroe() {
 		Invoice invoice = (Invoice) this.getTo();
 		return isTbai() && isBizkaia() && invoice.getNumber() > 0;
-	}
-	
-	public String getTbaiUrl() {
-		Invoice invoice = (Invoice) this.getTo();
-		Integer domainId = DomainManager.getCurrentDomain();
-		String domainName = AonUtil.getDomainName();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		return TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
 	}
 
 	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
@@ -158,6 +146,14 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowDeliveryFilterWindow(boolean showDeliveryFilterWindow) {
 		this.showDeliveryFilterWindow = showDeliveryFilterWindow;
+	}
+	
+	public boolean isShowTbaiWindow() {
+		return showTbaiWindow;
+	}
+
+	public void setShowTbaiWindow(boolean showTbaiWindow) {
+		this.showTbaiWindow = showTbaiWindow;
 	}
 	
 	public EdiInvoiceImporterHandler getEdiImporter() {
@@ -535,6 +531,16 @@ public class SaleInvoiceController extends InvoiceController {
 			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 			
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+			
+			long count = invoice.getDetails().stream().filter(r -> Double.toString(r.getQuantity())
+					.substring(Double.toString(r.getQuantity()).indexOf(".") + 1)
+					.length() > 2).count();
+			if(count > 0) {
+				throw new Exception("La cantidad no puede tener más de 2 decimales");
+			}
+			if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+				throw new Exception("El Documento del cliente está vacio.");
+			}
 
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			if(invoice.getNumber() < 1) {
@@ -558,7 +564,7 @@ public class SaleInvoiceController extends InvoiceController {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
-	
+		
 	@Transient
 	public synchronized void issueInvoice() {
 		try {
@@ -569,7 +575,16 @@ public class SaleInvoiceController extends InvoiceController {
 			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 			
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-
+			long count = invoice.getDetails().stream().filter(r -> Double.toString(r.getQuantity())
+						.substring(Double.toString(r.getQuantity()).indexOf(".") + 1)
+						.length() > 2).count();
+			if(count > 0) {
+				throw new Exception("La cantidad no puede tener más de 2 decimales");
+			}
+			if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+				throw new Exception("El Documento del cliente está vacio.");
+			}
+			
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			if(invoice.getNumber() < 1) {
 				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());

@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -40,6 +41,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -500,6 +502,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void createContractPayment(String currentDomainName, Integer contractId,
 				List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
+				Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -993,6 +1002,12 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void createContractPayment(String currentDomainName, Integer contractId,
 							List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+					@Override
+					public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee,
+							Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
 						// TODO Auto-generated method stub
 						
 					}

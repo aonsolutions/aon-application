@@ -311,44 +311,83 @@ public class ContextFunctions {
 					
 					
 					Date varStartDate = varPeriod.getStart();
+					Date varEndDate = varPeriod.getEnd();
 					double varDailyValue = varValue / varDays;
+					
+					Period firstVarPeriod = new Period(varStartDate, sectionDate);
+					long firstVarDays = firstVarPeriod.getDays();
+					
+					Date afterSectionDate = AonDateUtils.addDays(sectionDate, 1);
+					long lastVarDays = varDays - firstVarDays;
+					
+					double firstDailyValue ;
+					double lastDailyValue;
+					
+					try {
+						double minValue = 0.00;
+						if ( lastVarDays == 0L ) {
+							for (ITimedVariable<Number> data :context.eval(String.format("%s_MIN", name), varStartDate, sectionDate, Number.class)){
+								minValue += data.getValue(data.getPeriod()).doubleValue();
+							}
+							double firstVarValue = Math.max(minValue, varDailyValue * firstVarDays); 
+							firstDailyValue = firstVarValue / firstVarDays;
+							lastDailyValue = varDailyValue;
+						} else if ( firstVarDays <= lastVarDays ) {
+							for (ITimedVariable<Number> data :context.eval(String.format("%s_MIN", name), varStartDate, sectionDate, Number.class)){
+								minValue += data.getValue(data.getPeriod()).doubleValue();
+							}
+							double firstVarValue = Math.max(minValue, varDailyValue * firstVarDays); 
+							firstDailyValue = firstVarValue / firstVarDays;
+							lastDailyValue = ( varValue - firstVarValue ) / lastVarDays;
+						} else {
+							for (ITimedVariable<Number> data :context.eval(String.format("%s_MIN", name), afterSectionDate, varEndDate, Number.class)){
+								minValue += data.getValue(data.getPeriod()).doubleValue();
+							}
+							double lastVarValue = Math.max(minValue, varDailyValue * lastVarDays); 
+							lastDailyValue = lastVarValue / lastVarDays;
+							firstDailyValue = ( varValue - lastVarValue ) / firstVarDays;
+						}
+					} catch (Exception e) {
+						firstDailyValue = varDailyValue;
+						lastDailyValue = varDailyValue;
+					}
+
+					double firstVarDailyValue = firstDailyValue;
+					
 					
 					ITimedVariable<Object> firstVariable = new ITimedVariable<Object>() {
 						
 						@Override
 						public Period getPeriod() {
-							return new Period(varStartDate, sectionDate);
+							return firstVarPeriod;
 						}
 						
 						@Override
 						public Object getValue(Period period) {
 							long valueDays = period.getDays();
-							return varDailyValue * valueDays;
+							return firstVarDailyValue * valueDays;
 						}
 					};
 					
 					context.putVariable(name, firstVariable);
 					
-					long firstVarDays = firstVariable.getPeriod().getDays();
-					
 					if ( sectionDate.compareTo(varPeriod.getEnd()) == 0 )
 						continue;
 					
-					Date varEndDate = varPeriod.getEnd();
-					Date afterSectionDate = AonDateUtils.addDays(sectionDate, 1);
+					double lastVarDailyValue = lastDailyValue;
+					Period lastVarPeriod = new Period( afterSectionDate, varEndDate);
 
 					class LastTimedVariable extends DaysTimedVariable<Object> {
 						@Override
 						public Period getPeriod() {
-							return new Period( afterSectionDate, varEndDate);
+							return lastVarPeriod;
 						}
 						
 						@Override
 						public Object getValue(Period period) {
 							long valueDays = period.getDays();
-							long lastVarDays = varDays - firstVarDays;
 							valueDays = wholeMonth  ? lastVarDays : Math.min(lastVarDays , valueDays);
-							return varDailyValue * valueDays ;
+							return lastVarDailyValue * valueDays ;
 						}
 						
 						@Override

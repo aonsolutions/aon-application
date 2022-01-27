@@ -122,7 +122,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public class ContractAttachUIImpl extends ContractAttachUI {
 		
 		@Override
-		protected void onExportPDF() {
+		protected void onExportPDF(Consumer<String> consumer, Consumer<Throwable> failure) {
 			showLoading("Generando borrador de contrato");
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
@@ -130,26 +130,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveContractExport(
-								a -> {
-									showSuccess("Generaci\u00F3n Contrato", "El borrador de contrato se ha generado correctamente");
-									contractAttachUI.setContractAttachments(a);
-									this.refreshPage();
-								},
-								e -> showError("Generaci\u00F3n Contrato", e.getMessage())
-						);
-					}, f -> showError("Generaci\u00F3n Contrato", f.getMessage()));
+								a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+								e -> failure.accept(e));
+					}, f -> failure.accept(f));
 				else {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 					contrataEmployeeObject.saveContractExport(
-							a -> {
-								contractAttachUI.setContractAttachments(a);
-								this.refreshPage();
-							},
-							e -> {}
-					);
+							a -> consumer.accept("El borrador de contrato se ha generado correctamente"),
+							e -> failure.accept(e));
 				}
-			}, f -> {});
+			}, f -> failure.accept(f));
+		}
+
+		@Override
+		protected void showError(Map<String, String> errorMap) {
+			AonMessagePanel.showError(messageContainer, errorMap);
+		}
+
+		@Override
+		protected void showSuccess(Map<String, String> successMap) {
+			AonMessagePanel.showSuccess(messageContainer, successMap);
 		}
 	}
 	
@@ -252,7 +253,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem idcPlNss;		
 		private MenuItem peculiarities = null;
 		
-		private MenuItem movPrevDelete = null;
+//		private MenuItem movPrevDelete = null;
 		private MenuItem altaConsolidadaDelete = null;
 		
 		public NewTGSSContextMenu() {
@@ -281,15 +282,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
 			
-			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
+			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
 			addSeparator();
 			
-			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			movPrevDelete.ensureDebugId("movPrevDelete");
+//			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
+//					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+//			movPrevDelete.ensureDebugId("movPrevDelete");
 			
 			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
@@ -325,9 +326,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			return peculiarities;
 		}
 		
-		public MenuItem getMovPrevDelete() {
-			return movPrevDelete;
-		}
+//		public MenuItem getMovPrevDelete() {
+//			return movPrevDelete;
+//		}
 		
 		public MenuItem getAltaConsolidadaDelete() {
 			return altaConsolidadaDelete;
@@ -647,6 +648,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private NewSEPEContextMenu sepeContextMenu;
 	
 	// EmployeeSalary
+	private HTMLPanel employeeAttachButtons;
+	
+	// EmployeeSalary
 	private HTMLPanel employeeSalaryButtons;
 	
 	// EmployeeCalendar
@@ -695,7 +699,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		// Init toolbar
 		getToolbarPanel();
-		
 		
 		// Show contract buttons
 		showContractButtons();
@@ -816,9 +819,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			case 3:
 				contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
 				break;
-			case 4:
-				contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
-				break;
 			default:
 				break;
 			}
@@ -899,14 +899,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 4:
 				showLoadingPanel();
-				contrataEmployeeObject.getContractAttachments(s -> {
-					exportContract.getElement().getStyle().setDisplay(Display.NONE);
-					showContractButtons();
-					contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-					hideLoadingPanel();
-					hideTgssOption();
-					hideSepeOption();
-				}, f -> {});
+				exportContract.getElement().getStyle().setDisplay(Display.NONE);
+				showContractAttachButtons();
+				contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				hideLoadingPanel();
+				hideTgssOption();
+				hideSepeOption();
 				break;
 			case 5:
 				showLoadingPanel();
@@ -1038,6 +1036,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showSalariesButtons() {
 		employeeSalaryButtons.setVisible(true);
 		employeeContractButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
 		employeeContractVariablesButtons.setVisible(false);
@@ -1045,6 +1044,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void showContractButtons() {
 		employeeContractButtons.setVisible(true);
+		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
@@ -1054,6 +1054,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showCalendarButtons() {
 		employeeCalendarButtons.setVisible(true);
 		employeeContractButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
 		employeeContractVariablesButtons.setVisible(false);
@@ -1063,12 +1064,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractIrpfButtons.setVisible(true);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeContractVariablesButtons.setVisible(false);
 	}
 	
 	private void showContractVariablesButtons() {
 		employeeContractVariablesButtons.setVisible(true);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
+		employeeAttachButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
+	}
+	
+	private void showContractAttachButtons() {
+		employeeAttachButtons.setVisible(true);
+		employeeContractVariablesButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
@@ -1095,6 +1107,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employeeContractButtons = initEmployeeContractButtons();
 		toolbar.add(employeeContractButtons);
+		
+		// EmployeeAttach
+		
+		employeeAttachButtons = initEmployeeAttachButtons();
+		toolbar.add(employeeAttachButtons);
 		
 		// EmployeeSalary
 		
@@ -1243,9 +1260,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			break;
 		case 3:
 			contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
-			break;
-		case 4:
-			contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
 			break;
 		default:
 			break;
@@ -1696,6 +1710,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				},
 				f -> {}
 		);
+	}
+	
+	// ------------------------------------------------- EmployeeAttachButtons
+	
+	private HTMLPanel initEmployeeAttachButtons() {
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.addStyleName(style.flex());
+		
+		AonToolbarButton newAttachment = new AonToolbarButton(AON.MSG.newAction() + " Documento",  AON.CSS.aonIconAdd());
+		newAttachment.addClickHandler(e -> contractAttachUI.newAttachment());
+		hPanel.add(newAttachment);
+		
+		AonToolbarButton pdfExportBtn = new AonToolbarButton("Generar Borrador Contrato",  AON.CSS.aonIconPdf());
+		pdfExportBtn.addClickHandler(e -> contractAttachUI.exportContract());
+		hPanel.add(pdfExportBtn);
+		
+		return hPanel;
 	}
 	
 	// ------------------------------------------------- EmployeeSalaryButtons

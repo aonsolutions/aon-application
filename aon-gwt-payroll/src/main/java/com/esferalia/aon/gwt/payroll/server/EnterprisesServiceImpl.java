@@ -77,11 +77,13 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
@@ -91,6 +93,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -113,10 +116,17 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
+import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.payroll.Pair;
@@ -441,7 +451,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public List<Agreement> getTrashAgreements(String domain, int offset, int limit) {
 		Connection connection = null;
@@ -2245,12 +2255,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<ContractAttach> getContractAttachments(String domainName, Integer contractId) {
+	public List<Attach> getContractAttachments(String domainName, String login, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContractAttach.getContractAttachments(connection, domainId, contractId);
+			return AON.getAttachList(
+					domainName, 
+					domainId, 
+					login, 
+					f -> f.getDomainProperty().eq(domainId).and(f.getContractProperty().eq(contractId)), 
+					AttachType.CONTRACT, 
+					false);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -2274,12 +2290,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<ContractAttach> deleteContractAttach(String domainName, ContractAttach contractAttach) {
+	public void deleteContractAttach(String domainName, String login, Integer attachId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContractAttach.deleteContractAttach(connection, domainId, contractAttach);
+			AON.deleteAttach(domainName, domainId, login, f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -3497,4 +3513,75 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	@Override
+	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part)  throws IllegalArgumentException {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+
+//			Domain domain = new Domain().setName(domainName).setId(domainId);
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			ContractInfo contractInfo = empIt.getContractInfo();
+			EmployeeInfo employeeInfo = empIt.getEmployeeInfo();
+			String regime = empIt.getContractInfo().getCompleteCCC().substring(0, 4);
+			String ccc = empIt.getContractInfo().getCompleteCCC().substring(4, empIt.getContractInfo().getCompleteCCC().length());
+			
+			
+			//PAMETERS REQUIRED
+			EmployeeIT employeeIt =  new EmployeeIT()
+			.setDomain(domainId)
+			.setContract(contractInfo.getContractId())
+			.setRegime(regime)
+			.setCcc(ccc)
+			.setNss(employeeInfo.getSsNumber())
+			.setStartDate(it.getStartDate()) //FECHA DE BAJA
+			.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()))
+			;
+			
+			if(it.getEndDate()!=null) 
+				employeeIt.setEndDate(it.getEndDate());
+			
+			//EXAMPLE IT BAJA
+			EmployeeITPart newPart = parseITPart(part);
+			switch (newPart.getType()) {
+				case BAJA:
+					employeeIt.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays());
+				break;
+				case CONFIRMACION:
+				break;
+				case ALTA:
+					employeeIt.setDischargeCause(ContractLeaveDischargeCause.safeValueOf(it.getTypeHighPart()));
+				break;
+			}
+			
+			employeeIt.addITPart(newPart);
+			
+			System.out.println(employeeIt);
+			
+			List<String> messages = ITComunica.communicateITs(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), employeeIt);
+
+			if(!messages.isEmpty()) {
+				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
+				if(!msg.isEmpty())
+					throw new IllegalArgumentException(msg);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	
+	private static EmployeeITPart parseITPart(ITPart part) {
+		return new EmployeeITPart()
+		.setDate(part.getDate())
+		.setType(ContractLeaveDetailType.safeValueOf(part.getType()))
+		.setCias(part.getCias())
+		.setCollegeNumber(part.getCollegeNumber())
+		.setConfirmOrder(part.getConfirmOrderNumber()!=null ? part.getConfirmOrderNumber(): null);
+	}
 }

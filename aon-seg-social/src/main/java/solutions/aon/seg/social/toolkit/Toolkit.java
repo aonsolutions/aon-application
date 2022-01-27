@@ -97,7 +97,6 @@ public class Toolkit {
 	public static Date parseDate(String dateStr, String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
 		Date formattedDate;
-
 		try {
 			formattedDate = dateFormatter.parse(dateStr);
 			return formattedDate;

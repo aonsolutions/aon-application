@@ -26,6 +26,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.ProgressionState;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -61,6 +62,7 @@ import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -82,6 +84,8 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
@@ -1058,4 +1062,14 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		thread.start();		
 	}	
 	
+	public boolean isTbai() {
+		return getTbaiConfiguration().isActive();
+	}
+	
+	public TbaiConfiguration getTbaiConfiguration() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = ""; // UserUtils.getInstance().getLoggedUser().getLogin();
+		return AON.getTbaiConfiguration(domainName, domainId, login);
+	}
 }

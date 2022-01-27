@@ -959,6 +959,7 @@ public class AgreementParser {
 		name = name.replaceAll("/", "_");
 		name = name.replaceAll(":", "_");
 		name = name.replaceAll("º", "");
+		name = name.replaceAll("-", "_");
 		
 		switch (type) {
 		case "A":

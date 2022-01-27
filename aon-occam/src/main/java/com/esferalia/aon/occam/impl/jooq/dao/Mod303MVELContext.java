@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod303MVELContext extends ModelMVELContext implements Map<String, Object> {
@@ -222,20 +221,18 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	
 	// Comprobación de la casilla 78 (Cuotas a compensar de periodos anteriores aplicadas en este periodo)
 	public double checkC78(double c78, double c110, double c66, double c77) {
-		if (!isLastPeriod()) {
-			// No puede ser mayor que la casilla c110		
-			if (c78 > c110)
-				c78 = c110;
-			
+		// No puede ser mayor que la casilla c110		
+		if (c78 > c110)
+			c78 = c110;
+		double c66_77 = AonMathUtils.round(c66+c77);
+		if (!isLastPeriod() || (isLastPeriod() && !AonMathUtils.isLessThanZero(c66_77)))  {
 			// No puede ser mayor que el resultado del modelo hasta ahora (casillas 66 y 77)
-			if (c78 > (c66+c77))
-				c78 = (c66+c77);
-			
-			// No puede ser negativa
-			if (c78 < 0)
-				c78 = 0;	
+			if (c78 > (c66_77))
+				c78 = (c66_77);
 		}
-		
+		// No puede ser negativa
+		if (c78 < 0)
+			c78 = 0;	
 		return c78;
 		
 	}

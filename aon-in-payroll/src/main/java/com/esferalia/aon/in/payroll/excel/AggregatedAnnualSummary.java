@@ -166,7 +166,7 @@ public class AggregatedAnnualSummary {
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		
 		Date endDate = calendar.getTime();
-		try (AONContext aonContext = AONContext.getAONContext(domainName, user);) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime()))
 					.and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())));
 			if (enterpriseId.isPresent() && enterpriseId.get() > 0)

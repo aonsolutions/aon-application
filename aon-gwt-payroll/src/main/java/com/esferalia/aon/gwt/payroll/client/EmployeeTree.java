@@ -2170,9 +2170,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	private class EmployeeTabLayoutPanel extends CustomTabLayoutPanel {
 		
-		private EmployeeDraftObject employee;
+		private SalaryDraftObject salaryDraft;
 		
-               	private Map<Integer, ContractBonusObject> contractBonusMap ;  
+        private Map<Integer, ContractBonusObject> contractBonusMap ;  
 		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
 		private Map<Integer, EmployeeContractVariablesObject> contractVariablesMap ;  
 		
@@ -2180,7 +2180,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			contractBonusMap = new HashMap<>();
 			contractPaymentsMap = new HashMap<>();
 			contractVariablesMap = new HashMap<>();
-			add("Empleado", getEmployeeDraft(), this::onEmployeeSelected);
+			add("Contrato", getEmployeeDraft(), this::onEmployeeSelected);
 			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
 			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
@@ -2192,45 +2192,51 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onDraftSelected() {
-			employees.getEmployeeSalaryDraft(employee, o -> getSalaryDraft().setSalaryDraftObject(o));
+			//employees.getEmployeeSalaryDraft(salaryDraft, o -> getSalaryDraft().setSalaryDraftObject(o));
+			getSalaryDraft().setSalaryDraftObject(salaryDraft);
 		}
 
 		void onEventsSelected() {
-			employees.getEmployeeEvents(employee, o -> getEmployeeEventsDraft().setEmployeeEventsDraftObject(o));
+			employees.getEmployeeEvents(salaryDraft, o -> getEmployeeEventsDraft().setEmployeeEventsDraftObject(o));
 		}
 
 		void onCalendarSelected() {
-			employees.getEmployeeCalendar(employee, o -> getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(o));
+			employees.getEmployeeCalendar(salaryDraft, o -> getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(o));
 		}
 		
 		void onSSBonusSelected() {
 			ContractBonusObject contractBonusObject = 
-					contractBonusMap.computeIfAbsent(employee.getContractId(), ContractBonusObject::new );
+					contractBonusMap.computeIfAbsent(salaryDraft.getEmployeeId(), ContractBonusObject::new );
 			getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
 		}
 
 		void onSalariesSelected() {
-			employees.getEmployeeSalary(employee, o -> getEmployeeSalary().setEmployeeSalaryObject(o));
+			employees.getEmployeeSalary(salaryDraft, o -> getEmployeeSalary().setEmployeeSalaryObject(o));
 		}
 
 		void onPaymentsSelected() {
 			EmployeeContractPaymentsObject employeeContractPaymentsObject = 
-					contractPaymentsMap.computeIfAbsent(employee.getContractId(), EmployeeContractPaymentsObject::new );
+					contractPaymentsMap.computeIfAbsent(salaryDraft.getEmployeeId(), EmployeeContractPaymentsObject::new );
 			getEmployeeContractPayments().setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
 		}
 
 		void onVariablesSelected() {
 			EmployeeContractVariablesObject employeeContractVariablesObject = 
-					contractVariablesMap.computeIfAbsent(employee.getContractId(), this::newEmployeeContractVariablesObject );
+					contractVariablesMap.computeIfAbsent(salaryDraft.getEmployeeId(), this::newEmployeeContractVariablesObject );
 			getEmployeeContractVariables().setEmployeeContractVariablesObject(employeeContractVariablesObject);
 		}
 
 		void onEmployeeSelected() {
-		 //NOOP	
+			employees.getEmployeeDraft(salaryDraft, o -> { 
+				o.setEnterpriseContext(employees.getEnterpriseContext());
+				getEmployeeDraft().setEmployeeDraftObject(o);
+				singlenton.employee = o.getEmployee();
+			});	
 		}
 		
-		public void setEmployee(EmployeeDraftObject employee) {
-			this.employee = employee;
+
+		public void setSalaryDraft(SalaryDraftObject salaryDraft) {
+			this.salaryDraft = salaryDraft;
 		}
 		
 		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
@@ -2794,6 +2800,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEmployeePanel());
 		getEmployeePanel().selectWidget(getEmployeeCalendarDraftNew());
 		getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
+		employees.getEmployeeSalaryDraft(calendar, o -> getEmployeePanel().setSalaryDraft(o));
 	}
 	
 	@Override
@@ -2801,6 +2808,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEmployeePanel());
 		getEmployeePanel().selectWidget(getEmployeeSSBonus());
 		getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
+		employees.getEmployeeSalaryDraft(contractBonusObject, o -> getEmployeePanel().setSalaryDraft(o));
 	}
 
 	@Override
@@ -2808,6 +2816,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEmployeePanel());
 		getEmployeePanel().selectWidget(getEmployeeSalary());
 		getEmployeeSalary().setEmployeeSalaryObject(employeeSalary);
+		employees.getEmployeeSalaryDraft(employeeSalary, o -> getEmployeePanel().setSalaryDraft(o));
 	}
 
 	@Override
@@ -2825,6 +2834,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onSalaryDraftSelected(SalaryDraftObject salaryDraftObject) {
+		getEmployeePanel().setSalaryDraft(salaryDraftObject);
 		employeeDetail.setWidget(getEmployeePanel());
 		getEmployeePanel().selectWidget(getSalaryDraft());
 		getSalaryDraft().setSalaryDraftObject(salaryDraftObject);
@@ -2890,11 +2900,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	@Override
-	public void onEmployeeEventsDraftSelected(EmployeeEventsDraftObject employeeEventsDraft) {
+	public void onEmployeeEventsDraftSelected(EmployeeEventsDraftObject employeeEventsDraftObject) {
 		employeeDetail.setWidget(getEmployeePanel());
 		getEmployeePanel().selectWidget(getEmployeeEventsDraft());
-		getEmployeeEventsDraft().setEmployeeEventsDraftObject(employeeEventsDraft);
+		getEmployeeEventsDraft().setEmployeeEventsDraftObject(employeeEventsDraftObject);
+		employees.getEmployeeSalaryDraft(employeeEventsDraftObject, o -> getEmployeePanel().setSalaryDraft(o));
 	}
+	
 
 	@Override
 	public void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
@@ -2904,20 +2916,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		});
 		employeeDetail.setWidget(getEmployeePanel());
 
-		getEmployeePanel().setEmployee(employeeDraftObject);
 		getEmployeePanel().selectWidget(getEmployeeDraft());
-		if ( Wnd.isSysAdmin() ) {
-			getEmployeePanel().selectWidget(getSalaryDraft());
-			employees.getEmployeeSalaryDraft(employeeDraftObject, o -> {
-				getSalaryDraft().setSalaryDraftObject(o);
-			});
-		}
+//		if ( Wnd.isSysAdmin() ) {
+//			getEmployeePanel().selectWidget(getSalaryDraft());
+//			employees.getEmployeeSalaryDraft(employeeDraftObject, o -> {
+//				getSalaryDraft().setSalaryDraftObject(o);
+//			});
+//		}
 		
 		employeeDraftObject.setEnterpriseContext(employees.getEnterpriseContext());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
 		
-		
+		employees.getEmployeeSalaryDraft(employeeDraftObject, o -> getEmployeePanel().setSalaryDraft(o));
 	}
 
 	@Override

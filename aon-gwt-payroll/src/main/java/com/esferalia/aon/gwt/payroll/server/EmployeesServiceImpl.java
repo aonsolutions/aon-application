@@ -25,6 +25,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 import static com.esferalia.aon.watson.server.AonDateUtils.addMonths;
 import static com.esferalia.aon.watson.server.AonDateUtils.getMonthFirstDay;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static java.util.stream.Collectors.summingDouble;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -156,6 +157,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
@@ -192,7 +194,9 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -3607,7 +3611,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 //			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
 //					connection, agreementId, startDate, endDate,domainId, parentDomainId);
 //
-//			//¿Que variables se filtran aqui?
+//			//ï¿½Que variables se filtran aqui?
 //			Set<String> names = variables.keySet();
 //			for (Level level : levels) {
 //				Iterator<String> namesIt = names.iterator();
@@ -6714,7 +6718,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, String ssNumber, Date startDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqEmployeeIrpf.getEmployeeIrpf(connection, ssNumber, startDate);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqEmployeeIrpf.getEmployeeIrpf(connection, domainId, ssNumber, startDate);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -6877,4 +6882,41 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
+
+	@Override
+	public List<Certifica2Info> getSalariesOccam(String domainName, String login, ITEmployee itEmployee, Date startDate, Date endDate) {
+		List<Certifica2Info> certs = new ArrayList<>();
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+			String naf = itEmployee.getEmployeeInfo().getSsNumber();
+			
+		    AON.getSalaries(new Domain().setId(domainId).setName(domainName), login, 
+		    		
+					f->f.getCCCProperty().eq(ccc).and(f.getSSProperty().eq(naf))
+					.and(f.getStartDateProperty().ge(startDate)).and(f.getEndDateProperty().le(endDate))
+					
+			).sorted((o1, o2)-> o2.getStartDate().compareTo(o1.getStartDate()))
+			.filter(s-> s.getSalaryType()!=null && Arrays.asList(0,2,3).contains(s.getSalaryType().ordinal()) )
+			.forEach(salary->{
+				
+				Double baseCgc   = salary.getContextData("BASE_CGC", summingDouble(Double::parseDouble));
+				Double baseCgp   = salary.getContextData("BASE_CGP", summingDouble(Double::parseDouble));
+				Double quoteDays = salary.getContextData("DIAS_COTIZADOS", summingDouble(Double::parseDouble)); // DIAS_NOMINA
+	
+				if(quoteDays!=null && quoteDays>0) {
+					Certifica2Info cert = new Certifica2Info();
+					cert.setStartDate(salary.getStartDate());
+					cert.setBaseCgc(baseCgc!=null ? baseCgc : 0.00);
+					cert.setBaseUnemployment(baseCgp!=null ? baseCgp : 0.00);
+					cert.setSettleQuoteDays(quoteDays.intValue()); 
+					certs.add(cert);
+				}
+			});
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+		return certs;
+	}
 }

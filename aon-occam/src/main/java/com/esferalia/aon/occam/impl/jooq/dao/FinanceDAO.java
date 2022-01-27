@@ -229,7 +229,7 @@ public class FinanceDAO {
 				.set(FINANCE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FINANCE.ID)
 				.fetchOne();
-		ctx.log().info("INSERT FINANCE id: " + record.getValue(FINANCE.ID));		
+		ctx.log().debug("INSERT FINANCE id: " + record.getValue(FINANCE.ID));		
 		return record.getValue(FINANCE.ID); 
 	}
 	
@@ -269,7 +269,7 @@ public class FinanceDAO {
 			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(FINANCE.ID.equal( finance.getId()))
 			.execute();
-		ctx.log().info("UPDATE FINANCE  ("+i+") id: " + finance.getId());
+		ctx.log().debug("UPDATE FINANCE  ("+i+") id: " + finance.getId());
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
@@ -281,7 +281,7 @@ public class FinanceDAO {
 			.delete(FINANCE)
 			.where(FINANCE.ID.equal(id))
 			.execute();
-		ctx.log().info("DELETE FINANCE ("+i+") id: " + finance.getId());
+		ctx.log().debug("DELETE FINANCE ("+i+") id: " + finance.getId());
 	}
 	
 	private static void removeFinanceTrackingFractions(AONContext ctx, Finance finance) {
@@ -291,7 +291,7 @@ public class FinanceDAO {
 				.where(FINANCE_TRACKING.FINANCE.eq(finance.getId()))
 				.and(FINANCE_TRACKING.TYPE.eq(FinanceTrackingType.FRACTIONED.value()))
 				.execute();
-			ctx.log().info("DELETE FINANCE_TRACKING Fractions ("+i+") Finance id: " + finance.getId());
+			ctx.log().debug("DELETE FINANCE_TRACKING Fractions ("+i+") Finance id: " + finance.getId());
 		}
 	}
 	

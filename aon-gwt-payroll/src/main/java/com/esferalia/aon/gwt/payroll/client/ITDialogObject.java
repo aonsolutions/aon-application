@@ -3,8 +3,11 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
@@ -91,8 +94,25 @@ public class ITDialogObject {
 		return this.itEmployee.getStatus() == (byte)0 ? true : false;
 	}
 
-	public String getEmployeeName() {
-		return this.itEmployee.getEmployeeInfo().getFullName();
+	public ITEmployee getITEmployee(){
+		return this.itEmployee;
 	}
 
+	public String getEmployeeName() {
+		return getEmployeeinfo().getFullName();
+	}
+	
+	public EmployeeInfo getEmployeeinfo() {
+		return this.itEmployee.getEmployeeInfo();
+	}
+	public ContractInfo getContractInfo() {
+		return this.itEmployee.getContractInfo();
+	}
+	
+	public Optional<ITPart> getITBaja(IT it) {
+		return it.getITParts().stream().filter(part-> part.getId()!=null && part.getType() == (byte)0).findFirst();
+	}
+	public Optional<ITPart> getITAlta(IT it) {
+		return it.getITParts().stream().filter(part-> part.getId()!=null && part.getType() == (byte)2).findFirst();
+	}
 }

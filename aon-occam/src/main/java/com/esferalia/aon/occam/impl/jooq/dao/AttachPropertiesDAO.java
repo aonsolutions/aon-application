@@ -85,6 +85,8 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 
 		@Override public Property<Integer> getTagProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH_TAG.TAG);}
+
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 	
 	protected static class ContractAttachPropertiesDAO implements AttachProperties {
@@ -100,6 +102,7 @@ public class AttachPropertiesDAO {
 		}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTRACT_ATTACH.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTRACT_ATTACH.DOMAIN);}
+		@Override public Property<Integer> getContractProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTRACT_ATTACH.CONTRACT);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(CONTRACT_ATTACH.DESCRIPTION);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(CONTRACT_ATTACH.TYPE);}
 		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CONTRACT_ATTACH.ATTACH_DATE);}
@@ -157,6 +160,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 	
 	protected static class InvoiceAttachPropertiesDAO implements AttachProperties {
@@ -194,6 +198,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 	
 	protected static class OfferAttachPropertiesDAO implements AttachProperties {
@@ -230,6 +235,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 	
 	protected static class PayrollAttachPropertiesDAO implements AttachProperties {
@@ -266,6 +272,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 	
 	protected static class ProjectAttachPropertiesDAO implements AttachProperties {
@@ -304,6 +311,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.MODIFICATION_USER);}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 
 	protected static class SepeAttachPropertiesDAO implements AttachProperties {
@@ -340,6 +348,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getSourceBatchProperty() {return new FilterDAO.PropertyDAO<Integer>(SEPE_BATCH_ATTACH.SOURCE_BATCH);}
 		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(SEPE_BATCH_ATTACH.SOURCE_TYPE);}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 	
 	protected static class DataAttachPropertiesDAO implements AttachProperties {
@@ -376,6 +385,7 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.SOURCE);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(DATA_ATTACH.DESCRIPTION);}
 		@Override public Property<Integer> getTagProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 	}
 	
 	protected static class RattachTagPropertiesDAO implements RattachTagProperties {

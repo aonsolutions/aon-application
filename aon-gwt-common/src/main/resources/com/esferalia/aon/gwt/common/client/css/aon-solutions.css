@@ -850,14 +850,15 @@
 }
 
 .aon_message_panel{
-	height: 2rem;
+	/*height: 2rem;*/
+	height: 2.2rem;
 	align-items: center;
 	border-radius: 0.5em;
     display: flex;
     margin: 0 1em;
     width: auto;
     justify-content: space-between;
-    margin-top: .5rem;
+   /* margin-top: .5rem;*/
 }
 
 .aon_message_container{

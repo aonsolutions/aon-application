@@ -20,6 +20,11 @@ public class Mod190Writer {
 			void fill(Mod190 mod190, Writer wr) throws IOException {
 				Mod190File2017Aeat.fill(mod190, wr);
 			}
+			
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				fill(mod190, wr);
+			}
 
 			@Override
 			boolean accept(Mod190 mod190) {
@@ -32,6 +37,11 @@ public class Mod190Writer {
 			@Override
 			void fill(Mod190 mod190, Writer wr) throws IOException {
 				Mod190File2016Aeat.fill(mod190, wr);
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				fill(mod190, wr);
 			}
 
 			@Override
@@ -48,6 +58,11 @@ public class Mod190Writer {
 			}
 
 			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				fill(mod190, wr);
+			}
+
+			@Override
 			boolean accept(Mod190 mod190) {
 				return (mod190.isAEAT() && mod190.getYear() < 2016);
 			}
@@ -58,6 +73,11 @@ public class Mod190Writer {
 			@Override
 			void fill(Mod190 mod190, Writer wr) throws IOException {
 				Mod190File2017Bizkaia.fill(mod190, wr);
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2017Aeat.fill(mod190, wr);
 			}
 
 			@Override
@@ -75,6 +95,11 @@ public class Mod190Writer {
 			}
 
 			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2016Aeat.fill(mod190, wr);
+			}
+
+			@Override
 			boolean accept(Mod190 mod190) {
 				return (mod190.isBizkaia() && mod190.getYear() < 2017);
 			}
@@ -86,6 +111,11 @@ public class Mod190Writer {
 			@Override
 			void fill(Mod190 mod190, Writer wr) throws IOException {
 				Mod190File2017Gipuzkoa.fill(mod190, wr);
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2017Aeat.fill(mod190, wr);
 			}
 
 			@Override
@@ -103,6 +133,11 @@ public class Mod190Writer {
 			}
 
 			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2016Aeat.fill(mod190, wr);
+			}
+
+			@Override
 			boolean accept(Mod190 mod190) {
 				return (mod190.isGipuzkoa() && mod190.getYear() == 2016); 
 			}
@@ -114,6 +149,11 @@ public class Mod190Writer {
 			@Override
 			void fill(Mod190 mod190, Writer wr) throws IOException {
 				Mod190File2015Gipuzkoa.fill(mod190, wr);
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2015Aeat.fill(mod190, wr);
 			}
 
 			@Override
@@ -131,6 +171,11 @@ public class Mod190Writer {
 			}
 
 			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2017Aeat.fill(mod190, wr);
+			}
+
+			@Override
 			boolean accept(Mod190 mod190) {
 				return (mod190.isAraba() && mod190.getYear() >= 2017);
 			}
@@ -142,6 +187,10 @@ public class Mod190Writer {
 			@Override
 			void fill(Mod190 mod190, Writer wr) throws IOException {
 				Mod190File2016Araba.fill(mod190, wr);
+			}
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2016Aeat.fill(mod190, wr);
 			}
 
 			@Override
@@ -158,6 +207,11 @@ public class Mod190Writer {
 			}
 
 			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2017Aeat.fill(mod190, wr);
+			}
+
+			@Override
 			boolean accept(Mod190 mod190) {
 				return (mod190.isNavarra());
 			}
@@ -167,14 +221,22 @@ public class Mod190Writer {
 
 		abstract boolean accept(Mod190 mod190);
 		abstract void fill(Mod190 mod190, Writer wr) throws IOException;
+		abstract void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException;
 		
 	}
-	
 	public static void fillWriter(Mod190 mod190, Writer wr) throws IOException {
+		fillWriter(mod190, wr, false);
+	}
+	
+	public static void fillWriter(Mod190 mod190, Writer wr, boolean boeFormat) throws IOException {
 		boolean filled = false;
 		for (Writers writer : Writers.values()) {
 			if (writer.accept(mod190)) {
-				writer.fill(mod190, wr);
+				if (boeFormat) {
+					writer.fillBoeFormat(mod190, wr);
+				} else {
+					writer.fill(mod190, wr);
+				}
 				filled = true;
 			}
 		}

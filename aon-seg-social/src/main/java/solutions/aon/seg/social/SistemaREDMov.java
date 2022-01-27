@@ -270,18 +270,18 @@ class SistemaREDMov {
 					form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
 			}
 	    
-			htmlPage = ((HtmlInput)form.querySelector("input[value=\"Continuar\"]")).click();
+			htmlPage = ((HtmlSubmitInput)form.querySelector("input[value=Continuar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
 			if(msg1!=null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >=0 ) {
-				htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Continuar\"]")).click();
+				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Continuar]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
 			
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
 			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >=0 ) {
-				htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Continuar\"]")).click();
+				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Continuar]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}	
 //			
@@ -425,10 +425,9 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFIDFREALDD").setValueAttribute(fra[0]); 
 			form.getInputByName("txt_SDFIDFREALMM").setValueAttribute(fra[1]); 
 			form.getInputByName("txt_SDFIDFREALAA").setValueAttribute(fra[2]); 
-			
-			htmlPage = ((HtmlInput)form.querySelector("input[value=\"Continuar\"]")).click();
+			htmlPage = ((HtmlSubmitInput)form.querySelector("input[value=Continuar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Confirmar\"]")).click();
+			htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Confirmar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		} 
 	}

@@ -11,6 +11,7 @@ public class ITPart implements Serializable {
 	private static final long serialVersionUID = 1L;
 		
 	private Integer domain;
+	private Integer id;
 	private Byte type;
 	private Integer it;
 	private String collegeNumber;
@@ -27,64 +28,81 @@ public class ITPart implements Serializable {
 		return domain;
 	}
 
-	public void setDomain(Integer domain) {
+	public Integer getId() {
+		return id;
+	}
+
+	public ITPart setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+
+	public ITPart setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 
 	public Byte getType() {
 		return null == type ? 0 : type;
 	}
 
-	public void setType(Byte type) {
+	public ITPart setType(Byte type) {
 		this.type = type;
+		return this;
 	}
 
 	public Integer getIt() {
 		return it;
 	}
 
-	public void setIt(Integer it) {
+	public ITPart setIt(Integer it) {
 		this.it = it;
+		return this;
 	}
 
 	public String getCollegeNumber() {
 		return collegeNumber;
 	}
 
-	public void setCollegeNumber(String collegeNumber) {
+	public ITPart setCollegeNumber(String collegeNumber) {
 		this.collegeNumber = collegeNumber;
+		return this;
 	}
 
 	public Byte getConfirmOrderNumber() {
 		return confirmOrderNumber;
 	}
 
-	public void setConfirmOrderNumber(Byte confirmOrderNumber) {
+	public ITPart setConfirmOrderNumber(Byte confirmOrderNumber) {
 		this.confirmOrderNumber = confirmOrderNumber;
+		return this;
 	}
 
 	public String getCias() {
 		return cias;
 	}
 
-	public void setCias(String cias) {
+	public ITPart setCias(String cias) {
 		this.cias = cias;
+		return this;
 	}
 
 	public Date getDate() {
 		return parse(date);
 	}
 
-	public void setDate(Date date) {
+	public ITPart setDate(Date date) {
 		this.date = format(date);
+		return this;
 	}
 
 	public Byte getStatus() {
 		return null == status ? (byte) 0 : status;
 	}
 
-	public void setStatus(Byte status) {
+	public ITPart setStatus(Byte status) {
 		this.status = status;
+		return this;
 	}
 		
 }

@@ -19,5 +19,6 @@ public interface Model190ServiceAsync {
 	void changeStatus(Occam occam, Mod190 mod190, FiscalStatus newStatus, AsyncCallback<Mod190> callback);
 	void saveComments(Occam occam, Mod190 mod190, AsyncCallback<Mod190> callback);
 	void duplicate(Occam occam, Mod190 mod190, AsyncCallback<Mod190> callback);
+	void validateSalaries(Occam occam, Mod190 mod190, AsyncCallback<LinkedList<Mod190Detail>> callback);
 
 }

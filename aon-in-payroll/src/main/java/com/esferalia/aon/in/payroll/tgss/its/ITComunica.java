@@ -136,7 +136,7 @@ public class ITComunica {
 			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart,  List<String> messages) {
 			try {
 				verifyData(new Object[] { 
-						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
+						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getStartDate(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
 						 employeeIt.getType(),  itPart.getDate(),
 				});    
 	
@@ -147,14 +147,15 @@ public class ITComunica {
 				String ccc = employeeIt.getCcc();
 				String nss = employeeIt.getNss();
 				Date date = itPart.getDate();
-			
+				Optional<Date> fATEP = Optional.of(employeeIt.getStartDate());
+				
 				Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
 		
 				SituationEmployee situation = SituationEmployee.ACTIVO;
 				ContractType contractType =  ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL;
 				
+
 				Optional<AccidentType> accidentType = Optional.empty();
-				Optional<Date> fATEP = Optional.empty();
 				Optional<String> occupation = Optional.empty();
 				Optional<String> cias = itPart.getCias();
 				Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
@@ -171,6 +172,7 @@ public class ITComunica {
 				);
 				messages.add(SUCCESS);
 			} catch (SegSocialException e) {
+				e.printStackTrace();
 				messages.add(e.getMessage());
 			}
 	}
@@ -205,6 +207,7 @@ public class ITComunica {
 			
 			messages.add(SUCCESS);
 		} catch (SegSocialException e) {
+			e.printStackTrace();
 			messages.add(e.getMessage());
 		}
 	}
@@ -223,6 +226,7 @@ public class ITComunica {
 			String regime = employeeIt.getRegime();
 			String ccc = employeeIt.getCcc();
 			String nss = employeeIt.getNss();
+			
 
 			ContractLeaveDischargeCause causeAl = employeeIt.getDischargeCause();
 			
@@ -233,11 +237,12 @@ public class ITComunica {
 			SituationEmployee situation = SituationEmployee.ACTIVO;
 
 			Optional<AccidentType> accidentType = Optional.empty();
-			Optional<Date> fATEP = Optional.empty();
+	
 			Optional<String> cias = itPart.getCias();
 			Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
 			Optional<String> collegeNumber = itPartCollegeNumber.isPresent() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
-
+			Optional<Date> fATEP = Optional.empty();
+			
 			SistemaRED.registerITAlta(
 					byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
 					regime, ccc, nss, 
@@ -248,6 +253,7 @@ public class ITComunica {
 			
 			messages.add(SUCCESS);
 		} catch (SegSocialException e) {
+			e.printStackTrace();
 			messages.add(e.getMessage());
 		}
 	}
@@ -281,6 +287,7 @@ public class ITComunica {
 			
 			messages.add(SUCCESS);
 		} catch (SegSocialException e) {
+			e.printStackTrace();
 			messages.add(e.getMessage());
 		}
 	}
