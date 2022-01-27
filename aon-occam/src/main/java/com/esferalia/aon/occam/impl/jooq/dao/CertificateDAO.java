@@ -73,6 +73,7 @@ public class CertificateDAO {
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.SECURITY_LEVEL);}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 		
 	}
 
