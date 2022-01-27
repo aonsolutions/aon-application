@@ -163,6 +163,7 @@ import com.google.gwt.regexp.shared.RegExp;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED.ContractType;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
@@ -3549,7 +3550,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			EmployeeITPart newPart = parseITPart(part);
 			switch (newPart.getType()) {
 				case BAJA:
-					employeeIt.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays());
+					employeeIt.setContractType((byte)(contractInfo.isPartial() ? 0 : 1))
+					.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays());
 				break;
 				case CONFIRMACION:
 				break;
@@ -3569,6 +3571,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				if(!msg.isEmpty())
 					throw new IllegalArgumentException(msg);
 			}
+			throw new IllegalArgumentException();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);

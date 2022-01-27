@@ -8,17 +8,20 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -65,6 +68,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
@@ -78,6 +83,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -85,7 +91,9 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
@@ -99,6 +107,12 @@ public abstract class ITWidget extends ResizeComposite {
 	private static ITWidgetUiBinder uiBinder = GWT.create(ITWidgetUiBinder.class);
 
 	interface ITWidgetUiBinder extends UiBinder<Widget, ITWidget> {}
+	
+	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
+		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
+		SafeHtml tab(String title, String icon);
+	}
+	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
 	// ------------------------------------------------- ScheduledCommand (TGSS)
 	
@@ -164,6 +178,9 @@ public abstract class ITWidget extends ResizeComposite {
 	@UiField
 	HTMLPanel timelinePanel;
 	
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+	
 	// --------------------------------------------------- Variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -212,6 +229,15 @@ public abstract class ITWidget extends ResizeComposite {
 	private MultiFileUpload msjFIEFileUpload;
 	private TGSSContextMenu tgssContextMenu;
 
+	private boolean minimizedByUser;
+
+	private AonMinimizePanel footPanel;
+
+	private FlowPanel sessionLog;
+	private ResultsPanel resultsPanel;
+
+	private TabLayoutPanel tabLayout;
+
 	// --------------------------------------------------- Constructor
 
 	protected ITWidget() {
@@ -223,6 +249,10 @@ public abstract class ITWidget extends ResizeComposite {
 		getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		tgssContextMenu = new TGSSContextMenu();
+		
+		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+		
+		showResultsPanel();
 	}
 
 	// --------------------------------------------------- TimeLineChart.MouseEventsHandlers
@@ -403,12 +433,18 @@ public abstract class ITWidget extends ResizeComposite {
 			int itId = data.getContractLeaveId(posColumn, posCell);
 			
 			IT itInfo = getIT(itId);
+
 	    	ITEmployee itEmployee = getITEmployee(contractId);
-	    	
+			ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
+			
+			Optional<ITPart> bjOptional = itDialogObject.getITBaja(itInfo);
+			Optional<ITPart> altaOptional = itDialogObject.getITAlta(itInfo);
+			
 	    	tooltip.setFullName(itEmployee.getEmployeeInfo().getFullName());
 	    	tooltip.setDocument(itEmployee.getEmployeeInfo().getDocument());
 	    	tooltip.setNaf(itEmployee.getEmployeeInfo().getSsNumber());
-	    	tooltip.setComunicationStatus(itInfo.isComunicate());
+	    	tooltip.setComunicationBaja(bjOptional.isPresent() && bjOptional.get().getStatus().equals((byte)3) );
+	    	tooltip.setComunicationAlta(altaOptional.isPresent() && altaOptional.get().getStatus().equals((byte)3) );
 	    	tooltip.setITType(itInfo.getTypeLowPart());
 	    	tooltip.setLowType(itInfo.getTypeLowPart());
 	    	tooltip.setHighType(itInfo.getTypeHighPart());
@@ -1676,6 +1712,58 @@ public abstract class ITWidget extends ResizeComposite {
 		AonMessagePanel.showLoading(messagePanel, message);
 	}
 	
+	
+	//--------------------------------------------NEW------------
+	
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler(event -> {
+			minimizedByUser = true;
+			closeFootPanel();
+		});
+		footPanel.addMaximizeHandler(event -> openFootPanel());
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+	
+		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
+		
+		resultsPanel = new ResultsPanel();
+		
+		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information(), AON.CSS.aonIconHistory()));
+		
+		footPanel.add(tabLayout);
+		
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler(event -> {
+			minimizedByUser = false;
+			openFootPanelIfNeeded();
+		});
+		
+		return footPanel; 
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
+	}
+	
+	private void openFootPanelIfNeeded() {
+		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) 
+			openFootPanel();
+	}
+	
+	private void openFootPanel() {
+		int effectiveHeigth = 3;
+		splitLayoutPanel.setWidgetSize(footPanel, (double)Window.getClientHeight() / effectiveHeigth);
+		splitLayoutPanel.animate(500);
+	}
+	
+
+	private void showResultsPanel() {
+		tabLayout.selectTab(resultsPanel);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+	}
 	// --------------------------------------------------- Abstract Methdos
 	
 	protected abstract void syncITs(Consumer<Void> success, Consumer<Throwable> failure);

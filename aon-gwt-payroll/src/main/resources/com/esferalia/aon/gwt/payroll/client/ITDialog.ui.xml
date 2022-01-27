@@ -131,8 +131,14 @@
 						<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Parte IT</g:Label>
 						<g:HTMLPanel ui:field="itData" styleName="{style.flexColumn}">
 							<g:HTMLPanel styleName="{style.flex}">
-								<g:Label styleName='{style.requiredColor} {style.columnS}'>Trabajador</g:Label>
-								<g:HTMLPanel ui:field="employeePanel" styleName="{style.maxWidth}"></g:HTMLPanel>
+								<g:Label styleName='{style.subTitle}'>Trabajador:</g:Label>
+								<g:HTMLPanel ui:field="employeePanel"></g:HTMLPanel>
+
+								<g:Label styleName='{style.subTitle}'>Documento:</g:Label>
+								<g:HTMLPanel ui:field="employeePanelDoc"></g:HTMLPanel>
+
+								<g:Label styleName='{style.subTitle}'>Naf:</g:Label>
+								<g:HTMLPanel ui:field="employeePanelNaf"></g:HTMLPanel>
 							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="itBaja" styleName="{style.flex}">
 								<g:Label styleName='{style.requiredColor} {style.columnS}'>Fecha Baja</g:Label>

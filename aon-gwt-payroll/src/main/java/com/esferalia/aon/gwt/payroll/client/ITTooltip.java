@@ -46,7 +46,8 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 	private String fullName;
 	private String document;
 	private String naf;
-	private Boolean isComunicate;
+	private Boolean isComunicateBaja;
+	private Boolean isComunicateAlta;
 	private Byte itType;
 	private Byte lowType;
 	private Byte highType;
@@ -84,15 +85,20 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 		this.itTypeL.setText(parseLowCause(this.itType));
 		this.totalDaysL.setText(getITPartDays());
 		
-		if(null == this.isComunicate || !this.isComunicate)
-			this.comunicateStatusL.setText("Parte IT pediente de comunicar");
-		else
-			this.comunicateStatusL.setText("Parte IT comunicado");
+//		if(null == this.isComunicate || !this.isComunicate)
+//			this.comunicateStatusL.setText("Parte IT pediente de comunicar");
+//		else
+//			this.comunicateStatusL.setText("Parte IT comunicado");
 		
-		this.lowTypeL.setText(parseLowCause(this.lowType));
+		String lowMotive = parseLowCause(this.lowType);
+		lowMotive = lowMotive+" "+(isComunicateBaja!=null &&isComunicateBaja? "(Parte IT comunicado)" :"(Parte IT pediente de comunicar)");
+
+		this.lowTypeL.setText(lowMotive);
 		this.lowDateL.setText(formatDate.format(this.startDate));
 		
-		this.highTypeL.setText(parseHighCause(this.highType));
+		String highMotive = parseHighCause(this.highType);
+		highMotive = highMotive+" "+(isComunicateAlta!=null && isComunicateAlta? "(Parte IT comunicado)" :"(Parte IT pediente de comunicar)");
+		this.highTypeL.setText(highMotive);
 		this.highDateL.setText(null == this.endDate ? "" : formatDate.format(this.endDate));
 		
 	}
@@ -142,8 +148,12 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 		this.naf = naf;
 	}
 	
-	public void setComunicationStatus(Boolean isComunicate) {
-		this.isComunicate = isComunicate;
+	public void setComunicationBaja(Boolean isComunicate) {
+		this.isComunicateBaja = isComunicate;
+	}
+	
+	public void setComunicationAlta(Boolean isComunicate) {
+		this.isComunicateAlta = isComunicate;
 	}
 
 	public void setITType(Byte itType) {

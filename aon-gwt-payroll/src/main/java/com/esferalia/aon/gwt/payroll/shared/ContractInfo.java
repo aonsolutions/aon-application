@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -550,7 +551,7 @@ public class ContractInfo implements Serializable{
 	public boolean isPartial() {
 		if(contractType!=null) {
 			int type = Integer.parseInt(contractType);
-			return AonNumberUtils.between(type, 200, 300) || AonNumberUtils.between(type, 500, 599) || AonNumberUtils.equals(type, 0);
+			return AonNumberUtils.between(type, 200, 300) ||  Arrays.asList(309,330,350,389).contains(type) || AonNumberUtils.between(type, 500, 599) || AonNumberUtils.equals(type, 0) ;
 		}
 		return false;
 	}

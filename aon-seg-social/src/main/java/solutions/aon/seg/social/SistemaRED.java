@@ -155,7 +155,17 @@ public class SistemaRED {
 
 	// CONTRACTS
 	public enum ContractType {
-		FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL, RESTO_Y_AUTONOMOS
+		FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL, RESTO_Y_AUTONOMOS;
+		
+		public static ContractType safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		public static ContractType safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= ContractType.values().length) return null;
+			return ContractType.values()[i];
+		}
 	}
 
 
@@ -636,7 +646,7 @@ public class SistemaRED {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			SistemaREDITParts.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, startdate, contractType, baseCot, cotDays, fATEP, accidentType, licenseNumber, cias, occupation);
-		} catch (IOException | SegSocialException e) {
+		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
 	}

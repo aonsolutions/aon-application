@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
@@ -104,6 +105,13 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiField
 	HTMLPanel employeePanel;
+	
+	@UiField
+	HTMLPanel employeePanelDoc;
+	
+	@UiField
+	HTMLPanel employeePanelNaf;
+
 
 	@UiField
 	VerticalPanel itDataTable;
@@ -196,8 +204,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiField
 	HTMLPanel itAlta;
-
-
+	
 	private HTMLPanel tramos;
 
 	
@@ -372,10 +379,13 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 	}
 	
-	private void createEmployeePanel(String name) {
+	private void createEmployeePanel(EmployeeInfo employeeInfo) {
 		employeePanel.clear();
-		Label nameLB = new Label(name);
-		employeePanel.add(nameLB);
+		employeePanelDoc.clear();
+		employeePanelNaf.clear();
+		employeePanel.add(new Label(employeeInfo.getFullName()));
+		employeePanelDoc.add(new Label(employeeInfo.getDocument()));
+		employeePanelNaf.add(new Label(employeeInfo.getSsNumber()));
 		showListOption();
 	}
 	
@@ -471,7 +481,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		// Check type of part
 		showAdvancedOpts(!showAll);
 		
-		createEmployeePanel(itDialogObject.getEmployeeName());
+		createEmployeePanel(itDialogObject.getEmployeeinfo());
 		
 		// Check Comunicate
 		checkComunicateIT();
@@ -622,7 +632,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		this.itEmployee = itEmployee;
 		ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
 		setITDialogObject(itDialogObject);
-		createEmployeePanel(itEmployee.getEmployeeInfo().getFullName());
+		createEmployeePanel(itEmployee.getEmployeeInfo());
 	}
 	
 	private ITEmployee getITEmployee(String employeeName) {
@@ -1886,16 +1896,21 @@ public abstract class ITDialog extends AonCustomDialog {
 		HTMLPanel employeeData = new HTMLPanel("");
 		employeeData.setStyleName(style.flex());
 		flexColumn.add(employeeData);
+		
+		Label name = new Label("Trabajador:");
+		name.setStyleName(style.subTitle());
+		employeeData.add(name);
+		employeeData.add(new Label(itDialogObject.getEmployeeName()));
 
 		Label doc = new Label("Documento:");
 		doc.setStyleName(style.subTitle());
 		employeeData.add(doc);
 		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getDocument()));
-
-		Label name = new Label("Trabajador:");
-		name.setStyleName(style.subTitle());
-		employeeData.add(name);
-		employeeData.add(new Label(itDialogObject.getEmployeeName()));
+		
+		Label naf = new Label("Naf:");
+		naf.setStyleName(style.subTitle());
+		employeeData.add(naf);
+		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getSsNumber()));
 
 		HTMLPanel itInfoEl = new HTMLPanel("");
 		itInfoEl.setStyleName(style.flex());

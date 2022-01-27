@@ -106,10 +106,10 @@ public class TestItParts {
 	public void registerItBaja() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
 			SistemaREDITParts.registerItBaja(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011011187190", 
-					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO,
-					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 2.3, 23, Optional.of(new Date()), Optional.empty(),
-					Optional.empty(), Optional.empty(), Optional.of("9490"));
+					"0111", "01105360062", "011017250195", 
+					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
+					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.of(new Date()), Optional.empty(),
+					Optional.empty(), Optional.empty(), Optional.empty());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -133,10 +133,11 @@ public class TestItParts {
 	@Ignore
 	public void registerItAlta() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			System.out.println("baja:"+new Date("2021/12/27")+" alta:"+new Date("2022/01/03"));
 			SistemaREDITParts.registerItAlta(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "011011187190", 
 					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO,
-					new Date(), new Date(), Optional.empty(), Optional.empty(),  SistemaRED.CauseType.CURACION, Optional.empty(), Optional.empty());
+					new Date("2021/12/27"), new Date("2022/01/03"), Optional.empty(), Optional.empty(),  SistemaRED.CauseType.CURACION, Optional.empty(), Optional.empty());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
