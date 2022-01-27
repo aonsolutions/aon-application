@@ -120,6 +120,8 @@ import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
@@ -2253,12 +2255,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<ContractAttach> getContractAttachments(String domainName, Integer contractId) {
+	public List<Attach> getContractAttachments(String domainName, String login, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContractAttach.getContractAttachments(connection, domainId, contractId);
+			return AON.getAttachList(
+					domainName, 
+					domainId, 
+					login, 
+					f -> f.getDomainProperty().eq(domainId).and(f.getContractProperty().eq(contractId)), 
+					AttachType.CONTRACT, 
+					false);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -2282,12 +2290,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<ContractAttach> deleteContractAttach(String domainName, ContractAttach contractAttach) {
+	public void deleteContractAttach(String domainName, String login, Integer attachId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContractAttach.deleteContractAttach(connection, domainId, contractAttach);
+			AON.deleteAttach(domainName, domainId, login, f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	

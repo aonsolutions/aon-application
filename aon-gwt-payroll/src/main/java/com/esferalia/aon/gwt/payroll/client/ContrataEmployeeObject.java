@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -287,33 +288,14 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (Attachments)
 	
-	public void getContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+	public void getContractAttachments(Consumer<List<Attach>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		
-		enterprisesService.getContractAttachments(contractId, new AsyncCallback<List<ContractAttach>>() {
+		enterprisesService.getContractAttachments(contractId, new AsyncCallback<List<Attach>>() {
 			
 			@Override
-			public void onSuccess(List<ContractAttach> contractAttachments) {
+			public void onSuccess(List<Attach> contractAttachments) {
 				employeeContractData.setContractAttachments(contractAttachments);
-				success.accept(contractAttachments);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-			
-		});
-	}
-	
-	public void setContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		List<ContractAttach> contractAttachments = employeeContractData.getContractAttachments();
-		
-		enterprisesService.setContractAttachments(contractId, contractAttachments, new AsyncCallback<List<ContractAttach>>() {
-			
-			@Override
-			public void onSuccess(List<ContractAttach> contractAttachments) {
 				success.accept(contractAttachments);
 			}
 

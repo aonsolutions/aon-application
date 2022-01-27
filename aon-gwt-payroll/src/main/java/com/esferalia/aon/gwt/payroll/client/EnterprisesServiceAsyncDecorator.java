@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -550,9 +551,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getContractAttachments(String currentDomainName, Integer contractId, AsyncCallback<List<ContractAttach>> callback) {
+	public void getContractAttachments(String currentDomainName, String login, Integer contractId, AsyncCallback<List<Attach>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getContractAttachments(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+		enterprisesServiceAsync.getContractAttachments(currentDomainName, login, contractId, new AsyncCallbackWrapper<List<Attach>>(callback));
 	}
 	
 	@Override
@@ -568,9 +569,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void deleteContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> callback) {
+	public void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.deleteContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+		enterprisesServiceAsync.deleteContractAttach(currentDomainName, login, attachId, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override

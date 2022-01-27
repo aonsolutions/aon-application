@@ -423,19 +423,33 @@ public class AttachmentDAO {
 	//-------------------- FULL UPDATE
 	
 	public static void updateContractAttach(AONContext ctx, Attach attach){
-		ctx.getDslContext().update(CONTRACT_ATTACH)
-			.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(attach.getDate().getTime()))
-			.set(CONTRACT_ATTACH.CONTRACT, attach.getAttachModule())
-			.set(CONTRACT_ATTACH.DATA, attach.getData())
-			.set(CONTRACT_ATTACH.DESCRIPTION, attach.getDescription())
-			.set(CONTRACT_ATTACH.DOMAIN, attach.getDomain().getId())
-			.set(CONTRACT_ATTACH.DRIVEID, attach.getDriveId())
-			.set(CONTRACT_ATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
-			.set(CONTRACT_ATTACH.SCOPE, attach.getScope())
-			.set(CONTRACT_ATTACH.SECURITY_LEVEL, attach.getConfidential()?(byte)1:(byte)0)
-			.set(CONTRACT_ATTACH.TYPE, (byte) attach.getType())
-		.where(CONTRACT_ATTACH.ID.eq(attach.getId()))
-		.execute();
+		if(null == attach.getData())
+			ctx.getDslContext().update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(attach.getDate().getTime()))
+				.set(CONTRACT_ATTACH.CONTRACT, attach.getAttachModule())
+				.set(CONTRACT_ATTACH.DESCRIPTION, attach.getDescription())
+				.set(CONTRACT_ATTACH.DOMAIN, attach.getDomain().getId())
+				.set(CONTRACT_ATTACH.DRIVEID, attach.getDriveId())
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+				.set(CONTRACT_ATTACH.SCOPE, attach.getScope())
+				.set(CONTRACT_ATTACH.SECURITY_LEVEL, attach.getConfidential()?(byte)1:(byte)0)
+				.set(CONTRACT_ATTACH.TYPE, (byte) attach.getType())
+			.where(CONTRACT_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		else
+			ctx.getDslContext().update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(attach.getDate().getTime()))
+				.set(CONTRACT_ATTACH.CONTRACT, attach.getAttachModule())
+				.set(CONTRACT_ATTACH.DATA, attach.getData())
+				.set(CONTRACT_ATTACH.DESCRIPTION, attach.getDescription())
+				.set(CONTRACT_ATTACH.DOMAIN, attach.getDomain().getId())
+				.set(CONTRACT_ATTACH.DRIVEID, attach.getDriveId())
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte) attach.getMimeType().ordinal())
+				.set(CONTRACT_ATTACH.SCOPE, attach.getScope())
+				.set(CONTRACT_ATTACH.SECURITY_LEVEL, attach.getConfidential()?(byte)1:(byte)0)
+				.set(CONTRACT_ATTACH.TYPE, (byte) attach.getType())
+			.where(CONTRACT_ATTACH.ID.eq(attach.getId()))
+			.execute();
 	}
 	
 	public static void updateItemAttach(AONContext ctx, Attach attach){
