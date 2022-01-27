@@ -163,7 +163,6 @@ import com.google.gwt.regexp.shared.RegExp;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaRED.ContractType;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
