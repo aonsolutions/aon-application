@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -193,14 +194,14 @@ public interface EnterprisesService extends RemoteService {
 	
 	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
 
-	List<ContractAttach> getContractAttachments(String currentDomainName, Integer contractId);
+	List<Attach> getContractAttachments(String currentDomainName, String login, Integer contractId) throws IllegalArgumentException;
 	
 	List<ContractAttach> setContractAttachments(String currentDomainName, Integer contractId,
 			List<ContractAttach> contractAttachments);
 
 	List<ContractAttach> createContractAttach(String currentDomainName, ContractAttach contractAttach);
 
-	List<ContractAttach> deleteContractAttach(String currentDomainName, ContractAttach contractAttach);
+	void deleteContractAttach(String currentDomainName, String login, Integer attachId) throws IllegalArgumentException;
 
 	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId);
 
