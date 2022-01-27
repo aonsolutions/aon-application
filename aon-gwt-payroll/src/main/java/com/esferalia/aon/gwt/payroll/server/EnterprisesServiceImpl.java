@@ -2052,7 +2052,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqMail.sendPayrollEmail(connection, type, params, from, to, cc, cco, bodyHTML);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqMail.sendPayrollEmail(connection, domainId, type, params, from, to, cc, cco, bodyHTML);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
