@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,36 +12,40 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import net.esle.sinadura.core.certificado.Certificado;
-import net.esle.sinadura.core.firma.DocumentFactory;
-import net.esle.sinadura.core.firma.DocumentIFace;
-import net.esle.sinadura.core.firma.SignStoreFactory;
-import net.esle.sinadura.core.firma.SignStoreIFace;
-import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.facturae.FacturaeSigner;
 import com.code.aon.facturae.KeyStoreData;
-import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import net.esle.sinadura.core.certificado.Certificado;
+import net.esle.sinadura.core.firma.DocumentFactory;
+import net.esle.sinadura.core.firma.DocumentIFace;
+import net.esle.sinadura.core.firma.SignStoreFactory;
+import net.esle.sinadura.core.firma.SignStoreIFace;
+import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
 public class CertificateController implements Serializable {
 	
@@ -65,7 +68,7 @@ public class CertificateController implements Serializable {
 	
 	private CompanyController companyController;
 	
-	private RegistryAttachment keystore;
+	private Integer keystore;
 	
 	private String entity;
 	
@@ -113,16 +116,19 @@ public class CertificateController implements Serializable {
 		this.password = password;
 	}
 	
-	public RegistryAttachment getKeystore() {
+	public Integer getKeystore() {
 		return keystore;
 	}
 
-	public void setKeystore(RegistryAttachment keystore) {
+	public void setKeystore(Integer keystore) {
 		this.keystore = keystore;
 	}
 
 	public SignStoreIFace getSignStore() {
-		ByteArrayInputStream in = new ByteArrayInputStream( keystore.getData() );
+		Domain domain = getDomain();
+		User user = getUser();
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(keystore), AttachType.REGISTRY);
+		ByteArrayInputStream in = new ByteArrayInputStream( attach.getData() );
 		try {
 			return SignStoreFactory.buildSingStorePKSC12( in, password );
 		} catch (SinaduraCoreException e) {
@@ -288,33 +294,73 @@ public class CertificateController implements Serializable {
 		return digitalCertificates;
 	}
 	
-	private Criteria getCertificateCriteria( IManagerBean bean ) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		Serializable id = companyController.obtainCompany().getId();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
-		String scopeAlias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
-		UserUtils.getInstance().addNullableScopeExpression(criteria, scopeAlias);
-		return criteria;
+//	private Criteria getCertificateCriteria( IManagerBean bean ) throws ManagerBeanException {
+//		Criteria criteria = new Criteria();
+//		Serializable id = companyController.obtainCompany().getId();
+//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
+//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
+//		String scopeAlias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
+//		UserUtils.getInstance().addNullableScopeExpression(criteria, scopeAlias);
+//		return criteria;
+//	}
+	
+	public void loadDigitalCertificates() {
+		this.digitalCertificates = new LinkedList<SelectItem>();
+		Domain domain = getDomain();
+		User user = getUser();
+		AON.getCertificates(domain, user, f -> certificateFilter(domain, user, f)).forEach(certificate -> {
+			SelectItem item = new SelectItem(certificate.getId(), certificate.getName());
+			digitalCertificates.add(item);
+		});
+	}	
+	
+	public Domain getDomain() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return AON.getDomain(domainName, domainId, login);
 	}
 	
-	public void loadDigitalCertificates() throws ManagerBeanException {
-		this.digitalCertificates = new LinkedList<SelectItem>();
+	public User getUser( ) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Integer userId = UserUtils.getInstance().getLoggedUser().getId();	
+		return AON.getUser(domainName, domainId, login, f -> f.getIdProperty().eq(userId));
+	}
+	
+	public static Filter certificateFilter(Domain domain, User user, CertificateProperties f) {
+		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), user.getLogin());
 		
-		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = getCertificateCriteria(rattachBean);
-		Iterator<ITransferObject> iterator = rattachBean.getList(criteria).iterator();
-		while ( iterator.hasNext() ) {
-			RegistryAttachment ra = (RegistryAttachment) iterator.next();
-			SelectItem item = new SelectItem(ra, ra.getDescription());
-			digitalCertificates.add(item);
-		} 
-	}	
+		Filter filter;
+		if(domain.getParentId() != null) {
+			Integer[] domains = {domain.getId(), domain.getParentId()};
+			filter = f.getDomainProperty().in(domains);
+		} else filter = f.getDomainProperty().eq(domain.getId());
+    	
+		if(user.getRegistry() != null && domain.getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Integer[] registries = {user.getRegistry(), company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(user.getRegistry() != null) {
+			Integer[] registries = {user.getRegistry(), company.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(domain.getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Integer[] registries = {company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
+		
+		
+		filter = filter.and(f.getTypeProperty().eq(CertificateType.AEAT.name()).or(f.getTypeProperty().isNull()));
+		
+    	return filter;
+    }
 
 	public int getCertificateCount() throws ManagerBeanException {
-		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = getCertificateCriteria(rattachBean);
-		return rattachBean.getCount(criteria);
+//		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+//		Criteria criteria = getCertificateCriteria(rattachBean);
+		return 1; //rattachBean.getCount(criteria);
 	}	
 	
 	public List<SelectItem> getEntities(){
@@ -359,12 +405,15 @@ public class CertificateController implements Serializable {
 			document.setTSURL(getEntity());
 			InputStream imageIS = SignerController.class.getResourceAsStream(SIGN_IMAGE_PATH);
 			byte[] imageData = IOUtils.toByteArray( imageIS );
-			document.firmar( getSignStore(), getCertificado(), out, true, 
-					companyController.obtainCompany().getAlias(), companyController.getMainAddress().getCity(), imageData,
-					305, 745, 405, 795 );
+//			document.firmar( getSignStore(), getCertificado(), out, true, 
+//					companyController.obtainCompany().getAlias(), companyController.getMainAddress().getCity(), imageData,
+//					305, 745, 405, 795);
+			document.firmar(getSignStore(), getCertificado(), out, companyController.obtainCompany().getAlias(), companyController.getMainAddress().getCity(), imageData);
 		} catch ( IOException e ) {
+			e.printStackTrace();
 			throw new AonCoreException(e.getMessage(), e);
 		} catch (SinaduraCoreException e) {
+			e.printStackTrace();
 			throw new AonCoreException(e.getMessage(), e);
 		}
 		return out.toByteArray();		

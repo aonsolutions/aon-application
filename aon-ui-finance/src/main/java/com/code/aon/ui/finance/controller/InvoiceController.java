@@ -1639,7 +1639,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Integer domainId = DomainManager.getCurrentDomain();
 		Domain domain = AON.getDomain(domainName, domainId, "");
 
-		if(isSaleInvoiceDefault()){
+		if(isSaleInvoiceDefault() && MimeType.MIME_PDF == type){
 			return generateInvoiceAttachment(domain, invoice, to);
 		} else if ( type == MimeType.MIME_PDF ) {
 			return generateReportAttachment(to);	
@@ -2036,6 +2036,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public String getTbaiUrl() {
 		Invoice invoice = (Invoice) this.getTo();
+		if(invoice == null || invoice.getId() == null) return null;
 		Integer domainId = DomainManager.getCurrentDomain();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
