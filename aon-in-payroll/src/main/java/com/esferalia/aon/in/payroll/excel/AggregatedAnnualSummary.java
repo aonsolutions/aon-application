@@ -1365,8 +1365,6 @@ public class AggregatedAnnualSummary {
 			entry.setEnterpriseSS(safeSum(entry.getEnterpriseSS(), enterpriseSS));
 		if (s.getExtraProrationBase() != null)
 			entry.setExtraProrration(safeSum(entry.getExtraProrration(), s.getExtraProrationBase()));
-		if (s.getInkindIrpfBase() != 0d)
-			entry.setInKindIrpfBase(safeSum(entry.getInKindIrpfBase(), s.getInkindIrpfBase()));
 		if (s.getIrpfBase() != null)
 			entry.setTotalIrpfBase(safeSum(entry.getTotalIrpfBase(), s.getIrpfBase()));
 		if (s.getMoneyIrpfBase() != 0d)
