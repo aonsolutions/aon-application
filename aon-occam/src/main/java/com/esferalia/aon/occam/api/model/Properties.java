@@ -1162,6 +1162,10 @@ public interface Properties {
 		Property<Date> getEndDateProperty();
 		Property<Byte> getDischargeCauseProperty();
 		Property<Integer> getParentProperty();
+
+				
+		Property<String> getNafProperty();
+		Property<String> getCCCProperty();
 	}
 	
 	public interface IrpfDataProperties{

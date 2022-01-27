@@ -42,6 +42,7 @@ public class EmployeeIT implements Serializable {
 	String regime;
 	String ccc;
 	String nss;
+	Byte contractType; // 0 parcial, 1 tiempo completo
 	
 	public EmployeeIT() {
 		this.itParts = new ArrayList<>();
@@ -168,6 +169,15 @@ public class EmployeeIT implements Serializable {
 		return nss;
 	}
 	
+	public EmployeeIT setContractType(Byte contractType) {
+		this.contractType = contractType;
+		return this;
+	}
+
+	public Byte getContractType() {
+		return contractType;
+	}
+	
 	public EmployeeIT setDailyCgpBase(Double dailyCgpBase) {
 		this.dailyCgpBase = dailyCgpBase;
 		return this;
@@ -237,6 +247,7 @@ public class EmployeeIT implements Serializable {
         		+ "parent=" + parent +","
         		+ "dailyRegBase=" + dailyRegBase +","
         		+ "dischargeCause=" + dischargeCause +","
+        		+ "contractType=" + contractType +","
         		+ "itParts=[" + itParts.toString() +"]"
         +  "}";
     }

@@ -1,7 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.Date;
 import java.util.List;
@@ -27,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
+import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractLeavePropertiesDAO;
 
 public class EmployeeITDAO {
@@ -51,6 +56,10 @@ public class EmployeeITDAO {
 		.select()
 		.from(CONTRACT_LEAVE)
 		.innerJoin(CONTRACT_LEAVE_DETAIL).onKey()
+		.innerJoin(CONTRACT).on(CONTRACT.ID.eq(CONTRACT_LEAVE.CONTRACT))
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
 		.where(new ContractLeavePropertiesDAO().getConditions(filter))
 		.fetchGroups( r -> 
 			new EmployeeIT()
@@ -65,6 +74,9 @@ public class EmployeeITDAO {
 			.setDailyCgpBase(r.get(CONTRACT_LEAVE.DAILY_CGP_BASE))
 			.setParent(r.get(CONTRACT_LEAVE.PARENT))
 			.setDailyRegBase(r.get(CONTRACT_LEAVE.DAILY_REG_BASE))
+			.setRegime(getSSRegimeCode(r.get(CONTRACT.SS_REGIME)))
+			.setCcc(r.get(ENTERPRISE_CCC.CCC))
+			.setNss(r.get(PERSON.SOCIAL_SECURITY_NUM))
 			.setDischargeCause( ContractLeaveDischargeCause.safeValueOf(r.get(CONTRACT_LEAVE.DISCHARGE_CAUSE)) )
 			, r -> new EmployeeITPart()
 				.setId(r.get(CONTRACT_LEAVE_DETAIL.ID))
@@ -205,7 +217,17 @@ public class EmployeeITDAO {
 		if(null!=insertContractLeaveDetail) insertContractLeaveDetail.execute();
 	}
 	
-	
+	private static String getSSRegimeCode(Byte ordinal) {
+		if ( ordinal == null )
+			return null;
+		if ( ordinal < 0 )
+			return null;
+		SSRegimeType types [] = SSRegimeType.values();
+		if ( ordinal >= types.length )
+			return null;
+		
+		return types[ordinal].getCode();
+	}
 	private static java.sql.Date toSql(Date date) {
 		return null!= date ? new java.sql.Date(date.getTime()) : null;
 	}
