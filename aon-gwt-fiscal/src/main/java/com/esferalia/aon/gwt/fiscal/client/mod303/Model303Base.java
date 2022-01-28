@@ -197,7 +197,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 				@Override
 				public void onAccept() {
-					getCallback().onCancel(mod303);
+					getCallback().onCancel(getModel());
 				}
 				@Override
 				public void onCancel() {
@@ -205,7 +205,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				}
 			});
 		} else {
-			getCallback().onCancel(mod303);
+			getCallback().onCancel(getModel());
 		}
 	}
 
@@ -585,7 +585,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		getCallback().hideError();
-		Model303.service.save(getCallback().getOptions().getOccam(), this.mod303, new AsyncCallback<Mod303>() {
+		Model303.service.save(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						setDirty( false );
