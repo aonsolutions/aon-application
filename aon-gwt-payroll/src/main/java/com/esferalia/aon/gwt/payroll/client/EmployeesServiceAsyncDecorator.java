@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
@@ -686,12 +687,6 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getSalaries(currentDomainName, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
 	}
 	
-	@Override
-	public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
-			AsyncCallback<List<Certifica2Info>> callback) {
-		AON.start();
-		employeesServiceAsync.getSalariesOccam(currentDomainName, login, itEmployee, startDate, endDate, new AsyncCallbackWrapper<>(callback));
-	}
 
 	@Override
 	public void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback) {
@@ -996,4 +991,10 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.updateContractVariables(currentDomainName, contractVariables, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
+	@Override
+	public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
+			AsyncCallback<List<Certifica2Info>> callback) {
+		AON.start();
+		employeesServiceAsync.getSalariesOccam(currentDomainName, login, itEmployee, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+	}
 }

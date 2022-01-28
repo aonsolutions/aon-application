@@ -295,7 +295,7 @@ public class EnterprisePayrollExcelTestCase {
 			EnterprisePayrollExcel.write(
 					OutputStream.nullOutputStream(),
 //					new FileOutputStream(MessageFormat.format("./ExcelPayrollTest{0}.xls", type == ExcelType.COMPLETE ? "Complete" : "Summary")),
-					payrollList, Optional.empty(), "", "", type);
+					payrollList, Optional.empty(), "", "", Optional.empty(),type);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

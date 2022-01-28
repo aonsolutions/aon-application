@@ -62,7 +62,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private static final int MAX_LABEL_LENGTH = 100;
 	
-	private Mod303 mod303;
+	private Mod303 md303;
 	private Model303Callback callback;
 	private EnumMap<Mod303Key,AonDoubleBox> fieldsMap;
 	private boolean dirty;
@@ -104,7 +104,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		select( mod303 );
 		
-		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(this.mod303);
+		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(getModel());
 		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
 		addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
 		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH);
@@ -119,10 +119,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return callback;
 	}
 	protected Mod303 getModel() {
-		return mod303;
+		return md303;
 	}
 	public void setModel(Mod303 mod303) {
-		this.mod303 = mod303;
+		this.md303 = mod303;
 	}
 
 	private AonToolbar getToolbarPanel() {
@@ -152,14 +152,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		commentsButton.addClickHandler( event -> {
 			final AonToast toast = new AonToast();
 			FlowPanel commentPanel = new FlowPanel();
-			commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(mod303.getAdministration()) );
+			commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()) );
 			commentPanel.addStyleName(AON.CSS.aonHeightAll());
 			commentPanel.addStyleName(AON.CSS.aonTextCenter());
 			TextArea comment = new TextArea();
 			comment.addValueChangeHandler(event1 -> {
-				mod303.setComments(event1.getValue());
+				getModel().setComments(event1.getValue());
 				styleCommentsButton();
-				Model303.service.saveComments( getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
+				Model303.service.saveComments( getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						toast.hide();
@@ -172,7 +172,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					}
 				});
 			});
-			comment.setText(mod303.getComments());
+			comment.setText(getModel().getComments());
 			comment.setWidth("90%");
 			comment.setHeight("5em");
 			commentPanel.add(comment);
@@ -198,9 +198,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				@Override
 				public void onAccept() {
 					if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
-						getCallback().getOptions().getExternalCallback().onExit(mod303);
+						getCallback().getOptions().getExternalCallback().onExit(getModel());
 					} else {
-						getCallback().onCancel(mod303);
+						getCallback().onCancel(getModel());
 					}
 				}
 				@Override
@@ -210,9 +210,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			});
 		} else {
 			if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
-				getCallback().getOptions().getExternalCallback().onExit(mod303);
+				getCallback().getOptions().getExternalCallback().onExit(getModel());
 			} else {
-				getCallback().onCancel(mod303);
+				getCallback().onCancel(getModel());
 			}
 		}
 	}
@@ -240,7 +240,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void select( Mod303 mod303) {
 		setModel(mod303);
 		refreshToolbarState();
-		styleStatusLabel(mod303);
+		styleStatusLabel();
 	}
 	
 	protected void selectAndPopulate( Mod303 mod303) {
@@ -251,26 +251,26 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private void refreshToolbarState() {
-		toolbarPanel.setTitle(AonStringUtils.join(mod303.getDocument(),AonStringUtils.SPACE,mod303.getFullName()));
-		resetButton.setVisible(!mod303.isNew() && !mod303.isFinished() && !mod303.isSent());
-		auditButton.setVisible(!mod303.isNew());
-		newButton.setVisible(!mod303.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
+		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
+		resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		auditButton.setVisible(!getModel().isNew());
+		newButton.setVisible(!getModel().isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
-		saveButton.setVisible(!mod303.isFinished() && !mod303.isSent());
-		deleteButton.setVisible(!mod303.isNew() && !mod303.isFinished() && !mod303.isSent());
-		printButton.setVisible(!mod303.isNew());
-		markAsPendingButton.setVisible(!mod303.isNew() &&
-				(mod303.getStatus() == FiscalStatus.FINISHED 
-				|| mod303.getStatus() == FiscalStatus.BATCHED
-				|| mod303.getStatus() == FiscalStatus.SENT
-				|| mod303.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| mod303.getStatus() == FiscalStatus.BLOCKED));
-		markAsFinishedButton.setVisible(!mod303.isNew() &&
-				(mod303.getStatus() == FiscalStatus.PENDING
-				|| mod303.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| mod303.getStatus() == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(!mod303.isNew() &&
-				(mod303.getStatus() == FiscalStatus.FINISHED));
+		saveButton.setVisible(!getModel().isFinished() && !getModel().isSent());
+		deleteButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		printButton.setVisible(!getModel().isNew());
+		markAsPendingButton.setVisible(!getModel().isNew() &&
+				(getModel().getStatus() == FiscalStatus.FINISHED 
+				|| getModel().getStatus() == FiscalStatus.BATCHED
+				|| getModel().getStatus() == FiscalStatus.SENT
+				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
+				|| getModel().getStatus() == FiscalStatus.BLOCKED));
+		markAsFinishedButton.setVisible(!getModel().isNew() &&
+				(getModel().getStatus() == FiscalStatus.PENDING
+				|| getModel().getStatus() == FiscalStatus.CUSTOMER_CHECK
+				|| getModel().getStatus() == FiscalStatus.MISSING));
+		markAsSentButton.setVisible(!getModel().isNew() &&
+				(getModel().getStatus() == FiscalStatus.FINISHED));
 	}
 
 	protected EnumMap<Mod303Key, AonDoubleBox> getFieldsMap() {
@@ -367,7 +367,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return paintField(table, row, col, key, script.getFieldSize(key), script.isEnabled( key ));
 	}
 	protected int paintField(FlexTable table, int row, int col, final Mod303Key key, int fieldSize, boolean enabled) {
-		final FiscalModelDetail det1 = this.mod303.ensureDetail(key);
+		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox(fieldSize);
 		fieldsMap.put(key, input);
 		input.setEnabled(enabled); 
@@ -380,19 +380,19 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		input.addValueChangeHandler(event -> {
 			if (input.getValue() == null) input.setValue(0.0,false);
 			if (key.isDiffEnabled()) {
-				double result = mod303.getResultAmount(key);
-				double adjust = mod303.getAdjustAmount(key);
+				double result = getModel().getResultAmount(key);
+				double adjust = getModel().getAdjustAmount(key);
 				double amount = input.getValue();
 				if (AonMathUtils.isNotZero(result - adjust - amount)) {
-					mod303.ensureDetail(key).setAdjustAmount( result - amount);	
+					getModel().ensureDetail(key).setAdjustAmount( result - amount);	
 				}
 			}
-			mod303.ensureDetail(key).setAmount(input.getValue());
+			getModel().ensureDetail(key).setAmount(input.getValue());
 
-			if (key.isDiffEnabled() && AonMathUtils.isNotZero(mod303.ensureDetail(key).getAdjustAmount())) {
+			if (key.isDiffEnabled() && AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
 				input.addStyleName(AON.CSS.aonChanged());
-				input.setTitle(AON.MSG.difCalc(AON.FMT.format(mod303.ensureDetail(key).getResultAmount()),
-						AON.FMT.format(AonMathUtils.round( mod303.ensureDetail(key).getAdjustAmount() * -1))));
+				input.setTitle(AON.MSG.difCalc(AON.FMT.format(getModel().ensureDetail(key).getResultAmount()),
+						AON.FMT.format(AonMathUtils.round( getModel().ensureDetail(key).getAdjustAmount() * -1))));
 			} else {
 				input.removeStyleName(AON.CSS.aonChanged());
 			}
@@ -410,9 +410,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		int row = table.getRowCount();
 		paintLabel(table, row, AON.MSG.withoutActivity());
 		final CheckBox check = new CheckBox();
-		check.setValue(this.mod303.isWithoutActivity());
+		check.setValue(getModel().isWithoutActivity());
 		check.addClickHandler( event -> {
-				mod303.setWithoutActivity(check.getValue());
+			getModel().setWithoutActivity(check.getValue());
 				markAsDirty();
 		});
 		table.setWidget(row, 1, check);
@@ -422,9 +422,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		int row = table.getRowCount();
 		paintLabel(table, row, key.getDescription());
 		final CheckBox check = new CheckBox();
-		check.setValue(this.mod303.ensureDetail(key).getAmount() == 1);
+		check.setValue(getModel().ensureDetail(key).getAmount() == 1);
 		check.addClickHandler( event -> {
-				mod303.ensureDetail(key).setAmount((check.getValue() != null && check.getValue())?1.0:0.0);
+			getModel().ensureDetail(key).setAmount((check.getValue() != null && check.getValue())?1.0:0.0);
 				markAsDirty();
 		});
 		table.setWidget(row, 1, check);
@@ -438,11 +438,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		final AonDateBox dateBox = new AonDateBox();
-		if (AonStringUtils.isNotEmpty( mod303.ensureDetail(key).getDescription() ) ) {
-			dateBox.setValue( dateBox.parse(mod303.ensureDetail(key).getDescription() , false) );
+		if (AonStringUtils.isNotEmpty( getModel().ensureDetail(key).getDescription() ) ) {
+			dateBox.setValue( dateBox.parse(getModel().ensureDetail(key).getDescription() , false) );
 		}
 		dateBox.addValueChangeHandler( event -> {
-			mod303.ensureDetail(key).setDescription(dateBox.format());
+			getModel().ensureDetail(key).setDescription(dateBox.format());
 			markAsDirty();
 		});
 		table.setWidget(row, 1, dateBox);
@@ -458,11 +458,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		textBox.setVisibleLength(fieldSize+1);
 		textBox.setMaxLength(fieldSize);
 		textBox.setEnabled(enabled);
-		if (AonStringUtils.isNotEmpty( mod303.ensureDetail(key).getDescription() ) ) {
-			textBox.setValue( mod303.ensureDetail(key).getDescription() , false );
+		if (AonStringUtils.isNotEmpty( getModel().ensureDetail(key).getDescription() ) ) {
+			textBox.setValue( getModel().ensureDetail(key).getDescription() , false );
 		}
 		textBox.addValueChangeHandler( event ->  {
-			mod303.ensureDetail(key).setDescription(textBox.getValue());
+			getModel().ensureDetail(key).setDescription(textBox.getValue());
 			markAsDirty();
 		});
 		table.setWidget(row, 1, textBox);
@@ -474,9 +474,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
-		listBox.setSelectedIndex( (int) mod303.ensureDetail(key).getAmount() );
+		listBox.setSelectedIndex( (int) getModel().ensureDetail(key).getAmount() );
 		listBox.addChangeHandler( event -> {
-			mod303.ensureDetail(key).setAmount(listBox.getSelectedIndex());
+			getModel().ensureDetail(key).setAmount(listBox.getSelectedIndex());
 			markAsDirty();
 		});
 		table.setWidget(row, 1, listBox);
@@ -502,7 +502,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.setStyleName(AON.CSS.aonNowrap());
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
-			if 	(infoKey == FiscalModelKeyInfo.NONE || (infoKey == FiscalModelKeyInfo.DIFF_INVOICE && this.mod303.isDiffCalculationDisabled())) {
+			if 	(infoKey == FiscalModelKeyInfo.NONE || (infoKey == FiscalModelKeyInfo.DIFF_INVOICE && getModel().isDiffCalculationDisabled())) {
 				// Nothing
 			} else {
 				final AonTableButton button = new AonTableButton("");
@@ -519,7 +519,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				button.setTabIndex(-2); // NO FOCUS
 				button.addClickHandler( event  -> 
 					Model303.service.getInfo(getCallback().getOptions().getOccam(),
-							mod303,script, infoKey,new AsyncCallback<String>() {
+							getModel(),script, infoKey,new AsyncCallback<String>() {
 						
 						@Override
 						public void onFailure(Throwable caught) {
@@ -549,7 +549,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	public void calculateAndRefresh(AsyncCallback<Mod303> cbk) {
-		Model303.service.calculate(getCallback().getOptions().getOccam(), this.mod303,
+		Model303.service.calculate(getCallback().getOptions().getOccam(), getModel(),
 				new AsyncCallback<Mod303>() {
 
 					@Override
@@ -592,7 +592,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.save(getCallback().getOptions().getOccam(), this.mod303, new AsyncCallback<Mod303>() {
+		Model303.service.save(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						setDirty( false );
@@ -618,11 +618,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 			@Override
 			public void onAccept() {
-				Model303.service.delete(getCallback().getOptions().getOccam(),mod303, new AsyncCallback<Void>() {
+				Model303.service.delete(getCallback().getOptions().getOccam(),getModel(), new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						deleteButton.setEnabled(true);
-						getCallback().onRemove(mod303);
+						getCallback().onRemove(getModel());
 					}
 
 					@Override
@@ -642,7 +642,36 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private void onFinalize( ) {
 		markAsFinishedButton.setEnabled(false);
-		Model303.service.initializeForFinish(getCallback().getOptions().getOccam(),mod303,
+		if (isDirty()) {
+			AonConfirmDialog cd = new AonConfirmDialog();
+			cd.confirm(AON.MSG.confirmDeclarationSaveAction(), new AonConfirmDialogCallback() {
+
+				@Override
+				public void onAccept() {
+					save( new AsyncCallback<Mod303>() {
+
+						@Override
+						public void onSuccess(Mod303 result) {
+							doFinalize();
+						}
+						@Override
+						public void onFailure(Throwable caught) {
+							// Nothing
+						}
+					});
+				}
+				@Override
+				public void onCancel() {
+					markAsFinishedButton.setEnabled(true);
+				}
+			});
+		} else {
+			doFinalize();
+		}
+	}
+	
+	private void doFinalize( ) {
+		Model303.service.initializeForFinish(getCallback().getOptions().getOccam(),getModel(),
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
@@ -660,7 +689,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private void showFinalizePopup() {
-		Model303FinishDeclarationPopup finalizeDialog = new Model303FinishDeclarationPopup(this.mod303, getCallback(), new FinishDeclarationPopupCallback() {
+		Model303FinishDeclarationPopup finalizeDialog = new Model303FinishDeclarationPopup(getModel(), getCallback(), new FinishDeclarationPopupCallback() {
 			@Override
 			public void onCancel() {
 				// nothing
@@ -686,14 +715,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.markAsCustomerCheck(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsCustomerCheck(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsFinishedButton.setEnabled(true);
-						showPaymentInfo(mod303);
+						showPaymentInfo(getModel());
 					}
 
 					@Override
@@ -712,14 +741,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.markAsFinished(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsFinished(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsFinishedButton.setEnabled(true);
-						showPaymentInfo(mod303);
+						showPaymentInfo(getModel());
 					}
 
 					@Override
@@ -732,7 +761,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	private void reopenDeclaration() {
 		markAsPendingButton.setEnabled(false);
-		if (mod303.isSent() && AonStringUtils.isNotBlank(mod303.getNumber())) {
+		if (getModel().isSent() && AonStringUtils.isNotBlank(getModel().getNumber())) {
 			AonConfirmDialog cd = new AonConfirmDialog();
 			cd.confirm(AON.MSG.confirmReopenDeclarationAction(), new AonConfirmDialogCallback() {
 				
@@ -757,14 +786,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.markAsPending(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsPending(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
-						showPaymentInfo(mod303);
+						showPaymentInfo(getModel());
 					}
 
 					@Override
@@ -778,7 +807,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private void markAsSent() {
 		markAsSentButton.setEnabled(false);
-		Model303.service.markAsSent(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsSent(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						setDirty(false);
@@ -796,7 +825,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 	private void audit() {
 		AonAuditDialog dialog = new AonAuditDialog();
-		dialog.show(mod303);
+		dialog.show(getModel());
 	}
 
 	protected class Model303IdentificationDataCallback implements IModel303IdentificationDataCallback {
@@ -894,7 +923,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		}
 		
 		private void identificationLabelChanged() {
-			toolbarPanel.setTitle(AonStringUtils.join(mod303.getDocument(),AonStringUtils.SPACE,mod303.getFullName()));
+			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 		}
 		
 	}
@@ -953,13 +982,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		adjLabel.setTitle("Ajustes realizados");
 		marksPanels.add(adjLabel);
 
-		if (mod303.isReplacement()) {
+		if (getModel().isReplacement()) {
 			replacedLabel.setText(AON.MSG.replacement());
 			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
 			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
 			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
 		}
-		if (mod303.isComplementary()) {
+		if (getModel().isComplementary()) {
 			replacedLabel.setText( AON.MSG.complementary());
 			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
 			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
@@ -967,9 +996,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		}
 		marksPanels.add(replacedLabel);
 
-		if (AonMathUtils.isNotZero(mod303.getProratePercent()) &&  !AonMathUtils.equals(mod303.getProratePercent(), 100.0)) {
+		if (AonMathUtils.isNotZero(getModel().getProratePercent()) &&  !AonMathUtils.equals(getModel().getProratePercent(), 100.0)) {
 			prorataLabel.setStyleName(AON.CSS.aonMarginLeft());
-			prorataLabel.setText(AON.MSG.prorrata() + ": " + mod303.getProratePercent() + "%" + (mod303.isSpecialProrate()?" Especial":""));
+			prorataLabel.setText(AON.MSG.prorrata() + ": " + getModel().getProratePercent() + "%" + (getModel().isSpecialProrate()?" Especial":""));
 			prorataLabel.addStyleName(AON.CSS.aonBold());
 			
 		}
@@ -977,7 +1006,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		marksPanels.add(prorataLabel);
 		
 		styleDirtyLabel();
-		styleStatusLabel(this.mod303);
+		styleStatusLabel();
 		
 		decToolbar.getMessagePanel().add(marksPanels);
 		
@@ -987,10 +1016,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	protected void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
-		diffLabel.setVisible(!this.mod303.isDiffCalculationDisabled()); 		
+		diffLabel.setVisible(!getModel().isDiffCalculationDisabled()); 		
 		
 		boolean adjusted = false;
-		for (FiscalModelDetail det : this.mod303.getMap().values()) {
+		for (FiscalModelDetail det : getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
 				adjusted = true;
 				break;
@@ -999,10 +1028,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		adjLabel.setVisible(adjusted);
 	}
 	
-	protected void styleStatusLabel(Mod303 mod) {
-		statusLabel.setText(mod.getStatus().getName());
-		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( mod.getStatus() ));
-		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( mod.getStatus() ));
+	protected void styleStatusLabel() {
+		statusLabel.setText(getModel().getStatus().getName());
+		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( getModel().getStatus() ));
+		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( getModel().getStatus() ));
 		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
 		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
@@ -1012,14 +1041,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private void styleCommentsButton() {
-		if (AonStringUtils.isEmpty(mod303.getComments())) {
+		if (AonStringUtils.isEmpty(getModel().getComments())) {
 			commentsButton.addStyleName(AON.CSS.aonIconNoComments());
 			commentsButton.removeStyleName(AON.CSS.aonIconComments());
 		} else {
 			commentsButton.addStyleName(AON.CSS.aonIconComments());
 			commentsButton.removeStyleName(AON.CSS.aonIconNoComments());
 		}
-		commentsButton.setTitle(mod303.getComments());
+		commentsButton.setTitle(getModel().getComments());
 	}
 	
 	protected void showPaymentInfo(Mod303 mod) {

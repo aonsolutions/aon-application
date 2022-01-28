@@ -1,8 +1,10 @@
 package com.esferalia.aon.in.payroll.excel;
 
+import static com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcelUtils.sumThings;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -117,6 +119,7 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER.put("fogasaEnterprise", "FOGASA");
 			DEFAULT_HEADER.put("extraHEnterprise", "H. EXTRAS");
 			DEFAULT_HEADER.put("bonuses", "BONIF.");
+			DEFAULT_HEADER.put(FUNDAE, "FUNDAE");
 			
 			DEFAULT_HEADER.put("joint4", "");
 			
@@ -347,6 +350,7 @@ public class EnterprisePayrollExcel {
 					, enterpriseName
 					, startDate
 					, endDate
+					, Optional.empty()
 					, excelType);	
 		} catch (IOException e) {}
 		
@@ -424,6 +428,7 @@ public class EnterprisePayrollExcel {
 					, enterpriseName
 					, startDate
 					, endDate
+					, Optional.empty()
 					, excelType);	
 		} catch (IOException e) {}
 		
@@ -533,7 +538,7 @@ public class EnterprisePayrollExcel {
 				}
 			});
 			
-			Map<String, Map<String, List<ContractData>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
+			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			writeComplete(outputStream
@@ -574,7 +579,7 @@ public class EnterprisePayrollExcel {
 					.filter(p -> p.getSalaryType() == null || p.getSalaryType().ordinal()< SalaryType.L00.ordinal())
 					.collect(Collectors.toList());
 			
-			Map<String, Map<String, List<ContractData>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
+			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			write(outputStream
@@ -583,6 +588,7 @@ public class EnterprisePayrollExcel {
 					, enterpriseName
 					, startDate
 					, endDate
+					, Optional.ofNullable(contractDataByWorkplace)
 					, excelType);	
 		} catch (IOException e) {}
 		
@@ -594,6 +600,13 @@ public class EnterprisePayrollExcel {
 		c.setTime(date);
 		Integer month = c.get(Calendar.MONTH)+1;
 		Integer year = c.get(Calendar.YEAR);
+		
+		EnterprisePayrollExcelUtils.clearCalendar(c);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		Date sDate = c.getTime();
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date eDate = c.getTime();
+		
 		
 		Integer wId = null;
 		Integer eId = null;
@@ -619,11 +632,15 @@ public class EnterprisePayrollExcel {
 					.collect(Collectors.toList());
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
+			
+			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, sDate, eDate, eId, wId);
+			
 			write(outputStream
 					, payrolls
 					, Optional.empty()
 					, enterpriseName
 					, EnterprisePayrollExcelUtils.getDateString(month, year)
+					, Optional.ofNullable(contractDataByWorkplace)
 					, excelType);
 		} catch (IOException e) {}
 	}
@@ -635,6 +652,11 @@ public class EnterprisePayrollExcel {
 		Integer month = c.get(Calendar.MONTH)+1;
 		Integer year = c.get(Calendar.YEAR);
 		
+		EnterprisePayrollExcelUtils.clearCalendar(c);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		Date sDate = c.getTime();
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date eDate = c.getTime();
 		
 		Integer wId = null;
 		Integer eId = null;
@@ -662,11 +684,15 @@ public class EnterprisePayrollExcel {
 			
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
+			
+			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, sDate, eDate, eId, wId);
+			
 			write(outputStream
 					, payrolls
 					, Optional.empty()
 					, enterpriseName
 					, EnterprisePayrollExcelUtils.getDateString(month, year)
+					, Optional.ofNullable(contractDataByWorkplace)
 					, excelType);	
 		} catch (IOException e) {}
 	}
@@ -674,7 +700,7 @@ public class EnterprisePayrollExcel {
 	
 	public static void writeComplete(OutputStream outputStream, Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData,
 			/*Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeEmployeeData,*/ Optional<LinkedHashMap<String, String>> header,
-			String enterpriseName, Date startDate, Date endDate, Optional<Map<String, Map<String, List<ContractData>>>> optContractData)
+			String enterpriseName, Date startDate, Date endDate, Optional<Map<String, Map<String, Map<String, List<ContractData>>>>> optContractData)
 			throws IOException {
 		
 		
@@ -1224,16 +1250,20 @@ public class EnterprisePayrollExcel {
 	}	
 	
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
-			Optional<LinkedHashMap<String, String>> header, String enterpriseName, Date startDate, Date endDate, ExcelType excelType)
+			Optional<LinkedHashMap<String, String>> header, String enterpriseName, Date startDate, Date endDate, Optional<Map<String, Map<String, Map<String, List<ContractData>>>>> optContractDataByWorkplace, ExcelType excelType)
 			throws IOException {
 		
 		String dateString = EnterprisePayrollExcelUtils.getAppropiatePeriodString(startDate, endDate);
-		write(outputStream, payrolls, header, enterpriseName, dateString, excelType);
+		write(outputStream, payrolls, header, enterpriseName, dateString, optContractDataByWorkplace, excelType);
 	}
 
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
-			Optional<LinkedHashMap<String, String>> header, String enterpriseName, String dateString, ExcelType excelType)
+			Optional<LinkedHashMap<String, String>> header, String enterpriseName, String dateString, Optional<Map<String, Map<String, Map<String, List<ContractData>>>>> optContractDataByWorkplace, ExcelType excelType)
 			throws IOException {
+		
+		
+		//TODO: APLICAR LO DEL optContractDataByWorkplace xD
+		Map<String, Map<String, Map<String, Double>>> cdData = getContractData4Normal(optContractDataByWorkplace);
 		
 		Workbook wb = new XSSFWorkbook();
 
@@ -1420,6 +1450,10 @@ public class EnterprisePayrollExcel {
 							empQuoteFirstCell++;
 						if (!checks.isBonuses())
 							finalHeader.remove("bonuses");
+						else
+							empQuoteFirstCell++;
+						if (!checks.isFundae())
+							finalHeader.remove(FUNDAE);
 						else
 							empQuoteFirstCell++;
 						
@@ -1852,9 +1886,7 @@ public class EnterprisePayrollExcel {
 		wb.close();
 	}
 
-	
-	public static Map<String, Map<String, List<ContractData>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
-		
+	public static Map<String/*WORKPLACE*/, Map<String/*SSNUM*/, Map<String/*DATA TYPE*/, List<ContractData>>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
 		if (startDate == null || endDate == null)
 			return null;
 		
@@ -1862,38 +1894,34 @@ public class EnterprisePayrollExcel {
 		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 		
 		SelectConditionStep<Record> query = aonContext.getDslContext()
-		.select(WORKPLACE.DESCRIPTION, CONTRACT_DATA.asterisk())
+		.select(WORKPLACE.DESCRIPTION, PERSON.SOCIAL_SECURITY_NUM, CONTRACT_DATA.asterisk())
 		.from(CONTRACT)
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 		.innerJoin(ENTERPRISE).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE.REGISTRY))
 		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
 			.and(CONTRACT_DATA.END_DATE.ge(sqlStartDate))
 			.and(CONTRACT_DATA.END_DATE.le(sqlEndDate))
 			.and(CONTRACT_DATA.NAME.eq(FUNDAE))
-		.where(CONTRACT.START_DATE.ge(sqlStartDate))
-		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.le(sqlEndDate)))
+		.where(CONTRACT.START_DATE.le(sqlEndDate))
+		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(sqlStartDate)))
 		.and(ENTERPRISE.REGISTRY.eq(enterpriseId))
 		;
 		
 		if (workplaceId != null && workplaceId > 0) {
 			query = query.and(WORKPLACE.ID.eq(workplaceId));
 		}
-		
-		LinkedHashMap<String, Map<String, List<ContractData>>> contractDataMap = new LinkedHashMap<>();
+		System.out.println(query.toString());
+		LinkedHashMap<String, Map<String, Map<String, List<ContractData>>>> contractDataMap = new LinkedHashMap<>();
 		
 		query.fetchStream()
 		.filter(Objects::nonNull)
 		.forEach(res -> {
+			//----KEYS----
 			String name = res.get(CONTRACT_DATA.NAME);
+			String ssNum = res.get(PERSON.SOCIAL_SECURITY_NUM);
 			String workplace = res.get(WORKPLACE.DESCRIPTION);
-			Double value = null;
-			if (res.get(CONTRACT_DATA.EXPRESSION) != null) {
-				try {
-					value = Double.parseDouble(res.get(CONTRACT_DATA.EXPRESSION));
-				} catch (NumberFormatException e) {
-					value  = 0d;
-				}
-			}
+			//------------
 			
 			
 			ContractData cd = new ContractData()
@@ -1906,28 +1934,120 @@ public class EnterprisePayrollExcel {
 				.setName(res.get(CONTRACT_DATA.NAME));
 			
 			
-			if (res.get(CONTRACT_DATA.NAME) != null) {
-				if (contractDataMap.containsKey(workplace)) {
-					Map<String, List<ContractData>> contractData = contractDataMap.get(workplace);
-					if (contractData.containsKey(name)) {
-						contractData.get(name).add(cd);
-					} else {
-						LinkedList<ContractData> cdList = new LinkedList<>();
-						cdList.add(cd);
-						contractData.put(name, cdList);
-					}
-				} else {
-					LinkedHashMap<String, List<ContractData>> contractData = new LinkedHashMap<>();
-					LinkedList<ContractData> cdList = new LinkedList<>();
-					cdList.add(cd);
-					contractData.put(name, cdList);
-					contractDataMap.put(workplace, contractData);
-				}
+			if (name != null && ssNum != null) {
+				addToContractDataMap(contractDataMap, name, ssNum, workplace, cd);
 			}
 		});
 		
 		return contractDataMap;
 	}
+
+	private static void addToContractDataMap(LinkedHashMap<String, Map<String, Map<String, List<ContractData>>>> contractDataMap,
+			String name, String ssNum, String workplace, ContractData cd) {
+		if (contractDataMap.containsKey(workplace)) {
+			Map<String, Map<String, List<ContractData>>> contractData = contractDataMap.get(workplace);
+			if (contractData.containsKey(ssNum)) {
+				Map<String, List<ContractData>> employeeData = contractData.get(ssNum);
+				if (employeeData.containsKey(name)) {
+					employeeData.get(name).add(cd);
+				} else {
+					LinkedList<ContractData> cdList = new LinkedList<>();
+					cdList.add(cd);
+					employeeData.put(name, cdList);
+				}
+			} else {
+				LinkedHashMap<String, List<ContractData>> employeeData= new LinkedHashMap<>();
+				LinkedList<ContractData> cdList = new LinkedList<>();
+				cdList.add(cd);						
+				employeeData.put(name, cdList);
+				contractData.put(ssNum, employeeData);
+			}
+		} else {
+			LinkedHashMap<String, Map<String, List<ContractData>>> contractData = new LinkedHashMap<>();
+			LinkedHashMap<String, List<ContractData>> employeeData= new LinkedHashMap<>();
+			LinkedList<ContractData> cdList = new LinkedList<>();
+			cdList.add(cd);
+			employeeData.put(name, cdList);
+			contractData.put(ssNum, employeeData);
+			contractDataMap.put(workplace, contractData);
+		}
+	}
+	
+//	public static Map<String, Map<String, List<ContractData>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
+//		
+//		if (startDate == null || endDate == null)
+//			return null;
+//		
+//		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
+//		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+//		
+//		SelectConditionStep<Record> query = aonContext.getDslContext()
+//		.select(WORKPLACE.DESCRIPTION, CONTRACT_DATA.asterisk())
+//		.from(CONTRACT)
+//		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+//		.innerJoin(ENTERPRISE).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE.REGISTRY))
+//		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
+//			.and(CONTRACT_DATA.END_DATE.ge(sqlStartDate))
+//			.and(CONTRACT_DATA.END_DATE.le(sqlEndDate))
+//			.and(CONTRACT_DATA.NAME.eq(FUNDAE))
+//		.where(CONTRACT.START_DATE.ge(sqlStartDate))
+//		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.le(sqlEndDate)))
+//		.and(ENTERPRISE.REGISTRY.eq(enterpriseId))
+//		;
+//		
+//		if (workplaceId != null && workplaceId > 0) {
+//			query = query.and(WORKPLACE.ID.eq(workplaceId));
+//		}
+//		
+//		LinkedHashMap<String, Map<String, List<ContractData>>> contractDataMap = new LinkedHashMap<>();
+//		
+//		query.fetchStream()
+//		.filter(Objects::nonNull)
+//		.forEach(res -> {
+//			String name = res.get(CONTRACT_DATA.NAME);
+//			String workplace = res.get(WORKPLACE.DESCRIPTION);
+//			Double value = null;
+//			if (res.get(CONTRACT_DATA.EXPRESSION) != null) {
+//				try {
+//					value = Double.parseDouble(res.get(CONTRACT_DATA.EXPRESSION));
+//				} catch (NumberFormatException e) {
+//					value  = 0d;
+//				}
+//			}
+//			
+//			
+//			ContractData cd = new ContractData()
+//				.setDomain(res.get(CONTRACT_DATA.DOMAIN))
+//				.setContract(res.get(CONTRACT_DATA.CONTRACT))
+//				.setEndDate(res.get(CONTRACT_DATA.END_DATE))
+//				.setStartDate(res.get(CONTRACT_DATA.START_DATE))
+//				.setExpression(res.get(CONTRACT_DATA.EXPRESSION))
+//				.setId(res.get(CONTRACT_DATA.ID))
+//				.setName(res.get(CONTRACT_DATA.NAME));
+//			
+//			
+//			if (res.get(CONTRACT_DATA.NAME) != null) {
+//				if (contractDataMap.containsKey(workplace)) {
+//					Map<String, List<ContractData>> contractData = contractDataMap.get(workplace);
+//					if (contractData.containsKey(name)) {
+//						contractData.get(name).add(cd);
+//					} else {
+//						LinkedList<ContractData> cdList = new LinkedList<>();
+//						cdList.add(cd);
+//						contractData.put(name, cdList);
+//					}
+//				} else {
+//					LinkedHashMap<String, List<ContractData>> contractData = new LinkedHashMap<>();
+//					LinkedList<ContractData> cdList = new LinkedList<>();
+//					cdList.add(cd);
+//					contractData.put(name, cdList);
+//					contractDataMap.put(workplace, contractData);
+//				}
+//			}
+//		});
+//		
+//		return contractDataMap;
+//	}
 
 
 
@@ -3709,9 +3829,9 @@ public class EnterprisePayrollExcel {
 		return months;
 	}
 	
-	private static Map<String/*workplace*/, Map<String/*period name*/, Map<String/*type*/, Double/*amount*/>>> getContractData4Complete(Optional<Map<String, Map<String, List<ContractData>>>> optContractData, Date startDate, Date endDate) {
+	private static Map<String/*workplace*/, Map<String/*period name*/, Map<String/*type*/, Double/*amount*/>>> getContractData4Complete(Optional<Map<String, Map<String, Map<String, List<ContractData>>>>> optContractData, Date startDate, Date endDate) {
 		if (optContractData.isPresent() && startDate != null &&endDate != null) {
-			Map<String, Map<String, List<ContractData>>> contractData = optContractData.get();
+			Map<String, Map<String, Map<String, List<ContractData>>>> contractData = optContractData.get();
 			
 			Map<String, Map<String, Map<String, Double>>> returnedMap = new LinkedHashMap<>();
 			
@@ -3719,37 +3839,81 @@ public class EnterprisePayrollExcel {
 				if (k != null) {
 					String workplaceName = k;
 					LinkedHashMap<String, Map<String, Double>> periodMap = new LinkedHashMap<>();
+					Collection<Map<String, List<ContractData>>> values = v != null ? v.values() : Collections.emptyList(); //AQUÍ NO INTERESAN LOS NAFS
+					
+					values.forEach(valueMap -> {
+						valueMap.forEach((k1, v1) -> {
+							if (k1 != null) {
+								String typeName = k1;
+								v1.stream()
+								.filter(cd -> cd != null && cd.getExpression() != null)
+								.forEach(cd -> {
+									try {
+										Double value = Double.parseDouble(cd.getExpression());
+										Date start = cd.getStartDate().compareTo(startDate) > 0  ? cd.getEndDate() : startDate;//not null field
+										Date end = cd.getEndDate() != null ? cd.getEndDate() : endDate;
+										
+										periodsBetween(start, end).forEach(dateStr -> {
+											if (periodMap.containsKey(dateStr)) {
+												Map<String, Double> typeMap = periodMap.get(dateStr);
+												if (typeMap.containsKey(typeName)) {												
+													typeMap.put(typeName, EnterprisePayrollExcelUtils.sumThings(typeMap.get(typeName), value));
+												} else {
+													typeMap.put(typeName, value);
+												}
+											} else {
+												LinkedHashMap<String, Double> typeMap = new LinkedHashMap<>();
+												typeMap.put(typeName, value);
+												periodMap.put(dateStr, typeMap);
+											}
+										});
+										
+									} catch (NumberFormatException e) {}
+								});
+							}
+						});
+					});
+					returnedMap.put(workplaceName, periodMap);
+				}
+			});
+			return returnedMap;
+		} else {
+			return Collections.emptyMap();
+		}
+	}
+	
+	private static Map<String/*workplace*/, Map<String/*nss*/, Map<String/*type*/, Double/*amount*/>>> getContractData4Normal(Optional<Map<String, Map<String, Map<String, List<ContractData>>>>> optContractData) {
+		if (optContractData.isPresent()) {
+			Map<String, Map<String, Map<String, List<ContractData>>>> contractData = optContractData.get();
+			Map<String, Map<String, Map<String, Double>>> returnedMap = new LinkedHashMap<>();
+			contractData.forEach((k, v) -> {
+				if (k != null) {
+					String workplaceName = k;
+					LinkedHashMap<String, Map<String, Double>> nafMap = new LinkedHashMap<>();
 					v.forEach((k1, v1) -> {
 						if (k1 != null) {
-							String typeName = k1;
-							v1.stream()
-							.filter(cd -> cd != null && cd.getExpression() != null)
-							.forEach(cd -> {
-								try {
-									Double value = Double.parseDouble(cd.getExpression());
-									Date start = cd.getStartDate().compareTo(startDate) > 0  ? cd.getEndDate() : startDate;//not null field
-									Date end = cd.getEndDate() != null ? cd.getEndDate() : endDate;
-									
-									periodsBetween(start, end).forEach(dateStr -> {
-										if (periodMap.containsKey(dateStr)) {
-											Map<String, Double> typeMap = periodMap.get(dateStr);
-											if (typeMap.containsKey(typeName)) {												
-												typeMap.put(typeName, EnterprisePayrollExcelUtils.sumThings(typeMap.get(typeName), value));
+							String naf = k1;
+							v1.forEach((k2, v2) -> {
+								if (k2 != null) {									
+									String dataName = k2;
+									v2.forEach(cd -> {
+										try {
+											Double value = Double.parseDouble(cd.getExpression());
+											if (nafMap.containsKey(naf)) {
+												Map<String, Double> typeMap = nafMap.get(naf);
+												typeMap.put(dataName, sumThings(typeMap.get(dataName), value));
 											} else {
-												typeMap.put(typeName, value);
+												LinkedHashMap<String, Double> typeMap = new LinkedHashMap<>();
+												typeMap.put(dataName, value);
+												nafMap.put(naf, typeMap);
 											}
-										} else {
-											LinkedHashMap<String, Double> typeMap = new LinkedHashMap<>();
-											typeMap.put(typeName, value);
-											periodMap.put(dateStr, typeMap);
-										}
+										} catch (NumberFormatException | NullPointerException e) {}
 									});
-									
-								} catch (NumberFormatException e) {}
+								}
 							});
 						}
 					});
-					returnedMap.put(workplaceName, periodMap);
+					returnedMap.put(workplaceName, nafMap);
 				}
 			});
 			return returnedMap;

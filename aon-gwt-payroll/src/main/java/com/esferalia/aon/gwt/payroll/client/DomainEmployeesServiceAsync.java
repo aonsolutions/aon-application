@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
@@ -210,10 +211,6 @@ public class DomainEmployeesServiceAsync {
 
 	public void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getSalaries(getCurrentDomainName(), employee, callback);
-	}
-	
-	public void getSalariesOccam(ITEmployee itEmployee, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
-		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), itEmployee, startDate, endDate, callback);
 	}
 
 	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback) throws IllegalArgumentException {
@@ -661,6 +658,10 @@ public class DomainEmployeesServiceAsync {
 
 	public void updateContractVariables(List<ContractVariable> contractVariables, AsyncCallback<Void> callback) {
 		employeesServiceAsync.updateContractVariables(getCurrentDomainName(), contractVariables, callback);
+	}
+
+	public void getSalariesOccam(ITEmployee itEmployee, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), itEmployee, startDate, endDate, callback);
 	}
 
 	// ------------------------------------------------------------------------

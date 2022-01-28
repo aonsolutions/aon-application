@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -189,28 +190,45 @@ class Model303AEAT20212 extends Model303AEAT {
 			Widget c78 = table.getWidget(7, 0);
 			AonDisplayTable fp78 = new AonDisplayTable();
 			fp78.addStyleName(AON.CSS.aonWidthAll());
-			InlineLabel l780 =  new InlineLabel("REVISE CONTENIDO");
+			InlineLabel l780 =  new InlineLabel("REVISE CONTENIDO. EDITE SI PROCEDE.");
 			l780.setStyleName(AON.CSS.aonMarginLeft());
+			l780.addStyleName(AON.CSS.aonColorRed());
 			
-			InlineLabel l781 =  new InlineLabel("[Borrar Partida]");
+			InlineLabel l781 =  new InlineLabel("[Poner a cero]");
 			l781.setStyleName(AON.CSS.aonClickableLabel());
 			l781.addStyleName(AON.CSS.aonMarginLeft());
 			l781.addClickHandler(event -> {
 				getFieldsMap().get(Mod303Key.CT_C78).setValue(0.0,true);
 			});
 			
-			InlineLabel l782 =  new InlineLabel("[Asignar M\u00E1x]");
+			InlineLabel l782 =  new InlineLabel("Copiar [110]");
 			l782.setStyleName(AON.CSS.aonClickableLabel());
 			l782.addStyleName(AON.CSS.aonMarginLeft());
 			l782.addClickHandler(event -> {
 				getFieldsMap().get(Mod303Key.CT_C78).setValue(getModel().getAmount(Mod303Key.CT_C110),true);
 			});
 
+			InlineLabel l783 =  new InlineLabel("Asignar [066+077]");
+			l783.setStyleName(AON.CSS.aonClickableLabel());
+			l783.addStyleName(AON.CSS.aonMarginLeft());
+			l783.addClickHandler(event -> {
+				double c66 = AonNumberUtils.todouble( getFieldsMap().get(Mod303Key.CT_C66).getValue());
+				double c77 = AonNumberUtils.todouble( getFieldsMap().get(Mod303Key.CT_C77).getValue());
+				double amount = AonMathUtils.round(c66+c77); 
+				getFieldsMap().get(Mod303Key.CT_C78).setValue(amount,true);
+			});
+			
+			FlowPanel fp = new FlowPanel();
+			fp.add(l781);
+			fp.add(l782);
+			fp.add(l783);
+			
+			fp78.addRow()
+				.addCell(new Label(), AON.CSS.aonWidthAuto())
+				.addCell(l780, AON.CSS.aonTextCenter(),AON.CSS.aonNowrap(),AON.CSS.aonBold(),AON.CSS.aonWidth80());
 			fp78.addRow()
 				.addCell(c78, AON.CSS.aonWidthAuto())
-				.addCell( l780, AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonBold(),AON.CSS.aonWidth80())
-				.addCell( l781, AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80())
-				.addCell( l782, AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80());
+				.addCell(fp  , AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80());
 			table.setWidget(7, 0, fp78);
 		}
 		

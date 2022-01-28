@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -340,6 +341,11 @@ public class DomainEnterprisesServiceAsync {
 	void getEnterpriseStatus(Integer enterpriseId , AsyncCallback<EnterpriseStatus> asyncCallback) {
 		enterprisesServiceAsync.getEnterpriseStatus(getCurrentDomainName(), getCurrentUser(), enterpriseId, asyncCallback);		
 	}
+
+	void getEnterpriseITStatus(AsyncCallback<EnterpriseITStatus> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseITStatus(getCurrentDomainName(), getCurrentUser(), asyncCallback);		
+	}
+	
 	
 	public void getContractAttachments(Integer contractId, AsyncCallback<List<Attach>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getContractAttachments(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);

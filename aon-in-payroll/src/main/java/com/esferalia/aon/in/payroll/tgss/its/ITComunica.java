@@ -136,7 +136,7 @@ public class ITComunica {
 			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart,  List<String> messages) {
 			try {
 				verifyData(new Object[] { 
-						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getStartDate(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
+						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
 						 employeeIt.getType(),  itPart.getDate(), employeeIt.getContractType()
 				});    
 	
@@ -147,12 +147,12 @@ public class ITComunica {
 				String ccc = employeeIt.getCcc();
 				String nss = employeeIt.getNss();
 				Date date = itPart.getDate();
-				Optional<Date> fATEP = Optional.of(employeeIt.getStartDate());
+				Optional<Date> fATEP = Optional.of(date);
 				
 				Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
 		
 				SituationEmployee situation = SituationEmployee.ACTIVO;
-				ContractType contractType =  ContractType.safeValueOf(employeeIt.getContractType());
+		
 				
 				Optional<AccidentType> accidentType = Optional.empty();
 				Optional<String> occupation = Optional.empty();
@@ -164,7 +164,7 @@ public class ITComunica {
 						byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
 						regime, ccc, nss, 
 						contingencie, situation,  
-						date, contractType, 
+						date, ContractType.safeValueOf(employeeIt.getContractType().value()),
 						baseCgc, quoteDays, 
 						fATEP, accidentType,
 						collegeNumber, cias, occupation

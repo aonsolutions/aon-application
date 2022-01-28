@@ -903,7 +903,7 @@ class SistemaREDITParts {
 				if (dtStr.indexOf("Nombre:") >= 0) {
 					itPart.setNameEmployee(ddStr);
 				} else if (dtStr.indexOf("IPF:") >= 0) {
-					itPart.setIpf(ddStr.replace("D.N.I.", ""));
+					itPart.setIpf(ddStr.replace("D.N.I.", "").trim());
 				} else if (dtStr.indexOf("Direcci\u00F3n:") >= 0) {
 					itPart.setDirectionEmployee(ddStr);
 				} else if (dtStr.indexOf("Ocupaci\u00F3n:") >= 0) {

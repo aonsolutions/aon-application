@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -131,6 +132,9 @@ public interface EnterprisesServiceAsync {
 	void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo,
 			AsyncCallback<String> asyncCallback);
 	void getEnterpriseStatus(String domain, String user, Integer enterpriseId , AsyncCallback<EnterpriseStatus> callback);
+
+	void getEnterpriseITStatus(String domain, String user, AsyncCallback<EnterpriseITStatus> callback);
+
 	void getContractAttachments(String currentDomainName, String login, Integer contractId, AsyncCallback<List<Attach>> asyncCallback) throws IllegalArgumentException;
 	void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments,
 			AsyncCallback<List<ContractAttach>> asyncCallback);
@@ -216,7 +220,5 @@ public interface EnterprisesServiceAsync {
 	void syncSSBonus(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeSSBonuses(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	
-	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
-	
-	
+	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;	
 }

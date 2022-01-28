@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
@@ -511,11 +512,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 				Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
 			// TODO Auto-generated method stub
 			
-		}
-		
-		
-
-		
+		}		
 	}
 
 	@Before
@@ -1011,7 +1008,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						// TODO Auto-generated method stub
 						
 					}
-					
 				});
 
 		agreementDraftWidget.setAgreementDraftObject(agreementDraftObject);

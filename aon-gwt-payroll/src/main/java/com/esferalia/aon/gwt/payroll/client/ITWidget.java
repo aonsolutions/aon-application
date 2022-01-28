@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsEmployeeInfo;
@@ -83,7 +84,6 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -555,6 +555,8 @@ public abstract class ITWidget extends ResizeComposite {
 			initDateListBox();
 			initSuggestBox();
 			printTimelineChart();
+			
+			checkStatusITs();
 			
 		}, f -> {});
 	}
@@ -1443,6 +1445,52 @@ public abstract class ITWidget extends ResizeComposite {
 		});
 	}
 	
+	
+	private void checkStatusITs() {
+		checkStatus(status -> {
+			EnterpriseITStatus.ifSistemaREDEnabled(status, () -> {
+				showFootPanel();
+			}, () -> {
+				closeFootPanel();
+			});
+
+			SistemaREDITResults results = new SistemaREDITResults() {
+				@Override
+				public void up2DateEnterprise() {
+					this.setUp2DateEnterprise();
+					closeFootPanel();
+				}
+
+				@Override
+				public void run() {
+					checkStatus(status -> {
+						removeAll();
+						status.visit(this);
+					}, throwable -> {});
+				}
+				@Override
+				protected void credentialsFound() {
+					checkStatus(status -> {
+						removeAll();
+						status.visit(this);
+						EnterpriseITStatus.ifSistemaREDEnabled(status, () -> {
+							showFootPanel();
+						}, () -> {
+							closeFootPanel();
+						});
+					}, throwable -> {
+						closeFootPanel();
+					});
+				}
+			};
+			status.visit(results);
+			resultsPanel.setWidget(results);
+		}, f -> {
+			closeFootPanel();
+		});
+		
+	}
+	
 	private void onLeyend() {
 		openLeyend();
 	}
@@ -1716,7 +1764,7 @@ public abstract class ITWidget extends ResizeComposite {
 			minimizedByUser = true;
 			closeFootPanel();
 		});
-		footPanel.addMaximizeHandler(event -> openFootPanel());
+		footPanel.addMaximizeHandler(event -> showFootPanel());
 		footPanel.setStyleName(AON.CSS.aonSelector());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
@@ -1739,18 +1787,17 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
 		splitLayoutPanel.animate(500);
 	}
 	
 	private void openFootPanelIfNeeded() {
 		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) 
-			openFootPanel();
+			showFootPanel();
 	}
 	
-	private void openFootPanel() {
-		int effectiveHeigth = 3;
-		splitLayoutPanel.setWidgetSize(footPanel, (double)Window.getClientHeight() / effectiveHeigth);
+	private void showFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 		splitLayoutPanel.animate(500);
 	}
 	
@@ -1786,5 +1833,7 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure);
 	
 	protected abstract void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure);
+	
+	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
 
 }

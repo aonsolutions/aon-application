@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -513,6 +514,14 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getEnterpriseStatus(domain, user, enterpriseId, new AsyncCallbackWrapper<EnterpriseStatus>(callback));
 	}
+
+	@Override
+	public void getEnterpriseITStatus(String domain, String user, 
+			AsyncCallback<EnterpriseITStatus> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpriseITStatus(domain, user, new AsyncCallbackWrapper<EnterpriseITStatus>(callback));
+	}
+
 
 	@Override
 	public void getEmployeesITInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<ITEmployee>> callback) {

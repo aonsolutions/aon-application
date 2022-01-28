@@ -26,7 +26,7 @@ import solutions.aon.seg.social.object.WorkerLiquidation;
 
 public class SistemaRED {
 
-	//Origen de la liquidación
+	//Origen de la liquidaciï¿½n
 	public static enum LiquidationOrigin{
 		PRESENTADAS_POR_LA_EMPRESA("E"),
 		GENERADAS_POR_LA_TGSS("G"),
@@ -86,7 +86,7 @@ public class SistemaRED {
 		L13_VACACIONES_RETRIBUIDAS("L13"),
 		L90_COMPLEMENTARIA_POR_INCREMENTO_DE_BASES("L90"),
 		L91_COMP_NUEVOS_TRABAJADORES_Y_O_TRAMOS("L91"),
-		L92_COMP_SALARIOS_TRAMITACIÓN_DE_OFICIO("L92"),
+		L92_COMP_SALARIOS_TRAMITACION_DE_OFICIO("L92"),
 		L93_COMP_VAC_RETR_Y_NO_DISFR_DE_OFICIO("L93"),
 		V03_COMP_ABONO_SALARIOS_RETROACTIVOS_DE_L13("V03"),
 		V90_COMP_POR_INCREMENTO_DE_BASES_DE_L13("V90"),
@@ -638,6 +638,16 @@ public class SistemaRED {
 			throw new SegSocialException(e);
 		}
 	}
+
+	public static Collection<It> getIts(final InputStream cert, final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final Date startDate, final Date endDate, final Optional<String> naf) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(cert.readAllBytes())) {
+			return SistemaREDITParts.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
+		} catch (IOException | SegSocialException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
 	
 	public static void registerITBaja(final byte[] certificateData, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final String naf, final SistemaRED.Contingencies contingency, final SistemaRED.SituationEmployee situation_employee, 

@@ -179,6 +179,8 @@ public interface IFinance {
 	// 	***********************************************
 
 	public void deleteInvoiceFiscal(AONContext ctx, Integer id);
+	
+	public void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code);
 
 	
 	

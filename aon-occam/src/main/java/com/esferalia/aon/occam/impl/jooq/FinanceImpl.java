@@ -520,4 +520,10 @@ public class FinanceImpl implements IFinance {
 		ctx.getDslContext().transaction(
 				configuration -> InvoiceFiscalDAO.delete(ctx, id));
 	}
+
+	@Override
+	public void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceDAO.saveFacturaeCodeAsignacion(ctx, invoice, registry, code));		
+	}
 }
