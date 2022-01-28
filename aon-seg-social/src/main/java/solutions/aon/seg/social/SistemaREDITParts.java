@@ -184,7 +184,7 @@ class SistemaREDITParts {
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, SistemaRED.CauseType causeType, Optional<String> licenseNumber, Optional<String> cias)
 			throws SegSocialException {
 
-		Toolkit.verifyData(new Object[] { regime, ccc, naf, contingency });
+		Toolkit.verifyData(new Object[] { regime, ccc, naf, contingency, fbaja, falta });
 		try {
 			registerItAltaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
 					contingency, situationEmployee, fbaja, falta, fATEP, accidentType, causeType, licenseNumber, cias);
@@ -263,29 +263,31 @@ class SistemaREDITParts {
 			HtmlInput cotBaseInput1 = null;
 			HtmlInput cotBaseInput2 = null;
 			HtmlInput cotDaysInput = null;
-
-			String[] startDateArray = Toolkit.dateString(startdate);
-			String[] baseCotArray = Toolkit.splitDecimal(baseCot, 2);
-
-			if(contractType.equals(SistemaRED.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL)) {
-				contractTypeOption = form.querySelector("#tipoContrato option:nth-child(2)");
-				cotBaseInput1 = form.getInputByName("sumaBC1");
-				cotBaseInput2 = form.getInputByName("sumaBC2");
-				cotDaysInput = form.getInputByName("sumaDias");
-			} else if(contractType.equals(SistemaRED.ContractType.RESTO_Y_AUTONOMOS)) {
-				contractTypeOption = form.querySelector("#tipoContrato option:nth-child(3)");
-				cotBaseInput1 = form.getInputByName("baseCotizacion1");
-				cotBaseInput2 = form.getInputByName("baseCotizacion2");
-				cotDaysInput = form.getInputByName("diasCot");
+	
+			switch (contractType) {
+				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
+					contractTypeOption = form.querySelector("#tipoContrato option:nth-child(2)");
+					cotBaseInput1 = form.getInputByName("sumaBC1");
+					cotBaseInput2 = form.getInputByName("sumaBC2");
+					cotDaysInput = form.getInputByName("sumaDias");
+				break;
+				case RESTO_Y_AUTONOMOS:
+					contractTypeOption = form.querySelector("#tipoContrato option:nth-child(3)");
+					cotBaseInput1 = form.getInputByName("baseCotizacion1");
+					cotBaseInput2 = form.getInputByName("baseCotizacion2");
+					cotDaysInput = form.getInputByName("diasCot");	
+				break;
 			}
 			
 			if(null!=contractTypeOption) 
 				contractTypeOption.click();
 
+			String[] startDateArray = Toolkit.dateString(startdate);
 			form.getInputByName("fechaBaja_dd").setValueAttribute(startDateArray[0]);
 			form.getInputByName("fechaBaja_mm").setValueAttribute(startDateArray[1]);
 			form.getInputByName("fechaBaja_aa").setValueAttribute(startDateArray[2]);
-
+			
+			String[] baseCotArray = Toolkit.splitDecimal(baseCot, 2);
 			cotBaseInput1.setValueAttribute(baseCotArray[0]);
 			cotBaseInput2.setValueAttribute(baseCotArray[1]);
 			cotDaysInput.setValueAttribute(cotDays + "");
@@ -299,7 +301,7 @@ class SistemaREDITParts {
 				form.getInputByName("ncol_1").setValueAttribute(colegiateNumberList.get(1));
 				form.getInputByName("ncol_2").setValueAttribute(colegiateNumberList.get(2));
 			}
-			
+
 			if(cias.isPresent()) 
 				form.getInputByName("cias").setValueAttribute(cias.get());
 
@@ -329,7 +331,7 @@ class SistemaREDITParts {
 			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
 			htmlPage = validate.click();
 			handleItPartErrors(htmlPage);
-
+			
 			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
 			htmlPage = confim.click();
 			handleItPartErrors(htmlPage);
@@ -394,16 +396,17 @@ class SistemaREDITParts {
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, SistemaRED.PartType.ALTA);
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("AltaPartesForm")).orElseThrow();
 
-			String[] faltaString = Toolkit.dateString(falta);
+
 			String[] fbajaString = Toolkit.dateString(fbaja);
 
-			form.getInputByName("fechaBaja_dd").setValueAttribute(faltaString[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(faltaString[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(faltaString[2]);
-
-			form.getInputByName("fechaAlta_dd").setValueAttribute(fbajaString[0]);
-			form.getInputByName("fechaAlta_mm").setValueAttribute(fbajaString[1]);
-			form.getInputByName("fechaAlta_aa").setValueAttribute(fbajaString[2]);
+			form.getInputByName("fechaBaja_dd").setValueAttribute(fbajaString[0]);
+			form.getInputByName("fechaBaja_mm").setValueAttribute(fbajaString[1]);
+			form.getInputByName("fechaBaja_aa").setValueAttribute(fbajaString[2]);
+			
+			String[] faltaString = Toolkit.dateString(falta);
+			form.getInputByName("fechaAlta_dd").setValueAttribute(faltaString[0]);
+			form.getInputByName("fechaAlta_mm").setValueAttribute(faltaString[1]);
+			form.getInputByName("fechaAlta_aa").setValueAttribute(faltaString[2]);
 
 			if (fATEP.isPresent()) {
 				String[] fATEPString = Toolkit.dateString(fATEP.get());
@@ -434,6 +437,8 @@ class SistemaREDITParts {
 			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
 			htmlPage = validate.click();
 			handleItPartErrors(htmlPage);
+			
+//			Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"/home/rvasquez/Documentos/testCertificates.html");
 
 			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
 			htmlPage = confim.click();

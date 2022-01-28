@@ -429,6 +429,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00BFAceptar de nuevo el documento?")
 	String confirmRestoreRejected();
 
+	@DefaultMessage("La declaraci\u00F3n tiene cambios sin guardar.\n \u00BFGuardar antes de finalizar?")
+	String confirmDeclarationSaveAction();
+	
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
 	

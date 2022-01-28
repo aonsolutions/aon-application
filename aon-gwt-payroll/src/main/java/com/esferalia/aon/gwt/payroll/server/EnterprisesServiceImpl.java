@@ -2052,7 +2052,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqMail.sendPayrollEmail(connection, type, params, from, to, cc, cco, bodyHTML);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqMail.sendPayrollEmail(connection, domainId, type, params, from, to, cc, cco, bodyHTML);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -3549,7 +3550,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			EmployeeITPart newPart = parseITPart(part);
 			switch (newPart.getType()) {
 				case BAJA:
-					employeeIt.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays());
+					employeeIt.setContractType((byte)(contractInfo.isPartial() ? 0 : 1))
+					.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays());
 				break;
 				case CONFIRMACION:
 				break;
@@ -3569,6 +3571,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				if(!msg.isEmpty())
 					throw new IllegalArgumentException(msg);
 			}
+			throw new IllegalArgumentException();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);

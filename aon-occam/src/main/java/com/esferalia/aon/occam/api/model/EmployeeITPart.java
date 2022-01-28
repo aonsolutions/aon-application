@@ -42,7 +42,7 @@ public class EmployeeITPart implements Serializable {
 	}
 	
 	public EmployeeITPart setCias(String cias) {
-		this.cias = cias;
+		this.cias = cias!=null && cias.length()>5 ? cias : null;
 		return this;
 	}
 

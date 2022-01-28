@@ -17,14 +17,17 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.facturae.FACeUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.OutputFormat;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class SignerController implements ISignConstants, Serializable {
@@ -243,7 +246,9 @@ public class SignerController implements ISignConstants, Serializable {
 			if ( cc.isUsingSmartCard() ) {
 				updateSigned( to, cc.getAttachment(), false );
 			} else {
-				sign( to, signatureController.generateReportAttachment(to), false );	
+				if(!isSaleInvoiceDefault()) 
+					sign( to, signatureController.generateReportAttachment(to), false );
+				else sign(to, signatureController.getUnsignedAttachment(to, MimeType.MIME_PDF), false);
 				IAttachment attach = signatureController.getUnsignedAttachment(to, MimeType.MIME_XML);
 				if ( attach != null ) {
 					sign( to, attach, false );
@@ -256,6 +261,17 @@ public class SignerController implements ISignConstants, Serializable {
 		} finally {
 			cc.setShowSignWindow(false);
 		}
+	}
+	
+	public boolean isSaleInvoiceDefault() {
+		Integer domainId = DomainManager.getCurrentDomain();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		com.esferalia.aon.occam.api.model.ApplicationParameter appParam = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM);
+
+		com.esferalia.aon.occam.api.model.ApplicationParameter personalized = AON.getApplicationParameter(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.AppParam.REPORT_saleInvoice);
+		
+		return personalized.isEmpty() && ( appParam.getValue() == null || "default".equalsIgnoreCase(appParam.getValue()));
 	}
 	
 	public void onCancelSign( ActionEvent event ) {

@@ -225,7 +225,7 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		if (c78 > c110)
 			c78 = c110;
 		double c66_77 = AonMathUtils.round(c66+c77);
-		if (!isLastPeriod() || (isLastPeriod() && !AonMathUtils.isLessThanZero(c66_77)))  {
+		if (!isLastPeriod())  {
 			// No puede ser mayor que el resultado del modelo hasta ahora (casillas 66 y 77)
 			if (c78 > (c66_77))
 				c78 = (c66_77);

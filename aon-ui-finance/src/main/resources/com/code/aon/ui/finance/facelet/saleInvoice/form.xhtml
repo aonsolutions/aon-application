@@ -26,10 +26,14 @@
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and saleInvoice.to.number le 0}"> 
 							<aon:commandButton id="accept"	
-								value="#{bundle.aon_accept}"
-								action="#{saleInvoice.issueInvoice}"
+								value="Emitir"
+								action="#{saleInvoice.tbai}"
 								onclick="#{saveOnClick}" 
-								styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
+								styleClass="aon-finding-toolbar-item aon-icon-check-black"
+								reRender="showCertTbaiWindow">
+									<f:setPropertyActionListener target="#{saleInvoice.showCertTbaiWindow}"
+										value="#{true}" />
+							</aon:commandButton>
 						</aon:if>
 						
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}"> 
@@ -470,6 +474,9 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalTbai.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbai.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">

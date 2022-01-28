@@ -196,7 +196,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
-import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -6885,6 +6884,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public List<Certifica2Info> getSalariesOccam(String domainName, String login, ITEmployee itEmployee, Date startDate, Date endDate) {
+
 		List<Certifica2Info> certs = new ArrayList<>();
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6919,4 +6919,5 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 		return certs;
 	}
+	
 }

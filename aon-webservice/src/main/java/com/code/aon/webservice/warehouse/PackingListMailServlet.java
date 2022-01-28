@@ -3,6 +3,7 @@ package com.code.aon.webservice.warehouse;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -48,7 +49,12 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.itextpdf.text.pdf.BarcodeQRCode;
+
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @WebServlet(name = "PackingListNotification", urlPatterns = { "/packing_list_notification/*",
 															  "/aon_gwt_aio/ms/packing_list_notification/*"})
@@ -141,7 +147,7 @@ public class PackingListMailServlet extends HttpServlet{
 					f -> f.getRegistryProperty().eq(carrierPacking.getCarrier())
 					.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 			}
-			sendEmail(domain, login, mailAccount.getId(),(to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Empresa de Transporte");
+			sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Empresa de Transporte");
 		} else if(MSG.REGISTRY.equalsIgnoreCase(type)){
 			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 				Stream<Purchase> stream = null;
@@ -175,7 +181,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(purchase.getSupplier())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Proveedor");
+					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Proveedor");
 				});
 			} else if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
 				Stream<Delivery> stream = null;
@@ -205,7 +211,7 @@ public class PackingListMailServlet extends HttpServlet{
 							f -> f.getRegistryProperty().eq(delivery.getCustomer())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
-					sendEmail(domain, login, mailAccount.getId(), (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Cliente");
+					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Cliente");
 				});
 			}
 		}
@@ -338,60 +344,76 @@ public class PackingListMailServlet extends HttpServlet{
 				+ "</div></div>";
 	}
 	
-	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String bcc, String issue, String message, String scheme, CarrierPacking carrierPacking, String type){
+	public void sendEmail(Domain domain, String login, MailAccount mailAccount, 
+			String to, String bcc, String issue, String message, String scheme, 
+			CarrierPacking carrierPacking, String type){
 		try {
-			JSONObject json = new JSONObject();
-			json.put("mailAccountId", mailAccountId)
-				.put("recipientsTo", to)
-				.put("content", message)
-				.put("subject", issue)
-				.put("login", login)
-				.put("domainName", domain.getName())
-				.put("domainId", domain.getId())
-				.put("md5", Base64.getEncoder().encodeToString(createQRImage(domain, carrierPacking.getId())))
-				.put("attachName", "QR.png")
-				.put("mimetype", MimeType.PNG.ordinal())
-				.put("bcc", bcc);
+			byte[] qr = createQRImage(domain, carrierPacking.getId());
+			File file = File.createTempFile("qrcode", ".png");
+			AonFileUtils.writeByteArrayToFile(file, qr);
 			
-			sendPostHttpClient(domain, login, json, scheme, carrierPacking, type);			
-		} catch (JSONException e) {
+			SESMessage ses = new SESMessage()
+					.setAlias(mailAccount.getDisplayName())
+					.setReplyTo(mailAccount.getEmail())
+					.setTo(to)
+					.setBcc(bcc)
+					.setBody(message)
+					.setSubject(issue)
+					.setFile(file)
+					;
+			SES.sendEmail(ses);
+			
+			DataResponse dr = new DataResponse()
+					.setDomain(domain.getId())
+					.setCode("")
+					.setResponseDate(new Date())
+					.setSource(DataResponseSource.PACKING_LIST_NOTIFICATION)
+					.setSourceId(carrierPacking.getId());
+			dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
+			
+			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, new DataResponseDetail()
+					.setDomain(domain.getId())
+					.setDataResponse(dr.getId())
+					.setDataVariable("type")
+					.setDataValue(type));
+					
+		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
-	
-	protected void sendPostHttpClient(Domain domain, String login, JSONObject json, String scheme, CarrierPacking carrierPacking, String type) {
-		try{
-			String url = scheme + "://"+domain.getName()+ "/send_email/";
-			System.out.println(url);
-			HttpClientBuilder base = HttpClientBuilder.create();
-			HttpClient client = base.build();
-			HttpPost post = new HttpPost(url);
-			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("details", json.toString()));
-			post.setEntity(new UrlEncodedFormEntity(urlParameters));
-			HttpResponse resp = client.execute(post);
-			
-			if(resp.getStatusLine().getStatusCode() == 200) {
-				DataResponse dr = new DataResponse()
-						.setDomain(json.getInt("domainId"))
-						.setCode("")
-						.setResponseDate(new Date())
-						.setSource(DataResponseSource.PACKING_LIST_NOTIFICATION)
-						.setSourceId(carrierPacking.getId());
-				dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
-				
-				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, new DataResponseDetail()
-						.setDomain(domain.getId())
-						.setDataResponse(dr.getId())
-						.setDataVariable("type")
-						.setDataValue(type));
-				
-			}
-		} catch (IOException e){
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
-	}
-	
+//	
+//	protected void sendPostHttpClient(Domain domain, String login, JSONObject json, String scheme, CarrierPacking carrierPacking, String type) {
+//		try{
+//			String url = scheme + "://"+domain.getName()+ "/send_email/";
+//			System.out.println(url);
+//			HttpClientBuilder base = HttpClientBuilder.create();
+//			HttpClient client = base.build();
+//			HttpPost post = new HttpPost(url);
+//			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
+//			urlParameters.add(new BasicNameValuePair("details", json.toString()));
+//			post.setEntity(new UrlEncodedFormEntity(urlParameters));
+//			HttpResponse resp = client.execute(post);
+//			
+//			if(resp.getStatusLine().getStatusCode() == 200) {
+//				DataResponse dr = new DataResponse()
+//						.setDomain(json.getInt("domainId"))
+//						.setCode("")
+//						.setResponseDate(new Date())
+//						.setSource(DataResponseSource.PACKING_LIST_NOTIFICATION)
+//						.setSourceId(carrierPacking.getId());
+//				dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
+//				
+//				AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, new DataResponseDetail()
+//						.setDomain(domain.getId())
+//						.setDataResponse(dr.getId())
+//						.setDataVariable("type")
+//						.setDataValue(type));
+//			}
+//		} catch (IOException e){
+//			LOGGER.log(Level.SEVERE, e.getMessage());
+//		}
+//	}
+//	
 	private String getCompanyName(Domain domain, String login) {
 		return AON.getCompanyForDomain(domain.getName(), domain.getId(), login).getName();
 	}

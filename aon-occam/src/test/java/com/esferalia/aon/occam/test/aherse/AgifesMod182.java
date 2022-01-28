@@ -70,10 +70,10 @@ public class AgifesMod182 {
 	
 	public static void main(String[] args) throws IOException {
 		// FileWriter writer = new FileWriter("/home/ecastellano/TRABAJO/AHERSE/Model182.txt");
-		PrintWriter writer = new PrintWriter("/home/ecastellano/TRABAJO/AHERSE/Model182P.txt","ISO-8859-1");
+		PrintWriter writer = new PrintWriter("/home/ecastellano/TRABAJO/FISCAL/AHERSE/Model182P.txt","ISO-8859-1");
 		
 		HashMap<String,Registry> map = new HashMap<String,Registry>(); 
-		FileReader r = new FileReader("/home/ecastellano/TRABAJO/AHERSE/Model182.csv");
+		FileReader r = new FileReader("/home/ecastellano/TRABAJO/FISCAL/AHERSE/Model182.csv");
 		LineNumberReader reader = new LineNumberReader(r);
 		int i = 0;
 		double total = 0.0;
@@ -105,7 +105,7 @@ public class AgifesMod182 {
 		StringBuffer buf = new StringBuffer();
 		buf.append("1");
 		buf.append("182");
-		buf.append("2019");
+		buf.append("2021");
 		buf.append("G20124749");
 		buf.append(AonFiscalFileUtils.text("AGIFES",(57-18+1)));
 		buf.append("T");
@@ -129,7 +129,7 @@ public class AgifesMod182 {
 				buf = new StringBuffer();
 				buf.append("2");
 				buf.append("182");
-				buf.append("2019");
+				buf.append("2021");
 				buf.append("G20124749");
 				buf.append(AonFiscalFileUtils.document(reg.getDocument()));
 				buf.append(AonFiscalFileUtils.spaces(35-27+1));
@@ -147,6 +147,9 @@ public class AgifesMod182 {
 				buf.append("0");
 				buf.append(AonFiscalFileUtils.spaces(500-133+1));
 				writer.write(buf.toString());
+				if (buf.length() != 500) {
+					System.out.println( "LENGHT "   + reg.getDocument() + " " + reg.getName() + " " + reg.getAmount() );		
+				}
 				writer.write("\r\n");
 			} else {
 				System.out.println( reg.getDocument() + " " + reg.getName() + " " + reg.getAmount() );		
@@ -166,7 +169,7 @@ public class AgifesMod182 {
 			.setCity(tokens[2])
 			.setZip(tokens[3])
 			.setProvince(tokens[4])
-			.setAmount(AonNumberUtils.todouble(tokens[7]))
+			.setAmount(AonNumberUtils.todouble(tokens[5]))
 			;
 	}
 	

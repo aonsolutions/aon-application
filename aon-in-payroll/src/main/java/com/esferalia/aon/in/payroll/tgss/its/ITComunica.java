@@ -137,7 +137,7 @@ public class ITComunica {
 			try {
 				verifyData(new Object[] { 
 						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getStartDate(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
-						 employeeIt.getType(),  itPart.getDate(),
+						 employeeIt.getType(),  itPart.getDate(), employeeIt.getContractType()
 				});    
 	
 				Double base = employeeIt.getDailyCgcBase().get();
@@ -152,9 +152,8 @@ public class ITComunica {
 				Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
 		
 				SituationEmployee situation = SituationEmployee.ACTIVO;
-				ContractType contractType =  ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL;
+				ContractType contractType =  ContractType.safeValueOf(employeeIt.getContractType());
 				
-
 				Optional<AccidentType> accidentType = Optional.empty();
 				Optional<String> occupation = Optional.empty();
 				Optional<String> cias = itPart.getCias();
