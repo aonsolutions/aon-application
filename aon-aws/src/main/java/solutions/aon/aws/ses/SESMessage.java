@@ -72,7 +72,12 @@ public class SESMessage {
 	
 	public SESMessage setTo(String to) {
 		LinkedList<String> toList = new LinkedList<>();
-		toList.add(to);
+		if(to.contains(";")) {
+			String[] arr = to.split(";");
+			for (String str : arr) {
+				toList.add(str);
+			}
+		} else toList.add(to);
 		this.to = toList;
 		return this;
 	}
@@ -95,7 +100,12 @@ public class SESMessage {
 	
 	public SESMessage setBcc(String bcc) {
 		LinkedList<String> bccList = new LinkedList<>();
-		bccList.add(bcc);
+		if(bcc.contains(";")) {
+			String[] arr = bcc.split(";");
+			for (String str : arr) {
+				bccList.add(str);
+			}
+		} else bccList.add(bcc);
 		this.bcc = bccList;
 		return this;
 	}
@@ -118,7 +128,12 @@ public class SESMessage {
 
 	public SESMessage setCc(String cc) {
 		LinkedList<String> list = new LinkedList<>();
-		list.add(cc);
+		if(cc.contains(";")) {
+			String[] arr = cc.split(";");
+			for (String str : arr) {
+				list.add(str);
+			}
+		} else list.add(cc);
 		this.cc = list;
 		return this;
 	}
