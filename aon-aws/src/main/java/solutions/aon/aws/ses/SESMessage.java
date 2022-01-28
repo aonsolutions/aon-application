@@ -152,6 +152,12 @@ public class SESMessage {
 		return this;
 	}
 	
+	public SESMessage setFile(File file) {
+		LinkedList<File> list = new LinkedList<>();
+		list.add(file);
+		this.files = list;
+		return this;
+	}
 	public boolean hasAttach() {
 		return !getFiles().isEmpty();
 	}

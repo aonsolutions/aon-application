@@ -206,7 +206,7 @@ public class TbaiMain {
 			TbaiResponse response = sendXML(uri, tbaiConfiguration, xml);
 			tbaiData.saveResponseAnulacion(company.getDomain(), new User().setLogin(""), invoice, response, request);
 			HandleTbaiResponse(response);
-		} else if (tbaiConfiguration.isBizkaia() && !tbaiConfiguration.isTest()) {
+		} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 			LROEResponse lroeResponse = null;
 			LROEInfo info = null;
 			if (AonDocumentUtil.isValidCIF(company.getDocument())) {

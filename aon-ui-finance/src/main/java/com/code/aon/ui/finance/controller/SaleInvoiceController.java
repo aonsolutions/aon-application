@@ -77,9 +77,15 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -94,6 +100,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean showDeliveryTransferWindow;
 	private boolean showDeliveryFilterWindow;
 	private boolean showTbaiWindow;
+	private boolean showCertTbaiWindow;
 	
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
@@ -154,6 +161,14 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowTbaiWindow(boolean showTbaiWindow) {
 		this.showTbaiWindow = showTbaiWindow;
+	}
+	
+	public boolean isShowCertTbaiWindow() {
+		return showCertTbaiWindow;
+	}
+
+	public void setShowCertTbaiWindow(boolean showCertTbaiWindow) {
+		this.showCertTbaiWindow = showCertTbaiWindow;
 	}
 	
 	public EdiInvoiceImporterHandler getEdiImporter() {
@@ -528,19 +543,9 @@ public class SaleInvoiceController extends InvoiceController {
 			Invoice inv = (Invoice) getTo();
 			String domainName = AonUtil.getDomainName();
 			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 			
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-			
-			long count = invoice.getDetails().stream().filter(r -> Double.toString(r.getQuantity())
-					.substring(Double.toString(r.getQuantity()).indexOf(".") + 1)
-					.length() > 2).count();
-			if(count > 0) {
-				throw new Exception("La cantidad no puede tener más de 2 decimales");
-			}
-			if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
-				throw new Exception("El Documento del cliente está vacio.");
-			}
+			tbaiValidation(invoice);
 
 			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 			if(invoice.getNumber() < 1) {
@@ -553,8 +558,7 @@ public class SaleInvoiceController extends InvoiceController {
 
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-			
-			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
+			tbaiConfiguration.setCertificate(getCertData());
 			if(tbaiConfiguration.isActive()) {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
@@ -568,71 +572,98 @@ public class SaleInvoiceController extends InvoiceController {
 	@Transient
 	public synchronized void issueInvoice() {
 		try {
-			checkCertificate();		
-			Invoice inv = (Invoice) getTo();
-			String domainName = AonUtil.getDomainName();
-			String login = UserUtils.getInstance().getLoggedUser().getLogin();
-			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
-			
-			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-			long count = invoice.getDetails().stream().filter(r -> Double.toString(r.getQuantity())
-						.substring(Double.toString(r.getQuantity()).indexOf(".") + 1)
-						.length() > 2).count();
-			if(count > 0) {
-				throw new Exception("La cantidad no puede tener más de 2 decimales");
-			}
-			if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
-				throw new Exception("El Documento del cliente está vacio.");
-			}
-			
-			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
-			if(invoice.getNumber() < 1) {
-				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
-				invoice.setNumber(number);
-				invoice.setReferenceCode(null);
-				invoice.setIssueDate(new Date());
-			}
-			
-			AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
-			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-			
-			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
-			if(tbaiConfiguration.isActive()) {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
-			}
+			if(lroe) {
+				issueInvoiceLroe();
+			} else if(anular) {
+				 anularInvoice();
+			} else {
+				Invoice inv = (Invoice) getTo();
+				String domainName = AonUtil.getDomainName();
+				String login = UserUtils.getInstance().getLoggedUser().getLogin();
+				Integer userId = UserUtils.getInstance().getLoggedUser().getId();
+				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+				tbaiValidation(invoice);
 		
-			// SII
+				Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+				if(invoice.getNumber() < 1) {
+					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+					invoice.setNumber(number);
+					invoice.setReferenceCode(null);
+					invoice.setIssueDate(new Date());
+					invoice.setTaxDate(new Date());
+
+					inv.setNumber(number);
+					inv.setIssueDate(new Date());
+					inv.setTaxDate(new Date());
+				}
+			
+				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+			
+				tbaiConfiguration.setCertificate(getCertData());
+				if(tbaiConfiguration.isActive()) {
+					TbaiMain tbai = new TbaiMain();
+					tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
+				}
+		
+				// SII
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
 	
-	private static Certificate checkCertificate() throws Exception {
-		Integer domainId = DomainManager.getCurrentDomain();
-		String domainName = AonUtil.getDomainName();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		Integer userId = UserUtils.getInstance().getLoggedUser().getId();
-		Certificate cert = new Certificate();
-		try {
-			cert =  AON.getCertificate(domainName, domainId, login, userId, CertificateType.AEAT.name());
-		} catch (Exception e) {
-//			AonUtil.addErrorMessage("Error al obtener el certificado.");
-			throw new AbortProcessingException("Error al obtener el certificado.");
+	private void tbaiValidation(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+		checkCertificate();
+		checkInvoice(invoice);
+		checkRegistry(invoice);
+		checkDetails(invoice);
+	}
+	
+	private void checkInvoice(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+		if(invoice.isRectifier() && AonStringUtils.isBlank(invoice.getSeries())) {
+			throw new Exception("Las Facturas rectificativas tienen que tener serie");
 		}
+	}
+	
+	private void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+		if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+			throw new Exception("El Documento del cliente está vacio.");
+		}
+	}
+	
+	private void checkDetails(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
+		for (com.esferalia.aon.occam.api.model.finance.InvoiceDetail detail : invoice.getDetails()) {
+			if(Double.toString(detail.getQuantity())
+					.substring(Double.toString(detail.getQuantity()).indexOf(".") + 1)
+					.length() > 2){
+				throw new Exception("La cantidad '"+ detail.getQuantity() + "' no puede tener más de 2 decimales");
+			}
+			
+			if(Double.toString(detail.getPrice())
+					.substring(Double.toString(detail.getPrice()).indexOf(".") + 1)
+					.length() > 2){
+				throw new Exception("La cantidad '"+ detail.getPrice() + "' no puede tener más de 2 decimales");
+			}
+			
+			if(detail.getDescription().length() >= 249) {
+				throw new Exception("El concepto no puede tener más de 250 carácteres: " + detail.getDescription());
+			}
+		}	
+	}
+	
+	private Certificate checkCertificate() throws Exception {
+		Certificate cert = getCertData();
 		try {
 			if(!checkCert(cert.getCertificate(), cert.getPassword())) {
-//				AonUtil.addErrorMessage("El certificado o la contraseña no son correctos.");
 				throw new AbortProcessingException("El certificado o la contraseña no son correctos.");
 			}
 		} catch (Exception e) {
-//			AonUtil.addErrorMessage("El certificado o la contraseña no son correctos.");
 			throw new AbortProcessingException("El certificado o la contraseña no son correctos.");
 		}		
 		if(cert.isEmpty()) {
-//			AonUtil.addErrorMessage("El certificado no existe.");
 			throw new AbortProcessingException("El certificado no existe.");
 		}
 		return cert;		
@@ -648,24 +679,43 @@ public class SaleInvoiceController extends InvoiceController {
 			return false;
 		}
 	}
+
+	boolean lroe;
+	boolean anular;
 	
+	public void tbai() {
+		lroe = false;
+		anular = false;
+	}
 	
+	public void lroe() {
+		lroe = true;
+		anular = false;
+	}
+
+	public void anular() {
+		lroe = false;
+		anular = true;
+	}
+	
+	public void anularInvoice() throws Exception {
+		if(isTbaiInvoice()) {
+			checkCertificate();
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+			tbaiConfiguration.setCertificate(getCertData());
+			TbaiMain tbai = new TbaiMain();
+			tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+		}
+	}
 	@Override
 	public void onRemove(ActionEvent event) {
 		try {
-			if(isTbaiInvoice()) {
-				checkCertificate();
-				Invoice inv = (Invoice) getTo();
-				String domainName = AonUtil.getDomainName();
-				String login = UserUtils.getInstance().getLoggedUser().getLogin();
-				Integer userId = UserUtils.getInstance().getLoggedUser().getId();
-				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-				tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
-				TbaiMain tbai = new TbaiMain();
-				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
-			}
+			anularInvoice();
 			super.onRemove(event);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -677,5 +727,109 @@ public class SaleInvoiceController extends InvoiceController {
 			? "La factura está enviada a TicketBAI. Al borrarla quedará anulada en TicketBai."
 			: "¿Borrar?";
 				
+	}
+	LinkedList<SelectItem> digitalCertificates;
+	LinkedList<Certificate> certificates;
+	Integer certificate;
+	String password;
+	
+	public Integer getCertificate() {
+		return certificate;
+	}
+	
+	public void setCertificate(Integer certificate) {
+		this.certificate = certificate;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	private Certificate getCertData() {
+		Certificate cert = getCert();
+		if(!cert.hasPassword()) {
+			cert.setPassword(password);
+		}
+		Domain domain = getDomain();
+		User user = getUser();
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(getCertificate()), AttachType.REGISTRY);
+		cert.setCertificate(attach.getData());
+		return cert;
+	}
+	
+	private Certificate getCert() {
+		if(certificates == null) {
+			getDigitalCertificates();
+		}
+		return certificates.stream().filter(f -> f.getId().equals(certificate)).findFirst().orElse(new Certificate());	
+	}
+	
+	
+	public boolean isPass() {	
+		return getCert().hasPassword();
+	}
+
+	public LinkedList<SelectItem> getDigitalCertificates() {
+		if(digitalCertificates == null) {
+			digitalCertificates = new LinkedList<>();
+			certificates = new LinkedList<>();
+			Domain domain = getDomain();
+			User user = getUser();
+			AON.getCertificates(domain, user, f -> certificateFilter(domain, user, f)).forEach(certificate -> {
+				SelectItem item = new SelectItem(certificate.getId(), certificate.getName());
+				digitalCertificates.add(item);
+				certificates.add(certificate);
+			});
+			if(!certificates.isEmpty())
+				certificate = certificates.getFirst().getId();
+		}
+		return digitalCertificates;
+	}	
+
+	public Filter certificateFilter(Domain domain, User user, CertificateProperties f) {
+		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), user.getLogin());
+		
+		Filter filter;
+		if(domain.getParentId() != null) {
+			Integer[] domains = {domain.getId(), domain.getParentId()};
+			filter = f.getDomainProperty().in(domains);
+		} else filter = f.getDomainProperty().eq(domain.getId());
+    	
+		if(user.getRegistry() != null && domain.getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Integer[] registries = {user.getRegistry(), company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(user.getRegistry() != null) {
+			Integer[] registries = {user.getRegistry(), company.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else if(domain.getParentId() != null) {
+			Company parentCompany = AON.getCompanyForDomain(domain.getName(), domain.getParentId(), user.getLogin());
+			Integer[] registries = {company.getId(), parentCompany.getId()};
+			filter = filter.and(f.getRegistryProperty().in(registries));
+		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
+		
+		
+		filter = filter.and(f.getTypeProperty().eq(CertificateType.AEAT.name()).or(f.getTypeProperty().isNull()));
+		
+    	return filter;
+    }
+	
+	public Domain getDomain() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return AON.getDomain(domainName, domainId, login);
+	}
+	
+	public User getUser( ) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Integer userId = UserUtils.getInstance().getLoggedUser().getId();	
+		return AON.getUser(domainName, domainId, login, f -> f.getIdProperty().eq(userId));
 	}
 }

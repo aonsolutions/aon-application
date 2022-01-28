@@ -38,8 +38,20 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="lroeaccept"	
 											value="Enviar"
-											action="#{saleInvoice.issueInvoiceLroe}"
-											styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
+											action="#{saleInvoice.lroe}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											reRender="showCertTbaiWindow">
+											<f:setPropertyActionListener target="#{saleInvoice.showCertTbaiWindow}"
+												value="#{true}" />
+										</aon:commandButton>
+										<aon:commandButton id="lroeanular"	
+											value="Anular"
+											action="#{saleInvoice.anular}"
+											styleClass="aon-finding-toolbar-item aon-icon-removed"
+											reRender="showCertTbaiWindow">
+											<f:setPropertyActionListener target="#{saleInvoice.showCertTbaiWindow}"
+												value="#{true}" />
+										</aon:commandButton>
 									</aon:div>
 									
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
