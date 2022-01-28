@@ -81,6 +81,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -1594,6 +1595,23 @@ public class InvoiceDAO {
 					.setName(rec.getValue(REGISTRY.NAME))
 					.setType( AccountingRegistryType.getFor(InvoiceType.safeValueOf( rec.getValue(INVOICE.TYPE) )))
 					);			
+	}
+	
+	public static void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code) {
+		Project project = new Project()
+				.setDomain(new Domain().setId(ctx.getDomainId()))
+				.setRegistry(new com.esferalia.aon.occam.api.model.registry.Registry().setId(registry))
+				.setName(code)
+				.setDate(new Date());
+
+		project = ProjectDAO.save(ctx, project);
+
+		ctx.getDslContext().update(INVOICE_DETAIL)
+		.set(INVOICE_DETAIL.PROJECT, project.getId())
+		.where(INVOICE_DETAIL.DOMAIN.eq(ctx.getDomainId()))
+		.and(INVOICE_DETAIL.INVOICE.eq(invoice))
+		.execute();
+		
 	}
 	
 }

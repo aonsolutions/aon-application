@@ -106,6 +106,7 @@
 							action="#{saleInvoiceSigner.onDownloadFacturae}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
+						
 						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:commandButton id="saleInvoice-downloadEdiFtp"
 								value="SERES"
@@ -190,6 +191,17 @@
 							<ui:param name="skipCancelSignButton" value="#{!saleInvoice.signed}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm" />
 						</ui:include>
+						
+						<aon:if test="#{saleInvoice.downloadFacturae}">
+							<aon:menuItem id="Facturae_info"
+								value="Información Facturae"
+								iconClass="aon-icon-info"
+								reRender="showFacturaeInfoWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showFacturaeInfoWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
+						
 						<aon:menuItem id="duplicate"
 							value="#{bundle.aon_to_duplicate}"
 							rendered="#{!saleInvoice.rectifier and !saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0}"
@@ -477,6 +489,9 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbai.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalFacturae.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
