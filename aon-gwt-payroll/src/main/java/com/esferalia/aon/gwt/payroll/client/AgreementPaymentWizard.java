@@ -1556,6 +1556,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentExtra.setIrpfExpression("_P");
 		paymentExtra.setQuoteExpression("_P");
 		paymentExtra.setType(paymentTypeListBox.getSelected());
+		// Si tiene agreement extra es SalaryType EXTRA si no, es SALARY
 		paymentExtra.setSalaryType(Salary.Type.EXTRA);
 		paymentExtra.setName(paymentConcept.getValue());
 
@@ -1567,16 +1568,17 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			paymentExtra.setMonth(null);
 		}
 
-		createExtra();
+		createExtra(paymentExtra);
 	}
 
-	private void createExtra() {
+	private void createExtra(Payment paymentExtra) {
 		String periodicityValue = periodicityType.getSelectedValue();
 
 		if (AonStringUtils.equalsIgnoreCase(periodicityValue, "PRORRATEO")
-				|| AonStringUtils.isBlank(extraPayDate.getValue()))
+				|| AonStringUtils.isBlank(extraPayDate.getValue())) {
 			extra = null;
-		else {
+			paymentExtra.setSalaryType(Salary.Type.SALARY);
+		} else {
 			extra.setId(-1);
 			extra.setIssueDate(extraPayDate.getValue());
 			createExtraPeriod();

@@ -1549,7 +1549,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		paymentExtra.setIrpfExpression("_P");
 		paymentExtra.setQuoteExpression("_P");
 		paymentExtra.setType(paymentTypeListBox.getSelected());
-		paymentExtra.setSalaryType(Salary.Type.EXTRA);
+		paymentExtra.setSalaryType(Salary.Type.SALARY);
 		paymentExtra.setName(paymentConcept.getValue());
 		paymentExtra.setStartDate(createStartDate());
 		paymentExtra.setEndDate(createEndDate());
