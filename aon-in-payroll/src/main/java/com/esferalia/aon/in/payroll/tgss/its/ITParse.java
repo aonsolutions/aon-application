@@ -28,12 +28,14 @@ public class ITParse {
 		Date startDateIT = startIT.getWorkLeaveDate().get();
 		Optional<Date> endDateIT = endIT.getWorkRestartDate();
 
-
 		EmployeeIT employeeIT = new EmployeeIT()
-				.setNss(nss)
+				
+				.setCcc(startIT.getCcc())
 				.setType(ContractLeaveType.valueOfTGSS(startIT.getCauseNumber()))
 				.setStartDate(startDateIT);
 		
+		startIT.getIpf().ifPresent(d-> employeeIT.setDni(d));
+		startIT.getNameEmployee().ifPresent(d-> employeeIT.setName(d));
 		startIT.getDailyBaseCgc().ifPresent(d-> employeeIT.setDailyCgcBase(d.doubleValue()));
 
 		ContractLeaveDetailStatus status = ContractLeaveDetailStatus.PROCESSED;
