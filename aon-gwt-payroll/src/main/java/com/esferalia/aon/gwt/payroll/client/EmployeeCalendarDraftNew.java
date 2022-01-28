@@ -1551,13 +1551,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
     	};
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
-    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
     	itDialog.setIsUserComunica(employeeCalendarDraftObject.isUserComunica());
-    	
-    	itDialog.setModal(true);
-    	itDialog.setAnimationEnabled(true);
-    	itDialog.show();
-    	itDialog.center();
+    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
 	}	
 	
 	private void initHourDialog() {

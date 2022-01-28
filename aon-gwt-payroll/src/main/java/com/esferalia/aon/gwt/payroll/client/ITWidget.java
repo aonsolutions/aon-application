@@ -1545,11 +1545,6 @@ public abstract class ITWidget extends ResizeComposite {
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
     	itDialog.setIsUserComunica(isUserComunica());
     	itDialog.setITDialogObject(itDialogObject, itInfo, true);
-    	
-    	itDialog.setModal(true);
-    	itDialog.setAnimationEnabled(true);
-    	itDialog.show();
-    	itDialog.center();
 	}	
 	
 	private void accept(ITEmployee itEmployee, boolean newIT) {
