@@ -1,9 +1,9 @@
 package com.esferalia.aon.gwt.template.shared;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -44,6 +44,7 @@ public class InvoiceImportClass implements IsSerializable {
 	Boolean investment;
 	
 	LinkedList<InvoiceImportClass> lines;
+	LinkedList<Finance> finances;
 	
 	public InvoiceImportClass() {
 		// TODO Auto-generated constructor stub
@@ -339,6 +340,18 @@ public class InvoiceImportClass implements IsSerializable {
 		return this;
 	}
 	
+	
+	public LinkedList<Finance> getFinances() {
+		if(finances == null) {
+			finances = new LinkedList<>();
+		}
+		return finances;
+	}
+	
+	public InvoiceImportClass setFinances(LinkedList<Finance> finances) {
+		this.finances = finances;
+		return this;
+	}
 	
 	public Boolean isEmpty() {
 		return getType() == null && getDate() == null && getRef() == null

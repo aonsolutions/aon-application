@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceImport {
@@ -383,6 +384,53 @@ public class InvoiceImport {
 			return;
 		}	
 		
+		if(title.contains("FECHA VTO")) {
+			Date date = new Date();
+			try{
+				date = cell.getDateCellValue();
+			} catch (Exception e) {
+				date = AonDateUtils.parse(o.toString(), "dd/MM/yyyy");
+			}
+			
+			String numberStr = title.substring(title.length()-1);
+			Integer number = AonNumberUtils.toint(numberStr);
+			if(inv.getFinances().size() > number) {
+				inv.getFinances().get(number).setDueDate(date);
+			} else {
+				Finance finance = new Finance()
+						.setDueDate(date);
+				inv.getFinances().add(finance);
+			}
+		}
+		
+		if(title.contains("IMPORTE VTO")) {
+			Double amount = Utils.parseDouble(o);
+			
+			String numberStr = title.substring(title.length()-1);
+			Integer number = AonNumberUtils.toint(numberStr);
+			if(inv.getFinances().size() > number) {
+				inv.getFinances().get(number).setAmount(amount);
+			} else {
+				Finance finance = new Finance()
+						.setAmount(amount);
+				inv.getFinances().add(finance);
+			}
+		}
+		
+		if(title.contains("FORMA PAGO VTO")) {
+			String paymethod = o.toString();
+			
+			String numberStr = title.substring(title.length()-1);
+			Integer number = AonNumberUtils.toint(numberStr);
+			if(inv.getFinances().size() > number) {
+				inv.getFinances().get(number).setPayMethodName(paymethod);
+			} else {
+				Finance finance = new Finance()
+						.setPayMethodName(paymethod);
+				inv.getFinances().add(finance);
+			}
+		}
+		
 		if("CUENTA TESORERÍA".equalsIgnoreCase(title)
 				|| "CUENTA TESORERIA".equalsIgnoreCase(title)
 				|| "PAGO POR CAJA".equalsIgnoreCase(title)) {
@@ -627,33 +675,48 @@ public class InvoiceImport {
 			ai.setPayAccountId(financeAccount.getId())
 			  .setPayAccountCode(financeAccount.getCode())
 			  .setPayAccountDescription(financeAccount.getDescription());
-			
-			Finance f = new Finance()
+
+			ai.getInvoice().setFinances(new LinkedList<Finance>());
+			if(ivs.get(i).getFinances().isEmpty()) {
+				Finance f = new Finance()
 					.setAmount(ai.getInvoice().getTotal())
 					.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
 					.setPayMethod(pm.getId())
 					.setPayment(!invoice.isSales());
-			
-			ai.getInvoice().setFinances(new LinkedList<Finance>());
-			if(financeAccount != null && financeAccount.getId() != null) {
-				ai.getInvoice().addFinance(f);
+			} else {
+				for (Finance fin : ivs.get(i).getFinances()) {
+					if(aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty()) {
+						PayMethod pmAux = aonCtx.getPayMethods().stream().filter(p -> p.getName().equals(fin.getPayMethodName())).findFirst().orElse(pm);
+						fin.setPayMethod(pmAux.getId());
+					} else fin.setPayMethod(pm.getId());
+					fin.setPayment(!invoice.isSales());
+					if(financeAccount != null && financeAccount.getId() != null) {
+						ai.getInvoice().addFinance(fin);
+					}
+
+				} 
 			}
 
 			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
-				
+
 			if(financeAccount == null || financeAccount.getId() == null){
-				f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
-					.setDomain(domain.getId())
-					.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
-					.setRegistryDocument(ai.getInvoice().getRegistryDocument())
-					.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
-					.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
-					.setRegistryName(ai.getInvoice().getRegistryName())
-					.setScope(ai.getInvoice().getScope())
-					.setSecurityLevel(ai.getInvoice().getSecurityLevel())
-					.setConcept(ai.getInvoice().getDocumentNumber())
-					.setFinanceStatus(FinanceStatus.PENDING);
-				AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
+				if(ivs.get(i).getFinances().isEmpty()) {
+					Finance f = new Finance()
+						.setAmount(ai.getInvoice().getTotal())
+						.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
+						.setPayMethod(pm.getId())
+						.setPayment(!invoice.isSales());
+					insertFinances(domain, user.getLogin(), ai, f);
+				} else {
+					for (Finance fin : ivs.get(i).getFinances()) {
+						if(aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty()) {
+							PayMethod pmAux = aonCtx.getPayMethods().stream().filter(p -> p.getName().equals(fin.getPayMethodName())).findFirst().orElse(pm);
+							fin.setPayMethod(pmAux.getId());
+						} else fin.setPayMethod(pm.getId());
+						fin.setPayment(!invoice.isSales());
+						insertFinances(domain, user.getLogin(), ai, fin);						
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -664,6 +727,20 @@ public class InvoiceImport {
 		return error;
 	}
 	
+	private static void insertFinances(Domain domain, String login, AccountingInvoice ai, Finance f) {
+		f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
+			.setDomain(domain.getId())
+			.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
+			.setRegistryDocument(ai.getInvoice().getRegistryDocument())
+			.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
+			.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
+			.setRegistryName(ai.getInvoice().getRegistryName())
+			.setScope(ai.getInvoice().getScope())
+			.setSecurityLevel(ai.getInvoice().getSecurityLevel())
+			.setConcept(ai.getInvoice().getDocumentNumber())
+			.setFinanceStatus(FinanceStatus.PENDING);
+		AON.insertFinance(domain.getName(), domain.getId(), login, f);
+	}
 	
 	public static Error insertInvoice(Domain domain, User user, Integer i, InvoiceImportClass iic) {
 		Error error = new Error().setError(true);
@@ -881,33 +958,53 @@ public class InvoiceImport {
 			ai.setPayAccountId(financeAccount.getId())
 			  .setPayAccountCode(financeAccount.getCode())
 			  .setPayAccountDescription(financeAccount.getDescription());
-			
-			Finance f = new Finance()
+
+			ai.getInvoice().setFinances(new LinkedList<Finance>());
+			if(iic.getFinances().isEmpty()) {
+				Finance f = new Finance()
 					.setAmount(ai.getInvoice().getTotal())
 					.setDueDate(iic.getFinanceDate() != null ? iic.getFinanceDate() : ai.getInvoice().getIssueDate())
 					.setPayMethod(pm.getId())
 					.setPayment(!invoice.isSales());
 			
-			ai.getInvoice().setFinances(new LinkedList<Finance>());
-			if(financeAccount != null && financeAccount.getId() != null) {
-				ai.getInvoice().addFinance(f);
+				if(financeAccount != null && financeAccount.getId() != null) {
+					ai.getInvoice().addFinance(f);
+				}
+			} else {
+				for (Finance fin : iic.getFinances()) {
+					if(aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty()) {
+						PayMethod pmAux = aonCtx.getPayMethods().stream().filter(p -> p.getName().equals(fin.getPayMethodName())).findFirst().orElse(pm);
+						fin.setPayMethod(pmAux.getId());
+					} else fin.setPayMethod(pm.getId());
+					fin.setPayment(!invoice.isSales());
+					if(financeAccount != null && financeAccount.getId() != null) {
+						ai.getInvoice().addFinance(fin);
+					}
+				} 
 			}
+
 
 			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
 				
-			if(financeAccount == null || financeAccount.getId() == null){
-				f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
-					.setDomain(domain.getId())
-					.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
-					.setRegistryDocument(ai.getInvoice().getRegistryDocument())
-					.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
-					.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
-					.setRegistryName(ai.getInvoice().getRegistryName())
-					.setScope(ai.getInvoice().getScope())
-					.setSecurityLevel(ai.getInvoice().getSecurityLevel())
-					.setConcept(ai.getInvoice().getDocumentNumber())
-					.setFinanceStatus(FinanceStatus.PENDING);
-				AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
+
+			if(financeAccount == null || financeAccount.getId() == null) {
+				if(iic.getFinances().isEmpty()) {
+					Finance f = new Finance()
+						.setAmount(ai.getInvoice().getTotal())
+						.setDueDate(iic.getFinanceDate() != null ? iic.getFinanceDate() : ai.getInvoice().getIssueDate())
+						.setPayMethod(pm.getId())
+						.setPayment(!invoice.isSales());
+					insertFinances(domain, user.getLogin(), ai, f);
+				} else {
+					for (Finance fin : iic.getFinances()) {
+						if(aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty()) {
+							PayMethod pmAux = aonCtx.getPayMethods().stream().filter(p -> p.getName().equals(fin.getPayMethodName())).findFirst().orElse(pm);
+							fin.setPayMethod(pmAux.getId());
+						} else fin.setPayMethod(pm.getId());
+						fin.setPayment(!invoice.isSales());
+						insertFinances(domain, user.getLogin(), ai, fin);						
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
