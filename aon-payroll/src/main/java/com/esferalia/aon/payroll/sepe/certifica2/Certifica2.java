@@ -183,21 +183,26 @@ public class Certifica2 {
 		if(Boolean.TRUE.equals(checkIfNotExist(dni)))
 			return "No existe documento de identidad para esta persona";
 		
-		String contractType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
+		List<String> contractTypeList = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(CONTRACT_DATA.NAME.eq("TC2"))
-				.fetchOne(CONTRACT_DATA.EXPRESSION);
+				.orderBy(CONTRACT_DATA.START_DATE.desc())
+				.fetch(CONTRACT_DATA.EXPRESSION);
+		
+		String contractType = contractTypeList.isEmpty() ? null : contractTypeList.get(0);
 		
 		String tc2 = normalizeString(contractType);
 		
-		String quoteGroupType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
+		List<String> quoteGroupTypeList = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION"))
-				.fetchOne(CONTRACT_DATA.EXPRESSION);
+				.orderBy(CONTRACT_DATA.START_DATE.desc())
+				.fetch(CONTRACT_DATA.EXPRESSION);
 		
-		if(Boolean.TRUE.equals(checkIfNotExist(quoteGroupType)))
+		if(quoteGroupTypeList.isEmpty())
 			return "No existe grupo de cotizacion para este contrato";
 		
+		String quoteGroupType = quoteGroupTypeList.get(0);
 		String quoteGroup = normalizeString(quoteGroupType);
 		
 		String cnoType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
