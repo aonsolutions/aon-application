@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
@@ -1010,5 +1011,4 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

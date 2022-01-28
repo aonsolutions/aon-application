@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
@@ -538,6 +539,22 @@ public class MainContrataITObject {
 		initEmployeeList(employeesInfoList);
 		initITList(employeesInfoList);
 		success.accept(employeesInfoList);	
+	}
+	
+	// -------------------------------------------------- DataBase methods (checkStatus)
+	
+	public void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {
+		impl.getEnterpriseITStatus(new AsyncCallback<EnterpriseITStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EnterpriseITStatus result) {
+				 success.accept(result);
+			}
+		});
 	}
 	
 	// --------------------------------------------------- MainContrataITObject.Methods
