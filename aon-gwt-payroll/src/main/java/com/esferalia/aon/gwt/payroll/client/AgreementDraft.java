@@ -1439,8 +1439,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		RootPanel.get().addDomHandler(myHandler , KeyDownEvent.getType());
 		
-		//Show new payPeriod
-		deckPanelExtras.showWidget(0);
 		periodTypePanel.getElement().getStyle().clearWidth();
 		AonToolbarSmallButton showExtras = new AonToolbarSmallButton("Mostrar tabla extras");
 		showExtras.addClickHandler(e -> {
@@ -2097,6 +2095,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				this.filterPattern = "";
 		}
 		
+		showExtrasTable = false;
 		showDraft();
 		this.agreementDraftObject = agreementDraftObject;
 		this.agreementDraftObject.calculate(this);
@@ -2162,8 +2161,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		if(!checkIfExtrasExist())
 			deckPanelExtras.showWidget(2);
-		else
-			deckPanelExtras.showWidget(0);
+		else {
+			//Show new payPeriod
+			if(showExtrasTable) deckPanelExtras.showWidget(1);
+			else deckPanelExtras.showWidget(0);
+		}
 		
 		checkTypeOfExistingExtra();
 		
