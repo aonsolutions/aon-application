@@ -111,6 +111,15 @@ public class LROE implements Serializable {
 				if(responseData != null) {
 					Document d = XMLUtils.getDocument(responseData);
 					System.out.println(XMLUtils.documentToString(d));
+					String status = d.getElementsByTagName("EstadoRegistro").item(0).getTextContent();
+					boolean error = "incorrecto".equalsIgnoreCase(status);
+					responseJSON.put("error", error);
+					if(error) {
+						String errorCode = d.getElementsByTagName("CodigoErrorRegistro").item(0).getTextContent();
+						String errorMessage = d.getElementsByTagName("DescripcionErrorRegistroES").item(0).getTextContent();
+
+						responseJSON.put("errorMessage", errorCode + " - " + errorMessage);
+					}
 				}
 			} catch (ParserConfigurationException | SAXException e) {
 				e.printStackTrace();
@@ -123,8 +132,6 @@ public class LROE implements Serializable {
 			return new LROEResponse(responseJSON);
 		}
 	}
-	
-	
 	
 	private class TrustAllCertificates implements X509TrustManager {
 	    public void checkClientTrusted(X509Certificate[] certs, String authType) {
