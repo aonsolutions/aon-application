@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.SistemaRED;
@@ -66,6 +67,8 @@ public class ITComunica {
 				for (It it : its) {
 					
 					EmployeeIT employeeIT = ITParse.parseTGSSToAon(it);
+					if(employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+						employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
 			
 					String naf = nss.isPresent() ? nss.get() : employeeIT.getNss();
 					Optional<Employee> contract = ITComunica.contractIts(domain, ccc, naf, employeeIT.getStartDate(), employeeIT.getEndDate());

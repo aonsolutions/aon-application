@@ -1918,7 +1918,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		employeeData.add(doc);
 		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getDocument()));
 		
-		Label naf = new Label("Naf:");
+		Label naf = new Label("NAF:");
 		naf.setStyleName(style.subTitle());
 		employeeData.add(naf);
 		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getSsNumber()));

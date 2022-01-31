@@ -14,6 +14,7 @@ import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -23,9 +24,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -173,12 +172,12 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	
 	@Override
 	public void up2DateEnterprise() {
-		addInfo("Its actualizadas, no existen cambios nuevos.");
+		addInfo("ITs actualizadas, no existen cambios nuevos.");
 		syncMessages();
 	}
 	
 	protected void setUp2DateEnterprise() {
-		addInfo("Its actualizadas, no existen cambios nuevos.");
+		addInfo("ITs actualizadas, no existen cambios nuevos.");
 		syncMessages();
 	}
 	
@@ -189,16 +188,18 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	@Override
 	public void itNotExist(ItNotExist status) {
 		
+		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
+		
 		HorizontalPanel horizontalPanel = new HorizontalPanel();
 		horizontalPanel.add(new HTML("&nbsp;"));
 		horizontalPanel.add(
-		new Label(
-			"Afiliado '"
-			+status.getName()
-			+" parte de "+getPartStr(status.getPart())+" "
-			+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
-			+" ) no encontrada en aon Solutions."
-//			+" Pulse"
+			new Label(
+				"Afiliado '"
+				+status.getName()
+				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
+				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
+				+" ) no encontrada en aon Solutions."
+//			   +" Pulse"
 			)
 		);
 //		horizontalPanel.add(new HTML("&nbsp;"));
@@ -465,5 +466,4 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	/*-{
 		return eval(javascript);
 	}-*/;
-
 }

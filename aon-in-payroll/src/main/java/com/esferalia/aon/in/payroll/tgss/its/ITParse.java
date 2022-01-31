@@ -55,7 +55,8 @@ public class ITParse {
 					ContractLeaveDischargeCause.safeValueOf(endIT.getCauseNumber() - 1));
 
 		it.getConfirmations().forEach(c -> {
-			EmployeeITPart itPart = new EmployeeITPart().setType(ContractLeaveDetailType.CONFIRMACION)
+			EmployeeITPart itPart = new EmployeeITPart()
+			.setType(ContractLeaveDetailType.CONFIRMACION)
 			.setStatus(status);
 
 			c.getConfirmationDate().ifPresent(itPart::setDate);

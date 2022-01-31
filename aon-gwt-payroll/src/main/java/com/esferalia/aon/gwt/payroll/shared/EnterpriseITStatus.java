@@ -64,6 +64,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 		String ccc;
 		String name;
 		Byte part; //0 baja , 1 confirmacion, 2 alta
+		Byte confirmOrder;
+//		boolean aon;
 
 //		Double base;
 //		Integer quoteDays;
@@ -90,6 +92,14 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return part;
 		}
 		
+		public Byte getConfirmOrder() {
+			return confirmOrder;
+		}
+		
+//		public boolean getAon() {
+//			return aon;
+//		}
+		
 		public ItNotExist setDate(Date date) {
 			this.date = date;
 			return this;
@@ -115,6 +125,16 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return this;
 		}
 		
+		public ItNotExist setConfirmOrder(Byte confirmOrder) {
+			this.confirmOrder = confirmOrder;
+			return this;
+		}
+		
+//		public ItNotExist setAon(boolean b) {
+//			this.aon = b;
+//			return this;
+//		}
+		
 //		public Double getBase() {
 //			return base;
 //		}
@@ -131,7 +151,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 //			return contractType;
 //		}
 	
-		
 //		public ItBajaNotExist setBase(Double base) {
 //			this.base = base;
 //			return this;
@@ -162,7 +181,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 			super.visit(visitor);
 		}
 	}		
-	
 
 	public static class UnknownError extends EnterpriseITStatus{
 		
@@ -260,9 +278,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 			
 			@Override
 			public void itNotExist(ItNotExist itNotExist) {
-				System.out.println("ItNotExist " + itNotExist.naf + "[" + itNotExist.date + "]");
+				System.out.println("ItNotExist "+ itNotExist.name +" "+ itNotExist.naf + "[" + itNotExist.date + "]");
 			}
-			
 		});
 		return status;
 	}
@@ -288,7 +305,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void itNotExist(ItNotExist itNotExist) {
 				throw new OutOfDateException();
 			}
-			
 		});
 		return status;
 	}
