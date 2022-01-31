@@ -3570,7 +3570,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				if(!msg.isEmpty())
 					throw new IllegalArgumentException(msg);
 			}
-			throw new IllegalArgumentException();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
@@ -3584,7 +3583,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
 			Domain domain = new Domain().setId(domainId).setName(domainName);
-			return ITStatusUtils.getEnterpriseITStatus(connection, domain, login, userId);
+			return ITStatusUtils.getEnterpriseITStatus(domain, login, userId);
 		} catch ( CertificateNotFoundException e) {
 			return new EnterpriseITStatus.CredentialsNotFound();
 		} catch ( Exception e  ) {
