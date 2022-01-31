@@ -14,6 +14,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StringBufferInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,16 +22,18 @@ import java.sql.SQLException;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Properties;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 
+import javax.lang.model.type.TypeVisitor;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -46,13 +49,16 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
+import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
-import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
@@ -96,6 +102,8 @@ public class TrabajadoresTramos {
 		Option ccc =  SolicitudBorrador.getCCCOption();
 		Option authorized =  SolicitudBorrador.getAuthorizedOption();
 		Option type =  SolicitudBorrador.getTypeOption(tipo);
+		Option output =  SolicitudBorrador.getOuputOption();
+		
 		
 		Options options = new Options()
 		.addOption(hostName)
@@ -111,6 +119,7 @@ public class TrabajadoresTramos {
 		.addOption(ctrlMonth)
 		.addOption(ccc)
 		.addOption(type)
+		.addOption(output)
 		;
 		//@formatter:on
 
@@ -126,13 +135,13 @@ public class TrabajadoresTramos {
 
 			Class.forName(com.mysql.jdbc.Driver.class.getName());
 
-			Connection connection = DriverManager.getConnection(
-					String.format("jdbc:mysql://%s:%d/%s",
-							cmd.getOptionValue(hostName.getLongOpt(),
-									"127.0.0.1"),
-							3306, cmd.getOptionValue(database.getLongOpt())),
-					cmd.getOptionValue(user.getLongOpt()),
-					cmd.getOptionValue(password.getLongOpt()));
+			Properties properties = new Properties();
+			properties.setProperty("user", cmd.getOptionValue(user.getLongOpt()));
+			properties.setProperty("password", cmd.getOptionValue(password.getLongOpt()));
+			properties.setProperty("useSSL", "false");
+			properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
+			String url = String.format("jdbc:mysql://%s:%d/%s", cmd.getOptionValue(hostName.getLongOpt(), "127.0.0.1"), 3306, cmd.getOptionValue(database.getLongOpt()));
+			Connection connection = DriverManager.getConnection(url, properties);
 
 			desdeMes = cmd.getOptionValue(fromMonth.getLongOpt(), desdeMes);
 			desdeAnho = cmd.getOptionValue(fromYear.getLongOpt(), desdeAnho);
@@ -141,6 +150,14 @@ public class TrabajadoresTramos {
 			tipo = cmd.getOptionValue(type.getLongOpt(), tipo);
 			String cccs[] = cmd.getOptionValues(ccc.getLongOpt());
 			String autorizado = cmd.getOptionValue(authorized.getLongOpt());
+			String file = cmd.getOptionValue(output.getLongOpt());
+			
+			PrintStream out ; 
+			try {
+				out = new PrintStream(file);
+			} catch ( Exception e ) {
+				out = System.out;
+			}
 			
 			ByteArrayOutputStream trabajadoresYTramosOs = new ByteArrayOutputStream();
 			generate(connection, autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, trabajadoresYTramosOs);
@@ -152,8 +169,7 @@ public class TrabajadoresTramos {
 					.unmarshal(
 							net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 							trabajadoresTramosIs);
-			
-			Utils.marshal(trabajadoresTramos, System.out);
+			Utils.marshal(trabajadoresTramos, out);
 			
 			trabajadoresTramosIs.close();
 
@@ -218,8 +234,8 @@ public class TrabajadoresTramos {
 		Date fromDate = getFirstDayOf(desdeMes, desdeAnho);
 		Date toDate = getLastDayOf(hastaMes, hastaAnho);
 		for (Date date = fromDate; date.before(toDate); date = AonDateUtils.add(date,Calendar.MONTH,1)) {
-			int anho = AonDateUtils.get(date, Calendar.YEAR);
-			Month  mes = Month.values()[AonDateUtils.get(date, Calendar.MONTH)];
+			int anho = AonDateUtils.getYear(date);
+			Month  mes = Month.values()[AonDateUtils.getMonth(date)];
 			for ( String ccc: cccs ) {
 				String ccc_prov_num_dc = ccc.substring(4); // PROVINCIA (2) + Nº (7) + DÍGITOS CONTROL (2)
 				liquidacionMes(aonContext, trabajadoresTramosBuilder, anho, mes, ccc_prov_num_dc, tipo);
@@ -267,9 +283,9 @@ public class TrabajadoresTramos {
 		
 		for ( int i = 0; salaryData != null  ; i++) {
 			Date firstDayOfMonth = AonDateUtils.add(startDate, Calendar.MONTH, i);
-			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(firstDayOfMonth);
+			Date lastDayOfMonth = AonDateUtils.getMonthLastDay(firstDayOfMonth);
 			List<Salary> more = liquidacionMes(trabajadoresTramosBuilder, tipo, firstDayOfMonth, lastDayOfMonth, salaryData);
-			if ( more.isEmpty() )
+			if ( !AonStringUtils.equalsIgnoreCase("L13", tipo) || more.isEmpty() )
 				break;
 			salaryData = more.stream();
 		} 
@@ -327,7 +343,7 @@ public class TrabajadoresTramos {
 					});
 					
 					for ( ContextVariable contextVariable : contextVariables ) {
-						for ( ContextData cgcData: salary.getContextData().getOrDefault(contextVariable.getName(), Collections.emptyList()) ) {
+						for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(contextVariable.getName(), Collections.emptyList())) ) {
 							cgcBasePeriods = insert(cgcBasePeriods,  new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 						}
 					}
@@ -335,15 +351,15 @@ public class TrabajadoresTramos {
 					//Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
 					
-					for ( ContextData cgcData: salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList()) )
+					for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList())) )
 						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
 
 					for ( ContextVariable var : ContextVariable.ERE_BASES )
-						for ( ContextData cgcData: salary.getContextData().getOrDefault(var.getName(), Collections.emptyList()) )
+						for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(var.getName(), Collections.emptyList())))
 							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
-					for ( ContextData cgcData: salary.getContextData().getOrDefault(ContextVariable.DIRECT_BASE.getName(), Collections.emptyList()) )
+					for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(ContextVariable.DIRECT_BASE.getName(), Collections.emptyList())) )
 						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
@@ -354,8 +370,8 @@ public class TrabajadoresTramos {
 							continue;
 						if ( p.getEnd().before(startDate) )
 							continue;
-						if ( p.getEnd().after(endDate) )
-							continue;
+						//if ( p.getEnd().after(endDate) )
+						//	continue;
 						
 						TramoBuilder tramoBuilder  = new TramoBuilder();
 
@@ -922,8 +938,12 @@ public class TrabajadoresTramos {
 					
 					
 					Trabajador trabajador = trabajadorBuilder.create();
-					if ( trabajador.getTramos().getTramo().size() > 0 ) 
+					if ( trabajador.getTramos().getTramo().size() > 0 ) { 
 						liquidacionMesBuilder.add(trabajador); // Only if <Trabajador> has any <Tramo>
+					} else {
+						//System.err.println(trabajador.getCaf() + "," + trabajador.getNaf() + " without data for " + endDate ) ;
+					}
+					
 
 					if ( salary.getEndDate().after(endDate) )
 						nexts.add(salary);
@@ -931,8 +951,8 @@ public class TrabajadoresTramos {
 				}
 		);
 		
-		int anho = AonDateUtils.get(startDate, Calendar.YEAR);
-		Month mes = Month.values()[AonDateUtils.get(startDate, Calendar.MONTH)];
+		int anho = AonDateUtils.getYear(startDate);
+		Month mes = Month.values()[AonDateUtils.getMonth(startDate)];
 		liquidacionMesBuilder.setMes(mes);
 		liquidacionMesBuilder.setAnho(anho);
 		
@@ -1620,6 +1640,10 @@ public class TrabajadoresTramos {
 	}
 
 	private static <T> T visit(String tipo, TypeVisitor<T> visitor) {
+		return visit(tipo, visitor, null);
+	}
+
+	private static <T> T visit(String tipo, TypeVisitor<T> visitor, T def) {
 		if ( "L00".equalsIgnoreCase(tipo)) 
 			return visitor.visitL00();
 		if ( "L02".equalsIgnoreCase(tipo)) 
@@ -1632,7 +1656,7 @@ public class TrabajadoresTramos {
 			return visitor.visitL91();
 		if ( "L90".equalsIgnoreCase(tipo)) 
 			return visitor.visitL90();
-		return null;
+		return def;
 	}
 
 	private static String getContextData(String name, Salary salary, Date startDate, Date endDate) {
@@ -1684,5 +1708,44 @@ public class TrabajadoresTramos {
 		return data == null ? def : data ;
 	}
 	
+	
+	private static Collection<ContextData> filterValid(String tipo, Collection<ContextData> contextDatas) {
+		return visit(tipo
+			, new TypeVisitor<Collection<ContextData>>() {
+
+			@Override
+			public Collection<ContextData> visitL00() {
+				return contextDatas;
+			}
+
+			@Override
+			public Collection<ContextData> visitL02() {
+				return contextDatas;
+			}
+
+			@Override
+			public Collection<ContextData> visitL13() {
+				return contextDatas;
+			}
+
+			@Override
+			public Collection<ContextData> visitL03() {
+				return new FilterCollection<>(d -> AonNumberUtils.isNumber(d.getExpression()) && AonNumberUtils.todouble(d.getExpression()) > 1.00 , contextDatas);
+			}
+
+			@Override
+			public Collection<ContextData> visitL91() {
+				return contextDatas;
+			}
+
+			@Override
+			public Collection<ContextData> visitL90() {
+				return contextDatas;
+			}
+			
+		}
+		, Collections.emptyList());
+	}
+	 
 	
 }
