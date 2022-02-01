@@ -115,6 +115,15 @@ public class SolicitudBorrador {
 		return OptionBuilder.withLongOpt("rnt")
 				.withDescription("Solicitud RNT.").create("r");
 	}
+	
+	public static Option getOuputOption() {
+		return OptionBuilder.withLongOpt("output")
+				.hasArg()
+				.withArgName("file")
+				.withDescription("Write to file instead of stdout.")
+				.create("o");
+	}
+	
 	public static void main(String[] args)
 			throws JAXBException, DatatypeConfigurationException {
 		String tipo = "L00";
