@@ -10,7 +10,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE_OFF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE_OFF;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -19,13 +21,20 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_DA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
+import static com.esferalia.aon.payroll.enumeration.LeaveType.COMMON_DISEASE;
 import static com.esferalia.aon.payroll.enumeration.LeaveType.MATERNITY;
+import static com.esferalia.aon.payroll.enumeration.LeaveType.OCCUPATIONAL_DISEASE;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
@@ -33,7 +42,14 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.FRIDAY;
+import static java.util.Calendar.MONDAY;
 import static java.util.Calendar.MONTH;
+import static java.util.Calendar.SATURDAY;
+import static java.util.Calendar.SUNDAY;
+import static java.util.Calendar.THURSDAY;
+import static java.util.Calendar.TUESDAY;
+import static java.util.Calendar.WEDNESDAY;
 import static java.util.Calendar.YEAR;
 import static org.junit.Assert.assertEquals;
 
@@ -7042,6 +7058,93 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaITPartialI()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		//@formatter:off
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "04", startDate, add(endDate, DAY_OF_MONTH,-5));
+		//@formatter:on
+		
+		addSystemData(aonContext, contract.getStartDate(), null, new HashMap<String, String>(){
+			{
+				put("POR_HORAS","def () { isdef CONTEXT ? UTILIZADA('HORAS_TRABAJADAS') : FALSO() }");
+				put("HORAS_NOMINA","MAX(1,FLOOR([\"04\":(POR_HORAS() ? HORAS_TRABAJADAS : 1125.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/DIAS_MES) / 6.78 * COEFICIENTE_TRABAJADO)][GRUPO_COTIZACION]))");
+				put("BASE_CGC_MIN","[ \"04\":(MAX(6.78, (POR_HORAS() ? 6.78 * HORAS_NOMINA : 1125.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD)))] [GRUPO_COTIZACION]" );				
+			}
+		});
+
+		
+		int dayOfWeek = AonDateUtils.get(startDate, Calendar.DAY_OF_WEEK);
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), WEEK_HOURS_VARIABLES.get(dayOfWeek), 8.00);
+		
+		Date startITDate = add(startDate, Calendar.DAY_OF_MONTH, 1);
+		Date endITDate = contract.getEndDate();
+
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				OCCUPATIONAL_DISEASE, 
+				startITDate, 
+				endITDate, 
+				null/*1750.00/30*/);
+		//@formatter:on
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
+
+					int monthDays = AonDateUtils.getMax(startDate,
+							DAY_OF_MONTH);
+
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(add(startITDate, Calendar.DAY_OF_MONTH,-1), datas.get(0).getEndDate());
+
+				});
+		;
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc, "L00");
+		
+		Trabajador trabajador = trabajadoresTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0);
+		assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
+		assertTramoITATEPPagoDelegado(trabajador.getTramos().getTramo().get(1));
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
+		org.junit.Assert.assertEquals( 2, bases.size());
+		org.junit.Assert.assertEquals( 1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
+		//org.junit.Assert.assertEquals( get(endDate, DAY_OF_MONTH), Integer.parseInt(bases.get(0).getFechaHasta().getDia()));
+		
+		//assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500", (valor) ->  Integer.parseInt(valor) == (1750.00 * (8 / 40) /30) );		
+
+		assertDato(bases.get(0).getDatosTramo().getDato(), "H", "01", (valor) ->  Integer.parseInt(valor) == 1.00);		
+
+	}
+
+	@Test
 	public void testCretaRegimenArtistasNormal()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
@@ -7494,7 +7597,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		String ccc = UUID.randomUUID().toString().substring(0, 11);
 		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "04");
 		
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 
 		Date startITDate = add(startDate, DAY_OF_MONTH,8);
@@ -8551,4 +8654,15 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		return clone;
 	}
 
+	private static final Map<Integer, ContextVariable> WEEK_HOURS_VARIABLES = new HashMap<Integer, ContextVariable>() {
+		{
+			put(SUNDAY, SUNDAY_HOURS);
+			put(MONDAY, MONDAY_HOURS);
+			put(TUESDAY, TUESDAY_HOURS);
+			put(WEDNESDAY, WEDNESDAY_HOURS);
+			put(THURSDAY, THURSDAY_HOURS);
+			put(FRIDAY, FRIDAY_HOURS);
+			put(SATURDAY, SATURDAY_HOURS);
+		}
+	};
 }

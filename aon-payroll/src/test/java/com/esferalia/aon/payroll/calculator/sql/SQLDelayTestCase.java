@@ -4189,19 +4189,19 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(18, delay.getSalaryPayments().size());
 
-		List<SalaryData> februaryCgcBases =
+		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
 		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.filter(d -> get(d.getStartDate(),MONTH) == Calendar.FEBRUARY)
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(2, februaryCgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), februaryCgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), februaryCgcBases.get(0).getEndDate());
+		org.junit.Assert.assertEquals(2, cgcBases.size());
+		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), februaryCgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), februaryCgcBases.get(1).getEndDate());
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
@@ -4289,16 +4289,16 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(17, delay.getSalaryPayments().size());
 
-		List<SalaryData> februaryCgcBases =
+		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
 		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.filter(d -> get(d.getStartDate(),MONTH) == Calendar.FEBRUARY)
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(1, februaryCgcBases.size());
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), februaryCgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), februaryCgcBases.get(0).getEndDate());
+		org.junit.Assert.assertEquals(1, cgcBases.size());
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(0).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
@@ -4386,16 +4386,16 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(17, delay.getSalaryPayments().size());
 
-		List<SalaryData> februaryCgcBases =
+		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
 		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.filter(d -> get(d.getStartDate(),MONTH) == Calendar.FEBRUARY)
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate, MONTH))
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(1, februaryCgcBases.size());
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), februaryCgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), februaryCgcBases.get(0).getEndDate());
+		org.junit.Assert.assertEquals(1, cgcBases.size());
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(0).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
@@ -4484,19 +4484,19 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(18, delay.getSalaryPayments().size());
 
-		List<SalaryData> februaryCgcBases =
+		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
 		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.filter(d -> get(d.getStartDate(),MONTH) == Calendar.FEBRUARY)
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(2, februaryCgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), februaryCgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), februaryCgcBases.get(0).getEndDate());
+		org.junit.Assert.assertEquals(2, cgcBases.size());
+		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), februaryCgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), februaryCgcBases.get(1).getEndDate());
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
@@ -4585,16 +4585,16 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(17, delay.getSalaryPayments().size());
 
-		List<SalaryData> februaryCgcBases =
+		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
 		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.filter(d -> get(d.getStartDate(),MONTH) == Calendar.FEBRUARY)
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(1, februaryCgcBases.size());
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), februaryCgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), februaryCgcBases.get(0).getEndDate());
+		org.junit.Assert.assertEquals(1, cgcBases.size());
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(0).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
@@ -4683,14 +4683,14 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(16, delay.getSalaryPayments().size());
 
-		List<SalaryData> februaryCgcBases =
+		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
 		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.filter(d -> get(d.getStartDate(),MONTH) == Calendar.FEBRUARY)
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(0, februaryCgcBases.size());
+		org.junit.Assert.assertEquals(0, cgcBases.size());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
@@ -4788,10 +4788,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(18, delay.getSalaryPayments().size());
 
-		List<SalaryData> februaryCgcBases =
+		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
 		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.filter(d -> get(d.getStartDate(),MONTH) == Calendar.FEBRUARY)
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
@@ -4805,12 +4805,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		partialFactors.stream().allMatch(d -> Double.parseDouble(d.getExpression()) == 0.25 ); 
 		
-		org.junit.Assert.assertEquals(2, februaryCgcBases.size());
-		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), februaryCgcBases.get(0).getStartDate());
-		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), februaryCgcBases.get(0).getEndDate());
+		org.junit.Assert.assertEquals(2, cgcBases.size());
+		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
 		
-		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), februaryCgcBases.get(1).getStartDate());
-		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), februaryCgcBases.get(1).getEndDate());
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
