@@ -1161,7 +1161,7 @@ public abstract class Employee extends ResizeComposite {
 	private String getBankSwift(String account) {
 		if(AonStringUtils.isNotBlank(account)) {
 			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
-			return bankSwiftEntry.getSwift();
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getSwift();
 		}
 		return null;
 	}
@@ -1169,7 +1169,7 @@ public abstract class Employee extends ResizeComposite {
 	private String getBankAlias(String account) {
 		if(AonStringUtils.isNotBlank(account)) {
 			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
-			return bankSwiftEntry.getBankName();
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getBankName();
 		}
 		return null;
 	}
