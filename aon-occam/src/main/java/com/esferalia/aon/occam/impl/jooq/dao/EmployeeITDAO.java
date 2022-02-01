@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
-import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
@@ -45,7 +44,7 @@ public class EmployeeITDAO {
 		else if ( employeeIts.size() == 1 )
 			return Optional.of(employeeIts.get(0));
 		else 
-			throw new TooManyEmployeesException();
+			return Optional.of(employeeIts.get(employeeIts.size()-1));
 	}
 
 	public static Stream<EmployeeIT> getStream(AONContext aonContext, ContractLeaveFilter filter) {
@@ -212,6 +211,9 @@ public class EmployeeITDAO {
 				it.getConfirmOrder().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, c) );
 			
 				it.getCias().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CIAS, c) );
+				
+				if(it.getStatus()!=null) 
+					contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.STATUS, it.getStatus().value());
 				
 				contractLeaveDetailRecord.update();
 			} else {

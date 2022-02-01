@@ -307,22 +307,18 @@ public class ITComunica {
 	 */
 	private static Optional<Employee> contractIts(Domain domain, String ccc, String nss, Date startDate,
 			Optional<Date> endDate) {
-		return PAYROLL
-				.getEmployee(
-						domain.getName(), domain.getId(), "", f -> f
-								.getDomainProperty().eq(domain.getId())
-								.and(f.getCCCProperty().eq(ccc))
-								.and(f.getNafProperty().eq(nss))
-								.and( 
-										endDate.isPresent()
-										? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
-										  .and(f.getEndDateProperty().ge(new java.sql.Date(endDate.get().getTime()))
-										  .or(f.getEndDateProperty().isNull()))
-									: f.getEndDateProperty().isNull()
-									  .or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
-								)
-
-				);
+		return PAYROLL.getEmployee(
+			domain.getName(), domain.getId(), "", f -> f
+			.getDomainProperty().eq(domain.getId())
+			.and(f.getCCCProperty().eq(ccc))
+			.and(f.getNafProperty().eq(nss))
+			.and( 
+				endDate.isPresent() 
+				? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
+						.and(f.getEndDateProperty().ge(new java.sql.Date(endDate.get().getTime())).or(f.getEndDateProperty().isNull()))
+				: f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
+			)
+		);
 	}
 
 	// HANDLES EMPTY DATA

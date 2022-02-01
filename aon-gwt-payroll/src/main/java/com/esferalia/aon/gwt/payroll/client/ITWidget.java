@@ -1460,6 +1460,11 @@ public abstract class ITWidget extends ResizeComposite {
 					this.setUp2DateEnterprise();
 					closeFootPanel();
 				}
+				
+				@Override
+				public void updatedEnterprise() {
+					loadITWidget();
+				}
 
 				@Override
 				public void run() {

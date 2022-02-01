@@ -12,6 +12,7 @@ public abstract class EnterpriseITStatus implements Serializable {
 
 	public static interface Visitor  {
 		void up2DateEnterprise();
+		void updatedEnterprise();
 		void unknownError(String message);
 		void credentialsNotFound();
 		void itNotExist(ItNotExist itNotExist);
@@ -53,6 +54,14 @@ public abstract class EnterpriseITStatus implements Serializable {
 		@Override	
 		public void visit(Visitor visitor) {
 			visitor.up2DateEnterprise();
+			super.visit(visitor);
+		}
+	}		
+	
+	public static class UpdatedEnterprise extends AndEmployeeITStatus{
+		@Override	
+		public void visit(Visitor visitor) {
+			visitor.updatedEnterprise();
 			super.visit(visitor);
 		}
 	}		
@@ -215,6 +224,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 				
 			@Override
+			public void updatedEnterprise() {
+				enable.run();
+			}
+			
+			@Override
 			public void unknownError(String message) {
 				disabled.run();
 			}
@@ -241,6 +255,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 	
 			@Override
+			public void updatedEnterprise() {
+				onSuccess.run();
+			}
+			
+			@Override
 			public void unknownError(String message) {
 				onError.run();
 			}
@@ -249,7 +268,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void credentialsNotFound() {
 				onError.run();
 			}
-			
 			
 			@Override
 			public void itNotExist(ItNotExist itNotExist) {
@@ -264,6 +282,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			@Override
 			public void up2DateEnterprise() {
 				System.out.println("up2Date Enterprise");
+			}
+			
+			@Override
+			public void updatedEnterprise() {
+				System.out.println("updatedEnterprise");
 			}
 			
 			@Override
@@ -288,8 +311,37 @@ public abstract class EnterpriseITStatus implements Serializable {
 		status.visit(new Visitor() {
 			
 			@Override
-			public void up2DateEnterprise() {
+			public void up2DateEnterprise() {}
+
+			@Override
+			public void updatedEnterprise() {}
+			
+			@Override
+			public void unknownError(String message) {
+				throw new OutOfDateException();
 			}
+			
+			@Override
+			public void credentialsNotFound() {
+				throw new OutOfDateException();
+			}
+
+			@Override
+			public void itNotExist(ItNotExist itNotExist) {
+				throw new OutOfDateException();
+			}
+		});
+		return status;
+	}
+	
+	public static <T extends EnterpriseITStatus> T updated( T status ) {
+		status.visit(new Visitor() {
+			
+			@Override
+			public void up2DateEnterprise() {}
+			
+			@Override
+			public void updatedEnterprise() {}
 			
 			@Override
 			public void unknownError(String message) {

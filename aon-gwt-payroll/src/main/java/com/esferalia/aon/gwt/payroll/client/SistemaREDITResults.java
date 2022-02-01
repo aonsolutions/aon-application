@@ -181,9 +181,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		syncMessages();
 	}
 	
-	protected void credentialsFound() {
-		
-	}
+	protected void credentialsFound() {}
 
 	@Override
 	public void itNotExist(ItNotExist status) {
@@ -267,6 +265,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		syncErrors();
 	}
 	
+	@Override
+	public void updatedEnterprise() {}
 
 	// ------------------------------------------------------------------------
 	
