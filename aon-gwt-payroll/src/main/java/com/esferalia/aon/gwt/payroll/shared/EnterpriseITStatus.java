@@ -65,7 +65,7 @@ public abstract class EnterpriseITStatus implements Serializable {
 		String name;
 		Byte part; //0 baja , 1 confirmacion, 2 alta
 		Byte confirmOrder;
-//		boolean aon;
+		boolean toAon;
 
 //		Double base;
 //		Integer quoteDays;
@@ -95,10 +95,10 @@ public abstract class EnterpriseITStatus implements Serializable {
 		public Byte getConfirmOrder() {
 			return confirmOrder;
 		}
-		
-//		public boolean getAon() {
-//			return aon;
-//		}
+
+		public boolean getToAon() {
+			return toAon;
+		}
 		
 		public ItNotExist setDate(Date date) {
 			this.date = date;
@@ -130,10 +130,10 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return this;
 		}
 		
-//		public ItNotExist setAon(boolean b) {
-//			this.aon = b;
-//			return this;
-//		}
+		public ItNotExist setToAon(boolean b) {
+			this.toAon = b;
+			return this;
+		}
 		
 //		public Double getBase() {
 //			return base;

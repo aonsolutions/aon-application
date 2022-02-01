@@ -187,11 +187,22 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 
 	@Override
 	public void itNotExist(ItNotExist status) {
-		
-		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
-		
+
 		HorizontalPanel horizontalPanel = new HorizontalPanel();
 		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);	
+		
+		if(status.getToAon())
+			itNoExistToAon(horizontalPanel, status);
+		else 
+			itNoExistToSS(horizontalPanel, status);
+		
+		addNotFound(horizontalPanel).setUserObject(status);
+		syncNotFound();
+	}
+	
+	private void itNoExistToAon(HorizontalPanel horizontalPanel, ItNotExist status) {
+		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
 		horizontalPanel.add(
 			new Label(
 				"Afiliado '"
@@ -212,11 +223,22 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 //		horizontalPanel.add(anchor);
 //		horizontalPanel.add(new HTML("&nbsp;"));
 //		horizontalPanel.add(new Label("para a\u00f1adirlo en aon Solutions."));
+	}
+	
+	
+	private void itNoExistToSS(HorizontalPanel horizontalPanel, ItNotExist status) {
+		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
 		
-		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
-		
-		addNotFound(horizontalPanel).setUserObject(status);
-		syncNotFound();
+		horizontalPanel.add(
+			new Label(
+				"Afiliado '"
+				+status.getName()
+				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
+				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
+				+" ) no encontrada en SISTEMA RED."
+//			   +" Pulse"
+			)
+		);
 	}
 	
 	@Override

@@ -74,9 +74,14 @@ public class EmployeeITDAO {
 			.setDailyCgpBase(r.get(CONTRACT_LEAVE.DAILY_CGP_BASE))
 			.setParent(r.get(CONTRACT_LEAVE.PARENT))
 			.setDailyRegBase(r.get(CONTRACT_LEAVE.DAILY_REG_BASE))
+			
 			.setRegime(getSSRegimeCode(r.get(CONTRACT.SS_REGIME)))
 			.setCcc(r.get(ENTERPRISE_CCC.CCC))
+			
 			.setNss(r.get(PERSON.SOCIAL_SECURITY_NUM))
+			.setName(r.get(REGISTRY.NAME))
+			.setDni(r.get(REGISTRY.DOCUMENT))
+			
 			.setDischargeCause( ContractLeaveDischargeCause.safeValueOf(r.get(CONTRACT_LEAVE.DISCHARGE_CAUSE)) )
 			, r -> new EmployeeITPart()
 				.setId(r.get(CONTRACT_LEAVE_DETAIL.ID))
