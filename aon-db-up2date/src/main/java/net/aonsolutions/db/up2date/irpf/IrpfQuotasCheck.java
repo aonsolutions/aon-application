@@ -76,8 +76,8 @@ public class IrpfQuotasCheck implements Update {
 		dslContext
 		.select(
 		SALARY.ID,		
-		DSL.cast(SALARY.TOTAL_IRPF, SQLDataType.DECIMAL(15, 3)).as(TOTAL), 
-		DSL.sum(DSL.cast(SALARY_DATA.EXPRESSION, SQLDataType.DECIMAL(15, 3))).as(SUM)
+		DSL.cast(SALARY.TOTAL_IRPF, SQLDataType.DECIMAL(15, 2)).as(TOTAL), 
+		DSL.sum(DSL.cast(SALARY_DATA.EXPRESSION, SQLDataType.DECIMAL(15, 2))).as(SUM)
 		)
 		.from(SALARY)
 		.innerJoin(SALARY_DATA).onKey()
@@ -93,8 +93,8 @@ public class IrpfQuotasCheck implements Update {
 		dslContext
 		.select(
 		SALARY.ID,		
-		DSL.cast(SALARY.IRPF_BASE, SQLDataType.DECIMAL(15, 3)).as(TOTAL), 
-		DSL.sum(DSL.cast(SALARY_DATA.EXPRESSION, SQLDataType.DECIMAL(15, 3))).as(SUM)
+		DSL.cast(SALARY.IRPF_BASE, SQLDataType.DECIMAL(15, 2)).as(TOTAL), 
+		DSL.sum(DSL.cast(SALARY_DATA.EXPRESSION, SQLDataType.DECIMAL(15, 2))).as(SUM)
 		)
 		.from(SALARY)
 		.innerJoin(SALARY_DATA).onKey()
