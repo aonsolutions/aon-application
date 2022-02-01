@@ -90,7 +90,7 @@ public class AONContext implements AutoCloseable{
 	
 	public static AONContext getAONContext(String schema) {
 		try {
-			return new AONContext(AonDataSource.getInstance().getDatabaseConnection(schema));
+			return new AONContext(AonDataSource.getInstance().getDatabaseConnection(schema), schema );
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
@@ -168,9 +168,13 @@ public class AONContext implements AutoCloseable{
 
 	public AONContext(Connection connection) {
 		this(DSL.using(connection,getDefaultSettings()));
-		
 	}
 	
+	private AONContext(Connection connection, String schema) {
+		this(DSL.using(connection,getDefaultSettings()));
+		this.connection = connection;
+	}
+
 	private AONContext(Connection connection, String domainName, String user) {
 		this.domainName = domainName;
 		this.user = user;

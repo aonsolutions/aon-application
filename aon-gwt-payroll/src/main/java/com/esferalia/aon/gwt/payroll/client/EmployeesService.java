@@ -210,9 +210,6 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter);
 	
 	List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter);
-	
-	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
-			Date endDate);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids);
 
@@ -332,8 +329,14 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- ContractVariables
 	
-	List<ContractVariable> getContractVariables(String currentDomainName, Integer contractId);
+	List<ContractVariable> getContractVariables(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
-	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables);
+	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables) throws IllegalArgumentException;
+	
+	void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable) throws IllegalArgumentException;
+	
+	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
+			Date endDate);
 
+	
 }

@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
-import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
@@ -45,7 +44,7 @@ public class EmployeeITDAO {
 		else if ( employeeIts.size() == 1 )
 			return Optional.of(employeeIts.get(0));
 		else 
-			throw new TooManyEmployeesException();
+			return Optional.of(employeeIts.get(employeeIts.size()-1));
 	}
 
 	public static Stream<EmployeeIT> getStream(AONContext aonContext, ContractLeaveFilter filter) {
@@ -74,9 +73,14 @@ public class EmployeeITDAO {
 			.setDailyCgpBase(r.get(CONTRACT_LEAVE.DAILY_CGP_BASE))
 			.setParent(r.get(CONTRACT_LEAVE.PARENT))
 			.setDailyRegBase(r.get(CONTRACT_LEAVE.DAILY_REG_BASE))
+			
 			.setRegime(getSSRegimeCode(r.get(CONTRACT.SS_REGIME)))
 			.setCcc(r.get(ENTERPRISE_CCC.CCC))
+			
 			.setNss(r.get(PERSON.SOCIAL_SECURITY_NUM))
+			.setName(r.get(REGISTRY.NAME))
+			.setDni(r.get(REGISTRY.DOCUMENT))
+			
 			.setDischargeCause( ContractLeaveDischargeCause.safeValueOf(r.get(CONTRACT_LEAVE.DISCHARGE_CAUSE)) )
 			, r -> new EmployeeITPart()
 				.setId(r.get(CONTRACT_LEAVE_DETAIL.ID))
@@ -103,9 +107,7 @@ public class EmployeeITDAO {
 			return new EmployeeIT[0];
 		
 		for (EmployeeIT employeeIT : employeeIts) {
-
 			ContractLeaveRecord contractLeaveRecord = setContractLeave(dslContext, employeeIT);
-			
 			setContractLeaveDetail(dslContext, contractLeaveRecord, employeeIT.getITsParts());
 		}
 		
@@ -126,9 +128,30 @@ public class EmployeeITDAO {
 			}
 
 			employeeIt.getEndDate().ifPresent(end-> condition.and(CONTRACT_LEAVE.END_DATE.le(toSql(end)) ) );
-		
-			ContractLeaveRecord contractLeaveRecord  = condition.fetchOptionalInto(CONTRACT_LEAVE)
-			.orElseGet( () ->{
+			
+			Optional<ContractLeaveRecord> exists = condition.fetchStreamInto(CONTRACT_LEAVE).findFirst();
+			
+			ContractLeaveRecord contractLeaveRecord;
+	
+			if(exists.isPresent()) {
+				contractLeaveRecord = exists.get();
+				employeeIt.getDescription().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.DESCRIPTION, d) );
+
+				employeeIt.getEndDate().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.END_DATE, toSql(d)) );
+				
+				employeeIt.getParent().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.PARENT, d) );
+				
+				employeeIt.getDailyCgcBase().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.DAILY_CGC_BASE, d) );
+
+				employeeIt.getDailyCgpBase().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.DAILY_CGP_BASE, d) );
+
+				employeeIt.getDailyRegBase().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.DAILY_REG_BASE, d) );
+				
+				 if(null!=employeeIt.getDischargeCause()) 
+					 contractLeaveRecord.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, employeeIt.getDischargeCause().value());
+				 
+				 contractLeaveRecord.update();
+			} else {
 				InsertSetMoreStep<ContractLeaveRecord> sets = dslContext
 				.insertInto(CONTRACT_LEAVE)
 				.set(CONTRACT_LEAVE.DOMAIN, employeeIt.getDomain())
@@ -149,18 +172,16 @@ public class EmployeeITDAO {
 
 				employeeIt.getDailyRegBase().ifPresent(d-> sets.set(CONTRACT_LEAVE.DAILY_REG_BASE, d) );
 				
-				return sets.returning().fetchOne();
-			} );
-		 
-		 if(null!=employeeIt.getDischargeCause()) {
-				contractLeaveRecord.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, employeeIt.getDischargeCause().value());
-				contractLeaveRecord.update();
-		 }
+				 if(null!=employeeIt.getDischargeCause()) 
+					 sets.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, employeeIt.getDischargeCause().value());
+		
+				contractLeaveRecord = sets.returning().fetchOne();
+			}		 
+
 		 return contractLeaveRecord;
 	}
 	
 	private static void setContractLeaveDetail(DSLContext dslContext, ContractLeaveRecord contractLeaveRecord, List<EmployeeITPart> its) {
-
 
 		InsertSetMoreStep<ContractLeaveDetailRecord> insertContractLeaveDetail = null;
 		
@@ -179,16 +200,20 @@ public class EmployeeITDAO {
 				.and(CONTRACT_LEAVE_DETAIL.DATE.eq(toSql(it.getDate())))
 				.and(CONTRACT_LEAVE_DETAIL.TYPE.eq(it.getType().value()));
 			}
-			
 			Optional<ContractLeaveDetailRecord> detailLeave = contextDetail.fetchStreamInto(CONTRACT_LEAVE_DETAIL).findFirst();
 			
 			if(detailLeave.isPresent()) {
+	
 				ContractLeaveDetailRecord contractLeaveDetailRecord = detailLeave.get();
+				
 				it.getCollegeNumber().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, c) );
 				
 				it.getConfirmOrder().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, c) );
 			
 				it.getCias().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CIAS, c) );
+				
+				if(it.getStatus()!=null) 
+					contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.STATUS, it.getStatus().value());
 				
 				contractLeaveDetailRecord.update();
 			} else {

@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -3015,12 +3016,7 @@ public class Bases {
 				.withDescription("Set a default data valor")
 				.create('d');
 
-		Option naf = OptionBuilder
-				.hasArg()
-				.withArgName("naf")
-				.withLongOpt("naf")
-				.withDescription("Only send this NAF")
-				.create();
+		Option naf = getNafOption();
 
 		Option reftificationMark = OptionBuilder
 				.withLongOpt("reftification-mark")
@@ -3028,6 +3024,7 @@ public class Bases {
 				.create();
 
 		Option pretty = getPrettyOption();
+		Option output =  SolicitudBorrador.getOuputOption();
 
 		Options options = new Options()
 				.addOption(hostName)
@@ -3043,6 +3040,7 @@ public class Bases {
 				.addOption(skipExisting)
 				.addOption(naf)
 				.addOption(reftificationMark)
+				.addOption(output)
 				;
 				
 		//@formatter:on
@@ -3078,6 +3076,14 @@ public class Bases {
 					respuestaFiles.add(new File(path));
 			}
 			
+			String file = cmd.getOptionValue(output.getLongOpt());
+			
+			PrintStream out ; 
+			try {
+				out = new PrintStream(file);
+			} catch ( Exception e ) {
+				out = System.out;
+			}
 			
 			
 			// @formatter:off
@@ -3089,7 +3095,7 @@ public class Bases {
 					cmd.getOptionValues(defaults.getLongOpt()), 
 					trabajadoresTramosFiles,
 					respuestaFiles, 
-					System.out,
+					out,
 					new CustomizeBasesCallback()
 					.setReftificationMark(cmd.hasOption(reftificationMark.getLongOpt()))
 					);
@@ -3104,6 +3110,15 @@ public class Bases {
 
 		}
 
+	}
+
+	public static Option getNafOption() {
+		return OptionBuilder
+				.hasArg()
+				.withArgName("naf")
+				.withLongOpt("naf")
+				.withDescription("Only send this NAF")
+				.create();
 	}
 
 	public static void generate(Connection connection, boolean comments,

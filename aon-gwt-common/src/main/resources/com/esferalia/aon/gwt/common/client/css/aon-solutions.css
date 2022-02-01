@@ -838,7 +838,7 @@
 /* MESSAGE PANEL */
 
 .aon_message_close_panel{
-    padding-right: 1rem;
+    padding: .7rem 1rem 0 0;
 }
 
 .aon_message_close{
@@ -851,8 +851,8 @@
 
 .aon_message_panel{
 	/*height: 2rem;*/
-	height: 2.2rem;
-	align-items: center;
+	min-height: 2.2rem;
+	/*align-items: center;*/
 	border-radius: 0.5em;
     display: flex;
     margin: 0 1em;

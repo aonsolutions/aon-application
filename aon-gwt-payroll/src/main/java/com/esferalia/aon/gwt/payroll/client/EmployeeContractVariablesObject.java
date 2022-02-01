@@ -46,6 +46,20 @@ public class EmployeeContractVariablesObject {
 		});
 	}
 	
+	public void createContractVariable(ContractVariable contractVariable, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.createContractVariable(this.contractId, contractVariable, new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void updateContractVariables(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.updateContractVariables(this.contractVariables, new AsyncCallback<Void>() {
 			@Override

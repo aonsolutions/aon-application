@@ -1011,4 +1011,10 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
 }

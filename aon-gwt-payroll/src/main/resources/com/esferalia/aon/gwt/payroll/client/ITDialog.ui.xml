@@ -137,7 +137,7 @@
 								<g:Label styleName='{style.subTitle}'>Documento:</g:Label>
 								<g:HTMLPanel ui:field="employeePanelDoc"></g:HTMLPanel>
 
-								<g:Label styleName='{style.subTitle}'>Naf:</g:Label>
+								<g:Label styleName='{style.subTitle}'>NAF:</g:Label>
 								<g:HTMLPanel ui:field="employeePanelNaf"></g:HTMLPanel>
 							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="itBaja" styleName="{style.flex}">

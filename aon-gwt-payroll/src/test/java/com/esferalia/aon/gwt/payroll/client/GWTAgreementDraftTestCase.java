@@ -41,7 +41,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -512,10 +511,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
-		
-		
 
-		
+		@Override
+		public void createContractVariable(String currentDomainName, Integer contractId,
+				ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}		
 	}
 
 	@Before
@@ -1011,7 +1013,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						// TODO Auto-generated method stub
 						
 					}
-					
+
+					@Override
+					public void createContractVariable(String currentDomainName, Integer contractId,
+							ContractVariable contractVariable, AsyncCallback<Void> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
 				});
 
 		agreementDraftWidget.setAgreementDraftObject(agreementDraftObject);

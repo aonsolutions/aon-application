@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -465,6 +466,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		// Check type of part
 		showAdvancedOpts(this.itDialogObject.getEmployeeStatus());
+		
+		showDialog();
 	}
 	
 	public void setITDialogObject(ITDialogObject itDialogObject, IT it, boolean showAll) {
@@ -475,18 +478,26 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		// Check if exist IT
 		this.it = it;
-		
 		checkAndPaintIT();
 		
 		// Check type of part
 		showAdvancedOpts(!showAll);
-		
 		createEmployeePanel(itDialogObject.getEmployeeinfo());
 		
 		// Check Comunicate
 		checkComunicateIT();
+		
+		showDialog();
 	}
 	
+	private void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
+	}
+
 	private void checkComunicateIT() {
 		if(userComunica && (null == this.it.isComunicate() || !this.it.isComunicate())) {
 			comunicateIT.setVisible(true);
@@ -522,8 +533,9 @@ public abstract class ITDialog extends AonCustomDialog {
 		}
 		
 		//PRINT BTN IT COMUNICA
-		if(this.it!=null)
+		if(null != this.it)
 			printBtnCommunicate();
+		
 	}
 	
 	// --------------------------------------------------- PaintIt
@@ -1283,9 +1295,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	private boolean isCommunicatePart(ITPart itPart){
 		return it.getId()!=null && itPart.getId()!=null && itPart.getStatus() != (byte)3;
 	}
-	
 
-	
 	private void redrawConfirmationPartTable(Integer itId) {
 		IT it = this.itDialogObject.getIT(itId);
 		confirmationPartDataTable.clear();
@@ -1809,6 +1819,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		for(ITPart itPart : it.getITParts()) {
 			LOGGER.info("IT_PART:"+itPart.getId()+" TYPE:"+itPart.getType().toString());
 		}
+		
 		Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
 		Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
 		
@@ -1828,7 +1839,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		}
 
 		if(altaOptional.isPresent() && isCommunicatePart(altaOptional.get())) {
-			AonTableButton btnAlta = new AonTableButton("Comunicar Akta", AON.CSS.aonIconSend());
+			AonTableButton btnAlta = new AonTableButton("Comunicar Alta", AON.CSS.aonIconSend());
 			btnAlta.addClickHandler((e) -> {
 				itPartTmp = new ITPart()
 				.setId(altaOptional.get().getId())
@@ -1907,7 +1918,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		employeeData.add(doc);
 		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getDocument()));
 		
-		Label naf = new Label("Naf:");
+		Label naf = new Label("NAF:");
 		naf.setStyleName(style.subTitle());
 		employeeData.add(naf);
 		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getSsNumber()));

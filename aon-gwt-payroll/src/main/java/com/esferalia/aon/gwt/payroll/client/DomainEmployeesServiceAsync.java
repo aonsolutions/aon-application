@@ -211,10 +211,6 @@ public class DomainEmployeesServiceAsync {
 	public void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getSalaries(getCurrentDomainName(), employee, callback);
 	}
-	
-	public void getSalariesOccam(ITEmployee itEmployee, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
-		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), itEmployee, startDate, endDate, callback);
-	}
 
 	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getIrpfs(getCurrentDomainName(), employee, callback);
@@ -655,12 +651,20 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- ContractVariables
 	
-	public void getContractVariables(Integer contractId, AsyncCallback<List<ContractVariable>> callback) {
+	public void getContractVariables(Integer contractId, AsyncCallback<List<ContractVariable>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getContractVariables(getCurrentDomainName(), contractId, callback);
 	}
 
-	public void updateContractVariables(List<ContractVariable> contractVariables, AsyncCallback<Void> callback) {
+	public void updateContractVariables(List<ContractVariable> contractVariables, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.updateContractVariables(getCurrentDomainName(), contractVariables, callback);
+	}
+	
+	public void createContractVariable(Integer contractId, ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.createContractVariable(getCurrentDomainName(), contractId, contractVariable, callback);
+	}
+
+	public void getSalariesOccam(ITEmployee itEmployee, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), itEmployee, startDate, endDate, callback);
 	}
 
 	// ------------------------------------------------------------------------

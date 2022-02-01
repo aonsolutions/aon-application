@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.SistemaRED;
@@ -66,6 +67,8 @@ public class ITComunica {
 				for (It it : its) {
 					
 					EmployeeIT employeeIT = ITParse.parseTGSSToAon(it);
+					if(employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+						employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
 			
 					String naf = nss.isPresent() ? nss.get() : employeeIT.getNss();
 					Optional<Employee> contract = ITComunica.contractIts(domain, ccc, naf, employeeIT.getStartDate(), employeeIT.getEndDate());
@@ -136,7 +139,7 @@ public class ITComunica {
 			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart,  List<String> messages) {
 			try {
 				verifyData(new Object[] { 
-						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getStartDate(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
+						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
 						 employeeIt.getType(),  itPart.getDate(), employeeIt.getContractType()
 				});    
 	
@@ -147,12 +150,12 @@ public class ITComunica {
 				String ccc = employeeIt.getCcc();
 				String nss = employeeIt.getNss();
 				Date date = itPart.getDate();
-				Optional<Date> fATEP = Optional.of(employeeIt.getStartDate());
+				Optional<Date> fATEP = Optional.of(date);
 				
 				Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
 		
 				SituationEmployee situation = SituationEmployee.ACTIVO;
-				ContractType contractType =  ContractType.safeValueOf(employeeIt.getContractType());
+		
 				
 				Optional<AccidentType> accidentType = Optional.empty();
 				Optional<String> occupation = Optional.empty();
@@ -164,7 +167,7 @@ public class ITComunica {
 						byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
 						regime, ccc, nss, 
 						contingencie, situation,  
-						date, contractType, 
+						date, ContractType.safeValueOf(employeeIt.getContractType().value()),
 						baseCgc, quoteDays, 
 						fATEP, accidentType,
 						collegeNumber, cias, occupation
@@ -304,23 +307,18 @@ public class ITComunica {
 	 */
 	private static Optional<Employee> contractIts(Domain domain, String ccc, String nss, Date startDate,
 			Optional<Date> endDate) {
-		return PAYROLL
-				.getEmployee(
-						domain.getName(), domain.getId(), "", f -> f
-								.getDomainProperty().eq(
-										domain.getId())
-								.and(f.getCCCProperty()
-										.eq(ccc))
-								.and(f.getNafProperty().eq(nss))
-								.and(endDate.isPresent()
-										? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
-												.and(f.getEndDateProperty()
-														.ge(new java.sql.Date(endDate.get().getTime()))
-														.or(f.getEndDateProperty().isNull()))
-										: f.getEndDateProperty().isNull()
-												.or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime()))))
-
-				);
+		return PAYROLL.getEmployee(
+			domain.getName(), domain.getId(), "", f -> f
+			.getDomainProperty().eq(domain.getId())
+			.and(f.getCCCProperty().eq(ccc))
+			.and(f.getNafProperty().eq(nss))
+			.and( 
+				endDate.isPresent() 
+				? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
+						.and(f.getEndDateProperty().ge(new java.sql.Date(endDate.get().getTime())).or(f.getEndDateProperty().isNull()))
+				: f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
+			)
+		);
 	}
 
 	// HANDLES EMPTY DATA

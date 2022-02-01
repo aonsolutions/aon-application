@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -194,6 +195,8 @@ public interface EnterprisesService extends RemoteService {
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
 	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
+
+	EnterpriseITStatus getEnterpriseITStatus(String domain, String user);
 
 	List<Attach> getContractAttachments(String currentDomainName, String login, Integer contractId) throws IllegalArgumentException;
 	

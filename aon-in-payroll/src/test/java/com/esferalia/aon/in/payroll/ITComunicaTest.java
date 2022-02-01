@@ -1,7 +1,9 @@
 package com.esferalia.aon.in.payroll;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +18,32 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 
+import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.TestItRegister;
 import solutions.aon.seg.social.TestSistemaREDI;
+import solutions.aon.seg.social.object.It;
 
 public class ITComunicaTest {
+	
+	@Test
+	@Ignore
+	public void getIts() {
+		try (final InputStream is = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+			
+				Optional<String> nss = Optional.empty();
+//				Domain domain = new Domain().setName("b72384936-ayudat.aonsolutions.net").setId(7138);
+				
+				Date startDate = new Date("2021/12/01");
+				Date endDate = new Date();
+				Collection<It> ssIts = SistemaRED.getIts( is, "jg@FNMT", "pkcs12", 
+						"0111", "01105360062", startDate, endDate, Optional.empty());
+				for (It ssIt:ssIts) {
+					System.out.println(ssIt);
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Test
 	@Ignore

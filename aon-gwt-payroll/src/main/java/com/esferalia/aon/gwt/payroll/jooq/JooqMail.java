@@ -239,17 +239,16 @@ public class JooqMail {
 	
 	private static String sendPayrollEmailDB(DSLContext dslContext, Integer domainId, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
 		String message = "";
-		
-		switch (type) {
-		case EMPLOYEE:
-			message = sendEmployeesEmail(dslContext, type, params, from, to, cc, cco, bodyHTML);
-			break;
-		case ENTERPRISE:
-			String enterpriseName = dslContext.select(REGISTRY.NAME).from(REGISTRY)
+		String enterpriseName = dslContext.select(REGISTRY.NAME).from(REGISTRY)
 				.where(REGISTRY.ID.eq(
 						dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY)
 				)).fetchOne(REGISTRY.NAME);
 		
+		switch (type) {
+		case EMPLOYEE:
+			message = sendEmployeesEmail(dslContext, type, params, from, enterpriseName, to, cc, cco, bodyHTML);
+			break;
+		case ENTERPRISE:
 			message = sendEmail(dslContext, from, enterpriseName, to, cc, cco, bodyHTML);
 			break;
 		default:
@@ -259,7 +258,7 @@ public class JooqMail {
 		return message;
 	}
 
-	private static String sendEmployeesEmail(DSLContext dslContext, Type type, HashMap<String, String> params, String mailAccountId, String to, String cc, String cco, String bodyHTML) {
+	private static String sendEmployeesEmail(DSLContext dslContext, Type type, HashMap<String, String> params, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) {
 		ArrayList<Integer> salaryIds = getSalaryIds(params);
 		ArrayList<Integer> visitedContracts = new ArrayList<Integer>();
 		
@@ -288,10 +287,6 @@ public class JooqMail {
 				if(parseHTMLBody.length() == 0)
 					return "No se ha encontrado la variable NOMBRE_EMPLEADO, PERIODOS_NOMINA y/o INFORMACION_EMPRESA";
 				
-				String enterpriseName = dslContext.select(REGISTRY.NAME).from(REGISTRY)
-					.where(REGISTRY.DOMAIN.eq(salariesRecords.get(0).get(SALARY.DOMAIN)))
-					.fetchOne(REGISTRY.NAME);
-				
 				sendEmail(dslContext, mailAccountId, enterpriseName, emailTo, cc, cco, parseHTMLBody);
 				
 				visitedContracts.add(contractId);
@@ -313,9 +308,9 @@ public class JooqMail {
 					.setAlias(enterpriseName)
 					.setReplyTo(from)
 					.setTo(to)
-					.setBcc(cc)
 					.setSubject("N\u00d3MINAS " + enterpriseName)
 					.setBody(bodyHTML);
+			if(AonStringUtils.isNotBlank(cc)) msg.setBcc(cc);
 			SES.sendEmail(msg);
 			
 		} else {
@@ -330,7 +325,7 @@ public class JooqMail {
 	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, DSLContext dslContext) {
 		
 		// GENERATE URL
-		String formHTML = generateForm(params);
+		String formHTML = generateFormEmployee(params, salariesRecords);
 		
 		String employeeName = "<a style=\"font-weight: bold;\">NOMBRE_EMPLEADO</a>";
 		String payrollPeriods = "<li style=\"font-weight: bold;\">PERIODOS_NOMINA</li>";
@@ -352,6 +347,32 @@ public class JooqMail {
 		html = html.split("<div id=\"form\">")[0] + formHTML + html.split("<div id=\"form\">")[1].split("</div>")[1];
 		
 		html = html.split(enterpriseInfo)[0] +  "<a style=\"font-weight: bold;\">" + getEnterpriseInfo(dslContext, Integer.parseInt(params.get("enterprise"))) + "</a>";
+		
+		return html;
+	}
+	
+	private static String generateFormEmployee(HashMap<String, String> params, Result<Record> salariesRecords) {
+		String html = "";
+		
+		html += "<div>";
+		html += "<form method\"post\" action=\"" + params.get("url") + "\" target=\"_blank\">";
+		
+		for(Entry<String, String> entry : params.entrySet()) {
+			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url") || AonStringUtils.equalsIgnoreCase(entry.getKey(), "id"))
+				continue;
+			
+			html += "<input type=\"hidden\" name=\"" + entry.getKey() + "\" value=\"" + entry.getValue() + "\">";
+		}
+		
+		for(Record salaryRecord : salariesRecords)
+			html += "<input type=\"hidden\" name=\"id\" value=\"" + salaryRecord.get(SALARY.ID) + "\">";
+		
+		html += "<button type=\"submit\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
+		html +=		"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
+		html +=		"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
+		html += "</button>";
+		html += "</form>";
+		html += "</div>";
 		
 		return html;
 	}

@@ -5491,6 +5491,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ResultSet rs = null;
 		try {
 			cleaveStmt.setInt(1, getId());
+			this.cleaveStmt.setDate(2, toSqlDate(this.getEnd()));
+			this.cleaveStmt.setDate(3, toSqlDate(this.contractStartDate));
 			rs = cleaveStmt.executeQuery();
 			leaveLoader.clear();
 			while (rs.next()) {

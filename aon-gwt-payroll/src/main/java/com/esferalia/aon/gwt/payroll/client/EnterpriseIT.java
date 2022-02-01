@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
@@ -144,6 +145,10 @@ public class EnterpriseIT extends Composite {
 			);
 		}
 
+		@Override
+		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {
+//			enterpriseITObject.checkStatus(success::accept, failure::accept);
+		}
 	}
 	
 	// --------------------------------------------------- Binder

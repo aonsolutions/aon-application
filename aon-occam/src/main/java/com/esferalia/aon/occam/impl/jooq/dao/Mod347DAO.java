@@ -166,9 +166,9 @@ public class Mod347DAO {
 	
 	public static Mod347 initialize(AONContext ctx) {	
 		
-		// Ponemos por defecto el año, según la fecha actual, si estamos en enero o febrero ponemos
-		// el año anterior (se supone que queremos hacer el del ultimo periodo del año anterior)
-		// en caso contrario ponemos el año actual
+		// Ponemos por defecto el aÃ±o, segÃºn la fecha actual, si estamos en enero o febrero ponemos
+		// el aÃ±o anterior (se supone que queremos hacer el del ultimo periodo del aÃ±o anterior)
+		// en caso contrario ponemos el aÃ±o actual
 		Date today = new Date();
 		int year = AonDateUtils.getYear(today);		
 		if (AonDateUtils.getMonth(today) == 0 || AonDateUtils.getMonth(today) == 1) {
@@ -356,7 +356,7 @@ public class Mod347DAO {
 	
 	private static void validate(AONContext ctx, Mod347 mod347) {
 		
-		// Comprobar que está cumplimentado el ejercicio
+		// Comprobar que estÃ¡ cumplimentado el ejercicio
 		if (mod347.getYear() == 0)
 			throw new AonCoreException("Debe cumplimentar el Ejercicio.");
 		
@@ -364,7 +364,7 @@ public class Mod347DAO {
 		if (AonStringUtils.isBlank(mod347.getDocument()) || mod347.getDocument().length() > 9)
 			throw new AonCoreException("El NIF del Declarante debe estar cumplimentado y su longitud no puede ser mayor de 9 caracteres.");
 		
-		// Se comprueba que no exista otra declaración sustitutiva que sustituya a la misma anterior
+		// Se comprueba que no exista otra declaraciÃ³n sustitutiva que sustituya a la misma anterior
 		if (mod347.isReplacement()) {
 						
 			if (ctx.getDslContext().selectOne()
@@ -382,7 +382,7 @@ public class Mod347DAO {
 				throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_REPLACED.getMessage());			
 		}
 		else if (!mod347.isComplementary()) {
-			// Se comprueba que no exista ya una declaración, para el perido indicado
+			// Se comprueba que no exista ya una declaraciÃ³n, para el perido indicado
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MOD347)
 				.where(FS_MOD347.DOMAIN.equal(mod347.getDomain())
@@ -460,7 +460,7 @@ public class Mod347DAO {
 			if (declared.isDeleted()) {
 				deleteDeclared(ctx, declared);
 			} else {
-				// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, así
+				// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, asÃ­
 				// que hago que siempre que se guarde, se ponga el dominio en las lineas
 				declared.setDomain(mod347.getDomain());
 				updateDeclared(ctx, declared);
@@ -507,7 +507,7 @@ public class Mod347DAO {
 	private static void updateDeclared(AONContext ctx, Mod347Declared declared) {
 		validateDeclared(ctx, declared);
 		ctx.getDslContext().update(FS_MOD347_DETAIL)		
-			// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, así
+			// Antes no se guardaba el dominio en las lineas, cuando se generaba el modelo, asÃ­
 			// que hago que siempre que se guarde, se ponga el dominio en las lineas
 			.set(FS_MOD347_DETAIL.DOMAIN,declared.getDomain())
 			.set(FS_MOD347_DETAIL.TYPE, Mod347Key.safeValue(declared.getType()))
@@ -543,7 +543,7 @@ public class Mod347DAO {
 	private static void validateDeclared(AONContext ctx, Mod347Declared declared) {
 		if (AonStringUtils.length(declared.getDocument()) > 9) {									
 			throw new AonCoreException(
-				MessageFormat.format("La longitud del numero documento del Declarado no puede ser mayor de 9 caracteres. [{0} - {1}]"
+				MessageFormat.format("La longitud del num. documento del Declarado no puede ser mayor de 9 caracteres. [{0} - {1}]"
 				,declared.getDocument(),declared.getName()));
 		} 
 		if (AonStringUtils.length(declared.getOperatorNif()) > 15) {									
@@ -727,13 +727,13 @@ public class Mod347DAO {
 	private static void insertDetailsFromInvoice(AONContext ctx , final Mod347 mod347) {
 		
 		// PROCEDIMIENTO A SEGUIR:
-		// - Se leen las facturas, según los filtros, del ejercicio actual y del anterior (para las facturas RECC)
+		// - Se leen las facturas, segÃºn los filtros, del ejercicio actual y del anterior (para las facturas RECC)
 		// - Se asigna a todas las compras y gastos, el tipo "0" y a las ventas el "1"
 		// - Se guardan en un mapa agrupandolas por "Documento + Tipo + ISP + RECC"
 		// - Si la factura es RECC se acumula el importe total de la factura, si es del ejercicio actual y 
-		//   además se acumula tambien el importe declarado según la regla RECC del IVA
+		//   ademÃ¡s se acumula tambien el importe declarado segÃºn la regla RECC del IVA
 		// - Se van leyendo y por cada "Documento + Tipo + ISP + RECC", se va creando una linea de 
-		//   declarado (si el total de operaciones de "Documento + Tipo" supera el valor mínimo)
+		//   declarado (si el total de operaciones de "Documento + Tipo" supera el valor mÃ­nimo)
 		
 		// Se pone solo el ejercicio actual, porque getVatBreakdown ya lee automaticamente las facturas RECC del ejercicio anterior
 		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
@@ -741,7 +741,7 @@ public class Mod347DAO {
 		
 		Calendar cal = Calendar.getInstance();
 
-		// Mapa que guardará los datos agrupando por "Documento + Tipo + ISP + RECC"
+		// Mapa que guardarÃ¡ los datos agrupando por "Documento + Tipo + ISP + RECC"
 		Map<String,Mod347Declared> mapResult = new TreeMap<String, Mod347Declared>();
 		
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
@@ -756,9 +756,9 @@ public class Mod347DAO {
 						vat.setTransaction( InvoiceTransactionType.NATIONAL);
 				})
 				.forEach( vat -> {
-						// Añadir la factura al registro que corresponda del declarado
+						// AÃ±adir la factura al registro que corresponda del declarado
 						// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
-						// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347						
+						// ademÃ¡s del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347						
 						String document = AonStringUtils.trimToEmpty(vat.getRegistryDocument());
 						String name = AonStringUtils.trimToEmpty(vat.getRegistryName());
 						String c = document + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
@@ -772,22 +772,22 @@ public class Mod347DAO {
 							Country country = vat.getRegistryDocumentCountry();
 							if (country == null || country == Country.ES) {
 	
-								if (AonStringUtils.length(document) > 9) {									
-									throw new AonCoreException("La longitud del NIF del Declarado no puede ser mayor de 9 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
-								} 
+//								if (AonStringUtils.length(document) > 9) {									
+//									throw new AonCoreException("La longitud del NIF del Declarado no puede ser mayor de 9 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
+//								} 
 									
 								declared.setDocument(document);
 									
-								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
+								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la direcciÃ³n principal 
 								declared.setProvince(Province.safeValueOf(
 									RegistryAddressDAO.getMainAddressProvince(ctx, vat.getRegistry()))
 								);
 	
 							} else {
 								
-								if (AonStringUtils.length(document) > 15) {									
-									throw new AonCoreException("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
-								}	
+//								if (AonStringUtils.length(document) > 15) {									
+//									throw new AonCoreException("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
+//								}	
 								
 								declared.setOperatorNif(AonStringUtils.substring((country.getIso2() + document), 0, 17));
 								declared.setCountry(country);
@@ -812,7 +812,7 @@ public class Mod347DAO {
 							declared.setAmount(0.0);
 							declared.setVatAccrualAmount(0.0);
 							
-							// Añadir el declarado al map
+							// AÃ±adir el declarado al map
 							mapResult.put(c, declared);
 						}
 	
@@ -823,7 +823,7 @@ public class Mod347DAO {
 							
 							// Factura Criterio de Caja
 												
-							// Acumular el importe según RECC (La base y las cuotas tienen lo declarado según los cobros/pagos realizados)
+							// Acumular el importe segÃºn RECC (La base y las cuotas tienen lo declarado segÃºn los cobros/pagos realizados)
 							if (!vat.isFinancePending()) {
 								declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
 							}
@@ -861,12 +861,12 @@ public class Mod347DAO {
 		Map<String,Mod347Declared> map = new TreeMap<String, Mod347Declared>();
 		
 		for (Mod347Declared dec : mapResult.values()) {
-			// El importe mínimo a declarar se controla por NIF y Tipo (Ventas o Compras)
+			// El importe mÃ­nimo a declarar se controla por NIF y Tipo (Ventas o Compras)
 			String document = AonStringUtils.isNotBlank(dec.getOperatorNif())?dec.getOperatorNif():dec.getDocument(); 
 			String c = document + ";" + dec.getType();
 			if (!control.equals(c)) {
 
-				// Añadir el bloque a la base de datos, si supera el importe minimo
+				// AÃ±adir el bloque a la base de datos, si supera el importe minimo
 				if (Math.abs(acumulated) > minAmount) {
 					for (Mod347Declared declared : map.values()) {
 						insertDeclared(ctx, declared);
@@ -878,9 +878,9 @@ public class Mod347DAO {
 				map.clear();
 			}
 						
-			// Añadir la factura al registro que corresponda del bloque actual
+			// AÃ±adir la factura al registro que corresponda del bloque actual
 			// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
-			// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
+			// ademÃ¡s del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
 			c = document + ";" + dec.getType() + ";" + dec.isIsp() + ";" + dec.isVatAccrual();			
 			map.put(c, dec);
 									
@@ -889,7 +889,7 @@ public class Mod347DAO {
 
 		}
 
-		// Añadir ultimo bloque de map, si existe
+		// AÃ±adir ultimo bloque de map, si existe
 		if (Math.abs(acumulated) > minAmount) {
 			for (Mod347Declared declared : map.values()) {
 				insertDeclared(ctx, declared);
@@ -904,7 +904,7 @@ public class Mod347DAO {
 		
 		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
 		
-		// Información Desglose de facturas
+		// InformaciÃ³n Desglose de facturas
 		if (infoKey == FiscalModelKeyInfo.INVOICE) {
 			return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod347, declared));			
 		}
@@ -930,11 +930,11 @@ public class Mod347DAO {
 	
 	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod347 mod347, final Mod347Declared declared) {
 		
-		// Tipo de Facturas según la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
+		// Tipo de Facturas segÃºn la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
 		final InvoiceType invoiceType1;
 		final InvoiceType invoiceType2;
 		
-		// Tipo de transaccion según si está marcado o no ISP (solo compras)
+		// Tipo de transaccion segÃºn si estÃ¡ marcado o no ISP (solo compras)
 		final InvoiceTransactionType invoiceTransaction1;
 		final InvoiceTransactionType invoiceTransaction2;
 		

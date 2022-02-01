@@ -93,6 +93,7 @@ public class EmployeeContractVariables extends Composite {
 	private List<ContractVariable> contractVariableList;
 	
 	private AonToolbarButton saveButton;
+	private AonToolbarButton addVariable;
 	private ListBox yearLB;
 	private ListBox variableTypeLB;
 	
@@ -401,11 +402,16 @@ public class EmployeeContractVariables extends Composite {
 		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
+		addVariable = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd());
+		addVariable.addClickHandler(e -> onAdd());
+		toolbar.add(addVariable);
+		
 		this.yearLB = new ListBox();
 		this.toolbar.add(this.yearLB);
 		
 		this.variableTypeLB = new ListBox();
 		this.toolbar.add(this.variableTypeLB);
+		
 	}
 
 	// ----------------------------------------------- Toolbar.Methods
@@ -414,6 +420,21 @@ public class EmployeeContractVariables extends Composite {
 		employeeContractVariablesObject.updateContractVariables(
 				r -> changeYear(), 
 				t -> {});
+	}
+	
+	public void onAdd() {
+		new ContractVariableDialog() {
+			@Override
+			protected void onAccept(ContractVariable contractVariable) {
+				employeeContractVariablesObject.createContractVariable(
+					contractVariable, 
+					s ->
+						employeeContractVariablesObject.getContractVariables(
+								r -> initContractVariablesTable(),
+								t -> {}
+						), 
+					f -> {});	
+			}};
 	}
 	
 	// -------------------------------------------------- ContrataEmployee.Methods

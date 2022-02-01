@@ -380,6 +380,24 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 	}
 
+	public void sub(String name, Period period) {
+		List<ITimedVariable<?>> deleted = vars.get(name);
+		if (deleted == null)
+			return;
+		
+		List<ITimedVariable<?>> values = new ArrayList();
+		
+		for (ITimedVariable<?> var : deleted) {
+			var.getPeriod().sub(period)
+			.forEach( p -> values.add(newWrapTimedVariable(p.getStart(), p.getEnd(), var)));
+		}
+		
+		Collections.sort(values, this);
+		
+		vars.put(name, values);
+
+	}
+
 	public List<ITimedVariable<?>> getValues(String var) {
 
 		return vars.get(var);

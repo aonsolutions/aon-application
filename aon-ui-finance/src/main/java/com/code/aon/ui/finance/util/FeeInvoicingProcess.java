@@ -84,13 +84,15 @@ public class FeeInvoicingProcess implements ILongProcess {
 
 			Collection<Invoice> invoicedList = engine.getInvoicingDAO().getCollection();
 			if (invoicedList.size() > 0) {
+				for (Invoice invoice : invoicedList) {
+					invoice = ticketbai(invoice);
+				}
 				if (controller.getParams().isInvoiceRecordable()) {
 					HibernateUtil.beginTransaction(sessionName);
 					int invoicesToRecord = invoicedList.size();
 					int recordingInvoice = 0;
 					AccountEntryInvoiceWriter accountWriter = new AccountEntryInvoiceWriter();
 					for (Invoice invoice : invoicedList) {
-						invoice = ticketbai(invoice);
 						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
 						accountWriter.recordAndUpdateInvoice(invoice);
 						recordingInvoice++;

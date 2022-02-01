@@ -87,6 +87,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
@@ -3521,8 +3522,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-
-//			Domain domain = new Domain().setName(domainName).setId(domainId);
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
@@ -3550,8 +3549,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			EmployeeITPart newPart = parseITPart(part);
 			switch (newPart.getType()) {
 				case BAJA:
-					employeeIt.setContractType((byte)(contractInfo.isPartial() ? 0 : 1))
-					.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays());
+					employeeIt.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays())
+					.setContractType(contractInfo.isPartial() ? EmployeeIT.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL : EmployeeIT.ContractType.RESTO_Y_AUTONOMOS);
 				break;
 				case CONFIRMACION:
 				break;
@@ -3571,10 +3570,24 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				if(!msg.isEmpty())
 					throw new IllegalArgumentException(msg);
 			}
-			throw new IllegalArgumentException();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public EnterpriseITStatus getEnterpriseITStatus(String domainName, String login) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
+			Domain domain = new Domain().setId(domainId).setName(domainName);
+			return ITStatusUtils.getEnterpriseITStatus(domain, login, userId);
+		} catch ( CertificateNotFoundException e) {
+			return new EnterpriseITStatus.CredentialsNotFound();
+		} catch ( Exception e  ) {
+			return new EnterpriseITStatus.UnknownError().setMessage(e.getMessage());
 		}
 	}
 	

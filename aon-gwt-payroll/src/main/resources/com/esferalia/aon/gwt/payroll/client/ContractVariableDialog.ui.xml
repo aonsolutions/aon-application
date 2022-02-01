@@ -1,0 +1,94 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+ 
+	<ui:style>
+	
+		.panel {
+			width: 30rem;
+			margin-top: .5rem;
+		}
+	
+		.container {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+			padding: 1rem;
+		}
+		
+		.element {
+			display: flex;
+			flex-direction: column;
+			gap: .2rem;
+		}
+		
+		.title {
+			font-weight: bold;
+			font-size: 11px;
+		}
+		
+		.between {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+		}
+		
+		.widthAll {
+			width: 100%; 
+		}
+		
+		.dateBox {
+			width: auto !important;
+			height: 1.1rem;
+			text-align: center;
+		}
+		
+		.buttons {
+			display: flex;
+			justify-content: flex-end;
+			gap: .5rem;
+			margin-top: .5rem;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.panel}">
+	
+		<g:HTMLPanel ui:field="messagePanel" />
+		
+		<g:HTMLPanel styleName="{style.container}">
+	
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label text="Tipo variable" styleName="{style.title}" />
+				<g:ListBox ui:field="variableType" />
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label text="Nombre variable" styleName="{style.title}" />
+				<g:TextBox ui:field="variableName" />
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.element}">
+				<g:Label text="Valor variable" styleName="{style.title}" />
+				<g:TextBox ui:field="variableValue" />
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.between}">
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label text="Fecha inicio" styleName="{style.title}" />
+					<a:DateBoxEx ui:field="startDateBx" styleName="{style.dateBox}" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label text="Fecha inicio" styleName="{style.title}" />
+					<a:DateBoxEx ui:field="endDateBx" styleName="{style.dateBox}" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttons}" />
+		
+		</g:HTMLPanel>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

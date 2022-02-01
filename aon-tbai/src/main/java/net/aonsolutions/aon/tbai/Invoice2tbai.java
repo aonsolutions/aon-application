@@ -323,11 +323,11 @@ public class Invoice2tbai {
 					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 				}
 				DetalleIVAType  detalleIVA = new DetalleIVAType();
-				detalleIVA.setBaseImponible(Double.toString(r.getBase()));
-				detalleIVA.setCuotaImpuesto(Double.toString(r.getQuota()));
-				detalleIVA.setCuotaRecargoEquivalencia(Double.toString(r.getSurchargeQuota()));
+				detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
+				detalleIVA.setCuotaImpuesto(Double.toString(AonMathUtils.round(r.getQuota())));
+				detalleIVA.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 				detalleIVA.setTipoImpositivo(Double.toString(r.getPercentage()));
-				detalleIVA.setTipoRecargoEquivalencia(Double.toString(r.getSurcharge()));
+				detalleIVA.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurcharge())));
 				detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(SiNoType.N); // TODO SURCHARGE O SIMP SI O NO.
 				desgloseIVA.getDetalleIVA().add(detalleIVA);
 			});
@@ -368,11 +368,11 @@ public class Invoice2tbai {
 					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 				}
 				DetalleIVAType  detalleIVA = new DetalleIVAType();
-				detalleIVA.setBaseImponible(Double.toString(r.getBase()));
-				detalleIVA.setCuotaImpuesto(Double.toString(r.getQuota()));
-				detalleIVA.setCuotaRecargoEquivalencia(Double.toString(r.getSurchargeQuota()));
+				detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
+				detalleIVA.setCuotaImpuesto(Double.toString(AonMathUtils.round(r.getQuota())));
+				detalleIVA.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 				detalleIVA.setTipoImpositivo(Double.toString(r.getPercentage()));
-				detalleIVA.setTipoRecargoEquivalencia(Double.toString(r.getSurcharge()));
+				detalleIVA.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurcharge())));
 				detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N); // TODO SURCHARGE O SIMP SI O NO.
 				desgloseIVA.getDetalleIVA().add(detalleIVA);
 			});

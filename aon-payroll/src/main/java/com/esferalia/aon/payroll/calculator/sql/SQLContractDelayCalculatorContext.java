@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -488,7 +489,21 @@ public class SQLContractDelayCalculatorContext extends
 		Collection<Period> periods = getPeriods(ContextVariable.DELAY_AMOUNT);
 
 		for (Period period : periods) {
-
+			
+			
+			double totalWorkedDays ;
+			try {
+				totalWorkedDays = 
+				getExpressionContext().eval(ContextVariable.WORKED_DAYS.getName(), period.getStart(), period.getEnd(), Double.class)
+				.stream().collect(Collectors.summingDouble( ITimedResult::getValue ))
+				;
+			} catch ( ExpressionException e ) {
+				totalWorkedDays = 
+				getPeriods(ContextVariable.WORKED_DAYS).stream()
+				.map( p -> p.intersect(period)).filter( Objects::nonNull)
+				.collect(Collectors.summingLong( p -> p.getDays() ));
+			}
+			
 			ContractPayment payment = new DelayPaymentBuilder.DelayContractPayment();
 			payment.setId(null);
 			payment.setStartDate(period.getStart());
@@ -499,8 +514,15 @@ public class SQLContractDelayCalculatorContext extends
 			payment.setType(PaymentType.CRA_0008 );
 			payment.setIrpfExpression(ContextVariable.ALL);
 			payment.setQuoteExpression(ContextVariable.ALL);
-			payment.setExpression(ContextVariable.DELAY_AMOUNT.getName());
 			payment.setDescription(getDescriptionForSalaryDelay(payment, payments.size()));
+			payment.setExpression(
+					String.format(
+					Locale.ROOT,
+					"%s/%f*%s", 
+					ContextVariable.DELAY_AMOUNT.getName(), 
+					totalWorkedDays, 
+					ContextVariable.WORKED_DAYS.getName()
+					));
 			
 			payments.add(payment);
 		}

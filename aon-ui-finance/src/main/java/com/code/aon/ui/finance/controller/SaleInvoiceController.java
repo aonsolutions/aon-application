@@ -101,6 +101,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean showDeliveryFilterWindow;
 	private boolean showTbaiWindow;
 	private boolean showCertTbaiWindow;
+	private boolean showFacturaeInfoWindow;
 	
 	private EdiInvoiceImporterHandler ediImporter;
 	@Deprecated
@@ -169,6 +170,14 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowCertTbaiWindow(boolean showCertTbaiWindow) {
 		this.showCertTbaiWindow = showCertTbaiWindow;
+	}
+	
+	public boolean isShowFacturaeInfoWindow() {
+		return showFacturaeInfoWindow;
+	}
+
+	public void setShowFacturaeInfoWindow(boolean showFacturaeInfoWindow) {
+		this.showFacturaeInfoWindow = showFacturaeInfoWindow;
 	}
 	
 	public EdiInvoiceImporterHandler getEdiImporter() {
@@ -831,5 +840,28 @@ public class SaleInvoiceController extends InvoiceController {
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Integer userId = UserUtils.getInstance().getLoggedUser().getId();	
 		return AON.getUser(domainName, domainId, login, f -> f.getIdProperty().eq(userId));
+	}
+	
+	String codeAsignacion;
+	
+	public String getCodeAsignacion() {
+		if(AonStringUtils.isBlank(codeAsignacion) && getInvoice().getDetailList().size() > 0) {
+			InvoiceDetail det = (InvoiceDetail) getInvoice().getDetailList().get(0);
+			codeAsignacion = getInvoice().getProject() != null ? det.getProject().getName() : "";
+		}
+		return codeAsignacion;
+	}
+	
+	public void setCodeAsignacion(String codeAsignacion) {
+		this.codeAsignacion = codeAsignacion;
+	}
+	
+	public void saveFacturaeInfo() {
+		if(!AonStringUtils.isBlank(codeAsignacion)) {
+			
+			Domain domain = getDomain();
+			User user = getUser();
+			AON.saveFacturaeCodeAsignacion(domain, user, getInvoice().getId(), getInvoice().getRegistry().getId(), codeAsignacion);
+		}
 	}
 }

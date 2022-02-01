@@ -616,7 +616,12 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 
-
+			@Override
+			public void createContractVariable(String currentDomainName, Integer contractId,
+					ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
 			
 		};
 

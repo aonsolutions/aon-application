@@ -71,10 +71,6 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getSalaries(String domain, Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
-
-	
-	void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
-			AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException;
 	
 	void getIrpfs(String domain, Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException;
@@ -354,8 +350,13 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- ContractVariables
 	
-	void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback);
+	void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback) throws IllegalArgumentException;
 
-	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback);
-
+	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
+			AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException;
+	
 }
