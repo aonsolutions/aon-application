@@ -541,6 +541,17 @@ public class Mod347DAO {
 	}
 	
 	private static void validateDeclared(AONContext ctx, Mod347Declared declared) {
+		if (AonStringUtils.length(declared.getDocument()) > 9) {									
+			throw new AonCoreException(
+				MessageFormat.format("La longitud del numero documento del Declarado no puede ser mayor de 9 caracteres. [{0} - {1}]"
+				,declared.getDocument(),declared.getName()));
+		} 
+		if (AonStringUtils.length(declared.getOperatorNif()) > 15) {									
+			throw new AonCoreException(
+				MessageFormat.format("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. [{0} - {1}]"
+				,declared.getOperatorNif(),declared.getName()));
+			
+		}
 		declared.setFirstQuarterAmount( AonMathUtils.round(declared.getFirstQuarterAmount()));
 		declared.setSecondQuarterAmount( AonMathUtils.round(declared.getSecondQuarterAmount()));
 		declared.setThirdQuarterAmount( AonMathUtils.round(declared.getThirdQuarterAmount()));
