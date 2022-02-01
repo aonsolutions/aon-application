@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -616,6 +615,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 					Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void createContractVariable(String currentDomainName, Integer contractId,
+					ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

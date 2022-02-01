@@ -30,7 +30,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
@@ -1010,5 +1009,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		ITEmployee itEmployee, Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
 	}
 }

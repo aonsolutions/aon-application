@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
@@ -330,10 +329,14 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- ContractVariables
 	
-	List<ContractVariable> getContractVariables(String currentDomainName, Integer contractId);
+	List<ContractVariable> getContractVariables(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
-	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables);
+	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables) throws IllegalArgumentException;
+	
+	void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable) throws IllegalArgumentException;
 	
 	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 			Date endDate);
+
+	
 }

@@ -54,6 +54,10 @@ public class JooqEmployeeContractVariables {
 		updateContractVariables(DSL.using(conn, getDefaultSettings()), contractVariables);
 	}
 
+	public static void createContractVariable(Connection conn, Integer domainId, Integer contractId, ContractVariable contractVariable) {
+		createContractVariable(DSL.using(conn, getDefaultSettings()), domainId, contractId, contractVariable);
+	}
+
 	private static List<ContractVariable> getContractVariables(DSLContext dslContext, Integer contractId) {
 		List<ContractVariable> contractVariable = new ArrayList<>();
 		
@@ -166,6 +170,44 @@ public class JooqEmployeeContractVariables {
 				.set(CONTRACT_INFO.END_DATE, parseToSQLDate(contractVariable.getEndDate()))
 				.where(CONTRACT_INFO.ID.eq(contractVariable.getId()))
 				.execute();
+	}
+	
+
+	
+	private static void createContractVariable(DSLContext dslContext, Integer domainId, Integer contractId, ContractVariable contractVariable) {
+		VariableType variableType = contractVariable.getVariableType();
+		switch (variableType) {
+			case CONTRACT_DATA:
+				createContractData(dslContext, domainId, contractId, contractVariable);
+				break;
+			case CONTRACT_INFO:
+				createContractInfo(dslContext, domainId, contractId, contractVariable);
+				break;
+			default:
+				break;
+		}
+	}
+
+	private static void createContractData(DSLContext dslContext, Integer domainId, Integer contractId, ContractVariable contractVariable) {
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, domainId)
+			.set(CONTRACT_DATA.CONTRACT, contractId)
+			.set(CONTRACT_DATA.NAME, contractVariable.getDescription())
+			.set(CONTRACT_DATA.EXPRESSION, contractVariable.getExpression())
+			.set(CONTRACT_DATA.START_DATE, parseToSQLDate(contractVariable.getStartDate()))
+			.set(CONTRACT_DATA.END_DATE, parseToSQLDate(contractVariable.getEndDate()))
+			.execute();
+	}
+
+	private static void createContractInfo(DSLContext dslContext, Integer domainId, Integer contractId, ContractVariable contractVariable) {
+		dslContext.insertInto(CONTRACT_INFO)
+			.set(CONTRACT_INFO.DOMAIN, domainId)
+			.set(CONTRACT_INFO.CONTRACT, contractId)
+			.set(CONTRACT_INFO.NAME, contractVariable.getDescription())
+			.set(CONTRACT_INFO.EXPRESSION, contractVariable.getExpression())
+			.set(CONTRACT_INFO.START_DATE, parseToSQLDate(contractVariable.getStartDate()))
+			.set(CONTRACT_INFO.END_DATE, parseToSQLDate(contractVariable.getEndDate()))
+			.execute();
 	}
 
 }
