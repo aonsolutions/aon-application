@@ -6750,20 +6750,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	// ------------------------------------------------- ContractVariables
 	
 	@Override
-	public List<ContractVariable> getContractVariables(String domainName, Integer contractId) {
+	public List<ContractVariable> getContractVariables(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployeeContractVariables.getContractVariables(connection, contractId);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void updateContractVariables(String domainName, List<ContractVariable> contractVariables) {
+	public void updateContractVariables(String domainName, List<ContractVariable> contractVariables) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			JooqEmployeeContractVariables.updateContractVariables(connection, contractVariables);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+
+	@Override
+	public void createContractVariable(String domainName, Integer contractId, ContractVariable contractVariable) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqEmployeeContractVariables.createContractVariable(connection, domainId, contractId, contractVariable);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6932,4 +6943,5 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 		return certs;
 	}
+
 }
