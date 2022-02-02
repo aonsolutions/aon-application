@@ -348,21 +348,21 @@
 									styleName='aon-finding-toolbar-item aon_icon_undo {style.aon-toolbar-button}' />
 								<g:Button debugId='redoButton' ui:field='redoButton'
 									styleName="aon-finding-toolbar-item aon_icon_redo {style.aon-toolbar-button}" />
-								<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
-									styleName='aon-finding-toolbar-item {style.aon-toolbar-button} {style.toolBar-checkBox} '
-									text="SILTRA" checked="false" />
 								<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="COSTES Y BONIFICACIONES" checked="false" />
-								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="DIFERENCIAS" checked="false" />
 								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
 									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
 									text="AVISOS Y NOTIFICACIONES" checked="false" />
 								<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="MOSTRAR VARIABLES NO DEFINIDAS" checked="false" />
+								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="DIFERENCIAS" checked="false" />
+								<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
+									styleName='aon-finding-toolbar-item {style.aon-toolbar-button} {style.toolBar-checkBox} '
+									text="SILTRA" checked="false" />
 								
 								<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
 									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>

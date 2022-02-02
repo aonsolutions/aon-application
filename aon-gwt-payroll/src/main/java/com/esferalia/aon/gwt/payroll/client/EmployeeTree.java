@@ -2119,6 +2119,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		    	selectTab(tab);
 		    	callback.selected();
 		    });
+		    tab.ensureDebugId(normalize(text)+"Tab");
 		}
 		
 		public void select(int index) {
@@ -2187,8 +2188,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
 			add("Variables", getEmployeeEventsDraft(), this::onEventsSelected);
 			add("Conceptos de C\u00e1lculo", getEmployeeContractPayments(), this::onPaymentsSelected);
-			if ( Wnd.isSysAdmin() )
-				add("Variables de C\u00e1lculo", getEmployeeContractVariables(), this::onVariablesSelected);
+			add("Variables de C\u00e1lculo", getEmployeeContractVariables(), this::onVariablesSelected);
 		}
 
 		void onDraftSelected() {
@@ -4297,6 +4297,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		parent.setState(true, false);
 		resultsPanel.setWidget(messageTree);
 		showResultsPanel();
+	}
+
+	private static String normalize(String str){
+		return str
+		.toLowerCase()
+		.replace('\u00E1', 'a')
+		.replace('\u00E9', 'e')
+		.replace('\u00ED', 'i')
+		.replace('\u00F3', 'o')
+		.replace('\u00FA', 'u')
+		.replace('\u00F1', 'n')
+		.replace('\u00FC', 'u')
+		.replaceAll("\\s+", "_")
+		;
+		
 	}
 
 }

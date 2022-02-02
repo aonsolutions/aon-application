@@ -193,8 +193,8 @@ public class SLDSalaries {
 		// Costs 'Compensations' 
 		calcs.forEach((description, calc) -> {
 			Optional.ofNullable(calc.getEnterprise()).ifPresent(amount -> {
-				getCompensationType(description).ifPresent(deductionType -> 
-					salary.addCost(deductionType,  "ECSS_E", -amount, description));
+				getCompensationType(description).ifPresent(deductionType ->
+					salary.addCost(deductionType,  ( deductionType == DeductionType.PROFESSIONAL_CONTINGENCY ? "ATEP_E" : "ECSS_E" ), -amount, description));
 			});
 		});
 		
