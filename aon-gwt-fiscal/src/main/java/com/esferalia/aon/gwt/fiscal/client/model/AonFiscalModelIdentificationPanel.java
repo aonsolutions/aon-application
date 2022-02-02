@@ -17,10 +17,10 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class FiscalModelIdentificationData<T extends FiscalModel> 
+public class AonFiscalModelIdentificationPanel<T extends FiscalModel> 
 	extends ScrollPanel implements HasValueChangeHandlers<T> {
 
-	public FiscalModelIdentificationData(T model) {
+	public AonFiscalModelIdentificationPanel(T model) {
 
 		setStyleName(AON.CSS.aonScrollArea());
 		AonDisplayTable tab = new AonDisplayTable();
@@ -175,97 +175,92 @@ public class FiscalModelIdentificationData<T extends FiscalModel>
 				surnameLabel.setVisible(true);
 				surname.setVisible(true);
 			}
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		name.addValueChangeHandler(event -> {		
 			model.setName(name.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		surname.addValueChangeHandler(event -> {		
 			model.setSurname(surname.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 
 		phone.addValueChangeHandler(event -> {
 			model.setPhone(phone.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		contactPerson.addValueChangeHandler(event -> {
 			model.setContactPerson(contactPerson.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		contactPhone.addValueChangeHandler(event -> {
 			model.setContactPhone(contactPhone.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		contactCellular.addValueChangeHandler(event -> {
 			model.setContactCellular(contactCellular.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		contactMail.addValueChangeHandler(event -> {
 			model.setContactEmail(contactMail.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		streetInitial.addValueChangeHandler(event -> {
 			model.setStreetInitial(streetInitial.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		streetName.addValueChangeHandler(event -> {
 			model.setStreetName(streetName.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		streetNumber.addValueChangeHandler(event -> {
 			model.setStreetNumber(streetNumber.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		streetStair.addValueChangeHandler(event -> {
 			model.setStreetStair(streetStair.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		streetFloor.addValueChangeHandler(event -> {
 			model.setStreetFloor(streetFloor.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		streetDoor.addValueChangeHandler(event -> {
 			model.setStreetDoor(streetDoor.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		town.addValueChangeHandler(event -> {
 			model.setTown(town.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		province.addChangeHandler(event -> {
 			model.setProvince(Province.values()[province.getSelectedIndex()].getName());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 		
 		zip.addValueChangeHandler(event -> {
 			model.setZip(zip.getValue());
-			ValueChangeEvent.fire(FiscalModelIdentificationData.this, model);
+			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 
 		document.setValue(model.getDocument());
-		document.setEnabled(!model.isFinished());
-
 		name.setValue(model.getName());
-		name.setEnabled(!model.isFinished());
-		
 		surname.setValue(model.getSurname());
-		surname.setEnabled(!model.isFinished());
 		if (AonDocumentUtil.isEntity( document.getValue() )) {
 			nameLabel.setText(AON.MSG.nameCompanyName());
 			surnameLabel.setVisible(false);
@@ -276,48 +271,20 @@ public class FiscalModelIdentificationData<T extends FiscalModel>
 			surnameLabel.setVisible(true);
 			surname.setVisible(true);
 		}
-		
 		phone.setValue(model.getPhone());
-		phone.setEnabled(!model.isFinished());
-		
 		contactPerson.setValue(model.getContactPerson());
-		contactPerson.setEnabled(!model.isFinished());
-		
 		contactPhone.setValue(model.getContactPhone());
-		contactPhone.setEnabled(!model.isFinished());
-		
 		contactCellular.setValue(model.getContactCellular());
-		contactCellular.setEnabled(!model.isFinished());
-		
 		contactMail.setValue(model.getContactEmail());
-		contactMail.setEnabled(!model.isFinished());
-		
 		streetInitial.setValue(model.getStreetInitial());
-		streetInitial.setEnabled(!model.isFinished());
-		
 		streetName.setValue(model.getStreetName());
-		streetName.setEnabled(!model.isFinished());
-		
 		streetNumber.setValue(model.getStreetNumber());
-		streetNumber.setEnabled(!model.isFinished());
-		
 		streetStair.setValue(model.getStreetStair());
-		streetStair.setEnabled(!model.isFinished());
-		
 		streetFloor.setValue(model.getStreetFloor());
-		streetFloor.setEnabled(!model.isFinished());
-		
 		streetDoor.setValue(model.getStreetDoor());
-		streetDoor.setEnabled(!model.isFinished());
-		
 		town.setValue(model.getTown());
-		town.setEnabled(!model.isFinished());
-		
 		province.setSelectedIndex( Province.getByName(model.getProvince()).ordinal());
-		province.setEnabled(!model.isFinished());
-		
 		zip.setValue(model.getZip());
-		zip.setEnabled(!model.isFinished());
 	}
 
 	@Override

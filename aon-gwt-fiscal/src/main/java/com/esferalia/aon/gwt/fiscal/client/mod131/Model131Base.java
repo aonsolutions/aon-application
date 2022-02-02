@@ -22,7 +22,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup.IFinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131AEATScript;
 import com.esferalia.aon.gwt.fiscal.shared.mod131.Model131ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -977,7 +977,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 	}
 
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		FiscalModelIdentificationData<Mod131> identificationData = new FiscalModelIdentificationData<>( getModel() ) ;
+		AonFiscalModelIdentificationPanel<Mod131> identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
 		identificationData.addValueChangeHandler(event -> {
 			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 			markAsDirty();			

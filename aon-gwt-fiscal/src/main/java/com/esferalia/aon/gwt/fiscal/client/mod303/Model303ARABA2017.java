@@ -95,10 +95,10 @@ class Model303ARABA2017 extends Model303Base {
 		paintListBox(c909, key, table);
 	}
 
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, AON.MSG.identification());
-	}
+//	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
+//		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
+//		tabPanel.add(identificationData, AON.MSG.identification());
+//	}
 	
 	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();

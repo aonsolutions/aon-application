@@ -19,12 +19,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303FinishDeclarationPopup.FinishDeclarationPopupCallback;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303IdentificationData.IModel303IdentificationDataCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -44,6 +45,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -820,7 +822,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		AonAuditDialog dialog = new AonAuditDialog();
 		dialog.show(getModel());
 	}
-
+/*
 	protected class Model303IdentificationDataCallback implements IModel303IdentificationDataCallback {
 
 		@Override public boolean isFinished() 		{ return getModel().isFinished() || getModel().isSent();}
@@ -920,7 +922,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		}
 		
 	}
-	
+*/	
 	private void submitForm(String action) {
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
@@ -1102,6 +1104,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				resetButton.setEnabled(true);
 			}
 		});
+	}
+
+	protected void paintIdentificationTab(TabLayoutPanel tabPanel) {
+		AonFiscalModelIdentificationPanel<Mod303> identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
+		identificationData.addValueChangeHandler(event -> {
+			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
+			markAsDirty();			
+		});
+		tabPanel.add(identificationData, AON.MSG.identification());
 	}
 
 	protected void decorateDeclarationTab() {
