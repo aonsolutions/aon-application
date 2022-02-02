@@ -1,10 +1,9 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -15,17 +14,17 @@ public abstract class Mod303Declaration {
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaración");	
 		}
-		if (AEAT_2021_2_Declaration.accept(mod)) 		return new AEAT_2021_2_Declaration();
-		if (AEAT_2021_Declaration.accept(mod)) 		return new AEAT_2021_Declaration();
-		if (AEAT_2020_Declaration.accept(mod)) 		return new AEAT_2020_Declaration();
-		if (AEAT_2018_Declaration.accept(mod)) 		return new AEAT_2018_Declaration();
-		if (AEAT_2017_Declaration.accept(mod)) 		return new AEAT_2017_Declaration();
-		if (BIZKAIA_2018_Declaration.accept(mod)) 	return new BIZKAIA_2018_Declaration();
-		if (BIZKAIA_2017_Declaration.accept(mod)) 	return new BIZKAIA_2017_Declaration();
-		if (ARABA_2019_Declaration.accept(mod)) 	return new ARABA_2019_Declaration();
-		if (ARABA_2017_Declaration.accept(mod)) 	return new ARABA_2017_Declaration();
-		if (GIPUZKOA_2021_2_Declaration.accept(mod)) 	return new GIPUZKOA_2021_2_Declaration();
-		if (GIPUZKOA_2017_Declaration.accept(mod)) 	return new GIPUZKOA_2017_Declaration();
+		if (Mod303AEAT20212Declaration.accept(mod)) 		return new Mod303AEAT20212Declaration();
+		if (Mod303AEAT2021Declaration.accept(mod)) 		return new Mod303AEAT2021Declaration();
+		if (Mod303AEAT2020Declaration.accept(mod)) 		return new Mod303AEAT2020Declaration();
+		if (Mod303AEAT2018.accept(mod)) 		return new Mod303AEAT2018();
+		if (Mod303AEAT2017Declaration.accept(mod)) 		return new Mod303AEAT2017Declaration();
+		if (ModBIZKAIA2018Declaration.accept(mod)) 	return new ModBIZKAIA2018Declaration();
+		if (ModBIZKAIA2017Declaration.accept(mod)) 	return new ModBIZKAIA2017Declaration();
+		if (Mod303ARABA2019Declaration.accept(mod)) 	return new Mod303ARABA2019Declaration();
+		if (Mod303ARABA2017Declaration.accept(mod)) 	return new Mod303ARABA2017Declaration();
+		if (ModGIPUZKOA20212Declaration.accept(mod)) 	return new ModGIPUZKOA20212Declaration();
+		if (ModGIPUZKOA2017Declaration.accept(mod)) 	return new ModGIPUZKOA2017Declaration();
 		
 		throw new AonCoreException("No existe una declaración para el modelo solicitado");
 	}

@@ -6,8 +6,10 @@ import java.util.Objects;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -84,4 +86,18 @@ public class FiscalFaker {
 		MODEL111.createMod111(params.getOccam(), mod111);
 		return mod111;
 	}
+	
+	public static Mod303 getMod303( FiscalFakerParams params) {
+		Mod303 mod303 = new Mod303();
+		mod303.setDomain(params.getOccam().getDomain());
+		MODEL303.initialize( params.getOccam(), mod303);
+		mod303.setYear(AonDateUtils.getYear(params.getIssueDate()));
+		mod303.setPeriod( params.isMonthly()
+			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
+			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
+		mod303.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		MODEL303.create(params.getOccam(), mod303);
+		return mod303;
+	}
+	
 }

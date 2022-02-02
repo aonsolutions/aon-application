@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -10,14 +10,13 @@ import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class BIZKAIA_2017_Declaration extends Mod303Declaration {
+class ModBIZKAIA2017Declaration extends Mod303Declaration {
 	
-	protected BIZKAIA_2017_Declaration() {
+	protected ModBIZKAIA2017Declaration() {
 				
 	}
 	

@@ -31,8 +31,9 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
-import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.IMod303KeyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -41,7 +42,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class Mod303DAO extends FiscalModelDAO {
+public class OLD_Mod303DAO extends FiscalModelDAO {
 	
 	@FunctionalInterface
 	private static interface IModelInfoProvider {

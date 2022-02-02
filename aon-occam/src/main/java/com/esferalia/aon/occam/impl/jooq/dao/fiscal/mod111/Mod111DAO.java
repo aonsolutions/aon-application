@@ -36,7 +36,7 @@ public class Mod111DAO extends FiscalModelDAO {
 	
 	public static Mod111 get(AONContext ctx,int id) {
 		ctx.checkRead();
-		return FiscalModelDAO.<Mod111>get(ctx,Mod111::new,id);
+		return FiscalModelDAO.get(ctx,Mod111::new,id);
 	}
 	
 	public static Stream<Mod111> getSamePeriodModels(AONContext ctx,Mod111 fm) {

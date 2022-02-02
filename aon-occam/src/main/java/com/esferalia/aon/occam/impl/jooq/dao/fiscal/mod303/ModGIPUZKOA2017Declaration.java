@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
@@ -10,14 +10,13 @@ import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class GIPUZKOA_2021_2_Declaration extends Mod303Declaration {
+class ModGIPUZKOA2017Declaration extends Mod303Declaration {
 	
-	protected GIPUZKOA_2021_2_Declaration() {
+	protected ModGIPUZKOA2017Declaration() {
 		
 	}
 	
@@ -30,8 +29,9 @@ public class GIPUZKOA_2021_2_Declaration extends Mod303Declaration {
 	
 	public static boolean accept(Mod303 mod) {
 		return mod.isGipuzkoa() && 
-				(mod.getYear() > 2021 || (mod.getYear() == 2021 && mod.getPeriod().isLastSemester()));
+				(mod.getYear() < 2021 || (mod.getYear() == 2021 && !mod.getPeriod().isLastSemester()));
 	}
+	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018
 		 ,Mod303Key.GP_C020
@@ -317,13 +317,10 @@ public class GIPUZKOA_2021_2_Declaration extends Mod303Declaration {
 			,null,null,null)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
-		,GP_C051(Mod303Key.GP_C051)
-		,GP_C052(Mod303Key.GP_C052
+		,GP_C032(Mod303Key.GP_C032
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C052,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.GP_C032,mod,vat.getBase())
 			,null,null,null)
-		,GP_C053(Mod303Key.GP_C053)
-		,GP_C054(Mod303Key.GP_C054)
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		

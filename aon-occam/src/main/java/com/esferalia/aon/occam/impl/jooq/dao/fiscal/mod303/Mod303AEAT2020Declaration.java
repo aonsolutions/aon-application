@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import java.util.LinkedList;
 
@@ -16,11 +16,10 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AEAT_2018_Declaration extends Mod303Declaration {
+class Mod303AEAT2020Declaration extends Mod303Declaration {
 
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -31,7 +30,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		void populate(Mod303 mod);
 	}
 
-	protected AEAT_2018_Declaration() {
+	protected Mod303AEAT2020Declaration() {
 		
 	}
 	public static final double PERCENT1 = 4.0;
@@ -42,7 +41,9 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAEAT() && mod.getYear() >= 2018;
+		return  mod.isAEAT() 
+			&& ((mod.getYear() == 2020 && mod.isLastPeriod())
+			|| mod.getYear() > 2020);
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -510,6 +511,11 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> mod.putAmount(Mod303Key.CT_S1X4,ensureActivity(mod,0).getLor())
 			,mod -> ensureActivity(mod,0).setLor((int) mod.getAmount(Mod303Key.CT_S1X4))
 			,true)
+		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		,CT_S1X5(Mod303Key.CT_S1X5,null,null,null,null,null
+			,mod -> mod.putAmount(Mod303Key.CT_S1X5,ensureActivity(mod,0).getCov())
+			,mod -> ensureActivity(mod,0).setCov((int) mod.getAmount(Mod303Key.CT_S1X5))
+			,true)
 		,CT_S11D(Mod303Key.CT_S11D,null,null,null,null,null
 			,mod -> mod.putDescription(Mod303Key.CT_S11D,ensureModule(mod,0,0).getDescription())
 			,mod -> ensureModule(mod,0,0).setDescription(mod.getDescription(Mod303Key.CT_S11D))
@@ -658,7 +664,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setDev(mod.getAmount(Mod303Key.CT_S117))
 			,false)
 		// (1) Actividades en régimen simplificado. D Reducciones
-		,CT_S118(Mod303Key.CT_S118,null,null,null,"(CT_S1X4 == 1)?round(CT_S117*20/100):CT_S118",null
+		,CT_S118(Mod303Key.CT_S118,null,null,null,"calculateReduccion(0,CT_S117,CT_S1X4,CT_S1X5)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S118,ensureActivity(mod,0).getRed())
 			,mod -> ensureActivity(mod,0).setRed(mod.getAmount(Mod303Key.CT_S118))
 			,false)
@@ -766,7 +772,11 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> mod.putAmount(Mod303Key.CT_S2X4,ensureActivity(mod,1).getLor())
 			,mod -> ensureActivity(mod,1).setLor((int) mod.getAmount(Mod303Key.CT_S2X4))
 			,true)
-			
+		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		,CT_S2X5(Mod303Key.CT_S2X5,null,null,null,null,null
+			,mod -> mod.putAmount(Mod303Key.CT_S2X5,ensureActivity(mod,1).getCov())
+			,mod -> ensureActivity(mod,1).setCov((int) mod.getAmount(Mod303Key.CT_S2X5))
+			,true)
 		,CT_S21D(Mod303Key.CT_S21D,null,null,null,null,null
 			,mod -> mod.putDescription(Mod303Key.CT_S21D,ensureModule(mod,1,0).getDescription())
 			,mod -> ensureModule(mod,1,0).setDescription(mod.getDescription(Mod303Key.CT_S21D))
@@ -919,7 +929,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setDev(mod.getAmount(Mod303Key.CT_S217))
 			,false)
 		// (1) Actividades en régimen simplificado. D Reducciones
-		,CT_S218(Mod303Key.CT_S218,null,null,null,"(CT_S2X4 == 1)?round(CT_S217*20/100):CT_S218",null
+		,CT_S218(Mod303Key.CT_S218,null,null,null,"calculateReduccion(1,CT_S217,CT_S2X4,CT_S2X5)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S218,ensureActivity(mod,1).getRed())
 			,mod -> ensureActivity(mod,1).setRed(mod.getAmount(Mod303Key.CT_S218))
 			,false)
@@ -1025,7 +1035,11 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> mod.putAmount(Mod303Key.CT_S3X4,ensureActivity(mod,2).getLor())
 			,mod -> ensureActivity(mod,2).setLor((int) mod.getAmount(Mod303Key.CT_S3X4))
 			,true)
-			
+		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		,CT_S3X5(Mod303Key.CT_S3X5,null,null,null,null,null
+			,mod -> mod.putAmount(Mod303Key.CT_S3X5,ensureActivity(mod,2).getCov())
+			,mod -> ensureActivity(mod,2).setCov((int) mod.getAmount(Mod303Key.CT_S3X5))
+			,true)
 		,CT_S31D(Mod303Key.CT_S31D,null,null,null,null,null
 			,mod -> mod.putDescription(Mod303Key.CT_S31D,ensureModule(mod,2,0).getDescription())
 			,mod -> ensureModule(mod,2,0).setDescription(mod.getDescription(Mod303Key.CT_S31D))
@@ -1179,7 +1193,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setDev(mod.getAmount(Mod303Key.CT_S317))
 			,false)
 		// (1) Actividades en régimen simplificado. D Reducciones
-		,CT_S318(Mod303Key.CT_S318,null,null,null,"(CT_S3X4 == 1)?round(CT_S317*20/100):CT_S318",null
+		,CT_S318(Mod303Key.CT_S318,null,null,null,"calculateReduccion(2,CT_S317,CT_S3X4,CT_S3X5)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S318,ensureActivity(mod,2).getRed())
 			,mod -> ensureActivity(mod,2).setRed(mod.getAmount(Mod303Key.CT_S318))
 			,false)
@@ -1285,7 +1299,11 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> mod.putAmount(Mod303Key.CT_S4X4,ensureActivity(mod,3).getLor())
 			,mod -> ensureActivity(mod,3).setLor((int) mod.getAmount(Mod303Key.CT_S4X4))
 			,true)
-			
+		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		,CT_S4X5(Mod303Key.CT_S4X5,null,null,null,null,null
+			,mod -> mod.putAmount(Mod303Key.CT_S4X5,ensureActivity(mod,3).getCov())
+			,mod -> ensureActivity(mod,3).setCov((int) mod.getAmount(Mod303Key.CT_S4X5))
+			,true)
 		,CT_S41D(Mod303Key.CT_S41D,null,null,null,null,null
 			,mod -> mod.putDescription(Mod303Key.CT_S41D,ensureModule(mod,3,0).getDescription())
 			,mod -> ensureModule(mod,3,0).setDescription(mod.getDescription(Mod303Key.CT_S41D))
@@ -1439,7 +1457,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setDev(mod.getAmount(Mod303Key.CT_S417))
 			,false)
 		// (1) Actividades en régimen simplificado. D Reducciones
-		,CT_S418(Mod303Key.CT_S418,null,null,null,"(CT_S4X4 == 1)?round(CT_S417*20/100):CT_S418",null
+		,CT_S418(Mod303Key.CT_S418,null,null,null,"calculateReduccion(3,CT_S417,CT_S4X4,CT_S4X5)",null
 			,mod -> mod.putAmount(Mod303Key.CT_S418,ensureActivity(mod,3).getRed())
 			,mod -> ensureActivity(mod,3).setRed(mod.getAmount(Mod303Key.CT_S418))
 			,false)

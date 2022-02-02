@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import java.util.LinkedList;
 
@@ -10,18 +10,16 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
-import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AEAT_2017_Declaration extends Mod303Declaration {
+class Mod303AEAT2018 extends Mod303Declaration {
 
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -32,7 +30,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		void populate(Mod303 mod);
 	}
 
-	protected AEAT_2017_Declaration() {
+	protected Mod303AEAT2018() {
 		
 	}
 	public static final double PERCENT1 = 4.0;
@@ -43,7 +41,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAEAT() && mod.getYear() < 2018;
+		return  mod.isAEAT() && mod.getYear() >= 2018;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -73,6 +71,9 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_A09(Mod303Key.CT_A09)
 		,CT_A10(Mod303Key.CT_A10)
 		,CT_A11(Mod303Key.CT_A11)
+		,CT_A12(Mod303Key.CT_A12,null,null,(ctx,mod) -> set(Mod303Key.CT_A12,mod,2),null,null,null,null,true)
+		,CT_A13(Mod303Key.CT_A13,null,null,(ctx,mod) -> set(Mod303Key.CT_A13,mod,2),null,null,null,null,true)
+		,CT_A14(Mod303Key.CT_A14,null,null,(ctx,mod) -> set(Mod303Key.CT_A14,mod,0),null,null,null,null,true)
 		
 		// ---------------------------------------------------------
 		// ----------------------------------------- REGIMEN GENERAL
@@ -118,21 +119,21 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		
 		// Adquisiciones intracomunitarias de bienes y servicios. base y cuota.
 		,CT_C10(Mod303Key.CT_C10
-			,(mod,vat) -> adqIntracomunitariasFilterGene(vat,mod)
+			,(mod,vat) -> adqIntracomunitariasFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C10,mod,vat.getBase())
 			,null,null,null)
 		,CT_C11(Mod303Key.CT_C11
-			,(mod,vat) -> adqIntracomunitariasFilterGene(vat,mod)
+			,(mod,vat) -> adqIntracomunitariasFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C11,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom). Base y cuota
 		,CT_C12(Mod303Key.CT_C12
-			,(mod,vat) -> operacionesISPFilterGene(vat,mod)
+			,(mod,vat) -> operacionesISPFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C12,mod,vat.getBase())
 			,null,null,null)
 		,CT_C13(Mod303Key.CT_C13
-			,(mod,vat) -> operacionesISPFilterGene(vat,mod)
+			,(mod,vat) -> operacionesISPFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C13,mod,vat.getQuota())
 			,null,null,null)
 		
@@ -309,7 +310,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_SA13(Mod303Key.CT_SA13,null,null,null,null,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA13,( ensureFarmerActivity(mod,0).getInd() * 10000) )
 			,mod -> ensureFarmerActivity(mod,0).setInd(mod.getAmount(Mod303Key.CT_SA13) / 10000 )
-			,true)
+			,false)
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota devengada
 		,CT_SA14(Mod303Key.CT_SA14,null,null,null,"(hasFarmerActivity(0))?round(CT_SA12*CT_SA13/10000):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA14,ensureFarmerActivity(mod,0).getCuo())
@@ -319,14 +320,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		,CT_SA15(Mod303Key.CT_SA15,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?CT_SA15:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA15,ensureFarmerActivity(mod,0).getPor())
 			,mod -> ensureFarmerActivity(mod,0).setPor(mod.getAmount(Mod303Key.CT_SA15))
-			,true)
+			,false)
 		// (1) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
 		,CT_SA16(Mod303Key.CT_SA16,null,null,null,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA14*CT_SA15/100):(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA16,ensureFarmerActivity(mod,0).getIng())
 			,mod -> ensureFarmerActivity(mod,0).setIng(mod.getAmount(Mod303Key.CT_SA16))
 			,true)
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA17(Mod303Key.CT_SA17,null,null,null,null,null
+		,CT_SA17(Mod303Key.CT_SA17,null,null,null,"(hasFarmerActivity(0) && isLastPeriod())?CT_SA17:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA17,ensureFarmerActivity(mod,0).getSop())
 			,mod -> ensureFarmerActivity(mod,0).setSop(mod.getAmount(Mod303Key.CT_SA17))
 			,true)
@@ -371,7 +372,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,1).setIng(mod.getAmount(Mod303Key.CT_SA26))
 			,true)
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA27(Mod303Key.CT_SA27,null,null,null,null,null
+		,CT_SA27(Mod303Key.CT_SA27,null,null,null,"(hasFarmerActivity(1) && isLastPeriod())?CT_SA27:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA27,ensureFarmerActivity(mod,1).getSop())
 			,mod -> ensureFarmerActivity(mod,1).setSop(mod.getAmount(Mod303Key.CT_SA27))
 			,true)
@@ -417,7 +418,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,2).setIng(mod.getAmount(Mod303Key.CT_SA36))
 			,true)
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA37(Mod303Key.CT_SA37,null,null,null,null,null
+		,CT_SA37(Mod303Key.CT_SA37,null,null,null,"(hasFarmerActivity(2) && isLastPeriod())?CT_SA37:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA37,ensureFarmerActivity(mod,2).getSop())
 			,mod -> ensureFarmerActivity(mod,2).setSop(mod.getAmount(Mod303Key.CT_SA37))
 			,true)
@@ -463,7 +464,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureFarmerActivity(mod,3).setIng(mod.getAmount(Mod303Key.CT_SA46))
 			,true)
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,CT_SA47(Mod303Key.CT_SA47,null,null,null,null,null
+		,CT_SA47(Mod303Key.CT_SA47,null,null,null,"(hasFarmerActivity(3) && isLastPeriod())?CT_SA47:(0.0)",null
 			,mod -> mod.putAmount(Mod303Key.CT_SA47,ensureFarmerActivity(mod,3).getSop())
 			,mod -> ensureFarmerActivity(mod,3).setSop(mod.getAmount(Mod303Key.CT_SA47))
 			,true)
@@ -661,7 +662,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setRed(mod.getAmount(Mod303Key.CT_S118))
 			,false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
-		,CT_S119(Mod303Key.CT_S119,null,null,null, "calculateIndiceTemporada( CT_S1X1 )",null
+		,CT_S119(Mod303Key.CT_S119,null,null,null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S1X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S119,ensureActivity(mod,0).getInd())
 			,mod -> ensureActivity(mod,0).setInd(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S119))
 			,false)
@@ -695,7 +696,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setSop(mod.getAmount(Mod303Key.CT_S122))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S123(Mod303Key.CT_S123,null,null,null,null,null
+		,CT_S123(Mod303Key.CT_S123,null,null,null,"isLastPeriod()?calculateIndiceTemporada( CT_S1X1 ):0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S123,ensureActivity(mod,0).getIct())
 			,mod -> ensureActivity(mod,0).setIct(mod.getAmount(Mod303Key.CT_S123))
 			,false)
@@ -706,7 +707,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setRes(mod.getAmount(Mod303Key.CT_S124))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S125(Mod303Key.CT_S125,null,null,null,null,null
+		,CT_S125(Mod303Key.CT_S125,null,null,null,"isLastPeriod()?CT_S125:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S125,ensureActivity(mod,0).getPcm())
 			,mod -> ensureActivity(mod,0).setPcm(mod.getAmount(Mod303Key.CT_S125))
 			,false)
@@ -922,7 +923,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setRed(mod.getAmount(Mod303Key.CT_S218))
 			,false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
-		,CT_S219(Mod303Key.CT_S219,null,null,null, "calculateIndiceTemporada( CT_S2X1 )",null
+		,CT_S219(Mod303Key.CT_S219,null,null,null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S2X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S219,ensureActivity(mod,1).getInd())
 			,mod -> ensureActivity(mod,1).setInd(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S219))
 			,false)
@@ -955,7 +956,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setSop(mod.getAmount(Mod303Key.CT_S222))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S223(Mod303Key.CT_S223,null,null,null,null,null
+		,CT_S223(Mod303Key.CT_S223,null,null,null,"isLastPeriod()?calculateIndiceTemporada( CT_S2X1 ):0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S223,ensureActivity(mod,1).getIct())
 			,mod -> ensureActivity(mod,1).setIct(mod.getAmount(Mod303Key.CT_S223))
 			,false)
@@ -966,7 +967,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setRes(mod.getAmount(Mod303Key.CT_S224))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S225(Mod303Key.CT_S225,null,null,null,null,null
+		,CT_S225(Mod303Key.CT_S225,null,null,null,"isLastPeriod()?CT_S225:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S225,ensureActivity(mod,1).getPcm())
 			,mod -> ensureActivity(mod,1).setPcm(mod.getAmount(Mod303Key.CT_S225))
 			,false)
@@ -1182,7 +1183,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setRed(mod.getAmount(Mod303Key.CT_S318))
 			,false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
-		,CT_S319(Mod303Key.CT_S319,null,null,null, "calculateIndiceTemporada( CT_S3X1 )",null
+		,CT_S319(Mod303Key.CT_S319,null,null,null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S3X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S319,ensureActivity(mod,2).getInd())
 			,mod -> ensureActivity(mod,2).setInd(mod.getAmount(Mod303Key.CT_S319))
 			,false)
@@ -1215,7 +1216,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setSop(mod.getAmount(Mod303Key.CT_S322))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S323(Mod303Key.CT_S323,null,null,null,null,null
+		,CT_S323(Mod303Key.CT_S323,null,null,null,"isLastPeriod()?calculateIndiceTemporada( CT_S3X1 ):0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S323,ensureActivity(mod,2).getIct())
 			,mod -> ensureActivity(mod,2).setIct(mod.getAmount(Mod303Key.CT_S323))
 			,false)
@@ -1226,7 +1227,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setRes(mod.getAmount(Mod303Key.CT_S324))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S325(Mod303Key.CT_S325,null,null,null,null,null
+		,CT_S325(Mod303Key.CT_S325,null,null,null,"isLastPeriod()?CT_S325:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S325,ensureActivity(mod,2).getPcm())
 			,mod -> ensureActivity(mod,2).setPcm(mod.getAmount(Mod303Key.CT_S325))
 			,false)
@@ -1442,7 +1443,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setRed(mod.getAmount(Mod303Key.CT_S418))
 			,false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
-		,CT_S419(Mod303Key.CT_S419,null,null,null, "calculateIndiceTemporada( CT_S4X1 )",null
+		,CT_S419(Mod303Key.CT_S419,null,null,null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S4X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S419,ensureActivity(mod,3).getInd())
 			,mod -> ensureActivity(mod,3).setInd(mod.getAmount(Mod303Key.CT_S419))
 			,false)
@@ -1475,7 +1476,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setSop(mod.getAmount(Mod303Key.CT_S422))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S423(Mod303Key.CT_S423,null,null,null,null,null
+		,CT_S423(Mod303Key.CT_S423,null,null,null,"isLastPeriod()?calculateIndiceTemporada( CT_S4X1 ):0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S423,ensureActivity(mod,3).getIct())
 			,mod -> ensureActivity(mod,3).setIct(mod.getAmount(Mod303Key.CT_S423))
 			,false)
@@ -1486,7 +1487,7 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setRes(mod.getAmount(Mod303Key.CT_S424))
 			,false)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,CT_S425(Mod303Key.CT_S425,null,null,null,null,null
+		,CT_S425(Mod303Key.CT_S425,null,null,null,"isLastPeriod()?CT_S425:0.0",null
 			,mod -> mod.putAmount(Mod303Key.CT_S425,ensureActivity(mod,3).getPcm())
 			,mod -> ensureActivity(mod,3).setPcm(mod.getAmount(Mod303Key.CT_S425))
 			,false)
@@ -1611,21 +1612,49 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		// Cuotas a compensar de periodos anteriores
 		,CT_C67(Mod303Key.CT_C67,null,null,
 			(ctx,mod) -> {
-				add( Mod303Key.CT_C67, mod, 
-					Mod303DAO.getLastPeriodModels(ctx, mod)
-					.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
-					.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
-					.findFirst()
-					.orElse(0.0));						
+				if (mod.isFirstPeriod()) {
+					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
+					add( Mod303Key.CT_C67, mod, 
+							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
+							.filter(m303 -> m303.getYear() ==  (mod.getYear() - 1) )
+							.filter(m303 -> m303.isLastPeriod() ) 
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
+							.findFirst()
+							.orElse(0.0));						
+				} else {
+					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
+					add( Mod303Key.CT_C67, mod, 
+							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
+							.filter(m303 -> m303.getYear() == mod.getYear() )
+							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
+							.filter(fm ->  fm.isToCompensate())
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
+							.findFirst()
+							.orElse(0.0));						
+				}
 			}
 			,null
-			,"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
-			+"@foreach{fm : lastPeriodModels}" 
-				+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+			,
+			 "@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
+			+"@if{ mod.isFirstPeriod() }"
+				+"<li>Declaraciones del \u00FAltimo periodo del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : models}"
+					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.isLastPeriod() && fm.getAdministration() == mod.getAdministration() }"
+						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+					+"@end{}"
+				+"@end{}"
+				+"</ul></li>"
+			+"@else{}"
+				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+				+"@foreach{fm : lastPeriodModels}" 
+					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
+						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
+					+"@end{}"
+				+"@end{}"
+				+"</ul></li>"
 			+"@end{}"
-			+"</ul></li>"
-			+"<li>Resultado: <b>@{CT_C70}</b></li>"
+			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{CT_C67}</b></li>"
 		)
 		
 		// Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administración del Estado 
@@ -1869,11 +1898,14 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT3;
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat, Mod303 mod) {
-		return !vat.isVatSurchargeRegime() && vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses();
+		return !vat.isVatSurchargeRegime() && (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses());
 	}
 	
 	private static boolean adqIntracomunitariasFilterGene(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && adqIntracomunitariasFilter(vat,mod);
+	}
+	private static boolean adqIntracomunitariasFilterNoRECT(VatContext vat, Mod303 mod) {
+		return !vat.isRectification() && adqIntracomunitariasFilterGene(vat,mod); 
 	}
 	private static boolean adqIntracomunitariasFilterSimp(VatContext vat, Mod303 mod) {
 		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) 
@@ -1906,6 +1938,9 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 	private static boolean operacionesISPFilterGene(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
 				&& operacionesISPFilter(vat,mod);
+	}
+	private static boolean operacionesISPFilterNoRECT(VatContext vat, Mod303 mod) {
+		return !vat.isRectification() && operacionesISPFilterGene(vat,mod); 
 	}
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
@@ -2011,6 +2046,42 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 						FiscalModelDetail det = mod303.ensureDetail(key.getKey());
 						det.setAmount(prev.getAmount());
 						det.setDescription(prev.getDescription());
+						if (key == Mod303KeyDAO.CT_SA11 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA11))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA11);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA13).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA15).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
+						if (key == Mod303KeyDAO.CT_SA21 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA21))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA21);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA23).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA25).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
+						if (key == Mod303KeyDAO.CT_SA31 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA31))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA31);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA33).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA35).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
+						if (key == Mod303KeyDAO.CT_SA41 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA41))) {
+							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA41);
+							if (farmerIVA != null) {
+								mod303.ensureDetail(Mod303Key.CT_SA43).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								if (!mod303.isLastPeriod()) {
+									mod303.ensureDetail(Mod303Key.CT_SA45).setAmount(farmerIVA.getPorcentaje());
+								}
+							}
+						}
 						
 						if (key == Mod303KeyDAO.CT_S101 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S101))) {
 							IEpigraph epi = getEpigraph( mod303,  Mod303Key.CT_S101);
@@ -2061,9 +2132,16 @@ public class AEAT_2017_Declaration extends Mod303Declaration {
 
 	private IEpigraph getEpigraph(Mod303 mod303, Mod303Key key) {
 		if (mod303.getYear() < 2018) {
-			com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph.getEpigraph(mod303.getDescription(key));
+			return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph.getEpigraph(mod303.getDescription(key));
 		} 
 		return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph.getEpigraph(mod303.getDescription(key)); 
+	}
+
+	private IFarmerIVA getFarmerIVA(Mod303 mod303, Mod303Key key) {
+		if (mod303.getYear() < 2018) {
+			return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.FarmerIVA.getFarmerIVA(mod303.getDescription(key));
+		} 
+		return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.FarmerIVA.getFarmerIVA(mod303.getDescription(key)); 
 	}
 
 	@Override

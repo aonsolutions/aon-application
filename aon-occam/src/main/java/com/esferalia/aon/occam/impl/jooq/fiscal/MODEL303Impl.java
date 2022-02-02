@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 
 public class MODEL303Impl implements IMODEL303 {
 

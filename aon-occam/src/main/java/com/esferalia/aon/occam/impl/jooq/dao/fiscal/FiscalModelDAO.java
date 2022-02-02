@@ -240,6 +240,25 @@ public class FiscalModelDAO {
 		}
 		return effectivePreviousModels.stream();
 	}
+	
+	public static <T extends FiscalModel> Stream<T> getLastPeriodModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
+		ctx.checkRead();
+		if (fiscalModel.getPeriod() == Period.M01 || fiscalModel.getPeriod() == Period.T1) {
+			return Stream.empty();
+		}
+		return getSelect(ctx)
+			.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()))
+			.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
+			.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
+			.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().value()))
+			.and(FS_MODEL.PERIOD.eq((byte) ( (fiscalModel.getPeriod().getValue() - 1) )))
+			.orderBy(FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc()
+					,FS_MODEL.REPLACEMENT.desc(),FS_MODEL.ID.desc())
+			.fetch()
+			.stream()
+			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier))
+			.map(mod -> fillModelDetails(ctx,mod));
+	}
 
 	protected static <T extends FiscalModel> T fillModelDetails(AONContext ctx,T model) {
 		getModelDetails(ctx,model).forEach( model::put );
@@ -567,25 +586,6 @@ public class FiscalModelDAO {
 			.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()));		
 	}
 	
-	public static Stream<FiscalModel> getLastPeriodModels(AONContext ctx,FiscalModel fiscalModel) {
-		ctx.checkRead();
-		if (fiscalModel.getPeriod() == Period.M01 || fiscalModel.getPeriod() == Period.T1) {
-			return Stream.empty();
-		}
-		return getModelSelect(ctx, fiscalModel)
-				.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
-				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
-				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
-				.and(FS_MODEL.PERIOD.eq((byte) ( (fiscalModel.getPeriod().getValue() - 1) )))
-				.orderBy(FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc()
-						,FS_MODEL.REPLACEMENT.desc(),FS_MODEL.ID.desc())
-				.fetch()
-				.stream()
-				.map( record -> map(record))
-				.peek( model -> getModelDetails(ctx,model)
-								.forEach( detail -> model.put( detail) )
-					 );
-	}
 
 
 	public static Stream<Record> getMatrixRecords(AONContext ctx,int domain, FiscalModelFilter filter)  {

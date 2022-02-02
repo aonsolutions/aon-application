@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao.mod303;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import java.util.LinkedList;
 
@@ -16,11 +16,10 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AEAT_2021_Declaration extends Mod303Declaration {
+class Mod303AEAT2021Declaration extends Mod303Declaration {
 
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -32,7 +31,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		void populate(Mod303 mod);
 	}
 
-	protected AEAT_2021_Declaration() {
+	protected Mod303AEAT2021Declaration() {
 
 	}
 
