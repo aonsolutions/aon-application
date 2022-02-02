@@ -58,8 +58,14 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 		}
 	}
 
+	public enum AgreementOwner {
+		AONSOLUTIONS,
+		SERVICONVENIOS
+	}
+	
 	private int id;
 	private Integer domain;
+	private AgreementOwner owner;
 	private String ssNumber;
 	private String description;
 
@@ -68,7 +74,6 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 	
 	private boolean levelsWithoutCategories;
 	private boolean hasContracts;
-	private boolean isServiAgreement;
 	
 	private Set<Level> levels;
 	private Map<Integer, Set<String>> categories;
@@ -91,6 +96,14 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 		this.domain = domain;
 	}
 	
+	public AgreementOwner getOwner() {
+		return owner;
+	}
+
+	public void setOwner(AgreementOwner owner) {
+		this.owner = owner;
+	}
+
 	public String getSSNumber() {
 		return ssNumber;
 	}
@@ -138,14 +151,6 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 	
 	public boolean getHasContract() {
 		return this.hasContracts;
-	}
-	
-	public void setIsServiAgreement(boolean isServiAgreement) {
-		this.isServiAgreement = isServiAgreement;
-	}
-	
-	public boolean getIsServiAgreement() {
-		return this.isServiAgreement;
 	}
 	
 	public Set<Level> getLevels() {

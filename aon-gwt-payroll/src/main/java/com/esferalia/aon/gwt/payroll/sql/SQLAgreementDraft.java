@@ -40,6 +40,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.AgreementOwner;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
@@ -688,9 +689,6 @@ public class SQLAgreementDraft {
 				JooqAgreement.insertExtra(conn, domainId, draft.getId(), extra);
 			}
 		}
-		
-		// Insert ServiAgreement AGREEMENT_DATA
-		JooqAgreement.insertServiAgreementData(conn, domainId, draft.getId(), draft.getIsServiAgreement());
 	}
 
 	public static void update(Connection conn, AgreementDraft draft,
@@ -814,12 +812,14 @@ public class SQLAgreementDraft {
 			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT + " ( " + AgreementColumns.DOMAIN
 					+ ", " + AgreementColumns.DESCRIPTION 
-					+ ", " + AgreementColumns.SS_NUMBER + ")"
-					+ " VALUES ( ?,?,?)", new String[] { AgreementColumns.ID });
+					+ ", " + AgreementColumns.SS_NUMBER 
+					+ ", " + AgreementColumns.OWNER + ")"
+					+ " VALUES ( ?,?,?,?)", new String[] { AgreementColumns.ID });
 			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setString(2, draft.getDescription());
 			stmt.setString(3, draft.getSSNumber());
+			stmt.setByte(4, null == draft.getOwner() || draft.getOwner() == AgreementOwner.AONSOLUTIONS ? (byte)0 : (byte)1);
 			stmt.executeUpdate();
 			rs = stmt.getGeneratedKeys();
 			rs.next();
@@ -850,22 +850,6 @@ public class SQLAgreementDraft {
 			stmt.setInt(3, draft.getId());
 			stmt.executeUpdate();
 			stmt.close();
-			
-			if(!draft.getDatesWithChanges().isEmpty()) {
-				
-				DSLContext dslContext = DSL.using(conn, getDefaultSettings());
-				
-				Integer agreementDataId = dslContext.select(AGREEMENT_DATA.ID).from(AGREEMENT_DATA)
-					.where(AGREEMENT_DATA.NAME.eq("SERVIAGREEMENT"))
-					.and(AGREEMENT_DATA.AGREEMENT.eq(draft.getId()))
-					.fetchOne(AGREEMENT_DATA.ID);
-				
-				if(null != agreementDataId)
-					dslContext.update(AGREEMENT_DATA)
-						.set(AGREEMENT_DATA.START_DATE, new java.sql.Date(draft.getDatesWithChanges().first().getTime()))
-						.where(AGREEMENT_DATA.ID.eq(agreementDataId))
-						.execute();
-			}
 
 		} finally {
 			if (stmt != null)

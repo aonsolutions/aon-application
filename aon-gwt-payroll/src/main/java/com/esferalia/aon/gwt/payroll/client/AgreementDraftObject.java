@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.AgreementOwner;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
@@ -398,7 +399,7 @@ public class AgreementDraftObject {
 	}
 
 	public boolean isServiAgreement() {
-		return agreementDraft.getIsServiAgreement();
+		return null != agreementDraft.getOwner() && agreementDraft.getOwner() == AgreementOwner.SERVICONVENIOS;
 	}
 	
 	public Date getStartDate() {
