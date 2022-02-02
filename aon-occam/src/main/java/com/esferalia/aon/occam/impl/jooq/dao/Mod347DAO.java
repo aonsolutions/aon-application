@@ -536,6 +536,17 @@ public class Mod347DAO {
 	}
 	
 	private static void validateDeclared(AONContext ctx, Mod347Declared declared) {
+		if (AonStringUtils.length(declared.getDocument()) > 9) {									
+			throw new AonCoreException(
+				MessageFormat.format("La longitud del num. documento del Declarado no puede ser mayor de 9 caracteres. [{0} - {1}]"
+				,declared.getDocument(),declared.getName()));
+		} 
+		if (AonStringUtils.length(declared.getOperatorNif()) > 15) {									
+			throw new AonCoreException(
+				MessageFormat.format("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. [{0} - {1}]"
+				,declared.getOperatorNif(),declared.getName()));
+			
+		}
 		declared.setFirstQuarterAmount( AonMathUtils.round(declared.getFirstQuarterAmount()));
 		declared.setSecondQuarterAmount( AonMathUtils.round(declared.getSecondQuarterAmount()));
 		declared.setThirdQuarterAmount( AonMathUtils.round(declared.getThirdQuarterAmount()));
@@ -756,9 +767,9 @@ public class Mod347DAO {
 							Country country = vat.getRegistryDocumentCountry();
 							if (country == null || country == Country.ES) {
 	
-								if (AonStringUtils.length(document) > 9) {									
-									throw new AonCoreException("La longitud del NIF del Declarado no puede ser mayor de 9 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
-								} 
+//								if (AonStringUtils.length(document) > 9) {									
+//									throw new AonCoreException("La longitud del NIF del Declarado no puede ser mayor de 9 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
+//								} 
 									
 								declared.setDocument(document);
 									
@@ -769,9 +780,9 @@ public class Mod347DAO {
 	
 							} else {
 								
-								if (AonStringUtils.length(document) > 15) {									
-									throw new AonCoreException("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
-								}	
+//								if (AonStringUtils.length(document) > 15) {									
+//									throw new AonCoreException("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
+//								}	
 								
 								declared.setOperatorNif(AonStringUtils.substring((country.getIso2() + document), 0, 17));
 								declared.setCountry(country);

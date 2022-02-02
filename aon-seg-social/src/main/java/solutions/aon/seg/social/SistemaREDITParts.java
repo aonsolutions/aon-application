@@ -941,7 +941,7 @@ class SistemaREDITParts {
 				} else if (dtStr.indexOf("Fecha confirmaci\u00F3n:") >= 0 && !ddStr.contains("00/00/0000")) {
 					itPart.setConfirmationDate(Toolkit.parseDate(ddStr, FORMAT_DATE));
 				} else if (dtStr.indexOf("Reca\u00EDda:") >= 0) {
-					itPart.setRelapse(ddStr.equalsIgnoreCase("S\u00ED") ? true : false);
+					itPart.setRelapse(ddStr.equalsIgnoreCase("S\u00ED"));
 				} else if (dtStr.indexOf("N° parte:") >= 0) {
 					itPart.setPartNum(Integer.parseInt(ddStr));
 				} else if (dtStr.indexOf("Duraci\u00F3n probable en d\u00EDas:") >= 0) {

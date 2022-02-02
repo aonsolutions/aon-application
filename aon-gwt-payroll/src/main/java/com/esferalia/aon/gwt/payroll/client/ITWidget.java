@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.function.Consumer;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
@@ -30,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsEmployeeInfo;
@@ -237,6 +237,8 @@ public abstract class ITWidget extends ResizeComposite {
 	private ResultsPanel resultsPanel;
 
 	private TabLayoutPanel tabLayout;
+
+	private List<ITEmployee> itEmployeeIts;
 
 	// --------------------------------------------------- Constructor
 
@@ -539,7 +541,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	public void loadITWidget() {
 		getITEmployeeListDB(itEmployeeList -> {
-			
+			itEmployeeIts = itEmployeeList;
 			this.expressionCallback = new ExpressionCallback();
 			this.tooltipCallback = new TooltipCallBack();
 			this.popupPanel = new PopupPanel(true);
@@ -1456,18 +1458,25 @@ public abstract class ITWidget extends ResizeComposite {
 
 			SistemaREDITResults results = new SistemaREDITResults() {
 				@Override
-				public void up2DateEnterprise() {
-					this.setUp2DateEnterprise();
-					closeFootPanel();
-				}
-
-				@Override
 				public void run() {
+					setIsUserComunica(isUserComunica());
 					checkStatus(status -> {
 						removeAll();
 						status.visit(this);
 					}, throwable -> {});
 				}
+				
+				
+				@Override
+				public void up2DateEnterprise() {
+					this.setUp2DateEnterprise();
+					closeFootPanel();
+				}
+				@Override
+				public void updatedEnterprise() {
+					loadITWidget();
+				}
+				
 				@Override
 				protected void credentialsFound() {
 					checkStatus(status -> {
@@ -1482,6 +1491,11 @@ public abstract class ITWidget extends ResizeComposite {
 						closeFootPanel();
 					});
 				}
+				
+				@Override
+				protected void onOpenITPart(ItNotExist itNotExist) {
+					openITPartDialog(itNotExist);
+				}
 			};
 			status.visit(results);
 			resultsPanel.setWidget(results);
@@ -1489,6 +1503,36 @@ public abstract class ITWidget extends ResizeComposite {
 			closeFootPanel();
 		});
 		
+	}
+	
+	private void openITPartDialog(ItNotExist itNotExist){
+		Optional<Integer> idPart = itNotExist.getIdPart();
+		if(idPart.isPresent()) {
+			Optional<ITEmployee> itEmployee = Optional.empty();
+			Optional<ITPart> itPart = Optional.empty();
+			
+		 	outerLoop:
+			for (ITEmployee itE : itEmployeeIts) {
+				for ( IT it:itE.getIts()) {
+					for (ITPart part:it.getITParts()) {
+						if(part.getId().equals(idPart.get())) {
+							itEmployee = Optional.ofNullable(itE);
+							itPart = Optional.ofNullable(part);
+							break outerLoop;
+						}
+					}
+				}
+			}
+		 	
+		
+			if(itEmployee.isPresent() && itPart.isPresent()) {
+				ITPart part = itPart.get();
+				int contractId = itEmployee.get().getContractInfo().getContractId();
+	
+				ITDialog dialog = openITDialog(contractId, part.getIt());
+				dialog.setViewPartComunica(part);
+			} 
+		}
 	}
 	
 	private void onLeyend() {
@@ -1536,7 +1580,7 @@ public abstract class ITWidget extends ResizeComposite {
 		return itDialog;
 	}
 
-	private void openITDialog(int contractId, int itId) {
+	private ITDialog openITDialog(int contractId, int itId) {
 		IT itInfo = getIT(itId);
     	ITEmployee itEmployee = getITEmployee(contractId);
 
@@ -1593,6 +1637,7 @@ public abstract class ITWidget extends ResizeComposite {
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
     	itDialog.setIsUserComunica(isUserComunica());
     	itDialog.setITDialogObject(itDialogObject, itInfo, true);
+    	return itDialog;
 	}	
 	
 	private void accept(ITEmployee itEmployee, boolean newIT) {

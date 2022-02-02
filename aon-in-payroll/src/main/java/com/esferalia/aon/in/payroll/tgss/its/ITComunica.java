@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.SistemaRED;
@@ -66,6 +67,8 @@ public class ITComunica {
 				for (It it : its) {
 					
 					EmployeeIT employeeIT = ITParse.parseTGSSToAon(it);
+					if(employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+						employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
 			
 					String naf = nss.isPresent() ? nss.get() : employeeIT.getNss();
 					Optional<Employee> contract = ITComunica.contractIts(domain, ccc, naf, employeeIT.getStartDate(), employeeIT.getEndDate());
@@ -304,23 +307,18 @@ public class ITComunica {
 	 */
 	private static Optional<Employee> contractIts(Domain domain, String ccc, String nss, Date startDate,
 			Optional<Date> endDate) {
-		return PAYROLL
-				.getEmployee(
-						domain.getName(), domain.getId(), "", f -> f
-								.getDomainProperty().eq(
-										domain.getId())
-								.and(f.getCCCProperty()
-										.eq(ccc))
-								.and(f.getNafProperty().eq(nss))
-								.and(endDate.isPresent()
-										? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
-												.and(f.getEndDateProperty()
-														.ge(new java.sql.Date(endDate.get().getTime()))
-														.or(f.getEndDateProperty().isNull()))
-										: f.getEndDateProperty().isNull()
-												.or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime()))))
-
-				);
+		return PAYROLL.getEmployee(
+			domain.getName(), domain.getId(), "", f -> f
+			.getDomainProperty().eq(domain.getId())
+			.and(f.getCCCProperty().eq(ccc))
+			.and(f.getNafProperty().eq(nss))
+			.and( 
+				endDate.isPresent() 
+				? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
+						.and(f.getEndDateProperty().ge(new java.sql.Date(endDate.get().getTime())).or(f.getEndDateProperty().isNull()))
+				: f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
+			)
+		);
 	}
 
 	// HANDLES EMPTY DATA

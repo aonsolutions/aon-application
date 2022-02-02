@@ -92,6 +92,7 @@ import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.EnterpriseCostProvider;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SalaryPrintController extends BasicController implements ICollectionProvider, IPayrollConstants {
 	
@@ -266,7 +267,23 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.contract = contract;
 	}
 	
+	public int getLastYear() {
+		try {
+			Date lastSalaryDate = obtainLastSalaryDate();
+			return AonDateUtils.get(lastSalaryDate, Calendar.YEAR);
+		} catch (Exception e) {
+			return Calendar.getInstance().get(Calendar.YEAR);
+		} 
+	}
 	
+	public int getFirstYear() {
+		try {
+			Date firstSalaryDate = obtainFirstSalaryDate();
+			return AonDateUtils.get(firstSalaryDate, Calendar.YEAR);
+		} catch (Exception e) {
+			return Calendar.getInstance().get(Calendar.YEAR) - 5;
+		} 
+	}
 	
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
 		setIncludeEnterpriseCost(false);
@@ -447,6 +464,23 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT max(end_date) FROM salary";
+			select += " WHERE domain = " + DomainManager.getCurrentDomain() + " ;";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDate(1);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
+	}
+
+	private Date obtainFirstSalaryDate() throws AonConnectionException, SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT min(end_date) FROM salary";
 			select += " WHERE domain = " + DomainManager.getCurrentDomain() + " ;";
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();

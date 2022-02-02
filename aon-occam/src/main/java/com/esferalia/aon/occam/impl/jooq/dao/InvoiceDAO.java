@@ -336,6 +336,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.WORKPLACE
 				,INVOICE_DETAIL.SOURCE
 				,INVOICE_DETAIL.INVEST_ASSET
+				,INVOICE_DETAIL.PREPAYMENT
 				,SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
@@ -440,6 +441,14 @@ public class InvoiceDAO {
 					.collect(Collectors.toCollection(LinkedList::new))
 					);
 			AccountingInvoiceDAO.fillBreakdown(ctx, invoice);
+		
+			if(invoice.isRectifier()) {
+				Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
+				invoice.setRectificationInvoiceSeries(rectify.getSeries());
+				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
+				invoice.setRectificationInvoiceNumber(rectify.getNumber());
+				invoice.setRectificationType(rectify.getRectificationType());
+			}
 		}
 		return invoice;
 	}
@@ -712,6 +721,7 @@ public class InvoiceDAO {
 				.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setWarehouseName(r.getValue(WAREHOUSE.NAME))
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
+				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
 				;
 		}
 		

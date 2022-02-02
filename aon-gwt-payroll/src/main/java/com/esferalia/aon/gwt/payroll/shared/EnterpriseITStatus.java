@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 public abstract class EnterpriseITStatus implements Serializable {
 
@@ -12,6 +13,7 @@ public abstract class EnterpriseITStatus implements Serializable {
 
 	public static interface Visitor  {
 		void up2DateEnterprise();
+		void updatedEnterprise();
 		void unknownError(String message);
 		void credentialsNotFound();
 		void itNotExist(ItNotExist itNotExist);
@@ -57,6 +59,14 @@ public abstract class EnterpriseITStatus implements Serializable {
 		}
 	}		
 	
+	public static class UpdatedEnterprise extends AndEmployeeITStatus{
+		@Override	
+		public void visit(Visitor visitor) {
+			visitor.updatedEnterprise();
+			super.visit(visitor);
+		}
+	}		
+	
 	public static class ItNotExist extends AndEmployeeITStatus{
 		
 		Date date;
@@ -64,7 +74,10 @@ public abstract class EnterpriseITStatus implements Serializable {
 		String ccc;
 		String name;
 		Byte part; //0 baja , 1 confirmacion, 2 alta
-
+		Byte confirmOrder;
+		Integer idPart;
+		
+		
 //		Double base;
 //		Integer quoteDays;
 //		Byte contracTypeLeave;
@@ -88,6 +101,14 @@ public abstract class EnterpriseITStatus implements Serializable {
 		
 		public Byte getPart() {
 			return part;
+		}
+		
+		public Byte getConfirmOrder() {
+			return confirmOrder;
+		}
+
+		public Optional<Integer> getIdPart() {
+			return Optional.ofNullable(idPart);
 		}
 		
 		public ItNotExist setDate(Date date) {
@@ -115,6 +136,16 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return this;
 		}
 		
+		public ItNotExist setConfirmOrder(Byte confirmOrder) {
+			this.confirmOrder = confirmOrder;
+			return this;
+		}
+		
+		public ItNotExist setIdPart(Integer id) {
+			this.idPart = id;
+			return this;
+		}
+		
 //		public Double getBase() {
 //			return base;
 //		}
@@ -131,7 +162,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 //			return contractType;
 //		}
 	
-		
 //		public ItBajaNotExist setBase(Double base) {
 //			this.base = base;
 //			return this;
@@ -162,7 +192,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 			super.visit(visitor);
 		}
 	}		
-	
 
 	public static class UnknownError extends EnterpriseITStatus{
 		
@@ -197,6 +226,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 				
 			@Override
+			public void updatedEnterprise() {
+				enable.run();
+			}
+			
+			@Override
 			public void unknownError(String message) {
 				disabled.run();
 			}
@@ -223,6 +257,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 	
 			@Override
+			public void updatedEnterprise() {
+				onSuccess.run();
+			}
+			
+			@Override
 			public void unknownError(String message) {
 				onError.run();
 			}
@@ -231,7 +270,6 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void credentialsNotFound() {
 				onError.run();
 			}
-			
 			
 			@Override
 			public void itNotExist(ItNotExist itNotExist) {
@@ -249,6 +287,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 			
 			@Override
+			public void updatedEnterprise() {
+				System.out.println("updatedEnterprise");
+			}
+			
+			@Override
 			public void unknownError(String message) {
 				System.out.println("unknownError");
 			}			
@@ -260,9 +303,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 			
 			@Override
 			public void itNotExist(ItNotExist itNotExist) {
-				System.out.println("ItNotExist " + itNotExist.naf + "[" + itNotExist.date + "]");
+				System.out.println("ItNotExist "+ itNotExist.name +" "+ itNotExist.naf + "[" + itNotExist.date + "]");
 			}
-			
 		});
 		return status;
 	}
@@ -271,8 +313,10 @@ public abstract class EnterpriseITStatus implements Serializable {
 		status.visit(new Visitor() {
 			
 			@Override
-			public void up2DateEnterprise() {
-			}
+			public void up2DateEnterprise() {}
+
+			@Override
+			public void updatedEnterprise() {}
 			
 			@Override
 			public void unknownError(String message) {
@@ -288,7 +332,33 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void itNotExist(ItNotExist itNotExist) {
 				throw new OutOfDateException();
 			}
+		});
+		return status;
+	}
+	
+	public static <T extends EnterpriseITStatus> T updated( T status ) {
+		status.visit(new Visitor() {
 			
+			@Override
+			public void up2DateEnterprise() {}
+			
+			@Override
+			public void updatedEnterprise() {}
+			
+			@Override
+			public void unknownError(String message) {
+				throw new OutOfDateException();
+			}
+			
+			@Override
+			public void credentialsNotFound() {
+				throw new OutOfDateException();
+			}
+
+			@Override
+			public void itNotExist(ItNotExist itNotExist) {
+				throw new OutOfDateException();
+			}
 		});
 		return status;
 	}

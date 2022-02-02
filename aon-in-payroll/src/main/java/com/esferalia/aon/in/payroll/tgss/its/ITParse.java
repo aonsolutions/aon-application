@@ -1,7 +1,10 @@
 package com.esferalia.aon.in.payroll.tgss.its;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
@@ -23,19 +26,17 @@ public class ITParse {
 		ITPart startIT = it.getStart();
 		ITPart endIT = null != it.getEnd() ? it.getEnd() : new ITPart();
 		
-		String nss = startIT.getNaf().get();
-
 		Date startDateIT = startIT.getWorkLeaveDate().get();
 		Optional<Date> endDateIT = endIT.getWorkRestartDate();
 
 		EmployeeIT employeeIT = new EmployeeIT()
-				
 				.setCcc(startIT.getCcc())
 				.setType(ContractLeaveType.valueOfTGSS(startIT.getCauseNumber()))
 				.setStartDate(startDateIT);
 		
-		startIT.getIpf().ifPresent(d-> employeeIT.setDni(d));
-		startIT.getNameEmployee().ifPresent(d-> employeeIT.setName(d));
+		startIT.getIpf().ifPresent(employeeIT::setDni);
+		startIT.getNaf().ifPresent(employeeIT::setNss);
+		startIT.getNameEmployee().ifPresent(employeeIT::setName);
 		startIT.getDailyBaseCgc().ifPresent(d-> employeeIT.setDailyCgcBase(d.doubleValue()));
 
 		ContractLeaveDetailStatus status = ContractLeaveDetailStatus.PROCESSED;
@@ -57,7 +58,8 @@ public class ITParse {
 					ContractLeaveDischargeCause.safeValueOf(endIT.getCauseNumber() - 1));
 
 		it.getConfirmations().forEach(c -> {
-			EmployeeITPart itPart = new EmployeeITPart().setType(ContractLeaveDetailType.CONFIRMACION)
+			EmployeeITPart itPart = new EmployeeITPart()
+			.setType(ContractLeaveDetailType.CONFIRMACION)
 			.setStatus(status);
 
 			c.getConfirmationDate().ifPresent(itPart::setDate);

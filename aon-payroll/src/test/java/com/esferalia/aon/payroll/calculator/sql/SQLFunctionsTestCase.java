@@ -40,6 +40,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -1535,7 +1536,7 @@ public class SQLFunctionsTestCase extends
 				"1125.90 * DIAS_TRABAJADOS / DIAS_MES",
 			}
 			, new String[] {
-				String.format("TRAMO(FECHA(%s,1,1))", year ), 
+				String.format("TRAMO(FECHA(%s,%d,1))", year,  get(firstDayOfMonth,MONTH)+1), 
 			},
 			null
 			);

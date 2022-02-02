@@ -73,7 +73,8 @@ public class TbaiMain {
 		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 			TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
 			byte[] xml = tbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
-			if(xml == null) {
+			
+			if(xml == null || lroe.getChapter1().isTbaiError()) {
 				createEmisionTBAI(company, invoice, tbaiConfiguration);
 			} else {
 				LROEResponse lroeResponse = null;

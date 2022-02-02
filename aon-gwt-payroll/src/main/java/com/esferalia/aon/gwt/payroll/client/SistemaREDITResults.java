@@ -14,18 +14,18 @@ import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -105,6 +105,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	private TreeItem warningsItem;	
 	private TreeItem messagesItem;	
 	private TreeItem notFoundItem;
+
+	private boolean isUserComunica;
 	
 	public SistemaREDITResults() {
 		
@@ -134,9 +136,11 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 	}
 
-	public  void run() {
-	}
+	public void run() {}
 	
+	protected void setIsUserComunica(boolean isUserComunica) {
+		this.isUserComunica = isUserComunica;
+	}
 
 	// ------------------------------------------------------------ @UiHandlers
 
@@ -173,32 +177,43 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	
 	@Override
 	public void up2DateEnterprise() {
-		addInfo("Its actualizadas, no existen cambios nuevos.");
+		addInfo("ITs actualizadas, no existen cambios nuevos.");
 		syncMessages();
 	}
 	
 	protected void setUp2DateEnterprise() {
-		addInfo("Its actualizadas, no existen cambios nuevos.");
+		addInfo("ITs actualizadas, no existen cambios nuevos.");
 		syncMessages();
 	}
 	
-	protected void credentialsFound() {
-		
-	}
+	protected void credentialsFound() {}
 
 	@Override
 	public void itNotExist(ItNotExist status) {
-		
+
 		HorizontalPanel horizontalPanel = new HorizontalPanel();
 		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);	
+		
+		if(status.getIdPart().isPresent())
+			itNoExistToSS(horizontalPanel, status);
+		else 
+			itNoExistToAon(horizontalPanel, status);
+		
+		addNotFound(horizontalPanel).setUserObject(status);
+		syncNotFound();
+	}
+	
+	private void itNoExistToAon(HorizontalPanel horizontalPanel, ItNotExist status) {
+		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
 		horizontalPanel.add(
-		new Label(
-			"Afiliado '"
-			+status.getName()
-			+" parte de "+getPartStr(status.getPart())+" "
-			+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
-			+" ) no encontrada en aon Solutions."
-//			+" Pulse"
+			new Label(
+				"Afiliado '"
+				+status.getName()
+				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
+				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
+				+" ) no encontrada en aon Solutions."
+//			   +" Pulse"
 			)
 		);
 //		horizontalPanel.add(new HTML("&nbsp;"));
@@ -211,13 +226,38 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 //		horizontalPanel.add(anchor);
 //		horizontalPanel.add(new HTML("&nbsp;"));
 //		horizontalPanel.add(new Label("para a\u00f1adirlo en aon Solutions."));
-		
-		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
-		
-		addNotFound(horizontalPanel).setUserObject(status);
-		syncNotFound();
 	}
 	
+	
+	private void itNoExistToSS(HorizontalPanel horizontalPanel, ItNotExist status) {
+		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
+		
+		horizontalPanel.add(
+			new Label(
+				"Afiliado '"
+				+status.getName()
+				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
+				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
+				+" ) no encontrada en SISTEMA RED."
+			   +" Pulse"
+			)
+		);
+//		if(this.isUserComunica) {
+			horizontalPanel.add(new HTML("&nbsp;"));
+			Anchor anchor = new Anchor("aqu\u00ed");
+			anchor.addClickHandler(e -> {
+				onOpenITPart(status);
+			});
+			
+			anchor.getElement().getStyle().setColor("blue");
+			anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+			
+			horizontalPanel.add(anchor);
+			horizontalPanel.add(new HTML("&nbsp;"));
+			horizontalPanel.add(new Label("para gestionarlo."));
+//		}
+	}
+
 	@Override
 	public void unknownError(String message) {
 		addError(new SaltraEvent() {
@@ -244,6 +284,10 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		syncErrors();
 	}
 	
+	@Override
+	public void updatedEnterprise() {}
+	
+	protected void onOpenITPart(ItNotExist itNotExist) {}
 
 	// ------------------------------------------------------------------------
 	
@@ -465,5 +509,6 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	/*-{
 		return eval(javascript);
 	}-*/;
-
+	
+	
 }

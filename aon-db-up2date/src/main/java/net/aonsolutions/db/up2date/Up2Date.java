@@ -226,6 +226,7 @@ public class Up2Date {
     		//AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
     		//IPREM2022Update.IPREM2022UPDATE
     		//IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT
+    		
     		IrpfQuotasInsert.IRPFQUOTASINSERT,
     		IrpfQuotasCheck.IRPFQUOTASCHECK,
     		AlterAgreement4Owner.ALTER_AGREEMENT_OWNER

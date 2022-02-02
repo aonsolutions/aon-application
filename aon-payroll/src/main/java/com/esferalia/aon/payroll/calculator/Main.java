@@ -8,8 +8,6 @@ import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.xml.bind.JAXBException;
 
@@ -31,301 +32,25 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 
 public class Main {
-
-	public static class MainSalaryBuilder extends JooqSalaryBuilder<ISalary> {
-		
-		private List<Integer> olds ;
-		
-		protected Date endDate;
-		protected Date startDate;
-		protected Integer contract;
-
-		protected Double cgcBase;
-		protected Double totalLiquid;
-		protected Double totalPayment;
-		
-		protected String employeeName ;
-		protected String enterpriseName ;
-		
-		
-		public MainSalaryBuilder(Connection connection) {
-			super(connection);
-			olds = new ArrayList<Integer>();
-			head();
-		}
-		
-		@Override
-		public ISalary getSalary() {
-			ISalary newOne = super.getSalary();
-			Salary oldOnes [] = getOlds(contract, startDate, endDate);
-			
-			if ( oldOnes.length == 0 )
-				newOne();
-			
-			for(Salary oldOne: oldOnes ) {
-				olds.add(oldOne.getId());
-				
-				Double oldCgcBase = oldOne.getCommonContingenciesBase();
-				Double oldTotalLiquid = oldOne.getTotalLiquid();
-				Double oldTotalPayment = oldOne.getTotalPayment();
-				
-				if (totalLiquid.equals(oldTotalLiquid)
-					&& cgcBase.equals(oldCgcBase)
-					&& totalPayment.equals(oldTotalPayment))
-					existEqual(oldTotalLiquid, oldTotalPayment, oldCgcBase);
-				else
-					existNotEqual(oldTotalLiquid, oldTotalPayment, oldCgcBase);
-				
-			}
-			
-			return newOne;
-		}
-		
-		@Override
-		public void setEndDate(Date endDate) {
-			this.endDate = endDate;
-			super.setEndDate(endDate);
-		}
-
-		@Override
-		public void setStartDate(Date startDate) {
-			this.startDate = startDate;
-			super.setStartDate(startDate);
-		}
-
-		@Override
-		public void setContract(Object contract) {
-			this.contract = ((SQLSalaryProxy)contract).getContractId();
-			super.setContract(contract);
-		}
-
-		@Override
-		public void setEnterpriseName(String enterpriseName) {
-			this.enterpriseName = enterpriseName;
-			super.setEnterpriseName(enterpriseName);
-		}
-
-		@Override
-		public void setEmployeeName(String employeeName) {
-			this.employeeName = employeeName;
-			super.setEmployeeName(employeeName);
-		}
-		
-		@Override
-		public void setCgcBase(Double cgcBase) {
-			this.cgcBase = Math.round(cgcBase*1000)/1000.00d;;
-			super.setCgcBase(cgcBase);
-		}
-
-		@Override
-		public void setTotalLiquid(Double totalLiquid) {
-			this.totalLiquid = Math.round(totalLiquid*1000)/1000.00d;
-			super.setTotalLiquid(totalLiquid);
-		}
-		
-		@Override
-		public void setTotalPayment(Double totalPayment) {
-			this.totalPayment = Math.round(totalPayment*1000)/1000.00d;
-			super.setTotalPayment(totalPayment);
-		}
-		
-		
-		public void head() {
-			System.out.printf("%-20s %-33s %-9s            \t%-9s            \t%-9s            \r\n",
-					"ENTERPRISE",
-					"EMPLOYEE",
-					"LIQUID",
-					"PAYMENT",
-					"BASE");
-			System.out.printf("----------------------------------------------------------------------------------------------------------------------------\r\n");
-		}
-		
-		public void newOne(){
-			System.out.printf("%-20s %-33s %9.3f            \t%9.3f            \t%9.3f            \r\n",
-					enterpriseName,
-					employeeName,
-					totalLiquid,
-					totalPayment,
-					cgcBase);
-		}
-		
-		public void existEqual(Double oldTotalLiquid, Double oldTotalPayment, Double oldCgcBase){
-			System.out.printf("%-20s %-35s %9.3f (%9.3f)\t%9.3f (%9.3f)\t%9.3f (%9.3f)\r\n",
-					enterpriseName,
-					employeeName,
-					totalLiquid,
-					oldTotalLiquid,
-					totalPayment,
-					oldTotalPayment,
-					cgcBase,
-					oldCgcBase
-					);
-		}
-		
-		public void existNotEqual(Double oldTotalLiquid, Double oldTotalPayment, Double oldCgcBase){
-			System.err.printf("%-20s %-35s %9.3f (%9.3f)\t%9.3f (%9.3f)\t%9.3f (%9.3f)\r\n",
-					enterpriseName,
-					employeeName,
-					totalLiquid,
-					oldTotalLiquid,
-					totalPayment,
-					oldTotalPayment,
-					cgcBase,
-					oldCgcBase
-					);
-		}
-
-		public void delete() {
-			delete(olds.toArray(new Integer[olds.size()]));
-		}
-
-		public void delete(Integer ...olds) {
-			getDSLContext().delete(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.in(olds)).execute();
-			getDSLContext().delete(SALARY_COST)
-					.where(SALARY_COST.SALARY.in(olds)).execute();
-			getDSLContext().delete(SALARY_BONUS)
-					.where(SALARY_BONUS.SALARY.in(olds)).execute();
-			getDSLContext().delete(SALARY_PAYMENT)
-					.where(SALARY_PAYMENT.SALARY.in(olds))
-					.execute();
-			getDSLContext().delete(SALARY_DEDUCTION)
-					.where(SALARY_DEDUCTION.SALARY.in(olds))
-					.execute();
-			getDSLContext().delete(SALARY)
-					.where(SALARY.ID.in(olds)).execute();
-		}
-
-		public Salary []  getOlds(Integer contract, Date startDate, Date endDate){
-			
-			AONContext ctx = new AONContext(getDSLContext());
-			
-			return 
-			AON.getSalaries(ctx, props->props.getContractProperty().eq(contract)
-					.and(props.getStartDateProperty().le(endDate))
-					.and(props.getEndDateProperty().ge(startDate))
-					.and(props.getIsSalaryProperty().eq(true)))
-			.toArray(count->new Salary[count])
-			;
-		}
-	}
-	
-	/**
-	 * 
-	 * I know that for printing a colored text, for example red color, the code is:
-	 * "\e[1;31m This is red text \e[0m"
-	 * and I know that in this example, 31 is code of red color and the number of other colors is:
-	 *  
-	 * Black       0;30     Dark Gray     1;30
-	 * Blue        0;34     Light Blue    1;34
-	 * Green       0;32     Light Green   1;32
-	 * Cyan        0;36     Light Cyan    1;36
-	 * Red         0;31     Light Red     1;31
-	 * Purple      0;35     Light Purple  1;35
-	 * Brown       0;33     Yellow        1;33
-	 * Light Gray  0;37     White         1;37
-	 *
-	 * @author rtrepiana
-	 *
-	 */
-	private static class PrettyMainSalaryBuilder extends MainSalaryBuilder {
-
-		
-		public static final String ANSI_RESET = "\u001B[0m";
-		public static final String ANSI_BOLD = "\u001B[1m";
-		public static final String ANSI_BLACK = "\u001B[30m";
-		public static final String ANSI_RED = "\u001B[31m";
-		public static final String ANSI_GREEN = "\u001B[32m";
-		public static final String ANSI_YELLOW = "\u001B[33m";
-		public static final String ANSI_BLUE = "\u001B[34m";
-		public static final String ANSI_PURPLE = "\u001B[35m";
-		public static final String ANSI_CYAN = "\u001B[36m";
-		public static final String ANSI_WHITE = "\u001B[37m";
-
-		public PrettyMainSalaryBuilder(Connection connection) {
-			super(connection);
-		}
-		
-		
-		@Override
-		public void newOne() {
-			super.newOne();
-		}
-		
-		public void head() {
-			System.out.printf("%s%-20s %-33s %-9s            \t%-9s            \t%-9s            %s\r\n",
-					ANSI_BOLD,
-					"ENTERPRISE",
-					"EMPLOYEE",
-					"LIQUID",
-					"PAYMENT",
-					"BASE",
-					ANSI_RESET);
-			System.out.printf("----------------------------------------------------------------------------------------------------------------------------\r\n");
-		}
-
-		@Override
-		public void existEqual(Double oldTotalLiquid, Double oldTotalPayment,
-				Double oldCgcBase) {
-			System.out.printf("%-20s %-33s %9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\r\n",
-					enterpriseName,
-					employeeName,
-					totalLiquid,
-					ANSI_YELLOW,
-					oldTotalLiquid,
-					ANSI_RESET,
-					
-					totalPayment,
-					ANSI_YELLOW,
-					oldTotalPayment,
-					ANSI_RESET,
-					
-					cgcBase,
-					ANSI_YELLOW,
-					oldCgcBase,
-					ANSI_RESET
-					);
-		}
-		
-		@Override
-		public void existNotEqual(Double oldTotalLiquid,
-				Double oldTotalPayment, Double oldCgcBase) {
-			System.out.printf("%-20s %-33s %9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\t%9.3f (%s%9.3f%s)\r\n",
-					enterpriseName,
-					employeeName,
-					totalLiquid,
-					totalLiquid.equals(oldTotalLiquid) ? ANSI_YELLOW : ANSI_RED,
-					oldTotalLiquid,
-					ANSI_RESET,
-					
-					totalPayment,
-					totalPayment.equals(oldTotalPayment) ? ANSI_YELLOW : ANSI_RED,
-					oldTotalPayment,
-					ANSI_RESET,
-					
-					cgcBase,
-					cgcBase.equals(oldCgcBase) ? ANSI_YELLOW : ANSI_RED,
-					oldCgcBase,
-					ANSI_RESET
-					);
-		}
-		
-	}
 	
 
 	@SuppressWarnings("static-access")
@@ -377,6 +102,18 @@ public class Main {
 				.withLongOpt("ipf")
 				.withDescription("Calculate only selected IPFs (DNI, NIE...)")
 				.create("i");
+		Option naf=  OptionBuilder.withArgName("name")
+				.hasArg()
+				.withLongOpt("naf")
+				.withDescription("Calculate only selected NAFs")
+				.create("n");
+
+		Option type =  OptionBuilder.withArgName("tipo")
+				.hasArg()
+				.isRequired()
+				.withLongOpt("type")
+				.withDescription("Salary type, SALARY, EXTRA, DELAY or SETTLE")
+				.create("t");
 
 		Option dryRun =  OptionBuilder.withLongOpt("dry-run")
 									  .withDescription("Perform a trial run with no changes made.")
@@ -400,8 +137,10 @@ public class Main {
 		.addOption(dryRun)
 		.addOption(ccc)
 		.addOption(ipf)
+		.addOption(naf)
 		.addOption(delete)
 		.addOption(pretty)
+		.addOption(type)
 		;
 		//@formatter:on
 
@@ -414,14 +153,21 @@ public class Main {
 
 			Class.forName(com.mysql.jdbc.Driver.class.getName());
 
-			Connection connection = DriverManager.getConnection(String.format(
-					"jdbc:mysql://%s:%d/%s",
-					cmd.getOptionValue(hostName.getLongOpt(), "127.0.0.1"),
-					3306, cmd.getOptionValue(database.getLongOpt())), cmd
-					.getOptionValue(user.getLongOpt()), cmd
-					.getOptionValue(password.getLongOpt()));
+			Properties properties = new Properties();
+			properties.setProperty("user", cmd.getOptionValue(user.getLongOpt()));
+			properties.setProperty("password", cmd.getOptionValue(password.getLongOpt()));
+			properties.setProperty("useSSL", "false");
+			properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
+			String url = String.format("jdbc:mysql://%s:%s/%s", cmd.getOptionValue(hostName.getLongOpt(), "127.0.0.1"), 3306, cmd.getOptionValue(database.getLongOpt()));
+			Connection connection = DriverManager.getConnection(url, properties);
+
 
 			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
 			if (cmd.hasOption(year.getLongOpt()))
 				calendar.set(Calendar.YEAR,
 						Integer.parseInt(cmd.getOptionValue(year.getLongOpt())));
@@ -437,11 +183,10 @@ public class Main {
 			Date endDate = calendar.getTime();
 			Date issueDate = calendar.getTime();
 
-			MainSalaryBuilder salaryBuilder = cmd.hasOption(pretty.getLongOpt()) ? 
-					new PrettyMainSalaryBuilder(connection) : new  MainSalaryBuilder(connection);
-			
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) ;		
+					
 			RoundSalaryBuilder<ISalary> roundSalaryBuilder = 
-					new RoundSalaryBuilder<ISalary>(salaryBuilder, d -> d.setScale(2, RoundingMode.HALF_UP) );		
+					new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder, d -> d.setScale(2, RoundingMode.HALF_UP) );		
 					
 			Criteria criteria = new Criteria();
 			if (cmd.hasOption(ccc.getLongOpt()))
@@ -452,14 +197,69 @@ public class Main {
 				criteria.addEqualExpression(SQLContractSalaryCalculatorContext.PERSON_REGISTRY + "."
 						+ RegistryColumns.DOCUMENT,
 						cmd.getOptionValue(ipf.getLongOpt()));
+			if (cmd.hasOption(naf.getLongOpt()))
+				criteria.addEqualExpression(SQLConstants.PERSON + "."
+						+ PersonColumns.SOCIAL_SECURITY_NUM,
+						cmd.getOptionValue(naf.getLongOpt()));
 
 			connection.setAutoCommit(false);
+			
+			SQLContractSalaryCalculatorContext ctx = 
+			SalaryType.valueOf(cmd.getOptionValue(type.getLongOpt())).accept(new SalaryType.TypeVisitor<SQLContractSalaryCalculatorContext>() {
 
-			SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
-					connection, startDate, endDate, issueDate, criteria);
+				@Override
+				public SQLContractSalaryCalculatorContext visitSalary(SalaryType type) {
+					try {
+						return new SQLContractSalaryCalculatorContext(
+								connection, startDate, endDate, issueDate, criteria);
+					} catch (SQLException  | ExpressionException e) {
+						throw new RuntimeException(e);
+					} 
+				}
 
-			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>(
-					roundSalaryBuilder);
+				@Override
+				public SQLContractSalaryCalculatorContext visitExtra(SalaryType type) {
+					try {
+						return new SQLContractSalaryCalculatorContext(
+								connection, startDate, endDate, issueDate, criteria);
+					} catch (SQLException  | ExpressionException e) {
+						throw new RuntimeException(e);
+					} 
+				}
+
+				@Override
+				public SQLContractSalaryCalculatorContext visitSettle(SalaryType type) {
+					try {
+						return new SQLContractSalaryCalculatorContext(
+								connection, startDate, endDate, issueDate, criteria);
+					} catch (SQLException  | ExpressionException e) {
+						throw new RuntimeException(e);
+					} 
+				}
+
+				@Override
+				public SQLContractSalaryCalculatorContext visitDelay(SalaryType type) {
+					try {
+						return new SQLContractDelayCalculatorContext(
+								connection, startDate, endDate, issueDate, criteria);
+					} catch (SQLException  | ExpressionException e) {
+						throw new RuntimeException(e);
+					} 
+				}
+
+				@Override
+				public SQLContractSalaryCalculatorContext visitM190(SalaryType type) {
+					try {
+						return new SQLContractSalaryCalculatorContext(
+								connection, startDate, endDate, issueDate, criteria);
+					} catch (SQLException  | ExpressionException e) {
+						throw new RuntimeException(e);
+					} 
+				}
+				
+			});
+
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder);
 
 			while (ctx.next()) {
 				try {
@@ -470,11 +270,11 @@ public class Main {
 				}
 			}
 			
-			salaryBuilder.execute();
+			jooqSalaryBuilder.execute();
 			
-			if (cmd.hasOption(delete.getLongOpt())){
-				salaryBuilder.delete();
-			}
+//			if (cmd.hasOption(delete.getLongOpt())){
+//				salaryBuilder.delete();
+//			}
 
 			if (cmd.hasOption(dryRun.getLongOpt())) {
 				connection.rollback();

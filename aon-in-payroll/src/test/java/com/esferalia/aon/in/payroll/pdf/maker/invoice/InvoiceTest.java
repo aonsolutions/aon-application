@@ -206,7 +206,8 @@ public class InvoiceTest {
 		financeOne.setAdvance(true);
 		financeOne.setAmount(39687.23);
 		financeOne.setBankAccount(accountOne);
-		financeOne.setPayMethodType(PayMethodType.DEBIT_CARD);
+		financeOne.setPayMethodType(PayMethodType.OTHER);
+		financeOne.setPayMethodName("TRANSFERENCIA A 6000 DÍAS");
 		financeOne.setDueDate(new Date());
 		
 		Finance financeTwo = new Finance();

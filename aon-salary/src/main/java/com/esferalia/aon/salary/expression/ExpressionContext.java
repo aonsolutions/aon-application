@@ -293,19 +293,18 @@ public class ExpressionContext {
 			
 			
 			List<ITimedResult<T>> results = context.eval(expression, start, end, toType);
-
 			
 			for (ITimedResult<T> result : results) {
 				context.putVariable(expression.getName(), new ExpressionResult<T>(result, expression));
 			}
-			
+
 			Period deferredPeriod = new Period(start, end);
 			List<Period> calculatedPeriods =results.stream().map(r -> r.getPeriod()).collect(Collectors.toList());
 			
 			Period.sub(deferredPeriod, calculatedPeriods)
 			.forEach(p -> {
 				context.getVariables(expression.getName(), p.getStart(), p.getEnd()).forEach( v -> {
-					context.removeVariable(expression.getName(), v.getPeriod().getStart(), v.getPeriod().getEnd());
+					context.subVariable(expression.getName(), v.getPeriod().getStart(), v.getPeriod().getEnd());
 				});
 			});
 			
@@ -596,6 +595,11 @@ public class ExpressionContext {
 
 	public void removeVariable(Object name) {
 		variables.remove(name.toString());
+	}
+
+	public void subVariable(Object name, Date start, Date end) {
+		Period period = new Period(start, end);
+		variables.sub(name.toString(), period);
 	}
 
 	public void removeVariable(Object name, Date start, Date end) {

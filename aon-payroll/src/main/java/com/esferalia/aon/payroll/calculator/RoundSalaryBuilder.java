@@ -945,8 +945,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 		if ( isZero(totalIrpfBase))
 			return Collections.emptyMap();
-		if ( isZero(totalIrpfQuota))
-			return Collections.emptyMap();
+		//if ( isZero(totalIrpfQuota))
+		//	return Collections.emptyMap();
 		
 		Map<String, BigDecimal> irpfQuotasMap = new HashMap<>();
 		
