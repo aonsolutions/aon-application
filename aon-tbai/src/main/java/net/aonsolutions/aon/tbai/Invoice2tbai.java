@@ -379,11 +379,12 @@ public class Invoice2tbai {
 			
 			detalleNoExenta.setDesgloseIVA(desgloseIVA);
 			noExenta.getDetalleNoExenta().add(detalleNoExenta);
-			sujeta.setNoExenta(noExenta);
+			if(!noExenta.getDetalleNoExenta().isEmpty())
+				sujeta.setNoExenta(noExenta);
 
 			ExentaType exenta = new ExentaType();
 
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
+			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0).forEach(r -> {
 				DetalleExentaType detalleExenta = new DetalleExentaType();
 				detalleExenta.setBaseImponible(Double.toString(r.getBase()));
 				if(invoice.isIntracommunity())
@@ -392,7 +393,8 @@ public class Invoice2tbai {
 					detalleExenta.setCausaExencion(CausaExencionType.E_2);
 				exenta.getDetalleExenta().add(detalleExenta);
 			});
-			sujeta.setExenta(exenta);
+			if(!exenta.getDetalleExenta().isEmpty())
+				sujeta.setExenta(exenta);
 			
 			PrestacionServicios serv = new PrestacionServicios();
 			serv.setSujeta(sujeta);
