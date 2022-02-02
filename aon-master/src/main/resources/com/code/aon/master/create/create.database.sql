@@ -13,7 +13,7 @@ CREATE DATABASE `aon_master`
 USE `aon_master`;
 
 #
-# Structure for the `scope` table : 
+# Structure for the `scope` table :
 #
 
 CREATE TABLE `scope` (
@@ -26,7 +26,7 @@ CREATE TABLE `scope` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
 
 #
-# Structure for the `domain` table : 
+# Structure for the `domain` table :
 #
 
 CREATE TABLE `domain` (
@@ -61,7 +61,7 @@ CREATE TABLE `domain` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
 
 #
-# Structure for the `academic_year` table : 
+# Structure for the `academic_year` table :
 #
 
 CREATE TABLE `academic_year` (
@@ -74,7 +74,7 @@ CREATE TABLE `academic_year` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aï¿½o Academico';
 
 #
-# Structure for the `course_level` table : 
+# Structure for the `course_level` table :
 #
 
 CREATE TABLE `course_level` (
@@ -87,7 +87,7 @@ CREATE TABLE `course_level` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles de Cursos';
 
 #
-# Structure for the `course_subject` table : 
+# Structure for the `course_subject` table :
 #
 
 CREATE TABLE `course_subject` (
@@ -100,7 +100,7 @@ CREATE TABLE `course_subject` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Materias de Cursos';
 
 #
-# Structure for the `account` table : 
+# Structure for the `account` table :
 #
 
 CREATE TABLE `account` (
@@ -120,7 +120,7 @@ CREATE TABLE `account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables';
 
 #
-# Structure for the `invoicing_group` table : 
+# Structure for the `invoicing_group` table :
 #
 
 CREATE TABLE `invoicing_group` (
@@ -141,7 +141,7 @@ CREATE TABLE `invoicing_group` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Facturacion';
 
 #
-# Structure for the `registry` table : 
+# Structure for the `registry` table :
 #
 
 CREATE TABLE `registry` (
@@ -163,7 +163,7 @@ CREATE TABLE `registry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
 
 #
-# Structure for the `tariff` table : 
+# Structure for the `tariff` table :
 #
 
 CREATE TABLE `tariff` (
@@ -180,7 +180,7 @@ CREATE TABLE `tariff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas';
 
 #
-# Structure for the `customer` table : 
+# Structure for the `customer` table :
 #
 
 CREATE TABLE `customer` (
@@ -217,7 +217,7 @@ CREATE TABLE `customer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes';
 
 #
-# Structure for the `holiday` table : 
+# Structure for the `holiday` table :
 #
 
 CREATE TABLE `holiday` (
@@ -234,7 +234,7 @@ CREATE TABLE `holiday` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Festividades';
 
 #
-# Structure for the `calendar` table : 
+# Structure for the `calendar` table :
 #
 
 CREATE TABLE `calendar` (
@@ -270,7 +270,7 @@ CREATE TABLE `calendar` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Calendarios Laborales';
 
 #
-# Structure for the `enterprise` table : 
+# Structure for the `enterprise` table :
 #
 
 CREATE TABLE `enterprise` (
@@ -289,7 +289,7 @@ CREATE TABLE `enterprise` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Empresa';
 
 #
-# Structure for the `geozone` table : 
+# Structure for the `geozone` table :
 #
 
 CREATE TABLE `geozone` (
@@ -304,7 +304,7 @@ CREATE TABLE `geozone` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Zonas Geograficas';
 
 #
-# Structure for the `raddress` table : 
+# Structure for the `raddress` table :
 #
 
 CREATE TABLE `raddress` (
@@ -333,7 +333,7 @@ CREATE TABLE `raddress` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de Personas o Empresas';
 
 #
-# Structure for the `workplace` table : 
+# Structure for the `workplace` table :
 #
 
 CREATE TABLE `workplace` (
@@ -360,7 +360,7 @@ CREATE TABLE `workplace` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Centros de Trabajo';
 
 #
-# Structure for the `course` table : 
+# Structure for the `course` table :
 #
 
 CREATE TABLE `course` (
@@ -391,7 +391,7 @@ CREATE TABLE `course` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cursos';
 
 #
-# Structure for the `course_alumn` table : 
+# Structure for the `course_alumn` table :
 #
 
 CREATE TABLE `course_alumn` (
@@ -410,7 +410,7 @@ CREATE TABLE `course_alumn` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Alumnos por Curso';
 
 #
-# Structure for the `absence` table : 
+# Structure for the `absence` table :
 #
 
 CREATE TABLE `absence` (
@@ -428,7 +428,7 @@ CREATE TABLE `absence` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ausencias';
 
 #
-# Structure for the `academic_skill` table : 
+# Structure for the `academic_skill` table :
 #
 
 CREATE TABLE `academic_skill` (
@@ -442,7 +442,7 @@ CREATE TABLE `academic_skill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Academicas';
 
 #
-# Structure for the `account_period` table : 
+# Structure for the `account_period` table :
 #
 
 CREATE TABLE `account_period` (
@@ -463,7 +463,7 @@ CREATE TABLE `account_period` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ejercicios Contables';
 
 #
-# Structure for the `cnae` table : 
+# Structure for the `cnae` table :
 #
 
 CREATE TABLE `cnae` (
@@ -474,7 +474,7 @@ CREATE TABLE `cnae` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
 
 #
-# Structure for the `cnae2009` table : 
+# Structure for the `cnae2009` table :
 #
 
 CREATE TABLE `cnae2009` (
@@ -485,7 +485,7 @@ CREATE TABLE `cnae2009` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE 2009. Clasificaciï¿½n Nacional de Actividades Econï¿½micas ';
 
 #
-# Structure for the `iae` table : 
+# Structure for the `iae` table :
 #
 
 CREATE TABLE `iae` (
@@ -497,7 +497,7 @@ CREATE TABLE `iae` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='IAE';
 
 #
-# Structure for the `tax` table : 
+# Structure for the `tax` table :
 #
 
 CREATE TABLE `tax` (
@@ -526,7 +526,7 @@ CREATE TABLE `tax` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
 
 #
-# Structure for the `enterprise_activity` table : 
+# Structure for the `enterprise_activity` table :
 #
 
 CREATE TABLE `enterprise_activity` (
@@ -566,7 +566,7 @@ CREATE TABLE `enterprise_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
 
 #
-# Structure for the `account_entry` table : 
+# Structure for the `account_entry` table :
 #
 
 CREATE TABLE `account_entry` (
@@ -593,7 +593,7 @@ CREATE TABLE `account_entry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asientos Contables';
 
 #
-# Structure for the `rbank` table : 
+# Structure for the `rbank` table :
 #
 
 CREATE TABLE `rbank` (
@@ -616,7 +616,7 @@ CREATE TABLE `rbank` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de Cuentas Bancarias de Personas o Empresas';
 
 #
-# Structure for the `bank_statement` table : 
+# Structure for the `bank_statement` table :
 #
 
 CREATE TABLE `bank_statement` (
@@ -645,7 +645,7 @@ CREATE TABLE `bank_statement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Extractos bancarios';
 
 #
-# Structure for the `account_entry_bank_statement` table : 
+# Structure for the `account_entry_bank_statement` table :
 #
 
 CREATE TABLE `account_entry_bank_statement` (
@@ -663,7 +663,7 @@ CREATE TABLE `account_entry_bank_statement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Extractos bancarios';
 
 #
-# Structure for the `account_entry_detail` table : 
+# Structure for the `account_entry_detail` table :
 #
 
 CREATE TABLE `account_entry_detail` (
@@ -693,7 +693,7 @@ CREATE TABLE `account_entry_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Apuntes Contables';
 
 #
-# Structure for the `bank_statement_link` table : 
+# Structure for the `bank_statement_link` table :
 #
 
 CREATE TABLE `bank_statement_link` (
@@ -716,7 +716,7 @@ CREATE TABLE `bank_statement_link` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Enlaces del Extracto bancario';
 
 #
-# Structure for the `fbatch` table : 
+# Structure for the `fbatch` table :
 #
 
 CREATE TABLE `fbatch` (
@@ -745,7 +745,7 @@ CREATE TABLE `fbatch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas';
 
 #
-# Structure for the `account_entry_fbatch` table : 
+# Structure for the `account_entry_fbatch` table :
 #
 
 CREATE TABLE `account_entry_fbatch` (
@@ -763,7 +763,7 @@ CREATE TABLE `account_entry_fbatch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Remesas';
 
 #
-# Structure for the `invest_asset` table : 
+# Structure for the `invest_asset` table :
 #
 
 CREATE TABLE `invest_asset` (
@@ -785,7 +785,7 @@ CREATE TABLE `invest_asset` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bienes afectos o de inversion';
 
 #
-# Structure for the `department` table : 
+# Structure for the `department` table :
 #
 
 CREATE TABLE `department` (
@@ -798,7 +798,7 @@ CREATE TABLE `department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
 
 #
-# Structure for the `brand` table : 
+# Structure for the `brand` table :
 #
 
 CREATE TABLE `brand` (
@@ -811,7 +811,7 @@ CREATE TABLE `brand` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Marcas Comerciales';
 
 #
-# Structure for the `pcategory` table : 
+# Structure for the `pcategory` table :
 #
 
 CREATE TABLE `pcategory` (
@@ -827,7 +827,7 @@ CREATE TABLE `pcategory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Productos';
 
 #
-# Structure for the `product` table : 
+# Structure for the `product` table :
 #
 
 CREATE TABLE `product` (
@@ -875,7 +875,7 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
 
 #
-# Structure for the `tag` table : 
+# Structure for the `tag` table :
 #
 
 CREATE TABLE `tag` (
@@ -890,7 +890,7 @@ CREATE TABLE `tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
 
 #
-# Structure for the `item` table : 
+# Structure for the `item` table :
 #
 
 CREATE TABLE `item` (
@@ -938,7 +938,7 @@ CREATE TABLE `item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
 
 #
-# Structure for the `pos` table : 
+# Structure for the `pos` table :
 #
 
 CREATE TABLE `pos` (
@@ -977,7 +977,7 @@ CREATE TABLE `pos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='TPV';
 
 #
-# Structure for the `pos_shift` table : 
+# Structure for the `pos_shift` table :
 #
 
 CREATE TABLE `pos_shift` (
@@ -1003,7 +1003,7 @@ CREATE TABLE `pos_shift` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Turno de trabajo del TPV';
 
 #
-# Structure for the `project_type` table : 
+# Structure for the `project_type` table :
 #
 
 CREATE TABLE `project_type` (
@@ -1017,7 +1017,7 @@ CREATE TABLE `project_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Expedientes';
 
 #
-# Structure for the `project` table : 
+# Structure for the `project` table :
 #
 
 CREATE TABLE `project` (
@@ -1042,7 +1042,7 @@ CREATE TABLE `project` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proyectos';
 
 #
-# Structure for the `project_holder` table : 
+# Structure for the `project_holder` table :
 #
 
 CREATE TABLE `project_holder` (
@@ -1065,7 +1065,7 @@ CREATE TABLE `project_holder` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Project y Project Holder';
 
 #
-# Structure for the `commission_type` table : 
+# Structure for the `commission_type` table :
 #
 
 CREATE TABLE `commission_type` (
@@ -1079,7 +1079,7 @@ CREATE TABLE `commission_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Comisiones';
 
 #
-# Structure for the `seller` table : 
+# Structure for the `seller` table :
 #
 
 CREATE TABLE `seller` (
@@ -1099,7 +1099,7 @@ CREATE TABLE `seller` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
 
 #
-# Structure for the `invoice` table : 
+# Structure for the `invoice` table :
 #
 
 CREATE TABLE `invoice` (
@@ -1174,7 +1174,7 @@ CREATE TABLE `invoice` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Facturas';
 
 #
-# Structure for the `invoice_dua` table : 
+# Structure for the `invoice_dua` table :
 #
 
 CREATE TABLE `invoice_dua` (
@@ -1205,7 +1205,7 @@ CREATE TABLE `invoice_dua` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vinculo Factura DUA';
 
 #
-# Structure for the `invoice_fiscal` table : 
+# Structure for the `invoice_fiscal` table :
 #
 
 CREATE TABLE `invoice_fiscal` (
@@ -1232,7 +1232,7 @@ CREATE TABLE `invoice_fiscal` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Info fiscal de facturas';
 
 #
-# Structure for the `pay_method` table : 
+# Structure for the `pay_method` table :
 #
 
 CREATE TABLE `pay_method` (
@@ -1246,7 +1246,7 @@ CREATE TABLE `pay_method` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Formas de Pago';
 
 #
-# Structure for the `finance` table : 
+# Structure for the `finance` table :
 #
 
 CREATE TABLE `finance` (
@@ -1299,7 +1299,7 @@ CREATE TABLE `finance` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos';
 
 #
-# Structure for the `pm_type_detail` table : 
+# Structure for the `pm_type_detail` table :
 #
 
 CREATE TABLE `pm_type_detail` (
@@ -1316,7 +1316,7 @@ CREATE TABLE `pm_type_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles por Tipo de Forma de Pago';
 
 #
-# Structure for the `finance_tracking` table : 
+# Structure for the `finance_tracking` table :
 #
 
 CREATE TABLE `finance_tracking` (
@@ -1349,7 +1349,7 @@ CREATE TABLE `finance_tracking` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimiento de Vencimientos';
 
 #
-# Structure for the `account_entry_finance_tracking` table : 
+# Structure for the `account_entry_finance_tracking` table :
 #
 
 CREATE TABLE `account_entry_finance_tracking` (
@@ -1367,7 +1367,7 @@ CREATE TABLE `account_entry_finance_tracking` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Seguimiento de Vencimientos y Asientos Contab';
 
 #
-# Structure for the `account_entry_invoice` table : 
+# Structure for the `account_entry_invoice` table :
 #
 
 CREATE TABLE `account_entry_invoice` (
@@ -1386,7 +1386,7 @@ CREATE TABLE `account_entry_invoice` (
 
 
 #
-# Structure for the `application` table : 
+# Structure for the `application` table :
 #
 
 CREATE TABLE `application` (
@@ -1398,7 +1398,7 @@ CREATE TABLE `application` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicaciones';
 
 #
-# Structure for the `action` table : 
+# Structure for the `action` table :
 #
 
 CREATE TABLE `action` (
@@ -1424,7 +1424,7 @@ CREATE TABLE `auth` (
   `name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del usuario',
   `surname` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Apellidos del usuario.',
   `document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Documento de identificacion.',
-  `phone` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Número de telefono movil del usuario.',
+  `phone` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nï¿½mero de telefono movil del usuario.',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';
 
@@ -1444,7 +1444,7 @@ CREATE TABLE `auth_attach` (
 
 
 #
-# Structure for the `user` table : 
+# Structure for the `user` table :
 #
 
 CREATE TABLE `user` (
@@ -1477,7 +1477,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Usuarios';
 
 #
-# Structure for the `action_denied` table : 
+# Structure for the `action_denied` table :
 #
 
 CREATE TABLE `action_denied` (
@@ -1495,7 +1495,7 @@ CREATE TABLE `action_denied` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion no permitida para el Usuario';
 
 #
-# Structure for the `session` table : 
+# Structure for the `session` table :
 #
 
 CREATE TABLE `session` (
@@ -1518,7 +1518,7 @@ CREATE TABLE `session` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Sesion web';
 
 #
-# Structure for the `action_entry` table : 
+# Structure for the `action_entry` table :
 #
 
 CREATE TABLE `action_entry` (
@@ -1537,7 +1537,7 @@ CREATE TABLE `action_entry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Entrada de la ejecucion de una Accion';
 
 #
-# Structure for the `action_favorite` table : 
+# Structure for the `action_favorite` table :
 #
 
 CREATE TABLE `action_favorite` (
@@ -1556,7 +1556,7 @@ CREATE TABLE `action_favorite` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion Favorita del Usuario';
 
 #
-# Structure for the `activity_type` table : 
+# Structure for the `activity_type` table :
 #
 
 CREATE TABLE `activity_type` (
@@ -1573,7 +1573,7 @@ CREATE TABLE `activity_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Actividades';
 
 #
-# Structure for the `agreement` table : 
+# Structure for the `agreement` table :
 #
 
 CREATE TABLE `agreement` (
@@ -1581,7 +1581,8 @@ CREATE TABLE `agreement` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `calendar` int(4) DEFAULT NULL COMMENT 'Calendario',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
-  `ss_number` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de convenio',
+  `ss_number` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo Seguridad Social del convenio',
+  `owner` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Creador convenio, 0 = AonSolutions, 1 = ServiConvenios',
   PRIMARY KEY (`id`),
   KEY `IDX_AGREEMENT_CALENDAR` (`calendar`),
   KEY `IDX_AGREEMENT_DOMAIN` (`domain`),
@@ -1590,7 +1591,7 @@ CREATE TABLE `agreement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenios';
 
 #
-# Structure for the `agreement_data` table : 
+# Structure for the `agreement_data` table :
 #
 
 CREATE TABLE `agreement_data` (
@@ -1609,7 +1610,7 @@ CREATE TABLE `agreement_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del convenio';
 
 #
-# Structure for the `payment_concept` table : 
+# Structure for the `payment_concept` table :
 #
 
 CREATE TABLE `payment_concept` (
@@ -1628,7 +1629,7 @@ CREATE TABLE `payment_concept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
 
 #
-# Structure for the `agreement_payment` table : 
+# Structure for the `agreement_payment` table :
 #
 
 CREATE TABLE `agreement_payment` (
@@ -1656,7 +1657,7 @@ CREATE TABLE `agreement_payment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
 
 #
-# Structure for the `agreement_extra` table : 
+# Structure for the `agreement_extra` table :
 #
 
 CREATE TABLE `agreement_extra` (
@@ -1677,7 +1678,7 @@ CREATE TABLE `agreement_extra` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pagas extras';
 
 #
-# Structure for the `agreement_level` table : 
+# Structure for the `agreement_level` table :
 #
 
 CREATE TABLE `agreement_level` (
@@ -1693,7 +1694,7 @@ CREATE TABLE `agreement_level` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles retributivos';
 
 #
-# Structure for the `agreement_level_category` table : 
+# Structure for the `agreement_level_category` table :
 #
 
 CREATE TABLE `agreement_level_category` (
@@ -1709,7 +1710,7 @@ CREATE TABLE `agreement_level_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias profesionales';
 
 #
-# Structure for the `agreement_level_data` table : 
+# Structure for the `agreement_level_data` table :
 #
 
 CREATE TABLE `agreement_level_data` (
@@ -1728,7 +1729,7 @@ CREATE TABLE `agreement_level_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del convenio';
 
 #
-# Structure for the `alarm` table : 
+# Structure for the `alarm` table :
 #
 
 CREATE TABLE `alarm` (
@@ -1749,7 +1750,7 @@ CREATE TABLE `alarm` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Alarmas';
 
 #
-# Structure for the `catalogue` table : 
+# Structure for the `catalogue` table :
 #
 
 CREATE TABLE `catalogue` (
@@ -1765,7 +1766,7 @@ CREATE TABLE `catalogue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Catalogos';
 
 #
-# Structure for the `hotel` table : 
+# Structure for the `hotel` table :
 #
 
 CREATE TABLE `hotel` (
@@ -1797,7 +1798,7 @@ CREATE TABLE `hotel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hoteles';
 
 #
-# Structure for the `allotment` table : 
+# Structure for the `allotment` table :
 #
 
 CREATE TABLE `allotment` (
@@ -1828,7 +1829,7 @@ CREATE TABLE `allotment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cupos de seguridad';
 
 #
-# Structure for the `allotment_item` table : 
+# Structure for the `allotment_item` table :
 #
 
 CREATE TABLE `allotment_item` (
@@ -1846,7 +1847,7 @@ CREATE TABLE `allotment_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Habitacion por Cupo';
 
 #
-# Structure for the `allotment_tariff` table : 
+# Structure for the `allotment_tariff` table :
 #
 
 CREATE TABLE `allotment_tariff` (
@@ -1864,7 +1865,7 @@ CREATE TABLE `allotment_tariff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Cupo';
 
 #
-# Structure for the `alumn_loan` table : 
+# Structure for the `alumn_loan` table :
 #
 
 CREATE TABLE `alumn_loan` (
@@ -1883,7 +1884,7 @@ CREATE TABLE `alumn_loan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prestamos a Alumnos';
 
 #
-# Structure for the `amortization` table : 
+# Structure for the `amortization` table :
 #
 
 CREATE TABLE `amortization` (
@@ -1916,7 +1917,7 @@ CREATE TABLE `amortization` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fichas de Amortizacion Contables';
 
 #
-# Structure for the `amortization_detail` table : 
+# Structure for the `amortization_detail` table :
 #
 
 CREATE TABLE `amortization_detail` (
@@ -1940,7 +1941,7 @@ CREATE TABLE `amortization_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Ficha de Amortizacion Contable';
 
 #
-# Structure for the `amortization_invoice` table : 
+# Structure for the `amortization_invoice` table :
 #
 
 CREATE TABLE `amortization_invoice` (
@@ -1959,7 +1960,7 @@ CREATE TABLE `amortization_invoice` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vinculo entr la Ficha de Amortizacion y la factura.';
 
 #
-# Structure for the `amortization_type` table : 
+# Structure for the `amortization_type` table :
 #
 
 CREATE TABLE `amortization_type` (
@@ -1976,7 +1977,7 @@ CREATE TABLE `amortization_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Amortizacion';
 
 #
-# Structure for the `app_param` table : 
+# Structure for the `app_param` table :
 #
 
 CREATE TABLE `app_param` (
@@ -1991,7 +1992,7 @@ CREATE TABLE `app_param` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Parametros de la Aplicacion';
 
 #
-# Structure for the `role` table : 
+# Structure for the `role` table :
 #
 
 CREATE TABLE `role` (
@@ -2001,7 +2002,7 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Roles';
 
 #
-# Structure for the `application_role` table : 
+# Structure for the `application_role` table :
 #
 
 CREATE TABLE `application_role` (
@@ -2016,7 +2017,7 @@ CREATE TABLE `application_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Roles de la Aplicacion';
 
 #
-# Structure for the `domain_application` table : 
+# Structure for the `domain_application` table :
 #
 
 CREATE TABLE `domain_application` (
@@ -2034,7 +2035,7 @@ CREATE TABLE `domain_application` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
 
 #
-# Structure for the `domain_app` table : 
+# Structure for the `domain_app` table :
 #
 
 CREATE TABLE `domain_app` (
@@ -2048,7 +2049,7 @@ CREATE TABLE `domain_app` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
 
 #
-# Structure for the `user_app_role` table : 
+# Structure for the `user_app_role` table :
 #
 
 CREATE TABLE `user_app_role` (
@@ -2066,7 +2067,7 @@ CREATE TABLE `user_app_role` (
 
 
 #
-# Structure for the `application_user` table : 
+# Structure for the `application_user` table :
 #
 
 CREATE TABLE `application_user` (
@@ -2085,7 +2086,7 @@ CREATE TABLE `application_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Usuarios de las Aplicaciones del Dominio';
 
 #
-# Structure for the `profile` table : 
+# Structure for the `profile` table :
 #
 
 CREATE TABLE `profile` (
@@ -2101,7 +2102,7 @@ CREATE TABLE `profile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Perfiles';
 
 #
-# Structure for the `application_user_profile` table : 
+# Structure for the `application_user_profile` table :
 #
 
 CREATE TABLE `application_user_profile` (
@@ -2119,7 +2120,7 @@ CREATE TABLE `application_user_profile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Perfiles del Usuario para la Aplicacion';
 
 #
-# Structure for the `asset` table : 
+# Structure for the `asset` table :
 #
 
 CREATE TABLE `asset` (
@@ -2133,7 +2134,7 @@ CREATE TABLE `asset` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Activos';
 
 #
-# Structure for the `asset_activity` table : 
+# Structure for the `asset_activity` table :
 #
 
 CREATE TABLE `asset_activity` (
@@ -2155,7 +2156,7 @@ CREATE TABLE `asset_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades sobre el Activo';
 
 #
-# Structure for the `feature` table : 
+# Structure for the `feature` table :
 #
 
 CREATE TABLE `feature` (
@@ -2168,7 +2169,7 @@ CREATE TABLE `feature` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Caracteristicas';
 
 #
-# Structure for the `asset_feature` table : 
+# Structure for the `asset_feature` table :
 #
 
 CREATE TABLE `asset_feature` (
@@ -2186,7 +2187,7 @@ CREATE TABLE `asset_feature` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Caracteristicas por Activo';
 
 #
-# Structure for the `auto_concept` table : 
+# Structure for the `auto_concept` table :
 #
 
 CREATE TABLE `auto_concept` (
@@ -2199,7 +2200,7 @@ CREATE TABLE `auto_concept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos Automaticos';
 
 #
-# Structure for the `balance` table : 
+# Structure for the `balance` table :
 #
 
 CREATE TABLE `balance` (
@@ -2214,7 +2215,7 @@ CREATE TABLE `balance` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Balances';
 
 #
-# Structure for the `balance_detail` table : 
+# Structure for the `balance_detail` table :
 #
 
 CREATE TABLE `balance_detail` (
@@ -2239,7 +2240,7 @@ CREATE TABLE `balance_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
 
 #
-# Structure for the `bank_concept` table : 
+# Structure for the `bank_concept` table :
 #
 
 CREATE TABLE `bank_concept` (
@@ -2255,7 +2256,7 @@ CREATE TABLE `bank_concept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos bancarios';
 
 #
-# Structure for the `bonus_concept` table : 
+# Structure for the `bonus_concept` table :
 #
 
 CREATE TABLE `bonus_concept` (
@@ -2270,7 +2271,7 @@ CREATE TABLE `bonus_concept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de bonficaciones y/o reducciones';
 
 #
-# Structure for the `project_reservation` table : 
+# Structure for the `project_reservation` table :
 #
 
 CREATE TABLE `project_reservation` (
@@ -2342,7 +2343,7 @@ CREATE TABLE `project_reservation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Reservas de Hotel';
 
 #
-# Structure for the `project_reservation_room` table : 
+# Structure for the `project_reservation_room` table :
 #
 
 CREATE TABLE `project_reservation_room` (
@@ -2373,7 +2374,7 @@ CREATE TABLE `project_reservation_room` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Habitaciones por Reserva';
 
 #
-# Structure for the `booking` table : 
+# Structure for the `booking` table :
 #
 
 CREATE TABLE `booking` (
@@ -2404,7 +2405,7 @@ CREATE TABLE `booking` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Booking de Hoteles';
 
 #
-# Structure for the `calendar_holiday` table : 
+# Structure for the `calendar_holiday` table :
 #
 
 CREATE TABLE `calendar_holiday` (
@@ -2423,7 +2424,7 @@ CREATE TABLE `calendar_holiday` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Festivos de Calendarios';
 
 #
-# Structure for the `calendar_period` table : 
+# Structure for the `calendar_period` table :
 #
 
 CREATE TABLE `calendar_period` (
@@ -2456,7 +2457,7 @@ CREATE TABLE `calendar_period` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Periodos de Calendarios';
 
 #
-# Structure for the `campaign_type` table : 
+# Structure for the `campaign_type` table :
 #
 
 CREATE TABLE `campaign_type` (
@@ -2470,7 +2471,7 @@ CREATE TABLE `campaign_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Campaï¿½as';
 
 #
-# Structure for the `process` table : 
+# Structure for the `process` table :
 #
 
 CREATE TABLE `process` (
@@ -2484,7 +2485,7 @@ CREATE TABLE `process` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Procesos';
 
 #
-# Structure for the `workgroup` table : 
+# Structure for the `workgroup` table :
 #
 
 CREATE TABLE `workgroup` (
@@ -2498,7 +2499,7 @@ CREATE TABLE `workgroup` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Trabajo';
 
 #
-# Structure for the `campaign` table : 
+# Structure for the `campaign` table :
 #
 
 CREATE TABLE `campaign` (
@@ -2524,7 +2525,7 @@ CREATE TABLE `campaign` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campaï¿½as';
 
 #
-# Structure for the `campaign_project` table : 
+# Structure for the `campaign_project` table :
 #
 
 CREATE TABLE `campaign_project` (
@@ -2542,7 +2543,7 @@ CREATE TABLE `campaign_project` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campaï¿½as y Expedientes';
 
 #
-# Structure for the `carrier` table : 
+# Structure for the `carrier` table :
 #
 
 CREATE TABLE `carrier` (
@@ -2559,7 +2560,7 @@ CREATE TABLE `carrier` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agencias de Transporte';
 
 #
-# Structure for the `carrier_packing` table : 
+# Structure for the `carrier_packing` table :
 #
 
 CREATE TABLE `carrier_packing` (
@@ -2595,7 +2596,7 @@ CREATE TABLE `carrier_packing` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hojas de ruta';
 
 #
-# Structure for the `cashflow_forecast` table : 
+# Structure for the `cashflow_forecast` table :
 #
 
 CREATE TABLE `cashflow_forecast` (
@@ -2628,7 +2629,7 @@ CREATE TABLE `cashflow_forecast` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prevision de tesoreria';
 
 #
-# Structure for the `catalogue_category` table : 
+# Structure for the `catalogue_category` table :
 #
 
 CREATE TABLE `catalogue_category` (
@@ -2648,7 +2649,7 @@ CREATE TABLE `catalogue_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias del Catalogo';
 
 #
-# Structure for the `catalogue_item` table : 
+# Structure for the `catalogue_item` table :
 #
 
 CREATE TABLE `catalogue_item` (
@@ -2672,7 +2673,7 @@ CREATE TABLE `catalogue_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos del Catalogo';
 
 #
-# Structure for the `rattach` table : 
+# Structure for the `rattach` table :
 #
 
 CREATE TABLE `rattach` (
@@ -2705,7 +2706,7 @@ CREATE TABLE `rattach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
 
 #
-# Structure for the `category` table : 
+# Structure for the `category` table :
 #
 
 CREATE TABLE `category` (
@@ -2727,7 +2728,7 @@ CREATE TABLE `category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias';
 
 #
-# Structure for the `certifica2_batch` table : 
+# Structure for the `certifica2_batch` table :
 #
 
 CREATE TABLE `certifica2_batch` (
@@ -2750,7 +2751,7 @@ CREATE TABLE `certifica2_batch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de certificados de empresa';
 
 #
-# Structure for the `enterprise_ccc` table : 
+# Structure for the `enterprise_ccc` table :
 #
 
 CREATE TABLE `enterprise_ccc` (
@@ -2770,7 +2771,7 @@ CREATE TABLE `enterprise_ccc` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Codigo Cuenta Cotizacion';
 
 #
-# Structure for the `person` table : 
+# Structure for the `person` table :
 #
 
 CREATE TABLE `person` (
@@ -2790,7 +2791,7 @@ CREATE TABLE `person` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Personas';
 
 #
-# Structure for the `contract` table : 
+# Structure for the `contract` table :
 #
 
 CREATE TABLE `contract` (
@@ -2830,7 +2831,7 @@ CREATE TABLE `contract` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contratos';
 
 #
-# Structure for the `certifica2_batch_detail` table : 
+# Structure for the `certifica2_batch_detail` table :
 #
 
 CREATE TABLE `certifica2_batch_detail` (
@@ -2851,7 +2852,7 @@ CREATE TABLE `certifica2_batch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
 
 #
-# Structure for the `cnae2009_rate` table : 
+# Structure for the `cnae2009_rate` table :
 #
 
 CREATE TABLE `cnae2009_rate` (
@@ -2867,7 +2868,7 @@ CREATE TABLE `cnae2009_rate` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas de primas para I.T e I.M.S';
 
 #
-# Structure for the `cno` table : 
+# Structure for the `cno` table :
 #
 
 CREATE TABLE `cno` (
@@ -2878,7 +2879,7 @@ CREATE TABLE `cno` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNO';
 
 #
-# Structure for the `survey` table : 
+# Structure for the `survey` table :
 #
 
 CREATE TABLE `survey` (
@@ -2896,7 +2897,7 @@ CREATE TABLE `survey` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuestionarios';
 
 #
-# Structure for the `commercial_activity` table : 
+# Structure for the `commercial_activity` table :
 #
 
 CREATE TABLE `commercial_activity` (
@@ -2913,7 +2914,7 @@ CREATE TABLE `commercial_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades Comerciales';
 
 #
-# Structure for the `commercial_term` table : 
+# Structure for the `commercial_term` table :
 #
 
 CREATE TABLE `commercial_term` (
@@ -2929,7 +2930,7 @@ CREATE TABLE `commercial_term` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones Comerciales';
 
 #
-# Structure for the `supplier` table : 
+# Structure for the `supplier` table :
 #
 
 CREATE TABLE `supplier` (
@@ -2961,7 +2962,7 @@ CREATE TABLE `supplier` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores';
 
 #
-# Structure for the `target` table : 
+# Structure for the `target` table :
 #
 
 CREATE TABLE `target` (
@@ -2989,7 +2990,7 @@ CREATE TABLE `target` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales';
 
 #
-# Structure for the `offer` table : 
+# Structure for the `offer` table :
 #
 
 CREATE TABLE `offer` (
@@ -3050,7 +3051,7 @@ CREATE TABLE `offer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuestos';
 
 #
-# Structure for the `project_commercial` table : 
+# Structure for the `project_commercial` table :
 #
 
 CREATE TABLE `project_commercial` (
@@ -3074,7 +3075,7 @@ CREATE TABLE `project_commercial` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Operaciones Comerciales';
 
 #
-# Structure for the `commercial_tracking` table : 
+# Structure for the `commercial_tracking` table :
 #
 
 CREATE TABLE `commercial_tracking` (
@@ -3108,7 +3109,7 @@ CREATE TABLE `commercial_tracking` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimientos Comerciales';
 
 #
-# Structure for the `commission` table : 
+# Structure for the `commission` table :
 #
 
 CREATE TABLE `commission` (
@@ -3123,7 +3124,7 @@ CREATE TABLE `commission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones';
 
 #
-# Structure for the `commission_category` table : 
+# Structure for the `commission_category` table :
 #
 
 CREATE TABLE `commission_category` (
@@ -3143,7 +3144,7 @@ CREATE TABLE `commission_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Categoria';
 
 #
-# Structure for the `commission_item` table : 
+# Structure for the `commission_item` table :
 #
 
 CREATE TABLE `commission_item` (
@@ -3164,7 +3165,7 @@ CREATE TABLE `commission_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Articulo';
 
 #
-# Structure for the `commission_type_commission` table : 
+# Structure for the `commission_type_commission` table :
 #
 
 CREATE TABLE `commission_type_commission` (
@@ -3182,7 +3183,7 @@ CREATE TABLE `commission_type_commission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Tipo de Comision';
 
 #
-# Structure for the `company` table : 
+# Structure for the `company` table :
 #
 
 CREATE TABLE `company` (
@@ -3201,7 +3202,7 @@ CREATE TABLE `company` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos Corporativos';
 
 #
-# Structure for the `contact_data` table : 
+# Structure for the `contact_data` table :
 #
 
 CREATE TABLE `contact_data` (
@@ -3234,7 +3235,7 @@ CREATE TABLE `contact_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contactos';
 
 #
-# Structure for the `contact` table : 
+# Structure for the `contact` table :
 #
 
 CREATE TABLE `contact` (
@@ -3253,7 +3254,7 @@ CREATE TABLE `contact` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupo de Contactos';
 
 #
-# Structure for the `contact_detail` table : 
+# Structure for the `contact_detail` table :
 #
 
 CREATE TABLE `contact_detail` (
@@ -3271,7 +3272,7 @@ CREATE TABLE `contact_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Grupo de Contactos';
 
 #
-# Structure for the `contract_attach` table : 
+# Structure for the `contract_attach` table :
 #
 
 CREATE TABLE `contract_attach` (
@@ -3296,7 +3297,7 @@ CREATE TABLE `contract_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de contratos';
 
 #
-# Structure for the `contract_batch` table : 
+# Structure for the `contract_batch` table :
 #
 
 CREATE TABLE `contract_batch` (
@@ -3316,7 +3317,7 @@ CREATE TABLE `contract_batch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de contratos';
 
 #
-# Structure for the `contract_batch_detail` table : 
+# Structure for the `contract_batch_detail` table :
 #
 
 CREATE TABLE `contract_batch_detail` (
@@ -3338,7 +3339,7 @@ CREATE TABLE `contract_batch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de contratos';
 
 #
-# Structure for the `contract_bonus` table : 
+# Structure for the `contract_bonus` table :
 #
 
 CREATE TABLE `contract_bonus` (
@@ -3360,7 +3361,7 @@ CREATE TABLE `contract_bonus` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bonificaciones';
 
 #
-# Structure for the `contract_calendar_event` table : 
+# Structure for the `contract_calendar_event` table :
 #
 
 CREATE TABLE `contract_calendar_event` (
@@ -3378,7 +3379,7 @@ CREATE TABLE `contract_calendar_event` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias de calendario en Contratos';
 
 #
-# Structure for the `contract_clause` table : 
+# Structure for the `contract_clause` table :
 #
 
 CREATE TABLE `contract_clause` (
@@ -3397,7 +3398,7 @@ CREATE TABLE `contract_clause` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clausulas de contrato';
 
 #
-# Structure for the `contract_data` table : 
+# Structure for the `contract_data` table :
 #
 
 CREATE TABLE `contract_data` (
@@ -3416,7 +3417,7 @@ CREATE TABLE `contract_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
 
 #
-# Structure for the `deduction_concept` table : 
+# Structure for the `deduction_concept` table :
 #
 
 CREATE TABLE `deduction_concept` (
@@ -3433,7 +3434,7 @@ CREATE TABLE `deduction_concept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de deducciones';
 
 #
-# Structure for the `contract_cost` table : 
+# Structure for the `contract_cost` table :
 #
 
 CREATE TABLE `contract_cost` (
@@ -3454,7 +3455,7 @@ CREATE TABLE `contract_cost` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Costes';
 
 #
-# Structure for the `contract_deduction` table : 
+# Structure for the `contract_deduction` table :
 #
 
 CREATE TABLE `contract_deduction` (
@@ -3479,7 +3480,7 @@ CREATE TABLE `contract_deduction` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
 #
-# Structure for the `contract_embargo` table : 
+# Structure for the `contract_embargo` table :
 #
 
 CREATE TABLE `contract_embargo` (
@@ -3499,7 +3500,7 @@ CREATE TABLE `contract_embargo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Embargos';
 
 #
-# Structure for the `contract_info` table : 
+# Structure for the `contract_info` table :
 #
 
 CREATE TABLE `contract_info` (
@@ -3522,7 +3523,7 @@ CREATE TABLE `contract_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion temporal del Contrato';
 
 #
-# Structure for the `contract_leave` table : 
+# Structure for the `contract_leave` table :
 #
 
 CREATE TABLE `contract_leave` (
@@ -3548,7 +3549,7 @@ CREATE TABLE `contract_leave` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bajas';
 
 #
-# Structure for the `contract_leave_detail` table : 
+# Structure for the `contract_leave_detail` table :
 #
 
 CREATE TABLE `contract_leave_detail` (
@@ -3569,7 +3570,7 @@ CREATE TABLE `contract_leave_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las bajas';
 
 #
-# Structure for the `contract_payment` table : 
+# Structure for the `contract_payment` table :
 #
 
 CREATE TABLE `contract_payment` (
@@ -3597,7 +3598,7 @@ CREATE TABLE `contract_payment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 
 #
-# Structure for the `contrata_batch` table : 
+# Structure for the `contrata_batch` table :
 #
 
 CREATE TABLE `contrata_batch` (
@@ -3617,7 +3618,7 @@ CREATE TABLE `contrata_batch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de altas de Contratos';
 
 #
-# Structure for the `contrata_batch_detail` table : 
+# Structure for the `contrata_batch_detail` table :
 #
 
 CREATE TABLE `contrata_batch_detail` (
@@ -3636,7 +3637,7 @@ CREATE TABLE `contrata_batch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Remesas de altas de Contratos';
 
 #
-# Structure for the `cost_profile` table : 
+# Structure for the `cost_profile` table :
 #
 
 CREATE TABLE `cost_profile` (
@@ -3650,7 +3651,7 @@ CREATE TABLE `cost_profile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Perfiles de Costos para Usuarios';
 
 #
-# Structure for the `course_academicskill` table : 
+# Structure for the `course_academicskill` table :
 #
 
 CREATE TABLE `course_academicskill` (
@@ -3669,7 +3670,7 @@ CREATE TABLE `course_academicskill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Aptitudes Academicas por Curso';
 
 #
-# Structure for the `quality_skill` table : 
+# Structure for the `quality_skill` table :
 #
 
 CREATE TABLE `quality_skill` (
@@ -3683,7 +3684,7 @@ CREATE TABLE `quality_skill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Calidad';
 
 #
-# Structure for the `course_evaluation` table : 
+# Structure for the `course_evaluation` table :
 #
 
 CREATE TABLE `course_evaluation` (
@@ -3703,7 +3704,7 @@ CREATE TABLE `course_evaluation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Evaluaciones por Curso';
 
 #
-# Structure for the `task_holder` table : 
+# Structure for the `task_holder` table :
 #
 
 CREATE TABLE `task_holder` (
@@ -3724,7 +3725,7 @@ CREATE TABLE `task_holder` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Titulares de Tareas';
 
 #
-# Structure for the `course_instructor` table : 
+# Structure for the `course_instructor` table :
 #
 
 CREATE TABLE `course_instructor` (
@@ -3743,7 +3744,7 @@ CREATE TABLE `course_instructor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Profesores por Curso';
 
 #
-# Structure for the `course_observation` table : 
+# Structure for the `course_observation` table :
 #
 
 CREATE TABLE `course_observation` (
@@ -3759,7 +3760,7 @@ CREATE TABLE `course_observation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Observaciones por Curso';
 
 #
-# Structure for the `course_schedule` table : 
+# Structure for the `course_schedule` table :
 #
 
 CREATE TABLE `course_schedule` (
@@ -3777,7 +3778,7 @@ CREATE TABLE `course_schedule` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Horarios de Cursos';
 
 #
-# Structure for the `cra_batch` table : 
+# Structure for the `cra_batch` table :
 #
 
 CREATE TABLE `cra_batch` (
@@ -3796,7 +3797,7 @@ CREATE TABLE `cra_batch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas del fichero cra';
 
 #
-# Structure for the `cra_batch_detail` table : 
+# Structure for the `cra_batch_detail` table :
 #
 
 CREATE TABLE `cra_batch_detail` (
@@ -3814,7 +3815,7 @@ CREATE TABLE `cra_batch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las Remesas del fichero cra';
 
 #
-# Structure for the `creditor` table : 
+# Structure for the `creditor` table :
 #
 
 CREATE TABLE `creditor` (
@@ -3841,7 +3842,7 @@ CREATE TABLE `creditor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acreedores';
 
 #
-# Structure for the `customer_fee` table : 
+# Structure for the `customer_fee` table :
 #
 
 CREATE TABLE `customer_fee` (
@@ -3881,7 +3882,7 @@ CREATE TABLE `customer_fee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuotas de Clientes';
 
 #
-# Structure for the `job_type` table : 
+# Structure for the `job_type` table :
 #
 
 CREATE TABLE `job_type` (
@@ -3894,7 +3895,7 @@ CREATE TABLE `job_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Trabajos';
 
 #
-# Structure for the `task` table : 
+# Structure for the `task` table :
 #
 
 CREATE TABLE `task` (
@@ -3943,7 +3944,7 @@ CREATE TABLE `task` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tareas';
 
 #
-# Structure for the `daily_tracking` table : 
+# Structure for the `daily_tracking` table :
 #
 
 CREATE TABLE `daily_tracking` (
@@ -3977,7 +3978,7 @@ CREATE TABLE `daily_tracking` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Parte Diario de Trabajo';
 
 #
-# Structure for the `data_attach` table : 
+# Structure for the `data_attach` table :
 #
 
 CREATE TABLE `data_attach` (
@@ -4001,7 +4002,7 @@ CREATE TABLE `data_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='DATA ATTACH';
 
 #
-# Structure for the `data_request` table : 
+# Structure for the `data_request` table :
 #
 
 CREATE TABLE `data_request` (
@@ -4009,7 +4010,7 @@ CREATE TABLE `data_request` (
   `domain` int(4) NOT NULL DEFAULT 0 COMMENT 'Dominio',
   `date` datetime DEFAULT NULL COMMENT 'Fecha',
   `type` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'Tipo',
-  `black_box` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Información necesaria para replicar la petición',
+  `black_box` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Informaciï¿½n necesaria para replicar la peticiï¿½n',
   `md5` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Hash md5',
   PRIMARY KEY (`id`),
   KEY `IDX_DATA_REQUEST_DOMAIN` (`domain`),
@@ -4017,7 +4018,7 @@ CREATE TABLE `data_request` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Data Request';
 
 #
-# Structure for the `data_response` table : 
+# Structure for the `data_response` table :
 #
 
 CREATE TABLE `data_response` (
@@ -4040,7 +4041,7 @@ CREATE TABLE `data_response` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='DATA RESPONSE';
 
 #
-# Structure for the `data_response_detail` table : 
+# Structure for the `data_response_detail` table :
 #
 
 CREATE TABLE `data_response_detail` (
@@ -4061,7 +4062,7 @@ CREATE TABLE `data_response_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='DATA RESPONSE DETAIL';
 
 #
-# Structure for the `db_version` table : 
+# Structure for the `db_version` table :
 #
 
 CREATE TABLE `db_version` (
@@ -4070,7 +4071,7 @@ CREATE TABLE `db_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Version de la Base de Datos';
 
 #
-# Structure for the `delivery` table : 
+# Structure for the `delivery` table :
 #
 
 CREATE TABLE `delivery` (
@@ -4140,7 +4141,7 @@ CREATE TABLE `delivery` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Albaranes de Venta';
 
 #
-# Structure for the `offer_detail` table : 
+# Structure for the `offer_detail` table :
 #
 
 CREATE TABLE `offer_detail` (
@@ -4168,7 +4169,7 @@ CREATE TABLE `offer_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Presupuesto';
 
 #
-# Structure for the `sales` table : 
+# Structure for the `sales` table :
 #
 
 CREATE TABLE `sales` (
@@ -4238,7 +4239,7 @@ CREATE TABLE `sales` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pedidos de Venta';
 
 #
-# Structure for the `sales_detail` table : 
+# Structure for the `sales_detail` table :
 #
 
 CREATE TABLE `sales_detail` (
@@ -4278,7 +4279,7 @@ CREATE TABLE `sales_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Pedido de Venta';
 
 #
-# Structure for the `warehouse` table : 
+# Structure for the `warehouse` table :
 #
 
 CREATE TABLE `warehouse` (
@@ -4298,7 +4299,7 @@ CREATE TABLE `warehouse` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Almacenes';
 
 #
-# Structure for the `delivery_detail` table : 
+# Structure for the `delivery_detail` table :
 #
 
 CREATE TABLE `delivery_detail` (
@@ -4331,7 +4332,7 @@ CREATE TABLE `delivery_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Albaran de Venta';
 
 #
-# Structure for the `domain_application_module` table : 
+# Structure for the `domain_application_module` table :
 #
 
 CREATE TABLE `domain_application_module` (
@@ -4347,7 +4348,7 @@ CREATE TABLE `domain_application_module` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos de las Aplicaciones del Dominio';
 
 #
-# Structure for the `domain_gserviceaccount` table : 
+# Structure for the `domain_gserviceaccount` table :
 #
 
 CREATE TABLE `domain_gserviceaccount` (
@@ -4366,7 +4367,7 @@ CREATE TABLE `domain_gserviceaccount` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 #
-# Structure for the `elaboration` table : 
+# Structure for the `elaboration` table :
 #
 
 CREATE TABLE `elaboration` (
@@ -4398,7 +4399,7 @@ CREATE TABLE `elaboration` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ordenes de elaboracion';
 
 #
-# Structure for the `elaboration_detail` table : 
+# Structure for the `elaboration_detail` table :
 #
 
 CREATE TABLE `elaboration_detail` (
@@ -4426,7 +4427,7 @@ CREATE TABLE `elaboration_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de ordenes de elaboracion';
 
 #
-# Structure for the `elaboration_detail_composition` table : 
+# Structure for the `elaboration_detail_composition` table :
 #
 
 CREATE TABLE `elaboration_detail_composition` (
@@ -4453,7 +4454,7 @@ CREATE TABLE `elaboration_detail_composition` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Composicion de ordenes de elaboracion';
 
 #
-# Structure for the `enterprise_data` table : 
+# Structure for the `enterprise_data` table :
 #
 
 CREATE TABLE `enterprise_data` (
@@ -4472,7 +4473,7 @@ CREATE TABLE `enterprise_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de la Empresa';
 
 #
-# Structure for the `evaluation_observation` table : 
+# Structure for the `evaluation_observation` table :
 #
 
 CREATE TABLE `evaluation_observation` (
@@ -4489,7 +4490,7 @@ CREATE TABLE `evaluation_observation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Observaciones por Evaluacion';
 
 #
-# Structure for the `fan_batch` table : 
+# Structure for the `fan_batch` table :
 #
 
 CREATE TABLE `fan_batch` (
@@ -4509,7 +4510,7 @@ CREATE TABLE `fan_batch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas del fichero fan';
 
 #
-# Structure for the `fan_batch_detail` table : 
+# Structure for the `fan_batch_detail` table :
 #
 
 CREATE TABLE `fan_batch_detail` (
@@ -4527,7 +4528,7 @@ CREATE TABLE `fan_batch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas del fichero fan';
 
 #
-# Structure for the `favorite_category` table : 
+# Structure for the `favorite_category` table :
 #
 
 CREATE TABLE `favorite_category` (
@@ -4543,7 +4544,7 @@ CREATE TABLE `favorite_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Favoritos de Usuario';
 
 #
-# Structure for the `favorite` table : 
+# Structure for the `favorite` table :
 #
 
 CREATE TABLE `favorite` (
@@ -4563,7 +4564,7 @@ CREATE TABLE `favorite` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Favoritos de Usuario';
 
 #
-# Structure for the `fbatch_detail` table : 
+# Structure for the `fbatch_detail` table :
 #
 
 CREATE TABLE `fbatch_detail` (
@@ -4587,7 +4588,7 @@ CREATE TABLE `fbatch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Remesa';
 
 #
-# Structure for the `finance_pos` table : 
+# Structure for the `finance_pos` table :
 #
 
 CREATE TABLE `finance_pos` (
@@ -4607,7 +4608,7 @@ CREATE TABLE `finance_pos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos de TPV';
 
 #
-# Structure for the `fs_activity` table : 
+# Structure for the `fs_activity` table :
 #
 
 CREATE TABLE `fs_activity` (
@@ -4629,7 +4630,7 @@ CREATE TABLE `fs_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fiscal. Datos previos de Modulos';
 
 #
-# Structure for the `fs_activity_info` table : 
+# Structure for the `fs_activity_info` table :
 #
 
 CREATE TABLE `fs_activity_info` (
@@ -4653,7 +4654,7 @@ CREATE TABLE `fs_activity_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fiscal. Informacion de los Datos previos de Modulos';
 
 #
-# Structure for the `fs_mod347` table : 
+# Structure for the `fs_mod347` table :
 #
 
 CREATE TABLE `fs_mod347` (
@@ -4670,7 +4671,7 @@ CREATE TABLE `fs_mod347` (
   `replaced_number` varchar(13) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Decl. complementada o sustituida',
   `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF',
   `name` varchar(40) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
-  `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono Persona de Contacto',  
+  `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono Persona de Contacto',
   `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
   `contact_person` varchar(40) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `representative_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF Representante Legal',
@@ -4684,7 +4685,7 @@ CREATE TABLE `fs_mod347` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de Model 347';
 
 #
-# Structure for the `fs_mod347_detail` table : 
+# Structure for the `fs_mod347_detail` table :
 #
 
 CREATE TABLE `fs_mod347_detail` (
@@ -4744,7 +4745,7 @@ CREATE TABLE `fs_mod347_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de la Declaracion 347';
 
 #
-# Structure for the `fs_mod349` table : 
+# Structure for the `fs_mod349` table :
 #
 
 CREATE TABLE `fs_mod349` (
@@ -4763,7 +4764,7 @@ CREATE TABLE `fs_mod349` (
   `document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF',
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `representative_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF Representante Legal',
-  `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono Persona de Contacto',  
+  `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono Persona de Contacto',
   `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
   `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `periodicity_change` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indicador Cambio Periodicidad',
@@ -4778,7 +4779,7 @@ CREATE TABLE `fs_mod349` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de Modelo 349';
 
 #
-# Structure for the `fs_mod349_detail` table : 
+# Structure for the `fs_mod349_detail` table :
 #
 
 CREATE TABLE `fs_mod349_detail` (
@@ -4805,7 +4806,7 @@ CREATE TABLE `fs_mod349_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de la Declaracion 349';
 
 #
-# Structure for the `fs_model` table : 
+# Structure for the `fs_model` table :
 #
 
 CREATE TABLE `fs_model` (
@@ -4854,7 +4855,7 @@ CREATE TABLE `fs_model` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
 
 #
-# Structure for the `fs_model180` table : 
+# Structure for the `fs_model180` table :
 #
 
 CREATE TABLE `fs_model180` (
@@ -4890,7 +4891,7 @@ CREATE TABLE `fs_model180` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 180';
 
 #
-# Structure for the `fs_model180_detail` table : 
+# Structure for the `fs_model180_detail` table :
 #
 
 CREATE TABLE `fs_model180_detail` (
@@ -4932,7 +4933,7 @@ CREATE TABLE `fs_model180_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 180';
 
 #
-# Structure for the `fs_model184` table : 
+# Structure for the `fs_model184` table :
 #
 
 CREATE TABLE `fs_model184` (
@@ -4975,7 +4976,7 @@ CREATE TABLE `fs_model184` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 184';
 
 #
-# Structure for the `fs_model184_detail` table : 
+# Structure for the `fs_model184_detail` table :
 #
 
 CREATE TABLE `fs_model184_detail` (
@@ -5023,7 +5024,7 @@ CREATE TABLE `fs_model184_detail` (
   `declared_key` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Clave del declarado',
   `nature` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Naturaleza del inmueble',
   `asset_percent` double(15,3) DEFAULT '0.000' COMMENT 'Porc. titularidad inmueble',
-  
+
   `consumos_explotacion` double(15,3) DEFAULT '0.000' COMMENT 'Consumos de explotacion',
   `arrendamientos_canones` double(15,3) DEFAULT '0.000' COMMENT 'Arrendamientos y canones',
   `reparacion_conservacion` double(15,3) DEFAULT '0.000' COMMENT 'Reparaciones y conservaciï¿½n',
@@ -5032,7 +5033,7 @@ CREATE TABLE `fs_model184_detail` (
   `gastos_financieros` double(15,3) DEFAULT '0.000' COMMENT 'Gastos financieros',
   `amortizaciones` double(15,3) DEFAULT '0.000' COMMENT 'Amortizaciones',
   `provisiones` double(15,3) DEFAULT '0.000' COMMENT 'Provisiones',
-	
+
   `inm_int_fin` double(15,3) DEFAULT '0.000' COMMENT 'Intereses y demas gastos de financiacion',
   `inm_rep_con` double(15,3) DEFAULT '0.000' COMMENT 'Conservacion y reparacion',
   `inm_gas_rep_con` double(15,3) DEFAULT '0.000' COMMENT 'Intereses / Gastos de reparacion y conservacion pendientes',
@@ -5044,7 +5045,7 @@ CREATE TABLE `fs_model184_detail` (
   `inm_amort_mueb` double(15,3) DEFAULT '0.000' COMMENT 'Amortizaciï¿½n de bienes muebles',
   `inm_otr_gas_ded` double(15,3) DEFAULT '0.000' COMMENT 'Otros gastos deducibles',
   `inm_num_dias_arr` int(4) DEFAULT '0' COMMENT 'Nï¿½mero de dï¿½as de arrendamiento o cesiï¿½n de uso y disfrute',
-  
+
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_DETAIL_FS_MODEL184` (`fs_model184`),
@@ -5053,7 +5054,7 @@ CREATE TABLE `fs_model184_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 184';
 
 #
-# Structure for the `fs_model190` table : 
+# Structure for the `fs_model190` table :
 #
 
 CREATE TABLE `fs_model190` (
@@ -5068,7 +5069,7 @@ CREATE TABLE `fs_model190` (
   `name` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `contact_person` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Persona de Contacto',
   `contact_phone` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telf. Fijo de Contacto',
-  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',  
+  `contact_mail` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mail Persona de Contacto',
   `complementary` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion complementaria',
   `replacement` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Declaracion sustitutiva',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
@@ -5089,7 +5090,7 @@ CREATE TABLE `fs_model190` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 190';
 
 #
-# Structure for the `fs_model190_detail` table : 
+# Structure for the `fs_model190_detail` table :
 #
 
 CREATE TABLE `fs_model190_detail` (
@@ -5158,7 +5159,7 @@ CREATE TABLE `fs_model190_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 190';
 
 #
-# Structure for the `fs_model193` table : 
+# Structure for the `fs_model193` table :
 #
 
 CREATE TABLE `fs_model193` (
@@ -5197,7 +5198,7 @@ CREATE TABLE `fs_model193` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 193';
 
 #
-# Structure for the `fs_model193_detail` table : 
+# Structure for the `fs_model193_detail` table :
 #
 
 CREATE TABLE `fs_model193_detail` (
@@ -5242,7 +5243,7 @@ CREATE TABLE `fs_model193_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 193';
 
 #
-# Structure for the `fs_model200` table : 
+# Structure for the `fs_model200` table :
 #
 
 CREATE TABLE `fs_model200` (
@@ -5284,7 +5285,7 @@ CREATE TABLE `fs_model200` (
   `ultimate_document_country` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Codigo pais',
   `ultimate_name` varchar(40) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Nombre o razon social',
   `ultimate_country` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Pais o jurisdiccion',
-  `nrs_anexoV_ric` varchar(22) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NRS anexo V RIC',    
+  `nrs_anexoV_ric` varchar(22) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NRS anexo V RIC',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
@@ -5293,7 +5294,7 @@ CREATE TABLE `fs_model200` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuesto sobre sociedades';
 
 #
-# Structure for the `fs_model200_detail` table : 
+# Structure for the `fs_model200_detail` table :
 #
 
 CREATE TABLE `fs_model200_detail` (
@@ -5310,7 +5311,7 @@ CREATE TABLE `fs_model200_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles Impuesto sobre sociedades';
 
 #
-# Structure for the `fs_model200_registry` table : 
+# Structure for the `fs_model200_registry` table :
 #
 
 CREATE TABLE `fs_model200_registry` (
@@ -5349,7 +5350,7 @@ CREATE TABLE `fs_model200_registry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Adminitradores/participaciones del Impuesto sobre sociedades';
 
 #
-# Structure for the `fs_model390` table : 
+# Structure for the `fs_model390` table :
 #
 
 CREATE TABLE `fs_model390` (
@@ -5377,7 +5378,7 @@ CREATE TABLE `fs_model390` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 390';
 
 #
-# Structure for the `fs_model_detail` table : 
+# Structure for the `fs_model_detail` table :
 #
 
 CREATE TABLE `fs_model_detail` (
@@ -5399,7 +5400,7 @@ CREATE TABLE `fs_model_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Declaraciones Fiscales';
 
 #
-# Structure for the `fs_vat` table : 
+# Structure for the `fs_vat` table :
 #
 
 CREATE TABLE `fs_vat` (
@@ -5422,7 +5423,7 @@ CREATE TABLE `fs_vat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de Iva';
 
 #
-# Structure for the `fs_vat_declaration` table : 
+# Structure for the `fs_vat_declaration` table :
 #
 
 CREATE TABLE `fs_vat_declaration` (
@@ -5458,7 +5459,7 @@ CREATE TABLE `fs_vat_declaration` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Resultado de la Declaracion de Iva';
 
 #
-# Structure for the `fs_vat_detail` table : 
+# Structure for the `fs_vat_detail` table :
 #
 
 CREATE TABLE `fs_vat_detail` (
@@ -5490,7 +5491,7 @@ CREATE TABLE `fs_vat_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Declaracion de Iva';
 
 #
-# Structure for the `geotree` table : 
+# Structure for the `geotree` table :
 #
 
 CREATE TABLE `geotree` (
@@ -5508,7 +5509,7 @@ CREATE TABLE `geotree` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Jerarquia de Zonas Geograficas';
 
 #
-# Structure for the `geozone_irpf` table : 
+# Structure for the `geozone_irpf` table :
 #
 
 CREATE TABLE `geozone_irpf` (
@@ -5521,7 +5522,7 @@ CREATE TABLE `geozone_irpf` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de tramos del IRPF';
 
 #
-# Structure for the `geozone_irpf_descendant` table : 
+# Structure for the `geozone_irpf_descendant` table :
 #
 
 CREATE TABLE `geozone_irpf_descendant` (
@@ -5535,7 +5536,7 @@ CREATE TABLE `geozone_irpf_descendant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de porcentajes IRPF segun descendientes';
 
 #
-# Structure for the `geozone_irpf_handicap` table : 
+# Structure for the `geozone_irpf_handicap` table :
 #
 
 CREATE TABLE `geozone_irpf_handicap` (
@@ -5549,7 +5550,7 @@ CREATE TABLE `geozone_irpf_handicap` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de  ';
 
 #
-# Structure for the `holiday_detail` table : 
+# Structure for the `holiday_detail` table :
 #
 
 CREATE TABLE `holiday_detail` (
@@ -5566,7 +5567,7 @@ CREATE TABLE `holiday_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Festividades';
 
 #
-# Structure for the `iattach` table : 
+# Structure for the `iattach` table :
 #
 
 CREATE TABLE `iattach` (
@@ -5586,7 +5587,7 @@ CREATE TABLE `iattach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Articulos';
 
 #
-# Structure for the `income` table : 
+# Structure for the `income` table :
 #
 
 CREATE TABLE `income` (
@@ -5635,7 +5636,7 @@ CREATE TABLE `income` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Albaranes de Compra';
 
 #
-# Structure for the `proposal` table : 
+# Structure for the `proposal` table :
 #
 
 CREATE TABLE `proposal` (
@@ -5671,7 +5672,7 @@ CREATE TABLE `proposal` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Propuestas de Compra';
 
 #
-# Structure for the `proposal_detail` table : 
+# Structure for the `proposal_detail` table :
 #
 
 CREATE TABLE `proposal_detail` (
@@ -5701,7 +5702,7 @@ CREATE TABLE `proposal_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Propuesta de Compra';
 
 #
-# Structure for the `purchase` table : 
+# Structure for the `purchase` table :
 #
 
 CREATE TABLE `purchase` (
@@ -5770,7 +5771,7 @@ CREATE TABLE `purchase` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pedidos de Compra';
 
 #
-# Structure for the `purchase_detail` table : 
+# Structure for the `purchase_detail` table :
 #
 
 CREATE TABLE `purchase_detail` (
@@ -5815,7 +5816,7 @@ CREATE TABLE `purchase_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Pedido de Compra';
 
 #
-# Structure for the `income_detail` table : 
+# Structure for the `income_detail` table :
 #
 
 CREATE TABLE `income_detail` (
@@ -5851,7 +5852,7 @@ CREATE TABLE `income_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Albaran de Compra';
 
 #
-# Structure for the `inventory` table : 
+# Structure for the `inventory` table :
 #
 
 CREATE TABLE `inventory` (
@@ -5871,7 +5872,7 @@ CREATE TABLE `inventory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Inventarios de Almacenes';
 
 #
-# Structure for the `inventory_detail` table : 
+# Structure for the `inventory_detail` table :
 #
 
 CREATE TABLE `inventory_detail` (
@@ -5896,7 +5897,7 @@ CREATE TABLE `inventory_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Inventarios de Almacenes';
 
 #
-# Structure for the `invoice_address` table : 
+# Structure for the `invoice_address` table :
 #
 
 CREATE TABLE `invoice_address` (
@@ -5921,7 +5922,7 @@ CREATE TABLE `invoice_address` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de la Factura';
 
 #
-# Structure for the `invoice_attach` table : 
+# Structure for the `invoice_attach` table :
 #
 
 CREATE TABLE `invoice_attach` (
@@ -5942,7 +5943,7 @@ CREATE TABLE `invoice_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
 
 #
-# Structure for the `invoice_detail` table : 
+# Structure for the `invoice_detail` table :
 #
 
 CREATE TABLE `invoice_detail` (
@@ -5990,7 +5991,7 @@ CREATE TABLE `invoice_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Factura';
 
 #
-# Structure for the `invoice_detail_account` table : 
+# Structure for the `invoice_detail_account` table :
 #
 
 CREATE TABLE `invoice_detail_account` (
@@ -6009,7 +6010,7 @@ CREATE TABLE `invoice_detail_account` (
 
 
 #
-# Structure for the `invoice_detail_commission` table : 
+# Structure for the `invoice_detail_commission` table :
 #
 
 CREATE TABLE `invoice_detail_commission` (
@@ -6028,7 +6029,7 @@ CREATE TABLE `invoice_detail_commission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones asociadas a Lineas de Facturas';
 
 #
-# Structure for the `invoice_tax` table : 
+# Structure for the `invoice_tax` table :
 #
 
 CREATE TABLE `invoice_tax` (
@@ -6053,7 +6054,7 @@ CREATE TABLE `invoice_tax` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos del Detalle de la Factura';
 
 #
-# Structure for the `invoice_tax_account` table : 
+# Structure for the `invoice_tax_account` table :
 #
 
 CREATE TABLE `invoice_tax_account` (
@@ -6071,7 +6072,7 @@ CREATE TABLE `invoice_tax_account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Impuestos de Facturas';
 
 #
-# Structure for the `irpf_data` table : 
+# Structure for the `irpf_data` table :
 #
 
 CREATE TABLE `irpf_data` (
@@ -6107,7 +6108,7 @@ CREATE TABLE `irpf_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dator de irpf';
 
 #
-# Structure for the `irpf_data_ascendants` table : 
+# Structure for the `irpf_data_ascendants` table :
 #
 
 CREATE TABLE `irpf_data_ascendants` (
@@ -6126,7 +6127,7 @@ CREATE TABLE `irpf_data_ascendants` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ascendientes del modelo 145';
 
 #
-# Structure for the `irpf_data_descendients` table : 
+# Structure for the `irpf_data_descendients` table :
 #
 
 CREATE TABLE `irpf_data_descendients` (
@@ -6146,7 +6147,7 @@ CREATE TABLE `irpf_data_descendients` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Descendientes del modelo 145';
 
 #
-# Structure for the `irpf_regularization` table : 
+# Structure for the `irpf_regularization` table :
 #
 
 CREATE TABLE `irpf_regularization` (
@@ -6173,7 +6174,7 @@ CREATE TABLE `irpf_regularization` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos regularizacion IRPF';
 
 #
-# Structure for the `irpf_result` table : 
+# Structure for the `irpf_result` table :
 #
 
 CREATE TABLE `irpf_result` (
@@ -6236,7 +6237,7 @@ CREATE TABLE `irpf_result` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Resultados IRPF';
 
 #
-# Structure for the `item_addinfo` table : 
+# Structure for the `item_addinfo` table :
 #
 
 CREATE TABLE `item_addinfo` (
@@ -6257,7 +6258,7 @@ CREATE TABLE `item_addinfo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional del Articulo';
 
 #
-# Structure for the `item_alternative` table : 
+# Structure for the `item_alternative` table :
 #
 
 CREATE TABLE `item_alternative` (
@@ -6277,7 +6278,7 @@ CREATE TABLE `item_alternative` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo Alternativos';
 
 #
-# Structure for the `item_composition` table : 
+# Structure for the `item_composition` table :
 #
 
 CREATE TABLE `item_composition` (
@@ -6299,7 +6300,7 @@ CREATE TABLE `item_composition` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Composicion de Articulos';
 
 #
-# Structure for the `item_tariff` table : 
+# Structure for the `item_tariff` table :
 #
 
 CREATE TABLE `item_tariff` (
@@ -6321,7 +6322,7 @@ CREATE TABLE `item_tariff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas de Articulos';
 
 #
-# Structure for the `item_warehouse` table : 
+# Structure for the `item_warehouse` table :
 #
 
 CREATE TABLE `item_warehouse` (
@@ -6343,7 +6344,7 @@ CREATE TABLE `item_warehouse` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del Articulo por Almacen';
 
 #
-# Structure for the `leave_batch` table : 
+# Structure for the `leave_batch` table :
 #
 
 CREATE TABLE `leave_batch` (
@@ -6362,7 +6363,7 @@ CREATE TABLE `leave_batch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de partes IT';
 
 #
-# Structure for the `leave_batch_detail` table : 
+# Structure for the `leave_batch_detail` table :
 #
 
 CREATE TABLE `leave_batch_detail` (
@@ -6380,7 +6381,7 @@ CREATE TABLE `leave_batch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de remesas de partes IT';
 
 #
-# Structure for the `loan` table : 
+# Structure for the `loan` table :
 #
 
 CREATE TABLE `loan` (
@@ -6410,23 +6411,23 @@ CREATE TABLE `loan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prestamos';
 
 #
-# Structure for the `location` table : 
+# Structure for the `location` table :
 #
 
 CREATE TABLE `location` (
 	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
 	`domain` int(4) NOT NULL COMMENT 'Dominio',
-	`description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripción de la Ubicación',
-   	`radio` int(4) DEFAULT 50 COMMENT 'Radio de la Ubicación',
+	`description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripciï¿½n de la Ubicaciï¿½n',
+   	`radio` int(4) DEFAULT 50 COMMENT 'Radio de la Ubicaciï¿½n',
 	`latitude` double DEFAULT NULL COMMENT 'Latitud de las coordenadas.',
-	`longitude` double DEFAULT NULL COMMENT 'Longitud de las coordenadas.',	
+	`longitude` double DEFAULT NULL COMMENT 'Longitud de las coordenadas.',
 	PRIMARY KEY (`id`),
 	KEY `IDX_LOCATION_DOMAIN` (`domain`),
 	CONSTRAINT `FK_LOCATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ubicación';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ubicaciï¿½n';
 
 #
-# Structure for the `signature` table : 
+# Structure for the `signature` table :
 #
 
 CREATE TABLE `signature` (
@@ -6443,7 +6444,7 @@ CREATE TABLE `signature` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Firmas de Cuentas de Correo Electronico';
 
 #
-# Structure for the `mail_account` table : 
+# Structure for the `mail_account` table :
 #
 
 CREATE TABLE `mail_account` (
@@ -6481,7 +6482,7 @@ CREATE TABLE `mail_account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas de Correo Electronico';
 
 #
-# Structure for the `make` table : 
+# Structure for the `make` table :
 #
 
 CREATE TABLE `make` (
@@ -6494,7 +6495,7 @@ CREATE TABLE `make` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fabricantes';
 
 #
-# Structure for the `mark` table : 
+# Structure for the `mark` table :
 #
 
 CREATE TABLE `mark` (
@@ -6515,7 +6516,7 @@ CREATE TABLE `mark` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Notas de Alumnos';
 
 #
-# Structure for the `mk_campaign` table : 
+# Structure for the `mk_campaign` table :
 #
 
 CREATE TABLE `mk_campaign` (
@@ -6532,7 +6533,7 @@ CREATE TABLE `mk_campaign` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campaï¿½as de Marketing';
 
 #
-# Structure for the `mk_template` table : 
+# Structure for the `mk_template` table :
 #
 
 CREATE TABLE `mk_template` (
@@ -6560,7 +6561,7 @@ CREATE TABLE `mk_template` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Plantilla de Marketing';
 
 #
-# Structure for the `news` table : 
+# Structure for the `news` table :
 #
 
 CREATE TABLE `news` (
@@ -6593,7 +6594,7 @@ CREATE TABLE `news` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias';
 
 #
-# Structure for the `newsletter` table : 
+# Structure for the `newsletter` table :
 #
 
 CREATE TABLE `newsletter` (
@@ -6618,7 +6619,7 @@ CREATE TABLE `newsletter` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Boletin';
 
 #
-# Structure for the `mk_action` table : 
+# Structure for the `mk_action` table :
 #
 
 CREATE TABLE `mk_action` (
@@ -6646,7 +6647,7 @@ CREATE TABLE `mk_action` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
 
 #
-# Structure for the `survey_response` table : 
+# Structure for the `survey_response` table :
 #
 
 CREATE TABLE `survey_response` (
@@ -6672,7 +6673,7 @@ CREATE TABLE `survey_response` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Respuestas de Cuestionarios';
 
 #
-# Structure for the `mk_action_target` table : 
+# Structure for the `mk_action_target` table :
 #
 
 CREATE TABLE `mk_action_target` (
@@ -6698,7 +6699,7 @@ CREATE TABLE `mk_action_target` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales de la Accion de Marketing';
 
 #
-# Structure for the `model` table : 
+# Structure for the `model` table :
 #
 
 CREATE TABLE `model` (
@@ -6714,7 +6715,7 @@ CREATE TABLE `model` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modelos';
 
 #
-# Structure for the `newsletter_detail` table : 
+# Structure for the `newsletter_detail` table :
 #
 
 CREATE TABLE `newsletter_detail` (
@@ -6733,7 +6734,7 @@ CREATE TABLE `newsletter_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Noticias del Boletin';
 
 #
-# Structure for the `note` table : 
+# Structure for the `note` table :
 #
 
 CREATE TABLE `note` (
@@ -6768,7 +6769,7 @@ CREATE TABLE `notification` (
   KEY `IDX_NOTIFICATION_DOMAIN` (`domain`),
   CONSTRAINT `FK_NOTIFICATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification';
-	
+
 #
 # Structure for the `notification_receiver` table :
 #
@@ -6788,7 +6789,7 @@ CREATE TABLE `notification_receiver` (
 
 
 #
-# Structure for the `notice` table : 
+# Structure for the `notice` table :
 #
 
 CREATE TABLE `notice` (
@@ -6818,7 +6819,7 @@ CREATE TABLE `notice` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Avisos';
 
 #
-# Structure for the `notice_tag` table : 
+# Structure for the `notice_tag` table :
 #
 
 CREATE TABLE `notice_tag` (
@@ -6838,7 +6839,7 @@ CREATE TABLE `notice_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Avisos y Etiquetas';
 
 #
-# Structure for the `observation` table : 
+# Structure for the `observation` table :
 #
 
 CREATE TABLE `observation` (
@@ -6851,7 +6852,7 @@ CREATE TABLE `observation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Observaciones';
 
 #
-# Structure for the `offer_attach` table : 
+# Structure for the `offer_attach` table :
 #
 
 CREATE TABLE `offer_attach` (
@@ -6870,7 +6871,7 @@ CREATE TABLE `offer_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Presupuestos';
 
 #
-# Structure for the `offer_detail_commission` table : 
+# Structure for the `offer_detail_commission` table :
 #
 
 CREATE TABLE `offer_detail_commission` (
@@ -6889,7 +6890,7 @@ CREATE TABLE `offer_detail_commission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones asociadas a Lineas de Presupuestos';
 
 #
-# Structure for the `offer_term` table : 
+# Structure for the `offer_term` table :
 #
 
 CREATE TABLE `offer_term` (
@@ -6908,7 +6909,7 @@ CREATE TABLE `offer_term` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones del Presupuesto';
 
 #
-# Structure for the `payroll_batch_attach` table : 
+# Structure for the `payroll_batch_attach` table :
 #
 
 CREATE TABLE `payroll_batch_attach` (
@@ -6931,7 +6932,7 @@ CREATE TABLE `payroll_batch_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Remesas de Laboral';
 
 #
-# Structure for the `payroll_workplace` table : 
+# Structure for the `payroll_workplace` table :
 #
 
 CREATE TABLE `payroll_workplace` (
@@ -6955,7 +6956,7 @@ CREATE TABLE `payroll_workplace` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos laborales del Centro de Trabajo';
 
 #
-# Structure for the `pos_catalogue` table : 
+# Structure for the `pos_catalogue` table :
 #
 
 CREATE TABLE `pos_catalogue` (
@@ -6973,7 +6974,7 @@ CREATE TABLE `pos_catalogue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Catalogos asociados al TPV';
 
 #
-# Structure for the `pos_shift_count` table : 
+# Structure for the `pos_shift_count` table :
 #
 
 CREATE TABLE `pos_shift_count` (
@@ -6996,7 +6997,7 @@ CREATE TABLE `pos_shift_count` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Arqueo del TPV';
 
 #
-# Structure for the `prepayment` table : 
+# Structure for the `prepayment` table :
 #
 
 CREATE TABLE `prepayment` (
@@ -7019,7 +7020,7 @@ CREATE TABLE `prepayment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Suplidos';
 
 #
-# Structure for the `process_detail` table : 
+# Structure for the `process_detail` table :
 #
 
 CREATE TABLE `process_detail` (
@@ -7045,7 +7046,7 @@ CREATE TABLE `process_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Procesos';
 
 #
-# Structure for the `process_transition_type` table : 
+# Structure for the `process_transition_type` table :
 #
 
 CREATE TABLE `process_transition_type` (
@@ -7058,7 +7059,7 @@ CREATE TABLE `process_transition_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Transiciones entre Detalles de Procesos';
 
 #
-# Structure for the `process_detail_transition` table : 
+# Structure for the `process_detail_transition` table :
 #
 
 CREATE TABLE `process_detail_transition` (
@@ -7079,7 +7080,7 @@ CREATE TABLE `process_detail_transition` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Transiciones entre Detalles de Procesos';
 
 #
-# Structure for the `process_task` table : 
+# Structure for the `process_task` table :
 #
 
 CREATE TABLE `process_task` (
@@ -7101,7 +7102,7 @@ CREATE TABLE `process_task` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campaï¿½as, Actividades y Tareas';
 
 #
-# Structure for the `product_tag` table : 
+# Structure for the `product_tag` table :
 #
 
 CREATE TABLE `product_tag` (
@@ -7119,7 +7120,7 @@ CREATE TABLE `product_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Productos y Etiquetas';
 
 #
-# Structure for the `profile_action_denied` table : 
+# Structure for the `profile_action_denied` table :
 #
 
 CREATE TABLE `profile_action_denied` (
@@ -7137,7 +7138,7 @@ CREATE TABLE `profile_action_denied` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones Inhabilitadas en el Perfil';
 
 #
-# Structure for the `profile_module_denied` table : 
+# Structure for the `profile_module_denied` table :
 #
 
 CREATE TABLE `profile_module_denied` (
@@ -7153,7 +7154,7 @@ CREATE TABLE `profile_module_denied` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos Inhabilitados en el Perfil';
 
 #
-# Structure for the `profile_role` table : 
+# Structure for the `profile_role` table :
 #
 
 CREATE TABLE `profile_role` (
@@ -7171,7 +7172,7 @@ CREATE TABLE `profile_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Roles del Perfil';
 
 #
-# Structure for the `project_activity` table : 
+# Structure for the `project_activity` table :
 #
 
 CREATE TABLE `project_activity` (
@@ -7190,7 +7191,7 @@ CREATE TABLE `project_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades';
 
 #
-# Structure for the `project_attach` table : 
+# Structure for the `project_attach` table :
 #
 
 CREATE TABLE `project_attach` (
@@ -7216,7 +7217,7 @@ CREATE TABLE `project_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Proyectos';
 
 #
-# Structure for the `project_reservation_divert` table : 
+# Structure for the `project_reservation_divert` table :
 #
 
 CREATE TABLE `project_reservation_divert` (
@@ -7245,7 +7246,7 @@ CREATE TABLE `project_reservation_divert` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Desvio de Reservas';
 
 #
-# Structure for the `project_reservation_guest` table : 
+# Structure for the `project_reservation_guest` table :
 #
 
 CREATE TABLE `project_reservation_guest` (
@@ -7287,7 +7288,7 @@ CREATE TABLE `project_reservation_guest` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Huespedes por Reserva';
 
 #
-# Structure for the `project_reservation_room_detail` table : 
+# Structure for the `project_reservation_room_detail` table :
 #
 
 CREATE TABLE `project_reservation_room_detail` (
@@ -7305,7 +7306,7 @@ CREATE TABLE `project_reservation_room_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Habitacion por Reserva';
 
 #
-# Structure for the `project_reservation_service` table : 
+# Structure for the `project_reservation_service` table :
 #
 
 CREATE TABLE `project_reservation_service` (
@@ -7334,7 +7335,7 @@ CREATE TABLE `project_reservation_service` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Servicios por Reserva';
 
 #
-# Structure for the `project_reservation_service_detail` table : 
+# Structure for the `project_reservation_service_detail` table :
 #
 
 CREATE TABLE `project_reservation_service_detail` (
@@ -7358,7 +7359,7 @@ CREATE TABLE `project_reservation_service_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Servicio por Reserva';
 
 #
-# Structure for the `tas_item` table : 
+# Structure for the `tas_item` table :
 #
 
 CREATE TABLE `tas_item` (
@@ -7379,7 +7380,7 @@ CREATE TABLE `tas_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo susceptible de Asistencia Tecnica';
 
 #
-# Structure for the `project_tas` table : 
+# Structure for the `project_tas` table :
 #
 
 CREATE TABLE `project_tas` (
@@ -7410,7 +7411,7 @@ CREATE TABLE `project_tas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ordenes de Reparacion o Fabricacion';
 
 #
-# Structure for the `qualification` table : 
+# Structure for the `qualification` table :
 #
 
 CREATE TABLE `qualification` (
@@ -7426,7 +7427,7 @@ CREATE TABLE `qualification` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Calificaciones';
 
 #
-# Structure for the `question` table : 
+# Structure for the `question` table :
 #
 
 CREATE TABLE `question` (
@@ -7443,7 +7444,7 @@ CREATE TABLE `question` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Preguntas';
 
 #
-# Structure for the `question_value` table : 
+# Structure for the `question_value` table :
 #
 
 CREATE TABLE `question_value` (
@@ -7461,7 +7462,7 @@ CREATE TABLE `question_value` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Valores de Preguntas';
 
 #
-# Structure for the `raddinfo` table : 
+# Structure for the `raddinfo` table :
 #
 
 CREATE TABLE `raddinfo` (
@@ -7479,7 +7480,7 @@ CREATE TABLE `raddinfo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional de la Persona o Empresa';
 
 #
-# Structure for the `rattach_tag` table : 
+# Structure for the `rattach_tag` table :
 #
 
 CREATE TABLE `rattach_tag` (
@@ -7497,7 +7498,7 @@ CREATE TABLE `rattach_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Archivos Adjuntos y Etiquetas';
 
 #
-# Structure for the `rawdoc` table : 
+# Structure for the `rawdoc` table :
 #
 CREATE TABLE `rawdoc` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del documento',
@@ -7519,7 +7520,7 @@ CREATE TABLE `rawdoc` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Documentos a procesar';
 
 #
-# Structure for the `rdir_staff` table : 
+# Structure for the `rdir_staff` table :
 #
 
 CREATE TABLE `rdir_staff` (
@@ -7545,7 +7546,7 @@ CREATE TABLE `rdir_staff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Empresas y sus Directivos';
 
 #
-# Structure for the `record_data` table : 
+# Structure for the `record_data` table :
 #
 
 CREATE TABLE `record_data` (
@@ -7573,7 +7574,7 @@ CREATE TABLE `record_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos Registrales';
 
 #
-# Structure for the `relationship` table : 
+# Structure for the `relationship` table :
 #
 
 CREATE TABLE `relationship` (
@@ -7586,7 +7587,7 @@ CREATE TABLE `relationship` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Relaciones entre Personas y/o Empresas';
 
 #
-# Structure for the `reservation_request` table : 
+# Structure for the `reservation_request` table :
 #
 
 CREATE TABLE `reservation_request` (
@@ -7618,7 +7619,7 @@ CREATE TABLE `reservation_request` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Solicitud de Reservas';
 
 #
-# Structure for the `reservation_request_guest` table : 
+# Structure for the `reservation_request_guest` table :
 #
 
 CREATE TABLE `reservation_request_guest` (
@@ -7649,7 +7650,7 @@ CREATE TABLE `reservation_request_guest` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Huespedes por Solicitud de Reserva';
 
 #
-# Structure for the `reservation_request_room` table : 
+# Structure for the `reservation_request_room` table :
 #
 
 CREATE TABLE `reservation_request_room` (
@@ -7688,7 +7689,7 @@ CREATE TABLE `reservation_request_room` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Habitaciones por Solicitud de Reserva';
 
 #
-# Structure for the `ritem` table : 
+# Structure for the `ritem` table :
 #
 
 CREATE TABLE `ritem` (
@@ -7716,7 +7717,7 @@ CREATE TABLE `ritem` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos interesados por Personas o Empresas';
 
 #
-# Structure for the `rmedia` table : 
+# Structure for the `rmedia` table :
 #
 
 CREATE TABLE `rmedia` (
@@ -7740,7 +7741,7 @@ CREATE TABLE `rmedia` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Medios de Contacto de Personas o Empresas';
 
 #
-# Structure for the `rnote` table : 
+# Structure for the `rnote` table :
 #
 
 CREATE TABLE `rnote` (
@@ -7760,7 +7761,7 @@ CREATE TABLE `rnote` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas de Personas o Empresas';
 
 #
-# Structure for the `room` table : 
+# Structure for the `room` table :
 #
 
 CREATE TABLE `room` (
@@ -7782,7 +7783,7 @@ CREATE TABLE `room` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Habitaciones de Hotel';
 
 #
-# Structure for the `rpaymethod` table : 
+# Structure for the `rpaymethod` table :
 #
 
 CREATE TABLE `rpaymethod` (
@@ -7807,7 +7808,7 @@ CREATE TABLE `rpaymethod` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la Forma de Pago de la Persona o Empresa';
 
 #
-# Structure for the `rprofile` table : 
+# Structure for the `rprofile` table :
 #
 
 CREATE TABLE `rprofile` (
@@ -7829,7 +7830,7 @@ CREATE TABLE `rprofile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Perfiles de Personas o Empresas';
 
 #
-# Structure for the `rrelationship` table : 
+# Structure for the `rrelationship` table :
 #
 
 CREATE TABLE `rrelationship` (
@@ -7851,7 +7852,7 @@ CREATE TABLE `rrelationship` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relaciones entre Personas y/o Empresas';
 
 #
-# Structure for the `segment` table : 
+# Structure for the `segment` table :
 #
 
 CREATE TABLE `segment` (
@@ -7864,7 +7865,7 @@ CREATE TABLE `segment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos Comerciales';
 
 #
-# Structure for the `rsegment` table : 
+# Structure for the `rsegment` table :
 #
 
 CREATE TABLE `rsegment` (
@@ -7882,7 +7883,7 @@ CREATE TABLE `rsegment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos de Personas o Empresas';
 
 #
-# Structure for the `rseller` table : 
+# Structure for the `rseller` table :
 #
 
 CREATE TABLE `rseller` (
@@ -7903,7 +7904,7 @@ CREATE TABLE `rseller` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comerciales relacionados con Personas o Empresas';
 
 #
-# Structure for the `rsupplier` table : 
+# Structure for the `rsupplier` table :
 #
 
 CREATE TABLE `rsupplier` (
@@ -7935,7 +7936,7 @@ CREATE TABLE `rsupplier` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores relacionados con Personas o Empresas';
 
 #
-# Structure for the `rtax` table : 
+# Structure for the `rtax` table :
 #
 
 CREATE TABLE `rtax` (
@@ -7957,7 +7958,7 @@ CREATE TABLE `rtax` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos redefinidos para Personas o Empresas';
 
 #
-# Structure for the `salary` table : 
+# Structure for the `salary` table :
 #
 
 CREATE TABLE `salary` (
@@ -8007,7 +8008,7 @@ CREATE TABLE `salary` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
 
 #
-# Structure for the `salary_bonus` table : 
+# Structure for the `salary_bonus` table :
 #
 
 CREATE TABLE `salary_bonus` (
@@ -8025,7 +8026,7 @@ CREATE TABLE `salary_bonus` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bonificaciones';
 
 #
-# Structure for the `salary_cost` table : 
+# Structure for the `salary_cost` table :
 #
 
 CREATE TABLE `salary_cost` (
@@ -8044,7 +8045,7 @@ CREATE TABLE `salary_cost` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Costos';
 
 #
-# Structure for the `salary_data` table : 
+# Structure for the `salary_data` table :
 #
 
 CREATE TABLE `salary_data` (
@@ -8063,7 +8064,7 @@ CREATE TABLE `salary_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la nomina';
 
 #
-# Structure for the `salary_deduction` table : 
+# Structure for the `salary_deduction` table :
 #
 
 CREATE TABLE `salary_deduction` (
@@ -8083,7 +8084,7 @@ CREATE TABLE `salary_deduction` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
 #
-# Structure for the `salary_embargo` table : 
+# Structure for the `salary_embargo` table :
 #
 
 CREATE TABLE `salary_embargo` (
@@ -8103,7 +8104,7 @@ CREATE TABLE `salary_embargo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Embargos';
 
 #
-# Structure for the `salary_payment` table : 
+# Structure for the `salary_payment` table :
 #
 
 CREATE TABLE `salary_payment` (
@@ -8125,7 +8126,7 @@ CREATE TABLE `salary_payment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
 
 #
-# Structure for the `sepe_batch_attach` table : 
+# Structure for the `sepe_batch_attach` table :
 #
 
 CREATE TABLE `sepe_batch_attach` (
@@ -8148,7 +8149,7 @@ CREATE TABLE `sepe_batch_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de remesas de SEPE';
 
 #
-# Structure for the `series` table : 
+# Structure for the `series` table :
 #
 
 CREATE TABLE `series` (
@@ -8174,7 +8175,7 @@ CREATE TABLE `series` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Series';
 
 #
-# Structure for the `stock` table : 
+# Structure for the `stock` table :
 #
 
 CREATE TABLE `stock` (
@@ -8194,7 +8195,7 @@ CREATE TABLE `stock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Stocks de Almacenes';
 
 #
-# Structure for the `stop_sales` table : 
+# Structure for the `stop_sales` table :
 #
 
 CREATE TABLE `stop_sales` (
@@ -8217,7 +8218,7 @@ CREATE TABLE `stop_sales` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Paros de venta';
 
 #
-# Structure for the `stop_sales_item` table : 
+# Structure for the `stop_sales_item` table :
 #
 
 CREATE TABLE `stop_sales_item` (
@@ -8235,7 +8236,7 @@ CREATE TABLE `stop_sales_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Habitacion por Paro';
 
 #
-# Structure for the `stop_sales_tariff` table : 
+# Structure for the `stop_sales_tariff` table :
 #
 
 CREATE TABLE `stop_sales_tariff` (
@@ -8253,7 +8254,7 @@ CREATE TABLE `stop_sales_tariff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Paro';
 
 #
-# Structure for the `survey_question` table : 
+# Structure for the `survey_question` table :
 #
 
 CREATE TABLE `survey_question` (
@@ -8272,7 +8273,7 @@ CREATE TABLE `survey_question` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Preguntas de Cuestionarios';
 
 #
-# Structure for the `survey_response_detail` table : 
+# Structure for the `survey_response_detail` table :
 #
 
 CREATE TABLE `survey_response_detail` (
@@ -8293,7 +8294,7 @@ CREATE TABLE `survey_response_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Respuestas de Cuestionarios';
 
 #
-# Structure for the `survey_workflow` table : 
+# Structure for the `survey_workflow` table :
 #
 
 CREATE TABLE `survey_workflow` (
@@ -8318,7 +8319,7 @@ CREATE TABLE `survey_workflow` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Secuencias de Cuestionarios';
 
 #
-# Structure for the `system_cost` table : 
+# Structure for the `system_cost` table :
 #
 
 CREATE TABLE `system_cost` (
@@ -8336,7 +8337,7 @@ CREATE TABLE `system_cost` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Costos';
 
 #
-# Structure for the `system_data` table : 
+# Structure for the `system_data` table :
 #
 
 CREATE TABLE `system_data` (
@@ -8354,7 +8355,7 @@ CREATE TABLE `system_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
 
 #
-# Structure for the `system_deduction` table : 
+# Structure for the `system_deduction` table :
 #
 
 CREATE TABLE `system_deduction` (
@@ -8376,7 +8377,7 @@ CREATE TABLE `system_deduction` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
 #
-# Structure for the `system_payment` table : 
+# Structure for the `system_payment` table :
 #
 
 CREATE TABLE `system_payment` (
@@ -8401,7 +8402,7 @@ CREATE TABLE `system_payment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 
 #
-# Structure for the `tariff_addinfo` table : 
+# Structure for the `tariff_addinfo` table :
 #
 
 CREATE TABLE `tariff_addinfo` (
@@ -8419,7 +8420,7 @@ CREATE TABLE `tariff_addinfo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional de la Tarifa';
 
 #
-# Structure for the `tariff_catalogue` table : 
+# Structure for the `tariff_catalogue` table :
 #
 
 CREATE TABLE `tariff_catalogue` (
@@ -8437,7 +8438,7 @@ CREATE TABLE `tariff_catalogue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Catalogo';
 
 #
-# Structure for the `task_workflow` table : 
+# Structure for the `task_workflow` table :
 #
 
 CREATE TABLE `task_workflow` (
@@ -8464,7 +8465,7 @@ CREATE TABLE `task_workflow` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Flujo de Tareas';
 
 #
-# Structure for the `task_attach` table : 
+# Structure for the `task_attach` table :
 #
 
 CREATE TABLE `task_attach` (
@@ -8485,7 +8486,7 @@ CREATE TABLE `task_attach` (
 
 
 #
-# Structure for the `task_comment` table : 
+# Structure for the `task_comment` table :
 #
 
 CREATE TABLE `task_comment` (
@@ -8507,7 +8508,7 @@ CREATE TABLE `task_comment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Comentarios';
 
 #
-# Structure for the `task_event` table : 
+# Structure for the `task_event` table :
 #
 
 CREATE TABLE `task_event` (
@@ -8527,7 +8528,7 @@ CREATE TABLE `task_event` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Eventos';
 
 #
-# Structure for the `task_holder_workgroup` table : 
+# Structure for the `task_holder_workgroup` table :
 #
 
 CREATE TABLE `task_holder_workgroup` (
@@ -8545,7 +8546,7 @@ CREATE TABLE `task_holder_workgroup` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Usuarios y Grupos de Trabajo';
 
 #
-# Structure for the `task_tag` table : 
+# Structure for the `task_tag` table :
 #
 
 CREATE TABLE `task_tag` (
@@ -8563,7 +8564,7 @@ CREATE TABLE `task_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Etiquetas';
 
 #
-# Structure for the `tax_detail` table : 
+# Structure for the `tax_detail` table :
 #
 
 CREATE TABLE `tax_detail` (
@@ -8586,7 +8587,7 @@ CREATE TABLE `tax_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historico de Impuestos';
 
 #
-# Structure for the `timecontrol` table : 
+# Structure for the `timecontrol` table :
 #
 
 CREATE TABLE `timecontrol` (
@@ -8596,9 +8597,9 @@ CREATE TABLE `timecontrol` (
 	`status` tinyint(2) NOT NULL COMMENT 'Estado del control de horario',
 	`date` datetime NOT NULL COMMENT 'Fecha del control de horario',
 	`comments` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Comentarios del control de horario',
-	`location` int(4) DEFAULT NULL COMMENT 'Ubicación del Operario',
+	`location` int(4) DEFAULT NULL COMMENT 'Ubicaciï¿½n del Operario',
 	`latitude` double DEFAULT NULL COMMENT 'Latitud de las coordenadas.',
-	`longitude` double DEFAULT NULL COMMENT 'Longitud de las coordenadas.',	
+	`longitude` double DEFAULT NULL COMMENT 'Longitud de las coordenadas.',
 	`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
     `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
     `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -8616,7 +8617,7 @@ CREATE TABLE `timecontrol` (
 
 
 #
-# Structure for the `training_center` table : 
+# Structure for the `training_center` table :
 #
 
 CREATE TABLE `training_center` (
@@ -8630,7 +8631,7 @@ CREATE TABLE `training_center` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Centros Formativos acreditados';
 
 #
-# Structure for the `training_course` table : 
+# Structure for the `training_course` table :
 #
 
 CREATE TABLE `training_course` (
@@ -8656,7 +8657,7 @@ CREATE TABLE `training_course` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cursos de los Centros Formativos';
 
 #
-# Structure for the `user_scope` table : 
+# Structure for the `user_scope` table :
 #
 
 CREATE TABLE `user_scope` (
@@ -8674,7 +8675,7 @@ CREATE TABLE `user_scope` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos de Usuario';
 
 #
-# Structure for the `user_workgroup` table : 
+# Structure for the `user_workgroup` table :
 #
 
 CREATE TABLE `user_workgroup` (
@@ -8692,7 +8693,7 @@ CREATE TABLE `user_workgroup` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Usuarios y Grupos de Trabajo';
 
 #
-# Structure for the `warehouse_transfer` table : 
+# Structure for the `warehouse_transfer` table :
 #
 
 CREATE TABLE `warehouse_transfer` (
@@ -8725,7 +8726,7 @@ CREATE TABLE `warehouse_transfer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Traspasos entre Almacenes';
 
 #
-# Structure for the `warehouse_transfer_detail` table : 
+# Structure for the `warehouse_transfer_detail` table :
 #
 
 CREATE TABLE `warehouse_transfer_detail` (
@@ -8748,7 +8749,7 @@ CREATE TABLE `warehouse_transfer_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Traspasos entre Almacenes';
 
 #
-# Structure for the `web_info` table : 
+# Structure for the `web_info` table :
 #
 
 CREATE TABLE `web_info` (
@@ -8766,7 +8767,7 @@ CREATE TABLE `web_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion de la empresa que se mostrara en la ficha web';
 
 #
-# Structure for the `web_info_page` table : 
+# Structure for the `web_info_page` table :
 #
 
 CREATE TABLE `web_info_page` (
@@ -8782,7 +8783,7 @@ CREATE TABLE `web_info_page` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Paginas pertenecientes a la ficha web';
 
 #
-# Structure for the `web_info_page_detail` table : 
+# Structure for the `web_info_page_detail` table :
 #
 
 CREATE TABLE `web_info_page_detail` (
@@ -8801,7 +8802,7 @@ CREATE TABLE `web_info_page_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalles de la pagina perteneciente a la ficha web';
 
 #
-# Structure for the `web_info_page_resource` table : 
+# Structure for the `web_info_page_resource` table :
 #
 
 CREATE TABLE `web_info_page_resource` (
@@ -8820,7 +8821,7 @@ CREATE TABLE `web_info_page_resource` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Recursos de la pagina perteneciente a la ficha web';
 
 #
-# Structure for the `web_info_style` table : 
+# Structure for the `web_info_style` table :
 #
 
 CREATE TABLE `web_info_style` (
@@ -8847,7 +8848,7 @@ CREATE TABLE `auth_device` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dispositivos vinculados a auth';
 
 #
-# Structure for the `workplace_department` table : 
+# Structure for the `workplace_department` table :
 #
 
 CREATE TABLE `workplace_department` (
@@ -8877,4 +8878,3 @@ COMMIT;
 
 
 SET FOREIGN_KEY_CHECKS=1;
-
