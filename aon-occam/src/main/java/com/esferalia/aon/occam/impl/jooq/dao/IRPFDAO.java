@@ -39,8 +39,11 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public class IRPFDAO extends FiscalModelDAO {
+public class IRPFDAO {
 	
+	private IRPFDAO() {
+		
+	}
 	private static final IRPFPropertiesDAO IRPF_PROPERTIES = new IRPFPropertiesDAO();
 	private static class IRPFPropertiesDAO extends VATDAO implements IRPFProperties {
 

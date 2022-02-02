@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.test.mod190;
+package old.com.esferalia.aon.gwt.fiscal.test.accounting;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -16,13 +16,13 @@ import com.esferalia.aon.occam.test.fiscal.mod390hf.Mod390HFTestSuite;
 @RunWith(Suite.class)
 @SuiteClasses({
 	Mod111TestSuite.class,
-	Mod115TestSuite.class,
-	Mod123TestSuite.class,
-	Mod130TestSuite.class,
-	Mod131TestSuite.class,
-	Mod202TestSuite.class,
-	Mod303TestSuite.class,
-	Mod390HFTestSuite.class,
+//	Mod115TestSuite.class,
+//	Mod123TestSuite.class,
+//	Mod130TestSuite.class,
+//	Mod131TestSuite.class,
+//	Mod202TestSuite.class,
+//	Mod303TestSuite.class,
+//	Mod390HFTestSuite.class,
 })
 public class FiscalTestSuite {
 

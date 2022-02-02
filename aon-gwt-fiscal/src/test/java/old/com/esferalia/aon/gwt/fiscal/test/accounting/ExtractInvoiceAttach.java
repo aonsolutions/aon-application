@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.test.accounting;
+package old.com.esferalia.aon.gwt.fiscal.test.accounting;
 
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;

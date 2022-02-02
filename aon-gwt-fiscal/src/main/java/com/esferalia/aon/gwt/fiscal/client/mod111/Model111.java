@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
-import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.google.gwt.core.client.GWT;
@@ -411,36 +410,33 @@ public class Model111 extends MainEntryPoint {
 		});
 	}
 	
-	private void showNewDeclarationPopup( Mod111 m111 ) {
-		NewDeclarationPopup<Mod111,Model111ModuleOptions> newDialog = new NewDeclarationPopup<>( m111,
-			new Model111Callback() { 
+	private void showNewDeclarationPopup( Mod111 m111) {
+		Model111NewDeclarationPanel newDeclarationPanel = new Model111NewDeclarationPanel(m111,new Model111Callback() { 
+			@Override
+			public void onAccept(Mod111 mod111) {
+				SERVICE.create(getOptions().getOccam(),mod111,
+					new AsyncCallback<Mod111>() {
+						@Override
+						public void onSuccess(Mod111 m111) {
+							select(m111);
+						}
 
-					@Override
-					public void onAccept(Mod111 mod111) {
-						SERVICE.create(getOptions().getOccam(),mod111,
-							new AsyncCallback<Mod111>() {
-								@Override
-								public void onSuccess(Mod111 m111) {
-									select(m111);
-								}
-	
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-								}
-							});
-					}
-					@Override
-					public void onCancel(Mod111 model) {
-						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-							getOptions().getExternalCallback().onExit(model);
-						}						
-					}
-
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						}
+					});
+			}
+			@Override
+			public void onCancel(Mod111 model) {
+				if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+					getOptions().getExternalCallback().onExit(model);
+				}						
+			}
+		}); 
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 
 	private void showErrorMessage(String msg) {

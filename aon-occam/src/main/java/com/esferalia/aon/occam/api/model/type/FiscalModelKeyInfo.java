@@ -7,6 +7,7 @@ public enum FiscalModelKeyInfo implements Serializable {
 	, INVOICE		 			(true,  "Ver desglose en facturas")
 	, IN_ACCRUAL_INVOICE		(true,  "Ver desglose en facturas")
 	, OUT_ACCRUAL_INVOICE		(true,  "Ver desglose en facturas")
+	
 	, DIFF_INVOICE	 			(true,  "Detalle del c\u00E1lculo por diferencia. Facturas - declarado")
 	, DIFF_IN_ACCRUAL_INVOICE	(true,  "Detalle del c\u00E1lculo por diferencia. Facturas - declarado")
 	, DIFF_OUT_ACCRUAL_INVOICE	(true,  "Detalle del c\u00E1lculo por diferencia. Facturas - declarado")

@@ -147,6 +147,7 @@ class CompositeConnectionInfo extends ConnectionInfo {
 			try {
 				domains.putAll(connectionInfo.getDomains());
 			} catch ( AonConnectionException e) {
+				e.printStackTrace();
 			}
 		}
 		return domains;

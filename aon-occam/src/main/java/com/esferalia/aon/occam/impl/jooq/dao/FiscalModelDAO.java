@@ -57,6 +57,7 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
+@Deprecated
 public class FiscalModelDAO {
 	
 	private static final FiscalModelPropertiesDAO FS_MODEL_PROPERTIES = new FiscalModelPropertiesDAO();

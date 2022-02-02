@@ -32,7 +32,6 @@ public class Mod111Insert extends AbstractOccamTest {
 				mod111 = MODEL111.initializeMod111(getOccam(), mod111);
 				mod111.setAdministration(admon);
 				mod111 = MODEL111.createMod111(getOccam(), mod111);
-				
 				MODEL111.save(getOccam(), mod111);
 			}
 		}

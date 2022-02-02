@@ -14,6 +14,9 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModelValidation {
+	private FiscalModelValidation() {
+		
+	}
 
 	private static final byte ZERO = 0;
 	 
@@ -61,7 +64,7 @@ public class FiscalModelValidation {
 					.and( fm.getModel().isOtherDeponentAllowedInSamePeriod()
 							?FS_MODEL.DOCUMENT.eq( fm.getDocument() )
 							:DSL.trueCondition() )
-					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
+					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().value() ))
 					.and(FS_MODEL.REPLACEMENT.equal( ZERO ))
 					.and(FS_MODEL.COMPLEMENTARY.equal( ZERO ))
 					.and(FS_MODEL.STATUS.notEqual( (byte) FiscalStatus.BLOCKED.ordinal() ))
@@ -87,7 +90,7 @@ public class FiscalModelValidation {
 					.and( fm.getModel().isOtherDeponentAllowedInSamePeriod()
 							?FS_MODEL.DOCUMENT.eq( fm.getDocument() )
 							:DSL.trueCondition() )
-					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
+					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().value() ))
 					.and(FS_MODEL.REPLACEMENT.equal( ZERO ))
 					.and(FS_MODEL.COMPLEMENTARY.equal( ZERO ))
 					.and(FS_MODEL.STATUS.notEqual( (byte) FiscalStatus.BLOCKED.ordinal() ))
