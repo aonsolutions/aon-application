@@ -1921,6 +1921,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					@Override
 					public void execute() {
 						formers = !formers;
+						changeVisibleWorkplaces();
 						changeVisibleEmployees();
 						formerMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
 						popup.hide();
@@ -2108,7 +2109,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	private boolean isWorkPlaceVisible(Workplace workplace) {
-		return workplace.isActive() || inactive;
+		return inactive || (workplace.isActive() && workplace.getDate().compareTo(getFromDate()) >= 0 );
 	}
 
 	private int getWorkplacesOffset(TreeItem rootItem) {

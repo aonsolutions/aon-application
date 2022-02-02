@@ -335,6 +335,8 @@ import solutions.aon.sepe.exceptions.SepeException;
 public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		implements EmployeesService, StatisticsService, CalendarService, EmployeeEventsService {
 
+	private static final String CONTRACT_MAX_END_DATE = "contract_max_end_date";
+
 	public static final String REMOVE = "REMOVE()";
 
 	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
@@ -3217,7 +3219,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE 
+			String sql = "SELECT"
+					
+					+ " " + REGISTRY +".*"
+					+ "," + ENTERPRISE +".*"
+					+ "," + WORKPLACE +".*"
+					+ "," + PAYROLL_WORKPLACE +".*"
+					+ "," + AGREEMENT +".*"
+					+ "," + ENTERPRISE_ACTIVITY +".*"
+					+ "," + ENTERPRISE_CCC +".*"
+					
+					+ "," + CONTRACT +"." + ContractColumns.ID
+					+ ",MAX(IFNULL(" + CONTRACT +"." + ContractColumns.END_DATE + ",'9999-12-31')) AS " + CONTRACT_MAX_END_DATE
+		
+					+ " FROM " + REGISTRY + ", " + ENTERPRISE 
 					
 					+ " LEFT JOIN " + WORKPLACE + " ON ( "
 					+ ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
@@ -5126,8 +5141,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			workplace = new Workplace();
 			workplace.setId(rs.getInt(tableCol(WORKPLACE, WorkplaceColumns.ID)));
 			workplace.setDescription(rs.getString(tableCol(WORKPLACE, WorkplaceColumns.DESCRIPTION)));
-			workplace.setActive(rs.getBoolean(tableCol(WORKPLACE, WorkplaceColumns.ACTIVE))
-								&& rs.getInt(tableCol(CONTRACT, ContractColumns.ID)) > 0 );
+			
+			Object contractId = rs.getObject(tableCol(CONTRACT, ContractColumns.ID));
+			workplace.setActive(contractId != null && rs.getBoolean(tableCol(WORKPLACE, WorkplaceColumns.ACTIVE)));
+			if (contractId != null) {
+				workplace.setDate(rs.getDate(CONTRACT_MAX_END_DATE));
+			}
 
 			Object agreementId = rs.getObject(tableCol(PAYROLL_WORKPLACE, PayrollWorkplaceColumns.AGREEMENT));
 			if (agreementId != null) {
