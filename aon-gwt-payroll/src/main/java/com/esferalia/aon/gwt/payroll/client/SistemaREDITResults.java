@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -104,6 +105,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	private TreeItem warningsItem;	
 	private TreeItem messagesItem;	
 	private TreeItem notFoundItem;
+
+	private boolean isUserComunica;
 	
 	public SistemaREDITResults() {
 		
@@ -133,9 +136,11 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 	}
 
-	public  void run() {
-	}
+	public void run() {}
 	
+	protected void setIsUserComunica(boolean isUserComunica) {
+		this.isUserComunica = isUserComunica;
+	}
 
 	// ------------------------------------------------------------ @UiHandlers
 
@@ -190,10 +195,10 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		horizontalPanel.add(new HTML("&nbsp;"));
 		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);	
 		
-		if(status.getToAon())
-			itNoExistToAon(horizontalPanel, status);
-		else 
+		if(status.getIdPart().isPresent())
 			itNoExistToSS(horizontalPanel, status);
+		else 
+			itNoExistToAon(horizontalPanel, status);
 		
 		addNotFound(horizontalPanel).setUserObject(status);
 		syncNotFound();
@@ -234,11 +239,25 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
 				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
 				+" ) no encontrada en SISTEMA RED."
-//			   +" Pulse"
+			   +" Pulse"
 			)
 		);
+//		if(this.isUserComunica) {
+			horizontalPanel.add(new HTML("&nbsp;"));
+			Anchor anchor = new Anchor("aqu\u00ed");
+			anchor.addClickHandler(e -> {
+				onOpenITPart(status);
+			});
+			
+			anchor.getElement().getStyle().setColor("blue");
+			anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+			
+			horizontalPanel.add(anchor);
+			horizontalPanel.add(new HTML("&nbsp;"));
+			horizontalPanel.add(new Label("para gestionarlo."));
+//		}
 	}
-	
+
 	@Override
 	public void unknownError(String message) {
 		addError(new SaltraEvent() {
@@ -267,6 +286,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	
 	@Override
 	public void updatedEnterprise() {}
+	
+	protected void onOpenITPart(ItNotExist itNotExist) {}
 
 	// ------------------------------------------------------------------------
 	
@@ -488,4 +509,6 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	/*-{
 		return eval(javascript);
 	}-*/;
+	
+	
 }

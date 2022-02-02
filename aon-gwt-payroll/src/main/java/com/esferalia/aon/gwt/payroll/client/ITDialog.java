@@ -238,7 +238,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	private AonToolbarButton listIT;
 	private AonToolbarButton backListIT;
 	private AonToolbarButton newIT;
-	private AonToolbarButton comunicateIT;
+//	private AonToolbarButton comunicateIT;
 	private AonToolbarButton showCertificate;
 	
 	// --------------------------------------------------- Variables.Footer
@@ -485,7 +485,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		createEmployeePanel(itDialogObject.getEmployeeinfo());
 		
 		// Check Comunicate
-		checkComunicateIT();
+//		checkComunicateIT();
 		
 		showDialog();
 	}
@@ -498,11 +498,11 @@ public abstract class ITDialog extends AonCustomDialog {
 		});
 	}
 
-	private void checkComunicateIT() {
-		if(userComunica && (null == this.it.isComunicate() || !this.it.isComunicate())) {
-			comunicateIT.setVisible(true);
-		}
-	}
+//	private void checkComunicateIT() {
+//		if(userComunica && (null == this.it.isComunicate() || !this.it.isComunicate()) && comunicateIT!=null) {
+//			comunicateIT.setVisible(true);
+//		}
+//	}
 	
 	// --------------------------------------------------- setITDialogObject.Methods
 	
@@ -1276,8 +1276,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(isCommunicatePart(itPart)) {
 			AonTableButton communicate = new AonTableButton("Comunicar Confirmaci\u00F3n", AON.CSS.aonIconSend());
 			communicate.addClickHandler((e) -> {
-				itPartTmp = itPart;
-				viewCommunicateITPart(it);
+				setViewPartComunica(itPart);
 			});
 			
 			confirmationPartDataTable.setWidget(row, 5, communicate);
@@ -1826,13 +1825,13 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(bjOptional.isPresent() && isCommunicatePart(bjOptional.get())) {
 			AonTableButton btnBaja = new AonTableButton("Comunicar Baja", AON.CSS.aonIconSend()); 
 			btnBaja.addClickHandler((e) -> {
-				itPartTmp = new ITPart()
+				ITPart part = new ITPart()
 						.setId(bjOptional.get().getId())
 						.setDate(it.getStartDate()).setType((byte) 0)
 						.setCollegeNumber(collegiateNumberITPart.getValue())
 						.setCias(ciasITPart.getValue());
 
-				viewCommunicateITPart(it);
+				setViewPartComunica(part);
 			});
 
 			itBaja.add(btnBaja);
@@ -1841,20 +1840,21 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(altaOptional.isPresent() && isCommunicatePart(altaOptional.get())) {
 			AonTableButton btnAlta = new AonTableButton("Comunicar Alta", AON.CSS.aonIconSend());
 			btnAlta.addClickHandler((e) -> {
-				itPartTmp = new ITPart()
+				ITPart part = new ITPart()
 				.setId(altaOptional.get().getId())
 				.setDate(it.getEndDate()).setType((byte) 2)
 				.setCollegeNumber(collegiateNumberITPart.getValue())
 				.setCias(ciasITPart.getValue());
 
-				viewCommunicateITPart(it);
+				setViewPartComunica(part);
 			});
 			
 			itAlta.add(btnAlta);
 		}
 	}
 
-	private void viewCommunicateITPart(IT it) {
+	public void setViewPartComunica(ITPart itPart) {
+
 		listIT.setVisible(false);
 		deleteIT.setVisible(false);
 		backListIT.setVisible(true);
@@ -1865,7 +1865,10 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		mainCommunicate.add(loading);
 		
-		itPartTmp.setStatus( (byte) 3);
+		itPartTmp = itPart;
+
+		// itPartTmp.setStatus( (byte) 3);
+		
 		paintPanel(itPartTmp);
 
 		createFooterButtonsCommunicate();

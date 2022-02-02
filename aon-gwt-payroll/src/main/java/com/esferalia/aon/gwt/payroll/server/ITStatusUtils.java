@@ -61,9 +61,9 @@ public class ITStatusUtils {
 					).collect(Collectors.toList());
 
 					if(!aonEmployeesIT.isEmpty()) {
-						compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain, true);	//NO EXIST EN AON
+						compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain);	//NO EXIST EN AON
 			
-						compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain, false); //NO EXIST EN SS
+						compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
 					}
 				}
 			} catch (Exception e) {
@@ -85,7 +85,7 @@ public class ITStatusUtils {
 	 * FIRST LIST NOT EXIST IN SECOND LIST
 	 */
 	private static AndEmployeeITStatus compareEmployeesITs(List<EmployeeIT> firstList, List<EmployeeIT>secondList, 
-		AndEmployeeITStatus employeeITStatus, Domain domain, boolean toAon) {
+		AndEmployeeITStatus employeeITStatus, Domain domain) {
 		List<EmployeeIT> itsUpdate = new ArrayList<>();
 		AtomicBoolean change = new AtomicBoolean(false);
 		for (EmployeeIT second : secondList) {
@@ -95,19 +95,19 @@ public class ITStatusUtils {
 				List<EmployeeITPart> ssITConfirmations = second.getItConfirmations();
 				Optional<EmployeeITPart> ssITAlta = second.getItAlta();
 				
-				Date newStartDate = normalizeITToPaint(second.getType(), second.getStartDate(), toAon);
+				Date newStartDate = normalizeITToPaint(second.getType(), second.getStartDate(), second.getId()==null);
 				
 				List<EmployeeIT> aonEmployeeITs = firstList.stream()
 						.filter(e->e.getNss().equals(second.getNss()) && e.getStartDate().equals(newStartDate)).collect(Collectors.toList());
 
 				if(ssITBaja.isPresent()) {
-					System.out.println("Baja isPresent NSS:"+second.getNss()+ " date:"+ssITBaja.get().getDate()+" toAon:"+toAon);
+					System.out.println("Baja isPresent NSS:"+second.getNss()+ " date:"+ssITBaja.get().getDate()+" toAon:"+ssITBaja.get().getId());
 					aonEmployeeITs.stream().map(EmployeeIT::getItBaja)
 					.filter(e-> e.isPresent())
 					.map(e->e.get())
 					.filter(e->e.getDate().equals(ssITBaja.get().getDate()))
 					.findFirst().ifPresentOrElse(e->{
-						if(!ssITBaja.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
+						if(ssITBaja.get().getId()!=null && !ssITBaja.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
 							ssITBaja.get().setStatus(ContractLeaveDetailStatus.PROCESSED);
 							change.getAndSet(true);
 						}
@@ -119,21 +119,21 @@ public class ITStatusUtils {
 							.setName(name.get())
 							.setDate(ssITBaja.get().getDate())
 							.setPart(ContractLeaveDetailType.BAJA.value())
-							.setToAon(toAon)
+							.setIdPart(ssITBaja.get().getId())
 						);
 					});
 				}
 
 				if(ssITAlta.isPresent()) {
 					System.out.println();
-					System.out.println("Alta isPresent NSS:"+second.getNss()+ " date:"+ssITAlta.get().getDate()+" toAon:"+toAon);
+					System.out.println("Alta isPresent NSS:"+second.getNss()+ " date:"+ssITAlta.get().getDate()+" toAon:"+ssITAlta.get().getId());
 					System.out.println();
 					aonEmployeeITs.stream().map(EmployeeIT::getItAlta)
 					.filter(e-> e.isPresent())
 					.map(e->e.get())
 					.filter(e->e.getDate().equals(ssITAlta.get().getDate()))
 					.findFirst().ifPresentOrElse(e->{
-						if(!ssITAlta.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
+						if(ssITAlta.get().getId()!=null && !ssITAlta.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
 							ssITAlta.get().setStatus(ContractLeaveDetailStatus.PROCESSED);
 							change.getAndSet(true);
 						}
@@ -145,7 +145,7 @@ public class ITStatusUtils {
 							.setName(name.get())
 							.setDate(ssITAlta.get().getDate())
 							.setPart(ContractLeaveDetailType.ALTA.value())
-							.setToAon(toAon)
+							.setIdPart(ssITAlta.get().getId())
 						);
 					});
 				}
@@ -162,7 +162,7 @@ public class ITStatusUtils {
 							e.getDate().equals(ssITConfirmation.getDate())
 						)
 						.findFirst().ifPresentOrElse(e->{
-							if(!ssITConfirmation.getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
+							if(ssITConfirmation.getId()!=null && !ssITConfirmation.getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
 								ssITConfirmation.setStatus(ContractLeaveDetailStatus.PROCESSED);
 								change.getAndSet(true);
 							}
@@ -172,7 +172,7 @@ public class ITStatusUtils {
 							.setNaf(second.getNss())
 							.setName(name.get())
 							.setDate(ssITConfirmation.getDate())
-							.setToAon(toAon)
+							.setIdPart(ssITConfirmation.getId())
 							.setPart(ContractLeaveDetailType.CONFIRMACION.value());
 							ssITConfirmation.getConfirmOrder().ifPresent(order::setConfirmOrder);
 							
@@ -186,7 +186,7 @@ public class ITStatusUtils {
 		}
 
 
-		if(!toAon && !itsUpdate.isEmpty() && change.get()) {
+		if(change.get() && !itsUpdate.isEmpty()) {
 			itUpdate(domain, itsUpdate);
 			employeeITStatus.and(new EnterpriseITStatus.UpdatedEnterprise());
 		}

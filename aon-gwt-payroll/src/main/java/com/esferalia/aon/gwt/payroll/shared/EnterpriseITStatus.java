@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 public abstract class EnterpriseITStatus implements Serializable {
 
@@ -74,8 +75,9 @@ public abstract class EnterpriseITStatus implements Serializable {
 		String name;
 		Byte part; //0 baja , 1 confirmacion, 2 alta
 		Byte confirmOrder;
-		boolean toAon;
-
+		Integer idPart;
+		
+		
 //		Double base;
 //		Integer quoteDays;
 //		Byte contracTypeLeave;
@@ -105,8 +107,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return confirmOrder;
 		}
 
-		public boolean getToAon() {
-			return toAon;
+		public Optional<Integer> getIdPart() {
+			return Optional.ofNullable(idPart);
 		}
 		
 		public ItNotExist setDate(Date date) {
@@ -139,8 +141,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 			return this;
 		}
 		
-		public ItNotExist setToAon(boolean b) {
-			this.toAon = b;
+		public ItNotExist setIdPart(Integer id) {
+			this.idPart = id;
 			return this;
 		}
 		
