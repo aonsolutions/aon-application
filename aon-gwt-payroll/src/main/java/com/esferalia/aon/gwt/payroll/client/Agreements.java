@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsTreeToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.AgreementOwner;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -207,7 +208,7 @@ public class Agreements extends ResizeComposite implements
 		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
 		agreement.setSSNumber(null);
 		agreement.setDomain(getDomain());
-		agreement.setIsServiAgreement(false);
+		agreement.setOwner(AgreementOwner.AONSOLUTIONS);
 
 		return agreement;
 	}

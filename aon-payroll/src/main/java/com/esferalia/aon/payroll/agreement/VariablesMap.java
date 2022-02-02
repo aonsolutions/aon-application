@@ -45,6 +45,15 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AD_PERSONAM_ANUAL","AD_PERSONAM");
 		variablesMap.put("AD_PERSONAM_MENSUAL","AD_PERSONAM");
 		
+		variablesMap.put("ANTIGUEDAD_1_CUATRIENIO_MENSUAL","ANTIGUEDAD_1");
+		variablesMap.put("ANTIGUEDAD_2_CUATRIENIOS_MENSUAL","ANTIGUEDAD_2");
+		variablesMap.put("ANTIGUEDAD_3_CUATRIENIOS_MENSUAL","ANTIGUEDAD_3");
+		variablesMap.put("ANTIGUEDAD_4_CUATRIENIOS_MENSUAL","ANTIGUEDAD_4");
+		variablesMap.put("ANTIGUEDAD_5_CUATRIENIOS_MENSUAL","ANTIGUEDAD_5");
+		variablesMap.put("ANTIGUEDAD_6_CUATRIENIOS_MENSUAL","ANTIGUEDAD_6");
+		variablesMap.put("ANTIGUEDAD_7_CUATRIENIOS_MENSUAL","ANTIGUEDAD_7");
+		variablesMap.put("ANTIGUEDAD_8_CUATRIENIOS_MENSUAL","ANTIGUEDAD_8");
+		
 		variablesMap.put("ANTIGUEDAD_1_QUINQUENIO_MENSUAL","ANTIGUEDAD_5");
 		
 		variablesMap.put("ANTIGUEDAD_1_AÑOS_DIARIO","ANTIGUEDAD_1");
@@ -228,6 +237,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COLECTIVIDADES_MENSUAL", "COLECT_MENSUAL");
 		variablesMap.put("COMIDA_O_CENA_PORTUGAL_DIARIO", "COMIDA_CENA_PORT_D");
 		variablesMap.put("COMISION_VENDEDOR_MENSUAL", "COMISION_VENDEDOR");
+		variablesMap.put("COMISIONES_GARANTIZADAS_MENSUAL", "COMISIONES_GARANTIZADAS");
 		variablesMap.put("COMPENSACIONES_MARMOLERIAS_MENSUAL", "C_MARMOLERIAS_MENSUAL");
 		variablesMap.put("COMPENSACIONES_ANUAL", "COMPENSACIONES");
 		variablesMap.put("COMPENSACIONES_MENSUAL", "COMPENSACIONES");
@@ -593,6 +603,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_CENTROS_COMERCIALES_MENSUAL", "PLUS_CC");
 		variablesMap.put("PLUS_CENTROS_SANITARIOS_MENSUAL", "PLUS_C_SANITARIOS");
 		variablesMap.put("PLUS_CENTRO_DE_SALUD_HORAS", "PLUS_CENT_SALUD_H");
+		variablesMap.put("PLUS_COMPENSACION_ANTIGUEDAD_MENSUAL", "P_COMPENSACION_ANT");
 		variablesMap.put("PLUS_COMPENSACION_ANUAL", "PLUS_COMPENSACION");
 		variablesMap.put("PLUS_COMPENSACION_MENSUAL", "PLUS_COMPENSACION");
 		variablesMap.put("PLUS_CONVENIO_ANUAL", "PLUS_CONVENIO");
@@ -690,6 +701,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_GRUA_MENSUAL", "PLUS_GRUA");
 		variablesMap.put("PLUS_GRUA_DIARIO", "PLUS_GRUA");
 		variablesMap.put("PLUS_HORAS_HORAS", "PLUS_HORAS");
+		variablesMap.put("PLUS_HORNERO_MENSUAL", "PLUS_HORNERO");
 		variablesMap.put("PLUS_HERRAMIENTAS_ANUAL", "PLUS_HERRAMIENTAS_A");
 		variablesMap.put("PLUS_HERRAMIENTAS_DIARIO", "PLUS_HERRAMIENTAS_D");
 		variablesMap.put("PLUS_HERRAMIENTAS_MENSUAL", "PLUS_HERRAMIENTAS_M");
