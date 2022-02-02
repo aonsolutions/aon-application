@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AlterAgreement4Owner;
 import net.aonsolutions.db.up2date.payroll.ContractCleanUpdate;
 import net.aonsolutions.db.up2date.data.DataRequestUpdate;
 import net.aonsolutions.db.up2date.data.DataResponseTBAI;
@@ -227,7 +228,8 @@ public class Up2Date {
     		//IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT
     		
     		IrpfQuotasInsert.IRPFQUOTASINSERT,
-    		IrpfQuotasCheck.IRPFQUOTASCHECK
+    		IrpfQuotasCheck.IRPFQUOTASCHECK,
+    		AlterAgreement4Owner.ALTER_AGREEMENT_OWNER
     };
     
 
