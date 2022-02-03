@@ -483,17 +483,25 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			}
 		}
 
-		TreeItem workplaceItem = null;
+		List<TreeItem> workplaceItems = new ArrayList<>();
 
 		for (Workplace workplace : workplaces) {
-			workplaceItem = addEnterpriseWorkplaceItem(enterpriseItem, enterprise, workplace);
+			workplaceItems.add(addEnterpriseWorkplaceItem(enterpriseItem, enterprise, workplace));
 		}
 
 		enterpriseItem.setState(true, true);
 		tree.setSelectedItem(enterpriseItem, true); // Send event to show
 													// enterprise data
-		if (workplaces.size() == 1)
-			workplaceItem.setState(true, true); // Send event to show employees
+		
+		TreeItem visibleWorkplacesItems [] = workplaceItems.stream().filter( w -> w.isVisible()).toArray(TreeItem[]::new);
+		
+		if (visibleWorkplacesItems.length == 1) {
+			visibleWorkplacesItems[0].setState(true, true); // Send event to show employees
+		} else if ( visibleWorkplacesItems.length == 0 ){
+			this.inactive = true;
+			workplaceItems.forEach( workplaceItem -> workplaceItem.setVisible(true));
+		}
+			
 
 		scrollPanel.scrollToLeft();
 
@@ -1936,7 +1944,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					public void execute() {
 						try {
 							inactive = !inactive;
-
 							changeVisibleWorkplaces();
 							inactiveMenuItem.setStyleName("aon-MenuItemCheckYes", inactive);
 							popup.hide();
@@ -2489,14 +2496,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 	// ------------------------------------------------------------------------
 
-	private void load() {
-		
-		for ( int i = 0; i < tree.getItemCount(); i++ ) {
-			TreeItem enterpriseItem = tree.getItem(i);	
-			loadEnterprise(enterpriseItem);
-		}
-		
-	}
 	
 	private void loadEnterprise(TreeItem enterpriseItem) {
 		int workplacesOffset = getWorkplacesOffset(enterpriseItem);

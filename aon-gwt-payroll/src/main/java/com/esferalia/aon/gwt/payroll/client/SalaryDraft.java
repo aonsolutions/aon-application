@@ -994,6 +994,71 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
+	static class DelayFactory implements VariableEditorFactory<TextListBox> {
+
+		private String name;
+
+		public DelayFactory(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public boolean accept(Variable variable) {
+			return name.equals(variable.getName());
+		}
+
+		@Override
+		public TextListBox create(Variable variable) {
+
+			TextListBox textListBox = new TextListBox() {
+				
+				@Override
+				public String getValue() {
+
+					String value = super.getValue(getSelectedIndex());
+					if (AonStringUtils.isBlank(value))
+						return "NADA";
+					Payment.Type delay = Payment.Type.valueOf(Payment.Type.class, value);
+
+					String contextVariable =  getContextVariable(delay);
+					
+					return contextVariable;
+				}
+				
+				private String getContextVariable(Payment.Type e) {
+					switch (e) {
+					case CRA_0009:
+						return "CRA_0009";
+					case CRA_0012:
+						return "CRA_0012";
+					case CRA_0010:
+						return "CRA_0010";
+					case CRA_0011:
+						return "CRA_0011";
+					case CRA_0008:
+						return "CRA_0008";
+					}
+					return null;
+				}
+			};
+
+			for (Payment.Type e : new Payment.Type[] { 
+					Payment.Type.CRA_0008, 
+					Payment.Type.CRA_0009, 
+					Payment.Type.CRA_0010, 
+					Payment.Type.CRA_0011, 
+					Payment.Type.CRA_0012 
+			} )
+				textListBox.addItem(e.getDescription(), e.name());
+			
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			textListBox.addStyleName("aon-WriteOnly");
+
+			return textListBox;
+		}
+
+	}
+
 	static class DismissalFactory implements VariableEditorFactory<TextListBox> {
 
 		private String name;
@@ -2751,7 +2816,7 @@ public class SalaryDraft extends ResizeComposite
 	public void onChange(SalarySelect salarySelect) {
 		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
-		settleButton.setVisible(isAutomatic());
+		//settleButton.setVisible(isAutomatic());
 		
 		salaryButton.setVisible(!isSettle() && !isExtra());
 		
@@ -6633,6 +6698,7 @@ public class SalaryDraft extends ResizeComposite
 			new DateEditorFactory("FECHA_PREAVISO"),
 			//new DateEditorFactory("INICIO_PAGO_DIRECTO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class),
+			new DelayFactory("CAUSA_ATRASO"),
 			new DismissalFactory("CAUSA_INDEMNIZACION"),
 			new StringsListBoxFactory("GRUPO_COTIZACION",
 					new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" }),

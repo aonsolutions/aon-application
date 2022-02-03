@@ -67,6 +67,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.ExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -511,7 +512,7 @@ public class SQLContractDelayCalculatorContext extends
 			payment.setSalaryType(SalaryType.DELAY);
 
 			// TODO: Generic Delays ? 
-			payment.setType(PaymentType.CRA_0008 );
+			payment.setType(getPaymentType(PaymentType.CRA_0008));
 			payment.setIrpfExpression(ContextVariable.ALL);
 			payment.setQuoteExpression(ContextVariable.ALL);
 			payment.setDescription(getDescriptionForSalaryDelay(payment, payments.size()));
@@ -552,18 +553,27 @@ public class SQLContractDelayCalculatorContext extends
 		criteria.addEqualExpression(identifier, getId());
 
 		final Collection<IContractPayment> payments = new LinkedList<IContractPayment>();
+		
 
 		SalaryDelayPaymentDecorator salaryPaymentDecorator = new SalaryDelayPaymentDecorator() {
 			@Override
 			public int getOrdinal(IContractPayment payment) {
 				return payments.size()+1;
 			}
+			@Override
+			public PaymentType getPaymentType(IContractPayment payment) {
+				return SQLContractDelayCalculatorContext.this.getPaymentType(PaymentType.CRA_0008);
+			}
 		};
 		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
-		@Override
-		public  int getOrdinal(IContractPayment payment) {
-			return payments.size()+1;
-		}
+			@Override
+			public  int getOrdinal(IContractPayment payment) {
+				return payments.size()+1;
+			}
+			@Override
+			public PaymentType getPaymentType(IContractPayment payment) {
+				return PaymentType.CRA_0000;
+			}
 		};
 
 		
@@ -616,6 +626,30 @@ public class SQLContractDelayCalculatorContext extends
 
 		return payments;
 
+	}
+	
+	private PaymentType getPaymentType(PaymentType def) {
+		
+		try {
+			List<ITimedResult<PaymentType>> results = 
+			getExpressionContext().eval(ContextVariable.DELAY_CAUSE.getName(), getStartDate(), getEndDate(), PaymentType.class);
+			List<PaymentType> paymentTypes = results.stream().map( r -> r.getValue()).distinct().collect(Collectors.toList());
+			if ( paymentTypes.size() == 1 ) 
+				return paymentTypes.get(0);
+		
+		} catch (Exception e) {
+			getExpressionContext().putVariable(
+					ContextVariable.DELAY_CAUSE.getName(), 
+					new ExpressionVariable<>(def, 
+					new Period(getStartDate(), getEndDate()), 
+					new ExpressionImpl()
+					.setScope(ExpressionScope.CONTRACT)
+					.setName(ContextVariable.DELAY_CAUSE.getName())
+					.setExpression(def.name())
+					));
+		}
+		getExpressionContext().readVariable(ContextVariable.DELAY_CAUSE.getName(), getStartDate(), getEndDate(), PaymentType.class);
+		return def;
 	}
 
 
@@ -818,7 +852,7 @@ public class SQLContractDelayCalculatorContext extends
 	public interface IDelayPaymentDecorator {
 		int getOrdinal(IContractPayment payment);
 		String getDescriptionFor(IContractPayment payment);
-
+		PaymentType getPaymentType(IContractPayment payment);
 	}
 
 	private static class DelayPaymentBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
@@ -1224,7 +1258,7 @@ public class SQLContractDelayCalculatorContext extends
 			paymentConcept.setCode("__" + RN.roman(ordinal));
 			
 			// TODO: Generic Delays ? 
-			paymentConcept.setType(PaymentType.CRA_0008 );
+			paymentConcept.setType( paymentDecorator.getPaymentType(payment) );
 			// we use Locale.US to avoid ',' instead of '.' like decimals
 			// separator.
 			// Be care that MVEL like any other expression language don't

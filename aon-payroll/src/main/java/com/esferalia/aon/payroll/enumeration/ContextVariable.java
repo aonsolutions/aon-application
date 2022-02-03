@@ -314,8 +314,14 @@ public enum ContextVariable implements IResourceable {
 	SEPTEMBER("SEPTIEMBRE", VariableType.INTEGER),
 	OCTOBER("OCTUBRE", VariableType.INTEGER),
 	NOVEMBER("NOVIEMBRE", VariableType.INTEGER),
-	DECEMBER("DICIEMBRE", VariableType.INTEGER)
+	DECEMBER("DICIEMBRE", VariableType.INTEGER),
 	
+	DELAY_CAUSE("CAUSA_ATRASO", VariableType.INTEGER, false),
+	CRA_0009("CRA_0009", VariableType.INTEGER),
+	CRA_0011("CRA_0011", VariableType.INTEGER),
+	CRA_0012("CRA_0012", VariableType.INTEGER),
+	CRA_0010("CRA_0010", VariableType.INTEGER),
+	CRA_0008("CRA_0008", VariableType.INTEGER),
 	;
 
 	public static final String ALL = "_P";
