@@ -382,12 +382,16 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void createEmployeePanel(EmployeeInfo employeeInfo) {
 		employeePanel.clear();
+		employeePanel.add(new Label(employeeInfo.getFullName()));
+		updateEmployeePanel(employeeInfo);
+		showListOption();
+	}
+	
+	private void updateEmployeePanel(EmployeeInfo employeeInfo) {
 		employeePanelDoc.clear();
 		employeePanelNaf.clear();
-		employeePanel.add(new Label(employeeInfo.getFullName()));
 		employeePanelDoc.add(new Label(employeeInfo.getDocument()));
 		employeePanelNaf.add(new Label(employeeInfo.getSsNumber()));
-		showListOption();
 	}
 	
 	// --------------------------------------------------- onModuleLoad
@@ -484,9 +488,6 @@ public abstract class ITDialog extends AonCustomDialog {
 		showAdvancedOpts(!showAll);
 		createEmployeePanel(itDialogObject.getEmployeeinfo());
 		
-		// Check Comunicate
-//		checkComunicateIT();
-		
 		showDialog();
 	}
 	
@@ -533,8 +534,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		}
 		
 		//PRINT BTN IT COMUNICA
-		if(null != this.it)
-			printBtnCommunicate();
+//		if(null != this.it)
+//			printBtnCommunicate();
 		
 	}
 	
@@ -630,8 +631,8 @@ public abstract class ITDialog extends AonCustomDialog {
 			String employeeName = employeeSB.getValue();
 			if(itDialogObject == null) {
 				itEmployee = getITEmployee(employeeName);
-				ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
-				setITDialogObject(itDialogObject);
+				setITDialogObject(new ITDialogObject(itEmployee));
+				updateEmployeePanel(itEmployee.getEmployeeInfo());
 				showListOption();
 			}
 		});
@@ -1267,41 +1268,30 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
 		deleteBTN.addClickHandler((e) -> {
-			if(itPart.getIt() != null && null != dateBox.getValue()) {
+			if(itPart.getIt() != null) {
 				itDialogObject.deleteConfirmationPart(itPart.getIt(), itPart);
-				redrawConfirmationPartTable(itPart.getIt());
+				confirmationPartDataTable.getRowFormatter().setVisible(row, false);
 			}
 		});
-		
-		if(isCommunicatePart(itPart)) {
-			AonTableButton communicate = new AonTableButton("Comunicar Confirmaci\u00F3n", AON.CSS.aonIconSend());
-			communicate.addClickHandler((e) -> {
-				setViewPartComunica(itPart);
-			});
-			
-			confirmationPartDataTable.setWidget(row, 5, communicate);
-		}
-		
 		
 		confirmationPartDataTable.setWidget(row, 0, orderNumberTB);
 		confirmationPartDataTable.setWidget(row, 1, dateBox);
 		confirmationPartDataTable.setWidget(row, 2, collegeNumberTB);
 		confirmationPartDataTable.setWidget(row, 3, ciasTB);
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
-
+		
+//		if(isCommunicatePart(itPart)) {
+//			AonTableButton communicate = new AonTableButton("Comunicar Confirmaci\u00F3n", AON.CSS.aonIconSend());
+//			communicate.addClickHandler((e) -> {
+//				setViewPartComunica(itPart);
+//			});
+//			
+//			confirmationPartDataTable.setWidget(row, 5, communicate);
+//		}
 	}
 
 	private boolean isCommunicatePart(ITPart itPart){
 		return it.getId()!=null && itPart.getId()!=null && itPart.getStatus() != (byte)3;
-	}
-
-	private void redrawConfirmationPartTable(Integer itId) {
-		IT it = this.itDialogObject.getIT(itId);
-		confirmationPartDataTable.clear();
-		confirmationPartDataTable.resize(0, 0);
-		confirmationPartDataTable.resizeColumns(5);
-		paintSelectedIT(it, false);
-		calculateScrollPanelHeight();
 	}
 	
 	// --------------------------------------------------- ITDIalog.ShowHide_Elements
@@ -1499,17 +1489,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		});
 		toolbar.add(showCertificate);
 		showCertificate.setVisible(false);
-//		
-//		comunicateIT = new AonToolbarButton( "Comunicar IT", AON.CSS.aonIconSend());
-//		comunicateIT.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				onComunicateIT(event);
-//			}
-//		});
-//		toolbar.add(comunicateIT);
-//		comunicateIT.setVisible(false);
-		
+
 		backListIT.setVisible(false);
 		newIT.setVisible(false);
 		deleteIT.setVisible(false);
@@ -1944,7 +1924,6 @@ public abstract class ITDialog extends AonCustomDialog {
 		tramos = new HTMLPanel("");
 		tramos.setStyleName(style.styleBorder());
 		mainCommunicate.add(tramos);
-
 		
 		if(itPart.getType() == (byte)0)
 			addInfoAditionalBaja(flexColumn);

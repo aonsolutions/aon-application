@@ -1,10 +1,7 @@
 package com.esferalia.aon.in.payroll.tgss.its;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;

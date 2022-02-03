@@ -37,9 +37,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class SistemaREDITResults extends Composite implements RequiresResize, EnterpriseITStatus.Visitor {
 
 
-	static interface Binder extends UiBinder<Widget, SistemaREDITResults> {
-
-	}
+	static interface Binder extends UiBinder<Widget, SistemaREDITResults> {}
 
 	static interface Template extends SafeHtmlTemplates {
 
@@ -80,22 +78,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
-	
-//	@UiField
-//	FormPanel employeeFormPanel;
-//	@UiField
-//	Hidden idHidden;
-//	@UiField
-//	Hidden cccHidden;
-//	@UiField
-//	Hidden nafHidden;
-//	@UiField
-//	Hidden dateHidden;
-//	@UiField
-//	Hidden userHidden;
-//	@UiField
-//	Hidden domainHidden;
-	
+
 	@UiField
 	FlowPanel menuBarFlowPanel;
 
@@ -170,9 +153,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	public void onResize() {
 		dockLayoutPanel.onResize();
 	}
-
 	
-
 	// ------------------------------------------------------ EnterprisesStatus
 	
 	@Override
@@ -205,7 +186,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	}
 	
 	private void itNoExistToAon(HorizontalPanel horizontalPanel, ItNotExist status) {
-		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
+		String confirmOrder = status.getConfirmOrder().isPresent() ? " #"+status.getConfirmOrder().get() : "";
+		
 		horizontalPanel.add(
 			new Label(
 				"Afiliado '"
@@ -213,24 +195,24 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
 				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
 				+" ) no encontrada en aon Solutions."
-//			   +" Pulse"
+			   +" Pulse"
 			)
 		);
-//		horizontalPanel.add(new HTML("&nbsp;"));
-//		Anchor anchor = new Anchor("aqu\u00ed");
-//		anchor.addClickHandler(e -> newEmployee(status));
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		anchor.addClickHandler(e -> onSaveITPart(status));
 		
-//		anchor.getElement().getStyle().setColor("blue");
-//		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 		
-//		horizontalPanel.add(anchor);
-//		horizontalPanel.add(new HTML("&nbsp;"));
-//		horizontalPanel.add(new Label("para a\u00f1adirlo en aon Solutions."));
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para a\u00f1adirlo en aon Solutions."));
 	}
 	
 	
 	private void itNoExistToSS(HorizontalPanel horizontalPanel, ItNotExist status) {
-		String confirmOrder = status.getConfirmOrder()!=null ? " #"+status.getConfirmOrder() : "";
+		String confirmOrder = status.getConfirmOrder().isPresent() ? " #"+status.getConfirmOrder().get() : "";
 		
 		horizontalPanel.add(
 			new Label(
@@ -242,20 +224,22 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 			   +" Pulse"
 			)
 		);
-//		if(this.isUserComunica) {
-			horizontalPanel.add(new HTML("&nbsp;"));
-			Anchor anchor = new Anchor("aqu\u00ed");
+		
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		if(this.isUserComunica) {
 			anchor.addClickHandler(e -> {
 				onOpenITPart(status);
 			});
-			
 			anchor.getElement().getStyle().setColor("blue");
-			anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
-			
-			horizontalPanel.add(anchor);
-			horizontalPanel.add(new HTML("&nbsp;"));
-			horizontalPanel.add(new Label("para gestionarlo."));
-//		}
+		} else {
+			anchor.getElement().getStyle().setColor("grey");
+		}
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para gestionarlo."));
 	}
 
 	@Override
@@ -283,12 +267,15 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		syncErrors();
 	}
-	
-	@Override
+
 	public void updatedEnterprise() {}
 	
+	public void onFinish() {}
+	
 	protected void onOpenITPart(ItNotExist itNotExist) {}
-
+	
+	protected void onSaveITPart(ItNotExist itNotExist) {}
+	
 	// ------------------------------------------------------------------------
 	
 	protected void removeAll() {
@@ -365,8 +352,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
 				
-		notFoundItem.setWidget(imageItemWidget(images.warn(),
-				horizontalPanel));
+		notFoundItem.setWidget(imageItemWidget(images.warn(),horizontalPanel));
 		notFoundItem.setVisible(notFoundItem.getChildCount() > 0);
 		notFoundItem.setState(notFoundItem.getChildCount() > 0);
 	}
@@ -508,7 +494,6 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	private static native <T extends JavaScriptObject> T eval(String javascript)
 	/*-{
 		return eval(javascript);
-	}-*/;
-	
+	}-*/;	
 	
 }

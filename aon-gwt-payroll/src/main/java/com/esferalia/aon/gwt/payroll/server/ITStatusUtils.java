@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.AndEmployeeITStatus;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.in.payroll.tgss.its.ITParse;
 import com.esferalia.aon.occam.api.AON;
@@ -24,7 +23,6 @@ import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -42,11 +40,9 @@ public class ITStatusUtils {
 		List<CCCInfo> cccs = PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").collect(Collectors.toList());
 		  
 		AndEmployeeITStatus employeeITStatus = new AndEmployeeITStatus();
-
 		for ( CCCInfo ccc: cccs ) {
 			try {
 				
-			
 				List<EmployeeIT> ssIts = new ArrayList<>();
 				
 				SistemaRED.getIts(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), 
@@ -60,11 +56,10 @@ public class ITStatusUtils {
 							.and(f.getCCCProperty().eq(ccc.getCccAccount()))
 					).collect(Collectors.toList());
 
-					if(!aonEmployeesIT.isEmpty()) {
-						compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain);	//NO EXIST EN AON
 			
-						compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
-					}
+					compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain);	//NO EXIST EN AON
+		
+					compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -74,7 +69,9 @@ public class ITStatusUtils {
 		try {
 			EnterpriseITStatus.isUp2Date(employeeITStatus); 
 			employeeITStatus.and(new EnterpriseITStatus.Up2Date());
-		} catch ( OutOfDateException e ) {	e.printStackTrace();	}
+		} catch ( OutOfDateException e ) {}
+		
+		employeeITStatus.and(new EnterpriseITStatus.onFinish());
 		
 		EnterpriseITStatus.trace(employeeITStatus);
 		
@@ -87,10 +84,11 @@ public class ITStatusUtils {
 	private static AndEmployeeITStatus compareEmployeesITs(List<EmployeeIT> firstList, List<EmployeeIT>secondList, 
 		AndEmployeeITStatus employeeITStatus, Domain domain) {
 		List<EmployeeIT> itsUpdate = new ArrayList<>();
-		AtomicBoolean change = new AtomicBoolean(false);
+
 		for (EmployeeIT second : secondList) {
+			AtomicBoolean change = new AtomicBoolean(false);
 			Optional<String> name = second.getName();
-			if(name.isPresent()) {
+			if(name.isPresent() && second.getStartDate()!=null) {
 				Optional<EmployeeITPart> ssITBaja = second.getItBaja();
 				List<EmployeeITPart> ssITConfirmations = second.getItConfirmations();
 				Optional<EmployeeITPart> ssITAlta = second.getItAlta();
@@ -114,12 +112,8 @@ public class ITStatusUtils {
 					}, ()->{
 						employeeITStatus.and( 
 							new EnterpriseITStatus.ItNotExist()
-							.setCcc(second.getCcc())
-							.setNaf(second.getNss())
-							.setName(name.get())
-							.setDate(ssITBaja.get().getDate())
-							.setPart(ContractLeaveDetailType.BAJA.value())
-							.setIdPart(ssITBaja.get().getId())
+							.setEmployeeIT(second)
+							.setEmployeeITPart(ssITBaja.get())
 						);
 					});
 				}
@@ -140,12 +134,8 @@ public class ITStatusUtils {
 					}, ()->{
 						employeeITStatus.and( 
 							new EnterpriseITStatus.ItNotExist()
-							.setCcc(second.getCcc())
-							.setNaf(second.getNss())
-							.setName(name.get())
-							.setDate(ssITAlta.get().getDate())
-							.setPart(ContractLeaveDetailType.ALTA.value())
-							.setIdPart(ssITAlta.get().getId())
+							.setEmployeeIT(second)
+							.setEmployeeITPart(ssITAlta.get())
 						);
 					});
 				}
@@ -167,26 +157,21 @@ public class ITStatusUtils {
 								change.getAndSet(true);
 							}
 						}, ()->{
-							ItNotExist order = new EnterpriseITStatus.ItNotExist()
-							.setCcc(second.getCcc())
-							.setNaf(second.getNss())
-							.setName(name.get())
-							.setDate(ssITConfirmation.getDate())
-							.setIdPart(ssITConfirmation.getId())
-							.setPart(ContractLeaveDetailType.CONFIRMACION.value());
-							ssITConfirmation.getConfirmOrder().ifPresent(order::setConfirmOrder);
-							
-							employeeITStatus.and(order);
+							employeeITStatus.and(
+									new EnterpriseITStatus.ItNotExist()
+									.setEmployeeIT(second)
+									.setEmployeeITPart(ssITConfirmation)
+							);
 						});
 					} // FOR CONFIRMATIONS
 				} //IF CONFIRMATION NOT EMPTY
 				
-				itsUpdate.add(second);
+				if(change.get())
+					itsUpdate.add(second);
 			} //IF NAME
 		}
 
-
-		if(change.get() && !itsUpdate.isEmpty()) {
+		if(!itsUpdate.isEmpty()) {
 			itUpdate(domain, itsUpdate);
 			employeeITStatus.and(new EnterpriseITStatus.UpdatedEnterprise());
 		}

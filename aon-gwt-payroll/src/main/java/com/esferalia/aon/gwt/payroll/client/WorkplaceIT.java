@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -151,6 +152,10 @@ public class WorkplaceIT extends Composite {
 //			enterpriseITObject.checkStatus(success::accept, failure::accept);
 		}
 
+		@Override
+		protected void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure){
+
+		}
 	}
 	
 	// --------------------------------------------------- Binder
