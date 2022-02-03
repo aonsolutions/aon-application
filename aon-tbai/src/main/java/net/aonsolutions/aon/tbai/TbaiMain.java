@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -179,6 +180,11 @@ public class TbaiMain {
 					lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
 				}
 				LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
+				if(lroeResponse.isError()) {
+					dr.setSource(DataResponseSource.TBAI_TEST);
+					AON.updateDataResponse(company.getDomain().getName(), company.getDomain().getId(),
+							"", dr, f -> f.getIdProperty().eq(dr.getId()));
+				}
 				HandleLroeResponse(lroeResponse);
 			}
 		}

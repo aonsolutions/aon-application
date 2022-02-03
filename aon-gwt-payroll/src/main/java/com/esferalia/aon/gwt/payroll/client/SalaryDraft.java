@@ -2753,9 +2753,10 @@ public class SalaryDraft extends ResizeComposite
 		settleButton.setVisible(isSettle());
 		settleButton.setVisible(isAutomatic());
 		
-		acceptButton.setVisible(!isSettle() && !isExtra());
 		salaryButton.setVisible(!isSettle() && !isExtra());
 		
+		//acceptButton.setEnabled( hasDrafts() && !isSettle() && !isExtra());
+
 		calculateAndSync();
 		
 	}
@@ -3051,7 +3052,6 @@ public class SalaryDraft extends ResizeComposite
 		undoAllButton.setVisible(true);
 		costsCheck.setVisible(true);
 		salarySelect.setVisible(true);
-		acceptButton.setVisible(!isAutomatic());
 		irpfPreviewButton.setVisible(true);
 		printPreviewButton.setVisible(true);
 		tgssCheck.setVisible(isSalary());
@@ -3061,6 +3061,8 @@ public class SalaryDraft extends ResizeComposite
 		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
 		salaryButton.setVisible(!isSettle() && !isExtra());
+
+		acceptButton.setEnabled(hasDrafts() && !isAutomatic() );
 	}
 
 	private void showPreview() {
@@ -3110,6 +3112,10 @@ public class SalaryDraft extends ResizeComposite
 		return deckPanel.getVisibleWidgetIndex() == PDF_VIEWER_INDEX;
 	}
 
+	protected boolean hasDrafts() {
+		return salaryDraftObject == null ? false : salaryDraftObject.hasDrafts();
+	}
+
 	protected boolean isSettle() {
 		return salaryDraftObject == null ? false : salaryDraftObject.getType() == Type.SETTLE;
 	}
@@ -3136,10 +3142,11 @@ public class SalaryDraft extends ResizeComposite
 
 		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
-		redoButton.setEnabled(salaryDraftObject.canRedo());
-		undoButton.setEnabled(salaryDraftObject.canUndo());
-		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
-		undoAllButton.setEnabled(salaryDraftObject.hasDrafts());
+		
+		redoButton.setEnabled(false);
+		undoButton.setEnabled(false);
+		acceptButton.setEnabled(false);
+		undoAllButton.setEnabled(false);
 
 	}
 
@@ -6060,9 +6067,9 @@ public class SalaryDraft extends ResizeComposite
 	}-*/;
 
 	private void setAutomatic(boolean automatic) {
-
-//		acceptButton.setEnabled(!readOnly);
-		acceptButton.setVisible(!automatic);
+		if ( automatic ) { 
+			acceptButton.setEnabled(!automatic);
+		}
 		
 		totalPaymentsLabel.setReadOnly(automatic);
 		totalLiquidLabel.setReadOnly(automatic);
@@ -6072,15 +6079,12 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void setReadOnly(boolean readOnly) {
-
-//		fxButton.setEnabled(!readOnly);
-		fxButton.setVisible(!readOnly);
-//		undoButton.setEnabled(!readOnly);
-		undoButton.setVisible(!readOnly);
-//		redoButton.setEnabled(!readOnly);
-		redoButton.setVisible(!readOnly);
-//		undoAllButton.setEnabled(!readOnly);
-		undoAllButton.setVisible(!readOnly);
+		if ( readOnly ) {
+			fxButton.setEnabled(!readOnly);
+			undoButton.setEnabled(!readOnly);
+			redoButton.setEnabled(!readOnly);
+			undoAllButton.setEnabled(!readOnly);
+		}
 
 		contextTable.setStyleName("aon-ReadOnly", readOnly);
 		paymentsTable.setStyleName("aon-ReadOnly", readOnly);
