@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -211,7 +212,7 @@ public class Invoice2tbai {
 		receiver.setCodigoPostal(invoice.getAddress().getZip());
 		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
 		if(!AonStringUtils.isBlank(invoice.getRegistryDocument())) {
-			if(invoice.isNational()) {
+			if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 				receiver.setNIF(invoice.getRegistryDocument());			
 			} else {
 				IDOtro other = new IDOtro();
@@ -309,139 +310,58 @@ public class Invoice2tbai {
 		
 		TipoDesgloseType desglose = new TipoDesgloseType();
 
-		if(invoice.isNational()) {
-			DesgloseFacturaType desgloseFactura = new DesgloseFacturaType();
+		SujetaType sujeta = new SujetaType();
 
-			SujetaType sujeta = new SujetaType();
-
-			NoExentaType noExenta = new NoExentaType();
-			DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
-			detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
-			DesgloseIVAType desgloseIVA = new DesgloseIVAType();
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
-				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
-					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
-				}
-				DetalleIVAType  detalleIVA = new DetalleIVAType();
-				detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
-				detalleIVA.setCuotaImpuesto(Double.toString(AonMathUtils.round(r.getQuota())));
-				detalleIVA.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
-				detalleIVA.setTipoImpositivo(Double.toString(r.getPercentage()));
-				detalleIVA.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurcharge())));
-				detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(SiNoType.N); // TODO SURCHARGE O SIMP SI O NO.
-				desgloseIVA.getDetalleIVA().add(detalleIVA);
-			});
-			
-			detalleNoExenta.setDesgloseIVA(desgloseIVA);
-			noExenta.getDetalleNoExenta().add(detalleNoExenta);
-		
+		NoExentaType noExenta = new NoExentaType();
+		DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
+		detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
+		DesgloseIVAType desgloseIVA = new DesgloseIVAType();
+		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && (f.getPercentage() > 0 || invoice.isIsp())).forEach(r -> {
+			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
+				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
+			}
+			DetalleIVAType  detalleIVA = new DetalleIVAType();
+			detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
+			detalleIVA.setCuotaImpuesto(Double.toString(AonMathUtils.round(r.getQuota())));
+			detalleIVA.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
+			detalleIVA.setTipoImpositivo(Double.toString(r.getPercentage()));
+			detalleIVA.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurcharge())));
+			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
+			desgloseIVA.getDetalleIVA().add(detalleIVA);
+		});
+		detalleNoExenta.setDesgloseIVA(desgloseIVA);
+		noExenta.getDetalleNoExenta().add(detalleNoExenta);
+		if(!noExenta.getDetalleNoExenta().isEmpty())
 			sujeta.setNoExenta(noExenta);
-			
-//			EXENCION NACIONAL
-//			ExentaType exenta = new ExentaType();
-//
-//			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
-//				DetalleExentaType detalleExenta = new DetalleExentaType();
-//				detalleExenta.setBaseImponible(Double.toString(r.getBase()));
-//				if(invoice.isIntracommunity())
-//					detalleExenta.setCausaExencion(CausaExencionType.E_5);
-//				if(invoice.isExtracommunity())
-//					detalleExenta.setCausaExencion(CausaExencionType.E_2);
-//				exenta.getDetalleExenta().add(detalleExenta);
-//			});
-//			sujeta.setExenta(exenta);
-			
+		
+		ExentaType exenta = new ExentaType();
+		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
+			DetalleExentaType detalleExenta = new DetalleExentaType();
+			detalleExenta.setBaseImponible(Double.toString(r.getBase()));
+			detalleExenta.setCausaExencion(CausaExencionType.E_6);
+			if(invoice.isIntracommunity())
+				detalleExenta.setCausaExencion(CausaExencionType.E_5);
+			if(invoice.isExtracommunity())
+				detalleExenta.setCausaExencion(CausaExencionType.E_2);
+			exenta.getDetalleExenta().add(detalleExenta);
+		});
+		if(!exenta.getDetalleExenta().isEmpty())
+			sujeta.setExenta(exenta);
+		
+		if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
+			DesgloseFacturaType desgloseFactura = new DesgloseFacturaType();
 			desgloseFactura.setSujeta(sujeta);
 			desglose.setDesgloseFactura(desgloseFactura);
-			
 		} else if(invoice.isService()){
-			DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
-		
-			SujetaType sujeta = new SujetaType();
-
-			NoExentaType noExenta = new NoExentaType();
-			DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
-			detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
-			DesgloseIVAType desgloseIVA = new DesgloseIVAType();
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
-				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
-					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
-				}
-				DetalleIVAType  detalleIVA = new DetalleIVAType();
-				detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
-				detalleIVA.setCuotaImpuesto(Double.toString(AonMathUtils.round(r.getQuota())));
-				detalleIVA.setCuotaRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
-				detalleIVA.setTipoImpositivo(Double.toString(r.getPercentage()));
-				detalleIVA.setTipoRecargoEquivalencia(Double.toString(AonMathUtils.round(r.getSurcharge())));
-				detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N); // TODO SURCHARGE O SIMP SI O NO.
-				desgloseIVA.getDetalleIVA().add(detalleIVA);
-			});
-			
-			detalleNoExenta.setDesgloseIVA(desgloseIVA);
-			noExenta.getDetalleNoExenta().add(detalleNoExenta);
-			if(!noExenta.getDetalleNoExenta().isEmpty())
-				sujeta.setNoExenta(noExenta);
-
-			ExentaType exenta = new ExentaType();
-
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0).forEach(r -> {
-				DetalleExentaType detalleExenta = new DetalleExentaType();
-				detalleExenta.setBaseImponible(Double.toString(r.getBase()));
-				if(invoice.isIntracommunity())
-					detalleExenta.setCausaExencion(CausaExencionType.E_5);
-				if(invoice.isExtracommunity())
-					detalleExenta.setCausaExencion(CausaExencionType.E_2);
-				exenta.getDetalleExenta().add(detalleExenta);
-			});
-			if(!exenta.getDetalleExenta().isEmpty())
-				sujeta.setExenta(exenta);
-			
 			PrestacionServicios serv = new PrestacionServicios();
 			serv.setSujeta(sujeta);
+			DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 			desgloseFactura.setPrestacionServicios(serv);
 			desglose.setDesgloseTipoOperacion(desgloseFactura);
 		} else {
-			DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
-			
-			SujetaType sujeta = new SujetaType();
-
-			NoExentaType noExenta = new NoExentaType();
-			DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
-			detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
-			DesgloseIVAType desgloseIVA = new DesgloseIVAType();
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
-				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
-					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
-				}
-				DetalleIVAType  detalleIVA = new DetalleIVAType();
-				detalleIVA.setBaseImponible(Double.toString(r.getBase()));
-				detalleIVA.setCuotaImpuesto(Double.toString(r.getQuota()));
-				detalleIVA.setCuotaRecargoEquivalencia(Double.toString(r.getSurchargeQuota()));
-				detalleIVA.setTipoImpositivo(Double.toString(r.getPercentage()));
-				detalleIVA.setTipoRecargoEquivalencia(Double.toString(r.getSurcharge()));
-				detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N); // TODO SURCHARGE O SIMP SI O NO.  || invoice.isSimplified()
-				desgloseIVA.getDetalleIVA().add(detalleIVA);
-			});
-			
-			detalleNoExenta.setDesgloseIVA(desgloseIVA);
-			noExenta.getDetalleNoExenta().add(detalleNoExenta);
-			sujeta.setNoExenta(noExenta);
-
-			ExentaType exenta = new ExentaType();
-
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
-				DetalleExentaType detalleExenta = new DetalleExentaType();
-				detalleExenta.setBaseImponible(Double.toString(r.getBase()));
-				if(invoice.isIntracommunity())
-					detalleExenta.setCausaExencion(CausaExencionType.E_5);
-				if(invoice.isExtracommunity())
-					detalleExenta.setCausaExencion(CausaExencionType.E_2);
-				exenta.getDetalleExenta().add(detalleExenta);
-			});
-			sujeta.setExenta(exenta);
-			
 			Entrega entrega = new Entrega();
 			entrega.setSujeta(sujeta);
+			DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 			desgloseFactura.setEntrega(entrega);
 			desglose.setDesgloseTipoOperacion(desgloseFactura);
 		}

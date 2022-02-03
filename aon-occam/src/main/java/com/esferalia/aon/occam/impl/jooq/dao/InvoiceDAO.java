@@ -440,7 +440,7 @@ public class InvoiceDAO {
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new))
 					);
-			AccountingInvoiceDAO.fillBreakdown(ctx, invoice);
+			AccountingInvoiceDAO.fillBreakdown(ctx, invoice, true);
 		
 			if(invoice.isRectifier()) {
 				Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
