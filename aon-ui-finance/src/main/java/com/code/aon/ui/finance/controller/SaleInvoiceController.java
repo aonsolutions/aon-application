@@ -658,7 +658,7 @@ public class SaleInvoiceController extends InvoiceController {
 			}
 			
 			if(detail.getDescription().length() >= 249) {
-				throw new Exception("El concepto no puede tener más de 250 carácteres: " + detail.getDescription());
+//				throw new Exception("El concepto no puede tener más de 250 carácteres: " + detail.getDescription());
 			}
 		}	
 	}

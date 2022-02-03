@@ -130,7 +130,7 @@ public class Invoice2tbai {
 	private static ticketbai.anulacion.Emisor buildEmisorInvoiceAnulacion(Company company) {
 		ticketbai.anulacion.Emisor emisor = new ticketbai.anulacion.Emisor();
 		emisor.setApellidosNombreRazonSocial(company.getName());
-		emisor.setNIF(company.getDocument());
+		emisor.setNIF(company.getDocument().replace(" ", ""));
 		return emisor;
 	}
 
@@ -197,7 +197,7 @@ public class Invoice2tbai {
 	private static Sujetos getSujetos(Company company, Invoice invoice, TbaiConfiguration config) {
 		Sujetos entities = new Sujetos();
 		company.isLegalPerson();
-		String document = company.getDocument();
+		String document = company.getDocument().replace(" ", "");
 		String name = company.getName();
 		
 		Emisor sender = new Emisor();
@@ -213,12 +213,12 @@ public class Invoice2tbai {
 		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
 		if(!AonStringUtils.isBlank(invoice.getRegistryDocument())) {
 			if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
-				receiver.setNIF(invoice.getRegistryDocument());			
+				receiver.setNIF(invoice.getRegistryDocument().replace(" ", ""));			
 			} else {
 				IDOtro other = new IDOtro();
 				other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
 				other.setIDType(IDType.OTRO.getName());
-				other.setID(invoice.getRegistryDocument());
+				other.setID(invoice.getRegistryDocument().replace(" ", ""));
 				receiver.setIDOtro(other);
 			}
 		}
