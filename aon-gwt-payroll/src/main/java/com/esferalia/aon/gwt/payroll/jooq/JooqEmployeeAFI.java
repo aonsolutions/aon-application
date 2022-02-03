@@ -79,6 +79,7 @@ public class JooqEmployeeAFI {
 			String domainIdStr, 
 			String domainName, 
 			String contractIdStr,
+			String fileName,
 			Boolean isStartContract,
 			Boolean isEndContract, 
 			Boolean isChangeContract, 
@@ -106,7 +107,7 @@ public class JooqEmployeeAFI {
 			
 			eti.put("authkey", authKey);			
 			eti.put("payrollProvider", "498");	//Proveedor de nominas ESFERALIA NETWORKS, S.A.
-			eti.put("fileName", null);
+			eti.put("fileName", fileName);
 			eti.put("prorityCode", "N");
 			employeeAFIJSON.put("ETI", eti);
 			
@@ -205,7 +206,7 @@ public class JooqEmployeeAFI {
 			JSONObject etf = new JSONObject();
 			etf.put("authkey", authKey);
 			etf.put("payrollProvider", "498");
-			etf.put("fileName", null);
+			etf.put("fileName", fileName);
 			etf.put("priorityCode", "N");
 			employeeAFIJSON.put("ETF", etf);
 			

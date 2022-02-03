@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -26,10 +24,10 @@ public class EmployeeEventsDraftObject {
 	
 	private static class EmployeeVariablesDrafObject extends  EmployeeEventsDraftObject {
 		
-		private static final ArrayList<String> EMPTY_LIST = new ArrayList<String>();
+		private static final ArrayList<String> EMPTY_LIST = new ArrayList<>();
 		
 		private EmployeeEventsDraftObject delegate;
-		private ArrayList<String> variables = new ArrayList<String>();
+		private ArrayList<String> variables = new ArrayList<>();
 		
 		private EmployeeVariablesDrafObject(Collection<String> variables, EmployeeEventsDraftObject delegate){
 			super(delegate.idEmployee);
@@ -41,7 +39,6 @@ public class EmployeeEventsDraftObject {
 			return false;
 		}
 		
-
 		public ArrayList<String> getCalendarVariables() {
 			return EMPTY_LIST;
 		}
@@ -195,13 +192,13 @@ public class EmployeeEventsDraftObject {
 	// ----------------------------------------------- Constructor 
 	
 	public EmployeeEventsDraftObject(Integer idEmployee) {
-		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
+		this.mapEventsVar = new HashMap<>();
 		this.idEmployee = idEmployee;
-		this.employeeContractVariables = new ArrayList<String>();
-		this.calendarVariables = new ArrayList<String>();
-		this.agreementVariables = new ArrayList<String>();
-		this.contractVariables = new ArrayList<String>();
-		this.agreementVariablesValue = new HashMap<String, String>();
+		this.employeeContractVariables = new ArrayList<>();
+		this.calendarVariables = new ArrayList<>();
+		this.agreementVariables = new ArrayList<>();
+		this.contractVariables = new ArrayList<>();
+		this.agreementVariablesValue = new HashMap<>();
 	}
 	
 	// ----------------------------------------------- initCalendarVariables 
@@ -237,36 +234,26 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	public ArrayList<String> getAllVariables() {
-		LinkedHashSet<String> allVariablesListAux = new LinkedHashSet<String>();
+		LinkedHashSet<String> allVariablesListAux = new LinkedHashSet<>();
 		
 		allVariablesListAux.addAll(calendarVariables);
 		allVariablesListAux.addAll(agreementVariables);
 		allVariablesListAux.addAll(contractVariables);
 		allVariablesListAux.addAll(employeeContractVariables);
 		
-		ArrayList<String> allVariablesList = new ArrayList<String>(allVariablesListAux);
-		allVariablesList.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
+		ArrayList<String> allVariablesList = new ArrayList<>(allVariablesListAux);
+		allVariablesList.sort((var1, var2) -> var1.compareTo(var2));
 		
 		return allVariablesList;
 	}
 
 	public ArrayList<String> getAgreementVariables() {
-		ArrayList<String> agreementVars = new ArrayList<String>();
+		ArrayList<String> agreementVars = new ArrayList<>();
 		for(String var : employeeContractVariables)
-			if(!isCalendarVariable(var))
+			if(Boolean.FALSE.equals(isCalendarVariable(var)))
 				agreementVars.add(var);
 		
-		agreementVars.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
+		agreementVars.sort((var1, var2) -> var1.compareTo(var2));
 		
 		return agreementVars;
 	}
@@ -288,10 +275,10 @@ public class EmployeeEventsDraftObject {
 	
 	public ArrayList<String> getEmployeeContractVariables(ArrayList<String> variablesToShow) {
 		// Filter variables list
-		ArrayList<String> filterVariablesList = new ArrayList<String>();
+		ArrayList<String> filterVariablesList = new ArrayList<>();
 		
 		// Contract Type
-		if(employeeEventsData.getTC2() != "\"421\"") {
+		if(!AonStringUtils.equalsIgnoreCase(employeeEventsData.getTC2(), "\"421\"")) {
 			filterVariablesList.add("HORAS_FORMACION_PRESENCIAL");
 			filterVariablesList.add("HORAS_FORMACION_DISTANCIA");
 			filterVariablesList.add("HORAS_TUTORIA");
@@ -306,7 +293,7 @@ public class EmployeeEventsDraftObject {
 		
 
 		// Result List
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		
 		for(String var : variablesToShow) {
 			if(filterVariablesList.contains(var))
@@ -314,19 +301,14 @@ public class EmployeeEventsDraftObject {
 			result.add(var);
 		}
 		
-		result.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
+		result.sort((var1, var2) -> var1.compareTo(var2));
 		
 		return result;
 	}
 	
 	public ArrayList<String> getEmployeeContractVariables() {
 		// Filter variables list
-		ArrayList<String> filterVariablesList = new ArrayList<String>();
+		ArrayList<String> filterVariablesList = new ArrayList<>();
 		
 		// Contract Type
 		if(employeeEventsData.getTC2() != "\"421\"") {
@@ -343,7 +325,7 @@ public class EmployeeEventsDraftObject {
 			filterVariablesList.add("HORAS_EXTRAS");
 		
 		// Result List
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		
 		for(String var : this.employeeContractVariables) {
 			if(filterVariablesList.contains(var))
@@ -351,12 +333,7 @@ public class EmployeeEventsDraftObject {
 			result.add(var);
 		}
 		
-		result.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
+		result.sort((var1, var2) -> var1.compareTo(var2));
 		
 		return result;
 	}
@@ -455,7 +432,7 @@ public class EmployeeEventsDraftObject {
 				calendarVariables.clear();
 				initCalendarVariables();
 				
-				ArrayList<String> allStaticVariables = new ArrayList<String>();
+				ArrayList<String> allStaticVariables = new ArrayList<>();
 				
 				allStaticVariables.addAll(calendarVariables);
 				allStaticVariables.add("IMPORTE_HORA_EXTRA");
@@ -493,7 +470,7 @@ public class EmployeeEventsDraftObject {
 				}
 				
 				initializeDBCalendar(
-						s -> { success.accept(context);}, 
+						s -> success.accept(context), 
 						f -> {}
 				);
 				
@@ -535,37 +512,19 @@ public class EmployeeEventsDraftObject {
 	}
 
 	private void sortVariablesList() {
-		calendarVariables.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
-		agreementVariables.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
-		contractVariables.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
-		employeeContractVariables.sort(new Comparator<String>() {
-			@Override
-			public int compare(String var1, String var2) {
-				return var1.compareTo(var2);
-			}
-		});
+		calendarVariables.sort((var1, var2) -> var1.compareTo(var2));
+		agreementVariables.sort((var1, var2) -> var1.compareTo(var2));
+		contractVariables.sort((var1, var2) -> var1.compareTo(var2));
+		employeeContractVariables.sort((var1, var2) -> var1.compareTo(var2));
 	}
 	
 	public void updateDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
 		employeesService.setEmployeeEventsByContract(this.idEmployee, employeeEventsData, new AsyncCallback<EmployeeEventsData>() {
 
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 
 			@Override
 			public void onSuccess(EmployeeEventsData result) {
@@ -577,10 +536,10 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	private Set<String> filterContextVariables(Set<String> contextVariables, ArrayList<String> allStaticVariables) {
-		Set<String> resultSet = new LinkedHashSet<String>();
+		Set<String> resultSet = new LinkedHashSet<>();
 		
 		// Filter set
-		Set<String> filterSet = new LinkedHashSet<String>();
+		Set<String> filterSet = new LinkedHashSet<>();
 		filterSet.add("PAGA_EXTRA_HELP");
 		filterSet.add("TC2");
 		filterSet.add("SALARIO_VARIABLE_DIA");
@@ -611,7 +570,7 @@ public class EmployeeEventsDraftObject {
 	
 	private boolean continueVariable(String variableName) {
 		// Filter set
-		Set<String> filterSet = new LinkedHashSet<String>();
+		Set<String> filterSet = new LinkedHashSet<>();
 		filterSet.add("PAGA_EXTRA_HELP");
 		filterSet.add("TC2");
 		filterSet.add("SALARIO_VARIABLE_DIA");
@@ -648,17 +607,15 @@ public class EmployeeEventsDraftObject {
 	}
 
 	public void setListEmployeeEventsVaribales (String varName, ArrayList<EmployeeEventsVariable> employeeEventsVariables){
-		//TODO: REVISAR ESTO PARA QUE NO SE GUARDE POR MESES
 		employeeEventsData.setEventData(varName, employeeEventsVariables);
 		mapEventsVar.put(varName, employeeEventsVariables);
-//		mapEventsVar = employeeEventsData.getEventDateVarList();
 	}
 	
 	public Double getAcumulateVariableByMonth (String varName, int month, Integer year){
 		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
 		Date firstDayMonth = DateUtils.getFirstDayOfMonth(DateUtils.getDate(month, year));
 		Date lastDayMonth = DateUtils.getLastDayOfMonth(DateUtils.getDate(month, year));
-		Double acumulateMonth = 0.0;
+		Double acumulateMonth = null;
 		
 		if(null != varList) {
 			for (EmployeeEventsVariable e : varList){
@@ -672,7 +629,7 @@ public class EmployeeEventsDraftObject {
 				if ((DateUtils.isAfterOrEquals(e.getStartDate(), firstDayMonth) && DateUtils.isBeforeOrEquals(e.getStartDate(), lastDayMonth)) &&
 						null != e.getValue()) {
 					Double value = e.getValue();
-					acumulateMonth += value;
+					acumulateMonth = null == acumulateMonth ? value : (acumulateMonth+value);
 				}	
 			}
 		}
