@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVar
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -20,18 +21,18 @@ public class EventsDraftObject {
 	
 	// ----------------------------------------------- Variables
 
-	private ArrayList<Integer> workplaceContracts = new ArrayList<Integer>();; 
+	private ArrayList<Integer> workplaceContracts = new ArrayList<>(); 
 	
-	private ArrayList<EventEmployee> eventEmployees = new ArrayList<EventEmployee>();
+	private ArrayList<EventEmployee> eventEmployees = new ArrayList<>();
 	
-	private Map<Integer,Map<String, ArrayList<EmployeeEventsVariable>>> mapEventsVar = new HashMap<Integer, Map<String,ArrayList<EmployeeEventsVariable>>>();
+	private Map<Integer,Map<String, ArrayList<EmployeeEventsVariable>>> mapEventsVar = new HashMap<>();
 	
 	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
-	private ArrayList<String> agreementVariables = new ArrayList<String>();
-	private ArrayList<String> calendarVariables  = new ArrayList<String>();
-	private ArrayList<String> allVariables  = new ArrayList<String>();
+	private ArrayList<String> agreementVariables = new ArrayList<>();
+	private ArrayList<String> calendarVariables  = new ArrayList<>();
+	private ArrayList<String> allVariables  = new ArrayList<>();
 	
 	private Integer workplaceId;
 	private Integer agreementId;
@@ -50,7 +51,7 @@ public class EventsDraftObject {
 	// ----------------------------------------------- initCalendarVariables
 	
 	private void initCalendarVariables() {
-		this.calendarVariables = new ArrayList<String>();
+		this.calendarVariables = new ArrayList<>();
 		calendarVariables.add("DIAS_TRABAJADOS");
 		calendarVariables.add("DIAS_VACACIONES");
 		calendarVariables.add("DIAS_INACTIVIDAD");
@@ -81,10 +82,10 @@ public class EventsDraftObject {
 	
 	public ArrayList<String> getEmployeesVariables() {
 		// Result List
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		
 		for(String var : this.allVariables) {
-			if(isCalendarVariable(var))
+			if(Boolean.TRUE.equals(isCalendarVariable(var)))
 				continue;
 			result.add(var);
 		}
@@ -128,9 +129,7 @@ public class EventsDraftObject {
 				initWorkplaceEmployee(workplaceEmployeesDB);
 					
 				getAgreementVars(year,
-					r -> {
-							success.accept(workplaceEmployeesDB);
-						}, 
+					r -> success.accept(workplaceEmployeesDB), 
 					f -> {});
 				
 			}
@@ -148,7 +147,7 @@ public class EventsDraftObject {
 					
 					eventEmployees.add(eventEmployee);
 					workplaceContracts.add(employeeDB.getContractId());
-					mapEventsVar.put(employeeDB.getContractId(), new HashMap<String, ArrayList<EmployeeEventsVariable>>());
+					mapEventsVar.put(employeeDB.getContractId(), new HashMap<>());
 				
 				}
 			}
@@ -176,16 +175,14 @@ public class EventsDraftObject {
 				allVariables.addAll(agreementVariables);
 				
 				initializeDBVariables(allVariables, 
-						s -> { 
-								success.accept(result);
-							}, 
+						s -> success.accept(result), 
 						f -> {}
 				);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				failure.accept(caught);
 			}
 		});
 	}
@@ -242,7 +239,9 @@ public class EventsDraftObject {
 		employeesService.setEventsDraft(eventEmployees, new AsyncCallback<ArrayList<EventEmployee>>() {
 
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 
 			@Override
 			public void onSuccess(ArrayList<EventEmployee> result) {
@@ -285,7 +284,7 @@ public class EventsDraftObject {
 
 	public EventEmployee getEmployeeByFullName(String fullName) {
 		for(EventEmployee eventEmployee : eventEmployees) {
-			if(fullName.equals(eventEmployee.getFullName()) || fullName == eventEmployee.getFullName())
+			if(AonStringUtils.equalsIgnoreCase(fullName, eventEmployee.getFullName()))
 					return eventEmployee;
 		}
 		return null;
