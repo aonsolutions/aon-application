@@ -178,6 +178,8 @@
     		color: inherit !important;
     		background-color: transparent;
 		}
+		
+		
 
 		.aon-Disabled .gwt-TextBox,
 		.aon-Disabled .gwt-SuggestBox,
@@ -200,6 +202,10 @@
     		pointer-events: none;
     		color: inherit !important;
     		background-color: transparent;
+		}
+		
+		.aon-WriteOnly {
+    		pointer-events: initial !important;
 		}
 
 		.gwt-TextBox[readonly]:focus,
@@ -276,6 +282,7 @@
 		@external gwt-TextBox;
 		@external aon-ReadOnly;
 		@external aon-Disabled;
+		@external aon-WriteOnly;
 		@external gwt-SuggestBox;
 		@external aon_icon_redo;
 		@external aon-icon-reset;
