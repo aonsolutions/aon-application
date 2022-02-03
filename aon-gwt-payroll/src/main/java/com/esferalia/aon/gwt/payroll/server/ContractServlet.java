@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
 import com.esferalia.aon.in.payroll.excel.ExcelType;
 import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
 import com.esferalia.aon.in.payroll.tgss.report.Employee;
@@ -314,17 +315,22 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 		Date startDate =Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
 		Integer workplaceId = 0;
-		if(!api.getParams().optString("workplace").isEmpty()) workplaceId = api.getParams().optInt("workplace");
+		if(!api.getParams().optString("workplace").isEmpty())
+			workplaceId = api.getParams().optInt("workplace");
 
+		EnterprisePayrollExcelParams params = new EnterprisePayrollExcelParams()
+				.setDomainName(api.getDomain().getName())
+				.setLogin(api.getUser().getLogin())
+				.setOs(new FileOutputStream(file))
+				.setEnterpriseId(company.getId())
+				.setWorkplaceId(workplaceId);
 		if(!api.getParams().optString("endDate").isEmpty()) {
 			Date endDate = Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd");
-			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(
-					api.getDomain().getName(), api.getUser().getLogin(), new FileOutputStream(file), Optional.of(company.getId()), Optional.of(workplaceId), 
-					startDate, endDate, excelType);
+			
+			
+			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(params, startDate, endDate);
 		} else if (!api.getParams().optString("startDate").isEmpty()) {
-			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(
-					api.getDomain().getName(), api.getUser().getLogin(), new FileOutputStream(file), Optional.of(company.getId()), Optional.of(workplaceId), 
-					startDate, excelType);
+			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(params, startDate);
 		}
 	
 		return file;

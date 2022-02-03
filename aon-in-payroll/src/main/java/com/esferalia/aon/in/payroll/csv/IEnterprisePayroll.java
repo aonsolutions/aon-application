@@ -24,6 +24,11 @@ public interface IEnterprisePayroll {
 	public Double getTotalSS();
 	public Double getBonuses();
 	
+	public Double getItCompensation();	
+	
+	public Double getFundae();
+	public void setFundae(Double fundae);	
+	
 	public Double getCgcBase();
 	public Double getIrpfBase();
 	public Double getInkindIrpfBase();
