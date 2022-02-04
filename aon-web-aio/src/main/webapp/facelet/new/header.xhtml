@@ -1204,6 +1204,7 @@
 	
 	.aon-note{
 		color:#000;
+		cursor:text;
   		padding:1em;
   		display:block;
   		background:#FFD70045;
@@ -1230,6 +1231,12 @@
 		transform:rotate(2deg);
 	}
 
+	.aon-note-delete {
+		float: right;
+		border: none;
+		cursor:pointer;
+  		background:transparent;
+	}
 
 	.aon-note-text {
 		display:block;
@@ -1251,6 +1258,73 @@
 		padding-top: 0.5em;
   		font-weight: normal;
 	}
+	
+	.aon-width-third {
+		width: 33%;
+	}
+	
+	.aon-width-fourth {
+		width: 25%;
+	}
+
+
+
+	.aon-option-favorite .menu_aonFinance,
+	.aon-option-favorite .menu_finance_portal,
+	.aon-option-favorite .menu_eCommerce,
+	.aon-option-favorite .menu_call_center,
+	.aon-option-favorite .menu_aonOne,
+	.aon-option-favorite .menu_garage,
+	.aon-option-favorite .menu_academy,
+	.aon-option-favorite .menu_hotel,
+	.aon-option-favorite .menu_enterprise,
+	.aon-option-favorite .menu_warehouse,
+	.aon-option-favorite .menu_pos,
+	.aon-option-favorite .menu_groupware,
+	.aon-option-favorite .menu_crm {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-icon-logo.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_payroll,
+	.aon-option-favorite .menu_contrata,
+	.aon-option-favorite .menu_payroll_portal{
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-payroll.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+	
+	.aon-option-favorite .menu_document  {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-document.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_fiscal {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-fiscal.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_management {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-invoice.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+	
+	.aon-option-favorite .menu_accounting {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-account.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_configuration{
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-tools.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
 
 	</style>
 

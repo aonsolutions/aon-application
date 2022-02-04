@@ -3,7 +3,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 #foreach($option in ${options})
 	#if( ${option.isAddParentDiv()} )
-		<aon:div styleClass="aon-direct-access-list-element">
+		<aon:div styleClass="aon-direct-access-list-element ${option.getGroup().getCategory().getId()}">
 			${option.getXml(${preffix})}
 		</aon:div>
 	#else
