@@ -13,9 +13,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.AndEmployeeITStatus;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
+import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.in.payroll.tgss.its.ITParse;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
@@ -37,7 +37,7 @@ public class ITStatusUtils {
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), login, userId, "TGSS");
 	
-		List<CCCInfo> cccs = PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").collect(Collectors.toList());
+		List<CCCInfo> cccs = ITComunica.getCccs(domain);
 		  
 		AndEmployeeITStatus employeeITStatus = new AndEmployeeITStatus();
 		for ( CCCInfo ccc: cccs ) {

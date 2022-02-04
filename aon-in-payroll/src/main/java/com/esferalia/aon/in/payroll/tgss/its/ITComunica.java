@@ -48,10 +48,8 @@ public class ITComunica {
 	public static void syncUpITs(final byte certificateData[], final String certificatePassword,
 			final String certificateType, Domain domain, Optional<String> nss) throws IllegalArgumentException {
 
-		List<CCCInfo> cccs = PAYROLL.getCCCStream(domain.getName(), domain.getId(), "")
-				.filter(distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
+		List<CCCInfo> cccs = getCccs(domain);
 		
-
 		Date startDate = AonDateUtils.addYears(new Date(), -1);
 		Date endDate = new Date();
 
@@ -357,6 +355,10 @@ public class ITComunica {
 //				: f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
 			)
 		);
+	}
+	
+	public static List<CCCInfo> getCccs(Domain domain) {
+		return PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").filter(distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
 	}
 
 	// HANDLES EMPTY DATA
