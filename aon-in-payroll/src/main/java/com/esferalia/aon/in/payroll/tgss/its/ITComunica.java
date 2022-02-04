@@ -105,22 +105,15 @@ public class ITComunica {
 	// SINCRONIZAR ITS
 	public static void saveITs(Domain domain, List<EmployeeIT> employeeITs) throws IllegalArgumentException {
 		
-		for (EmployeeIT employeeIT : employeeITs) {
-			Optional<Employee> contract = ITComunica.contractIts(
-					domain, employeeIT.getCcc(), employeeIT.getNss(), employeeIT.getStartDate(), employeeIT.getEndDate()
-			);
+		employeeITs.stream().filter(e->e.getContract()==null)
+		.forEach(employeeIT->{
+			Optional<Employee> contract = ITComunica.contractIts(domain, employeeIT.getCcc(), employeeIT.getNss(), employeeIT.getStartDate(), employeeIT.getEndDate());
 			
-			if (contract.isPresent()) {
-				if(employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
-					employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
-				
+			if(contract.isPresent()) 
 				employeeIT.setContract(contract.get().getEmployeeId()).setDomain(domain.getId());
-			} else 
-				System.out.println("contractEmpty");	
-		}
+		});
 				
 		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
-
 	}
 	
 	public static List<String> communicateITs(final byte certificateData[], final String certificatePassword,

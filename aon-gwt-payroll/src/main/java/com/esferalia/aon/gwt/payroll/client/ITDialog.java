@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -199,7 +198,6 @@ public abstract class ITDialog extends AonCustomDialog {
 	HTMLPanel buttonsPanel;
 	
 	//-------------COMMUNICATE
-	
 	@UiField
 	HTMLPanel itBaja;
 	
@@ -207,10 +205,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	HTMLPanel itAlta;
 	
 	private HTMLPanel tramos;
-
-	
 	//-------------END COMMUNICATE
-	
 	
 	// --------------------------------------------------- Variables
 	
@@ -224,27 +219,18 @@ public abstract class ITDialog extends AonCustomDialog {
 	private IT it;
 	private ITEmployee itEmployee;
 	
-	private boolean userComunica = false;
-	
 	private List<ITEmployee> itEmployeeList = Collections.emptyList();
 	
-	private SuggestBox employeeSB;
 	private MultiWordSuggestOracle names = new MultiWordSuggestOracle();
 	
 	// --------------------------------------------------- Variables.Toolbar
-	
-	private AonToolbar toolbar;
 	private AonToolbarButton deleteIT;
 	private AonToolbarButton listIT;
 	private AonToolbarButton backListIT;
 	private AonToolbarButton newIT;
-//	private AonToolbarButton comunicateIT;
 	private AonToolbarButton showCertificate;
 	
 	// --------------------------------------------------- Variables.Footer
-	
-	private Button closeBtnDialog;
-	private Button acceptBtnDialog;
 
 	private DoubleBox baseCC;
 	private DoubleBox quoteDayInput;
@@ -498,12 +484,6 @@ public abstract class ITDialog extends AonCustomDialog {
 			show();
 		});
 	}
-
-//	private void checkComunicateIT() {
-//		if(userComunica && (null == this.it.isComunicate() || !this.it.isComunicate()) && comunicateIT!=null) {
-//			comunicateIT.setVisible(true);
-//		}
-//	}
 	
 	// --------------------------------------------------- setITDialogObject.Methods
 	
@@ -532,11 +512,6 @@ public abstract class ITDialog extends AonCustomDialog {
 				showConfirmationParts();
 			}
 		}
-		
-		//PRINT BTN IT COMUNICA
-//		if(null != this.it)
-//			printBtnCommunicate();
-		
 	}
 	
 	// --------------------------------------------------- PaintIt
@@ -615,7 +590,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		itEmployeeList = Collections.emptyList();
 		itEmployeeList = itEmployeeListIn;
 		
-		employeeSB = new SuggestBox(names);
+		SuggestBox employeeSB = new SuggestBox(names);
 		employeeSB.setStyleName("aon-inputText");
 		employeeSB.getElement().getStyle().setWidth(99, Unit.PCT);
 		employeeSB.setAutoSelectEnabled(true);
@@ -1026,15 +1001,12 @@ public abstract class ITDialog extends AonCustomDialog {
 	private void setCauseHighPart() {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<>();
-
-			ITPart itPart = new ITPart()
-			.setType((byte) 2) // ALTA
-			.setCollegeNumber(collegiateNumberITPart.getValue())
-			.setCias(ciasITPart.getValue())
-			;
-
-			itParts.add(itPart);
-
+			itParts.add( 
+					new ITPart()
+					.setType((byte) 2) // ALTA
+					.setCollegeNumber(collegiateNumberITPart.getValue())
+					.setCias(ciasITPart.getValue())
+			);
 			this.it.setITParts(itParts);
 		} else {
 			boolean added = false;
@@ -1056,14 +1028,12 @@ public abstract class ITDialog extends AonCustomDialog {
 	private void setCollegiateNumberITPart(String collegiateNumberLowPart) {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<>();
-			
-			ITPart itPart = new ITPart()
-			.setType((byte) 0) // BAJA
-			.setCollegeNumber(collegiateNumberLowPart)
-			.setDate(itStartDate.getValue());
-			
-			itParts.add(itPart);
-			
+			itParts.add(
+					new ITPart()
+					.setType((byte) 0) // BAJA
+					.setCollegeNumber(collegiateNumberLowPart)
+					.setDate(itStartDate.getValue())
+			);
 			this.it.setITParts(itParts);
 		} else {
 			for(ITPart itPart : this.it.getITParts()) {
@@ -1117,7 +1087,6 @@ public abstract class ITDialog extends AonCustomDialog {
 					realStartDate.setText(formatFullDate.format(date));
 				} else
 					realStartDate.setText(formatFullDate.format(date));
-				
 			}
 		}
 	}
@@ -1279,19 +1248,6 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 2, collegeNumberTB);
 		confirmationPartDataTable.setWidget(row, 3, ciasTB);
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
-		
-//		if(isCommunicatePart(itPart)) {
-//			AonTableButton communicate = new AonTableButton("Comunicar Confirmaci\u00F3n", AON.CSS.aonIconSend());
-//			communicate.addClickHandler((e) -> {
-//				setViewPartComunica(itPart);
-//			});
-//			
-//			confirmationPartDataTable.setWidget(row, 5, communicate);
-//		}
-	}
-
-	private boolean isCommunicatePart(ITPart itPart){
-		return it.getId()!=null && itPart.getId()!=null && itPart.getStatus() != (byte)3;
 	}
 	
 	// --------------------------------------------------- ITDIalog.ShowHide_Elements
@@ -1328,9 +1284,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- ITDIalog.Auxiliar_Methods
 	
-	public void setIsUserComunica(boolean userComunica) {
-		this.userComunica = userComunica;
-	}
+	public void setIsUserComunica(boolean userComunica) {}
 	
 	private boolean notSelectedId(Integer itId) {
 		return (null == this.it || null == this.it.getId()) ? true : (this.it.getId() == itId || this.it.getId().equals(itId));
@@ -1431,8 +1385,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- Toolbar
 	
 	private void createITToolbar() {
-		toolbar = getToolbarPanel();
-		north.add(toolbar);
+		north.add(getToolbarPanel());
 		north.setHeight(AonToolbar.HEIGTH + "px");
 	}
 	
@@ -1530,14 +1483,6 @@ public abstract class ITDialog extends AonCustomDialog {
 	private void onShowCertitificateIT(ClickEvent event) {
 		if(null != this.it.getId())
 			onShowCertitificateIT(it);
-		
-		hide();
-	}
-	
-	private void onComunicateIT(ClickEvent event) {
-		if( null != this.it.getId() && 
-			(null == this.it.isComunicate() || !this.it.isComunicate()))
-			onComunicateIT(it);
 		
 		hide();
 	}
@@ -1679,7 +1624,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		panel.setStyleName(style.buttonsPanel());
 		mainCommunicate.add(panel);
 		
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
 		closeBtnDialog.setAccessKey('C');
@@ -1718,7 +1663,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	private void createFooterButtons() {
 		buttonsPanel.clear();
 		
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
 		closeBtnDialog.setAccessKey('C');
@@ -1733,7 +1678,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		acceptBtnDialog = new Button();
+		Button acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText( AON.MSG.accept());
 		acceptBtnDialog.setAccessKey('A');
@@ -1771,10 +1716,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- Footer.Methods
 	
 	private boolean checkIfSaveIsPossible() {
-		if(causeLowPart.getSelectedIndex() != 0 && null != itStartDate.getValue())
-			return true;
-		
-		return false;
+		return causeLowPart.getSelectedIndex() != 0 && null != itStartDate.getValue();
 	}
 	
 	public static boolean isPartenityPart(IT it) {
@@ -1787,50 +1729,6 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	public ITEmployee getITEmployee() {
 		return itEmployee;
-	}
-	
-	
-	//--------------COMMUNICATE IT PART
-	
-	private void printBtnCommunicate(){
-		
-		LOGGER.info("IT_ID:"+ it.getId());
-		for(ITPart itPart : it.getITParts()) {
-			LOGGER.info("IT_PART:"+itPart.getId()+" TYPE:"+itPart.getType().toString());
-		}
-		
-		Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
-		Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
-		
-		if(bjOptional.isPresent() && isCommunicatePart(bjOptional.get())) {
-			AonTableButton btnBaja = new AonTableButton("Comunicar Baja", AON.CSS.aonIconSend()); 
-			btnBaja.addClickHandler((e) -> {
-				ITPart part = new ITPart()
-						.setId(bjOptional.get().getId())
-						.setDate(it.getStartDate()).setType((byte) 0)
-						.setCollegeNumber(collegiateNumberITPart.getValue())
-						.setCias(ciasITPart.getValue());
-
-				setViewPartComunica(part);
-			});
-
-			itBaja.add(btnBaja);
-		}
-
-		if(altaOptional.isPresent() && isCommunicatePart(altaOptional.get())) {
-			AonTableButton btnAlta = new AonTableButton("Comunicar Alta", AON.CSS.aonIconSend());
-			btnAlta.addClickHandler((e) -> {
-				ITPart part = new ITPart()
-				.setId(altaOptional.get().getId())
-				.setDate(it.getEndDate()).setType((byte) 2)
-				.setCollegeNumber(collegiateNumberITPart.getValue())
-				.setCias(ciasITPart.getValue());
-
-				setViewPartComunica(part);
-			});
-			
-			itAlta.add(btnAlta);
-		}
 	}
 
 	public void setViewPartComunica(ITPart itPart) {
@@ -1847,8 +1745,6 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		itPartTmp = itPart;
 
-		// itPartTmp.setStatus( (byte) 3);
-		
 		paintPanel(itPartTmp);
 
 		createFooterButtonsCommunicate();
@@ -1931,7 +1827,6 @@ public abstract class ITDialog extends AonCustomDialog {
 			addInfoAditionalConfirmation(itInfoEl, itPart);
 
 	}
-	
 	
 	private void addInfoAditionalBaja(HTMLPanel flexColumn) {
 		HTMLPanel panel = new HTMLPanel("");
@@ -2100,8 +1995,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			
 		onCommunicateITPart(it, itPartTmp);
 	}
-	
-	
+
 	
 	// --------------------------------------------------- Abstract Methods
 	

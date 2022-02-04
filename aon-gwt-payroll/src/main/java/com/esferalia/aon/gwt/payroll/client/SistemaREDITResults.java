@@ -67,11 +67,9 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		}
 	}
 
-
 	private static final Binder binder = GWT.create(Binder.class);
 
 	private static final Template TEMPLATE = GWT.create(Template.class);
-
 
 	@UiField
 	Tree eventsTree;
@@ -112,11 +110,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		errorsItem.setVisible(false);
 		warningsItem.setVisible(false);
 		messagesItem.setVisible(false);
-		notFoundItem.setVisible(false);
-		
-//		userHidden.setValue(Wnd.getCurrentUser());
-//		domainHidden.setValue(Wnd.getCurrentDomainNameURL());
-		
+		notFoundItem.setVisible(false);		
 	}
 
 	public void run() {}

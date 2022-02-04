@@ -3587,15 +3587,21 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			List<EmployeeIT> employeeITs = new ArrayList<>();
 			for (ItNotExist itNotExist : itNotExists) {
 				EmployeeIT employeeIT = itNotExist.getEmployeeIT();
+				
 				List<EmployeeITPart> parts =  new ArrayList<>();
 				Optional<EmployeeITPart> baja = employeeIT.getItBaja();
+				
 				EmployeeITPart part = itNotExist.getEmployeeITPart();
 				parts.add(part);
 				
 				if(baja.isPresent() && !part.getType().equals(ContractLeaveDetailType.BAJA)) 
 					parts.add(baja.get());
-
+				
+				if (employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+					employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
+				
 				employeeIT.setITParts(parts);
+				employeeIT.setDomain(domain.getId());
 				
 				employeeITs.add(employeeIT);
 			}
