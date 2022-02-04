@@ -200,7 +200,7 @@ public class ActionFavoriteController implements IAuditConstants, Serializable {
 	private void initFavoriteAndMoreUsedOptions() {
 		this.favoriteAndMoreUsedOptions = new LinkedList<ApplicationOption>(this.favorites);
 		ActionMoreUsedController amuc = new ActionMoreUsedController();
-		List<ActionMoreUsed> actions = amuc.getMoreUsed(8);
+		List<ActionMoreUsed> actions = amuc.getMoreUsed(4);
 		for (ActionMoreUsed amu : actions) {
 			ApplicationOption appOption = amu.getOption();
 			if (! this.favoriteAndMoreUsedOptions.contains(appOption) ) {
