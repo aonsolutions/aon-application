@@ -1,5 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -10,7 +15,10 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod303Declaration {
 	
-	public static Mod303Declaration getInstance( Mod303 mod) {
+	// 1 de Julio del 2021		
+	protected static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
+
+	protected static Mod303Declaration getInstance( Mod303 mod) {
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaración");	
 		}
@@ -19,14 +27,22 @@ public abstract class Mod303Declaration {
 		if (Mod303AEAT2020Declaration.accept(mod)) 		return new Mod303AEAT2020Declaration();
 		if (Mod303AEAT2018.accept(mod)) 		return new Mod303AEAT2018();
 		if (Mod303AEAT2017Declaration.accept(mod)) 		return new Mod303AEAT2017Declaration();
+		if (ModBIZKAIA2022Declaration.accept(mod)) 	return new ModBIZKAIA2022Declaration();
 		if (ModBIZKAIA2018Declaration.accept(mod)) 	return new ModBIZKAIA2018Declaration();
 		if (ModBIZKAIA2017Declaration.accept(mod)) 	return new ModBIZKAIA2017Declaration();
+		if (Mod303ARABA2022Declaration.accept(mod)) 	return new Mod303ARABA2022Declaration();
 		if (Mod303ARABA2019Declaration.accept(mod)) 	return new Mod303ARABA2019Declaration();
 		if (Mod303ARABA2017Declaration.accept(mod)) 	return new Mod303ARABA2017Declaration();
+		if (ModGIPUZKOA2022Declaration.accept(mod)) 	return new ModGIPUZKOA2022Declaration();
 		if (ModGIPUZKOA20212Declaration.accept(mod)) 	return new ModGIPUZKOA20212Declaration();
 		if (ModGIPUZKOA2017Declaration.accept(mod)) 	return new ModGIPUZKOA2017Declaration();
 		
-		throw new AonCoreException("No existe una declaración para el modelo solicitado");
+		throw new AonCoreException(MessageFormat.format(
+			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
+			mod.getAdministration().getDescription()
+			,mod.getYear()
+			,mod.getPeriod().getDescription()));
+		
 	}
 
 	protected static void add(Mod303Key key,Mod303 mod,double amount) {

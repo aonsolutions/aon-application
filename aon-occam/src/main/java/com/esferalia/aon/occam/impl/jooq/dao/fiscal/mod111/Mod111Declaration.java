@@ -53,8 +53,9 @@ public abstract class Mod111Declaration {
 		if (Mod111Navarra2021Declaration.accept(mod)) 	return new Mod111Navarra2021Declaration();
 		
 		throw new AonCoreException(MessageFormat.format(
-			"No existe una declaración para el modelo solicitado ({0} - {1})",
+			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
 			mod.getAdministration().getDescription()
+			,mod.getYear()
 			,mod.getPeriod().getDescription()));
 	}
 

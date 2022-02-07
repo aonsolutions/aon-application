@@ -1,48 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
-import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
-
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.mvel2.MVEL;
-import org.mvel2.templates.TemplateRuntime;
-
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
-import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
-import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.api.model.type.VATRegime;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.IMod303KeyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
-import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
-import com.esferalia.aon.occam.server.fiscal.AEATJson;
-import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
-
-
-public class OLD_Mod303DAO extends FiscalModelDAO {
+public class OLD_Mod303DAO {
+	/*
+}
+extends FiscalModelDAO {
 	
 	@FunctionalInterface
 	private static interface IModelInfoProvider {
@@ -703,6 +664,6 @@ public class OLD_Mod303DAO extends FiscalModelDAO {
 		}
 		return mod303;
 	}
-	
+*/	
 }
 

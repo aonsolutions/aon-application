@@ -26,7 +26,7 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// ---------------------------------------------------------------MODELO 303
 	@Override
 	public Mod303 getMod303(Occam occam, int id) throws AonCoreException {
-		return MODEL303.getMod303(occam, id);
+		return MODEL303.get(occam, id);
 	}
 
 	@Override

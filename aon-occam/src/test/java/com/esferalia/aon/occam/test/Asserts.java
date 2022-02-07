@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -708,6 +709,9 @@ public class Asserts {
 	}
 	
 	public static void assertMod111(Mod111 expected, Mod111 actual) {
+		assertFiscalModel(expected, actual);
+	}
+	public static void assertMod303(Mod303 expected, Mod303 actual) {
 		assertFiscalModel(expected, actual);
 	}
 		

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -13,9 +14,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303ARABA2019Declaration extends Mod303Declaration {
+class Mod303ARABA2022Declaration extends Mod303Declaration {
 	
-	protected Mod303ARABA2019Declaration() {
+	protected Mod303ARABA2022Declaration() {
 		
 	}
 	
@@ -27,14 +28,14 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAraba() && mod.getYear() >= 2019 && mod.getYear() < 2022;
+		return  mod.isAraba() && mod.getYear() >= 2022;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032
 		,Mod303Key.AR_C033,Mod303Key.AR_C034,Mod303Key.AR_C035,Mod303Key.AR_C036
 	};
 	
-	private static enum Mod303KeyDAO implements IMod303KeyDAO {
+	private enum Mod303KeyDAO implements IMod303KeyDAO {
 		 AR_C907	(Mod303Key.AR_C907)
 		,CM_002(Mod303Key.CM_002,null,null,(ctx,mod) -> add(Mod303Key.CM_002,mod,(
 				 AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE))?1:0),null,null)
@@ -208,7 +209,7 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 		
 		// IVA deducible en importaciones de bienes corrientes
 		,AR_C032	(Mod303Key.AR_C032
-			,(mod,vat) -> importacionesCorrientesFilter(vat)
+			,(mod,vat) -> importacionesCorrientesFilter(vat,mod)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C032,mod,vat)
 			,null,null,null)
 		
@@ -241,7 +242,7 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 		
 		// Rectificacion de deducciones
 		,AR_C046	(Mod303Key.AR_C046
-			,(mod,vat) -> rectificaciónDeduccionesFilter(vat,mod)
+			,(mod,vat) -> rectificDeduccionesFilter(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C046,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -279,7 +280,7 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 							Mod390HFDAO.getMod390HFs( ctx,ctx.getDomainId() )
 							.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
 							.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
-							.filter(fm ->  fm.isToCompensate())
+							.filter(Mod390HF::isToCompensate)
 							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.AR_C140)))
 							.findFirst()
 							.orElse(0.0));						
@@ -289,7 +290,7 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
 							.filter(m303 -> m303.getYear() == mod.getYear() )
 							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
-							.filter(fm ->  fm.isToCompensate())
+							.filter(Mod303::isToCompensate)
 							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.AR_C082)))
 							.findFirst()
 							.orElse(0.0));						
@@ -453,7 +454,7 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 				firstInitializer.initialize(ctx, mod);
 			}
 		}
-		public static Mod303KeyDAO safeValueOf(Mod303 mod, String key) {
+		public static Mod303KeyDAO safeValueOf(String key) {
 			if (AonStringUtils.isBlank(key)) return null; 
 			for (Mod303KeyDAO keyDAO : Mod303KeyDAO.values()) {	
 				if (keyDAO.getKey().getValue().equals(key) ) {
@@ -470,7 +471,7 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 	
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
-		return Mod303KeyDAO.safeValueOf(mod, key);
+		return Mod303KeyDAO.safeValueOf(key);
 	}
 	
 	@Override
@@ -541,12 +542,32 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
-	private static boolean importacionesCorrientesFilter(VatContext vat) {
-		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& !vat.isInvestment()  && !vat.isRectification() 
-			&& !vat.isService()
-			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+	
+	private static boolean commonImportacionesInversionFilter(VatContext vat, Mod303 mod) {
+		boolean basicFilter = vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
+				&& !vat.isVatSurchargeRegime() 
+				&& !vat.isRectification() 
+				&& !vat.isService();
+		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
+			if (vat.getTaxDate().before( IVA_2021_CHANGE_DATE )) {
+				basicFilter = true;
+			} else {
+				basicFilter = vat.hasDuaLinked() || vat.isVatImportation();
+			}
+			return basicFilter; 
+		}
+		return false;
 	}
+	private static boolean importacionesCorrientesFilter(VatContext vat, Mod303 mod) {
+		return commonImportacionesInversionFilter(vat, mod) 
+				&& !vat.isInvestment();
+	}
+//	private static boolean importacionesCorrientesFilter(VatContext vat) {
+//		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+//			&& !vat.isInvestment()  && !vat.isRectification() 
+//			&& !vat.isService()
+//			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+//	}
 	private static boolean importacionesInversionFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isInvestment() && !vat.isRectification() 
@@ -565,7 +586,7 @@ class Mod303ARABA2019Declaration extends Mod303Declaration {
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
 	
-	private static boolean rectificaciónDeduccionesFilter(VatContext vat, Mod303 mod) {
+	private static boolean rectificDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}

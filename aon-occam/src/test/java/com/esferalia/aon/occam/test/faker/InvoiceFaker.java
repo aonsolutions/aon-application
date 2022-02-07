@@ -507,29 +507,50 @@ public class InvoiceFaker {
 		InvoiceFakerTypes type = InvoiceFakerTypes.values()[faker.random().nextInt(InvoiceFakerTypes.values().length-1)];
 		return type.get(params);
 	}
-	public static Invoice getSalesNational(InvoiceFakerParams params) {
+	public static Invoice getSalesNational(AONContext ctx, AonConfiguration configuration) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration);
 		return InvoiceFakerTypes.SALES_NATIONAL.get(params);
+	}
+	public static Invoice getSalesCanCeuService(AONContext ctx, AonConfiguration configuration) {
+		return getSalesCanCeuService(new InvoiceFakerParams(ctx,configuration));
 	}
 	public static Invoice getSalesCanCeuService(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.SALES_CAN_CEU_MEL_SERVICE.get(params);
 	}
+	public static Invoice getSalesCanCeu(AONContext ctx, AonConfiguration configuration) {
+		return getSalesCanCeu(new InvoiceFakerParams(ctx,configuration));
+	}
 	public static Invoice getSalesCanCeu(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.SALES_CAN_CEU_MEL.get(params);
 	}
-	public static Invoice getExpensesNational(InvoiceFakerParams params) {
+	public static Invoice getExpensesNational(AONContext ctx, AonConfiguration configuration) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration);
 		return InvoiceFakerTypes.EXPENSES_NATIONAL.get(params);
 	}
-	public static Invoice getPurchaseNational(InvoiceFakerParams params) {
+	public static Invoice getPurchaseNational(AONContext ctx, AonConfiguration configuration) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration);
 		return InvoiceFakerTypes.PURCHASE_NATIONAL.get(params);
+	}
+	public static Invoice getPurchaseExtracommunity(AONContext ctx, AonConfiguration configuration) {
+		return getPurchaseExtracommunity( new InvoiceFakerParams(ctx,configuration));
 	}
 	public static Invoice getPurchaseExtracommunity(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_EXTRACOMMUNITY.get(params);
 	}
+	public static Invoice getPurchaseExtracommunityVatImport(AONContext ctx, AonConfiguration configuration) {
+		return getPurchaseExtracommunityVatImport( new InvoiceFakerParams(ctx,configuration) ); 
+	}
 	public static Invoice getPurchaseExtracommunityVatImport(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_EXTRACOMMUNITY_VAT_IMPORT.get(params);
 	}
+	public static Invoice getPurchaseCanCeu(AONContext ctx, AonConfiguration configuration) {
+		return getPurchaseCanCeu(new InvoiceFakerParams(ctx,configuration)); 
+	}
 	public static Invoice getPurchaseCanCeu(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL.get(params);
+	}
+	public static Invoice getPurchaseCanCeuVatImport(AONContext ctx, AonConfiguration configuration) {
+		return getPurchaseCanCeuVatImport(new InvoiceFakerParams(ctx,configuration)); 
 	}
 	public static Invoice getPurchaseCanCeuVatImport(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL_VAT_IMPORT.get(params);

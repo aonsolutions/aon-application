@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -14,9 +15,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class ModBIZKAIA2018Declaration extends Mod303Declaration {
+class ModBIZKAIA2022Declaration extends Mod303Declaration {
 	
-	protected ModBIZKAIA2018Declaration() {
+	protected ModBIZKAIA2022Declaration() {
 				
 	}
 	
@@ -29,7 +30,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT4 = 1.75;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isBizkaia() && mod.getYear() >= 2018 && mod.getYear() < 2022;
+		return  mod.isBizkaia() && mod.getYear() >= 2022;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -49,7 +50,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 		,Mod303Key.BZ_C094
 	};
 	
-	private static enum Mod303KeyDAO implements IMod303KeyDAO {
+	private enum Mod303KeyDAO implements IMod303KeyDAO {
 		 BZ_C185_1	(Mod303Key.BZ_C185_1)
 		,BZ_C185_2	(Mod303Key.BZ_C185_2)
 		,BZ_C186	(Mod303Key.BZ_C186,null,null,(ctx,mod) -> add(Mod303Key.BZ_C186,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
@@ -189,7 +190,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 		
 		// IVA deducible en importaciones
 		,BZ_C025	(Mod303Key.BZ_C025
-			,(mod,vat) -> importacionesFilter(vat)
+			,(mod,vat) -> importacionesFilter(vat,mod)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C025,mod,vat)
 			,null,null,null)
 		
@@ -232,7 +233,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 							Mod390HFDAO.getMod390HFs( ctx,ctx.getDomainId() )
 							.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
 							.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
-							.filter(fm ->  fm.isToCompensate())
+							.filter(Mod390HF::isToCompensate)
 							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.BZ_C110) * (-1)))
 							.findFirst()
 							.orElse(0.0));						
@@ -242,7 +243,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
 							.filter(m303 -> m303.getYear() == mod.getYear() )
 							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
-							.filter(fm ->  fm.isToCompensate())
+							.filter(Mod303::isToCompensate)
 							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.BZ_C038)))
 							.findFirst()
 							.orElse(0.0));						
@@ -294,7 +295,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 					add( Mod303Key.BZ_C041, mod, 
 						Mod303DAO.getSamePeriodModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
-							.filter(result -> AonMathUtils.isGreatherThanZero(result))
+							.filter(AonMathUtils::isGreatherThanZero)
 							.sum());						
 				}
 			} 
@@ -316,7 +317,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 					add( Mod303Key.BZ_C042, mod, 
 						Mod303DAO.getSamePeriodModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
-							.filter(result -> AonMathUtils.isLessThanZero(result))
+							.filter(AonMathUtils::isLessThanZero)
 							.sum());						
 				}
 			} 
@@ -645,7 +646,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 				firstInitializer.initialize(ctx, mod);
 			}
 		}
-		public static Mod303KeyDAO safeValueOf(Mod303 mod, String key) {
+		public static Mod303KeyDAO safeValueOf(String key) {
 			if (AonStringUtils.isBlank(key)) return null; 
 			for (Mod303KeyDAO keyDAO : Mod303KeyDAO.values()) {	
 				if (keyDAO.getKey().getValue().equals(key) ) {
@@ -661,7 +662,7 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 	}
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
-		return Mod303KeyDAO.safeValueOf(mod, key);
+		return Mod303KeyDAO.safeValueOf(key);
 	}
 	
 	@Override
@@ -725,8 +726,6 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 					|| vat.isOtherISPExpenses() 
 					|| vat.isExtracommunityExpenses() 
 					|| vat.isCanCeuMelExpenses() 
-//					|| vat.isIntracommunityExpenses()
-//					|| (vat.isIntracommunityPurchase() && vat.isService())
 					|| (vat.isExtracommunityPurchase() && vat.isService()) 
 					|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
@@ -738,18 +737,33 @@ class ModBIZKAIA2018Declaration extends Mod303Declaration {
 			&& vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime()
 			&& (vat.isNationalSales());
-//			&& (vat.isNationalSales() || adqIntracomunitariasFilter(vat) || operacionesISPFilter(vat));		
 	}
 	private static boolean operacionesInterioresFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
-	private static boolean importacionesFilter(VatContext vat) {
-		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& !vat.isService() 
-			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+	
+	
+	private static boolean importacionesFilter(VatContext vat, Mod303 mod) {
+		boolean basicFilter = vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
+				&& !vat.isVatSurchargeRegime() 
+				&& !vat.isService();
+		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
+			if (vat.getTaxDate().before( IVA_2021_CHANGE_DATE )) {
+				basicFilter = true;
+			} else {
+				basicFilter = vat.hasDuaLinked() || vat.isVatImportation();
+			}
+			return basicFilter; 
+		}
+		return false;
 	}
+//	private static boolean importacionesFilter(VatContext vat) {
+//		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+//			&& !vat.isService() 
+//			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+//	}
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		

@@ -37,9 +37,9 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 	TaskHolderTestSuite.class,
 	FinanceTestSuite.class,
 	AccountingTestSuite.class,
-	FiscalTestSuite.class,
 	WorkgroupTestSuite.class,
-	ProjectTestSuite.class
+	ProjectTestSuite.class,
+	FiscalTestSuite.class,
 //	JsonTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,
 })

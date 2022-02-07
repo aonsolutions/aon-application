@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -38,9 +35,6 @@ class Mod303AEAT20212Declaration extends Mod303Declaration {
 	protected Mod303AEAT20212Declaration() {
 
 	}
-	
-	// 1 de Julio del 2012		
-	private static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 	
 	public static final double PERCENT1 = 4.0;
 	public static final double PERCENT2 = 10.0;
