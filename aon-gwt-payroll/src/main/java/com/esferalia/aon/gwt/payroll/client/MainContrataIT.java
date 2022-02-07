@@ -186,6 +186,7 @@ public class MainContrataIT extends MainEntryPoint {
 
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
+		
 	}
 	
 	// --------------------------------------------------- OnModuleLoad

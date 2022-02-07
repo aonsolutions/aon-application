@@ -256,6 +256,7 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- Constructor
 
 	protected ITWidget() {
+		LOGGER.info("ITWidget");
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
@@ -553,6 +554,7 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- OnModuleLoad
 	
 	public void loadITWidget() {
+		LOGGER.info("loadITWidget");
 		getITEmployeeListDB(itEmployeeList -> {
 			itEmployeeIts = itEmployeeList;
 			this.expressionCallback = new ExpressionCallback();
@@ -1387,9 +1389,10 @@ public abstract class ITWidget extends ResizeComposite {
 		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
 		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
 			String json = e.getResults();
+			LOGGER.info(json);
 			
 			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
-			
+		
 			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
 			
 			for (int i = 0; i < jsITEmployees.length(); i++ ) {
@@ -1539,9 +1542,12 @@ public abstract class ITWidget extends ResizeComposite {
 					e.getEmployeeInfo().getSsNumber().equals(notExist.getNaf()) && 
 					e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()).equals(notExist.getCcc())
 				).forEach(e->{
-					Integer contractId = e.getContractInfo().getContractId();
-					if(contractId!=null)
-						notExist.getEmployeeIT().setContract(contractId);
+//					Integer contractId = e.getContractInfo().getContractId();
+//					if(contractId!=null)
+//						notExist.getEmployeeIT().setContract(contractId);
+					
+					notExist.getEmployeeIT().setNss(e.getEmployeeInfo().getSsNumber());
+					notExist.getEmployeeIT().setCcc(e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()));
 				});
 			}
 		}
