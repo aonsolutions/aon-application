@@ -6664,7 +6664,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private static Widget newPercentLabel(Item<?> item, Double percent, Variable percentVar) {
 		if (NumberUtils.isNotValid(percent))
-			return newPercentLabel(percentVar == null ? item.getDescription() : formatPercent(percentVar.getValue()));
+			return newPercentLabel(percentVar == null ? formatPercent(0.00) : formatPercent(percentVar.getValue()));
 		else
 			return newPercentLabel(formatPercent(percent));
 	}
