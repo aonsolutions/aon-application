@@ -494,6 +494,10 @@ public abstract class EmployeeDraft extends Composite {
 				
 	}
 		
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title );
+	}
+
 	// ------------------------------------------------- setEmployeeDraft
 
 	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraftObject) {

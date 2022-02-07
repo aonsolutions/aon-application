@@ -89,6 +89,10 @@ public class ContractBonusUI extends ResizeComposite {
 		deckPanel.showWidget(0);
 	}
 
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title );
+	}
+
 	// ------------------------------------------------------ t50QUOTA.Methods
 	
 	private void initt50QUOTA() {

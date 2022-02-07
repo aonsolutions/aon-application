@@ -381,6 +381,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		undoAllButton.setEnabled(false);
 		
 		scrollPanel.setHeight((Window.getClientHeight() - 150) + "px");
+		
+	}
+	
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title);
 	}
 
 	// ----------------------------------------------- Constructor.Methods
