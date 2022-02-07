@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema targetNamespace="http://www.seg-social.es/creta/esquemas/V100/ConsultaTrabajadoresRectificados" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.seg-social.es/creta/esquemas/V100/ConsultaTrabajadoresRectificados" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="ConsultaTrabajadoresRectificados">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Autorizado"/>
+                <xs:element ref="ReferenciaExterna"/>
+                <xs:element ref="Liquidacion"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Autorizado">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\d\d\d\d\d\d\d\d"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="ReferenciaExterna">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:minLength value="1"/>
+                <xs:maxLength value="8"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Liquidacion">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Ccc"/>
+                <xs:element ref="CccConcertado" minOccurs="0"/>
+                <xs:element ref="PeriodoDesde"/>
+                <xs:element ref="PeriodoHasta"/>
+                <xs:element ref="Tipo"/>
+                <xs:element ref="PeriodoControl" minOccurs="0"/>
+                <xs:element ref="NumeroLiquidacion"/>
+                <xs:element ref="RazonSocial"/>
+                <xs:element ref="RectificacionNRLAnt"/>
+                <xs:element ref="RectificacionNRLUlt"/>
+                <xs:element ref="Avisos" minOccurs="0"/>
+                <xs:element ref="Trabajadores"  minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Ccc" type="CtaCot"/>
+    <xs:element name="CccConcertado" type="CtaCot"/>
+    <xs:complexType name="CtaCot">
+        <xs:sequence>
+            <xs:element ref="Regimen"/>
+            <xs:element ref="Provincia"/>
+            <xs:element ref="Numero"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Regimen">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\d\d\d\d"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Provincia">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\d\d"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Numero">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\d{9}"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="PeriodoDesde" type="Periodo"/>
+    <xs:element name="PeriodoHasta" type="Periodo"/>
+    <xs:complexType name="Periodo">
+        <xs:sequence>
+            <xs:element ref="Mes"/>
+            <xs:element ref="Anho"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Mes">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="12"/>
+                <xs:enumeration value="11"/>
+                <xs:enumeration value="10"/>
+                <xs:enumeration value="09"/>
+                <xs:enumeration value="08"/>
+                <xs:enumeration value="07"/>
+                <xs:enumeration value="06"/>
+                <xs:enumeration value="05"/>
+                <xs:enumeration value="04"/>
+                <xs:enumeration value="03"/>
+                <xs:enumeration value="02"/>
+                <xs:enumeration value="01"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Anho">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:length value="4"/>
+                <xs:pattern value="\d{4}"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Tipo">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:minLength value="3"/>
+                <xs:maxLength value="3"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="PeriodoControl" type="Periodo"/>
+    <xs:element name="NumeroLiquidacion">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:length value="17"/>
+                <xs:pattern value="\d{17}"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="RazonSocial">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="55"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="RectificacionNRLAnt" type="RectificacionNRL"/>
+    <xs:element name="RectificacionNRLUlt" type="RectificacionNRL"/>
+    <xs:complexType name="RectificacionNRL">
+        <xs:sequence>
+            <xs:element ref="NumeroNRL"/>
+            <xs:element ref="ImporteTotalNRL"/>
+            <xs:element ref="NumeroTrabajadoresNRL"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="NumeroNRL" type="NumeroRectificacion"/>
+    <xs:element name="ImporteTotalNRL" type="Importe"/>
+    <xs:element name="NumeroTrabajadoresNRL" type="NumeroTrabajadores"/>
+    <xs:simpleType name="NumeroRectificacion">
+        <xs:restriction base="xs:string">
+            <xs:length value="3"/>
+            <xs:pattern value="\d{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Importe">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="11"/>
+            <xs:pattern value="(\d)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NumeroTrabajadores">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="6"/>
+            <xs:pattern value="(\d)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="Avisos">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Aviso" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Aviso">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Codigo"/>
+                <xs:element ref="Descripcion"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Codigo">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:length value="5"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Descripcion" type="xs:string"/>
+    <xs:element name="Trabajadores">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Trabajador" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Trabajador">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Naf"/>
+                <xs:element ref="Ipf"/>
+                <xs:element ref="Caf"/>
+                <xs:element ref="Periodos"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Naf">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\d{12}"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Ipf" type="IpfElement"/>
+    <xs:complexType name="IpfElement">
+        <xs:sequence>
+            <xs:element ref="TipoIpf"/>
+            <xs:element ref="NumeroIpf"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="TipoIpf">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\w"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="NumeroIpf">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\w{10}"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Caf">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="5"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="Periodos">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Periodo" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Periodo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="FechaPeriodo"/>
+                <xs:element ref="DatosPeriodo"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="FechaPeriodo" type="Periodo"/>
+    <xs:element name="DatosPeriodo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Cambio"/>
+                <xs:element ref="ImporteRectificacionAnterior"/>
+                <xs:element ref="ImporteRectificacionUltima"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Cambio">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="M"/>
+                <xs:enumeration value="B"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="ImporteRectificacionAnterior" type="Importe"/>
+    <xs:element name="ImporteRectificacionUltima" type="Importe"/>
+</xs:schema>
