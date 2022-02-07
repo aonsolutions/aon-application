@@ -15,9 +15,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.EditTextCell;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -89,13 +90,15 @@ public class EmployeeContractVariables extends Composite {
 	
 	// ----------------------------------------------- Variables 
 	
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 	private EmployeeContractVariablesObject employeeContractVariablesObject;
 	private List<ContractVariable> contractVariableList;
 	
 	private AonToolbarButton saveButton;
-	private AonToolbarButton addVariable;
-	private ListBox yearLB;
 	private ListBox variableTypeLB;
+	private ListBox yearLB;
+	private ListBox monthLB;
 	
 	// ----------------------------------------------- Constructor 
 	
@@ -116,7 +119,7 @@ public class EmployeeContractVariables extends Composite {
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
 	
 	private void setScrollPanelHeight() {
-		contractVariablesDG.setHeight((Window.getClientHeight() - 220) + "px");
+		contractVariablesDG.setHeight((Window.getClientHeight() - 230) + "px");
 	}
 	
 	private String getVariableTypeShort(VariableType variableType) {
@@ -151,6 +154,26 @@ public class EmployeeContractVariables extends Composite {
 	}
 	
 	private void addContractVariableColumns() {
+		// Edit column.
+	    ActionCell<ContractVariable> editActionCell = new ActionCell<>("", selectedContractVariable -> openContractVariableDialog(selectedContractVariable));
+	    
+	    Column<ContractVariable, ContractVariable> editColumn = new Column<ContractVariable, ContractVariable>(editActionCell) {
+
+			@Override
+			public ContractVariable getValue(ContractVariable contractVariable) {
+				return contractVariable;
+			}
+			
+			@Override
+			public void render(Context context, ContractVariable contractVariable, SafeHtmlBuilder sb) {
+				if(null != contractVariable) {
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+				}
+			}
+		};
+		
+		editColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		contractVariablesDG.setColumnWidth(editColumn, 5, Unit.PCT);
 		
 		// Type columns.
 		Column<ContractVariable, String> typeColumn = new Column<ContractVariable, String>(new ContractVariablesTypeCell()) {
@@ -165,68 +188,47 @@ public class EmployeeContractVariables extends Composite {
 		contractVariablesDG.setColumnWidth(typeColumn, 5, Unit.PCT);
 		
 		// Description column.
-		Column<ContractVariable, String> descriptionColumn = new Column<ContractVariable, String>(new EditTextCell()) {
+		Column<ContractVariable, String> descriptionColumn = new Column<ContractVariable, String>(new TextCell()) {
 			@Override
 			public String getValue(ContractVariable contractVariable) {
 				return contractVariable.getDescription();
 			}
 		};
 		
-		descriptionColumn.setFieldUpdater((index, contractVariable, description) -> {
-			contractVariable.setDescription(description);
-			contractVariable.setHasChange(true);
-		});
-		
 		descriptionColumn.setSortable(true);
 		contractVariablesDG.setColumnWidth(descriptionColumn, 20, Unit.PCT);
 	    
 	    // Expression column.
-	    Column<ContractVariable, String> expressionColumn = new Column<ContractVariable, String>(new EditTextCell()) {
+	    Column<ContractVariable, String> expressionColumn = new Column<ContractVariable, String>(new TextCell()) {
 	    	@Override
 	        public String getValue(ContractVariable contractVariable) {
 	    		return contractVariable.getExpression();
 	        }
 		};
-		
-		expressionColumn.setFieldUpdater((index, contractVariable, expression) -> {
-			contractVariable.setExpression(expression);
-			contractVariable.setHasChange(true);
-		});
 
 	    expressionColumn.setSortable(true);
 	    contractVariablesDG.setColumnWidth(expressionColumn, 35, Unit.PCT);
 	    
 	    // StartDate column.
-	    Column<ContractVariable, Date> startDateColumn = new Column<ContractVariable, Date>(new DatePickerCell()) {
+	    Column<ContractVariable, String> startDateColumn = new Column<ContractVariable, String>(new TextCell()) {
 	    	@Override
-	        public Date getValue(ContractVariable contractVariable) {
-	    		return contractVariable.getStartDate();
+	        public String getValue(ContractVariable contractVariable) {
+	    		return formatDate.format(contractVariable.getStartDate());
 	        }
 		};
-		
-		startDateColumn.setFieldUpdater((index, contractVariable, startDate) -> {
-			contractVariable.setStartDate(startDate);
-			contractVariable.setHasChange(true);
-			contractVariablesDG.redrawRow(index);
-		});
 
 	    startDateColumn.setSortable(true);
 	    startDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    contractVariablesDG.setColumnWidth(startDateColumn, 10, Unit.PCT);
 	    
 	    // EndDate column.	    
-	    Column<ContractVariable, Date> endDateColumn = new Column<ContractVariable, Date>(new DatePickerCell()) {
+	    Column<ContractVariable, String> endDateColumn = new Column<ContractVariable, String>(new TextCell()) {
 			@Override
-			public Date getValue(ContractVariable contractVariable) {
-				return contractVariable.getEndDate();
+			public String getValue(ContractVariable contractVariable) {
+				Date endDate = contractVariable.getEndDate();
+				return endDate == null ? "" : formatDate.format(endDate);
 			}
 		};
-		
-		endDateColumn.setFieldUpdater((index, contractVariable, endDate) -> {
-			contractVariable.setEndDate(endDate);
-			contractVariable.setHasChange(true);
-			contractVariablesDG.redrawRow(index);
-		});
 
 	    endDateColumn.setSortable(true);
 	    endDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -257,6 +259,7 @@ public class EmployeeContractVariables extends Composite {
 		contractVariablesDG.setColumnWidth(deleteColumn, 5, Unit.PCT);
 		
 	    // Add the columns.
+		contractVariablesDG.addColumn(editColumn, "");
 		contractVariablesDG.addColumn(typeColumn, "Tipo");
 		contractVariablesDG.addColumn(descriptionColumn, "Descripci\u00F3n");
 		contractVariablesDG.addColumn(expressionColumn, "Expresi\u00F3n");
@@ -278,7 +281,7 @@ public class EmployeeContractVariables extends Composite {
 	    List<ContractVariable> contractVariableListAux = contractVariableDataProvider.getList();
 	    contractVariableListAux.clear();
 	    
-	    this.contractVariableList = employeeContractVariablesObject.getContractVariables(Integer.parseInt(yearLB.getSelectedValue()), variableTypeLB.getSelectedValue());
+	    this.contractVariableList = employeeContractVariablesObject.getContractVariables(yearLB.getSelectedValue(), monthLB.getSelectedValue(), variableTypeLB.getSelectedValue());
 	    
 	    for (ContractVariable contractVariable : this.contractVariableList) {
 	    	contractVariableListAux.add(contractVariable);
@@ -333,7 +336,7 @@ public class EmployeeContractVariables extends Composite {
         	return d1.compareTo(d2);
 	}
 		
-	// ----------------------------------------------- setEmployeeContractPaymentsObject 
+	// ----------------------------------------------- setEmployeeContractVariablesObject 
 	
 	public void setEmployeeContractVariablesObject(EmployeeContractVariablesObject employeeContractVariablesObject) {
 		this.employeeContractVariablesObject = employeeContractVariablesObject;
@@ -342,25 +345,9 @@ public class EmployeeContractVariables extends Composite {
 				,t -> {});
 	}
 	
-	// ----------------------------------------------- setEmployeeContractPaymentsObject.Methods
+	// ----------------------------------------------- setEmployeeContractVariablesObject.Methods
 	
-	public void initializeYearLB() {
-		initializeYearLB(this.yearLB);
-	}
-
-	public void initializeYearLB(ListBox yearLB) {
-		Integer year = DateUtils.getYear();
-		Integer yearAux = DateUtils.getYear();
-		Integer previusYear = year - 1;
-		
-		yearLB.clear();
-		yearLB.addItem(yearAux.toString(), yearAux.toString());
-		yearLB.addItem(previusYear.toString(), previusYear.toString());
-		
-		yearLB.addChangeHandler(e -> changeYear());
-		
-		setSelectedValueLB(yearLB, year.toString());
-	}
+	
 	public void initializeVariableTypeLB() {
 		initializeVariableTypeLB(this.variableTypeLB);
 	}
@@ -374,6 +361,60 @@ public class EmployeeContractVariables extends Composite {
 		variableTypeLB.addChangeHandler(e -> changeYear());
 		
 		setSelectedValueLB(variableTypeLB, "0");
+	}
+	
+	public void initializeYearLB() {
+		initializeYearLB(this.yearLB);
+	}
+
+	public void initializeYearLB(ListBox yearLB) {
+		Integer year = DateUtils.getYear();
+		Integer yearAux = DateUtils.getYear();
+		Integer previusYear = year - 1;
+		
+		yearLB.clear();
+		yearLB.addItem("-", "");
+		yearLB.addItem(yearAux.toString(), yearAux.toString());
+		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		
+		yearLB.addChangeHandler(e -> {
+			checkSelectedYear();
+			changeYear();
+		});
+		
+		setSelectedValueLB(yearLB, year.toString());
+	}
+	
+	private void checkSelectedYear() {
+		if(AonStringUtils.isBlank(yearLB.getSelectedValue())) {
+			monthLB.setSelectedIndex(0);
+			monthLB.setVisible(false);
+		} else
+			monthLB.setVisible(true);
+	}
+
+
+	public void initializeMonthLB() {
+		initializeMonthLB(this.monthLB);
+	}
+
+	public void initializeMonthLB(ListBox monthLB) {
+		monthLB.clear();
+		monthLB.addItem("-", "");
+		monthLB.addItem("Enero", "0");
+		monthLB.addItem("Febrero", "1");
+		monthLB.addItem("Marzo", "2");
+		monthLB.addItem("Abril", "3");
+		monthLB.addItem("Mayo", "4");
+		monthLB.addItem("Junio", "5");
+		monthLB.addItem("Julio", "6");
+		monthLB.addItem("Agosto", "7");
+		monthLB.addItem("Septiembre", "8");
+		monthLB.addItem("Octubre", "9");
+		monthLB.addItem("Noviembre", "10");
+		monthLB.addItem("Diciembre", "11");
+		
+		monthLB.addChangeHandler(e -> changeYear());
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
@@ -402,15 +443,18 @@ public class EmployeeContractVariables extends Composite {
 		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
-		addVariable = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd());
-		addVariable.addClickHandler(e -> onAdd());
+		AonToolbarButton addVariable = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd());
+		addVariable.addClickHandler(e -> openContractVariableDialog(null));
 		toolbar.add(addVariable);
+		
+		this.variableTypeLB = new ListBox();
+		this.toolbar.add(this.variableTypeLB);
 		
 		this.yearLB = new ListBox();
 		this.toolbar.add(this.yearLB);
 		
-		this.variableTypeLB = new ListBox();
-		this.toolbar.add(this.variableTypeLB);
+		this.monthLB = new ListBox();
+		this.toolbar.add(this.monthLB);
 		
 	}
 
@@ -422,18 +466,25 @@ public class EmployeeContractVariables extends Composite {
 				t -> {});
 	}
 	
-	public void onAdd() {
-		new ContractVariableDialog() {
+	public void openContractVariableDialog(ContractVariable selectedContractVariable) {
+		new ContractVariableDialog(selectedContractVariable) {
 			@Override
 			protected void onAccept(ContractVariable contractVariable) {
-				employeeContractVariablesObject.createContractVariable(
-					contractVariable, 
-					s ->
-						employeeContractVariablesObject.getContractVariables(
-								r -> initContractVariablesTable(),
-								t -> {}
-						), 
-					f -> {});	
+				// Create new variable
+				if(contractVariable.getId() == null) {
+					employeeContractVariablesObject.createContractVariable(
+						contractVariable, 
+						s ->
+							employeeContractVariablesObject.getContractVariables(
+									r -> initContractVariablesTable(),
+									t -> {}
+							), 
+						f -> {});	
+				// Update variable
+				} else {
+					contractVariable.setHasChange(true);
+					contractVariablesDG.redraw();
+				}
 			}};
 	}
 	
@@ -443,12 +494,16 @@ public class EmployeeContractVariables extends Composite {
 		dockLayoutPanel.remove(toolbar);
 	}
 	
+	public void setVariableTypeLB(ListBox variableTypeLB) {
+		this.variableTypeLB = variableTypeLB;
+	}
+	
 	public void setYearLB(ListBox yearLB) {
 		this.yearLB = yearLB;
 	}
 	
-	public void setVariableTypeLB(ListBox variableTypeLB) {
-		this.variableTypeLB = variableTypeLB;
+	public void setMonthLB(ListBox monthLB) {
+		this.monthLB = monthLB;
 	}
 	
 }

@@ -51,20 +51,27 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	@UiField
 	HTMLPanel buttonsPanel;
 	
+	// ------------------------------------------------- Variables
+	
+	private ContractVariable contractVariable;
+	
 	// ------------------------------------------------- Constructor
 	
-	protected ContractVariableDialog() {
+	protected ContractVariableDialog(ContractVariable selectedContractVariable) {
 		setCaption("Variables contrato");
 		setWidget(binder.createAndBindUi(this));
+		this.contractVariable = selectedContractVariable;
 		initializeView();
-
 	}
 
 	// ------------------------------------------------- Constructor Methods
 	
 	private void initializeView() {
 		initListBox();
+		initHandlers();
 		getButtonsPanel();
+		if(null != this.contractVariable)
+			fillContractVariable();
 		showDialog();
 	}
 
@@ -72,6 +79,46 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		this.variableType.clear();
 		this.variableType.addItem("Contract Data", "CONTRACT_DATA");
 		this.variableType.addItem("Contract Info", "CONTRACT_INFO");
+	}
+
+	private void initHandlers() {
+		variableType.addChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setVariableType(VariableType.valueOf(variableType.getSelectedValue()));
+		});
+		
+		variableName.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setDescription(e.getValue());
+		});
+		
+		variableValue.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setExpression(e.getValue());
+		});
+		
+		startDateBx.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setStartDate(e.getValue());
+		});
+		
+		endDateBx.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setEndDate(e.getValue());
+		});
+	}
+
+	private void checkIfExistContractVariable() {
+		if(null == this.contractVariable)
+			this.contractVariable = new ContractVariable();
+	}
+
+	private void fillContractVariable() {
+		setSelectedValueLB(variableType, contractVariable.getVariableType().name());
+		this.variableName.setValue(contractVariable.getDescription());
+		this.variableValue.setValue(contractVariable.getExpression());
+		this.startDateBx.setValue(contractVariable.getStartDate());
+		this.endDateBx.setValue(contractVariable.getEndDate());
 	}
 
 	// ------------------------------------------------- Auxiliar Methods
@@ -117,7 +164,7 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	private void accept() {
 		Map<String, String> saveMessage = canSave();
 		if(saveMessage.isEmpty()) {
-			onAccept(createVariable());
+			onAccept(contractVariable);
 			hide();
 		} else
 			AonMessagePanel.showError(messagePanel, saveMessage);
@@ -131,17 +178,6 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		if(null == startDateBx.getValue()) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es obligatoria");
 		
 		return saveMessage;
-	}
-
-	private ContractVariable createVariable() {
-		ContractVariable contractVariable = new ContractVariable();
-		contractVariable.setVariableType(VariableType.valueOf(variableType.getSelectedValue()));
-		contractVariable.setDescription(variableName.getValue());
-		contractVariable.setExpression(variableValue.getValue());
-		contractVariable.setStartDate(startDateBx.getValue());
-		contractVariable.setEndDate(endDateBx.getValue());
-		
-		return contractVariable;
 	}
 	
 	// ------------------------------------------------- AbstractMethods
