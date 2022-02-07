@@ -13,9 +13,9 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod303WriterAEAT2021_2 implements IMod303Writer{
+public class Mod303WriterAEAT20212 implements IMod303Writer{
 
-	private static enum Mod303File {
+	private enum Mod303File {
 		AEAT_2021_REG_0_START (mod303 -> true ,new IPropertyFiller[] { 
 			(wr, mod) -> wr.append("<T")
 		   ,(wr, mod) -> wr.append("303")

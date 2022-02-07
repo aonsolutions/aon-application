@@ -208,6 +208,8 @@ public class FiscalModelDAO {
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier))
+			.filter(fim -> fim.getPeriod().isMonthPeriod() == fm.getPeriod().isMonthPeriod())
+			.filter(fim -> fim.getPeriod().isQuarterPeriod() == fm.getPeriod().isQuarterPeriod())
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
 	public static <T extends FiscalModel> Stream<T> getSamePeriodModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
@@ -228,8 +230,6 @@ public class FiscalModelDAO {
 	public static <T extends FiscalModel> Stream<T> getEffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
 		LinkedList<T> effectivePreviousModels = new LinkedList<>();
 		LinkedList<T> previousModels = getPreviousModels(ctx, fiscalModel, modelSupplier)
-				.filter(fm -> fm.getPeriod().isMonthPeriod() == fiscalModel.getPeriod().isMonthPeriod())
-				.filter(fm -> fm.getPeriod().isQuarterPeriod() == fiscalModel.getPeriod().isQuarterPeriod())
 				.collect(Collectors.toCollection(LinkedList::new));
 		for ( T fm : previousModels ) {
 			if (fm.isComplementary() || (!fm.isComplementary() && 
