@@ -745,6 +745,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
 	}
 	
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title );
+	}
+	
 	public void setContrataEmployeeCalendarHeight(){
 		scrollInfo.setHeight((Window.getClientHeight() - 290) + "px");
 	}
@@ -1301,7 +1305,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	private void changeYear() {
 		String fullYear = this.yearLB.getSelectedValue();
-		toolbar.setTitle("Calendario " + fullYear);
 		this.year = Integer.parseInt(fullYear) - 1900;
 		initCalendar();
 	}

@@ -108,6 +108,10 @@ public class EmployeeContractVariables extends Composite {
 	}
 	
 	
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title );
+	}
+
 	public void setSaveEnabled(boolean enabled) {
 		saveButton.setEnabled(enabled);
 	}

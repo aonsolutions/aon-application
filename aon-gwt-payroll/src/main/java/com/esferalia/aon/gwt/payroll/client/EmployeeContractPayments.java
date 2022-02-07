@@ -112,6 +112,10 @@ public class EmployeeContractPayments extends Composite {
 		//saveButton.setEnabled(false);
 	}
 	
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title );
+	}
+
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
 	
 	private void setScrollPanelHeight() {

@@ -2601,20 +2601,12 @@ public class SalaryDraft extends ResizeComposite
 	FlexTable paymentsTable;
 
 	@UiField
-	Label enterpriseNameLabel;
-	@UiField
-	Label enterpriseAddressLabel;
-	@UiField
-	Label enterpriseCityLabel;
-	@UiField
 	Label enterpriseCCCLabel;
 
 	@UiField
 	Label employeeNameLabel;
 	@UiField
 	Label employeeSSLabel;
-	@UiField
-	Label employeeDocumentLabel;
 	@UiField
 	Label employeeSeniorityLabel;
 	@UiField
@@ -2729,6 +2721,9 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiField
 	ListBox settlePreviewListBox;
+	
+	@UiField
+	InlineLabel toolbarTitleLabel;
 
 	private int zoom;
 	private Scope scope;
@@ -2788,6 +2783,10 @@ public class SalaryDraft extends ResizeComposite
 		export2JS(this);
 	}
 	
+	public void setToolbarTitle(String title) {
+		toolbarTitleLabel.setText(title );
+	}
+
 	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}
@@ -3244,13 +3243,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private void dumpSalaryDraft(boolean displayChanges) {
 
-		enterpriseNameLabel.setText(salaryDraftObject.getEnterpriseName());
 		enterpriseCCCLabel.setText(salaryDraftObject.getEnterpriseCCC());
-		enterpriseAddressLabel.setText(salaryDraftObject.getEnterpriseAddress());
 
 		employeeSSLabel.setText(salaryDraftObject.getEmployeeSS());
 		employeeNameLabel.setText(salaryDraftObject.getEmployeeName());
-		employeeDocumentLabel.setText(salaryDraftObject.getEmployeeDocument());
 		employeeSeniorityLabel.setText(format(salaryDraftObject.getEmployeeSeniorityDate()));
 		employeeAgreementCategoryLabel.setText(salaryDraftObject.getEmployeeAgreementCategory());
 
@@ -3330,7 +3326,7 @@ public class SalaryDraft extends ResizeComposite
 		dumpDeductions(embargos);
 		newDeductionHandler = insertNewDeductionRow();
 		insertBlankPaymentRow();
-		insertBlankPaymentRow();
+		//insertBlankPaymentRow();
 		
 		Scope nextScope = null;
 		boolean show = false; //scope.compareTo(Scope.CONTRACT) >= 0;
@@ -3638,7 +3634,8 @@ public class SalaryDraft extends ResizeComposite
 			}
 		});
 	}
-
+	
+	
 	private void initSalaryDb() {
 		dbSalaryCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			@Override
@@ -5429,7 +5426,7 @@ public class SalaryDraft extends ResizeComposite
 	private void showCosts(boolean show) {
 		
 		int costsBeforeRow = paymentsTable.getRowCount()
-				- (/* 1 new line */+2 /* blanks line */);
+				- (/* 1 new line */+1 /* blanks line */);
 
 		int costsCount = salaryDraftObject.getCosts().stream()
 		.collect(Collectors.summingInt(c ->  1 + ((c instanceof CompositeDeduction) ? ((CompositeDeduction)c).getChilds().size() : 0)));
