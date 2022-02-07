@@ -29,6 +29,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
 import com.esferalia.aon.in.payroll.excel.ExcelType;
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
@@ -38,6 +39,10 @@ import com.ibm.icu.util.Calendar;
 
 public class EnterpriseSalaryReportController implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3910637732757521646L;
 	private Date endDate;
 	private Date startDate;
 	private Person person;
@@ -174,11 +179,17 @@ public class EnterpriseSalaryReportController implements Serializable {
 				enterpriseId = optEnterprise.get().getRegistry();
 			}
 			
-			if (groupByPerson)
-				EnterprisePayrollExcel.enterprisePayrollGeneratorByEmployee(connectionDomainName, login, out, Optional.ofNullable(enterpriseId), Optional.empty(), startDate, endDate, ExcelType.EMPLOYEE_SUMMARY, salaryEnumTypes, person);
-			else
-				EnterprisePayrollExcel.enterprisePayrollGeneratorByPeriod(connectionDomainName, login, out, Optional.ofNullable(enterpriseId), Optional.empty(), startDate, endDate, ExcelType.PERIOD_SUMMARY, salaryEnumTypes, person);
-				
+			EnterprisePayrollExcelParams params = new EnterprisePayrollExcelParams()
+					.setDomainName(connectionDomainName)
+					.setLogin(login)
+					.setOs(out)
+					.setEnterpriseId(enterpriseId);
+			
+			if (groupByPerson) {
+				EnterprisePayrollExcel.enterprisePayrollGeneratorByEmployee(params.setExcelType(ExcelType.EMPLOYEE_COMPLETE), startDate, endDate, salaryEnumTypes, person);
+			} else {
+				EnterprisePayrollExcel.enterprisePayrollGeneratorByPeriod(params.setExcelType(ExcelType.PERIOD_COMPLETE), startDate, endDate, salaryEnumTypes, person);
+			}
 			
 		}
 		return null;
@@ -228,8 +239,13 @@ public class EnterpriseSalaryReportController implements Serializable {
 			if (optEnterprise.isPresent()) {
 				enterpriseId = optEnterprise.get().getRegistry();
 			}
+			EnterprisePayrollExcelParams params = new EnterprisePayrollExcelParams()
+					.setDomainName(connectionDomainName)
+					.setLogin(login)
+					.setOs(out)
+					.setEnterpriseId(enterpriseId);
 			
-			EnterprisePayrollExcel.completeEnterprisePayrollGenerator(connectionDomainName, login, out, Optional.ofNullable(enterpriseId), Optional.empty(), yearStart, yearEnd, salaryEnumTypes/*, person*/);
+			EnterprisePayrollExcel.completeEnterprisePayrollGenerator(params, yearStart, yearEnd, salaryEnumTypes/*, person*/);
 			
 		}
 		return null;

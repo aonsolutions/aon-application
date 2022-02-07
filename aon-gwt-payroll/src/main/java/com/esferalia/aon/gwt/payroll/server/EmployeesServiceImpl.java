@@ -335,6 +335,8 @@ import solutions.aon.sepe.exceptions.SepeException;
 public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		implements EmployeesService, StatisticsService, CalendarService, EmployeeEventsService {
 
+	private static final String CONTRACT_MAX_END_DATE = "contract_max_end_date";
+
 	public static final String REMOVE = "REMOVE()";
 
 	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
@@ -3217,25 +3219,64 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE + " LEFT JOIN " + WORKPLACE + " ON ( "
+			String sql = "SELECT"
+					
+					+ " " + REGISTRY +".*"
+					+ "," + ENTERPRISE +".*"
+					+ "," + WORKPLACE +".*"
+					+ "," + PAYROLL_WORKPLACE +".*"
+					+ "," + AGREEMENT +".*"
+					+ "," + ENTERPRISE_ACTIVITY +".*"
+					+ "," + ENTERPRISE_CCC +".*"
+					
+					+ "," + CONTRACT +"." + ContractColumns.ID
+					+ ",MAX(IFNULL(" + CONTRACT +"." + ContractColumns.END_DATE + ",'9999-12-31')) AS " + CONTRACT_MAX_END_DATE
+		
+					+ " FROM " + REGISTRY + ", " + ENTERPRISE 
+					
+					+ " LEFT JOIN " + WORKPLACE + " ON ( "
 					+ ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN " + PAYROLL_WORKPLACE + " ON ( " + WORKPLACE
+					+ WorkplaceColumns.ENTERPRISE + " )" 
+					
+					+ " LEFT JOIN " + PAYROLL_WORKPLACE + " ON ( " + WORKPLACE
 					+ "." + WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "." + PayrollWorkplaceColumns.WORKPLACE
-					+ ")" + " LEFT JOIN " + AGREEMENT + " ON ( " + PAYROLL_WORKPLACE + "."
+					+ ")" 
+					
+					+ " LEFT JOIN " + AGREEMENT + " ON ( " + PAYROLL_WORKPLACE + "."
 					+ PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT + "." + AgreementColumns.ID + " )"
 
 					+ " LEFT JOIN " + ENTERPRISE_ACTIVITY + " ON ( " + PAYROLL_WORKPLACE + "."
 					+ PayrollWorkplaceColumns.ENTERPRISE_ACTIVITY + " = " + ENTERPRISE_ACTIVITY + "."
-					+ EnterpriseActivityColumns.ID + " )" + " LEFT JOIN " + ENTERPRISE_CCC + " ON ( " + ENTERPRISE_CCC
+					+ EnterpriseActivityColumns.ID + " )" 
+					
+					+ " LEFT JOIN " + ENTERPRISE_CCC + " ON ( " + ENTERPRISE_CCC
 					+ "." + EnterpriseCccColumns.ENTERPRISE_ACTIVITY + " = " + ENTERPRISE_ACTIVITY + "."
 					+ EnterpriseActivityColumns.ID + " )"
 
-					+ " WHERE " + REGISTRY + "." + RegistryColumns.ID + " = ?" + " AND " + REGISTRY + "."
-					+ RegistryColumns.ID + " = " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " AND " + WORKPLACE
-					+ "." + WorkplaceColumns.SCOPE + " IN ( SELECT " + UserScopeColumns.SCOPE + " FROM " + USER_SCOPE
-					+ " WHERE " + UserScopeColumns.USER_ID + " = ? " + " UNION SELECT scope.id FROM scope INNER JOIN "
-					+ DOMAIN + " ON ( scope.domain = " + DOMAIN + "." + DomainColumns.ID + " ) INNER JOIN " + USER
-					+ " ON ( " + DOMAIN + "." + DomainColumns.PARENT + " = " + USER + "." + UserColumns.DOMAIN + " ) )"
+					+ " LEFT JOIN " + CONTRACT + " ON ( " 
+					+ " " + CONTRACT + "." + ContractColumns.ID + " > 0 "
+					+ " AND " + WORKPLACE+ "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE
+					+ ")" 
+
+
+					+ " WHERE " 
+					+ REGISTRY + "." + RegistryColumns.ID + " = ?" 
+					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY 
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.SCOPE 
+					+ " IN ( SELECT " + UserScopeColumns.SCOPE + " FROM " + USER_SCOPE
+					+ " WHERE " 
+					+ UserScopeColumns.USER_ID + " = ? " 
+					+ " UNION SELECT scope.id FROM scope INNER JOIN " + DOMAIN + " ON ( scope.domain = " + DOMAIN + "." + DomainColumns.ID + " ) "
+					+ "INNER JOIN " + USER + " ON ( " + DOMAIN + "." + DomainColumns.PARENT + " = " + USER + "." + UserColumns.DOMAIN + " ) )"
+					
+					+ " GROUP BY" 
+					+ " " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY
+					+ "," + WORKPLACE + "." + WorkplaceColumns.ID
+					+ "," + PAYROLL_WORKPLACE + "." + PayrollWorkplaceColumns.ID
+					+ "," + AGREEMENT + "." + AgreementColumns.ID
+					+ "," + ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
+					+ "," + ENTERPRISE_CCC + "." + EnterpriseCccColumns.ID
+					
 					+ " ORDER BY " + " UPPER(" + WORKPLACE + "." + WorkplaceColumns.DESCRIPTION + " )";
 
 			stmt = connection.prepareStatement(sql);
@@ -5100,7 +5141,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			workplace = new Workplace();
 			workplace.setId(rs.getInt(tableCol(WORKPLACE, WorkplaceColumns.ID)));
 			workplace.setDescription(rs.getString(tableCol(WORKPLACE, WorkplaceColumns.DESCRIPTION)));
-			workplace.setActive(rs.getBoolean(tableCol(WORKPLACE, WorkplaceColumns.ACTIVE)));
+			
+			Object contractId = rs.getObject(tableCol(CONTRACT, ContractColumns.ID));
+			workplace.setActive(contractId != null && rs.getBoolean(tableCol(WORKPLACE, WorkplaceColumns.ACTIVE)));
+			if (contractId != null) {
+				workplace.setDate(rs.getDate(CONTRACT_MAX_END_DATE));
+			}
 
 			Object agreementId = rs.getObject(tableCol(PAYROLL_WORKPLACE, PayrollWorkplaceColumns.AGREEMENT));
 			if (agreementId != null) {

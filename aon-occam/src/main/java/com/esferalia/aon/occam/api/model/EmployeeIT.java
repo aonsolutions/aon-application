@@ -235,10 +235,6 @@ public class EmployeeIT implements Serializable {
 		this.itParts.add(itPart);
 	}
 	
-	public void removeITParts() {
-		this.itParts.clear();
-	}
-	
 	public Optional<EmployeeITPart> getItBaja(){
 		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.BAJA)).findFirst();
 	}

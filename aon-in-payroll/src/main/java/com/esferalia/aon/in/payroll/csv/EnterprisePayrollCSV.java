@@ -493,6 +493,24 @@ public class EnterprisePayrollCSV {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Double getFundae() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setFundae(Double fundae) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Double getItCompensation() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 		
 		

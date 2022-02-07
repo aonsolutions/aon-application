@@ -200,7 +200,7 @@ public class InvoiceViewer extends SimpleLayoutPanel {
 		tab.setWidget(row, 0, new Label(""));
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
 		row++;
-		if (invoice.getBreakdown() != null && !invoice.getBreakdown().isEmpty()) {
+		if (!invoice.getBreakdown().isEmpty()) {
 			FlexTable taxTab = new FlexTable();
 			taxTab.setStyleName(AON.AON_CSS.aonPanelGrid());
 			taxTab.addStyleName(AON.AON_CSS.aonBlockRight());

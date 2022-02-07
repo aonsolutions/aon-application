@@ -1031,13 +1031,13 @@ public class InvoiceTemplate {
 		drawText(contents, getMsg().date(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
 		x += 60;
 		if (theme.getBoxTitleBackgroundColor() != null)
-			drawBox(contents, x, y, 80 - BOX_BORDER, TITLE_BOX_SIZE,  theme.getBoxTitleBackgroundColor());
+			drawBox(contents, x, y, 110 - BOX_BORDER, TITLE_BOX_SIZE,  theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().payMethod(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
-		x += 80;
+		x += 110;
 		if (theme.getBoxTitleBackgroundColor() != null)
-			drawBox(contents, x, y, 160 - BOX_BORDER, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, x, y, 130 - BOX_BORDER, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().bankAccount(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
-		x += 160;
+		x += 130;
 
 		if (theme.getBoxTitleBackgroundColor() != null)
 			drawBox(contents, x, y, 70, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
@@ -1061,8 +1061,8 @@ public class InvoiceTemplate {
 			
 			if (theme.getBoxBodyBackgroundColor() != null) {
 				drawBox(contents, 180, y, 60 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 240, y, 80 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 320, y, 160 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
+				drawBox(contents, 240, y, 110 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
+				drawBox(contents, 350, y, 130 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
 				drawBox(contents, 480, y, 70f, -fSize, theme.getBoxBodyBackgroundColor());				
 			}
 			
@@ -1074,15 +1074,15 @@ public class InvoiceTemplate {
 				
 				String altMethodName = finance.getPayMethodType() != null ? finance.getPayMethodType().getDescription() : "";
 				String paymethod = finance.getPayMethodName() != null ? finance.getPayMethodName() : altMethodName;
-				drawText(contents, paymethod, x + 5f, y - 12, theme.getTextColor(), regularFont,7, i + FINANCE_PAY_METHOD);
-				x += 80;
+				drawText(contents, paymethod != null ? croppedString(paymethod, 105 - BOX_BORDER, regularFont, 7) : "", x + 5f, y - 12, theme.getTextColor(), regularFont,7, i + FINANCE_PAY_METHOD);
+				x += 110;
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null)
 					drawText(contents, finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
 				else
 					drawText(contents, "", x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
 			
-				x += 160;
+				x += 130;
 				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(finance.getAmount()), theme.getTextColor(), regularFont, 7, 5, -12, i + FINANCE_AMOUNT);
 				
 				y -= 10;
@@ -1095,7 +1095,7 @@ public class InvoiceTemplate {
 //				drawBox(contents, 180, initY, 370 - BOX_BORDER, BOX_BORDER, theme.getBorderColor());
 				drawBox(contents, 180, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 240 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
-				drawBox(contents, 320 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
+				drawBox(contents, 350 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 480 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 550 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 180, y, 370, BOX_BORDER, theme.getBorderColor());

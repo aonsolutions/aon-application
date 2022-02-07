@@ -8,11 +8,12 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.regexp.shared.RegExp;
@@ -384,17 +385,30 @@ public class MainContrataITObject {
 			}}
 		);
 	}
+
+		
+	public void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.saveITParts(list, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}}
+		);
+	}
 	
 	// --------------------------------------------------- DataBase Auxiliar Methods
 	
 	public boolean isUserComunica() {
-		boolean isComunica = false;
 		try {
-			isComunica = this.userRoles.isComunica();
-			return isComunica;
-		} catch (NullPointerException e) {
-			return isComunica;
-		}
+			return this.userRoles.isComunica();
+		} catch (NullPointerException e) {}
+		return false;
 	}
 	
 	public void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {

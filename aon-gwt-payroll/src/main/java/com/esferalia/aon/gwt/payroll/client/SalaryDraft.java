@@ -994,6 +994,71 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
+	static class DelayFactory implements VariableEditorFactory<TextListBox> {
+
+		private String name;
+
+		public DelayFactory(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public boolean accept(Variable variable) {
+			return name.equals(variable.getName());
+		}
+
+		@Override
+		public TextListBox create(Variable variable) {
+
+			TextListBox textListBox = new TextListBox() {
+				
+				@Override
+				public String getValue() {
+
+					String value = super.getValue(getSelectedIndex());
+					if (AonStringUtils.isBlank(value))
+						return "NADA";
+					Payment.Type delay = Payment.Type.valueOf(Payment.Type.class, value);
+
+					String contextVariable =  getContextVariable(delay);
+					
+					return contextVariable;
+				}
+				
+				private String getContextVariable(Payment.Type e) {
+					switch (e) {
+					case CRA_0009:
+						return "CRA_0009";
+					case CRA_0012:
+						return "CRA_0012";
+					case CRA_0010:
+						return "CRA_0010";
+					case CRA_0011:
+						return "CRA_0011";
+					case CRA_0008:
+						return "CRA_0008";
+					}
+					return null;
+				}
+			};
+
+			for (Payment.Type e : new Payment.Type[] { 
+					Payment.Type.CRA_0008, 
+					Payment.Type.CRA_0009, 
+					Payment.Type.CRA_0010, 
+					Payment.Type.CRA_0011, 
+					Payment.Type.CRA_0012 
+			} )
+				textListBox.addItem(e.getDescription(), e.name());
+			
+			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			textListBox.addStyleName("aon-WriteOnly");
+
+			return textListBox;
+		}
+
+	}
+
 	static class DismissalFactory implements VariableEditorFactory<TextListBox> {
 
 		private String name;
@@ -2751,11 +2816,12 @@ public class SalaryDraft extends ResizeComposite
 	public void onChange(SalarySelect salarySelect) {
 		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
-		settleButton.setVisible(isAutomatic());
+		//settleButton.setVisible(isAutomatic());
 		
-		acceptButton.setVisible(!isSettle() && !isExtra());
 		salaryButton.setVisible(!isSettle() && !isExtra());
 		
+		//acceptButton.setEnabled( hasDrafts() && !isSettle() && !isExtra());
+
 		calculateAndSync();
 		
 	}
@@ -3051,7 +3117,6 @@ public class SalaryDraft extends ResizeComposite
 		undoAllButton.setVisible(true);
 		costsCheck.setVisible(true);
 		salarySelect.setVisible(true);
-		acceptButton.setVisible(!isAutomatic());
 		irpfPreviewButton.setVisible(true);
 		printPreviewButton.setVisible(true);
 		tgssCheck.setVisible(isSalary());
@@ -3061,6 +3126,8 @@ public class SalaryDraft extends ResizeComposite
 		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
 		salaryButton.setVisible(!isSettle() && !isExtra());
+
+		acceptButton.setEnabled(hasDrafts() && !isAutomatic() );
 	}
 
 	private void showPreview() {
@@ -3110,6 +3177,10 @@ public class SalaryDraft extends ResizeComposite
 		return deckPanel.getVisibleWidgetIndex() == PDF_VIEWER_INDEX;
 	}
 
+	protected boolean hasDrafts() {
+		return salaryDraftObject == null ? false : salaryDraftObject.hasDrafts();
+	}
+
 	protected boolean isSettle() {
 		return salaryDraftObject == null ? false : salaryDraftObject.getType() == Type.SETTLE;
 	}
@@ -3136,10 +3207,11 @@ public class SalaryDraft extends ResizeComposite
 
 		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
-		redoButton.setEnabled(salaryDraftObject.canRedo());
-		undoButton.setEnabled(salaryDraftObject.canUndo());
-		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
-		undoAllButton.setEnabled(salaryDraftObject.hasDrafts());
+		
+		redoButton.setEnabled(false);
+		undoButton.setEnabled(false);
+		acceptButton.setEnabled(false);
+		undoAllButton.setEnabled(false);
 
 	}
 
@@ -6060,9 +6132,9 @@ public class SalaryDraft extends ResizeComposite
 	}-*/;
 
 	private void setAutomatic(boolean automatic) {
-
-//		acceptButton.setEnabled(!readOnly);
-		acceptButton.setVisible(!automatic);
+		if ( automatic ) { 
+			acceptButton.setEnabled(!automatic);
+		}
 		
 		totalPaymentsLabel.setReadOnly(automatic);
 		totalLiquidLabel.setReadOnly(automatic);
@@ -6072,15 +6144,12 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void setReadOnly(boolean readOnly) {
-
-//		fxButton.setEnabled(!readOnly);
-		fxButton.setVisible(!readOnly);
-//		undoButton.setEnabled(!readOnly);
-		undoButton.setVisible(!readOnly);
-//		redoButton.setEnabled(!readOnly);
-		redoButton.setVisible(!readOnly);
-//		undoAllButton.setEnabled(!readOnly);
-		undoAllButton.setVisible(!readOnly);
+		if ( readOnly ) {
+			fxButton.setEnabled(!readOnly);
+			undoButton.setEnabled(!readOnly);
+			redoButton.setEnabled(!readOnly);
+			undoAllButton.setEnabled(!readOnly);
+		}
 
 		contextTable.setStyleName("aon-ReadOnly", readOnly);
 		paymentsTable.setStyleName("aon-ReadOnly", readOnly);
@@ -6629,6 +6698,7 @@ public class SalaryDraft extends ResizeComposite
 			new DateEditorFactory("FECHA_PREAVISO"),
 			//new DateEditorFactory("INICIO_PAGO_DIRECTO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class),
+			new DelayFactory("CAUSA_ATRASO"),
 			new DismissalFactory("CAUSA_INDEMNIZACION"),
 			new StringsListBoxFactory("GRUPO_COTIZACION",
 					new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" }),

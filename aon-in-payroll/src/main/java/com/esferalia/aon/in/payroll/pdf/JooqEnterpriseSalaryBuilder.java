@@ -9,23 +9,17 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.watson.util.AonNumberUtils.zeroIfNull;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +36,6 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.jooq.tables.Enterprise;
 import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -53,7 +46,6 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class JooqEnterpriseSalaryBuilder {
 	
@@ -86,7 +78,7 @@ public class JooqEnterpriseSalaryBuilder {
 		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		
-		Collection<Integer> typeInts = Arrays.stream(types).map(t -> t.ordinal()).collect(Collectors.toList());
+		Collection<Integer> typeInts = Arrays.stream(types).map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal).collect(Collectors.toList());
 		
 		condition = condition.and(SALARY.TYPE.in(typeInts));
 		

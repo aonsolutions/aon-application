@@ -81,7 +81,7 @@ public class IrpfQuotasInsert implements Update {
 			.and(SALARY.ID.notIn(salaryUpgraded))
 			.and(SALARY.ISSUE_DATE.ge(start2022))
 			.and(SALARY.IRPF_BASE.gt(0.00))
-			.and(SALARY.TOTAL_IRPF.gt(0.00))
+			//.and(SALARY.TOTAL_IRPF.gt(0.00))
 			.fetchGroups(SALARY.ID)
 			.forEach((id, salaryResult) -> { 
 				Map<Byte, Result<Record>> typeMap = 

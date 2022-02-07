@@ -4138,7 +4138,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 		Date startDate = firstDayOfMonth;
 		Date endDate = getLastDayOfMonth(startDate);
-
+		
+		
 		Date overrideStartDate = add(firstDayOfMonth, MONTH, 1);
 		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "ATRASO", "6.66");
 		Date overrideITStartDate = add(overrideStartDate, DAY_OF_MONTH, 10);  
@@ -4167,6 +4168,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");	
 		
+		addData(aonContext, contract, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				ContextVariable.DELAY_CAUSE, 
+				ContextVariable.CRA_0012.getName());
+
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
 		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
@@ -4177,12 +4184,20 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder() {
+			
+			@Override
+			public void addData(String name, ITimedVariable<?> data) {
+				// TODO Auto-generated method stub
+				super.addData(name, data);
+			}
+			
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
 					Map<String, ITimedVariable<?>> context) {
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
-				System.out.printf( "%d -. [%s]: %s, %f\r\n", ((IContractPayment) payment ).getId(), payment.getName(), description, amount );
+				System.out.printf( "%s: %d -. [%s]: %s, %f\r\n", payment.getType().name(), ((IContractPayment) payment ).getId(), payment.getName(), description, amount );
+				
 			}
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
@@ -4214,6 +4229,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
 		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		
+		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
 	}
 
 	@Test
@@ -4311,6 +4330,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
 		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+		
+		org.junit.Assert.assertEquals(PaymentType.CRA_0008.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0008, p.getType()) );
 	}
 
 	@Test

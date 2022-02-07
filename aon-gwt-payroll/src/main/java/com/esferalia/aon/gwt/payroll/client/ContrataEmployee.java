@@ -1822,18 +1822,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		hPanel.add(saveContractPaymentsButton);
 		
 		AonToolbarButton addContractPaymentsButton = new AonToolbarButton( AON.MSG.newAction() + " Variables Contrato", AON.CSS.aonIconAdd() );
-		addContractPaymentsButton.addClickHandler(e -> employeeContractVariables.onAdd());
+		addContractPaymentsButton.addClickHandler(e -> employeeContractVariables.openContractVariableDialog(null));
 		hPanel.add(addContractPaymentsButton);
+		
+		ListBox variableTypeLB = new ListBox();
+		employeeContractVariables.initializeVariableTypeLB(variableTypeLB);
+		employeeContractVariables.setVariableTypeLB(variableTypeLB);
+		hPanel.add(variableTypeLB);
 		
 		ListBox yearLBContractVariables = new ListBox();
 		employeeContractVariables.initializeYearLB(yearLBContractVariables);
 		employeeContractVariables.setYearLB(yearLBContractVariables);
 		hPanel.add(yearLBContractVariables);
 		
-		ListBox variableTypeLB = new ListBox();
-		employeeContractVariables.initializeVariableTypeLB(variableTypeLB);
-		employeeContractVariables.setVariableTypeLB(variableTypeLB);
-		hPanel.add(variableTypeLB);
+		ListBox monthLBContractVariables = new ListBox();
+		employeeContractVariables.initializeMonthLB(monthLBContractVariables);
+		employeeContractVariables.setMonthLB(monthLBContractVariables);
+		hPanel.add(monthLBContractVariables);
 		
 		return hPanel;
 	}

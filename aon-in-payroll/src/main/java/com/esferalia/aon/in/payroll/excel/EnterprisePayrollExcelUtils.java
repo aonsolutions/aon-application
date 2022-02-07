@@ -130,34 +130,36 @@ public class EnterprisePayrollExcelUtils {
 	}
 	
 	protected static void sumPayrolls(EnterprisePayroll originalPayroll, EnterprisePayroll newPayroll) {
-		originalPayroll.irpf = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getIrpf(), newPayroll.getIrpf());
-		originalPayroll.cgcBase = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getCgcBase(), newPayroll.getCgcBase());
-		originalPayroll.irpfBase = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getIrpfBase(), newPayroll.getIrpfBase());
-		originalPayroll.inKindIrpfBase = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getInkindIrpfBase(), newPayroll.getInkindIrpfBase());
-		originalPayroll.moneyIrpfBase = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getMoneyIrpfBase(), newPayroll.getMoneyIrpfBase());
-		originalPayroll.raw = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getRaw(), newPayroll.getRaw());
-		originalPayroll.liquid = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getLiquid(), newPayroll.getLiquid());
-		originalPayroll.employeeSS = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getEmployeeSS(), newPayroll.getEmployeeSS());
-		originalPayroll.enterpriseSS = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getEnterpriseSS(), newPayroll.getEnterpriseSS());
-		originalPayroll.totalSS = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getTotalSS(), newPayroll.getTotalSS());
-		originalPayroll.totalCost = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getTotalCost(), newPayroll.getTotalCost());
-		originalPayroll.bonuses = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getBonuses(), newPayroll.getBonuses());
-		originalPayroll.cgc = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getCgc(), newPayroll.getCgc());
-		originalPayroll.cgp = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getCgp(), newPayroll.getCgp());
-		originalPayroll.unemployment = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getUnemployment(), newPayroll.getUnemployment());
-		originalPayroll.jobTraining = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getJobTraining(), newPayroll.getJobTraining());
-		originalPayroll.advancedPayment = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getAdvancedPayment(), newPayroll.getAdvancedPayment());
-		originalPayroll.otherDeductions = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getOtherDeductions(), newPayroll.getOtherDeductions());
-		originalPayroll.estruc = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getEstruc(), newPayroll.getEstruc());
-		originalPayroll.noEstruct = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getNoEstruct(), newPayroll.getNoEstruct());
-		originalPayroll.cgcEnterprise = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getCgcEnterprise(), newPayroll.getCgcEnterprise());
-		originalPayroll.cgpEnterprise = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getCgpEnterprise(), newPayroll.getCgpEnterprise());
-		originalPayroll.unemploymentEnterprise = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getUnemploymentEnterprise(), newPayroll.getUnemploymentEnterprise());
-		originalPayroll.jobTrainingEnterprise = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getJobTrainingEnterprise(), newPayroll.getJobTrainingEnterprise());
-		originalPayroll.fogasaEnterprise = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getFogasaEnterprise(), newPayroll.getFogasaEnterprise());
-		originalPayroll.estrucEnterprise = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getEstrucEnterprise(), newPayroll.getEstrucEnterprise());
-		originalPayroll.noEstructEnterprise = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getNoEstructEnterprise(), newPayroll.getNoEstructEnterprise());
-		originalPayroll.embargos = EnterprisePayrollExcelUtils.sumThings(originalPayroll.getEmbargos(), newPayroll.getEmbargos());
+		originalPayroll.irpf				 	=	sumThings(originalPayroll.getIrpf(), newPayroll.getIrpf());
+		originalPayroll.cgcBase					=	sumThings(originalPayroll.getCgcBase(), newPayroll.getCgcBase());
+		originalPayroll.irpfBase 				=	sumThings(originalPayroll.getIrpfBase(), newPayroll.getIrpfBase());
+		originalPayroll.inKindIrpfBase			=	sumThings(originalPayroll.getInkindIrpfBase(), newPayroll.getInkindIrpfBase());
+		originalPayroll.moneyIrpfBase	 		=	sumThings(originalPayroll.getMoneyIrpfBase(), newPayroll.getMoneyIrpfBase());
+		originalPayroll.raw 					=	sumThings(originalPayroll.getRaw(), newPayroll.getRaw());
+		originalPayroll.liquid	 				=	sumThings(originalPayroll.getLiquid(), newPayroll.getLiquid());
+		originalPayroll.employeeSS	 			=	sumThings(originalPayroll.getEmployeeSS(), newPayroll.getEmployeeSS());
+		originalPayroll.enterpriseSS			=	sumThings(originalPayroll.getEnterpriseSS(), newPayroll.getEnterpriseSS());
+		originalPayroll.totalSS 				=	sumThings(originalPayroll.getTotalSS(), newPayroll.getTotalSS());
+		originalPayroll.totalCost	 			=	sumThings(originalPayroll.getTotalCost(), newPayroll.getTotalCost());
+		originalPayroll.itCompensation 			=	sumThings(originalPayroll.getItCompensation(), newPayroll.getItCompensation());
+		originalPayroll.bonuses 				=	sumThings(originalPayroll.getBonuses(), newPayroll.getBonuses());
+		originalPayroll.fundae	 				=	sumThings(originalPayroll.getFundae(), newPayroll.getFundae());
+		originalPayroll.cgc 					=	sumThings(originalPayroll.getCgc(), newPayroll.getCgc());
+		originalPayroll.cgp 					=	sumThings(originalPayroll.getCgp(), newPayroll.getCgp());
+		originalPayroll.unemployment 			=	sumThings(originalPayroll.getUnemployment(), newPayroll.getUnemployment());
+		originalPayroll.jobTraining 			=	sumThings(originalPayroll.getJobTraining(), newPayroll.getJobTraining());
+		originalPayroll.advancedPayment 		=	sumThings(originalPayroll.getAdvancedPayment(), newPayroll.getAdvancedPayment());
+		originalPayroll.otherDeductions 		=	sumThings(originalPayroll.getOtherDeductions(), newPayroll.getOtherDeductions());
+		originalPayroll.estruc	 				=	sumThings(originalPayroll.getEstruc(), newPayroll.getEstruc());
+		originalPayroll.noEstruct	 			=	sumThings(originalPayroll.getNoEstruct(), newPayroll.getNoEstruct());
+		originalPayroll.cgcEnterprise	 		=	sumThings(originalPayroll.getCgcEnterprise(), newPayroll.getCgcEnterprise());
+		originalPayroll.cgpEnterprise	 		=	sumThings(originalPayroll.getCgpEnterprise(), newPayroll.getCgpEnterprise());
+		originalPayroll.unemploymentEnterprise	= 	sumThings(originalPayroll.getUnemploymentEnterprise(), newPayroll.getUnemploymentEnterprise());
+		originalPayroll.jobTrainingEnterprise 	=	sumThings(originalPayroll.getJobTrainingEnterprise(), newPayroll.getJobTrainingEnterprise());
+		originalPayroll.fogasaEnterprise 		=	sumThings(originalPayroll.getFogasaEnterprise(), newPayroll.getFogasaEnterprise());
+		originalPayroll.estrucEnterprise 		=	sumThings(originalPayroll.getEstrucEnterprise(), newPayroll.getEstrucEnterprise());
+		originalPayroll.noEstructEnterprise 	=	sumThings(originalPayroll.getNoEstructEnterprise(), newPayroll.getNoEstructEnterprise());
+		originalPayroll.embargos 				=	sumThings(originalPayroll.getEmbargos(), newPayroll.getEmbargos());
 	}
 	
 

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.gwt.common.shared.HasId;
 
@@ -17,6 +18,8 @@ public class Workplace implements Serializable, HasId<Integer> {
 	private boolean			active;
 	private Activity		activity;
 	
+	private String			date;
+
 	public Workplace() {
 	}
 	
@@ -58,6 +61,14 @@ public class Workplace implements Serializable, HasId<Integer> {
 	
 	public void setActivity(Activity activity) {
 		this.activity = activity;
+	}
+	
+	public void setDate(Date date) {
+		this.date = Shared.format(date);
+	}
+	
+	public Date getDate() {
+		return Shared.parse(date);
 	}
 	
 	

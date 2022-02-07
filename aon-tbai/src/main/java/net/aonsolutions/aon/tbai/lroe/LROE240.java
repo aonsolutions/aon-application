@@ -13,6 +13,8 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 
 public class LROE240 extends LROE{
 	
+	private static final long serialVersionUID = 1L;
+	
 	protected final static String MODEL_240 = "240";
 	private final static String TEST_NIF_240 = "A99802019";
 	private final static String TEST_NAME_240 = "4wbLGzaHUvHzMkJm9Z5knRPBKpLKr7"; 
@@ -21,7 +23,7 @@ public class LROE240 extends LROE{
 		Cabecera240Type cabecera = new Cabecera240Type();
 		cabecera.setModelo(MODEL_240);
 		NIFPersonaType nif = new NIFPersonaType();
-		nif.setNIF(company.getDocument());
+		nif.setNIF(company.getDocument().replace(" ", ""));
 		nif.setApellidosNombreRazonSocial(company.getName());
 		cabecera.setObligadoTributario(nif);
 		cabecera.setEjercicio(AonDateUtils.getYear(new Date()));
@@ -37,7 +39,7 @@ public class LROE240 extends LROE{
 		json.put(IJsonNames.CON, LROE);
 		json.put(IJsonNames.APA, info.getSubcapitulo());
 		JSONObject json2 = new JSONObject();
-		json2.put(IJsonNames.NIF, company.getDocument()); 
+		json2.put(IJsonNames.NIF, company.getDocument().replace(" ", "")); 
 		json2.put(IJsonNames.NRS, company.getName());
 		json.put(IJsonNames.INTE, json2);
 

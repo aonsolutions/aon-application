@@ -1388,16 +1388,20 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		Pattern hidden = Pattern.compile("display\\s*:\\s*none");
 		
-		Assert.assertEquals(true, hidden.matcher(fxButton.getAttribute("style")).find());
+		assertDisabled("fxButton", true);
+		//Assert.assertEquals(true, hidden.matcher(fxButton.getAttribute("style")).find());
 		//Assert.assertFalse(fxButton.isDisplayed());
-		HtmlButton undoAllButton = getElementById("undoAllButton");
-		Assert.assertEquals(true, hidden.matcher(undoAllButton.getAttribute("style")).find());
+		assertDisabled("undoAllButton", true);
+		//HtmlButton undoAllButton = getElementById("undoAllButton");
+		//Assert.assertEquals(true, hidden.matcher(undoAllButton.getAttribute("style")).find());
 		//Assert.assertFalse(undoAllButton.isDisplayed());
-		HtmlButton undoButton = getElementById("undoButton");
-		Assert.assertEquals(true, hidden.matcher(undoButton.getAttribute("style")).find());
+		assertDisabled("undoButton", true);
+		//HtmlButton undoButton = getElementById("undoButton");
+		//Assert.assertEquals(true, hidden.matcher(undoButton.getAttribute("style")).find());
 		//Assert.assertFalse(undoButton.isDisplayed());
-		HtmlButton redoButton = getElementById("redoButton");
-		Assert.assertEquals(true, hidden.matcher(redoButton.getAttribute("style")).find());
+		assertDisabled("redoButton", true);
+		//HtmlButton redoButton = getElementById("redoButton");
+		//Assert.assertEquals(true, hidden.matcher(redoButton.getAttribute("style")).find());
 		//Assert.assertFalse(redoButton.isDisplayed());
 
 
@@ -1741,19 +1745,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(2018, Calendar.JUNE, 15, 0, 0, 0);
 		settle(calendar.getTime());
 
+		wait4Disabled("acceptButton", true);
+		assertInputDisabled( "description-box-1" , true); // VACACIONES RETRIBUIDAS NO DISFRUTADAS
 		assertInputDisabled( "db-amount-label-1" , true); // VACACIONES RETRIBUIDAS NO DISFRUTADAS
 		assertNotElement("description-box-2");
-		
-		setValue("description-box-1", "VACACIONES");
-		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
-		assertInputDisabled( "db-amount-label-1" , true); // VACACIONES
-		assertNotElement("description-box-2");
 
-		click("acceptButton");
-		wait4Disabled("acceptButton", true);
-		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
-		assertInputDisabled( "db-amount-label-1" , true); // VACACIONES
-		assertNotElement("description-box-2");
 		
 		
 	}	

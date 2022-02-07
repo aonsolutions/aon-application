@@ -8,6 +8,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DismissalType;
 import com.esferalia.aon.payroll.enumeration.OffType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -63,6 +64,17 @@ public class AonConstants {
 	public static Integer NOVEMBER = 11;
 	@Variable(ContextVariable.DECEMBER)
 	public static Integer DECEMBER = 12;
+
+	@Variable(ContextVariable.CRA_0009)
+	public static PaymentType CRA_0009 = PaymentType.CRA_0009;
+	@Variable(ContextVariable.CRA_0011)
+	public static PaymentType CRA_0011= PaymentType.CRA_0011;
+	@Variable(ContextVariable.CRA_0012)
+	public static PaymentType CRA_0012 = PaymentType.CRA_0012;
+	@Variable(ContextVariable.CRA_0010)
+	public static PaymentType CRA_0010 = PaymentType.CRA_0010;
+	@Variable(ContextVariable.CRA_0008)
+	public static PaymentType CRA_0008 = PaymentType.CRA_0008;
 
 	// ------------------------------------------------------------------------
 	// 

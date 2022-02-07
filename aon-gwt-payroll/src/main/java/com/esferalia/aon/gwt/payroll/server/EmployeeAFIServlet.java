@@ -20,7 +20,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @WebServlet(name = "Employee-AFI", urlPatterns = { "/aon_gwt_payroll/employee_afi/*" })
 public class EmployeeAFIServlet extends HttpServlet {
 	
-	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
+	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddHHmmss");
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -44,9 +44,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 		try {
 			Calendar currentDate = Calendar.getInstance();
 			
-			String hour = AonStringUtils.leftPad(currentDate.get(Calendar.HOUR_OF_DAY)+"", 2, '0');
-			String minutes = AonStringUtils.leftPad(currentDate.get(Calendar.MINUTE)+"", 2, '0');
-			String fileName = dateFormatter.format(currentDate.getTime()) + hour + minutes;
+			String fileName = dateFormatter.format(currentDate.getTime());
 			
 			response.setContentType("text/html;charset=utf-8");
 			response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + ".AFI\"");
@@ -57,6 +55,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 					domainId,
 					domainName, 
 					contractId,
+					fileName,
 					isStartContract, 
 					isEndContract, 
 					isChangeContract, 

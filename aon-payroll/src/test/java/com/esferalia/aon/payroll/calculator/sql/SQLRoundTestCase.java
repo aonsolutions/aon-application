@@ -39,6 +39,7 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -434,7 +435,62 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		);
 	}
 
+	@Test
+	public void testIrpfNoQuotas()
+			throws ExpressionException, SQLException, SalaryException {
+		testIrpfQuotas(
+				Collections.singletonMap(ContextVariable.IRPF_PERCENT.getName(), "0.00"),
+				new Payment() { 
+					{ 
+						type = PaymentType.CRA_0001; 
+						description = "SALARIO BASE"; 
+						expression = "1111.1111111234 * DIAS_TRABAJADOS / DIAS_MES";
+					}
+				},
+				new Payment() { 
+					{ 
+						description = "PLUS TRANSPORTE Y DISTANCIA"; 
+						expression =  "33.33334567 * DIAS_TRABAJADOS / DIAS_MES"; 
+						type =  PaymentType.CRA_0032;
+					}
+				},
+				new Payment() { 
+					{ 
+						description = "PRORRATEO PAGA EXTRAORDINARIA"; 
+						expression =  "SALARIO_BASE / 12.00 * 2.00"; 
+						type =  PaymentType.CRA_0004;
+					}
+				},
+				new Payment() { 
+					{ 
+						description = "RETRIBUCIÓN EN ESPECIE"; 
+						expression =  "SALARIO_BASE * 0.10"; 
+						type =  PaymentType.CRA_0013;
+					}
+				},
+				new Payment() { 
+					{ 
+						description = "HORAS COMPLEMENTARIAS PACTADAS"; 
+						expression =  "22.22335445546"; 
+						type =  PaymentType.CRA_0016;
+					}
+				},
+				new Payment() { 
+					{ 
+						description = "GASTOS DE LOCMOCIÓN Y DISTANCIA"; 
+						expression =  "69.6969696"; 
+						type =  PaymentType.CRA_0042;
+					}
+				}
+		);
+	}
+
 	public void testIrpfQuotas(Payment ...payments)
+			throws ExpressionException, SQLException, SalaryException {
+		testIrpfQuotas(Collections.EMPTY_MAP, payments);
+	}
+
+	public void testIrpfQuotas(Map<String,String> datas, Payment ...payments)
 			throws ExpressionException, SQLException, SalaryException {
 		
 		Connection connection = getConnection();
@@ -445,7 +501,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		cleanSystemCosts(aonContext);
 		cleanSystemDeductions(aonContext);
 		
-		ContractRecord contract = newContract(aonContext, getFirstDayOfMonth(getToday()), Collections.EMPTY_MAP);
+		ContractRecord contract = newContract(aonContext, getFirstDayOfMonth(getToday()), datas);
 		
 		for (Payment payment : payments)
 			addPayment(aonContext, contract, payment.description, payment.expression, "_P", "_P", payment.type);

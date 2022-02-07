@@ -19,15 +19,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -157,13 +149,13 @@ public class EventsDraft extends ResizeComposite {
 		
 		public SeeMenu() {
 			
-			calendarVariablesMenuItem = addItem("Consultar variables calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			calendarVariablesMenuItem = addItem("Consultar variables calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			calendarVariablesMenuItem.ensureDebugId("calendarVariablesMenuItem");
 			
-			editableVariablesMenuItem = addItem("Editar variables convenio", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			editableVariablesMenuItem = addItem("Editar variables convenio", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			editableVariablesMenuItem.ensureDebugId("editableVariablesMenuItem");
 			
-			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			allVariablesMenuItem.ensureDebugId("allVariablesMenuItem");
 			
 		}
@@ -195,7 +187,7 @@ public class EventsDraft extends ResizeComposite {
 		String setBlockCellStyle();
 		String aonCheck();
 		String pointer();
-		String cmd_btn();
+		String cmdBtn();
 		String flexVariables();
 		String widthMenuItem();
 	}
@@ -239,7 +231,7 @@ public class EventsDraft extends ResizeComposite {
 	// ----------------------------------------------- Constructor
 	
 	public EventsDraft() {
-		toolbar = getToolbarPanel();
+		getToolbarPanel();
 		
 		initWidget(binder.createAndBindUi(this));
 		
@@ -262,7 +254,7 @@ public class EventsDraft extends ResizeComposite {
 
 	private void changeYear(int changeDate) {
 		String selectItem = typeView.getSelectedItemText();
-		if (selectItem == "MES"){
+		if (AonStringUtils.equalsIgnoreCase(selectItem, "MES")){
 			Date actualDate = DateUtils.getDate(this.actualMonth, this.actualYear);
 			DateUtils.addMonths2Date(actualDate, changeDate);
 			
@@ -271,7 +263,7 @@ public class EventsDraft extends ResizeComposite {
 			
 			dateLabel.setText((this.actualMonth+1)+"/"+(this.actualYear));
 		
-		}else if (selectItem == "VARIABLE"){
+		}else if (AonStringUtils.equalsIgnoreCase(selectItem, "VARIABLE")){
 			this.actualYear += changeDate;
 			dateLabel.setText((this.actualYear)+"");
 		}
@@ -284,13 +276,10 @@ public class EventsDraft extends ResizeComposite {
 	public void setEventsDraftObject(EventsDraftObject eventsDraftObject) {
 		clearEventsTable();
 		this.eventsDraftObject = eventsDraftObject;
-		
 		Date currentDate = new Date();
 		this.actualYear = DateUtils.getYear(currentDate); 
 		this.actualMonth =  DateUtils.getMonth(currentDate);
-		
 		fillTypeViewListBox();
-		
 		this.eventsDraftObject.getWorkPlaceEmployeesDB(this.actualYear,
 				r -> { 
 					initializeVariablesToShow();
@@ -310,12 +299,7 @@ public class EventsDraft extends ResizeComposite {
 		typeView.addItem("MES");
 		typeView.addItem("VARIABLE");
 		
-		typeView.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				initializeView();
-			}
-		});
+		typeView.addChangeHandler(e -> initializeView());
 	}
 	
 	private void initializeVariablesToShow() {
@@ -335,27 +319,22 @@ public class EventsDraft extends ResizeComposite {
 	private void fillVariableListBox() {
 		varListView.clear();
 		ArrayList<String> variableList = new ArrayList<>(this.eventsDraftObject.getAllVariables());
-		for(String var : variableList)
-			varListView.addItem(var);
+		for(String varName : variableList)
+			varListView.addItem(varName);
 		
-		varListView.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				initializeView();	
-			}
-		});
+		varListView.addChangeHandler(e -> initializeView());
 	}
 
 	private void initializeView() {
-		if (typeView.getSelectedItemText() == "MES")
+		if (AonStringUtils.equalsIgnoreCase(typeView.getSelectedItemText(), "MES"))
 			hide(varListViewPanel);
 		else
 			show(varListViewPanel);
-		
 		clearEventsTable();
 		fillDateLabel();
 		fillEventTable(getVariablesToShow());
 		setStyleEventTable();
+		
 	}
 
 	// ----------------------------------------------- initializeView.Methods
@@ -366,9 +345,9 @@ public class EventsDraft extends ResizeComposite {
 	
 	private void fillDateLabel() {
 		String selectItem = typeView.getSelectedItemText();
-		if (selectItem == "MES"){
+		if (AonStringUtils.equalsIgnoreCase(selectItem, "MES")){
 			dateLabel.setText((this.actualMonth+1)+"/"+(this.actualYear));
-		}else if (selectItem == "VARIABLE"){
+		}else if (AonStringUtils.equalsIgnoreCase(selectItem, "VARIABLE")){
 			dateLabel.setText((this.actualYear)+"");
 		}
 	}
@@ -380,11 +359,11 @@ public class EventsDraft extends ResizeComposite {
 		monthList = createMonthList();
 		
 		String selectItem = typeView.getSelectedItemText();
-		if (selectItem == "MES"){
+		if (AonStringUtils.equalsIgnoreCase(selectItem, "MES")){
 			initializeFirstRow(variableList);
 			initializeValueForAllByMonth(employeeList, variableList);
 			initializeTableByMonth(employeeList, variableList);
-		}else if (selectItem == "VARIABLE"){
+		}else if (AonStringUtils.equalsIgnoreCase(selectItem, "VARIABLE")){
 			initializeFirstRow(monthList);
 			initializeValueForAllByVar(employeeList);
 			initializeTableByVar(employeeList);
@@ -423,56 +402,43 @@ public class EventsDraft extends ResizeComposite {
 		
 		for(int column=0; column<columns; column++){
 			EventTableCell eventCell = new EventTableCell(1, column+1);
-			eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					for(int row=0; row<employeeList.size(); row++){
-						String value = null;
-						if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-							value = null;
-						else
-							value = eventCell.getValue();
-						Date startDate = DateUtils.getDate(actualMonth, actualYear);
-						Date endDate = DateUtils.getLastDayOfMonth(startDate);
-						
-						EventEmployee eventEmployee = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(row+2, 0));
-						Integer contractId = eventEmployee.getContractId();
-						 
-						String varName = eventsTable.getText(0, eventCell.getColumn());
-						
-						addNewValue(contractId, varName, value, startDate, endDate);
-						
-						EventTableCell eventCell_Aux = (EventTableCell) eventsTable.getWidget(row+2, eventCell.getColumn());
-						eventCell_Aux.setTextBoxValue(value.toString());
-					}
-					
-					eventCell.setTextBoxValue("-");
-				}
-
-			});
-			
-			eventCell.addFocusHandler(new FocusHandler() {
-				
-				@Override
-				public void onFocus(FocusEvent event) {
+			eventCell.addValueChangeHandler(e -> {
+				for(int row=0; row<employeeList.size(); row++){
+					String value = null;
 					if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-						eventCell.setValue("");
+						value = null;
+					else
+						value = eventCell.getValue();
+					Date startDate = DateUtils.getDate(actualMonth, actualYear);
+					Date endDate = DateUtils.getLastDayOfMonth(startDate);
+					
+					EventEmployee eventEmployee = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(row+2, 0));
+					Integer contractId = eventEmployee.getContractId();
+					 
+					String varName = eventsTable.getText(0, eventCell.getColumn());
+					
+					addNewValue(contractId, varName, value, startDate, endDate);
+					
+					EventTableCell eventCell_Aux = (EventTableCell) eventsTable.getWidget(row+2, eventCell.getColumn());
+					eventCell_Aux.setTextBoxValue(value.toString());
 				}
+				
+				eventCell.setTextBoxValue("-");
 			});
 			
-			eventCell.addBlurHandler(new BlurHandler() {
-				
-				@Override
-				public void onBlur(BlurEvent event) {
-					if(AonStringUtils.isBlank(eventCell.getValue()))
-						eventCell.setValue("-");
-				}
+			eventCell.addFocusHandler(e -> {
+				if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
+					eventCell.setValue("");
+			});
+			
+			eventCell.addBlurHandler(e -> {
+				if(AonStringUtils.isBlank(eventCell.getValue()))
+					eventCell.setValue("-");
 			});
 			
 			eventCell.setTextBoxValue("-");
 			
-			if(eventsDraftObject.isCalendarVariable(eventsTable.getText(0, eventCell.getColumn()))){
+			if(Boolean.TRUE.equals(eventsDraftObject.isCalendarVariable(eventsTable.getText(0, eventCell.getColumn())))){
 				eventCell.setEnabled(false);
 				eventCell.setBlockVariableStyle();
 			} else {
@@ -483,7 +449,6 @@ public class EventsDraft extends ResizeComposite {
 		}
 		
 	}
-	
 	
 	private void initializeTableByMonth(ArrayList<EventEmployee> employeeList, ArrayList<String> variableList) {
 		int columns = this.getColCount();
@@ -509,53 +474,37 @@ public class EventsDraft extends ResizeComposite {
 				EmployeeEventsVariable variable = eventsDraftObject.getEmployeeEventsVariableByMonth(contractId, variableList.get(column), DateUtils.getMonth(findingDate), DateUtils.getYear(findingDate));
 				
 				EventTableCell eventCell = new EventTableCell(row+1, column+1);
-				eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
+				eventCell.addValueChangeHandler(e -> {
+					String value = null;
+					if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
+						value = null;
+					else
+						value = eventCell.getValue();
 					
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						String value = null;
-						if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-							value = null;
-						else
-							value = eventCell.getValue();
-						
-						Date startDate =  DateUtils.getDate(actualMonth, actualYear);
-						Date endDate = DateUtils.getLastDayOfMonth(startDate);
-						
-						EventEmployee eventEmployee = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(eventCell.getRow(), 0));
-						Integer contractId = eventEmployee.getContractId();
-						
-						String varName = eventsTable.getText(0, eventCell.getColumn());
-						
-						addNewValue(contractId, varName, value, startDate, endDate);
-					}
+					Date startDate =  DateUtils.getDate(actualMonth, actualYear);
+					Date endDate = DateUtils.getLastDayOfMonth(startDate);
+					
+					EventEmployee eventEmployeeAux = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(eventCell.getRow(), 0));
+					Integer contractIdAux = eventEmployeeAux.getContractId();
+					
+					String varName = eventsTable.getText(0, eventCell.getColumn());
+					
+					addNewValue(contractIdAux, varName, value, startDate, endDate);
 				});
 				
-				eventCell.addFocusHandler(new FocusHandler() {
-					
-					@Override
-					public void onFocus(FocusEvent event) {
-						if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-							eventCell.setValue("");
-					}
+				eventCell.addFocusHandler(e -> {
+					if(AonStringUtils.isBlank(eventCell.getValue()) || AonStringUtils.equalsIgnoreCase(eventCell.getValue(), "-"))
+						eventCell.setValue("");
 				});
 				
-				eventCell.addBlurHandler(new BlurHandler() {
-					
-					@Override
-					public void onBlur(BlurEvent event) {
-						if(AonStringUtils.isBlank(eventCell.getValue()))
-							eventCell.setValue("-");
-					}
+				eventCell.addBlurHandler(e -> {
+					if(AonStringUtils.isBlank(eventCell.getValue()))
+						eventCell.setValue("-");
 				});
 				
-				if(null == variable){
-					eventCell.setTextBoxValue("-");
-				}else{
-					eventCell.setTextBoxValue(variable.getValue().toString());
-				}
+				eventCell.setTextBoxValue(null == variable ? "-" : variable.getValue().toString());
 				
-				if(eventsDraftObject.isCalendarVariable(variableList.get(column))){
+				if(Boolean.TRUE.equals(eventsDraftObject.isCalendarVariable(variableList.get(column)))){
 					eventCell.setEnabled(false);
 					eventCell.setBlockVariableStyle();
 				} else {
@@ -568,7 +517,6 @@ public class EventsDraft extends ResizeComposite {
 		
 	}
 	
-	
 	private void initializeValueForAllByVar(ArrayList<EventEmployee> employeeList) {
 		int columns = this.getColCount();
 		
@@ -579,55 +527,42 @@ public class EventsDraft extends ResizeComposite {
 		
 		for(int column=0; column<columns; column++){
 			EventTableCell eventCell = new EventTableCell(1, column+1);
-			eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					for(int row=0; row<employeeList.size(); row++){
-						String varName = varListView.getSelectedValue();
-						String value = null;
-						if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-							value = null;
-						else
-							value = eventCell.getValue();
-						Date startDate =  DateUtils.getDate(eventCell.getColumn()-1, actualYear);
-						Date endDate = DateUtils.getLastDayOfMonth(startDate);
-						
-						EventEmployee eventEmployee = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(row+2, 0));
-						Integer contractId = eventEmployee.getContractId();
-						
-						addNewValue(contractId, varName, value, startDate, endDate);
-						
-						EventTableCell eventCell_Aux = (EventTableCell) eventsTable.getWidget(row+2, eventCell.getColumn());
-						eventCell_Aux.setTextBoxValue(value.toString());
-					}
-					
-					eventCell.setTextBoxValue("-");
-					
-				}
-			});
-			
-			eventCell.addFocusHandler(new FocusHandler() {
-				
-				@Override
-				public void onFocus(FocusEvent event) {
+			eventCell.addValueChangeHandler(e -> {
+				for(int row=0; row<employeeList.size(); row++){
+					String varName = varListView.getSelectedValue();
+					String value = null;
 					if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-						eventCell.setValue("");
+						value = null;
+					else
+						value = eventCell.getValue();
+					Date startDate =  DateUtils.getDate(eventCell.getColumn()-1, actualYear);
+					Date endDate = DateUtils.getLastDayOfMonth(startDate);
+					
+					EventEmployee eventEmployee = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(row+2, 0));
+					Integer contractId = eventEmployee.getContractId();
+					
+					addNewValue(contractId, varName, value, startDate, endDate);
+					
+					EventTableCell eventCell_Aux = (EventTableCell) eventsTable.getWidget(row+2, eventCell.getColumn());
+					eventCell_Aux.setTextBoxValue(value.toString());
 				}
+				
+				eventCell.setTextBoxValue("-");
 			});
 			
-			eventCell.addBlurHandler(new BlurHandler() {
-				
-				@Override
-				public void onBlur(BlurEvent event) {
-					if(AonStringUtils.isBlank(eventCell.getValue()))
-						eventCell.setValue("-");
-				}
+			eventCell.addFocusHandler(e -> {
+				if(AonStringUtils.isBlank(eventCell.getValue()) || AonStringUtils.equalsIgnoreCase(eventCell.getValue(),"-"))
+					eventCell.setValue("");
+			});
+			
+			eventCell.addBlurHandler(e -> {
+				if(AonStringUtils.isBlank(eventCell.getValue()))
+					eventCell.setValue("-");
 			});
 			
 			eventCell.setTextBoxValue("-");
 			
-			if(eventsDraftObject.isCalendarVariable(varListView.getSelectedValue())){
+			if(Boolean.TRUE.equals(eventsDraftObject.isCalendarVariable(varListView.getSelectedValue()))){
 				eventCell.setEnabled(false);
 				eventCell.setBlockVariableStyle();
 			} else {
@@ -638,7 +573,6 @@ public class EventsDraft extends ResizeComposite {
 		}
 		
 	}
-	
 	
 	private void initializeTableByVar(ArrayList<EventEmployee> employeeList) {
 		//Cogemos la variable seleccionada en el momento de la creacion
@@ -668,52 +602,35 @@ public class EventsDraft extends ResizeComposite {
 				EmployeeEventsVariable variable = eventsDraftObject.getEmployeeEventsVariableByMonth(contractId, varName, DateUtils.getMonth(findingDate), DateUtils.getYear(findingDate));
 				
 				EventTableCell eventCell = new EventTableCell(row+1, column+1);
-				eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
+				eventCell.addValueChangeHandler(e -> {
+					String value = null;
+					if(AonStringUtils.isBlank(eventCell.getValue()) || AonStringUtils.equalsIgnoreCase(eventCell.getValue(),"-"))
+						value = null;
+					else
+						value = eventCell.getValue();
 					
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						String value = null;
-						if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-							value = null;
-						else
-							value = eventCell.getValue();
-						
-						Date startDate = DateUtils.getDate(eventCell.getColumn()-1, actualYear);
-						Date endDate = DateUtils.getLastDayOfMonth(startDate);
-						
-						EventEmployee eventEmployee = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(eventCell.getRow(), 0));
-						Integer contractId = eventEmployee.getContractId();
-						
-						addNewValue(contractId, varName, value, startDate, endDate);
-						
-					}
+					Date startDate = DateUtils.getDate(eventCell.getColumn()-1, actualYear);
+					Date endDate = DateUtils.getLastDayOfMonth(startDate);
+					
+					EventEmployee eventEmployeeAux = eventsDraftObject.getEmployeeByFullName(eventsTable.getText(eventCell.getRow(), 0));
+					Integer contractIdAux = eventEmployeeAux.getContractId();
+					
+					addNewValue(contractIdAux, varName, value, startDate, endDate);
 				});
 				
-				eventCell.addFocusHandler(new FocusHandler() {
-					
-					@Override
-					public void onFocus(FocusEvent event) {
-						if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-							eventCell.setValue("");
-					}
+				eventCell.addFocusHandler(e -> {
+					if(AonStringUtils.isBlank(eventCell.getValue()) || AonStringUtils.equalsIgnoreCase(eventCell.getValue(),"-"))
+						eventCell.setValue("");
 				});
 				
-				eventCell.addBlurHandler(new BlurHandler() {
-					
-					@Override
-					public void onBlur(BlurEvent event) {
-						if(AonStringUtils.isBlank(eventCell.getValue()))
-							eventCell.setValue("-");
-					}
+				eventCell.addBlurHandler(e -> {
+					if(AonStringUtils.isBlank(eventCell.getValue()))
+						eventCell.setValue("-");
 				});
 				
-				if(null == variable){
-					eventCell.setTextBoxValue("-");
-				}else{
-					eventCell.setTextBoxValue(variable.getValue().toString());
-				}
+				eventCell.setTextBoxValue(null == variable ? "-" : variable.getValue().toString());
 				
-				if(eventsDraftObject.isCalendarVariable(varListView.getSelectedValue())){
+				if(Boolean.TRUE.equals(eventsDraftObject.isCalendarVariable(varListView.getSelectedValue()))){
 					eventCell.setEnabled(false);
 					eventCell.setBlockVariableStyle();
 				} else {
@@ -744,7 +661,7 @@ public class EventsDraft extends ResizeComposite {
 			case 2:
 				return eventsDraftObject.getCalendarVariables();
 			default:
-				return new ArrayList<String>();
+				return new ArrayList<>();
 		}
 	}
 
@@ -783,32 +700,24 @@ public class EventsDraft extends ResizeComposite {
 	
 	// ----------------------------------------------- Toolbar
 	
-	private AonToolbar getToolbarPanel() {
+	private void getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Variables de c\u00e1lculo");
+		this.toolbar = new AonToolbar("Variables de c\u00e1lculo");
 		
 		undoAllButton = new AonToolbarButton( "Restaurar últimos valores guardados", AON.CSS.aonIconUndo() );
-		undoAllButton.addClickHandler(e -> {
-			onUndo(e);
-		});
+		undoAllButton.addClickHandler(e -> onUndo());
 		toolbar.add(undoAllButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		saveButton.addClickHandler(e -> {
-			onSave(e);
-		});
+		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
 		newValueButton = new AonToolbarButton( "Nuevo valor", AON.CSS.aonIconAdd() );
-		newValueButton.addClickHandler(e -> {
-			onNewValue(e);
-		});
+		newValueButton.addClickHandler(e -> onNewValue());
 		toolbar.add(newValueButton);
 		
 		visibilityBtn = new AonToolbarButton( "Visualizaci\u00F3n", AON.CSS.aonIconVisibility() );
-		visibilityBtn.addClickHandler(e -> {
-			onVisibility(e);
-		});
+		visibilityBtn.addClickHandler(e -> onVisibility(e));
 		toolbar.add(visibilityBtn);
 		
 		Label type = new Label("Tipo vista:");
@@ -829,18 +738,16 @@ public class EventsDraft extends ResizeComposite {
 		hide(varListViewPanel);
 		
 		toolbar.add(varListViewPanel);
-		
-		return toolbar;
 
 	}
 
 	// ----------------------------------------------- Toolbar.Methods
 
-	private void onUndo(ClickEvent e) {
+	private void onUndo() {
 		initUndoAllDialog();
 	}
 	
-	private void onSave(ClickEvent e) {
+	private void onSave() {
 		eventsDraftObject.updateEventsDraft(
 				r -> {
 					changeYear(0);
@@ -850,7 +757,7 @@ public class EventsDraft extends ResizeComposite {
 				t -> {});
 	}
 	
-	private void onNewValue(ClickEvent e) {
+	private void onNewValue() {
 		EventsInputDialog dialog = new EventsInputDialog(
 				"Nuevo valor",
 				eventsDraftObject.getAgreementVariables(),
@@ -877,7 +784,6 @@ public class EventsDraft extends ResizeComposite {
 		dialog.show();
 	}
 
-	
 	private void onVisibility(ClickEvent e) {
 		NativeEvent nativeEvent = e.getNativeEvent();
 		seeMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
@@ -887,11 +793,13 @@ public class EventsDraft extends ResizeComposite {
 	// ----------------------------------------------- Toolbar.Auxiliar Methods
 	
 	private void initUndoAllDialog() {
-		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?"));
+		AonDialog dialog = new AonDialog("RESTAURAR", new HTML("\u00BFRESTAURAR INCIDENCIAS con los valores de la \u00FAltima versi\u00F3n guardada?"));
 		dialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
-			public void onCancel() {}
+			public void onCancel() {
+				// Nothing to do here
+			}
 			
 			@Override
 			public void onAccept() {

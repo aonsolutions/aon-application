@@ -392,7 +392,7 @@ public class JooqEmployeeEvents {
 		for(Entry<String, ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> entry : employeeEventsData.getContractEventsList().entrySet()){
 			if(varsToUpdate.contains(entry.getKey())) {
 				for(Quartet<java.util.Date, java.util.Date, String, String> quartet : entry.getValue()) {
-					if(null != quartet.getExpression() && !AonStringUtils.equalsIgnoreCase(quartet.getExpression(), "0"))
+					if(AonStringUtils.isNotBlank(quartet.getExpression()))
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
 								CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 								.values(domain, quartet.getName(), idEmployee, quartet.getExpression(), 

@@ -2,7 +2,6 @@ package com.esferalia.aon.in.payroll.tgss.its;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +17,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
-import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.SistemaRED;
@@ -34,7 +31,6 @@ import solutions.aon.seg.social.SistemaRED.SituationEmployee;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
-import solutions.aon.seg.social.object.It;
 
 public class ITComunica {
 	
@@ -48,46 +44,44 @@ public class ITComunica {
 	public static void syncUpITs(final byte certificateData[], final String certificatePassword,
 			final String certificateType, Domain domain, Optional<String> nss) throws IllegalArgumentException {
 
-		List<CCCInfo> cccs = PAYROLL.getCCCStream(domain.getName(), domain.getId(), "")
-				.filter(distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
+		List<CCCInfo> cccs = getCccs(domain);
+		
+		Date startDate = AonDateUtils.addYears(new Date(), -1);
+		Date endDate = new Date();
 
 		for (CCCInfo cti : cccs) {
 			try {
 				String regime = cti.getCccRegimeCode();
 				String ccc = cti.getCccAccount();
-
-				Date startDate = AonDateUtils.addYears(new Date(), -1);
-				Date endDate = new Date();
-
-				Collection<It> its = SistemaRED.getIts(certificateData, certificatePassword, certificateType, regime,
-						ccc, startDate, endDate, nss);
-		
+				
 				List<EmployeeIT> employeeITs = new ArrayList<>();
 				
-				for (It it : its) {
-					
-					EmployeeIT employeeIT = ITParse.parseTGSSToAon(it);
-					if(employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
-						employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
-			
-					String naf = nss.isPresent() ? nss.get() : employeeIT.getNss();
-					Optional<Employee> contract = ITComunica.contractIts(domain, ccc, naf, employeeIT.getStartDate(), employeeIT.getEndDate());
+				SistemaRED.getIts(certificateData, certificatePassword, certificateType, regime,
+						ccc, startDate, endDate, nss).stream()
+				.map(it -> employeeITs.add(ITParse.parseTGSSToAon(it)));
 
-					if (contract.isPresent()) {
-
-						employeeIT.setContract(contract.get().getEmployeeId()).setDomain(domain.getId());
-						
-						employeeITs.add(employeeIT);
-					} else 
-						System.out.println("contractEmpty");		
-				}
-
-				AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
+				saveITs(domain, employeeITs);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new IllegalArgumentException(e);
 			}
 		}
+	}
+	
+	// SINCRONIZAR ITS
+	public static void saveITs(Domain domain, List<EmployeeIT> employeeITs) throws IllegalArgumentException {
+		
+		employeeITs.stream().filter(e->e.getContract()==null)
+		.forEach(employeeIT->{
+//			ITComunica.contractIts(domain, employeeIT.getCcc(), employeeIT.getNss(), employeeIT.getStartDate(), employeeIT.getEndDate())
+//			.ifPresent(contract->{
+//				employeeIT.setContract(contract.getEmployeeId());
+//			});
+
+			employeeIT.setDomain(domain.getId());
+		});
+				
+		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
 	}
 	
 	public static List<String> communicateITs(final byte certificateData[], final String certificatePassword,
@@ -229,7 +223,6 @@ public class ITComunica {
 			String ccc = employeeIt.getCcc();
 			String nss = employeeIt.getNss();
 			
-
 			ContractLeaveDischargeCause causeAl = employeeIt.getDischargeCause();
 			
 			Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1);
@@ -299,26 +292,9 @@ public class ITComunica {
 		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}
 
-	/**
-	 * 
-	 * @param domain
-	 * @param employee (ccc, naf, startDate, endDate(Optional))
-	 * @return employee( contract exist)
-	 */
-	private static Optional<Employee> contractIts(Domain domain, String ccc, String nss, Date startDate,
-			Optional<Date> endDate) {
-		return PAYROLL.getEmployee(
-			domain.getName(), domain.getId(), "", f -> f
-			.getDomainProperty().eq(domain.getId())
-			.and(f.getCCCProperty().eq(ccc))
-			.and(f.getNafProperty().eq(nss))
-			.and( 
-				endDate.isPresent() 
-				? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
-						.and(f.getEndDateProperty().ge(new java.sql.Date(endDate.get().getTime())).or(f.getEndDateProperty().isNull()))
-				: f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
-			)
-		);
+	
+	public static List<CCCInfo> getCccs(Domain domain) {
+		return PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").filter(distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
 	}
 
 	// HANDLES EMPTY DATA
