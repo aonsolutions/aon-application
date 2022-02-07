@@ -53,9 +53,9 @@ public class OLD_Mod303DAO extends FiscalModelDAO {
 	
 	public enum Mod303KeyInfoDAO {
 		 NONE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, NONE_INFO)) )
-		,INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO))))
-		,IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualInputInvoicesInfo(ctx, mod, script,keyDAO))))
-		,OUT_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualOutputInvoicesInfo(ctx, mod, script,keyDAO))))
+//		,INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO))))
+//		,IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualInputInvoicesInfo(ctx, mod, script,keyDAO))))
+//		,OUT_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getAccrualOutputInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_IN_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInAccrualInvoicesInfo(ctx, mod, script,keyDAO))))
 		,DIFF_OUT_ACCRUAL_INVOICE( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffOutAccrualInvoicesInfo(ctx, mod, script,keyDAO))))
@@ -452,58 +452,58 @@ public class OLD_Mod303DAO extends FiscalModelDAO {
 	}
 
 	// -------------------------------------------------------------------- INVOICES
-	private static boolean isProrated(final Mod303 mod303, IModelScript<Mod303Key> script) {
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		if ( dec.getProrateKeys() != null ) {
-			for (Mod303Key pk : dec.getProrateKeys()) {
-				for (Mod303Key sk :script.getKeys()) {
-					if (pk == sk) return true;			
-				}
-			}
-		}
-		return false;
-	}
+//	private static boolean isProrated(final Mod303 mod303, IModelScript<Mod303Key> script) {
+//		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+//		if ( dec.getProrateKeys() != null ) {
+//			for (Mod303Key pk : dec.getProrateKeys()) {
+//				for (Mod303Key sk :script.getKeys()) {
+//					if (pk == sk) return true;			
+//				}
+//			}
+//		}
+//		return false;
+//	}
 	
-	private static String getInvoicesInfo(AONContext ctx, final Mod303 mod303
-			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
-		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod303) 
-				+ " DEL " + mod303.getPeriod().getDescription()
-				+ " DE " + mod303.getYear();
-		return VATFormatter.formatInvoices(title,script.getLabel()
-			,getVatBreakdown(ctx, mod303, true)
-					.filter( br ->  keyDAO.acceptValue(mod303, br) )	
-					.collect(Collectors.toCollection(LinkedList::new))
-			, (isProrated(mod303, script)?mod303:null)
-		);
-	}
+//	private static String getInvoicesInfo(AONContext ctx, final Mod303 mod303
+//			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
+//		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+//				+ FiscalModelUtils.getModelName(mod303) 
+//				+ " DEL " + mod303.getPeriod().getDescription()
+//				+ " DE " + mod303.getYear();
+//		return VATFormatter.formatInvoices(title,script.getLabel()
+//			,getVatBreakdown(ctx, mod303, true)
+//					.filter( br ->  keyDAO.acceptValue(mod303, br) )	
+//					.collect(Collectors.toCollection(LinkedList::new))
+//			, (isProrated(mod303, script)?mod303:null)
+//		);
+//	}
 	
-	private static String getAccrualOutputInvoicesInfo(AONContext ctx, final Mod303 mod303
-			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
-		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod303) 
-				+ " DEL " + mod303.getPeriod().getDescription()
-				+ " DE " + mod303.getYear();
-		return VATFormatter.formatInvoices(title,script.getLabel()
-			,getAccrualBreakdown(ctx, mod303,true)
-					.filter( br ->  br.isSales()  )	
-					.collect(Collectors.toCollection(LinkedList::new))
-			, (isProrated(mod303, script)?mod303:null)
-		);
-	}
-	private static String getAccrualInputInvoicesInfo(AONContext ctx, final Mod303 mod303
-			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
-		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod303) 
-				+ " DEL " + mod303.getPeriod().getDescription()
-				+ " DE " + mod303.getYear();
-		return VATFormatter.formatInvoices(title,script.getLabel()
-			,getAccrualBreakdown(ctx, mod303,true)
-					.filter( br ->  !br.isSales()  )	
-					.collect(Collectors.toCollection(LinkedList::new))
-			, (isProrated(mod303, script)?mod303:null)
-		);
-	}
+//	private static String getAccrualOutputInvoicesInfo(AONContext ctx, final Mod303 mod303
+//			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
+//		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+//				+ FiscalModelUtils.getModelName(mod303) 
+//				+ " DEL " + mod303.getPeriod().getDescription()
+//				+ " DE " + mod303.getYear();
+//		return VATFormatter.formatInvoices(title,script.getLabel()
+//			,getAccrualBreakdown(ctx, mod303,true)
+//					.filter( br ->  br.isSales()  )	
+//					.collect(Collectors.toCollection(LinkedList::new))
+//			, (isProrated(mod303, script)?mod303:null)
+//		);
+//	}
+//	private static String getAccrualInputInvoicesInfo(AONContext ctx, final Mod303 mod303
+//			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
+//		String title = "FACTURAS CRITERIO CAJA QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+//				+ FiscalModelUtils.getModelName(mod303) 
+//				+ " DEL " + mod303.getPeriod().getDescription()
+//				+ " DE " + mod303.getYear();
+//		return VATFormatter.formatInvoices(title,script.getLabel()
+//			,getAccrualBreakdown(ctx, mod303,true)
+//					.filter( br ->  !br.isSales()  )	
+//					.collect(Collectors.toCollection(LinkedList::new))
+//			, (isProrated(mod303, script)?mod303:null)
+//		);
+//	}
 	private static String getDiffInAccrualInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
 		return VATFormatter.formatDiffInvoices(getDiffTitle(mod303)

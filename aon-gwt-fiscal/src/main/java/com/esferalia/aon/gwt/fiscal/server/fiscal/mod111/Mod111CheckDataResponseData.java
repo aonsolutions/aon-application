@@ -28,7 +28,7 @@ public class Mod111CheckDataResponseData extends HttpServlet {
 					.setDomainName(params.getDomainName())
 					.setDomain(params.getDomainId())
 					.setUser(params.getUser());
-			Mod111 mod111 = MODEL111.getMod111(occam, params.getMod());
+			Mod111 mod111 = MODEL111.get(occam, params.getMod());
 			if (mod111 == null) {
 				ModelAdmonUtils.giveExceptionBack(resp, "Declaración no encontrada" );
 			}

@@ -427,12 +427,6 @@ public class Model111 extends MainEntryPoint {
 						}
 					});
 			}
-			@Override
-			public void onCancel(Mod111 model) {
-				if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-					getOptions().getExternalCallback().onExit(model);
-				}						
-			}
 		}); 
 		declarationContainer.setWidget(newDeclarationPanel);
 		tabLayout.selectTab(INFORMATION_TAB);

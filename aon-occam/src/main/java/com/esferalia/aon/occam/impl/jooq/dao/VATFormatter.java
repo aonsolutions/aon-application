@@ -75,7 +75,7 @@ public class VATFormatter {
 			+ AonStringUtils.leftPad("CUOTA RE",15)
 			+ AonStringUtils.leftPad("% DED.",8)
 			+ AonStringUtils.leftPad("CUOTA DED.",15);
-		if ( mod303 != null && mod303.hasProrate() && mod303.isSpecialProrate()) {
+		if ( mod303 != null && mod303.hasProrate()) {
 			header = header 
 				+ AonStringUtils.leftPad("% PRO.",8)
 				+ AonStringUtils.leftPad("CUOTA PRO.",15); 
@@ -170,7 +170,7 @@ public class VATFormatter {
 			buf.append(AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductiblePercent()) + AonStringUtils.PERCENT,8));
 			buf.append(AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductibleQuota()),15));
 			double proratedQuota = vat.getDeductibleQuota();
-			if ( mod303 != null && mod303.hasProrate() && mod303.isSpecialProrate()) {
+			if ( mod303 != null && mod303.hasProrate()) {
 				if ( vat.getActivity() == null) {
 					proratedQuota = AonMathUtils.round(proratedQuota * mod303.getProratePercent() / 100);
 					buf.append(MessageFormat.format(SPAN_MSG_BLUE, AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(mod303.getProratePercent()) + AonStringUtils.PERCENT,8)));
@@ -214,7 +214,7 @@ public class VATFormatter {
 		buf.append(AonStringUtils.leftPad(DEC.format(sumReQuota),15));
 		buf.append(AonStringUtils.leftPad(" ",8));
 		buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(sumDedQuota)? " " : DEC.format(sumDedQuota),15));
-		if ( mod303 != null && mod303.hasProrate() && mod303.isSpecialProrate()) {
+		if ( mod303 != null && mod303.hasProrate()) {
 			buf.append(AonStringUtils.leftPad(" ",8));
 			buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(sumProratedQuota)? " " : DEC.format(sumProratedQuota),15));
 		}
@@ -225,25 +225,25 @@ public class VATFormatter {
 		buf.append(OP_DIV_BOLD);
 		buf.append(AonStringUtils.repeat("-", length));
 		buf.append(CL_DIV_BOLD);
-		if ( mod303 != null && mod303.hasProrate() && !mod303.isSpecialProrate()) {
-			double proratedQuota = AonMathUtils.round(sumDedQuota * mod303.getProratePercent() / 100);
-			buf.append(OP_DIV_BOLD);
-			buf.append(AonStringUtils.repeat(" ", 106));
-			buf.append(AonStringUtils.leftPad(" ",25));
-			buf.append(AonStringUtils.leftPad(" ",23));
-			buf.append(AonStringUtils.SPACE);
-			buf.append(AonStringUtils.rightPad("PRORRATA GENERAL:",20));				
-			buf.append(AonStringUtils.leftPad(DEC.format(mod303.getProratePercent()) + AonStringUtils.PERCENT,8));
-			buf.append(AonStringUtils.leftPad(" ",15));
-			buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(proratedQuota)? " " : DEC.format(proratedQuota),15));
-			buf.append(AonStringUtils.SPACE);
-			buf.append(AonStringUtils.rightPad(" ",25));
-			buf.append(AonStringUtils.repeat(" ", 2));
-			buf.append(CL_DIV_BOLD);
-			buf.append(OP_DIV_BOLD);
-			buf.append(AonStringUtils.repeat("-", length));
-			buf.append(CL_DIV_BOLD);
-		}
+//		if ( mod303 != null && mod303.hasProrate() && !mod303.isSpecialProrate()) {
+//			double proratedQuota = AonMathUtils.round(sumDedQuota * mod303.getProratePercent() / 100);
+//			buf.append(OP_DIV_BOLD);
+//			buf.append(AonStringUtils.repeat(" ", 106));
+//			buf.append(AonStringUtils.leftPad(" ",25));
+//			buf.append(AonStringUtils.leftPad(" ",23));
+//			buf.append(AonStringUtils.SPACE);
+//			buf.append(AonStringUtils.rightPad("PRORRATA GENERAL:",20));				
+//			buf.append(AonStringUtils.leftPad(DEC.format(mod303.getProratePercent()) + AonStringUtils.PERCENT,8));
+//			buf.append(AonStringUtils.leftPad(" ",15));
+//			buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(proratedQuota)? " " : DEC.format(proratedQuota),15));
+//			buf.append(AonStringUtils.SPACE);
+//			buf.append(AonStringUtils.rightPad(" ",25));
+//			buf.append(AonStringUtils.repeat(" ", 2));
+//			buf.append(CL_DIV_BOLD);
+//			buf.append(OP_DIV_BOLD);
+//			buf.append(AonStringUtils.repeat("-", length));
+//			buf.append(CL_DIV_BOLD);
+//		}
 		
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 

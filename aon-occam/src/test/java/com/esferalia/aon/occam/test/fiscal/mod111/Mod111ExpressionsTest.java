@@ -38,9 +38,14 @@ public class Mod111ExpressionsTest extends AbstractOccamTest {
 	}
 	
 	private void test( Administration admon) {
+		test(admon, true);
+		test(admon, false);
+	}
+	
+	private void test( Administration admon, boolean monthly) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setIssueDate(new Date())
-			.setMonthly(true)
+			.setMonthly(monthly)
 			.setAdministration(admon);
 		Mod111 mod111 = FiscalFaker.getMod111(params);
 		MODEL111.calculate(getOccam(), mod111);

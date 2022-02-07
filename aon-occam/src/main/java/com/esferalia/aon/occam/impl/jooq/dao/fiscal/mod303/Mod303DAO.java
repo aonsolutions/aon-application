@@ -454,12 +454,8 @@ public class Mod303DAO extends FiscalModelDAO {
 	// -------------------------------------------------------------------- INVOICES
 	private static boolean isProrated(final Mod303 mod303, IModelScript<Mod303Key> script) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		if ( dec.getProrateKeys() != null ) {
-			for (Mod303Key pk : dec.getProrateKeys()) {
-				for (Mod303Key sk :script.getKeys()) {
-					if (pk == sk) return true;			
-				}
-			}
+		for (Mod303Key key : script.getKeys() ) {
+			if (dec.isProrrated(key)) return true;
 		}
 		return false;
 	}

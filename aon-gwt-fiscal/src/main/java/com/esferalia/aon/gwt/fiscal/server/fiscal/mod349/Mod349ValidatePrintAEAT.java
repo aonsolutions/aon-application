@@ -41,7 +41,7 @@ public class Mod349ValidatePrintAEAT extends HttpServlet {
 
 			@Override
 			protected boolean accept(Mod349 mod349) {
-				return mod349.getYear() == 2021
+				return mod349.getYear() > 2021
 					|| (mod349.getYear() == 2021 && mod349.getPeriod().isLastSemester())
 					;
 			}

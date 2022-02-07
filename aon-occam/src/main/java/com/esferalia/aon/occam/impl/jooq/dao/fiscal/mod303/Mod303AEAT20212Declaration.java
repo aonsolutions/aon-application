@@ -1532,8 +1532,7 @@ class Mod303AEAT20212Declaration extends Mod303Declaration {
 		, CT_C76(Mod303Key.CT_C76)
 
 		// Suma de resultados
-		, CT_C64(Mod303Key.CT_C64, null, null, null, "CT_C46+CT_S58+CT_C76", null) // TODO Sumar el resultado del
-																					// regimen simplificado, si procede.
+		, CT_C64(Mod303Key.CT_C64, null, null, null, "CT_C46+CT_S58+CT_C76", null)
 
 		// % Atribuible a la Administración del Estado
 		, CT_C65(Mod303Key.CT_C65, null, null, (ctx, mod) -> add(Mod303Key.CT_C65, mod, 100.0), null, null)
@@ -1556,17 +1555,20 @@ class Mod303AEAT20212Declaration extends Mod303Declaration {
 				// ejercicio anterior.
 				add(Mod303Key.CT_C110, mod,
 						Mod303DAO.getMod303s(ctx, ctx.getDomainId())
-								.filter(m303 -> m303.getYear() == (mod.getYear() - 1))
-								.filter(m303 -> m303.isLastPeriod()).filter(fm -> fm.isToCompensate())
-								.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
-								.findFirst().orElse(0.0));
+							.filter(m303 -> m303.getYear() == (mod.getYear() - 1))
+							.filter(Mod303::isLastPeriod)
+							.filter(Mod303::isToCompensate)
+							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
+							.findFirst()
+							.orElse(0.0));
 				// Se le suma tambien la nueva casilla 87 a partir de 2021 (Cuotas a compensar
 				// de periodos previos pendientes para periodos posteriores)
 				// Solo para primeros periodos a partir de 2022
 				if (mod.getYear() > 2021)
 					add(Mod303Key.CT_C110, mod, 
 						Mod303DAO.getMod303s(ctx, ctx.getDomainId())
-						   .filter(m303 -> m303.getYear() == (mod.getYear() - 1)).filter(m303 -> m303.isLastPeriod())
+						   .filter(m303 -> m303.getYear() == (mod.getYear() - 1))
+						   .filter(Mod303::isLastPeriod)
 						   .mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C87)))
 						   .findFirst()
 						   .orElse(0.0));
@@ -1576,7 +1578,7 @@ class Mod303AEAT20212Declaration extends Mod303Declaration {
 				add(Mod303Key.CT_C110, mod,
 						Mod303DAO.getMod303s(ctx, ctx.getDomainId()).filter(m303 -> m303.getYear() == mod.getYear())
 								.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1))
-								.filter(fm -> fm.isToCompensate())
+								.filter(Mod303::isToCompensate)
 								.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
 								.findFirst().orElse(0.0));
 				// Se le suma tambien la nueva casilla 87 a partir de 2021 (Cuotas a compensar
@@ -1765,7 +1767,7 @@ class Mod303AEAT20212Declaration extends Mod303Declaration {
 				filler.fill(mod);
 		}
 
-		public static Mod303KeyDAO safeValueOf(Mod303 mod, String key) {
+		public static Mod303KeyDAO safeValueOf(String key) {
 			if (AonStringUtils.isBlank(key))
 				return null;
 			for (Mod303KeyDAO keyDAO : Mod303KeyDAO.values()) {
@@ -1785,7 +1787,7 @@ class Mod303AEAT20212Declaration extends Mod303Declaration {
 
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
-		return Mod303KeyDAO.safeValueOf(mod, key);
+		return Mod303KeyDAO.safeValueOf(key);
 	}
 
 	@Override

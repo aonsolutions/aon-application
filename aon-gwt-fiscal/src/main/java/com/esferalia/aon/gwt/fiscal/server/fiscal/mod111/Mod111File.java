@@ -38,7 +38,7 @@ public class Mod111File extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			Mod111 mod111 = MODEL111.getMod111(occam,id);
+			Mod111 mod111 = MODEL111.get(occam,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

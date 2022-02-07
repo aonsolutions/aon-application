@@ -38,7 +38,8 @@ public abstract class Mod303Declaration {
 	}
 	
 	private static boolean mustApplyProrrate(Mod303 mod,VatContext vat) {
-		return (mod.hasProrate()) && (!mod.isSpecialProrate() || (mod.isSpecialProrate() && vat.getActivity() == null));
+		return (mod.hasProrate()) && 
+			(!mod.isSpecialProrate() || (mod.isSpecialProrate() && vat.getActivity() == null));
 	}
 	private static double getProrratePercent(Mod303 mod,VatContext vat) {
 		if (mod.isLastPeriod()) {
@@ -126,11 +127,20 @@ public abstract class Mod303Declaration {
 	public Mod303Key getRegularizationKey() {
 		return null;
 	}
+	
+	protected boolean isProrrated(Mod303Key key) {
+		if ( key != null && getProrateKeys() != null ) {
+			for (Mod303Key pk : getProrateKeys()) {
+				if (pk == key) return true;			
+			}
+		}
+		return false;
+	}
 
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
-	public abstract Mod303Key[] getProrateKeys();
+	protected abstract Mod303Key[] getProrateKeys();
 	public abstract boolean hasSimplifiedRegime();
 
 

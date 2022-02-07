@@ -90,8 +90,10 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 			, null,null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C19+BZ_C20+BZ_C21+BZ_C22")
 		,BZ_C36M(Mod111Key.BZ_C36T
 			, null,null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C30+BZ_C31+BZ_C32+BZ_C33")
+		,BZ_C39T(Mod111Key.BZ_C39, null,null,null, "BZ_C36T")
 		,BZ_TIP (Mod111Key.BZ_TIP, null,null,null,null)
 		;
+		
 		
 		private Mod111Key key;
 		private IValueAccepter acceptValue;
