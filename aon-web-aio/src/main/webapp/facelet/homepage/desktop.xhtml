@@ -41,6 +41,10 @@
 							<ui:include src="/facelet/new/portlet/parentDomainInfoPortlet.xhtml" />
 						</aon:if>
 						
+	  					<aon:if test="#{userUtils.newAONTheme}">				
+							<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
+						</aon:if>
+
 						<aon:if test="#{desktop.showGraphicsPortlet}">
 							<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
@@ -110,10 +114,6 @@
  							
 						</aon:if>
 
-						<aon:if test="#{!desktop.showGraphicsPortlet}">
-							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
-						</aon:if>
-
 					</aon:if>
 					<aon:if test="#{!domainSwitcher.childDomain}">
 						<aon:if test="#{domainSwitcher.domainCount >= 0}">
@@ -126,7 +126,12 @@
 							
 						</aon:if>
 						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
+	  						<aon:if test="#{userUtils.newAONTheme}">				
+								<ui:include src="/facelet/new/portlet/optionFavoritePortlet.xhtml" />
+							</aon:if>
+	  						<aon:if test="#{!userUtils.newAONTheme}">				
+								<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
+							</aon:if>
 						</aon:if>
 					</aon:if>
 				</aon:div>

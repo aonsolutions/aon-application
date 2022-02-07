@@ -88,6 +88,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
@@ -2662,7 +2663,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			case "46":
 				return "CONTINGENCIAS COMUNES IT";
 			case "47":
-				return "CONTINGENCIAS COMUNES/BASE MÍNIMA RETA";
+				return "CONTINGENCIAS COMUNES/BASE Mï¿½NIMA RETA";
 			case "48":
 				return "CONTINGENCIAS COMUNES OBLIGATORIA-IT/REA";
 			case "49":
@@ -2672,7 +2673,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			case "51":
 				return "HORAS EXTRAS";
 			case "52":
-				return "CONTINGENCIAS OBLIGATORIAS/BASE MÍNIMA";
+				return "CONTINGENCIAS OBLIGATORIAS/BASE Mï¿½NIMA";
 			case "53":
 				return "P.F. DESEMPLEO, FOGASA, FORMACI\u00D3N PROFESIONAL";
 			case "54":
@@ -2706,7 +2707,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			case "70":
 				return "C.C. S./ HORAS COMPLEMENTARIAS";
 			case "71":
-				return "CONTINGENCIAS COMUNES -IT/BASE MÍNIMA RET";
+				return "CONTINGENCIAS COMUNES -IT/BASE Mï¿½NIMA RET";
 			case "72":
 				return "MATERNIDAD/PATERNIDAD TIEMPO PARCIAL";
 			case "73":
@@ -3576,6 +3577,41 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+
+	@Override
+	public void saveITParts(String domainName, String userLogin, List<ItNotExist> itNotExists)  throws IllegalArgumentException {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Domain domain = new Domain().setId(domainId).setName(domainName);
+			List<EmployeeIT> employeeITs = new ArrayList<>();
+			for (ItNotExist itNotExist : itNotExists) {
+				EmployeeIT employeeIT = itNotExist.getEmployeeIT();
+				
+				List<EmployeeITPart> parts =  new ArrayList<>();
+				Optional<EmployeeITPart> baja = employeeIT.getItBaja();
+				
+				EmployeeITPart part = itNotExist.getEmployeeITPart();
+				parts.add(part);
+				
+				if(baja.isPresent() && !part.getType().equals(ContractLeaveDetailType.BAJA)) 
+					parts.add(baja.get());
+				
+				if (employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+					employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
+				
+				employeeIT.setITParts(parts);
+				employeeIT.setDomain(domain.getId());
+				
+				employeeITs.add(employeeIT);
+			}
+			ITComunica.saveITs(domain, employeeITs);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
 	@Override
 	public EnterpriseITStatus getEnterpriseITStatus(String domainName, String login) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {

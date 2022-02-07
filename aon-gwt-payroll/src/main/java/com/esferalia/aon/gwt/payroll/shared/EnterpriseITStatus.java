@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.EmployeeIT;
+import com.esferalia.aon.occam.api.model.EmployeeITPart;
+
 public abstract class EnterpriseITStatus implements Serializable {
 
 	/**
@@ -17,8 +20,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 		void unknownError(String message);
 		void credentialsNotFound();
 		void itNotExist(ItNotExist itNotExist);
+		void onFinish();
 	}
-
 
 
 	public static class CredentialsNotFound extends EnterpriseITStatus{
@@ -34,9 +37,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 		
 		@Override
 		public void visit(Visitor visitor) {
-			if ( next != null ) {
+			if ( next != null ) 
 				next.visit(visitor);
-			}
 		}
 		
 		public AndEmployeeITStatus and(AndEmployeeITStatus status) {
@@ -67,121 +69,75 @@ public abstract class EnterpriseITStatus implements Serializable {
 		}
 	}		
 	
+	public static class onFinish extends AndEmployeeITStatus{
+		@Override	
+		public void visit(Visitor visitor) {
+			visitor.onFinish();
+			super.visit(visitor);
+		}
+	}		
+	
 	public static class ItNotExist extends AndEmployeeITStatus{
 		
-		Date date;
-		String naf;
-		String ccc;
-		String name;
-		Byte part; //0 baja , 1 confirmacion, 2 alta
-		Byte confirmOrder;
-		Integer idPart;
-		
-		
+		EmployeeIT employeeIT;
+		EmployeeITPart employeeITPart;
 //		Double base;
 //		Integer quoteDays;
 //		Byte contracTypeLeave;
 //		Byte contractType; // 0 = FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL, 1 = RESTO_Y_AUTONOMOS;
 		
+		
+		public ItNotExist setEmployeeIT(EmployeeIT it) {
+			this.employeeIT = it;
+			return this;
+		}
+		
+		public ItNotExist setEmployeeITPart(EmployeeITPart part) {
+			this.employeeITPart = part;
+			return this;
+		}
+		
 		public Date getDate() {
-			return date;
+			return getEmployeeITPart().getDate();
+		}
+		
+		public Date getStartDate() {
+			return getEmployeeIT().getStartDate();
 		}
 		
 		public String getNaf() {
-			return naf;
+			return getEmployeeIT().getNss();
 		}
 
 		public String getCcc() {
-			return ccc;
+			return getEmployeeIT().getCcc();
 		}
 		
 		public String getName() {
-			return name;
+			Optional<String> tmp = getEmployeeIT().getName();
+			return tmp.isPresent() ? tmp.get() : "";
 		}
 		
 		public Byte getPart() {
-			return part;
+			return getEmployeeITPart().getType().value();
 		}
 		
-		public Byte getConfirmOrder() {
-			return confirmOrder;
-		}
-
 		public Optional<Integer> getIdPart() {
-			return Optional.ofNullable(idPart);
+			return Optional.ofNullable(getEmployeeITPart().getId());
 		}
 		
-		public ItNotExist setDate(Date date) {
-			this.date = date;
-			return this;
+		public EmployeeIT getEmployeeIT() {
+			return employeeIT;
 		}
 		
-		public ItNotExist setNaf(String naf) {
-			this.naf = naf;
-			return this;
+		public EmployeeITPart getEmployeeITPart() {
+			return employeeITPart;
 		}
 		
-		public ItNotExist setCcc(String ccc) {
-			this.ccc = ccc;
-			return this;
+		public Optional<Byte> getConfirmOrder() {
+			return getEmployeeITPart().getConfirmOrder();
 		}
-		
-		public ItNotExist setName(String name) {
-			this.name = name;
-			return this;
-		}
-		
-		public ItNotExist setPart(Byte part) {
-			this.part = part;
-			return this;
-		}
-		
-		public ItNotExist setConfirmOrder(Byte confirmOrder) {
-			this.confirmOrder = confirmOrder;
-			return this;
-		}
-		
-		public ItNotExist setIdPart(Integer id) {
-			this.idPart = id;
-			return this;
-		}
-		
-//		public Double getBase() {
-//			return base;
-//		}
-//		
-//		public Integer getQuoteDays() {
-//			return quoteDays;
-//		}
-//		
-//		public Byte getContractTypeLeave() {
-//			return contracTypeLeave;
-//		}
-//		
-//		public Byte getContractType() {
-//			return contractType;
-//		}
 	
-//		public ItBajaNotExist setBase(Double base) {
-//			this.base = base;
-//			return this;
-//		}
-//		
-//		public ItBajaNotExist setQuoteDays(Integer quoteDays) {
-//			this.quoteDays = quoteDays;
-//			return this;
-//		}
-//		
-//		public ItBajaNotExist setContractTypeLeave(Byte contracTypeLeave) {
-//			this.contracTypeLeave = contracTypeLeave;
-//			return this;
-//		}
-//		
-//		public ItBajaNotExist getContractType(Byte contracType) {
-//			this.contractType = contracType;
-//			return this;
-//		}
-		
 		@Override
 		public void visit(Visitor visitor) {
 			visitor.itNotExist(this);
@@ -244,6 +200,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void itNotExist(ItNotExist itNotExist) {
 				enable.run();
 			}
+			
+			@Override
+			public void onFinish() {
+				enable.run();
+			}
 		});
 	}
 
@@ -275,6 +236,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void itNotExist(ItNotExist itNotExist) {
 				onError.run();
 			}
+
+			@Override public void onFinish() {}
 		});
 	}
 
@@ -303,8 +266,10 @@ public abstract class EnterpriseITStatus implements Serializable {
 			
 			@Override
 			public void itNotExist(ItNotExist itNotExist) {
-				System.out.println("ItNotExist "+ itNotExist.name +" "+ itNotExist.naf + "[" + itNotExist.date + "]");
+				System.out.println("ItNotExist "+ itNotExist.getName() +" "+ itNotExist.getNaf() + "[" + itNotExist.getDate() + "]");
 			}
+
+			@Override public void onFinish() {}
 		});
 		return status;
 	}
@@ -312,11 +277,9 @@ public abstract class EnterpriseITStatus implements Serializable {
 	public static <T extends EnterpriseITStatus> T isUp2Date( T status ) {
 		status.visit(new Visitor() {
 			
-			@Override
-			public void up2DateEnterprise() {}
+			@Override public void up2DateEnterprise() {}
 
-			@Override
-			public void updatedEnterprise() {}
+			@Override public void updatedEnterprise() {}
 			
 			@Override
 			public void unknownError(String message) {
@@ -332,6 +295,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void itNotExist(ItNotExist itNotExist) {
 				throw new OutOfDateException();
 			}
+
+			@Override public void onFinish() {}
 		});
 		return status;
 	}
@@ -339,11 +304,9 @@ public abstract class EnterpriseITStatus implements Serializable {
 	public static <T extends EnterpriseITStatus> T updated( T status ) {
 		status.visit(new Visitor() {
 			
-			@Override
-			public void up2DateEnterprise() {}
+			@Override public void up2DateEnterprise() {}
 			
-			@Override
-			public void updatedEnterprise() {}
+			@Override public void updatedEnterprise() {}
 			
 			@Override
 			public void unknownError(String message) {
@@ -359,6 +322,7 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void itNotExist(ItNotExist itNotExist) {
 				throw new OutOfDateException();
 			}
+			@Override public void onFinish() {}
 		});
 		return status;
 	}

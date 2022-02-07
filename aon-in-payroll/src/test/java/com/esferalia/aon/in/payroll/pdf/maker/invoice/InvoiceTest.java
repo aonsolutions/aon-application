@@ -160,6 +160,7 @@ public class InvoiceTest {
 //		}
 //		invoice.setComments(listadecosas);
 		invoice.setComments("Akatsuki (Akatsuki; literalmente Amanecer) fue en sus comienzos, una organización que buscaba acabar con la tiranía y la opresión a través de medios pacíficos, pero que pronto cambiaría sus métodos hasta volverse una organización criminal constituida por varios ninjas renegados de Clase S que se convirtieron en los principales antagonistas de la serie Naruto: Shippuuden. ");		
+		invoice.setRemarks("ESTA FACTURA RECTIFICA ALGO");
 		/** BREAKDOWNS */
 		jump();
 		log(GENERATE, "Creating breakdowns.");

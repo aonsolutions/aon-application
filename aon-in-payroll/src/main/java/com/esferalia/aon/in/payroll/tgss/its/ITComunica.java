@@ -48,38 +48,48 @@ public class ITComunica {
 	public static void syncUpITs(final byte certificateData[], final String certificatePassword,
 			final String certificateType, Domain domain, Optional<String> nss) throws IllegalArgumentException {
 
-		List<CCCInfo> cccs = PAYROLL.getCCCStream(domain.getName(), domain.getId(), "")
-				.filter(distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
+		List<CCCInfo> cccs = getCccs(domain);
+		
+		Date startDate = AonDateUtils.addYears(new Date(), -1);
+		Date endDate = new Date();
 
 		for (CCCInfo cti : cccs) {
 			try {
 				String regime = cti.getCccRegimeCode();
 				String ccc = cti.getCccAccount();
-
-				Date startDate = AonDateUtils.addYears(new Date(), -1);
-				Date endDate = new Date();
-
+				
 				Collection<It> its = SistemaRED.getIts(certificateData, certificatePassword, certificateType, regime,
 						ccc, startDate, endDate, nss);
 		
 				List<EmployeeIT> employeeITs = new ArrayList<>();
 				
 				for (It it : its) {
-					
-					EmployeeIT employeeIT = ITParse.parseTGSSToAon(it);
-					if(employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
-						employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
-			
-					String naf = nss.isPresent() ? nss.get() : employeeIT.getNss();
-					Optional<Employee> contract = ITComunica.contractIts(domain, ccc, naf, employeeIT.getStartDate(), employeeIT.getEndDate());
-
-					if (contract.isPresent()) {
-
-						employeeIT.setContract(contract.get().getEmployeeId()).setDomain(domain.getId());
+					try {
 						
-						employeeITs.add(employeeIT);
-					} else 
-						System.out.println("contractEmpty");		
+						EmployeeIT employeeIT = ITParse.parseTGSSToAon(it);
+						if(employeeIT.getType().equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+							employeeIT.setStartDate(AonDateUtils.addDays(employeeIT.getStartDate(), 1)); // ADD 1 DAY BEFORE
+						
+						String naf = nss.isPresent() ? nss.get() : employeeIT.getNss();
+						
+//						if(employeeIT.getEndDate().isEmpty()) {
+//							Optional<Date> endDateTmp = getEndDateAon(domain, ccc, naf, employeeIT.getStartDate());
+//							if(endDateTmp.isPresent())
+//								employeeIT.setEndDate(endDateTmp.get());
+//						}
+				
+						Optional<Employee> contract = ITComunica.contractIts(domain, ccc, naf, employeeIT.getStartDate(), employeeIT.getEndDate());
+	
+						if (contract.isPresent()) {
+	
+							employeeIT.setContract(contract.get().getEmployeeId()).setDomain(domain.getId());
+							
+							employeeITs.add(employeeIT);
+						} else 
+							System.out.println("contractEmpty");	
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 
 				AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
@@ -88,6 +98,20 @@ public class ITComunica {
 				throw new IllegalArgumentException(e);
 			}
 		}
+	}
+	
+	// SINCRONIZAR ITS
+	public static void saveITs(Domain domain, List<EmployeeIT> employeeITs) throws IllegalArgumentException {
+		
+		employeeITs.stream().filter(e->e.getContract()==null)
+		.forEach(employeeIT->{
+			Optional<Employee> contract = ITComunica.contractIts(domain, employeeIT.getCcc(), employeeIT.getNss(), employeeIT.getStartDate(), employeeIT.getEndDate());
+			
+			if(contract.isPresent()) 
+				employeeIT.setContract(contract.get().getEmployeeId()).setDomain(domain.getId());
+		});
+				
+		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
 	}
 	
 	public static List<String> communicateITs(final byte certificateData[], final String certificatePassword,
@@ -111,6 +135,16 @@ public class ITComunica {
 		 
 		 return messages;
 	}
+	
+//	private static Optional<Date> getEndDateAon(Domain domain, String ccc, String nss, Date startDate) {
+//		Optional<EmployeeIT> employeeIT = AON.getEmployeeIT(domain, new User(), 
+//				f->f.getDomainProperty().eq(domain.getId()).and(f.getCCCProperty().eq(ccc).and(f.getNafProperty().eq(nss))).and(f.getStartDateProperty().eq(new java.sql.Date(startDate.getTime())))
+//		);
+//		if(employeeIT.isPresent() && employeeIT.get().getEndDate().isPresent()) 
+//			return employeeIT.get().getEndDate();
+//	
+//		return Optional.empty();
+//	}
 	
 	public static List<String> removeITs(final byte certificateData[], final String certificatePassword,
 			final String certificateType, EmployeeIT employeeIt) {
@@ -307,18 +341,24 @@ public class ITComunica {
 	 */
 	private static Optional<Employee> contractIts(Domain domain, String ccc, String nss, Date startDate,
 			Optional<Date> endDate) {
+//		System.out.println("nss:"+nss+" startDate:"+startDate +" endDate:"+endDate);
 		return PAYROLL.getEmployee(
 			domain.getName(), domain.getId(), "", f -> f
 			.getDomainProperty().eq(domain.getId())
 			.and(f.getCCCProperty().eq(ccc))
 			.and(f.getNafProperty().eq(nss))
 			.and( 
-				endDate.isPresent() 
-				? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
-						.and(f.getEndDateProperty().ge(new java.sql.Date(endDate.get().getTime())).or(f.getEndDateProperty().isNull()))
-				: f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
+				f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(new Date().getTime())))
+//				endDate.isPresent() 
+//				? f.getStartDateProperty().le(new java.sql.Date(startDate.getTime()))
+//						.and( f.getEndDateProperty().ge(new java.sql.Date(endDate.get().getTime())).or(f.getEndDateProperty().isNull()) )
+//				: f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(new java.sql.Date(startDate.getTime())))
 			)
 		);
+	}
+	
+	public static List<CCCInfo> getCccs(Domain domain) {
+		return PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").filter(distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
 	}
 
 	// HANDLES EMPTY DATA

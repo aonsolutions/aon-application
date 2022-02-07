@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -44,8 +43,6 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
-import com.esferalia.aon.occam.api.model.config.ConfigBlock;
-import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -358,12 +355,16 @@ public class AccountingInvoiceDAO {
 	}
 
 	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
+		fillBreakdown(ctx, invoice, false);
+	}
+	
+	public static void fillBreakdown(AONContext ctx, Invoice invoice, boolean skipVatExempt) {
 		if (invoice.getBreakdown() == null) {
 			invoice.setBreakdown(new LinkedList<>());
 		}
 		
 		boolean vatExempt = 
-				(invoice.isSales()  && !invoice.isNational())		// VENTA NO NACIONAL
+				invoice.isSales()  && !invoice.isNational() && !skipVatExempt		// VENTA NO NACIONAL
 			;
 
 		ctx.getDslContext()

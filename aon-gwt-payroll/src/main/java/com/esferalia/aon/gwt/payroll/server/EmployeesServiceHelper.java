@@ -1465,6 +1465,9 @@ public class EmployeesServiceHelper {
 			}
 		};
 		draftCtx.setListener(listener);
+		
+		draftCtx.loadDraftContext(ctx.getExpressionContext());
+
 		return draftCtx;
 	}
 

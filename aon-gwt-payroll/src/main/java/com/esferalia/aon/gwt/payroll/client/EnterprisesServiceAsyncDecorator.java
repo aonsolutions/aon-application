@@ -48,6 +48,7 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
@@ -924,6 +925,12 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.communicateITPart(currentDomainName, currentUser, itEmployee, it, part, asyncCallback);
+	}
+
+	@Override
+	public void saveITParts(String currentDomainName, String currentUser, List<ItNotExist> list, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveITParts(currentDomainName, currentUser, list, asyncCallback);
 	}
 	
 }
