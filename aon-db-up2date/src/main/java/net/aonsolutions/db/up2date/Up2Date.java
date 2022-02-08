@@ -36,6 +36,7 @@ import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2019Close;
 import net.aonsolutions.db.up2date.tgss.HomeBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.IPREM2022Update;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
 import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
@@ -226,8 +227,9 @@ public class Up2Date {
     		//IPREM2022Update.IPREM2022UPDATE
     		//IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT
     		
-    		IrpfQuotasInsert.IRPFQUOTASINSERT,
-    		IrpfQuotasCheck.IRPFQUOTASCHECK
+    		//IrpfQuotasInsert.IRPFQUOTASINSERT,
+    		//IrpfQuotasCheck.IRPFQUOTASCHECK,
+    		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE
     };
     
 
