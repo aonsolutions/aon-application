@@ -30,13 +30,13 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod130DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -135,7 +135,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 
 					@Override
 					public void visitM111() {
-						Mod111 model = Mod111DAO.getMod111(ctx, id);	
+						Mod111 model = Mod111DAO.get(ctx, id);	
 						model.setDeclarationType(dec);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
