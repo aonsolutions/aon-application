@@ -223,6 +223,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			t.mg.enable("costeTotal");
 		if (t.mg.entriesForCol("bonificaciones") > 0)
 			t.mg.enable("bonificaciones");
+		if (t.mg.entriesForCol("fundae") > 0)
+			t.mg.enable("fundae");
 		if (t.mg.entriesForCol("ssTotal") > 0)
 			t.mg.enable("ssTotal");
 
@@ -258,7 +260,9 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		if (t.mg.isActive("ssEmpr"))
 			current = setColumn(current, sizes, headers, alignments, c, "S.S. Empr.", RIGHT);
 		if (t.mg.isActive("bonificaciones"))
-			current = setColumn(current, sizes, headers, alignments, c, "Bonificaciones", RIGHT);
+			current = setColumn(current, sizes, headers, alignments, c, "Bonif.", RIGHT);
+		if (t.mg.isActive("fundae"))
+			current = setColumn(current, sizes, headers, alignments, c, "FUNDAE", RIGHT);
 		if (t.mg.isActive("ssTotal"))
 			current = setColumn(current, sizes, headers, alignments, c, "Total S.S", RIGHT);
 		if (t.mg.isActive("costeTotal"))
@@ -413,6 +417,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		Double liquido		  = e.getLiquido().orElse(null);
 		Double ssEmpresa	  = e.getSsEmpr().orElse(null);
 		Double bonificaciones = e.getBonificaciones().orElse(null);
+		Double fundae		  = e.getFundae().orElse(null);
 		Double costeTotal	  = e.getCosteTotal().orElse(null);
 		Double ssTotal		  = e.getSsTotal().orElse(null);
 
@@ -425,6 +430,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		Double liquidoSS		= e.getLiquidoSS().orElse(null);
 		Double ssEmpresaSS		= e.getSsEmprSS().orElse(null);
 		Double bonificacionesSS	= e.getBonificacionesSS().orElse(null);
+		Double fundaeSS 		= null;
+
 		Double costeTotalSS		= e.getCosteTotalSS().orElse(null);
 		Double ssTotalSS		= e.getSsTotalSS().orElse(null);
 
@@ -436,7 +443,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Otr. ded."), toLatinNumber(deducciones));
 		table.fillCell(table.getColumn("Liquido"), toLatinNumber(liquido));
 		table.fillCell(table.getColumn("S.S. Empr."), toLatinNumber(ssEmpresa));
-		table.fillCell(table.getColumn("Bonificaciones"), toLatinNumber(bonificaciones));
+		table.fillCell(table.getColumn("Bonif."), toLatinNumber(bonificaciones));
+		table.fillCell(table.getColumn("FUNDAE"), toLatinNumber(fundae));
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotal));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotal));
 		
@@ -454,7 +462,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Otr. ded."), toLatinNumber(deduccionesSS));
 		table.fillCell(table.getColumn("Liquido"), toLatinNumber(liquidoSS));
 		table.fillCell(table.getColumn("S.S. Empr."), toLatinNumber(ssEmpresaSS));
-		table.fillCell(table.getColumn("Bonificaciones"), toLatinNumber(bonificacionesSS));
+		table.fillCell(table.getColumn("Bonif."), toLatinNumber(bonificacionesSS));
+		table.fillCell(table.getColumn("FUNDAE"), toLatinNumber(fundaeSS));
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotalSS));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotalSS));
 
@@ -466,7 +475,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.paintCell(table.getColumn("Otr. ded."),  		getColor(deducciones, deduccionesSS));
 		table.paintCell(table.getColumn("Liquido"),			getColor(liquido, liquidoSS));
 		table.paintCell(table.getColumn("S.S. Empr."),		getColor(ssEmpresa, ssEmpresaSS));
-		table.paintCell(table.getColumn("Bonificaciones"),	getColor(bonificaciones, bonificacionesSS));
+		table.paintCell(table.getColumn("Bonif."),			getColor(bonificaciones, bonificacionesSS));
 		table.paintCell(table.getColumn("Total S.S"),		getColor(ssTotal, ssTotalSS));
 		table.paintCell(table.getColumn("Coste total"),		getColor(costeTotal, costeTotalSS));
 
@@ -502,6 +511,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		Double ssEmpresa   = e.getSsEmpr().orElse(null);
 		
 		Double bonificaciones = e.getBonificaciones().orElse(null);
+		Double fundae		  = e.getFundae().orElse(null);
 		Double costeTotal	  = e.getCosteTotal().orElse(null);
 		Double ssTotal		  = e.getSsTotal().orElse(null);
 
@@ -513,7 +523,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Otr. ded."), toLatinNumber(deducciones));
 		table.fillCell(table.getColumn("Liquido"), toLatinNumber(liquido));
 		table.fillCell(table.getColumn("S.S. Empr."), toLatinNumber(ssEmpresa));
-		table.fillCell(table.getColumn("Bonificaciones"), toLatinNumber(bonificaciones));
+		table.fillCell(table.getColumn("Bonif."), toLatinNumber(bonificaciones));
+		table.fillCell(table.getColumn("FUNDAE"), toLatinNumber(fundae));
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotal));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotal));
 
@@ -532,7 +543,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.paintCell(table.getColumn("Otr. ded."), color);
 		table.paintCell(table.getColumn("Liquido"), color);
 		table.paintCell(table.getColumn("S.S. Empr."), color);
-		table.paintCell(table.getColumn("Bonificaciones"), color);
+		table.paintCell(table.getColumn("Bonif."), color);
+		table.paintCell(table.getColumn("FUNDAE"), color);
 		table.paintCell(table.getColumn("Total S.S"), color);
 		table.paintCell(table.getColumn("Coste total"), color);
 
@@ -596,7 +608,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Otr. ded."), toLatinNumber(deduccionesSS));
 		table.fillCell(table.getColumn("Liquido"), toLatinNumber(liquidoSS));
 		table.fillCell(table.getColumn("S.S. Empr."), toLatinNumber(ssEmpresaSS));
-		table.fillCell(table.getColumn("Bonificaciones"), toLatinNumber(bonificacionesSS));
+		table.fillCell(table.getColumn("Bonif."), toLatinNumber(bonificacionesSS));
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotalSS));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotalSS));
 		
@@ -608,7 +620,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.paintCell(table.getColumn("Otr. ded."), RED);
 		table.paintCell(table.getColumn("Liquido"), RED);
 		table.paintCell(table.getColumn("S.S. Empr."), RED);
-		table.paintCell(table.getColumn("Bonificaciones"), RED);
+		table.paintCell(table.getColumn("Bonif."), RED);
 		table.paintCell(table.getColumn("Total S.S"), RED);
 		table.paintCell(table.getColumn("Coste total"), RED);
 
