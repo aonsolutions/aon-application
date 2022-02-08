@@ -357,15 +357,31 @@ public class FacturasEmitidas extends SIIBuilt {
 				}
 				SujetaPrestacionType st3 = new SujetaPrestacionType();
 				
-				Exenta exenta3 = new Exenta();
-				DetalleExentaType detalleExenta = new DetalleExentaType();
-				detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
-				detalleExenta.setCausaExencion(CausaExencionType.E_6);
-				exenta3.getDetalleExenta().add(detalleExenta);
-				st3.setExenta(exenta3);
+				NoExenta noExenta3 = new NoExenta();
+				DesgloseIVA diva3 = new DesgloseIVA();
+				if(AonMathUtils.isNotZero(exenta)) {
+					if(vat.isOtherISP()) {
+						DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
+						diet.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); 
+						diet.setCuotaRepercutida("0"); 
+						diet.setTipoImpositivo("0"); 
+						diva3.getDetalleIVA().add(diet);
+
+
+						noExenta3.setDesgloseIVA(diva3);
+						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);		
+						st3.setNoExenta(noExenta3);
+					} else {
+						Exenta exenta3 = new Exenta();
+						DetalleExentaType detalleExenta = new DetalleExentaType();
+						detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+						detalleExenta.setCausaExencion(CausaExencionType.E_6);
+						exenta3.getDetalleExenta().add(detalleExenta);
+						st3.setExenta(exenta3);
+					}
+				}
 				
 				if(!noExenta.isEmpty()){
-					DesgloseIVA diva3 = new DesgloseIVA();
 					noExentaMap.keySet().stream().forEach(key -> {
 						DetalleIVAEmitidaPrestacionType diet = new DetalleIVAEmitidaPrestacionType();
 						diet.setBaseImponible(Double.toString(AonMathUtils.round(noExentaMap.get(key).getBase()))); 
@@ -373,7 +389,6 @@ public class FacturasEmitidas extends SIIBuilt {
 						diet.setTipoImpositivo(Double.toString(AonMathUtils.round(key))); 
 						diva3.getDetalleIVA().add(diet);
 					});
-					NoExenta noExenta3 = new NoExenta();
 					noExenta3.setDesgloseIVA(diva3);
 					noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
 					if(vat.isOtherISP()){
@@ -441,16 +456,29 @@ public class FacturasEmitidas extends SIIBuilt {
 			}
 			SujetaType st = new SujetaType();
 		
-			https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta exenta1 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta();
-			DetalleExentaType detalleExenta = new DetalleExentaType();
-			detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
-			detalleExenta.setCausaExencion(CausaExencionType.E_6);
-			exenta1.getDetalleExenta().add(detalleExenta);
-			st.setExenta(exenta1);
-			
-			if(!noExenta.isEmpty()){
-				https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA diva = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA();
-				
+			https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta noExenta1 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta();
+			https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA diva = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta.DesgloseIVA();
+			if(AonMathUtils.isNotZero(exenta)) {
+				if(vat.isOtherISP()) {
+					DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
+					diet.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); 
+					diet.setCuotaRepercutida("0"); 
+					diet.setTipoImpositivo("0"); 
+					diva.getDetalleIVA().add(diet);
+
+					noExenta1.setDesgloseIVA(diva);
+					noExenta1.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);		
+					st.setNoExenta(noExenta1);
+				} else {
+					https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta exenta1 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta();
+					DetalleExentaType detalleExenta = new DetalleExentaType();
+					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
+					detalleExenta.setCausaExencion(CausaExencionType.E_6);
+					exenta1.getDetalleExenta().add(detalleExenta);
+					st.setExenta(exenta1);
+				}
+			}			
+			if(!noExenta.isEmpty()){				
 				noExentaMap.keySet().stream().forEach(key -> {
 					DetalleIVAEmitidaType diet = new DetalleIVAEmitidaType();
 					diet.setBaseImponible(Double.toString(AonMathUtils.round(noExentaMap.get(key).getBase())));
@@ -463,7 +491,6 @@ public class FacturasEmitidas extends SIIBuilt {
 					diva.getDetalleIVA().add(diet);
 				});
 
-				https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta noExenta1 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.NoExenta();
 				noExenta1.setDesgloseIVA(diva);
 				TipoOperacionSujetaNoExentaType noExType = TipoOperacionSujetaNoExentaType.S_1;
 				// TODO inversion sujeto pasivo 
@@ -712,10 +739,9 @@ public class FacturasEmitidas extends SIIBuilt {
 							diva3.getDetalleIVA().add(diet);
 						});
 						noExenta3.setDesgloseIVA(diva3);
-						noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1);
-						if(vat.isOtherISP()){
-							noExenta3.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_2);
-						}	
+						noExenta3.setTipoNoExenta(vat.isOtherISP() 
+								? TipoOperacionSujetaNoExentaType.S_2
+								: TipoOperacionSujetaNoExentaType.S_1);
 						st3.setNoExenta(noExenta3);
 					}
 					prestacion.setSujeta(st3);		
