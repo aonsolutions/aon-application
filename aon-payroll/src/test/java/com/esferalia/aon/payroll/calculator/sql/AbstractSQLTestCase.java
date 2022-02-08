@@ -121,6 +121,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.protobuf.TypeOrBuilder;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
@@ -834,7 +835,7 @@ public abstract class AbstractSQLTestCase {
 
 			aonContext.getDslContext().insertInto(CONTRACT_DEDUCTION).set(CONTRACT_DEDUCTION.DOMAIN, domainId)
 					.set(CONTRACT_DEDUCTION.CONTRACT, contract.getId()).set(CONTRACT_DEDUCTION.START_DATE, startDate)
-					.set(CONTRACT_DEDUCTION.DESCRIPTION, deduction).set(CONTRACT_DEDUCTION.EXPRESSION, deduction)
+					.set(CONTRACT_DEDUCTION.DESCRIPTION, AonStringUtils.abbreviate(deduction, 64)).set(CONTRACT_DEDUCTION.EXPRESSION, deduction)
 					.set(CONTRACT_DEDUCTION.TYPE, (byte) type.ordinal()).execute();
 		}
 
