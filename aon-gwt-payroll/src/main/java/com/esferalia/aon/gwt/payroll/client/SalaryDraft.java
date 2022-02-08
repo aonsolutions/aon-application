@@ -2608,6 +2608,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label employeeSSLabel;
 	@UiField
+	Label employeeDocumentLabel;
+	@UiField
 	Label employeeSeniorityLabel;
 	@UiField
 	Label employeeAgreementCategoryLabel;
@@ -3247,6 +3249,7 @@ public class SalaryDraft extends ResizeComposite
 
 		employeeSSLabel.setText(salaryDraftObject.getEmployeeSS());
 		employeeNameLabel.setText(salaryDraftObject.getEmployeeName());
+		employeeDocumentLabel.setText(salaryDraftObject.getEmployeeDocument());
 		employeeSeniorityLabel.setText(format(salaryDraftObject.getEmployeeSeniorityDate()));
 		employeeAgreementCategoryLabel.setText(salaryDraftObject.getEmployeeAgreementCategory());
 
