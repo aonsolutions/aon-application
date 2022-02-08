@@ -147,6 +147,5 @@ public class Mod111DAO extends FiscalModelDAO {
 		}
 		return mod111;
 	}
-	
 }
 
