@@ -232,7 +232,7 @@ public class Up2Date {
     		IrpfQuotasInsert.IRPFQUOTASINSERT,
     		IrpfQuotasCheck.IRPFQUOTASCHECK,
     		AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
-    		AgreementOwnerUpdate.AGREEMENTOWNERUPDATE
+    		AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
     		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE
     };
     
