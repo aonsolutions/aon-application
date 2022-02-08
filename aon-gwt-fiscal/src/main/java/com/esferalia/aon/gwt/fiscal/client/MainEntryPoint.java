@@ -28,9 +28,6 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
-import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
-import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
@@ -123,6 +120,24 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.mod303.Model303.run();
 			}
 		},
+		Model347 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod347.Model347.run();
+			}
+		},
+		Model349 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod349.Model349.run();
+			}
+		},
+		Model390 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod390.Model390.run();
+			}
+		},
 		Model390HF {
 			@Override
 			void run() {
@@ -134,9 +149,6 @@ public class MainEntryPoint implements EntryPoint {
 	}
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
-	private static final String FS_MOD347_ENTRY_POINT = "Model347";
-	private static final String FS_MOD349_ENTRY_POINT = "Model349";
-	private static final String FS_MOD390_ENTRY_POINT = "Model390";
 	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
 	private static final String FS_CONFIG_POINT = "FiscalConfig";
 	//	
@@ -242,51 +254,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					Model200 model200 = new Model200();
 					model200.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD347_ENTRY_POINT)) {
-			GWT.runAsync(Model347.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model347 model347 = new Model347();
-					model347.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD349_ENTRY_POINT)) {
-			GWT.runAsync(Model349.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model349 model349 = new Model349();
-					model349.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_ENTRY_POINT)) {
-			GWT.runAsync(Model390.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model390 model390 = new Model390();
-					model390.onModuleLoad();
 				}
 				
 			});

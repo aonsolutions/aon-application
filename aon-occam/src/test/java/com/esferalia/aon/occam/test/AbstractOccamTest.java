@@ -28,7 +28,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import com.esferalia.aon.jooq.tables.User;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -55,6 +57,7 @@ public abstract class AbstractOccamTest {
 	protected static String DOMAIN_NAME = "occamtest.aonsolutions.test";
 	protected static Integer DOMAIN_ID;
 	protected static String USER = "admin";
+	private static AonConfiguration config;
 	
 	private static String getDbPort() {		return System.getProperty("dbPort", "3306");	}
 	private static String getDbHost() {		return System.getProperty("dbHost", "127.0.0.1");	}
@@ -72,6 +75,13 @@ public abstract class AbstractOccamTest {
 				.setDomainName(DOMAIN_NAME)
 				.setDomain(DOMAIN_ID)
 				.setUser(USER);
+	}
+	
+	protected static AonConfiguration getConfiguration() {
+		if (config == null) {
+			config = AON.getConfiguration(ctx);
+		}
+		return config;
 	}
 	
 	@BeforeClass

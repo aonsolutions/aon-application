@@ -2,11 +2,12 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.mvel2.MVEL;
 
@@ -16,11 +17,11 @@ public class ModelMVELContext implements Map<String, Object> {
 
 	private Map<String, Object> context;
 	private Map<String, String> expressionMap;
-	private Stack<String> stack = new Stack<String>();
+	private Deque<String> stack = new ArrayDeque<>();
 	
 	public ModelMVELContext() {
-		this.context = new HashMap<String, Object>();
-		this.expressionMap = new HashMap<String, String>();
+		this.context = new HashMap<>();
+		this.expressionMap = new HashMap<>();
 	}
 
 	public Map<String, String> getExpressionMap() {
@@ -80,7 +81,7 @@ public class ModelMVELContext implements Map<String, Object> {
 				return ret;
 			}
 		}
-		return new Double(0);
+		return Double.valueOf(0.0);
 	}
 	public Object evaluateExpression(String key,String expression) {
 		return mvelEval(key,expression);
@@ -127,12 +128,6 @@ public class ModelMVELContext implements Map<String, Object> {
 	@Override
 	public Collection<Object> values() {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		context = null;
-		super.finalize();
 	}
 
 	// ************************ Métodos disponibles en las expresiones MVEL.

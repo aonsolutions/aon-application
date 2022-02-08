@@ -41,7 +41,7 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 
 			@Override
 			protected boolean accept(Mod303 mod303) {
-				return mod303.getYear() == 2021
+				return mod303.getYear() >= 2021
 					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())
 					;
 			}
@@ -86,7 +86,7 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod303 mod303 = MODEL303.getMod303(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod303 mod303 = MODEL303.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (mod303 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}

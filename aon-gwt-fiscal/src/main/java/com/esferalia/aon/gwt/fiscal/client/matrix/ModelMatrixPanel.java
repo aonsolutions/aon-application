@@ -132,13 +132,59 @@ public class ModelMatrixPanel extends FlowPanel {
 						cloned.setId(null);
 					}
 					cloned.setStatus( status );
-					fillModelCell( options, cloned , cell);
+					paintViewModelCell(options, cell, cloned );
 				}
 			}
 		}
 	}
+
+	private void paintNewModelCell(MatrixModuleOptions options, AonDisplayTableCell cell, IFiscalModel model) {
+		cell.clear();
+		AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
+		cell.add(addButton);
+		cell.addStyleName( AON.CSS.aonBorderBottom() );
+		cell.addStyleName( AON.CSS.aonTextCenter() );
+		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));									
+		addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
+				, new AonModuleCallback<IFiscalModel>() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onChange(IFiscalModel changed) {
+				LOGGER.info("Change " + changed.getStatus().getName());
+				refresh( changed );
+			}
+
+
+			@Override
+			public void onRemove(IFiscalModel removed) {
+				LOGGER.info("Remove " + removed.getStatus().getName());
+				refresh( removed );
+			}
+
+			@Override
+			public void onExit(IFiscalModel edited) {
+				LOGGER.info("Exit " + edited.getStatus().getName());
+				if (edited.getId() != null) {
+					refresh( edited );
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				LOGGER.info("Failure");
+				showError(caught.getMessage());
+			}
+			
+			private void refresh(IFiscalModel model) {
+				ModelMatrixPanel.this.paintViewModelCell( options, cell, model);
+			}
+			
+		})));
+	}
 	
-	private void fillModelCell(MatrixModuleOptions options, IFiscalModel model, AonDisplayTableCell cell) {
+	private void paintViewModelCell(MatrixModuleOptions options, AonDisplayTableCell cell, IFiscalModel model) {
 		FocusPanel focusPanel = new FocusPanel();
 		Label mod = new Label();
 		mod.setTitle(AON.MSG.viewDeclaration(FiscalModelUtils.getModelName( model ), model.getPeriod().getDescription()));
@@ -164,8 +210,7 @@ public class ModelMatrixPanel extends FlowPanel {
 
 			@Override
 			public void onRemove(IFiscalModel removed) {
-				LOGGER.info("Remove " + removed.getStatus().getName());
-				refresh( removed );
+				ModelMatrixPanel.this.paintNewModelCell(options,cell,cloneModel( removed ));
 			}
 
 			@Override
@@ -243,49 +288,7 @@ public class ModelMatrixPanel extends FlowPanel {
 			model.setDomain(fm.getDomain());
 			model.setPeriod(Period.values()[ ((times == 4)?12:0) + x]);
 			AonDisplayTableCell cell = row.addCell();
-			
-			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
-			cell.add(addButton);
-			cell.addStyleName( AON.CSS.aonBorderBottom() );
-			cell.addStyleName( AON.CSS.aonTextCenter() );
-			cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));									
-			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
-					, new AonModuleCallback<IFiscalModel>() {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void onChange(IFiscalModel changed) {
-					LOGGER.info("Change " + changed.getStatus().getName());
-					refresh( changed );
-				}
-
-
-				@Override
-				public void onRemove(IFiscalModel removed) {
-					LOGGER.info("Remove " + removed.getStatus().getName());
-					refresh( removed );
-				}
-
-				@Override
-				public void onExit(IFiscalModel edited) {
-					LOGGER.info("Exit " + edited.getStatus().getName());
-					if (edited.getId() != null) {
-						refresh( edited );
-					}
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					LOGGER.info("Failure");
-					showError(caught.getMessage());
-				}
-				
-				private void refresh(IFiscalModel model) {
-					ModelMatrixPanel.this.fillModelCell( options, model, cell);
-				}
-				
-			})));
+			paintNewModelCell(options,cell,model);
 		}
 		return periodTable;
 	}
@@ -379,7 +382,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		Window.alert("ERROR:" + message);
 	}
 
-	private FiscalModel cloneModel( FiscalModel fm) {
+	private FiscalModel cloneModel( IFiscalModel fm) {
 		return new FiscalModel()
 				.setYear(fm.getYear())
 				.setAdministration(fm.getAdministration())

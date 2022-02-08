@@ -86,6 +86,10 @@ public class Model190 extends MainEntryPoint {
 			showErrorMessage(msg);
 		}
 		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
+		}
+		@Override
 		public void showInfoPanel(String htmlText) {
 			showInfoPanel( new HTMLPanel(htmlText) );
 		}

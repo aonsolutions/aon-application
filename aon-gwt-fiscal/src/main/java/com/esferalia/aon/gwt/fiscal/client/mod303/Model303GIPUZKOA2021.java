@@ -48,10 +48,10 @@ class Model303GIPUZKOA2021 extends Model303Base {
 
 	}
 
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, AON.MSG.identification());
-	}
+//	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
+//		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
+//		tabPanel.add(identificationData, AON.MSG.identification());
+//	}
 
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();

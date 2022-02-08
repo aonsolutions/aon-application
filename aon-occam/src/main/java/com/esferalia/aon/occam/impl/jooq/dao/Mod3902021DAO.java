@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.Mod390toAEATIVA2021;
@@ -608,6 +609,7 @@ public class Mod3902021DAO {
 		
 		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata
 		Mod303 mod303 = new Mod303();
+		mod303.setDomain(mod390.getDomain());
 		mod303.setYear(mod390.getYear());
 		mod303.setAdministration(Administration.COMMON_TERRITORY);
 		mod303.setModel( FiscalModelType.M303 );

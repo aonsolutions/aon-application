@@ -474,7 +474,7 @@ public class Mod190DAO {
 
 	private static void validate(AONContext ctx, Mod190 mod190) {
 		if (mod190.isReplacement() || mod190.isComplementary()) {
-			// Se comprueba que exista la declaración sustituida.
+			// Se comprueba que exista la declaraciÃ³n sustituida.
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL190)
 					.where(FS_MODEL190.YEAR.equal(mod190.getYear())
@@ -488,7 +488,7 @@ public class Mod190DAO {
 				throw new AonCoreException(
 						AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage());
 		} else {
-			// Se comprueba que no exista ya una declaración.
+			// Se comprueba que no exista ya una declaraciÃ³n.
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MODEL190)
 				.where(FS_MODEL190.YEAR.equal(mod190.getYear())

@@ -26,7 +26,7 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// ---------------------------------------------------------------MODELO 303
 	@Override
 	public Mod303 getMod303(Occam occam, int id) throws AonCoreException {
-		return MODEL303.getMod303(occam, id);
+		return MODEL303.get(occam, id);
 	}
 
 	@Override
@@ -37,6 +37,11 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Mod303 calculate(Occam occam, Mod303 mod303) {
 		return MODEL303.calculate(occam, mod303);
+	}
+
+	@Override
+	public Mod303 calculateProrrate(Occam occam, Mod303 mod303) {
+		return MODEL303.calculateProrrate(occam, mod303);
 	}
 
 	@Override
@@ -66,16 +71,16 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod303 initialize(Occam occam, Mod303 mod303) {
-		return MODEL303.initializeMod303(occam, mod303);
+		return MODEL303.initialize(occam, mod303);
 	}
 
 	@Override
 	public Mod303 create(Occam occam, Mod303 mod303) {
-		return MODEL303.createMod303(occam, mod303);
+		return MODEL303.create(occam, mod303);
 	}
 	@Override
 	public Mod303 reset(Occam occam, Mod303 mod303) {
-		return MODEL303.resetMod303(occam, mod303);
+		return MODEL303.reset(occam, mod303);
 	}
 	@Override
 	public Mod303 declarationChanged(Occam occam, Mod303 mod303) throws AonCoreException {
@@ -83,11 +88,11 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	@Override
 	public void delete(Occam occam, Mod303 mod303) {
-		MODEL303.deleteMod303(occam, mod303);
+		MODEL303.delete(occam, mod303);
 	}
 	@Override
 	public String getInfo(Occam occam, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException {
-		return MODEL303.getMod303Info(occam, mod303, script, infoKey);
+		return MODEL303.getInfo(occam, mod303, script, infoKey);
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class Mod303Print extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			Mod303 mod303 = MODEL303.getMod303(occam,id);
+			Mod303 mod303 = MODEL303.get(occam,id);
 
 			Mod303ExcelAction action = new Mod303ExcelAction(mod303);
 			action.initialize(FiscalModelUtils.getModelName(mod303));

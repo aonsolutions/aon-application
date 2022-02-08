@@ -29,6 +29,9 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -55,6 +58,10 @@ public class Asserts {
 	
 	private static final double DELTA = 1e-15;
 	
+	public static void assertEqualsDouble(String msg,double expected,double actual) {
+		assertEquals(msg, expected, actual, DELTA);		
+	}
+	
 	public static void assertEqualsNulls(String msg,Object expected, Object actual) {
 		if ( expected == null) assertNull(msg,actual);
 		if ( expected != null) assertNotNull(msg,actual);
@@ -69,6 +76,14 @@ public class Asserts {
 			if ( expected != null && actual != null) {
 				assertEquals(" sizes not fit", expected.length, actual.length);	
 			}
+	}
+	
+	public static void assertNullCollection(String msg,Collection<?> actual) {
+		assertNull(msg,actual);		
+	}
+	public static void assertEmptyCollection(String msg,Collection<?> actual) {
+		assertNotNull(msg,actual);		
+		assertTrue(msg,actual.isEmpty());
 	}
 	
 	public static void assertEqualsCollection(String msg,Collection<?> expected, Collection<?> actual) {
@@ -642,26 +657,6 @@ public class Asserts {
 		assertEquals("Comments", expected.getComments(), actual.getComments());
 		assertEquals("Remarks", expected.getRemarks(), actual.getRemarks());
 		assertEqualsInvoiceFiscal(expected.getFiscal(), actual.getFiscal());
-/*
-	private Byte status;
-	private String siiStatus;
-	private LinkedList<InvoiceDetail> details;
-	private LinkedList<InvoiceBreakdown> breakdown;
-	private LinkedList<Finance> finances;
-	private String tediCategory;
-	
-	private Integer registryAddress;		//**
-	private RegistryAddress registryAddressData;
-	private StreetType addressStreetType;	//**
-	private String address;					//**
-	private String addressNumber;			//**
-	private String addressTown;
-	private String addressZIP;
-	private Integer addressGeozone;			//**
-	private String addressProvinceCode;
-	private String addressProvince;
- 		
- */
 	}
 
 	public static void assertEqualsInvoiceFiscal(InvoiceFiscal expected, InvoiceFiscal actual) {
@@ -673,6 +668,51 @@ public class Asserts {
 				assertEquals("InvoiceFiscal " + vatRegime.getName(),expected.isVatRegimeEnabled(vatRegime),actual.isVatRegimeEnabled(vatRegime));	
 			}
 		}
+	}
+	
+	public static <T extends FiscalModel> void assertFiscalModel(T expected, T actual) {
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("DomainName", expected.getDomainName(), actual.getDomainName());
+		assertEquals("Year", expected.getYear(), actual.getYear());
+		assertEquals("Finance", expected.getFinance(), actual.getFinance());
+		assertEquals("Model", expected.getModel(), actual.getModel());
+		assertEquals("Period", expected.getPeriod(), actual.getPeriod());
+		assertEquals("Administration", expected.getAdministration(), actual.getAdministration());
+		assertEquals("Status", expected.getStatus(), actual.getStatus());
+		assertEquals("Confidential", expected.isConfidential(), actual.isConfidential());
+		assertEquals("Complementary", expected.isComplementary(), actual.isComplementary());
+		assertEquals("Replacement", expected.isReplacement(), actual.isReplacement());
+		assertEquals("WithoutActivity", expected.isWithoutActivity(), actual.isWithoutActivity());
+		assertEquals("Number", expected.getNumber(), actual.getNumber());
+		assertEquals("ReplacedNumber", expected.getReplacedNumber(), actual.getReplacedNumber());
+		assertEquals("Comments", expected.getComments(), actual.getComments());
+		assertEquals("Document", expected.getDocument(), actual.getDocument());
+		assertEquals("Surname", expected.getSurname(), actual.getSurname());
+		assertEquals("Name", expected.getName(), actual.getName());
+		assertEquals("StreetInitial", expected.getStreetInitial(), actual.getStreetInitial());
+		assertEquals("StreetName", expected.getStreetName(), actual.getStreetName());
+		assertEquals("StreetNumber", expected.getStreetNumber(), actual.getStreetNumber());
+		assertEquals("StreetStair", expected.getStreetStair(), actual.getStreetStair());
+		assertEquals("StreetFloor", expected.getStreetFloor(), actual.getStreetFloor());
+		assertEquals("StreetDoor", expected.getStreetDoor(), actual.getStreetDoor());
+		assertEquals("Phone", expected.getPhone(), actual.getPhone());
+		assertEquals("Town", expected.getTown(), actual.getTown());
+		assertEquals("Province", expected.getProvince(), actual.getProvince());
+		assertEquals("Zip", expected.getZip(), actual.getZip());
+		assertEquals("AdmonAeat", expected.getAdmonAeat(), actual.getAdmonAeat());
+		assertEquals("ContactPerson", expected.getContactPerson(), actual.getContactPerson());
+		assertEquals("ContactPhone", expected.getContactPhone(), actual.getContactPhone());
+		assertEquals("ContactCellular", expected.getContactCellular(), actual.getContactCellular());
+		assertEquals("ContactEmail", expected.getContactEmail(), actual.getContactEmail());
+		assertEquals("Iban", expected.getIban(), actual.getIban());
+	}
+	
+	public static void assertMod111(Mod111 expected, Mod111 actual) {
+		assertFiscalModel(expected, actual);
+	}
+	public static void assertMod303(Mod303 expected, Mod303 actual) {
+		assertFiscalModel(expected, actual);
 	}
 		
 	

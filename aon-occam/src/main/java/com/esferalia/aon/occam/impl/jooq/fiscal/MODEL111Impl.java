@@ -8,14 +8,15 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111InfoDAO;
 
 public class MODEL111Impl implements IMODEL111 {
 
 	@Override
-	public Mod111 getMod111(AONContext ctx, int id) {
-		return Mod111DAO.getMod111(ctx, id);
+	public Mod111 get(AONContext ctx, int id) {
+		return Mod111DAO.get(ctx, id);
 	}
 	@Override
 	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain) {
@@ -26,17 +27,17 @@ public class MODEL111Impl implements IMODEL111 {
 	}
 	@Override
 	public Mod111 calculate(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.calculateMod111(ctx, mod111);
+		return Mod111DAO.calculate(mod111);
 	}
 	@Override
 	public Mod111 save(AONContext ctx, Mod111 mod111) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod111DAO.saveMod111(ctx, mod111));		
+				configuration -> Mod111DAO.save(ctx, mod111));		
 	}
 	@Override
 	public Mod111 saveComments(AONContext ctx, Mod111 mod111) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod111DAO.saveCommentsMod111(ctx, mod111));		
+				configuration -> Mod111DAO.saveComments(ctx, mod111));		
 	}
 	@Override
 	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111){
@@ -73,20 +74,20 @@ public class MODEL111Impl implements IMODEL111 {
 
 	@Override
 	public Mod111 initialize(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.initializeMod111(ctx,mod111);
+		return Mod111DAO.initialize(ctx,mod111);
 	}
 
 	@Override
 	public Mod111 create(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.createMod111(ctx,mod111);
+		return Mod111DAO.create(ctx,mod111);
 	}
 	@Override
 	public Mod111 reset(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.resetMod111(ctx,mod111);
+		return Mod111DAO.reset(ctx,mod111);
 	}
 	@Override
 	public String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
-		return Mod111DAO.getMod111Info(ctx,mod111,script,infoKey);
+		return Mod111InfoDAO.getInfo(ctx,mod111,script,infoKey);
 	}
 	@Override
 	public Mod111 aeatPresentation(AONContext ctx, Mod111 mod111, String aeatResponse) {

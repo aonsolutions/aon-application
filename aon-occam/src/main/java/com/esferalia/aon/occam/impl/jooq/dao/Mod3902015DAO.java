@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.Mod390toAEATIVA2015;

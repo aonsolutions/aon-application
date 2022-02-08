@@ -125,6 +125,10 @@ public class Model390HF extends MainEntryPoint {
 		}
 
 		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
+		}
+		@Override
 		public Model390HFModuleOptions getOptions() {
 			return Model390HF.this.getOptions();
 		}
