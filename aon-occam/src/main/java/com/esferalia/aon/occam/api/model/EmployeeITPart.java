@@ -42,7 +42,7 @@ public class EmployeeITPart implements Serializable {
 	}
 	
 	public EmployeeITPart setCias(String cias) {
-		this.cias = cias;
+		this.cias = cias!=null && cias.length()>5 ? cias : null;
 		return this;
 	}
 
@@ -74,9 +74,11 @@ public class EmployeeITPart implements Serializable {
 
 	public EmployeeITPart setCollegeNumber(String collegeNumber) {
 		
-		if(null!=collegeNumber && collegeNumber.length()>8)
+		if(collegeNumber!=null && collegeNumber.length()>8)
 			collegeNumber = collegeNumber.substring(collegeNumber.length() - 8, collegeNumber.length());
-
+		else if(collegeNumber!=null && collegeNumber.length()<=0) 
+			collegeNumber = null;
+		
 		this.collegeNumber = collegeNumber;
 
 		return this;

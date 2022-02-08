@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.Mod390toAEATIVA2021;
@@ -88,9 +89,9 @@ public class Mod3902021DAO {
 
 	public enum DetailKey implements Serializable {
 		
-		  K00_04 (Mod3902021DetailKey.C0002, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent1(vc))
-		 ,K00_10 (Mod3902021DetailKey.C0004, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent2(vc))
-		 ,K00_21 (Mod3902021DetailKey.C0006, (mod, vc) -> isCommonNationalSales(vc, mod) && !vc.isSurcharge() && hasPercent3(vc))
+		  K00_04 (Mod3902021DetailKey.C0002, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent1(vc))
+		 ,K00_10 (Mod3902021DetailKey.C0004, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent2(vc))
+		 ,K00_21 (Mod3902021DetailKey.C0006, (mod, vc) -> isCommonNationalSales(vc, mod) && hasPercent3(vc))
 		 ,K01_04 (Mod3902021DetailKey.C0501, null)
 		 ,K01_10 (Mod3902021DetailKey.C0503, null)
 		 ,K01_21 (Mod3902021DetailKey.C0505, null)
@@ -608,6 +609,7 @@ public class Mod3902021DAO {
 		
 		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata
 		Mod303 mod303 = new Mod303();
+		mod303.setDomain(mod390.getDomain());
 		mod303.setYear(mod390.getYear());
 		mod303.setAdministration(Administration.COMMON_TERRITORY);
 		mod303.setModel( FiscalModelType.M303 );
@@ -929,6 +931,12 @@ public class Mod3902021DAO {
 				if (m303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE
 				 && (period == Period.M12 || period == Period.T4)) {
 					mod390.setBox97(  AonMathUtils.round( m303.getResult() * (-1) ));
+				}
+				if (m303.isFirstPeriod()) {
+					mod390.setBox85(  m303.getAmount( Mod303Key.CT_C110) );
+				}
+				if (m303.isLastPeriod()) {
+					mod390.setBox662(  m303.getAmount( Mod303Key.CT_C87) );
 				}
 			});
 		

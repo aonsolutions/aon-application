@@ -608,8 +608,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject selfconta(AonApiData api) throws JSONException, Exception {
+		Integer year = null;
+		if(api.getData().opt("year") != null) {
+			year = api.getData().optInt("year");
+		}
 		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-		BidoqRequest.selfconta(api.getDomain(), api.getUser(), company.getDocument());
+		BidoqRequest.selfconta(api.getDomain(), api.getUser(), company.getDocument(), year);
 		return new JSONObject();
 	}
 	

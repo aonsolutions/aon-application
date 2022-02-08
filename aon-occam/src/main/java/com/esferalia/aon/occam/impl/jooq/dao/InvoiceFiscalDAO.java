@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 
 import java.util.function.BiConsumer;
@@ -20,7 +19,6 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceFiscalDAO {
 	
@@ -183,7 +181,8 @@ public class InvoiceFiscalDAO {
 				
 				@Override
 				public void visitVatImportation() {
-					if (invoice.isVatImportationAvailable() && AonMathUtils.isLessThan(invoice.getTotal(), 150.00 )) {
+//					if (invoice.isVatImportationAvailable() && AonMathUtils.isLessThan(invoice.getTotal(), 150.00 )) {
+					if (invoice.isVatImportationAvailable() && invoice.isVatImportationAmountValid() ) {
 						invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, invoice.isVatImportation());
 					} else {
 						invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, false);

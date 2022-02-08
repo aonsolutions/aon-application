@@ -137,8 +137,8 @@ public class JooqEmployee {
 				.set(REGISTRY.DOMAIN, domain)
 				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
 				.set(REGISTRY.DOCUMENT_TYPE, null == employeeData.getDocumentType() ? (byte) 0 : employeeData.getDocumentType())
-				.set(REGISTRY.DOCUMENT_COUNTRY, AonStringUtils.isBlank(employeeData.getNationality()) ? "ES" : employeeData.getNationalityCode())
-				.set(REGISTRY.NATIONALITY, AonStringUtils.isBlank(employeeData.getNationality())  ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.DOCUMENT_COUNTRY, AonStringUtils.isBlank(employeeData.getNationalityCode()) ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.NATIONALITY, AonStringUtils.isBlank(employeeData.getNationalityCode())  ? "ES" : employeeData.getNationalityCode())
 				.set(REGISTRY.NAME, employeeData.getFullName())
 				.returning(REGISTRY.ID)
 				.fetchOne();
@@ -1106,8 +1106,8 @@ public class JooqEmployee {
 		dslContext.update(REGISTRY)
 			.set(REGISTRY.DOCUMENT, employeeData.getDocument())
 			.set(REGISTRY.DOCUMENT_TYPE, employeeData.getDocumentType())
-			.set(REGISTRY.DOCUMENT_COUNTRY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
-			.set(REGISTRY.NATIONALITY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
+			.set(REGISTRY.DOCUMENT_COUNTRY,  AonStringUtils.isBlank(employeeData.getNationalityCode()) ? "ES" : employeeData.getNationalityCode())
+			.set(REGISTRY.NATIONALITY,  AonStringUtils.isBlank(employeeData.getNationalityCode()) ? "ES" : employeeData.getNationalityCode())
 			.set(REGISTRY.NAME, (null == employeeData.getSurName() ? "" :  employeeData.getSurName() + " ") + 
 					(null == employeeData.getSecondSurName() ? "" : employeeData.getSecondSurName() + ", ") + 
 					employeeData.getName())
@@ -1540,34 +1540,6 @@ public class JooqEmployee {
 					}
 				}
 				
-				if(null == contractData.getRlceId()){
-					if(AonStringUtils.isNotBlank(contractData.getRlce())){
-						ContractDataRecord rlceRecord = null;
-						
-						rlceRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(contractData.getRlceId(), domain, "RLCE", contractData.getContractId(), "\""+ contractData.getRlce()+"\"", 
-									startDate, endDate)
-							.returning(CONTRACT_DATA.ID)
-							.fetchOne();
-						
-						contractData.setRlceId(rlceRecord.getId());
-					}
-				}else{
-					if(AonStringUtils.isBlank(contractData.getRlce())){
-						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getRlceId())).execute();
-						contractData.setRlceId(null);
-						contractData.setRlce(null);
-					}else{
-						dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getRlce()+"\"")
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.where(CONTRACT_DATA.ID.eq(contractData.getRlceId()))
-						.execute();
-					}
-				}
-				
 				if(null == contractData.getPartialityCoefId()){
 					if(null != contractData.getPartialityCoef()){
 						ContractDataRecord ocupacionRecord = null;
@@ -1622,6 +1594,34 @@ public class JooqEmployee {
 						.where(CONTRACT_DATA.ID.eq(contractData.getMdctzId()))
 						.execute();
 					}
+				}
+			}
+			
+			if(null == contractData.getRlceId()){
+				if(AonStringUtils.isNotBlank(contractData.getRlce())){
+					ContractDataRecord rlceRecord = null;
+					
+					rlceRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getRlceId(), domain, "RLCE", contractData.getContractId(), "\""+ contractData.getRlce()+"\"", 
+								startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+					
+					contractData.setRlceId(rlceRecord.getId());
+				}
+			}else{
+				if(AonStringUtils.isBlank(contractData.getRlce())){
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getRlceId())).execute();
+					contractData.setRlceId(null);
+					contractData.setRlce(null);
+				}else{
+					dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getRlce()+"\"")
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.where(CONTRACT_DATA.ID.eq(contractData.getRlceId()))
+					.execute();
 				}
 			}
 			

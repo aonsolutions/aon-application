@@ -883,13 +883,9 @@ public class AgreementParser {
 		// Set agreement_data is ServiAgreement
 		
 		if(!AonStringUtils.contains(agreementCode, 'a'))
-			dslContext.insertInto(AGREEMENT_DATA)
-				.set(AGREEMENT_DATA.DOMAIN, domainId)
-				.set(AGREEMENT_DATA.NAME, "SERVIAGREEMENT")
-				.set(AGREEMENT_DATA.AGREEMENT, agreementId)
-				.set(AGREEMENT_DATA.EXPRESSION, "TRUE")
-				.set(AGREEMENT_DATA.START_DATE, parseDateToSql(startDateCal.getTime()))
-				.set(AGREEMENT_DATA.END_DATE, parseDateToSql(auxEndDate))
+			dslContext.update(AGREEMENT)
+				.set(AGREEMENT.OWNER, (byte)1) // 0 = AonSolutions, 1 = ServiConvenios
+				.where(AGREEMENT.ID.eq(agreementId))
 				.execute();
 		
 		result.setFirst(agreementId);
@@ -959,6 +955,7 @@ public class AgreementParser {
 		name = name.replaceAll("/", "_");
 		name = name.replaceAll(":", "_");
 		name = name.replaceAll("º", "");
+		name = name.replaceAll("-", "_");
 		
 		switch (type) {
 		case "A":

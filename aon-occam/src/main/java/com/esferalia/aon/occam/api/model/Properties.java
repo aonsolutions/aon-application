@@ -85,6 +85,7 @@ public interface Properties {
 	public interface AttachProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
+		Property<Integer> getContractProperty();
 		Property<String> getDescriptionProperty();
 		Property<Byte> getTypeProperty();
 		Property<Date> getAttachDateProperty();
@@ -1161,6 +1162,10 @@ public interface Properties {
 		Property<Date> getEndDateProperty();
 		Property<Byte> getDischargeCauseProperty();
 		Property<Integer> getParentProperty();
+
+				
+		Property<String> getNafProperty();
+		Property<String> getCCCProperty();
 	}
 	
 	public interface IrpfDataProperties{

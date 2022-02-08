@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -684,6 +685,7 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getSalaries(currentDomainName, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
 	}
+	
 
 	@Override
 	public void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback) {
@@ -932,6 +934,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.createContractPayment(currentDomainName, contractId, contractConceptCalc, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
+	@Override
+	public void createContractPayment(String currentDomainName, Integer contractId, List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.createContractPayment(currentDomainName, contractId, contractConceptCalcList, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
 	// ------------------------------------------------- Contract Extension
 
 	@Override
@@ -971,15 +979,27 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- ContractVariables
 
 	@Override
-	public void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback) {
+	public void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getContractVariables(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractVariable>>(callback));
 	}
 
 	@Override
-	public void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback) {
+	public void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.updateContractVariables(currentDomainName, contractVariables, new AsyncCallbackWrapper<Void>(callback));
 	}
+
+	@Override
+	public void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.createContractVariable(currentDomainName, contractId, contractVariable, new AsyncCallbackWrapper<Void>(callback));
+	}
 	
+	@Override
+	public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
+			AsyncCallback<List<Certifica2Info>> callback) {
+		AON.start();
+		employeesServiceAsync.getSalariesOccam(currentDomainName, login, itEmployee, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+	}
 }

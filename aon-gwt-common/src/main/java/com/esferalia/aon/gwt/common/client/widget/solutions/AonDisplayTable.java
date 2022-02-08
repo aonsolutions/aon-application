@@ -76,8 +76,9 @@ public class AonDisplayTable extends FlowPanel {
 	public AonDisplayTable addLabelWidgetRow(Widget label, Widget widget) {
 		AonDisplayTableRow row = new AonDisplayTableRow();
 		add(row);
-		row.addCell(label, AON.CSS.aonTableLabel());
+		row.addCell(label, AON.CSS.aonWidth200());
 		row.addCell(widget);
 		return this;
 	}
+	
 }

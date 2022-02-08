@@ -126,7 +126,7 @@ class Page09 extends PageAbs {
 		tab.addRow()
 			.addCell(new Label(AON.MSG.box523Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
 			.addCell(new AonBoxLabel(523),AON.CSS.aonWidth40())
-			.addCell(box113,AON.CSS.aonWidth120());
+			.addCell(box523,AON.CSS.aonWidth120());
 
 		
 		basePanel.add(getTitle(AON.MSG.accrualRegimeOperations()));

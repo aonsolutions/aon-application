@@ -38,8 +38,20 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="lroeaccept"	
 											value="Enviar"
-											action="#{saleInvoice.issueInvoiceLroe}"
-											styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
+											action="#{saleInvoice.lroe}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											reRender="showCertTbaiWindow">
+											<f:setPropertyActionListener target="#{saleInvoice.showCertTbaiWindow}"
+												value="#{true}" />
+										</aon:commandButton>
+										<aon:commandButton id="lroeanular"	
+											value="Anular"
+											action="#{saleInvoice.anular}"
+											styleClass="aon-finding-toolbar-item aon-icon-removed"
+											reRender="showCertTbaiWindow">
+											<f:setPropertyActionListener target="#{saleInvoice.showCertTbaiWindow}"
+												value="#{true}" />
+										</aon:commandButton>
 									</aon:div>
 									
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
@@ -84,13 +96,13 @@
 														rendered="#{ch1.response.error}" />
 
 													<aon:outputLink id="lroeDownloadRequest"
-														title="Descargar Request"
+														title="Descargar Petición"
 														target="_blank" value="#{ch1.requestUrl}" 
 														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
 												    </aon:outputLink>
 													
 													<aon:outputLink id="lroeDownloadResponse"
-														title="Descargar Response"
+														title="Descargar Respuesta"
 														target="_blank" value="#{ch1.responseUrl}" 
 														styleClass="aon-editDataTable-button aon-icon-download aon-nowrap aon-margin-left">
 												    </aon:outputLink>

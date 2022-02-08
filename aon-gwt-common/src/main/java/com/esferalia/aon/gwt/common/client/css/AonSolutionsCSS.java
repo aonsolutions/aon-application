@@ -312,6 +312,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_lock")
 	String aonIconLock();
 	
+	@ClassName("aon_icon_unlock")
+	String aonIconUnLock();
+	
 	@ClassName("aon_icon_renew")
 	String aonIconRenew();
 	
@@ -582,6 +585,12 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_width_150")
 	String aonWidth150();
+
+	@ClassName("aon_width_300")
+	String aonWidth300();
+	
+	@ClassName("aon_width_200")
+	String aonWidth200();
 
 	@ClassName("aon_width_400")
 	String aonWidth400();
@@ -1099,6 +1108,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_floating_message_content")
 	String aonFloatingMessageContent();
+	
+	@ClassName("aon_custom_scroll")
+	String aonCustomScroll();
 
 }
 

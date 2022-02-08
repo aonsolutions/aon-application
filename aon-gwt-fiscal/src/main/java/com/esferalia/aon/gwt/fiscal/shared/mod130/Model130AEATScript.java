@@ -72,7 +72,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			+ "ns\u00EDgnela con signo menos (-)"
 			,new Mod130Key[]{Mod130Key.C14},COMPUTE)
 	,C15	("Resultados negativos de trimestres anteriores"
-			,new Mod130Key[]{Mod130Key.C15},NONE)
+			,new Mod130Key[]{Mod130Key.C15},COMPUTE_KEY)
 	,C16	("El 2 por 100 del [03] (m\u00E1ximo: 660,14 euros por trimestre) o el "
 			+ "2 por 100 de [08] (m\u00E1ximo: 660,14 euros anuales)"
 			,new Mod130Key[]{Mod130Key.C16},COMPUTE)

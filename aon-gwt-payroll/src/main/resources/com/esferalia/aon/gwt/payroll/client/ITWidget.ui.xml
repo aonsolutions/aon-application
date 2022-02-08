@@ -58,21 +58,23 @@
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:VerticalPanel styleName="{style.mt-50} {style.widthAll}">
-			
-				<g:HTMLPanel ui:field="messagePanel" />
-				<g:HTMLPanel ui:field="filterITListPanel" />
-				
-				<g:DeckPanel ui:field='deckPanel' styleName="{style.deckPanel}">
-					<g:HTMLPanel ui:field='timelinePanel'/>
-					<g:HTMLPanel styleName="{style.messagePanel}">
-						<g:Label styleName="{style.message}">No existen partes IT para para este periodo</g:Label>
-					</g:HTMLPanel>
-				</g:DeckPanel>
-			
-			</g:VerticalPanel>
+			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+				<g:center>
+					<g:VerticalPanel styleName="{style.mt-50} {style.widthAll}">
+					
+						<g:HTMLPanel ui:field="messagePanel" />
+						<g:HTMLPanel ui:field="filterITListPanel" />
+						
+						<g:DeckPanel ui:field='deckPanel' styleName="{style.deckPanel}">
+							<g:HTMLPanel ui:field='timelinePanel'/>
+							<g:HTMLPanel styleName="{style.messagePanel}">
+								<g:Label styleName="{style.message}">No existen partes IT para para este periodo</g:Label>
+							</g:HTMLPanel>
+						</g:DeckPanel>
+					</g:VerticalPanel>
+				</g:center>
+			</g:SplitLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 			
 </ui:UiBinder> 
-

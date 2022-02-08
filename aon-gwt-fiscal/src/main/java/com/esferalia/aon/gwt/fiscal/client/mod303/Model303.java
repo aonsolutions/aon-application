@@ -67,7 +67,7 @@ public class Model303 extends MainEntryPoint {
 		@Override
 		public void onRemove(Mod303 mod303) {
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(mod303);
+				getOptions().getExternalCallback().onRemove(mod303);
 			} else {
 				onCancel(mod303);
 			}
@@ -75,11 +75,15 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod303 mod303) {
-			cleanInfoPanel();
-			declarationContainer.setWidget(model303Table);
-			model303Table.refresh( new Model303Callback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(mod303);
+			} else {
+				cleanInfoPanel();
+				declarationContainer.setWidget(model303Table);
+				model303Table.refresh( new Model303Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 		
 		@Override
@@ -89,10 +93,9 @@ public class Model303 extends MainEntryPoint {
 					new AsyncCallback<Mod303>() {
 						@Override
 						public void onSuccess(Mod303 m303) {
-							cleanInfoPanel();
 							tabLayout.selectTab(INFORMATION_TAB);
 							closeFootPanel();
-							showNewDeclarationPopup(m303);
+							showNewDeclarationPanel(m303);
 						}
 
 						@Override
@@ -113,15 +116,17 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void cleanInfoPanel() {
-			Widget w = breakdownPanel.getWidget();
-			if (w != null) {
-				breakdownPanel.remove( breakdownPanel.getWidget() ); 
-			}
+			Model303.this.cleanInfoPanel(); 
 		}
 		
 		@Override
 		public void showError(String msg) {
 			aonLayout.showErrorPanel(msg);
+		}
+
+		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
 		}
 
 		@Override
@@ -195,7 +200,7 @@ public class Model303 extends MainEntryPoint {
 					public void onSuccess(Mod303 m303) {
 						tabLayout.selectTab(INFORMATION_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup( m303 );
+						showNewDeclarationPanel( m303 );
 					}
 
 
@@ -247,8 +252,15 @@ public class Model303 extends MainEntryPoint {
 				});
 	}
 
-	private void showNewDeclarationPopup(Mod303 m303) {
-		Model303NewDeclarationPopup newDialog = new Model303NewDeclarationPopup( m303,
+	private void cleanInfoPanel() {
+		Widget w = breakdownPanel.getWidget();
+		if (w != null) {
+			breakdownPanel.remove( breakdownPanel.getWidget() ); 
+		}
+	}
+
+	private void showNewDeclarationPanel(Mod303 m303) {
+		Model303NewDeclarationPanel newDeclarationPanel = new Model303NewDeclarationPanel( m303,
 			new Model303Callback() {
 
 					@Override
@@ -276,18 +288,13 @@ public class Model303 extends MainEntryPoint {
 								});
 
 					}
-					@Override
-					public void onCancel(Mod303 model) {
-						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-							getOptions().getExternalCallback().onExit(model);
-						}						
-					}
 				}
 			); 
-			newDialog.center();
-			newDialog.show();
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
-	
+
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);

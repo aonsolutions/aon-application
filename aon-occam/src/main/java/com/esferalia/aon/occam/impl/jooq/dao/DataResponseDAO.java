@@ -80,12 +80,14 @@ public class DataResponseDAO {
 					.selectDistinct(DATA_RESPONSE.fields()).from(DATA_RESPONSE)
 					.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(DATA_RESPONSE.SOURCE_ID))
 					.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE)), filter)
-				.fetchInto(DATA_RESPONSE).stream().map(new DataResponseFiller());
+				.fetchInto(DATA_RESPONSE).stream().map(new DataResponseFiller())
+				.sorted((a1, a2) -> a2.getId().compareTo(a1.getId()));
 		}
 		return DATA_RESPONSE_PROPERTIES.build( ctx.getDslContext()
 				.selectDistinct(DATA_RESPONSE.fields()).from(DATA_RESPONSE)
 				.leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE)), filter)
-			.fetchInto(DATA_RESPONSE).stream().map(new DataResponseFiller());		
+			.fetchInto(DATA_RESPONSE).stream().map(new DataResponseFiller())
+			.sorted((a1, a2) -> a2.getId().compareTo(a1.getId()));		
 	}
 	
 	public static DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse){	

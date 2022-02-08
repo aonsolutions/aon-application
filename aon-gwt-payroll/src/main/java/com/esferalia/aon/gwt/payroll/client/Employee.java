@@ -1161,7 +1161,7 @@ public abstract class Employee extends ResizeComposite {
 	private String getBankSwift(String account) {
 		if(AonStringUtils.isNotBlank(account)) {
 			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
-			return bankSwiftEntry.getSwift();
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getSwift();
 		}
 		return null;
 	}
@@ -1169,7 +1169,7 @@ public abstract class Employee extends ResizeComposite {
 	private String getBankAlias(String account) {
 		if(AonStringUtils.isNotBlank(account)) {
 			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
-			return bankSwiftEntry.getBankName();
+			return null == bankSwiftEntry ? null : bankSwiftEntry.getBankName();
 		}
 		return null;
 	}
@@ -1309,10 +1309,10 @@ public abstract class Employee extends ResizeComposite {
 			this.modality.addItem(model.getModelDescription(), model.getEnumeration().toString());
 	}
 	
-	private String getIso2(String country) {
-		for (int i = 0; i < Country.values().length; i++)
-			if (Country.values()[i].getName().equals(country))
-				return Country.values()[i].getIso2();
+	private String getIso2(String countryName) {
+		for(Country country : Country.values())
+			if (AonStringUtils.equalsIgnoreCase(country.getName(), countryName))
+				return country.getIso2();
 		
 		return null;
 	}

@@ -73,6 +73,7 @@ public class CertificateDAO {
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.SECURITY_LEVEL);}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
+		@Override public Property<Integer> getContractProperty() {return null;}
 		
 	}
 
@@ -445,7 +446,11 @@ public class CertificateDAO {
 	}
 	
 	private static void getCertificateInfo(AONContext ctx, Certificate certificate) {
-		certificate.setCertificateInfo(getInfo(ctx, f -> f.getIdProperty().eq(certificate.getId())));
+		try {
+			certificate.setCertificateInfo(getInfo(ctx, f -> f.getIdProperty().eq(certificate.getId())));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static Integer createRegistryForUser(AONContext ctx, Record userRecord, Integer domainId) {

@@ -6,12 +6,27 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 
 public class Payroll extends Methods{
 
 	final IApiAsync impl = GWT.create(IApi.class);
+	
+	public interface UnsexedCallback {
+		
+		public void writeOnFootPanel(String nss, String name);
+		
+	}
 
 	public Payroll(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
@@ -79,7 +94,6 @@ public class Payroll extends Methods{
 	public void printContractMedia(Integer year, Boolean resume, Boolean detail){
 		String str = "domain="+ getDomainName() + "&login="+getUserName() + "&year="+year + "&resume=" + resume + "&detail=" + detail;
 		impl.base(str, new AsyncCallback<String>() {
-			
 			@Override
 			public void onSuccess(String result) {
 				Window.open(getUrl() + "print_contract_media/" + result, "_blank", null);
@@ -87,6 +101,62 @@ public class Payroll extends Methods{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
+	}
+	
+//	public void printRemunerationRecord(Integer year){
+//		String parameters = "domain="+ getDomainName() + "&login="+getUserName() + "&year="+year;
+//		Window.open(getUrl() + "remuneration_record/registro_retributivo_" + year + "?" + parameters, "_blank", null);
+//	}
+	
+	public void printRemunerationRecord(Integer year, FlowPanel formContainer, UnsexedCallback unsexedCallback){
+		String printURL = URL.encode(getUrl() + "remuneration_record/Registro_Retributivo_" + year);
+		
+		FormPanel formPanel = new FormPanel(/*"_blank"*/);
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanel.addSubmitCompleteHandler(event -> {
+			
+			JSONObject json = new JSONObject(JsonUtils.safeEval(event.getResults()));
+			
+			JSONValue noSex = json.get("noSex");
+			JSONArray noSexArr = new JSONArray(JsonUtils.safeEval(noSex.toString()));
+			
+			
+			for (int i=0; i<noSexArr.size(); i++) {
+				
+				JSONObject unsexed = new JSONObject(JsonUtils.safeEval(noSexArr.get(i).toString()));
+				
+				String name = unsexed.get("name").isString().stringValue();
+				String nss = unsexed.get("nss").isString().stringValue();
+				
+				unsexedCallback.writeOnFootPanel(nss, name);
+				
+			}
+			
+			String base64Excel = json.get("excel").isString().stringValue();
+			
+			String url = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," + base64Excel;
+			
+			Window.open(url, "Registro Retributivo", "");
+			formContainer.getElement().getStyle().setDisplay(Display.NONE);
+		});
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("year", String.valueOf(year)));
+		flowPanel.add(new Hidden("domain", getDomainName()));
+		flowPanel.add(new Hidden("user", getUserName()));
+		
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			formContainer.remove(formPanel);
+		});
+		
+		formContainer.add(formPanel);
+		
+		formPanel.submit();
+		formContainer.getElement().getStyle().setDisplay(Display.BLOCK);
 	}
 
 }

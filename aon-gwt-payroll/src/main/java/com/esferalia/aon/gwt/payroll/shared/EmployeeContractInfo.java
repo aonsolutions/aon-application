@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class EmployeeContractInfo implements Serializable{
@@ -18,7 +19,7 @@ public class EmployeeContractInfo implements Serializable{
 	private ContractSpecificData contractSpecificData;
 	private Map<String, String> contractOtherData;
 	private List<ContractClause> contractClauses;
-	private List<ContractAttach> contractAttachments;
+	private List<Attach> contractAttachments;
 	private List<SSBonusData> contractBonus;
 	private Map<String, String> scopeMap;
 	
@@ -28,13 +29,6 @@ public class EmployeeContractInfo implements Serializable{
 	private Map<String, String> payMethods;
 	
 	public static final ProvidesKey<EmployeeContractInfo> KEY_PROVIDER = item -> item == null ? null : item.getContractInfo().getContractId();
-	
-//	public static final ProvidesKey<EmployeeContractInfo> KEY_PROVIDER = new ProvidesKey<EmployeeContractInfo>() {
-//      @Override
-//      public Object getKey(EmployeeContractInfo item) {
-//        return item == null ? null : item.getContractInfo().getContractId();
-//      }
-//    };
 	
 	public EmployeeContractInfo(){
 		super();
@@ -88,15 +82,15 @@ public class EmployeeContractInfo implements Serializable{
 		this.contractClauses.add(contractClause);
 	}
 
-	public List<ContractAttach> getContractAttachments() {
+	public List<Attach> getContractAttachments() {
 		return contractAttachments;
 	}
 
-	public void setContractAttachments(List<ContractAttach> contractAttachments) {
+	public void setContractAttachments(List<Attach> contractAttachments) {
 		this.contractAttachments = contractAttachments;
 	}
 	
-	public void addContractAttach(ContractAttach contractAttach) {
+	public void addContractAttach(Attach contractAttach) {
 		this.contractAttachments.add(contractAttach);
 	}
 

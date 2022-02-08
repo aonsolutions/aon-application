@@ -69,6 +69,7 @@ public class Mod111 extends FiscalModel implements Serializable {
 	}
 	
 	@Override
+	@Deprecated
 	public boolean isDiffCalculationAvailable() {
 		// Disponible poder elegir si se cálcula por diferencia
 		return true;

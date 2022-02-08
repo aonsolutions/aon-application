@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
@@ -13,16 +14,21 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLoadingPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -42,9 +48,11 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -61,7 +69,10 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class ITDialog extends AonCustomDialog {
+	
+	private static final Logger LOGGER = Logger.getLogger(ITDialog.class.getName());
 
+	
 	// --------------------------------------------------- UiBinder
 	
 	interface ITDialogUiBinder extends UiBinder<Widget, ITDialog> {}
@@ -76,6 +87,14 @@ public abstract class ITDialog extends AonCustomDialog {
 	interface MyStyle extends CssResource {
 		String headerStyle();
 		String columnWidth();
+		String paddingContainer();
+		String flexCustom();
+		String flexColumn();
+		String flex();
+		String subTitle();
+		String styleBorder();
+		String tittle();
+		String buttonsPanel();
 	}
 	
 	@UiField
@@ -87,6 +106,13 @@ public abstract class ITDialog extends AonCustomDialog {
 	@UiField
 	HTMLPanel employeePanel;
 	
+	@UiField
+	HTMLPanel employeePanelDoc;
+	
+	@UiField
+	HTMLPanel employeePanelNaf;
+
+
 	@UiField
 	VerticalPanel itDataTable;
 	
@@ -148,6 +174,9 @@ public abstract class ITDialog extends AonCustomDialog {
 	HTMLPanel mainTablePanel;
 	
 	@UiField
+	VerticalPanel mainCommunicate;
+	
+	@UiField
 	VerticalPanel maternityDataTable;
 	
 	@UiField
@@ -168,6 +197,16 @@ public abstract class ITDialog extends AonCustomDialog {
 	@UiField
 	HTMLPanel buttonsPanel;
 	
+	//-------------COMMUNICATE
+	@UiField
+	HTMLPanel itBaja;
+	
+	@UiField
+	HTMLPanel itAlta;
+	
+	private HTMLPanel tramos;
+	//-------------END COMMUNICATE
+	
 	// --------------------------------------------------- Variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -180,27 +219,24 @@ public abstract class ITDialog extends AonCustomDialog {
 	private IT it;
 	private ITEmployee itEmployee;
 	
-	private boolean userComunica = false;
-	
 	private List<ITEmployee> itEmployeeList = Collections.emptyList();
 	
-	private SuggestBox employeeSB;
 	private MultiWordSuggestOracle names = new MultiWordSuggestOracle();
 	
 	// --------------------------------------------------- Variables.Toolbar
-	
-	private AonToolbar toolbar;
 	private AonToolbarButton deleteIT;
 	private AonToolbarButton listIT;
 	private AonToolbarButton backListIT;
 	private AonToolbarButton newIT;
-	private AonToolbarButton comunicateIT;
 	private AonToolbarButton showCertificate;
 	
 	// --------------------------------------------------- Variables.Footer
-	
-	private Button closeBtnDialog;
-	private Button acceptBtnDialog;
+
+	private DoubleBox baseCC;
+	private DoubleBox quoteDayInput;
+
+	private ITPart itPartTmp = null;
+	AonLoadingPanel loading = new AonLoadingPanel("Espere...");
 	
 	// --------------------------------------------------- ProvideITDataGrid
 	
@@ -327,13 +363,21 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		createITToolbar();
 		createFooterButtons();
+		
 	}
 	
-	private void createEmployeePanel(String name) {
+	private void createEmployeePanel(EmployeeInfo employeeInfo) {
 		employeePanel.clear();
-		Label nameLB = new Label(name);
-		employeePanel.add(nameLB);
+		employeePanel.add(new Label(employeeInfo.getFullName()));
+		updateEmployeePanel(employeeInfo);
 		showListOption();
+	}
+	
+	private void updateEmployeePanel(EmployeeInfo employeeInfo) {
+		employeePanelDoc.clear();
+		employeePanelNaf.clear();
+		employeePanelDoc.add(new Label(employeeInfo.getDocument()));
+		employeePanelNaf.add(new Label(employeeInfo.getSsNumber()));
 	}
 	
 	// --------------------------------------------------- onModuleLoad
@@ -353,6 +397,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationsDataTable.getElement().getStyle().setDisplay(Display.NONE);
 		maternityDataTable.getElement().getStyle().setDisplay(Display.NONE);
 		showBaseCGC();
+		
 	}
 	
 	// --------------------------------------------------- onModuleLoad.Methods
@@ -411,6 +456,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		// Check type of part
 		showAdvancedOpts(this.itDialogObject.getEmployeeStatus());
+		
+		showDialog();
 	}
 	
 	public void setITDialogObject(ITDialogObject itDialogObject, IT it, boolean showAll) {
@@ -421,23 +468,23 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		// Check if exist IT
 		this.it = it;
-		
 		checkAndPaintIT();
 		
 		// Check type of part
 		showAdvancedOpts(!showAll);
+		createEmployeePanel(itDialogObject.getEmployeeinfo());
 		
-		createEmployeePanel(itDialogObject.getEmployeeName());
-		
-		// Check Comunicate
-		checkComunicateIT();
+		showDialog();
 	}
 	
-	private void checkComunicateIT() {
-		if(userComunica && (null == this.it.isComunicate() || !this.it.isComunicate()))
-			comunicateIT.setVisible(true);
+	private void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
-
+	
 	// --------------------------------------------------- setITDialogObject.Methods
 	
 	private void initRaggedListBox(){
@@ -543,7 +590,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		itEmployeeList = Collections.emptyList();
 		itEmployeeList = itEmployeeListIn;
 		
-		employeeSB = new SuggestBox(names);
+		SuggestBox employeeSB = new SuggestBox(names);
 		employeeSB.setStyleName("aon-inputText");
 		employeeSB.getElement().getStyle().setWidth(99, Unit.PCT);
 		employeeSB.setAutoSelectEnabled(true);
@@ -559,8 +606,8 @@ public abstract class ITDialog extends AonCustomDialog {
 			String employeeName = employeeSB.getValue();
 			if(itDialogObject == null) {
 				itEmployee = getITEmployee(employeeName);
-				ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
-				setITDialogObject(itDialogObject);
+				setITDialogObject(new ITDialogObject(itEmployee));
+				updateEmployeePanel(itEmployee.getEmployeeInfo());
 				showListOption();
 			}
 		});
@@ -573,7 +620,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		this.itEmployee = itEmployee;
 		ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
 		setITDialogObject(itDialogObject);
-		createEmployeePanel(itEmployee.getEmployeeInfo().getFullName());
+		createEmployeePanel(itEmployee.getEmployeeInfo());
 	}
 	
 	private ITEmployee getITEmployee(String employeeName) {
@@ -887,9 +934,9 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<ITPart>();
 			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setDate(date);
+			ITPart itPart = new ITPart()
+			.setType((byte) 0) // BAJA
+			.setDate(date);
 			
 			itParts.add(itPart);
 			
@@ -918,13 +965,13 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void setDateHighPart(Date date) {
 		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
+			List<ITPart> itParts = new ArrayList<>();
 			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			itPart.setDate(date);
-			itPart.setCollegeNumber(collegiateNumberITPart.getValue());
-			itPart.setCias(ciasITPart.getValue());
+			ITPart itPart = new ITPart()
+			.setType((byte) 2) // ALTA
+			.setDate(date)
+			.setCollegeNumber(collegiateNumberITPart.getValue())
+			.setCias(ciasITPart.getValue());
 			
 			itParts.add(itPart);
 			
@@ -936,16 +983,15 @@ public abstract class ITDialog extends AonCustomDialog {
 					itPart.setDate(date);
 					itPart.setCollegeNumber(collegiateNumberITPart.getValue());
 					itPart.setCias(ciasITPart.getValue());
-					
 					added = true;
 				}
 			}
 			if(!added) {
-				ITPart itPart = new ITPart();
-				itPart.setType((byte) 2); // ALTA
-				itPart.setDate(date);
-				itPart.setCollegeNumber(collegiateNumberITPart.getValue());
-				itPart.setCias(ciasITPart.getValue());
+				ITPart itPart = new ITPart()
+				.setType((byte) 2) // ALTA
+				.setDate(date)
+				.setCollegeNumber(collegiateNumberITPart.getValue())
+				.setCias(ciasITPart.getValue());
 				
 				this.it.addITPart(itPart);
 			}
@@ -954,29 +1000,26 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void setCauseHighPart() {
 		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			itPart.setCollegeNumber(collegiateNumberITPart.getValue());
-			itPart.setCias(ciasITPart.getValue());
-			
-			itParts.add(itPart);
-			
+			List<ITPart> itParts = new ArrayList<>();
+			itParts.add( 
+					new ITPart()
+					.setType((byte) 2) // ALTA
+					.setCollegeNumber(collegiateNumberITPart.getValue())
+					.setCias(ciasITPart.getValue())
+			);
 			this.it.setITParts(itParts);
 		} else {
 			boolean added = false;
 			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 2) {
+				if(itPart.getType() == (byte) 2) 
 					added = true;
-				}
 			}
 			if(!added) {
 				ITPart itPart = new ITPart();
 				itPart.setType((byte) 2); // ALTA
 				itPart.setCollegeNumber(collegiateNumberITPart.getValue());
 				itPart.setCias(ciasITPart.getValue());
-				
+
 				this.it.addITPart(itPart);
 			}
 		}
@@ -984,42 +1027,38 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void setCollegiateNumberITPart(String collegiateNumberLowPart) {
 		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setCollegeNumber(collegiateNumberLowPart);
-			itPart.setDate(itStartDate.getValue());
-			
-			itParts.add(itPart);
-			
+			List<ITPart> itParts = new ArrayList<>();
+			itParts.add(
+					new ITPart()
+					.setType((byte) 0) // BAJA
+					.setCollegeNumber(collegiateNumberLowPart)
+					.setDate(itStartDate.getValue())
+			);
 			this.it.setITParts(itParts);
 		} else {
 			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) {
+				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) 
 					itPart.setCollegeNumber(collegiateNumberLowPart);
-				}
 			}
 		}
 	}
 	
 	private void setCiasITPart(String ciasLowPart) {
 		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
+			List<ITPart> itParts = new ArrayList<>();
 			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setCias(ciasLowPart);
-			itPart.setDate(itStartDate.getValue());
+			ITPart itPart = new ITPart()
+			.setType((byte) 0) // BAJA
+			.setCias(ciasLowPart)
+			.setDate(itStartDate.getValue());
 			
 			itParts.add(itPart);
 			
 			this.it.setITParts(itParts);
 		} else {
 			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) {
+				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) 
 					itPart.setCias(ciasLowPart);
-				}
 			}
 		}
 	}
@@ -1048,7 +1087,6 @@ public abstract class ITDialog extends AonCustomDialog {
 					realStartDate.setText(formatFullDate.format(date));
 				} else
 					realStartDate.setText(formatFullDate.format(date));
-				
 			}
 		}
 	}
@@ -1058,16 +1096,17 @@ public abstract class ITDialog extends AonCustomDialog {
 	public void initConfirmationsTable() {
 		confirmationPartDataTableHeader.clear();
 		confirmationPartDataTableHeader.resize(0, 0);
-		confirmationPartDataTableHeader.resizeColumns(5);
+		confirmationPartDataTableHeader.resizeColumns(6);
 		confirmationPartDataTable.clear();
 		confirmationPartDataTable.resize(0, 0);
-		confirmationPartDataTable.resizeColumns(5);
+		confirmationPartDataTable.resizeColumns(6);
 		paintHeader();
 		initFooterConfirmationParts();
 		calculateScrollPanelHeight();
 		setColumnWidth();
 		center();
 	}
+	
 	
 	private void paintHeader() {
 		int row = confirmationPartDataTableHeader.insertRow(confirmationPartDataTableHeader.getRowCount());
@@ -1088,6 +1127,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTableHeader.setWidget(row, 2, collegeNumber);
 		confirmationPartDataTableHeader.setWidget(row, 3, cias);
 		confirmationPartDataTableHeader.setWidget(row, 4, blank);
+		confirmationPartDataTableHeader.setWidget(row, 5, blank);
 	}
 	
 	private void initFooterConfirmationParts() {
@@ -1142,6 +1182,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- ITDIalog.Methods
 	
 	private void addConfirmationITPart(ITPart itPart) {
+
 		int row = confirmationPartDataTable.insertRow(confirmationPartDataTable.getRowCount());
 		
 		TextBox orderNumberTB = new TextBox();
@@ -1188,7 +1229,6 @@ public abstract class ITDialog extends AonCustomDialog {
 		ciasTB.setText(itPart.getCias());
 		
 		ciasTB.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				itPart.setCias(event.getValue());
@@ -1196,11 +1236,10 @@ public abstract class ITDialog extends AonCustomDialog {
 		});
 		
 		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
-		deleteBTN.getElement().getStyle().setMarginTop(5, Unit.PX);
 		deleteBTN.addClickHandler((e) -> {
-			if(itPart.getIt() != null && null != dateBox.getValue()) {
+			if(itPart.getIt() != null) {
 				itDialogObject.deleteConfirmationPart(itPart.getIt(), itPart);
-				redrawConfirmationPartTable(itPart.getIt());
+				confirmationPartDataTable.getRowFormatter().setVisible(row, false);
 			}
 		});
 		
@@ -1209,15 +1248,6 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 2, collegeNumberTB);
 		confirmationPartDataTable.setWidget(row, 3, ciasTB);
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
-	}
-	
-	private void redrawConfirmationPartTable(Integer itId) {
-		IT it = this.itDialogObject.getIT(itId);
-		confirmationPartDataTable.clear();
-		confirmationPartDataTable.resize(0, 0);
-		confirmationPartDataTable.resizeColumns(5);
-		paintSelectedIT(it, false);
-		calculateScrollPanelHeight();
 	}
 	
 	// --------------------------------------------------- ITDIalog.ShowHide_Elements
@@ -1254,9 +1284,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- ITDIalog.Auxiliar_Methods
 	
-	public void setIsUserComunica(boolean userComunica) {
-		this.userComunica = userComunica;
-	}
+	public void setIsUserComunica(boolean userComunica) {}
 	
 	private boolean notSelectedId(Integer itId) {
 		return (null == this.it || null == this.it.getId()) ? true : (this.it.getId() == itId || this.it.getId().equals(itId));
@@ -1357,8 +1385,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- Toolbar
 	
 	private void createITToolbar() {
-		toolbar = getToolbarPanel();
-		north.add(toolbar);
+		north.add(getToolbarPanel());
 		north.setHeight(AonToolbar.HEIGTH + "px");
 	}
 	
@@ -1415,17 +1442,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		});
 		toolbar.add(showCertificate);
 		showCertificate.setVisible(false);
-		
-		comunicateIT = new AonToolbarButton( "Comunicar IT", AON.CSS.aonIconSend());
-		comunicateIT.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onComunicateIT(event);
-			}
-		});
-		toolbar.add(comunicateIT);
-		comunicateIT.setVisible(false);
-		
+
 		backListIT.setVisible(false);
 		newIT.setVisible(false);
 		deleteIT.setVisible(false);
@@ -1470,14 +1487,6 @@ public abstract class ITDialog extends AonCustomDialog {
 		hide();
 	}
 	
-	private void onComunicateIT(ClickEvent event) {
-		if( null != this.it.getId() && 
-			(null == this.it.isComunicate() || !this.it.isComunicate()))
-			onComunicateIT(it);
-		
-		hide();
-	}
-	
 	private void onListIT(ClickEvent event) {
 		// Check type of part
 		if(this.itDialogObject.getEmployeeStatus()) {
@@ -1509,6 +1518,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		newIT.setVisible(false);
 		deleteIT.setVisible(false);
 		listIT.setVisible(true);
+		createFooterButtons();
 	}
 	
 	private void onNewIT(ClickEvent event) {
@@ -1581,7 +1591,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- NormalizeIT.Methods
 	
-	private void normalizeITToSave() {
+	protected void normalizeITToSave() {
 		if((byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue())) {
 			Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
 			
@@ -1609,10 +1619,51 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- Footer
 	
+	private void createFooterButtonsCommunicate() {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.setStyleName(style.buttonsPanel());
+		mainCommunicate.add(panel);
+		
+		Button closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		panel.add(closeBtnDialog);
+		
+		Button communicateDialog = new Button();
+		communicateDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		communicateDialog.setText("Comunicar");
+		communicateDialog.setAccessKey('A');
+		communicateDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+                sendItPart();
+			}
+		});
+		
+		panel.add(communicateDialog);
+	}
+	
+	protected void startLoading(boolean load) {
+		if(load) 
+			loading.show();
+		else 
+			loading.hide();
+	}
+	
 	private void createFooterButtons() {
 		buttonsPanel.clear();
 		
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
 		closeBtnDialog.setAccessKey('C');
@@ -1627,7 +1678,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		acceptBtnDialog = new Button();
+		Button acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText( AON.MSG.accept());
 		acceptBtnDialog.setAccessKey('A');
@@ -1665,10 +1716,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- Footer.Methods
 	
 	private boolean checkIfSaveIsPossible() {
-		if(causeLowPart.getSelectedIndex() != 0 && null != itStartDate.getValue())
-			return true;
-		
-		return false;
+		return causeLowPart.getSelectedIndex() != 0 && null != itStartDate.getValue();
 	}
 	
 	public static boolean isPartenityPart(IT it) {
@@ -1682,11 +1730,278 @@ public abstract class ITDialog extends AonCustomDialog {
 	public ITEmployee getITEmployee() {
 		return itEmployee;
 	}
+
+	public void setViewPartComunica(ITPart itPart) {
+
+		listIT.setVisible(false);
+		deleteIT.setVisible(false);
+		backListIT.setVisible(true);
+		deckPanel.showWidget(2);
+		deckPanel.setWidth("620px");
+
+		mainCommunicate.clear();
+		
+		mainCommunicate.add(loading);
+		
+		itPartTmp = itPart;
+
+		paintPanel(itPartTmp);
+
+		createFooterButtonsCommunicate();
+
+	}
+
+	private void paintPanel(ITPart itPart){
+		
+		String cause = null;
+		switch(itPart.getType()){
+			case (byte)0:
+				cause = parseLowCauseByte(it.getTypeLowPart());
+			break;
+			case (byte)1:
+				cause = "Confirmaci\u00F3n";
+			break;
+			case (byte)2:
+				cause = parseHighCauseByte(it.getTypeHighPart());
+			break;
+			default:
+				cause = "";
+			break;
+		}
+
+		HTMLPanel panel = new HTMLPanel("");
+		panel.setStyleName(style.styleBorder());
+		mainCommunicate.add(panel);
+
+		Label labelM = new Label("Parte IT");
+		labelM.addStyleName("aon-group-title "+style.tittle());
+		labelM.setWidth("105px");
+		panel.add(labelM);
+
+		HTMLPanel flexColumn  = new HTMLPanel("");
+		flexColumn.setStyleName(style.flexColumn());
+		panel.add(flexColumn);
+
+		//-----EMPLOYEE DATA
+		HTMLPanel employeeData = new HTMLPanel("");
+		employeeData.setStyleName(style.flex());
+		flexColumn.add(employeeData);
+		
+		Label name = new Label("Trabajador:");
+		name.setStyleName(style.subTitle());
+		employeeData.add(name);
+		employeeData.add(new Label(itDialogObject.getEmployeeName()));
+
+		Label doc = new Label("Documento:");
+		doc.setStyleName(style.subTitle());
+		employeeData.add(doc);
+		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getDocument()));
+		
+		Label naf = new Label("NAF:");
+		naf.setStyleName(style.subTitle());
+		employeeData.add(naf);
+		employeeData.add(new Label(itDialogObject.getEmployeeinfo().getSsNumber()));
+
+		HTMLPanel itInfoEl = new HTMLPanel("");
+		itInfoEl.setStyleName(style.flex());
+		flexColumn.add(itInfoEl);
+		
+		Label dateEl = new Label("Fecha:");
+		dateEl.setStyleName(style.subTitle());
+		itInfoEl.add(dateEl);
+		itInfoEl.add(new Label( formatFullDate.format(itPart.getDate()) ));
+
+		Label causeEl = new Label("Causa:");
+		causeEl.setStyleName(style.subTitle());
+		itInfoEl.add(causeEl);
+		itInfoEl.add(new Label(cause));
+
+		//TRAMOS
+		tramos = new HTMLPanel("");
+		tramos.setStyleName(style.styleBorder());
+		mainCommunicate.add(tramos);
+		
+		if(itPart.getType() == (byte)0)
+			addInfoAditionalBaja(flexColumn);
+		else if(itPart.getType() == (byte)1)
+			addInfoAditionalConfirmation(itInfoEl, itPart);
+
+	}
+	
+	private void addInfoAditionalBaja(HTMLPanel flexColumn) {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.setStyleName(style.flex());
+		flexColumn.add(panel);
+
+		Label baseEl = new Label("Base cotizaci\u00F3n");
+		baseEl.setStyleName(style.subTitle());
+		panel.add(baseEl);
+
+		baseCC = new DoubleBox();
+		baseCC.setStyleName("aon-inputText");
+		panel.add(baseCC);
+		baseCC.addChangeHandler(event->{
+			it.setRegulationBase(baseCC.getValue());
+		});
+		
+		Label quoteDayEl = new Label("D\u00EDas cotizados");
+		quoteDayEl.setStyleName(style.subTitle());
+		panel.add(quoteDayEl);
+		
+		quoteDayInput = new DoubleBox();
+		quoteDayInput.setStyleName("aon-inputText");
+		panel.add(quoteDayInput);
+		quoteDayInput.addChangeHandler(event->{
+			it.setQuoteDays(quoteDayInput.getValue().intValue());
+		});
+
+		getTramos();
+	}
+	
+	private void addInfoAditionalConfirmation(HTMLPanel panel, ITPart itPart) {
+		Label name = new Label("N" + String.valueOf("\u00B0") + " de orden:");
+		name.addStyleName(style.subTitle());
+		panel.add(name);
+		panel.add(new Label(itPart.getConfirmOrderNumber().toString()));
+	}
+	
+	protected void changeStatusProcessed() {
+		for (ITPart itPart: this.it.getITParts()) {
+			if(itPart.getId().equals(itPartTmp.getId())) {
+				itPart.setStatus( (byte)3);
+				break;
+			}
+		}
+	}
+	
+	private void getTramos() {
+		tramos.clear();
+		
+		LOGGER.info("CONTRACT_INFO: "+ this.itDialogObject.getContractInfo().toString());
+	
+		Date startDate = DateUtils.getFirstDayOfMonth( DateUtils.addMonths2Date(it.getStartDate(), -4) );
+		Date endDate = DateUtils.getLastDayOfMonth(  DateUtils.addMonths2Date(it.getStartDate(), -1)  );
+		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+		employeesService.getSalariesOccam(this.itDialogObject.getITEmployee(), startDate, endDate, new AsyncCallback<List<Certifica2Info>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
+				dialog.warning();
+			}
+
+			@Override
+			public void onSuccess(List<Certifica2Info> result) {
+				fillQuoteDataListPanel(result);
+			}
+		});		
+	}
+
+	private void fillQuoteDataListPanel(List<Certifica2Info> datas) {
+		if(!datas.isEmpty()){
+			Label lbl = new Label("Tramos");
+			lbl.setWidth("105px");
+			lbl.setStyleName("aon-group-title "+ style.tittle());
+			tramos.add(lbl);
+
+			boolean isPartial = this.itDialogObject.getContractInfo().isPartial();
+			
+			HTMLPanel list = new HTMLPanel("");
+			list.setStyleName(style.flexColumn());
+			tramos.add(list);
+
+			Double base = 0.0;
+			Boolean cgp = this.it.getTypeLowPart()!=null && this.it.getTypeLowPart()==(byte)1 ? true : false; // si es accidente laboral
+			Integer quoteDay = 0;
+			
+			for (int i = 0; i < datas.size(); i++) {
+				Certifica2Info data = datas.get(i);
+				
+                HTMLPanel row = new HTMLPanel("");
+				row.setStyleName(style.flexCustom());
+	
+				Label monthL = new Label("Mes: ");
+				monthL.addStyleName(style.subTitle());
+				
+				Label monthValue = new Label( getMonthStr(data.getStartDate()) +"" );
+				
+				Label yearL = new Label("A\u00F1o: ");
+				yearL.addStyleName(style.subTitle());
+				Label yearValue = new Label(DateUtils.getYear(data.getStartDate())+"");
+				
+				Label daysL = new Label("D\u00EDas: ");
+				daysL.addStyleName(style.subTitle());
+				Label daysValue = new Label(getDayStr(data.getSettleQuoteDays()));
+				
+				Label cgcL = new Label("CGC: ");
+				cgcL.addStyleName(style.subTitle());
+				Double cgc = Math.round(data.getBaseCgc()*100.0)/100.0;
+				Label cgcValue = new Label( cgc.toString());
+				
+				Double baseUnEmployee  = Math.round(data.getBaseUnemployment()*100.0)/100.0;
+				Label unemploymentL = new Label("Desempleo: ");
+				unemploymentL.addStyleName(style.subTitle());
+				Label unemploymentValue = new Label( baseUnEmployee.toString());
+				
+				row.add(monthL);
+				row.add(monthValue);
+				row.add(yearL);
+				row.add(yearValue);
+				row.add(daysL);
+				row.add(daysValue);
+				row.add(cgcL);
+				row.add(cgcValue);
+				row.add(unemploymentL);
+				row.add(unemploymentValue);
+				list.add(row);
+
+				base+= cgp ? data.getBaseUnemployment() : data.getBaseCgc();
+				quoteDay+=data.getSettleQuoteDays();
+				
+				if((isPartial && quoteDay>=84) || (!isPartial && quoteDay>=28)) 
+					break; 
+			}
+            
+            Double tmp = Math.round(base*100.0)/100.0;
+            baseCC.setValue(tmp);
+            quoteDayInput.setValue(quoteDay.doubleValue());
+        	it.setRegulationBase(tmp);
+    		it.setQuoteDays(quoteDay);
+        }
+	}
+	
+	private String getMonthStr(Date date) {
+		Integer month = DateUtils.getMonth(date) +1;
+		if(month > 0 && month <=9) 
+			return "0"+month;
+		
+		return month.toString();
+	}
+	
+	private String getDayStr(Integer day) {
+		if(day > 0 && day <=9) 
+			return "0"+day;
+		
+		return day.toString();
+	}
+
+    private void sendItPart() {
+		for (ITPart itPart: this.it.getITParts()) {
+			if(itPart.getId().equals(itPartTmp.getId())) {
+				itPart.setStatus( (byte)3);
+				break;
+			}
+		}
+			
+		onCommunicateITPart(it, itPartTmp);
+	}
+
 	
 	// --------------------------------------------------- Abstract Methods
 	
 	protected abstract void onShowCertitificateIT(IT it);
 	protected abstract void onComunicateIT(IT it);
+	protected abstract void onCommunicateITPart(IT it, ITPart itPart);
 	protected abstract void onDelete(IT it);
 	protected abstract void onAccept();
 	

@@ -207,6 +207,8 @@
 .aon_icon_show_pass { background-image: iconShowPass;}
 @url iconLock aonIconLock;
 .aon_icon_lock { background-image: iconLock;}
+@url iconUnLock aonIconUnLock;
+.aon_icon_unlock { background-image: iconUnLock;}
 @url iconRenew aonIconRenew;
 .aon_icon_renew { background-image: iconRenew;}
 @url iconRenewWhite aonIconRenewWhite;
@@ -473,6 +475,8 @@
 .aon_width_100 { width: 100px; }
 .aon_width_120 { width: 120px; }
 .aon_width_150 { width: 150px; }
+.aon_width_200 { width: 200px; }
+.aon_width_300 { width: 300px; }
 .aon_width_400 { width: 400px; }
 
 .aon_fixed_font {
@@ -834,7 +838,7 @@
 /* MESSAGE PANEL */
 
 .aon_message_close_panel{
-    padding-right: 1rem;
+    padding: .7rem 1rem 0 0;
 }
 
 .aon_message_close{
@@ -846,14 +850,15 @@
 }
 
 .aon_message_panel{
-	height: 2rem;
-	align-items: center;
+	/*height: 2rem;*/
+	min-height: 2.2rem;
+	/*align-items: center;*/
 	border-radius: 0.5em;
     display: flex;
     margin: 0 1em;
     width: auto;
     justify-content: space-between;
-    margin-top: .5rem;
+   /* margin-top: .5rem;*/
 }
 
 .aon_message_container{
@@ -1790,4 +1795,19 @@
 
 .aon_floating_message_content {
 	padding: 3px 20px;
+}
+
+.aon_custom_scroll::-webkit-scrollbar {
+ 	width: 7.5px;
+}
+.aon_custom_scroll::-webkit-scrollbar-track {
+ 	background: transparent; 
+}
+.aon_custom_scroll::-webkit-scrollbar-thumb {
+ 	border-radius: 5px;
+ 	background: #002469; 
+}
+.aon_custom_scroll::-webkit-scrollbar-thumb:hover {
+	border-radius: 5px;
+ 	background: #7A9AD7; 
 }

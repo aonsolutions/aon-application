@@ -28,6 +28,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
@@ -63,6 +64,7 @@ import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
@@ -88,6 +90,7 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.seres.writer.udapa.UdapaDeliveryWriter;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -701,12 +704,30 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		Delivery to = (Delivery)this.getTo();
 		try {
 	        DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
-			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+	        boolean tbai = isTbai();
+	        if(tbai) {
+	        	String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, getInvoiceSeries());
+	        	setInvoiceNumber(number);
+	        }
+			invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate(), isTbai());
 			onLoadInvoice(event);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+	
+	public boolean isTbai() {
+		return getTbaiConfiguration().isActive();
+	}
+	
+	public TbaiConfiguration getTbaiConfiguration() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return AON.getTbaiConfiguration(domainName, domainId, login);
 	}
 
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {

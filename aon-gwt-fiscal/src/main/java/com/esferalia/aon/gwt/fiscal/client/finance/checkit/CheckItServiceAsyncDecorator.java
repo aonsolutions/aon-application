@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.checkit;
 
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
@@ -69,6 +71,13 @@ public class CheckItServiceAsyncDecorator implements CheckItServiceAsync {
 	public void getFields(Integer loginId, AsyncCallback<CheckItLoginFields> callback) {
 		AON.start();
 		fsa.getFields(loginId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getMovements(String domainName, int domain, String user, Integer empresaId, CheckItBankAccount checkItBankAccount, Date startDate,
+			Date endDate, AsyncCallback<List<CheckItBankStatement>> callback) {
+		AON.start();
+		fsa.getMovements(domainName, domain, user, empresaId, checkItBankAccount, startDate, endDate, new AsyncCallbackWrapper<>(callback));
 	}
 	
 }

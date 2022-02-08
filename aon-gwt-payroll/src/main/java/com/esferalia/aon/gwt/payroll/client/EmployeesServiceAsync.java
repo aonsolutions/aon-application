@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -70,7 +71,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getSalaries(String domain, Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
-
+	
 	void getIrpfs(String domain, Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException;
 
@@ -328,6 +329,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void updateContractPayments(String currentDomainName, Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback);
 
 	void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback);
+	
+	void createContractPayment(String currentDomainName, Integer contractId, List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback);
 
 	// ------------------------------------------------- ContractExtension
 	
@@ -347,8 +350,13 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- ContractVariables
 	
-	void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback);
+	void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback) throws IllegalArgumentException;
 
-	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback);
-
+	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
+			AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException;
+	
 }

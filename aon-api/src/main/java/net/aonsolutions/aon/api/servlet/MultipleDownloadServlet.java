@@ -173,11 +173,14 @@ public class MultipleDownloadServlet extends HttpServlet{
     						
     						String qrUrl = domain.getName() + "/dip?source=invoice&id=" + id;  
     						TbaiConfiguration tbai = AON.getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
+    						String tbaiId = "";
     						if(tbai.isActive()) {	
-    							String tbaiUrl = TbaiData.getInstance(tbai).getTbaiUrl(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
+    							TbaiData tbaiData = TbaiData.getInstance(tbai);
+    							String tbaiUrl = tbaiData.getTbaiUrl(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
     							qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
+    							tbaiId = tbaiData.getTbaiId(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
     						}
-    						PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData());
+    						PdfMaker.printInvoice(out, company, invoice, config, qrUrl, logo.getData(), tbaiId);
     						list.add(file);	
     					}
     				}
@@ -207,7 +210,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 						Invoice invoice = InvoiceJSON.fromJSON(new JSONObject(r.getJson()));
 						File file = File.createTempFile(name, ".pdf");
 						FileOutputStream out = new FileOutputStream(file);
-						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData());
+						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData(), "");
 						list.add(file);
 					}
 				} catch (IOException e) {

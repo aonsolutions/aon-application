@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
@@ -179,8 +180,9 @@ public class AonDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	}
 	
 	public void setValue(Double value, boolean fireEvents, boolean shouldDisplayChange) {
+		boolean hasChange = AonNumberUtils.notEquals(value, getValue());
 		setValue(value, fireEvents);
-		if (shouldDisplayChange) {
+		if (shouldDisplayChange && hasChange) {
 			addStyleName(AON.CSS.aonValueChanged());
 			if (CHANGE_DISPLAY_MILLIS > 0)
 				new Timer() {

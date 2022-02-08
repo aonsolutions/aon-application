@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
@@ -1489,6 +1490,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			protected void onComunicateIT(IT it) {
 				// Not use on this implementation
 			}
+
+			@Override
+			protected void onCommunicateITPart(IT it, ITPart itPart) {
+				// TODO Auto-generated method stub
+				
+			}
     		
     	};
     	
@@ -1537,17 +1544,18 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				else
 					comunicateIT(itEmployee, it);
 			}
+
+			@Override
+			protected void onCommunicateITPart(IT it, ITPart itPart) {
+				// TODO Auto-generated method stub
+				
+			}
 			
     	};
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
-    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
     	itDialog.setIsUserComunica(employeeCalendarDraftObject.isUserComunica());
-    	
-    	itDialog.setModal(true);
-    	itDialog.setAnimationEnabled(true);
-    	itDialog.show();
-    	itDialog.center();
+    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
 	}	
 	
 	private void initHourDialog() {

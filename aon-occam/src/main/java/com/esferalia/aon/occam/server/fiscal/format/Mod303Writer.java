@@ -28,7 +28,8 @@ public class Mod303Writer {
 	protected static SimpleDateFormat df = new SimpleDateFormat("MMMMM");
 	
 	private enum Writers {
-		 AEAT_2021_2	(mod303 -> (mod303.isAEAT() && (mod303.getYear() >= 2021 || (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())) ), Mod303WriterAEAT2021_2::new)
+		AEAT_2022		(mod303 -> (mod303.isAEAT() && mod303.getYear() > 2021), Mod303WriterAEAT2022::new)
+		,AEAT_2021_2	(mod303 -> (mod303.isAEAT() && (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())), Mod303WriterAEAT20212::new)
 		,AEAT_2021		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester()), Mod303WriterAEAT2021::new)
 		,AEAT_2019		(mod303 -> (mod303.isAEAT() && mod303.getYear() > 2018 && mod303.getYear() <= 2020), Mod303WriterAEAT2019::new)
 		,AEAT_2018T4	(mod303 -> (mod303.getYear() == 2018 && mod303.isLastPeriod()) 	, Mod303WriterAEAT20184T::new)

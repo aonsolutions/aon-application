@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.checkit;
 
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
@@ -22,4 +24,5 @@ public interface CheckItService extends RemoteService {
 	CheckItLoginFields getCredentials(Integer enterpriseId, Integer loginId) throws IllegalArgumentException;
 	Boolean editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields) throws IllegalArgumentException;
 	CheckItLoginFields getFields(Integer loginId) throws IllegalArgumentException;
+	List<CheckItBankStatement> getMovements(String domainName, int domain, String user, Integer empresaId, CheckItBankAccount checkItBankAccount, Date startDate, Date endDate) throws IllegalArgumentException; 
 }

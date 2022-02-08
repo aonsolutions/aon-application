@@ -1,13 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.mod349;
 
+import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.Model349Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349Base.IModel349Detail;
-import com.esferalia.aon.gwt.fiscal.client.mod349.Model349Base.Model349BaseCallback;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
@@ -19,9 +19,9 @@ public class Model349Detail extends DockLayoutPanel implements IModel349Detail {
 	}
 	private Model349DetailTable table;
 	
-	public Model349Detail(Model349ModuleOptions options, Model349BaseCallback callback, Integer selectedIndex ) {
+	public Model349Detail(Model349Callback callback, Mod349 mod349, Integer selectedIndex ) {
 		super(Unit.PX);
-		table = new Model349DetailTable(callback, selectedIndex);
+		table = new Model349DetailTable(callback, mod349, selectedIndex);
 		addWest(table, 300);
 		
 		SimpleLayoutPanel container = new SimpleLayoutPanel();
@@ -29,7 +29,7 @@ public class Model349Detail extends DockLayoutPanel implements IModel349Detail {
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod349Detail> event) {
-				Model349DetailPanel panel = new Model349DetailPanel( options, event.getSelectedItem(), new IModel349DetailCallback() {					
+				Model349DetailPanel panel = new Model349DetailPanel( callback, mod349, event.getSelectedItem(), new IModel349DetailCallback() {					
 					
 					@Override
 					public void onValueChanged(Mod349Detail detail) {
@@ -44,15 +44,9 @@ public class Model349Detail extends DockLayoutPanel implements IModel349Detail {
 						detail.setDirty(true);
 						table.refresh();
 					}
-				}, callback);
+				});
 				container.setWidget(panel);
-				
-				Scheduler.get().scheduleDeferred(new Command() {
-			        public void execute() {
-			        	panel.setFocus(true);
-			        }
-			    });		
-
+				Scheduler.get().scheduleDeferred(() -> panel.setFocus(true));		
 			}
 		});
 		add(container);

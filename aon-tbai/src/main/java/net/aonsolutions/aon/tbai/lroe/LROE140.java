@@ -13,6 +13,8 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 
 public class LROE140 extends LROE {
 	
+	private static final long serialVersionUID = 1L;
+	
 	protected final static String MODEL_140 = "140";
 	private final static String TEST_NIF_140 = "99980200M";
 	private final static String TEST_NAME_140 = "8FVCxNbMNm"; 
@@ -39,7 +41,7 @@ public class LROE140 extends LROE {
 		json.put(IJsonNames.CON, "LROE");
 		json.put(IJsonNames.APA, info.getSubcapitulo());
 		JSONObject json2 = new JSONObject();
-		json2.put(IJsonNames.NIF, person.getDocument()); 
+		json2.put(IJsonNames.NIF, person.getDocument().replace(" ", "")); 
 		json2.put(IJsonNames.NRS, person.getFirstName());
 		json2.put(IJsonNames.AP1, person.getFirstSurname()); 
 		json2.put(IJsonNames.AP2, person.getSecondSurname());

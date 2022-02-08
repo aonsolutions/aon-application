@@ -1741,14 +1741,13 @@ public class AON {
 		}
 	}
 	
+	public static Invoice insertInvoice(Occam occam, Invoice invoice){
+		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
+	}
+	
 	public static Invoice insertInvoice(String domainName, Integer domainId, String login, Invoice invoice){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().insertInvoice(ctx, invoice);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -7110,6 +7109,12 @@ public class AON {
 	public static EmployeeIT[] setEmployeeIT(Domain domain, User user, EmployeeIT... employeeITs) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getEmployeeIT().setEmployeeIT(ctx, employeeITs);
+		}
+	}
+	
+	public static void saveFacturaeCodeAsignacion(Domain domain, User user, Integer invoice, Integer registry, String code) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			getFinance().saveFacturaeCodeAsignacion(ctx, invoice, registry, code);
 		}
 	}
 }

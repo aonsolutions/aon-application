@@ -125,6 +125,8 @@ public class InvoiceTest {
 		
 		/** INVOICE BASIC DATA */
 		Invoice invoice = new Invoice();
+		invoice.setSeries("2022");
+		invoice.setNumber(1);
 
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		invoice.setAddress(new RegistryAddress()
@@ -158,6 +160,7 @@ public class InvoiceTest {
 //		}
 //		invoice.setComments(listadecosas);
 		invoice.setComments("Akatsuki (Akatsuki; literalmente Amanecer) fue en sus comienzos, una organización que buscaba acabar con la tiranía y la opresión a través de medios pacíficos, pero que pronto cambiaría sus métodos hasta volverse una organización criminal constituida por varios ninjas renegados de Clase S que se convirtieron en los principales antagonistas de la serie Naruto: Shippuuden. ");		
+		invoice.setRemarks("ESTA FACTURA RECTIFICA ALGO");
 		/** BREAKDOWNS */
 		jump();
 		log(GENERATE, "Creating breakdowns.");
@@ -204,7 +207,8 @@ public class InvoiceTest {
 		financeOne.setAdvance(true);
 		financeOne.setAmount(39687.23);
 		financeOne.setBankAccount(accountOne);
-		financeOne.setPayMethodType(PayMethodType.DEBIT_CARD);
+		financeOne.setPayMethodType(PayMethodType.OTHER);
+		financeOne.setPayMethodName("TRANSFERENCIA A 6000 DÍAS");
 		financeOne.setDueDate(new Date());
 		
 		Finance financeTwo = new Finance();
@@ -700,8 +704,8 @@ public class InvoiceTest {
 //			company = null;
 //			logo = null;
 			
-			InvoiceTemplate.create(os, company, invoice, config, "www.aonsolutions.es", logo);
-			InvoiceTemplate.create(dos, company, invoice, config, "www.aonsolutions.es", logo);
+			InvoiceTemplate.create(os, company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			InvoiceTemplate.create(dos, company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
 			PDDocument document = PDDocument.load(bis);

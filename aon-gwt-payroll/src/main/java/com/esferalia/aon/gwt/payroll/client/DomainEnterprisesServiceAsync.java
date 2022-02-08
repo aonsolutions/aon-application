@@ -24,17 +24,18 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -43,11 +44,13 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -339,9 +342,14 @@ public class DomainEnterprisesServiceAsync {
 	void getEnterpriseStatus(Integer enterpriseId , AsyncCallback<EnterpriseStatus> asyncCallback) {
 		enterprisesServiceAsync.getEnterpriseStatus(getCurrentDomainName(), getCurrentUser(), enterpriseId, asyncCallback);		
 	}
+
+	void getEnterpriseITStatus(AsyncCallback<EnterpriseITStatus> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseITStatus(getCurrentDomainName(), getCurrentUser(), asyncCallback);		
+	}
 	
-	public void getContractAttachments(Integer contractId, AsyncCallback<List<ContractAttach>> asyncCallback) {
-		enterprisesServiceAsync.getContractAttachments(getCurrentDomainName(), contractId, asyncCallback);
+	
+	public void getContractAttachments(Integer contractId, AsyncCallback<List<Attach>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getContractAttachments(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 	
 	public void setContractAttachments(Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<List<ContractAttach>> asyncCallback) {
@@ -352,8 +360,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.createContractAttach(getCurrentDomainName(), contractAttach, asyncCallback);	
 	}
 	
-	public void deleteContractAttach(ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> asyncCallback) {
-		enterprisesServiceAsync.deleteContractAttach(getCurrentDomainName(), contractAttach, asyncCallback);
+	public void deleteContractAttach(Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.deleteContractAttach(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
 	}
 	
 	public void getContractClauses(Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) {
@@ -399,19 +407,7 @@ public class DomainEnterprisesServiceAsync {
 	public void getCNOs(AsyncCallback<Map<String, CNO>> asyncCallback) {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
-	
-	public void getDigitalCertificateTGSS(AsyncCallback<DigitalCertificate> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificateTGSS(getCurrentDomainName(), getCurrentUser(), asyncCallback);
-	}
-	
-	public void getDigitalCertificatesSEPE(AsyncCallback<List<DigitalCertificate>> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificatesSEPE(getCurrentDomainName(), asyncCallback);
-	}
-
-	public void deleteDigitalCertificate(DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), digitalCertificate, asyncCallback);
-	}
-	
+		
 	public void getMainCCCInfoDataBase(AsyncCallback<MainCCCInfo> asyncCallback) {
 		enterprisesServiceAsync.getMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
@@ -591,7 +587,15 @@ public class DomainEnterprisesServiceAsync {
 	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), contractId, asyncCallback);
 	}
+	
 
+	public void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
+		enterprisesServiceAsync.communicateITPart(getCurrentDomainName(), getCurrentUser(),itEmployee, it, part, asyncCallback);
+	}
+
+	public void saveITParts(List<ItNotExist>itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
+		enterprisesServiceAsync.saveITParts(getCurrentDomainName(), getCurrentUser(), itNotExist, asyncCallback);
+	}
 	
 	// ----------------------------------------------------------------- static
 	

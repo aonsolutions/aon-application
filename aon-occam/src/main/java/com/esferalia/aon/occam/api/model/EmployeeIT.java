@@ -33,15 +33,18 @@ public class EmployeeIT implements Serializable {
 	ContractLeaveDischargeCause dischargeCause;
 	List<EmployeeITPart> itParts;
 	
-	Double dailyCgcBase;	
 	Double dailyCgpBase;	
 	Double dailyRegBase;	
 	
-
-	Integer quoteDays;
+	Double dailyCgcBase;	//base TGSS
+	Integer quoteDays;	// day TGSS
+	
 	String regime;
 	String ccc;
+	String name;
 	String nss;
+	String dni;
+	ContractType contractType;
 	
 	public EmployeeIT() {
 		this.itParts = new ArrayList<>();
@@ -163,9 +166,37 @@ public class EmployeeIT implements Serializable {
 		this.nss = nss;
 		return this;
 	}
+	
+	public EmployeeIT setDni(String dni) {
+		this.dni = dni;
+		return this;
+	}
+
+	public Optional<String> getDni() {
+		return Optional.ofNullable(dni);
+	}
+	
+	
+	public EmployeeIT setName(String name) {
+		this.name = name;
+		return this;
+	}
+
+	public Optional<String> getName() {
+		return Optional.ofNullable(name);
+	}
 
 	public String getNss() {
 		return nss;
+	}
+	
+	public EmployeeIT setContractType(ContractType contractType) {
+		this.contractType = contractType;
+		return this;
+	}
+
+	public ContractType getContractType() {
+		return contractType;
 	}
 	
 	public EmployeeIT setDailyCgpBase(Double dailyCgpBase) {
@@ -195,7 +226,6 @@ public class EmployeeIT implements Serializable {
 		return itParts;
 	}
 
-
 	public EmployeeIT setITParts(List<EmployeeITPart> itParts) {
 		this.itParts = itParts;
 		return this;
@@ -204,7 +234,6 @@ public class EmployeeIT implements Serializable {
 	public void addITPart(EmployeeITPart itPart) {
 		this.itParts.add(itPart);
 	}
-	
 	
 	public Optional<EmployeeITPart> getItBaja(){
 		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.BAJA)).findFirst();
@@ -225,14 +254,19 @@ public class EmployeeIT implements Serializable {
         		+ "domain=" + domain +","
         		+ "type=" + type +","
         		+ "contract=" + contract +","
+        		+ "nss=" + nss +","
+        		+ "regime=" + regime +","
+        		+ "ccc=" + ccc +","
         		+ "description=" + description +","
         		+ "startDate=" + startDate +","
         		+ "endDate=" + endDate +","
         		+ "dailyCgcBase=" + dailyCgcBase +","
+        		+ "quoteDays=" + quoteDays +","
         		+ "dailyCgpBase=" + dailyCgpBase +","
         		+ "parent=" + parent +","
         		+ "dailyRegBase=" + dailyRegBase +","
         		+ "dischargeCause=" + dischargeCause +","
+        		+ "contractType=" + contractType +","
         		+ "itParts=[" + itParts.toString() +"]"
         +  "}";
     }
@@ -251,5 +285,24 @@ public class EmployeeIT implements Serializable {
 		return Objects.equals(id, employeeIt.id);
 	}
 	
+	
+	// CONTRACTS
+	public enum ContractType {
+		FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL, RESTO_Y_AUTONOMOS;
+		
+		public byte value() {
+			return (byte) this.ordinal();
+		}
+		
+		public static ContractType safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		public static ContractType safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= ContractType.values().length) return null;
+			return ContractType.values()[i];
+		}
+	}
 
 }

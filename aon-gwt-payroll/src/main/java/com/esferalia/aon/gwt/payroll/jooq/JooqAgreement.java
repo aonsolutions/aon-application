@@ -57,6 +57,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.AgreementOwner;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -459,21 +460,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		return getExtras(DSL.using(conn, getDefaultSettings()), CONTRACT.WORKPLACE.in(workplaces));
 	
 	}
-	
-	public static void insertServiAgreementData(Connection conn, Integer domainId, Integer agreementId, boolean isServiAgreement) throws SQLException {
-		insertServiAgreementData(DSL.using(conn, getDefaultSettings()), domainId, agreementId, isServiAgreement);
-	}
-
-	private static void insertServiAgreementData(DSLContext dslContext, Integer domainId, Integer agreementId, boolean isServiAgreement) {
-		dslContext.insertInto(AGREEMENT_DATA)
-			.set(AGREEMENT_DATA.DOMAIN, domainId)
-			.set(AGREEMENT_DATA.NAME, "SERVIAGREEMENT")
-			.set(AGREEMENT_DATA.AGREEMENT, agreementId)
-			.set(AGREEMENT_DATA.EXPRESSION, isServiAgreement ? "TRUE" : "FALSE")
-			.set(AGREEMENT_DATA.START_DATE, new java.sql.Date(new Date().getTime()))
-			.set(AGREEMENT_DATA.END_DATE, DSL.val(null, AGREEMENT_DATA.END_DATE))
-			.execute();
-	}
 
 	public static List<Agreement> getAgreements(Connection conn, int offset,
 			int limit, Integer... domains) throws SQLException {
@@ -530,7 +516,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setDomain(record.getDomain());
 			agreement.setDescription(record.getDescription());
 			agreement.setSSNumber(record.getSsNumber());
-			agreement.setIsServiAgreement(isServiAgreement(dslContext, record.getId()));
+			agreement.setOwner(null == record.getOwner() || (byte)0 == record.getOwner() ? AgreementOwner.AONSOLUTIONS : AgreementOwner.SERVICONVENIOS);
 			
 			agreement.setLevels(Collections.emptySet());
 			//agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
@@ -575,7 +561,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setDomain(record.getDomain());
 			agreement.setDescription(record.getDescription());
 			agreement.setSSNumber(record.getSsNumber());
-			agreement.setIsServiAgreement(isServiAgreement(dslContext, record.getId()));
+			agreement.setOwner(null == record.getOwner() || (byte)0 == record.getOwner() ? AgreementOwner.AONSOLUTIONS : AgreementOwner.SERVICONVENIOS);
 			
 			agreement.setLevels(Collections.emptySet());
 
@@ -604,7 +590,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		agreement.setDomain(record.getDomain());
 		agreement.setDescription(record.getDescription());
 		agreement.setSSNumber(record.getSsNumber());
-		agreement.setIsServiAgreement(isServiAgreement(dslContext, record.getId()));
+		agreement.setOwner(null == record.getOwner() || (byte)0 == record.getOwner() ? AgreementOwner.AONSOLUTIONS : AgreementOwner.SERVICONVENIOS);
 		
 		agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
 
@@ -680,21 +666,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		}
 		return extras;
-	}
-	
-	private static boolean isServiAgreement(DSLContext dslContext, Integer agreementId) {
-		Result<Record> agreementDataRecords = dslContext.select().from(AGREEMENT_DATA)
-				.where(AGREEMENT_DATA.NAME.eq("SERVIAGREEMENT"))
-				.and(AGREEMENT_DATA.AGREEMENT.eq(agreementId))
-				.fetch();
-		
-		if(agreementDataRecords.isNotEmpty()) {
-			Record agreementDataRecord = agreementDataRecords.get(0);
-			String agreementDataValue = agreementDataRecord.get(AGREEMENT_DATA.EXPRESSION);
-			return AonStringUtils.equalsIgnoreCase(agreementDataValue, "TRUE") ? true : false;
-		}
-		
-		return false;
 	}
 
 	private static boolean hasContract(DSLContext dslContext,
@@ -1741,7 +1712,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				if(AonNumberUtils.equals(enterpriseId, infoRecord.get(REGISTRY.ID)))
 					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
 				else {
-					message += "<br><b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
+					message += "<br><b>" + infoRecord.get(REGISTRY.NAME) + "</b><br><br>";
 					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
 					enterpriseId = infoRecord.get(REGISTRY.ID);
 				}

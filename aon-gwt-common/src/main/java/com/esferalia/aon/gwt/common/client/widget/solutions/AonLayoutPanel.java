@@ -19,11 +19,16 @@ public class AonLayoutPanel extends DockLayoutPanel {
 	public AonLayoutPanel() {
 		this(Unit.PX);	
 	}
-	
 	public void showErrorPanel(String msg) {
-		this.showErrorPanel(msg, null );	
+		this.showErrorPanel(msg, null, true );	
 	}
-	public void showErrorPanel(String msg, Widget beforeWidget) {
+	public void showErrorPanel(String msg, boolean clean) {
+		this.showErrorPanel(msg, null, clean);	
+	}
+	public void showErrorPanel(String msg, Widget beforeWidget, boolean clean) {
+		if (clean) {
+			hideErrorPanel();
+		}
 		msgWidget = AonFloatingMessage.error(msg);
 		showMessagesPanel(beforeWidget);
 	}

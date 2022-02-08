@@ -8,17 +8,23 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -26,6 +32,8 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsEmployeeInfo;
@@ -61,10 +69,14 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
@@ -78,6 +90,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -85,7 +98,9 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
@@ -94,11 +109,21 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 
 public abstract class ITWidget extends ResizeComposite {
 	
+	private static final Logger LOGGER = Logger.getLogger(ITWidget.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
 	// --------------------------------------------------- UiBinder
 
 	private static ITWidgetUiBinder uiBinder = GWT.create(ITWidgetUiBinder.class);
 
 	interface ITWidgetUiBinder extends UiBinder<Widget, ITWidget> {}
+	
+	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
+		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
+		SafeHtml tab(String title, String icon);
+	}
+	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
 	// ------------------------------------------------- ScheduledCommand (TGSS)
 	
@@ -164,6 +189,9 @@ public abstract class ITWidget extends ResizeComposite {
 	@UiField
 	HTMLPanel timelinePanel;
 	
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+	
 	// --------------------------------------------------- Variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -212,9 +240,23 @@ public abstract class ITWidget extends ResizeComposite {
 	private MultiFileUpload msjFIEFileUpload;
 	private TGSSContextMenu tgssContextMenu;
 
+	private boolean minimizedByUser;
+
+	private AonMinimizePanel footPanel;
+
+	private FlowPanel sessionLog;
+	private ResultsPanel resultsPanel;
+
+	private TabLayoutPanel tabLayout;
+
+	private List<ITEmployee> itEmployeeIts;
+
+	private ProgressPanel progressPanel;
+	
 	// --------------------------------------------------- Constructor
 
 	protected ITWidget() {
+		LOGGER.info("ITWidget");
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
@@ -223,6 +265,10 @@ public abstract class ITWidget extends ResizeComposite {
 		getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		tgssContextMenu = new TGSSContextMenu();
+		
+		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+
+		showResultsPanel();
 	}
 
 	// --------------------------------------------------- TimeLineChart.MouseEventsHandlers
@@ -403,12 +449,18 @@ public abstract class ITWidget extends ResizeComposite {
 			int itId = data.getContractLeaveId(posColumn, posCell);
 			
 			IT itInfo = getIT(itId);
+
 	    	ITEmployee itEmployee = getITEmployee(contractId);
-	    	
+			ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
+			
+			Optional<ITPart> bjOptional = itDialogObject.getITBaja(itInfo);
+			Optional<ITPart> altaOptional = itDialogObject.getITAlta(itInfo);
+			
 	    	tooltip.setFullName(itEmployee.getEmployeeInfo().getFullName());
 	    	tooltip.setDocument(itEmployee.getEmployeeInfo().getDocument());
 	    	tooltip.setNaf(itEmployee.getEmployeeInfo().getSsNumber());
-	    	tooltip.setComunicationStatus(itInfo.isComunicate());
+	    	tooltip.setComunicationBaja(bjOptional.isPresent() && bjOptional.get().getStatus().equals((byte)3) );
+	    	tooltip.setComunicationAlta(altaOptional.isPresent() && altaOptional.get().getStatus().equals((byte)3) );
 	    	tooltip.setITType(itInfo.getTypeLowPart());
 	    	tooltip.setLowType(itInfo.getTypeLowPart());
 	    	tooltip.setHighType(itInfo.getTypeHighPart());
@@ -502,8 +554,9 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- OnModuleLoad
 	
 	public void loadITWidget() {
+		LOGGER.info("loadITWidget");
 		getITEmployeeListDB(itEmployeeList -> {
-			
+			itEmployeeIts = itEmployeeList;
 			this.expressionCallback = new ExpressionCallback();
 			this.tooltipCallback = new TooltipCallBack();
 			this.popupPanel = new PopupPanel(true);
@@ -519,6 +572,8 @@ public abstract class ITWidget extends ResizeComposite {
 			initDateListBox();
 			initSuggestBox();
 			printTimelineChart();
+			
+			checkStatusITs();
 			
 		}, f -> {});
 	}
@@ -1334,9 +1389,10 @@ public abstract class ITWidget extends ResizeComposite {
 		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
 		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
 			String json = e.getResults();
+			LOGGER.info(json);
 			
 			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
-			
+		
 			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
 			
 			for (int i = 0; i < jsITEmployees.length(); i++ ) {
@@ -1407,6 +1463,132 @@ public abstract class ITWidget extends ResizeComposite {
 		});
 	}
 	
+	
+	private void checkStatusITs() {
+		showProgressPanel();
+		checkStatus(status -> {
+			EnterpriseITStatus.ifSistemaREDEnabled(status, () -> {
+				showFootPanel();
+			}, () -> {
+				closeFootPanel();
+			});
+
+			SistemaREDITResults results = new SistemaREDITResults() {
+				@Override
+				public void run() {
+					
+					checkStatus(status -> {
+						removeAll();
+						status.visit(this);
+					}, throwable -> {});
+				}
+				
+				@Override
+				public void up2DateEnterprise() {
+					this.setUp2DateEnterprise();
+					closeFootPanel();
+				}
+				
+				@Override
+				public void updatedEnterprise() {
+					loadITWidget();
+				}
+				
+				@Override
+				protected void credentialsFound() {
+					checkStatus(status -> {
+						removeAll();
+						status.visit(this);
+						EnterpriseITStatus.ifSistemaREDEnabled(status, () -> {
+							showFootPanel();
+						}, () -> {
+							closeFootPanel();
+						});
+					}, throwable -> {
+						closeFootPanel();
+					});
+				}
+				
+				@Override
+				protected void onOpenITPart(ItNotExist itNotExist) {
+					openITPartDialog(itNotExist);
+				}
+				
+				@Override
+				protected void onSaveITPart(ItNotExist itNotEx) {
+					List<ItNotExist> itNotExist  = new ArrayList<>();
+					itNotExist.add(itNotEx);
+					saveITPartsAon(itNotExist);
+				}
+				
+				@Override
+				public void onFinish() {
+					hideProgressPanel();
+				}
+			};
+			results.setIsUserComunica(isUserComunica());
+			status.visit(results);
+			resultsPanel.setWidget(results);
+		}, f -> {
+			closeFootPanel();
+		});
+		
+	}
+	
+	private void saveITPartsAon(List<ItNotExist> itNotExist) {
+		for (ItNotExist notExist : itNotExist) {
+			if(itEmployeeIts!=null) {
+				itEmployeeIts.stream().filter(e-> 
+					e.getEmployeeInfo().getSsNumber().equals(notExist.getNaf()) && 
+					e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()).equals(notExist.getCcc())
+				).forEach(e->{
+//					Integer contractId = e.getContractInfo().getContractId();
+//					if(contractId!=null)
+//						notExist.getEmployeeIT().setContract(contractId);
+					
+					notExist.getEmployeeIT().setNss(e.getEmployeeInfo().getSsNumber());
+					notExist.getEmployeeIT().setCcc(e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()));
+				});
+			}
+		}
+		saveITParts(itNotExist, s->{		
+			showCreateMessage();
+			loadITWidget();
+		}, e->{
+			AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
+			dialog.warning();
+		});
+	}
+	
+	private void openITPartDialog(ItNotExist itNotExist){
+		Optional<Integer> idPart = itNotExist.getIdPart();
+		if(idPart.isPresent()) {
+			Optional<ITEmployee> itEmployee = Optional.empty();
+			Optional<ITPart> itPart = Optional.empty();
+			
+		 	outerLoop:
+			for (ITEmployee itE : itEmployeeIts) {
+				for ( IT it:itE.getIts()) {
+					for (ITPart part:it.getITParts()) {
+						if(part.getId().equals(idPart.get())) {
+							itEmployee = Optional.ofNullable(itE);
+							itPart = Optional.ofNullable(part);
+							break outerLoop;
+						}
+					}
+				}
+			}
+		 	
+			if(itPart.isPresent()) {
+				ITPart part = itPart.get();
+				int contractId = itEmployee.get().getContractInfo().getContractId();
+	
+				ITDialog dialog = openITDialog(contractId, part.getIt());
+				dialog.setViewPartComunica(part);
+			} 
+		}
+	}
+	
 	private void onLeyend() {
 		openLeyend();
 	}
@@ -1435,6 +1617,10 @@ public abstract class ITWidget extends ResizeComposite {
 			protected void onComunicateIT(IT it) {
 				// On new IT not comunicate
 			}
+
+			@Override
+			protected void onCommunicateITPart(IT it, ITPart part) {
+			}
     		
     	};
     	
@@ -1448,7 +1634,7 @@ public abstract class ITWidget extends ResizeComposite {
 		return itDialog;
 	}
 
-	private void openITDialog(int contractId, int itId) {
+	private ITDialog openITDialog(int contractId, int itId) {
 		IT itInfo = getIT(itId);
     	ITEmployee itEmployee = getITEmployee(contractId);
 
@@ -1477,17 +1663,33 @@ public abstract class ITWidget extends ResizeComposite {
 				else
 					cominicateIT(itEmployee, it);
 			}
+
+			@Override
+			protected void onCommunicateITPart(IT it, ITPart part) {
+				startLoading(true);
+				communicateITPart(itEmployee, it, part, s->{		
+				
+					normalizeITToSave();
+				
+					acceptUpdate(itEmployee);
+					
+					hide();
+					
+					startLoading(false);
+			
+				}, e->{
+					AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
+					dialog.warning();
+					startLoading(false);
+				});
+			}
 			
     	};
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
-    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
     	itDialog.setIsUserComunica(isUserComunica());
-    	
-    	itDialog.setModal(true);
-    	itDialog.setAnimationEnabled(true);
-    	itDialog.show();
-    	itDialog.center();
+    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
+    	return itDialog;
 	}	
 	
 	private void accept(ITEmployee itEmployee, boolean newIT) {
@@ -1503,6 +1705,13 @@ public abstract class ITWidget extends ResizeComposite {
 		);
 	}
 	
+	private void acceptUpdate(ITEmployee itEmployee) {
+		setITEmployee(itEmployee, s -> {
+			loadITWidget();
+			showCommunicateIT();
+		},f -> {});
+	}
+	
 	private void showCreateMessage() {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put("Creaci\u00F3n IT", "El parte ha sido creado correctamente");
@@ -1512,6 +1721,12 @@ public abstract class ITWidget extends ResizeComposite {
 	private void showUpdateMessage() {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put("Actualizaci\u00F3n IT", "El parte ha sido actualizado correctamente");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+	
+	private void showCommunicateIT() {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Comunicaci\u00F3n", "Parte IT comunicada a la TGSS");
 		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
@@ -1570,11 +1785,7 @@ public abstract class ITWidget extends ResizeComposite {
 							f -> {}
 						);
 					}
-
-					@Override
-					public void onCancel() {
-						// Close Panel
-					}
+					@Override public void onCancel() {}
 				}
 		);
 	}
@@ -1640,6 +1851,77 @@ public abstract class ITWidget extends ResizeComposite {
 		AonMessagePanel.showLoading(messagePanel, message);
 	}
 	
+	//--------------------------------------------NEW------------
+	
+	private AonMinimizePanel getMinimizePanel() {
+		resultsPanel = new ResultsPanel();
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler(event -> {
+			minimizedByUser = true;
+			closeFootPanel();
+		});
+		footPanel.addMaximizeHandler(event -> showFootPanel());
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+	
+		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
+		
+		footPanel.add(tabLayout);
+		
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler(event -> {
+			minimizedByUser = false;
+			openFootPanelIfNeeded();
+		});
+
+		return footPanel; 
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
+		splitLayoutPanel.animate(500);
+	}
+	
+	private void openFootPanelIfNeeded() {
+		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) 
+			showFootPanel();
+	}
+	
+	private void showFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+		splitLayoutPanel.animate(500);
+	}
+	
+	private void showResultsPanel() {
+		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information(), AON.CSS.aonIconHistory()));
+		tabLayout.selectTab(resultsPanel);
+	}
+	
+	private void showProgressPanel() {
+		tabLayout.remove(resultsPanel);
+		
+		progressPanel = new ProgressPanel();
+		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
+		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
+			Task syncTask = new Task();
+			syncTask.setDescription("Consultando ITs con el SISTEMA RED");
+			progressPanel.showTask(syncTask);
+			handlerRegistration[0].removeHandler();
+		});
+		
+		InlineLabel tab = new InlineLabel("Progreso");
+		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		tabLayout.add(progressPanel, tab);
+		tabLayout.selectTab(progressPanel);
+	}
+	
+	private void hideProgressPanel() {
+		tabLayout.remove(progressPanel);
+		showResultsPanel();
+	}
+	
 	// --------------------------------------------------- Abstract Methdos
 	
 	protected abstract void syncITs(Consumer<Void> success, Consumer<Throwable> failure);
@@ -1665,5 +1947,11 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure);
+	
+	protected abstract void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure);
+	
+	protected abstract void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);
+	
+	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
 
 }

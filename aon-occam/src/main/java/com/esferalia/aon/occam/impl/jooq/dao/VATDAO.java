@@ -211,7 +211,7 @@ public class VATDAO  {
 				,INVOICE_FISCAL.VAT_IMPORTATION
 				,INVOICE_DUA.ID
 				
-				,INVOICE.RETENTION_QUOTA
+				,INVOICE.WITHHOLDING
 				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
@@ -281,7 +281,7 @@ public class VATDAO  {
 				,INVOICE_FISCAL.VAT_IMPORTATION
 				,INVOICE_DUA.ID
 
-				,INVOICE.RETENTION_QUOTA
+				,INVOICE.WITHHOLDING
 				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
@@ -353,7 +353,7 @@ public class VATDAO  {
 			,FINANCE_TRACKING.TYPE
 			,FINANCE_TRACKING.AMOUNT
 			
-			,INVOICE.RETENTION_QUOTA
+			,INVOICE.WITHHOLDING
 			,INVOICE.REGISTRY
 			)
 			.from(FINANCE_TRACKING)
@@ -426,7 +426,7 @@ public class VATDAO  {
 			,INVOICE.TOTAL
 			,FINANCE.AMOUNT
 			
-			,INVOICE.RETENTION_QUOTA
+			,INVOICE.WITHHOLDING
 			,INVOICE.REGISTRY
 			)
 			.from(FINANCE)
@@ -497,7 +497,7 @@ public class VATDAO  {
 			,INVOICE.TOTAL
 			,FINANCE.AMOUNT
 			
-			,INVOICE.RETENTION_QUOTA
+			,INVOICE.WITHHOLDING
 			,INVOICE.REGISTRY
 			)
 			.from(FINANCE)
@@ -772,7 +772,7 @@ public class VATDAO  {
 				.setDeductibleQuota(getDeductibleQuota(rec))
 				
 				.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
-				.setHasRetention(rec.getValue(INVOICE.RETENTION_QUOTA) != 0)		
+				.setHasRetention(AonEnumUtils.getBoolean(rec.getValue(INVOICE.WITHHOLDING)))		
 				.setRegistry(rec.getValue(INVOICE.REGISTRY))
 			;
 		}

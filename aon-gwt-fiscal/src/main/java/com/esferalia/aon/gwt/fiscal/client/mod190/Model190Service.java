@@ -22,5 +22,6 @@ public interface Model190Service extends RemoteService {
 	Mod190 saveComments(Occam occam, Mod190 mod190) throws AonCoreException;
 	Mod190 changeStatus(Occam occam, Mod190 mod190, FiscalStatus newStatus) throws AonCoreException;
 	Mod190 duplicate(Occam occam, Mod190 mod190) throws AonCoreException;
+	LinkedList<Mod190Detail> validateSalaries(Occam occam, Mod190 mod190) throws AonCoreException;
 
 }

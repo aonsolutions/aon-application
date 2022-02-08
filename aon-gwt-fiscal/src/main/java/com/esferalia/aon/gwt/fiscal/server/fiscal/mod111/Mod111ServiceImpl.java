@@ -24,7 +24,7 @@ public class Mod111ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	@Override
 	public Mod111 getMod111(Occam occam, int id) throws AonCoreException {
-		return MODEL111.getMod111(occam, id);
+		return MODEL111.get(occam, id);
 	}
 
 	@Override
@@ -73,26 +73,26 @@ public class Mod111ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod111 initialize(Occam occam, Mod111 mod111) {
-		return MODEL111.initializeMod111(occam, mod111);
+		return MODEL111.initialize(occam, mod111);
 	}
 
 	@Override
 	public Mod111 create(Occam occam, Mod111 mod111) {
-		return MODEL111.createMod111(occam, mod111);
+		return MODEL111.create(occam, mod111);
 	}
 
 	@Override
 	public Mod111 reset(Occam occam, Mod111 mod111) {
-		return MODEL111.resetMod111(occam, mod111);
+		return MODEL111.reset(occam, mod111);
 	}
 
 	@Override
 	public void delete(Occam occam, Mod111 mod111) {
-		MODEL111.deleteMod111(occam, mod111);
+		MODEL111.delete(occam, mod111);
 	}
 	@Override
 	public String getInfo(Occam occam, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException {
-		return MODEL111.getMod111Info(occam, mod111, script, infoKey);
+		return MODEL111.getInfo(occam, mod111, script, infoKey);
 	}
 
 }

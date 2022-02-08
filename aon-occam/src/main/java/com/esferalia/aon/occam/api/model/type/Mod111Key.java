@@ -175,6 +175,9 @@ public enum Mod111Key implements IFiscalModelKey {
 	public int getBox() {
 		return box;
 	}
+	public String getBoxFormatted() {
+		return " [" + AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0')+"] ";
+	}
 
 	public static Mod111Key getKey(String value) {
 		for (Mod111Key key : Mod111Key.values()) {

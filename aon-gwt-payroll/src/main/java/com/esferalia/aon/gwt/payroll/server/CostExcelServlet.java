@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.ibm.icu.util.Calendar;
 
@@ -86,16 +87,15 @@ public class CostExcelServlet extends HttpServlet {
 		calendar.set(Calendar.SECOND, 0);
 		Date startDate = calendar.getTime();
 		try (ServletOutputStream sos = resp.getOutputStream()) {
-			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(
-				domainName
-				, user
-				, sos
-				, Optional.ofNullable(enterpriseId)
-				, Optional.ofNullable(workplaceId)
-				, startDate
-				, type
-				, types
-				);
+			EnterprisePayrollExcelParams params = new EnterprisePayrollExcelParams()
+					.setDomainName(domainName)
+					.setLogin(user)
+					.setOs(sos)
+					.setEnterpriseId(enterpriseId)
+					.setWorkplaceId(workplaceId)
+					.setExcelType(type);
+			
+			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(params, startDate, types);
 			resp.getOutputStream().flush();
 			resp.flushBuffer();
 		}

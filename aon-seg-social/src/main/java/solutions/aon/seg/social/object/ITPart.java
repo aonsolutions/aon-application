@@ -206,6 +206,7 @@ public class ITPart {
 	}
 
 	public ITPart setCcc(String d) {
+		if(d!=null)  d = d.substring(4, d.length());
 		this.ccc = d;
 		return this;
 	}
@@ -301,8 +302,8 @@ public class ITPart {
 		return Optional.ofNullable(nameEmployee);
 	}
 	
-	public String getIpf() {
-		return ipf;
+	public Optional<String> getIpf() {
+		return Optional.ofNullable(ipf);
 	}
 	
 	public Optional<String> getDirectionEmployee() {
@@ -425,6 +426,10 @@ public class ITPart {
 		return Optional.ofNullable(lack);
 	}
 	
+	public Optional<Float> getDailyBaseCgc() {
+		return Optional.ofNullable(null!=baseCtz && baseCtz>0 ? baseCtz : sumBCtz);
+	}
+	
 	public Integer getCauseNumber() {
 		String cause = null;
 		if(getPartType().contains("baja") && getContingency().isPresent())
@@ -440,6 +445,7 @@ public class ITPart {
 	public void accept(Visitor visitor) {
 		if(receptionDate != null) visitor.visitReceptionDate(receptionDate);
 		if(naf != null) visitor.visitNaf(naf);
+		if(ccc != null) visitor.visitCcc(ccc);
 		if(workLeaveDate != null) visitor.visitWorkLeaveDate(workLeaveDate);
 		if(workRestartDate != null) visitor.visitWorkRestartDate(workRestartDate);
 		if(confirmationDate != null) visitor.visitConfirmationDate(confirmationDate);
@@ -450,6 +456,7 @@ public class ITPart {
 	
 	public static interface Visitor{
 		void visitReceptionDate(Date receptionDate);
+		void visitCcc(String ccc);
 		void visitConfirmationDate(Date confirmationDate);
 		void visitNaf(String naf);
 		void visitWorkLeaveDate(Date workLeaveDate);
@@ -504,7 +511,14 @@ public class ITPart {
 			public void visitNaf(String naf) {
 				stringBuffer.append(String.format(" naf : \"%s\" ", naf));
 			}
+			
+			@Override
+			public void visitCcc(String ccc) {
+				stringBuffer.append(String.format(" ccc : \"%s\" ", ccc));
+			}
 		});
+		
+		getIpf().ifPresent(c-> stringBuffer.append(String.format(" dni : \"%s\" ", c)) );
 		
 		getContingency().ifPresent(c-> stringBuffer.append(String.format(" contingency : \"%s\" ", c)) );
 		

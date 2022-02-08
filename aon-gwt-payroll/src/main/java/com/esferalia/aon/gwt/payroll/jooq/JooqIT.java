@@ -216,7 +216,7 @@ public class JooqIT {
 						
 						Integer contractLeaveDetailId = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.ID);
 						Byte typePart = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE);
-						
+						itPart.setId(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.ID));
 						itPart.setDomain(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DOMAIN));
 						itPart.setType(typePart);
 						itPart.setIt(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE));
@@ -551,6 +551,7 @@ public class JooqIT {
 					Integer contractLeaveDetailId = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.ID);
 					Byte typePart = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE);
 					
+					itPart.setId(contractLeaveDetailId);
 					itPart.setDomain(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DOMAIN));
 					itPart.setType(typePart);
 					itPart.setIt(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE));

@@ -8,8 +8,11 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -135,6 +138,19 @@ public class EnterpriseIT extends Composite {
 					failure::accept);
 		}
 
+		@Override
+		protected void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure) {
+			enterpriseITObject.communicateITPart( itEmployee, it, part,
+					success::accept, 
+					failure::accept
+			);
+		}
+
+		@Override
+		protected void saveITParts(List<ItNotExist> itNotExist,Consumer<Void> success, Consumer<Throwable> failure) {}
+		
+		@Override
+		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {}
 	}
 	
 	// --------------------------------------------------- Binder
@@ -168,6 +184,7 @@ public class EnterpriseIT extends Composite {
 	public void setEnterpriseITObject(EnterpriseITObject enterpriseITObject) {
 		this.enterpriseITObject = enterpriseITObject;
 		itWidget.loadITWidget();
+
 	}
 	
 }

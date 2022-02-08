@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
@@ -108,6 +109,7 @@ public class CreditorDAO {
 		return ctx.getDslContext().select()
 				.from(CREDITOR)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CREDITOR.REGISTRY))
+				.join(DOMAIN).on(CREDITOR.DOMAIN.eq(DOMAIN.ID))
 				.where(CREDITOR_PROPERTIES.getConditions(filter));
 		
 	}

@@ -397,6 +397,21 @@ public class PDFToolkit {
 		contents.fill();
 	}
 
+	public static void drawBox(PDPageContentStream contents, float x, float y, float width, float height, Color color, float opacity)
+			throws IOException {
+		contents.saveGraphicsState();
+		PDExtendedGraphicsState extendedGraphicsState = new PDExtendedGraphicsState();
+		extendedGraphicsState.setNonStrokingAlphaConstant(opacity);
+	 
+		contents.setGraphicsStateParameters(extendedGraphicsState);
+		contents.setNonStrokingColor(color);
+	 
+		contents.addRect(x, y, width, height);
+		contents.fill();
+		
+		contents.restoreGraphicsState();
+	}
+
 	/**
 	 * <p>
 	 * <b>Description:</b> <i>Draws a bordered box.</i>

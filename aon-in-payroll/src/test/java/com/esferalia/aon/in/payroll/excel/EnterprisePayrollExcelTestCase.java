@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Number;
@@ -248,6 +249,24 @@ public class EnterprisePayrollExcelTestCase {
 			return null;
 		}
 
+		@Override
+		public Double getFundae() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setFundae(Double fundae) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Double getItCompensation() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 	
 	@Test
@@ -292,10 +311,11 @@ public class EnterprisePayrollExcelTestCase {
 		}
 
 		try {
+			
 			EnterprisePayrollExcel.write(
 					OutputStream.nullOutputStream(),
 //					new FileOutputStream(MessageFormat.format("./ExcelPayrollTest{0}.xls", type == ExcelType.COMPLETE ? "Complete" : "Summary")),
-					payrollList, Optional.empty(), "", "", type);
+					payrollList, Optional.empty(), "", "",type);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

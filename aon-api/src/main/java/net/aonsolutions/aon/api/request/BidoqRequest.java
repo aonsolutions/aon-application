@@ -70,9 +70,15 @@ public class BidoqRequest {
 	private static final String BIDOQ_INVOICE_URL = "https://www.mispapeles.es/selfconta/api/informaFacturaAon"; 
 	private static final String BIDOQ_INVOICE_API_KEY = "qmd3Ho*mpbhduav3w5mJ9fkt5%hkxN7aWn@Lfrxw9B6poRRyM8"; 
 	
-	private static JSONObject getSelfcontaInvoices(String document) throws Exception {
+	private static JSONObject getSelfcontaInvoices(String document, Integer year) throws Exception {
 		//String sendData = "cif=46230043C" ;
-		String sendData = "cif=" + document ;
+		if(year == null) year = AonDateUtils.getYear(new Date());
+		String fechaInicio = year + "-01-01";
+		String fechaFin = year + "-12-31";
+		String sendData = "cif=" + document 
+				+ "&fechaInicio=" + fechaInicio
+				+ "&fechaFin=" + fechaFin;
+		
 		return post(BIDOQ_INVOICE_URL, sendData);
 	
 	}
@@ -113,11 +119,11 @@ public class BidoqRequest {
 		tedi2Aon(domain, user, json);
 	}
 	
-	public static void selfconta(Domain domain, User user, String document) throws Exception {
+	public static void selfconta(Domain domain, User user, String document, Integer year) throws Exception {
 		System.out.println("");
 		System.out.println("***** " + document + " *****");
 		
-		JSONObject json = getSelfcontaInvoices(document);
+		JSONObject json = getSelfcontaInvoices(document, year);
 		saveImportation(domain, user, json.toString().getBytes());
 	
 		JSONObject ingresos = json.getJSONObject("ingresos");

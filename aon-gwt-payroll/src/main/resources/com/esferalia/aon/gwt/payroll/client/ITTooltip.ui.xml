@@ -41,7 +41,7 @@
 		<g:HTMLPanel styleName="{style.flex}">
 			<g:Label styleName="{style.bold}">Doc:</g:Label>
 			<g:Label ui:field="documentL"/>
-			<g:Label styleName="{style.bold}">Naf:</g:Label>
+			<g:Label styleName="{style.bold}">NAF:</g:Label>
 			<g:Label ui:field="nafL"/>
 		</g:HTMLPanel>
 		

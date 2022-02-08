@@ -79,6 +79,7 @@ public class JooqEmployeeAFI {
 			String domainIdStr, 
 			String domainName, 
 			String contractIdStr,
+			String fileName,
 			Boolean isStartContract,
 			Boolean isEndContract, 
 			Boolean isChangeContract, 
@@ -106,7 +107,7 @@ public class JooqEmployeeAFI {
 			
 			eti.put("authkey", authKey);			
 			eti.put("payrollProvider", "498");	//Proveedor de nominas ESFERALIA NETWORKS, S.A.
-			eti.put("fileName", null);
+			eti.put("fileName", fileName);
 			eti.put("prorityCode", "N");
 			employeeAFIJSON.put("ETI", eti);
 			
@@ -205,7 +206,7 @@ public class JooqEmployeeAFI {
 			JSONObject etf = new JSONObject();
 			etf.put("authkey", authKey);
 			etf.put("payrollProvider", "498");
-			etf.put("fileName", null);
+			etf.put("fileName", fileName);
 			etf.put("priorityCode", "N");
 			employeeAFIJSON.put("ETF", etf);
 			
@@ -487,7 +488,7 @@ public class JooqEmployeeAFI {
 		fab.put("year", endDateCalendar.get(Calendar.YEAR));
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
-		fab.put("partialityCoef", partialityCoef == null ? "" : partialityCoef);
+		fab.put("partialityCoef", partialityCoef == null ? "" : parseCoefLengnt(partialityCoef));
 		fab.put("gender", gender);
 		
 		//DAM -> All reserved
@@ -499,6 +500,12 @@ public class JooqEmployeeAFI {
 		return json;
 	}
 	
+	private static String parseCoefLengnt(String partialityCoef) {
+		if(partialityCoef.length() <= 3)
+			return partialityCoef;
+		return partialityCoef.length() <= 3 ? partialityCoef : partialityCoef.substring(partialityCoef.length()-3, partialityCoef.length());
+	}
+
 	// -------------------------------------------- getEmployeeAFIInfo. MC
 	
 	@SuppressWarnings("unchecked")
@@ -569,13 +576,12 @@ public class JooqEmployeeAFI {
 		fab.put("year", dateCalendar.get(Calendar.YEAR));
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
-		fab.put("partialityCoef", partialityCoef);
+		fab.put("partialityCoef", null == partialityCoef ? "" : parseCoefLengnt(partialityCoef));
 		fab.put("gender", gender);
 		
 		String ocupation = parseContractData(contractDataOcupationRecord.isEmpty() ? null : contractDataOcupationRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		
 		//DAM
-		dam.put("ocupation", ocupation);
 		dam.put("ocupation", ocupation);
 		
 		json.put("FAB", fab);

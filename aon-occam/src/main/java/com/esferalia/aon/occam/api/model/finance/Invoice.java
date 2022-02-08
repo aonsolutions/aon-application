@@ -14,11 +14,11 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Invoice implements Serializable, HasAudit {
+	public static final double REG_IMPORT_MAX_VALUE  = 150.0;
 	
 	private static final long serialVersionUID = 8897444490096530091L;
 	
@@ -522,7 +522,7 @@ public class Invoice implements Serializable, HasAudit {
 	
 	public Invoice addFinance(Finance finance) {
 		if (getFinances() == null) {
-			setFinances(new LinkedList<Finance>());
+			setFinances(new LinkedList<>());
 		}
 		getFinances().add(finance);
 		return this;
@@ -630,9 +630,15 @@ public class Invoice implements Serializable, HasAudit {
 		return !isUndeductible() && (
 			  (isPurchase() && isNational())						// Compra nacional 
 			|| (isExpenses() && isNational())						// Gasto nacional
-			|| (isVatImportationAvailable() && isVatImportation()	// Regimen importacioon 
-				&& AonMathUtils.isLessThan(getTotal(), 150.00 ))	
+			|| (isVatImportationAvailable() && isVatImportation()	// Regimen importacioon
+				&& isVatImportationAmountValid())
+//				&& AonMathUtils.isLessThan(getTotal(), REG_IMPORT_MAX_VALUE0 ))	
 			|| mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
+	}
+	public boolean isVatImportationAmountValid() {
+		return getDetails() == null 
+			|| getDetails().isEmpty()
+			|| AonMathUtils.isLessThan( getDetails().stream().mapToDouble( InvoiceDetail::getTaxableBase ).sum() , REG_IMPORT_MAX_VALUE );
 	}
 	public String getSiiStatus() {
 		return siiStatus;

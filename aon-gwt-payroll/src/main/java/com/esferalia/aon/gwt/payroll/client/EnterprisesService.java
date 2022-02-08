@@ -24,17 +24,18 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
@@ -43,11 +44,13 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -194,14 +197,16 @@ public interface EnterprisesService extends RemoteService {
 	
 	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
 
-	List<ContractAttach> getContractAttachments(String currentDomainName, Integer contractId);
+	EnterpriseITStatus getEnterpriseITStatus(String domain, String user);
+
+	List<Attach> getContractAttachments(String currentDomainName, String login, Integer contractId) throws IllegalArgumentException;
 	
 	List<ContractAttach> setContractAttachments(String currentDomainName, Integer contractId,
 			List<ContractAttach> contractAttachments);
 
 	List<ContractAttach> createContractAttach(String currentDomainName, ContractAttach contractAttach);
 
-	List<ContractAttach> deleteContractAttach(String currentDomainName, ContractAttach contractAttach);
+	void deleteContractAttach(String currentDomainName, String login, Integer attachId) throws IllegalArgumentException;
 
 	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId);
 
@@ -223,10 +228,6 @@ public interface EnterprisesService extends RemoteService {
 	
 	Map<String, CNO> getCNOs(String currentDomainName);
 
-	DigitalCertificate getDigitalCertificateTGSS(String currentDomainName, String currentUser);
-
-	List<DigitalCertificate> getDigitalCertificatesSEPE(String currentDomainName);
-
 	MainCCCInfo getMainCCCInfoDataBase(String currentDomainName, String currentUser);
 
 	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo);
@@ -234,8 +235,6 @@ public interface EnterprisesService extends RemoteService {
 	List<SSBonusData> getContractBonus(String currentDomainName, Integer contractId);
 
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData);
-
-	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
 
@@ -256,6 +255,10 @@ public interface EnterprisesService extends RemoteService {
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
 
 	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
+	
+	void communicateITPart(String currentDomainName, String currentUser, ITEmployee itEmployee ,IT it, ITPart part) throws IllegalArgumentException;
+
+	void saveITParts(String currentDomainName, String currentUser, List<ItNotExist> itNotExist) throws IllegalArgumentException;
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 

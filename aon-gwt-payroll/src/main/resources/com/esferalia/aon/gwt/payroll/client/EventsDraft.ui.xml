@@ -109,7 +109,7 @@
 			cursor: pointer;
 		}
 		
-		.cmd_btn{
+		.cmdBtn{
 			background-position: center left;
 			background-repeat: no-repeat;
 			padding-left: 25px !important;

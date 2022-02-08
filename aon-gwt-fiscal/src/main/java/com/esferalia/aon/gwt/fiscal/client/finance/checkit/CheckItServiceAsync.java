@@ -1,13 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.checkit;
 
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
-import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CheckItServiceAsync {
@@ -24,4 +24,5 @@ public interface CheckItServiceAsync {
 	void getCredentials(Integer enterpriseId, Integer loginId, AsyncCallback<CheckItLoginFields> callback);
 	void editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields, AsyncCallback<Boolean> callback);
 	void getFields(Integer loginId, AsyncCallback<CheckItLoginFields> callback);
+	void getMovements(String domainName, int domain, String user, Integer empresaId, CheckItBankAccount checkItBankAccount, Date startDate, Date endDate, AsyncCallback<List<CheckItBankStatement>> callback); 
 }

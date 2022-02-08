@@ -32,13 +32,13 @@ const createStylePoint = (color) => {
   return div;
 };
 
-export const getTotal = (dataArray) => {
-  let total = 0;
-  for (let i = 0; i < dataArray.length; i++) {
-    total += dataArray[i][1];
-  }
-  return total;
-};
+// export const getTotal = (dataArray) => {
+//   let total = 0;
+//   for (let i = 0; i < dataArray.length; i++) {
+//     total += dataArray[i][1];
+//   }
+//   return total;
+// };
 
 export const pieChar = (div, data, opts, callBackClick) => {
   return new Promise((resolve) => {
@@ -106,14 +106,15 @@ export const addLegend = (div, data, colors, fn) => {
     tableLegend.appendChild(tbody);
 
     for (let idx in data) {
-      let color = colors[idx];
       let name = data[idx][0];
       let value = data[idx][1];
-
-      let tr = addTrTableLegend({ name, value, color }, tbody);
-      tr.addEventListener("click", (ev) => {
-        fn({ name, value });
-      });
+      if(name && value){
+        let color = colors[idx];
+        let tr = addTrTableLegend({ name, value, color }, tbody);
+        tr.addEventListener("click", () => 
+          fn({ name, value })
+        );
+      }  
     }
     resolve(tableLegend);
   });

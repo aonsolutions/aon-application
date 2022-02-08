@@ -26,10 +26,14 @@
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and saleInvoice.to.number le 0}"> 
 							<aon:commandButton id="accept"	
-								value="#{bundle.aon_accept}"
-								action="#{saleInvoice.issueInvoice}"
+								value="Emitir"
+								action="#{saleInvoice.tbai}"
 								onclick="#{saveOnClick}" 
-								styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
+								styleClass="aon-finding-toolbar-item aon-icon-check-black"
+								reRender="showCertTbaiWindow">
+									<f:setPropertyActionListener target="#{saleInvoice.showCertTbaiWindow}"
+										value="#{true}" />
+							</aon:commandButton>
 						</aon:if>
 						
 						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}"> 
@@ -102,6 +106,7 @@
 							action="#{saleInvoiceSigner.onDownloadFacturae}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
+						
 						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:commandButton id="saleInvoice-downloadEdiFtp"
 								value="SERES"
@@ -186,6 +191,17 @@
 							<ui:param name="skipCancelSignButton" value="#{!saleInvoice.signed}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm" />
 						</ui:include>
+						
+						<aon:if test="#{saleInvoice.downloadFacturae}">
+							<aon:menuItem id="Facturae_info"
+								value="Información Facturae"
+								iconClass="aon-icon-info"
+								reRender="showFacturaeInfoWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showFacturaeInfoWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
+						
 						<aon:menuItem id="duplicate"
 							value="#{bundle.aon_to_duplicate}"
 							rendered="#{!saleInvoice.rectifier and !saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0}"
@@ -265,6 +281,26 @@
 								iconClass="aon-icon-bizkaia"
 								reRender="showLroeWindow">
 								<f:setPropertyActionListener target="#{saleInvoice.showLroeWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator2" />
+							<aon:menuItem id="ticket-bai-araba"
+								value="Envíos TicketBAI"
+								iconClass="aon-icon-araba"
+								reRender="showTbaiWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showTbaiWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</aon:if>
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.gipuzkoa}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator2" />
+							<aon:menuItem id="ticket-bai-gipuzkoa"
+								value="Envíos TicketBAI"
+								iconClass="aon-icon-gipuzkoa"
+								reRender="showTbaiWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showTbaiWindow}"
 									value="#{true}" />							
 							</aon:menuItem>
 						</aon:if>
@@ -447,6 +483,15 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalLroe.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalTbai.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalCertTbai.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalFacturae.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">

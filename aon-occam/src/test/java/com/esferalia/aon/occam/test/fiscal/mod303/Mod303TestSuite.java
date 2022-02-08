@@ -6,9 +6,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	Mod303Delete.class,
-	Mod303Insert.class,
-	 // Mod303AEAT2021C59.class,
+	Mod303ExpressionsTest.class,
+	Mod303DeleteTest.class,
+	Mod303InsertTest.class,
 })
 public class Mod303TestSuite {
 

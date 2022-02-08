@@ -81,6 +81,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -335,6 +336,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.WORKPLACE
 				,INVOICE_DETAIL.SOURCE
 				,INVOICE_DETAIL.INVEST_ASSET
+				,INVOICE_DETAIL.PREPAYMENT
 				,SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
@@ -438,7 +440,15 @@ public class InvoiceDAO {
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new))
 					);
-			AccountingInvoiceDAO.fillBreakdown(ctx, invoice);
+			AccountingInvoiceDAO.fillBreakdown(ctx, invoice, true);
+		
+			if(invoice.isRectifier()) {
+				Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
+				invoice.setRectificationInvoiceSeries(rectify.getSeries());
+				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
+				invoice.setRectificationInvoiceNumber(rectify.getNumber());
+				invoice.setRectificationType(rectify.getRectificationType());
+			}
 		}
 		return invoice;
 	}
@@ -711,6 +721,7 @@ public class InvoiceDAO {
 				.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setWarehouseName(r.getValue(WAREHOUSE.NAME))
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
+				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
 				;
 		}
 		
@@ -1594,6 +1605,23 @@ public class InvoiceDAO {
 					.setName(rec.getValue(REGISTRY.NAME))
 					.setType( AccountingRegistryType.getFor(InvoiceType.safeValueOf( rec.getValue(INVOICE.TYPE) )))
 					);			
+	}
+	
+	public static void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code) {
+		Project project = new Project()
+				.setDomain(new Domain().setId(ctx.getDomainId()))
+				.setRegistry(new com.esferalia.aon.occam.api.model.registry.Registry().setId(registry))
+				.setName(code)
+				.setDate(new Date());
+
+		project = ProjectDAO.save(ctx, project);
+
+		ctx.getDslContext().update(INVOICE_DETAIL)
+		.set(INVOICE_DETAIL.PROJECT, project.getId())
+		.where(INVOICE_DETAIL.DOMAIN.eq(ctx.getDomainId()))
+		.and(INVOICE_DETAIL.INVOICE.eq(invoice))
+		.execute();
+		
 	}
 	
 }

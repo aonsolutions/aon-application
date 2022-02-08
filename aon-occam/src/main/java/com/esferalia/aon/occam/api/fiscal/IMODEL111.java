@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public interface IMODEL111 {
 
-	public Mod111 getMod111(AONContext ctx, int id);
+	public Mod111 get(AONContext ctx, int id);
 	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain);
 	public Mod111 calculate(AONContext ctx, Mod111 mod111);
 	public Mod111 save(AONContext ctx, Mod111 mod111);

@@ -1,9 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -24,21 +21,13 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -71,13 +60,13 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		int column;
 		int row;
 		
-		public EventTableCell(int column, int row, String var) {
+		public EventTableCell(int column, int row, String varName) {
 			super();
 			this.column = column;
 			this.row = row;
 			
 			//ESTILOS
-			this.ensureDebugId(var.toLowerCase()+"_"+column);
+			this.ensureDebugId(varName.toLowerCase()+"_"+column);
 			this.addStyleName(style.cellFormat());
 			if (row % 2 == 1){
 				this.removeStyleName(style.cellFormat());
@@ -129,6 +118,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 2;
+			selectedPositions.clear();
 			
 			fillCellsEvents(); 
 		}
@@ -154,6 +144,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 1;
+			selectedPositions.clear();
 			
 			fillCellsEvents(); 
 		}
@@ -179,6 +170,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 0;
+			selectedPositions.clear();
 			
 			fillCellsEvents(); 
 		}
@@ -204,6 +196,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 3;
+			selectedPositions.clear();
 			
 			fillCellsEvents(); 
 		}
@@ -229,6 +222,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			variablesToShow = 4;
+			selectedPositions.clear();
 			
 			fillCellsEvents(); 
 		}
@@ -244,19 +238,19 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		
 		public SeeMenu() {
 			
-			calendarVariablesMenuItem = addItem("Variables del calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			calendarVariablesMenuItem = addItem("Variables del calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			calendarVariablesMenuItem.ensureDebugId("calendarVariablesMenuItem");
 			
-			editableVariablesMenuItem = addItem("Variables editables", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			editableVariablesMenuItem = addItem("Variables editables", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			editableVariablesMenuItem.ensureDebugId("editableVariablesMenuItem");
 			
-			agreementVariablesMenuItem = addItem("Variables con datos en convenio", new AgreementVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			agreementVariablesMenuItem = addItem("Variables con datos en convenio", new AgreementVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			agreementVariablesMenuItem.ensureDebugId("agreementVariablesMenuItem");
 			
-			contractVariablesMenuItem = addItem("Variables con datos en contrato", new ContractVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			contractVariablesMenuItem = addItem("Variables con datos en contrato", new ContractVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			contractVariablesMenuItem.ensureDebugId("contractVariablesMenuItem");
 			
-			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmdBtn());
 			allVariablesMenuItem.ensureDebugId("allVariablesMenuItem");
 			
 		}
@@ -319,7 +313,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		String bgcWhite();
 		String aonCheck();
 		String widthMenuItem();
-		String cmd_btn();
+		String cmdBtn();
 		String container();
 		String loadingPanel();
 	}
@@ -346,9 +340,9 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	
 	private EmployeeEventsDraftObject employeeEventsDraft;
 	
-	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
+	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<>();
 	
-	private HashMap<String,Integer> variablesRow = new HashMap<String,Integer>();
+	private HashMap<String,Integer> variablesRow = new HashMap<>();
 	
 	private Integer variablesToShow = 1; // 0 = ALL_VARIABLES -- 1 = EDITABLE_VARS -- 2 = CALENDAR_VARS -- 3 = AGREEMENT_VARS -- 4 = CONTRACT_VARS
 	
@@ -365,8 +359,8 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeEventsDraft() {
-		toolbar = getToolbarPanel();
+	protected EmployeeEventsDraft() {
+		getToolbarPanel();
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -412,7 +406,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		blankLabel.addStyleName(style.firstHeadStyleHide());
 		eventsGrid.setWidget(0, 0, blankLabel);
 		
-		String months[] = {"ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT",
+		String[] months = {"ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT",
 						   "NOV", "DIC"};
 		
 		for(int i=0; i<months.length; i++){
@@ -454,15 +448,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		}else{
 			//Borrar selecciones anteriores
 			eraseSelectedPositions();
-			
 			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
-			
 			if(AonStringUtils.containsIgnoreCase(variableName, "("))
 				variableName = AonStringUtils.split(variableName, '(')[0].trim();
-			
 			ArrayList<EmployeeEventsVariable> employeeEventsVariables = employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
-			
-			if(!employeeEventsDraft.isCalendarVariable(variableName)) {
+			if(Boolean.FALSE.equals(employeeEventsDraft.isCalendarVariable(variableName))) {
 				if(null != employeeEventsVariables && !employeeEventsVariables.isEmpty())
 					openEventsDialog(variableName, employeeEventsVariables);
 				else
@@ -508,16 +498,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		//Descargar Variables actualizadas
 		employeeEventsDraft.initializeDBEventsVariables(years[0],
 				r -> {
-					//initializeYearLB(this.yearLB);
-					//syncYearLBOptions();
-					//setSelectedValueLB(yearLB, (aYear+1900)+"");
 					yearLB.clear();
-					for ( Integer aYear: years ) {
+					for ( Integer aYear: years )
 						yearLB.addItem(aYear.toString(), aYear.toString());
-					}
-					yearLB.addChangeHandler(e -> {
-						changeYear();
-					});
+					
+					yearLB.addChangeHandler(e -> changeYear());
 					yearLB.setSelectedIndex(0);
 					this.year = years[0] - 1900;
 					
@@ -551,9 +536,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		yearLB.addItem(previusYear.toString(), previusYear.toString());
 		yearLB.addItem(previusYearII.toString(), previusYearII.toString());
 		
-		yearLB.addChangeHandler(e -> {
-			changeYear();
-		});
+		yearLB.addChangeHandler(e -> changeYear());
 		
 		setSelectedValueLB(yearLB, year+"");
 		year = year - 1900;
@@ -567,9 +550,9 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	
 	private void syncYearLBOptions() {
 		for(int i= this.yearLB.getItemCount() -1 ; i >= 0; i--) {
-			Integer year = Integer.parseInt(this.yearLB.getValue(i));
-			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
-			Date firstDayOfYear = DateUtils.getFirstDayOfYear(year-1900);
+			Integer yearAux = Integer.parseInt(this.yearLB.getValue(i));
+			Date lastDayOfYear = DateUtils.getLastDayOfYear(yearAux-1900);
+			Date firstDayOfYear = DateUtils.getFirstDayOfYear(yearAux-1900);
 			if(isOutOfContractPeriod(firstDayOfYear, lastDayOfYear)) {
 				this.yearLB.removeItem(i);
 			}
@@ -616,8 +599,8 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		clearEventsGrid();
 		
 		//Crear nuevas filas con las variables dadas
-		for(String var : employeeEventsDraft.getEmployeeContractVariables(getVariablesToShow()))
-			createVariableRow(var);
+		for(String contractVar : employeeEventsDraft.getEmployeeContractVariables(getVariablesToShow()))
+			createVariableRow(contractVar);
 		
 	}
 	
@@ -635,7 +618,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		headLabel.addStyleName(style.firstHeadStyle());
 		headLabel.getElement().getStyle().setWidth(270, Unit.PX);
 		
-		if (employeeEventsDraft.isCalendarVariable(var)){
+		if (Boolean.TRUE.equals(employeeEventsDraft.isCalendarVariable(var))){
 			Double acumulateYaer = employeeEventsDraft.getAcumulateYear(var);
 			if(AonNumberUtils.notEquals(acumulateYaer, 0.0)) {
 				headLabel.setText(var + " (" + acumulateYaer);
@@ -647,7 +630,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			}
 		}
 		
-		if(employeeEventsDraft.isAgreementVariable(var)) {
+		if(Boolean.TRUE.equals(employeeEventsDraft.isAgreementVariable(var))) {
 			String value = employeeEventsDraft.getAgreementVariablesValue(var);
 			headLabel.setText(headLabel.getText() + " (" + value + ")");
 		}
@@ -656,23 +639,17 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		
 		headPanel.add(headLabel);
 		
-		if (employeeEventsDraft.isCalendarVariable(var)){
+		if (Boolean.TRUE.equals(employeeEventsDraft.isCalendarVariable(var))){
 			Button calendarButton = new Button();
 			calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
-			calendarButton.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					onShowCalendar();
-				}
-			});
+			calendarButton.addClickHandler(e -> onShowCalendar());
 			
 			headPanel.add(calendarButton);
 			headLabel.addStyleName(style.setBlockVariableStyle());
 		}else {
 			headLabel.removeStyleName(style.setBlockVariableStyle());
 			headPanel.getElement().getStyle().setWidth(100, Unit.PCT);
-			headLabel.getElement().getStyle().setTextAlign(TextAlign.LEFT);;
+			headLabel.getElement().getStyle().setTextAlign(TextAlign.LEFT);
 		}
 		
 		if (newRow % 2 == 1)
@@ -686,51 +663,38 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		
 		ArrayList<EmployeeEventsVariable> varList = this.employeeEventsDraft.getListEmployeeEventsVaribales(var);
 		
-		//Window.alert("Numero de columnas por fila :"+eventsGrid.getCellCount(newRow));
 		for (int col = 1; col < 13 /*eventsGrid.getCellCount(newRow)*/; col++){
 			
 			EventTableCell eventCell = new EventTableCell(col, newRow, var);
-			eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
+			eventCell.addValueChangeHandler(e -> {
+				//Borrar selecciones anteriores
+				eraseSelectedPositions();
+				selectPosition(eventCell.getRow(), eventCell.getColumn());
 				
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					//Borrar selecciones anteriores
-					eraseSelectedPositions();
-					selectPosition(eventCell.getRow(), eventCell.getColumn());
-					
-					if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-"){
-						addValueSelectedPositions(null);
-						eventCell.setText("-");
-					}else
-						addValueSelectedPositions(Double.parseDouble(eventCell.getText()));
-					
-					eraseSelectedPositions();
-					eventCell.addStyleName(style.onChange());	
-				}
+				if(AonStringUtils.isBlank(eventCell.getValue()) || AonStringUtils.equalsIgnoreCase(eventCell.getValue(), "-")){
+					addValueSelectedPositions(null);
+					eventCell.setText("-");
+				}else
+					addValueSelectedPositions(Double.parseDouble(eventCell.getText()));
+				
+				eraseSelectedPositions();
+				eventCell.addStyleName(style.onChange());	
 			});
 			
-			eventCell.addFocusHandler(new FocusHandler() {
-				
-				@Override
-				public void onFocus(FocusEvent event) {
-					if(AonStringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
-						eventCell.setValue("");
-				}
+			eventCell.addFocusHandler(e -> {
+				if(AonStringUtils.isBlank(eventCell.getValue()) || AonStringUtils.equalsIgnoreCase(eventCell.getValue(), "-"))
+					eventCell.setValue("");
 			});
 			
-			eventCell.addBlurHandler(new BlurHandler() {
-				
-				@Override
-				public void onBlur(BlurEvent event) {
-					if(AonStringUtils.isBlank(eventCell.getValue()))
-						eventCell.setValue("-");
-				}
+			eventCell.addBlurHandler(e -> {
+				if(AonStringUtils.isBlank(eventCell.getValue()))
+					eventCell.setValue("-");
 			});
 			
-			if (employeeEventsDraft.isCalendarVariable(var) /*|| (null != varList && !varList.isEmpty() && !isBeforeLastDate(actualMonth, Integer.parseInt(yearLB.getSelectedItemText()), varList))*/ ){
+			if (Boolean.TRUE.equals(employeeEventsDraft.isCalendarVariable(var))){
 				eventCell.setBlockVariableStyle();
 				eventCell.setEnabled(false);
-			}else{
+			} else{
 				eventCell.removeBlockVariableStyle();
 			}
 			
@@ -749,7 +713,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 				eventCell.addStyleName(style.bgcWhite());
 			}
 			
-			if (AonNumberUtils.equals(accumulateMonth, 0.0)){
+			if (null == accumulateMonth){
 				eventCell.setTextBoxValue("-");
 				eventsGrid.setWidget(newRow, col, eventCell);
 				if (newRow % 2 != 1)
@@ -776,27 +740,6 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		}
 		
 	}
-   
-    private boolean isBeforeLastDate(Integer month, int year, ArrayList<EmployeeEventsVariable> varList) {
-    	// Get finding Date
-    	Date findingDate = DateUtils.getDate(month, year);
-		
-    	// Sort list
-		Collections.sort(varList, Collections.reverseOrder(new Comparator<EmployeeEventsVariable>() {
-			@Override
-			public int compare(EmployeeEventsVariable o1, EmployeeEventsVariable o2) {
-				return o1.getStartDate().compareTo(o2.getStartDate());
-			}
-		}));
-		
-		// Get lastDate
-		Date lastDate = varList.get(0).getEndDate();
-		
-		if(lastDate == null)
-			return false;
-		else
-			return DateUtils.isBeforeOrEquals(lastDate, findingDate);
-	}
 
 	// ----------------------------------------------- EmployeeEventsDraft.Auxiliar Methods
     
@@ -817,14 +760,14 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	}
 	
 	private ArrayList<String> getVariablesWithOutCalendar() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		
 		ArrayList<String> allEmployeeVariables = employeeEventsDraft.getAllVariables();
 		
-		for(String var : allEmployeeVariables) {
-			if(employeeEventsDraft.isCalendarVariable(var))
+		for(String employeeVariable : allEmployeeVariables) {
+			if(Boolean.TRUE.equals(employeeEventsDraft.isCalendarVariable(employeeVariable)))
 				continue;
-			result.add(var);
+			result.add(employeeVariable);
 		}
 		
 		return result;
@@ -833,6 +776,8 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	private void addValueSelectedPositions(Double valueD) {
 		int variableRow = calculateRow(selectedPositions.getSelectedList().get(0));
 		String variable = eventsGrid.getWidget(variableRow, 0).getElement().getInnerText();
+		if(AonStringUtils.containsIgnoreCase(variable, "("))
+			variable = AonStringUtils.split(variable, '(')[0].trim();
 		
 		int colStart = calculateCol(selectedPositions.getSelectedList().get(0));
 		Integer monthStart = calculateMonthByColumn(colStart);
@@ -878,7 +823,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			case 4:
 				return employeeEventsDraft.getContractVariables();
 			default:
-				return new ArrayList<String>();
+				return new ArrayList<>();
 		}
 	}
 	
@@ -923,14 +868,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		event.stopPropagation();
 		if(!selectedPositions.getSelectedList().isEmpty()){
 			ContextMenu menu = new  ContextMenu();
-			
-			menu.addItem("A"+String.valueOf("\u00f1")+"adir nuevo valor", new Command() {
-				@Override
-				public void execute() {
-					openNewValueDialog(null);
-				}
-			});
-			
+			menu.addItem("A\u00f1adir nuevo valor", () -> openNewValueDialog(null));
 			menu.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
 		    menu.show();
 		}
@@ -938,33 +876,25 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	
 	// ----------------------------------------------- Toolbar
 	
-	private AonToolbar getToolbarPanel() {
+	private void getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Variables de c\u00e1lculo");
+		this.toolbar = new AonToolbar("Variables de c\u00e1lculo");
 		
 		undoAllButton = new AonToolbarButton( "Restaurar últimos valores guardados", AON.CSS.aonIconUndo() );
-		undoAllButton.addClickHandler(e -> {
-			onUndo();
-		});
+		undoAllButton.addClickHandler(e -> onUndo());
 		toolbar.add(undoAllButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveButton.ensureDebugId("employeeEventsDraftSaveButton");
-		saveButton.addClickHandler(e -> {
-			onSave();
-		});
+		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
 		newValueButton = new AonToolbarButton( "Nuevo valor", AON.CSS.aonIconAdd() );
-		newValueButton.addClickHandler(e -> {
-			onNewValue();
-		});
+		newValueButton.addClickHandler(e -> onNewValue());
 		toolbar.add(newValueButton);
 		
 		visibilityButton = new AonToolbarButton( "Visualizaci\u00F3n", AON.CSS.aonIconVisibility() );
-		visibilityButton.addClickHandler(e -> {
-			onVisibility(e);
-		});
+		visibilityButton.addClickHandler(e -> onVisibility(e));
 		toolbar.add(visibilityButton);
 		
 		//Nombre variables para TEST
@@ -975,8 +905,6 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		yearLB.ensureDebugId("employeeEventsDraftYearListBox"); 
 		toolbar.add(this.yearLB);
 		
-		return toolbar;
-
 	}
 
 	// ----------------------------------------------- Toolbar.Methods
@@ -988,20 +916,21 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	public void onSave() {
 		employeeEventsDraft.updateDBCalendar(
 				r -> {
-					//Descargar Variables actualizadas
-					String selectedYear = this.yearLB.getSelectedValue();
-					Integer actualYear = Integer.parseInt(selectedYear);
-					employeeEventsDraft.initializeDBEventsVariables(actualYear,
-							s -> {
-								initializeVariablesToShow();
-								showEvents();
-								changeYear();
-								saveButton.setEnabled(false);
-								undoAllButton.setEnabled(false);
-							}, f -> {});
-//					changeYear();
-//					saveButton.setEnabled(false);
-//					undoAllButton.setEnabled(false);
+					// Descargar Variables actualizadas
+//					String selectedYear = this.yearLB.getSelectedValue();
+//					Integer actualYear = Integer.parseInt(selectedYear);
+					showEvents();
+					changeYear();
+					saveButton.setEnabled(false);
+					undoAllButton.setEnabled(false);
+//					employeeEventsDraft.initializeDBEventsVariables(actualYear,
+//							s -> {
+//								initializeVariablesToShow();
+//								showEvents();
+//								changeYear();
+//								saveButton.setEnabled(false);
+//								undoAllButton.setEnabled(false);
+//							}, f -> {});
 				}, 
 				t -> {});
 	}
@@ -1011,15 +940,16 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	}
 	
 	private void initUndoAllDialog() {
-		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?"));
+		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la \u00FAltima versi\u00F3n guardada?"));
 		dialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
-			public void onCancel() {}
+			public void onCancel() {
+				// Nothing to do here
+			}
 			
 			@Override
 			public void onAccept() {
-				//clearEventsGrid();
 				Integer actualYear = DateUtils.getYear(new Date());
 				employeeEventsDraft.initializeDBEventsVariables(
 						actualYear,
@@ -1107,9 +1037,12 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		this.yearLB = yearLB;
 	}
 		 
-    protected abstract void onShowCalendar();
-
-    public EmployeeCalendarDraftObject getEmployeeCalendarObject() {
+	public EmployeeCalendarDraftObject getEmployeeCalendarObject() {
 		return employeeEventsDraft.getEmployeeCalendar();
 	}
+	
+	protected abstract void onShowCalendar();
+
+
+    
 }

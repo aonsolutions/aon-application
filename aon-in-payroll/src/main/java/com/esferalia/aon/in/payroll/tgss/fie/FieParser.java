@@ -161,9 +161,7 @@ public class FieParser {
 					listener.onDitItEndCause(itEndCause);
 					
 					String itPartCancelStr = substring(dit,72,73);
-					Boolean itPartCancel = itPartCancelStr.equals("S");
-					if(isBlank(itPartCancelStr)) itPartCancel = null;
-					listener.onDitItPartCancel(itPartCancel);					
+					listener.onDitItPartCancel(itPartCancelStr!=null && itPartCancelStr.equals("S"));					
 					listener.endDIT();
 
 				//ITD
@@ -369,7 +367,7 @@ public class FieParser {
 			@Override
 			public void onDitItStartDate(Date itStartDate) {System.out.println("\t ItStartDate: '" + itStartDate + "'");}
 			@Override
-			public void onDitItPartCancel(Boolean itPartCancel) {System.out.println("\t ItPartCancel: '" + itPartCancel + "'");}
+			public void onDitItPartCancel(boolean itPartCancel) {System.out.println("\t ItPartCancel: '" + itPartCancel + "'");}
 			@Override
 			public void onDitItEndDate(Date itEndDate) {System.out.println("\t ItEndDate: '" + itEndDate + "'");}
 			@Override
@@ -412,6 +410,4 @@ public class FieParser {
 			public void endDIT() {System.out.println("}");}
 		});
 	}
-	
-
 }

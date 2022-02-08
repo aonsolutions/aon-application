@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
-
+	
 	<ui:define name="content">
 		<aon:form id="reportPrintSearch">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
@@ -61,8 +61,8 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 
-					<aon:htmlCommandLink id="salaryExpense-detailed_report-excel" 
-						value="Listado detallado"
+					<!-- <aon:htmlCommandLink id="salaryExpense-detailed_report-excel" 
+						value="Listado detallado&#160;"
 						actionListener="#{enterprise.onSelectFirst}"
 						styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel" target="_blank"
 						action="#{enterpriseSalaryReport.onDetailedExcel}">
@@ -78,7 +78,85 @@
 							target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyDetailed':'salaryExpenseDetailed'}" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</aon:htmlCommandLink>
+					</aon:htmlCommandLink> -->
+				
+					<h:panelGrid columns="2" style="display:inline; vertical-align:bottom;">
+						<rich:dropDownMenu style="margin-left:2.5em; padding: 0 !important; border: none !important" mode="ajax">
+			                <f:facet name="label">
+			                    <h:panelGrid cellpadding="0" cellspacing="0" columns="2" style=" vertical-align:bottom; font-size: .95em;">
+			                        <h:outputText class="aon-icon-excel aon-finding-toolbar-item" style="margin-left:-2.5em; font-size: .8em; border-right: none !important; color:dark-gray" value="RESUMEN ANUAL"/>
+			                    </h:panelGrid>
+			                </f:facet>
+			                <rich:menuItem action="#{enterpriseSalaryReport.onDetailedExcel}">
+				                <f:facet name="icon">            			      		
+	            			      		<h:outputText
+											value="chevron_right"  
+											styleClass="material-icons" 
+											style="font-size:1.5em; vertical-align: bottom" 
+										/>
+           			      		</f:facet>
+			                    <h:outputText value="Listado de costes" />
+			                    <f:setPropertyActionListener
+								target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.salaryTypes}" value="#{enterpriseSalaryReport.salaryTypes}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+			                </rich:menuItem>
+			                
+               			    <rich:menuItem action="#{enterpriseSalaryReport.onAggregatedMonthly}">
+				                <f:facet name="icon">            			      		
+	            			      		<h:outputText
+											value="chevron_right"  
+											styleClass="material-icons" 
+											style="font-size:1.5em; vertical-align: bottom" 
+										/>
+           			      		</f:facet>
+			                    <h:outputText value="Agregado mensual" />
+			                    <f:setPropertyActionListener
+								target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.salaryTypes}" value="#{enterpriseSalaryReport.salaryTypes}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+			                </rich:menuItem>
+			                
+               			    <rich:menuItem action="#{enterpriseSalaryReport.onAggregatedQuarterly}">
+				                <f:facet name="icon">            			      		
+	            			      		<h:outputText
+											value="chevron_right"  
+											styleClass="material-icons" 
+											style="font-size:1.5em; vertical-align: bottom" 
+										/>
+           			      		</f:facet>
+			                    <h:outputText value="Agregado trimestral" />
+			                    <f:setPropertyActionListener
+								target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.salaryTypes}" value="#{enterpriseSalaryReport.salaryTypes}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+								<f:setPropertyActionListener
+									target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+			                </rich:menuItem>
+			                
+			                 
+		            	</rich:dropDownMenu>
+						<aon:selectOneMenu id="reportPrint_yearly_year" value="#{enterpriseSalaryReport.yearlyYear}" >
+							<f:selectItems value="#{enterpriseSalaryReport.availableYears}"  />
+						</aon:selectOneMenu>
+					</h:panelGrid>
+					
 					<!-- <aon:htmlCommandLink id="salaryExpense-detailed_report" 
 						value="Listado detallado"
 						actionListener="#{enterprise.onSelectFirst}"
@@ -137,12 +215,12 @@
 							<a4j:support event="onchange" reRender="reportPrintSearch" ajaxSingle="#{true}"
 								actionListener="#{reportPrint.onChangePeriod}" />
 						</aon:selectOneMenu>
-						<rich:inputNumberSpinner id="reportPrint_year" value="#{reportPrint.year}"
-							disabled="#{reportPrint.betweenDatesEnabled}"
-			   				inputSize="4" minValue="2013" maxValue="#{enterpriseSalaryReport.currentYear}">
+						<aon:selectOneMenu id="reportPrint_year" value="#{reportPrint.year}"
+							disabled="#{reportPrint.betweenDatesEnabled}" >
+							<f:selectItems value="#{enterpriseSalaryReport.availableYears}"  />
 							<a4j:support event="onchange" reRender="reportPrintSearch" ajaxSingle="#{true}"
 								actionListener="#{reportPrint.onChangePeriod}" />
-			   			</rich:inputNumberSpinner>
+						</aon:selectOneMenu>
 					</h:panelGrid>
 					
 					<aon:outputText value="&#160;" />

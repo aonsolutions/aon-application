@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RegistryFull<R extends Registry> implements Serializable {
 
@@ -48,7 +49,12 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	public boolean hasAddresses() {
 		return this.addresses != null && this.addresses.size() > 0;
 	}
-	
+	public RegistryAddress getMainAddress() {
+		return (hasAddresses()) 
+			?this.addresses.stream().filter(addr -> addr.isMain()).findFirst().orElse(null)
+			:null;
+	}
+
 	// ------------------------------------------ REGISTRY MEDIA
 	public LinkedList<RegistryMedia> getMedias() {
 		return medias;
@@ -94,7 +100,10 @@ public class RegistryFull<R extends Registry> implements Serializable {
 //		ensureMedias().add(new RegistryMedia().setMedia(MediaType.EMAIL));
 //		ensureMedias().add(new RegistryMedia().setMedia(MediaType.WEB));
 	}
-	
-	
+	public List<RegistryMedia> getEmailMedias() {
+		return (hasMedias()) 
+			?this.medias.stream().filter(med -> med.isEmail()).collect(Collectors.toCollection(LinkedList::new))
+			:null;
+	}
 	
 }

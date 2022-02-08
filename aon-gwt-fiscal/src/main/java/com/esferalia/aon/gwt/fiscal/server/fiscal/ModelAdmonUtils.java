@@ -86,10 +86,10 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod190Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod3902021Writer;
+import com.esferalia.aon.occam.server.fiscal.format.m190.Mod190Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -240,6 +240,9 @@ public class ModelAdmonUtils {
 			DomainGserviceaccount g = AON.getDomainGserviceaccount(params.getDomainName(), params.getDomainId(), params.getUser());
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+		}
+		if(AonStringUtils.isBlank(params.getPass())) {
+			params.setPass(attach.getDescription().split("HIDE\\(")[1].split("\\)")[0]);
 		}
 		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -544,7 +547,7 @@ public class ModelAdmonUtils {
 			}
 			@Override 
 			public void visitM303() { 
-				MODEL303.aeatPresentationMod303(occam, getMod303(fm) , aeatResponse);
+				MODEL303.aeatPresentation(occam, getMod303(fm) , aeatResponse);
 			}
 			@Override 
 			public void visitM390() { 

@@ -151,7 +151,7 @@ class Page08 extends PageAbs {
 			markAsDirty();
 		});
 		tab.addRow()
-			.addCell(new Label("Operaciones sujetas con inversión del sujeto pasivo"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new Label("Operaciones sujetas con inversi\u00F3n del sujeto pasivo"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
 			.addCell(new AonBoxLabel(125),AON.CSS.aonWidth40())
 			.addCell(box125,AON.CSS.aonWidth120());
 
@@ -162,7 +162,7 @@ class Page08 extends PageAbs {
 			markAsDirty();
 		});
 		tab.addRow()
-			.addCell(new Label("OSS. Operaciones no sujetas por reglas de localización acogidas a la OSS"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new Label("OSS. Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
 			.addCell(new AonBoxLabel(126),AON.CSS.aonWidth40())
 			.addCell(box126,AON.CSS.aonWidth120());
 		

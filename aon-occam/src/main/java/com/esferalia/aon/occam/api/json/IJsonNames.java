@@ -27,8 +27,12 @@ public interface IJsonNames {
 	String ADJUST = "adjust";
 	String ADMINISTRATION = "administration";
 	String ADMINISTRATIVE = "administrative";
-	String ALIAS = "alias"; 
+	String ALIAS = "alias";
+	String AMORTIZATION_DESCRIPTION = "amortizationDescription";
+	String AMORTIZATION_PERCENT = "amortizationPercent";
+	String AMORTIZATION_INITIAL_DATE = "amortizationInitialDate";
 	String AMOUNT = "amount";
+	String AMOUNT_347 = "amount347";
 	String AP1 = "ap1";
 	String AP2 = "ap2";
 	String APA = "apa";
@@ -105,6 +109,8 @@ public interface IJsonNames {
 	String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
 	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
+	String DEDUCTIBLE_PERCENT = "deductiblePercent";
+	String DEDUCTIBLE_QUOTA = "deductibleQuota";
 	String DEFAULT_CERTIFICATE = "defaultCertificate";
 	String DEFINED_USERS = "definedUsers";
 	String DELIVERY_GROUPED = "deliveryGrouped";
@@ -116,6 +122,7 @@ public interface IJsonNames {
 	String DETAIL = "detail";
 	String DETAIL2 = "detail2";
 	String DETAIL3 = "detail3";
+	String DETAIL_DESCRIPTION = "detailDescription";
 	String DETAILED = "detailed";
 	String DETAILS = "details";
 	String DIRTY = "dirty";
@@ -133,6 +140,7 @@ public interface IJsonNames {
 	String DOMAINS = "domains";
 	String DRIVE_ID = "driveId";
 	String DRS = "drs";
+	String DUA_LINKED = "duaLinked";
 	String DUE_DATE = "due_date";
 	// ---------------------------------------------------------------------------------------------	[E] 
 	String E_INVOICE = "eInvoice";
@@ -154,7 +162,8 @@ public interface IJsonNames {
 	String FILE_DATA = "fileData";
 	String FILE = "file";
 	String FILE_NAME = "fileName";
-	String FINANCE_PARAMS = "financeParams";	
+	String FINANCE_PARAMS = "financeParams";
+	String FINANCE_PENDING = "financePending";
 	String FINANCES = "finances";
 	String FOOTER = "footer";
 	String FOOTER_TEXT = "footerText";
@@ -187,6 +196,7 @@ public interface IJsonNames {
 	String INACTIVE = "inactive";
 	String INCREASE_PERCENT = "increasePercent";
 	String INITIATION_DATE = "initiationDate";
+	String INSIDE_PERIOD = "insidePeriod";
 	String INTE = "inte";
 	String INTERNET = "internet";
 	String INTERVAL = "interval";
@@ -195,6 +205,8 @@ public interface IJsonNames {
 	String INVEST_ASSET = "investAsset";
 	String INVESTMENT = "investment";
 	String INVOICING_GROUP = "invoicingGroup";
+	String INVOICE = "invoice";
+	String INVOICE_TYPE = "invoiceType";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
@@ -202,6 +214,7 @@ public interface IJsonNames {
 	String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
 	String IRPF = "irpf";
 	String IRPF_PARAMS = "irpfParams";
+	String ISSUE_DATE = "irpf";
 	String ITEM = "item";
 	// ---------------------------------------------------------------------------------------------	[J] 
 	String JOURNAL = "journal";
@@ -324,12 +337,18 @@ public interface IJsonNames {
 	String RECORD_DATE = "recordDate";
 	String RECTIFICATION = "rectification";
 	String RECTIFICATION_INVOICE = "rectification_invoice";
+	String RECTIFICATION_TYPE = "rectificationType";
 	String RECTIFIED = "rectified";
 	String REFERENCE_CODE = "referenceCode";
 	String REFERENCE = "reference";
+	String REG_CONTABLE_DATE = "regContableDate";
 	String REGIME = "regime";
 	String REGISTRATION = "registration";
+	String REGISTRY_DOCUMENT = "registryDocument";
+	String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";
+	String REGISTRY_DOCUMENT_COUNTRY = "registryDocumentCountry";
 	String REGISTRY_ID = "registryId";
+	String REGISTRY_NAME = "registryName";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
 	String REMARKS = "remarks";
@@ -369,6 +388,7 @@ public interface IJsonNames {
 	String SHARED = "shared";
 	String SHEET = "sheet";
 	String SHOW_COVER = "showCover";
+	String SII_STATUS = "siiStatus";
 	String SIGNATURE = "signature";
 	String SIZE = "size";
 	String SOURCE = "source";
@@ -381,6 +401,7 @@ public interface IJsonNames {
 	String STREET_TYPE = "streetType";
 	String SUBJECT = "subject";
 	String SUFIX = "sufix";
+	String SURCHARGE_PERCENT = "surchargePercent";
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
@@ -392,6 +413,7 @@ public interface IJsonNames {
 	String TASK_HOLDER = "task_holder";
 	String TAXES = "taxes";
 	String TAX = "tax";
+	String TAX_DATE = "taxDate";
 	String TECHNICAL = "technical";
 	String TEST = "test";
 	String TEXT_COLOR = "textColor";
@@ -413,11 +435,16 @@ public interface IJsonNames {
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	String VALUE = "value";
+	String VAT = "vat";
 	String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
+	String VAT_ACCRUAL_REGIME = "vatAccrualRegime";
+	String VAT_DEDUCTION_TYPE = "vatDeductionType";
+	String VAT_IMPORTATION = "vatImportation";
 	String VAT_PARAMS = "vatParams";
 	String VAT_PERCENT = "vatPercent";
+	String VAT_REGIME = "vatRegime";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
-	String VAT = "vat";
+	String VAT_SURCHARGE_REGIME = "vatSurchargeRegime";
 	String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	String WEB = "web";

@@ -8,8 +8,11 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -137,6 +140,22 @@ public class WorkplaceIT extends Composite {
 					failure::accept);
 		}
 
+		@Override
+		protected void communicateITPart(ITEmployee itEmployee, IT it, ITPart itPart, Consumer<Void> success, Consumer<Throwable> failure) {
+			workplaceITObject.communicateITPart(itEmployee, it, itPart,
+					success::accept, 
+					failure::accept);
+		}
+		
+		@Override
+		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {
+//			enterpriseITObject.checkStatus(success::accept, failure::accept);
+		}
+
+		@Override
+		protected void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure){
+
+		}
 	}
 	
 	// --------------------------------------------------- Binder

@@ -1,19 +1,19 @@
 package solutions.aon.seg.social;
 
+import static java.lang.Integer.parseInt;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -38,11 +38,13 @@ import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.object.PaternityCertificate;
-import solutions.aon.seg.social.object.PaternityCertificate.PaternityCertificateBuilder;
+import solutions.aon.seg.social.object.PaternityDetail;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class Paternity {
+	private static String DATE_FORMAT = "dd/MM/yyyy";
+	
 	final static String[] ID_TYPE = { "NIF", "NIE" };
 	// M -> Madre, P -> 'Otro progenitor', A -> Primer adoptante, B -> Segundo
 	// adoptante
@@ -51,7 +53,9 @@ class Paternity {
 			"Cesión/Opción en favor del otro progenitor", "Parto múltiple",
 			"Inicio del descanso antes del parto (solo para madre biológica ET)" };
 	final static String[] FATHER_REASON = { "Nacimiento de hijo", "Parto múltiple" };
+	
 	// ADOPTERS es válido para las opciones del primer y segundo adoptante
+	
 	final static String ADOPTERS = "Adopción/Tutela/Acogimiento";
 
 	public static boolean grabarCertificado(final InputStream certificateInputStream, final String certificatePassword,
@@ -90,7 +94,7 @@ class Paternity {
 			HtmlSelect reasonSelect = formDatos.getSelectByName("motivoMadreBiologica");
 			reasonSelect.getOptionByText(reason).setSelected(true);
 			// START DATE
-			formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(dateFrom, "dd/MM/yyyy").get());
+			formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
 
 			// SUBMIT
 			htmlPage = formDatos.getInputByValue("Validar").click();
@@ -99,7 +103,7 @@ class Paternity {
 			HtmlForm formDatos2 = (HtmlForm) htmlPage.getElementById("formDatos");
 			// END DATE
 			formDatos2.getInputByName("fechaFinPeriodo1")
-					.setValueAttribute(Toolkit.formatDate(dateTo, "dd/MM/yyyy").get());
+					.setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
 			// BASE CC
 			formDatos2.getInputByName("baseCC1").setValueAttribute("" + Float.toString(baseCC).replace(".", ","));
 			formDatos2.getInputByName("baseCP1").setValueAttribute("" + Float.toString(baseCP).replace(".", ","));
@@ -133,7 +137,7 @@ class Paternity {
 
 	public static void voidPaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
+			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -147,19 +151,19 @@ class Paternity {
 			// REGIME
 			formDatos.getInputByName("regimen").setValueAttribute(regime);
 			// CCC
-			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			// DATE FROM
-			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, "dd/MM/yyyy").get());
+			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
 			// END DATE
-			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, "dd/MM/yyyy").get());
+			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
 			// NAF
 			formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
 			formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
 			// START DATE (OPTIONAL)
 			if (!startDate.isEmpty()) {
 				formDatos.getInputByName("fechaInicio")
-						.setValueAttribute(Toolkit.formatDate(startDate.get(), "dd/MM/yyyy").get());
+						.setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
 			}
 
 			// SUBMIT
@@ -174,18 +178,7 @@ class Paternity {
 				htmlAux = htmlAux.getElementById("SPM.ACC.AC_GE_ANULAR").click();
 
 			} catch (NullPointerException | ElementNotFoundException e) {
-				try {
-					HtmlListItem errorLi = (HtmlListItem) htmlPage
-							.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
-					if (errorLi.getVisibleText().trim().equalsIgnoreCase(
-							"Régimen/Cuenta de Cotización NO HAY DATOS PARA ESTOS CRITERIOS DE CONSULTA")) {
-						throw new PaternityNotFoundException();
-					} else {
-						throw new PaternityWrongDataException();
-					}
-				} catch (NullPointerException e1) {
-					throw new PaternityException();
-				}
+				checkErrors(htmlPage);
 			}
 
 		} catch (FailingHttpStatusCodeException e) {
@@ -201,10 +194,9 @@ class Paternity {
 		}
 	}
 
-	public static Collection<PaternityCertificate> consultCertificates(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo,
-			final Optional<Date> startDate) throws SegSocialException {
+	public static List<PaternityCertificate> getPaternitys(
+			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
+			String regime, String ccc,  Date dateFrom,  Date dateTo,  Optional<String> nss, Optional<Date> startDate) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -218,124 +210,61 @@ class Paternity {
 			// REGIME
 			formDatos.getInputByName("regimen").setValueAttribute(regime);
 			// CCC
-			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			// DATE FROM
-			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, "dd/MM/yyyy").get());
+			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
 			// END DATE
-			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, "dd/MM/yyyy").get());
+			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
 			// NAF
-			try {
-			formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
-			} catch (InvalidDataException e) {
-				throw new UnfilledMandatory("No ccc found");
+			if(nss.isPresent()) {
+				String[] naf = Toolkit.SplitString(nss.get(), 2);
+				formDatos.getInputByName("naf2").setValueAttribute(naf[0]);
+				formDatos.getInputByName("naf10").setValueAttribute(naf[1]);
 			}
+			
 			// START DATE (OPTIONAL)
-			if (!startDate.isEmpty()) {
-				formDatos.getInputByName("fechaInicio")
-						.setValueAttribute(Toolkit.formatDate(startDate.get(), "dd/MM/yyyy").get());
-			}
+			if (!startDate.isEmpty()) 
+				formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
 
 			// SUBMIT
 			htmlPage = formDatos.getInputByValue("Buscar").click();
+			
+			checkErrors(htmlPage);
 
 			// CHECKING IF THE PAGE THREW RESULTS
 			try {
 				HtmlTable resultTable = (HtmlTable) htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
 				int rows = resultTable.getRowCount() - 1;
 				formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
-				ArrayList<PaternityCertificate> ret = new ArrayList<PaternityCertificate>();
+				ArrayList<PaternityCertificate> paternityCertificates = new ArrayList<>();
 				for (int i = 1; i <= rows; i++) {
 					HtmlTableCell resultCell = resultTable.getCellAt(i, 0);
-
+					
 					try {
 						HtmlInput resultInput = (HtmlInput) resultCell.getFirstElementChild();
 						htmlPage = resultInput.click();
 						HtmlPage htmlAux = formDatos.getInputByValue("Ver detalle").click();
 
-						// TAKING DATA FROM EACH PAGE
-						// Picking info placed into dd's
-						DomNodeList<DomNode> dtList = htmlAux.querySelectorAll("fieldset dt");
-						PaternityCertificateBuilder pcb = new PaternityCertificateBuilder();
-						for (DomNode dt : dtList) {
-							chooseDataType(dt, pcb);
-						}
-
-						DomNodeList<DomNode> tdList1 = htmlAux
-								.querySelectorAll("table[class='margenIzq12 rellenoIzq12 ancho60 clearL'] td");
-						pcb.setPeriodNumber(
-								Integer.parseInt(Toolkit.removeNBSP(tdList1.get(0).getVisibleText().trim())));
-						try {
-							Date startD = new SimpleDateFormat("dd/MM/yyyy")
-									.parse(Toolkit.removeNBSP(tdList1.get(1).getVisibleText().trim()));
-							pcb.setStartDate(startD);
-						} catch (java.text.ParseException e) {
-							pcb.setStartDate(null);
-						}
-						try {
-							Date endD = new SimpleDateFormat("dd/MM/yyyy")
-									.parse(Toolkit.removeNBSP(tdList1.get(2).getVisibleText().trim()));
-							pcb.setEndDate(endD);
-						} catch (java.text.ParseException e) {
-							pcb.setEndDate(null);
-						}
-						pcb.setPartiality(Toolkit.removeNBSP(tdList1.get(3).getVisibleText().trim()));
-
-						// REGISTRIES
-						DomNodeList<DomNode> trRegistryList = htmlAux
-								.querySelectorAll("table[class='margenSup12 ancho60 clearL']>tbody>tr");
-						ArrayList<String[]> registries = new ArrayList<String[]>();
-						for (int j = 1; j < trRegistryList.size(); j++) {
-							HtmlTableRow trElement = (HtmlTableRow) trRegistryList.get(j);
-							Iterable<DomElement> tdElements = trElement.getChildElements();
-							String[] registry = new String[5];
-							int k = 0;
-							int countEmpty = 0;
-							for (DomElement td : tdElements) {
-								registry[k] = Toolkit.removeNBSP(td.getVisibleText().trim());
-								if ((registry[k] == null) || (registry[k].equalsIgnoreCase("")))
-									countEmpty++;
-								k++;
-							}
-							if (countEmpty == 4) {
-								break;
-							}
-							registries.add(registry);
-						}
-						pcb.setRegistry(registries);
-						htmlAux = htmlAux.getElementById("SPM.ACC.AC_CO_INFORME").click();
-						HtmlButton docButton = htmlAux.querySelector("button[class='botonDesplegable desplegar']");
-						htmlAux = docButton.click();
-						HtmlAnchor docAnchor = htmlAux.querySelector(
-								"a[title='Informe:Anulación de certificado de Otro progenitor (Nacimiento de hijo)']");
-
-						InputStream is = docAnchor.click().getWebResponse().getContentAsStream();
-						byte[] pdf = is.readAllBytes();
-						is.close();
-						pcb.setPdf(pdf);
-						PaternityCertificate pc = pcb.build();
-						ret.add(pc);
+						PaternityCertificate pcb = new PaternityCertificate();
+							
+						setDataGeneral(htmlAux, pcb);
+						
+						setDataBases(htmlAux, pcb);
+//						
+						setDataDetail(htmlAux, pcb);
+//	
+						setPdf(htmlAux, pcb);
+	
+						paternityCertificates.add(pcb);
 					} catch (NullPointerException | ElementNotFoundException e) {
-						// If radiobutton doesn't exist
+						e.printStackTrace();
 					}
 				}
-				return ret;
+				return paternityCertificates;
 			} catch (NullPointerException | ElementNotFoundException e) {
-				try {
-					HtmlListItem errorLi = (HtmlListItem) htmlPage
-							.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
-					if (errorLi.getVisibleText().trim().equalsIgnoreCase(
-							"Régimen/Cuenta de Cotización NO HAY DATOS PARA ESTOS CRITERIOS DE CONSULTA")) {
-						throw new PaternityNotFoundException();
-					} else {
-						throw new PaternityWrongDataException();
-					}
-				} catch (NullPointerException e1) {
-					throw new PaternityException();
-				}
+				checkErrors(htmlPage);
 			}
-
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
@@ -350,80 +279,112 @@ class Paternity {
 		return null;
 	}
 
-	private static void chooseDataType(DomNode dt, PaternityCertificateBuilder pcb) {
-		if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("C.C.C:")) {
-			try {
-				String text = dt.getNextElementSibling().getVisibleText().trim();
-				text = text.substring(0, text.indexOf(' '));
-				text = Toolkit.removeExtraZeros(text);
-				pcb.setCcc(text);
-			} catch (NullPointerException e) {
-				pcb.setCcc(null);
-			}
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Código Postal:")) {
-			pcb.setPostCode(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Domicilio:")) {
-			pcb.setAddress(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Provincia:")) {
-			pcb.setProvince(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Localidad:")) {
-			pcb.setMunicipality(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Motivo:")) {
-			pcb.setReason(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Fecha de recepción:")) {
-			String strDate = Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim());
-			try {
-				pcb.setReceptionDate(new SimpleDateFormat("dd/MM/yyyy").parse(strDate));
-			} catch (java.text.ParseException e) {
-				pcb.setReceptionDate(null);
-			}
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Trabajador")) {
-			pcb.setWorkerName(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("N.I.F./N.I.E.:")) {
-			pcb.setWorkerNif(
-					Toolkit.removeExtraZeros(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim())));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("N.A.F.:")) {
-			pcb.setWorkerNaf(
-					Toolkit.removeExtraZeros(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim())));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Grupo cotización:")) {
-			pcb.setWorkerGroup(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("F. alta empresa:")) {
-			String strDate = Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim());
-			try {
-				pcb.setWorkerDischargeDate(new SimpleDateFormat("dd/MM/yyyy").parse(strDate));
-			} catch (java.text.ParseException e) {
-				pcb.setWorkerDischargeDate(null);
-			}
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("F. baja empresa:")) {
-			String strDate = Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim());
-			try {
-				pcb.setWorkerWithdrawalDate(new SimpleDateFormat("dd/MM/yyyy").parse(strDate));
-			} catch (java.text.ParseException e) {
-				pcb.setWorkerWithdrawalDate(null);
-			}
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Código contrato:")) {
-			pcb.setWorkerContractCode(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Tipo contrato:")) {
-			pcb.setWorkerContractType(Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("Coef. t. parcial:")) {
-			pcb.setWorkerPartialTimeCoef(Float.parseFloat(Toolkit.removeNBSP(
-					dt.getNextElementSibling().getVisibleText().trim().replace(',', '.').replace(".", ""))));
-		} else if (Toolkit.removeNBSP(dt.getVisibleText()).trim().equalsIgnoreCase("¿ES EMPLEADO PÚBLICO?")) {
-			if (Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()).equalsIgnoreCase("NO")) {
-				pcb.setIsPublicEmployee(false);
-			} else if (Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim()).equalsIgnoreCase("")) {
-				pcb.setIsPublicEmployee(null);
-			} else {
-				pcb.setIsPublicEmployee(true);
-			}
-		}
+	private static void setDataBases(HtmlPage htmlPage, PaternityCertificate pcb) {
+		DomNodeList<DomNode> tdList1 = htmlPage.querySelectorAll("table[class='margenIzq12 rellenoIzq12 ancho60 clearL'] td");
+		pcb.setPeriodNumber(Integer.parseInt(Toolkit.removeNBSP(tdList1.get(0).getVisibleText().trim())));
+		
+		String startStr = Toolkit.removeNBSP(tdList1.get(1).getVisibleText().trim());
+		if(!startStr.isEmpty())
+			pcb.setStartDate(Toolkit.parseDate(startStr, DATE_FORMAT));
 
+		String endStr = Toolkit.removeNBSP(tdList1.get(2).getVisibleText().trim());
+		if(!endStr.isEmpty())
+			pcb.setEndDate(Toolkit.parseDate(endStr, DATE_FORMAT));
+		
+		pcb.setPartiality(Toolkit.removeNBSP(tdList1.get(3).getVisibleText().trim()));
+	}
+	
+	private static void setDataDetail(HtmlPage htmlPage, PaternityCertificate pcb) {
+		DomNodeList<DomNode> trList = htmlPage.querySelectorAll("table[class='margenSup12 ancho60 clearL']>tbody>tr");
+		for (int j = 1; j < trList.size(); j++) {
+			DomNodeList<DomNode> tds = ((HtmlTableRow) trList.get(j)).getChildNodes();
+			String dateStr = Toolkit.removeNBSP(tds.get(2).getVisibleText().trim());
+			if(!dateStr.isEmpty()) {
+				Date date = Toolkit.parseDate(dateStr, "yyyy/MM");
+				String baseCCStr = Toolkit.removeNBSP(tds.get(3).getVisibleText().trim());
+				String baseCPStr = Toolkit.removeNBSP(tds.get(4).getVisibleText().trim());
+				String daysStr = Toolkit.removeNBSP(tds.get(5).getVisibleText().trim());
+	
+				pcb.addPaternityDetail(
+						new PaternityDetail().setDate(date)
+						.setBaseCC(Toolkit.parseStringToFloat(baseCCStr))
+						.setBaseCP(Toolkit.parseStringToFloat(baseCPStr))
+						.setDays(parseInt(daysStr))
+				);
+			} else 
+				break;
+		}
+	}
+	
+	private static void setPdf(HtmlPage htmlPage, PaternityCertificate pcb) {
+		try {
+			htmlPage = htmlPage.getElementById("SPM.ACC.AC_CO_INFORME").click();
+
+			HtmlButton docButton = htmlPage.querySelector("button[class='botonDesplegable desplegar']");
+			htmlPage = docButton.click();
+			HtmlAnchor docAnchor = htmlPage.querySelector("a[title='Informe:Anulación de certificado de Otro progenitor (Nacimiento de hijo)']");
+			
+			InputStream is = docAnchor.click().getWebResponse().getContentAsStream();
+			byte[] pdf = is.readAllBytes();
+			pcb.setPdf(pdf);		
+			is.close();
+		} catch (Exception e) {}
+	}
+	
+	private static void setDataGeneral(HtmlPage htmlPage, PaternityCertificate pcb) {
+		htmlPage.querySelectorAll("fieldset dt").forEach(dt->{
+			String text = Toolkit.removeNBSP(dt.getVisibleText()).trim();
+			String value = Toolkit.removeNBSP(dt.getNextElementSibling().getVisibleText().trim());
+			if(!value.isEmpty()) {
+				if (text.indexOf("C.C.C:")>=0) {
+					pcb.setCcc(value.replaceAll("\\D+", ""));
+				} else if (text.indexOf("Código Postal:")>=0) {
+					pcb.setPostCode(value);
+				} else if (text.indexOf("Domicilio:")>=0) {
+					pcb.setAddress(value);
+				} else if (text.indexOf("Provincia:")>=0) {
+					pcb.setProvince(value);
+				} else if (text.indexOf("Localidad:")>=0) {
+					pcb.setMunicipality(value);
+				} else if (text.indexOf("Motivo:")>=0) {
+					pcb.setReason(value);
+				} else if (text.indexOf("Fecha de recepción:")>=0) {
+					pcb.setReceptionDate(Toolkit.parseDate(value, DATE_FORMAT));
+				} else if (text.indexOf("Trabajador")>=0) {
+					pcb.setWorkerName(value);
+				} else if (text.indexOf("N.I.F./N.I.E.:")>=0) {
+					pcb.setWorkerNif(Toolkit.removeExtraZeros(value));
+				} else if (text.indexOf("N.A.F.:")>=0) {
+					pcb.setWorkerNaf(Toolkit.removeExtraZeros(value));
+				} else if (text.indexOf("Grupo cotización:")>=0) {
+					pcb.setWorkerGroup(value);
+				} else if (text.indexOf("F. alta empresa:")>=0) {
+					pcb.setWorkerDischargeDate(Toolkit.parseDate(value, DATE_FORMAT));
+				} else if (text.indexOf("F. baja empresa:")>=0) {
+					pcb.setWorkerWithdrawalDate(Toolkit.parseDate(value, DATE_FORMAT));
+				} else if (text.indexOf("Código contrato:")>=0) {
+					pcb.setWorkerContractCode(value);
+				} else if (text.indexOf("Tipo contrato:")>=0) {
+					pcb.setWorkerContractType(value);
+				} else if (text.indexOf("Coef. t. parcial:")>=0) {
+					pcb.setWorkerPartialTimeCoef(Toolkit.parseStringToFloat(value));
+				} else if (text.indexOf("ES EMPLEADO PÚBLICO")>=0) {
+					if (value.indexOf("NO")>=0) {
+						pcb.setIsPublicEmployee(false);
+					} else if (value.equalsIgnoreCase("")) {
+						pcb.setIsPublicEmployee(null);
+					} else {
+						pcb.setIsPublicEmployee(true);
+					}
+				}
+			}
+		});
 	}
 
 	// Gets the pdf of the first element of the query
 	public static byte[] getCertificatePdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
+			final String certificateType, final String nss, final String regime,
+			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -437,20 +398,19 @@ class Paternity {
 			// REGIME
 			formDatos.getInputByName("regimen").setValueAttribute(regime);
 			// CCC
-			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			// DATE FROM
-			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, "dd/MM/yyyy").get());
+			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
 			// END DATE
-			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, "dd/MM/yyyy").get());
+			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
 			// NAF
-			formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(nss, 2)[0]);
+			formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(nss, 2)[1]);
 			// START DATE (OPTIONAL)
-			if (!startDate.isEmpty()) {
-				formDatos.getInputByName("fechaInicio")
-						.setValueAttribute(Toolkit.formatDate(startDate.get(), "dd/MM/yyyy").get());
-			}
+			if (!startDate.isEmpty()) 
+				formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
+
 
 			// SUBMIT
 			htmlPage = formDatos.getInputByValue("Buscar").click();
@@ -474,18 +434,7 @@ class Paternity {
 				return ret;
 
 			} catch (NullPointerException | ElementNotFoundException e) {
-				try {
-					HtmlListItem errorLi = (HtmlListItem) htmlPage
-							.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
-					if (errorLi.getVisibleText().trim().equalsIgnoreCase(
-							"Régimen/Cuenta de Cotización NO HAY DATOS PARA ESTOS CRITERIOS DE CONSULTA")) {
-						throw new PaternityNotFoundException();
-					} else {
-						throw new PaternityWrongDataException();
-					}
-				} catch (NullPointerException e1) {
-					throw new PaternityException();
-				}
+				checkErrors(htmlPage);
 			}
 
 		} catch (FailingHttpStatusCodeException e) {
@@ -502,4 +451,10 @@ class Paternity {
 		return null;
 	}
 
+	
+	private static void checkErrors(HtmlPage htmlPage) throws InvalidDataException {
+		DomNode errors = htmlPage.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
+		if (errors != null)
+			throw new InvalidDataException(errors.getVisibleText());
+	}
 }

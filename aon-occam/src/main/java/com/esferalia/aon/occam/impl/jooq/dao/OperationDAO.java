@@ -39,7 +39,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 // Para el Panel de Compras y Gastos / Ventas e Ingresos 
-public class OperationDAO extends FiscalModelDAO {
+public class OperationDAO {
 	
 	// ---------- STREAM FUNCTIONS ----------
 	

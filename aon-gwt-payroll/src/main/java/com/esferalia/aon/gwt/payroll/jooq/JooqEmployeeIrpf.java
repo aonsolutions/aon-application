@@ -52,11 +52,11 @@ public class JooqEmployeeIrpf {
 	
 	// --------------------------------------------- Methods. getEmployeeIrpf
 	
-	public static List<EmployeeIrpf> getEmployeeIrpf(Connection conn, String ssNumber, Date startDate) throws IllegalArgumentException {
-		return getEmployeeIrpf(DSL.using(conn, getDefaultSettings()), ssNumber, startDate);
+	public static List<EmployeeIrpf> getEmployeeIrpf(Connection conn, Integer domainId, String ssNumber, Date startDate) throws IllegalArgumentException {
+		return getEmployeeIrpf(DSL.using(conn, getDefaultSettings()), domainId, ssNumber, startDate);
 	}
 
-	private static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, String ssNumber, Date startDate) throws IllegalArgumentException {
+	private static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, Integer domainId, String ssNumber, Date startDate) throws IllegalArgumentException {
 		List<EmployeeIrpf> employeeIrpfList = new ArrayList<>();
 		
 		// Iterator Date
@@ -82,6 +82,7 @@ public class JooqEmployeeIrpf {
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.ISSUE_DATE.between(parseDateToSQL(iteratorDate), parseDateToSQL(endDate)).or(SALARY.ISSUE_DATE.eq(parseDateToSQL(iteratorDate)).or(SALARY.ISSUE_DATE.eq( parseDateToSQL(endDate)))))
 					.and(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNumber))
+					.and(SALARY.DOMAIN.eq(domainId))
 					.orderBy(SALARY.TYPE)
 					.fetch();
 			
@@ -148,12 +149,12 @@ public class JooqEmployeeIrpf {
 								.where(SALARY_DEDUCTION.SALARY.eq(salaryId))
 								.and(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("EN_ESPECIE")).fetchOne(SALARY_DEDUCTION.AMOUNT);
 						
-						String baseCgcStr = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+						List<String> baseCgcStr = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
 								.where(SALARY_DATA.NAME.eq("BASE_CGC"))
 								.and(SALARY_DATA.SALARY.eq(salaryId))
-								.fetchOne(SALARY_DATA.EXPRESSION);
-						if(null != value && AonStringUtils.isNotBlank(baseCgcStr))
-							inkindBase = Double.parseDouble(baseCgcStr) - value;
+								.fetch(SALARY_DATA.EXPRESSION);
+						if(null != value && !baseCgcStr.isEmpty())
+							inkindBase = Double.parseDouble(baseCgcStr.get(0)) - value;
 					}
 					
 					Double moneyBase = salaryRecord.get(SALARY.MONEY_IRPF_BASE);
@@ -344,6 +345,7 @@ public class JooqEmployeeIrpf {
 			
 			if(employeeIrpf.isDelete()) {
 				dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.eq(employeeIrpf.getSalaryId())).execute();
+				dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.eq(employeeIrpf.getSalaryId())).execute();
 				dslContext.delete(SALARY).where(SALARY.ID.eq(employeeIrpf.getSalaryId())).execute();
 			} else {
 					

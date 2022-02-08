@@ -1,21 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.client.mod347;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347.Model347Callback;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
-import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model347ARABA extends Model347Base {
 
-	public Model347ARABA(Model347ModuleOptions options, Mod347 mod347, Model347Callback cbk, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex) {
-		super(options, mod347, cbk);
+	public Model347ARABA(Model347Callback cbk, Mod347 mod347, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex) {
+		super(cbk, mod347);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -24,27 +21,71 @@ public class Model347ARABA extends Model347Base {
 		add(centerPanel);
 		
 		paintDeclarationTab(tabPanel);
-		paintDeclaredTab(options, tabPanel, selectedIndexDeclared);
+		paintDeclaredTab(tabPanel, selectedIndexDeclared);
 		paintAssetsTab(tabPanel, selectedIndexAsset);
-		paintAdministrationTab(options, cbk,tabPanel);
+		paintAdministrationTab(tabPanel);
 		addTabPanelSelectionHandler(tabPanel);
 		
-		tabPanel.selectTab(tabPanelIndex, true);		
+		tabPanel.selectTab(tabPanelIndex, true);
 	}
 
-	private void paintAdministrationTab(Model347ModuleOptions options, Model347Callback cbk, TabLayoutPanel tabPanel) {
-		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(options, cbk));
-		panel.add(getInformationPanel());
-		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod347().getAdministration())));
-	}
+	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {
+		IFiscalModelAdmonPanelCallback<Mod347, Model347ModuleOptions> cbk = 
+				new IFiscalModelAdmonPanelCallback<Mod347, Model347ModuleOptions>() {
 
-	@Override
-	protected LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Informaci\u00F3n general."
-				,"http://www.araba.eus/cs/Satellite?pageid=1193046566413&language=null&tipomodelo=1193045445346&pagename=DiputacionAlava%2FPage%2FDPA_B_listadoModelos&tipoimpuesto=-1&nmodelo=347&anio="+getMod347().getYear()+"&aniodesde="+getMod347().getYear()+"&aniohasta="+getMod347().getYear()+"&btnimpu=Buscar"));
-		return list;
+					@Override
+					public Model347ModuleOptions getOptions() {
+						return getCallback().getOptions();
+					}
+
+					@Override
+					public Mod347 getModel() {
+						return Model347ARABA.this.getModel();
+					}
+
+					@Override
+					public void showError(String msg) {
+						getCallback().showError(msg);
+					}
+
+					@Override
+					public String getValidatePrintAction() {
+						return null;
+						
+					}
+
+					@Override
+					public String getDownloadFileAction() {
+						return Model347Base.MODEL347_FILE;
+					}
+
+					@Override
+					public String getSendAction() {
+						return null;
+					}
+
+					@Override
+					public void sendSuccessfully() {
+						// Nothing
+					}
+
+					@Override
+					public String getCheckAction() {
+						return null;
+					}
+
+					@Override
+					public String getCheckDataResponseDataAction() {
+						return null;
+					}
+
+					@Override
+					public String getModelInformationURL() {
+						return "https://egoitza.araba.eus/es/-/modelo-347";
+					}
+			};
+			admonPanel = new FiscalModelAdmonPanel<>(cbk);
+			tabPanel.add( admonPanel, AON.MSG.administrationName(getModel().getAdministration()));		
 	}
 
 }

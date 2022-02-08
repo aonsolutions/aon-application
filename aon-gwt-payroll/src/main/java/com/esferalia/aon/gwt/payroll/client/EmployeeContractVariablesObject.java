@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,6 +9,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeContractVariablesObject {
@@ -46,6 +48,20 @@ public class EmployeeContractVariablesObject {
 		});
 	}
 	
+	public void createContractVariable(ContractVariable contractVariable, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.createContractVariable(this.contractId, contractVariable, new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void updateContractVariables(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.updateContractVariables(this.contractVariables, new AsyncCallback<Void>() {
 			@Override
@@ -60,27 +76,50 @@ public class EmployeeContractVariablesObject {
 		});
 	}
 
-	public List<ContractVariable> getContractVariables(Integer year, String variableTypeValue) {
+	public List<ContractVariable> getContractVariables(String yearValue, String monthValue, String variableTypeValue) {
 		this.contractVariablesFiltered.clear();
 		
-		Date startDate = DateUtils.getFirstDayOfYear(year - 1900);
-		Date endDate = DateUtils.getLastDayOfYear(year - 1900);
-		
-		VariableType variableType = getVariableType(variableTypeValue);
-		
-		for(ContractVariable contractVariable : contractVariables) {
-			if(contractVariable.getId() < 0)
-				continue;
+		// Se filtra solo por tipo de variable sin fechas
+		if(AonStringUtils.isBlank(yearValue)) {
+			VariableType variableType = getVariableType(variableTypeValue);
 			
-			if(	(isInPeriod(startDate, endDate, contractVariable.getStartDate()) ||
-				(null != contractVariable.getEndDate() && isInPeriod(startDate, endDate, contractVariable.getEndDate())) ||
-				(null == contractVariable.getEndDate() && (isInPeriod(startDate, endDate, contractVariable.getStartDate()) || DateUtils.isBeforeOrEquals(contractVariable.getStartDate(), startDate))))
-				&& (null == variableType || variableType.equals(contractVariable.getVariableType())))
+			for(ContractVariable contractVariable : contractVariables) {
+				if(contractVariable.getId() < 0)
+					continue;
 				
-				this.contractVariablesFiltered.add(contractVariable);
+				if(null == variableType || variableType.equals(contractVariable.getVariableType()))
+					this.contractVariablesFiltered.add(contractVariable);
+			}
+		// Se filtra por tipo de variable y fechas
+		} else {
+			Integer year = Integer.parseInt(yearValue);
+			Date startDate = DateUtils.getFirstDayOfYear(year - 1900);
+			Date endDate = DateUtils.getLastDayOfYear(year - 1900);
+			
+			if(AonStringUtils.isNotBlank(monthValue)) {
+				Integer month = Integer.parseInt(monthValue);
+				startDate.setMonth(month);
+				startDate = DateUtils.getFirstDayOfMonth(startDate);
+				endDate = DateUtils.getLastDayOfMonth(startDate);
+			}
+			
+			VariableType variableType = getVariableType(variableTypeValue);
+			
+			for(ContractVariable contractVariable : contractVariables) {
+				if(contractVariable.getId() < 0)
+					continue;
+				
+				if(	(isInPeriod(startDate, endDate, contractVariable.getStartDate()) ||
+					(null != contractVariable.getEndDate() && isInPeriod(startDate, endDate, contractVariable.getEndDate())) ||
+					(null == contractVariable.getEndDate() && (isInPeriod(startDate, endDate, contractVariable.getStartDate()) || DateUtils.isBeforeOrEquals(contractVariable.getStartDate(), startDate))))
+					&& (null == variableType || variableType.equals(contractVariable.getVariableType())))
+					
+					this.contractVariablesFiltered.add(contractVariable);
+			}
 		}
 		
-		this.contractVariablesFiltered.sort((o1, o2) -> compareString(o1, o2, getContractVariableTypeShort(o1.getVariableType()), getContractVariableTypeShort(o2.getVariableType())));	
+		this.contractVariablesFiltered.sort((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()));
+		Collections.reverse(this.contractVariablesFiltered);
 		
 		return this.contractVariablesFiltered;
 	}
@@ -106,25 +145,6 @@ public class EmployeeContractVariablesObject {
 				Integer id = contractVariable.getId();
 				contractVariable.setId(id * -1);
 			}
-		}
-	}
-	
-	private int compareString(Object o1, Object o2, String s1, String s2) {
-		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
-		else
-        	return s2.compareTo(s1);
-	}
-	
-	private String getContractVariableTypeShort(VariableType variableType) {
-		switch (variableType) {
-			case CONTRACT_DATA:
-				return "D";
-			case CONTRACT_INFO:
-				return "I";
-			default:
-				return "N/D";
 		}
 	}
 	

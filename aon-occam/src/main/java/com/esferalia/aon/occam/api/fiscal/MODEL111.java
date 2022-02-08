@@ -22,9 +22,9 @@ public class MODEL111 {
 		}
 	}
 
-	public static Mod111 getMod111(Occam occam, int id) {
+	public static Mod111 get(Occam occam, int id) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod111(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
@@ -76,31 +76,31 @@ public class MODEL111 {
 		}
 	}
 
-	public static void deleteMod111(Occam occam, Mod111 mod111) {
+	public static void delete(Occam occam, Mod111 mod111) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod111);
 		}
 	}
 
-	public static Mod111 initializeMod111(Occam occam,Mod111 mod111) {
+	public static Mod111 initialize(Occam occam,Mod111 mod111) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initialize(ctx, mod111);
 		}
 	}
 
-	public static Mod111 createMod111(Occam occam,Mod111 mod111) {
+	public static Mod111 create(Occam occam,Mod111 mod111) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().create(ctx, mod111);
 		}
 	}
 
-	public static Mod111 resetMod111(Occam occam,Mod111 mod111) {
+	public static Mod111 reset(Occam occam,Mod111 mod111) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().reset(ctx, mod111);
 		}
 	}
 
-	public static String getMod111Info(Occam occam, Mod111 mod111
+	public static String getInfo(Occam occam, Mod111 mod111
 			,IModelScript<Mod111Key> script,FiscalModelKeyInfo infoKey) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod111, script, infoKey);

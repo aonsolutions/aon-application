@@ -429,6 +429,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00BFAceptar de nuevo el documento?")
 	String confirmRestoreRejected();
 
+	@DefaultMessage("La declaraci\u00F3n tiene cambios sin guardar.\n \u00BFGuardar antes de finalizar?")
+	String confirmDeclarationSaveAction();
+	
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
 	
@@ -446,6 +449,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Confirme si desea inicializar la declaraci\u00F3n.")
 	String confirmDeclarationinitializationAction();
+	
+	@DefaultMessage("Confirme si desea realizar el env\u00EDo.")
+	String confirmDeclarationsendAction();
 
 	@DefaultMessage("\u00BFConfirma el borrado definitivo del documento?")
 	String confirmDeleteForever();
@@ -1547,7 +1553,13 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Porcentaje de prorrata")
 	String prorrataPercent();
+
+	@DefaultMessage("Porcentaje de prorrata definitivo")
+	String prorrataFinalPercent();
 	
+	@DefaultMessage("Porcentaje de prorrata ejercicio")
+	String prorrataYearPercent();
+
 	@DefaultMessage("Ha modificado el porcentaje de prorata. El modelo se inicializar\u00E1 a partir de los datos de facturas. \u00BFDesea continuar?.")
 	String prorateChanged();
 

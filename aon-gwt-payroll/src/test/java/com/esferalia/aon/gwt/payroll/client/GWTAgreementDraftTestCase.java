@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -496,10 +497,27 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
-		
-		
 
-		
+		@Override
+		public void createContractPayment(String currentDomainName, Integer contractId,
+				List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
+				Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void createContractVariable(String currentDomainName, Integer contractId,
+				ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}		
 	}
 
 	@Before
@@ -982,7 +1000,27 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						// TODO Auto-generated method stub
 						
 					}
-					
+
+					@Override
+					public void createContractPayment(String currentDomainName, Integer contractId,
+							List<ContractConceptCalc> contractConceptCalcList, AsyncCallback<Void> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+					@Override
+					public void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee,
+							Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void createContractVariable(String currentDomainName, Integer contractId,
+							ContractVariable contractVariable, AsyncCallback<Void> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
 				});
 
 		agreementDraftWidget.setAgreementDraftObject(agreementDraftObject);

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModelUtils {
@@ -89,6 +90,23 @@ public class FiscalModelUtils {
 		String name = FiscalModelTypeName.getName(fm);
 		return AonStringUtils.isNotBlank(name)?name:fm.getModel().getName();
 	}
+	
+	public static String getPeriodDescription(IFiscalModel fm) {
+		String description = "";
+		if (fm.getPeriod() != null) {
+			if (fm.getModel() == FiscalModelType.M202) {
+				if (fm.getPeriod() == Period.T1)
+					description = "1\u00BA Per.";
+				if (fm.getPeriod() == Period.T2) 
+					description = "2\u00BA Per.";
+				if (fm.getPeriod() == Period.T3) 
+					description = "3\u00BA Per.";				
+			}
+			else description = fm.getPeriod().getDescription();			
+		}		
+		return description;
+	}
+	
 }
 
 

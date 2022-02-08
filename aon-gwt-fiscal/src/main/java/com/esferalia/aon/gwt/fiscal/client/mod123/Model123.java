@@ -65,6 +65,11 @@ public class Model123 extends MainEntryPoint {
 		}
 		
 		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
+		}
+
+		@Override
 		public void showInfoPanel(String htmlText) {
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);

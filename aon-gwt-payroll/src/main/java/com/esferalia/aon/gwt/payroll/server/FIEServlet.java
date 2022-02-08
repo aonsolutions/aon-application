@@ -37,6 +37,7 @@ import org.jooq.Result;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
@@ -50,6 +51,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.payroll.EmployeeNotFoundexception;
 import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.payroll.TooManyITsException;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.google.gson.GsonBuilder;
 
 
@@ -114,8 +116,10 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			Fie2AON fie2AON = new Fie2AON() {
 				@Override
 				public void endDIT() {
-					try {
-						ids.add(addIT(ctx, domainId, getIt()));
+					try {	
+						IT itp = getIt();
+						if(!itp.getCancel())
+							ids.add(addIT(ctx, domainId, itp));
 					} catch ( EmployeeNotFoundexception e) {
 						
 					}
@@ -147,7 +151,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		private String naf;
 		private String ipf;
 
-		private Contingency contingency;
+		private ContractLeaveType contingency;
 		
 		private Date startDate;
 		private Date endDate;
@@ -155,12 +159,15 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		private Date fromITDate;
 		private Date prevItDate;
 		private int accumulatedDays;
+		
 
 		private Date directPayStartDate;
 		private Double directPayBase;
 		
 		private Date confirmationDate;
 		private String confirmationPartNumber;
+		
+		private boolean cancel;
 		
 		public String getCcc() {
 			return ccc;
@@ -202,11 +209,11 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			this.endDate = endDate;
 		}
 
-		public Contingency getContingency() {
+		public ContractLeaveType getContingency() {
 			return contingency;
 		}
 
-		public void setContingency(Contingency contingency) {
+		public void setContingency(ContractLeaveType contingency) {
 			this.contingency = contingency;
 		}
 
@@ -266,39 +273,16 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			this.confirmationPartNumber = confirmationPartNumber;
 		}
 		
-	}
-	
-	public enum Contingency {
-
-		COMMON_DISEASE,
-		OCCUPATIONAL_DISEASE,
-		MATERNITY,
-		PATERNITY,
-		PREGNANCY_RISK,
-		BREASTFEEDING_RISK,
-		NON_OCCUPATIONAL_DISEASE,
-		COMMON_DISEASE_AT_LACK,
-		COMMON_OCCUPATIONAL_DISEASE;
-		
-		public byte value() {
-			return (byte) this.ordinal();
+		public boolean getCancel() {
+			return cancel;
 		}
-	}
-	
-	public enum EndCause {		
+
+		public void setCancel(boolean cancel) {
+			this.cancel = cancel;
+		}
 		
-		CURATION,
-		DEATH,
-		MEDICAL_INSPECTION,
-		DISABILITY,
-		TIME_EXHAUSTION,
-		IMPROVEMENT,
-		ENTERING,
-		CONTROL_INSS,
-		RECOVERY,
-		ENTERING_EDUCATION;
-   
-	}	
+		
+	}
 	
 	private static class Fie2AON implements FieListener {
 		
@@ -370,21 +354,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			// 3=Accidente de Trabajo; 
 			// 4=Enfermedad Profesional; 
 			// 5=Periodo de observación.
-			switch (contingency) {
-			case 1:
-				it.setContingency(Contingency.COMMON_DISEASE);
-				break;
-			case 2:
-				it.setContingency(Contingency.NON_OCCUPATIONAL_DISEASE);
-				break;
-			case 3:
-			case 4:
-				it.setContingency(Contingency.OCCUPATIONAL_DISEASE);
-				break;
-			default:
-				it.setContingency(Contingency.COMMON_DISEASE);
-				break;
-			}
+			it.setContingency(ContractLeaveType.valueOfTGSS(contingency));
 		}
 
 		@Override
@@ -393,8 +363,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			// N=no se acredita carencia;
 			// P=consulta la Dirección Provincial del INSS
 			switch (deficiencyIndicator) {
-			case "N":
-				it.setContingency(Contingency.COMMON_DISEASE_AT_LACK);
+			case "S":
+				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
 				break;
 			default:
 				break;
@@ -425,9 +395,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		}
 
 		@Override
-		public void onDitItPartCancel(Boolean itPartCancel) {
-			// TODO Auto-generated method stub
-			
+		public void onDitItPartCancel(boolean itPartCancel) {
+			it.setCancel(itPartCancel);
 		}
 
 		@Override
@@ -452,50 +421,21 @@ public class FIEServlet extends HttpServlet implements FIEService {
 
 	
 	}
-	
+
 	public static void addIT(String domainName, Integer domainId, String userLogin, IT it) {
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, userLogin)) {
 			addIT(aonContext.getDslContext(), domainId, it);
 		}
-		
 	}
 	
 	public static Integer addIT(DSLContext ctx , Integer domainId, IT it) throws EmployeeNotFoundexception, TooManyEmployeesException {
-		java.sql.Date itStartDate = new java.sql.Date(it.getStartDate().getTime());
+		java.sql.Date startDateO = new java.sql.Date(it.getStartDate().getTime());
+		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
 		java.sql.Date itEndDate = it.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
 		
 		try {
 			
-			ContractRecord contractRecord = 
-			ctx
-			.select()
-			.from(REGISTRY)
-			.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-			.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-			.innerJoin(ENTERPRISE_CCC).onKey()
-			.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
-			.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-			.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-			.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-			.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
-			.fetchOptionalInto(CONTRACT)
-			.orElseGet(() -> 			
-					ctx
-					.select()
-					.from(REGISTRY)
-					.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-					.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
-					.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
-					.where(DOMAIN.PARENT.eq(domainId))
-					.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-					.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-					.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
-					.fetchOptionalInto(CONTRACT)
-					.orElseThrow(() -> new EmployeeNotFoundexception() ) 
-			);
-			
+			ContractRecord contractRecord = getContract(ctx, domainId, it);		
 			
 			try {
 				ContractLeaveRecord contractLeaveRecord = 
@@ -512,8 +452,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 					r.setDomain(contractRecord.getDomain());
 					return r;
 				});
-				;
-				
+		
 				contractLeaveRecord.setStartDate(itStartDate);
 				contractLeaveRecord.setType(it.getContingency().value());
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
@@ -534,11 +473,15 @@ public class FIEServlet extends HttpServlet implements FIEService {
 						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
 						.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)0)
 						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
-						.set(CONTRACT_LEAVE_DETAIL.DATE,itStartDate)
+						.set(CONTRACT_LEAVE_DETAIL.DATE,startDateO)
 						.returning(CONTRACT_LEAVE_DETAIL.ID)
 						.fetchOne();
-				else
+				else {
 					lowContractLeaveDetail = (ContractLeaveDetailRecord) lowContractLeaveDetails.get(0);
+					lowContractLeaveDetail.set(CONTRACT_LEAVE_DETAIL.DATE, startDateO);
+					lowContractLeaveDetail.update();
+				}
+					
 				
 				// Create Contract Leave Detail (HIGH)
 				
@@ -630,7 +573,6 @@ public class FIEServlet extends HttpServlet implements FIEService {
 					.orElseThrow(() -> new EmployeeNotFoundexception() ) 
 			);
 			
-			
 			try {
 				ContractLeaveRecord contractLeaveRecord = 
 				ctx
@@ -664,7 +606,44 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			throw new TooManyEmployeesException(e);
 		}
 	}
+
+	private static java.sql.Date normalizeStartDateToSave(ContractLeaveType contingency, Date date) {
+		if(contingency!=null && contingency.equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+			date = DateUtils.addDays2Date(date, 1);
+		
+		return new java.sql.Date(date.getTime());
+	}
 	
-
-
+	public static ContractRecord getContract(DSLContext ctx, Integer domainId, IT it) {
+		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
+		java.sql.Date itEndDate = it.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
+		return ctx
+		.select()
+		.from(REGISTRY)
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(ENTERPRISE_CCC).onKey()
+		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
+		.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
+		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+		.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+		.fetchOptionalInto(CONTRACT)
+		.orElseGet(() -> 			
+				ctx
+				.select()
+				.from(REGISTRY)
+				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+				.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
+				.where(DOMAIN.PARENT.eq(domainId))
+				.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
+				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
+				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+				.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+				.fetchOptionalInto(CONTRACT)
+				.orElseThrow(() -> new EmployeeNotFoundexception() ) 
+		);
+	}
 }

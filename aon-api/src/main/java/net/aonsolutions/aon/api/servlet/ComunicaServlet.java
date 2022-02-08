@@ -260,8 +260,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private JSONArray getOccupation() {
 		JSONArray arr = new JSONArray();
-		for (Entry<String, String> v : Occupation.getOccupation().entrySet()) 
-			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));		
+		for (Entry<String, String> v : Occupation.getOccupation().entrySet()) {
+			String value = 	v.getValue();
+			if(v.getValue()!=null && v.getValue().equals("-1")) value = " ";
+			arr.put(new JSONObject().put("name",  v.getKey()).put("value",value));		
+		}
+	
 		
 		return arr;
 	}

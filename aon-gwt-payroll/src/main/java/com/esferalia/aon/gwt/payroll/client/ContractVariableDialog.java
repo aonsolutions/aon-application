@@ -1,0 +1,187 @@
+package com.esferalia.aon.gwt.payroll.client;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+
+public abstract class ContractVariableDialog extends AonCustomDialog {
+	
+	// ------------------------------------------------- UIBinder
+	
+	interface Certifica2DialogUIBinder extends UiBinder<Widget, ContractVariableDialog> {}
+
+	private static final Certifica2DialogUIBinder binder = GWT.create(Certifica2DialogUIBinder.class);
+	
+	// ------------------------------------------------- UIFileds
+	
+	@UiField
+	HTMLPanel messagePanel;
+	
+	@UiField
+	ListBox variableType;
+	
+	@UiField
+	TextBox variableName;
+	
+	@UiField
+	TextBox variableValue;
+	
+	@UiField
+	DateBoxEx startDateBx;
+	
+	@UiField
+	DateBoxEx endDateBx;
+	
+	@UiField
+	HTMLPanel buttonsPanel;
+	
+	// ------------------------------------------------- Variables
+	
+	private ContractVariable contractVariable;
+	
+	// ------------------------------------------------- Constructor
+	
+	protected ContractVariableDialog(ContractVariable selectedContractVariable) {
+		setCaption("Variables contrato");
+		setWidget(binder.createAndBindUi(this));
+		this.contractVariable = selectedContractVariable;
+		initializeView();
+	}
+
+	// ------------------------------------------------- Constructor Methods
+	
+	private void initializeView() {
+		initListBox();
+		initHandlers();
+		getButtonsPanel();
+		if(null != this.contractVariable)
+			fillContractVariable();
+		showDialog();
+	}
+
+	private void initListBox() {
+		this.variableType.clear();
+		this.variableType.addItem("Contract Data", "CONTRACT_DATA");
+		this.variableType.addItem("Contract Info", "CONTRACT_INFO");
+	}
+
+	private void initHandlers() {
+		variableType.addChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setVariableType(VariableType.valueOf(variableType.getSelectedValue()));
+		});
+		
+		variableName.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setDescription(e.getValue());
+		});
+		
+		variableValue.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setExpression(e.getValue());
+		});
+		
+		startDateBx.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setStartDate(e.getValue());
+		});
+		
+		endDateBx.addValueChangeHandler(e -> {
+			checkIfExistContractVariable();
+			contractVariable.setEndDate(e.getValue());
+		});
+	}
+
+	private void checkIfExistContractVariable() {
+		if(null == this.contractVariable)
+			this.contractVariable = new ContractVariable();
+	}
+
+	private void fillContractVariable() {
+		setSelectedValueLB(variableType, contractVariable.getVariableType().name());
+		this.variableName.setValue(contractVariable.getDescription());
+		this.variableValue.setValue(contractVariable.getExpression());
+		this.startDateBx.setValue(contractVariable.getStartDate());
+		this.endDateBx.setValue(contractVariable.getEndDate());
+	}
+
+	// ------------------------------------------------- Auxiliar Methods
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	// ------------------------------------------------- ButtonsPanel
+	
+	private void getButtonsPanel() {
+		Button closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText("Cerrar");
+		closeBtnDialog.addClickHandler(e -> hide());
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		Button acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtnDialog.setText("Aceptar");
+		acceptBtnDialog.addClickHandler(e -> accept());
+		
+		buttonsPanel.add(acceptBtnDialog);
+	}
+
+	private void accept() {
+		Map<String, String> saveMessage = canSave();
+		if(saveMessage.isEmpty()) {
+			onAccept(contractVariable);
+			hide();
+		} else
+			AonMessagePanel.showError(messagePanel, saveMessage);
+	}
+
+	private Map<String, String> canSave() {
+		Map<String, String> saveMessage = new HashMap<>();
+		
+		if(AonStringUtils.isBlank(variableName.getValue())) saveMessage.put("Nombre", "El nombre de la variable es obligatorio");
+		if(AonStringUtils.isBlank(variableValue.getValue())) saveMessage.put("Valor", "El valor de la variable es obligatorio");
+		if(null == startDateBx.getValue()) saveMessage.put("Fecha inicio", "La fecha de inicio de la variable es obligatoria");
+		
+		return saveMessage;
+	}
+	
+	// ------------------------------------------------- AbstractMethods
+	
+	protected abstract void onAccept(ContractVariable createVariable);
+	
+}

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -18,74 +19,62 @@ public class Model347ServiceAsyncDecorator implements Model347ServiceAsync {
 		this.fsa = mod347ServiceAsync;
 	}
 	
-	
-	// ---------------------------------------------------------------MODELO 347
 	@Override
-	public void deleteMod347(String domainName,String user, int domainId, Mod347 mod347,
-			AsyncCallback<Void> callback) {
+	public void getMod347s(Occam occam, AsyncCallback<LinkedList<Mod347>> callback) {
 		AON.start();
-		fsa.deleteMod347(domainName, user,domainId, mod347,
-				new AsyncCallbackWrapper<Void>(callback));
+		fsa.getMod347s(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void saveMod347(String domainName, String user,int domainId, Mod347 mod347,
-			AsyncCallback<Mod347> callback) {
+	public void get(Occam occam, Integer id, AsyncCallback<Mod347> callback) {
 		AON.start();
-		fsa.saveMod347(domainName, user,domainId, mod347,
-				new AsyncCallbackWrapper<Mod347>(callback));
-	}
-
-	@Override
-	public void getMod347s(String domainName, String user,int domainId,
-			AsyncCallback<LinkedList<Mod347>> callback) {
-		AON.start();
-		fsa.getMod347s(domainName, user,domainId,
-				new AsyncCallbackWrapper<LinkedList<Mod347>>(callback));
-	}
-
-	@Override
-	public void initializeMod347(String domainName, String user,Integer domain,
-			AsyncCallback<Mod347> callback) {
-		AON.start();
-		fsa.initializeMod347(domainName, user,domain, new AsyncCallbackWrapper<Mod347>(callback));
-	}
-
-	@Override
-	public void getMod347(String domainName, String user,int domainId, Integer id,
-			AsyncCallback<Mod347> callback) {
-		AON.start();
-		fsa.getMod347(domainName, user,domainId, id,
-				new AsyncCallbackWrapper<Mod347>(callback));
-	}
-
-	@Override
-	public void saveCommentsMod347(String domainName, String user,Mod347 mod347,
-			AsyncCallback<Mod347> callback) {
-		AON.start();
-		fsa.saveCommentsMod347(domainName, user,mod347, new AsyncCallbackWrapper<Mod347>(
-				callback));
-	}
-
-	@Override
-	public void changeStatusMod347(String domainName, String user,Mod347 mod347, FiscalStatus newStatus,
-			AsyncCallback<Mod347> callback) {
-		AON.start();
-		fsa.changeStatusMod347(domainName, user,mod347, newStatus, 
-				new AsyncCallbackWrapper<Mod347>(callback));
+		fsa.get(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void getInfo(String domainName, String user,int domain, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey,
-			AsyncCallback<String> callback) {
+	public void initialize(Occam occam, AsyncCallback<Mod347> callback) {
 		AON.start();
-		fsa.getInfo(domainName,user, domain, mod347, declared, infoKey, new AsyncCallbackWrapper<String>(callback));		
+		fsa.initialize(occam, new AsyncCallbackWrapper<>(callback));
+	}
+	@Override
+	public void reset(Occam occam, Mod347 model, AsyncCallback<Mod347> callback) {
+		AON.start();
+		fsa.reset(occam, model, new AsyncCallbackWrapper<>(callback));
+	}
+	@Override
+	public void save(Occam occam, Mod347 mod347,AsyncCallback<Mod347> callback) {
+		AON.start();
+		fsa.save(occam, mod347, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void delete(Occam occam, Mod347 mod347, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.delete(occam, mod347,new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void duplicateMod347(String domainName, String user,Integer domain, Mod347 mod347, AsyncCallback<Mod347> callback) {
+	public void saveComments(Occam occam, Mod347 mod347, AsyncCallback<Mod347> callback) {
 		AON.start();
-		fsa.duplicateMod347(domainName, user, domain, mod347, new AsyncCallbackWrapper<Mod347>(callback));
+		fsa.saveComments(occam,mod347, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void changeStatus(Occam occam,Mod347 mod347, FiscalStatus newStatus, AsyncCallback<Mod347> callback) {
+		AON.start();
+		fsa.changeStatus(occam,mod347, newStatus, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getInfo(Occam occam, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInfo(occam, mod347, declared, infoKey, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void duplicate(Occam occam, Mod347 mod347, AsyncCallback<Mod347> callback) {
+		AON.start();
+		fsa.duplicate(occam, mod347, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

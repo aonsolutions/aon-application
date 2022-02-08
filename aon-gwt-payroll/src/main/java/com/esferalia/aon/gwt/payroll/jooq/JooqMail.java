@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -232,19 +233,23 @@ public class JooqMail {
 	
 	// ---------------------------------------------- Send Email
 	
-	public static String sendPayrollEmail(Connection connection, Type type,  HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
-		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), type, params, from, to, cc, cco, bodyHTML);
+	public static String sendPayrollEmail(Connection connection, Integer domainId, Type type,  HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), domainId, type, params, from, to, cc, cco, bodyHTML);
 	}
 	
-	private static String sendPayrollEmailDB(DSLContext dslContext, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+	private static String sendPayrollEmailDB(DSLContext dslContext, Integer domainId, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
 		String message = "";
+		String enterpriseName = dslContext.select(REGISTRY.NAME).from(REGISTRY)
+				.where(REGISTRY.ID.eq(
+						dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY)
+				)).fetchOne(REGISTRY.NAME);
 		
 		switch (type) {
 		case EMPLOYEE:
-			message = sendEmployeesEmail(dslContext, type, params, from, to, cc, cco, bodyHTML);
+			message = sendEmployeesEmail(dslContext, type, params, from, enterpriseName, to, cc, cco, bodyHTML);
 			break;
 		case ENTERPRISE:
-			message = sendEmail(dslContext, from, to, cc, cco, bodyHTML);
+			message = sendEmail(dslContext, from, enterpriseName, to, cc, cco, bodyHTML);
 			break;
 		default:
 			break;
@@ -253,7 +258,7 @@ public class JooqMail {
 		return message;
 	}
 
-	private static String sendEmployeesEmail(DSLContext dslContext, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+	private static String sendEmployeesEmail(DSLContext dslContext, Type type, HashMap<String, String> params, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) {
 		ArrayList<Integer> salaryIds = getSalaryIds(params);
 		ArrayList<Integer> visitedContracts = new ArrayList<Integer>();
 		
@@ -282,7 +287,7 @@ public class JooqMail {
 				if(parseHTMLBody.length() == 0)
 					return "No se ha encontrado la variable NOMBRE_EMPLEADO, PERIODOS_NOMINA y/o INFORMACION_EMPRESA";
 				
-				sendEmail(dslContext, from, emailTo, cc, cco, parseHTMLBody);
+				sendEmail(dslContext, mailAccountId, enterpriseName, emailTo, cc, cco, parseHTMLBody);
 				
 				visitedContracts.add(contractId);
 			}
@@ -292,51 +297,25 @@ public class JooqMail {
 		return "Email(s) enviado(s) correctamente.";
 	}
 
-	private static String sendEmail(DSLContext dslContext, String from, String to, String cc, String cco, String bodyHTML) {
+	private static String sendEmail(DSLContext dslContext, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) {
 		Record mailAccountRecord = dslContext.select().from(MAIL_ACCOUNT)
-				.where(MAIL_ACCOUNT.ID.eq(Integer.parseInt(from))).fetchOne();
-		
-		String smtp = "smtp";
-		String port = null;
-		String host = null;
-		String user =  null;
-		String password = null;
+				.where(MAIL_ACCOUNT.ID.eq(Integer.parseInt(mailAccountId))).fetchOne();
 		
 		if(null != mailAccountRecord) {
-			port =  mailAccountRecord.get(MAIL_ACCOUNT.OUTGOING_PORT).toString();
-			host = mailAccountRecord.get(MAIL_ACCOUNT.OUTGOING_HOST);
-			user = mailAccountRecord.get(MAIL_ACCOUNT.MAIL_USERNAME);
-			password = mailAccountRecord.get(MAIL_ACCOUNT.PASSWORD);
+			String from = mailAccountRecord.get(MAIL_ACCOUNT.MAIL_USERNAME);
+			
+			SESMessage msg = new SESMessage()
+					.setAlias(enterpriseName)
+					.setReplyTo(from)
+					.setTo(to)
+					.setSubject("N\u00d3MINAS " + enterpriseName)
+					.setBody(bodyHTML);
+			if(AonStringUtils.isNotBlank(cc)) msg.setBcc(cc);
+			SES.sendEmail(msg);
+			
 		} else {
 			return "No existe cuenta de correo desde la que enviar este mensaje.";
 		}
-		
-		// Send Email
-		Properties props = new Properties();
-
-	    props.setProperty("mail.transport.protocol", smtp);
-	    props.setProperty("mail.smtp.port", port);
-	    props.setProperty("mail.host", host);
-	    props.setProperty("mail.user", user);
-	    props.setProperty("mail.password", password);
-	    props.setProperty("mail.smtp.starttls.enable", "true");
-	   
-	    try {
-	    	Session session = Session.getInstance(props, null);
-	 	    Transport transport = session.getTransport("smtp");
-			transport.connect(host, user, password);
-			MimeMessage message = new MimeMessage(session);
-			message.setSubject("N" + String.valueOf("\u00F3") + "minas");
-			message.setContent(bodyHTML, "text/html; charset=UTF-8");
-		    message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-		    if(null != cc)
-		    	message.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));
-		    if(null != cco)
-		    	message.addRecipient(Message.RecipientType.BCC, new InternetAddress(cco));
-		    
-		    transport.sendMessage(message, message.getAllRecipients());
-		    transport.close();	
-		} catch (MessagingException e) {}
 	    
 	    return "Email enviado correctamente.";
 	}
@@ -346,7 +325,7 @@ public class JooqMail {
 	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, DSLContext dslContext) {
 		
 		// GENERATE URL
-		String formHTML = generateForm(params);
+		String formHTML = generateFormEmployee(params, salariesRecords);
 		
 		String employeeName = "<a style=\"font-weight: bold;\">NOMBRE_EMPLEADO</a>";
 		String payrollPeriods = "<li style=\"font-weight: bold;\">PERIODOS_NOMINA</li>";
@@ -368,6 +347,32 @@ public class JooqMail {
 		html = html.split("<div id=\"form\">")[0] + formHTML + html.split("<div id=\"form\">")[1].split("</div>")[1];
 		
 		html = html.split(enterpriseInfo)[0] +  "<a style=\"font-weight: bold;\">" + getEnterpriseInfo(dslContext, Integer.parseInt(params.get("enterprise"))) + "</a>";
+		
+		return html;
+	}
+	
+	private static String generateFormEmployee(HashMap<String, String> params, Result<Record> salariesRecords) {
+		String html = "";
+		
+		html += "<div>";
+		html += "<form method\"post\" action=\"" + params.get("url") + "\" target=\"_blank\">";
+		
+		for(Entry<String, String> entry : params.entrySet()) {
+			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url") || AonStringUtils.equalsIgnoreCase(entry.getKey(), "id"))
+				continue;
+			
+			html += "<input type=\"hidden\" name=\"" + entry.getKey() + "\" value=\"" + entry.getValue() + "\">";
+		}
+		
+		for(Record salaryRecord : salariesRecords)
+			html += "<input type=\"hidden\" name=\"id\" value=\"" + salaryRecord.get(SALARY.ID) + "\">";
+		
+		html += "<button type=\"submit\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
+		html +=		"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
+		html +=		"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
+		html += "</button>";
+		html += "</form>";
+		html += "</div>";
 		
 		return html;
 	}

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
@@ -105,6 +106,7 @@ public class SupplierDAO {
 		return ctx.getDslContext().select()
 				.from(SUPPLIER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(SUPPLIER.REGISTRY))
+				.join(DOMAIN).on(SUPPLIER.DOMAIN.eq(DOMAIN.ID))
 				.where(SUPPLIER_PROPERTIES.getConditions(filter));
 		
 	}

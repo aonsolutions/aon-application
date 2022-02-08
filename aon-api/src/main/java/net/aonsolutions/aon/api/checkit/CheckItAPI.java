@@ -960,8 +960,15 @@ public class CheckItAPI implements IParamNames{
 	}
 	
 	public static List<CheckItBankStatement> getAllBankStatements(Integer empresaId, Integer accountId) throws CheckItException {
-		JSONObject requestParams = new JSONObject();
 		
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 1900);
+		cal.set(Calendar.MONTH, Calendar.JANUARY);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		
+		return getBankStatementsFromTo(empresaId, accountId, new Date(), cal.getTime());
+		
+		/*JSONObject requestParams = new JSONObject();
 		requestParams.put(API_KEY_PARAM, API_KEY);
 		requestParams.put(ENTERPRISE_ID_PARAM, empresaId);
 		requestParams.put(DATE_TO_PARAM, formatDateForTransactions(new Date())); // HOY
@@ -979,6 +986,31 @@ public class CheckItAPI implements IParamNames{
 			CheckItBankStatement bankStatement = bankStatementFromJson(transactionJson);
 			bankStatements.add(bankStatement);
 
+		}
+		bankStatements.sort((b1, b2) -> b2.getReference2().compareTo(b1.getReference2()));
+		return bankStatements;*/
+	}
+	
+	public static List<CheckItBankStatement> getBankStatementsFromTo(Integer empresaId, Integer accountId, Date startDate, Date endDate) throws CheckItException {
+		JSONObject requestParams = new JSONObject();
+		
+		requestParams.put(API_KEY_PARAM, API_KEY);
+		requestParams.put(ENTERPRISE_ID_PARAM, empresaId);
+		requestParams.put(ACCOUNT_ID_PARAM, accountId);
+		requestParams.put(DATE_FROM_PARAM, formatDateForTransactions(startDate));
+		requestParams.put(DATE_TO_PARAM, formatDateForTransactions(endDate)); // REQUEST PARAMS COMPLETED
+		
+		JSONArray transactionsArray = CheckItAPI.getTransactions(requestParams);
+		
+		List<CheckItBankStatement> bankStatements = new LinkedList<>();
+		
+		for (int i = 0; i < transactionsArray.length(); i++) {
+			
+			JSONObject transactionJson = transactionsArray.optJSONObject(i);
+			
+			CheckItBankStatement bankStatement = bankStatementFromJson(transactionJson);
+			bankStatements.add(bankStatement);
+			
 		}
 		bankStatements.sort((b1, b2) -> b2.getReference2().compareTo(b1.getReference2()));
 		return bankStatements;
@@ -1134,6 +1166,15 @@ public class CheckItAPI implements IParamNames{
 			Integer movId = idAndDate != null ? Integer.valueOf(idAndDate.getKey()) : null;
 			List<CheckItBankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
 			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
+			return bankStatements;
+		}
+	}
+	
+	public static List<CheckItBankStatement> getMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban, Date startDate, Date endDate) throws CheckItException {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
+//			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
+			List<CheckItBankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
+//			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;
 		}
 	}

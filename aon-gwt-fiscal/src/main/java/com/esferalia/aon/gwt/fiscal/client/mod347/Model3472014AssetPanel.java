@@ -1,51 +1,34 @@
 package com.esferalia.aon.gwt.fiscal.client.mod347;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Asset2014.IModel347AssetCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusable {
 	
-	private static class MediumLabel extends InlineLabel {
-		private MediumLabel(String label) {
-			super();
-			if (AonStringUtils.length(label) > 35) {
-				setText(AonStringUtils.abbreviate(label, 35));
-				setTitle(label);
-			} else {
-				setText(label);
-			}
-			setStyleName(AON.AON_CSS.aonFontMedium());
-		}
-	}
 	private int tabIndex; 
 
-	private DocumentTextBox document = new DocumentTextBox();	
+	private AonDocumentTextBox document = new AonDocumentTextBox();	
 
 	public Model3472014AssetPanel(Mod347Asset asset, IModel347AssetCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();
-		scroll.setStyleName(AON.AON_CSS.aonWidthAll());
+		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.setStyleName(AON.CSS.aonScrollArea());
 		
 		// NIF Arrendatario / NIF Representante / Nombre
 		
@@ -54,47 +37,37 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		tab1.getColumnFormatter().setWidth(1, "100px");
 		tab1.getColumnFormatter().setWidth(2, "auto");
 		
-		tab1.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab1.addStyleName(AON.AON_CSS.aonNowrap());
+		tab1.setStyleName(AON.CSS.aonWidthAll());
+		tab1.addStyleName(AON.CSS.aonNowrap());
 
-		tab1.setWidget(0, 0, new MediumLabel("NIF arrendatario"));
-		tab1.setWidget(0, 1, new MediumLabel(AON.MSG.representativeDocument()));
-		tab1.setWidget(0, 2, new MediumLabel(AON.MSG.fullName()));
+		tab1.setWidget(0, 0, new Model347SmallerLabel("NIF arrendatario"));
+		tab1.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.representativeDocument()));
+		tab1.setWidget(0, 2, new Model347SmallerLabel(AON.MSG.fullName()));
 		
 		document.setValue(asset.getDocument());
 		document.setMaxLength(9);
-		document.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setDocument(document.getValue());
-				callback.onValueChanged(asset);
-			}
+		document.addValueChangeHandler( event -> {
+			asset.setDocument(document.getValue());
+			callback.onValueChanged(asset);
 		});
 		tab1.setWidget(1, 0, document);
 		
-		DocumentTextBox representativeDocument = new DocumentTextBox();
+		AonDocumentTextBox representativeDocument = new AonDocumentTextBox();
 		representativeDocument.setValue(asset.getRepresentativeDocument());
 		representativeDocument.setMaxLength(9);
-		representativeDocument.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setRepresentativeDocument(representativeDocument.getValue());
-				callback.onValueChanged(asset);
-			}
+		representativeDocument.addValueChangeHandler( event -> {
+			asset.setRepresentativeDocument(representativeDocument.getValue());
+			callback.onValueChanged(asset);
 		});
 		tab1.setWidget(1, 1, representativeDocument);
 				
-		TextBox name = new TextBox();
+		AonTextBox name = new AonTextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
-		name.setStyleName(AON.AON_CSS.aonInputText());		
 		name.setValue(asset.getName());
-		name.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setName(name.getValue());
-				callback.onTableChanged(asset);
-			}
+		name.addValueChangeHandler(event -> {
+			asset.setName(name.getValue());
+			callback.onTableChanged(asset);
 		});
 		tab1.setWidget(1, 2, name);
 		
@@ -107,36 +80,28 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		tab2.getColumnFormatter().setWidth(1, "170px");
 		tab2.getColumnFormatter().setWidth(2, "auto");
 		
-		tab2.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab2.addStyleName(AON.AON_CSS.aonNowrap());
+		tab2.setStyleName(AON.CSS.aonWidthAll());
+		tab2.addStyleName(AON.CSS.aonNowrap());
 
-		tab2.setWidget(0, 0, new MediumLabel(AON.MSG.amount()));
-		tab2.setWidget(0, 1, new MediumLabel(AON.MSG.cadasdralReference()));
-		tab2.setWidget(0, 2, new MediumLabel(AON.MSG.buildingLocation()));	
+		tab2.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.amount()));
+		tab2.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.cadasdralReference()));
+		tab2.setWidget(0, 2, new Model347SmallerLabel(AON.MSG.buildingLocation()));	
 
-		DoubleBox amount = new DoubleBox();
+		AonDoubleBox amount = new AonDoubleBox();
 		amount.setValue(asset.getAmount());
-		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {				
-				asset.setAmount(amount.getValue());
-				callback.onValueChanged(asset);
-			}
+		amount.addValueChangeHandler(event -> {				
+			asset.setAmount(amount.getValue());
+			callback.onValueChanged(asset);
 		});
 		tab2.setWidget(1, 0, amount);
 		
-		TextBox cadasdralReference = new TextBox();
+		AonTextBox cadasdralReference = new AonTextBox();
 		cadasdralReference.setVisibleLength(25);
 		cadasdralReference.setMaxLength(25);
-		cadasdralReference.setStyleName(AON.AON_CSS.aonInputText());
 		cadasdralReference.setValue(asset.getCadasdralReference());
-		cadasdralReference.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setCadasdralReference(cadasdralReference.getValue());
-				callback.onValueChanged(asset);				
-			}
+		cadasdralReference.addValueChangeHandler(event -> {
+			asset.setCadasdralReference(cadasdralReference.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab2.setWidget(1, 1, cadasdralReference);	
 		
@@ -161,12 +126,9 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 				// nothing 
 			}
 		}
-		location.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				asset.setAssetLocation(Integer.toString( location.getSelectedIndex()));
-				callback.onValueChanged(asset);
-			}
+		location.addChangeHandler(event -> {
+			asset.setAssetLocation(Integer.toString( location.getSelectedIndex()));
+			callback.onValueChanged(asset);
 		});
 		tab2.setWidget(1, 2, location);
 		
@@ -175,8 +137,8 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		// Tipo via / Nombre via / Tipo Num / Numero / Calif. Num / Bloque / Portal / Escalera / Piso / Puerta
 		
 		FlexTable tab3 = new FlexTable();
-		tab3.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab3.addStyleName(AON.AON_CSS.aonNowrap());
+		tab3.setStyleName(AON.CSS.aonWidthAll());
+		tab3.addStyleName(AON.CSS.aonNowrap());
 		
 		tab3.getColumnFormatter().setWidth(0, "110px");
 		tab3.getColumnFormatter().setWidth(1, "250px");		
@@ -189,152 +151,112 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		tab3.getColumnFormatter().setWidth(8, "50px");
 		tab3.getColumnFormatter().setWidth(9, "auto");		
 
-		tab3.setWidget(0, 0, new MediumLabel(AON.MSG.streetType()));
-		tab3.setWidget(0, 1, new MediumLabel(AON.MSG.streetName()));
-		tab3.setWidget(0, 2, new MediumLabel("Tipo N\u00FAm."));
-		tab3.setWidget(0, 3, new MediumLabel(AON.MSG.streetNumber()));
-		tab3.setWidget(0, 4, new MediumLabel(AON.MSG.streetNumberSuffix()));
-		tab3.setWidget(0, 5, new MediumLabel(AON.MSG.streetBlock()));
-		tab3.setWidget(0, 6, new MediumLabel(AON.MSG.streetHall()));
-		tab3.setWidget(0, 7, new MediumLabel(AON.MSG.streetStair()));
-		tab3.setWidget(0, 8, new MediumLabel(AON.MSG.streetFloor()));
-		tab3.setWidget(0, 9, new MediumLabel(AON.MSG.streetDoor()));		
+		tab3.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.streetType()));
+		tab3.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.streetName()));
+		tab3.setWidget(0, 2, new Model347SmallerLabel("Tipo N\u00FAm."));
+		tab3.setWidget(0, 3, new Model347SmallerLabel(AON.MSG.streetNumber()));
+		tab3.setWidget(0, 4, new Model347SmallerLabel(AON.MSG.streetNumberSuffix()));
+		tab3.setWidget(0, 5, new Model347SmallerLabel(AON.MSG.streetBlock()));
+		tab3.setWidget(0, 6, new Model347SmallerLabel(AON.MSG.streetHall()));
+		tab3.setWidget(0, 7, new Model347SmallerLabel(AON.MSG.streetStair()));
+		tab3.setWidget(0, 8, new Model347SmallerLabel(AON.MSG.streetFloor()));
+		tab3.setWidget(0, 9, new Model347SmallerLabel(AON.MSG.streetDoor()));		
 
 		StreetTypeListBox streetType = new StreetTypeListBox();
 		streetType.setValue(StreetType.getForIneCode(asset.getAssetStreetType()));
-		streetType.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				asset.setAssetStreetType(streetType.getValue(streetType.getSelectedIndex()));
-				callback.onValueChanged(asset);
-			}
+		streetType.addChangeHandler( event -> {
+			asset.setAssetStreetType(streetType.getValue(streetType.getSelectedIndex()));
+			callback.onValueChanged(asset);
 		});
 		tab3.setWidget(1, 0, streetType);
 		
-		TextBox streetName = new TextBox();
+		AonTextBox streetName = new AonTextBox();
 		streetName.setVisibleLength(50);
 		streetName.setMaxLength(50);
-		streetName.setStyleName(AON.AON_CSS.aonInputText());
 		streetName.setValue(asset.getAssetStreet());
-		streetName.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreet(streetName.getValue());
-				callback.onValueChanged(asset);				
-			}
+		streetName.addValueChangeHandler(event -> {
+			asset.setAssetStreet(streetName.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 1, streetName);
 		
-		TextBox numberType = new TextBox();
-		numberType.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox numberType = new AonTextBox();
 		numberType.setMaxLength(3);
 		numberType.setVisibleLength(3);
 		numberType.setValue(asset.getAssetStreetNumberType());
-		numberType.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetNumberType(numberType.getValue());
-				callback.onValueChanged(asset);				
-			}
+		numberType.addValueChangeHandler(event -> {
+			asset.setAssetStreetNumberType(numberType.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 2, numberType);
 		
-		TextBox number = new TextBox();
-		number.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox number = new AonTextBox();
 		number.setMaxLength(5);
 		number.setVisibleLength(5);
 		number.setValue(asset.getAssetStreetNumber());
-		number.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetNumber(number.getValue());
-				callback.onValueChanged(asset);				
-			}
+		number.addValueChangeHandler(event -> {
+			asset.setAssetStreetNumber(number.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 3, number);
 		
-		TextBox numberSuffix = new TextBox();
-		numberSuffix.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox numberSuffix = new AonTextBox();
 		numberSuffix.setMaxLength(3);
 		numberSuffix.setVisibleLength(3);
 		numberSuffix.setValue(asset.getAssetStreetNumberSuffix());
-		numberSuffix.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetNumberSuffix(numberSuffix.getValue());
-				callback.onValueChanged(asset);				
-			}
+		numberSuffix.addValueChangeHandler(event -> {
+			asset.setAssetStreetNumberSuffix(numberSuffix.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 4, numberSuffix);
 		
-		TextBox block = new TextBox();
-		block.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox block = new AonTextBox();
 		block.setMaxLength(3);
 		block.setVisibleLength(3);
 		block.setValue(asset.getAssetStreetBlock());
-		block.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetBlock(block.getValue());
-				callback.onValueChanged(asset);				
-			}
+		block.addValueChangeHandler(event -> {
+			asset.setAssetStreetBlock(block.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 5, block);
 		
-		TextBox hall = new TextBox();
-		hall.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox hall = new AonTextBox();
 		hall.setMaxLength(3);
 		hall.setVisibleLength(3);
 		hall.setValue(asset.getAssetStreetHall());
-		hall.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetHall(hall.getValue());
-				callback.onValueChanged(asset);				
-			}
+		hall.addValueChangeHandler(event -> {
+			asset.setAssetStreetHall(hall.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 6, hall);
 		
-		TextBox stair = new TextBox();
-		stair.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox stair = new AonTextBox();
 		stair.setMaxLength(3);
 		stair.setVisibleLength(3);
 		stair.setValue(asset.getAssetStreetStair());
-		stair.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetStair(stair.getValue());
-				callback.onValueChanged(asset);				
-			}
+		stair.addValueChangeHandler(event -> {
+			asset.setAssetStreetStair(stair.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 7, stair);
 		
-		TextBox floor = new TextBox();
-		floor.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox floor = new AonTextBox();
 		floor.setMaxLength(3);
 		floor.setVisibleLength(3);
 		floor.setValue(asset.getAssetStreetFloor());
-		floor.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetFloor(floor.getValue());
-				callback.onValueChanged(asset);				
-			}
+		floor.addValueChangeHandler(event -> {
+			asset.setAssetStreetFloor(floor.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 8, floor);
 		
-		TextBox door = new TextBox();
-		door.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox door = new AonTextBox();
 		door.setMaxLength(3);
 		door.setVisibleLength(3);
 		door.setValue(asset.getAssetStreetDoor());
-		door.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetDoor(door.getValue());
-				callback.onValueChanged(asset);				
-			}
+		door.addValueChangeHandler(event -> {
+			asset.setAssetStreetDoor(door.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab3.setWidget(1, 9, door);
 		
@@ -343,40 +265,32 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		// Complemento / Localidad		
 		
 		FlexTable tab4 = new FlexTable();
-		tab4.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab4.addStyleName(AON.AON_CSS.aonNowrap());
+		tab4.setStyleName(AON.CSS.aonWidthAll());
+		tab4.addStyleName(AON.CSS.aonNowrap());
 		
 		tab4.getColumnFormatter().setWidth(0, "300px");
 		tab4.getColumnFormatter().setWidth(1, "auto");		
 		
-		tab4.setWidget(0, 0, new MediumLabel(AON.MSG.streetComplement()));
-		tab4.setWidget(0, 1, new MediumLabel(AON.MSG.city()));
+		tab4.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.streetComplement()));
+		tab4.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.city()));
 		
-		TextBox complement = new TextBox();
-		complement.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox complement = new AonTextBox();
 		complement.setMaxLength(40);
 		complement.setVisibleLength(40);
 		complement.setValue(asset.getAssetStreetComplement());
-		complement.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetComplement(complement.getValue());
-				callback.onValueChanged(asset);				
-			}
+		complement.addValueChangeHandler(event -> {
+			asset.setAssetStreetComplement(complement.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab4.setWidget(1, 0, complement);
 		
-		TextBox city = new TextBox();
-		city.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox city = new AonTextBox();
 		city.setMaxLength(30);
 		city.setVisibleLength(30);
 		city.setValue(asset.getAssetStreetCity());
-		city.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetCity(city.getValue());
-				callback.onValueChanged(asset);				
-			}
+		city.addValueChangeHandler(event -> {
+			asset.setAssetStreetCity(city.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab4.setWidget(1, 1, city);
 		
@@ -385,51 +299,43 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		// Municipio / Código municipio / Provincia / Código postal
 		
 		FlexTable tab5 = new FlexTable();
-		tab5.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab5.addStyleName(AON.AON_CSS.aonNowrap());
+		tab5.setStyleName(AON.CSS.aonWidthAll());
+		tab5.addStyleName(AON.CSS.aonNowrap());
 		
 		tab5.getColumnFormatter().setWidth(0, "250px");
 		tab5.getColumnFormatter().setWidth(1, "120px");
 		tab5.getColumnFormatter().setWidth(2, "150px");
 		tab5.getColumnFormatter().setWidth(3, "auto");		
 		
-		tab5.setWidget(0, 0, new MediumLabel(AON.MSG.town()));
-		tab5.setWidget(0, 1, new MediumLabel(AON.MSG.townCode()));
-		tab5.setWidget(0, 2, new MediumLabel(AON.MSG.province()));
-		tab5.setWidget(0, 3, new MediumLabel(AON.MSG.zip()));
+		tab5.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.town()));
+		tab5.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.townCode()));
+		tab5.setWidget(0, 2, new Model347SmallerLabel(AON.MSG.province()));
+		tab5.setWidget(0, 3, new Model347SmallerLabel(AON.MSG.zip()));
 
-		TextBox town = new TextBox();
-		town.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox town = new AonTextBox();
 		town.setMaxLength(30);
 		town.setVisibleLength(30);
 		town.setValue(asset.getAssetStreetTown());
-		town.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetTown(town.getValue());
-				callback.onValueChanged(asset);				
-			}
+		town.addValueChangeHandler(event -> {
+			asset.setAssetStreetTown(town.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab5.setWidget(1, 0, town);
 
 		FlowPanel townCodePanel = new FlowPanel(); 
-		TextBox townCode = new TextBox();
-		townCode.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox townCode = new AonTextBox();
 		townCode.setMaxLength(5);
 		townCode.setVisibleLength(5);
 		townCode.setValue(asset.getAssetStreetTownCode());
-		townCode.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetTownCode(townCode.getValue());
-				callback.onValueChanged(asset);				
-			}
+		townCode.addValueChangeHandler(event -> {
+			asset.setAssetStreetTownCode(townCode.getValue());
+			callback.onValueChanged(asset);				
 		});
 		townCodePanel.add(townCode);
 		
 		Anchor townCodeAnchor = new Anchor();
-		townCodeAnchor.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		townCodeAnchor.addStyleName(AON.AON_CSS.aonIconGoto());
+		townCodeAnchor.setStyleName(AON.CSS.aonIconLabel());
+		townCodeAnchor.addStyleName(AON.CSS.aonIconLink());
 		townCodeAnchor.setTarget("_blank");
 		townCodeAnchor.setHref("http://www.ine.es/daco/daco42/codmun/codmunmapa.htm");
 		townCodePanel.add(townCodeAnchor);
@@ -446,26 +352,19 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 		} else {
 			provinceCode.setSelectedIndex( 0 );
 		}
-		provinceCode.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				asset.setAssetStreetProvince(Integer.toString(provinceCode.getSelectedIndex()));
-				callback.onValueChanged(asset);
-			}
+		provinceCode.addChangeHandler( event -> {
+			asset.setAssetStreetProvince(Integer.toString(provinceCode.getSelectedIndex()));
+			callback.onValueChanged(asset);
 		});
 		tab5.setWidget(1, 2, provinceCode);
 
-		TextBox zip = new TextBox();
-		zip.setStyleName(AON.AON_CSS.aonInputText());
+		AonTextBox zip = new AonTextBox();
 		zip.setMaxLength(5);
 		zip.setVisibleLength(5);
 		zip.setValue(asset.getAssetStreetZip());
-		zip.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				asset.setAssetStreetZip(zip.getValue());
-				callback.onValueChanged(asset);				
-			}
+		zip.addValueChangeHandler(event -> {
+			asset.setAssetStreetZip(zip.getValue());
+			callback.onValueChanged(asset);				
 		});
 		tab5.setWidget(1, 3, zip);
 		panel.add(tab5);		
@@ -481,6 +380,7 @@ public class Model3472014AssetPanel extends SimpleLayoutPanel implements Focusab
 
 	@Override
 	public void setAccessKey(char key) {
+		// Nothing
 	}
 
 	@Override
