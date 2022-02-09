@@ -405,12 +405,36 @@
 							
 							<g:Grid styleName="aon-dataTable">
 								<g:row styleName="aon-dataTable-row-even">
-									<g:customCell>
-										<g:HTMLPanel>
-											<g:Label styleName="{style.cell-label}">N. INSCRIPCION
-												SS</g:Label>
-											<g:Label ui:field="enterpriseCCCLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
-										</g:HTMLPanel>
+									<g:customCell  styleName="{style.span-cell}" >
+										<g:Grid styleName="{style.span-cell-table}">
+											<g:row>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">N. INSCRIPCION
+															SS</g:Label>
+														<g:Label ui:field="enterpriseCCCLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">GRUPO COTIZACIÓN</g:Label>
+														<g:Label ui:field="employeeGroupLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">TIPO CONTRATO</g:Label>
+														<g:Label ui:field="employeeContractLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">OCUPACIÓN</g:Label>
+														<g:Label ui:field="employeeOcupationLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+											</g:row>
+										</g:Grid>
 									</g:customCell>
 									<g:customCell styleName="{style.span-cell}">
 										<g:Grid styleName="{style.span-cell-table}">
