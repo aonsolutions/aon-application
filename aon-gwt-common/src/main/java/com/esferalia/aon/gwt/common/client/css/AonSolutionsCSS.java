@@ -949,15 +949,6 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_toolbar_small_button_container")
 	String aonToolbarSmallButtonContainer();
 
-	@ClassName("aon_toolbar_search_container")
-	String aonToolbarSearchContainer();
-
-	@ClassName("aon_toolbar_search_box")
-	String aonToolbarSearchBox();
-	
-	@ClassName("aon_toolbar_text_box")
-	String aonToolbarTextBox();
-	
 	@ClassName("aon_toolbar_message_container")
 	String aonToolbarMessageContainer();
 	
@@ -1025,6 +1016,7 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_search_panel_label")
 	String aonSearchPanelLabel();
 
+	
 	@ClassName("aon_block_message")
 	String aonBlockMessage();
 

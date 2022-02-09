@@ -27,8 +27,6 @@ import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 public class LROE140_1_1 extends LROE140 {
 
-	private static final long serialVersionUID = 1L;
-
 	private static final String CAPITULO = "1";
 	private static final String SUBCAPITULO = "1.1";
 	

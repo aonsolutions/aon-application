@@ -34,8 +34,6 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		
 		private String name;
 		private String document;
-		private boolean showName = true;
-		private boolean showDocument = true;
 		private boolean showNRC;
 		private boolean testEnvironment;
 		private String infoMessage;
@@ -61,22 +59,6 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		}
 		public AonCertificationPopupParams setShowNRC(boolean showNRC) {
 			this.showNRC = showNRC;
-			return this;
-		}
-		
-		public boolean isShowName() {
-			return showName;
-		}
-		public AonCertificationPopupParams setShowName(boolean showName) {
-			this.showName = showName;
-			return this;
-		}
-		
-		public boolean isShowDocument() {
-			return showDocument;
-		}
-		public AonCertificationPopupParams setShowDocument(boolean showDocument) {
-			this.showDocument = showDocument;
 			return this;
 		}
 		
@@ -233,35 +215,31 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			.addCell(l1)
 			.addCell(certificates);
 		
-		if(params.isShowDocument() || params.isShowName()) {
-			Label ldc = new Label("Datos del certificado");
-			ldc.setStyleName(AON.CSS.aonInnerLabel());
-			ldc.addStyleName(AON.CSS.aonTextUnderline());
-			table.addRow()
-				.addCell(ldc)
-				.addCell(new Label());
-		}
-		if(params.isShowName()) {
-			Label l = new Label("Raz\u00F3n Social / Nombre");
-			l.addStyleName(AON.CSS.aonTableLabel());
-			name.setVisibleLength(45);
-			name.addKeyUpHandler(event -> name.decorateAsValid());
-			name.setText(params.getName());
-			table.addRow()
-				.addCell(l)
-				.addCell(name);
-		}
+		Label ldc = new Label("Datos del certificado");
+		ldc.setStyleName(AON.CSS.aonInnerLabel());
+		ldc.addStyleName(AON.CSS.aonTextUnderline());
+		table.addRow()
+			.addCell(ldc)
+			.addCell(new Label());
+		
+		Label l = new Label("Raz\u00F3n Social / Nombre");
+		l.addStyleName(AON.CSS.aonTableLabel());
+		name.setVisibleLength(45);
+		name.addKeyUpHandler(event -> name.decorateAsValid());
+		name.setText(params.getName());
+		table.addRow()
+			.addCell(l)
+			.addCell(name);
 
-		if(params.isShowDocument()) {
-			Label l0 = new Label("DNI/NIF");
-			l0.addStyleName(AON.CSS.aonTableLabel());
-			document.setText(params.getDocument());
-			document.setVisibleLength(11);
-			document.addKeyUpHandler(event -> document.decorateAsValid());
-			table.addRow()
-				.addCell(l0)
-				.addCell(document);
-		}
+		Label l0 = new Label("DNI/NIF");
+		l0.addStyleName(AON.CSS.aonTableLabel());
+		document.setText(params.getDocument());
+		document.setVisibleLength(11);
+		document.addKeyUpHandler(event -> document.decorateAsValid());
+		table.addRow()
+			.addCell(l0)
+			.addCell(document);
+
 		Label l2 = new Label("Contrase\u00f1a");
 		l2.addStyleName(AON.CSS.aonTableLabel());
 		password.setStyleName(AON.CSS.aonInputText());
@@ -301,19 +279,19 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			if (certificates.getSelectedIndex() == 0) {
 				certificates.addStyleName(AON.CSS.aonInputTextError());
 				certificates.setFocus(true);
-			} else if(params.isShowName() && AonStringUtils.isBlank(name.getValue())) {
+			} else  if (AonStringUtils.isBlank(name.getValue())) {
 				name.decorateAsError();
 				name.selectAll();
 				name.setFocus(true);
-			} else if(params.isShowDocument() && (AonStringUtils.isBlank(document.getValue()) || !AonDocumentUtil.isValid(document.getValue()))) {
+			} else if (AonStringUtils.isBlank(document.getValue()) || !AonDocumentUtil.isValid(document.getValue()) ) {
 				document.decorateAsError();
 				document.selectAll();
 				document.setFocus(true);
-			} else if(password.isVisible() && AonStringUtils.isBlank(password.getValue())) {
+			} else if (password.isVisible() && AonStringUtils.isBlank(password.getValue())) {
 				password.addStyleName(AON.CSS.aonInputTextError());
 				password.selectAll();
 				password.setFocus(true);
-			} else if(params.isShowNRC() && AonStringUtils.isBlank(nrc.getValue())) {
+			} else if (params.isShowNRC() && AonStringUtils.isBlank(nrc.getValue())) {
 				nrc.addStyleName(AON.CSS.aonInputTextError());
 				nrc.selectAll();
 				nrc.setFocus(true);
@@ -321,8 +299,8 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 				hide();
 				onAccept(
 						new AEATParams()
-						.setName(params.isShowName() ? AonStringUtils.trim(name.getValue()) : "")
-						.setDocument(params.isShowDocument() ? AonStringUtils.trim(document.getValue()) : "")
+						.setName( AonStringUtils.trim(name.getValue()))
+						.setDocument( AonStringUtils.trim(document.getValue()))
 						.setCertificateId( AonNumberUtils.toInteger(certificates.getSelectedValue()) )
 						.setPass(AonStringUtils.trim(password.getValue()))
 						.setNrc(AonStringUtils.trim(nrc.getValue()))

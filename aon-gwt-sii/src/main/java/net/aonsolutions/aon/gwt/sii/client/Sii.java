@@ -15,6 +15,7 @@ public class Sii implements EntryPoint {
 	AonData aonData;
 	final ISiiAsync impl = GWT.create(ISii.class);
 
+
 	public Sii(AonData aonData) {
 		this.aonData = aonData;
 	}

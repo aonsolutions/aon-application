@@ -28,15 +28,10 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
-import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
-import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
-import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
-import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
-import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
@@ -152,9 +147,7 @@ public class MainEntryPoint implements EntryPoint {
 		;
 		abstract void run();
 	}
-	private static final String SII_ENTRY_POINT = "Sii";
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
-	private static final String FS_MOD240_ENTRY_POINT = "Model240";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
 	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
 	private static final String FS_CONFIG_POINT = "FiscalConfig";
@@ -234,7 +227,7 @@ public class MainEntryPoint implements EntryPoint {
 		} catch (IllegalArgumentException e) {
 			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
 		}
-		if (FS_MOD140_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
+		if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
 			GWT.runAsync(Model140.class, new RunAsyncCallback() {
 
 				@Override
@@ -244,21 +237,8 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					new Model140().onModuleLoad();
-				}
-				
-			});
-		} else if(FS_MOD240_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
-			GWT.runAsync(Model240.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					new Model240().onModuleLoad();
+					Model140 model140 = new Model140();
+					model140.onModuleLoad();
 				}
 				
 			});
@@ -677,20 +657,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					CheckItModule rawdoc  = new CheckItModule();
 					rawdoc.onModuleLoad();
-				}
-				
-			});
-		} else if (SII_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
-			GWT.runAsync(Sii.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					new Sii().onModuleLoad();
 				}
 				
 			});

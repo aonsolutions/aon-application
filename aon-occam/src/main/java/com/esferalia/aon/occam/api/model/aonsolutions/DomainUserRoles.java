@@ -2,13 +2,16 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class DomainUserRoles implements Serializable {
-
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	
 	Domain domain;

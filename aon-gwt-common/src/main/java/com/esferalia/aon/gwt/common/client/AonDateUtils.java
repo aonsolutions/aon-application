@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.common.client;
 
-import static java.util.Calendar.DAY_OF_YEAR;
-
-import java.util.Calendar;
 import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -50,5 +47,5 @@ public class AonDateUtils {
 	public static String formatTime(Date date) {
 		return hourFormat.format(date);
 	}
-
+	
 }

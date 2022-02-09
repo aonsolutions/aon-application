@@ -263,7 +263,7 @@ public class Invoice2tbai {
 
 		
 		DatosFacturaType datos = new DatosFacturaType();
-		datos.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
+		datos.setFechaOperacion(AonDateUtils.format(invoice.getCreationDate(), "dd-MM-yyyy"));
 		datos.setDescripcionFactura("FACTURA " + invoice.getReferenceCode());
 		
 		DetallesFacturaType detalles = new DetallesFacturaType();

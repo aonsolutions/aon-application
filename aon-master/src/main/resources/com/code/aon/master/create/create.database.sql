@@ -1232,61 +1232,6 @@ CREATE TABLE `invoice_fiscal` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Info fiscal de facturas';
 
 #
-# Structure for the `invoice_status` table : 
-#
-
-CREATE TABLE `invoice_status` (
-`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-`invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
-`type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de comunicacion',
-`status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Estado de la Comunicacion',
-PRIMARY KEY (`id`),
-KEY `IDX_INVOICE_STATUS_DOMAIN` (`domain`),
-KEY `IDX_INVOICE_STATUS_INVOICE` (`invoice`),
-CONSTRAINT `FK_INVOICE_STATUS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-CONSTRAINT `FK_INVOICE_STATUS_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Estado Comunicaciones de Facturas';
-
-#
-# Structure for the `invoice_batch` table : 
-#
-
-CREATE TABLE `invoice_batch` (
-`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-`date` datetime NOT NULL COMMENT 'Fecha de comunicacion',
-`type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de comunicacion',
-`operation` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de operacion',
-`data_response` int(4) NOT NULL COMMENT 'Envio de la comunicacion',
-`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
-PRIMARY KEY (`id`),
-KEY `IDX_INVOICE_BATCH_DOMAIN` (`domain`),
-KEY `IDX_INVOICE_BATCH_DATA_RESPONSE` (`data_response`),
-CONSTRAINT `FK_INVOICE_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-CONSTRAINT `FK_INVOICE_BATCH_DATA_RESPONSE` FOREIGN KEY (`data_response`) REFERENCES `data_response` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='comunicaciones lote facturas';
-
-#
-# Structure for the `invoice_batch_detail` table : 
-#
-
-CREATE TABLE `invoice_batch_detail` (
-`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-`invoice` int(4) NOT NULL COMMENT 'Identificador de la factura',
-`invoice_batch` int(4) NOT NULL COMMENT 'Identificador de invoice batch',
-`status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Estado de la comunicacion',
-PRIMARY KEY (`id`),
-KEY `IDX_INVOICE_BATCH_DETAIL_DOMAIN` (`domain`),
-KEY `IDX_INVOICE_BATCH_DETAIL_INVOICE` (`invoice`),
-KEY `IDX_INVOICE_BATCH_DETAIL_INVOICE_BATCH` (`invoice_batch`),
-CONSTRAINT `FK_INVOICE_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-CONSTRAINT `FK_INVOICE_BATCH_DETAIL_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
-CONSTRAINT `FK_INVOICE_BATCH_DETAIL_INVOICE_BATCH` FOREIGN KEY (`invoice_batch`) REFERENCES `invoice_batch` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle comunicaciones lote facturas';
-
-#
 # Structure for the `pay_method` table :
 #
 
@@ -4908,25 +4853,6 @@ CREATE TABLE `fs_model` (
   CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
-
-#
-# Structure for the `fs_model_invoice` table :
-#
-
-CREATE TABLE `fs_model_invoice` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `fs_model` int(4) NOT NULL COMMENT 'Identificador del Modelo',
-  `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
-  PRIMARY KEY (`id`),
-  KEY `IDX_FS_MODEL_INVOICE_DOMAIN` (`domain`),
-  KEY `IDX_FS_MODEL_INVOICE_FS_MODEL` (`fs_model`),
-  KEY `IDX_FS_MODEL_INVOICE_INVOICE` (`invoice`),
-  CONSTRAINT `FK_FS_MODEL_INVOICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_MODEL_INVOICE_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
-  CONSTRAINT `FK_FS_MODEL_INVOICE_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Facturas del Modelo';
-
 
 #
 # Structure for the `fs_model180` table :

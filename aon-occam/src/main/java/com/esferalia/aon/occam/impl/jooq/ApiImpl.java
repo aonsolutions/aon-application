@@ -2,8 +2,11 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.stream.Stream;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IApi;
+import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.impl.jooq.dao.api.InvoiceApiDAO;

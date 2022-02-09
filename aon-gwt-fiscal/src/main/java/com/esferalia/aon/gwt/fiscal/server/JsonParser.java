@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
+import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.Account;
@@ -34,7 +35,7 @@ public class JsonParser {
 		
 	}
 	
-	public static AEATParams parseAEATParams(String aeatParams) throws Exception {
+	public static AEATParams parseAEATParams(String aeatParams) throws ParseException {
 		AEATParams params = new AEATParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(aeatParams);
@@ -81,7 +82,7 @@ public class JsonParser {
 		return params;
 	}
 
-	public static AccountParams parseAccountParams(String accountParams) throws Exception {
+	public static AccountParams parseAccountParams(String accountParams) throws ParseException {
 		AccountParams params = new AccountParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(accountParams);
@@ -137,7 +138,7 @@ public class JsonParser {
 		return params;
 	}
 
-	public static AccountEntryParams parse(String accountEntryParams) throws Exception, java.text.ParseException {
+	public static AccountEntryParams parse(String accountEntryParams) throws ParseException, java.text.ParseException {
 		AccountEntryParams params = new AccountEntryParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(accountEntryParams);
@@ -289,7 +290,7 @@ public class JsonParser {
 		return params;
 	}
 
-	public static AccountingReportParams parseAccountingParams(String accountReportParams) throws Exception, java.text.ParseException {
+	public static AccountingReportParams parseAccountingParams(String accountReportParams) throws ParseException, java.text.ParseException {
 		AccountingReportParams params = new AccountingReportParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(accountReportParams);
@@ -554,7 +555,7 @@ public class JsonParser {
 		return params;
 	}
 	
-	public static FinanceParams parseFinanceParams(String financeParams) throws Exception, java.text.ParseException {
+	public static FinanceParams parseFinanceParams(String financeParams) throws ParseException, java.text.ParseException {
 		FinanceParams params = new FinanceParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(financeParams);

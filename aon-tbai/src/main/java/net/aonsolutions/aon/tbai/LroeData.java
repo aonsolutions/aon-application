@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunication;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -144,22 +143,6 @@ public class LroeData {
 				.setDataRequest(response.getDataRequest().getId());
 		
 		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
-		
-//		if(response.isOk()) {
-//			InvoiceCommunication ic = AON.getInvoiceCommunication(domain, user, f -> f.getDomainProperty().eq(domain.getId()).and(f.getInvoiceProperty().eq(invoice.getId())).and(f.getTypeProperty().eq(info.getCommunicationType().value())));
-//			if(ic.isEmpty()) {
-//				ic.setDomain(domain.getId())
-//				.setInvoice(invoice.getId())
-//				.setType(info.getCommunicationType());
-//			}
-//			if(info.isAlta()) {
-//				ic.setSent(dr.getId());
-//			}
-//			if(info.isAnulacion()) {
-//				ic.setAnnulled(dr.getId());
-//			}
-//			AON.saveInvoiceCommunication(domain, user, ic);
-//		}
 		
 		DataResponseDetail drd1 = new DataResponseDetail()
 				.setDomain(domain.getId())

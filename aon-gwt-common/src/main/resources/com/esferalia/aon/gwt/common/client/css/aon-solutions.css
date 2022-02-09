@@ -838,7 +838,7 @@
 /* MESSAGE PANEL */
 
 .aon_message_close_panel{
-    padding-right: 1rem;
+    padding: .7rem 1rem 0 0;
 }
 
 .aon_message_close{
@@ -851,8 +851,8 @@
 
 .aon_message_panel{
 	/*height: 2rem;*/
-	height: 2.2rem;
-	align-items: center;
+	min-height: 2.2rem;
+	/*align-items: center;*/
 	border-radius: 0.5em;
     display: flex;
     margin: 0 1em;
@@ -957,27 +957,6 @@
 	display: flex;
 }
 
-.aon_toolbar_search_container {
-	display: flex;
-}
-	
-.aon_toolbar_search_box {
-	display: flex;
-	border-bottom: 2px solid #002469;
-}
-		
-.aon_toolbar_text_box {
-	box-shadow: none !important;
-	border: none !important;
-	outline: none !important;
-}
-		
-.aon_toolbar_text_box:focus {
-	box-shadow: none !important;
-	border: none !important;
-	outline: none !important;
-}
-		
 .aon_toolbar_message_container {
 	margin-left: 40px;
 	margin-right: 40px;

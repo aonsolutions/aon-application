@@ -1,13 +1,14 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Certificate implements Serializable {
 	
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
@@ -15,11 +16,8 @@ public class Certificate implements Serializable {
 	private String type;
 	private String password;
 	private String name;
-	private byte [] data;
+	private byte [] certificate;
 	private boolean confidential;
-	private boolean user;
-	private List<CertificateType> types;
-	private Date updateDate;
 
 	public Integer getId() {
 		
@@ -62,23 +60,12 @@ public class Certificate implements Serializable {
 		return !AonStringUtils.isBlank(getPassword());
 	}
 
-	@Deprecated
 	public byte[] getCertificate() {
-		return data;
+		return certificate;
 	}
 	
-	@Deprecated
 	public Certificate setCertificate(byte[] certificate) {
-		this.data = certificate;
-		return this;
-	}
-	
-	public byte[] getData() {
-		return data;
-	}
-	
-	public Certificate setData(byte[] data) {
-		this.data = data;
+		this.certificate = certificate;
 		return this;
 	}
 	
@@ -112,35 +99,8 @@ public class Certificate implements Serializable {
 		this.confidential = confidential;
 		return this;
 	}
-
-	public boolean isUser() {
-		return user;
-	}
-	
-	public Certificate setUser(boolean user) {
-		this.user = user;
-		return this;
-	}
-	
-	public boolean isCompany() {
-		return !isUser();
-	}
-
-	public Certificate setCompany(boolean company) {
-		setUser(!company);
-		return this;
-	}
-	
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-
-	public Certificate setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
-		return this;
-	}
 	
 	public boolean isEmpty() {
-		return getData() == null && getPassword() == null;
+		return getCertificate() == null && getPassword() == null;
 	}
 }

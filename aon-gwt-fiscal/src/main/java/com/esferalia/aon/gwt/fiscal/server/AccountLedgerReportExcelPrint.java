@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.jooq.tools.json.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -77,7 +78,7 @@ public class AccountLedgerReportExcelPrint extends HttpServlet {
 
 	}
 	
-	private AccountingReportParams parseParams(String accountReportParams) throws Exception, java.text.ParseException {
+	private AccountingReportParams parseParams(String accountReportParams) throws ParseException, java.text.ParseException {
 		AccountingReportParams params = new AccountingReportParams();
 		JSONObject json = new JSONObject(accountReportParams);
 		// ******************* DOMAIN *******************

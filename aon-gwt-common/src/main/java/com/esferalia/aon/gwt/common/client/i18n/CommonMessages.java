@@ -161,9 +161,6 @@ public interface CommonMessages extends Messages {
 		,"M200"		,"Declaraci\u00F3n-liquidaci\u00F3n del Impuesto sobre Sociedades."
 		,"M202"		,"Impuesto sobre sociedades. Pago fraccionado."
 		,"M303"		,"IVA. Autoliquidaci\u00F3n."
-		,"M140"		,"Libro-registro de operaciones econ\u00F3micas de personas f\u00EDsicas"
-		,"M240"		,"Libro-registro de operaciones econ\u00F3micas de personas jur\u00EDdicas"
-		,"SII"		,"Suministro inmediato de informaci\u00F3n"
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
 
@@ -468,9 +465,6 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Buscar")
 	String searchAction();
 
-	@DefaultMessage("Busqueda Avanzada")
-	String advancedSearch();
-	
 	@DefaultMessage("Cancelar")
 	String cancelAction();
 	

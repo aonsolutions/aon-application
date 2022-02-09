@@ -1,7 +1,18 @@
 package net.aonsolutions.db.up2date.data;
 
 import java.sql.Connection;
+import java.util.LinkedList;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.conf.ParamType;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.DataResponse;
+import com.esferalia.aon.jooq.tables.DataResponseDetail;
 
 import net.aonsolutions.db.up2date.Update;
 
