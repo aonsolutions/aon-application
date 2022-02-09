@@ -47,25 +47,28 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfCopyFields;
-import com.lowagie.text.pdf.PdfReader;
+//import com.lowagie.text.DocumentException;
+//import com.lowagie.text.pdf.PdfCopyFields;
+//import com.lowagie.text.pdf.PdfReader;
 
 public class CommercialEmailUtil extends CompanyEmailUtil {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	public void initMessageController( MessageController messageController, Offer offer ) throws ManagerBeanException, IOException, ReportException, DocumentException {
-		initMessageController( messageController, offer, null, true, true, false);
+	public void initMessageController( MessageController messageController, Offer offer ) throws ManagerBeanException, IOException, ReportException{
+//	, DocumentException {
+	//	initMessageController( messageController, offer, null, true, true, false);
 	}
 	
 	public void initMessageController( MessageController messageController, Offer offer, SddMandateObject sddMandateObject, 
-			boolean includeOffer, boolean includeOfferAttach, boolean includeSddMandate) throws ManagerBeanException, IOException, ReportException, DocumentException {
-		initMessageController( messageController, offer, sddMandateObject, includeOffer, includeOfferAttach, includeSddMandate, false);
+			boolean includeOffer, boolean includeOfferAttach, boolean includeSddMandate) throws ManagerBeanException, IOException, ReportException {
+		//, DocumentException {
+	//	initMessageController( messageController, offer, sddMandateObject, includeOffer, includeOfferAttach, includeSddMandate, false);
 	}
 	
 	public void initMessageController( MessageController messageController, Offer offer, SddMandateObject sddMandateObject, 
-			boolean includeOffer, boolean includeOfferAttach, boolean includeSddMandate, boolean documentOnlineSign) throws ManagerBeanException, IOException, ReportException, DocumentException {
+			boolean includeOffer, boolean includeOfferAttach, boolean includeSddMandate, boolean documentOnlineSign) throws ManagerBeanException, IOException, ReportException { 
+		//, DocumentException {
 		String[] emails = null;
 		Target target = offer.getTarget();
 		if ( target != null ) {
@@ -95,7 +98,7 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 			}
 			
 			AonFile aonFile = new AonFile();
-			aonFile.setData(mergePdf(list));
+			aonFile.setData(null); //mergePdf(list));
 			aonFile.setFileName( "presupuesto_"+offer.getReferenceCode()+".pdf" );
 			aonFile.setMimeType(MimeType.MIME_PDF);
 			messageController.addAttachment(aonFile);
@@ -234,42 +237,42 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 	}
 	
 	
-	public static byte[] mergePdf(List<byte[]> attachList) throws IOException, DocumentException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//		try {
-			List<PdfReader> pdfReaderList = new ArrayList<PdfReader>();
-			for(byte[] data: attachList){
-				pdfReaderList.add(new PdfReader(data));
-			}
-
-			PdfCopyFields copy = new PdfCopyFields(outputStream);
-			copy.open();
-
-			if (null != pdfReaderList && !pdfReaderList.isEmpty()) {
-				Iterator<PdfReader> iter = pdfReaderList.iterator();
-				while (iter.hasNext()) {
-					String pageNOs = "";
-					PdfReader pdfReader = (PdfReader) iter.next();
-					int noOfPages = pdfReader.getNumberOfPages();
-					if (noOfPages > 0) {
-						pageNOs = getNumderOfPages(noOfPages);
-					}
-					copy.addDocument(pdfReader, pageNOs);
-				}
-			}
-			copy.close();
-			return outputStream.toByteArray();
-//		} catch (DocumentException e) {
-//			String msg = "Se ha producido un error al generar un documento a partir de la lista de documentos dada.";
-//			LOGGER.error(msg, e);
-//			AonUtil.addErrorMessage(msg + "["+e+"]");
-//		} catch (IOException e) {
-//			String msg = "Se ha producido un error al generar un documento a partir de la lista de documentos dada.";
-//			LOGGER.error(msg, e);
-//			AonUtil.addErrorMessage(msg + "["+e+"]");
-//		}
-//		return null;
-	}
+//	public static byte[] mergePdf(List<byte[]> attachList) throws IOException, DocumentException {
+//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+////		try {
+//			List<PdfReader> pdfReaderList = new ArrayList<PdfReader>();
+//			for(byte[] data: attachList){
+//				pdfReaderList.add(new PdfReader(data));
+//			}
+//
+//			PdfCopyFields copy = new PdfCopyFields(outputStream);
+//			copy.open();
+//
+//			if (null != pdfReaderList && !pdfReaderList.isEmpty()) {
+//				Iterator<PdfReader> iter = pdfReaderList.iterator();
+//				while (iter.hasNext()) {
+//					String pageNOs = "";
+//					PdfReader pdfReader = (PdfReader) iter.next();
+//					int noOfPages = pdfReader.getNumberOfPages();
+//					if (noOfPages > 0) {
+//						pageNOs = getNumderOfPages(noOfPages);
+//					}
+//					copy.addDocument(pdfReader, pageNOs);
+//				}
+//			}
+//			copy.close();
+//			return outputStream.toByteArray();
+////		} catch (DocumentException e) {
+////			String msg = "Se ha producido un error al generar un documento a partir de la lista de documentos dada.";
+////			LOGGER.error(msg, e);
+////			AonUtil.addErrorMessage(msg + "["+e+"]");
+////		} catch (IOException e) {
+////			String msg = "Se ha producido un error al generar un documento a partir de la lista de documentos dada.";
+////			LOGGER.error(msg, e);
+////			AonUtil.addErrorMessage(msg + "["+e+"]");
+////		}
+////		return null;
+//	}
 	
 	/**
 	 * Function to get page numbers in string with comma separated

@@ -428,6 +428,15 @@ public interface Properties {
 		Property<String> getNameProperty();
 	}
 	
+	public interface InvoiceCommunicationProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getSentProperty();
+		Property<Integer> getAnnulledProperty();
+	}
+	
 	public interface TaxProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

@@ -30,9 +30,10 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
-import com.esferalia.aon.watson.util.AonEnumUtils;;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class InvoiceApiDAO {
 	
@@ -43,8 +44,11 @@ public class InvoiceApiDAO {
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
 		
 		return ctx.getDslContext().select()
-				.from(INVOICE).where(INVOICE_PROPERTIES.getConditions(filter))
-			.orderBy(INVOICE.ISSUE_DATE.desc())
+				.from(INVOICE)
+				//.leftOuterJoin(INVOICE_COMMUNICATION).on(INVOICE_COMMUNICATION.INVOICE.eq(INVOICE.ID))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.groupBy(INVOICE.ID)
+			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
 			.limit(perPage)
 			.offset(perPage * (page -1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
@@ -88,7 +92,7 @@ public class InvoiceApiDAO {
 	
 
 
-	public static class InvoiceApiFiller implements Function<Record,Invoice> {
+	public static class InvoiceApiFiller extends Filler implements Function<Record,Invoice> {
 		AONContext aonCtx;
 		public InvoiceApiFiller(AONContext ctx) {
 			this.aonCtx = ctx;
@@ -143,7 +147,15 @@ public class InvoiceApiDAO {
 				.setCreationUser(record.getValue(INVOICE.CREATION_USER))
 				.setModificationDate(record.getValue(INVOICE.MODIFICATION_DATE))
 				.setModificationUser(record.getValue(INVOICE.MODIFICATION_USER));
+//				.setCommunicationType(InvoiceCommunicationType.safeValueOf(getValue(record, INVOICE_COMMUNICATION.TYPE)));
 			
+//				Integer sent = getValue(record, INVOICE_COMMUNICATION.SENT);
+//				Integer annulled = getValue(record, INVOICE_COMMUNICATION.ANNULLED);
+//				if(sent != null && annulled == null) {
+//					invoice.setCommunicationStatus(InvoiceCommunicationStatus.SENT);
+//				} else if(annulled != null) {
+//					invoice.setCommunicationStatus(InvoiceCommunicationStatus.ANNULLED);
+//				} else invoice.setCommunicationStatus(InvoiceCommunicationStatus.PENDING);
 			try (AONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
 
 				invoice.setDetails(getInvoiceDetails(ctx, invoice.getId())

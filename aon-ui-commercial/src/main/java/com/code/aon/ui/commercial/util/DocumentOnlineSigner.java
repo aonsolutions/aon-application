@@ -60,9 +60,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfCopyFields;
-import com.lowagie.text.pdf.PdfReader;
+//import com.lowagie.text.DocumentException;
+//import com.lowagie.text.pdf.PdfCopyFields;
+//import com.lowagie.text.pdf.PdfReader;
 
 public class DocumentOnlineSigner implements Serializable {
 	
@@ -356,7 +356,7 @@ public class DocumentOnlineSigner implements Serializable {
 			String rDirStaffName = getRDirStaffName(offer) != null && !getRDirStaffName(offer).equals("") ? getRDirStaffName(offer) : offer.getTarget().getRegistry().getName();
 			String sellerEmail = getSellerEmail(offer);
 			
-			byte[] data = mergePdf(list);
+			byte[] data = null; // mergePdf(list);
 			byte[] encoded = Base64.getEncoder().encode(data);
 			
 			JSONObject json = new JSONObject();
@@ -530,31 +530,31 @@ public class DocumentOnlineSigner implements Serializable {
 		return aonFile;
 	}
 	
-	public static byte[] mergePdf(List<byte[]> attachList) throws IOException, DocumentException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		List<PdfReader> pdfReaderList = new ArrayList<PdfReader>();
-		for(byte[] data: attachList){
-			pdfReaderList.add(new PdfReader(data));
-		}
-
-		PdfCopyFields copy = new PdfCopyFields(outputStream);
-		copy.open();
-
-		if (null != pdfReaderList && !pdfReaderList.isEmpty()) {
-			Iterator<PdfReader> iter = pdfReaderList.iterator();
-			while (iter.hasNext()) {
-				String pageNOs = "";
-				PdfReader pdfReader = (PdfReader) iter.next();
-				int noOfPages = pdfReader.getNumberOfPages();
-				if (noOfPages > 0) {
-					pageNOs = getNumderOfPages(noOfPages);
-				}
-				copy.addDocument(pdfReader, pageNOs);
-			}
-		}
-		copy.close();
-		return outputStream.toByteArray();
-	}
+//	public static byte[] mergePdf(List<byte[]> attachList) throws IOException, DocumentException {
+//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//		List<PdfReader> pdfReaderList = new ArrayList<PdfReader>();
+//		for(byte[] data: attachList){
+//			pdfReaderList.add(new PdfReader(data));
+//		}
+//
+//		PdfCopyFields copy = new PdfCopyFields(outputStream);
+//		copy.open();
+//
+//		if (null != pdfReaderList && !pdfReaderList.isEmpty()) {
+//			Iterator<PdfReader> iter = pdfReaderList.iterator();
+//			while (iter.hasNext()) {
+//				String pageNOs = "";
+//				PdfReader pdfReader = (PdfReader) iter.next();
+//				int noOfPages = pdfReader.getNumberOfPages();
+//				if (noOfPages > 0) {
+//					pageNOs = getNumderOfPages(noOfPages);
+//				}
+//				copy.addDocument(pdfReader, pageNOs);
+//			}
+//		}
+//		copy.close();
+//		return outputStream.toByteArray();
+//	}
 	
 	/**
 	 * Function to get page numbers in string with comma separated

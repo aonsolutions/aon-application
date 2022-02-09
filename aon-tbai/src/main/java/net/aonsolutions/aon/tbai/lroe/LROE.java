@@ -40,6 +40,7 @@ public class LROE implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	protected static final String LROE = "LROE";
+	protected static final String DATE_FORMAT = "dd-MM-yyyy";
 	
 	public LROEResponse send(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
 		JSONObject responseJSON = new JSONObject();

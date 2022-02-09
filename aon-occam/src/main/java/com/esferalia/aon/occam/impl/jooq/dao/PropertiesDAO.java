@@ -239,6 +239,11 @@ public class PropertiesDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
 
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
+
+		// INVOICE COMMUNICATION
+//		@Override public Property<Byte> getInvoiceCommunicationTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_COMMUNICATION.TYPE);}
+//		@Override public Property<Integer> getInvoiceCommunicationSentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_COMMUNICATION.SENT);}
+//		@Override public Property<Integer> getInvoiceCommunicationAnnulledProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_COMMUNICATION.ANNULLED);}		
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -894,7 +899,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getAttachProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.ATTACH);}
 	}
 	
-	protected static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
+	public static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, RegistryAddInfoFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);

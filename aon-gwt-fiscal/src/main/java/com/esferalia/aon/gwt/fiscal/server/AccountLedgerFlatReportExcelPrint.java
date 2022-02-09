@@ -24,7 +24,6 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
-import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -70,7 +69,7 @@ public class AccountLedgerFlatReportExcelPrint extends HttpServlet {
 
 	}
 	
-	private AccountingReportParams parseParams(String accountReportParams) throws ParseException, java.text.ParseException {
+	private AccountingReportParams parseParams(String accountReportParams) throws Exception, java.text.ParseException {
 		AccountingReportParams params = new AccountingReportParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(accountReportParams);

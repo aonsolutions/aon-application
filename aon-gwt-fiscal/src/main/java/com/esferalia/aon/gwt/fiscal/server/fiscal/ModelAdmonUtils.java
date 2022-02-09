@@ -40,7 +40,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.jooq.tools.json.ParseException;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
@@ -161,7 +160,7 @@ public class ModelAdmonUtils {
 		AEATParams aeatParams = null;
 		try {
 			aeatParams = JsonParser.parseAEATParams(aeatParamsString);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			throw new AonCoreException(MessageFormat.format("[INT] Error en la evaluaci\u00F3n de los par\u00C1metros {0}", e.getMessage()));	
 		}
 		return aeatParams; 

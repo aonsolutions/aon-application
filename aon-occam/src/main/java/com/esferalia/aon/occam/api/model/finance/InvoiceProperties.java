@@ -1,11 +1,12 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;
 
-public interface InvoiceProperties {
+public interface InvoiceProperties extends Serializable {
 	
 	Property<Integer> getIdProperty();
 	Property<Integer> getDomainProperty();
@@ -42,4 +43,8 @@ public interface InvoiceProperties {
 	Property<Timestamp> getModificationDateProperty();
 	Property<String> getModificationUserProperty();
 	
+	// INVOICE COMMUNICATION
+//	Property<Byte> getInvoiceCommunicationTypeProperty();
+//	Property<Integer> getInvoiceCommunicationSentProperty();
+//	Property<Integer> getInvoiceCommunicationAnnulledProperty();	
 }

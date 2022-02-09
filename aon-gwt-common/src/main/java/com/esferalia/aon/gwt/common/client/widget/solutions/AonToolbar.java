@@ -2,10 +2,12 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonToolbar extends FlowPanel {
@@ -14,6 +16,7 @@ public class AonToolbar extends FlowPanel {
 	
 	private FlowPanel buttonContainer;
 	private FlowPanel messagePanel;
+	private FlowPanel searchPanel;
 	private FlowPanel titlePanel;
 	
 	public AonToolbar( ) {
@@ -34,6 +37,11 @@ public class AonToolbar extends FlowPanel {
 		messagePanel = new FlowPanel();
 		messagePanel.setStyleName(AON.CSS.aonToolbarMessageContainer());
 		innerToolbar.add(messagePanel);
+		
+		searchPanel = new FlowPanel();
+		searchPanel.setStyleName(AON.CSS.aonToolbarSearchContainer());
+		searchPanel.setVisible(false);
+		innerToolbar.add(searchPanel);
 		
 		titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarTitleContainer());
@@ -66,6 +74,11 @@ public class AonToolbar extends FlowPanel {
 		errorMsg.setStyleName(AON.CSS.aonToolbarMessage());
 		errorMsg.addStyleName(AON.CSS.aonToolbarErrorMessage());
 		messagePanel.add(errorMsg);
+	}
+	
+	public void showSearchPanel(Widget widget) {
+		searchPanel.add(widget);
+		searchPanel.setVisible(true);
 	}
 
 	public void hideMessages( ) {

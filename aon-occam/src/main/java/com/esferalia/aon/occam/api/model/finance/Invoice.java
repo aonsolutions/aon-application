@@ -94,8 +94,10 @@ public class Invoice implements Serializable, HasAudit {
 	private Registry registryData;
 	private Byte status;
 	// ***************************
-	
-	
+
+	private InvoiceCommunicationType communicationType;
+	private InvoiceCommunicationStatus communicationStatus;
+		
 	public Integer getId() {
 		return id;
 	}
@@ -641,6 +643,7 @@ public class Invoice implements Serializable, HasAudit {
 			|| AonMathUtils.isLessThan( getDetails().stream().mapToDouble( InvoiceDetail::getTaxableBase ).sum() , REG_IMPORT_MAX_VALUE );
 	}
 	public String getSiiStatus() {
+		if(siiStatus == null) siiStatus = "Pendiente";
 		return siiStatus;
 	}
 	public Invoice setSiiStatus(String siiStatus) {
@@ -653,7 +656,7 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isVatImportation() {
 		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_IMPORTATION);
 	}
-	public Invoice setVatImportation( boolean value) {
+	public Invoice setVatImportation(boolean value) {
 		ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, value);
 		return this;
 	}
@@ -667,6 +670,23 @@ public class Invoice implements Serializable, HasAudit {
 		return getNumber() <= 0;
 	}
 	
+	public InvoiceCommunicationStatus getCommunicationStatus() {
+		return communicationStatus;
+	}
+
+	public Invoice setCommunicationStatus(InvoiceCommunicationStatus communicationStatus) {
+		this.communicationStatus = communicationStatus;
+		return this;
+	}
+	
+	public InvoiceCommunicationType getCommunicationType() {
+		return communicationType;
+	}
+	
+	public Invoice setCommunicationType(InvoiceCommunicationType communicationType) {
+		this.communicationType = communicationType;
+		return this;
+	}
 	
 }
 
