@@ -18,6 +18,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,7 +42,6 @@ public class Model347AssetTable extends SimpleLayoutPanel implements HasSelectio
 		
 		if (model.getAssets() == null || model.getAssets().isEmpty()) {
 			refresh();
-			newDeclared( );	
 		} else if ( selectedIndex != null) {
 			selectionIndex = selectedIndex;
 			refresh();
@@ -67,7 +67,7 @@ public class Model347AssetTable extends SimpleLayoutPanel implements HasSelectio
 			restoreDeletedButton.setVisible(event.getSelectedItem().isDeleted());
 		});
 
-		newDetailButton.addClickHandler(event -> newDeclared( ));
+		newDetailButton.addClickHandler(event -> newAsset( ));
 		toolbar.add(newDetailButton);
 		
 		restoreDeletedButton.addClickHandler(event -> {
@@ -131,47 +131,53 @@ public class Model347AssetTable extends SimpleLayoutPanel implements HasSelectio
 		int i = 0;
 		boolean resetSelection = false;
 		int firstMatch = -1;
-		for (Mod347Asset asset : this.model.getAssets()) {
-			AonDisplayGridRow row = tab.addRow();
-			boolean visible = AonStringUtils.isBlank(filterBox.getValue()) ||
-					AonStringUtils.isBlank(asset.getName()) ||
-					AonStringUtils.containsIgnoreCase(asset.getName(), filterBox.getValue());
-			row.addStyleName(AON.CSS.aonClickable()); 
-			row.setVisible(visible);
-			if (firstMatch == -1 && visible) {
-				firstMatch = i;
+		if (this.model.getAssets().isEmpty()) {
+			tab.addRow().addCell( new Label( AON.MSG.noData()),AON.CSS.aonWidthAuto());
+		} else {
+			for (Mod347Asset asset : this.model.getAssets()) {
+				AonDisplayGridRow row = tab.addRow();
+				boolean visible = AonStringUtils.isBlank(filterBox.getValue()) ||
+						AonStringUtils.isBlank(asset.getName()) ||
+						AonStringUtils.containsIgnoreCase(asset.getName(), filterBox.getValue());
+				row.addStyleName(AON.CSS.aonClickable()); 
+				row.setVisible(visible);
+				if (firstMatch == -1 && visible) {
+					firstMatch = i;
+				}
+				if (i == Model347AssetTable.this.selectionIndex) {
+					row.addStyleName(AON.CSS.aonBackgroundLigthBlue());
+					resetSelection = !visible; 
+				}
+				final int idx = i;
+				row.addClickHandler( event ->  {
+					Model347AssetTable.this.selectionIndex = idx;
+					styleTable( tab );				
+					SelectionEvent.fire(Model347AssetTable.this, asset);	
+				});
+				String name = AonStringUtils.abbreviate(AonStringUtils.defaultIfBlank(asset.getName(), "Inmueble") , 30 );
+				InlineLabel nameLabel = new InlineLabel( name );
+				if (asset.isDirty()) {
+					nameLabel.setText("* " + name);
+				} else {
+					nameLabel.setText(name);
+				}
+				if (asset.isDeleted()) {
+					nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
+				} else {
+					nameLabel.removeStyleName(AON.CSS.aonTextLineThrough());
+				}
+				
+				row.addCell( nameLabel ,AON.CSS.aonWidthAuto());
+				i++;
 			}
-			if (i == Model347AssetTable.this.selectionIndex) {
-				row.addStyleName(AON.CSS.aonBackgroundLigthBlue());
-				resetSelection = !visible; 
+			if (resetSelection) {
+				selectionIndex = firstMatch;
+				SelectionEvent.fire(Model347AssetTable.this, getSelected() );
 			}
-			final int idx = i;
-			row.addClickHandler( event ->  {
-				Model347AssetTable.this.selectionIndex = idx;
-				styleTable( tab );				
-				SelectionEvent.fire(Model347AssetTable.this, asset);	
-			});
-			String name = AonStringUtils.abbreviate(AonStringUtils.defaultIfBlank(asset.getName(), AON.MSG.resetAction()) , 30 );
-			InlineLabel nameLabel = new InlineLabel( name );
-			if (asset.isDirty()) {
-				nameLabel.setText("* " + name);
-			} else {
-				nameLabel.setText(name);
-			}
-			if (asset.isDeleted()) {
-				nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
-			} else {
-				nameLabel.removeStyleName(AON.CSS.aonTextLineThrough());
-			}
-			i++;
-		}
-		if (resetSelection) {
-			selectionIndex = firstMatch;
-			SelectionEvent.fire(Model347AssetTable.this, getSelected() );
 		}
 	}
 	
-	private void newDeclared() {
+	private void newAsset() {
 		Mod347Asset detail = new Mod347Asset()
 				.setDirty(true)
 				.setTempId((model.getAssets().size() * (-1)));
