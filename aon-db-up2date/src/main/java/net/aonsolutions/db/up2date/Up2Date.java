@@ -19,31 +19,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AgreementOwnerUpdate;
-import net.aonsolutions.db.up2date.payroll.AlterAgreement4Owner;
-import net.aonsolutions.db.up2date.payroll.ContractCleanUpdate;
-import net.aonsolutions.db.up2date.data.DataRequestUpdate;
-import net.aonsolutions.db.up2date.data.DataResponseTBAI;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2022Insert;
+import net.aonsolutions.db.up2date.finance.InvoiceBatchCreation;
+import net.aonsolutions.db.up2date.fiscal.FsModelInvoiceCreation;
 import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
 import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;
-import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
-import net.aonsolutions.db.up2date.payroll.IrpfM190Update;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022Update;
-import net.aonsolutions.db.up2date.tgss.AgriculturalPercentages2022Update;
-import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.Bases2022Update;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2019Close;
-import net.aonsolutions.db.up2date.tgss.HomeBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.IPREM2022Update;
+import net.aonsolutions.db.up2date.payroll.AgreementOwnerUpdate;
+import net.aonsolutions.db.up2date.payroll.AlterAgreement4Owner;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
-import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
-import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
+
 
 
 public class Up2Date {
@@ -233,7 +216,9 @@ public class Up2Date {
     		IrpfQuotasCheck.IRPFQUOTASCHECK,
     		AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
     		AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
-    		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE
+    		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
+    		InvoiceBatchCreation.INVOICE_BATCH_CREATION,
+    		FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION
     };
     
 
