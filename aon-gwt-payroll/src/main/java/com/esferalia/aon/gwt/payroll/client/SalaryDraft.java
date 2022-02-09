@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -38,6 +39,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
+import com.esferalia.aon.gwt.payroll.shared.Employee.Occupation;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasBonus;
@@ -236,6 +238,10 @@ public class SalaryDraft extends ResizeComposite
 	// @formatter:off
 	private static String[] SKIP_VARIABLES = { 
 			
+			"GRUPO_COTIZACION", "TC2", "OCUPACION",
+			
+			
+			
 			"CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD", // functions
 			"GET_VARIABLE", "SI", "MAX", "MIN", "ABS", // functions
 
@@ -330,6 +336,7 @@ public class SalaryDraft extends ResizeComposite
 			
 			"BONIFICACION_TUTORIA",
 			"BONIFICACION_FORMACION_CONTINUA"
+			
 			
 	};
 
@@ -2613,6 +2620,12 @@ public class SalaryDraft extends ResizeComposite
 	Label employeeSeniorityLabel;
 	@UiField
 	Label employeeAgreementCategoryLabel;
+	@UiField
+	Label employeeGroupLabel;
+	@UiField
+	Label employeeContractLabel;
+	@UiField
+	Label employeeOcupationLabel;
 
 	@UiField
 	Label periodLabel;
@@ -3308,6 +3321,32 @@ public class SalaryDraft extends ResizeComposite
 		totalLiquidLabel.setText(format(salaryDraftObject.getTotalLiquid()), displayChanges);
 		dbTotalLiquidLabel.setText(format(salaryDraftObject.getDbTotalLiquid()));
 		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
+
+		salaryDraftObject.getContext().forEach( v ->  {
+			if ( v.getName() == null )
+				return;
+			if ( v.getValue() == null )
+				return;
+			if ( AonStringUtils.isBlank(v.getValue().toString()) )
+				return;
+			switch (v.getName()) {
+			case "TC2":
+				String tc2 = v.getValue().toString();
+				employeeContractLabel.setText(tc2);
+				employeeContractLabel.setTitle(Employee.TC2.getDescriptionByCode(tc2));
+				break;
+			case "OCUPACION":
+				String occupation = v.getValue().toString();
+				employeeOcupationLabel.setText(occupation);
+				employeeOcupationLabel.setTitle(Employee.Occupation.getDescriptionByName(occupation));
+				break;
+			case "GRUPO_COTIZACION":
+				employeeGroupLabel.setText(v.getValue().toString());
+				break;
+			default:
+				break;
+			}
+		});
 
 		clearDbWidgets();
 		clearSsWidgets();
