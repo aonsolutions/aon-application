@@ -1807,6 +1807,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		void onClickIdcButton(ClickEvent e) {
 			showIdc(DateUtils.getFirstDayOfMonth());
 		}
+		
+		@Override
+		protected void onClickEmployee(int x, int y, String naf) {
+			EmployeeTree.this.employees.selectEmployee(naf, true);
+		}
 
 		void showIdc(Date date) {
 			FullViewer viewer = getIDCPDF(employeeDetail, date);

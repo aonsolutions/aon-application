@@ -798,7 +798,8 @@ public abstract class CretaDetail extends Composite {
 						TableRowBuilder tr = startRow();
 						tr.className(trStyle);
 						tr.attribute("onmouseout", "javascript:onEmployeeOut();");
-						tr.attribute("onmouseover", "javascript:onEmployeeOver('"+jsFile.getId()+"','"+employee.getNaf()+"',event.x,event.y);");
+						tr.attribute("onmouseover", "javascript:onEmployeeOver('"+jsFile.getId()+"','"+employee.getNaf()+"',event.x,event.y, event.ctrlKey);");
+						tr.attribute("onclick", "javascript:onEmployeeClick('"+jsFile.getId()+"','"+employee.getNaf()+"',event.x, event.y, event.ctrlKey);");
 						
 						TableCellBuilder td = tr.startTD();
 						td.className(tdStyle);
@@ -1039,7 +1040,11 @@ public abstract class CretaDetail extends Composite {
 			jsFileToolTipTimer.cancel();		
 	}
 
-	public void onEmployeeOver(String trabajadoresYTramosId, String naf, int x , int y ) {
+	public void onEmployeeOver(String trabajadoresYTramosId, String naf, int x , int y, boolean ctrlKey ) {
+		if ( ctrlKey ) {
+			return;
+		}
+			
 		jsFileToolTipTimer = new Timer() {
 			
 			@Override
@@ -1062,6 +1067,12 @@ public abstract class CretaDetail extends Composite {
 		};
 
 		jsFileToolTipTimer.schedule(1000);
+	}
+	
+	public void onEmployeeClick(String trabajadoresYTramosId, String naf,int x , int y,  boolean ctrlKey) {
+		if ( ctrlKey ) { 
+			onClickEmployee(x, y, naf);
+		}
 	}
 	
 	public void onEmployeeChange(String trabajadoresYTramosId, String naf, boolean checked ) {
@@ -1100,8 +1111,8 @@ public abstract class CretaDetail extends Composite {
 	
 	private native void exportOnEmployeeOver() /*-{
 		var that = this;
-		$wnd.onEmployeeOver = $entry(function(trabajadoresYTramosId, naf, x, y) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOver(Ljava/lang/String;Ljava/lang/String;II)(trabajadoresYTramosId, naf, x, y);
+		$wnd.onEmployeeOver = $entry(function(trabajadoresYTramosId, naf, x, y, ctrlKey) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOver(Ljava/lang/String;Ljava/lang/String;IIZ)(trabajadoresYTramosId, naf, x, y, ctrlKey);
 		});
 	}-*/;
 	
@@ -1112,6 +1123,14 @@ public abstract class CretaDetail extends Composite {
 		});
 	}-*/;
 	
+	private native void exportOnEmployeeClick() /*-{
+		var that = this;
+		$wnd.onEmployeeClick = $entry(function(trabajadoresYTramosId, naf, x, y, ctrlKey) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeClick(Ljava/lang/String;Ljava/lang/String;IIZ)(trabajadoresYTramosId, naf, x, y, ctrlKey);
+		});
+	}-*/;
+
+
 	// ----------------------------------------------- CreataDetail.Composite Methods
 	
 	@Override
@@ -1120,6 +1139,7 @@ public abstract class CretaDetail extends Composite {
 		exportOnEmployeeOut();
 		exportOnEmployeeOver();
 		exportOnEmployeeChange();
+		exportOnEmployeeClick();
 		super.onAttach();
 	}
 
@@ -1506,6 +1526,10 @@ public abstract class CretaDetail extends Composite {
 
 	protected abstract void onDCLResults(JsEvent success [], JsEvent errors []);
 
+	protected void onClickEmployee(final int x, final int y, String naf) {
+		// NOOP
+	}
+
 	protected void onJsFileClick(final String key, final int x, final int y) {
 		// NOOP
 	}
@@ -1513,5 +1537,8 @@ public abstract class CretaDetail extends Composite {
 	protected void onJsFileDblClick(final int x, final int y, JsFile ...jsFile ) {
 		// NOOP
 	}
+	
+
+	
 	
 }
