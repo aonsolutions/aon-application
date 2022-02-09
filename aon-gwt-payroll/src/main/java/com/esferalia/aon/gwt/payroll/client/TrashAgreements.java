@@ -157,7 +157,7 @@ public class TrashAgreements extends ResizeComposite implements
 						
 						// Select the first one.
 						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
-							agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
+							agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), false);
 						
 						// Get remainning
 						if ( agreements.size() == limit )
