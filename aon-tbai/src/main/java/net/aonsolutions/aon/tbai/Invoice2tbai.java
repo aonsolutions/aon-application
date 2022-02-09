@@ -203,15 +203,15 @@ public class Invoice2tbai {
 		Emisor sender = new Emisor();
 		sender.setApellidosNombreRazonSocial(name);
 		sender.setNIF(document);
-		entities.setEmisor(sender);
-			
-		Destinatarios receivers = new Destinatarios();
-		
-		IDDestinatario receiver = new IDDestinatario();
-		receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
-		receiver.setCodigoPostal(invoice.getAddress().getZip());
-		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
+		entities.setEmisor(sender);			
 		if(!AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+			Destinatarios receivers = new Destinatarios();
+		
+			IDDestinatario receiver = new IDDestinatario();
+			receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
+			receiver.setCodigoPostal(invoice.getAddress().getZip());
+			receiver.setDireccion(invoice.getAddress().getFullAddress()); 
+
 			if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 				receiver.setNIF(invoice.getRegistryDocument().replace(" ", ""));			
 			} else {
@@ -221,12 +221,12 @@ public class Invoice2tbai {
 				other.setID(invoice.getRegistryDocument().replace(" ", ""));
 				receiver.setIDOtro(other);
 			}
-		}
 			
-		receivers.getIDDestinatario().add(receiver);
-		entities.setDestinatarios(receivers);
-		entities.setVariosDestinatarios(SiNoType.N);
-		entities.setEmitidaPorTercerosODestinatario(EmitidaPorTercerosType.N);
+			receivers.getIDDestinatario().add(receiver);
+			entities.setDestinatarios(receivers);
+			entities.setVariosDestinatarios(SiNoType.N);
+			entities.setEmitidaPorTercerosODestinatario(EmitidaPorTercerosType.N);
+		}
 		return entities;
 	}
 	

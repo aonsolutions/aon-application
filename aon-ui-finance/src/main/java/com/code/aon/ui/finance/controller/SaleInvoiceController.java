@@ -638,7 +638,7 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	private void checkRegistry(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {
-		if(AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+		if(AonStringUtils.isBlank(invoice.getRegistryDocument()) && !invoice.isSimplified()) {
 			throw new Exception("El Documento del cliente está vacio.");
 		}
 	}
