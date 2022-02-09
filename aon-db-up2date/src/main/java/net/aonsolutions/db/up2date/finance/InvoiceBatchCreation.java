@@ -27,7 +27,7 @@ public class InvoiceBatchCreation implements Update {
 		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
 		System.out.println("[START]");
-		dslContext.execute("DROP TABLE `invoice_status`");
+
 		createInvoiceInfo(dslContext);
 		createInvoiceBatch(dslContext);
 		createInvoiceBatchDetail(dslContext);
