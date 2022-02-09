@@ -63,13 +63,14 @@ public class Model347AssetTable extends SimpleLayoutPanel implements HasSelectio
 		AonToolbarButton restoreDeletedButton = new AonToolbarButton(AON.MSG.restoreAction(),AON.CSS.aonIconRestore());
 
 		addSelectionHandler(event -> {
-			deleteDetailButton.setVisible(!event.getSelectedItem().isDeleted());
-			restoreDeletedButton.setVisible(event.getSelectedItem().isDeleted());
+			deleteDetailButton.setVisible(event.getSelectedItem() != null && !event.getSelectedItem().isDeleted());
+			restoreDeletedButton.setVisible(event.getSelectedItem() != null && event.getSelectedItem().isDeleted());
 		});
 
 		newDetailButton.addClickHandler(event -> newAsset( ));
 		toolbar.add(newDetailButton);
 		
+		restoreDeletedButton.setVisible(false);
 		restoreDeletedButton.addClickHandler(event -> {
 			getSelected().setDeleted(false);
 			if (!getSelected().isDirty()) {
@@ -80,6 +81,7 @@ public class Model347AssetTable extends SimpleLayoutPanel implements HasSelectio
 		});
 		toolbar.add(restoreDeletedButton);
 		
+		deleteDetailButton.setVisible(false);
 		deleteDetailButton.addClickHandler(event -> {
 			getSelected().setDeleted(true);
 			restoreDeletedButton.setVisible(true);
