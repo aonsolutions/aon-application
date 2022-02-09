@@ -1,10 +1,11 @@
 package com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class ColManager {
+	
+	private static final int MAX_LENGTH = 12;
 
 	private HashMap<String, Integer> indexes;
 	private int[] entriesPerColumn;
@@ -16,15 +17,15 @@ public class ColManager {
 	private double[] totalAon;
 	
 	public ColManager() {
-
-		entriesPerColumn = new int[11];
-		enabled = new boolean[11];
-		indexes = new HashMap<String, Integer>();
 		
-		subtotalAon = new double[11];
-		subtotalSs = new double[11];
-		totalAon = new double[11];
-		totalSs = new double[11];
+		entriesPerColumn = new int[MAX_LENGTH];
+		enabled = new boolean[MAX_LENGTH];
+		indexes = new HashMap<>();
+		
+		subtotalAon = new double[MAX_LENGTH];
+		subtotalSs = new double[MAX_LENGTH];
+		totalAon = new double[MAX_LENGTH];
+		totalSs = new double[MAX_LENGTH];
 		
 		indexes.put("trabajador", 0);
 		indexes.put("tipo", 1);
@@ -35,8 +36,9 @@ public class ColManager {
 		indexes.put("liquido", 6);
 		indexes.put("ssEmpr", 7);
 		indexes.put("bonificaciones", 8);
-		indexes.put("ssTotal", 9);
-		indexes.put("costeTotal", 10);
+		indexes.put("fundae", 9);
+		indexes.put("ssTotal", 10);
+		indexes.put("costeTotal", 11);
 
 	}
 	
@@ -57,17 +59,30 @@ public class ColManager {
 	}
 	
 	public void add(EnterprisePayrollEntry e) {
-		if(e.empleado.isPresent() || e.empleadoSS.isPresent()) 					entriesPerColumn[0]++;
-		if(e.tipo.isPresent() || e.tipoSS.isPresent()) 							entriesPerColumn[1]++;
-		if(e.devengado.isPresent() || e.devengadoSS.isPresent()) 				entriesPerColumn[2]++;
-		if(e.ssTrab.isPresent() || e.ssTrabSS.isPresent()) 						entriesPerColumn[3]++;
-		if(e.irpf.isPresent() || e.irpfSS.isPresent()) 							entriesPerColumn[4]++;
-		if(e.deducciones.isPresent() || e.deduccionesSS.isPresent()) 			entriesPerColumn[5]++;
-		if(e.liquido.isPresent() || e.liquidoSS.isPresent()) 					entriesPerColumn[6]++;
-		if(e.ssEmpr.isPresent() || e.ssEmprSS.isPresent() ) 					entriesPerColumn[7]++;
-		if(e.bonificaciones.isPresent() || e.bonificacionesSS.isPresent() ) 	entriesPerColumn[8]++;
-		if(e.ssTotal.isPresent() || e.ssTotalSS.isPresent() ) 					entriesPerColumn[9]++;
-		if(e.costeTotal.isPresent() || e.costeTotalSS.isPresent() ) 			entriesPerColumn[10]++;
+		if(e.empleado.isPresent() || e.empleadoSS.isPresent())
+			entriesPerColumn[0]++;
+		if(e.tipo.isPresent() || e.tipoSS.isPresent())
+			entriesPerColumn[1]++;
+		if(e.devengado.isPresent() || e.devengadoSS.isPresent())
+			entriesPerColumn[2]++;
+		if(e.ssTrab.isPresent() || e.ssTrabSS.isPresent())
+			entriesPerColumn[3]++;
+		if(e.irpf.isPresent() || e.irpfSS.isPresent())
+			entriesPerColumn[4]++;
+		if(e.deducciones.isPresent() || e.deduccionesSS.isPresent())
+			entriesPerColumn[5]++;
+		if(e.liquido.isPresent() || e.liquidoSS.isPresent())
+			entriesPerColumn[6]++;
+		if(e.ssEmpr.isPresent() || e.ssEmprSS.isPresent())
+			entriesPerColumn[7]++;
+		if(e.bonificaciones.isPresent() || e.bonificacionesSS.isPresent() )
+			entriesPerColumn[8]++;
+		if(e.fundae.isPresent())
+			entriesPerColumn[9]++;
+		if(e.ssTotal.isPresent() || e.ssTotalSS.isPresent() )
+			entriesPerColumn[10]++;
+		if(e.costeTotal.isPresent() || e.costeTotalSS.isPresent())
+			entriesPerColumn[11]++;
 	}
 	
 	public void showEnabled() {
@@ -76,7 +91,9 @@ public class ColManager {
 	
 	public int countEnabled() {
 		int c = 0;
-		for (int i = 0; i < enabled.length; i++) if(enabled[i]) c++;
+		for (int i = 0; i < enabled.length; i++)
+			if(enabled[i])
+				c++;
 		return c;
 	}
 	
@@ -89,8 +106,9 @@ public class ColManager {
 		subtotalAon[6]  += e.liquido.orElse(0.00);
 		subtotalAon[7]  += e.ssEmpr.orElse(0.00);
 		subtotalAon[8]  += e.bonificaciones.orElse(0.00);
-		subtotalAon[9]  += e.ssTotal.orElse(0.00);
-		subtotalAon[10] += e.costeTotal.orElse(0.00);
+		subtotalAon[9]  += e.fundae.orElse(0.00);
+		subtotalAon[10]  += e.ssTotal.orElse(0.00);
+		subtotalAon[11] += e.costeTotal.orElse(0.00);
 		
 		subtotalSs[2]  += 	e.devengadoSS.orElse(0.00);
 		subtotalSs[3]  += 	e.ssTrabSS.orElse(0.00);
@@ -99,8 +117,8 @@ public class ColManager {
 		subtotalSs[6]  += 	e.liquidoSS.orElse(0.00);
 		subtotalSs[7]  += 	e.ssEmprSS.orElse(0.00);
 		subtotalSs[8]  += 	e.bonificacionesSS.orElse(0.00);
-		subtotalSs[9]  += 	e.ssTotalSS.orElse(0.00);
-		subtotalSs[10] += 	e.costeTotalSS.orElse(0.00);
+		subtotalSs[10]  += 	e.ssTotalSS.orElse(0.00);
+		subtotalSs[11] += 	e.costeTotalSS.orElse(0.00);
 				
 	}
 	public void addToTotal() {
@@ -114,6 +132,7 @@ public class ColManager {
 		totalAon[8]  +=  subtotalAon[8];
 		totalAon[9]  +=  subtotalAon[9];
 		totalAon[10] +=  subtotalAon[10];
+		totalAon[11] +=  subtotalAon[11];
 		
 		totalSs[2]  +=  subtotalSs[2];
 		totalSs[3]  +=  subtotalSs[3];
@@ -124,9 +143,10 @@ public class ColManager {
 		totalSs[8]  +=  subtotalSs[8];
 		totalSs[9]  +=  subtotalSs[9];
 		totalSs[10] +=  subtotalSs[10];
+		totalSs[11] +=  subtotalSs[11];
 				
-		subtotalAon = new double[11];
-		subtotalSs = new double[11];
+		subtotalAon = new double[MAX_LENGTH];
+		subtotalSs = new double[MAX_LENGTH];
 	}
 
 	public ArrayList<Double> getSsSubtotal() {

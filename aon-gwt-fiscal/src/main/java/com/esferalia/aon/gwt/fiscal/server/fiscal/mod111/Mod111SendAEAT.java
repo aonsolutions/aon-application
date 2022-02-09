@@ -28,7 +28,7 @@ public class Mod111SendAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod111 model = MODEL111.getMod111(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod111 model = MODEL111.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (model == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}

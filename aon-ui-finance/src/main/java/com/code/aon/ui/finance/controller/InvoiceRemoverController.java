@@ -20,6 +20,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -27,6 +28,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class InvoiceRemoverController extends BasicController implements IProgression{
 	
@@ -126,6 +134,7 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 			while(iter.hasNext()){
 				Invoice invoice = iter.next();
 				try {
+					checkInvoiceTbai(invoice);
 					HibernateUtil.beginTransaction(sessionName);
 					getManagerBean().remove(invoice);
 					HibernateUtil.getSession(sessionName).flush();					
@@ -156,7 +165,21 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 		}
 	}
 
-	
+	public void checkInvoiceTbai(Invoice inv) {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		Domain domain = AON.getDomain(domainName, domainId, "");
+		TbaiConfiguration tbai =  AON.getTbaiConfiguration(domain, "");
+		if(tbai.isActive()) {
+			DataResponseSource source = tbai.isTest() ? DataResponseSource.TBAI_TEST: DataResponseSource.TBAI;
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", source, f -> f.getSourceProperty().eq(source.value())
+					.and(f.getSourceIdProperty().eq(inv.getId())));
+
+			if(dr != null && dr.getId() != null) {
+				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
+			}
+		}
+	}
 
 	@Override
 	public Long getProgressionCurrentValue() {

@@ -1553,7 +1553,13 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Porcentaje de prorrata")
 	String prorrataPercent();
+
+	@DefaultMessage("Porcentaje de prorrata definitivo")
+	String prorrataFinalPercent();
 	
+	@DefaultMessage("Porcentaje de prorrata ejercicio")
+	String prorrataYearPercent();
+
 	@DefaultMessage("Ha modificado el porcentaje de prorata. El modelo se inicializar\u00E1 a partir de los datos de facturas. \u00BFDesea continuar?.")
 	String prorateChanged();
 

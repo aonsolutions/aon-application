@@ -1,283 +1,205 @@
 package com.esferalia.aon.gwt.fiscal.client.mod347;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Base.Model347BaseCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.fiscal.client.mod347.Model347.Model347Callback;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Model347DeclaredTable extends SimpleLayoutPanel implements HasSelectionHandlers<Mod347Declared> {
 
-	private static class Model347DetailCellTable extends CellTable<Mod347Declared> {
-		private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
+	private Mod347 model;
+	private ScrollPanel tablePanel;
+	private Integer selectionIndex;
+	private AonTextBox filterBox;
 	
-		private SingleSelectionModel<Mod347Declared> model;
+	public Model347DeclaredTable(Model347Callback cbk, Mod347 model, Integer selectedIndex) {
+		this.model = model;
+		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
+		tableDockLayout.setStyleName(AON.CSS.aonBorderRight());
+		tableDockLayout.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
+		tablePanel = new ScrollPanel();
+		tablePanel.addStyleName(AON.CSS.aonScrollArea());
+		tableDockLayout.add(tablePanel);
+		setWidget(tableDockLayout);
 		
-		public Model347DetailCellTable(ProvidesKey<Mod347Declared> providesKey) {
-			super(1,TABLE_STYLE, providesKey);
-			this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
-			this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-			
-			addNameColumn();
-			addKeyColumn();			
-			
-			model = new SingleSelectionModel<Mod347Declared>(Model347.MOD347_DECLARED_PROVIDES_KEY);
-			this.setSelectionModel(model);
-			this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-		}
-		
-		private void addNameColumn() {
-			final TextColumn<Mod347Declared> nameColumn = new TextColumn<Mod347Declared>() {
-				@Override
-				public String getValue(Mod347Declared detail) {
-					return AonStringUtils.defaultIfBlank(detail.getName(), AON.MSG.newAction());
-				}
-				@Override
-				public void render(Context context, Mod347Declared detail, SafeHtmlBuilder sb) {
-					sb.appendHtmlConstant("<div style='");
-					if (detail.isDirty()) {
-						sb.appendHtmlConstant("font-weight:bold;");
-					}
-					if (detail.isDeleted()) {
-						sb.appendHtmlConstant("text-decoration:line-through;");
-					}
-					sb.appendHtmlConstant("font-size: 0.9em;height: auto;overflow: hidden; padding-right: 3px; text-transform: uppercase;width: auto;'>");
-					sb.appendEscaped( AonStringUtils.abbreviate( getValue(detail), 35 ));
-					if (detail.isDirty()) {
-						sb.appendEscaped("*");
-					}
-					sb.appendHtmlConstant("</div>");
-				} 
-				
-			};
-			this.addColumn(nameColumn);
-			this.setColumnWidth(nameColumn, "auto");			
-		}
-		
-		private void addKeyColumn() {
-			final TextColumn<Mod347Declared> keyColumn = new TextColumn<Mod347Declared>() {
-				@Override
-				public String getValue(Mod347Declared detail) {
-					return detail.getType()==null?"":detail.getType().getValue();
-				}
-				@Override
-				public void render(Context context, Mod347Declared detail, SafeHtmlBuilder sb) {
-					sb.appendHtmlConstant("<div style='");
-					if (detail.isDirty()) {
-						sb.appendHtmlConstant("font-weight:bold;");
-					}
-					if (detail.isDeleted()) {
-						sb.appendHtmlConstant("text-decoration:line-through;");
-					}
-					sb.appendHtmlConstant("font-size: 0.9em;height: auto;overflow: hidden; padding-right: 3px; text-transform: uppercase;width: auto;'>");
-					sb.appendEscaped(getValue(detail));
-					sb.appendHtmlConstant("</div>");
-				} 
-				
-			};
-			this.addColumn(keyColumn);
-			this.setColumnWidth(keyColumn, "20px");			
-		}	
-			
-		public Mod347Declared getSelected() {
-			return model.getSelectedObject();
+		if (model.getDeclared() == null || model.getDeclared().isEmpty()) {
+			refresh();
+			newDeclared( );	
+		} else if ( selectedIndex != null) {
+			selectionIndex = selectedIndex;
+			refresh();
+		} else {
+			selectionIndex = 0;
+			refresh();
 		}
 	}
 	
-	private Model347DetailCellTable table;
-	private ScrollPanel tablePanel;
-	
-	public Model347DeclaredTable(Model347BaseCallback cbk, Integer selectedIndex) {
-		table = new Model347DetailCellTable(Model347.MOD347_DECLARED_PROVIDES_KEY);
-		if (table.getSelectionModel() != null) {
-			table.getSelectionModel().addSelectionChangeHandler(new com.google.gwt.view.client.SelectionChangeEvent.Handler() {
-				
-				@Override
-				public void onSelectionChange(SelectionChangeEvent event) {
-					SelectionEvent.fire(Model347DeclaredTable.this, table.getSelected());
-				}
-			});
-		}
-		table.addRangeChangeHandler( new com.google.gwt.view.client.RangeChangeEvent.Handler() {
+	private Mod347Declared getSelected() {
+		return model.getDeclared().get(selectionIndex);
+	}
 
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				table.setRowData(cbk.getMod347().getDeclared());
+	private Widget getToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar("");
+		
+		AonToolbarButton newDetailButton = new AonToolbarButton(AON.MSG.newPerceptor(),AON.CSS.aonIconAdd());
+		AonToolbarButton deleteDetailButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		AonToolbarButton restoreDeletedButton = new AonToolbarButton(AON.MSG.restoreAction(),AON.CSS.aonIconRestore());
+
+		addSelectionHandler(event -> {
+			deleteDetailButton.setVisible(!event.getSelectedItem().isDeleted());
+			restoreDeletedButton.setVisible(event.getSelectedItem().isDeleted());
+		});
+
+		newDetailButton.addClickHandler(event -> newDeclared( ));
+		toolbar.add(newDetailButton);
+		
+		restoreDeletedButton.addClickHandler(event -> {
+			getSelected().setDeleted(false);
+			if (!getSelected().isDirty()) {
+				restoreDeletedButton.setVisible(false);
+				deleteDetailButton.setVisible(true);
+				refresh();
 			}
 		});
+		toolbar.add(restoreDeletedButton);
 		
-		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-		tableDockLayout.setStyleName(AON.AON_CSS.aonBorderRight());
-		tableDockLayout.addNorth(getToolbarPanel(cbk), 25);
-		tablePanel = new ScrollPanel();
-		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
-		tablePanel.add(table);
-		tableDockLayout.add(tablePanel);
+		deleteDetailButton.addClickHandler(event -> {
+			getSelected().setDeleted(true);
+			restoreDeletedButton.setVisible(true);
+			deleteDetailButton.setVisible(false);
+			refresh();
+		});
+		toolbar.add(deleteDetailButton);
+		
+		FlowPanel searchPanel = new FlowPanel();
+		searchPanel.setStyleName(AON.CSS.aonFlexBlockInline());
+		searchPanel.addStyleName(AON.CSS.aonMarginLeft());
+		
+		InlineLabel searchIcon = new InlineLabel("Filtro:");
+		searchIcon.setStyleName(AON.CSS.aonInnerLabel());
+		searchPanel.add(searchIcon);
+		filterBox = new AonTextBox( );
+		filterBox.setVisibleLength(10);
+		filterBox.addValueChangeHandler(event -> refresh());
+		searchPanel.add(filterBox);
+		
+		AonToolbarButton cleanFilterButton = new AonToolbarButton(AON.MSG.clean(),AON.CSS.aonIconClear());
+		cleanFilterButton.addClickHandler(event -> {
+			filterBox.setValue("");
+			refresh();	
+		});
+		searchPanel.add(cleanFilterButton);
+		toolbar.add(searchPanel);
+		
+		return toolbar;
+	}
+	
+	public void styleTable(AonDisplayGrid tab) {
+		for ( int i = 0 ; i < tab.getWidgetCount(); i++) {
+			if (i == selectionIndex) {
+				tab.getWidget(i).addStyleName(AON.CSS.aonBackgroundLigthBlue());
+			} else {
+				tab.getWidget(i).removeStyleName(AON.CSS.aonBackgroundLigthBlue());
+			}
+		}
+	}
+
+	public void refresh() {
+		AonDisplayGrid tab = new AonDisplayGrid();
+		tab.addStyleName(AON.CSS.aonNoPadding());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tablePanel.clear();
+		tablePanel.setWidget(tab);
+		int i = 0;
+		boolean resetSelection = false;
+		int firstMatch = -1;
+		for (Mod347Declared detail : this.model.getDeclared()) {
+			AonDisplayGridRow row = tab.addRow();
+			boolean visible = AonStringUtils.isBlank(filterBox.getValue()) ||
+					AonStringUtils.isBlank(detail.getName()) ||
+					AonStringUtils.containsIgnoreCase(detail.getName(), filterBox.getValue());
+			row.addStyleName(AON.CSS.aonClickable()); 
+			row.setVisible(visible);
+			if (firstMatch == -1 && visible) {
+				firstMatch = i;
+			}
+			if (i == Model347DeclaredTable.this.selectionIndex) {
+				row.addStyleName(AON.CSS.aonBackgroundLigthBlue());
+				resetSelection = !visible; 
+			}
+			final int idx = i;
+			row.addClickHandler( event ->  {
+				Model347DeclaredTable.this.selectionIndex = idx;
+				styleTable( tab );				
+				SelectionEvent.fire(Model347DeclaredTable.this, detail);	
+			});
+			String name = AonStringUtils.abbreviate(AonStringUtils.defaultIfBlank(detail.getName(), AON.MSG.resetAction()) , 30 );
+			InlineLabel nameLabel = new InlineLabel( name );
+			if (detail.isDirty()) {
+				nameLabel.setText("* " + name);
+			} else {
+				nameLabel.setText(name);
+			}
+			if (detail.isDeleted()) {
+				nameLabel.addStyleName(AON.CSS.aonTextLineThrough());
+			} else {
+				nameLabel.removeStyleName(AON.CSS.aonTextLineThrough());
+			}
+			if ( this.model.isAEAT()) {
+				InlineLabel numberLabel = new InlineLabel( "" + (i + 2) );
+				numberLabel.setTitle("N\u00FAm. l\u00EDnea en el fichero AEAT");
+				row.addCell( numberLabel , AON.CSS.aonTextCenter(),AON.CSS.aonWidth20() );
+			}
+			row.addCell( new InlineLabel( detail.getType() == null?"":detail.getType().getValue() ) , AON.CSS.aonTextCenter(),AON.CSS.aonWidth20() )
+				.addCell( nameLabel ,AON.CSS.aonWidthAuto());
+			i++;
+		}
+		if (resetSelection) {
+			selectionIndex = firstMatch;
+			SelectionEvent.fire(Model347DeclaredTable.this, getSelected() );
+		}
+	}
+	
+	private void newDeclared() {
+		Mod347Declared detail = new Mod347Declared()
+				.setDirty(true)
+				.setTempId((model.getDeclared().size() * (-1)));
+		model.getDeclared().add(detail);
+		selectionIndex = model.getDeclared().size() - 1;
 		refresh();
-		
-		if (table.getVisibleItemCount() == 0) {
-			newDeclared( cbk );	
-		} else if (selectedIndex != null) {
-			// Controlar que selectedIndex está dentro de la tabla que se muestra
-			if (selectedIndex < table.getVisibleItemCount())
-				table.getSelectionModel().setSelected(cbk.getMod347().getDeclared().get(selectedIndex), true);
-			else table.getSelectionModel().setSelected(cbk.getMod347().getDeclared().get(table.getVisibleItemCount()-1), true);
-		} else {
-			table.getSelectionModel().setSelected( table.getVisibleItems().get(0), true);	
-		}		
-		
-		setWidget(tableDockLayout);
+		tablePanel.scrollToBottom();
+		SelectionEvent.fire(Model347DeclaredTable.this, detail);
+	}
+
+	public Integer getSelectionIndex() {
+		return selectionIndex;
 	}
 
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Mod347Declared> handler) {
-		return super.addHandler(handler, SelectionEvent.getType());
-	}
-
-	public void refresh() {
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-	}
-	
-	
-	private Widget getToolbarPanel(Model347BaseCallback cbk) {
-		FlowPanel westToolbar = new FlowPanel();
-		westToolbar.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		westToolbar.addStyleName(AON.AON_CSS.aonTextRight());
-		westToolbar.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.getColumnFormatter().setWidth(0, "auto");
-		toolbar.getColumnFormatter().setWidth(1, "1px;");
-		toolbar.getColumnFormatter().setWidth(2, "1px;");
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		titlePanel.add(new Label("Declarados"));
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		Button deleteDetailButton = new Button();
-		Button restoreDeletedButton = new Button();
-		Button newDetailButton = new Button();
-		buttonContainer.add(deleteDetailButton);
-		buttonContainer.add(restoreDeletedButton);
-		buttonContainer.add(newDetailButton);
-		westToolbar.add(toolbar);
-		addSelectionHandler(new SelectionHandler<Mod347Declared>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod347Declared> event) {
-				deleteDetailButton.setVisible(!event.getSelectedItem().isDeleted());
-				restoreDeletedButton.setVisible(event.getSelectedItem().isDeleted());
-			}
-		});
-		
-		deleteDetailButton.setTitle(AON.MSG.deleteAction());
-		deleteDetailButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		deleteDetailButton.addStyleName(AON.AON_CSS.aonIconDelete());
-		deleteDetailButton.addStyleName(AON.AON_CSS.aonMarginRight());
-		deleteDetailButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				table.getSelected().setDeleted(true);
-				restoreDeletedButton.setVisible(true);
-				deleteDetailButton.setVisible(false);
-				table.redraw();
-			}
-		});
-		
-		restoreDeletedButton.setTitle(AON.MSG.restoreAction());
-		restoreDeletedButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		restoreDeletedButton.addStyleName(AON.AON_CSS.aonIconRedo());
-		restoreDeletedButton.addStyleName(AON.AON_CSS.aonMarginRight());
-		restoreDeletedButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				table.getSelected().setDeleted(false);
-				if (!table.getSelected().isDirty()) {
-					restoreDeletedButton.setVisible(false);
-					deleteDetailButton.setVisible(true);
-					table.redraw();
-				}
-			}
-		});
-		
-		newDetailButton.setTitle(AON.MSG.newAction());
-		newDetailButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		newDetailButton.addStyleName(AON.AON_CSS.aonIconReset());
-		newDetailButton.addStyleName(AON.AON_CSS.aonMarginRight());
-		newDetailButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				newDeclared( cbk );
-			}
-
-		});
-		
-		return westToolbar;
-	}
-	
-	private void newDeclared(Model347BaseCallback cbk) {
-		cbk.getMod347().getDeclared().add(
-				new Mod347Declared()
-					.setDirty(true)
-					.setTempId((cbk.getMod347().getDeclared().size() * (-1)))
-			);
-		table.setRowData(cbk.getMod347().getDeclared());
-		table.redraw();
-		int i = cbk.getMod347().getDeclared().size() - 1;
-		table.getSelectionModel().setSelected(cbk.getMod347().getDeclared().get(i),true);
-		tablePanel.scrollToBottom();
-	}
-
-	public Integer getSelectionIndex() {
-		if ( table.getSelected() != null) {
-			int i = 0;
-			for ( Mod347Declared det : table.getVisibleItems()) {
-				if ( det == table.getSelected() ) {
-					return i;
-				}
-				i++;
-			}
+		HandlerRegistration hr = super.addHandler(handler, SelectionEvent.getType());
+		if (selectionIndex != null) {
+			SelectionEvent.fire(Model347DeclaredTable.this, getSelected());
 		}
-		return null;
+		return hr;
 	}
-	
 	
 }

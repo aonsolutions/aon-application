@@ -34,15 +34,15 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod130DAO extends FiscalModelDAO {
 
-	// Á --> \u00C1 á --> \u00E1 
-	// É --> \u00C9 é --> \u00E9 
-	// Í --> \u00CD í --> \u00ED 
-	// Ó --> \u00D3 ó --> \u00F3 
-	// Ú --> \u00DA ú --> \u00FA ... acento
-	// Ü --> \u00DC ü --> \u00fc ... diéresis
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// º --> \u00AA ª --> \u00BA
-	// ¿ --> \u00BF
+	// Ã --> \u00C1 Ã¡ --> \u00E1 
+	// Ã‰ --> \u00C9 Ã© --> \u00E9 
+	// Ã --> \u00CD Ã­ --> \u00ED 
+	// Ã“ --> \u00D3 Ã³ --> \u00F3 
+	// Ãš --> \u00DA Ãº --> \u00FA ... acento
+	// Ãœ --> \u00DC Ã¼ --> \u00fc ... diÃ©resis
+	// Ã‘ --> \u00D1 Ã± --> \u00F1
+	// Âº --> \u00AA Âª --> \u00BA
+	// Â¿ --> \u00BF
 	
 	@FunctionalInterface
 	private static interface IModelInfoProvider {

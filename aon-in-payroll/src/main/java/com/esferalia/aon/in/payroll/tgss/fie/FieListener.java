@@ -35,7 +35,7 @@ public interface FieListener {
 
 	public void onDitItEndCause(String itEndCause);
 
-	public void onDitItPartCancel(Boolean itPartCancel);
+	public void onDitItPartCancel(boolean itPartCancel);
 	
 	default public void onDitProcessType(Integer processType) {};
 

@@ -2078,6 +2078,7 @@ public class EnterprisePayrollExcel {
 		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
 			.and(CONTRACT_DATA.END_DATE.ge(sqlStartDate))
 			.and(CONTRACT_DATA.END_DATE.le(sqlEndDate))
+			.and(CONTRACT_DATA.END_DATE.ge(CONTRACT_DATA.START_DATE))
 			.and(CONTRACT_DATA.NAME.eq(FUNDAE))
 		.where(CONTRACT.START_DATE.le(sqlEndDate))
 		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(sqlStartDate)))
@@ -2148,84 +2149,6 @@ public class EnterprisePayrollExcel {
 			contractDataMap.put(workplace, contractData);
 		}
 	}
-	
-//	public static Map<String, Map<String, List<ContractData>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
-//		
-//		if (startDate == null || endDate == null)
-//			return null;
-//		
-//		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-//		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-//		
-//		SelectConditionStep<Record> query = aonContext.getDslContext()
-//		.select(WORKPLACE.DESCRIPTION, CONTRACT_DATA.asterisk())
-//		.from(CONTRACT)
-//		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-//		.innerJoin(ENTERPRISE).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE.REGISTRY))
-//		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
-//			.and(CONTRACT_DATA.END_DATE.ge(sqlStartDate))
-//			.and(CONTRACT_DATA.END_DATE.le(sqlEndDate))
-//			.and(CONTRACT_DATA.NAME.eq(FUNDAE))
-//		.where(CONTRACT.START_DATE.ge(sqlStartDate))
-//		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.le(sqlEndDate)))
-//		.and(ENTERPRISE.REGISTRY.eq(enterpriseId))
-//		;
-//		
-//		if (workplaceId != null && workplaceId > 0) {
-//			query = query.and(WORKPLACE.ID.eq(workplaceId));
-//		}
-//		
-//		LinkedHashMap<String, Map<String, List<ContractData>>> contractDataMap = new LinkedHashMap<>();
-//		
-//		query.fetchStream()
-//		.filter(Objects::nonNull)
-//		.forEach(res -> {
-//			String name = res.get(CONTRACT_DATA.NAME);
-//			String workplace = res.get(WORKPLACE.DESCRIPTION);
-//			Double value = null;
-//			if (res.get(CONTRACT_DATA.EXPRESSION) != null) {
-//				try {
-//					value = Double.parseDouble(res.get(CONTRACT_DATA.EXPRESSION));
-//				} catch (NumberFormatException e) {
-//					value  = 0d;
-//				}
-//			}
-//			
-//			
-//			ContractData cd = new ContractData()
-//				.setDomain(res.get(CONTRACT_DATA.DOMAIN))
-//				.setContract(res.get(CONTRACT_DATA.CONTRACT))
-//				.setEndDate(res.get(CONTRACT_DATA.END_DATE))
-//				.setStartDate(res.get(CONTRACT_DATA.START_DATE))
-//				.setExpression(res.get(CONTRACT_DATA.EXPRESSION))
-//				.setId(res.get(CONTRACT_DATA.ID))
-//				.setName(res.get(CONTRACT_DATA.NAME));
-//			
-//			
-//			if (res.get(CONTRACT_DATA.NAME) != null) {
-//				if (contractDataMap.containsKey(workplace)) {
-//					Map<String, List<ContractData>> contractData = contractDataMap.get(workplace);
-//					if (contractData.containsKey(name)) {
-//						contractData.get(name).add(cd);
-//					} else {
-//						LinkedList<ContractData> cdList = new LinkedList<>();
-//						cdList.add(cd);
-//						contractData.put(name, cdList);
-//					}
-//				} else {
-//					LinkedHashMap<String, List<ContractData>> contractData = new LinkedHashMap<>();
-//					LinkedList<ContractData> cdList = new LinkedList<>();
-//					cdList.add(cd);
-//					contractData.put(name, cdList);
-//					contractDataMap.put(workplace, contractData);
-//				}
-//			}
-//		});
-//		
-//		return contractDataMap;
-//	}
-
-
 
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
 
@@ -3027,7 +2950,7 @@ public class EnterprisePayrollExcel {
 				column = addTotalsFormulaCell(checks.isExtraHEnterprise(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
 				column = addTotalsFormulaCell(checks.isItCompensation(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
 				column = addTotalsFormulaCell(checks.isBonuses(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isFundae(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isFundae(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, false);
 				//------------------------------
 				
 				//JOINT

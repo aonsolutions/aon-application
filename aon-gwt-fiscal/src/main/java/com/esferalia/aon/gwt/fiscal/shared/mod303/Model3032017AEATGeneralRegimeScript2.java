@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
@@ -33,7 +34,7 @@ public enum Model3032017AEATGeneralRegimeScript2 implements IModelScript<Mod303K
 	,DED10 ("Regularizaci\u00F3n inversiones"
 		,new Mod303Key[]{null				,Mod303Key.CT_C43},null,NONE)
 	,DED11 ("Regularizaci\u00F3n por aplicaci\u00F3n del porcentaje definitivo de prorrata"
-		,new Mod303Key[]{null				,Mod303Key.CT_C44},null,NONE)
+		,new Mod303Key[]{null				,Mod303Key.CT_C44},null,COMPUTE_KEY)
 	,DED12 ("Total a deducir"
 		,new Mod303Key[]{null				,Mod303Key.CT_C45},null,COMPUTE)
 	,R01   ("Resultado r\u00E9gimen general"

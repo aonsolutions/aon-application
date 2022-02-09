@@ -76,6 +76,12 @@ public class Mod303ServiceAsyncDecorator implements Mod303ServiceAsync {
 	}
 
 	@Override
+	public void calculateProrrate(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback) {
+		AON.start();
+		fsa.calculateProrrate(occam, mod303, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void initializeForFinish(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback) {
 		AON.start();
 		fsa.initializeForFinish(occam, mod303, new AsyncCallbackWrapper<>(callback));

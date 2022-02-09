@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -38,6 +39,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
+import com.esferalia.aon.gwt.payroll.shared.Employee.Occupation;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasBonus;
@@ -236,6 +238,10 @@ public class SalaryDraft extends ResizeComposite
 	// @formatter:off
 	private static String[] SKIP_VARIABLES = { 
 			
+			"GRUPO_COTIZACION", "TC2", "OCUPACION",
+			
+			
+			
 			"CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD", // functions
 			"GET_VARIABLE", "SI", "MAX", "MIN", "ABS", // functions
 
@@ -330,6 +336,7 @@ public class SalaryDraft extends ResizeComposite
 			
 			"BONIFICACION_TUTORIA",
 			"BONIFICACION_FORMACION_CONTINUA"
+			
 			
 	};
 
@@ -2601,12 +2608,6 @@ public class SalaryDraft extends ResizeComposite
 	FlexTable paymentsTable;
 
 	@UiField
-	Label enterpriseNameLabel;
-	@UiField
-	Label enterpriseAddressLabel;
-	@UiField
-	Label enterpriseCityLabel;
-	@UiField
 	Label enterpriseCCCLabel;
 
 	@UiField
@@ -2619,6 +2620,12 @@ public class SalaryDraft extends ResizeComposite
 	Label employeeSeniorityLabel;
 	@UiField
 	Label employeeAgreementCategoryLabel;
+	@UiField
+	Label employeeGroupLabel;
+	@UiField
+	Label employeeContractLabel;
+	@UiField
+	Label employeeOcupationLabel;
 
 	@UiField
 	Label periodLabel;
@@ -2729,6 +2736,9 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiField
 	ListBox settlePreviewListBox;
+	
+	@UiField
+	InlineLabel toolbarTitleLabel;
 
 	private int zoom;
 	private Scope scope;
@@ -2788,6 +2798,10 @@ public class SalaryDraft extends ResizeComposite
 		export2JS(this);
 	}
 	
+	public void setToolbarTitle(String title) {
+		toolbarTitleLabel.setText(title );
+	}
+
 	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}
@@ -3244,9 +3258,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private void dumpSalaryDraft(boolean displayChanges) {
 
-		enterpriseNameLabel.setText(salaryDraftObject.getEnterpriseName());
 		enterpriseCCCLabel.setText(salaryDraftObject.getEnterpriseCCC());
-		enterpriseAddressLabel.setText(salaryDraftObject.getEnterpriseAddress());
 
 		employeeSSLabel.setText(salaryDraftObject.getEmployeeSS());
 		employeeNameLabel.setText(salaryDraftObject.getEmployeeName());
@@ -3310,6 +3322,32 @@ public class SalaryDraft extends ResizeComposite
 		dbTotalLiquidLabel.setText(format(salaryDraftObject.getDbTotalLiquid()));
 		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
 
+		salaryDraftObject.getContext().forEach( v ->  {
+			if ( v.getName() == null )
+				return;
+			if ( v.getValue() == null )
+				return;
+			if ( AonStringUtils.isBlank(v.getValue().toString()) )
+				return;
+			switch (v.getName()) {
+			case "TC2":
+				String tc2 = v.getValue().toString();
+				employeeContractLabel.setText(tc2);
+				employeeContractLabel.setTitle(Employee.TC2.getDescriptionByCode(tc2));
+				break;
+			case "OCUPACION":
+				String occupation = v.getValue().toString();
+				employeeOcupationLabel.setText(occupation);
+				employeeOcupationLabel.setTitle(Employee.Occupation.getDescriptionByName(occupation));
+				break;
+			case "GRUPO_COTIZACION":
+				employeeGroupLabel.setText(v.getValue().toString());
+				break;
+			default:
+				break;
+			}
+		});
+
 		clearDbWidgets();
 		clearSsWidgets();
 		clearEventsTable();
@@ -3330,7 +3368,7 @@ public class SalaryDraft extends ResizeComposite
 		dumpDeductions(embargos);
 		newDeductionHandler = insertNewDeductionRow();
 		insertBlankPaymentRow();
-		insertBlankPaymentRow();
+		//insertBlankPaymentRow();
 		
 		Scope nextScope = null;
 		boolean show = false; //scope.compareTo(Scope.CONTRACT) >= 0;
@@ -3638,7 +3676,8 @@ public class SalaryDraft extends ResizeComposite
 			}
 		});
 	}
-
+	
+	
 	private void initSalaryDb() {
 		dbSalaryCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			@Override
@@ -5429,7 +5468,7 @@ public class SalaryDraft extends ResizeComposite
 	private void showCosts(boolean show) {
 		
 		int costsBeforeRow = paymentsTable.getRowCount()
-				- (/* 1 new line */+2 /* blanks line */);
+				- (/* 1 new line */+1 /* blanks line */);
 
 		int costsCount = salaryDraftObject.getCosts().stream()
 		.collect(Collectors.summingInt(c ->  1 + ((c instanceof CompositeDeduction) ? ((CompositeDeduction)c).getChilds().size() : 0)));
@@ -6664,7 +6703,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private static Widget newPercentLabel(Item<?> item, Double percent, Variable percentVar) {
 		if (NumberUtils.isNotValid(percent))
-			return newPercentLabel(percentVar == null ? item.getDescription() : formatPercent(percentVar.getValue()));
+			return newPercentLabel(percentVar == null ? formatPercent(0.00) : formatPercent(percentVar.getValue()));
 		else
 			return newPercentLabel(formatPercent(percent));
 	}

@@ -1,14 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.mod349;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.Model349Callback;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
-import com.esferalia.aon.watson.util.Pair;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
@@ -16,40 +14,80 @@ public class Model349AEAT extends Model349Base {
 	
 	private static final int OPERATORS_TAB = 1;
 
-	public Model349AEAT(Model349ModuleOptions options, Mod349 mod349,Model349Callback cbk,Integer selectedIndex) {
-		super(options, mod349, cbk);
-		
+	public Model349AEAT(Model349Callback cbk,Mod349 mod349,Integer selectedIndex) {
+		super(cbk, mod349);
+
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
-		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
+		centerPanel.addStyleName(AON.CSS.aonScrollArea());
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
 		paintDeclarationTab(tabPanel);
-		paintOperatorsTab(options, tabPanel, selectedIndex);
-		paintAdministrationTab(options, cbk,tabPanel);
+		paintOperatorsTab(tabPanel, selectedIndex);
+		paintAdministrationTab(tabPanel);
 		
 		tabPanel.selectTab(OPERATORS_TAB, false);		
 		
 	}
 
-	private void paintAdministrationTab(Model349ModuleOptions options, Model349Callback cbk,TabLayoutPanel tabPanel) {
-		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(options, cbk));
-		panel.add(getInformationPanel());
-		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod349().getAdministration())));
-	}
+	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {
+		IFiscalModelAdmonPanelCallback<Mod349, Model349ModuleOptions> cbk = 
+				new IFiscalModelAdmonPanelCallback<Mod349, Model349ModuleOptions>() {
 
-	@Override
-	protected LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Tr\u00E1mites."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GI28.shtml"));
-		list.add(new Pair<String, String>("Informaci\u00F3n general y ayuda." 
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/GI28.shtml"));
-		list.add(new Pair<String, String>("Ficha."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GI28.shtml"));
-		return list;
+					@Override
+					public Model349ModuleOptions getOptions() {
+						return getCallback().getOptions();
+					}
+
+					@Override
+					public Mod349 getModel() {
+						return Model349AEAT.this.getModel();
+					}
+
+					@Override
+					public void showError(String msg) {
+						getCallback().showError(msg);
+					}
+
+					@Override
+					public String getValidatePrintAction() {
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod349ValidatePrintAEAT";
+						
+					}
+
+					@Override
+					public String getDownloadFileAction() {
+						return Model349Base.MODEL349_FILE;
+					}
+
+					@Override
+					public String getSendAction() {
+						return null;
+					}
+
+					@Override
+					public void sendSuccessfully() {
+						// Nothing
+					}
+
+					@Override
+					public String getCheckAction() {
+						return null;
+					}
+
+					@Override
+					public String getCheckDataResponseDataAction() {
+						return null;
+					}
+
+					@Override
+					public String getModelInformationURL() {
+						return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GI28.shtml";
+					}
+			};
+			admonPanel = new FiscalModelAdmonPanel<>(cbk);
+			tabPanel.add( admonPanel, AON.MSG.administrationName(getModel().getAdministration()));		
 	}
 	
 }

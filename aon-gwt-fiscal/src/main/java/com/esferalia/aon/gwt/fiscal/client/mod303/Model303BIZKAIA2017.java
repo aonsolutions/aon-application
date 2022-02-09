@@ -161,10 +161,10 @@ class Model303BIZKAIA2017 extends Model303Base {
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, AON.MSG.identification());
-	}
+//	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
+//		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
+//		tabPanel.add(identificationData, AON.MSG.identification());
+//	}
 
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
 		IFiscalModelAdmonPanelCallback<Mod303, Model303ModuleOptions> cbk = 

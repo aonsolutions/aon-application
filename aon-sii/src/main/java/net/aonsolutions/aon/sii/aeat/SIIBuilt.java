@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 
@@ -43,6 +44,7 @@ public class SIIBuilt {
 	protected PeriodoLiquidacion periodoLiquidacion(Date invDate, Date date, boolean anual, boolean errorPeriodo){
 		Integer nowDay = errorPeriodo ? AonDateUtils.getDay(date) : AonDateUtils.getDay(new Date());
 		Integer nowMonth = errorPeriodo ? AonDateUtils.getMonth(date) + 1 : AonDateUtils.getMonth(new Date()) + 1;
+		Integer nowYear = errorPeriodo ? AonDateUtils.getYear(date) : AonDateUtils.getYear(new Date());
 		
 		Integer invYear = AonDateUtils.getYear(invDate);
 		Integer invMonth = AonDateUtils.getMonth(invDate) + 1;
@@ -50,8 +52,8 @@ public class SIIBuilt {
 		Integer year = AonDateUtils.getYear(date);
 		Integer month = AonDateUtils.getMonth(date) + 1;
 		
-		if(nowMonth == 1) nowMonth = 13;
-		Integer diffMonth = nowMonth-invMonth;
+		if(nowYear > invYear) nowMonth = nowMonth + 12;
+		Integer diffMonth = nowMonth-invMonth; 
 		if(!invMonth.equals(nowMonth) && diffMonth < 2 && nowDay <= 15) {
 			year = invYear;
 			month = invMonth;

@@ -228,6 +228,10 @@ public class EmployeeSalary extends Composite {
 		initFilterPanel();
 	}
 	
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title );
+	}
+
 	// --------------------------------------------- Filter Panel
 	
 	private void initFilterPanel() {
@@ -281,7 +285,6 @@ public class EmployeeSalary extends Composite {
 
 	public void setEmployeeSalaryObject(EmployeeSalaryObject employeeSalaryObject) {
 		this.employeeSalaryObject = employeeSalaryObject;
-		setNewToolbarTitle();
 		this.employeeSalaryObject.getSalariesDates(
 				s -> {
 					initDatesListBox();
@@ -338,10 +341,6 @@ public class EmployeeSalary extends Composite {
 		);
 	}
 	
-	private void setNewToolbarTitle() {
-		String employeeName = this.employeeSalaryObject.getEmployeeName();
-		if(AonStringUtils.isNotBlank(employeeName)) toolbar.setTitle("N\u00F3minas : " + employeeName);
-	}
 
 	// --------------------------------------------- Init SalaryTable
 

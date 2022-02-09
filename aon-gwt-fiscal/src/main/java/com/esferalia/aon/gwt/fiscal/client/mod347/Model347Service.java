@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod347;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -13,15 +14,15 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ms/Mod347")
 public interface Model347Service extends RemoteService {
 	
-	// ---------------------------------------------------------------MODELO 347 
-	void deleteMod347(String domainName,String user, int domain,Mod347 mod347) throws AonCoreException;
-	Mod347 saveMod347(String domainName,String user, int domain,Mod347 mod347) throws AonCoreException;
-	LinkedList<Mod347> getMod347s(String domainName,String user, int domain) throws AonCoreException;
-	Mod347 getMod347(String domainName,String user, int domain,Integer id) throws AonCoreException;
-	Mod347 initializeMod347(String domainName,String user, Integer domain) throws AonCoreException;
-	Mod347 saveCommentsMod347(String domainName,String user, Mod347 mod347) throws AonCoreException;
-	Mod347 changeStatusMod347(String domainName,String user, Mod347 mod347, FiscalStatus newStatus) throws AonCoreException;
-	String getInfo(String domainName, String user,int domain,Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) throws AonCoreException;
-	Mod347 duplicateMod347(String domainName,String user, Integer domain, Mod347 mod347) throws AonCoreException;
+	LinkedList<Mod347> getMod347s(Occam occam) throws AonCoreException;
+	Mod347 get(Occam occam,Integer id) throws AonCoreException;
+	Mod347 initialize(Occam occam) throws AonCoreException;
+	Mod347 reset(Occam occam, Mod347 model) throws AonCoreException;
+	Mod347 save(Occam occam,Mod347 mod347) throws AonCoreException;
+	void delete(Occam occam,Mod347 mod347) throws AonCoreException;
+	Mod347 saveComments(Occam occam, Mod347 mod347) throws AonCoreException;
+	Mod347 changeStatus(Occam occam, Mod347 mod347, FiscalStatus newStatus) throws AonCoreException;
+	String getInfo(Occam occam,Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Mod347 duplicate(Occam occam, Mod347 mod347) throws AonCoreException;
 	
 }

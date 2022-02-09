@@ -150,6 +150,10 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return previousProratePercent;
 	}
 
+	public boolean hasPreviousProrate() {
+		return getPreviousProratePercent() != 0 && getPreviousProratePercent() != 100;
+	}
+
 	@Override
 	public void setDefaultDeclarationType(){
 		if (AonMathUtils.isZero(getResult() )) {

@@ -1807,6 +1807,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		void onClickIdcButton(ClickEvent e) {
 			showIdc(DateUtils.getFirstDayOfMonth());
 		}
+		
+		@Override
+		protected void onClickEmployee(int x, int y, String naf) {
+			EmployeeTree.this.employees.selectEmployee(naf, true);
+		}
 
 		void showIdc(Date date) {
 			FullViewer viewer = getIDCPDF(employeeDetail, date);
@@ -2191,40 +2196,48 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onDraftSelected() {
 			//employees.getEmployeeSalaryDraft(salaryDraft, o -> getSalaryDraft().setSalaryDraftObject(o));
+			getSalaryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			getSalaryDraft().setSalaryDraftObject(salaryDraft);
 		}
 
 		void onEventsSelected() {
+			getEmployeeEventsDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			employees.getEmployeeEvents(salaryDraft, o -> getEmployeeEventsDraft().setEmployeeEventsDraftObject(o));
 		}
 
 		void onCalendarSelected() {
+			getEmployeeCalendarDraftNew().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			employees.getEmployeeCalendar(salaryDraft, o -> getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(o));
 		}
 		
 		void onSSBonusSelected() {
+			getEmployeeSSBonus().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			ContractBonusObject contractBonusObject = 
 					contractBonusMap.computeIfAbsent(salaryDraft.getEmployeeId(), ContractBonusObject::new );
 			getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
 		}
 
 		void onSalariesSelected() {
+			getEmployeeSalary().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			employees.getEmployeeSalary(salaryDraft, o -> getEmployeeSalary().setEmployeeSalaryObject(o));
 		}
 
 		void onPaymentsSelected() {
+			getEmployeeContractPayments().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			EmployeeContractPaymentsObject employeeContractPaymentsObject = 
 					contractPaymentsMap.computeIfAbsent(salaryDraft.getEmployeeId(), EmployeeContractPaymentsObject::new );
 			getEmployeeContractPayments().setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
 		}
 
 		void onVariablesSelected() {
+			getEmployeeContractVariables().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			EmployeeContractVariablesObject employeeContractVariablesObject = 
 					contractVariablesMap.computeIfAbsent(salaryDraft.getEmployeeId(), this::newEmployeeContractVariablesObject );
 			getEmployeeContractVariables().setEmployeeContractVariablesObject(employeeContractVariablesObject);
 		}
 
 		void onEmployeeSelected() {
+			getEmployeeDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			employees.getEmployeeDraft(salaryDraft, o -> { 
 				o.setEnterpriseContext(employees.getEnterpriseContext());
 				getEmployeeDraft().setEmployeeDraftObject(o);
@@ -2235,6 +2248,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		public void setSalaryDraft(SalaryDraftObject salaryDraft) {
 			this.salaryDraft = salaryDraft;
+			getEmployeeDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			getEmployeeSalary().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			getSalaryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			getEmployeeSSBonus().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			getEmployeeCalendarDraftNew().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			getEmployeeContractPayments().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			getEmployeeContractVariables().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 		}
 		
 		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
@@ -2242,6 +2262,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			new EmployeeContractVariablesObject(contractId);
 			
 			return employeeContractVariablesObject;
+		}
+		
+		private String getTitle(Employee employee) {
+			return employee.getFullname();
 		}
 		
 	}

@@ -57,7 +57,10 @@
 	<table-filter match-name="task_attach" exclude="true" />
 	<table-filter match-name="project_holder" exclude="true" />
 	<table-filter match-name="data_request" exclude="true" />
-
+	<table-filter match-name="invoice_info" exclude="true" />
+	<table-filter match-name="invoice_batch" exclude="true" />
+	<table-filter match-name="invoice_batch_detail" exclude="true" />
+	<table-filter match-name="fs_model_invoice" exclude="true" />
 
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->

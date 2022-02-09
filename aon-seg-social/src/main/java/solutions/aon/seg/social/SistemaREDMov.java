@@ -270,9 +270,10 @@ class SistemaREDMov {
 					form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
 			}
 	    
+
 			htmlPage = ((HtmlSubmitInput)form.querySelector("input[value=Continuar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
 			if(msg1!=null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >=0 ) {
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Continuar]")).click();
@@ -281,11 +282,11 @@ class SistemaREDMov {
 			
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
 			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >=0 ) {
-				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Continuar]")).click();
+				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Confirmar]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}	
-//			
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(),"test.html");
+			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(),"/home/rvasquez/Documentos/test.html");
 			return employee;
 	}
 	

@@ -14,7 +14,7 @@ import './aon-invoice-print.js';
 import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
 
-import { MSG, MATERIAL_ICONS, CONSTANT, EVENT } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 import * as ACTION from '../actions.js';
@@ -37,6 +37,7 @@ import * as GWT from '../../gwt/gwt.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { AonInvestList } from '../product/aon-invest-list.js';
 import { AonInvest } from '../product/aon-invest.js';
+import { AonSelect } from '../../components/aon-select.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -415,11 +416,33 @@ export class AonInvoicePanel extends AonElement {
 					name: 'Importación Selfconta',
 					icon: 'import_export',
 					fn: () => {
+						let div = this.createElement(TAG.DIV);
+						div.id = "aonInvoiceSelfcontaDiv"; 
+			
+						let div2 = this.createElement(TAG.DIV);
+						div2.id = "aonInvoiceSelfcontaDiv2"; 
+						div2.innerHTML = "¿Desea importar las facturas?"
+						div.appendChild(div2);
+
+						let yearSelect = new AonSelect();
+						yearSelect.id = "aonInvoiceSelfcontaYear";
+    					yearSelect.title = MSG.YEAR;
+						yearSelect.options = JSON.stringify([
+							{name:'2022', value:2022},
+							{name:'2021', value:2021}
+						]);
+						div.appendChild(yearSelect);
+
 						let aonApplication = this.getApplication();
-						aonApplication.confirmDialog("Importar", "Desea importar las facturas?", async() => {
+						let d = aonApplication.getDialog();
+						d.clear();
+						if(!this.isMobile()) d.width = '400px';
+						d.setTitle("Importar");
+						d.setContent(div);
+						d.addAcceptAction(async() => {
 							aonApplication.startLoading();
 							try {
-								await selfconta();
+								await selfconta(yearSelect.value);
 								this.showToast({
 									type: 'success',
 									message: 'Datos Importados. Revisa las facturas rechazadas.'
@@ -429,6 +452,7 @@ export class AonInvoicePanel extends AonElement {
 							}
 							aonApplication.stopLoading();
 						});
+						d.open();
 					}
 				});
 		}

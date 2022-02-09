@@ -7,37 +7,27 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
-import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
-import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ProvidesKey;
 
 public class Model347 extends MainEntryPoint {
 	private static final Logger LOGGER = Logger.getLogger(Model347.class.getName());
@@ -45,21 +35,7 @@ public class Model347 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	public static final ProvidesKey<Mod347Declared> MOD347_DECLARED_PROVIDES_KEY = new ProvidesKey<Mod347Declared>() {
-		@Override
-		public Object getKey(Mod347Declared det) {
-			return det == null ?null: det.getId() == null? det.getTempId(): det.getId();
-		}
-	};
-	public static final ProvidesKey<Mod347Asset> MOD347_ASSET_PROVIDES_KEY = new ProvidesKey<Mod347Asset>() {
-		@Override
-		public Object getKey(Mod347Asset det) {
-			return det == null ?null: det.getId() == null? det.getTempId(): det.getId();
-		}
-	};
-	
-	private final static int NOTIFICATIONS_TAB = 0;
-	private final static int BREAKDOWN_TAB = 1;
+	private static final int INFORMATION_TAB = 0;
 	
 	static final Model347ServiceAsync SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
@@ -71,91 +47,145 @@ public class Model347 extends MainEntryPoint {
 		SERVICE = new Model347ServiceAsyncDecorator(serviceRaw);
 	}
 	
-	interface Model347Binder extends UiBinder<Widget, Model347> {}
-	private static final Model347Binder MODEL_347_BINDER = GWT.create(Model347Binder.class);
-
-	protected static interface IModel347Callback{
-
-		void onAccept(Mod347 mod347);
-		void onCancel();
-		void onSelect(Model347ModuleOptions options,Mod347 mod347, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex);
-		void showError(String msg);
-		void cleanErrorPanel();
-		void onNew(Model347ModuleOptions options);
-		void onReset(Model347ModuleOptions options, Mod347 mod347);
-		void onDuplicate(Model347ModuleOptions options, int id);
-		void showBreakdownPanel(String htmlText);
-		void cleanBreakdownPanel();
-	}
-	
-	protected class Model347Callback implements IModel347Callback {
+	protected class Model347Callback implements IFiscalModelCallback<Mod347,Model347ModuleOptions> {
 		
+
+		
+		@Override
+		public Model347ModuleOptions getOptions() {
+			return Model347.this.options;
+		}
+
 		@Override
 		public void onAccept(Mod347 mod347) {
 			// 
 		}
+
 		@Override
-		public void onCancel() {
-			cancel();
+		public void onRemove(Mod347 model) {
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onRemove(model);
+			} else {
+				onCancel(model);
+			}
 		}
+		
 		@Override
-		public void onSelect(Model347ModuleOptions options,Mod347 mod347, Integer selectedIndexDeclared,  Integer selectedIndexAsset, int tabPanelIndex) {
-			select(options,mod347, selectedIndexDeclared, selectedIndexAsset, tabPanelIndex);
+		public void onCancel(Mod347 mod347) {
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(mod347);
+			} else {
+				cleanErrorMessage();
+				declarationContainer.setWidget(model347Table);
+				model347Table.refresh( new Model347Callback() );
+				closeFootPanel();
+			}
 		}
+		
 		@Override
-		public void onNew(Model347ModuleOptions options) {
-			newModel(options);
+		public void onNew() {
+			newModel(getOptions());
 		}
-		@Override
-		public void onReset(Model347ModuleOptions options, Mod347 mod347) {
-			resetModel(options, mod347);
-		}
-		@Override
-		public void onDuplicate(Model347ModuleOptions options, int id) {
-			duplicateModel(options, id);
-		}
-		@Override
-		public void cleanErrorPanel() {
-			Model347.this.cleanErrorPanel();
-		}
+
 		@Override
 		public void showError(String msg) {
-			Model347.this.showErrorPanel(msg);
+			showErrorMessage(msg);
 		}
 		
 		@Override
-		public void showBreakdownPanel(String htmlText) {
-			Model347.this.showBreakdownPanel(htmlText);
+		public void hideError() {
+			aonLayout.hideErrorPanel();
 		}
 		
 		@Override
-		public void cleanBreakdownPanel() {
-			Model347.this.cleanBreakdownPanel();
+		public void showInfoPanel(String htmlText) {
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			HTMLPanel panel = new HTMLPanel(htmlText);
+			breakdownPanel.setWidget(panel);
+			breakdownPanel.scrollToTop();
+		}
+
+		@Override
+		public void cleanInfoPanel() {
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+			}
+		}
+
+		public void onSelect(Mod347 mod347, Integer selectedIndexDeclared,  Integer selectedIndexAsset, int tabPanelIndex) {
+			select(mod347, selectedIndexDeclared, selectedIndexAsset, tabPanelIndex);
+		}
+
+		// ***********************************************************
+		// ***********************************************************
+		
+		public void onDuplicate(Model347ModuleOptions options, int id) {
+			cleanErrorMessage();
+			SERVICE.get(options.getOccam(), id, new AsyncCallback<Mod347>() {
+				@Override
+				public void onSuccess(Mod347 m347) {
+					cleanAndClose();
+					m347.setYear(m347.getYear() + 1);
+					showDuplicateDeclarationPopup(options, m347);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+				}
+			});
+		}
+
+		private void showDuplicateDeclarationPopup(Model347ModuleOptions options, Mod347 model) {
+			Model347NewDeclarationPopup newDeclarationPanel = new Model347NewDeclarationPopup(model,true, new Model347Callback() {
+
+					@Override
+					public void onAccept(Mod347 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						popup.add(new AonSplash());
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
+						SERVICE.duplicate(options.getOccam(), model,
+								new AsyncCallback<Mod347>() {
+									@Override
+									public void onSuccess(Mod347 model) {
+										popup.hide();
+										select(model, null, null, 0);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+									}
+								});
+					}
+					
+				}
+			);
+			newDeclarationPanel.setCaption(AON.MSG.duplicate());
+			declarationContainer.setWidget(newDeclarationPanel);
+			model347Table.refresh( new Model347Callback() );
+			tabLayout.selectTab(INFORMATION_TAB);
+			closeFootPanel();
 		}
 	}
 
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	private Model347ModuleOptions options;
+	
+	private AonLayoutPanel aonLayout;
+	private SplitLayoutPanel splitLayoutPanel;
+	private SimpleLayoutPanel declarationContainer;
+	
+	private Model347Table model347Table;
+	private TabLayoutPanel tabLayout;
+	private AonMinimizePanel footPanel;
+	private ScrollPanel breakdownPanel;	
 
-	@UiField
-	SimpleLayoutPanel declarationContainer;
-	
-	@UiField
-	TabLayoutPanel tabLayout;
-	
-	@UiField
-	ResultsPanel notificationsPanel;
-	
-	@UiField
-	MinimizePanel footPanel;
-
-	@UiField
-	ScrollPanel breakdownPanel;
-
-	Model347Table model347Table;
-	
-	Panel formContainer;
-	SimplePanel headerPanel = new SimplePanel();
 	
 	@Override
 	public void onModuleLoad() {
@@ -164,13 +194,13 @@ public class Model347 extends MainEntryPoint {
 			@Override
 			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-				Model347ModuleOptions options = new Model347ModuleOptions();
-				options.setParentWidget(root);
-				options.setDomainName(getCurrentDomainName());
-				options.setDomain(getCurrentDomain());
-				options.setUser(getCurrentUser());
-				options.setConfiguration(config);
-				onModuleLoad( options );
+				Model347ModuleOptions opts = new Model347ModuleOptions();
+				opts.setParentWidget(root);
+				opts.setDomainName(getCurrentDomainName());
+				opts.setDomain(getCurrentDomain());
+				opts.setUser(getCurrentUser());
+				opts.setConfiguration(config);
+				onModuleLoad( opts );
 			}
 			
 			@Override public void onFailure(Throwable caught) {
@@ -180,221 +210,77 @@ public class Model347 extends MainEntryPoint {
 	}
 	
 	public void onModuleLoad(Model347ModuleOptions options) {
+		this.options = options;
+		
 		AON.ensureInjected();
 
-		Widget ui = MODEL_347_BINDER.createAndBindUi(this);
+		aonLayout = new AonLayoutPanel();
+		splitLayoutPanel = new SplitLayoutPanel( 2 );
+		aonLayout.add(splitLayoutPanel);
+		
+		declarationContainer = new SimpleLayoutPanel();
+		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 
-		model347Table = new Model347Table(options, new Model347Callback());
-		model347Table.addSelectionHandler(new SelectionHandler<Mod347>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod347> event) {
-				onSelectionChange(options,event);
-			}
-		});
+		splitLayoutPanel.add(declarationContainer);
+		
+		model347Table = new Model347Table(new Model347Callback());
+		model347Table.addSelectionHandler(event -> onSelectionChange(options,event));
 		
 		declarationContainer.setWidget(model347Table);
-		options.getParentWidget().add(ui);
+
+		options.getParentWidget().add(aonLayout);
 		if (options.getFiscalModelId() != null ) {
-			LOGGER.info("Access to Model347 with a ID: " + options.getFiscalModelId());
 			onSelect(options,options.getFiscalModelId());
 		} else if (options.getNewModel() != null ) {
-			LOGGER.info("Access to Model347 new Model");
 			newModel(options); 
 		} else {
-			model347Table.refresh();
-			LOGGER.info("Model347 setting NOTIFICATIONS_TAB");
-			tabLayout.selectTab(NOTIFICATIONS_TAB);
+			model347Table.refresh(new Model347Callback());
 		}
 	}
 
-	private void onSelect(Model347ModuleOptions options, Integer id ) {
-		LOGGER.info("OnSelect Model347 with a ID: " + options.getFiscalModelId());
-		SERVICE.getMod347(options.getDomainName(), options.getUser(), options.getDomain(), id , new AsyncCallback<Mod347>() {
-			@Override
-			public void onSuccess(Mod347 selected) {
-				if (selected == null) {
-					showErrorPanel(AON.MSG.unableToFindDeclaration());
-				} else {
-					select(options,selected, null, null, 0);
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-			}
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler( event -> closeFootPanel() );
+		footPanel.addMaximizeHandler( event -> {
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
+			splitLayoutPanel.animate(500);
 		});
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+		footPanel.add(tabLayout);
+		
+		breakdownPanel = new ScrollPanel();
+		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
+
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
+		return footPanel; 
 	}
 
-	private void onSelectionChange(Model347ModuleOptions options,SelectionEvent<Mod347> event) {
-		Mod347 sel = event.getSelectedItem();
-		SERVICE.getMod347(options.getDomainName(), options.getUser(), options.getDomain(),
-				sel.getId(), new AsyncCallback<Mod347>() {
-					@Override
-					public void onSuccess(Mod347 selected) {
-						if (selected == null) {
-							showErrorPanel(AON.MSG.unableToFindDeclaration());
-						} else {
-							select(options,selected, null, null, 0);
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-					}
-				} );
-	}
-	
-
-	private void select(Model347ModuleOptions options, Mod347 selected, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex) {
-		cleanErrorPanel();
-		if ( selected.isAEAT() ) {
-			declarationContainer.setWidget( new Model347AEAT(options, selected,new Model347Callback(),selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));
-		} else if ( selected.isAraba() ) {
-			declarationContainer.setWidget( new Model347ARABA(options, selected,new Model347Callback(),selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
-		} else if ( selected.isBizkaia() ) {
-			declarationContainer.setWidget( new Model347BIZKAIA(options, selected,new Model347Callback(),selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
-		} else if ( selected.isGipuzkoa() ) {
-			declarationContainer.setWidget( new Model347GIPUZKOA(options, selected,new Model347Callback(),selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
-		} else if ( selected.isNavarra() ) {
-			declarationContainer.setWidget( new Model347NAVARRA(options, selected,new Model347Callback(),selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
-		} else {
-			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
-		}
-	}
-
-	private void newModel(Model347ModuleOptions options) {
-		cleanErrorPanel();
-		SERVICE.initializeMod347(options.getDomainName(), options.getUser(), options.getDomain(), 
-				new AsyncCallback<Mod347>() {
-					@Override
-					public void onSuccess(Mod347 m347) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(BREAKDOWN_TAB);
-						closeFootPanel();
-						showNewDeclarationPopup(options, m347);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
-	}
-	
-	private void resetModel(Model347ModuleOptions options, Mod347 oldMod347) {
-		cleanErrorPanel();
-		SERVICE.initializeMod347(options.getDomainName(), options.getUser(), options.getDomain(), 
-				new AsyncCallback<Mod347>() {
-					@Override
-					public void onSuccess(Mod347 newMod347) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(BREAKDOWN_TAB);
-						closeFootPanel();
-						// Determinados valores son los mismos que la declaración actual
-						newMod347.setAdministration(oldMod347.getAdministration());
-						newMod347.setYear(oldMod347.getYear());
-						newMod347.setComplementary(oldMod347.isComplementary());
-						newMod347.setReplacement(oldMod347.isReplacement());
-						newMod347.setReplacedNumber(oldMod347.getReplacedNumber());
-						showResetDeclarationPopup(options, newMod347, oldMod347);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
-	}
-	
-	private void duplicateModel(Model347ModuleOptions options, int id) {
-		cleanErrorPanel();
-		SERVICE.getMod347(options.getDomainName(),options.getUser(),options.getDomain(), id,
-				new AsyncCallback<Mod347>() {
-					@Override
-					public void onSuccess(Mod347 m347) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(BREAKDOWN_TAB);
-						closeFootPanel();
-						showDuplicateDeclarationPopup(options, m347);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-	}
-
-	private void cancel() {
-		cleanErrorPanel();
-		declarationContainer.setWidget(model347Table);
-		model347Table.refresh();
+	private void cleanAndClose() {
+		cleanBreakdownPanel();
+		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
 	}
 	
-	@UiHandler("footPanel")
-	protected void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-
-	@UiHandler("footPanel")
-	protected void onFootMaximize(MaximizeEvent event) {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
-		splitLayoutPanel.animate(500);
-	}
-
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
-
-	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-		splitLayoutPanel.animate(500);
-	}
-	
-	private void cleanErrorPanel() {
-		SimpleLayoutPanel panel = new SimpleLayoutPanel();
-		notificationsPanel.setWidget(panel);
-		closeFootPanel();
-	}
 	private void openFootPanelIfNeeded() {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-			openFootPanel();
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
+			splitLayoutPanel.animate(500);
 		}
 	}
-	private void showErrorPanel(String msg) {
-
-		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		
-		InlineLabel icon = new InlineLabel("");
-		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
-		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		tab.setWidget(0, 0, icon);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		
-		InlineLabel label = new InlineLabel(msg);
-		label.addStyleName(AON.AON_CSS.aonColorRed());
-		label.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, label);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
-		notificationsPanel.setWidget(panel);
-		
-		// Abrimos el panel inferior, si es necesario y seleccionamos la pestaña de notificaciones
-		openFootPanelIfNeeded();		
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
+	
+	private void cleanErrorMessage() {
+		aonLayout.hideErrorPanel();
+	}
+	
+	private void showErrorMessage(String msg) {
+		aonLayout.showErrorPanel(msg);
 	}
 	
 	private void cleanBreakdownPanel() {
@@ -402,143 +288,113 @@ public class Model347 extends MainEntryPoint {
 		if (w != null) {
 			breakdownPanel.remove( breakdownPanel.getWidget() ); 
 		}
-		closeFootPanel();
 	}
 	
-	private void showBreakdownPanel(String htmlText) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(BREAKDOWN_TAB);
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		breakdownPanel.setWidget(panel);
-		breakdownPanel.scrollToTop();
+	// **************************************************************
+	// **************************************************************
+	// **************************************************************
+	private void onSelect(Model347ModuleOptions options, Integer id ) {
+		LOGGER.info("OnSelect Model347 with a ID: " + options.getFiscalModelId());
+		SERVICE.get(options.getOccam(), id , new AsyncCallback<Mod347>() {
+			@Override
+			public void onSuccess(Mod347 selected) {
+				if (selected == null) {
+					showErrorMessage(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(selected, null, null, 0);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
+	}
+
+	private void onSelectionChange(Model347ModuleOptions options,SelectionEvent<Mod347> event) {
+		Mod347 sel = event.getSelectedItem();
+		onSelect(options, sel.getId());
+	}
+	
+
+	private void select(Mod347 selected, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex) {
+		cleanErrorMessage();
+		if ( selected.isAEAT() ) {
+			declarationContainer.setWidget( new Model347AEAT(new Model347Callback(), selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));
+		} else if ( selected.isAraba() ) {
+			declarationContainer.setWidget( new Model347ARABA(new Model347Callback(),selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
+		} else if ( selected.isBizkaia() ) {
+			declarationContainer.setWidget( new Model347BIZKAIA(new Model347Callback(),selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
+		} else if ( selected.isGipuzkoa() ) {
+			declarationContainer.setWidget( new Model347GIPUZKOA(new Model347Callback(),selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
+		} else if ( selected.isNavarra() ) {
+			declarationContainer.setWidget( new Model347NAVARRA(new Model347Callback(),selected,selectedIndexDeclared,selectedIndexAsset,tabPanelIndex));			
+		} else {
+			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
+		}
+	}
+
+	private void newModel(Model347ModuleOptions options) {
+		cleanErrorMessage();
+		SERVICE.initialize(options.getOccam(), new AsyncCallback<Mod347>() {
+			@Override
+			public void onSuccess(Mod347 m347) {
+				cleanAndClose();
+				showNewDeclarationPopup(options,m347);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+			}
+		});
 	}
 	
 	private void showNewDeclarationPopup(Model347ModuleOptions options, Mod347 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup( model,
-			new Model347Callback() {
+		Model347NewDeclarationPopup newDeclarationPanel = new Model347NewDeclarationPopup( model, false, new Model347Callback() {
+				@Override
+				public void onAccept(Mod347 model) {
+					final PopupPanel popup = new PopupPanel(false, true);
+					popup.add(new AonSplash());
+					popup.setGlassEnabled(true);
+					popup.setAnimationEnabled(true);
+					popup.center();
 
-					@Override
-					public void onAccept(Mod347 model) {
-						final PopupPanel popup = new PopupPanel(false, true);
-						Label label = new Label(AON.MSG.processing());
-						label.addStyleName(AON.AON_CSS.aonTimer());
-						popup.add(label);
-						popup.setGlassEnabled(true);
-						popup.setAnimationEnabled(true);
-						popup.center();
+					SERVICE.save(options.getOccam(),model,new AsyncCallback<Mod347>() {
+						@Override
+						public void onSuccess(Mod347 model) {
+							popup.hide();
+							select(model, null, null, 0);
+						}
 
-						SERVICE.saveMod347(options.getDomainName(),options.getUser(),options.getDomain(),model,
-								new AsyncCallback<Mod347>() {
-									@Override
-									public void onSuccess(Mod347 model) {
-										popup.hide();
-										select(options,model, null, null, 0);
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										popup.hide();
-										showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-									}
-								});
-					}
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						}
+					});
 				}
-			); 
-			newDialog.center();
-			newDialog.show();
+			}
+		); 
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 	
-	private void showResetDeclarationPopup(Model347ModuleOptions options, Mod347 newMod347, Mod347 oldMod347) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod347, false, true,
-			new Model347Callback() {
-
-					@Override
-					public void onAccept(Mod347 model) {
-						final PopupPanel popup = new PopupPanel(false, true);
-						Label label = new Label(AON.MSG.processing());
-						label.addStyleName(AON.AON_CSS.aonTimer());
-						popup.add(label);
-						popup.setGlassEnabled(true);
-						popup.setAnimationEnabled(true);
-						popup.center();
-						
-						// Primero se borra la declaración actual
-						SERVICE.deleteMod347(options.getDomainName(), options.getUser(), options.getDomain(), oldMod347, 
-								new AsyncCallback<Void>() {
-
-									@Override									
-									public void onSuccess(Void result) {
-										// Si todo ha ido bien, se añade la declaración nueva
-										SERVICE.saveMod347(options.getDomainName(),options.getUser(),options.getDomain(),model,
-												new AsyncCallback<Mod347>() {
-													@Override
-													public void onSuccess(Mod347 model) {
-														popup.hide();
-														select(options, model, null, null, 0);
-													}
-
-													@Override
-													public void onFailure(Throwable caught) {
-														popup.hide();
-														showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-													}
-												});										
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										popup.hide();
-										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));										
-									}
-								});
-					}
-					
-					@Override
-					public void onCancel() {}
-					
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
+	public static void run() {
+		GWT.runAsync(Model347.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("Modelo 347"));
+			}
+			
+			@Override
+			public void onSuccess() {
+				Model347 model347 = new Model347();
+				model347.onModuleLoad();
+			}
+		});
 	}
-	
-	private void showDuplicateDeclarationPopup(Model347ModuleOptions options, Mod347 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
-			new Model347Callback() {
-
-					@Override
-					public void onAccept(Mod347 model) {
-						final PopupPanel popup = new PopupPanel(false, true);
-						Label label = new Label(AON.MSG.processing());
-						label.addStyleName(AON.AON_CSS.aonTimer());
-						popup.add(label);
-						popup.setGlassEnabled(true);
-						popup.setAnimationEnabled(true);
-						popup.center();
-
-						SERVICE.duplicateMod347(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
-								new AsyncCallback<Mod347>() {
-									@Override
-									public void onSuccess(Mod347 model) {
-										popup.hide();
-										select(options, model, null, null, 0);
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										popup.hide();
-										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-									}
-								});
-					}
-					
-					@Override
-					public void onCancel() {}
-
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
-	}
-	
 }

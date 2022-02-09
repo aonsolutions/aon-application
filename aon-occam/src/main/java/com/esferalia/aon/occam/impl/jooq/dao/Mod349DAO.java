@@ -149,7 +149,7 @@ public class Mod349DAO {
 			.set(FS_MOD349.DOMAIN,mod349.getDomain())
 			.set(FS_MOD349.YEAR,mod349.getYear())
 			.set(FS_MOD349.PERIOD,mod349.getPeriod().getValue())			
-			.set(FS_MOD349.ADMINISTRATION, mod349.getAdministration().getValue())
+			.set(FS_MOD349.ADMINISTRATION, mod349.getAdministration().value())
 			.set(FS_MOD349.COMMENTS,mod349.getComments())
 			.set(FS_MOD349.STATUS, ZERO_BYTE )
 			.set(FS_MOD349.SECURITY_LEVEL, AonEnumUtils.getByte(mod349.isConfidential()) )			
@@ -181,7 +181,7 @@ public class Mod349DAO {
 		ctx.getDslContext().update(FS_MOD349)			
 			.set(FS_MOD349.YEAR,mod349.getYear())
 			.set(FS_MOD349.PERIOD,mod349.getPeriod().getValue())			
-			.set(FS_MOD349.ADMINISTRATION, mod349.getAdministration().getValue())
+			.set(FS_MOD349.ADMINISTRATION, mod349.getAdministration().value())
 			.set(FS_MOD349.COMMENTS,mod349.getComments())
 			.set(FS_MOD349.STATUS, AonEnumUtils.getByte( mod349.getStatus() ) )
 			.set(FS_MOD349.SECURITY_LEVEL,AonEnumUtils.getByte(mod349.isConfidential()) )			
@@ -230,7 +230,7 @@ public class Mod349DAO {
 				.where(FS_MOD349.DOMAIN.equal(mod349.getDomain())
 						.and(FS_MOD349.YEAR.equal(mod349.getYear()))
 						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().getValue()))
-						.and(FS_MOD349.ADMINISTRATION.equal(mod349.getAdministration().getValue()))
+						.and(FS_MOD349.ADMINISTRATION.equal(mod349.getAdministration().value()))
 						.and(FS_MOD349.REPLACEMENT.equal( ONE_BYTE ))
 						.and(FS_MOD349.REPLACED_NUMBER.equal(mod349.getReplacedNumber())))
 				.fetch()
@@ -265,7 +265,7 @@ public class Mod349DAO {
 				.where(FS_MOD349.DOMAIN.equal(mod349.getDomain())
 						.and(FS_MOD349.YEAR.equal(mod349.getYear()))
 						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().getValue()))
-						.and(FS_MOD349.ADMINISTRATION.equal((byte) mod349.getAdministration().getValue()))
+						.and(FS_MOD349.ADMINISTRATION.equal((byte) mod349.getAdministration().value()))
 						.and(FS_MOD349.REPLACEMENT.equal(ZERO_BYTE))
 						.and(FS_MOD349.COMPLEMENTARY.equal(ZERO_BYTE)))				
 				.fetch()
@@ -780,6 +780,8 @@ public class Mod349DAO {
 		int id = mod349.getId();
 		mod349.setId(null);
 		mod349.setDiffEnabled(false);
+		mod349.setStatus(FiscalStatus.PENDING);
+		mod349.setNumber(null);
 		mod349 = insert(ctx, mod349, false);
 		
 		if (!mod349.isComplementary()) {
@@ -794,6 +796,12 @@ public class Mod349DAO {
 		}
 		return save(ctx, mod349);		
 	
+	}
+	
+	public static Mod349 reset(AONContext ctx, Mod349 mod349) {
+		deleteDetails(ctx, mod349);		
+		insertDetailsFromInvoice(ctx, mod349);
+		return getById(ctx, mod349.getId()) ;
 	}
 	
 }

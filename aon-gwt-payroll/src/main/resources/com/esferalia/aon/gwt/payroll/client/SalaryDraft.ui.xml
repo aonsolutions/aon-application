@@ -73,8 +73,15 @@
 			padding: 0px !important;
 		}
 		
+		.cell-value {
+			text-align: left;
+			padding-top: 0.2em;
+			padding-left: 0.2em;
+		}
+
 		@if !user.agent safari {
 			.cell-label {
+				color:black;
 				font-size: 9px;
 				font-weight: bold;
 				font-family: sans-serif;
@@ -82,6 +89,7 @@
 		}
 		@else {
 			.cell-label {
+				color:black;
 				font-size: 11px;
 				font-weight: bold;
 				font-family: sans-serif;
@@ -305,14 +313,14 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
-		<g:north size="72">
+		<g:north size="60">
 
 			<g:FlowPanel ui:field="toolbar">
 
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
+				<g:FlowPanel styleName="aon-finding-title-toolbar aon-width-all">
+					<g:HorizontalPanel styleName="aon-width-all">
 			
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
+						<g:HorizontalPanel styleName="aon-finding-toolbar aon-width-all">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button debugId='acceptButton' ui:field='acceptButton'
 									styleName='aon-finding-toolbar-item aon_icon_save {style.aon-toolbar-button}' text="GUARDAR"
@@ -337,6 +345,8 @@
 									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="DESCARGAR" />
 								<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
+									
+								<g:InlineLabel debugId="toolBarTitleLabel" ui:field="toolbarTitleLabel" styleName="aon_toolbar_title aon-float-right" />
 
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
@@ -394,26 +404,37 @@
 							<!--  g:HorizontalPanel ui:field='dbTimeRulePanel'  debugId='dbTimeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin} {style.disabled}" /-->
 							
 							<g:Grid styleName="aon-dataTable">
-								<g:row styleName="aon-dataTable-row-odd">
-									<g:customCell style="width:50%">
-										<g:HTMLPanel>
-											<g:Label styleName="{style.cell-label}">EMPRESA</g:Label>
-											<g:Label ui:field="enterpriseNameLabel" styleName="aon-text-center">&nbsp; </g:Label>
-										</g:HTMLPanel>
-									</g:customCell>
-									<g:customCell>
-										<g:HTMLPanel>
-											<g:Label styleName="{style.cell-label}">TRABAJADOR/A</g:Label>
-											<g:Label debugId="employeeNameLabel" ui:field="employeeNameLabel" styleName="aon-text-center">&nbsp; </g:Label>
-										</g:HTMLPanel>
-									</g:customCell>
-								</g:row>
 								<g:row styleName="aon-dataTable-row-even">
-									<g:customCell>
-										<g:HTMLPanel>
-											<g:Label styleName="{style.cell-label}">DOMICILIO</g:Label>
-											<g:Label ui:field="enterpriseAddressLabel" styleName="aon-text-center">&nbsp; </g:Label>
-										</g:HTMLPanel>
+									<g:customCell  styleName="{style.span-cell}" >
+										<g:Grid styleName="{style.span-cell-table}">
+											<g:row>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">N. INSCRIPCION
+															SS</g:Label>
+														<g:Label ui:field="enterpriseCCCLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">GRUPO COTIZACIÓN</g:Label>
+														<g:Label ui:field="employeeGroupLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">TIPO CONTRATO</g:Label>
+														<g:Label ui:field="employeeContractLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">OCUPACIÓN</g:Label>
+														<g:Label ui:field="employeeOcupationLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+											</g:row>
+										</g:Grid>
 									</g:customCell>
 									<g:customCell styleName="{style.span-cell}">
 										<g:Grid styleName="{style.span-cell-table}">
@@ -423,62 +444,22 @@
 														<g:Label styleName="{style.cell-label}">CATEGORÍA
 															PROFESIONAL</g:Label>
 														<g:Label ui:field="employeeAgreementCategoryLabel"
-															styleName="aon-text-center">&nbsp; </g:Label>
+															styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell}">
 													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">PUESTO DE
-															TRABAJO</g:Label>
-														<g:Label ui:field="employeeJobLabel" styleName="aon-text-center">&nbsp; </g:Label>
+														<g:Label styleName="{style.cell-label}">N. AFILIACION
+															SS</g:Label>
+														<g:Label ui:field="employeeSSLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+														<g:Label debugId="employeeNameLabel" ui:field="employeeNameLabel" styleName="aon-text-center" visible="false" />
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">ANTIGUEDAD</g:Label>
 														<g:Label ui:field="employeeSeniorityLabel"
-															styleName="aon-text-center">&nbsp; </g:Label>
-													</g:HTMLPanel>
-												</g:customCell>
-											</g:row>
-										</g:Grid>
-									</g:customCell>
-								</g:row>
-								<g:row styleName="aon-dataTable-row-odd">
-									<g:customCell styleName="{style.span-cell}">
-										<g:Grid styleName="{style.span-cell-table}">
-											<g:row>
-												<g:customCell styleName="{style.span-cell-cell}">
-													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">POBLACION</g:Label>
-														<g:Label ui:field="enterpriseCityLabel" styleName="aon-text-center">&nbsp; </g:Label>
-													</g:HTMLPanel>
-												</g:customCell>
-												<g:customCell styleName="{style.span-cell-cell-last}">
-													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">N. INSCRIPCION
-															SS</g:Label>
-														<g:Label ui:field="enterpriseCCCLabel" styleName="aon-text-center">&nbsp; </g:Label>
-													</g:HTMLPanel>
-												</g:customCell>
-											</g:row>
-										</g:Grid>
-									</g:customCell>
-									<g:customCell styleName="{style.span-cell}">
-										<g:Grid styleName="{style.span-cell-table}">
-											<g:row>
-												<g:customCell styleName="{style.span-cell-cell}">
-													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">N. AFILIACION
-															SS</g:Label>
-														<g:Label ui:field="employeeSSLabel" styleName="aon-text-center">&nbsp; </g:Label>
-													</g:HTMLPanel>
-												</g:customCell>
-												<g:customCell styleName="{style.span-cell-cell-last}">
-													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">DNI</g:Label>
-														<g:Label ui:field="employeeDocumentLabel"
-															styleName="aon-text-center">&nbsp; </g:Label>
+															styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
@@ -493,13 +474,13 @@
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">PERIODO DE
 															LIQUIDACION</g:Label>
-														<g:Label debugId="periodLabel" ui:field="periodLabel" styleName="aon-text-center">&nbsp; </g:Label>
+														<g:Label debugId="periodLabel" ui:field="periodLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">TOTAL DIAS</g:Label>
-														<g:Label ui:field="daysLabel" styleName="aon-text-center">&nbsp; </g:Label>
+														<g:Label ui:field="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
@@ -507,18 +488,29 @@
 									</g:customCell>
 
 									<g:customCell>
-										<g:HTMLPanel>
-											<g:Label styleName="{style.cell-label}">IMPORTE TOTAL
-												DEVENGOS</g:Label>
-											<g:HTMLPanel tag="div" styleName="aon-text-center">
-												<!-- e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}"
-													ui:field="totalPaymentsLabel">&nbsp; </e:ValueInlineHTML-->
-												<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentsLabel" ui:field="totalPaymentsLabel">&nbsp; </e:ExpressionValueBox>												
-												<g:InlineHTML debugId="dbTotalPaymentsLabel" ui:field="dbTotalPaymentsLabel"
-													visible="false" />
-											</g:HTMLPanel>
-										</g:HTMLPanel>
+										<g:Grid styleName="{style.span-cell-table}">
+											<g:row>
+												<g:customCell styleName="{style.span-cell-cell}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">DNI</g:Label>
+														<g:Label ui:field="employeeDocumentLabel"
+															styleName="{style.cell-value}">&nbsp; </g:Label>
+													</g:HTMLPanel>
+												</g:customCell>
+												<g:customCell styleName="{style.span-cell-cell-last}">
+													<g:HTMLPanel>
+														<g:Label styleName="{style.cell-label}">IMPORTE TOTAL
+															DEVENGOS</g:Label>
+														<g:HTMLPanel tag="div" styleName="{style.cell-value}">
+															<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-right" visibleLength="15"
+																	changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentsLabel" ui:field="totalPaymentsLabel">&nbsp; </e:ExpressionValueBox>												
+															<g:InlineHTML debugId="dbTotalPaymentsLabel" ui:field="dbTotalPaymentsLabel"
+																visible="false" />
+														</g:HTMLPanel>
+													</g:HTMLPanel>
+												</g:customCell>
+											</g:row>
+										</g:Grid>
 									</g:customCell>
 								</g:row>
 							</g:Grid>

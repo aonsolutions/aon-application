@@ -37,6 +37,15 @@ public class Employee implements Serializable, HasId<Integer> {
 		public String getDescription() {
 			return description;
 		};
+		
+		public static String getDescriptionByName(String name) {
+			for (Occupation accupation: Occupation.values() )
+				if ( accupation.name().equals(name))
+					return accupation.getDescription();
+				
+			return "";
+		}
+		
 	}
 	
 
@@ -151,7 +160,7 @@ public class Employee implements Serializable, HasId<Integer> {
 				if ( tc2.getCode().equals(code))
 					return tc2.getDescription();
 				
-			throw new NoSuchElementException();
+			return "";
 		}
 	}
 	

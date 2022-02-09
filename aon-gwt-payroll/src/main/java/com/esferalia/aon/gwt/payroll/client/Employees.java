@@ -813,6 +813,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		tree.setSelectedItem(treeItem, fireEvents);
 	}
 
+	public void selectEmployee(String naf, boolean fireEvents) {
+		select(naf);
+	}
+
 	public void selectItem(Predicate<TreeItem> predicate, boolean fireEvents) {
 
 		TreeItem treeItem = getTreeItem(tree, predicate); //getEmployeeItem(employeeId);
@@ -2269,7 +2273,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		});
 	}
 
-
 	private TreeItem getActivityItem(final int activityId) {
 		return getTreeItem(tree, new Predicate<TreeItem>() {
 			@Override
@@ -2633,14 +2636,21 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		int employeesOffset = getEmployeesOffset(workplaceItem);
 		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
 			TreeItem employeeItem = workplaceItem.getChild(i);
-
-			EmployeeDraftObject employee = (EmployeeDraftObject) employeeItem.getUserObject();
+			Object userObject = employeeItem.getUserObject();
+			
+			Employee employee = null;
+			if ( userObject instanceof EmployeeDraftObject )
+				employee = ((EmployeeDraftObject) userObject).getEmployee();
+			else if ( userObject instanceof SalaryDraftObject )
+				employee = ((SalaryDraftObject) userObject).getEmployee();
+			else 
+				continue;
 			
 			boolean found  = 
 			AonStringUtils.isBlank(pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getFullname(), pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getDocument(), pattern)
-			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getSocialSecurity(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getFullname(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getDocument(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getSocialSecurity(), pattern)
 			;
 			
 			if ( found )

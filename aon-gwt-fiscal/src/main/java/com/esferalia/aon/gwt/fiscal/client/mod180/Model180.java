@@ -87,6 +87,11 @@ public class Model180 extends MainEntryPoint {
 			showErrorMessage(msg);
 		}
 		@Override
+		public void hideError() {
+			aonLayout.hideErrorPanel();
+		}
+
+		@Override
 		public void showInfoPanel(String htmlText) {
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);

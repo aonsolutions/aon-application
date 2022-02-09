@@ -1741,14 +1741,13 @@ public class AON {
 		}
 	}
 	
+	public static Invoice insertInvoice(Occam occam, Invoice invoice){
+		return insertInvoice( occam.getDomainName(), occam.getDomain(), occam.getUser(), invoice);
+	}
+	
 	public static Invoice insertInvoice(String domainName, Integer domainId, String login, Invoice invoice){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().insertInvoice(ctx, invoice);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	

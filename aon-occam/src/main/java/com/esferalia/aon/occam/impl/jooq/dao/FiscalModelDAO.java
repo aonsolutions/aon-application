@@ -57,6 +57,7 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
+@Deprecated
 public class FiscalModelDAO {
 	
 	private static final FiscalModelPropertiesDAO FS_MODEL_PROPERTIES = new FiscalModelPropertiesDAO();
@@ -130,7 +131,7 @@ public class FiscalModelDAO {
 		return getModelSelect(ctx, fiscalModel)
 				.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
 				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
-				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
+				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().value()))
 				.and(FS_MODEL.PERIOD.lessThan(fiscalModel.getPeriod().getValue()))
 				.orderBy(desc?FS_MODEL.PERIOD.desc():FS_MODEL.PERIOD.asc())
 				.fetch()

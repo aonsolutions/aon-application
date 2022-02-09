@@ -27,7 +27,7 @@ public class FinanceJSON {
 	}
 	
 	public static Finance fromJSON(JSONObject json) {
-		Date date = JsonUtils.getDateFormat(json, IJsonNames.DUE_DATE, "yyyy-MM-dd");
+		Date date = JsonUtils.getDate(json, IJsonNames.DUE_DATE);
 		Integer paymethod = null;
 		if(AonNumberUtils.isNumber(json.optString(IJsonNames.PAYMETHOD)))
 			paymethod = AonNumberUtils.toInteger(json.optString(IJsonNames.PAYMETHOD));

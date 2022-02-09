@@ -6,8 +6,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	Mod111Delete.class,
-	Mod111Insert.class,
+	Mod111ExpressionsTest.class,
+	Mod111DeleteTest.class,
+	Mod111InsertTest.class,
 })
 public class Mod111TestSuite {
 

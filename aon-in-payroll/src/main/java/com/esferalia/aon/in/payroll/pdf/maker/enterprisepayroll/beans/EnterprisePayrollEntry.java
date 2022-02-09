@@ -15,6 +15,7 @@ public class EnterprisePayrollEntry {
 	Optional<Double> costeTotal;
 	Optional<Double> ssTotal;
 	Optional<Double> bonificaciones;
+	Optional<Double> fundae;
 
 	Optional<String> empleadoSS;
 	Optional<String> tipoSS;
@@ -48,6 +49,7 @@ public class EnterprisePayrollEntry {
 		this.ssEmpr			= Optional.empty();
 		this.costeTotal		= Optional.empty();
 		this.ssTotal		= Optional.empty();
+		this.fundae 		= Optional.empty();
 		this.bonificaciones	= Optional.empty();
 
 		this.empleadoSS		  = Optional.empty();
@@ -194,6 +196,10 @@ public class EnterprisePayrollEntry {
 		return bonificaciones;
 	}
 
+	public Optional<Double> getFundae() {
+		return fundae;
+	}
+
 	public Optional<Double> getBonificacionesSS() {
 		return bonificacionesSS;
 	}
@@ -282,6 +288,10 @@ public class EnterprisePayrollEntry {
 	public void setBonificaciones(Optional<Double> bonificaciones) {
 		this.bonificaciones = bonificaciones;
 	}
+	
+	public void setFundae(Optional<Double> fundae) {
+		this.fundae = fundae;
+	}
 
 	public void setBonificacionesSS(Optional<Double> bonificacionesSS) {
 		this.bonificacionesSS = bonificacionesSS;
@@ -296,7 +306,7 @@ public class EnterprisePayrollEntry {
 	public boolean HasAon() {
 		return empleado.isPresent() || tipo.isPresent() || devengado.isPresent() || ssTrab.isPresent()
 				|| irpf.isPresent() || deducciones.isPresent() || liquido.isPresent() || ssEmpr.isPresent()
-				|| ssTotal.isPresent() || bonificaciones.isPresent();
+				|| ssTotal.isPresent() || bonificaciones.isPresent() || fundae.isPresent();
 	}
 
 	@Override
@@ -315,14 +325,15 @@ public class EnterprisePayrollEntry {
 				&& Objects.equals(devengadoSS, that.devengadoSS) && Objects.equals(ssTrabSS, that.ssTrabSS)
 				&& Objects.equals(irpfSS, that.irpfSS) && Objects.equals(deduccionesSS, that.deduccionesSS)
 				&& Objects.equals(liquidoSS, that.liquidoSS) && Objects.equals(ssEmprSS, that.ssEmprSS)
-				&& Objects.equals(costeTotalSS, that.costeTotalSS) && Objects.equals(ssTotalSS, that.ssTotalSS);
+				&& Objects.equals(costeTotalSS, that.costeTotalSS) && Objects.equals(ssTotalSS, that.ssTotalSS)
+				&& Objects.equals(fundae, that.fundae);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(empleado, tipo, devengado, ssTrab, irpf, deducciones, liquido, ssEmpr, costeTotal, ssTotal,
 				empleadoSS, tipoSS, devengadoSS, ssTrabSS, irpfSS, deduccionesSS, liquidoSS, ssEmprSS, costeTotalSS,
-				ssTotalSS);
+				ssTotalSS, fundae);
 	}
 
 }

@@ -56,7 +56,7 @@ public class ExpressionContext {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-		public abstract <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType)
+		public abstract <T> void eval(ExpressionContext context, Class<T> toType)
 				throws ExpressionException;
 
 	}
@@ -288,14 +288,14 @@ public class ExpressionContext {
 		}
 
 		@Override
-		public <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType) throws ExpressionException {
+		public <T> void eval(ExpressionContext context, Class<T> toType) throws ExpressionException {
 			
 			
 			
-			List<ITimedResult<T>> results = context.eval(expression, start, end, toType);
+			List<ITimedResult<Object>> results = context.eval(expression, start, end, Object.class);
 			
-			for (ITimedResult<T> result : results) {
-				context.putVariable(expression.getName(), new ExpressionResult<T>(result, expression));
+			for (ITimedResult<Object> result : results) {
+				context.putVariable(expression.getName(), new ExpressionResult<>(result, expression));
 			}
 
 			Period deferredPeriod = new Period(start, end);
@@ -308,7 +308,6 @@ public class ExpressionContext {
 				});
 			});
 			
-			return results;
 		}
 		
 	}
