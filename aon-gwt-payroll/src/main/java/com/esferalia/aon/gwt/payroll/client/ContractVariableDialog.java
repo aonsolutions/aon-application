@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -62,6 +64,7 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		setWidget(binder.createAndBindUi(this));
 		this.contractVariable = selectedContractVariable;
 		initializeView();
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.variableType);
 	}
 
 	// ------------------------------------------------- Constructor Methods
@@ -148,14 +151,14 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	private void getButtonsPanel() {
 		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
-		closeBtnDialog.setText("Cerrar");
+		closeBtnDialog.setText("Cancelar");
 		closeBtnDialog.addClickHandler(e -> hide());
 		
 		buttonsPanel.add(closeBtnDialog);
 		
 		Button acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText("Aceptar");
+		acceptBtnDialog.setText("Grabar");
 		acceptBtnDialog.addClickHandler(e -> accept());
 		
 		buttonsPanel.add(acceptBtnDialog);

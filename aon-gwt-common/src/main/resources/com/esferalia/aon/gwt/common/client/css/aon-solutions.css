@@ -951,6 +951,7 @@
 	margin-left: 1em;
 	display: flex;
 	align-items: center;
+	gap: .5rem;
 }
 
 .aon_toolbar_small_button_container {

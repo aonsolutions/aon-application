@@ -80,7 +80,7 @@
 					<a:DateBoxEx ui:field="startDateBx" styleName="{style.dateBox}" />
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label text="Fecha inicio" styleName="{style.title}" />
+					<g:Label text="Fecha fin" styleName="{style.title}" />
 					<a:DateBoxEx ui:field="endDateBx" styleName="{style.dateBox}" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>

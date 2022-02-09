@@ -95,7 +95,6 @@ public class EmployeeContractVariables extends Composite {
 	private EmployeeContractVariablesObject employeeContractVariablesObject;
 	private List<ContractVariable> contractVariableList;
 	
-	private AonToolbarButton saveButton;
 	private ListBox variableTypeLB;
 	private ListBox yearLB;
 	private ListBox monthLB;
@@ -108,16 +107,6 @@ public class EmployeeContractVariables extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.getElement().getStyle().setHeight(100, Unit.PCT);
 		setScrollPanelHeight();
-		saveButton.setEnabled(false);
-	}
-	
-	
-	public void setToolbarTitle(String title) {
-		toolbar.setTitle(title );
-	}
-
-	public void setSaveEnabled(boolean enabled) {
-		saveButton.setEnabled(enabled);
 	}
 	
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
@@ -351,42 +340,33 @@ public class EmployeeContractVariables extends Composite {
 	
 	// ----------------------------------------------- setEmployeeContractVariablesObject.Methods
 	
-	
 	public void initializeVariableTypeLB() {
-		initializeVariableTypeLB(this.variableTypeLB);
-	}
-	
-	public void initializeVariableTypeLB(ListBox variableTypeLB) {
-		variableTypeLB.clear();
-		variableTypeLB.addItem("Contract Data", "0");
-		variableTypeLB.addItem("Contract Info", "1");
-		variableTypeLB.addItem("Todas", "2");
+		this.variableTypeLB.clear();
+		this.variableTypeLB.addItem("Contract Data", "0");
+		this.variableTypeLB.addItem("Contract Info", "1");
+		this.variableTypeLB.addItem("Todas", "2");
 		
-		variableTypeLB.addChangeHandler(e -> changeYear());
+		this.variableTypeLB.addChangeHandler(e -> changeYear());
 		
-		setSelectedValueLB(variableTypeLB, "0");
+		setSelectedValueLB(this.variableTypeLB, "0");
 	}
 	
 	public void initializeYearLB() {
-		initializeYearLB(this.yearLB);
-	}
-
-	public void initializeYearLB(ListBox yearLB) {
 		Integer year = DateUtils.getYear();
 		Integer yearAux = DateUtils.getYear();
 		Integer previusYear = year - 1;
 		
-		yearLB.clear();
-		yearLB.addItem("-", "");
-		yearLB.addItem(yearAux.toString(), yearAux.toString());
-		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		this.yearLB.clear();
+		this.yearLB.addItem("-", "");
+		this.yearLB.addItem(yearAux.toString(), yearAux.toString());
+		this.yearLB.addItem(previusYear.toString(), previusYear.toString());
 		
-		yearLB.addChangeHandler(e -> {
+		this.yearLB.addChangeHandler(e -> {
 			checkSelectedYear();
 			changeYear();
 		});
 		
-		setSelectedValueLB(yearLB, year.toString());
+		setSelectedValueLB(this.yearLB, year.toString());
 	}
 	
 	private void checkSelectedYear() {
@@ -397,28 +377,23 @@ public class EmployeeContractVariables extends Composite {
 			monthLB.setVisible(true);
 	}
 
-
 	public void initializeMonthLB() {
-		initializeMonthLB(this.monthLB);
-	}
-
-	public void initializeMonthLB(ListBox monthLB) {
-		monthLB.clear();
-		monthLB.addItem("-", "");
-		monthLB.addItem("Enero", "0");
-		monthLB.addItem("Febrero", "1");
-		monthLB.addItem("Marzo", "2");
-		monthLB.addItem("Abril", "3");
-		monthLB.addItem("Mayo", "4");
-		monthLB.addItem("Junio", "5");
-		monthLB.addItem("Julio", "6");
-		monthLB.addItem("Agosto", "7");
-		monthLB.addItem("Septiembre", "8");
-		monthLB.addItem("Octubre", "9");
-		monthLB.addItem("Noviembre", "10");
-		monthLB.addItem("Diciembre", "11");
+		this.monthLB.clear();
+		this.monthLB.addItem("-", "");
+		this.monthLB.addItem("Enero", "0");
+		this.monthLB.addItem("Febrero", "1");
+		this.monthLB.addItem("Marzo", "2");
+		this.monthLB.addItem("Abril", "3");
+		this.monthLB.addItem("Mayo", "4");
+		this.monthLB.addItem("Junio", "5");
+		this.monthLB.addItem("Julio", "6");
+		this.monthLB.addItem("Agosto", "7");
+		this.monthLB.addItem("Septiembre", "8");
+		this.monthLB.addItem("Octubre", "9");
+		this.monthLB.addItem("Noviembre", "10");
+		this.monthLB.addItem("Diciembre", "11");
 		
-		monthLB.addChangeHandler(e -> changeYear());
+		this.monthLB.addChangeHandler(e -> changeYear());
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
@@ -443,21 +418,20 @@ public class EmployeeContractVariables extends Composite {
 		
 		this.toolbar = new AonToolbar("Variables Contrato");
 		
-		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		saveButton.addClickHandler(e -> onSave());
-		toolbar.add(saveButton);
-		
 		AonToolbarButton addVariable = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd());
 		addVariable.addClickHandler(e -> openContractVariableDialog(null));
 		toolbar.add(addVariable);
 		
 		this.variableTypeLB = new ListBox();
+		initializeVariableTypeLB();
 		this.toolbar.add(this.variableTypeLB);
 		
 		this.yearLB = new ListBox();
+		initializeYearLB();
 		this.toolbar.add(this.yearLB);
 		
 		this.monthLB = new ListBox();
+		initializeMonthLB();
 		this.toolbar.add(this.monthLB);
 		
 	}
@@ -487,7 +461,7 @@ public class EmployeeContractVariables extends Composite {
 				// Update variable
 				} else {
 					contractVariable.setHasChange(true);
-					contractVariablesDG.redraw();
+					onSave();
 				}
 			}};
 	}

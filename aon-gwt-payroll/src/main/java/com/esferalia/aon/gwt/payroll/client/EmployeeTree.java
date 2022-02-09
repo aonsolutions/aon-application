@@ -2261,10 +2261,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			EmployeeContractVariablesObject employeeContractVariablesObject = 
 			new EmployeeContractVariablesObject(contractId);
 			
-			employeeContractVariables.initializeYearLB();
-			employeeContractVariables.initializeVariableTypeLB();
-			employeeContractVariables.setSaveEnabled(true);
-			
 			return employeeContractVariablesObject;
 		}
 		
