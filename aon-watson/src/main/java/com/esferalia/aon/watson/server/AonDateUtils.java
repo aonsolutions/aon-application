@@ -34,7 +34,10 @@ public class AonDateUtils {
     public static final long MILLIS_PER_DAY = 24 * MILLIS_PER_HOUR;
 
     private static final SimpleDateFormat ORDER_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd"); 
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy"); 
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT2 = new SimpleDateFormat("dd-MM-yyyy");
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT3 = new SimpleDateFormat("yyyy/MM/dd");
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT4 = new SimpleDateFormat("yyyy-MM-dd");
 	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	private static final SimpleDateFormat DATE_TIME_FORMAT_AUX = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -1056,11 +1059,30 @@ public class AonDateUtils {
 	}
 	
 	public static Date simpleParse(String date) {
-		try {
-			return date == null ? null : SIMPLE_DATE_FORMAT.parse(date);
-		} catch (ParseException e) {
-			return null;
-		}
+		if(AonStringUtils.isBlank(date)) return null;
+		date = date.replace(" ", "");
+		Date d = null;
+		if(d == null && isSimpleDateFormat(date)) parse(date, SIMPLE_DATE_FORMAT);
+		if(d == null && isSimpleDateFormat2(date)) d = parse(date, SIMPLE_DATE_FORMAT2);
+		if(d == null && isSimpleDateFormat3(date)) d = parse(date, SIMPLE_DATE_FORMAT3);
+		if(d == null && isSimpleDateFormat4(date)) d = parse(date, SIMPLE_DATE_FORMAT4);
+		return d;
+	}
+	
+	public static boolean isSimpleDateFormat(String str) {
+		return !AonStringUtils.isBlank(str) && str.length() == 10 && str.contains("/") && str.indexOf("/") == 2;
+	}
+	
+	public static boolean isSimpleDateFormat2(String str) {
+		return !AonStringUtils.isBlank(str) && str.length() == 10 && str.contains("-") && str.indexOf("-") == 2;
+	}
+
+	public static boolean isSimpleDateFormat3(String str) {
+		return !AonStringUtils.isBlank(str) && str.length() == 10 && str.contains("/") && str.indexOf("/") == 4;
+	}
+	
+	public static boolean isSimpleDateFormat4(String str) {
+		return !AonStringUtils.isBlank(str) && str.length() == 10 && str.contains("-") && str.indexOf("-") == 4;
 	}
 
 	public static String orderFormat(Date date) {

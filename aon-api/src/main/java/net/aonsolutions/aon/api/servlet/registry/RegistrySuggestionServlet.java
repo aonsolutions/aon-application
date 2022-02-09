@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -96,10 +97,6 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	
 	
 	private JSONObject registryToJSON(Registry reg, Boolean global) {
-		return new JSONObject()
-				.put("id", reg.getId())
-				.put("document", reg.getDocument())
-				.put("name", reg.getName())
-				.put("global", global);
+		return RegistryJSON.toJSON(reg).put("global", global);
 	}
 }

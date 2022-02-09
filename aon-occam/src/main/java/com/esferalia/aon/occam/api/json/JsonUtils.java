@@ -94,7 +94,7 @@ public class JsonUtils {
 	
 	public static Date getDate(JSONObject json, String key ) {
 		if(json == null) return null;
-		String date = json.optString(key, null);
+		String date = json.optString(key, null).replace("\"", "");
 		Date d = AonDateUtils.parse(date);
 		if(d == null) d = getDateTime(json, key);
 		return d;
