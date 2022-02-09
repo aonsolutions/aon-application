@@ -5,7 +5,6 @@ import static com.esferalia.aon.gwt.payroll.client.MainEntryPoint.getParameter;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -109,7 +108,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ProvidesResize;
@@ -2242,10 +2240,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
 			EmployeeContractVariablesObject employeeContractVariablesObject = 
 			new EmployeeContractVariablesObject(contractId);
-			
-			employeeContractVariables.initializeYearLB();
-			employeeContractVariables.initializeVariableTypeLB();
-			employeeContractVariables.setSaveEnabled(true);
 			
 			return employeeContractVariablesObject;
 		}
