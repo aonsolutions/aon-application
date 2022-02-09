@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ColManager {
@@ -107,7 +108,7 @@ public class ColManager {
 		subtotalAon[7]  += e.ssEmpr.orElse(0.00);
 		subtotalAon[8]  += e.bonificaciones.orElse(0.00);
 		subtotalAon[9]  += e.fundae.orElse(0.00);
-		subtotalAon[10]  += e.ssTotal.orElse(0.00);
+		subtotalAon[10] += e.ssTotal.orElse(0.00) + e.fundae.orElse(0.00);
 		subtotalAon[11] += e.costeTotal.orElse(0.00);
 		
 		subtotalSs[2]  += 	e.devengadoSS.orElse(0.00);
@@ -117,10 +118,17 @@ public class ColManager {
 		subtotalSs[6]  += 	e.liquidoSS.orElse(0.00);
 		subtotalSs[7]  += 	e.ssEmprSS.orElse(0.00);
 		subtotalSs[8]  += 	e.bonificacionesSS.orElse(0.00);
-		subtotalSs[10]  += 	e.ssTotalSS.orElse(0.00);
+		subtotalSs[10] += 	e.ssTotalSS.orElse(0.00);
 		subtotalSs[11] += 	e.costeTotalSS.orElse(0.00);
 				
 	}
+	
+	public void manageSubtotalWithFudae() {
+		if (Arrays.stream(subtotalSs).anyMatch(value -> value != 0)) {
+			subtotalSs[10] += subtotalAon[9]; 
+		}
+	}
+	
 	public void addToTotal() {
 		
 		totalAon[2]  +=  subtotalAon[2];

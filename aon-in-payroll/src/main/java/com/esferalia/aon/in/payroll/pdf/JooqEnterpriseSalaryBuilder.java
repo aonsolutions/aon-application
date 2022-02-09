@@ -961,7 +961,7 @@ public class JooqEnterpriseSalaryBuilder {
 				for(ContractData cd : fundaeList) {
 					if (salaryStart.compareTo(cd.getEndDate()) <= 0 && salaryEnd.compareTo(cd.getEndDate()) >= 0) {
 						try {
-							Double value = Double.parseDouble(cd.getExpression());
+							Double value = (-1) * Double.parseDouble(cd.getExpression());
 							fundaeAmount += value;
 						} catch (NullPointerException | NumberFormatException e) {
 						} finally {								
@@ -972,7 +972,7 @@ public class JooqEnterpriseSalaryBuilder {
 				fundaeList.removeAll(removeable);
 				
 				
-				if (fundaeAmount > 0)
+				if (fundaeAmount != 0)
 					entry.setFundae(Optional.ofNullable(fundaeAmount));
 			}
 		}
