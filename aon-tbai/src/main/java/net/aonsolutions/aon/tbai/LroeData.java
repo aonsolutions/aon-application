@@ -19,6 +19,11 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -143,6 +148,42 @@ public class LroeData {
 				.setDataRequest(response.getDataRequest().getId());
 		
 		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+
+		InvoiceBatch invoiceBatch = new InvoiceBatch()
+				.setDomain(domain.getId())
+				.setDate(new Date())
+				.setType(info.getCommunicationType())
+				.setOperation(info.getCommunicationOperation())
+				.setDataResponse(dr.getId())
+				.setCreationUser(user.getLogin());
+		
+		InvoiceBatchDetail invoiceBatchDetail = new InvoiceBatchDetail()
+				.setDomain(domain.getId())
+				.setInvoice(invoice.getId())
+				.setStatus(response.isOk()
+					? InvoiceCommunicationStatus.ACCEPTED
+					: InvoiceCommunicationStatus.WRONG);
+		
+		InvoiceTracking invoiceTracking = new InvoiceTracking()
+				.setInvoiceBatch(invoiceBatch)
+				.setInvoiceBatchDetail(invoiceBatchDetail);
+		
+		AON.saveInvoiceTracking(domain, user, invoiceTracking);
+		
+		InvoiceInfo invoiceInfo = AON.getInvoiceInfo(domain, user, f-> f.getInvoiceProperty().eq(invoice.getId())
+				.and(f.getTypeProperty().eq(info.getCommunicationType().value())));
+		if(invoiceInfo.isEmpty()) invoiceInfo = new InvoiceInfo()
+				.setDomain(domain.getId())
+				.setInvoice(invoice.getId())
+				.setType(info.getCommunicationType());
+		if(invoiceBatch.getOperation().isAnnulment() && response.isOk()) {
+			invoiceInfo.setStatus(InvoiceCommunicationStatus.ANNULLED);
+		} else if(invoiceInfo.getStatus().isPending()) {
+			invoiceInfo.setStatus(response.isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
+		} else if(invoiceInfo.getStatus().isWrong() && response.isOk()) {
+			invoiceInfo.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+		}
+		AON.saveInvoiceInfo(domain, user, invoiceInfo);
 		
 		DataResponseDetail drd1 = new DataResponseDetail()
 				.setDomain(domain.getId())

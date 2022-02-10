@@ -100,6 +100,7 @@ public class InvoiceTaxDAO {
 		ctx.getDslContext().update(INVOICE_TAX)
 		.set(INVOICE_TAX.DOMAIN, invoiceTax.getDomain())
 		//TODO
+		.where(INVOICE_TAX.ID.eq(invoiceTax.getId()))
 		.execute();
 		return invoiceTax;
 	}

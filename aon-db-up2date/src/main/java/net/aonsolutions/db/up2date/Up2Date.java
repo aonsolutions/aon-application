@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.InsertInvoiceInfoLroe;
 import net.aonsolutions.db.up2date.finance.InvoiceBatchCreation;
 import net.aonsolutions.db.up2date.fiscal.FsModelInvoiceCreation;
 import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
@@ -218,7 +219,8 @@ public class Up2Date {
     		AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
     		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
     		InvoiceBatchCreation.INVOICE_BATCH_CREATION,
-    		FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION
+    		FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
+    		InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE
     };
     
 
