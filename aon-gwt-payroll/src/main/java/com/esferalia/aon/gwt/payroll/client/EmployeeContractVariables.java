@@ -483,5 +483,9 @@ public class EmployeeContractVariables extends Composite {
 	public void setMonthLB(ListBox monthLB) {
 		this.monthLB = monthLB;
 	}
+
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title);
+	}
 	
 }
