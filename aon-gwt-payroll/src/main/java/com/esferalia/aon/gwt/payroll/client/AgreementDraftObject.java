@@ -47,7 +47,9 @@ public class AgreementDraftObject {
 
 	static interface CalculateCallback {
 		void onCalculateFailure(Throwable throwable);
+
 		void onCalculateSucces(AgreementDraftObject object);
+
 	}
 
 	abstract private class UndoableEdit<T> implements Undoable {
