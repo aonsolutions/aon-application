@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod140;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -13,8 +14,12 @@ import com.esferalia.aon.gwt.common.shared.AonMenuItem;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.SiiService;
+import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
@@ -25,17 +30,27 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LroeModel140 extends DockLayoutPanel {
+	
+	private static final SiiServiceAsync SII_SERVICE;
+	static {
+		SiiServiceAsync siiServiceRaw = GWT.create(SiiService.class);
+		SII_SERVICE = new SiiServiceAsyncDecorator(siiServiceRaw); 
+	}
 	
 	private final AonMenuItem chapter1 = new AonMenuItem()
 			.setTitle("1. Ingresos y facturas emitidas")
@@ -98,9 +113,14 @@ public class LroeModel140 extends DockLayoutPanel {
 	private FiscalModelModuleOptions<FiscalModel> options;
 	InvoiceGrid invoiceGrid;
 	InvoiceParams filterParams;
+	
+	List<Invoice> selectedInvoices;
+	Model140 model140;
 
-	protected LroeModel140(FiscalModelModuleOptions<FiscalModel> options) {
+
+	protected LroeModel140(Model140 parent, FiscalModelModuleOptions<FiscalModel> options) {
 		super(Unit.PX);
+		this.model140 = parent;
 		FiscalModel mod140 = new FiscalModel();
 		mod140.setAdministration(Administration.BIZKAIA);
 		mod140.setModel(FiscalModelType.M140);
@@ -118,16 +138,17 @@ public class LroeModel140 extends DockLayoutPanel {
 			
 			@Override
 			public void info(Integer invoice, String reference) {
-				Window.alert("info");
+				Window.alert("En desarrollo...");
 			}
 
 			@Override
 			public void download(Invoice object) {
-				Window.alert("download");
+				Window.alert("En desarrollo...");
 			}
 
 			@Override
 			public void select(LinkedList<Invoice> selFiles) {
+				selectedInvoices = selFiles;
 				boolean visible = !selFiles.isEmpty();
 				sendButton.setVisible(visible);
 				bajaButton.setVisible(visible);
@@ -197,6 +218,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		bajaButton = new AonToolbarButton("Anular", AON.CSS.aonIconSendCancel());
 		bajaButton.addClickHandler(event -> send(false));
 		bajaButton.setVisible(false);
+		bajaButton.setEnabled(false);
 		toolbarPanel.add(bajaButton);
 		
 		AonToolbarButton draftButton = new AonToolbarButton(AON.MSG.generateFile(), AON.CSS.aonIconDownload());
@@ -312,13 +334,67 @@ public class LroeModel140 extends DockLayoutPanel {
 				@Override
 				protected void onAccept( AEATParams params) {
 					hide();
+					getModel140().openFootPanelIfNeeded();
+					VerticalPanel vp = new VerticalPanel();
+					getModel140().getBreakdownPanel().setWidget(vp);
 					if(alta) {
-						Window.alert("ALTA");
+						selectedInvoices.stream().forEach(invoice -> {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted()) {
+								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
+								vp.add(getErrorMessage(message));
+							} else {
+								SII_SERVICE.altaLroe140(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<ICResponse>() {
+									
+									@Override
+									public void onSuccess(ICResponse result) {
+										if(!result.isError()) { 	
+											String message = "La factura " + invoice.getReferenceCode() + " se ha enviado correctamente.";
+											vp.add(getOkMessage(message));
+										} else vp.add(getErrorMessage(result.getErrorMessage()));
+										
+										if(selectedInvoices.size() >= vp.getWidgetCount()) {
+											invoiceGrid.setFilterParams(getFilterParams());
+										}
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										vp.add(getErrorMessage(caught.getMessage()));
+										if(selectedInvoices.size() >= vp.getWidgetCount()) {
+											invoiceGrid.setFilterParams(getFilterParams());
+										}
+									}
+								});
+							}
+						});
 					} else {
 						Window.alert("BAJA");						
 					}
 				}
 			};
 			certPopup.center();
+	}
+	
+	public Label getMessage(String message, String color){
+		Label label = new Label(message);
+		label.getElement().getStyle().setColor(color);
+		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		return label;
+	}
+	
+	public Label getOkMessage(String message ){
+		return getMessage(message, "green");
+	}
+	
+	public Label getErrorMessage(String message ){
+		return getMessage(message, "red");
+	}
+	
+	public Label getWarningMessage(String message ){
+		return getMessage(message, "orange");
+	}
+	
+	public Model140 getModel140() {
+		return model140;
 	}
 }

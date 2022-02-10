@@ -69,7 +69,7 @@ public class Model140 extends MainEntryPoint {
 		declarationContainer = new SimpleLayoutPanel();
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		splitLayoutPanel.add(declarationContainer);
-		declarationContainer.setWidget(new LroeModel140(options));
+		declarationContainer.setWidget(new LroeModel140(this, options));
 		options.getParentWidget().add(aonLayout);		
 	}
 
@@ -98,10 +98,14 @@ public class Model140 extends MainEntryPoint {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
-	private void openFootPanelIfNeeded() {
+	public void openFootPanelIfNeeded() {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
 			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
 			splitLayoutPanel.animate(500);
 		}
+	}
+	
+	public ScrollPanel getBreakdownPanel() {
+		return breakdownPanel;
 	}
 }

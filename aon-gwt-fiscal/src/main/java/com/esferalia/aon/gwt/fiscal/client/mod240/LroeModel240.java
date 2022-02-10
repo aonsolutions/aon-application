@@ -19,13 +19,13 @@ import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -111,12 +111,12 @@ public class LroeModel240 extends DockLayoutPanel {
 			
 			@Override
 			public void info(Integer invoice, String reference) {
-				Window.alert("info");
+				Window.alert("En desarrollo...");
 			}
 
 			@Override
 			public void download(Invoice object) {
-				Window.alert("download");
+				Window.alert("En desarrollo...");
 			}
 
 			@Override
@@ -182,7 +182,7 @@ public class LroeModel240 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_2)
+				.setCommunicationType(InvoiceCommunicationType.LROE_2)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
@@ -233,6 +233,7 @@ public class LroeModel240 extends DockLayoutPanel {
 		bajaButton = new AonToolbarButton("Anular", AON.CSS.aonIconSendCancel());
 		bajaButton.addClickHandler(event -> send(false));
 		bajaButton.setVisible(false);
+		bajaButton.setEnabled(false);
 		toolbarPanel.add(bajaButton);
 		
 		AonToolbarSearchBox searchBox = new AonToolbarSearchBox() {
@@ -285,14 +286,14 @@ public class LroeModel240 extends DockLayoutPanel {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {
-								SII_SERVICE.altaLroe240(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<AEATResponse>() {
+								SII_SERVICE.altaLroe240(options.getDomainName(), options.getDomain(), options.getUser(), getFilterParams().getCommunicationType(), invoice, params, new AsyncCallback<ICResponse>() {
 									
 									@Override
-									public void onSuccess(AEATResponse result) {
-										if(result.isCorrect()) { 	
+									public void onSuccess(ICResponse result) {
+										if(!result.isError()) { 	
 											String message = "La factura " + invoice.getReferenceCode() + " se ha enviado correctamente.";
 											vp.add(getOkMessage(message));
-										} else vp.add(getErrorMessage(result.getErrores().getFirst()));
+										} else vp.add(getErrorMessage(result.getErrorMessage()));
 										
 										if(selectedInvoices.size() >= vp.getWidgetCount()) {
 											invoiceGrid.setFilterParams(getFilterParams());

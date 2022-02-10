@@ -28,7 +28,8 @@ public class LROE240 extends LROE{
 		cabecera.setObligadoTributario(nif);
 		cabecera.setEjercicio(AonDateUtils.getYear(new Date()));
 		cabecera.setCapitulo(info.getCapitulo());
-		cabecera.setSubcapitulo(info.getSubcapitulo());
+		if(info.getSubcapitulo() != null)
+			cabecera.setSubcapitulo(info.getSubcapitulo());
 		cabecera.setOperacion(info.getOperacion());
 		cabecera.setVersion(info.getVersion());
 		return cabecera;
@@ -37,7 +38,8 @@ public class LROE240 extends LROE{
 	protected static JSONObject buildJSON(Company company, LROEInfo info) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.CON, LROE);
-		json.put(IJsonNames.APA, info.getSubcapitulo());
+		json.put(IJsonNames.APA, info.getSubcapitulo() != null
+				? info.getSubcapitulo() : info.getCapitulo());
 		JSONObject json2 = new JSONObject();
 		json2.put(IJsonNames.NIF, company.getDocument().replace(" ", "")); 
 		json2.put(IJsonNames.NRS, company.getName());

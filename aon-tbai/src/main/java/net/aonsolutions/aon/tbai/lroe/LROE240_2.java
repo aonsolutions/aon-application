@@ -51,12 +51,11 @@ import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
-public class LROE240_2_1 extends LROE240 {
+public class LROE240_2 extends LROE240 {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private static final String CAPITULO = "2";
-	private static final String SUBCAPITULO = "2.1";
 	
 	private LROEPJ240FacturasRecibidasAltaModifPeticion build(Company company, List<Invoice> invoices, LROEInfo info) {
 		LROEPJ240FacturasRecibidasAltaModifPeticion lroe =  new LROEPJ240FacturasRecibidasAltaModifPeticion();
@@ -179,8 +178,11 @@ public class LROE240_2_1 extends LROE240 {
 
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			if(!detail.isPrepayment()) {
-				InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
-				InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().get();
+				InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
+//				InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
+				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+				}
 				DetalleIVAFacturaRecibidaType r = new DetalleIVAFacturaRecibidaType();
 				r.setCompraBienesCorrientesGastosBienesInversion(invoice.isPurchase() ? TipoCompraGastoBienEnum.C : TipoCompraGastoBienEnum.G);
 				if(detail.getInvestAsset() != null && invoice.isInvestment()) {
@@ -192,7 +194,7 @@ public class LROE240_2_1 extends LROE240 {
 				r.setTipoImpositivo(Double.toString(tax.getPercentage()));
 				r.setCuotaIVADeducible(Double.toString(tax.getDeductibleQuota()));
 				r.setCuotaIVASoportada(Double.toString(tax.getQuota()));
-
+				
 				// r.setPorcentajeCompensacionREAGYP("");
 				// r.setImporteCompensacionREAGYP("");
 			
@@ -233,15 +235,18 @@ public class LROE240_2_1 extends LROE240 {
 			
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p240, bos );
-			byte[] data = toGzip(bos.toByteArray());
-			return send(tbaiConfiguration, buildJSON(company, info), data);
+			
+			byte[] xml = bos.toByteArray();
+			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
+			byte[] data = toGzip(xml);
+			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
 	}
 	
 	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_240, CAPITULO, SUBCAPITULO, operacion);
+		return new LROEInfo(MODEL_240, CAPITULO, null, operacion);
 	}
 	
 	private LROEPJ240FacturasRecibidasAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info) {	

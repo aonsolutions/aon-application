@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
 import java.util.Date;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.IJsonNames;
@@ -67,6 +69,12 @@ public class InvoiceJSON {
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
 				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY));
+	}
+
+	public static JSONArray toJSON(List<Invoice> invoices) {
+		JSONArray array = new JSONArray();
+		invoices.stream().forEach(invoice -> array.put(toJSON(invoice)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(Invoice invoice) {

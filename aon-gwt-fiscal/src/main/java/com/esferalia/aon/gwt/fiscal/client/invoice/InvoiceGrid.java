@@ -115,7 +115,7 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	}
 	
 	public void setFilterParams(InvoiceParams filterParams) {
-		this.filterParams = filterParams;
+		this.filterParams = filterParams.setPage(1);	
 		getInvoices(new AsyncCallback<List<Invoice>>() {
 
 			@Override

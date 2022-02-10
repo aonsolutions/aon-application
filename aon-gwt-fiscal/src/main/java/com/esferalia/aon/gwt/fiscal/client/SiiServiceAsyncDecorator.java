@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SiiServiceAsyncDecorator implements SiiServiceAsync {
@@ -35,7 +35,7 @@ public class SiiServiceAsyncDecorator implements SiiServiceAsync {
 
 	@Override
 	public void altaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
-			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
 		AON.start();
 		ssa.altaLroe140(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
 		
@@ -50,7 +50,7 @@ public class SiiServiceAsyncDecorator implements SiiServiceAsync {
 	
 	@Override
 	public void altaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
-			Invoice invoice, AEATParams aeatParams, AsyncCallback<AEATResponse> callback) {
+			Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
 		AON.start();
 		ssa.altaLroe240(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
 		

@@ -86,6 +86,7 @@ public class InvoiceTrackingDAO {
 		InvoiceBatch invoiceBatch = InvoiceBatchDAO.save(ctx, invoiceTracking.getInvoiceBatch());
 		invoiceTracking.setInvoiceBatch(invoiceBatch);
 		
+		invoiceTracking.getInvoiceBatchDetail().setInvoiceBatch(invoiceBatch.getId());
 		InvoiceBatchDetail invoiceBatchDetail = InvoiceBatchDetailDAO.save(ctx, invoiceTracking.getInvoiceBatchDetail());
 		invoiceTracking.setInvoiceBatchDetail(invoiceBatchDetail);
 	

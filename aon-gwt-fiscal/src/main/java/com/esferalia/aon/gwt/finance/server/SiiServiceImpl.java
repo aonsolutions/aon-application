@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.SiiService;
+import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
@@ -16,19 +17,23 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.tbai.InvoiceCommunication;
+import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.lroe.LROE140_2_1;
-import net.aonsolutions.aon.tbai.lroe.LROE240_2_1;
+import net.aonsolutions.aon.tbai.lroe.LROE240_2;
+import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 @WebServlet(name = "Sii Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/sii" })
 public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements SiiService {
@@ -80,23 +85,36 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
     }
 
 	@Override
-	public String altaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) throws Exception {
+	public ICResponse altaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
 			Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
-			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
-			} else if(InvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
-				LROE140_2_1 lroe = new LROE140_2_1();
-				lroe.alta(tbaiConfiguration, person, invoice);
-			}
-			return null;	
+			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
+			tbaiConfiguration.setCertificate(cert);
+			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoice.getId());
+			InvoiceCommunication ic = new InvoiceCommunication()
+					.setCompany(company)
+					.setPerson(person)
+					.setInvoice(invoice)
+					.setModel(FiscalModelType.M140)
+					.setOperation(InvoiceCommunicationOperation.REGISTER)
+					.setTbaiConfiguration(tbaiConfiguration)
+					.setType(communicationType);
+			
+			LroeMain lroe = new LroeMain();
+			LROEResponse resp = lroe.alta(ic);
+			ICResponse icResponse = new ICResponse();
+			icResponse.setError(resp.isError());
+			icResponse.setErrorMessage(resp.getErrorMessage());
+			return icResponse;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw e;
+			ICResponse icResponse = new ICResponse();
+			icResponse.setError(true);
+			icResponse.setErrorMessage(e.getMessage());
+			return icResponse;
 		}
 	}
 
@@ -107,6 +125,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
 			Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
+			
 			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
@@ -114,6 +133,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 				LROE140_2_1 lroe = new LROE140_2_1();
 				lroe.anulacion(person, tbaiConfiguration, invoice);
 			}
+			
 			return null;	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -122,7 +142,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 	
 	@Override
-	public AEATResponse altaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+	public ICResponse altaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
@@ -130,19 +150,26 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 			tbaiConfiguration.setCertificate(cert);
 			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoice.getId());
-			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
-			} else if(InvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
-				LROE240_2_1 lroe = new LROE240_2_1();
-				lroe.alta(tbaiConfiguration, company, invoice);
-			}
-			return new AEATResponse();	
+			InvoiceCommunication ic = new InvoiceCommunication()
+					.setCompany(company)
+					.setInvoice(invoice)
+					.setModel(FiscalModelType.M240)
+					.setOperation(InvoiceCommunicationOperation.REGISTER)
+					.setTbaiConfiguration(tbaiConfiguration)
+					.setType(communicationType);
+			
+			LroeMain lroe = new LroeMain();
+			LROEResponse resp = lroe.alta(ic);
+			ICResponse icResponse = new ICResponse();
+			icResponse.setError(resp.isError());
+			icResponse.setErrorMessage(resp.getErrorMessage());
+			return icResponse;
 		} catch (Exception e) {
 			e.printStackTrace();
-			AEATResponse aeat = new AEATResponse();
-			aeat.addError(e.getMessage());
-			return aeat;
+			ICResponse icResponse = new ICResponse();
+			icResponse.setError(true);
+			icResponse.setErrorMessage(e.getMessage());
+			return icResponse;
 		}
 	}
 
@@ -156,7 +183,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 				TbaiMain tbai = new TbaiMain();
 				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
 			} else if(InvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
-				LROE240_2_1 lroe = new LROE240_2_1();
+				LROE240_2 lroe = new LROE240_2();
 				lroe.anulacion(company, tbaiConfiguration, invoice);
 			}
 			return null;	

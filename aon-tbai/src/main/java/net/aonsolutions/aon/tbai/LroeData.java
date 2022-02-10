@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONObject;
 
@@ -115,6 +116,33 @@ public class LroeData {
 		JSONObject json = new JSONObject();
 		json.put("lroe", info.toJSON());
 		json.put("invoice", InvoiceJSON.toJSON(invoice));
+		DataRequest request = new DataRequest()
+			.setDomain(domain.getId())
+			.setDate(new Date())
+			.setBlackBox(json.toString())
+			.setType(DataRequestType.LROE);
+		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
+		request.setMd5(md5);
+		
+		request = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), request);
+		
+		Attach attach = new Attach()
+				.setDomain(domain)
+				.setAttachType(AttachType.DATA)
+				.setType(DataAttachType.REQUEST.value())
+				.setSource(DataAttachSource.LROE.value())
+				.setSourceId(request.getId())
+				.setMimeType(MimeType.XML)
+				.setData(data);
+		
+		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+		return request;
+	}
+	
+	public static DataRequest saveRequest(Domain domain, User user, List<Invoice> invoice, LROEInfo info, byte[] data) {
+		JSONObject json = new JSONObject();
+		json.put("lroe", info.toJSON());
+		json.put("invoices", InvoiceJSON.toJSON(invoice));
 		DataRequest request = new DataRequest()
 			.setDomain(domain.getId())
 			.setDate(new Date())

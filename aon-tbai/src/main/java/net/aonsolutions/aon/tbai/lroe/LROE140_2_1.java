@@ -152,6 +152,9 @@ public class LROE140_2_1 extends LROE140 {
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
 			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().get();
+			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+			}
 			DetalleRentaIVAGastoType r = new DetalleRentaIVAGastoType();
 			r.setEpigrafe(invoice.getEpigraph());
 			r.setConcepto(detail.getDescription());
@@ -251,6 +254,10 @@ public class LROE140_2_1 extends LROE140 {
 			emisor.setIDOtro(otro);
 		}
 		return emisor;
+	}
+	
+	public LROEInfo buildInfo(OperacionEnum operacion) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
 	}
 	
 	public LROEResponse anulacion(Person person, TbaiConfiguration tbaiConfiguration, Invoice invoice) throws StatusCodeException {

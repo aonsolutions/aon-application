@@ -49,7 +49,6 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_2_facturasemitidas_sinsg_altamodifpeticion_v1_0_1.LROEPJ240FacturasEmitidasSinSGAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_2_facturasemitidas_sinsg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasSinSGAnulacionPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
-import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 
@@ -220,7 +219,7 @@ public class LROE240_1_2 extends LROE240 {
 		return destinatarios;
 	}
 	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) throws StatusCodeException {
+	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.A_00);
 			
