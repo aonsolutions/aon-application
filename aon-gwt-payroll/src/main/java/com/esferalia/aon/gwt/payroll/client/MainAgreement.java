@@ -228,6 +228,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		@Override
 		public void onFailure(Throwable caught) {
 			if ( !isSelected() ) return;
+			// TODO Auto-generated method stub
 			MainAgreement.this.agreementDraft
 					.setAgreementDraftObject(agreementDraftObject);
 		}
@@ -235,10 +236,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		@Override
 		public void onSuccess(SortedSet<Date> result) {
 			if ( !isSelected() ) return;
-			
+			// TODO Auto-generated method stub
 			if (!CollectionUtils.isEmpty(result)) {
 				Date lastChange = result.last();
 				agreementDraftObject.setStartDate(lastChange);
+//				agreementDraftObject.setStartDate(DateUtils
+//						.getFirstDayOfMonth(lastChange));
 				agreementDraftObject.setEndDate(DateUtils
 						.getLastDayOfMonth(lastChange));
 			}
@@ -447,16 +450,16 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			agreementDraftObject.addListener(new DraftObjectListener(treeItem,
 					agreementDraftObject));
 			
-//			agreements.getAgreementsTree().getEmployeesService()
-//					.getChanges( 
-//							Wnd.getCurrentDomainNameURL(),
-//							agreement, 
-//							new AgreementChangesCallback(agreementDraftObject));
+			agreements.getAgreementsTree().getEmployeesService()
+					.getChanges( 
+							Wnd.getCurrentDomainNameURL(),
+							agreement, 
+							new AgreementChangesCallback(agreementDraftObject));
 
 		} // end-if: Not exists, create it then...
-//		else {
+		else {
 			agreementDraft.setAgreementDraftObject(agreementDraftObject);
-//		}
+		}
 		
 		agreements.getToolbar().setVisibleDraftButton(isEditable(agreementDraftObject));
 		

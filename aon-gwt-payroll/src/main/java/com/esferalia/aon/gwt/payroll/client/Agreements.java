@@ -341,13 +341,10 @@ public class Agreements extends ResizeComposite implements
 						}
 						
 						// Select the first one.
-//						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0) {
-//							Window.alert("getAgreements select");
-//							agreementsTree.getTree().setSelectedItem(
-//									agreementsTree.getTree().getItem(
-//											Math.max(item2Select, 0)), true);
-//						}
-						
+						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
+							agreementsTree.getTree().setSelectedItem(
+									agreementsTree.getTree().getItem(
+											Math.max(item2Select, 0)), true);
 						// Get remainning
 						if ( agreements.size() == limit )
 							getAgreements(offset + limit, limit , s -> {
@@ -433,9 +430,8 @@ public class Agreements extends ResizeComposite implements
 		}
 		
 		// If not exist active agreements.. select first
-		if(!isSelected) {
+		if(!isSelected)
 			agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
-		}
 	}
 	
 	private void selectImportAgreement(Integer agreementId, Consumer<Boolean> success) {

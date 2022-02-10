@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.PERCENT_FORMAT;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.ERROR;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.WARNING;
 
@@ -332,6 +333,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				public void onClick(ClickEvent event) {
 					extra.setIssueDate("REMOVE()");
 					AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+					;
 					AgreementDraft.this.calculate();
 				}
 			});
@@ -1096,8 +1098,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				protected void onAccept(List<Payment> payments) {
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					save(AgreementDraft.this);
-//					agreementDraftObject.save(AgreementDraft.this);
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 
 				@Override
@@ -1123,9 +1124,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				protected void onAccept(List<Payment> payments) {
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					
-					save(AgreementDraft.this);
-//					agreementDraftObject.save(AgreementDraft.this);
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 				@Override
@@ -1151,9 +1150,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				protected void onAccept(List<Payment> payments) {
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					
-					save(AgreementDraft.this);
-//					agreementDraftObject.save(AgreementDraft.this);
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 				@Override
@@ -1179,8 +1176,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				protected void onAccept(List<Payment> payments) {
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					save(AgreementDraft.this);
-//					agreementDraftObject.save(AgreementDraft.this);
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 				@Override
@@ -1213,8 +1209,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					for(Extra extra : extras)
 						AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
 					
-					save(AgreementDraft.this);
-//					agreementDraftObject.save(AgreementDraft.this);
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 			};
@@ -1672,8 +1667,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	
 	private void changeTab(ToggleButton button, boolean readOnly, Button moreOptionsBtn, Date[] datesList) {
 		if(!readOnly){
-//			agreementDraftObject.save(new CalculateCallback() {
-			save(new CalculateCallback() {
+			agreementDraftObject.save(new CalculateCallback() {
 	
 				@Override
 				public void onCalculateFailure(Throwable throwable) {}
@@ -1979,8 +1973,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			agreementDraftObject.setEndDate(finalNewSelectTabEndDate);
 			
 			// TODO: no he conseguido hacerlo con Calculate
-			save(this);
-//			agreementDraftObject.save(this);
+			agreementDraftObject.save(this);
 			
 		}
 		
@@ -2094,6 +2087,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	public void setAgreementDraftObject(AgreementDraftObject agreementDraftObject) {
+		
 		if (this.agreementDraftObject != null) {
 			agreementDraftObject.removeListener(undoListener);
 			
@@ -2104,8 +2098,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		showExtrasTable = false;
 		showDraft();
 		this.agreementDraftObject = agreementDraftObject;
-		AgreementDraft.this.calculate();
-//		this.agreementDraftObject.calculate(this);
+		this.agreementDraftObject.calculate(this);
 		enableUndoRedoButtons();
 		this.agreementDraftObject.addListener(undoListener);
 
@@ -2118,14 +2111,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	@Override
 	public void onCalculateFailure(Throwable throwable) {
-		showError("Error calculando el convenio", throwable.getMessage());
-//		AonDialog warnDialog = new AonDialog("ERROR", new HTML(throwable.getMessage()));
-//		warnDialog.warning();
+		AonDialog warnDialog = new AonDialog("ERROR", new HTML(throwable.getMessage()));
+		warnDialog.warning();
 	}
 
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
-		
+
 //		this.agreementDraftObject = object;
 		
 //		Window.alert("Draft StartDate : " + agreementDraftObject.getStartDate() + " Draft EndDate : " + agreementDraftObject.getEndDate());
@@ -2137,16 +2129,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		setSSNumber();
 		setDescription();
-		
+
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() /*&& isOnCategoryTab*/ )
 			categoryButton.click();
 		else {
-//			createSalaryTable();
+			createSalaryTable();
 			agreementDraftObject.showValueVariables();
 			if(agreementDraftObject.getShownVariables().isEmpty())
 				agreementDraftObject.showNoValueVariables();
-			createSalaryTable();
-//			reloadSalaryTable();
+			reloadSalaryTable();
 		}
 		
 		clearPaymentsTable();
@@ -2183,7 +2174,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		setVisible(serviAgreementPanel.getElement(), isServiAgreement);
 		setVisible(serviAgreementUpdateButton.getElement(), isServiAgreement);
 		
-		showSuccess("Convenio cargado", "Convenio cargado correctamente");
 	}
 
 	private void createSalaryTable() {
@@ -2432,13 +2422,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	//
 	// ------------------------------------------------------------------------
 
-	private void save(CalculateCallback callback) {
-		showLoading("Guardando convenio...");
-		agreementDraftObject.save(callback);
-	}
-	
 	private void calculate() {
-		showLoading("Calculando el contexto del convenio...");
 		agreementDraftObject.calculate(this);
 	}
 	
@@ -2461,7 +2445,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		};
 
-		showLoading("Calculando el contexto del convenio...");
 		agreementDraftObject.calculate(compositeCb);
 	}
 
@@ -4812,16 +4795,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			agreementDraftObject.clearDrafts();
 			agreementDraftObject.clearNewDatesWithChanges();
 			agreementDraftObject.clearDeleteDatesWithChanges();
-			AgreementDraft.this.calculate();
-//			agreementDraftObject.calculate(AgreementDraft.this);
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(undoAllButton);
 		
 		undoButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndo() );
 		undoButton.addClickHandler(e -> {
 			agreementDraftObject.undo();
-			AgreementDraft.this.calculate();
-//			agreementDraftObject.calculate(AgreementDraft.this);
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(undoButton);
 		undoButton.setVisible(false);
@@ -4829,14 +4810,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		redoButton = new AonToolbarButton("Rehacer", AON.CSS.aonIconRedo() );
 		redoButton.addClickHandler(e -> {
 			agreementDraftObject.redo();
-			AgreementDraft.this.calculate();
-//			agreementDraftObject.calculate(AgreementDraft.this);
+			agreementDraftObject.calculate(AgreementDraft.this);
 		});
 		toolbar.add(redoButton);
 		redoButton.setVisible(false);
 		
 		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(e -> /*agreementDraftObject.*/save(AgreementDraft.this));
+		acceptButton.addClickHandler(e -> agreementDraftObject.save(AgreementDraft.this));
 		toolbar.add(acceptButton);
 		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
@@ -4920,8 +4900,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							AgreementDraftObject agreementDraftObjectNew = agreementDraftObject.createAgreementDraftObject();
 							agreementDraftObject.getChanges(
 									agreementDraftObjectNew, 
-									s -> this.setAgreementDraftObject(agreementDraftObjectNew), 
-									f -> {});
+									s -> {
+										this.setAgreementDraftObject(agreementDraftObjectNew);
+										calculate();
+									}, f -> {});
 						}
 					}, 
 					f -> showError("Error actualizaci\u00F3n", f.getMessage()));
