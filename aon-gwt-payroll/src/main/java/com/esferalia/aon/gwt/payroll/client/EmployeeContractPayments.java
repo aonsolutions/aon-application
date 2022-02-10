@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -41,6 +43,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -383,8 +386,20 @@ public class EmployeeContractPayments extends Composite {
 	    
 	    // Delete column.
 	    ActionCell<ContractConceptCalc> deleteActionCell = new ActionCell<>("", contractConceptCalc -> {
-	    	employeeContractPaymentsObject.deleteContractConceptCalc(contractConceptCalc);
-	    	onSave();
+	    	AonDialog deleteDialog = new AonDialog("Eliminar concepto", new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
+			deleteDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+			    	employeeContractPaymentsObject.deleteContractConceptCalc(contractConceptCalc);
+			    	onSave();
+				}
+			});
 	    }); 
 	    
 	    Column<ContractConceptCalc, ContractConceptCalc> deleteColumn = new Column<ContractConceptCalc, ContractConceptCalc>(deleteActionCell) {

@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
@@ -31,6 +33,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -229,8 +232,20 @@ public class EmployeeContractVariables extends Composite {
 	    
 	    // Delete column.
 	    ActionCell<ContractVariable> deleteActionCell = new ActionCell<>("", contractVariable -> {
-	    	employeeContractVariablesObject.deleteContractVariable(contractVariable);
-	    	onSave();
+	    	AonDialog deleteDialog = new AonDialog("Eliminar variable", new HTML("\u00BFDesea eliminar la variable seleccionada\u003F"));
+			deleteDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					employeeContractVariablesObject.deleteContractVariable(contractVariable);
+			    	onSave();
+				}
+			});
 	    }); 
 	    
 	    Column<ContractVariable, ContractVariable> deleteColumn = new Column<ContractVariable, ContractVariable>(deleteActionCell) {
