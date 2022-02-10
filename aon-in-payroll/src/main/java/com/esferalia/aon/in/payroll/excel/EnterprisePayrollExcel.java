@@ -620,7 +620,7 @@ public class EnterprisePayrollExcel {
 		if (data.containsKey(FUNDAE) && data.get(FUNDAE) != null) {
 			List<ContractData> fundaeList = data.get(FUNDAE);
 			HashSet<Integer> monthsWithFundae = new HashSet<>();
-			double value = fundaeList.stream().filter(d -> filterContractData(payroll, d, monthsWithFundae)).map(d -> {
+			double value = (-1) * fundaeList.stream().filter(d -> filterContractData(payroll, d, monthsWithFundae)).map(d -> {
 				String expression = d.getExpression();
 				try {
 					return Double.parseDouble(expression);
@@ -1288,7 +1288,7 @@ public class EnterprisePayrollExcel {
 				
 				
 				//WORKPLACE'S TOTALS
-				writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, totalRows, excelType, true, fixedCells);
+				writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, totalRows, excelType, true, fixedCells, finalHeader);
 
 				for (int i = 0; i < finalHeader.size(); i++) {
 					sheet.autoSizeColumn(i);
@@ -1884,15 +1884,14 @@ public class EnterprisePayrollExcel {
 					
 
 					
-
 				
 				//WORKPLACE'S TOTALS
-				int totalsRow = writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType);
+				int totalsRow = writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType, finalHeader);
 
 				//WORKPLACE'S SS TOTALS
 				if (ssRows != null && !ssRows.isEmpty()) {
 					hasSS = true;
-					writeWorkplaceSSTotals(wb, stylesMap, sheet, joints, importantCells, ssRows, ssCols);
+					writeWorkplaceSSTotals(wb, stylesMap, sheet, joints, importantCells, ssRows, ssCols, finalHeader);
 				}
 				
 				
@@ -2744,20 +2743,31 @@ public class EnterprisePayrollExcel {
 		return row.getRowNum();
 		
 	}
+	
+	private static int getKeyIndex(Map<String, String> header, String key) {
+		int ind = 0;
+		for(String k : header.keySet()) {
+			if (k != null && k.equals(key)) {
+				return ind;
+			}
+			ind++;
+		}
+		return -1;
+	}
 
 	private static int writeWorkplaceTotals(Map<PayrollCellStyle, CellStyle> stylesMap, Sheet sheet, ArrayList<Integer> joints,
-			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType) {
-		return writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType, false);
+			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType, Map<String, String> header) {
+		return writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType, false, header);
 	}
 	
 	
 	private static int writeWorkplaceTotals(Map<PayrollCellStyle, CellStyle> stylesMap, Sheet sheet, ArrayList<Integer> joints,
-			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType, boolean completeWorkplace) {
-		return writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType, completeWorkplace, Collections.emptyMap());
+			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType, boolean completeWorkplace, Map<String, String> header) {
+		return writeWorkplaceTotals(stylesMap, sheet, joints, importantCells, normalRows, excelType, completeWorkplace, Collections.emptyMap(), header);
 	}
 	
 	private static int writeWorkplaceTotals(Map<PayrollCellStyle, CellStyle> stylesMap, Sheet sheet, ArrayList<Integer> joints,
-			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType, boolean completeWorkplace, Map<Integer, Double> fixedValues) {
+			ArrayList<Integer> importantCells, LinkedList<Integer> normalRows, ExcelType excelType, boolean completeWorkplace, Map<Integer, Double> fixedValues, Map<String, String> header) {
 		Row row;
 		
 		fixedValues = fixedValues != null ? fixedValues : Collections.emptyMap();
@@ -2776,6 +2786,9 @@ public class EnterprisePayrollExcel {
 		row = sheet.createRow(sheet.getLastRowNum() + 1);
 		
 		int ind = 1;
+		
+		int totalssInd = getKeyIndex(header, "totalSS");
+		int fundaeInd = getKeyIndex(header, FUNDAE);
 		
 		if (completeWorkplace) {
 			Cell totalCell = row.createCell(2);
@@ -2802,6 +2815,11 @@ public class EnterprisePayrollExcel {
 				fsb.append("+" + CellReference.convertNumToColString(i) + r);
 				
 			}
+			
+			if (i == totalssInd && fundaeInd > 0) {
+				fsb.append("+" + CellReference.convertNumToColString(fundaeInd) + (row.getRowNum() + 1));
+			}
+			
 			Cell cell = row.createCell(i);
 			if (joints.contains(i))
 				style = stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE);
@@ -2817,7 +2835,7 @@ public class EnterprisePayrollExcel {
 						cell.setCellType(CellType.BLANK);
 					else
 						cell.setCellValue(value);
-				} else {
+				} else {					
 					cell.setCellFormula(fsb.toString());
 					cell.setCellType(CellType.FORMULA);
 				}
@@ -2830,7 +2848,7 @@ public class EnterprisePayrollExcel {
 	}
 	
 	private static void writeWorkplaceSSTotals(Workbook wb, Map<PayrollCellStyle, CellStyle> stylesMap, Sheet sheet, ArrayList<Integer> joints,
-			ArrayList<Integer> importantCells, LinkedList<Integer> ssRows, HashSet<Integer> ssCols) {
+			ArrayList<Integer> importantCells, LinkedList<Integer> ssRows, HashSet<Integer> ssCols, Map<String, String> header) {
 		Row row;
 		
 		
@@ -2844,6 +2862,9 @@ public class EnterprisePayrollExcel {
 		
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 		
+		int totalssInd = getKeyIndex(header, "totalSS");
+		int fundaeInd = getKeyIndex(header, FUNDAE);
+		
 		for (int i = 2; i < lastColumn; i++) {
 				CellStyle style = stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE);
 				StringBuilder fsb = new StringBuilder("0");
@@ -2851,6 +2872,11 @@ public class EnterprisePayrollExcel {
 					fsb.append("+" + CellReference.convertNumToColString(i) + r);
 					
 				}
+				
+				if (i == totalssInd && fundaeInd > 0) {
+					fsb.append("+" + CellReference.convertNumToColString(fundaeInd) + row.getRowNum());
+				}
+				
 				Cell cell = row.createCell(i);
 				if (joints.contains(i))
 					style = stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE);

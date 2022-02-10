@@ -332,6 +332,9 @@ public class EnterprisePayrollTemplate extends PdfFile {
 					t.mg.addToSubtotal(entry.getValue());
 				} catch (Exception ignored){}
 			});
+			
+			t.mg.manageSubtotalWithFudae();
+			
 			try
 			{
 				drawSubtotal(t, table);
