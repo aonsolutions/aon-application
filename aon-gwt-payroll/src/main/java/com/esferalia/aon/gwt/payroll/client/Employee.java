@@ -1211,7 +1211,7 @@ public abstract class Employee extends ResizeComposite {
 		} else
 			document.setEnabled(true);
 		
-		nationality.setEnabled(false);
+		nationality.setEnabled(true);
 		
 		String ssNum = this.securitySocialNum.getValue().trim();
 		if(AonStringUtils.isNotBlank(ssNum))
