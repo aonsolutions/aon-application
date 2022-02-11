@@ -2471,7 +2471,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		logEvent("richStylesInjected");
 		
-		if ( !Wnd.isSysAdmin() )
+		if ( false )
 			employees = new Employees(true, true) {
 				@Override
 				public void onEnterprise(Enterprise enterprise) {
@@ -2492,7 +2492,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				if ( AonStringUtils.isNotBlank(employeeSearch) )
 					employees.search(employeeSearch);
 			}
-		};
+			};
 		
 
 		// Create the UI defined in Employee.ui.xml.

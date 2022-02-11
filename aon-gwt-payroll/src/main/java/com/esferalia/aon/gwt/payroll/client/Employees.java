@@ -1827,14 +1827,17 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	protected void tryNewAONTheme(TreeItem employeeItem, EmployeeDraftObject employeeDraftObject) {
-		if ( !Wnd.isNewAONTheme() )
-			return;
 		SalaryDraftObject salaryDraftObject = getUserObject(employeeDraftObject, SalaryDraftObject.class);
-		TreeItem salaryDraftItem = getTreeItem(salaryDraftObject);
-		employeeItem.setUserObject(salaryDraftObject);
-		salaryDraftItem.setUserObject(employeeDraftObject);
-		salaryDraftItem.setHTML(materialIconItemHTML("edit", "Contrato"));
-		salaryDraftItem.ensureDebugId(getId(employeeDraftObject.getEmployee())+"-contract");
+		if ( salaryDraftObject == null ) {
+			salaryDraftObject = newSalaryDraftObject(employeeDraftObject.getEmployee());
+			employeeItem.setUserObject(salaryDraftObject);
+		}else {
+			employeeItem.setUserObject(salaryDraftObject);
+			TreeItem salaryDraftItem = getTreeItem(salaryDraftObject);
+			salaryDraftItem.setUserObject(employeeDraftObject);
+			salaryDraftItem.setHTML(materialIconItemHTML("edit", "Contrato"));
+			salaryDraftItem.ensureDebugId(getId(employeeDraftObject.getEmployee())+"-contract");
+		}
 	}
 
 
@@ -2043,43 +2046,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private int getEmployeeLimit() {
 		TreeItem root = tree.getItem(0);
 
-		//TreeItem item = root.getChild(ENTERPRISE_COSTS_INDEX);
-
 		int itemHeight = root.getOffsetHeight();
 		int browserHeight = Window.getClientHeight();
 		int visibleItems = browserHeight / itemHeight;
 		return Math.max(visibleItems + 1, MIN_EMPLOYEE_LIMIT);
 	}
-
-//	private void shortenTree(boolean shorten) {
-//		for (int i = 0; i < tree.getItemCount(); i++) {
-//			shortenTreeItem(tree.getItem(i), shorten);
-//		}
-//	}
-//
-//	private void shortenTreeItem(TreeItem treeItem, boolean shorten) {
-//		Object userObject = treeItem.getUserObject();
-//		treeItem.setVisible(
-//				(!shorten ) || 
-//				(userObject instanceof CCC) ||
-//				(userObject instanceof Activity) ||
-//				(userObject instanceof Workplace) ||
-//				(userObject instanceof Enterprise) || 
-//				(userObject instanceof EmployeeDraftObject) 
-//		);
-//		
-//		if ( userObject instanceof EmployeeDraftObject  ) {
-//			NodeList<Element> imgs = treeItem.getElement().getElementsByTagName("img");
-//			for ( int i = 0; i < imgs.getLength(); i++ ) {
-//				imgs.getItem(i).getStyle().setDisplay(shorten ? Display.NONE: Display.INITIAL);
-//			}
-//		}
-//		
-//		for (int i = 0; i < treeItem.getChildCount(); i++) {
-//			shortenTreeItem(treeItem.getChild(i), shorten);
-//		}
-//	}
-	
 
 	/**
 	 * Change formers. Note that we assume that workplaces start at position 2,
@@ -2089,11 +2060,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	 */
 
 	private void changeVisibleEmployees() {
-		TreeItem enterpriseItem = tree.getItem(0);
-		int childCount = enterpriseItem.getChildCount();
-		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
-		for (int i = workplacesOffset; i < childCount; i++) {
-			TreeItem workplaceItem = enterpriseItem.getChild(i);
+		int itemCount = tree.getItemCount();
+		int workplacesOffset = getWorkplacesOffset(tree);
+		for (int i = workplacesOffset; i < itemCount; i++) {
+			TreeItem workplaceItem = tree.getItem(i);
 			boolean inViewport = elementInViewport(workplaceItem.getElement());
 			boolean opened = workplaceItem.getState();
 			try {
@@ -2108,11 +2078,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	private void changeVisibleWorkplaces() {
-		TreeItem enterpriseItem = tree.getItem(0);
-		int childCount = enterpriseItem.getChildCount();
-		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
-		for (int j = workplacesOffset; j < childCount; j++) {
-			TreeItem workplaceItem = enterpriseItem.getChild(j);
+		int itemCount = tree.getItemCount();
+		int workplacesOffset = getWorkplacesOffset(tree);
+		for (int j = workplacesOffset; j < itemCount; j++) {
+			TreeItem workplaceItem = tree.getItem(j);
 			Workplace workplace = (Workplace) workplaceItem.getUserObject();
 			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
 		}
@@ -2123,20 +2092,31 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return inactive || (workplace.isActive() && workplace.getDate().compareTo(getFromDate()) >= 0 );
 	}
 
-	private int getWorkplacesOffset(TreeItem rootItem) {
-		int itemCount = rootItem.getChildCount();
+	private int getWorkplacesOffset(Tree tree) {
+		int itemCount = tree.getItemCount();
 
 		for (int i = 0; i < itemCount; i++) {
-			TreeItem childItem = rootItem.getChild(i);
+			TreeItem childItem = tree.getItem(i);
 			Object userObject = childItem.getUserObject();
 			if (userObject instanceof Workplace)
 				return i;
 		}
 
 		return itemCount;
-
-		// return extended ? 3 : 2;
 	}
+
+//	private int getWorkplacesOffset(TreeItem enterpriseItem) {
+//		int itemCount = enterpriseItem.getChildCount();
+//
+//		for (int i = 0; i < itemCount; i++) {
+//			TreeItem childItem = enterpriseItem.getChild(i);
+//			Object userObject = childItem.getUserObject();
+//			if (userObject instanceof Workplace)
+//				return i;
+//		}
+//
+//		return itemCount;
+//	}
 
 	private int getEmployeesOffset(TreeItem workplaceItem) {
 
@@ -2169,12 +2149,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	private void showEndDate(boolean endDate) {
-
-		TreeItem enterpriseItem = tree.getItem(0);
-		int childCount = enterpriseItem.getChildCount();
-		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
-		for (int i = workplacesOffset; i < childCount; i++) {
-			TreeItem workplaceItem = enterpriseItem.getChild(i);
+		int itemCount = tree.getItemCount();
+		int workplacesOffset = getWorkplacesOffset(tree);
+		for (int i = workplacesOffset; i < itemCount; i++) {
+			TreeItem workplaceItem = tree.getItem(i);
 			int workplaceItems = workplaceItem.getChildCount();
 			int employeesOffset = getEmployeesOffset(workplaceItem);
 			for (int j = employeesOffset; j < workplaceItems; j++) {
@@ -2500,14 +2478,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	// ------------------------------------------------------------------------
 
 	
-	private void loadEnterprise(TreeItem enterpriseItem) {
-		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
-		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
-			TreeItem workplaceItem = enterpriseItem.getChild(i);	
-			loadWorkplace(workplaceItem);
-		}
-	}
-
 	private void loadWorkplace(TreeItem workplaceItem) {
 		int employeesOffset = getEmployeesOffset(workplaceItem);
 		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
@@ -2518,24 +2488,23 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private void filter( String pattern ) {
 		
-		for ( int i = 0; i < tree.getItemCount(); i++ ) {
-			TreeItem enterpriseItem = tree.getItem(i);	
+		filterEnterprise( pattern, tree, workplaceItem -> {
+		});
 
-			//enterpriseItem.setVisible(false);
-			//enterpriseItem.setState(false); // close
-
-			filterEnterprise( pattern, enterpriseItem, workplaceItem -> {
-				//enterpriseItem.setVisible(true);
-				enterpriseItem.setState(true, false); // open
-			});
-		}
-		
+//		for ( int i = 0; i < tree.getItemCount(); i++ ) {
+//			TreeItem enterpriseItem = tree.getItem(i);	
+//
+//			filterEnterprise( pattern, enterpriseItem, workplaceItem -> {
+//				enterpriseItem.setState(true, false); // open
+//			});
+//		}
+//		
 	}
 
-	private void filterEnterprise( String pattern, TreeItem enterpriseItem , Consumer<TreeItem> found) {
-		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
-		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
-			TreeItem workplaceItem = enterpriseItem.getChild(i);	
+	private void filterEnterprise( String pattern, Tree tree  , Consumer<TreeItem> found) {
+		int workplacesOffset = getWorkplacesOffset(tree);
+		for ( int i = workplacesOffset; i < tree.getItemCount(); i++ ) {			
+			TreeItem workplaceItem = tree.getItem(i);	
 
 			workplaceItem.setVisible(false);	// hides
 			workplaceItem.setState(false, false);		// close
@@ -2547,6 +2516,22 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			});
 		}
 	}
+
+//	private void filterEnterprise( String pattern, TreeItem enterpriseItem , Consumer<TreeItem> found) {
+//		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
+//		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
+//			TreeItem workplaceItem = enterpriseItem.getChild(i);	
+//
+//			workplaceItem.setVisible(false);	// hides
+//			workplaceItem.setState(false, false);		// close
+//
+//			loadAndfilterWorkplace( pattern, workplaceItem, employeeItem -> {
+//				workplaceItem.setVisible(true);	// display
+//				workplaceItem.setState(true, false); 	// open	
+//				found.accept( workplaceItem );
+//			});
+//		}
+//	}
 	
 	private void loadAndfilterWorkplace( String pattern, TreeItem workplaceItem, Consumer<TreeItem> found ) {
 		onWorkplaceOpen(workplaceItem, Integer.MAX_VALUE, () -> filterWorkplace(pattern, workplaceItem, found) );
@@ -2584,20 +2569,20 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		for ( int i = 0; i < tree.getItemCount(); i++ ) {
 			TreeItem enterpriseItem = tree.getItem(i);	
-			selectEmployee( pattern, enterpriseItem, 0, workplaceItem -> {
+			selectEmployee( pattern, 0, workplaceItem -> {
 				enterpriseItem.setState(true); // open
 			});
 		}
 	}
 	
 	
-	private void selectEmployee( String pattern, TreeItem enterpriseItem , int index, Consumer<TreeItem> found) {
-		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
+	private void selectEmployee( String pattern, int index, Consumer<TreeItem> found) {
+		int workplacesOffset = getWorkplacesOffset(tree);
 		int i = workplacesOffset + index ; 
-		if ( i >= enterpriseItem.getChildCount() )
+		if ( i >= tree.getItemCount() )
 			return;
 		
-		TreeItem workplaceItem = enterpriseItem.getChild(i);	
+		TreeItem workplaceItem = tree.getItem(i);	
 		
 		loadAndFindemployee( pattern, 
 		workplaceItem, 
@@ -2610,11 +2595,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			
 			found.accept( workplaceItem );
 		},
-		() -> {
-			selectEmployee(pattern, enterpriseItem, index+1, found);
-		});
+		() ->selectEmployee(pattern, index+1, found)
+		);
 		
-		return ;
 	}
 
 	private void loadAndFindemployee( String pattern, TreeItem workplaceItem, Consumer<TreeItem> found, Runnable lost) {
