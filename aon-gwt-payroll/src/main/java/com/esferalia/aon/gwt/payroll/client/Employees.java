@@ -1164,12 +1164,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			
 			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
 
-			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
-			
 			//Add employeeCalendar to Draft
 			employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
 			employeeEventsDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
-			draftObject.setEmployeeCalendarDraftObject(employeeCalendarDraftObject);
 						
 			Category category = employee.getCategory();
 
@@ -1309,7 +1306,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			addWorkplaceAgreementItem(workplaceItem, enterprise, agreement);
 
-		} // TODO: extended ? Yes I'm know , it's awful.
+		} 
+		
+		if ( workplaceItem.getChildCount() == 0 ) {
+			workplaceItem.addItem(new SafeHtmlBuilder().appendEscaped("fake").toSafeHtml());
+		}
+		
 		return workplaceItem;
 	}
 
@@ -1367,8 +1369,17 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	 * Workplace Item has been expanded +.
 	 */
 	private void onWorkplaceOpen(final TreeItem workplaceItem) {
+		removeFakeChild(workplaceItem);
 		onWorkplaceOpen(workplaceItem, getEmployeeLimit(), () -> {} );
 	}
+	
+	private void removeFakeChild(TreeItem treeItem) {
+		TreeItem child = treeItem.getChild(0);
+		if ( child.getUserObject() == null ) {
+			child.remove();
+		}
+	}
+	
 	private void onWorkplaceOpen(final TreeItem workplaceItem, final int limit, Runnable callback) {
 
 		Workplace workplace = (Workplace) workplaceItem.getUserObject();
@@ -2131,7 +2142,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		return workplaceItem.getChildCount();
 
-		// return extended ? 7 : 5;
 	}
 
 	/**
@@ -2517,22 +2527,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 
-//	private void filterEnterprise( String pattern, TreeItem enterpriseItem , Consumer<TreeItem> found) {
-//		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
-//		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
-//			TreeItem workplaceItem = enterpriseItem.getChild(i);	
-//
-//			workplaceItem.setVisible(false);	// hides
-//			workplaceItem.setState(false, false);		// close
-//
-//			loadAndfilterWorkplace( pattern, workplaceItem, employeeItem -> {
-//				workplaceItem.setVisible(true);	// display
-//				workplaceItem.setState(true, false); 	// open	
-//				found.accept( workplaceItem );
-//			});
-//		}
-//	}
-	
 	private void loadAndfilterWorkplace( String pattern, TreeItem workplaceItem, Consumer<TreeItem> found ) {
 		onWorkplaceOpen(workplaceItem, Integer.MAX_VALUE, () -> filterWorkplace(pattern, workplaceItem, found) );
 	}

@@ -3872,8 +3872,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	protected static void showEmployeeEvents(String []variables, int [] years) {
 		EmployeeEventsDraftObject employeeEventsDraftObject = 
-		getEmployeeTree().getSalaryDraft().getSalaryDraftObject().getEmployeeEventsDraftObjecta();
-		
+		new EmployeeEventsDraftObject(getEmployeeTree().getSalaryDraft().getSalaryDraftObject().getEmployeeId());
 		getEmployeeTree().employeeDetail.setWidget(getEmployeeTree().getEmployeePanel());
 		getEmployeeTree().getEmployeePanel().selectWidget(getEmployeeTree().getEmployeeEventsDraft());
 		getEmployeeTree().getEmployeeEventsDraft().setEmployeeEventsDraftObject(employeeEventsDraftObject.getEmployeeEventsDraftObject(variables), years);
@@ -3883,8 +3882,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	protected static void showEmployeeCalendar() {
 		EmployeeTree employeeTree = getEmployeeTree();
-		EmployeeCalendarDraftObject calendar = employeeTree.getSalaryDraft().getSalaryDraftObject()
-				.getEmployeeCalendarDraftObject();
+		EmployeeCalendarDraftObject calendar = new EmployeeCalendarDraftObject(getEmployeeTree().getSalaryDraft().getSalaryDraftObject().getEmployeeId());
+		
 		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeePanel());
 		employeeTree.getEmployeePanel().selectWidget(employeeTree.getEmployeeCalendarDraftNew());
 		employeeTree.getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
