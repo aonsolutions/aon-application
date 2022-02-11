@@ -6132,8 +6132,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					certificate.getType(),
 					employee);
 			
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6174,8 +6174,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					certificate.getType(), 
 					employee);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6206,8 +6206,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					nss, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6245,8 +6245,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employee.getIpf(), 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6303,8 +6303,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					null, 
 					coef);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6353,8 +6353,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					Optional.of(tc2), 
 					null);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6401,8 +6401,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					grup_ctz, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6448,8 +6448,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					ocup, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6496,9 +6496,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					cat, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
