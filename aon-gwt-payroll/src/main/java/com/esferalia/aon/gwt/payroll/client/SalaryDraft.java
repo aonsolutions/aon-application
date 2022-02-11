@@ -15,13 +15,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -39,7 +40,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
-import com.esferalia.aon.gwt.payroll.shared.Employee.Occupation;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasBonus;
@@ -2670,13 +2670,9 @@ public class SalaryDraft extends ResizeComposite
 	Label dbProrationBaseLabel;
 
 	@UiField
-	ValueLabel totalPaymentLabel;
+	ValueTextBox totalPaymentLabel;
 	@UiField
 	Label dbTotalPaymentLabel;
-	@UiField
-	ValueTextBox totalPaymentsLabel;
-	@UiField
-	Label dbTotalPaymentsLabel;
 	@UiField
 	ValueTextBox totalLiquidLabel;
 	@UiField
@@ -2731,9 +2727,6 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	HorizontalPanel timeRulePanel;
 	
-	@UiField
-	Button saveButton;
-
 	@UiField
 	ListBox settlePreviewListBox;
 	
@@ -3031,12 +3024,12 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
-	@UiHandler("totalPaymentsLabel")
+	@UiHandler("totalPaymentLabel")
 	void onPaymentsChanges(ChangeEvent event) {
 
 		Payment draftPayment = new Payment();
 
-		String expression = totalPaymentsLabel.getValue();
+		String expression = totalPaymentLabel.getValue();
 
 		draftPayment.setExpression("/*read-only*/BRUTO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
@@ -3064,20 +3057,20 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	@UiHandler("totalPaymentsLabel")
+	@UiHandler("totalPaymentLabel")
 	void onPaymentsBlur(BlurEvent event) {
 		try {
-			String value = totalPaymentsLabel.getValue();
-			totalPaymentsLabel.setText(format(StringUtils.isBlank(value) ? 0 : Double.valueOf(value)));
+			String value = totalPaymentLabel.getValue();
+			totalPaymentLabel.setText(format(StringUtils.isBlank(value) ? 0 : Double.valueOf(value)));
 		} catch (Exception e) {
-			totalPaymentsLabel.setText(format(salaryDraftObject.getTotalPayment()));
+			totalPaymentLabel.setText(format(salaryDraftObject.getTotalPayment()));
 		}
 	}
 
-	@UiHandler("totalPaymentsLabel")
+	@UiHandler("totalPaymentLabel")
 	void onPaymentsFocus(FocusEvent event) {
 		Double totalPayment = salaryDraftObject.getTotalPayment();
-		totalPaymentsLabel
+		totalPaymentLabel
 				.setText(String.valueOf(NumberUtils.isNotValid(totalPayment) ? 0.00 : AON.round(totalPayment)));
 	}
 	
@@ -3097,7 +3090,6 @@ public class SalaryDraft extends ResizeComposite
 		dbTotalDeductionLabel.setVisible(visible);
 		dbTotalLiquidLabel.setVisible(visible);
 		dbTotalPaymentLabel.setVisible(visible);
-		dbTotalPaymentsLabel.setVisible(visible);
 
 		for (HasVisibility obj : dbUIObjects)
 			obj.setVisible(visible);
@@ -3120,8 +3112,6 @@ public class SalaryDraft extends ResizeComposite
 	private void showDraft() {
 		deckPanel.showWidget(DRAFT_PANEL_INDEX);
 
-		saveButton.setVisible(false);
-		
 		closePreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
 		
@@ -3136,6 +3126,7 @@ public class SalaryDraft extends ResizeComposite
 		tgssCheck.setVisible(isSalary());
 		dbSalaryCheck.setVisible(hasDbSalary());
 		eventsCheck.setVisible(hasEvents());
+		notDefinedVarsCheck.setVisible(true);
 		
 		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
@@ -3146,8 +3137,6 @@ public class SalaryDraft extends ResizeComposite
 
 	private void showPreview() {
 		deckPanel.showWidget(PDF_VIEWER_INDEX);
-
-		saveButton.setVisible(true);
 		
 		closePreviewButton.setVisible(true);
 		settlePreviewListBox.setVisible(isSettle());
@@ -3161,13 +3150,12 @@ public class SalaryDraft extends ResizeComposite
 		dbSalaryCheck.setVisible(false);
 		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
+		notDefinedVarsCheck.setVisible(false);
 	}
 
 	private void showIrpfPreview() {
 		deckPanel.showWidget(PDF_VIEWER_INDEX);
 
-		saveButton.setVisible(true);
-		
 		closePreviewButton.setVisible(true);
 		
 		fxButton.setVisible(false);
@@ -3184,6 +3172,7 @@ public class SalaryDraft extends ResizeComposite
 		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
+		notDefinedVarsCheck.setVisible(false);
 
 	}
 
@@ -3263,17 +3252,13 @@ public class SalaryDraft extends ResizeComposite
 		employeeSSLabel.setText(salaryDraftObject.getEmployeeSS());
 		employeeNameLabel.setText(salaryDraftObject.getEmployeeName());
 		employeeDocumentLabel.setText(salaryDraftObject.getEmployeeDocument());
-		employeeSeniorityLabel.setText(format(salaryDraftObject.getEmployeeSeniorityDate()));
+		employeeSeniorityLabel.setText(format(salaryDraftObject.getEmployeeSeniorityDate()) );
 		employeeAgreementCategoryLabel.setText(salaryDraftObject.getEmployeeAgreementCategory());
 
 		Date startDate = salaryDraftObject.getStartDate();
 		Date endDate = salaryDraftObject.getEndDate();
 		periodLabel.setText(format(startDate) + " - " + format(endDate));
 		daysLabel.setText(Integer.toString(salaryDraftObject.getTimeUnits()));
-
-		totalPaymentsLabel.setText(format(salaryDraftObject.getTotalPayment()), displayChanges);
-		dbTotalPaymentsLabel.setText(format(salaryDraftObject.getDbTotalPayment()));
-		setDbStyleName(dbTotalPaymentsLabel, totalPaymentsLabel);
 
 		Double cgcBase = salaryDraftObject.getCgcBase();
 		cgcBaseLabel.setText(format(cgcBase), displayChanges);
@@ -3321,32 +3306,23 @@ public class SalaryDraft extends ResizeComposite
 		totalLiquidLabel.setText(format(salaryDraftObject.getTotalLiquid()), displayChanges);
 		dbTotalLiquidLabel.setText(format(salaryDraftObject.getDbTotalLiquid()));
 		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
-
-		salaryDraftObject.getContext().forEach( v ->  {
-			if ( v.getName() == null )
-				return;
-			if ( v.getValue() == null )
-				return;
-			if ( AonStringUtils.isBlank(v.getValue().toString()) )
-				return;
-			switch (v.getName()) {
-			case "TC2":
-				String tc2 = v.getValue().toString();
-				employeeContractLabel.setText(tc2);
-				employeeContractLabel.setTitle(Employee.TC2.getDescriptionByCode(tc2));
-				break;
-			case "OCUPACION":
-				String occupation = v.getValue().toString();
-				employeeOcupationLabel.setText(occupation);
-				employeeOcupationLabel.setTitle(Employee.Occupation.getDescriptionByName(occupation));
-				break;
-			case "GRUPO_COTIZACION":
-				employeeGroupLabel.setText(v.getValue().toString());
-				break;
-			default:
-				break;
-			}
-		});
+		
+		employeeContractLabel.setText(getValueOf("TC2"));
+		employeeContractLabel.setTitle(getTitleOfTC2());
+		employeeOcupationLabel.setText(getValueOf("OCUPACION"));
+		employeeOcupationLabel.setTitle(getTitleOf("OCUPACION",Employee.Occupation.class));
+		employeeGroupLabel.setText(getValueOf("GRUPO_COTIZACION"));
+		
+		String seniorityYears = 
+		getValuesOf("A\u00D1OS_ANTIGUEDAD").distinct().map(AonNumberUtils::todouble).filter( d -> d > 0)
+		.sorted().map( d -> Integer.toString(d.intValue()) ).collect(Collectors.joining(","));
+		if ( AonStringUtils.equals("1", seniorityYears) ) {
+			employeeSeniorityLabel.setText(employeeSeniorityLabel.getText() + "  ( " + seniorityYears + " A\u00D1O )");
+		}else if ( AonStringUtils.isNotBlank(seniorityYears) ) {
+			employeeSeniorityLabel.setText(employeeSeniorityLabel.getText() + "  ( " + seniorityYears + " A\u00D1OS )");
+		}
+			
+		salaryDraftObject.getContext().forEach( v -> info(v.getName() + " = " + v.getValue()));
 
 		clearDbWidgets();
 		clearSsWidgets();
@@ -3411,6 +3387,50 @@ public class SalaryDraft extends ResizeComposite
 		eventsTableSpace.setVisible(eventsTable.isVisible()/*eventsTable.getRowCount() > 0*/);
 		showPaymentsEvents(eventsTable.isVisible());
 
+	}
+
+	public Stream<String> getValuesOf(String name) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		;
+	}
+
+	public String getValueOf(String name) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		.collect(Collectors.joining(","))
+		;
+	}
+
+	public <T extends Enum<T> & HasDescription > String getTitleOf(String name, Class<T> enumType) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		.map(v -> valueOf(enumType, v))
+		.filter(Objects::nonNull)
+		.map( t -> t.getDescription())
+		.collect(Collectors.joining(","))
+		;
+	}
+
+	public String getTitleOfTC2() {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase("TC2", v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		.map(Employee.TC2::getDescriptionByCode)
+		.filter(AonStringUtils::isNotBlank)
+		.collect(Collectors.joining(","))
+		;
 	}
 
 	private void onHideShowNotDefinedVars() {
@@ -3764,7 +3784,7 @@ public class SalaryDraft extends ResizeComposite
 //			salaryDraftObject.synchronize(this);
 	}
 	
-	@UiHandler("saveButton")
+	//@UiHandler("saveButton")
 	void onDownloadClick(ClickEvent event) {
 		String fileName = 
 				salaryDraftObject.getEmployeeName() + " " 
@@ -4241,7 +4261,7 @@ public class SalaryDraft extends ResizeComposite
 		if ( isBruto(payment)) {
 			totalsPayment = payment;
 			labelWidget = newPercentLabel("BRUTO");
-			((Label)labelWidget).addClickHandler((e) -> totalPaymentsLabel.setFocus(true));
+			((Label)labelWidget).addClickHandler((e) -> totalPaymentLabel.setFocus(true));
 		}
 
 		Button expandButton = null;
@@ -6175,10 +6195,8 @@ public class SalaryDraft extends ResizeComposite
 			acceptButton.setEnabled(!automatic);
 		}
 		
-		totalPaymentsLabel.setReadOnly(automatic);
+		totalPaymentLabel.setReadOnly(automatic);
 		totalLiquidLabel.setReadOnly(automatic);
-		
-		
 		
 	}
 	
@@ -6995,10 +7013,6 @@ public class SalaryDraft extends ResizeComposite
 		this.irpfPreviewButton = irpfPreviewButton;
 	}
 
-	public void setSaveButton(AonToolbarButton saveButton) {
-		this.saveButton = saveButton;
-	}
-
 	public void setClosePreviewButton(AonToolbarButton closePreviewButton) {
 		this.closePreviewButton = closePreviewButton;
 	}
@@ -7181,6 +7195,14 @@ public class SalaryDraft extends ResizeComposite
 			return def;
 		}
 		
+	}
+	
+	private static <T extends Enum<T>> T valueOf (Class<T> enumType, String name)  {
+		try {
+			return Enum.valueOf(enumType, name);
+		} catch ( Exception e ) {
+			return null;
+		}
 	}
 
 }
