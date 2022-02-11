@@ -36,6 +36,10 @@
 		.margin-top30{
 			margin-top: 30px;
 		}
+		
+		.draft {
+			min-width: 1080px;
+		}
 
 		.document {
 			margin-top: 5px;
@@ -387,7 +391,7 @@
 			<g:DeckLayoutPanel ui:field="deckPanel">
 				<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor} {style.container}">
 					<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
-						<g:VerticalPanel ui:field="draftPanel" width="auto">
+						<g:VerticalPanel ui:field="draftPanel" width="auto" styleName="{style.draft}">
 							
 							<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
 							<!--  g:HorizontalPanel ui:field='dbTimeRulePanel'  debugId='dbTimeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin} {style.disabled}" /-->
