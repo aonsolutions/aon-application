@@ -7,13 +7,6 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<a4j:region>
-		<h:form>
-			<a4j:poll status="aonStatus" interval="300000"
-				actionListener="#{desktop.onRefresh}" reRender="desktopDiv1" />
-		</h:form>
-	</a4j:region>
-	
 	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
 
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

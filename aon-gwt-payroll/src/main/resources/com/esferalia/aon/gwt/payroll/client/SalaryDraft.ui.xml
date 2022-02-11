@@ -9,6 +9,16 @@
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.SalaryDraft.MyStyle'>
+	
+		.table-value,
+		.table-value tr,
+		.table-value td  {
+			width: 100%;
+			margin:0 !important;
+			padding:0 !important;
+			border:none !important;
+		}
+	
 		.editor {
 			
 		}
@@ -337,7 +347,7 @@
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR FINIQUITO" visible="false"/>
 								<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
 									styleName='aon-finding-toolbar-item aon_icon_pdf {style.aon-toolbar-button}'
-									text="Vista Preliminar" />
+									text="Vista Previa" />
 								<g:Button debugId='irpfPreviewButton' ui:field='irpfPreviewButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconIrpfPreview}'
 									text="IRPF" />
@@ -463,8 +473,8 @@
 											<g:row>
 												<g:customCell styleName="{style.span-cell-cell}">
 													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">PERIODO DE
-															LIQUIDACION</g:Label>
+														<g:Label styleName="{style.cell-label}">PERIODO
+															LIQUIDACIÓN</g:Label>
 														<g:Label debugId="periodLabel" ui:field="periodLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
@@ -475,7 +485,7 @@
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">TOTAL DIAS</g:Label>
+														<g:Label styleName="{style.cell-label}">TOTAL DÍAS</g:Label>
 														<g:Label ui:field="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
@@ -495,8 +505,11 @@
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">&nbsp;</g:Label>
-														<g:Label styleName="{style.cell-label}">&nbsp;</g:Label>
+														<g:Label styleName="{style.cell-label}">DIAS TRABAJADOS</g:Label>
+														<g:HorizontalPanel styleName="{style.table-value}" >
+															<g:Label ui:field="employeeWorkedDaysLabel" styleName="{style.cell-value}">&nbsp;</g:Label>
+															<g:Button  ui:field="employeeWorkedDaysButton" styleName="aon-editDataTable-button aon-icon-calendar"></g:Button>
+														</g:HorizontalPanel>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
@@ -526,7 +539,7 @@
 									<g:row styleName="aon-dataTable-row-odd">
 										<g:customCell>
 											<g:HTMLPanel>
-												<g:Label styleName="{style.cell-label}">RENUMERACION
+												<g:Label styleName="{style.cell-label}">RENUMERACIÓN
 													TOTAL</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML

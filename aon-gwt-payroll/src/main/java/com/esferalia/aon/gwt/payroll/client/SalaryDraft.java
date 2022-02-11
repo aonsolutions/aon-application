@@ -240,8 +240,6 @@ public class SalaryDraft extends ResizeComposite
 			
 			"GRUPO_COTIZACION", "TC2", "OCUPACION",
 			
-			
-			
 			"CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD", // functions
 			"GET_VARIABLE", "SI", "MAX", "MIN", "ABS", // functions
 
@@ -1368,12 +1366,6 @@ public class SalaryDraft extends ResizeComposite
 		}
 		
 
-		private String formatValue(Double value) {
-			if ( AonNumberUtils.isNotValid(value)  )
-				return "0.00";
-			return NumberFormat.getFormat("#,##0.00#").format(Math.round(value * 1000.00) / 1000.00);
-		}
-		
 		
 	}
 
@@ -2626,6 +2618,10 @@ public class SalaryDraft extends ResizeComposite
 	Label employeeContractLabel;
 	@UiField
 	Label employeeOcupationLabel;
+	@UiField
+	Label employeeWorkedDaysLabel;
+	@UiField
+	Button employeeWorkedDaysButton;
 
 	@UiField
 	Label periodLabel;
@@ -2888,6 +2884,12 @@ public class SalaryDraft extends ResizeComposite
 //	void onPrintButtonClick(ClickEvent event) {
 //		pdfViewer.print();
 //	}
+	
+	
+	@UiHandler("employeeWorkedDaysButton")
+	void onWorkedDaysClick(ClickEvent event) {
+		EmployeeTree.showEmployeeCalendar();
+	}
 
 	@UiHandler("irpfPreviewButton")
 	void onIrpfPreviewClick(ClickEvent event) {
@@ -3312,6 +3314,9 @@ public class SalaryDraft extends ResizeComposite
 		employeeOcupationLabel.setText(getValueOf("OCUPACION"));
 		employeeOcupationLabel.setTitle(getTitleOf("OCUPACION",Employee.Occupation.class));
 		employeeGroupLabel.setText(getValueOf("GRUPO_COTIZACION"));
+		
+		double workedDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		employeeWorkedDaysLabel.setText(formatValue(workedDays));
 		
 		String seniorityYears = 
 		getValuesOf("A\u00D1OS_ANTIGUEDAD").distinct().map(AonNumberUtils::todouble).filter( d -> d > 0)
@@ -6114,10 +6119,10 @@ public class SalaryDraft extends ResizeComposite
 	private List<Variable> getConstants(List<Variable> context) {
 		List<Variable> summingConstants = new ArrayList<Variable>();
 
-		try {
-			summingConstants.add(newNumberVariable(context, "DIAS_TRABAJADOS"));
-		} catch ( Exception e ) {
-		}
+		//try {
+		//	summingConstants.add(newNumberVariable(context, "DIAS_TRABAJADOS"));
+		//} catch ( Exception e ) {
+		//}
 
 		try {
 			summingConstants.add(newNumberVariable(context, "HORAS_TRABAJADAS"));
@@ -7204,5 +7209,14 @@ public class SalaryDraft extends ResizeComposite
 			return null;
 		}
 	}
+	
+	
+	private static String formatValue(Double value) {
+		if ( AonNumberUtils.isNotValid(value)  )
+			return "0.00";
+		return NumberFormat.getFormat("#,##0.00#").format(Math.round(value * 1000.00) / 1000.00);
+	}
+	
+	
 
 }
