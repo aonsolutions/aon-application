@@ -414,8 +414,11 @@ public class InvoiceAutoComplete {
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
 					&& !AonStringUtils.isBlank(detail.getAccountCode())) {
-				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDescriptionProperty().eq(detail.getDescription()).or(f.getProductCodeProperty().eq(detail.getAccountCode()))
-						.or(f.getProductNameProperty().eq(detail.getDescription())));
+				
+				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain()).and(
+						f.getDescriptionProperty().eq(detail.getDescription())
+						.or(f.getProductCodeProperty().eq(detail.getAccountCode()))
+						.or(f.getProductNameProperty().eq(detail.getDescription()))));
 				if(i.getId() == null) {
 					Product p = new Product();
 					p.setDomain(new Domain().setId(detail.getDomain()));

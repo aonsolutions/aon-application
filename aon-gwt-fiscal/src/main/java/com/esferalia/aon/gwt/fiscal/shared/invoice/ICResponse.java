@@ -17,15 +17,17 @@ public class ICResponse implements Serializable{
 		return error;
 	}
 	
-	public void setError(boolean error) {
+	public ICResponse setError(boolean error) {
 		this.error = error;
+		return this;
 	}
 	
 	public String getErrorMessage() {
 		return errorMessage;
 	}
 	
-	public void setErrorMessage(String errorMessage) {
+	public ICResponse setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+		return this;
 	}
 }

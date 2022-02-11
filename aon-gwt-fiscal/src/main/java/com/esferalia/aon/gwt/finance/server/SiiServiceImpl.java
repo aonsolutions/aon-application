@@ -103,12 +103,18 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 					.setTbaiConfiguration(tbaiConfiguration)
 					.setType(communicationType);
 			
-			LroeMain lroe = new LroeMain();
-			LROEResponse resp = lroe.alta(ic);
-			ICResponse icResponse = new ICResponse();
-			icResponse.setError(resp.isError());
-			icResponse.setErrorMessage(resp.getErrorMessage());
-			return icResponse;
+			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
+				return new ICResponse().setError(false);
+			} else {
+				LroeMain lroe = new LroeMain();
+				LROEResponse resp = lroe.alta(ic);
+				ICResponse icResponse = new ICResponse();
+				icResponse.setError(resp.isError());
+				icResponse.setErrorMessage(resp.getErrorMessage());
+				return icResponse;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			ICResponse icResponse = new ICResponse();
@@ -158,12 +164,18 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 					.setTbaiConfiguration(tbaiConfiguration)
 					.setType(communicationType);
 			
-			LroeMain lroe = new LroeMain();
-			LROEResponse resp = lroe.alta(ic);
-			ICResponse icResponse = new ICResponse();
-			icResponse.setError(resp.isError());
-			icResponse.setErrorMessage(resp.getErrorMessage());
-			return icResponse;
+			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+				TbaiMain tbai = new TbaiMain();
+				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
+				return new ICResponse().setError(false);
+			} else {
+				LroeMain lroe = new LroeMain();
+				LROEResponse resp = lroe.alta(ic);
+				ICResponse icResponse = new ICResponse();
+				icResponse.setError(resp.isError());
+				icResponse.setErrorMessage(resp.getErrorMessage());
+				return icResponse;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			ICResponse icResponse = new ICResponse();
@@ -190,7 +202,8 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
-		}	}
+		}
+	}
 	
 	@Override
 	public String altaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {

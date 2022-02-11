@@ -162,7 +162,8 @@ public class LroeModel140 extends DockLayoutPanel {
 	public void initializeFilter() {
 		this.filterParams = new InvoiceParams()
 			.setDomain(getOptions().getDomain())
-			.setType(InvoiceType.SALES);
+			.setType(InvoiceType.SALES)
+			.setCommunicationType(InvoiceCommunicationType.LROE_1_1);
 	}
 	
 	private AonMenu getMenu() {

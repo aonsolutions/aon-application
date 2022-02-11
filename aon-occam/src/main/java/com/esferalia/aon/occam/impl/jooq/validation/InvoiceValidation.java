@@ -298,10 +298,6 @@ public class InvoiceValidation {
 	}
 
 	public static void validateInvoiceDeletion(AONContext ctx, AonConfiguration config, Invoice inv) {
-		DataResponse dr = DataResponseDAO.get(ctx, f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
-				.and(f.getSourceIdProperty().eq(inv.getId()))
-				.and(f.getCodeProperty().eq("ok")));
-
 		if (config == null) config = ConfigurationDAO.getConfiguration(ctx, inv.getIssueDate());
 		RECTIFIED_INVOICE
 		.andThen(DUA_LINKED_INVOICE)

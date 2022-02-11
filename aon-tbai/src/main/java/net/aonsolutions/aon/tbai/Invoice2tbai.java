@@ -329,10 +329,13 @@ public class Invoice2tbai {
 			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
 			desgloseIVA.getDetalleIVA().add(detalleIVA);
 		});
-		detalleNoExenta.setDesgloseIVA(desgloseIVA);
-		noExenta.getDetalleNoExenta().add(detalleNoExenta);
-		if(!noExenta.getDetalleNoExenta().isEmpty())
-			sujeta.setNoExenta(noExenta);
+		
+		if(!desgloseIVA.getDetalleIVA().isEmpty()) {
+			detalleNoExenta.setDesgloseIVA(desgloseIVA);
+			noExenta.getDetalleNoExenta().add(detalleNoExenta);
+			if(!noExenta.getDetalleNoExenta().isEmpty())
+				sujeta.setNoExenta(noExenta);
+		}
 		
 		ExentaType exenta = new ExentaType();
 		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {

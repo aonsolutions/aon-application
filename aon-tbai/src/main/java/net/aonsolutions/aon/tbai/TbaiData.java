@@ -364,13 +364,13 @@ public class TbaiData {
         return sb.toString();
 	}
 	
-	public static void main(String[] args) {
-		JSONObject requestData = new JSONObject();
-		requestData.put("domain_name", "mac.aonsolutions.net");
-		requestData.put("domain_id", 24649); // 24427) ;// 22287);
-		requestData.put("id", 780526); //781651); // 780287); //780014); // 780002);
-		requestData.put("attach_type", AttachType.DATA.getName());
-		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
-		System.out.println("ms/api/file/" +  result);
-	}
+//	public static void main(String[] args) {
+//		JSONObject requestData = new JSONObject();
+//		requestData.put("domain_name", "mac.aonsolutions.net");
+//		requestData.put("domain_id", 24708); //24649); // 24427) ;// 22287);
+//		requestData.put("id", 791139); //781651); // 780287); //780014); // 780002);
+//		requestData.put("attach_type", AttachType.DATA.getName());
+//		String result = Base64.getEncoder().encodeToString(requestData.toString().getBytes(StandardCharsets.UTF_8));
+//		System.out.println("ms/api/file/" +  result);
+//	}
 }

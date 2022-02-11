@@ -84,6 +84,9 @@ public class LROEResponse implements Serializable {
 	}
 	
 	public DataRequest getDataRequest() {
+		if(dataRequest == null) {
+			dataRequest = new DataRequest();
+		}
 		return dataRequest;
 	}
 	

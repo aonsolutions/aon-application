@@ -122,23 +122,15 @@ public class TbaiMain {
 			send = !info.isAccepted();
 		}
 		if(send) {
-			if(invoice.isRectifier()) {
-				Invoice rectify = AON.getInvoice(company.getDomain().getName(), company.getDomain().getId(), "", invoice.getRectificationInvoice());
-				invoice.setRectificationInvoiceSeries(rectify.getSeries());
-				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
-				invoice.setRectificationInvoiceNumber(rectify.getNumber());
-				invoice.setRectificationType(rectify.getRectificationType());
-			}
 			TbaiBlockchain blockchain = tbaiData.getBlockchain(company.getDomain(), new User().setLogin(""), invoice.getId());
 			final TicketBai tbai = Invoice2tbai.build(company, invoice, tbaiConfiguration, blockchain);
 
 			final JAXBContext jaxbContext = JAXBContext.newInstance(TicketBai.class);
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal(tbai, bos);
+
 			byte[] data = bos.toByteArray();
 			TbaiSign tbaiSign = new TbaiSign();
 			byte[] xml = tbaiSign.sign(tbaiConfiguration, data);
