@@ -39,9 +39,11 @@ import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
+import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
@@ -2138,6 +2140,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			selectTab(tabs.indexOf(tab));
 		}
 
+		public void setVisibleWidget(Widget w, boolean visible) {
+			setVisibleTab(widgets.indexOf(w), visible);
+		}
+
 		private void selectTab(int index) {
 		    checkIndex(index);
 		    if (index == selectedIndex) {
@@ -2154,6 +2160,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		}
 		
+		private void setVisibleTab(int index, boolean visible) {
+		    checkIndex(index);
+		    tabs.get(index).setVisible(visible);
+		}
+
 		private void showWidget(Widget w) {
 			widgetPanel.setWidget(w);
 		}
@@ -2177,6 +2188,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		private SalaryDraftObject salaryDraft;
 		
         private Map<Integer, ContractBonusObject> contractBonusMap ;  
+		private Map<Integer, CategoryDraftObject> contractCategoriesMap ;  
 		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
 		private Map<Integer, EmployeeContractVariablesObject> contractVariablesMap ;  
 		
@@ -2184,12 +2196,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			contractBonusMap = new HashMap<>();
 			contractPaymentsMap = new HashMap<>();
 			contractVariablesMap = new HashMap<>();
+			contractCategoriesMap = new HashMap<>();
 			add("Contrato", getEmployeeDraft(), this::onEmployeeSelected);
 			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
 			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
 			add("Variables", getEmployeeEventsDraft(), this::onEventsSelected);
+			add("Convenio", getCategoryDraft(), this::onAgreementSelected);
 			add("Conceptos de C\u00e1lculo", getEmployeeContractPayments(), this::onPaymentsSelected);
 			add("Variables de C\u00e1lculo", getEmployeeContractVariables(), this::onVariablesSelected);
 		}
@@ -2245,6 +2259,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			});	
 		}
 		
+		void onAgreementSelected(){
+			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			CategoryDraftObject categoryDraftObject = 
+					contractCategoriesMap.computeIfAbsent(salaryDraft.getEmployeeId(), id -> newCategoryDraftObject(salaryDraft.getEmployee()));
+			getCategoryDraft().setCategoryDraftObject(categoryDraftObject);
+		}
 
 		public void setSalaryDraft(SalaryDraftObject salaryDraft) {
 			this.salaryDraft = salaryDraft;
@@ -2255,6 +2275,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getEmployeeCalendarDraftNew().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			getEmployeeContractPayments().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			getEmployeeContractVariables().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+
+			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			setVisibleWidget(getCategoryDraft(), salaryDraft.getEmployee().getCategory() != null );
 		}
 		
 		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
@@ -2266,6 +2289,31 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			employeeContractVariables.setSaveEnabled(true);
 			
 			return employeeContractVariablesObject;
+		}
+		
+		
+		
+		private CategoryDraftObject newCategoryDraftObject(Employee employee) {
+			
+			Category category = employee.getCategory();
+			Agreement agreement = category.getAgreement(); 
+			
+			com.esferalia.aon.gwt.payroll.shared.CategoryDraft categoryDraft = 
+			new com.esferalia.aon.gwt.payroll.shared.CategoryDraft();
+			categoryDraft.setId(agreement.getId());
+			categoryDraft.setDomain(agreement.getDomain());
+			categoryDraft.setLevelId(category.getLevelId());
+			categoryDraft.setDescription(agreement.getDescription());
+			categoryDraft.setSSNumber(agreement.getSSNumber());
+			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
+			
+			return 
+			new CategoryDraftObject(
+					enterprise.getDomain(),
+					Wnd.getCurrentDomainNameURL(),
+					categoryDraft, 
+					DomainEmployeesServiceAsync.newInstance());			
 		}
 		
 		private String getTitle(Employee employee) {
@@ -2410,7 +2458,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeContractVariables employeeContractVariables; 
 	private EmployeeSalary employeeSalary;
-	private CategoryDraft categoryDraft;
+	private com.esferalia.aon.gwt.payroll.client.CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
 	private BonusEditor bonusEditor;
 	private PaymentEditor paymentEditor;
@@ -3283,9 +3331,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return employeeDraft;
 	}
 
-	private CategoryDraft getCategoryDraft() {
+	private com.esferalia.aon.gwt.payroll.client.CategoryDraft getCategoryDraft() {
 		if (categoryDraft == null)
-			categoryDraft = new CategoryDraft();
+			categoryDraft = new com.esferalia.aon.gwt.payroll.client.CategoryDraft();
 		return categoryDraft;
 	}
 

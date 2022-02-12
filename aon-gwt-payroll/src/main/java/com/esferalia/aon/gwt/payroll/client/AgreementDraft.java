@@ -1472,6 +1472,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 	}
 	
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title );
+	}
+	
+	
 	// -------------------------------------------------------------------------
 	// 						INIT CATEGORY PANEL
 	// -------------------------------------------------------------------------
