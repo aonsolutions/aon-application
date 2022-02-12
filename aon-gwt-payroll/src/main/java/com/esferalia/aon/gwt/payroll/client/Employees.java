@@ -2082,6 +2082,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			}catch ( Exception e ) {
 			}
 			removeEmployeeItems(workplaceItem);
+			if ( workplaceItem.getChildCount() == 0 ) {
+				workplaceItem.addItem(new SafeHtmlBuilder().appendEscaped("fake").toSafeHtml());
+			}
 			if (inViewport & opened) {
 				workplaceItem.setState(true);
 			}

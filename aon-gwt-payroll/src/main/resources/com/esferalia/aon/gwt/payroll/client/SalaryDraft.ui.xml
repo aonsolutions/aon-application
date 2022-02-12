@@ -10,13 +10,13 @@
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.SalaryDraft.MyStyle'>
 	
-		.table-value,
-		.table-value tr,
-		.table-value td  {
-			width: 100%;
+		.table-label,
+		.table-label tr,
+		.table-label td  {
 			margin:0 !important;
 			padding:0 !important;
 			border:none !important;
+			vertical-align: middle !important;
 		}
 	
 		.editor {
@@ -147,6 +147,7 @@
 		.span-cell-cell-last {
 			border: 0px !important;
 		}
+		
 		
 		.toolBar-checkBox input {
 			vertical-align: middle;
@@ -299,6 +300,11 @@
 		.aon_icon_redo {
 			background-size:32px;
 		}
+		
+		button[disabled], .gwt-ListBox[disabled] {
+		  display: initial !important;
+		  visibility: initial !important;
+		}		
 
 		@external gwt-ListBox;
 		@external gwt-TextBox;
@@ -327,7 +333,7 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
-		<g:north size="32">
+		<g:north size="68">
 
 			<g:FlowPanel ui:field="toolbar">
 
@@ -366,12 +372,24 @@
 								<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
 									
-								<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="COSTES" checked="false" />
+								<g:InlineLabel debugId="toolBarTitleLabel" ui:field="toolbarTitleLabel" styleName="aon_toolbar_title aon-float-right" />
+
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
+				
+				<g:FlowPanel styleName="aon-finding-title-toolbar aon-width-all">
+					<g:HorizontalPanel styleName="aon-width-all">
+			
+						<g:HorizontalPanel styleName="aon-finding-toolbar aon-width-all">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
 									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
 									text="AVISOS" checked="false" />
+								<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="COSTES" checked="false" />
 								<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="VARIABLES NO DEFINIDAS" checked="false" />
@@ -387,13 +405,11 @@
 									<g:item value="{LETTER}">CARTA (&Beta;)</g:item>
 								</g:ListBox>
 
-								<g:InlineLabel debugId="toolBarTitleLabel" ui:field="toolbarTitleLabel" styleName="aon_toolbar_title aon-float-right" />
-
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-				
+
 			</g:FlowPanel>
 
 		</g:north>
@@ -473,14 +489,15 @@
 											<g:row>
 												<g:customCell styleName="{style.span-cell-cell}">
 													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">PERIODO
-															LIQUIDACIÓN</g:Label>
-														<g:Label debugId="periodLabel" ui:field="periodLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
+														<g:Label styleName="{style.cell-label}">RECIBO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FECHA DE CÁLCULO</g:Label>
+														<e:SalarySelect ui:field="salarySelect" />
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell}">
 													<g:HTMLPanel>
-														<e:SalarySelect ui:field="salarySelect" />
+														<g:Label styleName="{style.cell-label}">PERIODO
+															LIQUIDACIÓN</g:Label>
+														<g:Label debugId="periodLabel" ui:field="periodLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
@@ -505,11 +522,11 @@
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">DIAS TRABAJADOS</g:Label>
-														<g:HorizontalPanel styleName="{style.table-value}" >
-															<g:Label ui:field="employeeWorkedDaysLabel" styleName="{style.cell-value}">&nbsp;</g:Label>
+														<g:HorizontalPanel styleName="{style.table-label}" >
+															<g:Label styleName="{style.cell-label}">DIAS TRABAJADOS</g:Label>
 															<g:Button  ui:field="employeeWorkedDaysButton" styleName="aon-editDataTable-button aon-icon-calendar"></g:Button>
 														</g:HorizontalPanel>
+														<g:Label ui:field="employeeWorkedDaysLabel" styleName="{style.cell-value}">&nbsp;</g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
