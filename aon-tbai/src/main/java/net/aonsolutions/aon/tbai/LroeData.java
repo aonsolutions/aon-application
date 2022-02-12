@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONObject;
 
@@ -19,6 +20,11 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -132,6 +138,33 @@ public class LroeData {
 		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
 		return request;
 	}
+	
+	public static DataRequest saveRequest(Domain domain, User user, List<Invoice> invoice, LROEInfo info, byte[] data) {
+		JSONObject json = new JSONObject();
+		json.put("lroe", info.toJSON());
+		json.put("invoices", InvoiceJSON.toJSON(invoice));
+		DataRequest request = new DataRequest()
+			.setDomain(domain.getId())
+			.setDate(new Date())
+			.setBlackBox(json.toString())
+			.setType(DataRequestType.LROE);
+		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
+		request.setMd5(md5);
+		
+		request = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), request);
+		
+		Attach attach = new Attach()
+				.setDomain(domain)
+				.setAttachType(AttachType.DATA)
+				.setType(DataAttachType.REQUEST.value())
+				.setSource(DataAttachSource.LROE.value())
+				.setSourceId(request.getId())
+				.setMimeType(MimeType.XML)
+				.setData(data);
+		
+		AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+		return request;
+	}
 		
 	public static DataResponse saveResponse(Domain domain, User user, Invoice invoice, LROEResponse response, LROEInfo info) {
 		DataResponse dr = new DataResponse()
@@ -143,6 +176,42 @@ public class LroeData {
 				.setDataRequest(response.getDataRequest().getId());
 		
 		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+
+		InvoiceBatch invoiceBatch = new InvoiceBatch()
+				.setDomain(domain.getId())
+				.setDate(new Date())
+				.setType(info.getCommunicationType())
+				.setOperation(info.getCommunicationOperation())
+				.setDataResponse(dr.getId())
+				.setCreationUser(user.getLogin());
+		
+		InvoiceBatchDetail invoiceBatchDetail = new InvoiceBatchDetail()
+				.setDomain(domain.getId())
+				.setInvoice(invoice.getId())
+				.setStatus(response.isOk()
+					? InvoiceCommunicationStatus.ACCEPTED
+					: InvoiceCommunicationStatus.WRONG);
+		
+		InvoiceTracking invoiceTracking = new InvoiceTracking()
+				.setInvoiceBatch(invoiceBatch)
+				.setInvoiceBatchDetail(invoiceBatchDetail);
+		
+		AON.saveInvoiceTracking(domain, user, invoiceTracking);
+		
+		InvoiceInfo invoiceInfo = AON.getInvoiceInfo(domain, user, f-> f.getInvoiceProperty().eq(invoice.getId())
+				.and(f.getTypeProperty().eq(info.getCommunicationType().value())));
+		if(invoiceInfo.isEmpty()) invoiceInfo = new InvoiceInfo()
+				.setDomain(domain.getId())
+				.setInvoice(invoice.getId())
+				.setType(info.getCommunicationType());
+		if(invoiceBatch.getOperation().isAnnulment() && response.isOk()) {
+			invoiceInfo.setStatus(InvoiceCommunicationStatus.ANNULLED);
+		} else if(invoiceInfo.getStatus().isPending()) {
+			invoiceInfo.setStatus(response.isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
+		} else if(invoiceInfo.getStatus().isWrong() && response.isOk()) {
+			invoiceInfo.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+		}
+		AON.saveInvoiceInfo(domain, user, invoiceInfo);
 		
 		DataResponseDetail drd1 = new DataResponseDetail()
 				.setDomain(domain.getId())

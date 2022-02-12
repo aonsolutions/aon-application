@@ -1570,6 +1570,44 @@ public interface Properties {
 		Property<Double> getDeductibleQuotaProperty();
 	}
 	
+	public interface InvoiceInfoProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
+	public interface InvoiceBatchProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getOperationProperty();
+		Property<Integer> getDataResponseProperty();
+		Property<String> getCreationUserProperty();
+	}
+	
+	public interface InvoiceBatchDetailProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceProperty();
+		Property<Integer> getInvoiceBatchProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
+	public interface InvoiceTrackingProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceProperty();
+		Property<Byte> getStatusProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getOperationProperty();
+		Property<Integer> getDataResponseProperty();
+		Property<String> getCreationUserProperty();
+	}
+	
 	public interface InvestAssetProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

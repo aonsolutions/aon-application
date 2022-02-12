@@ -526,112 +526,133 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	}
 
 	public void anular(String sii){
-		VerticalPanel vp = new VerticalPanel();
-		HorizontalPanel hp1 = new HorizontalPanel();
-		hp1.add(new Label("Certificado"));
-		ListBox lb = new ListBox();
 		getAPI().getAttachment().getAeatCertificates(new AsyncCallback<JSON<JsCertificate>>() {
 
 			@Override
 			public void onSuccess(JSON<JsCertificate> result) {
+				VerticalPanel vp = new VerticalPanel();
+				HorizontalPanel hp1 = new HorizontalPanel();
+				hp1.add(new Label("Certificado"));
+				ListBox lb = new ListBox();
+	
+				hp1.add(lb);
+
+				HorizontalPanel hp2 = new HorizontalPanel();
+				hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
+				hp2.add(new Label("Contrase\u00f1a"));
+				PasswordTextBox tb = new PasswordTextBox();
+				tb.setStyleName(AON.AON_CSS.aonInputText());
+				hp2.add(tb);
+			
+
+				HashMap<Integer, Boolean> showPasswordMap = new HashMap<>();
+
 				result.getData().stream().forEach(a -> {
 					lb.addItem(a.getName(), a.getId() + "");
+					showPasswordMap.put(a.getId(), a.hasPassword());
 				});
-			}
 
-			@Override public void onFailure(Throwable caught) {}
-		});
-		hp1.add(lb);
-
-		HorizontalPanel hp2 = new HorizontalPanel();
-		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
-		hp2.add(new Label("Contrase\u00f1a"));
-		PasswordTextBox tb = new PasswordTextBox();
-		tb.setStyleName(AON.AON_CSS.aonInputText());
-		hp2.add(tb);
-		vp.add(hp1);
-		vp.add(hp2);
-
-		HorizontalPanel hp3 = new HorizontalPanel();
-		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
-		Label l = new Label("NIF");
-		l.getElement().getStyle().setPaddingTop(5, Unit.PX);
-		l.getElement().getStyle().setPaddingLeft(5, Unit.PX);
-		l.setVisible(false);
-		TextBox t = new TextBox();t.setStyleName(AON.AON_CSS.aonInputText());
-		t.setVisible(false);
-		CheckBox cb = new CheckBox("Por terceros");
-		cb.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				l.setVisible(cb.getValue());
-				t.setVisible(cb.getValue());
-			}
-		});
-		hp3.add(cb);
-		hp3.add(l);
-		hp3.add(t);
-		vp.add(hp3);
-
-		AonDialog dialog = new AonDialog("Anular Operaci\u00f3n", vp) {
-
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-
-			@Override
-			protected void onAccept() {
-				HashMap<String, LinkedList<String>> map =  new HashMap<>();
-				LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
-				map.put("id", list);
-		    	list = new LinkedList<>();
-		    	list.add("baja");
-		    	map.put("action", list);
-		    	list = new LinkedList<>();
-		    	list.add(lb.getSelectedValue());
-		    	map.put("cert", list);
-		    	list = new LinkedList<>();
-		    	list.add(tb.getText());
-		    	map.put("pass", list);
-		    	list = new LinkedList<>();
-		    	list.add(sii);
-		    	map.put("option", list);
-
-		    	list = new LinkedList<>();
-		    	list.add(cb.getValue() ? t.getValue() : "false");
-		    	map.put("terceros", list);
-
-		    	hide();
-		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
+				hp2.setVisible(!showPasswordMap.get(Integer.parseInt(lb.getSelectedValue())));
+				lb.addChangeHandler(new ChangeHandler() {
 
 					@Override
-					public void onSuccess(JSON<JsObject> result) {
-						VerticalPanel vp = new VerticalPanel();
-						result.getData().stream().forEach(r -> {
-							Label label = new Label(r.getName());
-							String str = r.getId() + "";
-							String color = "red";
-							if(str.equals("200")) color = "green";
-							else if(str.substring(0, 1).equals("2")) color = "orange";
-							label.getElement().getStyle().setColor(color);
-							vp.add(label);
+					public void onChange(ChangeEvent event) {
+						hp2.setVisible(!showPasswordMap.get(Integer.parseInt(lb.getSelectedValue())));
+					}
+				});
+
+				
+				vp.add(hp1);
+				vp.add(hp2);
+
+				HorizontalPanel hp3 = new HorizontalPanel();
+				hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
+				Label l = new Label("NIF");
+				l.getElement().getStyle().setPaddingTop(5, Unit.PX);
+				l.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+				l.setVisible(false);
+				TextBox t = new TextBox();t.setStyleName(AON.AON_CSS.aonInputText());
+				t.setVisible(false);
+				CheckBox cb = new CheckBox("Por terceros");
+				cb.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						l.setVisible(cb.getValue());
+						t.setVisible(cb.getValue());
+					}
+				});
+				hp3.add(cb);
+				hp3.add(l);
+				hp3.add(t);
+				vp.add(hp3);
+				
+				AonDialog dialog = new AonDialog("Anular Operaci\u00f3n", vp) {
+
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+
+					@Override
+					protected void onAccept() {
+						HashMap<String, LinkedList<String>> map =  new HashMap<>();
+						LinkedList<String> list = selFiles.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
+						map.put("id", list);
+						list = new LinkedList<>();
+						list.add("baja");
+						map.put("action", list);
+						list = new LinkedList<>();
+						list.add(lb.getSelectedValue());
+						map.put("cert", list);
+						list = new LinkedList<>();
+						list.add(tb.getText());
+						map.put("pass", list);
+						list = new LinkedList<>();
+						list.add(sii);
+						map.put("option", list);
+						
+						list = new LinkedList<>();
+						list.add(cb.getValue() ? t.getValue() : "false");
+						map.put("terceros", list);
+
+						hide();
+						getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
+
+							@Override
+							public void onSuccess(JSON<JsObject> result) {
+								VerticalPanel vp = new VerticalPanel();
+								result.getData().stream().forEach(r -> {
+									Label label = new Label(r.getName());
+									String str = r.getId() + "";
+									String color = "red";
+									if(str.equals("200")) color = "green";
+									else if(str.substring(0, 1).equals("2")) color = "orange";
+									label.getElement().getStyle().setColor(color);
+									vp.add(label);
+								});
+								parent.errorPanel.setWidget(vp);
+								parent.tabLayout.selectTab(0);
+								parent.openFootPanel();
+								parent.gridContent();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+
+							}
 						});
-						parent.errorPanel.setWidget(vp);
-						parent.tabLayout.selectTab(0);
-						parent.openFootPanel();
-						parent.gridContent();
+				
 					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-
-					}
-				});
+				};
+				dialog.center();
 			}
-		};
-		dialog.center();
+			
+			@Override
+			public void onFailure(Throwable caught) {
+
+			}
+		});
 	}
 
 	public void sendSii(String sii) {
