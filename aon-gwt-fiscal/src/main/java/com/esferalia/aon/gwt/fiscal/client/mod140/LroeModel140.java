@@ -1,11 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.mod140;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -32,15 +36,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -197,7 +207,7 @@ public class LroeModel140 extends DockLayoutPanel {
 	
 	AonToolbarButton sendButton;
 	AonToolbarButton bajaButton;
-
+	
 	private Widget getToolbar() {
 		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE, getModel().getFullName()));
 		
@@ -223,7 +233,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		toolbarPanel.add(bajaButton);
 		
 		AonToolbarButton draftButton = new AonToolbarButton(AON.MSG.generateFile(), AON.CSS.aonIconDownload());
-		draftButton.addClickHandler(event -> submitForm());
+		draftButton.addClickHandler(event -> draft());
 		toolbarPanel.add(draftButton);
 		
 		toolbarPanel.add(diskForm);
@@ -231,7 +241,57 @@ public class LroeModel140 extends DockLayoutPanel {
 		return toolbarPanel;
 	}
 	
-	private void submitForm() {
+	
+	private void draft() {
+		VerticalPanel vp = new VerticalPanel();
+
+		HorizontalPanel hp1 = new HorizontalPanel();
+		Label label1 = new Label(AON.MSG.epigraph());
+		label1.setWidth("50px");
+		label1.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp1.add(label1);
+		TextBox epigraph = new TextBox();
+		epigraph.setStyleName("aon-inputText");
+		hp1.add(epigraph);
+		vp.add(hp1);
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		Label label2 = new Label(AON.MSG.from());
+		label2.setWidth("50px");
+		label2.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp2.add(label2);
+		DateBoxEx from = new DateBoxEx();
+		hp2.add(from);
+		vp.add(hp2);
+		
+		HorizontalPanel hp3 = new HorizontalPanel();
+		Label label3 = new Label(AON.MSG.to());
+		label3.setWidth("50px");
+		label3.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp3.add(label3);
+		DateBoxEx to = new DateBoxEx();
+		hp3.add(to);
+		vp.add(hp3);
+		
+		AonDialog draftDialog = new AonDialog("Descargar fichero", vp);
+
+		draftDialog.confirm(new AonAcceptDialogCallback() {
+			
+			@Override
+			public void onCancel() {
+				draftDialog.hide();
+			}
+			
+			@Override
+			public void onAccept() {
+				submitForm(epigraph.getValue(), from.format(), to.format());
+			}
+		});
+	}
+	
+	
+	private void submitForm(String epigraph, String from, String to) {
+
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model140File");
 		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
@@ -252,7 +312,22 @@ public class LroeModel140 extends DockLayoutPanel {
 		user.setName("user");
 		user.setValue(String.valueOf(getOptions().getUser()));
 		html.add(user);
-		diskForm.add(html);
+		
+		Hidden epigraphHidden = new Hidden();
+		epigraphHidden.setName("epigraph");
+		epigraphHidden.setValue(epigraph);
+		html.add(epigraphHidden);
+		
+		Hidden fromHidden = new Hidden();
+		fromHidden.setName("fromDate");
+		fromHidden.setValue(from);
+		html.add(fromHidden);
+		
+		Hidden toHidden = new Hidden();
+		toHidden.setName("toDate");
+		toHidden.setValue(to);
+		html.add(toHidden);
+		diskForm.setWidget(html);
 		diskForm.submit();
 	}
 	
