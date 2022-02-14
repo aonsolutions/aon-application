@@ -390,7 +390,7 @@ public enum StreetType {
 		
 		List<? extends StreetType> typesList = Arrays.stream(this.getClass().getEnumConstants())
 		.filter(st -> st != null && st.getAeatCode().equals(this.aeatCode))
-		.collect(Collectors.toUnmodifiableList());
+		.collect(Collectors.toList());
 		
 		if (typesList.stream().anyMatch(st -> language.equals(st.getLanguage()))) {
 			StreetType type = typesList.stream().filter(st -> language.equals(st.getLanguage())).findFirst().orElse(null);
