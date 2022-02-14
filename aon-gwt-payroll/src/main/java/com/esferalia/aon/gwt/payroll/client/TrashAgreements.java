@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
@@ -76,8 +77,8 @@ public class TrashAgreements extends ResizeComposite implements
 
 		initWidget(BINDER.createAndBindUi(this));
 		
-		this.listeners = new LinkedList<Listener>();
-		this.toolbars = new LinkedList<Toolbar>();
+		this.listeners = new LinkedList<>();
+		this.toolbars = new LinkedList<>();
 		
 		agreementsTree.addListener(this);
 		toolbar.addListener(this);
@@ -93,7 +94,7 @@ public class TrashAgreements extends ResizeComposite implements
 					@Override
 					public void onSuccess(Integer result) {
 						TrashAgreements.this.domain = result;
-						getTrashAgreements();
+						getTrashAgreements(s -> {});
 					}
 				});
 	}
@@ -129,15 +130,18 @@ public class TrashAgreements extends ResizeComposite implements
 	}
 	
 	public void reloadAgreements() {
-		getTrashAgreements();
+		getTrashAgreements(s -> {
+			if(agreementsTree.getTree().getItemCount() > 0)
+				agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
+		});
 	}
 	
-	public void getTrashAgreements() {
+	public void getTrashAgreements(Consumer<Agreement> success) {
 		agreementsTree.clearTree();
-		getTrashAgreements(0, 1000);
+		getTrashAgreements(success, 0, 1000);
 	}
 	
-	private void getTrashAgreements (int offset, int limit) {
+	private void getTrashAgreements (Consumer<Agreement> success, int offset, int limit) {
 		
 		agreementsTree.getEnterpriseService().getTrashAgreements(offset, limit,
 				new AsyncCallback<List<Agreement>>() {
@@ -156,12 +160,14 @@ public class TrashAgreements extends ResizeComposite implements
 						}
 						
 						// Select the first one.
-						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
-							agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
+//						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
+//							agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), false);
 						
 						// Get remainning
 						if ( agreements.size() == limit )
-							getTrashAgreements(offset + limit, limit);
+							getTrashAgreements(success, offset + limit, limit);
+						else
+							success.accept(null);
 
 					}
 				});
@@ -203,8 +209,8 @@ public class TrashAgreements extends ResizeComposite implements
 	// -------------------------------------------------------- Private methods
 
 	@Override
-	public void getAgreements() {
-		getTrashAgreements();
+	public void getAgreements(Consumer<Agreement> success) {
+		getTrashAgreements(success);
 	}
 	
 	@Override
@@ -222,16 +228,16 @@ public class TrashAgreements extends ResizeComposite implements
 	@Override
 	public void onAgreementDelete4Ever(Agreement agreement) {
 		if(agreement.getId() < 0) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementDelete4Ever(agreement);
+			for(Toolbar toolbarIt : toolbars)
+				toolbarIt.onAgreementDelete4Ever(agreement);
 		}
 	}
 
 	@Override
 	public void onAgreementRestore(Agreement agreement) {
 		if(agreement.getId() < 0) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementRestore(agreement);
+			for(Toolbar toolbarIt : toolbars)
+				toolbarIt.onAgreementRestore(agreement);
 		}
 	}
 	
@@ -264,8 +270,8 @@ public class TrashAgreements extends ResizeComposite implements
 	public void onDelete4EverButtonClick(ClickEvent event) {
 		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
 		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementDelete4Ever((Agreement) object);
+			for(Toolbar toolbarIt : toolbars)
+				toolbarIt.onAgreementDelete4Ever((Agreement) object);
 		}
 	}
 
@@ -273,8 +279,8 @@ public class TrashAgreements extends ResizeComposite implements
 	public void onRestoreButtonClick(ClickEvent event) {
 		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
 		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementRestore((Agreement) object);
+			for(Toolbar toolbarIt : toolbars)
+				toolbarIt.onAgreementRestore((Agreement) object);
 		}
 	}
 

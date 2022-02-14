@@ -70,7 +70,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		}
 
 		@Override
-		public void onChange(UndoManager undoManager) {
+		public void onChange(@SuppressWarnings("rawtypes") UndoManager undoManager) {
 			
 			ImageResource resource = AgreementsTree.getImageResource(
 					draftObject.canUndo(), draftObject.hasErrors(),
@@ -162,24 +162,24 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		public AgreementContextMenu() {
 			
 			newItem = addItem("Nuevo", new NewAgreementCommand(), 
-					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			newItem.ensureDebugId("newItem");
 			addSeparator();
 			
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
-					AON.CSS.aonIconCopy(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconCopy(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			copyItem.ensureDebugId("copyItem");
 			
 			pasteItem = addItem("Pegar", new PasteAgreementCommand(), 
-					AON.CSS.aonIconPaste(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconPaste(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			pasteItem.ensureDebugId("pasteItem");
 			
 			deleteItem = addItem("Eliminar", new DeleteAgreementCommand(), 
-					AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());			
+					AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());			
 			deleteItem.ensureDebugId("deleteItem");
 			
 			moveItem = addItem("Mover a..", new MoveAgreementCommand(), 
-					AON.CSS.aonIconMoveTo(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconMoveTo(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			moveItem.ensureDebugId("moveItem");
 			moveItem.setTitle("Mover convenio al dominio padre");
 			moveItem.setVisible(false);
@@ -228,7 +228,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		@Override
 		public void onFailure(Throwable caught) {
 			if ( !isSelected() ) return;
-			// TODO Auto-generated method stub
 			MainAgreement.this.agreementDraft
 					.setAgreementDraftObject(agreementDraftObject);
 		}
@@ -236,12 +235,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		@Override
 		public void onSuccess(SortedSet<Date> result) {
 			if ( !isSelected() ) return;
-			// TODO Auto-generated method stub
 			if (!CollectionUtils.isEmpty(result)) {
 				Date lastChange = result.last();
 				agreementDraftObject.setStartDate(lastChange);
-//				agreementDraftObject.setStartDate(DateUtils
-//						.getFirstDayOfMonth(lastChange));
 				agreementDraftObject.setEndDate(DateUtils
 						.getLastDayOfMonth(lastChange));
 			}
@@ -270,7 +266,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	interface MyStyle extends CssResource {
 		String borderR();
-		String cmd_btn();
+		String cmdBtn();
 	}
 	
 	@UiField
@@ -349,16 +345,16 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		agreements.addStyleName(style.borderR());
 		
-		this.editionsListener = new LinkedList<EditionListener>();
+		this.editionsListener = new LinkedList<>();
 		this.agreement = null;
 		this.parentDomain = null;
 		this.contextMenu = new AgreementContextMenu();
 		this.agreements.addToolbar(this);
 		this.agreements.addListener(this);
-		this.agreementDrafts = new HashMap<Integer, AgreementDraftObject>();
+		this.agreementDrafts = new HashMap<>();
 		
-		this.toolbars = new LinkedList<Toolbar>();
-		this.listeners = new LinkedList<Listener>();
+		this.toolbars = new LinkedList<>();
+		this.listeners = new LinkedList<>();
 		
 		this.userRoles = new DomainUserRoles();
 		
@@ -368,10 +364,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		addEditionOptions(this);
 		
 		if(storage.getItem(AGREEMENT) != null) {
-			Integer id = Integer.parseInt(storage.getItem(AGREEMENT).toString());
-			Agreement agreement = new Agreement();
-			agreement.setId(id);
-			contextMenu.setAgreementCopy(agreement);
+			Integer id = Integer.parseInt(storage.getItem(AGREEMENT));
+			Agreement agreementAux = new Agreement();
+			agreementAux.setId(id);
+			contextMenu.setAgreementCopy(agreementAux);
 			contextMenu.setVisible(true);
 		}	
 		
@@ -379,7 +375,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 			@Override
 			public void onFailure(Throwable caught) {
-				
+				// Not use here
 			}
 
 			@Override
@@ -394,7 +390,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						// Not use here
+					}
 					
 				});
 			}
@@ -475,7 +473,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onNewAgreement(Agreement agreement) {
-		
+		// Not use here
 	}
 
 	@Override
@@ -497,15 +495,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 
 	@Override
-	public void onAgreementContextMenu(Agreement agreement,
-			ContextMenuEvent event) {
-		
-		// TODO : comment to avoid R Click
-//		NativeEvent nativeEvent = event.getNativeEvent();
-//		contextMenu.setPopupPosition(nativeEvent.getClientX(), 
-//				nativeEvent.getClientY());
-//		contextMenu.setVisibleDeleteItem(isEditable(agreementDraft.agreementDraftObject));
-//		contextMenu.show();
+	public void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event) {
+		// Not use here
 	}
 
 	@Override
@@ -531,16 +522,16 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		contextMenu.setAgreementCopy(agreement);	
 		
-		storage.setItem(AGREEMENT, new String(agreement.getId().toString()));
+		storage.setItem(AGREEMENT, agreement.getId().toString());
 	}
 
 	@Override
-	public void onAgreementPaste(Agreement agreement) {
+	public void onAgreementPaste(Agreement agreementCopy) {
 		
-		agreement = contextMenu.getAgreementCopy();
+		agreementCopy = contextMenu.getAgreementCopy();
 		
 		if(agreement != null) {
-			agreements.getAgreementsTree().getEnterpriseService().copyAgreement(agreement, 
+			agreements.getAgreementsTree().getEnterpriseService().copyAgreement(agreementCopy, 
 					new AsyncCallback<Agreement>() {
 
 				@Override
@@ -563,7 +554,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					agreement, new AsyncCallback<String>() {
 	
 						@Override
-						public void onFailure(Throwable caught) {}
+						public void onFailure(Throwable caught) {
+							// Not use here
+						}
 	
 						@Override
 						public void onSuccess(String message) {
@@ -571,7 +564,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 							dialog.confirm(new AonAcceptDialogCallback() {
 								
 								@Override
-								public void onCancel() {}
+								public void onCancel() {
+									// Not use here
+								}
 								
 								@Override
 								public void onAccept() {
@@ -593,12 +588,14 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 							});
 						}});	
 		} else {
-			String message = "Este convenio ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
+			String message = "Este convenio ser\u00E1 eliminado de forma permanente.<br>\u00BFDesea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
 			AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
-				public void onCancel() {}
+				public void onCancel() {
+					// Not use here
+				}
 				
 				@Override
 				public void onAccept() {

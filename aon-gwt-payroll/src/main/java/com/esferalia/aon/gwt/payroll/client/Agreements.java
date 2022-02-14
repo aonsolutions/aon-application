@@ -344,7 +344,7 @@ public class Agreements extends ResizeComposite implements
 						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
 							agreementsTree.getTree().setSelectedItem(
 									agreementsTree.getTree().getItem(
-											Math.max(item2Select, 0)), true);
+											Math.max(item2Select, 0)), false);
 						// Get remainning
 						if ( agreements.size() == limit )
 							getAgreements(offset + limit, limit , s -> {
