@@ -42,10 +42,12 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -64,6 +66,7 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -91,7 +94,7 @@ public class InvoiceTemplate {
 	public static final int MAX_LOGO_HEIGHT = 55;
 	public static final int MIN_FOOTER = 40;
 	public static final float BOX_BORDER = .5f;
-	public static final float BOTTOM_TOLERANCE = 0.3f;
+	public static final float BOTTOM_TOLERANCE = /*0.3f*/0f;
 	public static final float TITLE_BOX_SIZE = 17f;
 	public static final float LEGAL_TEXT_SIZE = 6;
 	
@@ -111,8 +114,14 @@ public class InvoiceTemplate {
 	float commentSize;
 	float entriesStart;
 	float bottomExtra;
+	int predictedPages;
 	PDFont regularFont;
 	PDFont boldFont;
+	
+	CompanyFull company;
+	AonLanguage addressLanguage;
+	
+	float opacity = 0.5f;
 	
 	byte[] background;
 	boolean adapt;
@@ -132,13 +141,19 @@ public class InvoiceTemplate {
 //			template.boldFont = PDType0Font.load(doc, InvoiceTemplate.class.getResourceAsStream("fonts/OpenSans-Bold.ttf"));
 			template.regularFont = PdfFonts.HELVETICA;
 			template.boldFont = PdfFonts.HELVETICA_BOLD;
-					
+			template.company = company;
+			
 			template.legalLines = Collections.emptyList();
 			template.pageNumber = 0;
 			template.msg = new InvoiceTemplateMsg(config.getLanguage());
 			template.config = config;
 			template.logo = logo;
 			template.bottomExtra = 0;
+			
+			String clientZip = invoice.getAddress() != null ? invoice.getAddress().getZip() : "";
+			
+			template.addressLanguage = determineStreetTypeLanguage(clientZip, config.getLanguage());
+			
 
 			if (os != null)
 				template.filename = os;
@@ -207,8 +222,14 @@ public class InvoiceTemplate {
 	}
 	
 	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, PrintInvoiceThemeConfiguration theme) throws IOException {
+		float firstY = y;
+		if (invoice.isRectifier() && (invoice.getRectificationInvoiceNumber() != null || !AonStringUtils.isEmpty(invoice.getRectificationInvoiceSeries()))) {
+			String message = getMsg().rectifies() + " " + (invoice.getRectificationInvoiceNumber() != null ? invoice.getRectificationInvoiceNumber() : "") + " / " + AonStringUtils.trimToEmpty(invoice.getRectificationInvoiceSeries());
+			drawText(contents, message, 50f, y, theme.getTitleTextColor(), boldFont, 10);
+			y-=20;
+		}
+		
 		if (comment != null && !comment.isEmpty()) {
-			float firstY = y;
 			
 			drawText(contents, getMsg().notes() + ":", 50f, y, theme.getTitleTextColor(), boldFont, 10);
 			List<String> lines = PDFToolkit.getLinesRespectOriginal(comment, 575 - 100 - 50f, regularFont, 10);
@@ -426,7 +447,6 @@ public class InvoiceTemplate {
 		}
 		
 		limit += bottomExtra;
-		System.out.println(limit);
 		
 		
 		x = 50f;
@@ -438,17 +458,32 @@ public class InvoiceTemplate {
 		
 		drawComment(doc, company, invoice, invoice.getComments(), config.getTheme());
 		
-		if (config.isDetailed())
+		entriesStart = y;
+		if (config.isDetailed()) {
+			float realY = y;
+			y-=10;
+			float realEntriesStart = entriesStart;
+			predictedPages = predictNumberOfDetailedPages(invoice);
+			entriesStart = realEntriesStart;
+			y = realY;
 			drawDetailedHeader(config.getTheme());
-		else
+		}
+		else {
+			float originalEntriesStart = entriesStart;
+			float originalY = y;
+			y-=10;
+			predictedPages = predictSimplifiedPages(invoice);
+			entriesStart = originalEntriesStart;
+			y = originalY;
 			drawSimpleHeader(config.getTheme());
+		}
 		
 		return contents;
 	}
 
 	// DRAW DETAILED ENTRIES
 	public void drawDetailedEntries(PDDocument doc, CompanyFull company, Invoice invoice) throws IOException {
-		if (invoice.getDetails() != null){
+		if (invoice.getDetails() != null) {
 			int i = 0;
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				
@@ -463,26 +498,25 @@ public class InvoiceTemplate {
 				drawDetail(i, detail, divided, lineDiff, doc, invoice, company);
 					
 				i++;
-	
 			}
 		}
 	}
 
 
-	private void drawExtraBoxBackground(PrintInvoiceConfiguration config) throws IOException {
-		if (config.isDetailed()) {			
-			drawBox(contents, 50, bottom, 250 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor());
-			
-			drawBox(contents, 300, bottom, 70 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor());
-			drawBox(contents, 370, bottom, 70 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor());
-			drawBox(contents, 440, bottom, 40 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor());
-			drawBox(contents, 480, bottom, 70, limit - bottom, config.getTheme().getBoxBodyBackgroundColor());
-			
-		} else {
-			drawBox(contents, 50, bottom, 429, limit - bottom, config.getTheme().getBoxBodyBackgroundColor());
-			drawBox(contents, 480, bottom, 70, limit - bottom, config.getTheme().getBoxBodyBackgroundColor());
-		}
-	}
+//	private void drawExtraBoxBackground(PrintInvoiceConfiguration config) throws IOException {
+//		if (config.isDetailed()) {			
+//			drawBox(contents, 50, bottom, 250 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor(), opacity);
+//			
+//			drawBox(contents, 300, bottom, 70 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor(), opacity);
+//			drawBox(contents, 370, bottom, 70 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor(), opacity);
+//			drawBox(contents, 440, bottom, 40 - BOX_BORDER, limit - bottom, config.getTheme().getBoxBodyBackgroundColor(), opacity);
+//			drawBox(contents, 480, bottom, 70, limit - bottom, config.getTheme().getBoxBodyBackgroundColor(), opacity);
+//			
+//		} else {
+//			drawBox(contents, 50, bottom, 429, limit - bottom, config.getTheme().getBoxBodyBackgroundColor(), opacity);
+//			drawBox(contents, 480, bottom, 70, limit - bottom, config.getTheme().getBoxBodyBackgroundColor(), opacity);
+//		}
+//	}
 
 	private void jumpToNewPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config,
 			byte[] logo) throws IOException {
@@ -491,6 +525,190 @@ public class InvoiceTemplate {
 		contents = drawPage(doc, company, invoice, config, true);
 		y		 = height - top - topInfoHeight - 5;
 		x		 = 50;
+	}
+	
+
+	
+	
+	private int predictNumberOfDetailedPages(Invoice invoice) throws IOException {
+		AtomicInteger numberOfPages = new AtomicInteger(1);
+		if (invoice.getDetails() != null){
+			int i = 0;
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				String description = 
+						safeString(detail.getDescription())
+							.replace("\t", " ");
+	
+				ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240,regularFont, 8);				
+				float lineDiff = 10;
+				predictDetailPages(i, divided, invoice, detail, lineDiff, numberOfPages);
+				i++;
+			}
+		}
+		return numberOfPages.get();
+	}
+	
+	private void predictDetailPages(int i, ArrayList<String> divided, Invoice invoice, InvoiceDetail detail, float lineDiff, AtomicInteger numberOfPages) throws IOException {
+		float dy = y;
+		for (String str : divided) {
+			dy -= lineDiff;
+			if (dy < bottom + 5) {
+				fictionalPageJump(invoice);
+				y		 = height - top - topInfoHeight - 5;
+				dy = entriesStart - 10;
+				numberOfPages.getAndIncrement();
+			}
+			
+		}
+		
+		if (dy < limit + 5 && i == invoice.getDetails().size() - 1) {
+			fictionalPageJump(invoice);
+			y		 = height - top - topInfoHeight - 5;
+			dy = entriesStart - 10;
+			numberOfPages.getAndIncrement();
+		}
+		
+		y = dy - 3;
+		
+	}
+	
+	
+	private void fictionalPageJump(Invoice invoice) throws IOException {
+		y = height - top - 20;
+		
+		float tempY = height - MIN_HEADER_FOR_LOGO + 20;
+		
+		RegistryAddress transmitterAddr = null;
+		
+		if (company != null && config.isCompany()) {
+			Company registry = company.getRegistry();
+			String companyName = registry != null ? AonStringUtils.trimToEmpty(registry.getName()) : "";
+			companyName = croppedString(companyName, 240, regularFont, 9);
+			String address;
+			String zip = "";
+			
+			if (company.getAddresses() != null && !company.getAddresses().isEmpty()) {
+				transmitterAddr = company.getAddresses().stream().filter(RegistryAddress::isMain).findFirst().orElse(company.getAddresses().getFirst());
+				address = transmitterAddr.getFullAddress(addressLanguage);
+				String cp = AonStringUtils.trimToEmpty(transmitterAddr.getZip());
+				String city = AonStringUtils.trimToEmpty(transmitterAddr.getCity());
+				String province = AonStringUtils.trimToEmpty(transmitterAddr.getProvince());
+				String country = AonStringUtils.trimToEmpty(transmitterAddr.getCountry() != null ? transmitterAddr.getCountry().getName() : "");
+				
+				String location = "";
+				
+				if (!city.isEmpty()) {
+					location += city;
+				}
+				if (!province.isEmpty()) {
+					location += ", " + province;
+				}
+				if (!country.isEmpty()) {
+					location += ", " + country;
+				}
+				
+				if (cp.isEmpty())
+					zip = location;
+				else {
+					zip = cp + ", " + location;
+				}
+			} else {
+				address = "";
+				zip = "";
+			}
+			
+			tempY -= 10;
+			
+			List<String> addressLines = getLines(address, 235, regularFont, 8);
+			float addrPlus = 11;
+			
+			if (!addressLines.isEmpty()) {
+				addrPlus -= 9;
+				if (addressLines.size() > 1) {
+					StringBuilder addressBuilder = new StringBuilder("");
+					for(int i=1; i<addressLines.size(); i++) {
+						addressBuilder.append(addressLines.get(i));
+					}
+					addrPlus -= 9;
+				}
+			}
+			addrPlus -= 1;
+			
+			List<String> zipLines = getLines(zip, 235, regularFont, 8);
+			if (!zipLines.isEmpty()) {
+				addrPlus -= 9;
+				if (zipLines.size() > 1) {
+					StringBuilder zipBuilder = new StringBuilder("");
+					for(int i=1; i<zipLines.size(); i++) {
+						zipBuilder.append(zipLines.get(i));
+					}
+				}
+			}
+		}
+		
+		y -= 30;
+		y -= 4;
+		y -= 16;	
+		y -= 20;	
+		y -= 10;
+		y  = height - top - 35;
+		
+		String str = safeString(invoice.getRegistryName())
+				.replace("\t", " ");
+		
+		List<String> nameLines = PDFToolkit.getLines(str, 230, boldFont, 10);
+		
+		if (nameLines != null) {
+			String line1 = nameLines.get(0).trim();
+			String line2 = null;
+			if (nameLines.size() > 1) {
+				line2 = nameLines.get(1).trim();
+			}
+			
+			if (line1 != null) {
+				y -= 10;
+			}
+			if (line2 != null) {	
+			}
+		}
+		y -= 15;
+		
+		String fullAddress = "";
+		String province = "";
+		
+		if (invoice.getAddress() != null && !invoice.getAddress().isEmpty()) {
+			RegistryAddress address = invoice.getAddress();
+			fullAddress = safeString(address.getFullAddress(addressLanguage));
+			boolean isProvince = address.getProvince() != null && !address.getProvince().isEmpty() && !AonStringUtils.equalsIgnoreCase(address.getProvince(), address.getCity());
+			if (isProvince) {
+				province = "(" + address.getProvince().trim() + ") ";
+			}
+			
+			if (transmitterAddr != null && transmitterAddr.getCountry() != null && address.getCountry() != null) {
+				Country transmitterCountry = transmitterAddr.getCountry();
+				if (!transmitterCountry.equals(address.getCountry())) {
+					float textWidth = PDFToolkit.fontWidth(province + transmitterAddr.getCountry().getName(), 9, regularFont);
+					province += textWidth <= 230 ? address.getCountry().getName() : address.getCountry().getIso3();
+				}
+			}		
+		}
+		
+		List<String> addressLines = PDFToolkit.getLines(fullAddress, 230, regularFont, 9);
+		
+		if (addressLines != null && !addressLines.isEmpty()) {
+			y -= 10;
+			if (addressLines.size() > 1) {
+				y -= 12.5;
+			}
+			
+		}
+		
+		y -= 10;
+		
+		y -= 60;
+		
+		entriesStart = y;
+		
 	}
 	
 	private void drawDetail(int i, InvoiceDetail detail, ArrayList<String> divided, float lineDiff,
@@ -552,11 +770,12 @@ public class InvoiceTemplate {
 				jumpToNewPage(doc, company, invoice, config, logo);
 				extraBackground = false;
 				dy = /*y*/entriesStart - 10;
-			} else if (dy < limit + 5 && !extraBackground) {
-				if (config.getTheme().getBoxBodyBackgroundColor() != null)
-					drawExtraBoxBackground(config);
-				extraBackground = true;
 			}
+//			else if (dy < limit + 5 && !extraBackground) {
+//				if (config.getTheme().getBoxBodyBackgroundColor() != null)
+//					drawExtraBoxBackground(config);
+//				extraBackground = true;
+//			}
 			
 		}
 		
@@ -566,7 +785,28 @@ public class InvoiceTemplate {
 		}
 		
 		y = dy - 3;
-		
+	}
+	
+	
+	public int predictSimplifiedPages (Invoice invoice) throws IOException {
+		int numOfPages = 1;
+		if (invoice.getDetails() != null) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				if (y < bottom + 5) {
+					fictionalPageJump(invoice);
+					numOfPages++;
+					y = entriesStart - 10;
+				}
+				y -= 10;
+			}	
+			if (y < limit + 5) {
+				fictionalPageJump(invoice);
+				y = height - top - topInfoHeight - 5;
+				numOfPages++;
+			}
+			
+		}
+		return numOfPages;
 	}
 
 	// DRAW SIMPLIFIED ENTRIES
@@ -585,11 +825,11 @@ public class InvoiceTemplate {
 //						.getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8");
 //				croppedString(description, 420, REGULAR_FONT, 8), x + 5, y,
 				
-				if (y < limit && !xtraBack) {
-					if (config.getTheme().getBoxBodyBackgroundColor() != null)
-						drawExtraBoxBackground(config);
-					xtraBack = true;
-				}
+//				if (y < limit && !xtraBack) {
+//					if (config.getTheme().getBoxBodyBackgroundColor() != null)
+//						drawExtraBoxBackground(config);
+//					xtraBack = true;
+//				}
 					
 				drawText(
 					contents,
@@ -612,6 +852,7 @@ public class InvoiceTemplate {
 										4.5f,
 										0);
 				y -= 10;
+
 			}
 			
 			if (y < limit + 5) {
@@ -644,7 +885,7 @@ public class InvoiceTemplate {
 			
 			if (company.getAddresses() != null && !company.getAddresses().isEmpty()) {
 				transmitterAddr = company.getAddresses().stream().filter(RegistryAddress::isMain).findFirst().orElse(company.getAddresses().getFirst());
-				address = transmitterAddr.getFullAddress();
+				address = transmitterAddr.getFullAddress(addressLanguage);
 				String cp = AonStringUtils.trimToEmpty(transmitterAddr.getZip());
 				String city = AonStringUtils.trimToEmpty(transmitterAddr.getCity());
 				String province = AonStringUtils.trimToEmpty(transmitterAddr.getProvince());
@@ -744,12 +985,17 @@ public class InvoiceTemplate {
 		y -= 20;
 
 		drawText(contents, "N.I.F.:", x, y, config.getTheme().getTitleTextColor(), boldFont, 11, NIF);
-		drawText(contents, safeString(invoice.getRegistryDocument()), x + 50, y, config.getTheme().getTextColor(), regularFont, 11, NIF);
+		String countryCode = "";
+		if (invoice.isExtracommunity() && countryCode != null) {
+			countryCode = AonStringUtils.trimToEmpty(invoice.getRegistryDocumentCountry().getIso2());
+		}
+		
+		drawText(contents, safeString((!AonStringUtils.isEmpty(countryCode) ? countryCode + " " : "") + invoice.getRegistryDocument()), x + 50, y, config.getTheme().getTextColor(), regularFont, 11, NIF);
 		
 		y -= 10;
 		x += 250;
 
-		drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor());
+		drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor(), opacity);
 		x += 10;
 		y  = height - top - 35;
 		String str = safeString(invoice.getRegistryName())
@@ -781,7 +1027,7 @@ public class InvoiceTemplate {
 		
 		if (invoice.getAddress() != null && !invoice.getAddress().isEmpty()) {
 			RegistryAddress address = invoice.getAddress();
-			fullAddress = safeString(address.getFullAddress());
+			fullAddress = safeString(address.getFullAddress(addressLanguage));
 			boolean isProvince = address.getProvince() != null && !address.getProvince().isEmpty() && !AonStringUtils.equalsIgnoreCase(address.getProvince(), address.getCity());
 			if (isProvince) {
 				province = "(" + address.getProvince().trim() + ") ";
@@ -852,12 +1098,16 @@ public class InvoiceTemplate {
 			drawBox(contents, 50, y, 500, BOX_BORDER, theme.getBorderColor());
 		}
 		
-		if (theme.getBoxBodyBackgroundColor() != null) {			
-			drawBox(contents, 50, limit - BOTTOM_TOLERANCE, 250 - BOX_BORDER, y - limit + BOTTOM_TOLERANCE, theme.getBoxBodyBackgroundColor());
-			drawBox(contents, 300, limit - BOTTOM_TOLERANCE, 70 - BOX_BORDER, y - limit + BOTTOM_TOLERANCE, theme.getBoxBodyBackgroundColor());
-			drawBox(contents, 370, limit - BOTTOM_TOLERANCE, 70 - BOX_BORDER, y - limit + BOTTOM_TOLERANCE, theme.getBoxBodyBackgroundColor());
-			drawBox(contents, 440, limit - BOTTOM_TOLERANCE, 40 - BOX_BORDER, y - limit + BOTTOM_TOLERANCE, theme.getBoxBodyBackgroundColor());
-			drawBox(contents, 480, limit - BOTTOM_TOLERANCE, 70, y - limit + BOTTOM_TOLERANCE, theme.getBoxBodyBackgroundColor());
+		if (theme.getBoxBodyBackgroundColor() != null) {
+			
+			float startPoint = pageNumber < predictedPages ? bottom - BOTTOM_TOLERANCE : limit - BOTTOM_TOLERANCE;
+			float boxHeight = pageNumber < predictedPages ? y - bottom + BOTTOM_TOLERANCE : y - limit + BOTTOM_TOLERANCE;
+			
+			drawBox(contents, 50, startPoint, 250 - BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
+			drawBox(contents, 300, startPoint, 70 - BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
+			drawBox(contents, 370, startPoint, 70 - BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
+			drawBox(contents, 440, startPoint, 40 - BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
+			drawBox(contents, 480, startPoint, 70, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
 		}
 		
 		entriesStart = y;
@@ -886,9 +1136,13 @@ public class InvoiceTemplate {
 			drawBox(contents, 50, y, 500 - BOX_BORDER, BOX_BORDER, theme.getBorderColor());
 		}
 		
-		if (theme.getBoxBodyBackgroundColor() != null) {			
-			drawBox(contents, 50, limit - BOTTOM_TOLERANCE, 429 + BOX_BORDER, y - limit + BOTTOM_TOLERANCE, theme.getBoxBodyBackgroundColor());
-			drawBox(contents, 480, limit - BOTTOM_TOLERANCE, 70, y - limit + BOTTOM_TOLERANCE, theme.getBoxBodyBackgroundColor());
+		if (theme.getBoxBodyBackgroundColor() != null) {
+			
+			float startPoint = pageNumber < predictedPages ? bottom - BOTTOM_TOLERANCE : limit - BOTTOM_TOLERANCE;
+			float boxHeight = pageNumber < predictedPages ? y - bottom + BOTTOM_TOLERANCE : y - limit + BOTTOM_TOLERANCE;
+			
+			drawBox(contents, 50, startPoint, 429 + BOX_BORDER, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
+			drawBox(contents, 480, startPoint, 70, boxHeight, theme.getBoxBodyBackgroundColor(), opacity);
 		}
 		
 		
@@ -956,11 +1210,11 @@ public class InvoiceTemplate {
 			float bdSize = invoice.getBreakdown().size() * 10 + 10f;
 			
 			if (theme.getBoxBodyBackgroundColor() != null) {				
-				drawBox(contents, 180, y, 80 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 260, y, 80 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 340, y, 60 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 400, y, 50 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 450, y, 100f, -bdSize, theme.getBoxBodyBackgroundColor());
+				drawBox(contents, 180, y, 80 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 260, y, 80 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 340, y, 60 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 400, y, 50 - BOX_BORDER, -bdSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 450, y, 100f, -bdSize, theme.getBoxBodyBackgroundColor(), opacity);
 			}
 			
 			float initiaruY = y - 12;
@@ -1027,17 +1281,17 @@ public class InvoiceTemplate {
 		y-= 28;
 		
 		if (theme.getBoxTitleBackgroundColor() != null)
-			drawBox(contents, x, y, 60 - BOX_BORDER, TITLE_BOX_SIZE,  theme.getBoxTitleBackgroundColor());
+			drawBox(contents, x, y, 45 - BOX_BORDER, TITLE_BOX_SIZE,  theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().date(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
-		x += 60;
+		x += 45;
 		if (theme.getBoxTitleBackgroundColor() != null)
 			drawBox(contents, x, y, 110 - BOX_BORDER, TITLE_BOX_SIZE,  theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().payMethod(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
 		x += 110;
 		if (theme.getBoxTitleBackgroundColor() != null)
-			drawBox(contents, x, y, 130 - BOX_BORDER, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, x, y, 145 - BOX_BORDER, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().bankAccount(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
-		x += 130;
+		x += 145;
 
 		if (theme.getBoxTitleBackgroundColor() != null)
 			drawBox(contents, x, y, 70, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
@@ -1060,29 +1314,30 @@ public class InvoiceTemplate {
 			float fSize = invoice.getFinances().size() * 10 + 10f;
 			
 			if (theme.getBoxBodyBackgroundColor() != null) {
-				drawBox(contents, 180, y, 60 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 240, y, 110 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 350, y, 130 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor());
-				drawBox(contents, 480, y, 70f, -fSize, theme.getBoxBodyBackgroundColor());				
+				drawBox(contents, 180, y, 45 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 225, y, 110 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 335, y, 145 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 480, y, 70f, -fSize, theme.getBoxBodyBackgroundColor(), opacity);				
 			}
 			
 			
 			for (Finance finance : invoice.getFinances()) {
 				x = 180;
 				drawText(contents, formatDate(finance.getDueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_DATE);
-				x += 60;
+				x += 45;
 				
 				String altMethodName = finance.getPayMethodType() != null ? finance.getPayMethodType().getDescription() : "";
 				String paymethod = finance.getPayMethodName() != null ? finance.getPayMethodName() : altMethodName;
 				drawText(contents, paymethod != null ? croppedString(paymethod, 105 - BOX_BORDER, regularFont, 7) : "", x + 5f, y - 12, theme.getTextColor(), regularFont,7, i + FINANCE_PAY_METHOD);
 				x += 110;
 			
-				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null)
-					drawText(contents, finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
-				else
+				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null) {
+					String bicCode = !AonStringUtils.isEmpty(finance.getBic()) ? " [" + finance.getBic() + "]" : "";
+					drawText(contents, finance.getBankAccount().getIban() + bicCode, x + 5f, y - 12, theme.getTextColor(), regularFont, 6, i + FINANCE_BANK_ACCOUNT);
+				} else
 					drawText(contents, "", x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
 			
-				x += 130;
+				x += 145;
 				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(finance.getAmount()), theme.getTextColor(), regularFont, 7, 5, -12, i + FINANCE_AMOUNT);
 				
 				y -= 10;
@@ -1094,8 +1349,8 @@ public class InvoiceTemplate {
 				float backHeight  = initY - y;
 //				drawBox(contents, 180, initY, 370 - BOX_BORDER, BOX_BORDER, theme.getBorderColor());
 				drawBox(contents, 180, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
-				drawBox(contents, 240 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
-				drawBox(contents, 350 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
+				drawBox(contents, 225 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
+				drawBox(contents, 335 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 480 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 550 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 180, y, 370, BOX_BORDER, theme.getBorderColor());
@@ -1128,6 +1383,30 @@ public class InvoiceTemplate {
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    ImageIO.write(imagen, "PNG", baos);
 	    return baos.toByteArray();        
+	}
+	
+	private static AonLanguage determineStreetTypeLanguage (String zipCode, AonLanguage invoiceLanguage) {
+		if (zipCode == null || zipCode.length() != 5) {
+			return AonLanguage.SPANISH;
+		}
+		String[] basqueZips = {"01", "20", "31", "48"};
+		String[] catalanZips = {"07", "08", "17", "43", "25"};
+		String[] galicianZips = {"15", "32", "27", "36"};
+		String[] valencianZips = {"46", "12", "03"};
+		
+		String zipStart = zipCode.substring(0, 2);
+		
+		if (AonLanguage.BASQUE.equals(invoiceLanguage) && Arrays.asList(basqueZips).contains(zipStart)) {
+			return AonLanguage.BASQUE;
+		} else if (AonLanguage.CATALAN.equals(invoiceLanguage) && Arrays.asList(catalanZips).contains(zipStart)) {
+			return AonLanguage.CATALAN;
+		} else if (AonLanguage.GALICIAN.equals(invoiceLanguage) && Arrays.asList(galicianZips).contains(zipStart)) {
+			return AonLanguage.GALICIAN;
+		} else if (AonLanguage.VALENCIAN.equals(invoiceLanguage) && Arrays.asList(valencianZips).contains(zipStart)) {
+			return AonLanguage.VALENCIAN;
+		} else {
+			return AonLanguage.SPANISH;
+		}
 	}
 	
 	private InvoiceTemplateMsg getMsg() {	

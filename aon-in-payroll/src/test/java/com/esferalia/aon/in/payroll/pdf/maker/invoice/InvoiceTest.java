@@ -60,6 +60,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.Logger;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -75,6 +76,7 @@ import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -102,7 +104,7 @@ public class InvoiceTest {
 		String addressNumber  = "12";
 		String addressProvince = "Almería";
 		String addressTown = "Andrajosía de vera";
-		String addressZIP = "191238";
+		String addressZIP = "01004";
 		
 		String registryName = "AON SOLUTIONS MASTER XL PLUS MASTER PRO S GAMING MAX";
 		String referenceCode = "8901389091AAA";
@@ -127,7 +129,9 @@ public class InvoiceTest {
 		Invoice invoice = new Invoice();
 		invoice.setSeries("2022");
 		invoice.setNumber(1);
-
+		
+		invoice.setRectificationInvoiceNumber(288);
+		invoice.setRectificationInvoiceSeries("NO LO SÉ XD");		
 		invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		invoice.setAddress(new RegistryAddress()
 				.setAddress(address)
@@ -138,10 +142,11 @@ public class InvoiceTest {
 		);
 		
 		RegistryAddress raddress = new RegistryAddress();
+		raddress.setStreetType(StreetType.AV);
 		raddress.setAddress(address);
 		raddress.setCountry(Country.KP);
 		raddress.setProvince("PYONGYANG");
-		raddress.setZip("01002");
+		raddress.setZip("07002");
 		raddress.setCity("PYONGYANG");
 //		raddress.setGeozone(52216);
 		
@@ -153,6 +158,8 @@ public class InvoiceTest {
 		invoice.setReferenceCode(referenceCode);
 		invoice.setIssueDate(issueDate);
 		invoice.setRegistryDocument(registryDocument);
+		invoice.setRegistryDocumentCountry(Country.VE);
+		invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
 		
 //		String listadecosas = "Lista de cosas:\n";
 //		for (int i=1; i<=40; i++) {
@@ -204,6 +211,7 @@ public class InvoiceTest {
 		BankAccount accountThree = new BankAccount("ES9999921999950296759997");
 		
 		Finance financeOne = new Finance();
+		financeOne.setBic("BBVAESMMXXX");
 		financeOne.setAdvance(true);
 		financeOne.setAmount(39687.23);
 		financeOne.setBankAccount(accountOne);
@@ -549,7 +557,7 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=188; i++) {
+		for (int i=1; i<=119; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
@@ -558,7 +566,7 @@ public class InvoiceTest {
 		detailX.setDiscountExpression("30");
 		detailX.setQuantity(0);
 		detailX.setTaxableBase(0);
-//		details.add(detailX);
+		details.add(detailX);
 //		details.add(detailOne);
 //		details.add(detailTwo);
 //		details.add(detailThree);
@@ -567,11 +575,11 @@ public class InvoiceTest {
 //		details.add(detailFive);
 		
 		
-		details.add(shortDetail1);
-		details.add(shortDetail2);
-		details.add(shortDetail3);
-		details.add(shortDetail4);
-		details.add(shortDetail5);		
+//		details.add(shortDetail1);
+//		details.add(shortDetail2);
+//		details.add(shortDetail3);
+//		details.add(shortDetail4);
+//		details.add(shortDetail5);		
 		
 		invoice.setDetails(details);
 		
@@ -587,6 +595,7 @@ public class InvoiceTest {
 			Attach attach = new Attach();
 			attach.setData(back);
 			
+			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
 			config.setDetailed(true);

@@ -32,6 +32,8 @@ public class InvoiceTemplateMsg extends Properties implements Serializable{
 			getProperties("catalan.properties");
 		} else if(AonLanguage.GALICIAN.equals(language)) {
 			getProperties("galician.properties");
+		} else if(AonLanguage.VALENCIAN.equals(language)) {
+		getProperties("valencian.properties");
 		}
 	}
 	
@@ -53,6 +55,10 @@ public class InvoiceTemplateMsg extends Properties implements Serializable{
 	
 	public String rectifiedInvoice() {
 		return getProperty("rectifiedInvoice");
+	}
+	
+	public String rectifies() {
+		return getProperty("rectifies");
 	}
 	
 	public String number() {
