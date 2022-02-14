@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -25,8 +26,10 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -54,6 +57,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceTrackingDAO;
 
 public class FinanceImpl implements IFinance {
 
@@ -525,5 +530,23 @@ public class FinanceImpl implements IFinance {
 	public void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code) {
 		ctx.getDslContext().transaction(
 				configuration -> InvoiceDAO.saveFacturaeCodeAsignacion(ctx, invoice, registry, code));		
+	}
+
+	@Override
+	public InvoiceTracking saveInvoiceTracking(AONContext ctx, InvoiceTracking invoiceTracking) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceTrackingDAO.save(ctx, invoiceTracking));				
+	}
+
+	@Override
+	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceInfoDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceInfoDAO.save(ctx, invoiceInfo));				
 	}
 }

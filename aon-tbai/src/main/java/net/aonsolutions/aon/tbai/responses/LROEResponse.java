@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.tbai.responses;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -8,7 +9,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class LROEResponse {
+public class LROEResponse implements Serializable {
 	
 	public static final String LROE_RESPONSE_ID = "eus-bizkaia-n3-identificativo";
 	public static final String LROE_RESPONSE_CODE = "eus-bizkaia-n3-codigo-respuesta";
@@ -83,6 +84,9 @@ public class LROEResponse {
 	}
 	
 	public DataRequest getDataRequest() {
+		if(dataRequest == null) {
+			dataRequest = new DataRequest();
+		}
 		return dataRequest;
 	}
 	

@@ -94,8 +94,9 @@ public class Invoice implements Serializable, HasAudit {
 	private Registry registryData;
 	private Byte status;
 	// ***************************
-	
-	
+
+	private InvoiceInfo invoiceInfo;
+		
 	public Integer getId() {
 		return id;
 	}
@@ -641,6 +642,7 @@ public class Invoice implements Serializable, HasAudit {
 			|| AonMathUtils.isLessThan( getDetails().stream().mapToDouble( InvoiceDetail::getTaxableBase ).sum() , REG_IMPORT_MAX_VALUE );
 	}
 	public String getSiiStatus() {
+		if(siiStatus == null) siiStatus = "Pendiente";
 		return siiStatus;
 	}
 	public Invoice setSiiStatus(String siiStatus) {
@@ -653,7 +655,7 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isVatImportation() {
 		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_IMPORTATION);
 	}
-	public Invoice setVatImportation( boolean value) {
+	public Invoice setVatImportation(boolean value) {
 		ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, value);
 		return this;
 	}
@@ -667,6 +669,17 @@ public class Invoice implements Serializable, HasAudit {
 		return getNumber() <= 0;
 	}
 	
+	public InvoiceInfo getInvoiceInfo() {
+		if(invoiceInfo == null) {
+			invoiceInfo = new InvoiceInfo();
+		}
+		return invoiceInfo;
+	}
+
+	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
+		this.invoiceInfo = invoiceInfo;
+		return this;
+	}
 	
 }
 

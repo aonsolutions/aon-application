@@ -37,10 +37,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -69,6 +71,14 @@ import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
 
+	public static void main(String[] args) {
+		DataRequest dr = AON.getDataRequest("despacho-serval.aibanez.net", 5749, "pramirez", f -> f.getIdProperty().eq(938));
+		JSONObject json = new JSONObject(dr.getBlackBox());
+		JSONObject invoiceJSON = json.getJSONObject("invoice");
+		Invoice invoice = InvoiceJSON.fromJSON(invoiceJSON);
+		
+	}
+	
 	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
 		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
 		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
@@ -112,23 +122,15 @@ public class TbaiMain {
 			send = !info.isAccepted();
 		}
 		if(send) {
-			if(invoice.isRectifier()) {
-				Invoice rectify = AON.getInvoice(company.getDomain().getName(), company.getDomain().getId(), "", invoice.getRectificationInvoice());
-				invoice.setRectificationInvoiceSeries(rectify.getSeries());
-				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
-				invoice.setRectificationInvoiceNumber(rectify.getNumber());
-				invoice.setRectificationType(rectify.getRectificationType());
-			}
 			TbaiBlockchain blockchain = tbaiData.getBlockchain(company.getDomain(), new User().setLogin(""), invoice.getId());
 			final TicketBai tbai = Invoice2tbai.build(company, invoice, tbaiConfiguration, blockchain);
 
 			final JAXBContext jaxbContext = JAXBContext.newInstance(TicketBai.class);
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal(tbai, bos);
+
 			byte[] data = bos.toByteArray();
 			TbaiSign tbaiSign = new TbaiSign();
 			byte[] xml = tbaiSign.sign(tbaiConfiguration, data);

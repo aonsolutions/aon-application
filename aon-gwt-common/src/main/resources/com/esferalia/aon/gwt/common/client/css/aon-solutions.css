@@ -1033,6 +1033,27 @@
 	height: 24px;
 }
 
+.aon_toolbar_search_container {
+	display: flex;
+}
+	
+.aon_toolbar_search_box {
+	display: flex;
+	border-bottom: 2px solid #002469;
+}
+		
+.aon_toolbar_text_box {
+	box-shadow: none !important;
+	border: none !important;
+	outline: none !important;
+}
+		
+.aon_toolbar_text_box:focus {
+	box-shadow: none !important;
+	border: none !important;
+	outline: none !important;
+}
+
 .aon_button {
 	flex-shrink: 0;
 	border-radius: 50%;

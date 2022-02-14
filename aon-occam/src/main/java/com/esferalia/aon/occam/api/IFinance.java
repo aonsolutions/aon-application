@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -21,8 +22,10 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -181,8 +184,10 @@ public interface IFinance {
 	public void deleteInvoiceFiscal(AONContext ctx, Integer id);
 	
 	public void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code);
+	
+	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
+	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
 
-	
-	
+	public InvoiceTracking saveInvoiceTracking(AONContext ctx, InvoiceTracking invoiceTracking);
 }
 	

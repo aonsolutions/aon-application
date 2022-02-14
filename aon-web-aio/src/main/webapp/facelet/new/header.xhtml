@@ -1267,6 +1267,9 @@
 		width: 25%;
 	}
 
+	.aon-width-fifth {
+		width: 20%;
+	}
 
 
 	.aon-option-favorite .menu_aonFinance,
@@ -1352,6 +1355,13 @@
 			}
 	</script>
 		
+	<a4j:region>
+		<h:form>
+			<a4j:poll status="aonStatus" interval="300000"
+				actionListener="#{desktop.onRefresh}" reRender="aonHeader" />
+		</h:form>
+	</a4j:region>
+
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
 		<aon:panelGrid columns="4" width="100%" 

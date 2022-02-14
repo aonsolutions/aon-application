@@ -146,7 +146,7 @@ public class EmployeeDialogObject {
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
-		this.contractData.setWorkplaceId(workplace.getId());
+		this.contractData.setWorkplaceId(null == workplace ? null : workplace.getId());
 	}
 
 	public Date getContractStartDate() {
