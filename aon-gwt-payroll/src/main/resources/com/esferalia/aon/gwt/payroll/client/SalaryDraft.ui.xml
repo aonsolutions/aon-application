@@ -327,6 +327,11 @@
 			height: 100%;
 		}
 		
+		.white {
+			color: white;
+			
+		}
+		
 	</ui:style>
 
 
@@ -359,13 +364,13 @@
 									text="IRPF" />
 
 								<g:Button debugId='fxButton' ui:field='fxButton'
-									styleName='aon-finding-toolbar-item aon_icon_fx {style.aon-toolbar-button}' enabled="false" />
+									styleName='aon-finding-toolbar-item aon_icon_fx {style.aon-toolbar-button} {style.white}' enabled="false" text="."/>
 								<g:Button debugId='undoAllButton' ui:field='undoAllButton'
-									styleName='aon-finding-toolbar-item aon_icon_undo_all {style.aon-toolbar-button}' />
+									styleName='aon-finding-toolbar-item aon_icon_undo_all {style.aon-toolbar-button} {style.white}' text="."/>
 								<g:Button debugId='undoButton' ui:field='undoButton'
-									styleName='aon-finding-toolbar-item aon_icon_undo {style.aon-toolbar-button}' />
+									styleName='aon-finding-toolbar-item aon_icon_undo {style.aon-toolbar-button} {style.white}' text="." />
 								<g:Button debugId='redoButton' ui:field='redoButton'
-									styleName="aon-finding-toolbar-item aon_icon_redo {style.aon-toolbar-button}" />
+									styleName="aon-finding-toolbar-item aon_icon_redo {style.aon-toolbar-button} {style.white}" text="." />
 
 								<!--  g:Button debugId='printButton' ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-printer' text="IMPRIMIR" /-->
