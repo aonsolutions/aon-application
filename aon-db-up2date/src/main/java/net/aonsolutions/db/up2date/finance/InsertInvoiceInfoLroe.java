@@ -19,6 +19,7 @@ import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.jooq.tables.DataResponse;
 import com.esferalia.aon.jooq.tables.DataResponseDetail;
+import com.esferalia.aon.jooq.tables.Invoice;
 import com.esferalia.aon.jooq.tables.InvoiceInfo;
 
 import net.aonsolutions.db.up2date.Update;
@@ -53,61 +54,65 @@ public class InsertInvoiceInfoLroe implements Update {
 			System.out.println("Data Response: " + dr);
 			System.out.println("Domain: " + domain);
 			System.out.println("Invioce: " + invoice);
-			String jsonStr = dslContext.select(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE)
-				.from(DataResponseDetail.DATA_RESPONSE_DETAIL)
-				.where(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(dr))
-				.and(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("json"))
-				.fetch().stream().map(re-> re.getValue(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE))
-				.findFirst().orElse("{}");
-			System.out.println(jsonStr);
-			String infoStr = dslContext.select(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE)
-				.from(DataResponseDetail.DATA_RESPONSE_DETAIL)
-				.where(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(dr))
-				.and(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("info"))
-				.fetch().stream().map(re-> re.getValue(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE))
-				.findFirst().orElse("{}");
-			System.out.println(infoStr);
+			
+			long count = dslContext.select(Invoice.INVOICE.ID).from(Invoice.INVOICE).where(Invoice.INVOICE.ID.eq(invoice)).fetch().stream().count();
+			
+			if(count > 0) {
+				String jsonStr = dslContext.select(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE)
+						.from(DataResponseDetail.DATA_RESPONSE_DETAIL)
+						.where(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(dr))
+						.and(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("json"))
+						.fetch().stream().map(re-> re.getValue(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE))
+						.findFirst().orElse("{}");
+				System.out.println(jsonStr);
+				String infoStr = dslContext.select(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE)
+						.from(DataResponseDetail.DATA_RESPONSE_DETAIL)
+						.where(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(dr))
+						.and(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VARIABLE.eq("info"))
+						.fetch().stream().map(re-> re.getValue(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE))
+						.findFirst().orElse("{}");
+				System.out.println(infoStr);
 
-			try {
-				System.out.println("parse1");
-				JSONParser parser = new JSONParser();
-				System.out.println("parse2");
-				JSONObject json =  (JSONObject) parser.parse(jsonStr);
-				System.out.println("parse3");
-				JSONObject info =  (JSONObject) parser.parse(infoStr);
-				System.out.println("parse4");
-				
-				String op = (String) info.get("operacion");
-				System.out.println(op);
-				byte status = 0;
-				byte operation = 0;
-				if("A_00".equalsIgnoreCase(op) || "A_01".equalsIgnoreCase(op)) {
-					boolean error = (boolean) json.getOrDefault("error", false);
-					System.out.println(error);
-					String lroeType = (String) json.get("eus-bizkaia-n3-tipo-respuesta");
-					if(!error && !"Incorrecto".equalsIgnoreCase(lroeType)) {
-						status = 1;
-						if(com.containsKey(invoice))
-							com.get(invoice).setSent(dr);
-						else com.put(invoice, new Communication().setDomain(domain).setSent(dr));
-					} else {
-						status = 3;
-						if(com.containsKey(invoice))
-							com.get(invoice).setWrong(dr);
-						else com.put(invoice, new Communication().setDomain(domain).setWrong(dr));
+				try {
+					System.out.println("parse1");
+					JSONParser parser = new JSONParser();
+					System.out.println("parse2");
+					JSONObject json =  (JSONObject) parser.parse(jsonStr);
+					System.out.println("parse3");
+					JSONObject info =  (JSONObject) parser.parse(infoStr);
+					System.out.println("parse4");
+					
+					String op = (String) info.get("operacion");
+					System.out.println(op);
+					byte status = 0;
+					byte operation = 0;
+					if("A_00".equalsIgnoreCase(op) || "A_01".equalsIgnoreCase(op)) {
+						boolean error = (boolean) json.getOrDefault("error", false);
+						System.out.println(error);
+						String lroeType = (String) json.get("eus-bizkaia-n3-tipo-respuesta");
+						if(!error && !"Incorrecto".equalsIgnoreCase(lroeType)) {
+							status = 1;
+							if(com.containsKey(invoice))
+								com.get(invoice).setSent(dr);
+							else com.put(invoice, new Communication().setDomain(domain).setSent(dr));
+						} else {
+							status = 3;
+							if(com.containsKey(invoice))
+								com.get(invoice).setWrong(dr);
+							else com.put(invoice, new Communication().setDomain(domain).setWrong(dr));
+						}
+					} else if("AN_0".equalsIgnoreCase(op)) {
+						operation = 2;
+						boolean error = (boolean) json.getOrDefault("error", false);
+						String lroeType = (String) json.get("eus-bizkaia-n3-tipo-respuesta");
+						if(!error && !"Incorrecto".equalsIgnoreCase(lroeType)) {
+							if(com.containsKey(invoice))
+								com.get(invoice).setAnnuled(dr);
+							else com.put(invoice, new Communication().setDomain(domain).setAnnuled(dr));					
+						} 
 					}
-				} else if("AN_0".equalsIgnoreCase(op)) {
-					operation = 2;
-					boolean error = (boolean) json.getOrDefault("error", false);
-					String lroeType = (String) json.get("eus-bizkaia-n3-tipo-respuesta");
-					if(!error && !"Incorrecto".equalsIgnoreCase(lroeType)) {
-						if(com.containsKey(invoice))
-							com.get(invoice).setAnnuled(dr);
-						else com.put(invoice, new Communication().setDomain(domain).setAnnuled(dr));					
-					} 
-				}
 				
-				Integer invoiceBatch = dslContext.insertInto(INVOICE_BATCH)
+					Integer invoiceBatch = dslContext.insertInto(INVOICE_BATCH)
 						.set(INVOICE_BATCH.DOMAIN, domain)
 						.set(INVOICE_BATCH.DATE, new Timestamp(date.getTime()))
 						.set(INVOICE_BATCH.TYPE, (byte) 0)
@@ -116,14 +121,15 @@ public class InsertInvoiceInfoLroe implements Update {
 						.set(INVOICE_BATCH.CREATION_USER, creation_user)
 					.returning(INVOICE_BATCH.ID).fetchOne().getId();
 				
-				Integer invoiceBatchDetail = dslContext.insertInto(INVOICE_BATCH_DETAIL)
+					Integer invoiceBatchDetail = dslContext.insertInto(INVOICE_BATCH_DETAIL)
 						.set(INVOICE_BATCH_DETAIL.DOMAIN, domain)
 						.set(INVOICE_BATCH_DETAIL.INVOICE, invoice)
 						.set(INVOICE_BATCH_DETAIL.INVOICE_BATCH, invoiceBatch)
 						.set(INVOICE_BATCH_DETAIL.STATUS, status)
 					.returning(INVOICE_BATCH_DETAIL.ID).fetchOne().getId();
-			} catch (ParseException e) {
-				e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		System.out.println(com.size());
