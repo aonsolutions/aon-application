@@ -327,6 +327,11 @@
 			height: 100%;
 		}
 		
+		.white {
+			color: white;
+			
+		}
+		
 	</ui:style>
 
 
@@ -359,13 +364,13 @@
 									text="IRPF" />
 
 								<g:Button debugId='fxButton' ui:field='fxButton'
-									styleName='aon-finding-toolbar-item aon_icon_fx {style.aon-toolbar-button}' enabled="false" />
+									styleName='aon-finding-toolbar-item aon_icon_fx {style.aon-toolbar-button} {style.white}' enabled="false" text="."/>
 								<g:Button debugId='undoAllButton' ui:field='undoAllButton'
-									styleName='aon-finding-toolbar-item aon_icon_undo_all {style.aon-toolbar-button}' />
+									styleName='aon-finding-toolbar-item aon_icon_undo_all {style.aon-toolbar-button} {style.white}' text="."/>
 								<g:Button debugId='undoButton' ui:field='undoButton'
-									styleName='aon-finding-toolbar-item aon_icon_undo {style.aon-toolbar-button}' />
+									styleName='aon-finding-toolbar-item aon_icon_undo {style.aon-toolbar-button} {style.white}' text="." />
 								<g:Button debugId='redoButton' ui:field='redoButton'
-									styleName="aon-finding-toolbar-item aon_icon_redo {style.aon-toolbar-button}" />
+									styleName="aon-finding-toolbar-item aon_icon_redo {style.aon-toolbar-button} {style.white}" text="." />
 
 								<!--  g:Button debugId='printButton' ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-printer' text="IMPRIMIR" /-->
@@ -502,7 +507,7 @@
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
-														<g:Label styleName="{style.cell-label}">TOTAL DÍAS</g:Label>
+														<g:Label styleName="{style.cell-label}">DÍAS</g:Label>
 														<g:Label ui:field="daysLabel" styleName="{style.cell-value}">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
@@ -521,13 +526,21 @@
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
-													<g:HTMLPanel>
-														<g:HorizontalPanel styleName="{style.table-label}" >
-															<g:Label styleName="{style.cell-label}">DIAS TRABAJADOS</g:Label>
-															<g:Button  ui:field="employeeWorkedDaysButton" styleName="aon-editDataTable-button aon-icon-calendar"></g:Button>
-														</g:HorizontalPanel>
-														<g:Label ui:field="employeeWorkedDaysLabel" styleName="{style.cell-value}">&nbsp;</g:Label>
-													</g:HTMLPanel>
+													<g:HorizontalPanel styleName="{style.table-label}" >
+														<g:HTMLPanel>
+															<g:Label ui:field="employeeWorkedHoursTitle" styleName="{style.cell-label}" visible="false">HORAS TRABAJADAS</g:Label>
+															<g:Label ui:field="employeeWorkedHoursLabel" styleName="{style.cell-value}" visible="false">&nbsp;</g:Label>
+															<g:Label ui:field="employeeSalaryHoursTitle" styleName="{style.cell-label}" visible="false">HORAS NOMINA</g:Label>
+															<g:Label ui:field="employeeSalaryHoursLabel" styleName="{style.cell-value}" visible="false">&nbsp;</g:Label>
+															<g:Label ui:field="employeeWorkedDaysTitle" styleName="{style.cell-label}" visible="false">DIAS TRABAJADOS</g:Label>
+															<g:Label ui:field="employeeWorkedDaysLabel" styleName="{style.cell-value}" visible="false">&nbsp;</g:Label>
+														</g:HTMLPanel>
+														<g:HTMLPanel>
+															<g:Button  ui:field="employeeWorkedDaysButton" styleName="aon-editDataTable-button aon-icon-calendar" visible="false"></g:Button>
+															<g:Button  ui:field="employeeWorkedHoursButton" styleName="aon-editDataTable-button aon-icon-calendar" visible="false"></g:Button>
+															<g:Label styleName="{style.cell-value}" >&nbsp;</g:Label>
+														</g:HTMLPanel>
+													</g:HorizontalPanel>
 												</g:customCell>
 											</g:row>
 										</g:Grid>

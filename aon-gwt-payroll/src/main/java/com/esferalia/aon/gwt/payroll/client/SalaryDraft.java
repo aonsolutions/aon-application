@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.DelegateVariable;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
 import com.esferalia.aon.gwt.payroll.shared.Event;
@@ -2619,9 +2620,21 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label employeeOcupationLabel;
 	@UiField
+	Label employeeWorkedHoursLabel;
+	@UiField
+	Label employeeWorkedHoursTitle;
+	@UiField
+	Label employeeSalaryHoursLabel;
+	@UiField
+	Label employeeSalaryHoursTitle;
+	@UiField
 	Label employeeWorkedDaysLabel;
 	@UiField
+	Label employeeWorkedDaysTitle;
+	@UiField
 	Button employeeWorkedDaysButton;
+	@UiField
+	Button employeeWorkedHoursButton;
 
 	@UiField
 	Label periodLabel;
@@ -2886,7 +2899,9 @@ public class SalaryDraft extends ResizeComposite
 //	}
 	
 	
-	@UiHandler("employeeWorkedDaysButton")
+	@UiHandler(
+		{"employeeWorkedDaysButton", 
+		"employeeWorkedHoursButton"})
 	void onWorkedDaysClick(ClickEvent event) {
 		EmployeeTree.showEmployeeCalendar();
 	}
@@ -3315,8 +3330,25 @@ public class SalaryDraft extends ResizeComposite
 		employeeOcupationLabel.setTitle(getTitleOf("OCUPACION",Employee.Occupation.class));
 		employeeGroupLabel.setText(getValueOf("GRUPO_COTIZACION"));
 		
-		double workedDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
-		employeeWorkedDaysLabel.setText(formatValue(workedDays));
+		double workHours = getValuesOf("HORAS_TRABAJADAS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		employeeWorkedHoursLabel.setText(formatValue(workHours));
+		employeeWorkedHoursLabel.setVisible(isSalary() && workHours > 0);
+		employeeWorkedHoursTitle.setVisible(employeeWorkedHoursLabel.isVisible());
+		
+		boolean isPartial = getValuesOf("COEFICIENTE_PARCIALIDAD").map(  AonNumberUtils::todouble).anyMatch( d -> d < 1.00 );
+		
+		double salaryHours = getValuesOf("HORAS_NOMINA").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		employeeSalaryHoursLabel.setText(formatValue(salaryHours));
+		employeeSalaryHoursLabel.setVisible(isSalary() && isPartial &&  workHours == 0 && salaryHours > 0);
+		employeeSalaryHoursTitle.setVisible(employeeSalaryHoursLabel.isVisible());
+
+		employeeWorkedHoursButton.setVisible(employeeWorkedHoursLabel.isVisible() || employeeSalaryHoursLabel.isVisible());
+
+		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		employeeWorkedDaysLabel.setText(formatValue(workDays));
+		employeeWorkedDaysLabel.setVisible(isSalary() && !isPartial &&  workDays > 0 );
+		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
+		employeeWorkedDaysButton.setVisible(employeeWorkedDaysLabel.isVisible());
 		
 		String seniorityYears = 
 		getValuesOf("A\u00D1OS_ANTIGUEDAD").distinct().map(AonNumberUtils::todouble).filter( d -> d > 0)
@@ -3359,13 +3391,21 @@ public class SalaryDraft extends ResizeComposite
 		List<Variable> context = getContext(salaryDraftObject);
 		List<Variable> variables = context.stream()
 				.filter(v->!skipVariable(v))
-//				.filter(v->!isPaymentVariable(v))
+				//.filter(v->!isPaymentVariable(v))
 				.collect(Collectors.toList());
-		List<Variable> constants = getConstants(context);
+		//List<Variable> constants = getConstants(context);
+		
 		
 		List<Variable> visibleContext  = new ArrayList<Variable>();
-		visibleContext.addAll(constants);
+		//visibleContext.addAll(constants);
 		visibleContext.addAll(variables);
+		if ( isPartial ) {
+			List<Variable> partialVariables = getVariablesOf("COEFICIENTE_PARCIALIDAD").collect(Collectors.toList()); 
+			visibleContext.removeAll(partialVariables);
+			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
+		}
+		
+		
 		
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 
@@ -3400,6 +3440,13 @@ public class SalaryDraft extends ResizeComposite
 		.map(Variable::getValue)
 		.filter(Objects::nonNull)
 		.map(String::valueOf )
+		;
+	}
+
+	public Stream<Variable> getVariablesOf(String name) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.filter( v -> v.getValue() != null)
 		;
 	}
 
@@ -6124,11 +6171,11 @@ public class SalaryDraft extends ResizeComposite
 		//} catch ( Exception e ) {
 		//}
 
-		try {
-			summingConstants.add(newNumberVariable(context, "HORAS_TRABAJADAS"));
-			return summingConstants;
-		} catch ( Exception e ) {
-		}
+		//try {
+		//	summingConstants.add(newNumberVariable(context, "HORAS_TRABAJADAS"));
+		//	return summingConstants;
+		//} catch ( Exception e ) {
+		//}
 		
 		Object partialFactor = getContextValue("COEFICIENTE_PARCIALIDAD", salaryDraftObject );
 		
@@ -6138,10 +6185,10 @@ public class SalaryDraft extends ResizeComposite
 		if ( Double.parseDouble(String.valueOf(partialFactor)) == 1.00 )
 			return summingConstants;
 		
-		try {
-			summingConstants.add(newNumberVariable(context, "HORAS_NOMINA"));
-		} catch ( Exception e ) {
-		}
+		//try {
+		//	summingConstants.add(newNumberVariable(context, "HORAS_NOMINA"));
+		//} catch ( Exception e ) {
+		//}
 
 		return summingConstants; 
 	}
