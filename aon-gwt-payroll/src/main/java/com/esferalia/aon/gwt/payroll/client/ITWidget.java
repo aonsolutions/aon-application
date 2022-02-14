@@ -1536,6 +1536,21 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private void saveITPartsAon(List<ItNotExist> itNotExist) {
+		
+		setEmployeeData(itNotExist);
+		
+		showProgressPanel();
+		
+		saveITParts(itNotExist, s->{		
+			showCreateMessage();
+			loadITWidget();
+		}, e->{
+			AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
+			dialog.warning();
+		});
+	}
+	
+	private void setEmployeeData(List<ItNotExist> itNotExist) {
 		for (ItNotExist notExist : itNotExist) {
 			if(itEmployeeIts!=null) {
 				itEmployeeIts.stream().filter(e-> 
@@ -1551,13 +1566,6 @@ public abstract class ITWidget extends ResizeComposite {
 				});
 			}
 		}
-		saveITParts(itNotExist, s->{		
-			showCreateMessage();
-			loadITWidget();
-		}, e->{
-			AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
-			dialog.warning();
-		});
 	}
 	
 	private void openITPartDialog(ItNotExist itNotExist){
@@ -1899,8 +1907,7 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private void showProgressPanel() {
-		tabLayout.remove(resultsPanel);
-		
+		removeTabs();
 		progressPanel = new ProgressPanel();
 		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
 		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
@@ -1918,8 +1925,16 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private void hideProgressPanel() {
-		tabLayout.remove(progressPanel);
+		removeTabs();
 		showResultsPanel();
+	}
+	
+	private void removeTabs(){
+		if(resultsPanel!=null) 
+			tabLayout.remove(resultsPanel);
+		
+		if(progressPanel!=null)
+			tabLayout.remove(progressPanel);
 	}
 	
 	// --------------------------------------------------- Abstract Methdos

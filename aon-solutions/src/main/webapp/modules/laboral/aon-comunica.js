@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles, getIDC, getTA, movDelete } from "../../services/service.js";
-import { setValueName } from "../../services/utils.js";
+import { setValueName, waitEl } from "../../services/utils.js";
 import { PayrollOptions, PAYROLL_VIEWS, CONTRACT_OPTIONS } from "./PayrollEnums.js";
 import { AonMovementsList } from "./comunic@/aon-movements-list.js";
 import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
@@ -202,18 +202,39 @@ export class AonComunica extends AonElement {
     });
   }
 
+  loadGwt(module){
+
+    let application = this.getApplication();
+    
+    this.clearElementById(application.CONTENT);
+
+    application.startLoader();
+
+    GWT.load(module, application.CONTENT);
+
+    waitEl(`#${application.CONTENT} .aon_toolbar`).finally(()=> {
+      application.stopLoader();
+      this.fixSpacing();
+    });
+  }
+
+  fixSpacing() {
+    if (!document.querySelector("aon-module")) 
+      waitEl(`#${this.getApplication().getContent().id} div:first-child`).then(el => el.style.position = "").catch(err => console.log(err));        
+  }
+
   showView(view, data = undefined, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
       switch(view){
       case PAYROLL_VIEWS.AON_CERT:
-          GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.applicationEl.CONTENT);
+          this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
           break;
       case PAYROLL_VIEWS.AON_CTA_LIST:
           if(this.isMobile()){
             aonView = new AonCtaList();
           } else {
-              GWT.load(GWT.MAIN_CCC, this.applicationEl.CONTENT);
+            this.loadGwt(GWT.MAIN_CCC);
           }
           break;
       case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
