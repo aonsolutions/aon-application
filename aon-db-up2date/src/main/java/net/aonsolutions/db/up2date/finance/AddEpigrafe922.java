@@ -38,6 +38,22 @@ public class AddEpigrafe922 implements Update {
 			.set( Iae.IAE.TITLE,"SERVICIOS DE LIMPIEZA");
 		}
 		
+		long count2 = dslContext.select().from(Iae.IAE).where(Iae.IAE.SECTION.eq("1").and(Iae.IAE.EPIGRAPH.eq("504.11"))).fetch().stream().count();
+		if(count2 < 1) {
+			dslContext.insertInto(Iae.IAE)
+			.set(Iae.IAE.SECTION, "1")
+			.set(Iae.IAE.EPIGRAPH, "504.11")
+			.set( Iae.IAE.TITLE,"INSTALACIONES ELECTRICAS EN GENERAL, REDES TELEGRAFICAS, TELEFONIA, TV, ETC.");
+		}
+		
+		long count3 = dslContext.select().from(Iae.IAE).where(Iae.IAE.SECTION.eq("1").and(Iae.IAE.EPIGRAPH.eq("504.12"))).fetch().stream().count();
+		if(count3 < 1) {
+			dslContext.insertInto(Iae.IAE)
+			.set(Iae.IAE.SECTION, "1")
+			.set(Iae.IAE.EPIGRAPH, "504.12")
+			.set( Iae.IAE.TITLE,"INSTALACIONES ELECTRICAS EN TODA CLASE DE EDIFICIOS");
+		}
+		
 		System.out.println("[END]");
 	}
 
