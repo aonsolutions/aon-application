@@ -313,10 +313,13 @@ export class AonMovementsList extends AonElement {
       }
     } catch (error) {
       if(typeof error === "string") error = JSON.parse(error);
-      if(error &&  EXCEPTION_MESSAGE[error.message])error.message =  EXCEPTION_MESSAGE[error.message];
-      if(!this.isMobile()){
+      
+      if(error && EXCEPTION_MESSAGE[error.message])
+        error.message =  EXCEPTION_MESSAGE[error.message];
+
+      if(!this.isMobile())
         this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
-      }
+ 
       this.showToast(error);
     }
     return data;
