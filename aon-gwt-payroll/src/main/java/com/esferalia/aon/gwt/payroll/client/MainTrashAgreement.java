@@ -48,7 +48,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	interface MyStyle extends CssResource {
 		String borderR();
-		String cmd_btn();
+		String cmdBtn();
 	}
 	
 	@UiField
@@ -66,14 +66,13 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	private Map<Integer, AgreementDraftObject> agreementDrafts;	
 	private List<TrashEditionListener> editionsListener;
 	
-	private Integer domain;	
-	private Agreement agreement;
+	private Integer domain;
 	private AgreementDraft agreementDraft;
 	
 	private List<Listener> listeners;
 	private List<Toolbar> toolbars;
 	
-	public MainTrashAgreement() {
+	protected MainTrashAgreement() {
 		// Inject rich styles.
 		AON.ensureInjected();
 		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
@@ -85,18 +84,17 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		
 		agreements.addStyleName(style.borderR());
 		
-		this.agreementDrafts = new HashMap<Integer, AgreementDraftObject>();
-		this.editionsListener = new LinkedList<TrashEditionListener>();
+		this.agreementDrafts = new HashMap<>();
+		this.editionsListener = new LinkedList<>();
 		
 		this.domain = null;
-		this.agreement = null;
 		this.agreementDraft = new AgreementDraft();
 		
 		this.agreements.addToolbar(this);
 		this.agreements.addListener(this);
 		
-		this.toolbars = new LinkedList<Toolbar>();
-		this.listeners = new LinkedList<Listener>();
+		this.toolbars = new LinkedList<>();
+		this.listeners = new LinkedList<>();
 		
 		addToolbar(this);
 		toolbar.addListener(this);
@@ -123,9 +121,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	
 	@Override
 	public void onAgreementSelected(Agreement agreement) {
-		
-		this.agreement = agreement;
-		
 		detailPanel.setWidget(agreementDraft);
 		
 		AgreementDraftObject agreementDraftObject = agreementDrafts
@@ -200,7 +195,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		AonConfirmDialog confirmDialog = new AonConfirmDialog();
 		confirmDialog.confirm(
 				"BORRADO", 
-				String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular"+ String.valueOf("\u00E1") +"n de este convenio.",
+				String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio.",
 				new AonConfirmDialogCallback() {
 
 					@Override
@@ -213,13 +208,17 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								// Not use here
+							}
 							
 						});
 					}
 
 					@Override
-					public void onCancel() {}
+					public void onCancel() {
+						// Not use here
+					}
 				}
 		);
 		
@@ -243,13 +242,17 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								// Not use here
+							}
 							
 						});
 					}
 
 					@Override
-					public void onCancel() {}
+					public void onCancel() {
+						// Not use here
+					}
 					
 				}
 		);
@@ -293,14 +296,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	}
 
 	public void selectFirstItem() {
-		agreements.getTrashAgreements();
-		getAgreementsTree().getTree().setSelectedItem(
-				getAgreementsTree().getTree().getItem(0),
-				true);
+		agreements.getTrashAgreements(s -> getAgreementsTree().getTree().setSelectedItem(getAgreementsTree().getTree().getItem(0), true));
 	}
-	
-	// --------------------------------------------------------- Abstract Methods
-	
-	public abstract void onBackButtonClick();
 	
 }

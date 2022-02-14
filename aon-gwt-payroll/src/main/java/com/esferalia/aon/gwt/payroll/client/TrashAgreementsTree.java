@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -61,7 +62,7 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler {
 		public static SafeHtml getSafeHtml(int left, int top, int width,
 				int height, boolean isDraggable, SafeUri... uris) {
 
-			StringBuffer background = new StringBuffer();
+			StringBuilder background = new StringBuilder();
 			for (SafeUri uri : uris) {
 				if (background.length() > 0)
 					background.append(", ");
@@ -92,12 +93,12 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler {
 		
 		void onTreeItemSelected(SelectionEvent<TreeItem> event);
 		
-		void getAgreements();
+		void getAgreements(Consumer<Agreement> success);
 	}
 	
 	private static final Images IMAGES = GWT.create(Images.class);
 
-	private static final ImageResource RESOURCES[][][] = {
+	private static final ImageResource[][][] RESOURCES = {
 			{ { IMAGES.agreement(), IMAGES.agreement_warn() },
 				{ IMAGES.agreement_error(), IMAGES.agreement_error() } },
 			{
@@ -124,7 +125,7 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler {
 	public TrashAgreementsTree() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.listeners = new ArrayList<Listener>();
+		this.listeners = new ArrayList<>();
 		this.tree.addKeyDownHandler(this);
 		
 	}
@@ -205,7 +206,7 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler {
 			ImageResource... imageMarks) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
-		List<SafeUri> uris = new ArrayList<SafeUri>();
+		List<SafeUri> uris = new ArrayList<>();
 		uris.add(imageProto.getSafeUri());
 		for (ImageResource imageMark : imageMarks)
 			uris.add(imageMark.getSafeUri());
@@ -221,9 +222,10 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler {
 	}
 	
 	public static ImageResource getImageResource(Agreement agreement) {
+		int index = agreement.hasLevelsWithoutCategories() ? 1 : 0;
 		return agreement.getDomain() == 0 ?
 				IMAGES.logo() :
-				RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
+				RESOURCES[0][0][index];
 	}
 	
 	public static ImageResource getImageResource(Agreement agreement, Integer actualDomain) {
