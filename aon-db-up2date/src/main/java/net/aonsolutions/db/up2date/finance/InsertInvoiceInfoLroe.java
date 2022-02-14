@@ -74,21 +74,15 @@ public class InsertInvoiceInfoLroe implements Update {
 				System.out.println(infoStr);
 
 				try {
-					System.out.println("parse1");
 					JSONParser parser = new JSONParser();
-					System.out.println("parse2");
 					JSONObject json =  (JSONObject) parser.parse(jsonStr);
-					System.out.println("parse3");
 					JSONObject info =  (JSONObject) parser.parse(infoStr);
-					System.out.println("parse4");
-					
+				
 					String op = (String) info.get("operacion");
-					System.out.println(op);
 					byte status = 0;
 					byte operation = 0;
 					if("A_00".equalsIgnoreCase(op) || "A_01".equalsIgnoreCase(op)) {
 						boolean error = (boolean) json.getOrDefault("error", false);
-						System.out.println(error);
 						String lroeType = (String) json.get("eus-bizkaia-n3-tipo-respuesta");
 						if(!error && !"Incorrecto".equalsIgnoreCase(lroeType)) {
 							status = 1;
@@ -111,22 +105,31 @@ public class InsertInvoiceInfoLroe implements Update {
 							else com.put(invoice, new Communication().setDomain(domain).setAnnuled(dr));					
 						} 
 					}
-				
-					Integer invoiceBatch = dslContext.insertInto(INVOICE_BATCH)
-						.set(INVOICE_BATCH.DOMAIN, domain)
-						.set(INVOICE_BATCH.DATE, new Timestamp(date.getTime()))
-						.set(INVOICE_BATCH.TYPE, (byte) 0)
-						.set(INVOICE_BATCH.OPERATION, operation)
-						.set(INVOICE_BATCH.DATA_RESPONSE, dr)
-						.set(INVOICE_BATCH.CREATION_USER, creation_user)
-					.returning(INVOICE_BATCH.ID).fetchOne().getId();
-				
-					Integer invoiceBatchDetail = dslContext.insertInto(INVOICE_BATCH_DETAIL)
-						.set(INVOICE_BATCH_DETAIL.DOMAIN, domain)
-						.set(INVOICE_BATCH_DETAIL.INVOICE, invoice)
-						.set(INVOICE_BATCH_DETAIL.INVOICE_BATCH, invoiceBatch)
-						.set(INVOICE_BATCH_DETAIL.STATUS, status)
-					.returning(INVOICE_BATCH_DETAIL.ID).fetchOne().getId();
+					Integer invoiceBatch = dslContext.select(INVOICE_BATCH.ID).from(INVOICE_BATCH).where(INVOICE_BATCH.DATA_RESPONSE.eq(dr)).fetch().stream().map(rib -> rib.getValue(INVOICE_BATCH.ID)).findFirst().orElse(null);
+					if(invoiceBatch == null) {
+						invoiceBatch = dslContext.insertInto(INVOICE_BATCH)
+								.set(INVOICE_BATCH.DOMAIN, domain)
+								.set(INVOICE_BATCH.DATE, new Timestamp(date.getTime()))
+								.set(INVOICE_BATCH.TYPE, (byte) 0)
+								.set(INVOICE_BATCH.OPERATION, operation)
+								.set(INVOICE_BATCH.DATA_RESPONSE, dr)
+								.set(INVOICE_BATCH.CREATION_USER, creation_user)
+								.returning(INVOICE_BATCH.ID).fetchOne().getId();
+						System.out.println("INSERT INTO INVOICE_BATCH - " + invoiceBatch);
+					}
+					
+					Integer invoiceBatchDetail = dslContext.select(INVOICE_BATCH_DETAIL.ID).from(INVOICE_BATCH_DETAIL).where(INVOICE_BATCH_DETAIL.INVOICE.eq(invoice))
+							.and(INVOICE_BATCH_DETAIL.INVOICE_BATCH.eq(invoiceBatch))
+							.fetch().stream().map(rib -> rib.getValue(INVOICE_BATCH.ID)).findFirst().orElse(null);
+					if(invoiceBatchDetail == null) {
+						invoiceBatchDetail = dslContext.insertInto(INVOICE_BATCH_DETAIL)
+								.set(INVOICE_BATCH_DETAIL.DOMAIN, domain)
+								.set(INVOICE_BATCH_DETAIL.INVOICE, invoice)
+								.set(INVOICE_BATCH_DETAIL.INVOICE_BATCH, invoiceBatch)
+								.set(INVOICE_BATCH_DETAIL.STATUS, status)
+								.returning(INVOICE_BATCH_DETAIL.ID).fetchOne().getId();
+						System.out.println("INSERT INTO INVOICE_BATCH_DETAIL - " + invoiceBatchDetail);
+					}
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -141,12 +144,19 @@ public class InsertInvoiceInfoLroe implements Update {
 			if(annulled) status = 4;
 			else if(accepted) status = 1;
 			else if(wrong) status = 3;
-			dslContext.insertInto(InvoiceInfo.INVOICE_INFO)
+			
+			Integer invoiceInfo = dslContext.select(InvoiceInfo.INVOICE_INFO.ID).from(InvoiceInfo.INVOICE_INFO).where(InvoiceInfo.INVOICE_INFO.INVOICE.eq(key))
+					.fetch().stream().map(rib -> rib.getValue(InvoiceInfo.INVOICE_INFO.ID)).findFirst().orElse(null);
+			if (invoiceInfo == null) {
+				dslContext.insertInto(InvoiceInfo.INVOICE_INFO)
 				.set(InvoiceInfo.INVOICE_INFO.DOMAIN, com.get(key).getDomain())
 				.set(InvoiceInfo.INVOICE_INFO.INVOICE, key)
 				.set(InvoiceInfo.INVOICE_INFO.TYPE, (byte) 0)
 				.set(InvoiceInfo.INVOICE_INFO.STATUS, status)
 				.execute();
+				System.out.println("INSERT INTO INVOICE_INFO");
+			}
+
 		}
 		
 		System.out.println("[END]");
