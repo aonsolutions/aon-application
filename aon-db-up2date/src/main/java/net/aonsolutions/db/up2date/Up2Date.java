@@ -219,10 +219,10 @@ public class Up2Date {
     		AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
     		AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
     		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
-    		InvoiceBatchCreation.INVOICE_BATCH_CREATION,
-    		FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
-    		InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
-    		AddEpigrafe922.ADD_EPIGRAFE_922
+    		//InvoiceBatchCreation.INVOICE_BATCH_CREATION,
+    		//FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
+    		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
+    		//AddEpigrafe922.ADD_EPIGRAFE_922,
     };
     
 
