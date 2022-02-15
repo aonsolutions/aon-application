@@ -214,10 +214,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 						acceptBtnDialog.setEnabled(true);
 						generationAFITB.setEnabled(true);
 
-						if (isAlta)
-							showAlta();
-						else if (isBaja)
+						if (isBaja)
 							showBaja();
+						else if (isAlta)
+							showAlta();
 						else
 							showMovs();
 

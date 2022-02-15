@@ -36,7 +36,7 @@ public final class EmployeeAFIGeneration {
 		public ETI(String authKey, String payrollProvider, String fileName, String priorityCode) {
 			super();
 			this.etiHeader = "ETI";
-			this.sintaxIndent = AonStringUtils.rightPad("AFI92W0000", 10, '0');
+			this.sintaxIndent = AonStringUtils.rightPad("AFI90W0000", 10, '0');
 			this.authKey = AonStringUtils.leftPad(authKey, 8, '0');
 			this.payrollProvider = AonStringUtils.leftPad(payrollProvider, 3, '0');
 			this.reserved5 = AonStringUtils.leftPad("", 5, '0');
@@ -718,7 +718,7 @@ public final class EmployeeAFIGeneration {
 		public ETF(String authKey, String payrollProvider, String fileName, String priorityCode, String countEmployees, String countLines) {
 			super();
 			this.etfHeader = "ETF";
-			this.sintaxIndent = "AFI92W0000";
+			this.sintaxIndent = "AFI90W0000";
 			this.authKey = StringUtils.leftPad(authKey, 8, '0');
 			this.payrollProvider = payrollProvider;
 			this.reserved5 = StringUtils.leftPad("", 5, '9');
