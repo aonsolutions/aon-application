@@ -6,6 +6,7 @@ public enum AonLanguage implements Serializable{
 	
 	BASQUE("eu"),
 	CATALAN("ca"),
+	VALENCIAN("va"),
 	DEUTSCH("de"),
 	ENGLISH("en"),
 	GALICIAN("gl"),
