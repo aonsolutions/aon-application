@@ -1,13 +1,16 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_FACTOR;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DATE;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -30,6 +33,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -38,11 +42,13 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 //import com.esferalia.aon.salary.expression.CompileException;
@@ -55,6 +61,43 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 	
 	private static class SuccessException extends Exception {
 		
+	}
+
+	@Test
+	public void testWorkedFactorOffDays() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfMonth
+				, new HashMap<String, String>(){
+					{
+						put("TC2", "\"200\"");
+						put("HORAS_LUNES", "4");
+						put("HORAS_MARTES", "4");
+						put("HORAS_MIERCOLES", "4");
+						put("HORAS_JUEVES", "4");
+						put("HORAS_VIERNES", "4");
+						put("HORAS_SABADO", "0");
+						put("HORAS_DOMINGO", "0");
+					}
+				}
+				);
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(WORKED_FACTOR.getName(), firstDayOfMonth, lastDayOfMonth,Number.class)
+		.forEach(r -> assertEquals(0.5, r.getValue().doubleValue(), 0.00));
+		
+		// all month off 
+		addData(aonContext, contract, firstDayOfMonth, lastDayOfMonth, DROP_FACTOR, "1.0");
+
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract).getExpressionContext()
+		.eval(WORKED_FACTOR.getName(), firstDayOfMonth, lastDayOfMonth,Number.class)
+		.forEach(r -> assertEquals(0.5, r.getValue().doubleValue(), 0.00));
 	}
 
 	@Test
@@ -614,6 +657,8 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		} catch ( SuccessException e ) {
 		}
 	}
+	
+	
 	
 
 	// ------------------------------------------------------------------------
