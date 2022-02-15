@@ -9,6 +9,7 @@ import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -26,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
+
 import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.SexType;
@@ -67,6 +69,8 @@ public class Contrato {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+
+			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/atraves_comunicacion.jsp").click();
@@ -78,6 +82,12 @@ public class Contrato {
 			
 			HtmlSubmitInput sb = htmlPage.querySelector("#enviar");
 			htmlPage = sb.click();
+			
+			DomNode text = htmlPage.querySelector(".tac.azneg");
+			if(text!=null && text.getVisibleText().indexOf("Desea comunicar el contrato")>=0) {
+				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("#enviar")).click();
+			}
+			
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 			
 			{// DATA ENTERPRISE
@@ -164,7 +174,6 @@ public class Contrato {
 			form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
 			
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-			
 			
 			String ide = null;
 			String message = getSuccessMessage(htmlPage);
