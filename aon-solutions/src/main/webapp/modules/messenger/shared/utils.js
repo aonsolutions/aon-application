@@ -343,24 +343,24 @@ const jsonDiv = ()=> {
 
 /**
  * 
- * @param {HTMLElement} aon-application
- * @param {HTMLElement} aon-messenger-chat columnns div form
+ * @param {HTMLElement} firstDiv
+ * @param {HTMLElement} aonMessengerChatcolumnns div form
  */
-export const buildForm = (div, aonMessengerChat) => {
+export const buildForm = (firstDiv, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const isAdvisoryCompany = task.isAdvisoryCompany();
     const dataDefault = aonMessengerChat.getData();
 
     //-----------------------APPEND DIV TAGS
-    createTagsDiv(div, task); //DEFAULT HIDDEN
+    createTagsDiv(firstDiv, task); //DEFAULT HIDDEN
     
     //-----------------------CREATE FIRST CARD
     const aonCard = createCardMessenger(MSG.DATA, "");
     aonCard.flex = "true";
-    div.appendChild(aonCard);
+    firstDiv.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
 
-    if( !task.isExternal() && task.registry && task.registry.name){
+    if( !task.isExternal() && task.registry && task.registry.name && task.getSource() !== TASK_SOURCE.CAU){
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
     }
@@ -372,32 +372,26 @@ export const buildForm = (div, aonMessengerChat) => {
     //-----------------------CREATE DIV PROCESS
     const divProcess = createStartJustifiedColumn().element;
     divProcess.id = MESSENGER_IDS.PROCESS_DIV;
-    div.appendChild(divProcess);
+    firstDiv.appendChild(divProcess);
     //---------------------END CREATE DIV PROCESS
 
     const divStatic = createDivGrid(divCard, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
 
     const divDinamic = createDivGrid(undefined, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
 
+    divCard.appendChild(divDinamic);
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
+  
     if(task.id || dataDefault.source_id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     const divRequest = createDivGrid(divStatic, requestTypeSelect, {classes:[CSS.AON_COL_XS_6]});
   
     //-----------------END TYPE REQUEST
 
     //---------------------IS CAU
-    if(aonMessengerChat.isCau()){
-        task.setSource(TASK_SOURCE.CAU);
-        divRequest.style.display = "none";
-
-        const selectTypeRequestCau = createSelectCau('typeCau', MESSENGER_IDS.TYPE_REQUEST_CAU, MSG.TYPE_REQUEST);
-        createDivGrid(divStatic, selectTypeRequestCau, {classes:[CSS.AON_COL_XS_6]})
-        fillTypeRequestCau(aonMessengerChat);
-
-        const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP, 'Aplicación');
-        createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
-        fillSelectAppCau(aonMessengerChat);
+    if(aonMessengerChat.isCau() || task.getSource() === TASK_SOURCE.CAU){
+       divRequest.style.display = "none";
+       addCauForm(task, aonMessengerChat, divStatic);
     } else //if(   (!task.id || task.isExternal()) && !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) ))
     if((!task.id || task.isExternal()) && !aonMessengerChat.getDur().isEmployee()){
 
@@ -426,8 +420,6 @@ export const buildForm = (div, aonMessengerChat) => {
             divBtnForExternal.style.display = "block";
     } else 
         divRequest.className = CSS.AON_COL_XS_12;
-
-    divCard.appendChild(divDinamic);
 
     requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> requestTypeChange(aonMessengerChat, requestTypeSelect, divDinamic, divProcess));
 
@@ -811,6 +803,53 @@ const showTags = (b) => {
             }
         }
     }
+}
+
+const addCauForm = (task, aonMessengerChat, divStatic)=> {
+
+    if( task.id && task.source === TASK_SOURCE.CAU && !aonMessengerChat.getApplicationParent().cau && task.getDescriptionJson().cauInfo){
+        try {
+            const cauInfo =  task.getDescriptionJson().cauInfo;
+            const company = cauInfo.company;
+            const parent = cauInfo.parent;
+
+            if(company && company.domain)
+                createDivGrid(divStatic, createLabelAnchor("Dominio", company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+
+            if(parent && parent.domain)
+                createDivGrid(divStatic, createLabelAnchor("Dominio padre", parent.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+        } catch (error) {}
+    }
+    
+    task.setSource(TASK_SOURCE.CAU);
+
+    const selectTypeRequestCau = createSelectCau('typeCau', MESSENGER_IDS.TYPE_REQUEST_CAU, MSG.TYPE_REQUEST);
+    createDivGrid(divStatic, selectTypeRequestCau, {classes:[CSS.AON_COL_XS_6]})
+    fillTypeRequestCau(aonMessengerChat);
+
+    const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP, 'Aplicación');
+    createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
+    fillSelectAppCau(aonMessengerChat);
+}
+
+const createLabelAnchor = (text, domainNam) => {
+    const label = setStyles(document.createElement(TAG.LABEL),{
+        color:CSS.variable(COLORS.GRAYSON),
+        paddingLeft:"4px",
+    });
+    label.textContent =  `${text}: `;
+
+    const anchor = setStyles(document.createElement("a"),{
+        color:CSS.variable(COLORS.AON_BLUE),
+        // userSelect:"text",
+        // cursor: "text"
+    });
+    anchor.href = "https://"+domainNam;
+    anchor.target = "_blank";
+    anchor.textContent = domainNam;
+    label.appendChild(anchor);
+
+    return label;
 }
 
 /**

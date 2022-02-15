@@ -2,9 +2,18 @@
 export const API_URL = 'ms/api';
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
+
+//----PROD
 export const SIG_URL = "https://aonsolutions.org/ms/api";
 export const SIG_DOMAIN_NAME = "sig.aonsolutions.org";
 export const SIG_DOMAIN_ID = 5;
+//----TEST
+// export const SIG_URL = "https://11a4-46-27-135-14.ngrok.io/ms/api" ;
+// export const SIG_DOMAIN_NAME = "b72384936-ayudat.rvasquez.net";
+// export const SIG_DOMAIN_ID = 7138;
+
+
+export const SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
 
 //FB
 export const VAPIDKEY_FB = "BCH91WxACVIpylkYRMj3xSpIfrzjz7Ixnctcj25BPMBZKSbGeKjJFIdaRsJGQ3F-SXVFGD0cr4outWLCFwemIkE";

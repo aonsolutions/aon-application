@@ -1,5 +1,5 @@
 import {  EVENT, MSG } from "../../../environments/environments.js";
-import {Apps} from "../../../services/app.js";
+import {Apps, getApp} from "../../../services/app.js";
 import { getProjects} from "../../../services/projectService.js";
 import { getCustomers } from "../../../services/registryService.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
@@ -26,7 +26,7 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(TASK_SOURCE.MANUAL === source)
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
 
-    if(aonMessengerChat.getDur().hasCallCenter())
+    if(aonMessengerChat.getDur().hasCallCenter() || (source && source == TASK_SOURCE.CAU) )
         sources.push({value: TASK_SOURCE.CAU, name: "Soporte" });
 
     aonSelect.setOptions(sources);
@@ -365,7 +365,7 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
     try {
         let value = task.getDescriptionJson().app;
 
-        const apps = getAppPermission(aonMessengerChat.getDur());
+        const apps = getAppPermission(aonMessengerChat.getDur(), value);
         let options = apps.map(app => ({value:app.app, name:app.title}));
 
         if(options)
@@ -389,7 +389,7 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
 
 
 
-const getAppPermission = (dur) => {
+const getAppPermission = (dur, value) => {
   let apps = [];
   if( dur.isAccounting())
     apps.push(Apps.ACCOUNTING);
@@ -411,6 +411,9 @@ const getAppPermission = (dur) => {
 
   if(dur.isInvoice())
     apps.push(Apps.INVOICE);
+
+  const exist = apps.some(a => a.app === value );
+  if(!exist) apps.push(getApp(value));
 
   return apps;
 }

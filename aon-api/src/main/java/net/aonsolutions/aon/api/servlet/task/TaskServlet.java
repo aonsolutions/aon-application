@@ -6,11 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -29,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -38,6 +42,7 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -173,7 +178,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
 		boolean edit = task.getId() != null;
-		setCauData(api, task);
+		setCauInfo(api, task);
 		if(edit) {
 			TaskUtils.checkFiles(api, task);
 		}
@@ -370,23 +375,29 @@ public class TaskServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	private void setCauData(AonApiData api, Task task) {
-		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
+	private void setCauInfo(AonApiData api, Task task) {
+		if(!api.getData().optString("cau").isEmpty() && api.getData().optInt("cau")>0) {
 			try {
+				task.setDomain(api.getDomain());
 				JSONObject description = new JSONObject(task.getDescription());
-				JSONObject cauData = description.optJSONObject("cauData");
-				JSONObject company = cauData.optJSONObject(IJsonNames.COMPANY);
-				JSONObject auth = cauData.optJSONObject(IJsonNames.AUTH);
+				JSONObject cauInfo = description.optJSONObject("cauInfo");
+				JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
+				JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
+				JSONObject auth = cauInfo.optJSONObject(IJsonNames.AUTH);
+				String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
+				String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
+
+				String doc = docParent!=null ? docParent : docCustomer;
+						 
 				if(!auth.optString("email").isEmpty()) {
 					task.setGtaskId(auth.optString(IJsonNames.EMAIL));
 				}
-				if(!company.optString(IJsonNames.DOCUMENT).isEmpty()) {
-					Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-							f->f.getDocumentProperty().eq(company.optString(IJsonNames.DOCUMENT)));
-					if(!customer.getDocument().isEmpty())
-						task.setRegistry(customer.get());
-				}
 				
+				if(doc!=null) {
+					Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
+					if(registry!=null && registry.getId()!=null)
+						task.setRegistry(registry);
+				}
 			} catch (Exception e) {e.printStackTrace();}
 		}
 	}

@@ -156,7 +156,7 @@ export class AonElement extends HTMLElement{
 
 	isBeta(){
     const href = window.location.href;
-		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080');
+		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
 	}
 
   showMessage(msg) {

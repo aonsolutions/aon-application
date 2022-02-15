@@ -81,8 +81,8 @@ export class AonMessengerChat extends AonElement {
     if(myTaskHolder && myTaskHolder.id) 
       data.myTaskHolder = myTaskHolder;
       
-    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email)  
-      data.auth = this.applicationParentEl.cauData.auth;
+    if(this.applicationParentEl.cauInfo.auth && this.applicationParentEl.cauInfo.auth.email)  
+      data.auth = this.applicationParentEl.cauInfo.auth;
       
     this.setData(data); 
     this.task = new Task(this.getData());
@@ -207,8 +207,12 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceQuery(){
     try {
+      if(this.isCau() && !this.task.id)
+        this.setCauData(this.task);
+        
       const data = await saveTask(this.task);
       this.task.editTask(data);
+
       checkFilesAddEventDescription(this.task);//check files description
 
       if(this.getData().id){
@@ -221,6 +225,12 @@ export class AonMessengerChat extends AonElement {
     } catch (error) {
       console.log(error);
       this.showError(error);
+    }
+  }
+
+  setCauData(){
+    if(this.applicationParentEl.cauInfo){
+      this.task.setDescriptionJson({cauInfo:this.applicationParentEl.cauInfo});
     }
   }
 
