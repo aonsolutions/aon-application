@@ -17,6 +17,7 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map.Entry;
@@ -61,6 +62,14 @@ public class JooqEmployeeAFI {
 	private static final String TC2 = "TC2";
 	private static final String PARTIALITY = "COEFICIENTE_PARCIALIDAD";
 	private static final String OCUPATION = "OCUPACION";
+	
+	public static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
+
+	private static String stripDiacritics(String str) {
+	    str = Normalizer.normalize(str, Normalizer.Form.NFD);
+	    str = DIACRITICS_AND_FRIENDS.matcher(str).replaceAll("");
+	    return str;
+	}
 	
 	// -------------------------------------------- Methods
 	
@@ -169,6 +178,8 @@ public class JooqEmployeeAFI {
 			
 			//RZS
 			String rzsName = removeAccents(enterpriseRegistryRecord.get(REGISTRY.NAME));
+			if(AonStringUtils.isNotBlank(rzsName))
+				rzsName = stripDiacritics(rzsName);
 			
 			JSONObject rzsData = new JSONObject();
 			rzsData.put("businessmanType", "2");
