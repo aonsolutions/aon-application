@@ -56,7 +56,7 @@ public class FDIWriter implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final String FDI 				= "FDI";
-	private final String WINSUITE_VERSION 	= "30WSxxx";
+	private final String WINSUITE_VERSION 	= "51WSxxx";
 	
 	private ETI eti;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
