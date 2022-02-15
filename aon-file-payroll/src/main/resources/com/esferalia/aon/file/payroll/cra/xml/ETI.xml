@@ -3,7 +3,7 @@
 <register name="ETI">
 	<field name="cabecera" value="ETI" format="AlphaNumeric" pattern="X(3)" />
 	<field name="id1" value="CRA1" format="AlphaNumeric" pattern="X(4)" />
-	<field name="id2" value="1" format="Numeric" pattern="9(1)" />
+	<field name="id2" value="2" format="Numeric" pattern="9(1)" />
 	<field name="id3" value="WSxx" format="AlphaNumeric" pattern="X(4)" />
 	<field name="id4" value="1" format="Numeric" pattern="9(1)" />
 	<field name="clave" value="bean" bean="ETI" property="clave" format="AlphaNumeric" pattern="X(8)" />
