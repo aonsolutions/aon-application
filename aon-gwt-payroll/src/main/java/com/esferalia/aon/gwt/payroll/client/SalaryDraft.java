@@ -4568,17 +4568,17 @@ public class SalaryDraft extends ResizeComposite
 			buttonsPanel.add(hideButton);
 			handler.setHideButton(hideButton);
 			hideButton.ensureDebugId("agreement-button-" + row );
+		} else {
+			Button deleteButton = new Button();
+			deleteButton.setTabIndex(Short.MAX_VALUE);
+			deleteButton.setStyleName(AON.AON_ICON_DELETE);
+			deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+			buttonsPanel.add(deleteButton);
+			enable(deleteButton, !isSystem(item) && !isRemove(item) && isEditable);
+			deleteButton.ensureDebugId("delete-button-" + row );
+			handler.setDeleteButton(deleteButton);
 		}
 
-		Button deleteButton = new Button();
-		deleteButton.setTabIndex(Short.MAX_VALUE);
-		deleteButton.setStyleName(AON.AON_ICON_DELETE);
-		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		buttonsPanel.add(deleteButton);
-		enable(deleteButton, !isSystem(item) && !isRemove(item) && isEditable);
-		deleteButton.ensureDebugId("delete-button-" + row );
-
-		handler.setDeleteButton(deleteButton);
 
 		paymentsTable.setWidget(row, 5, buttonsPanel);
 		paymentsTable.getCellFormatter().addStyleName(row, 5, AON.AON_TEXT_RIGHT);
@@ -6872,7 +6872,7 @@ public class SalaryDraft extends ResizeComposite
 		if (widget.isEnabled() == enabled)
 			return;
 
-		widget.setEnabled(enabled);
+		//widget.setEnabled(enabled);
 		widget.setVisible(enabled);
 	}
 
