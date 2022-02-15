@@ -157,7 +157,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	@Override
 	protected void initContractExpressionCtx(NextHook hook) throws SQLException, ExpressionException {
 		super.initContractExpressionCtx(hook);
-		initMonthVariables(getExpressionContext());
+		try {
+			initMonthVariables(getExpressionContext());
+		} catch (ExpressionException  e) {
+		}
 	}
 
 	@Override
