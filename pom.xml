@@ -217,6 +217,11 @@
 		-->
 		<module>aon-aws</module>
 		<module>aon.accounting.report</module>
+
+		<!-- TRASPASO DSI NOMINAS -->
+		<module>paradoxdriver</module>
+		<module>aon-dsi-nominas</module>				
+		
 	</modules>
 
 	<scm>
