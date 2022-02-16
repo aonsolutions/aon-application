@@ -258,7 +258,10 @@ export class AonMessenger extends AonElement {
 			let option = {
 				name: item.description,
 				icon: MATERIAL_ICONS.LABEL,
-				actions:[]
+				actions:[],
+				fn: () => {
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, {...this._filter, search:item.description});
+				}
 			};
 
 			if(manager)

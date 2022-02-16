@@ -47,8 +47,7 @@ export const fillAdvisory = async (task, aonMessengerChat) => {
                 if(detail && detail.value){
                     task.setDomain(detail.domain);
                     task.setRegistry(detail.registry);
-                    task.setAppParams(detail.appParams);
-                    task.changeWhAndTh();
+                    aonMessengerChat.onChangeWhAndTh(detail.appParams);
                     if(task.isExternal() || !task.id )
                         task.setSender({});
 
@@ -86,8 +85,6 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             const aonSelectParet = aonSelect.parentNode;
 
             aonSelectParet.style.display = "none";
-            
-            // if(projects.length ===0 && (task.id && !task.isExternal()) )
 
             if( projects.length === 0 && registry )
                 projects = await getProjects({ registry: task.getRegistry().id });
@@ -95,7 +92,7 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
             
             let display = "block";
-    
+
             if(project && project.id)
                 aonSelect.value = project.id; 
             else if(1===projects.length && !task.id){
@@ -203,7 +200,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
         try {
 
             const customers = await getCustomers({reload:false, page:1, perPage:50});
-
+            
             let options = [];
             if(customers && customers.length>0)
                 options = customers.map( c=> ({...c, value: c.id}) ) ;
@@ -217,7 +214,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 
             aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
                 const value = target.value;
-                if(value.length > 2){
+                if(value.length >0){
                     const cs = await getCustomers({reload:true, page:1, perPage:30, value});
                     aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
                 }
@@ -412,8 +409,10 @@ const getAppPermission = (dur, value) => {
   if(dur.isInvoice())
     apps.push(Apps.INVOICE);
 
-  const exist = apps.some(a => a.app === value );
-  if(!exist) apps.push(getApp(value));
+  if(value){
+    const exist = apps.some(a => a.app === value );
+    if(!exist) apps.push(getApp(value));
+  }
 
   return apps;
 }

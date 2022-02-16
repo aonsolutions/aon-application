@@ -469,7 +469,7 @@ export const TITLE = MSG.TITLE;
 export const TRAY = "Bandeja";//TODO
 export const TYPE_HERE = "Escriba aquí"; //TODO
 export const TYPE_REQUEST = "Tipo solicitud";//TODO
-
+export const TYPE_INCIDENT = "Tipo incidencia";//TODO
 
 // ----- U
 
