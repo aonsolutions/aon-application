@@ -1592,18 +1592,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JUNE, 2018);
 		
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN
 		assertInputDisabled( "description-box-3" , true); 
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-4" , true); // PREST. POR ENFERMEDAD COMÚN 
 		assertInputDisabled( "description-box-4" , true); 
-		assertDisabled("delete-button-4", true);
+		assertHidden("delete-button-4", true);
 		assertInputDisabled( "db-amount-label-5" , true); // PREST. POR ENFERMEDAD COMÚN 		
 		assertInputDisabled( "description-box-5" , true); 
-		assertDisabled("delete-button-5", true);
+		assertHidden("delete-button-5", true);
 		
 		
 		setValue("description-box-3", "[1001]P. POR ENFERMEDAD COMÚN");
@@ -1612,16 +1612,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Class("payment-row-4", "aon-dataTable-row-highlight");
 		wait4Class("payment-row-5", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-4" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DE LA EMPRESA
-		assertDisabled("delete-button-4", true);
+		assertHidden("delete-button-4", true);
 		assertInputDisabled( "db-amount-label-5" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
-		assertDisabled("delete-button-5", true);
+		assertHidden("delete-button-5", true);
 
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		
 		click("edit-button-1");
 		wait4Id("paymetDialogHTMLPanel");
@@ -1635,15 +1635,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4NoClass("payment-row-2", "aon-dataTable-row-highlight");
 		wait4NoClass("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-4" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DE LA EMPRESA
-		assertDisabled("delete-button-4", true);
+		assertHidden("delete-button-4", true);
 		assertInputDisabled( "db-amount-label-5" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
-		assertDisabled("delete-button-5", true);
+		assertHidden("delete-button-5", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		
 		
 		// PREST, ENFERMEDAD PROFESIONAL
@@ -1652,31 +1652,31 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JUNE, 2018);
 		
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		
 		setValue("description-box-3", "P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL");
 		
 		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // PRESTACIÓN POR ENFERMEDAD COMÚN
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 
 		// PREST, MATERNIDAD
 		draft("PREST, MATERNIDAD");
@@ -1686,25 +1686,25 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		
 		setValue("description-box-3", "P.POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO");
 		
 		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		wait4NoClass("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		
 		// PREST, PATERNIDAD
 		draft("PREST, PATERNIDAD");
@@ -1714,29 +1714,29 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR PATERNIDAD
 		assertInputDisabled( "db-amount-label-3" , true); // PRESTACIÓN POR PATERNIDAD
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		
 		setValue("description-box-3", "P. POR PATERNIDAD");
 		
 		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR PATERNIDAD
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 		
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		wait4NoClass("payment-row-3", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-3" , true); // P. POR PATERNIDAD
-		assertDisabled("delete-button-3", true);
+		assertHidden("delete-button-3", true);
 		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-2", false);
+		assertHidden("delete-button-2", false);
 		assertInputDisabled( "db-amount-label-1" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-1", false);
+		assertHidden("delete-button-1", false);
 
 		//VACACIONES, NO DISFRUTADAS
 		draft("VACACIONES, NO DISFRUTADAS");
@@ -1864,6 +1864,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		DomElement el = getElementById(id);
 		Pattern hidden = Pattern.compile("display\\s*:\\s*none");
 		Assert.assertEquals(!display, hidden.matcher(el.getAttribute("style")).find());
+		
+	}
+
+	private void assertHidden(String id, boolean hidden ) {
+		DomElement el = getElementById(id);
+		Pattern display = Pattern.compile("display\\s*:\\s*none");
+		Assert.assertEquals(hidden, display.matcher(el.getAttribute("style")).find());
 		
 	}
 }
