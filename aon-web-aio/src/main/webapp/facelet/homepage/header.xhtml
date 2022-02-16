@@ -1038,6 +1038,24 @@
     	border: solid #F3F3F3 1px !important;
     }
     
+	.aon-finding-title-toolbar + .aon-scroll-area {
+		padding-top: 0px;
+		overflow-y: scroll;
+		height: calc( 100vh - 160px);
+	} 
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead tr {
+		border-bottom: #ccc 1px solid;
+	}
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead th {
+		top: 0px;
+		padding-top: 8px;
+		position: sticky;
+		background-color: white;
+		background-clip: padding-box;
+	}
+
 	</style>
 
 	<script type="text/javascript">
