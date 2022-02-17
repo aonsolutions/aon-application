@@ -193,6 +193,7 @@ public class AonServer implements IMailConstants, Serializable {
         	values.setProperty(prefix + SOCKET_FACTORY_PORT, String.valueOf(account.getOutgoingPort()));
         } else if (account.getOutgoingSecurity() == ConnectionSecurity.TLS) {
         	values.put(prefix + STARTTLS_ENABLE, Boolean.TRUE.toString());
+        	values.put(prefix + SSL_PROTOCOLS, TLS1_2);
         }
         // setTimeout(values, prefix);
         if (account.isOutgoingVerification()) {
