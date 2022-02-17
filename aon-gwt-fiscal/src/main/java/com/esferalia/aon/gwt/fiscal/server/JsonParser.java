@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -652,4 +653,47 @@ public class JsonParser {
 		}
 		return params;
 	}
+	
+	public static OperationParams parseOperationParams(String operationParams) throws ParseException, java.text.ParseException {
+		OperationParams params = new OperationParams();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonParams =  (JSONObject) parser.parse(operationParams);
+		
+		Object dom = jsonParams.get(IRequestParamsNames.DOMAIN);
+		if (dom == null) {
+			throw new IllegalArgumentException("NULL DOMAIN!");
+		}
+		if (dom instanceof Long) {
+			Long domain = (Long) dom; 
+			params.setDomain(domain.intValue());
+		} else if (dom instanceof String) {
+			Integer domain = AonNumberUtils.toInteger((String) dom);
+			if (domain == null) {
+				throw new IllegalArgumentException("NULL DOMAIN!");
+			}
+			params.setDomain(domain);
+		}
+		
+		Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
+		if (activity != null) {
+			params.setActivity(activity.intValue());	
+		}
+		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
+		if (AonStringUtils.isNotBlank(fromDate)) {
+			params.setFromDate( FORMATTER.parse(fromDate));
+		}
+		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
+		if (AonStringUtils.isNotBlank(toDate)) {
+			params.setToDate( FORMATTER.parse(toDate));			
+		}
+		Long expenses = (Long) jsonParams.get(IRequestParamsNames.EXPENSES);
+		params.setExpenses(expenses == null || expenses==1);
+		
+		Long irpf = (Long) jsonParams.get(IRequestParamsNames.IRPF);
+		if (irpf != null) {
+			params.setIrpf(irpf==1);
+		}
+		return params;
+	}
+
 }

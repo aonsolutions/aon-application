@@ -1,32 +1,29 @@
-package com.esferalia.aon.gwt.fiscal.client.invoice;
+package com.esferalia.aon.gwt.fiscal.client.report;
 
 import java.util.Date;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-@Deprecated
 public class JsOperationBreakdown extends JavaScriptObject {
 	
-	private static DateTimeFormat DATE_FORMAT = null;
+	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("yyyy-MM-dd");
 
 	protected JsOperationBreakdown() {
 	}
 	
-	private DateTimeFormat getDateTimeFormat() {
-		if (DATE_FORMAT == null)
-			DATE_FORMAT = DateTimeFormat.getFormat("yyyy-MM-dd");
-		return DATE_FORMAT;
-	}
-	
+	public final native int getEntryId() /*-{
+		return this.entryId;
+	}-*/;
 	public final Date getEntryDate() {
-		return getDateTimeFormat().parse(getEntryDateString());
+		return DATE_FORMAT.parse(getEntryDateString());
 	}
 	public final native String getEntryDateString() /*-{
 		return this.entryDate;
 	}-*/;
 	public final Date getTaxDate() {
-		return getDateTimeFormat().parse(getTaxDateString());
+		return DATE_FORMAT.parse(getTaxDateString());
 	}
 	public final native String getTaxDateString() /*-{
 		return this.taxDate;
@@ -49,6 +46,12 @@ public class JsOperationBreakdown extends JavaScriptObject {
 	public final native String getRegistryName() /*-{
 		return this.registryName;
 	}-*/;
+	public final String getRegistryFullName() {
+		return  AonStringUtils.abbreviate(
+			AonStringUtils.defaultIfBlank(getRegistryDocument(), AonStringUtils.EMPTY)
+			+ (AonStringUtils.isBlank(getRegistryDocument())?AonStringUtils.EMPTY:AonStringUtils.HYPHEN)
+			+ AonStringUtils.defaultIfBlank(getRegistryName(), AonStringUtils.EMPTY),34 );
+	}
 	public final native String getDocumentNumber() /*-{
 		return this.documentNumber;
 	}-*/;
@@ -69,6 +72,9 @@ public class JsOperationBreakdown extends JavaScriptObject {
 	}-*/;
 	public final native double getTotal() /*-{
 		return this.total;
+	}-*/;
+	public final native String getEpigraph() /*-{
+		return this.epigraph;
 	}-*/;
 	
 }

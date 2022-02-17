@@ -149,7 +149,9 @@ public interface IJsonNames {
 	String EMPTY = "";
 	String ENABLE_HEREDITY = "enableHeredity";
 	String END_DATE = "end_date";
+	String ENTRY_DATE = "entryDate";
 	String ENTRY_ENABLED = "entryEnabled";
+	String ENTRY_ID = "entryId";
 	String EPIGRAPH = "epigraph";
 	String ERROR = "error";
 	String EXPENSES = "expenses";
@@ -403,6 +405,7 @@ public interface IJsonNames {
 	String SUFIX = "sufix";
 	String SURCHARGE_PERCENT = "surchargePercent";
 	String SURCHARGE_QUOTA = "surcharge_quota";
+	String SURCHARGEQUOTA = "surchargeQuota";
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
 	String SEARCH = "search";
@@ -462,4 +465,5 @@ public interface IJsonNames {
 	String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	String ZIP = "zip";
+	
 }

@@ -398,6 +398,11 @@ public class AON {
 	// ********************************************
 	// *************************** CONFIGURATION **
 	// ********************************************
+	public static AonConfiguration getConfiguration(Occam occam) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getConfiguration(ctx, null);
+		}
+	}
 	public static AonConfiguration getConfiguration(Occam occam,Date atDate) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getConfiguration(ctx, atDate);

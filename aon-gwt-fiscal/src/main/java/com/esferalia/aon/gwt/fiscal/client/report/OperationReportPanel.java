@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.invoice;
+package com.esferalia.aon.gwt.fiscal.client.report;
 
 import java.util.Map;
 
@@ -25,8 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
-@Deprecated
-public class OperationReportPanel extends ScrollPanel{
+class OperationReportPanel extends ScrollPanel{
 		
 	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/OperationReportStream");
 	private static final String HEADER_IVA = AonStringUtils.rightPad("ID", 5)

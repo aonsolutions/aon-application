@@ -149,6 +149,21 @@ public class MainEntryPoint implements EntryPoint {
 		;
 		abstract void run();
 	}
+	//
+	//    ================================================================== ACCOUNTING
+	//
+	private enum AccountingEntryPoint {
+		AccountingOperationReport {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.report.OperationReport.run();
+			}
+		},
+		;
+		abstract void run();
+	}
+
+	
+	
 	private static final String SII_ENTRY_POINT = "Sii";
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD240_ENTRY_POINT = "Model240";
@@ -228,6 +243,12 @@ public class MainEntryPoint implements EntryPoint {
 		try {
 			FiscalEntryPoint fiscalEntryPoint = FiscalEntryPoint.valueOf(entryPoint);
 			fiscalEntryPoint.run();
+		} catch (IllegalArgumentException e) {
+			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
+		}
+		try {
+			AccountingEntryPoint accountingEntryPoint = AccountingEntryPoint.valueOf(entryPoint);
+			accountingEntryPoint.run();
 		} catch (IllegalArgumentException e) {
 			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
 		}

@@ -217,10 +217,10 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.ACTIVITY_DESCRIPTION, params.getActivityDescription()== null? JSON_NULL : new JSONString( params.getActivityDescription()));		
 		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromDate() 	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDate())));
 		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
-		json.put(IRequestParamsNames.EXPENSES		,params.getExpenses()	== null? JSON_NULL : new JSONNumber( params.getExpenses()?1:0));
-		json.put(IRequestParamsNames.IRPF			,params.getIrpf()		== null? JSON_NULL : new JSONNumber( params.getIrpf()?1:0));
-		json.put(IRequestParamsNames.AEAT_BOOK		,params.getAeatBook()	== null? JSON_NULL : new JSONNumber( params.getAeatBook()?1:0));
-		json.put(IRequestParamsNames.UNIFIED_BOOK	,params.getUnifiedBook()== null? JSON_NULL : new JSONNumber( params.getUnifiedBook()?1:0));
+		json.put(IRequestParamsNames.EXPENSES		,new JSONNumber( params.getExpenses()?1:0));
+		json.put(IRequestParamsNames.IRPF			,new JSONNumber( params.getIrpf()?1:0));
+		json.put(IRequestParamsNames.AEAT_BOOK		,new JSONNumber( params.getAeatBook()?1:0));
+		json.put(IRequestParamsNames.UNIFIED_BOOK	,new JSONNumber( params.getUnifiedBook()?1:0));
 		return json.toString();
 	}
 	

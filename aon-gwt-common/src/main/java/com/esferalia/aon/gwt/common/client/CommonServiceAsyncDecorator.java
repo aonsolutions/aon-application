@@ -37,7 +37,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getAonConfiguration(currentDomainName, currentDomain, user, new AsyncCallbackWrapper<>(callback));
 	}
-
+	@Override
+	public void getAonConfiguration(Occam occam, AsyncCallback<AonConfiguration> callback) {
+		AON.start();
+		serviceAsync.getAonConfiguration(occam, new AsyncCallbackWrapper<>(callback));
+	}
+	
 	@Override
 	public void getAonConfiguration(Occam occam, ConfigParams params, AsyncCallback<AonConfiguration> callback) {
 		AON.start();
