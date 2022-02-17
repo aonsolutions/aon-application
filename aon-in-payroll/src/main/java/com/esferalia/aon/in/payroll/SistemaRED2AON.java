@@ -45,6 +45,7 @@ import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
@@ -55,6 +56,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -286,6 +288,8 @@ public class SistemaRED2AON {
 			java.sql.Date endDate ,
 			String ...nafs) throws SegSocialException {
 		
+		String authorized = getAuthorized(login, domainId, domainName, ccc);
+		
 		Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
 		
 		nafs = employees.keySet().toArray(new String[employees.size()]);
@@ -301,6 +305,7 @@ public class SistemaRED2AON {
 				endDate, 
 				LiquidationType.TODAS, 
 				LiquidationOrigin.TODAS, 
+				authorized,
 				nafs
 				);
 		
@@ -384,6 +389,12 @@ public class SistemaRED2AON {
 			// TODO : all employees
 			employees.keySet().forEach(naf -> syncWithIdcs(login, domainName, domainId, userId, regimen, ccc, naf, endDate));
 			
+	}
+	
+	private static String getAuthorized(String login, Integer domainId, String domainName, String ccc) {
+		ApplicationParameter PAY_authorization_key_PAY = 
+		AON.getApplicationParameter(domainName, domainId, login, AppParam.PAY_authorization_key_PAY);
+		return PAY_authorization_key_PAY.getValue();
 	}
 	
 	private static Map<String,List<Employee>> getEmployees(String login, Integer domainId, String domainName, String ccc,

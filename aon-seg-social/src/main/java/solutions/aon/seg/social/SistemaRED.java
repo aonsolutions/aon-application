@@ -390,9 +390,9 @@ public class SistemaRED {
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> getCalcByNAF(final byte[] certificateData,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
-			final SistemaRED.LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+			final SistemaRED.LiquidationOrigin liqOrigin, String authorized, String... nafs) throws SegSocialException{
 		try ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
+			return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, authorized, nafs);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
@@ -401,8 +401,8 @@ public class SistemaRED {
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> getCalcByNAF(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
-			final SistemaRED.LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
-		return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
+			final SistemaRED.LiquidationOrigin liqOrigin, String authorized, String... nafs) throws SegSocialException{
+		return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, authorized, nafs);
 	}
 
 	public static Map<String, Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(
