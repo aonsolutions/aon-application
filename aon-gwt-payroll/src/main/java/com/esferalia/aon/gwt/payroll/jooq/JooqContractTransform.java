@@ -271,7 +271,7 @@ public class JooqContractTransform {
 		// Datos generales
 		DATOSGENERALESTRANSFORMACIONTYPE datosGeneralTransformacion = new DATOSGENERALESTRANSFORMACIONTYPE();
 		datosGeneralTransformacion.setFECHAINICIO(formatDate.format(contractTransform.getContractStartDate()));
-		datosGeneralTransformacion.setCODIGOOCUPACION(cno);
+		datosGeneralTransformacion.setCODIGOOCUPACION(AonStringUtils.rightPad(cno, 8, ' '));
 		datosGeneralTransformacion.setMUNICIPIOCT(municipalityCodeCT);
 		datosGeneralTransformacion.setNACIONALIDADCT("724");
 		if(null != contractTransform.getDiscontinuosInd() && Boolean.TRUE.equals(contractTransform.getDiscontinuosInd()))
