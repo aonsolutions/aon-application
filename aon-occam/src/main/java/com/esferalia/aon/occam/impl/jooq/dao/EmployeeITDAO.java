@@ -192,17 +192,32 @@ public class EmployeeITDAO {
 		java.sql.Date itEndDate = employeeIt.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
 		
 		return dslContext
-		.select()
-		.from(REGISTRY)
-		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-		.innerJoin(ENTERPRISE_CCC).onKey()
-		.where(ENTERPRISE_CCC.DOMAIN.eq(employeeIt.getDomain()))
-		.and(ENTERPRISE_CCC.CCC.eq(employeeIt.getCcc()))
-		.and(PERSON.SOCIAL_SECURITY_NUM.eq(employeeIt.getNss()))
-		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-		.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
-		.orderBy(CONTRACT.ID.desc()).fetchStreamInto(CONTRACT).findFirst().orElseThrow(() -> new EmployeeNotFoundexception() );
+				.select()
+				.from(REGISTRY)
+				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+				.innerJoin(ENTERPRISE_CCC).onKey()
+				.where(ENTERPRISE_CCC.DOMAIN.eq(employeeIt.getDomain()))
+				.and(ENTERPRISE_CCC.CCC.eq(employeeIt.getCcc()))
+				.and(PERSON.SOCIAL_SECURITY_NUM.eq(employeeIt.getNss()))
+				.and(CONTRACT.START_DATE.le(itStartDate))
+				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+				.orderBy(CONTRACT.ID.desc())
+				.fetchOptionalInto(CONTRACT)
+				.orElseThrow(() -> new EmployeeNotFoundexception() );
+		
+//		return dslContext
+//		.select()
+//		.from(REGISTRY)
+//		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+//		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+//		.innerJoin(ENTERPRISE_CCC).onKey()
+//		.where(ENTERPRISE_CCC.DOMAIN.eq(employeeIt.getDomain()))
+//		.and(ENTERPRISE_CCC.CCC.eq(employeeIt.getCcc()))
+//		.and(PERSON.SOCIAL_SECURITY_NUM.eq(employeeIt.getNss()))
+//		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+//		.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+//		.orderBy(CONTRACT.ID.desc()).fetchStreamInto(CONTRACT).findFirst().orElseThrow(() -> new EmployeeNotFoundexception() );
 	}
 	private static void setContractLeaveDetail(DSLContext dslContext, ContractLeaveRecord contractLeaveRecord, List<EmployeeITPart> its) {
 
