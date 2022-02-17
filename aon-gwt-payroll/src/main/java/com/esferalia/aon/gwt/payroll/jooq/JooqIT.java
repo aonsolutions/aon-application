@@ -20,11 +20,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SelectSeekStep1;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -37,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.ibm.icu.util.Calendar;
@@ -953,7 +957,28 @@ public class JooqIT {
 				Date startDate = null == it.getStartDate() ? null : new Date(it.getStartDate().getTime());
 				Date endDate = null == it.getEndDate() ? null : new Date(it.getEndDate().getTime());
 				
-				Integer contractId = itEmployee.getContractInfo().getContractId();
+//				Integer contractId = itEmployee.getContractInfo().getContractId();
+				String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+				String nss = itEmployee.getEmployeeInfo().getSsNumber();
+				
+				Result<Record> contractRecords = dslContext
+					.select()
+					.from(REGISTRY)
+					.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+					.innerJoin(ENTERPRISE_CCC).onKey()
+					.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
+					.and(ENTERPRISE_CCC.CCC.eq(ccc))
+					.and(PERSON.SOCIAL_SECURITY_NUM.eq(nss))
+					.and(CONTRACT.START_DATE.le(startDate))
+					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
+					.orderBy(CONTRACT.ID.desc())
+					.fetch();
+				
+				if(contractRecords.isEmpty())
+					throw new IllegalArgumentException("No existe contrato activo para este trabajador en el periodo de la baja");
+				
+				Integer contractId = contractRecords.get(0).get(CONTRACT.ID);
 				
 				dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 				
