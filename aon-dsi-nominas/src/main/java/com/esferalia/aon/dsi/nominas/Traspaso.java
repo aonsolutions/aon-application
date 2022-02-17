@@ -44,7 +44,6 @@ public class Traspaso {
 		parentDomain = parentDom;
 		
 		info("[INICIO DEL TRASPASO]");
-		info("PARENTDOMAIN = " + parentDomain);
 		
 		try (Connection dsiConn = getDsiConnection("jdbc:paradox:" + paradoxDirectory)) {
 		

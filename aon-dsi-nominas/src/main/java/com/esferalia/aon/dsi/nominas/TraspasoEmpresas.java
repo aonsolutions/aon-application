@@ -740,13 +740,13 @@ public class TraspasoEmpresas {
 						.fetchOne(APP_PARAM.VALUE);
 		
 		if (value != null) {
-			removeTable("rpaymethod"); // **
-			removeTable("workplace"); // **
-			removeTable("enterprise_activity"); // **
-			removeTable("rbank"); // **
-			removeTable("rdir_staff"); // **
-			removeTable("rmedia"); // **
-			removeTable("raddress"); // **
+			removeTable("rpaymethod"); 
+			removeTable("workplace"); 
+			removeTable("enterprise_activity"); 
+			removeTable("rbank");
+			removeTable("rdir_staff"); 
+			removeTable("rmedia"); 
+			removeTable("raddress"); 
 		}
 		
 	}

@@ -63,6 +63,14 @@ public class AonZipLoaderController implements Serializable {
 	}
 	
 	public void onLoad(ActionEvent event ) {
+		processFile(false);
+	}
+
+	public void onPayrollLoad(ActionEvent event ) {
+		processFile(true);
+	}	
+	
+	private void processFile(boolean isPayrollFile) {
 		HttpServletResponse response = DownloadUtil.getResponse();
 		response.setContentType( MimeType.MIME_HTML.getName() );
 		response.setCharacterEncoding("ISO-8859-1");
@@ -79,10 +87,9 @@ public class AonZipLoaderController implements Serializable {
 		Loader loader = new Loader(params);
 		try {
 			byte[] data = getAonFile().getData();
-			ByteArrayInputStream input = new ByteArrayInputStream(data);
-			
+			ByteArrayInputStream input = new ByteArrayInputStream(data);			
 			ZippedMultiLoad zml = new ZippedMultiLoad(getParams());
-			zml.load(input, logger);
+			zml.load(input, logger, isPayrollFile);
 			input.close();
 		} catch (IOException e) {
 			logger.error(e.getMessage());
@@ -98,7 +105,6 @@ public class AonZipLoaderController implements Serializable {
 			if (logger != null) logger.end();
 			FacesContext context = FacesContext.getCurrentInstance();
 	        context.responseComplete();    			
-			
 		}
 	}
 	
@@ -137,12 +143,14 @@ public class AonZipLoaderController implements Serializable {
 				mustFlush = 0;
 			}
 		}
+		
 		public void start() {
 			this.out.print("<div style=\"font-family: monospace;\">");			
 			this.out.print("<div style=\"text-align: center\">");
 			this.out.print("<a href=\"/aon-aio\">Volver</a>");
 			this.out.print("</div>");
 		}
+		
 		public void end() {
 			this.out.print("<div style=\"text-align: center\">");
 			this.out.print("<a href=\"/aon-aio\">Volver</a>");

@@ -117,7 +117,7 @@ public class Paga {
 			variable =  "IMPORTE_PAGA_" + AonStringUtils.trimToEmpty(this.mes);
 		}	
 		// Además si la paga está prorrateada, se añade _P a la variable
-		if ("P".equals(this.tipo))
+		if (AonStringUtils.isNotBlank(variable) && "P".equals(this.tipo))
 			variable = variable + "_P";
 		return variable;				
 	}
