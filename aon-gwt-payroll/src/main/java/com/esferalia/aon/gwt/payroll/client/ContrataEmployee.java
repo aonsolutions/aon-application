@@ -1200,13 +1200,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showError(messageContainer, messageMap);
 			break;
 		case 1:
-			contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> 
-				contrataEmployeeObject.getContractSpecificData(su -> 
-					contractSpecificData.setEmployeeContractInfo(
-							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
-							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
-				, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()))
-			, f -> showError("Error guardando Datos SEPE", f.getMessage()));
+			contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
+					s -> {
+						Map<String, String> messageSuccessMap = new HashMap<>();
+						messageSuccessMap.put("Guardado", "Los datos SEPE han sido actualizados correctamente");
+						AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
+						contrataEmployeeObject.getContractSpecificData(su -> 
+								contractSpecificData.setEmployeeContractInfo(
+										contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
+										contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
+							, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
+					}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
 			break;
 		case 2:
 			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
