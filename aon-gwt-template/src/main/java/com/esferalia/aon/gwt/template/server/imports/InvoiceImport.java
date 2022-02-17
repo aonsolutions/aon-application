@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -62,6 +63,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1086,10 +1088,17 @@ public class InvoiceImport {
 				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
 				if(reg == null || !reg.getDomain().equals(domain.getId())) {
 					reg = reg != null ? reg : new Registry();
+					DocumentType dtype = DocumentType.OTHER;
+					if(Country.ES.equals(country) && AonDocumentUtil.isValidCIF(nif)) {
+						dtype = DocumentType.CIF;
+					} else if(Country.ES.equals(country) && AonDocumentUtil.isValidDNI(nif)) {
+						dtype = DocumentType.NIF;
+					}
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain)
 						.setDocument(nif)
 						.setDocumentCountry(country)
+						.setDocumentType(dtype)
 						.setName(name)
 						.setNationality(country));
 				}	
@@ -1121,10 +1130,17 @@ public class InvoiceImport {
 				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
 				if(reg == null || !reg.getDomain().equals(domain.getId())) {
 					reg = reg != null ? reg : new Registry();
+					DocumentType dtype = DocumentType.OTHER;
+					if(Country.ES.equals(country) && AonDocumentUtil.isValidCIF(nif)) {
+						dtype = DocumentType.CIF;
+					} else if(Country.ES.equals(country) && AonDocumentUtil.isValidDNI(nif)) {
+						dtype = DocumentType.NIF;
+					}
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain)
 						.setDocument(nif)
 						.setDocumentCountry(country)
+						.setDocumentType(dtype)
 						.setName(name)
 						.setNationality(country));
 				}			
@@ -1160,10 +1176,17 @@ public class InvoiceImport {
 				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
 				if(reg == null || !reg.getDomain().equals(domain.getId())) {
 					reg = reg != null ? reg : new Registry();
+					DocumentType dtype = DocumentType.OTHER;
+					if(Country.ES.equals(country) && AonDocumentUtil.isValidCIF(nif)) {
+						dtype = DocumentType.CIF;
+					} else if(Country.ES.equals(country) && AonDocumentUtil.isValidDNI(nif)) {
+						dtype = DocumentType.NIF;
+					}
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain)
 						.setDocument(nif)
 						.setDocumentCountry(country)
+						.setDocumentType(dtype)
 						.setName(name)
 						.setNationality(country));
 				}			
