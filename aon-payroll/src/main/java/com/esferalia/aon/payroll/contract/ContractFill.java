@@ -48,17 +48,17 @@ public class ContractFill {
 			return null;
 		
 		if(contractType >= 100 && contractType <= 400) 
-			return fillIndefiniteContract(contractOtherInfo, contractFillInfo, contractClauses);
+			return fillIndefiniteContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
 		else if (contractType == 421) 
 			return fillFormationContract(contractOtherInfo, contractFillInfo, contractClauses);
 		else if (contractType == 420 || contractType == 520) 
 			return fillPracticeContract(contractOtherInfo, contractFillInfo, contractClauses);
 		else 
-			return fillTemporalContract(contractOtherInfo, contractFillInfo, contractClauses);
+			return fillTemporalContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
 		
 	}
 	
-	private static byte[] fillIndefiniteContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillIndefiniteContract(Integer contractType, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -133,6 +133,9 @@ public class ContractFill {
 			// ^^^--- new 
 			
 //			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
+	        
+	        removeIndefiniteNotUsingPage(contractType, pdfDocument);
+	        
 			pdfDocument.save(out);
 			pdfDocument.close();
 			
@@ -141,6 +144,67 @@ public class ContractFill {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	private static void removeIndefiniteNotUsingPage(Integer contractType, PDDocument pdfDocument) {
+		if(contractType.equals(100) || contractType.equals(200) || contractType.equals(300)) {
+//			pdfDocument.removePage(4);
+//			pdfDocument.removePage(5);
+//			pdfDocument.removePage(6);
+//			pdfDocument.removePage(7);
+//			pdfDocument.removePage(8);
+//			pdfDocument.removePage(9);
+//			pdfDocument.removePage(10);
+//			pdfDocument.removePage(11);
+//			pdfDocument.removePage(12);
+//			pdfDocument.removePage(13);
+//			pdfDocument.removePage(14);
+//			pdfDocument.removePage(15);
+//			pdfDocument.removePage(16);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+		} else if(contractType.equals(130) || contractType.equals(230) || contractType.equals(330)) {
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+		} else if(contractType.equals(109) || contractType.equals(139) || contractType.equals(189) || 
+				contractType.equals(209) || contractType.equals(239) || contractType.equals(289) || 
+				contractType.equals(309) || contractType.equals(339) || contractType.equals(389)) {
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
 		}
 	}
 
@@ -214,7 +278,14 @@ public class ContractFill {
 			// ^^^--- new 
 
 //			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
-			pdfDocument.save(out);
+
+	        // Remove unused pages
+	        pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+	        
+	        pdfDocument.save(out);
 			pdfDocument.close();
 			
 			return out.toByteArray();
@@ -295,7 +366,15 @@ public class ContractFill {
 			// ^^^--- new 
 
 //			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
-			pdfDocument.save(out);
+			
+	        // Remove unused pages
+	        pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+	        
+	        pdfDocument.save(out);
 			pdfDocument.close();
 			
 			return out.toByteArray();
@@ -306,7 +385,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillTemporalContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillTemporalContract(Integer contractType, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -316,6 +395,8 @@ public class ContractFill {
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();
+			
+			System.out.println("acroForm size : " + acroForm.getFields().size());
 			
 			if(null != acroForm) {
 				for(PDField field : acroForm.getFields()) {
@@ -376,7 +457,10 @@ public class ContractFill {
 			// ^^^--- new 
 
 //			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
-			pdfDocument.save(out);
+			
+	        removeTemporalPages(contractType, pdfDocument);
+	        
+	        pdfDocument.save(out);
 			pdfDocument.close();
 			
 			return out.toByteArray();
@@ -387,6 +471,74 @@ public class ContractFill {
 		}
 	}
 	
+	private static void removeTemporalPages(Integer contractType, PDDocument pdfDocument) {
+		if(contractType.equals(401) || contractType.equals(501)) {
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+		} else if(contractType.equals(402) || contractType.equals(502)) {
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+		} else if(contractType.equals(410) || contractType.equals(510)) {
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+		} else if(contractType.equals(430) || contractType.equals(530)) {
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(3);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+			pdfDocument.removePage(4);
+		}
+	}
+
 	public static void setField(PDField field, String value) throws IOException {
 	    if (field instanceof PDCheckBox) {
 	        field.setValue("No");
