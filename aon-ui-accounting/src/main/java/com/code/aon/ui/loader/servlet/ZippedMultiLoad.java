@@ -210,6 +210,9 @@ public class ZippedMultiLoad {
 			((HTMLLogger) log).print("</div>");
 			++row;
 		}
+		if (row == 0) {
+			log.error("El archivo no contiene empresas. Compruebe que es un archivo válido para el traspaso de DSI ContaVS o Fiscal.");
+		}
 	}
 	
 	private DomainData searchDomain(Integer parentDomain,String domainName) throws ManagerBeanException {

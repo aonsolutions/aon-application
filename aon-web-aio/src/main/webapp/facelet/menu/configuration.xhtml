@@ -360,6 +360,7 @@
 									</aon:if>
 									<aon:if test="#{company.dsiLoaderEnabled}">
 										<aon:if test="#{!domainSwitcher.childDomain}">
+											<!--		
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="boe_import" action="boe_import_form"
 													title="#{bundle.boe_import_module}">
@@ -369,6 +370,8 @@
 													<aon:outputText value="#{bundle.boe_import_module}" />
 												</aon:commandLink>
 											</aon:div>
+											 -->
+											
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="zip_dsi_import" action="aonZipLoader_form"
 													actionListener="#{aonZipLoader.onStart}"

@@ -147,13 +147,15 @@ public class AonZipLoaderController implements Serializable {
 		public void start() {
 			this.out.print("<div style=\"font-family: monospace;\">");			
 			this.out.print("<div style=\"text-align: center\">");
-			this.out.print("<a href=\"/aon-aio\">Volver</a>");
+//			this.out.print("<a href=\"/aon-aio\">Volver</a>");
+			this.out.print("<a href=\"./\">Volver</a>");
 			this.out.print("</div>");
 		}
 		
 		public void end() {
 			this.out.print("<div style=\"text-align: center\">");
-			this.out.print("<a href=\"/aon-aio\">Volver</a>");
+			//this.out.print("<a href=\"/aon-aio\">Volver</a>");
+			this.out.print("<a href=\"./\">Volver</a>");
 			this.out.print("</div>");
 			this.out.print("<script>window.scrollTo(0,document.body.scrollHeight);</script>");
 			this.out.print("</div>");
