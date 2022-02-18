@@ -67,6 +67,7 @@ import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CertificadosWriter implements Serializable {
@@ -839,7 +840,7 @@ public class CertificadosWriter implements Serializable {
 					List<SalaryData> journalDaysList = utils.getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), "JORNADAS_REALES");
 					Integer journalDays = null;
 					try {
-						journalDays = journalDaysList!=null && journalDaysList.size()>0 ? Integer.parseInt(journalDaysList.get(0).getExpression()) : null;
+						journalDays = journalDaysList.stream().map( SalaryData::getExpression).collect(Collectors.summingInt(AonNumberUtils::toint));
 					} catch (NumberFormatException e) {
 						LOGGER.error("No se han podido obtener las jornadas reales", e);
 					}
