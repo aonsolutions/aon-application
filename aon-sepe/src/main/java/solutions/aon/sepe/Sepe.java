@@ -8,24 +8,24 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
 import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract;
-import solutions.aon.sepe.Contrato.FirmType;
+import solutions.aon.sepe.Contrata.FirmType;
 import solutions.aon.sepe.exceptions.SepeException;
 
 public class Sepe {
 	
 	public static byte[] getContratoPdf( final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-		return Contrato.contratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+		return Contrata.contratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 
 	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-			return Contrato.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+			return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
 	public static byte[] transformacionsPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini) throws SepeException {
-			return Contrato.transformacionsPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini);
+			return Contrata.transformacionsPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini);
 	}
 	
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream, final String certificatePassword,
@@ -40,32 +40,32 @@ public class Sepe {
 	
 	public static String sendContract(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Contract cto) throws SepeException  {
-		return Contrato.contrato(certificateInputStream, certificatePassword, certificateType, cto);
+		return Contrata.sendContrata(certificateInputStream, certificatePassword, certificateType, cto);
 	}
 	
 	public static String sendContratoCopyBasic(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType,  String ipf, Date fini, Date ffin, FirmType typeFirm, String workAddress, String restContract) throws SepeException  {
-		return Contrato.contratoCopyBasic(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, typeFirm, workAddress, restContract);
+		return Contrata.contratoCopyBasic(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, typeFirm, workAddress, restContract);
 	}
 	
 	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType,  String ide) throws SepeException  {
-		Contrato.removeContrato(certificateInputStream, certificatePassword, certificateType, ide);
+		Contrata.removeContrato(certificateInputStream, certificatePassword, certificateType, ide);
 	}
 	
 	public static void removeTransformation(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType,  String ide) throws SepeException  {
-		Contrato.removeTransformation(certificateInputStream, certificatePassword, certificateType, ide);
+		Contrata.removeTransformation(certificateInputStream, certificatePassword, certificateType, ide);
 	}
 	
 	public static Contract getContractData(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-		return Contrato.getContractData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+		return Contrata.getContractData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
 	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SepeException{
-		Contrato.validateCert(certificateInputStream, certificatePassword, certificateType);
+		Contrata.validateCert(certificateInputStream, certificatePassword, certificateType);
 	}
 	
 	public static void main(String[] args)

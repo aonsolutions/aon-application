@@ -54,6 +54,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import solutions.aon.seg.social.IServicioRedConstants;
 import solutions.aon.seg.social.ServicioREDRegeXML;
 import solutions.aon.seg.social.exception.ReportTooLongException;
+import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
@@ -768,15 +769,17 @@ public class Toolkit {
 	}
 	
 	public static String getBodyGET(CloseableHttpClient httpClient, String link) throws SegSocialException, IOException {
-			try (CloseableHttpResponse resp = httpClient.execute(new HttpGet(link))) {
-				Toolkit.checkResponseStatus(resp);
-				HttpEntity entity = resp.getEntity();
-				if (entity != null) {
-					return EntityUtils.toString(resp.getEntity(), IServicioRedConstants.ISO_8859_1);
-				}
-				return null;
+		String html = null;
+		try (CloseableHttpResponse resp = httpClient.execute(new HttpGet(link))) {
+			Toolkit.checkResponseStatus(resp);
+			HttpEntity entity = resp.getEntity();
+			if (entity != null) {
+				html = EntityUtils.toString(resp.getEntity(), IServicioRedConstants.ISO_8859_1);
+				Toolkit.checkCertificateRevoked(html);
 			}
 		}
+		return html;
+	}
 
 	public static String getBodyPOST(CloseableHttpClient httpClient, HttpPost httpPost) throws SegSocialException, IOException {
 		try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
@@ -797,6 +800,15 @@ public class Toolkit {
 		}
 		return null;
 	}
+	
+	public static void checkCertificateRevoked(String body) throws SegSocialException {
+		if(body!=null) {
+			String element = getElementByAttribute(body, "src", "revokedError.jpg");
+			if(element!=null)
+				throw new RevokedCertificateException("Certificado revocado");
+		}
+	}
+	
 	public static String getLink(String body) {
 		Matcher matcher = FORM_PATTERN.matcher(body);
 		if (matcher.find()) {

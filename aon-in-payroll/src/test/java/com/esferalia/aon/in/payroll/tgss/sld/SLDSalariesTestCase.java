@@ -67,6 +67,7 @@ public class SLDSalariesTestCase {
 			to, 
 			SistemaRED.LiquidationType.L00_NORMAL, 
 			SistemaRED.LiquidationOrigin.TODAS,
+			"00312622",
 			nafs
 			);
 			

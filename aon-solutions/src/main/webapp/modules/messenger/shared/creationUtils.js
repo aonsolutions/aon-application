@@ -712,7 +712,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
     margin: "5px",
     fontWeight: "450" 
   });
-  divOne.dataset.taskTag = tag.id;
+  divOne.dataset.taskTag = JSON.stringify(tag);
   parent.appendChild(divOne);
 
   const divTwo = setStyles(document.createElement(TAG.DIV),{ display: "inline-block"});
@@ -721,7 +721,10 @@ export const appendTaskTag = ( tag, parent, fn) =>{
 
   const divThree = setStyles(document.createElement(TAG.DIV),{  display: "inline-block", verticalAlign:"bottom", cursor:"pointer"});
   divThree.title = MSG.DELETE_TAG;
-  divThree.addEventListener(EVENT.CLICK,()=> fn(tag.id));
+  divThree.addEventListener(EVENT.CLICK,()=>{
+    divOne.remove();
+    fn(tag.id);
+  });
   divOne.appendChild(divThree);
 
   const i = setStyles(document.createElement("i"),{ fontSize: "15px" });

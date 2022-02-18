@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -199,6 +200,7 @@ public class VATDAO  {
 
 				,INVOICE_DETAIL.TAXABLE_BASE
 				,INVOICE_DETAIL.INVEST_ASSET
+				,INVOICE_DETAIL.SOURCE
 				,INVOICE_TAX.BASE
 				,INVOICE_TAX.PERCENTAGE
 				,INVOICE_TAX.QUOTA
@@ -212,6 +214,7 @@ public class VATDAO  {
 				,INVOICE_DUA.ID
 				
 				,INVOICE.WITHHOLDING
+				,INVOICE.RETENTION_QUOTA
 				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
@@ -269,6 +272,7 @@ public class VATDAO  {
 
 				,INVOICE_DETAIL.TAXABLE_BASE
 				,INVOICE_DETAIL.INVEST_ASSET
+				,INVOICE_DETAIL.SOURCE
 				,INVOICE_TAX.BASE
 				,INVOICE_TAX.PERCENTAGE
 				,INVOICE_TAX.QUOTA
@@ -282,6 +286,7 @@ public class VATDAO  {
 				,INVOICE_DUA.ID
 
 				,INVOICE.WITHHOLDING
+				,INVOICE.RETENTION_QUOTA
 				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
@@ -337,6 +342,7 @@ public class VATDAO  {
 			
 			,INVOICE_DETAIL.TAXABLE_BASE
 			,INVOICE_DETAIL.INVEST_ASSET
+			,INVOICE_DETAIL.SOURCE
 			,INVOICE_TAX.BASE
 			,INVOICE_TAX.PERCENTAGE
 			,INVOICE_TAX.QUOTA
@@ -354,6 +360,7 @@ public class VATDAO  {
 			,FINANCE_TRACKING.AMOUNT
 			
 			,INVOICE.WITHHOLDING
+			,INVOICE.RETENTION_QUOTA
 			,INVOICE.REGISTRY
 			)
 			.from(FINANCE_TRACKING)
@@ -411,6 +418,7 @@ public class VATDAO  {
 			
 			,INVOICE_DETAIL.TAXABLE_BASE
 			,INVOICE_DETAIL.INVEST_ASSET
+			,INVOICE_DETAIL.SOURCE
 			,INVOICE_TAX.BASE
 			,INVOICE_TAX.PERCENTAGE
 			,INVOICE_TAX.QUOTA
@@ -427,6 +435,7 @@ public class VATDAO  {
 			,FINANCE.AMOUNT
 			
 			,INVOICE.WITHHOLDING
+			,INVOICE.RETENTION_QUOTA
 			,INVOICE.REGISTRY
 			)
 			.from(FINANCE)
@@ -482,6 +491,7 @@ public class VATDAO  {
 			
 			,INVOICE_DETAIL.TAXABLE_BASE
 			,INVOICE_DETAIL.INVEST_ASSET
+			,INVOICE_DETAIL.SOURCE
 			,INVOICE_TAX.BASE
 			,INVOICE_TAX.PERCENTAGE
 			,INVOICE_TAX.QUOTA
@@ -498,6 +508,7 @@ public class VATDAO  {
 			,FINANCE.AMOUNT
 			
 			,INVOICE.WITHHOLDING
+			,INVOICE.RETENTION_QUOTA
 			,INVOICE.REGISTRY
 			)
 			.from(FINANCE)
@@ -772,11 +783,29 @@ public class VATDAO  {
 				.setDeductibleQuota(getDeductibleQuota(rec))
 				
 				.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
-				.setHasRetention(AonEnumUtils.getBoolean(rec.getValue(INVOICE.WITHHOLDING)))		
+//				.setHasRetention(AonEnumUtils.getBoolean(rec.getValue(INVOICE.WITHHOLDING)))
+				.setHasRetention( hasRetention(
+						rec.getValue(INVOICE.WITHHOLDING),
+						rec.getValue(INVOICE_DETAIL.SOURCE),
+						rec.getValue(INVOICE.RETENTION_QUOTA)))
 				.setRegistry(rec.getValue(INVOICE.REGISTRY))
 			;
 		}
+		
+		private boolean hasRetention(Byte withholding, Byte source, Double retentionQuota) {
+			boolean retention =	AonEnumUtils.getBoolean(withholding);		
+			if (retention) {
+				InvoiceSource invoiceSource = InvoiceSource.safeValueOf(source);
+				if (invoiceSource != InvoiceSource.ACCOUNT && invoiceSource != InvoiceSource.TEDI) {  // Viene de gestión
+					retention = AonMathUtils.isNotZero(retentionQuota);
+				}
+			}
+			return retention;
+		}
+		
 	}
+	
+	
 	
 	public static class SiiVatContextFiller  implements Function<Record,VatContext> {
 

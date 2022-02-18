@@ -63,6 +63,7 @@ import solutions.aon.seg.social.ServicioREDEmployee;
 import solutions.aon.seg.social.ServicioREDMov;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
@@ -193,11 +194,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
             try{            	
                 employees.addAll(
                 		ServicioREDEmployee.getTotalEmployees( 
-                				new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), 
+                				new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
                 				ccc.getCccRegimeCode(), ccc.getCccAccount()
                 		)
                 );
-            } catch(InvalidCertificateException e) {
+            } catch(InvalidCertificateException | RevokedCertificateException e) {
                 e.printStackTrace();
                 errors.add(e.getClass().getSimpleName());
             } catch(Exception e) {
@@ -224,7 +225,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").forEach(ccc -> {
 		  try {
 			  byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
-					new ByteArrayInputStream(certificate.getCertificate()), 
+					new ByteArrayInputStream(certificate.getData()), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					ccc.getCccRegimeCode(), 
@@ -284,7 +285,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 
 			JSONArray arr = new JSONArray();			
-			final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 			
 			String nss = api.getParams().optString("nss");
 			if(nss.isEmpty()) 
@@ -312,7 +313,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String apellido1 =  params.optString("apellido1");
 		String apellido2 =  params.optString("apellido2");
 		JSONObject json = new JSONObject();
-		Employee employee = SistemaRED.nafxipf(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
+		Employee employee = SistemaRED.nafxipf(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
 		json.put("ident", employee.getIdent());
 		json.put("ipf", employee.getIpf());
 		employee.getName().ifPresent(name-> json.put("name",name) );
@@ -368,7 +369,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Boolean communicateTGSS = true;
 		
-		AonComunica.addContract(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), domain, 
+		AonComunica.addContract(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, 
 				EmployeeParse.toEmployeeOccam(employee) , communicateTGSS);
 		
 		if(Boolean.TRUE.equals(communicateTGSS) && employee.getName().isPresent()) 
@@ -401,7 +402,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setName(name)
 		.setSituation(situation)
 		.build();
-		employee = SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), employee);
+		employee = SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), employee);
 		if(employee.getName().isPresent()) 
 			sendMovEmailNotification(api, employee, frb, SituationType.BAJA);
 		return new JSONObject();
@@ -433,7 +434,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			employee.setEndDate(AonDateUtils.parse(data.getString("frb"), FORMAT_DATE));
 			date = employee.getEndDate().get();
 		}
-		AonComunica.deleteContract(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), domain, employee , true);
+		AonComunica.deleteContract(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, employee , true);
 		
 		if(!data.isNull("name")) {
 			SituationType situationType = employee.getEndDate().isEmpty() ? SituationType.ALTA : SituationType.BAJA;
@@ -454,7 +455,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String regime = params.optString("regime");
 		String ccc    = params.optString("ctaCti");
 		String nss    = params.optString("nss");
-		return SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
+		return SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
 	}
 	
 	private JSONObject updateContract(AonApiData api) throws Exception {
@@ -492,7 +493,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		if(!ocup.isEmpty() && !data.optString("ocup_edit").isEmpty() && data.getBoolean("ocup_edit")) {
             try {
-            	SistemaRED.cambioOcupacion( new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), ipf, regime, ctaCti, nss, ocup, date);
+            	SistemaRED.cambioOcupacion( new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, regime, ctaCti, nss, ocup, date);
             	json.put("ocup_edit", true);
             	json.put("contract_edit", true);
             	if(!data.isNull("name")) {
@@ -503,6 +504,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
         			sendNotification(api, body);
         		}
             } catch(Exception e) {
+            	System.out.println("errors updateOccupation"+ e.getMessage());
             	e.printStackTrace();
             	errors.put(e.getMessage());
             }	
@@ -520,7 +522,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Date date = AonDateUtils.parse(data.optString("fecha"), FORMAT_DATE);
 		if(!gc.isEmpty() && !data.optString("gc_edit").isEmpty() && data.getBoolean("gc_edit")) {
 			 try{
-				 SistemaRED.cambioGrupCtz(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), ipf, regime, ctaCti, nss, gc, date);
+				 SistemaRED.cambioGrupCtz(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, regime, ctaCti, nss, gc, date);
 				 json.put("gc_edit", true);
 				 json.put("contract_edit", true);
             	 if(!data.isNull("name")) {
@@ -530,6 +532,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
         			sendNotification(api, body);
         		 }
 			} catch(Exception e) {
+				System.out.println("errors updateGrupCtz"+ e.getMessage());
 				e.printStackTrace();
 				errors.put(e.getMessage());
 			}	
@@ -549,12 +552,13 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		if(!coef.isEmpty() && !data.optString("coef_edit").isEmpty() && data.getBoolean("coef_edit") ||
 				!contract.isEmpty() && !data.optString("contract_edit").isEmpty() && data.getBoolean("contract_edit")) {
 			 try{
-				 SistemaRED.cambioContratoCoef(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), 
+				 SistemaRED.cambioContratoCoef(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
 						 ipf, regime, ctaCti, nss, date, Optional.ofNullable(contract), coef
 				);
 				 json.put("coef_edit", true);
 				 json.put("contract_edit", true);
 			} catch(Exception e) {
+				System.out.println("errors updateFactor"+ e.getMessage());
 				e.printStackTrace();
 				errors.put(e.getMessage());
 			}	
@@ -587,7 +591,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				LinkedList<File> files = new LinkedList<>();
 				
 				try {
-					byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), ccc, regime, situation, nss, dat);
+					byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ccc, regime, situation, nss, dat);
 					File file = File.createTempFile("duplicateTA", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
@@ -598,7 +602,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}
 				
 				try {
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, dat);
+					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, dat);
 					File file = File.createTempFile("duplicateIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
@@ -734,7 +738,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					if(contract.isEmpty()) { 
 						if(data.getGc().isEmpty()) {
 							data = SistemaRED.getEmployee(
-								new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), 
+								new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
 								data.getRegime(), data.getCtaCti().get(), nss
 							);
 						}

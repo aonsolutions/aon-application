@@ -39,6 +39,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getConfiguration(currentDomainName, currentDomain,user, atDate);
 	}
 	@Override
+	public AonConfiguration getAonConfiguration(Occam occam) throws AonCoreException {
+		return AON.getConfiguration(occam);
+	}
+	@Override
 	public AonConfiguration getAonConfiguration(Occam occam, ConfigParams params) throws AonCoreException {
 		return AON.getConfiguration(occam, params);
 	}

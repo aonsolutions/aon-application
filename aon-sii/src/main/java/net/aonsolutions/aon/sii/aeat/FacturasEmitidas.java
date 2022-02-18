@@ -1067,7 +1067,7 @@ public class FacturasEmitidas extends SIIBuilt {
 	}
 	
 	private Boolean validateNif(String nif, String name, DocumentType type) {
-		return !type.equals(DocumentType.NOT_CENSUSED);
+		return !DocumentType.NOT_CENSUSED.equals(type);
 		/*
 		VNifV1Ent vnif = new VNifV1Ent();
 		vnif.setNif(nif);

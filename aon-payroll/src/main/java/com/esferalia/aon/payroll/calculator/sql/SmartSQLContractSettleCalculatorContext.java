@@ -406,9 +406,9 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						extraPayment.setPaymentConcept(autoGenratedConcept);
 	
 						extraPayment.setDescription(description);
-						extraPayment.setExpression(String.format(Locale.US, "%f", amount));
 						extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
 						extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
+						extraPayment.setExpression(String.format(Locale.US, "/*hideable*/%f", amount));
 						
 						
 						extraPayments.add( extraPayment );

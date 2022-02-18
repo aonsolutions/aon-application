@@ -4777,7 +4777,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			};
 			
 			ctx.putVariable(DROP_DAYS, dropDays);
-			ctx.putVariable(SALARY_DAYS, dropDays);			
+			ctx.putVariable(SALARY_DAYS, dropDays);
+			
+			
+			ITimedVariable<Double> workedFactor = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return p;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					
+					double workedFactor = getCurrentBindings().get(PARTIAL_FACTOR,
+							obj -> ((Number) obj).doubleValue(), 1.00);
+					
+					for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS )
+						workedFactor *= (1.00 - getCurrentBindings().get(ereFactor,
+							obj -> ((Number) obj).doubleValue(), 0.00));
+					
+					return workedFactor;
+				}
+
+			};
+			ctx.putVariable(WORKED_FACTOR, workedFactor);
+			
 		}
 
 		

@@ -33,6 +33,10 @@ public interface IMailConstants {
 	String SOCKET_FACTORY_CLASS = ".socketFactory.class";
 	
 	String STARTTLS_ENABLE = ".starttls.enable";
+
+	String SSL_PROTOCOLS = ".ssl.protocols";
+
+	String TLS1_2 = "TLSv1.2";
 	
 	String TIMEOUT = ".timeout";
 	

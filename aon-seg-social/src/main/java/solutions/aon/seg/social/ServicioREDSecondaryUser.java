@@ -49,7 +49,11 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 				String sessionStr = Toolkit.getElementByAttribute(body, "id", "SPM.IDSESSION");
 				link = IServicioRedConstants.BASE_URL_TGSS+"/ProsaInternet/OnlineAccessUtf8"+Toolkit.getAttribute(sessionStr, "innerText");
 			} else {
-				link = IServicioRedConstants.BASE_URL_TGSS+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "FORMULARIO_1"), "action");
+				String action = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "FORMULARIO_1"), "action");
+				if(action!=null)
+					link = IServicioRedConstants.BASE_URL_TGSS+action;
+				else 
+					throw new SegSocialException("No hay datos disponibles");
 			}				
 		
 			Boolean more = false;

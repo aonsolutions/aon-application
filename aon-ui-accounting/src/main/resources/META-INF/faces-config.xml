@@ -1012,6 +1012,14 @@
 			<to-view-id>/com/code/aon/ui/accounting/facelet/aonLoader/zipform.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!--  **** AON ZIP PAYROLL LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>aonZipPayrollLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/aonLoader/zippayrollform.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!--  **** BALANCE SHEET RESOLVER PAGES  **** -->
 	<navigation-rule>

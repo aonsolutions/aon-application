@@ -275,8 +275,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 //	private ITDataObject dataObject;
 	private SalaryDraft salaryDraft;
 	private UndoManager<Undoable> undoManager;
-	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
-	private EmployeeEventsDraftObject employeeEventsDraftObject;
 	private DomainEmployeesServiceAsync employeesServiceAsync;
 
 	public SalaryDraftObject(SalaryDraft salaryDraft, /*ITDataObject dataObject,*/
@@ -1498,22 +1496,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 				return var;
 		return null;
 	}
-	public void setEmployeeCalendarDraftObject(EmployeeCalendarDraftObject employeeCalendarDraftObject) {
-		this.employeeCalendarDraftObject = employeeCalendarDraftObject;
-	}
-	
-	public EmployeeCalendarDraftObject getEmployeeCalendarDraftObject() {
-		return employeeCalendarDraftObject;
-	}
-	
-	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraftObject) {
-		this.employeeEventsDraftObject = employeeEventsDraftObject;
-	}
-	
-	public EmployeeEventsDraftObject getEmployeeEventsDraftObjecta() {
-		return employeeEventsDraftObject;
-	}
-	
 	private static void info(String message) {
 		if ( LogConfiguration.loggingIsEnabled())
 			LOGGER.log(Level.WARNING, message);

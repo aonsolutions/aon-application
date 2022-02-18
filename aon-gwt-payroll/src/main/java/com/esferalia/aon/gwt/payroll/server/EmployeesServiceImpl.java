@@ -1049,7 +1049,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft) throws IllegalArgumentException {
-		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>());
+		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>() {
+			@Override
+			protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
+				super.fillData(ctx);
+				fillData(ctx, new ContextVariable[] { ContextVariable.SENIORITY } );
+			}
+		});
 		return salaryDraft;
 	}
 

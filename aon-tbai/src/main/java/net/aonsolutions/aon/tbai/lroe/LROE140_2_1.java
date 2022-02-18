@@ -7,11 +7,13 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -25,24 +27,33 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Coun
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionRecargoEquivalenciaORegimenSimplificadoEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionGastoConFacturaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesGastosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.CabeceraFacturaGastosRecibidasType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.ClavesGastoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DatosFacturaGastoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleRentaIVAGastoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoPersonaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.FacturaRectificativaImporteType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.FacturasRectificadasSustituidasType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.GastoConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.GastosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDClaveGastoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaConEmisorType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.RentaIVAGastoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_altamodifpeticion_v1_0_2.LROEPF140GastosConFacturaAltaModifPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_anulacionpeticion_v1_0_0.LROEPF140GastosConFacturaAnulacionPeticion;
+import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 public class LROE140_2_1 extends LROE140 {
-	
+
+	private static final long serialVersionUID = 1L;
+
 	private static final String CAPITULO = "2";
 	private static final String SUBCAPITULO = "2.1";
 	
@@ -97,8 +108,8 @@ public class LROE140_2_1 extends LROE140 {
 		CabeceraFacturaGastosRecibidasType cabecera = new CabeceraFacturaGastosRecibidasType();
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
 		cabecera.setNumFactura(invoice.getReferenceCode());
-		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
-		cabecera.setFechaRecepcion(AonDateUtils.format(invoice.getCreationDate(), "dd-MM-yyyy"));
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		cabecera.setFechaRecepcion(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
 		if(invoice.isRectified()) {
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
@@ -109,7 +120,7 @@ public class LROE140_2_1 extends LROE140 {
 			IDFacturaType rectificada = new IDFacturaType();
 			rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
 			rectificada.setNumFactura(invoice.getRectificationInvoiceNumber().toString());
-			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), "dd-MM-yyyy"));
+			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), DATE_FORMAT));
 			rectificadas.getIDFacturaRectificadaSustituida().add(rectificada);
 			cabecera.setFacturasRectificadasSustituidas(rectificadas);
 		}
@@ -141,6 +152,9 @@ public class LROE140_2_1 extends LROE140 {
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
 			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().get();
+			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+			}
 			DetalleRentaIVAGastoType r = new DetalleRentaIVAGastoType();
 			r.setEpigrafe(invoice.getEpigraph());
 			r.setConcepto(detail.getDescription());
@@ -197,11 +211,72 @@ public class LROE140_2_1 extends LROE140 {
 		}
 	}
 	
-	public static void modificacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
+	private LROEPF140GastosConFacturaAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info) {	
+		LROEPF140GastosConFacturaAnulacionPeticion lroe = new LROEPF140GastosConFacturaAnulacionPeticion();
+		lroe.setCabecera(buildCabecera(person, info));
+		
+		AnulacionesGastosConFacturaType anulaciones = new AnulacionesGastosConFacturaType();
+		AnulacionGastoConFacturaType anulacion = new AnulacionGastoConFacturaType();
 
+		IDFacturaConEmisorType factura = new IDFacturaConEmisorType();
+
+		factura.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
+		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		factura.setSerieFactura(invoice.getSeries());
+		factura.setNumFactura(invoice.getReferenceCode());
+		anulacion.setIDGasto(factura);
+		
+		anulaciones.getGasto().add(anulacion);
+		lroe.setGastos(anulaciones);
+		return lroe;
+	}
+
+	private DocumentoType buildEmisorAnulacion(Invoice invoice) {
+		DocumentoType emisor = new DocumentoType();
+		
+		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
+			emisor.setNIF(invoice.getRegistryDocument());
+		} else if(invoice.isIntracommunity()){
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			String document = invoice.getRegistryDocument();
+			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
+				document = invoice.getRegistryDocumentCountry().getIso2() + document;
+			}
+			otro.setID(document);
+			otro.setIDType(IDType.NIF_IVA.getName());
+			emisor.setIDOtro(otro);
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			otro.setID(invoice.getRegistryDocument());
+			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
+			emisor.setIDOtro(otro);
+		}
+		return emisor;
 	}
 	
-	public static void anulacion(TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] xml)  {
+	public LROEInfo buildInfo(OperacionEnum operacion) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
+	}
+	
+	public LROEResponse anulacion(Person person, TbaiConfiguration tbaiConfiguration, Invoice invoice) throws StatusCodeException {
+		try {
+			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.AN_0);
+			final LROEPF140GastosConFacturaAnulacionPeticion p240 = buildBaja(person, invoice, info); 
+			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaAnulacionPeticion.class );
+			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
 
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			jaxbMarshaller.marshal( p240, bos );
+			byte[] xml = bos.toByteArray();
+			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
+			byte[] data = toGzip(xml);
+			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+		} catch (Exception e) {
+			return error(e);
+		}
 	}
 }

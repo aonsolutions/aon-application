@@ -94,7 +94,7 @@ public class Employee {
 	public Optional<Double> getFactor(){return Optional.ofNullable(factor);}
 	public Optional<String> getSex() {return Optional.ofNullable(sex);}
 	public Integer getIdent() {return ident;}
-	public String getColec() {return colec;}
+	public Optional<String> getColec() {return Optional.ofNullable(colec);}
 	public String getOcup() {return ocup;}
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	public Optional<String> getRlce() {return Optional.ofNullable(rlce);}

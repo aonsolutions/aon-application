@@ -1038,7 +1038,23 @@
     	border: solid #F3F3F3 1px !important;
     }
     
-    
+	.aon-finding-title-toolbar + .aon-scroll-area {
+		padding-top: 0px;
+		overflow-y: scroll;
+		height: calc( 100vh - 160px);
+	} 
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead tr {
+		border-bottom: #ccc 1px solid;
+	}
+
+	.aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead th {
+		top: 0px;
+		padding-top: 8px;
+		position: sticky;
+		background-color: white;
+		background-clip: padding-box;
+	}
 
 	</style>
 
@@ -1066,6 +1082,13 @@
 			}
 	</script>
 		
+	<a4j:region>
+		<h:form>
+			<a4j:poll status="aonStatus" interval="300000"
+				actionListener="#{desktop.onRefresh}" reRender="aonHeader" />
+		</h:form>
+	</a4j:region>
+
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
 		<aon:panelGrid columns="4" width="100%" 

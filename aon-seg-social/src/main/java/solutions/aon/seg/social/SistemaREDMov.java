@@ -34,6 +34,7 @@ import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
@@ -235,6 +236,9 @@ class SistemaREDMov {
  			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
  			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
  			webclient.getOptions().setUseInsecureSSL(true);
+ 			
+ 			Optional<String> colect = employee.getColec();
+	    	Optional<String> rlce = employee.getRlce();
 	    	
  			HtmlPage htmlPage = firstPageAltaBaja(
 					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
@@ -243,8 +247,8 @@ class SistemaREDMov {
 	
 			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			
-			if(employee.getRlce().isPresent())
-				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(employee.getRlce().get());
+			if(rlce.isPresent())
+				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce.get());
 			
 			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
 			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
@@ -252,10 +256,11 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
 			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
 			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
-			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty()) {
-				String conv = employee.getColec()!=null ? employee.getColec() : "60888888888888";
-				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(conv); 
+	
+			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
+				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get()); 
 			}
+			
 			if (employee.getRegime().equals("0163") && !employee.getMdctz().isEmpty()) {
 				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
 			} else {
@@ -286,7 +291,6 @@ class SistemaREDMov {
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}	
 			
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(),"/home/rvasquez/Documentos/test.html");
 			return employee;
 	}
 	
@@ -581,11 +585,13 @@ class SistemaREDMov {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 
 	        Integer ident  = 1; 
-		     if(identity(ipf).equals("6")) ident = 3; // NIE
+		    if(identity(ipf).equals("6")) 
+		    	ident = 3; // NIE
  			//Date
  			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
  			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
+			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
@@ -611,15 +617,25 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fr[1]); 
 			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fr[2]); 
 			
+			if(!contract.isEmpty()) 
+				form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); //tipo de contrato
 			
-			if(!contract.isEmpty()) form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); //tipo de contrato
-			if(coef==null) coef = "0";
+			if(coef==null) 
+				coef = "0";
+			
 			form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); //coef 3 digits
 			
 			btnSubmit = htmlPage.querySelector("#Sub2207401004");
 			htmlPage = btnSubmit.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
+			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
+			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >=0 ) {
+				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Confirmar]")).click();
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			}	
+			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.dir")+"/Documentos/test.html");
 		} 
 	}
 	
@@ -656,12 +672,14 @@ class SistemaREDMov {
 		  formDatos.getInputByName(fieldValue).setValueAttribute(newValue);
 		  formDatos.getInputByName(fieldDate).setValueAttribute(fr[0]+"/"+fr[1]+"/"+fr[2]);
 		  
-		  htmlPage  = ((HtmlButton)htmlPage.querySelector("#ENVIO_6")).click();
+		  htmlPage  = ((HtmlButton)htmlPage.querySelector("#ENVIO_7")).click();
 		  handleNewSegSocialExceptions(htmlPage);
 		  
 		  DomNode message=htmlPage.querySelector(".INFO.mensaje");
 		  if(message!=null && !message.getVisibleText().isEmpty()) 
 				System.out.println(message.getVisibleText());
+		  
+		  Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.dir")+"/Documentos/test.html");
 		} 
 	}
 	
@@ -845,6 +863,10 @@ class SistemaREDMov {
 	    	validateCertExpired( new ByteArrayInputStream(certByte), certificatePassword);
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
+	
+			if(htmlPage.getUrl().toString().contains("revokedError")) 
+				throw new RevokedCertificateException("Certificado revocado");
+			
 			DomNode section = htmlPage.querySelector("#segsocial section");
 			if(section!=null && section.getVisibleText().toLowerCase().indexOf("no autorizado")>=0) {
 				DomNode error = section.querySelector("p");

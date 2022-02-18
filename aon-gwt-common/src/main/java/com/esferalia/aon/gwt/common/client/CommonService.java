@@ -25,6 +25,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, String user) throws AonCoreException;
 	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate) throws AonCoreException;
+	AonConfiguration getAonConfiguration(Occam occam) throws AonCoreException;
 	AonConfiguration getAonConfiguration(Occam occam, ConfigParams params) throws AonCoreException;
 	
 	// **************************************************

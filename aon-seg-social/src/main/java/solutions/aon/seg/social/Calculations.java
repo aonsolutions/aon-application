@@ -228,7 +228,7 @@ class Calculations {
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
-			final SistemaRED.LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+			final SistemaRED.LiquidationOrigin liqOrigin, String authorized, String... nafs) throws SegSocialException{
 		
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
@@ -237,8 +237,14 @@ class Calculations {
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
 			try {
-				htmlPage.getElementById("autorizacion0").click();
-				htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+				authorized = authorized.trim().replaceFirst("^0*", "");
+				for ( Object autorizacionInput : htmlPage.getByXPath("//*[starts-with(@id,\"autorizacion\")]") ) {
+					if ( ((HtmlInput) autorizacionInput).getAttribute("title").contains(authorized) ) {
+						((HtmlInput) autorizacionInput).click();
+						htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+						break;
+					}
+				}
 			} catch (NullPointerException e) {}
 			htmlPage=SistemaREDI.liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 			try {

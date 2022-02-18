@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.api;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -30,9 +31,11 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
-import com.esferalia.aon.watson.util.AonEnumUtils;;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class InvoiceApiDAO {
 	
@@ -43,8 +46,11 @@ public class InvoiceApiDAO {
 		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
 		
 		return ctx.getDslContext().select()
-				.from(INVOICE).where(INVOICE_PROPERTIES.getConditions(filter))
-			.orderBy(INVOICE.ISSUE_DATE.desc())
+				.from(INVOICE)
+				.leftOuterJoin(INVOICE_INFO).on(INVOICE_INFO.INVOICE.eq(INVOICE.ID))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.groupBy(INVOICE.ID)
+			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
 			.limit(perPage)
 			.offset(perPage * (page -1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
@@ -88,30 +94,30 @@ public class InvoiceApiDAO {
 	
 
 
-	public static class InvoiceApiFiller implements Function<Record,Invoice> {
+	public static class InvoiceApiFiller extends Filler implements Function<Record,Invoice> {
 		AONContext aonCtx;
 		public InvoiceApiFiller(AONContext ctx) {
 			this.aonCtx = ctx;
 		}
 		
 		@Override
-		public Invoice apply(Record record) {
+		public Invoice apply(Record r) {
 			Invoice invoice = new Invoice()
-				.setId(record.getValue(INVOICE.ID))
-				.setDomain(record.getValue(INVOICE.DOMAIN))
-				.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
-				.setSeries(record.getValue(INVOICE.SERIES))
-				.setNumber(record.getValue(INVOICE.NUMBER))
-				.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(record.getValue(INVOICE.TAX_DATE))
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
+				.setId(r.getValue(INVOICE.ID))
+				.setDomain(r.getValue(INVOICE.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getValue(INVOICE.TYPE)))
+				.setSeries(r.getValue(INVOICE.SERIES))
+				.setNumber(r.getValue(INVOICE.NUMBER))
+				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
+				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(INVOICE.SECURITY_LEVEL)))
 			
-				.setRegistry(record.getValue(INVOICE.REGISTRY))
-				.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(record.getValue(INVOICE.RNAME))
+				.setRegistry(r.getValue(INVOICE.REGISTRY))
+				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(r.getValue(INVOICE.RNAME))
 				
 //				.setAddressProvinceCode(record.getValue(GEOZONE.CODE))
 //				.setAddressProvince(record.getValue(GEOZONE.NAME))
@@ -119,31 +125,32 @@ public class InvoiceApiDAO {
 //				.setAddressZIP(record.getValue(RADDRESS.ZIP))
 				
 //				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
-				.setActivity(record.getValue(INVOICE.ACTIVITY))	
-				.setInvestAsset(record.getValue(INVOICE.INVEST_ASSET))
-				.setProject(record.getValue(INVOICE.PROJECT))
-				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,record.getValue(INVOICE.RECTIFICATION_TYPE)))	
-				.setRectificationInvoice(record.getValue(INVOICE.RECTIFICATION_INVOICE))	
-				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class, record.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(record.getValue(INVOICE.STATUS) != null && record.getValue(INVOICE.STATUS) == 1 )	
-				.setSurcharge(record.getValue(INVOICE.SURCHARGE) == 1 )	
-				.setWithholding(record.getValue(INVOICE.WITHHOLDING) == 1 )	
-				.setWithholdingFarmer(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
-				.setVatAccrualPayment(record.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
-				.setInvestment(record.getValue(INVOICE.INVESTMENT) == 1 )	
-				.setService(record.getValue(INVOICE.SERVICE) == 1 )	
-				.setAdvance(record.getValue(INVOICE.ADVANCE) == 1 )	
-				.setTaxableBase(record.getValue(INVOICE.TAXABLE_BASE))	
-				.setVatQuota(record.getValue(INVOICE.VAT_QUOTA))	
-				.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA))	
-				.setTotal(record.getValue(INVOICE.TOTAL))	
-				.setComments(record.getValue(INVOICE.COMMENTS))
-				.setStatus(record.getValue(INVOICE.STATUS))
-				.setCreationDate(record.getValue(INVOICE.CREATION_DATE))
-				.setCreationUser(record.getValue(INVOICE.CREATION_USER))
-				.setModificationDate(record.getValue(INVOICE.MODIFICATION_DATE))
-				.setModificationUser(record.getValue(INVOICE.MODIFICATION_USER));
-			
+				.setActivity(r.getValue(INVOICE.ACTIVITY))	
+				.setInvestAsset(r.getValue(INVOICE.INVEST_ASSET))
+				.setProject(r.getValue(INVOICE.PROJECT))
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getValue(INVOICE.RECTIFICATION_TYPE)))	
+				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
+				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class, r.getValue(INVOICE.TRANSACTION)))
+				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
+				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
+				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
+				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
+				.setVatAccrualPayment(r.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1 )	
+				.setInvestment(r.getValue(INVOICE.INVESTMENT) == 1 )	
+				.setService(r.getValue(INVOICE.SERVICE) == 1 )	
+				.setAdvance(r.getValue(INVOICE.ADVANCE) == 1 )	
+				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
+				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
+				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
+				.setTotal(r.getValue(INVOICE.TOTAL))	
+				.setComments(r.getValue(INVOICE.COMMENTS))
+				.setStatus(r.getValue(INVOICE.STATUS))
+				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
+				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
+				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER))
+				.setInvoiceInfo(InvoiceInfoFiller.build(r));
+
 			try (AONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){
 
 				invoice.setDetails(getInvoiceDetails(ctx, invoice.getId())

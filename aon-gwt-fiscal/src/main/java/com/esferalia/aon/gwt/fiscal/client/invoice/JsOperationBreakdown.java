@@ -5,6 +5,7 @@ import java.util.Date;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
+@Deprecated
 public class JsOperationBreakdown extends JavaScriptObject {
 	
 	private static DateTimeFormat DATE_FORMAT = null;

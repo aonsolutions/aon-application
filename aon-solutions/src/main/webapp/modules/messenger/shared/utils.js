@@ -343,24 +343,24 @@ const jsonDiv = ()=> {
 
 /**
  * 
- * @param {HTMLElement} aon-application
- * @param {HTMLElement} aon-messenger-chat columnns div form
+ * @param {HTMLElement} firstDiv
+ * @param {HTMLElement} aonMessengerChatcolumnns div form
  */
-export const buildForm = (div, aonMessengerChat) => {
+export const buildForm = (firstDiv, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const isAdvisoryCompany = task.isAdvisoryCompany();
     const dataDefault = aonMessengerChat.getData();
 
     //-----------------------APPEND DIV TAGS
-    createTagsDiv(div, task); //DEFAULT HIDDEN
+    createTagsDiv(firstDiv, task); //DEFAULT HIDDEN
     
     //-----------------------CREATE FIRST CARD
     const aonCard = createCardMessenger(MSG.DATA, "");
     aonCard.flex = "true";
-    div.appendChild(aonCard);
+    firstDiv.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
 
-    if( !task.isExternal() && task.registry && task.registry.name){
+    if( !task.isExternal() && task.registry && task.registry.name && task.getSource() !== TASK_SOURCE.CAU){
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
     }
@@ -372,47 +372,44 @@ export const buildForm = (div, aonMessengerChat) => {
     //-----------------------CREATE DIV PROCESS
     const divProcess = createStartJustifiedColumn().element;
     divProcess.id = MESSENGER_IDS.PROCESS_DIV;
-    div.appendChild(divProcess);
+    firstDiv.appendChild(divProcess);
     //---------------------END CREATE DIV PROCESS
 
     const divStatic = createDivGrid(divCard, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
 
     const divDinamic = createDivGrid(undefined, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
 
+    divCard.appendChild(divDinamic);
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
+  
     if(task.id || dataDefault.source_id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     const divRequest = createDivGrid(divStatic, requestTypeSelect, {classes:[CSS.AON_COL_XS_6]});
   
     //-----------------END TYPE REQUEST
-
+    let btnForExternal = undefined;
     //---------------------IS CAU
-    if(aonMessengerChat.isCau()){
-        task.setSource(TASK_SOURCE.CAU);
-        divRequest.style.display = "none";
-
-        const selectTypeRequestCau = createSelectCau('typeCau', MESSENGER_IDS.TYPE_REQUEST_CAU, MSG.TYPE_REQUEST);
-        createDivGrid(divStatic, selectTypeRequestCau, {classes:[CSS.AON_COL_XS_6]})
-        fillTypeRequestCau(aonMessengerChat);
-
-        const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP, 'Aplicación');
-        createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
-        fillSelectAppCau(aonMessengerChat);
+    if(aonMessengerChat.isCau() || task.getSource() === TASK_SOURCE.CAU){
+        if(aonMessengerChat.isCau()){
+            task.setSource(TASK_SOURCE.CAU);
+            showTags(false);
+        }
+        divRequest.style.display = 'none';
     } else //if(   (!task.id || task.isExternal()) && !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) ))
     if((!task.id || task.isExternal()) && !aonMessengerChat.getDur().isEmployee()){
 
         let initText = !task.id || task.isExternal() ? 'Para' : 'De';
         let titleBtn = isAdvisoryCompany ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
 
-        const btnForExternal = createAonSwitch(titleBtn);
-        const divBtnForExternal = createDivGrid(divStatic, btnForExternal, {classes:[CSS.AON_COL_XS_6], styles:{ top:'16px',  marginLeft: 0, display:"none"} });
+        btnForExternal = createAonSwitch(titleBtn);
+        const divBtnForExternal = createDivGrid(divStatic, btnForExternal, {classes:[CSS.AON_COL_XS_6], styles:{ top:'16px',  marginLeft: 0, display:"none"}});
         btnForExternal.checked = task.isOtherDomain();
         if(task.id || task.isOtherDomain()) btnForExternal.disabled = CONSTANT.TRUE;
 
         btnForExternal.addEventListener(EVENT.CHANGE, ({target}) => {
             let forExternal = target.checked;
             showTags(forExternal ? false : true);
-            requestTypeChange(aonMessengerChat, requestTypeSelect, divDinamic, divProcess);
+            onChangeTypeSelect(aonMessengerChat, requestTypeSelect, divDinamic, divProcess, forExternal);
         });
 
         if(!task.isAdvisoryCompany()){
@@ -427,9 +424,12 @@ export const buildForm = (div, aonMessengerChat) => {
     } else 
         divRequest.className = CSS.AON_COL_XS_12;
 
-    divCard.appendChild(divDinamic);
+    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=>{
+        if(!task.id && btnForExternal)
+            hideBtnExternal(requestTypeSelect.getDetail().value, btnForExternal);
 
-    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> requestTypeChange(aonMessengerChat, requestTypeSelect, divDinamic, divProcess));
+        onChangeTypeSelect(aonMessengerChat, requestTypeSelect, divDinamic, divProcess, btnForExternal ? btnForExternal.isChecked() : false)
+    });
 
     fillRequestType(task, aonMessengerChat);
 }
@@ -441,15 +441,12 @@ export const buildForm = (div, aonMessengerChat) => {
  * @param {HTMLElement} divDinamic appendChild
  * @param {HTMLElement} divProcess div process
  */
- const requestTypeChange = (aonMessengerChat, requestTypeSelect, divDinamic, divProcess) =>{
+ const onChangeTypeSelect = (aonMessengerChat, requestTypeSelect, divDinamic, divProcess, forExternal = false) =>{
     const task = aonMessengerChat.task;
-    const btnForExternal = document.getElementById(MESSENGER_IDS.EXTERNAL_TASK);
-    
-    // if(!task.id && btnForExternal && btnForExternal.disabled == CONSTANT.TRUE)
-    //     task.cleanTask(true);
+    const detail = requestTypeSelect.getDetail() || {};
 
-    const detail = requestTypeSelect.getDetail();
     if(detail){
+        const type = detail.value;
         //------------------HTML CLEAN UP
         divDinamic.innerHTML = "";
         divProcess.innerHTML = "";
@@ -457,28 +454,39 @@ export const buildForm = (div, aonMessengerChat) => {
         if(aonTextArea) 
             aonTextArea.remove();
         //------------------HTML CLEAN UP
-        if(detail.value){
-            task.setSource(detail.value);
+        if(type){
+            task.setSource(type);
             
-            if(!task.id)
+            if(!task.id){
                 task.setTitle(detail.name);
-               
-            const forExternal = btnForExternal ? btnForExternal.isChecked() : false;
-            if(!forExternal && !task.id) {
-                task.setDomain(task.getDomainTmp());
-                task.setProject({});
-                task.setRegistry({});
-                task.setGTaskId(undefined);
+
+                if(!forExternal) {
+                    task.setDomain(task.getDomainTmp());
+                    task.setProject({});
+                    task.setRegistry({});
+                    task.setGTaskId(undefined);
+                } 
             }
-            
-            if(detail.value === TASK_SOURCE.REQUEST)
+
+            if(type === TASK_SOURCE.REQUEST)
                 formRequest(divDinamic, aonMessengerChat, forExternal);
-            else 
+            else if(type === TASK_SOURCE.CAU){
+                formCau(divDinamic, aonMessengerChat, forExternal);
+            } else 
                 formQuery(divDinamic, aonMessengerChat, forExternal);
         }
     }
 } 
 
+
+const hideBtnExternal = (type, btnForExternal) => {
+    let display = "block";
+    if(type === TASK_SOURCE.CAU){
+        btnForExternal.checked = CONSTANT.FALSE;
+        display = "none";
+    } 
+    btnForExternal.style.display = display;
+}
 
 
 /**
@@ -491,9 +499,12 @@ export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const applicationParent = aonMessengerChat.applicationParentEl;
     const isAdvisoryCompany = task.isAdvisoryCompany();
+    const hideData = task.getId() && task.source === TASK_SOURCE.CAU && task.isOtherDomain();
+
     //-------------------------CAU--------------------------
-    if((task.source === TASK_SOURCE.CAU && !applicationParent.cau) || forExternal){
-        if(isAdvisoryCompany)
+    if( ( (task.source === TASK_SOURCE.CAU && !applicationParent.cau) || forExternal) && !hideData){
+
+        if(isAdvisoryCompany || task.source === TASK_SOURCE.CAU)
             addCustomerAndContact(task, aonMessengerChat, divDinamic);
         
         if(forExternal){
@@ -507,12 +518,12 @@ export const buildForm = (div, aonMessengerChat) => {
             // ------------------PROJECT
             const projectSelect = createProject();
             projectSelect.default = true;
-            createDivGrid(divDinamic, projectSelect, {classes:[CSS.AON_COL_XS_12]});
+            createDivGrid(divDinamic, projectSelect, {classes:[CSS.AON_COL_XS_12], styles: {display: 'none'}});
         } 
     } 
 
     //--------------------------DIV WORKGROUP AND TASKHOLDER
-    if((!forExternal) && !applicationParent.cau)
+    if((!forExternal) && !applicationParent.cau && !hideData)
         addTaskHolderAndWorkgroup(aonMessengerChat, divDinamic);
 
     addTaskDescription(aonMessengerChat);
@@ -551,13 +562,25 @@ const formRequest = (divDinamic, aonMessengerChat, forExternal = false) => {
         // ------------------PROJECT
         const projectSelect = createProject();
         projectSelect.default = true;
-        createDivGrid(divDinamic, projectSelect, {classes:[CSS.AON_COL_XS_12]});
+        createDivGrid(divDinamic, projectSelect, {classes:[CSS.AON_COL_XS_12], styles: {display: 'none'}});
         fillProject(task);
     }
 
      //--------------------------DIV WORKGROUP AND TASKHOLDER
     if((!forExternal) && !aonMessengerChat.getApplicationParent().cau)
         addTaskHolderAndWorkgroup(aonMessengerChat, divDinamic);
+}
+
+/**
+ * 
+ * @param {HTMLElement} divDinamic columns div append html
+ * @param {HTMLElement} aonMessengerChat aon-messenger-chat
+ * @param {Boolean} forExternal btn by gestor(forExternal)
+ */
+const formCau = (divDinamic, aonMessengerChat, forExternal = false) => {
+    addCauForm(aonMessengerChat, divDinamic);
+    
+    formQuery(divDinamic, aonMessengerChat, forExternal);
 }
 
 /**
@@ -709,15 +732,16 @@ const addCustomerAndContact = (task, aonMessengerChat, divDinamic) => {
  */
 const createTagsDiv = (parent, task) => {
     const div = createReceiverDiv().element;
-    div.style.flexWrap     = "wrap";
+    div.style.flexWrap = "wrap";
     div.id = MESSENGER_IDS.DIV_TASK_TAGS;
     parent.insertBefore(div, parent.firstChild);
 
     let tags = task.getDescriptionJson().tags || [];
+
     for (let tag of tags) 
         addTaskTag(tag, div);
 
-    if(task.id || task.isExternal())
+    if(task.id && task.isExternal())
         showTags(false);
 }
 
@@ -735,7 +759,7 @@ export const dialogTaskTags = (ev, aonMessengerChat) => {
   
     const divTaskTags = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
 
-    const tags = aonMessengerChat.getApplicationParent()._tags;
+    const tags = aonMessengerChat.getTagsPanel();
     
     const taskTags = aonMessengerChat.task.getDescriptionJson().tags || [];
     
@@ -760,8 +784,8 @@ export const dialogTaskTags = (ev, aonMessengerChat) => {
  * @param {Object} tag 
  * @param {HTMLElement} parent div appendChild
  */
-const addTaskTag = ( tag, parent) =>{
-    appendTaskTag(tag, parent, (id)=> removeTaskTag(id));
+const addTaskTag = (tag, parent) =>{
+    appendTaskTag(tag, parent, (id)=> removeTaskTag(id) );
     setTaskTags();
 }
 
@@ -770,30 +794,29 @@ const addTaskTag = ( tag, parent) =>{
  * @param {Number} id id tag
  */
 const removeTaskTag = (id) => {
-    let divOne = document.querySelector( `[data-task-tag='${id}']`);
-    if(divOne) 
-        divOne.remove();
-
+    [...document.querySelectorAll("[data-task-tag]")].forEach(el=>{
+        try {
+            if(JSON.parse(el.dataset.taskTag).id == id)
+                return el.remove();
+        } catch (e) {}
+    });
     setTaskTags();
 }
 
 const setTaskTags = () => {
-    const arrayTags = [];
-    [...document.querySelectorAll("[data-task-tag]")].map(el => arrayTags.push(parseInt(el.dataset.taskTag)));
-
+    const tags = [];
+    [...document.querySelectorAll("[data-task-tag]")].map(el => tags.push(JSON.parse(el.dataset.taskTag)));
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const task = aonMessengerChat.task;
-    let tags = task.getDescriptionJson().tags || [];
-    tags = aonMessengerChat.getApplicationParent()._tags.filter(tag=> arrayTags.includes(tag.id));
     task.setDescriptionJson({tags});
 }
+
 
 /**
  * 
  * @param {Boolean} b 
  */
-const showTags = (b) => {
-    
+ const showTags = (b) => {
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     if(aonMessengerChat) {
         const toolbar = aonMessengerChat.querySelector(`#${aonMessengerChat.id}Toolbar`);
@@ -801,16 +824,61 @@ const showTags = (b) => {
             const iconBtn = toolbar.querySelector(`#${toolbar.TOOL_SECTION}LabelsButton`);
             if(iconBtn){
                 const buttonToolbar = iconBtn.parentNode;
-                let display = "block";
-                if(!b) {
-                    display = "none";
-                    [...document.querySelectorAll("[data-task-tag]")].map(el => el.remove());
-                }
+                let display = b ? "block" : "none";
                 buttonToolbar.style.display = display;
-                setTaskTags();
+                const div = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
+                if(div)
+                    div.style.display = display;
             }
         }
     }
+}
+
+const addCauForm = (aonMessengerChat, divStatic)=> {
+    const task = aonMessengerChat.task;
+    if( task.id && task.source === TASK_SOURCE.CAU && !aonMessengerChat.getApplicationParent().cau && task.getDescriptionJson().cauInfo){
+        try {
+            const cauInfo =  task.getDescriptionJson().cauInfo;
+            const company = cauInfo.company;
+            const parent = cauInfo.parent;
+
+            if(company && company.domain)
+                createDivGrid(divStatic, createLabelAnchor("Dominio", company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+
+            if(parent && parent.domain)
+                createDivGrid(divStatic, createLabelAnchor("Dominio padre", parent.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+        } catch (error) {}
+    }
+    
+    task.setSource(TASK_SOURCE.CAU);
+
+    const selectTypeIncident = createSelectCau('typeCau', MESSENGER_IDS.TYPE_REQUEST_CAU, MSG.TYPE_INCIDENT);
+    createDivGrid(divStatic, selectTypeIncident, {classes:[CSS.AON_COL_XS_6]})
+    fillTypeRequestCau(aonMessengerChat);
+
+    const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP, 'Aplicación');
+    createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
+    fillSelectAppCau(aonMessengerChat);
+}
+
+const createLabelAnchor = (text, domainNam) => {
+    const label = setStyles(document.createElement(TAG.LABEL),{
+        color:CSS.variable(COLORS.GRAYSON),
+        paddingLeft:"4px",
+    });
+    label.textContent =  `${text}: `;
+
+    const anchor = setStyles(document.createElement("a"),{
+        color:CSS.variable(COLORS.AON_BLUE),
+        // userSelect:"text",
+        // cursor: "text"
+    });
+    anchor.href = "https://"+domainNam;
+    anchor.target = "_blank";
+    anchor.textContent = domainNam;
+    label.appendChild(anchor);
+
+    return label;
 }
 
 /**

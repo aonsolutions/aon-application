@@ -20,6 +20,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "Operation Report Stream", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportStream" })
+@Deprecated
 public class OperationReportStreamServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -2697508555670615321L;

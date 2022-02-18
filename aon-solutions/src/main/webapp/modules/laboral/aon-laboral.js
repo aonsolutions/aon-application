@@ -339,9 +339,17 @@ export class AonLaboral extends AonElement {
 
     GWT.load(module, application.CONTENT);
 
-    waitEl(`#${application.CONTENT} .aon_toolbar`).finally(()=> application.stopLoader() );
+    waitEl(`#${application.CONTENT} .aon_toolbar`).finally(()=> {
+      application.stopLoader();
+      this.fixSpacing();
+    });
   }
 
+  fixSpacing() {
+    if (!document.querySelector("aon-module")) 
+      waitEl(`#${this.getApplication().getContent().id} div:first-child`).then(el => el.style.position = "").catch(err => console.log(err));        
+  }
+    
   isComunica(){
     return this.getDur().isComunica();
   }

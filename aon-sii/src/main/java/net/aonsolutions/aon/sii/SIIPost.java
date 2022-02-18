@@ -61,7 +61,7 @@ public class SIIPost {
 	private void secure(String uri) {
 		try {
 			Certificate cert = getSiiConfiguration().getCertificate();
-			ByteArrayInputStream key = new ByteArrayInputStream(cert.getCertificate());
+			ByteArrayInputStream key = new ByteArrayInputStream(cert.getData());
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 			keyStore.load(key, cert.getPassword().toCharArray());
     	

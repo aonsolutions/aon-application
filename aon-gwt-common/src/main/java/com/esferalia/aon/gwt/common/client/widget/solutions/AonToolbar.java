@@ -14,6 +14,7 @@ public class AonToolbar extends FlowPanel {
 	
 	private FlowPanel buttonContainer;
 	private FlowPanel messagePanel;
+	private FlowPanel searchPanel;
 	private FlowPanel titlePanel;
 	
 	public AonToolbar( ) {
@@ -34,6 +35,11 @@ public class AonToolbar extends FlowPanel {
 		messagePanel = new FlowPanel();
 		messagePanel.setStyleName(AON.CSS.aonToolbarMessageContainer());
 		innerToolbar.add(messagePanel);
+		
+		searchPanel = new FlowPanel();
+		searchPanel.setStyleName(AON.CSS.aonToolbarSearchContainer());
+		searchPanel.setVisible(false);
+		innerToolbar.add(searchPanel);
 		
 		titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarTitleContainer());
@@ -66,6 +72,11 @@ public class AonToolbar extends FlowPanel {
 		errorMsg.setStyleName(AON.CSS.aonToolbarMessage());
 		errorMsg.addStyleName(AON.CSS.aonToolbarErrorMessage());
 		messagePanel.add(errorMsg);
+	}
+	
+	public void showSearchPanel(Widget widget) {
+		searchPanel.add(widget);
+		searchPanel.setVisible(true);
 	}
 
 	public void hideMessages( ) {

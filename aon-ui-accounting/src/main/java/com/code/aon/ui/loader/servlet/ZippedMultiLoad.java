@@ -43,10 +43,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
-import net.aonsolutions.core.dbutils.AonSQLException;
-import net.aonsolutions.core.dbutils.AonSQLFile;
-import net.aonsolutions.core.dbutils.AonSQLScript;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.master.VersionManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.DomainController;
@@ -60,11 +56,17 @@ import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.controller.AonZipLoaderController.HTMLLogger;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.dsi.nominas.Traspaso;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLFile;
+import net.aonsolutions.core.dbutils.AonSQLScript;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 
 public class ZippedMultiLoad {
 	
@@ -75,31 +77,43 @@ public class ZippedMultiLoad {
 		this.params = params; 
 	}
 
-	public void load(InputStream input, ILogger log) throws AonException {
-		log.info("Comienza el proceso de importaci√≥n");
+	public void load(InputStream input, ILogger log, boolean isPayrollFile) throws AonException {
+		if (isPayrollFile) {
+			log.info("TRASPASO DE DATOS DSI NOMINAS OMEGA");
+		} 
+		else {
+			log.info("TRASPASO DE DATOS DSI CONTAVS O FISCAL");
+		}
+		log.info("Comienza el proceso de importaciÛn");
 		try {
-			unzip(input,log);
+			unzip(input,log, isPayrollFile);
 		} finally {
-			log.info("Final del proceso de importaci√≥n");
+			log.info("Final del proceso de importaciÛn");
 		}
 	}
 
-	private void unzip(InputStream input, ILogger log) throws AonException {
+	private void unzip(InputStream input, ILogger log, boolean isPayrollFile) throws AonException {
 		try {
 			Path destinationFolder = Files.createTempDirectory("importDSI", new FileAttribute<?>[] {});
 			log.info(MessageFormat.format("Creado Directorio de trabajo: {0}", destinationFolder));
-			unzip(destinationFolder, input, log);
-			readFolders(destinationFolder, log);
+			if (unzip(destinationFolder, input, log)) {
+				if (isPayrollFile) {
+					readPayrollFile(destinationFolder, log);
+				} else {
+					readFolders(destinationFolder, log);	
+				}			
+			}
 			AonFileUtils.deleteDirectory(destinationFolder.toFile());
 			log.info(MessageFormat.format("Borrado de la carpeta de trabajo: {0}", destinationFolder));		
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error(MessageFormat.format("Error fatal: '{0}'", e.getMessage()));
 			e.printStackTrace();
-			throw new AonException("I/O Probleam.",e);
-		}
+			throw new AonException("I/O Problem.",e);
+		} 
+		
 	}
 
-	private void unzip(Path destinationFolder, InputStream input, ILogger log) throws ManagerBeanException {
+	private boolean unzip(Path destinationFolder, InputStream input, ILogger log) throws ManagerBeanException {
 		ZipInputStream zipIn = null;
 		FileOutputStream out = null;
 		FacesContext ctx = FacesContext.getCurrentInstance();
@@ -159,8 +173,10 @@ public class ZippedMultiLoad {
 				}
 			}
 			if (empty) {
-				log.warn("El archivo est√° vacio o no es un ZIP v√°lido.");
+				log.error("El archivo est· vacio o no es un ZIP v·lido.");
+				return false;
 			}
+			return true;
 		} catch (IOException e) {
 			throw new AonCoreException(e.getMessage());
 		} finally {
@@ -194,7 +210,11 @@ public class ZippedMultiLoad {
 			((HTMLLogger) log).print("</div>");
 			++row;
 		}
+		if (row == 0) {
+			log.error("El archivo no contiene empresas. Compruebe que es un archivo v·lido para el traspaso de DSI ContaVS o Fiscal.");
+		}
 	}
+	
 	private DomainData searchDomain(Integer parentDomain,String domainName) throws ManagerBeanException {
 		IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
 		Criteria c = new Criteria();
@@ -305,7 +325,7 @@ public class ZippedMultiLoad {
 			IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
 			List<ITransferObject> scopes = scopeBean.getList(null);
 			if (scopes == null || scopes.size() == 0) {
-				log.error("No se ha encontrado ning√∫n √°mbito v√°lido");	
+				log.error("No se ha encontrado ning˙n Ambito v·lido");	
 			}
 			params.setScope((Scope) scopes.get(0));
 			for (File file : enterpriseFiles) {
@@ -325,7 +345,7 @@ public class ZippedMultiLoad {
 				loader.load(input, session);
 			}
 			HibernateUtil.commitTransaction(sessionName);
-			log.info("\tTRANSACTION COMMIT: Final punto transaccional. Grabaci√≥n en base de datos");
+			log.info("\tTRANSACTION COMMIT: Final punto transaccional. GrabaciÛn en base de datos");
 			((HTMLLogger) log).print("<div style=\""
 					+ "font-size: 1.4em;"
 					+ "text-align: center;"
@@ -359,6 +379,28 @@ public class ZippedMultiLoad {
 			ds.setModel(null);
 		}
 	}
+	
+	private void readPayrollFile(Path destinationFolder, ILogger log) throws AonException {
+		Integer parentDomain = DomainManager.getCurrentDomain();
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		Connection connection = null;
+		try {
+			String domainName = AonUtil.getDomainName();
+			connection = DatabaseUtil.getConnection(domainName);
+			log.info("PARENT_DOMAIN_NAME = " + domainName);
+			log.info("PARENT_DOMAIN_ID = " + parentDomain);
+			Traspaso.execute(destinationFolder.toString(), connection, parentDomain, log);
+		} catch (Exception e) {
+			log.error(MessageFormat.format("Error durante la carga de datos. {0}",e.getMessage()));
+		} finally {
+			ds.onUpperDomain(null); // Cambiar al dominio padre (para que se actualice la lista de empresas/dominios)
+			if (connection != null) {
+				DatabaseUtil.closeQuietly(connection);
+			}
+			ds.setModel(null);
+		}
+	}
+
 	
 	private class NewDomainControllerExt extends NewDomainController {
 		
@@ -408,7 +450,7 @@ public class ZippedMultiLoad {
 				sqlScript.setDomain(newDomain.getId());
 				log.info("Insertando valores por defecto ....");
 				sqlScript.execute();
-				log.info("Insertando customizaci√≥n ....");
+				log.info("Insertando customizaciÛn ....");
 				copyCustomizeId(newDomain);
 				log.info("Insertando company ....");
 				addCompany(newDomain);
@@ -461,6 +503,6 @@ public class ZippedMultiLoad {
 			}
 		}
 		
-	}
+	}	
 	
 }
