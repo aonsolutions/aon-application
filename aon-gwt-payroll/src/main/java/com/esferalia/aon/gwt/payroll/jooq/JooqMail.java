@@ -302,7 +302,7 @@ public class JooqMail {
 				.where(MAIL_ACCOUNT.ID.eq(Integer.parseInt(mailAccountId))).fetchOne();
 		
 		if(null != mailAccountRecord) {
-			String from = mailAccountRecord.get(MAIL_ACCOUNT.MAIL_USERNAME);
+			String from = mailAccountRecord.get(MAIL_ACCOUNT.EMAIL);
 			
 			SESMessage msg = new SESMessage()
 					.setAlias(enterpriseName)
