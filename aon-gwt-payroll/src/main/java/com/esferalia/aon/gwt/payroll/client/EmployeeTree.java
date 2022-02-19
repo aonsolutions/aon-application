@@ -78,10 +78,13 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -101,6 +104,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -2583,6 +2587,69 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		} catch (Throwable t) {
 
 		}
+		
+		initOpenCloseEmployees();
+	}
+	
+	private void initOpenCloseEmployees() {
+		
+		Element closeEmployeesButton = Document.get().createSpanElement();
+		closeEmployeesButton.setInnerText("chevron_left");
+		closeEmployeesButton.setClassName("material-icons");
+		
+		closeEmployeesButton.getStyle().setOpacity(0.5);
+		closeEmployeesButton.getStyle().setPadding(5, Unit.PX);
+		closeEmployeesButton.getStyle().setBackgroundColor("#ddd");
+		closeEmployeesButton.getStyle().setProperty("borderTopLeftRadius", "50%");
+		closeEmployeesButton.getStyle().setProperty("borderBottomLeftRadius", "50%");
+		
+		closeEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
+		closeEmployeesButton.getStyle().setRight(5, Unit.PX);
+		closeEmployeesButton.getStyle().setBottom(7, Unit.PX);
+
+		employees.getElement().appendChild(closeEmployeesButton);
+		
+		Element openEmployeesButton = Document.get().createSpanElement();
+		openEmployeesButton.setInnerText("chevron_right");
+		openEmployeesButton.setClassName("material-icons");
+		
+		openEmployeesButton.getStyle().setOpacity(0.5);
+		openEmployeesButton.getStyle().setPadding(5, Unit.PX);
+		openEmployeesButton.getStyle().setBackgroundColor("#ddd");
+		openEmployeesButton.getStyle().setProperty("borderTopRightRadius", "50%");
+		openEmployeesButton.getStyle().setProperty("borderBottomRightRadius", "50%");
+
+		openEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
+		openEmployeesButton.getStyle().setLeft(5, Unit.PX);
+		openEmployeesButton.getStyle().setBottom(7, Unit.PX);
+		openEmployeesButton.getStyle().setDisplay(Display.NONE);
+
+		splitLayoutPanel.getElement().appendChild(openEmployeesButton);
+
+		InlineLabel.wrap(openEmployeesButton).addClickHandler(e -> {
+			splitLayoutPanel.setWidgetSize(employees, 275);
+			openEmployeesButton.getStyle().setDisplay(Display.NONE);
+			closeEmployeesButton.getStyle().setDisplay(Display.INITIAL);
+		});
+
+		InlineLabel.wrap(closeEmployeesButton).addClickHandler(e -> {
+			splitLayoutPanel.setWidgetSize(employees, 0);
+			closeEmployeesButton.getStyle().setDisplay(Display.NONE);
+			new Timer(){
+				@Override
+				public void run() {
+					openEmployeesButton.getStyle().setDisplay(Display.INITIAL);
+				}
+			}.schedule(500);
+			
+		});
+
+		employees.getElement().getParentElement().getStyle().setProperty("transition-property", "width");
+		employees.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
+		
+		employeeDetail.getElement().getParentElement().getStyle().setProperty("transition-property", "inset");
+		employeeDetail.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
+		
 	}
 
 	// --------------------------------------------------- Cost.Listener methods
