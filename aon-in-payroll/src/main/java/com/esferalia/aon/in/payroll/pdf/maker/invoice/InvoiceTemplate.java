@@ -1394,7 +1394,8 @@ public class InvoiceTemplate {
 		String[] galicianZips = {"15", "32", "27", "36"};
 		String[] valencianZips = {"46", "12", "03"};
 		
-		String zipStart = zipCode.substring(0, 2);
+		String zipStart = !AonStringUtils.isBlank(zipCode) && zipCode.length() > 2
+				? zipCode.substring(0, 2) : "";
 		
 		if (AonLanguage.BASQUE.equals(invoiceLanguage) && Arrays.asList(basqueZips).contains(zipStart)) {
 			return AonLanguage.BASQUE;

@@ -349,7 +349,7 @@ public class FacturasEmitidas extends SIIBuilt {
 			});
 			
 			if(!fet.getTipoFactura().equals(ClaveTipoFacturaType.F_2) && !fet.getTipoFactura().equals(ClaveTipoFacturaType.F_4) 
-				&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity())){
+				&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity() || isNDocument(vat.getRegistryDocument()))){
 				TipoConDesgloseType tcdt = new TipoConDesgloseType();
 				
 				if(vat.isService() && !vat.isIntracommunity()){
@@ -745,4 +745,7 @@ public class FacturasEmitidas extends SIIBuilt {
 		return baos.toByteArray();
 	}
 
+	private boolean isNDocument(String document) {
+		return !AonStringUtils.isBlank(document) && 'N' == document.charAt(0);
+	}
 }

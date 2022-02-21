@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRBajaFEmitidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRCobrosEmitidasType;
@@ -344,7 +345,7 @@ public class FacturasEmitidas extends SIIBuilt {
 		});
 		
 		if(!fet.getTipoFactura().equals(ClaveTipoFacturaType.F_2) && !fet.getTipoFactura().equals(ClaveTipoFacturaType.F_4) 
-			&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity())){
+			&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity() || isNDocument(vat.getRegistryDocument()))){
 			TipoConDesgloseType tcdt = new TipoConDesgloseType();
 			
 			if(vat.isService() && !vat.isIntracommunity()){
@@ -694,7 +695,7 @@ public class FacturasEmitidas extends SIIBuilt {
 			});
 			
 			if(!fet.getTipoFactura().equals(ClaveTipoFacturaType.F_2) && !fet.getTipoFactura().equals(ClaveTipoFacturaType.F_4) 
-				&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity())){
+				&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity() || isNDocument(vat.getRegistryDocument()))){
 				TipoConDesgloseType tcdt = new TipoConDesgloseType();
 				
 				if(vat.isService() && !vat.isIntracommunity()){
@@ -1087,4 +1088,8 @@ public class FacturasEmitidas extends SIIBuilt {
 		return baos.toByteArray();
 	}
 
+	private boolean isNDocument(String document) {
+		return !AonStringUtils.isBlank(document) && 'N' == document.charAt(0);
+	}
+	
 }
