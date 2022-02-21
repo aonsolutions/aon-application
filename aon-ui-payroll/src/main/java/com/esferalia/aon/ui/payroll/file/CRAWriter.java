@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
@@ -68,9 +67,9 @@ public class CRAWriter {
 		this.eti = eti;
 	}
 
-	public FileOutput createCRA(List<EnterpriseCCC> list, Integer year, Month month) throws ManagerBeanException {
+	public FileOutput createCRA(List<EnterpriseCCC> list, Date date, Integer year, Month month) throws ManagerBeanException {
 		try {
-			ETI eti = buildCRA( list, year, month );
+			ETI eti = buildCRA( list, date, year, month );
 			if(eti.getDdeList()==null
 					|| eti.getDdeList().isEmpty()){
 				String msg = "No se puede generar el fichero CRA. (Segmento ETI vacio)";
@@ -89,8 +88,8 @@ public class CRAWriter {
 		}
 	}
 	
-	private ETI buildCRA(List<EnterpriseCCC> cccs, Integer year, Month month) throws ManagerBeanException {
-		ETI eti = createETIRecord(year, month);
+	private ETI buildCRA(List<EnterpriseCCC> cccs, Date date, Integer year, Month month) throws ManagerBeanException {
+		ETI eti = createETIRecord(date);
 		Connection connection = null; 
 		try {
 			IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
@@ -154,8 +153,8 @@ public class CRAWriter {
 		dde.setTrbList(list);
 	}
 	
-	private ETI createETIRecord(Integer year, Month month) throws ManagerBeanException {
-		ETI eti = new ETI();
+	private ETI createETIRecord(Date date) throws ManagerBeanException {
+		ETI eti = new ETI(date);
 		String authorizationKey = getAuthorizationKey(DomainManager.getCurrentDomain());
 		if(StringUtils.isBlank(authorizationKey)){
 			authorizationKey = getAuthorizationKey(DomainManager.getDomainProvider().getParentDomain());

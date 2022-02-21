@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -18,6 +17,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonAgreementsTreeToolbar extends Composite {
+	
+	// ------------------------------------------ Listener
 
 	public interface Listener {
 		
@@ -32,37 +33,47 @@ public class AonAgreementsTreeToolbar extends Composite {
 		void onCollapseAllButtonClick(ClickEvent event);
 	}
 	
+	// ------------------------------------------ UiBinder
+	
 	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
 
 	interface AonOptionsToolbarUiBinder extends	UiBinder<Widget, AonAgreementsTreeToolbar> {}
+	
+	// ------------------------------------------ UiFields
 	
 	@UiField
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
 		String textBox();
+		String loading();
 	}
 	
 	@UiField
 	HTMLPanel toolbar;
+	
+	// ------------------------------------------ Variables
 
 	private List<Listener> listeners;
 	
-	private AonButton searchButton;
 	private TextBox searchTextBox;
 	
+	private AonButton loadingButton;
 	private AonButton newButton;
 	private AonButton draftButton;
 	private AonButton viewAgreementsButton;
-	private AonButton collapseAllButton;
 	
-	private boolean viewAgreements = true;
+	private boolean viewAgreements = false;
+	
+	// ------------------------------------------ Constructor
 	
 	public AonAgreementsTreeToolbar() {
 		initWidget(uiBinder.createAndBindUi(this));
 		createToolbar();
-		this.listeners = new ArrayList<Listener>();
+		this.listeners = new ArrayList<>();
 	}
+	
+	// ------------------------------------------ Visibility
 	
 	public void setVisibleDraftButton(boolean visible) {
 		draftButton.setVisible(visible);
@@ -84,6 +95,22 @@ public class AonAgreementsTreeToolbar extends Composite {
 		viewAgreementsButton.setEnabled(enabled);
 	}
 	
+	public void setVisibleLoadingButton(boolean enabled) {
+		loadingButton.setVisible(enabled);
+	}
+	
+	// ------------------------------------------ Listener
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
+	
+	// ------------------------------------------ Auxliar methods
+	
 	public TextBox getSearchTextBox() {
 		return searchTextBox;
 	}
@@ -94,17 +121,11 @@ public class AonAgreementsTreeToolbar extends Composite {
 		viewAgreementsButton.addStyleName(AON.CSS.aonIconVisibility());
 	}
 	
-	public void addListener(Listener listener) {
-		listeners.add(listener);
-	}
-	
-	public void removeListener(Listener listener) {
-		listeners.remove(listener);
-	}
+	// ------------------------------------------ Toolbar
 	
 	private void createToolbar() {
 		
-		searchButton = new AonToolbarButton("Buscar", AON.CSS.aonIconSearch() );
+		AonButton searchButton = new AonToolbarButton("Buscar", AON.CSS.aonIconSearch() );
 		toolbar.add(searchButton);
 		
 		searchTextBox = new TextBox();
@@ -117,55 +138,49 @@ public class AonAgreementsTreeToolbar extends Composite {
 		toolbar.add(searchTextBox);
 		searchTextBox.getElement().getStyle().setWidth(100, Unit.PCT);
 		
+		loadingButton = new AonToolbarButton("Cargando convenios", AON.CSS.aonIconRenew());
+		loadingButton.addStyleName(style.loading());
+		toolbar.add(loadingButton);
+		
 		newButton = new AonToolbarButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		newButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				for(Listener listener : listeners)
-					listener.onNewButtonClick(event);
-			}
+		newButton.addClickHandler(e -> {
+			for(Listener listener : listeners)
+				listener.onNewButtonClick(e);
 		});
 		toolbar.add(newButton);
 		
-		viewAgreementsButton = new AonToolbarButton("Mostrar todos los convenios", AON.CSS.aonIconVisibility() );
-		viewAgreementsButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(viewAgreements) {
-					viewAgreementsButton.setTitle("Mostrar convenios activos");
-					viewAgreementsButton.removeStyleName(AON.CSS.aonIconVisibility());
-					viewAgreementsButton.addStyleName(AON.CSS.aonIconVisibilityOff());
-				} else {
-					viewAgreementsButton.setTitle("Mostrar todos los convenios");
-					viewAgreementsButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
-					viewAgreementsButton.addStyleName(AON.CSS.aonIconVisibility());
-				}
-				
-				for(Listener listener : listeners)
-					listener.onViewAgreementsButtonClick(event, viewAgreements);
-				
-				viewAgreements = !viewAgreements;
+		viewAgreementsButton = new AonToolbarButton(
+				viewAgreements ? "Mostrar convenios activos" : "Mostrar todos los convenios", 
+				viewAgreements ? AON.CSS.aonIconVisibilityOff()  : AON.CSS.aonIconVisibility() );
+		viewAgreementsButton.addClickHandler(e -> {
+			viewAgreements = !viewAgreements;
+			
+			if(viewAgreements) {
+				viewAgreementsButton.setTitle("Mostrar convenios activos");
+				viewAgreementsButton.removeStyleName(AON.CSS.aonIconVisibility());
+				viewAgreementsButton.addStyleName(AON.CSS.aonIconVisibilityOff());
+			} else {
+				viewAgreementsButton.setTitle("Mostrar todos los convenios");
+				viewAgreementsButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
+				viewAgreementsButton.addStyleName(AON.CSS.aonIconVisibility());
 			}
+			
+			for(Listener listener : listeners)
+				listener.onViewAgreementsButtonClick(e, viewAgreements);
 		});
 		toolbar.add(viewAgreementsButton);
 		
 		draftButton = new AonToolbarButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
-		draftButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				for(Listener listener : listeners)
-					listener.onDraftButtonClick(event);
-			}
+		draftButton.addClickHandler(e -> {
+			for(Listener listener : listeners)
+				listener.onDraftButtonClick(e);
 		});
 		toolbar.add(draftButton);
 		
-		collapseAllButton = new AonToolbarButton("Mas", AON.CSS.aonIconMoreVertical() );
-		collapseAllButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				for(Listener listener : listeners)
-					listener.onCollapseAllButtonClick(event);
-			}
+		AonButton collapseAllButton = new AonToolbarButton("Mas", AON.CSS.aonIconMoreVertical() );
+		collapseAllButton.addClickHandler(e -> {
+			for(Listener listener : listeners)
+				listener.onCollapseAllButtonClick(e);
 		});
 		toolbar.add(collapseAllButton);
 		
