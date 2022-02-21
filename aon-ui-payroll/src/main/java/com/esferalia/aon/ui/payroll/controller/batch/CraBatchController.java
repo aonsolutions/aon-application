@@ -126,14 +126,16 @@ public class CraBatchController extends BasicController {
 				getNewBatchWizard().accept(event);
 			}
 			CraBatch batch = (CraBatch) getTo();
+			Date date = new Date();
 			CRAWriter craWriter = new CRAWriter();
-			FileOutput output = craWriter.createCRA(getEnterpriseCCCList(), batch.getYear(), batch.getMonth());
+			FileOutput output = craWriter.createCRA(getEnterpriseCCCList(), date, batch.getYear(), batch.getMonth());
 			if(output.getErrors()!=null && output.getErrors().size()>0){
 				AonUtil.addErrorMessage("Error generando el fichero CRA");
 				output.getErrors().forEach(e -> AonUtil.addErrorMessage(e.getMessage()));
 			} else if (output != null && output.getContent() != null) {
 				batch.setOutcomeFile(output.getContent());
-				batch.setOutcomeFileDate(new Date());
+				batch.setOutcomeFileDate(date);
+				batch.setDate(date);
 				batch.setStatus(FileStatus.GENERATED);
 				super.accept(null);
 			}
@@ -148,7 +150,7 @@ public class CraBatchController extends BasicController {
 		OutputStream out = null;
         try {
         	Date date = batch.getDate();
-        	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmm");
+        	SimpleDateFormat formatter = new SimpleDateFormat("ddHHmmss");
     		String name = formatter.format(date);
     		byte[] data = batch.getOutcomeFile();
         	int size = data.length;
