@@ -1668,7 +1668,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				if(AonNumberUtils.equals(enterpriseId, infoRecord.get(REGISTRY.ID)))
 					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
 				else {
-					message += "<br><b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
+					message += "<br><b>" + infoRecord.get(REGISTRY.NAME) + "</b><br><br>";
 					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
 					enterpriseId = infoRecord.get(REGISTRY.ID);
 				}

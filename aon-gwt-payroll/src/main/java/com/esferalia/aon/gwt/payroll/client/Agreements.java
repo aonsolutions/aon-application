@@ -125,7 +125,7 @@ public class Agreements extends ResizeComposite implements
 	public void getAgreements() {
 		agreementsTree.clearTree();
 		getAgreements(0, 10, s -> {
-			selectActiveAgreementOrFirst();
+//			selectActiveAgreementOrFirst();
 			showAgreements(false); // Show active agreements
 			agreementsTree.scrollToTop();
 			toolbar.setEnabledViewAgreementsButton(true);
