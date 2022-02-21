@@ -293,6 +293,7 @@ public class RegistryAddress implements Serializable {
 		String st = getStreetType() == null 
 				|| StreetType.XX.equals(getStreetType())
 				|| StreetType.ZZ.equals(getStreetType())
+				|| AonStringUtils.isBlank(description)
 				? "": description.substring(0, 1) + description.substring(1).toLowerCase();
 		StringBuilder buf = new StringBuilder();
 		buf.append(AonStringUtils.defaultString(st));
