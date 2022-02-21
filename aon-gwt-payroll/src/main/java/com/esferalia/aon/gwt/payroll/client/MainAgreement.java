@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
+//------------------------------------------- EditionListener
 
 interface EditionListener {
 	
@@ -57,7 +58,8 @@ interface EditionListener {
 public class MainAgreement extends MainEntryPoint implements Listener,
 		EditionListener, Agreements.Toolbar, AonAgreementsToolbar.Listener {
 	
-
+	// ------------------------------------------- UndoManager Listener
+	
 	static class DraftObjectListener implements UndoManager.Listener {
 
 		private TreeItem treeItem;
@@ -71,7 +73,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		@Override
 		public void onChange(@SuppressWarnings("rawtypes") UndoManager undoManager) {
-			
 			ImageResource resource = AgreementsTree.getImageResource(
 					draftObject.canUndo(), draftObject.hasErrors(),
 					draftObject.hasWarnings());
@@ -81,20 +82,22 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	}
 
+	// ------------------------------------------- UiBinder
+	
 	static interface Binder extends UiBinder<Widget, MainAgreement> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
+	// ------------------------------------------- ScheduledCommand
+	
 	class NewAgreementCommand implements ScheduledCommand {
-
 		@Override
 		public void execute() {
-			MainAgreement.this.agreements.addNewItemTree(null);
+			MainAgreement.this.agreements.addNewItemTree();
 		}
 	}
 	
 	class CopyAgreementCommand implements ScheduledCommand {
-
 		@Override
 		public void execute() {
 			for(EditionListener listener : editionsListener)
@@ -103,7 +106,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 	
 	class PasteAgreementCommand implements ScheduledCommand {
-
 		@Override
 		public void execute() {
 			for(EditionListener listener : editionsListener)
@@ -112,7 +114,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 	
 	class DeleteAgreementCommand implements ScheduledCommand  {
-
 		@Override
 		public void execute() {
 			for(EditionListener listener : editionsListener)
@@ -121,17 +122,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 	
 	class MoveAgreementCommand implements ScheduledCommand {
-
 		@Override
 		public void execute() {
-			
-			if(Window.confirm("\u00BFDesea subir el convenio seleccionado al dominio padre\u003F")) {
+			if(Window.confirm("\u00BFDesea subir el convenio seleccionado al dominio padre\u003F"))
 				moveAgreement2Parent(MainAgreement.this.agreement);
-			}
 		}
 		
 		private void moveAgreement2Parent(Agreement agreement) {
-			
 			MainAgreement.this.agreements.getAgreementsTree().getEnterpriseService()
 				.moveAgreement2Parent(agreement, new AsyncCallback<Void>() {
 
@@ -147,8 +144,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				}
 			});
 		}
-		
 	}
+	
+	// ------------------------------------------- ContextMenu
 	
 	class AgreementContextMenu extends ContextMenu {
 		
@@ -214,22 +212,20 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		}
 	}
 
-	
+	// ------------------------------------------- AgreementChangesCallback
 
 	class AgreementChangesCallback implements AsyncCallback<SortedSet<Date>> {
 
 		AgreementDraftObject agreementDraftObject;
 
-		public AgreementChangesCallback(
-				AgreementDraftObject agreementDraftObject) {
+		public AgreementChangesCallback(AgreementDraftObject agreementDraftObject) {
 			this.agreementDraftObject = agreementDraftObject;
 		}
 
 		@Override
 		public void onFailure(Throwable caught) {
 			if ( !isSelected() ) return;
-			MainAgreement.this.agreementDraft
-					.setAgreementDraftObject(agreementDraftObject);
+			MainAgreement.this.agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
 
 		@Override
@@ -238,13 +234,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			if (!CollectionUtils.isEmpty(result)) {
 				Date lastChange = result.last();
 				agreementDraftObject.setStartDate(lastChange);
-				agreementDraftObject.setEndDate(DateUtils
-						.getLastDayOfMonth(lastChange));
+				agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
 			}
-
-			MainAgreement.this.agreementDraft
-					.setAgreementDraftObject(agreementDraftObject);
-
+			MainAgreement.this.agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
 		
 		private boolean isSelected() {
@@ -255,11 +247,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		}
 	}
 	
-	private static final String AGREEMENT = "c-agreement";
-	
-	/*
-	 * @UiField MetaData metaData;
-	 */
+	// ------------------------------------------- UiFields
 	
 	@UiField
 	MyStyle style;
@@ -290,6 +278,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@UiField(provided = true)
 	MainTrashAgreement mainTrashAgreement;
 	
+	// ------------------------------------------- Variables
+	
+	private static final String AGREEMENT = "c-agreement";
+	
 	private HTMLPanel messagesPanel = new HTMLPanel("");
 	private Integer parentDomain;	
 	private Storage storage;
@@ -306,6 +298,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	private DomainUserRoles userRoles;
 	
+	// ------------------------------------------- ModuleLoad
+	
 	@Override
 	public void onModuleLoad() {
 		// Inject rich styles.
@@ -316,7 +310,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
 		mainTrashAgreement = new MainTrashAgreement() {
-			
 			@Override
 			public void onBackButtonClick() {
 				getAgreements();
@@ -407,7 +400,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	private void showTrashAgreements() {
 		deckPanel.showWidget(1);
 	}
-	// ---------------------------------------------------- Agreements.Listener
+	
+	// ------------------------------------------- Agreements.Listener
 
 	@Override
 	public void onAgreementSelected(Agreement agreement) {
@@ -418,8 +412,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.contextMenu.setVisibleMoveItem( (parentDomain != null) && 
 				parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
 
-		AgreementDraftObject agreementDraftObject = agreementDrafts
-				.get(agreement.getId());
+		AgreementDraftObject agreementDraftObject = agreementDrafts.get(agreement.getId());
+		
 		if (agreementDraftObject == null) {
 			com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft = new 
 					com.esferalia.aon.gwt.payroll.shared.AgreementDraft();
@@ -636,7 +630,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		splitLayoutPanel.animate(500);
 	}
 	
-	// --------------------------------------------------------- NEW TOOLBAR
+	// ------------------------------------------- Toolbar methods
 	
 	public void addListener(Listener listener) {
 		listeners.add(listener);

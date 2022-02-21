@@ -503,7 +503,7 @@
 			</g:center>
 		</g:DockLayoutPanel>
 		<g:HTMLPanel styleName="{style.flexColumn}" ui:field="selectMessage">
-			<g:Label text="Seleccione un convenio para ser cargado" styleName="{style.message}" />
+			<g:Label text="Seleccione un convenio para visualizarlo" styleName="{style.message}" />
 		</g:HTMLPanel>
 	</g:DeckLayoutPanel>
 

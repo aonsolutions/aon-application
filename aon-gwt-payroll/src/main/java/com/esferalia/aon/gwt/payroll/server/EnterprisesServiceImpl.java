@@ -453,6 +453,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public List<Agreement> getAgreements(String domain, boolean allAgreements) {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
+			return JooqAgreement.getAgreements(connection, allAgreements, domainID, parentDomainID);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public List<Agreement> getTrashAgreements(String domain, int offset, int limit) {
