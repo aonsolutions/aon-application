@@ -22,7 +22,9 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.finance.AddEpigrafe922;
 import net.aonsolutions.db.up2date.finance.InsertInvoiceInfoLroe;
 import net.aonsolutions.db.up2date.finance.InvoiceBatchCreation;
+import net.aonsolutions.db.up2date.fiscal.AlterFsModelResult;
 import net.aonsolutions.db.up2date.fiscal.FsModelInvoiceCreation;
+import net.aonsolutions.db.up2date.fiscal.RefreshMod111Result;
 import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
 import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;
 import net.aonsolutions.db.up2date.payroll.AgreementOwnerUpdate;
@@ -213,16 +215,17 @@ public class Up2Date {
     		//AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
     		//IPREM2022Update.IPREM2022UPDATE
     		//IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT
-    		
-    		IrpfQuotasInsert.IRPFQUOTASINSERT,
-    		IrpfQuotasCheck.IRPFQUOTASCHECK,
-    		AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
-    		AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
-    		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
+    		//IrpfQuotasInsert.IRPFQUOTASINSERT,
+    		//IrpfQuotasCheck.IRPFQUOTASCHECK,
+    		//AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
+    		//AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
+    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
     		//InvoiceBatchCreation.INVOICE_BATCH_CREATION,
     		//FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
     		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
     		//AddEpigrafe922.ADD_EPIGRAFE_922,
+    		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
+    		RefreshMod111Result.REFRESH_MOD111_RESULT
     };
     
 

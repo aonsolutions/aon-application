@@ -4902,11 +4902,16 @@ CREATE TABLE `fs_model` (
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `account_entry` int(4) DEFAULT NULL Comment 'identificador del apunte',
+  `result` double(15,3) DEFAULT NULL COMMENT 'Resultado',
+  `declaration_type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de resultado',  
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL_FINANCE` (`finance`),
+  KEY `IDX_FS_MODEL_ACCOUNT_ENTRY` (`account_entry`),
   CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
+  CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
+  CONSTRAINT `FK_FS_MODEL_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
 
 #
