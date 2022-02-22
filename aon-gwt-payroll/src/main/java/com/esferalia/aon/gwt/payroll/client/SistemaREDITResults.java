@@ -193,15 +193,30 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 			)
 		);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor anchor = new Anchor("aqu\u00ed");
-		anchor.addClickHandler(e -> onSaveITPart(status));
+		Anchor add = new Anchor("a\u00f1adir");
+		add.addClickHandler(e -> onSaveITPart(status));
 		
-		anchor.getElement().getStyle().setColor("blue");
-		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		add.getElement().getStyle().setColor("blue");
+		add.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 		
-		horizontalPanel.add(anchor);
+		horizontalPanel.add(add);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para a\u00f1adirlo en aon Solutions."));
+		horizontalPanel.add(new Label("para guardarlo en aon Solutions o"));
+		
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor remove = new Anchor("eliminar");
+		if(this.isUserComunica) {
+			remove.addClickHandler(e -> onRemoveITPartToSS(status));
+			remove.getElement().getStyle().setColor("red");
+		} else {
+			remove.getElement().getStyle().setColor("grey");
+		}
+
+		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		
+		horizontalPanel.add(remove);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para anularlo en SISTEMA RED."));
 	}
 	
 	
@@ -233,7 +248,16 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(anchor);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para gestionarlo."));
+		horizontalPanel.add(new Label("para gestionarlo o"));
+		
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor remove = new Anchor("eliminar");
+		remove.addClickHandler(e -> onRemoveITPartToAon(status));
+		remove.getElement().getStyle().setColor("red");
+		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		horizontalPanel.add(remove);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para anularlo en aon Solutions."));
 	}
 
 	@Override
@@ -269,6 +293,10 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	protected void onOpenITPart(ItNotExist itNotExist) {}
 	
 	protected void onSaveITPart(ItNotExist itNotExist) {}
+	
+	protected void onRemoveITPartToAon(ItNotExist itNotExist) {}
+	
+	protected void onRemoveITPartToSS(ItNotExist itNotExist) {}
 	
 	// ------------------------------------------------------------------------
 	

@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -126,6 +127,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
@@ -2959,7 +2961,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			ITComunica.syncUpITs(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), domain, Optional.empty());
+			ITComunica.syncUpITs(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, Optional.empty());
 			
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
@@ -3613,6 +3615,36 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				employeeITs.add(employeeIT);
 			}
 			ITComunica.saveITs(domain, employeeITs);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void removeITParts(String domainName, String userLogin, List<ItNotExist> itNotExists)  throws IllegalArgumentException {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			 Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			Domain domain = new Domain().setId(domainId).setName(domainName);
+			
+			 for (ItNotExist itNotExist : itNotExists) {
+			 	EmployeeIT employeeIT = itNotExist.getEmployeeIT();
+			 	EmployeeITPart part = itNotExist.getEmployeeITPart();
+			 
+			    if(employeeIT.getId()!=null) {
+			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
+			    } else { //DELETE TGSS
+				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
+				 	
+					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			    	ITComunica.removeITs(new ByteArrayInputStream(certificate.getData()).readAllBytes(), certificate.getPassword(), certificate.getType(), employeeIT);
+			    }
+			    System.out.println("REMOVE IT>> "+employeeIT);	
+			 }
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
