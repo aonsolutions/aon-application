@@ -267,6 +267,14 @@ public class AonDocumentUtil {
 		}
     	return (doc.matches("^(F).{8}"));
     }
+    
+    public static boolean isAssetCommunity(String doc) {
+		if (doc == null || doc.length() != 9) {
+			return false;
+		}
+    	return (doc.matches("^(E).{8}"));
+    }
+
 }
 
 
