@@ -98,6 +98,11 @@ public class MainAgreementTest {
 	@Test
 	public void TestEstatutoDeLosTrabajadores() throws Exception {
 
+		wait4Id("mostrarConvenios");
+		
+		HtmlButton agreementsButton = (HtmlButton) getElementById("mostrarConvenios");
+		agreementsButton.click();
+		
 		wait4Id("estatuto_de_los_trabajadores");
 
 		HtmlDivision agreementTreeItem =
@@ -262,6 +267,9 @@ public class MainAgreementTest {
 	@Test
 	public void TestMensajesdeAyuda() throws Exception {
 
+		HtmlButton agreementsButton = (HtmlButton) getElementById("mostrarConvenios");
+		agreementsButton.click();
+		
 		wait4Id("mensajes_de_ayuda,_ejemplos");
 
 		HtmlDivision agreementTreeItem =
