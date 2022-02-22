@@ -4,9 +4,12 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
+import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +21,9 @@ import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.SelectConditionStep;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
@@ -41,8 +45,9 @@ public class EmployeeITDAO {
 	
 //	private static String CONTRACT_DATA_NAMES [] = {"INICIO_PAGO_DIRECTO", "TIPO_SOLICITANTE_MAT_PAT", "MOTIVO_MAT_PAT", "BASE_REGULADORA", "COEFICIENTE_MATERNIDAD", "COEFICIENTE_PATERNIDAD"};
 	
-	public static Optional<EmployeeIT> get(AONContext aonContext, ContractLeaveFilter filter ) {
-		List<EmployeeIT> employeeIts = getStream(aonContext, filter).collect(Collectors.toList());
+	public static Optional<EmployeeIT> get(AONContext ctx, ContractLeaveFilter filter ) {
+		ctx.checkRead();
+		List<EmployeeIT> employeeIts = getStream(ctx, filter).collect(Collectors.toList());
 		if ( employeeIts.isEmpty() )
 			return Optional.empty();
 		else if ( employeeIts.size() == 1 )
@@ -51,8 +56,9 @@ public class EmployeeITDAO {
 			return Optional.of(employeeIts.get(employeeIts.size()-1));
 	}
 
-	public static Stream<EmployeeIT> getStream(AONContext aonContext, ContractLeaveFilter filter) {
-		DSLContext dslContext = aonContext.getDslContext();
+	public static Stream<EmployeeIT> getStream(AONContext ctx, ContractLeaveFilter filter) {
+		ctx.checkRead();
+		DSLContext dslContext = ctx.getDslContext();
 		
 		Map<EmployeeIT, List<EmployeeITPart>> employeeITMap = 
 		dslContext
@@ -100,42 +106,72 @@ public class EmployeeITDAO {
 		return employeeITMap.keySet().stream();
 	}
 
-	public static EmployeeIT[] setEmployeeIT(AONContext aonContext, EmployeeIT... employeeITs) {
-		return setEmloyeeITImpl(aonContext.getDslContext(), employeeITs);
-	}
-
-	private static EmployeeIT [] setEmloyeeITImpl(DSLContext dslContext, EmployeeIT ...employeeIts) {
+	public static EmployeeIT [] setEmployeeIT(AONContext ctx, EmployeeIT ...employeeIts) {
+		ctx.checkWrite();
 		if ( employeeIts == null )
 			return new EmployeeIT[0];
 		if ( employeeIts.length == 0 )
 			return new EmployeeIT[0];
 		
 		for (EmployeeIT employeeIT : employeeIts) {
-			ContractLeaveRecord contractLeaveRecord = setContractLeave(dslContext, employeeIT);
-			setContractLeaveDetail(dslContext, contractLeaveRecord, employeeIT.getITsParts());
+			ContractLeaveRecord contractLeaveRecord = setContractLeave(ctx.getDslContext(), employeeIT);
+			setContractLeaveDetail(ctx.getDslContext(), contractLeaveRecord, employeeIT.getITsParts());
 		}
 		
 		return employeeIts;
 	}
 	
-	private static ContractLeaveRecord setContractLeave(DSLContext dslContext, EmployeeIT employeeIt) {
-		   java.sql.Date itStartDate = normalizeStartDateToSave(employeeIt.getType(), employeeIt.getStartDate());
-			SelectConditionStep<Record> condition = dslContext
-			.select()
-			.from(CONTRACT_LEAVE)
-			.where(CONTRACT_LEAVE.DOMAIN.eq(employeeIt.getDomain()));
-			
-			if(null!=employeeIt.getId()) {
-				condition.and(CONTRACT_LEAVE.ID.eq(employeeIt.getId()));
-			} else if(employeeIt.getContract()==null) {
-				ContractRecord contract = getContract(dslContext, employeeIt);
-				employeeIt.setContract(contract.getId());
-				condition.and(CONTRACT_LEAVE.START_DATE.eq(itStartDate).and(CONTRACT_LEAVE.CONTRACT.eq(employeeIt.getContract())));
-			}
+	public static void removeEmployeeIT(AONContext ctx, Integer contractLeaveId, Integer ...partIds) {
+		ctx.checkWrite();
+		DSLContext dslContext = ctx.getDslContext();
+	
+		get(ctx, f->f.getIdProperty().eq(contractLeaveId)).ifPresent(employeeIT->{
 
-			employeeIt.getEndDate().ifPresent(end-> condition.and(CONTRACT_LEAVE.END_DATE.le(toSql(end)) ) );
+			List<EmployeeITPart> parts = employeeIT.getITsParts().stream().filter(part-> Arrays.asList(partIds).contains(part.getId())).collect(Collectors.toList());
 			
-			Optional<ContractLeaveRecord> exists = condition.fetchStreamInto(CONTRACT_LEAVE).findFirst();
+			Optional<EmployeeITPart> baja =	 parts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.BAJA)).findFirst();
+			
+			if(baja.isPresent()) {
+				removeLeaveBatch(dslContext, employeeIT.getITsParts());
+
+				dslContext.batch(	
+						dslContext.delete(CONTRACT_LEAVE_DETAIL).where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(employeeIT.getId())),
+						dslContext.delete(CONTRACT_LEAVE).where(CONTRACT_LEAVE.ID.eq(employeeIT.getId()))
+				).execute();
+			} else {
+		
+				removeLeaveBatch(dslContext, parts);	
+				
+				dslContext.delete(CONTRACT_LEAVE_DETAIL).where(CONTRACT_LEAVE_DETAIL.ID.in(partIds)).execute();
+				
+				Optional<EmployeeITPart> alta = parts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.ALTA)).findFirst();
+				if(alta.isPresent()) {
+					getContractLeave(dslContext, employeeIT).ifPresent(contractLeave->{
+						contractLeave.set(CONTRACT_LEAVE.END_DATE, null);
+						contractLeave.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, null);
+						contractLeave.update();
+					});
+				}
+			}
+		});
+	}
+	
+	private static void removeLeaveBatch(DSLContext dslContext, List<EmployeeITPart> parts) {
+		Integer[] partIds = parts.stream().map(EmployeeITPart::getId).toArray(Integer[]::new);
+		
+		Result<Record1<Integer>> leaveBatchIds = dslContext
+				.select(LEAVE_BATCH_DETAIL.ID).from(LEAVE_BATCH_DETAIL).where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.in(partIds)).fetch();
+		
+		dslContext.batch(	
+			dslContext.delete(LEAVE_BATCH).where(LEAVE_BATCH.ID.in(leaveBatchIds)),
+			dslContext.delete(LEAVE_BATCH_DETAIL).where(LEAVE_BATCH_DETAIL.ID.in(partIds))
+		).execute();
+	}
+	
+
+	private static ContractLeaveRecord setContractLeave(DSLContext dslContext, EmployeeIT employeeIt) {
+			
+			Optional<ContractLeaveRecord> exists = getContractLeave(dslContext, employeeIt);
 			
 			ContractLeaveRecord contractLeaveRecord;
 	
@@ -158,6 +194,7 @@ public class EmployeeITDAO {
 				 
 				 contractLeaveRecord.update();
 			} else {
+				java.sql.Date itStartDate = normalizeStartDateToSave(employeeIt.getType(), employeeIt.getStartDate());
 				InsertSetMoreStep<ContractLeaveRecord> sets = dslContext
 				.insertInto(CONTRACT_LEAVE)
 				.set(CONTRACT_LEAVE.DOMAIN, employeeIt.getDomain())
@@ -187,10 +224,95 @@ public class EmployeeITDAO {
 		 return contractLeaveRecord;
 	}
 	
-	private static ContractRecord getContract(DSLContext dslContext, EmployeeIT employeeIt) {
-		java.sql.Date itStartDate = normalizeStartDateToSave(employeeIt.getType(), employeeIt.getStartDate());
-		java.sql.Date itEndDate = employeeIt.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
+	private static void setContractLeaveDetail(DSLContext dslContext, ContractLeaveRecord contractLeaveRecord, List<EmployeeITPart> parts) {
+
+		InsertSetMoreStep<ContractLeaveDetailRecord> insertContractLeaveDetail = null;
 		
+		List<EmployeeITPart> partsSort= parts.stream().sorted((o1, o2)-> o1.getDate().compareTo(o2.getDate())).collect(Collectors.toList());
+		
+		for(EmployeeITPart part: partsSort) {
+
+			Optional<ContractLeaveDetailRecord> detailLeave = getContractLeaveDetail(dslContext, contractLeaveRecord, part);
+			
+			if(detailLeave.isPresent()) {
+	
+				ContractLeaveDetailRecord contractLeaveDetailRecord = detailLeave.get();
+				
+				part.getCollegeNumber().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, c) );
+				
+				part.getConfirmOrder().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, c) );
+			
+				part.getCias().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CIAS, c) );
+				
+				if(part.getStatus()!=null) 
+					contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.STATUS, part.getStatus().value());
+				
+				contractLeaveDetailRecord.update();
+			} else {
+				InsertSetStep<ContractLeaveDetailRecord> insert = 
+						null != insertContractLeaveDetail ? insertContractLeaveDetail.newRecord() : dslContext.insertInto(CONTRACT_LEAVE_DETAIL);
+						
+				InsertSetMoreStep<ContractLeaveDetailRecord> recordSets = insert
+				.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractLeaveRecord.getDomain())
+				.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
+				.set(CONTRACT_LEAVE_DETAIL.TYPE, part.getType().value())
+				.set(CONTRACT_LEAVE_DETAIL.DATE, toSql(part.getDate()))
+				.set(CONTRACT_LEAVE_DETAIL.STATUS, part.getStatus().value())
+				;
+				
+				part.getCollegeNumber().ifPresent(c-> recordSets.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, c) );
+				
+				part.getConfirmOrder().ifPresent(c-> recordSets.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, c) );
+			
+				part.getCias().ifPresent(c-> recordSets.set(CONTRACT_LEAVE_DETAIL.CIAS, c) );
+				
+				insertContractLeaveDetail = recordSets;
+			}
+	
+		}	
+		
+		if(null!=insertContractLeaveDetail) insertContractLeaveDetail.execute();
+	}
+	
+	private static Optional<ContractLeaveRecord> getContractLeave(DSLContext dslContext, EmployeeIT employeeIt) {
+		SelectConditionStep<Record> condition = dslContext
+		.select()
+		.from(CONTRACT_LEAVE)
+		.where(CONTRACT_LEAVE.DOMAIN.eq(employeeIt.getDomain()));
+		
+		if(null!=employeeIt.getId()) {
+			condition.and(CONTRACT_LEAVE.ID.eq(employeeIt.getId()));
+		} else {
+			if(employeeIt.getContract()==null) {
+				java.sql.Date itStartDate = normalizeStartDateToSave(employeeIt.getType(), employeeIt.getStartDate());
+				ContractRecord contract = getContract(dslContext, employeeIt);
+				employeeIt.setContract(contract.getId());
+				condition.and(CONTRACT_LEAVE.START_DATE.eq(itStartDate).and(CONTRACT_LEAVE.CONTRACT.eq(employeeIt.getContract())));
+			}
+			employeeIt.getEndDate().ifPresent(end-> condition.and(CONTRACT_LEAVE.END_DATE.le(toSql(end)) ) );
+		} 
+		
+	    return condition.fetchStreamInto(CONTRACT_LEAVE).findFirst();
+	}
+	
+	private static Optional<ContractLeaveDetailRecord> getContractLeaveDetail(DSLContext dslContext, ContractLeaveRecord contractLeaveRecord, EmployeeITPart part) {
+		
+		SelectConditionStep<Record> contextDetail = dslContext.select()
+		.from(CONTRACT_LEAVE_DETAIL)
+		.where(CONTRACT_LEAVE_DETAIL.DOMAIN.eq(contractLeaveRecord.getDomain()));
+		
+		if(null!=part.getId()) {
+			contextDetail.and(CONTRACT_LEAVE_DETAIL.ID.eq(part.getId()));
+		} else {
+			contextDetail.and(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(contractLeaveRecord.getId()))
+			.and(CONTRACT_LEAVE_DETAIL.DATE.eq(toSql(part.getDate())))
+			.and(CONTRACT_LEAVE_DETAIL.TYPE.eq(part.getType().value()));
+		}
+		return contextDetail.fetchStreamInto(CONTRACT_LEAVE_DETAIL).findFirst();
+	}
+	
+	private static ContractRecord getContract(DSLContext dslContext, EmployeeIT employeeIt) {
+		java.sql.Date itStartDate = new java.sql.Date(employeeIt.getStartDate().getTime());
 		return dslContext
 				.select()
 				.from(REGISTRY)
@@ -202,82 +324,8 @@ public class EmployeeITDAO {
 				.and(PERSON.SOCIAL_SECURITY_NUM.eq(employeeIt.getNss()))
 				.and(CONTRACT.START_DATE.le(itStartDate))
 				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-				.orderBy(CONTRACT.ID.desc())
-				.fetchOptionalInto(CONTRACT)
-				.orElseThrow(() -> new EmployeeNotFoundexception() );
-		
-//		return dslContext
-//		.select()
-//		.from(REGISTRY)
-//		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-//		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-//		.innerJoin(ENTERPRISE_CCC).onKey()
-//		.where(ENTERPRISE_CCC.DOMAIN.eq(employeeIt.getDomain()))
-//		.and(ENTERPRISE_CCC.CCC.eq(employeeIt.getCcc()))
-//		.and(PERSON.SOCIAL_SECURITY_NUM.eq(employeeIt.getNss()))
-//		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-//		.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
-//		.orderBy(CONTRACT.ID.desc()).fetchStreamInto(CONTRACT).findFirst().orElseThrow(() -> new EmployeeNotFoundexception() );
-	}
-	private static void setContractLeaveDetail(DSLContext dslContext, ContractLeaveRecord contractLeaveRecord, List<EmployeeITPart> its) {
-
-		InsertSetMoreStep<ContractLeaveDetailRecord> insertContractLeaveDetail = null;
-		
-		List<EmployeeITPart> sort = its.stream().sorted((o1, o2)-> o1.getDate().compareTo(o2.getDate())).collect(Collectors.toList());
-		
-		for(EmployeeITPart it: sort) {
-			
-			SelectConditionStep<Record> contextDetail = dslContext.select()
-			.from(CONTRACT_LEAVE_DETAIL)
-			.where(CONTRACT_LEAVE_DETAIL.DOMAIN.eq(contractLeaveRecord.getDomain()));
-			
-			if(null!=it.getId()) {
-				contextDetail.and(CONTRACT_LEAVE_DETAIL.ID.eq(it.getId()));
-			} else {
-				contextDetail.and(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(contractLeaveRecord.getId()))
-				.and(CONTRACT_LEAVE_DETAIL.DATE.eq(toSql(it.getDate())))
-				.and(CONTRACT_LEAVE_DETAIL.TYPE.eq(it.getType().value()));
-			}
-			Optional<ContractLeaveDetailRecord> detailLeave = contextDetail.fetchStreamInto(CONTRACT_LEAVE_DETAIL).findFirst();
-			
-			if(detailLeave.isPresent()) {
-	
-				ContractLeaveDetailRecord contractLeaveDetailRecord = detailLeave.get();
-				
-				it.getCollegeNumber().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, c) );
-				
-				it.getConfirmOrder().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, c) );
-			
-				it.getCias().ifPresent(c-> contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.CIAS, c) );
-				
-				if(it.getStatus()!=null) 
-					contractLeaveDetailRecord.set(CONTRACT_LEAVE_DETAIL.STATUS, it.getStatus().value());
-				
-				contractLeaveDetailRecord.update();
-			} else {
-				InsertSetStep<ContractLeaveDetailRecord> insert = 
-						null != insertContractLeaveDetail ? insertContractLeaveDetail.newRecord() : dslContext.insertInto(CONTRACT_LEAVE_DETAIL);
-						
-				InsertSetMoreStep<ContractLeaveDetailRecord> recordSets = insert
-				.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractLeaveRecord.getDomain())
-				.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
-				.set(CONTRACT_LEAVE_DETAIL.TYPE, it.getType().value())
-				.set(CONTRACT_LEAVE_DETAIL.DATE, toSql(it.getDate()))
-				.set(CONTRACT_LEAVE_DETAIL.STATUS, it.getStatus().value())
-				;
-				
-				it.getCollegeNumber().ifPresent(c-> recordSets.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, c) );
-				
-				it.getConfirmOrder().ifPresent(c-> recordSets.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, c) );
-			
-				it.getCias().ifPresent(c-> recordSets.set(CONTRACT_LEAVE_DETAIL.CIAS, c) );
-				
-				insertContractLeaveDetail = recordSets;
-			}
-	
-		}	
-		
-		if(null!=insertContractLeaveDetail) insertContractLeaveDetail.execute();
+				.orderBy(CONTRACT.START_DATE.asc())
+				.fetchStreamInto(CONTRACT).findFirst().orElseThrow(() -> new EmployeeNotFoundexception() );
 	}
 	
 	private static String getSSRegimeCode(Byte ordinal) {
@@ -301,7 +349,5 @@ public class EmployeeITDAO {
 			date = AonDateUtils.addDays(date, 1);
 		
 		return new java.sql.Date(date.getTime());
-	}
-	
-
+	}	
 }

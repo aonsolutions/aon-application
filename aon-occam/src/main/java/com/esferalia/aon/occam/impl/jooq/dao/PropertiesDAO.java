@@ -1085,8 +1085,10 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getDischargeCauseProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.DISCHARGE_CAUSE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.PARENT);}
 		
-		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
 		@Override public Property<String> getCCCProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.CCC);}
+		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
+		@Override public Property<String> getNameProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getDocumentProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 
 	}
 	
