@@ -101,7 +101,10 @@ public class MainAgreementTest {
 		wait4Id("mostrarConvenios");
 		
 		HtmlButton agreementsButton = (HtmlButton) getElementById("mostrarConvenios");
-		agreementsButton.click();
+		System.out.println(agreementsButton.getAttribute("class"));
+		System.out.println(agreementsButton.getAttribute("class").contains("aon_icon_visibility_off"));
+		if(!agreementsButton.getAttribute("class").contains("aon_icon_visibility_off"))
+			agreementsButton.click();
 		
 		wait4Id("estatuto_de_los_trabajadores");
 
@@ -266,6 +269,8 @@ public class MainAgreementTest {
 
 	@Test
 	public void TestMensajesdeAyuda() throws Exception {
+		
+		wait4Id("mostrarConvenios");
 
 		HtmlButton agreementsButton = (HtmlButton) getElementById("mostrarConvenios");
 		agreementsButton.click();
