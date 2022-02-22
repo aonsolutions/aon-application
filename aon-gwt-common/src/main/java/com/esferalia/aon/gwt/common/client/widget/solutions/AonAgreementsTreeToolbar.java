@@ -170,6 +170,7 @@ public class AonAgreementsTreeToolbar extends Composite {
 		});
 		toolbar.add(viewAgreementsButton);
 		
+		
 		draftButton = new AonToolbarButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 		draftButton.addClickHandler(e -> {
 			for(Listener listener : listeners)
@@ -184,6 +185,7 @@ public class AonAgreementsTreeToolbar extends Composite {
 		});
 		toolbar.add(collapseAllButton);
 		
+		viewAgreementsButton.ensureDebugId("mostrarConvenios");
 		newButton.ensureDebugId("newButton");
 		draftButton.ensureDebugId("draftButton");
 		collapseAllButton.ensureDebugId("collapseAllButton");
