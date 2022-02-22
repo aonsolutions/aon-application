@@ -4,9 +4,11 @@ import static com.esferalia.aon.jooq.tables.Certifica2Batch.CERTIFICA2_BATCH;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
@@ -44,6 +46,7 @@ import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONTYPE
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CUENTACOTIZACIONTYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CertificadoEmpresa;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.EMPRESATYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.REPRESENTANTETYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE.DatosVacacionesCotizadas;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -306,6 +309,11 @@ public class JooqCertifica2 {
 		
 		CUENTACOTIZACIONTYPE cuentaCotizacion = new CUENTACOTIZACIONTYPE();
 		
+		REPRESENTANTETYPE representanteType = new REPRESENTANTETYPE();
+		representanteType.setCIFNIF(certifica2Info.getRepresentativeDocument());
+		representanteType.setNombre(certifica2Info.getRepresentativeName());
+		representanteType.setApellido1(certifica2Info.getRepresentativeSurname());
+		
 		EMPRESATYPE empresaType = new EMPRESATYPE();
 		empresaType.setCIFNIF(certifica2Info.getEnterpriseDocument());
 		empresaType.setCCC(certifica2Info.getCompleteCCC());
@@ -358,6 +366,7 @@ public class JooqCertifica2 {
 		datosVacacionesCotizadas.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Info.getBaseUnemployment()), 9, '0'));
 		trabajadorType.setDatosVacacionesCotizadas(datosVacacionesCotizadas);
 		
+		cuentaCotizacion.setDatosRepresentante(representanteType);
 		cuentaCotizacion.setDatosEmpresa(empresaType);
 		cuentaCotizacion.getDatosTrabajador().add(trabajadorType);
 		
@@ -476,6 +485,35 @@ public class JooqCertifica2 {
 		
 		String cno = normalizeString(cnoType);
 		
+		// ---------------------------------------------------- Representative Data
+		
+		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
+		Integer enterpriseRegisty = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
+		
+		String representativeDocument = "";
+		String representativeName = "";
+		String representativeSurname = "";
+		
+		Result<Record> staffRecords = dslContext.select().from(RDIR_STAFF).where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty)).fetch();
+		
+		// Hay representante de empresa
+		if(staffRecords.isNotEmpty()) {
+			Record staffRecord = staffRecords.get(0);
+			representativeDocument = staffRecord.get(RDIR_STAFF.DOCUMENT);
+			String fullName = staffRecord.get(RDIR_STAFF.NAME);
+			if(fullName.contains(",")) {
+				representativeName = fullName.split(",")[1].trim();
+				representativeSurname = fullName.split(",")[0].trim();
+			} else {
+				representativeName = fullName.trim();
+			}
+		} else {
+			// No hay representante
+			Record enterpriseRegistry = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(enterpriseRegisty)).fetchOne();
+			representativeDocument = enterpriseRegistry.get(REGISTRY.DOCUMENT);
+			representativeName = enterpriseRegistry.get(REGISTRY.NAME);
+		}
+		
 		// ---------------------------------------------------- Enterprise Data
 		
 		Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
@@ -581,29 +619,37 @@ public class JooqCertifica2 {
 		
 		// Check Settle for unEnjoy Holidays
 		Result<Record> settlementRecords = dslContext.select().from(SALARY)
-				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
-				.and(SALARY.CCC.eq(ccc))
+				.where(SALARY.CONTRACT.eq(contractId))
 				.and(SALARY.TYPE.eq((byte)2))
-				.and(SALARY.END_DATE.ge(filterDate))
-				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
-		Certifica2Info settlementCertifica2Info = null;
+//		Result<Record> settlementRecords = dslContext.select().from(SALARY)
+//				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
+//				.and(SALARY.CCC.eq(ccc))
+//				.and(SALARY.TYPE.eq((byte)2))
+//				.and(SALARY.END_DATE.ge(filterDate))
+//				.and(SALARY.END_DATE.le(endDate))
+//				.orderBy(SALARY.END_DATE.desc())
+//				.fetch();
 		
-		if(settlementRecords.isEmpty()) {
+		Certifica2Info settlementCertifica2Info = null;
+		if(settlementRecords.isEmpty())
 			settlementCertifica2Info = new Certifica2Info(
 					null,
 					null,
 					0, 
 					0.00, 
 					0.00);
-		} else {
+		else {
 			Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
 			
-			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
-			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate) - 1;
+			String holidays = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.eq(settlementId))
+					.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
+					.fetchOne(SALARY_DATA.EXPRESSION);
+			
+			Integer holidayDays = (int) (AonStringUtils.isBlank(holidays) ? 0 : Double.parseDouble(holidays));
 			
 			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(settlementId))
@@ -618,10 +664,11 @@ public class JooqCertifica2 {
 				baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
 			}
 			
+			
 			settlementCertifica2Info = new Certifica2Info(
 					null,
 					null,
-					settlementDaysBetween.intValue(), 
+					holidayDays, 
 					baseCGC, 
 					baseCGP);
 		}
@@ -629,13 +676,13 @@ public class JooqCertifica2 {
 		// ---------------------------------------------------- Create Certificates
 		
 		CertificatesBuilder bd  = new CertificatesBuilder();
-		bd.setRegimen(regime)
+		bd.setIpfManager(representativeDocument)
+			.setName(representativeName)
+			.setSurname(representativeSurname)
+			.setLastSurname("")
+			.setIpf(enterpriseCIF)
+			.setRegimen(regime)
 			.setCtaCti(ccc)
-			.setIpf(dni)
-			.setIpfManager(enterpriseCIF)
-			.setName(name)
-			.setSurname(surName)
-			.setLastSurname(secondSurName)
 			.setTypeContract(tc2)
 			.setGz(quoteGroup)
 			.setDurationContract(contractDuration.intValue())
@@ -746,6 +793,35 @@ public class JooqCertifica2 {
 		if(AonStringUtils.isNotBlank(cnoType))
 			cno = normalizeString(cnoType);
 		
+		// ---------------------------------------------------- Representative Data
+		
+		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
+		Integer enterpriseRegisty = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
+		
+		String representativeDocument = "";
+		String representativeName = "";
+		String representativeSurname = "";
+		
+		Result<Record> staffRecords = dslContext.select().from(RDIR_STAFF).where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty)).fetch();
+		
+		// Hay representante de empresa
+		if(staffRecords.isNotEmpty()) {
+			Record staffRecord = staffRecords.get(0);
+			representativeDocument = staffRecord.get(RDIR_STAFF.DOCUMENT);
+			String fullName = staffRecord.get(RDIR_STAFF.NAME);
+			if(fullName.contains(",")) {
+				representativeName = fullName.split(",")[1].trim();
+				representativeSurname = fullName.split(",")[0].trim();
+			} else {
+				representativeName = fullName.trim();
+			}
+		} else {
+			// No hay representante
+			Record enterpriseRegistry = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(enterpriseRegisty)).fetchOne();
+			representativeDocument = enterpriseRegistry.get(REGISTRY.DOCUMENT);
+			representativeName = enterpriseRegistry.get(REGISTRY.NAME);
+		}
+		
 		// ---------------------------------------------------- Enterprise Data
 		
 		Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
@@ -852,13 +928,19 @@ public class JooqCertifica2 {
 		
 		// Check Settle for unEnjoy Holidays
 		Result<Record> settlementRecords = dslContext.select().from(SALARY)
-				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
-				.and(SALARY.CCC.eq(ccc))
+				.where(SALARY.CONTRACT.eq(contractId))
 				.and(SALARY.TYPE.eq((byte)2))
-				.and(SALARY.END_DATE.ge(filterDate))
-				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
+		
+//		Result<Record> settlementRecords = dslContext.select().from(SALARY)
+//				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
+//				.and(SALARY.CCC.eq(ccc))
+//				.and(SALARY.TYPE.eq((byte)2))
+//				.and(SALARY.END_DATE.ge(filterDate))
+//				.and(SALARY.END_DATE.le(endDate))
+//				.orderBy(SALARY.END_DATE.desc())
+//				.fetch();
 		
 		Certifica2Info settlementCertifica2Info = null;
 		if(settlementRecords.isEmpty())
@@ -871,9 +953,12 @@ public class JooqCertifica2 {
 		else {
 			Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
 			
-			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
-			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate) - 1;
+			String holidays = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.eq(settlementId))
+					.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
+					.fetchOne(SALARY_DATA.EXPRESSION);
+			
+			Integer holidayDays = (int) (AonStringUtils.isBlank(holidays) ? 0 : Double.parseDouble(holidays));
 			
 			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(settlementId))
@@ -892,7 +977,7 @@ public class JooqCertifica2 {
 			settlementCertifica2Info = new Certifica2Info(
 					null,
 					null,
-					settlementDaysBetween.intValue(), 
+					holidayDays, 
 					baseCGC, 
 					baseCGP);
 		}
@@ -901,6 +986,9 @@ public class JooqCertifica2 {
 		
 		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = new com.esferalia.aon.gwt.payroll.shared.Certifica2Info();
 		
+		certifica2Info.setRepresentativeDocument(representativeDocument);
+		certifica2Info.setRepresentativeName(representativeName);
+		certifica2Info.setRepresentativeSurname(representativeSurname);
 		certifica2Info.setRegime(regime);
 		certifica2Info.setCcc(ccc);
 		certifica2Info.setCompleteCCC(completeCCC);
