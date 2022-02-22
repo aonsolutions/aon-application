@@ -9,13 +9,19 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.Raddress;
+import com.esferalia.aon.jooq.tables.Salary;
+import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 /**
  * Class containing some utilities for payroll generator methods
@@ -96,6 +102,42 @@ public class Utilities {
 		} catch (Exception e) {}
 		return optLogo;
 	}
+	
+	public static Optional<InputStream> getLogo(String domainName) {
+		Optional<InputStream> optLogo = Optional.empty();
+		
+		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+			Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+							.and(f.getDomainProperty().eq(aonContext.getDomainId())),
+					AttachType.REGISTRY);
+			if (attach1 != null && attach1.getData() != null)
+				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
+		} catch (Exception e) {}
+		return optLogo;
+	}
+	
+	public static String getFullAddress (String domain, Integer salaryId) {
+		try (AONContext aonContext = AONContext.getAONContext(domain, "")) {
+			RaddressRecord raddressReg = aonContext.getDslContext().select()
+			.from(Salary.SALARY)
+			.innerJoin(Contract.CONTRACT).onKey()
+			.innerJoin(Workplace.WORKPLACE).onKey()
+			.innerJoin(Raddress.RADDRESS).on(Raddress.RADDRESS.ID.eq(Workplace.WORKPLACE.ADDRESS))
+			.where(Salary.SALARY.ID.eq(salaryId))
+			.fetchOneInto(Raddress.RADDRESS);
+			if (raddressReg != null) {
+				RAddress raddress = AON.getRAddress(domain, raddressReg.getDomain(), "", f -> f.getIdProperty().eq(raddressReg.getId()));
+				if (raddress != null)
+					return raddress.getFullAddress();
+			}
+			
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 	
 	/**
 	 * Method to get the abbreviation name commonly used on the database for a different deduction types

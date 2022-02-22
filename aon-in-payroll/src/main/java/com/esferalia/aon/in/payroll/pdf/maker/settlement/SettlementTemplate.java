@@ -11,10 +11,10 @@ import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.LEFT;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.RIGHT;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.PAGE_TYPE.VERTICAL;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.Number2Text.convertDouble;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeDouble;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeString;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeValue;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.Number2Text.convertDouble;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawBox;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
@@ -40,7 +40,6 @@ import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText.PdfTextBuild
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.VERTICAL_ALIGNMENT;
-import com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DeductionTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
@@ -53,6 +52,7 @@ public class SettlementTemplate extends PdfFile {
 
 	private Settlement settlement;
 	private byte[]	   logo;
+	private byte[]	   signature;
 
 	public SettlementTemplate(
 			Settlement settlement, float x, float y, PDDocument doc, ResourceBundle words, OutputStream out,
@@ -92,6 +92,7 @@ public class SettlementTemplate extends PdfFile {
 			template.lang	= (Locale) safeValue(config.getLanguage(), new Locale("Es"));
 			template.limitY	= 200;
 			template.logo = config.getLogo();
+			template.signature = config.getSignature();
 
 			template.newPage(VERTICAL);
 
@@ -169,7 +170,8 @@ public class SettlementTemplate extends PdfFile {
 
 		String[] variables = new String[] { "employeeName", "employeeNif", "employeeCategory", "employeeAntiquity" };
 		String[] values	   = new String[] { safeString(settlement.getEmployeeName()),
-				safeString(settlement.employeeNIF()), safeString(settlement.employeeCategory()),
+				safeString(settlement.employeeNIF()),
+				settlement != null && settlement.employeeCategory().isPresent() ? "con la categoría de " + settlement.employeeCategory().get() : "",
 				safeString(formatDate(settlement.getEmployeeAntiquity(), dateFormat)) };
 
 		final String employeeTxt = replaceVariables(variables, values, text("EMPLOYEE"));
@@ -320,7 +322,7 @@ public class SettlementTemplate extends PdfFile {
 							.mapToDouble(deduction -> (deduction == null) ? 0 : safeDouble(deduction.getAmount()))
 							.sum();
 
-					String deductionTxt		 = m.getKey() + ". " + DeductionTypes.getType(m.getKey());
+					String deductionTxt		 = "- " +/*m.getKey() + ". " + */DeductionTypes.getType(m.getKey());
 					String deductionTotalTxt = toLatinNumber(localTotal) + " " + text("CURRENCY");
 
 					drawText(contents, deductionTxt, x() + 3, y(), BLACK, HELVETICA_BOLD, fontsize);
@@ -343,13 +345,13 @@ public class SettlementTemplate extends PdfFile {
 
 								if (n.getAmount().isPresent() && n.getAmount().get() != 0)
 								{
-									PdfText quantity = new PdfText(x(), y(), 60, 15, contents, entryPercent, BLACK,
+									PdfText quantity = new PdfText(x(), y(), 60, 15, contents, n.getPercent().isEmpty() ? entryValue : entryPercent, BLACK,
 											HELVETICA, 9f, RIGHT);
 									quantity.draw();
 
 									new PdfText(x() + 64, y(), 210, 15, contents, entryTxt, BLACK, HELVETICA, 9f, LEFT)
 											.draw();
-									new PdfText(x() + 64 + 210, y(), 60, 15, contents, entryValue, BLACK, HELVETICA, 9f,
+									new PdfText(x() + 64 + 210, y(), 60, 15, contents, n.getPercent().isEmpty() ? "" : entryValue, BLACK, HELVETICA, 9f,
 											RIGHT).draw();
 
 									down(10);
@@ -392,7 +394,11 @@ public class SettlementTemplate extends PdfFile {
 		String representativeSignTxt = text("REPRESENTATIVE SIGN");
 
 		String[] variables = { "location" };
-		String[] values	   = { safeString(settlement.location()) };
+		String[] values	   = {"A "};
+		if (settlement.location().isPresent()) {
+			values[0]	   = "En " + settlement.location().get() + " a ";
+		}
+//		String[] values	   = { safeString(settlement.location()) };
 		String	 dateTxt   = formatDate(new Date(), replaceVariables(variables, values, text("DATE"))).orElse("");
 
 		PdfTextBuilder builder = new PdfTextBuilder();
@@ -424,8 +430,8 @@ public class SettlementTemplate extends PdfFile {
 		builder.stream(contents).width(width).height(40).y(40).content(enterpriseSignTxt).color(GRAY)
 				.horizontalAlignment(ALIGNMENT.CENTER);
 
-		PdfImage logo_img = new PdfImage(x(), 80, width, 50, ALIGNMENT.CENTER, contents, doc, logo);
-		logo_img.draw();
+		PdfImage signImg = new PdfImage(x(), 80, width, 50, ALIGNMENT.CENTER, contents, doc, signature);
+		signImg.draw();
 	
 		
 		PdfText enterpriseSign = builder.build();

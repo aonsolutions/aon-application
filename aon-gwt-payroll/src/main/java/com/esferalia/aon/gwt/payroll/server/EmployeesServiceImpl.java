@@ -1712,6 +1712,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			try {
 				SettleBuilder.printDraftSettle(settle, reportOut, new Locale("Es"),
+						Utilities.getLogo(domain).orElse(new ByteArrayInputStream(new byte[0])),
 						Utilities.getSignature(domain).orElse(new ByteArrayInputStream(new byte[0])));
 			} catch (CanNotCreatePdfException ignored) {
 			}
@@ -4601,7 +4602,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		ISalary salary = getSalary(domain, draft);
 		Settle settle = new Settle();
-
+		
 		settle.setEmployeeName(salary.getEmployeeName()).setEmployeeCategory(salary.getCategory())
 				.setEmployeeDocument(salary.getEmployeeDocument()).setEmployeeQuoteGroup(salary.getQuoteGroup())
 				.setEmployeeSeniorityDate(salary.getSeniorityDate()).setEnterpriseAddress(salary.getEnterpriseAddress())
@@ -4633,6 +4634,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				byte type = (byte) deduction.getType().ordinal();
 				String description = deduction.getDescription();
 				settle.addDeduction(type, name, description, deduction.getAmount(), type);
+			}
+		} catch (SalaryException ignored) {
+		}
+		
+		try {
+			for (IDeduction embargo : salary.getEmbargoS()) {
+				String description = embargo.getDescription();
+				settle.addEmbargo(description, embargo.getAmount());
 			}
 		} catch (SalaryException ignored) {
 		}
