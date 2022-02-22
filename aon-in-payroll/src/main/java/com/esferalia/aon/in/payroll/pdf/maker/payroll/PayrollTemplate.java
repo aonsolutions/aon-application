@@ -371,7 +371,7 @@ public class PayrollTemplate {
 
 						double localTotal = m.getValue().stream().mapToDouble(accrual -> safeDouble(accrual.getAmount()))
 								.sum();
-						String deductionTxt = m.getKey() + ". " + getType(m.getKey());
+						String deductionTxt = /*m.getKey() + */"- " + getType(m.getKey());
 						String deductionTotalTxt = toLatinNumber(localTotal) + " " + text("MONEDA");
 
 						drawText(contents, deductionTxt, x, y, BLACK, HELVETICA_BOLD, fontSize);

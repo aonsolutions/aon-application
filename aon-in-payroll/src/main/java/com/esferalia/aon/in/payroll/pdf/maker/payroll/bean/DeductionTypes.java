@@ -8,6 +8,7 @@ public class DeductionTypes {
 		case 2: return "Impuesto sobre la renta de las personas físicas (IRPF)";
 		case 3: return "Anticipos";
 		case 4: return "Valor de los productos recibidos en especie";
+		case 5: return "Embargos";
 		default: return "Otras deducciones";
 		}
 	}

@@ -13,12 +13,14 @@ public class SettlePrintConfiguration extends PrintConfiguration {
 
 	private Settlement	 settlement;
 	private byte[]		 logo;
+	private byte[]		 signature;
 
-	public SettlePrintConfiguration(Settlement settlement, InputStream logo, Locale language) {
+	public SettlePrintConfiguration(Settlement settlement, InputStream logo, InputStream signature, Locale language) {
 
 		super(language);
 		this.settlement	= settlement;
 		this.logo = ReadAllBytesSafely(logo);
+		this.signature = ReadAllBytesSafely(signature);
 	}
 
 	public Settlement getSettlement() {
@@ -35,6 +37,14 @@ public class SettlePrintConfiguration extends PrintConfiguration {
 
 	public void setLogo(byte[] logo) {
 		this.logo = logo;
+	}
+	
+	public byte[] getSignature() {
+		return signature;
+	}
+	
+	public void setSignature(byte[] signature) {
+		this.signature = signature;
 	}
 
 }
