@@ -18,12 +18,14 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.BienAfectoIRPFYOIVAEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveTipoFacturaGastosEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveTipoRectificativaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.EstadoRegistroConsultaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionRecargoEquivalenciaORegimenSimplificadoEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
@@ -44,8 +46,12 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.RentaIVAGastoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.CabeceraGastosConsultaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FechaDesdeHastaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaGastosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_altamodifpeticion_v1_0_2.LROEPF140GastosConFacturaAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_anulacionpeticion_v1_0_0.LROEPF140GastosConFacturaAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_consultapeticion_v1_0_0.LROEPF140GastosConFacturaConsultaPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -150,23 +156,24 @@ public class LROE140_2_1 extends LROE140 {
 	private RentaIVAGastoType buildRenta(Invoice invoice) {
 		RentaIVAGastoType renta = new RentaIVAGastoType();
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
-			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().get();
+			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
+			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}
 			DetalleRentaIVAGastoType r = new DetalleRentaIVAGastoType();
 			r.setEpigrafe(invoice.getEpigraph());
-			r.setConcepto(detail.getDescription());
+			
 			r.setBaseImponible(Double.toString(tax.getBase()));	
 			r.setTipoImpositivo(Double.toString(tax.getPercentage()));
 			r.setCuotaIVADeducible(Double.toString(tax.getDeductibleQuota()));
 			r.setCuotaIVASoportada(Double.toString(tax.getQuota()));
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
-			if(irpf != null)
-				r.setImporteGastoIRPF(Double.toString(irpf.getQuota()));
-			
+			if(!AonStringUtils.isBlank(detail.getAccountCode())) {
+				r.setConcepto(detail.getAccountCode().substring(0, 3));
+				if(irpf != null) r.setImporteGastoIRPF(Double.toString(irpf.getQuota()));
+			}			
 			r.setInversionSujetoPasivo(invoice.isIsp() ? SiNoEnum.S : SiNoEnum.N);
 			if(invoice.isSurcharge()) {
 				r.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(OperacionRecargoEquivalenciaORegimenSimplificadoEnum.E);
@@ -277,6 +284,55 @@ public class LROE140_2_1 extends LROE140 {
 			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
+		}
+	}
+
+	private LROEPF140GastosConFacturaConsultaPeticion buildConsulta(Person person, Invoice invoice, LROEInfo info) {
+		LROEPF140GastosConFacturaConsultaPeticion lroe = new LROEPF140GastosConFacturaConsultaPeticion();
+		lroe.setCabecera(buildCabecera(person, info));
+		FiltroConsultaGastosConFacturaType filtro = new FiltroConsultaGastosConFacturaType(); 
+		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
+		filtro.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
+		filtro.setEpigrafe(invoice.getEpigraph());
+		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
+		filtro.setNumPaginaConsulta(1);
+		lroe.setFiltroConsultaGastosConFactura(filtro);
+		return lroe;
+	}
+	
+	private CabeceraGastosConsultaType buildCabeceraFactura(Invoice invoice) {
+		CabeceraGastosConsultaType cabecera = new CabeceraGastosConsultaType();
+		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		cabecera.setFechaExpedicionFactura(fecha);
+		
+		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
+		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		cabecera.setFechaRecepcion(fechaRec);
+	
+		cabecera.setNumFactura(invoice.getReferenceCode());
+		return cabecera;
+	}
+	
+	
+	public void consulta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
+		try {
+			LROEInfo info = buildInfo(OperacionEnum.C_00);
+			LROEPF140GastosConFacturaConsultaPeticion lroe = buildConsulta(person, invoice, info);
+			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaConsultaPeticion.class );
+			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
+
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			jaxbMarshaller.marshal( lroe, bos );
+			byte[] xml = bos.toByteArray();
+			byte[] data = toGzip(xml);
+			sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }
