@@ -13,6 +13,9 @@ public class Certifica2Info implements Serializable {
 	
 	// ------------------------------------------ Variables
 	
+	private String representativeDocument;
+	private String representativeName;
+	private String representativeSurname;
 	private String regime;
 	private String ccc;
 	private String completeCCC;
@@ -46,6 +49,30 @@ public class Certifica2Info implements Serializable {
 
 	public String getRegime() {
 		return regime;
+	}
+
+	public String getRepresentativeDocument() {
+		return representativeDocument;
+	}
+
+	public void setRepresentativeDocument(String representativeDocument) {
+		this.representativeDocument = representativeDocument;
+	}
+
+	public String getRepresentativeName() {
+		return representativeName;
+	}
+
+	public void setRepresentativeName(String representativeName) {
+		this.representativeName = representativeName;
+	}
+
+	public String getRepresentativeSurname() {
+		return representativeSurname;
+	}
+
+	public void setRepresentativeSurname(String representativeSurname) {
+		this.representativeSurname = representativeSurname;
 	}
 
 	public void setRegime(String regime) {
