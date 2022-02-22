@@ -3,7 +3,9 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 
+import java.text.MessageFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
 import org.jooq.impl.DSL;
@@ -15,11 +17,14 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelInvoiceDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -239,6 +244,22 @@ public class InvoiceValidation {
 	};
 	
 	/**
+	 * La factura ha sido utilizada para los calculos de los modelos fiscales.
+	 */
+	public static BiConsumer<Invoice, AonConfigurationContext> FS_MODEL = (inv,ctx) -> {
+		LinkedList<FiscalModel> models = FiscalModelInvoiceDAO.isDeclared(ctx.getContext(), inv.getId() );
+		if (models != null && !models.isEmpty()) {
+			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
+					models
+						.stream()
+						.map( fm -> MessageFormat.format("[Mod. {0} {1} {2}] ",FiscalModelUtils.getModelName(fm),fm.getYear(),fm.getPeriod().getDescription()))
+						.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+						.toString()
+					));
+		}
+	};
+
+	/**
 	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden borrar.
 	 */
 	public static BiConsumer<Invoice, AonConfigurationContext> SII = (inv,ctx) -> {
@@ -304,6 +325,7 @@ public class InvoiceValidation {
 		.andThen(OPERATIONS_DEADLINE)
 		.andThen(SII)
 		.andThen(TBAI)
+		.andThen(FS_MODEL)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 

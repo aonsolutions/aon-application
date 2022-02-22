@@ -24,6 +24,7 @@ import java.util.TimeZone;
 
 import org.jooq.Record;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
@@ -36,12 +37,15 @@ import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
@@ -57,6 +61,7 @@ public abstract class AbstractOccamTest {
 	protected static String DOMAIN_NAME = "occamtest.aonsolutions.test";
 	protected static Integer DOMAIN_ID;
 	protected static String USER = "admin";
+	protected static boolean NEW_DOMAIN = false;
 	private static AonConfiguration config;
 	
 	private static String getDbPort() {		return System.getProperty("dbPort", "3306");	}
@@ -91,6 +96,9 @@ public abstract class AbstractOccamTest {
 			createDomain();
 		}
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
+		if (NEW_DOMAIN) {
+			ctx.getDslContext().transaction(configuration -> initializeDomain( ctx ));
+		}
 		System.setOut(System.out);
 		System.setErr(System.err);
 	}
@@ -98,6 +106,11 @@ public abstract class AbstractOccamTest {
 	@AfterClass
 	public static void afterClass() {
 		if (ctx != null) ctx.finalize();
+	}
+	
+	@Before
+	public void beforeTest() {
+		System.out.println( "Running [" + this.getClass().getSimpleName() + "]");
 	}
 
 	private static void shutUp() {
@@ -114,9 +127,8 @@ public abstract class AbstractOccamTest {
 	}
 	
 	protected static boolean mustShutUp() {
-		return false;
-//		String mustShutUp = System.getProperty("mustShutUp", "true");
-//		return "true".equalsIgnoreCase(mustShutUp);
+		String mustShutUp = System.getProperty("mustShutUp", "false");
+		return "true".equalsIgnoreCase(mustShutUp);
 	}
 
 	
@@ -184,6 +196,7 @@ public abstract class AbstractOccamTest {
 			return domain;
 		}
 		
+		NEW_DOMAIN = true;
 		int newDomainId = ctx
 				.getDslContext()
 				.insertInto(DOMAIN)
@@ -310,21 +323,40 @@ public abstract class AbstractOccamTest {
 		.execute();
 		ctx.log().info("Workplace insertada correctamente");
 		
-		ctx.getDslContext().insertInto(APP_PARAM)
-			.set(APP_PARAM.DOMAIN, newDomainId)
-			.set(APP_PARAM.NAME, AppParam.AON_BETA_ENABLED.toString())
-			.set(APP_PARAM.VALUE, Boolean.TRUE.toString());
-		ctx.log().info("App Param AON_BETA_ENABLED set to TRUE");
-
-		ctx.getDslContext().insertInto(APP_PARAM)
-			.set(APP_PARAM.DOMAIN, newDomainId)
-			.set(APP_PARAM.NAME, AppParam.AON_ALPHA_ENABLED.toString())
-			.set(APP_PARAM.VALUE, Boolean.TRUE.toString());
-		ctx.log().info("App Param AON_ALPHA_ENABLED set to TRUE");
-
-	return domain;
+		return domain;
 	}
 	
+	private static void initializeDomain(AONContext context) {
+		context.getDslContext().insertInto(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, context.getDomainId())
+			.set(APP_PARAM.NAME, AppParam.AON_BETA_ENABLED.toString())
+			.set(APP_PARAM.VALUE, Boolean.TRUE.toString())
+			.execute();
+		context.log().info("App Param AON_BETA_ENABLED set to TRUE");
+	
+		context.getDslContext().insertInto(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, context.getDomainId())
+			.set(APP_PARAM.NAME, AppParam.AON_ALPHA_ENABLED.toString())
+			.set(APP_PARAM.VALUE, Boolean.TRUE.toString())
+			.execute();
+		context.log().info("App Param AON_ALPHA_ENABLED set to TRUE");
+		
+		Creditor defaultFiscalCreditor = AonFaker.getCreditor(context);
+		defaultFiscalCreditor.setDocumentCountry(Country.ES);
+		defaultFiscalCreditor.setDocumentType(DocumentType.CIF);
+		defaultFiscalCreditor.setDocument("Q2826000H");
+		defaultFiscalCreditor.setTransaction(InvoiceTransactionType.NATIONAL);
+		defaultFiscalCreditor.setName("Agencia Tributaria");
+		CreditorDAO.save(context, defaultFiscalCreditor);
+		context.log().info("Default Fiscal Creditor inserted!");
+		
+		context.getDslContext().insertInto(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, context.getDomainId())
+			.set(APP_PARAM.NAME, AppParam.FS_ADMON_CREDITOR.toString())
+			.set(APP_PARAM.VALUE, defaultFiscalCreditor.getId().toString() )
+			.execute();
+		context.log().info("App Param FS_ADMON_CREDITOR set to " + defaultFiscalCreditor.getId());
+	}
 	
 	
 	

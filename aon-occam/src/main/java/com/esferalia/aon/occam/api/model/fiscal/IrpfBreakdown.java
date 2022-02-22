@@ -3,14 +3,14 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class IrpfBreakdown implements Serializable{
+public class IrpfBreakdown implements Serializable {
 	
 	private static final long serialVersionUID = 8600299724576523607L;
 	
@@ -242,16 +242,7 @@ public class IrpfBreakdown implements Serializable{
 	}
 	
 	public String getDocumentNumber() {
-		String documentNumber = ((InvoiceType.SALES == getInvoiceType()) ? 
-				"E" 
-				: (InvoiceType.UNDEDUCTIBLE == getInvoiceType()) 
-				? "G" 
-				: "R") + "-";
-		if (!AonStringUtils.isEmpty(getSeries())) {
-			documentNumber += series + "/";
-		}
-		documentNumber += AonStringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-		return documentNumber;
+		return FinanceUtil.getDocumentNumber(getInvoiceType(), getSeries(), getNumber());
 	}
 	
 	//

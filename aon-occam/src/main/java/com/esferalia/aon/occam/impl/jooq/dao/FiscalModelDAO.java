@@ -83,7 +83,9 @@ public class FiscalModelDAO {
 		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.DOCUMENT);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.NAME);}
 		@Override public Property<String> getSurnameProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.SURNAME);}
-		
+		@Override public Property<Integer> getAccountEntryProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.ACCOUNT_ENTRY);}
+		@Override public Property<Double> getResultProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.RESULT);}
+		@Override public Property<Byte> getResultTypeProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.DECLARATION_TYPE);}
 	}
 
 	public static Record getModelRecord(final AONContext ctx,int id) {

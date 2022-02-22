@@ -155,4 +155,9 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 		return Mod111KeyDAO.values();
 	}
 
+	@Override
+	double getResult(Mod111 mod) {
+		return mod.getAmount(Mod111Key.AR_C87);
+	}
+	
 }

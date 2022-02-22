@@ -7,6 +7,39 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AonDisplayTable extends FlowPanel {
 	
+	public static class AonDisplayTableHeaderRow extends FlowPanel {
+		public AonDisplayTableHeaderRow() {
+			setStyleName(AON.CSS.aonDisplayGridHeaderRow());		
+		}
+		public AonDisplayTableCell addCell() {
+			AonDisplayTableCell cell = new AonDisplayTableCell();
+			cell.setStyleName(AON.CSS.aonDisplayGridHeaderCell());
+			add(cell);
+			return cell;
+		}
+		public AonDisplayTableCell addCell(String ... style ) {
+			AonDisplayTableCell cell = addCell();
+			for (String st : style) {
+				cell.addStyleName(st);
+			}
+			return cell;
+		}
+		public AonDisplayTableHeaderRow addCell( Widget widget ) {
+			addCell().add(widget);
+			return this;
+		}
+		public AonDisplayTableHeaderRow addCellIf( boolean condition, Widget widget ) {
+			return condition?addCell(widget):this;
+		}
+		public AonDisplayTableHeaderRow addCellIf( boolean condition, Widget widget, String ... style ) {
+			return condition?addCell(widget,style):this;
+		}
+		public AonDisplayTableHeaderRow addCell(Widget widget, String ... style) {
+			addCell(style).add(widget);
+			return this;
+		}
+	}
+
 	public static class AonDisplayTableRow extends FlowPanel {
 		public AonDisplayTableRow() {
 			setStyleName(AON.CSS.aonDisplayTableRow());		
@@ -59,6 +92,12 @@ public class AonDisplayTable extends FlowPanel {
 
 	public AonDisplayTableRow addRow() {
 		AonDisplayTableRow row = new AonDisplayTableRow();
+		add(row);
+		return row;
+	}
+
+	public AonDisplayTableHeaderRow addHeaderRow() {
+		AonDisplayTableHeaderRow row = new AonDisplayTableHeaderRow();
 		add(row);
 		return row;
 	}

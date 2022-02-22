@@ -41,7 +41,7 @@ public class MODEL111Impl implements IMODEL111 {
 	}
 	@Override
 	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111){
-		return FiscalModelDAO.initializeForFinish(ctx, mod111);
+		return Mod111DAO.initializeForFinish(ctx, mod111);
 	}
 	@Override
 	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111){

@@ -810,6 +810,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Estado Vto.")
 	String financeStatus();
 
+	@DefaultMessage("Contabilizado")
+	String recorded();
+
+	@DefaultMessage("Cont.")
+	String recordedAbbr();
+
 	@DefaultMessage("Descripci\u00F3n")
 	String description();
 

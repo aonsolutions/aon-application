@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.mvel2.MVEL;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelInvoiceDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -27,7 +29,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod111DAO extends FiscalModelDAO {
 	
 	public static Stream<Mod111> getMod111s(AONContext ctx,int domain, FiscalModelFilter filter) {
-		return FiscalModelDAO.getFullFiscalModels(ctx,domain,FiscalModelType.M111,filter, Mod111::new);
+		return FiscalModelDAO.getFiscalModels(ctx,domain,FiscalModelType.M111,filter, Mod111::new);
 	}
 
 	public static Stream<Mod111> getMod111s(AONContext ctx,int domain) {
@@ -76,6 +78,7 @@ public class Mod111DAO extends FiscalModelDAO {
 				mod111.ensureDetail(key.getKey()).setAmount(AonMathUtils.round( amount) );
 			}
 		}
+		mod111.setDeclarationResult(dec.getResult(mod111));
 		return mod111; 
 	}
 	
@@ -85,6 +88,8 @@ public class Mod111DAO extends FiscalModelDAO {
 			mod111.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod111);
+		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
+		dec.ensureDetails(mod111);
 		return mod111;
 	}
 	
@@ -98,11 +103,19 @@ public class Mod111DAO extends FiscalModelDAO {
 	public static Mod111 create(AONContext ctx,Mod111 mod111) {
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		dec.ensureDetails(mod111);
-		dec.createFromInvoices(ctx,mod111);
+		Set<Integer> invoices = dec.createFromInvoices(ctx,mod111);
 		dec.createFromSalary(ctx,mod111);
 		dec.uniqueInitialize(ctx,mod111);
-		calculate(mod111);
+		mod111 = save(ctx, mod111);
+		FiscalModelInvoiceDAO.save(ctx, mod111, invoices);
 		return mod111;
+	}
+	
+	public static Mod111 initializeForFinish(AONContext ctx,Mod111 mod111) {
+		calculate(mod111);
+		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
+		dec.initializeDeclarationType(mod111);
+		return FiscalModelDAO.initializeForFinish(ctx, mod111);
 	}
 	
 	public static Mod111 markAsFinished(AONContext ctx,Mod111 mod111) {
@@ -111,8 +124,9 @@ public class Mod111DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod111 markAsPending(AONContext ctx,Mod111 mod111) {
-		mod111.setDeclarationType( (String) null);
 		mod111.setStatus(FiscalStatus.PENDING);
+		mod111.setDeclarationResult(null);
+		mod111.setDeclarationResultType(null);
 		Finance finance = mod111.getFinance();
 		mod111.setFinance(null);
 		mod111 = save(ctx, mod111);

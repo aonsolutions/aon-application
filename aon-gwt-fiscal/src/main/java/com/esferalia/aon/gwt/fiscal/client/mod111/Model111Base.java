@@ -15,13 +15,19 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsComputeInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdown;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsInvoiceIrpfBreakdownGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsSalaryIrpfBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.Model111Callback;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup.IFinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup.IFinishDeclarationPopupCallback;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.shared.mod111.Model111ScriptProvider;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -32,6 +38,9 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -48,7 +57,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class Model111Base extends DockLayoutPanel {
-
 	protected FiscalModelAdmonPanel<Mod111, Model111ModuleOptions> admonPanel;
 
 	private static final String WIDTH_140PX = "140px";
@@ -568,7 +576,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	}
 	
 	private void showFinalizePopup(Mod111 model) {
-		FinishDeclarationPopup<Mod111,Model111ModuleOptions> finalizeDialog = new FinishDeclarationPopup<>(
+		AonFinishDeclarationPopup<Mod111,Model111ModuleOptions> finalizeDialog = new AonFinishDeclarationPopup<>(
 			model,
 			getCallback(), 
 			new IFinishDeclarationPopupCallback<Mod111>() {
@@ -593,6 +601,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		finalizeDialog.show();
 	}
 	
+
 	private void doMarkAsFinished() {
 		markAsFinishedButton.setEnabled(false);
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -651,10 +660,10 @@ public abstract class Model111Base extends DockLayoutPanel {
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
-			buff.append(AON.FMT.format(mod.getResult()));
-			if (mod.getDeclarationType() != null) {
+			buff.append(AON.FMT.format(mod.getDeclarationResult()));
+			if (mod.getDeclarationResultType() != null) {
 				buff.append(AonStringUtils.SPACE);
-				buff.append(mod.getDeclarationType().getDescription());
+				buff.append(mod.getDeclarationResultType().getDescription());
 			}
 			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
 				buff.append(AonStringUtils.SPACE);
@@ -837,40 +846,170 @@ public abstract class Model111Base extends DockLayoutPanel {
 	private void paintInfoCol(FlexTable table, int row, int col, final Model111Callback callback, final IModelScript<Mod111Key> script) {
 		FlowPanel buttonContainer = new FlowPanel();
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
+			
 			buttonContainer.setStyleName(AON.CSS.aonNowrap());
-			if 	(infoKey != FiscalModelKeyInfo.NONE) {
-				final AonTableButton button = new AonTableButton("");
-				button.setTitle(infoKey.getLabel());
-				if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.CSS.aonIconList());
-				else if	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.CSS.aonIconDiff());
-				else if	(infoKey == FiscalModelKeyInfo.SALARY) button.addStyleName(AON.CSS.aonIconEuro());
-				else if	(infoKey == FiscalModelKeyInfo.SALARY_IN_KIND) button.addStyleName(AON.CSS.aonIconData());
-				else if	(infoKey == FiscalModelKeyInfo.DIFF_SALARY) button.addStyleName(AON.CSS.aonIconDiff());
-				else if	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.CSS.aonIconCalc());
-				
-				// Botones info diferencia, solo si el modelo se creo por diferencias
-				if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE || infoKey == FiscalModelKeyInfo.DIFF_SALARY) {
-					button.setVisible(!getModel().isDiffCalculationDisabled());				
-				}				
-				
-				button.addClickHandler(event -> Model111.SERVICE.getInfo(
-					callback.getOptions().getOccam(),getModel(),script, infoKey,
-					new AsyncCallback<String>() {
+			infoKey.visit(new IFiscalModelKeyInfoVisitor<Void>() {
 
+				private void showCharInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model111.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							button.setEnabled(true);
+							callback.showError(AON.MSG.errorMessage());
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							button.setEnabled(true);
+							callback.showInfoPanel(result);
+						}
+					});
+				}
+				
+				private void showInvoiceIrpfBreakdownInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model111.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
 						}
-
+	
 						@Override
 						public void onSuccess(String result) {
-							callback.showInfoPanel(result);
+							JsInvoiceIrpfBreakdownGridPanel grid = new JsInvoiceIrpfBreakdownGridPanel();
+							grid.setTitle("FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO "
+									+ getModel().getModelFullName());
+							grid.setSubTitle(script.getLabel());
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsIRPFBreakdown> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								grid.addRow(array.get(i));
+							}
+							grid.addFooterRow();
+							callback.showInfoPanelWidget(grid);
+							button.setEnabled(true);
 						}
+					});
+				}
 				
-					}
-				));
-				buttonContainer.add(button);
-			}
+				private void showSalaryIrpfBreakdownInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model111.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							JsSalaryIrpfBreakdownGridPanel grid = new JsSalaryIrpfBreakdownGridPanel();
+							grid.setTitle("N\u00D3MINAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO "
+									+ getModel().getModelFullName());
+							grid.setSubTitle(script.getLabel());
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsIRPFBreakdown> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								grid.addRow(array.get(i));
+							}
+							grid.addFooterRow();
+							callback.showInfoPanelWidget(grid);
+							button.setEnabled(true);
+						}
+					});
+				}
+
+				private void showComputeInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model111.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							FlowPanel gridContainer = new FlowPanel();
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsIRPFComputeInfo> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								JsComputeInfoGridPanel grid = new JsComputeInfoGridPanel();
+								grid.setTitle("DETALLE DEL C\u00C1LCULO");
+								grid.setSubTitle(script.getLabel());
+								grid.addContent(array.get(i));
+								gridContainer.add(grid);
+							}
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
+						}
+					});
+				}
+				
+				private AonTableButton addButton(String iconStyle) {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),iconStyle);
+					buttonContainer.add(button);
+					return button;
+				}
+				
+				@Override
+				public Void visitInvoice() {
+					final AonTableButton button = addButton(AON.CSS.aonIconList());
+					button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+					return null;
+				}
+
+				@Override public Void visitModelInvoiceIrpfBreakdown() {
+					return visitInvoice();
+				}
+				
+				@Override 
+				public Void visitSalary() { 
+					final AonTableButton button = addButton(AON.CSS.aonIconEuro());
+					button.addClickHandler(event -> showSalaryIrpfBreakdownInfo(button));
+					return null; 
+				}
+				@Override 
+				public Void visitSalaryInKind() { 
+					final AonTableButton button = addButton(AON.CSS.aonIconData());
+					button.addClickHandler(event -> showSalaryIrpfBreakdownInfo(button));
+					return null; 
+				}
+
+				@Override public Void visitCompute() { 
+					final AonTableButton button = addButton(AON.CSS.aonIconCalc());
+					button.addClickHandler(event -> showComputeInfo(button));
+					return null; 
+				}
+				
+				// *******************************************
+				// *******************************************
+				// *******************************************
+				
+				@Override 
+				public Void visitDiffInvoice() {
+					final AonTableButton button = addButton(AON.CSS.aonIconDiff());
+					button.addClickHandler(event -> showCharInfo(button));
+					return null; 
+				}
+				@Override 
+				public Void visitDiffSalary() {
+					return visitDiffInvoice();
+				}
+
+				@Override public Void visitNone() { return null; }
+				@Override public Void visitInAccrualInvoice() { return null; }
+				@Override public Void visitOutAccrualInvoice() { return null; }
+				@Override public Void visitDiffInAccrualInvoice() { return null; }
+				@Override public Void visitDiffOutAccrualInvoice() { return null; }
+				@Override public Void visitComputeKey() { return null; }
+				@Override public Void visitActAccount() { return null; }
+				@Override public Void visitTitle() { return null; }
+				@Override public Void visitIrpfActivity() { return null; }
+				@Override public Void visitCorporate() { return null; }
+			});
 			table.setWidget(row, col, buttonContainer);
 		}
 	}

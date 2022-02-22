@@ -6,18 +6,21 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod111Declaration {
 	
@@ -114,9 +117,6 @@ public abstract class Mod111Declaration {
 		}
 	}
 
-	abstract IMod111KeyDAO valueOf(String string);
-	abstract IMod111KeyDAO[] getKeys();
-
 	void ensureDetails(Mod111 mod111) {
 		Arrays.stream( getKeys() )
 			.forEach(key -> mod111.ensureDetail(key.getKey()).setExpression(key.getExpression()));
@@ -136,12 +136,42 @@ public abstract class Mod111Declaration {
 				.forEach(key -> key.initialize(ctx, mod111, docs, pdocs, br)));
 	}
 
-	void createFromInvoices(final AONContext ctx, final Mod111 mod111) {
+	IrpfBreakdown addInvoice( Set<Integer> invoices, IrpfBreakdown br) {
+		invoices.add(br.getInvoice());
+		return br;	
+	}
+	
+	Set<Integer> createFromInvoices(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
-		IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111)
+		final Set<Integer> invoices = new HashSet<>();
+		Stream<IrpfBreakdown> stream;
+		if ( mod111.isComplementary() ) {
+			stream =  IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111);
+		} else {
+			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
+		}
+		stream
+			.map( br -> addInvoice(invoices,br))
 			.forEach(br -> Arrays.stream( getKeys() )
 				.filter(key -> key.acceptValue(mod111,br))
 				.forEach(key -> key.initialize(ctx, mod111, docs, pdocs, br)));
+		return invoices;
 	}
+	
+	protected void initializeDeclarationType(Mod111 mod111) {
+		if (AonMathUtils.isGreatherThanZero(mod111.getDeclarationResult() )) {
+			mod111.setDeclarationResultType(FiscalModelDeclarationType.DEPOSIT);
+		} else {
+			mod111.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
+		}
+	}
+
+	abstract IMod111KeyDAO valueOf(String string);
+	abstract IMod111KeyDAO[] getKeys();
+	abstract double getResult(final Mod111 mod111);
+	
+	
+	
+	
 }

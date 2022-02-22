@@ -57,7 +57,7 @@ public class VATDAO  {
 	
 	
 	private static final VATPropertiesDAO VAT_PROPERTIES = new VATPropertiesDAO();
-	private static class VATPropertiesDAO extends VATDAO implements VATProperties {
+	private static class VATPropertiesDAO implements VATProperties {
 
 		private Condition[] getConditions(VATFilter filter) {
 			if (filter == null) {

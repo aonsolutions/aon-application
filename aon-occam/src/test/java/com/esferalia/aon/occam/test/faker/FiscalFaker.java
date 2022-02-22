@@ -77,12 +77,17 @@ public class FiscalFaker {
 	public static Mod111 getMod111( FiscalFakerParams params) {
 		Mod111 mod111 = new Mod111();
 		mod111.setDomain(params.getOccam().getDomain());
-		MODEL111.initialize( params.getOccam(), mod111);
 		mod111.setYear(AonDateUtils.getYear(params.getIssueDate()));
 		mod111.setPeriod( params.isMonthly()
 			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
 		mod111.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		MODEL111.initialize( params.getOccam(), mod111);
+		return mod111;
+	}
+
+	public static Mod111 createMod111( FiscalFakerParams params) {
+		Mod111 mod111 = getMod111( params );
 		MODEL111.create(params.getOccam(), mod111);
 		return mod111;
 	}

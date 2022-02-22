@@ -1,33 +1,60 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod111;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public class Model111ScriptProvider {
+	private Model111ScriptProvider() {
+		
+	}
 
 	public static IModelScript<Mod111Key>[] obtainScript(Mod111 mod111) {
-		IModelScript<Mod111Key>[] ms = null;
-		if (mod111.getAdministration() == Administration.COMMON_TERRITORY) {
-			ms = Model111AEATScript.values();
-		} else if (mod111.getAdministration() == Administration.GIPUZKOA) {
-			ms = Model110GipuzkoaScript.values();
-		} else if (mod111.getAdministration() == Administration.BIZKAIA) {
-			if (mod111.getPeriod().isQuarterPeriod()) {
-				ms = Model110BizkaiaScript.values();
-			} else {
-				ms = Model111BizkaiaScript.values();
+		IModelScript<Mod111Key>[] ms = mod111.getAdministration().visit(new IAdministrationVisitor<IModelScript<Mod111Key>[]>() {
+
+			@Override
+			public IModelScript<Mod111Key>[] visitAlava() {
+				return (mod111.getYear() > 2015)
+					?Model111Araba2016Script.values()
+					:Model111ArabaScript.values();
 			}
-		} else if (mod111.getAdministration() == Administration.NAVARRA) {
-			ms = Model715NavarraScript.values();
-		} else if (mod111.getAdministration() == Administration.ALAVA) {
-			if (mod111.getYear() > 2015) {
-				ms = Model111Araba2016Script.values();
-			} else {
-				ms = Model111ArabaScript.values();
+
+			@Override
+			public IModelScript<Mod111Key>[] visitBizkaia() {
+				if ( (mod111.getYear() > 2021) ) {
+					return (mod111.getPeriod().isQuarterPeriod())
+						?Model110Bizkaia2022Script.values()
+						:Model111Bizkaia2022Script.values();
+				} else {
+					return (mod111.getPeriod().isQuarterPeriod())
+						?Model110BizkaiaScript.values()
+						:Model111BizkaiaScript.values();
+				}
 			}
-		}
+
+			@Override
+			public IModelScript<Mod111Key>[] visitGipuzkoa() {
+				return Model110GipuzkoaScript.values();
+			}
+
+			@Override
+			public IModelScript<Mod111Key>[] visitNavarra() {
+				return Model715NavarraScript.values();
+			}
+
+			@Override
+			public IModelScript<Mod111Key>[] visitCommonTerritory() {
+				return (mod111.getYear() > 2021)
+					?Model111AEAT2022Script.values()
+					:Model111AEATScript.values();
+			}
+
+			@Override
+			public IModelScript<Mod111Key>[] visitUnknown() {
+				return null;
+			}
+		});
 		if (ms == null) {
 			throw new IllegalStateException(
 					"No hay declaración disponible para: " + mod111.getAdministration().toString() + " "

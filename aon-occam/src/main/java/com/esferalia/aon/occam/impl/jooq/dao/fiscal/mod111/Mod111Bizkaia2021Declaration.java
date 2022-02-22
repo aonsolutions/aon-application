@@ -147,4 +147,9 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		return Mod111KeyDAO.values();
 	}
 
+	@Override
+	double getResult(Mod111 mod) {
+		return mod.getAmount(Mod111Key.BZ_C39);
+	}
+
 }

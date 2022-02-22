@@ -1,34 +1,38 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111;
 
 
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.IrpfBreakdownJSON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IRPFFormatter;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
-import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod111InfoDAO {
-	
-	/*
-public static <T extends FiscalModel> Stream<T> getFiscalModels(AONContext ctx,int domain, FiscalModelType model, Supplier<T> modelSupplier) { 
-	 */
-	
+	public static final DecimalFormat DEC2 = new DecimalFormat("#,###.##");		
 	private static final String INFO_MSG = "<pre class='aon_margin_bottom'>{0}<pre>";
 	private static final String NONE_INFO = "No hay datos";
 	private enum Mod111KeyInfoDAO {
@@ -41,37 +45,62 @@ public static <T extends FiscalModel> Stream<T> getFiscalModels(AONContext ctx,i
 		,INVOICE {
 			@Override
 			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO)); 
+				return Objects.requireNonNullElse(
+						getInvoicesInfo(ctx, mod,keyDAO)
+							.map( IrpfBreakdownJSON::toJSON)
+							.collect(JSONArray::new,JSONArray::put,JSONArray::put)
+							,new JSONArray()).toString(); 
 			}
 		} 
+		,MODEL_INVOICE_IRPF_BREAKDOWN {
+			@Override
+			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
+				return Objects.requireNonNullElse(
+					getModelInvoicesInfo(ctx, mod,keyDAO)
+						.map( IrpfBreakdownJSON::toJSON)
+						.collect(JSONArray::new,JSONArray::put,JSONArray::put)
+						,new JSONArray()).toString(); 
+			}
+		}
+		,SALARY {
+			@Override
+			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
+				return Objects.requireNonNullElse(
+					getSalaryInfo(ctx, mod,keyDAO)
+						.map( IrpfBreakdownJSON::toJSON)
+						.collect(JSONArray::new,JSONArray::put,JSONArray::put)
+						,new JSONArray()).toString(); 
+			}
+		}
+		,SALARY_IN_KIND {
+			@Override
+			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
+				return Objects.requireNonNullElse(
+					getSalaryInfo(ctx, mod,keyDAO)
+						.map( IrpfBreakdownJSON::toJSON)
+						.collect(JSONArray::new,JSONArray::put,JSONArray::put)
+						,new JSONArray()).toString(); 
+			}
+		}
+		,COMPUTE {
+			@Override
+			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
+				return Objects.requireNonNullElse(getExpression(mod, script),new JSONArray()).toString(); 
+			}
+		}
+		// **********************************************
+		// **********************************************
+		// **********************************************
 		,DIFF_INVOICE{
 			@Override
 			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
 				return MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO)); 
 			}
 		}
-		,SALARY {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return MessageFormat.format(INFO_MSG, getSalaryInfo(ctx, mod, script,keyDAO));
-			}
-		}
-		,SALARY_IN_KIND {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return MessageFormat.format(INFO_MSG, getSalaryInKindInfo(ctx, mod, script,keyDAO));
-			}
-		}
 		,DIFF_SALARY{
 			@Override
 			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
 				return MessageFormat.format(INFO_MSG, getDiffSalaryInfo(ctx, mod, script,keyDAO));
-			}
-		}
-		,COMPUTE {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return MessageFormat.format(INFO_MSG, getExpression(mod, script,keyDAO));
 			}
 		}
 		;
@@ -88,110 +117,108 @@ public static <T extends FiscalModel> Stream<T> getFiscalModels(AONContext ctx,i
 			.findFirst()
 			.orElse(null);
 	}
-
-	private static String getSalaryInKindInfo(AONContext ctx, final Mod111 mod111
-			, final IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-		return IRPFFormatter.formatSalaries(
-				"INFORME RETENCIONES EN ESPECIE EN N\u00D3MINAS"
-						+ " DEL " + mod111.getPeriod().getDescription()
-						+ " DE " + mod111.getYear()
-				,script.getLabel()
-				,IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
-					.filter( br ->  keyDAO.acceptValue(mod111, br) )	
-					.collect(Collectors.toCollection(LinkedList::new))
-				);
-	}
-	private static String getSalaryInfo(AONContext ctx, final Mod111 mod111
-			, final IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-		return IRPFFormatter.formatSalaries(
-				"INFORME RETENCIONES DINERARIAS EN N\u00D3MINAS"
-						+ " DEL " + mod111.getPeriod().getDescription()
-						+ " DE " + mod111.getYear()
-				,script.getLabel()
-				,IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
-					.filter( br ->  keyDAO.acceptValue(mod111, br) )	
-					.collect(Collectors.toCollection(LinkedList::new))
-				);
+	
+	private static Stream<IrpfBreakdown> getModelInvoicesInfo(AONContext ctx, final Mod111 mod111, IMod111KeyDAO keyDAO) {
+		return IRPFDAO.getModelInputInvoicesIrpfBreakdown(ctx, mod111)
+			.filter( br ->  keyDAO.acceptValue(mod111, br));
 	}
 	
-	private static String getExpression(Mod111 mod111, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO0) {
+	private static Stream<IrpfBreakdown> getInvoicesInfo(AONContext ctx, final Mod111 mod111, IMod111KeyDAO keyDAO) {
+		return IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111)
+			.filter( br ->  keyDAO.acceptValue(mod111, br));
+	}
+
+	private static Stream<IrpfBreakdown> getSalaryInfo(AONContext ctx, final Mod111 mod111, IMod111KeyDAO keyDAO) {
+		return IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
+			.filter( br ->  keyDAO.acceptValue(mod111, br) );
+	}
+
+	private static class Mod111MVELExpressionContext extends LinkedHashMap<String, Object> {
+		
+		private static final long serialVersionUID = 7905148919414628166L;
+		
+		private String expression;
+		private Mod111 mod111;
+		private final LinkedList<Mod111Key> keys = new LinkedList<>();
+
+		public Mod111MVELExpressionContext(String expression, final Mod111 mod111) {
+			super();
+			this.expression = expression;
+			this.mod111 = mod111;
+			for (String keyValue : mod111.getMap().keySet()) {
+				Mod111Key mod111Key = Mod111Key.getKey(keyValue);
+				if (mod111Key != null) {
+					FiscalModelDetail detail = mod111.getMap().get(keyValue);
+					put(mod111Key.toString(), detail==null?0.0:detail.getAmount());
+				}
+			}
+		}
+		
+		@Override
+		public Object get(Object keyString) {
+			Mod111Key key = Mod111Key.valueOf(keyString.toString());
+			keys.add(key);
+			String anchor = "{" + (keys.size() - 1) + "}";
+			expression = AonStringUtils.replace(expression, keyString.toString(), anchor);
+			return super.get(keyString);
+		}
+		
+		public String getExpression() {
+			return expression;
+		}
+		public String getFormula() {
+			 return MessageFormat.format(expression,keys.stream().map(Mod111Key::getBoxFormatted).toArray());
+		}
+		public List<Mod111Key> getKeys() {
+			return keys;
+		}
+		public String getResult() {
+			 return MessageFormat.format(expression,keys.stream()
+					 .map(k-> " ["+DEC2.format(mod111.getAmount(k)) +"] " )
+					 .toArray());
+		}
+		
+		@Override
+		public boolean equals(Object arg0) {
+			return super.equals(arg0);
+		}
+	}
+	
+	private static String getExpression(Mod111 mod111, IModelScript<Mod111Key> script) {
 		StringBuilder buf = new StringBuilder();
 		int headerLength = 100;
 		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
 		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.center("DETALLE DEL C\u00C1LCULO", headerLength)));
 		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
-
-		final StringBuilder expr = new StringBuilder();
-		final StringBuilder resu = new StringBuilder();
-
-		LinkedHashMap<String, Object> mvelCtx = new LinkedHashMap<String, Object>() {
-			private static final long serialVersionUID = -4910560506222174407L;
-			@Override
-			public Object get(Object keyString) {
-				Mod111Key key = Mod111Key.valueOf(keyString.toString());
-				String exprCopy = expr.toString();
-				expr.delete(0, expr.length());
-				expr.append(AonStringUtils.replace(exprCopy
-						, keyString.toString()
-						, key.getBoxFormatted()));
-				Object value = super.get(keyString);
-				exprCopy = resu.toString();
-				resu.delete(0, resu.length());
-				resu.append(AonStringUtils.replace(exprCopy
-						, keyString.toString()
-						," " + value.toString() + " "
-						));
-				return value;
-			}
-		};
-
-		for (String keyValue : mod111.getMap().keySet()) {
-			Mod111Key mod111Key = Mod111Key.getKey(keyValue);
-			if (mod111Key != null) {
-				FiscalModelDetail detail = mod111.getMap().get(keyValue);
-				mvelCtx.put(mod111Key.toString(), detail==null?0.0:detail.getAmount());
-			}
-		}
-
-		Mod111Declaration dec = Mod111Declaration.getInstance(mod111); 
+		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
+		JSONArray array = new JSONArray();
 		for (Mod111Key key : script.getKeys() ) {
 			IMod111KeyDAO keyDAO = dec.getKey(key);
 			if (keyDAO != null) {
-				resu.delete(0, resu.length());
-				resu.append(keyDAO.getExpression());
-				expr.delete(0, expr.length());
-				expr.append(keyDAO.getExpression());
-				
-				String box = " [" + AonStringUtils.leftPad(Integer.toString(keyDAO.getKey().getBox()), 3, '0')+"] ";
-				buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
-				buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.center("Casilla: " + box + " - " + script.getLabel(), headerLength)));
+				Mod111MVELExpressionContext mvelCtx = new Mod111MVELExpressionContext(keyDAO.getExpression(),mod111);
 				Object ret = MVEL.eval(keyDAO.getExpression(), mvelCtx, mvelCtx);
-				resu.append(" = ");
-				resu.append(AonMathUtils.round((Double) ret));
-				expr.append(" = ");
-				expr.append(box);
-				buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,"<b>F\u00F3rmula:</b> " + expr.toString()));		
-				buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BLUE_BORDER_BOTTOM,"<b>Resultado:</b> " + resu.toString()));
+				JSONObject info = new JSONObject()
+					.put(IJsonNames.EXPRESSION, keyDAO.getExpression())
+					.put(IJsonNames.PATTERN, mvelCtx.getExpression())
+					.put(IJsonNames.FORMULA, mvelCtx.getFormula())
+					.put(IJsonNames.RESULT, mvelCtx.getResult())
+					.put(IJsonNames.VALUE, ret)
+					;
+				JSONArray keysArray = new JSONArray();		
+				for (Mod111Key k : mvelCtx.getKeys()) {
+					keysArray.put(k);
+				}
+				info.put(IJsonNames.KEYS, keysArray);
+				array.put(info);
 			}
 			
 		}
-		return buf.toString();
+		return array.toString();
 	}
 	
-	private static String getInvoicesInfo(AONContext ctx, final Mod111 mod111
-			, final IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-		
-		String title = "FACTURAS CON RETENCIONES QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod111) 
-				+ " DEL " + mod111.getPeriod().getDescription()
-				+ " DE " + mod111.getYear();
-		return IRPFFormatter.formatInvoices(title,script.getLabel()
-			,IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111)
-					.filter( br ->  keyDAO.acceptValue(mod111, br) )	
-					.collect(Collectors.toCollection(LinkedList::new))
-		);
-	}
-	
+	// *****************************************************
+	// *****************************************************
+	// *****************************************************
 	private static String getDiffSalaryInfo(AONContext ctx, final Mod111 mod111
 			, final IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
 		return IRPFFormatter.formatDiffInvoices(
@@ -200,7 +227,7 @@ public static <T extends FiscalModel> Stream<T> getFiscalModels(AONContext ctx,i
 				,script.getKeys()
 				,FiscalModelDAO.getEffectivePreviousModels(ctx,mod111,Mod111::new)
 				 .collect(Collectors.toCollection(LinkedList::new))	
-				,IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
+				,com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
 					.filter( br ->  keyDAO.acceptValue(mod111, br) )	
 					.collect(Collectors.toCollection(LinkedList::new))
 				);
@@ -218,11 +245,11 @@ public static <T extends FiscalModel> Stream<T> getFiscalModels(AONContext ctx,i
 			,script.getKeys()
 			,FiscalModelDAO.getEffectivePreviousModels(ctx, mod111, Mod111::new)
 			 	.collect(Collectors.toCollection(LinkedList::new))	
-			,IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod111)
+			,com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod111)
 				.filter( br ->  keyDAO.acceptValue(mod111, br) )	
 				.collect(Collectors.toCollection(LinkedList::new))
 		);
 	}
-	
+
 }
 

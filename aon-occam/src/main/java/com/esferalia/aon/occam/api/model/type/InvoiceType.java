@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceType implements Serializable  {
 
@@ -90,6 +91,9 @@ public enum InvoiceType implements Serializable  {
 	
 	public String getDescription() {
 		return description;
+	}
+	public String getAbbrDescription() {
+		return AonStringUtils.substring(description,0,4);
 	}
 	
 	public String getTediName() {

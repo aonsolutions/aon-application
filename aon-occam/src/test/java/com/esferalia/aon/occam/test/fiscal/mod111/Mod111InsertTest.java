@@ -41,10 +41,10 @@ public class Mod111InsertTest extends AbstractOccamTest {
 		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA, true);
 		Mod111 navarra = insertModel( Administration.NAVARRA, true);
 		
-		Asserts.assertEqualsDouble("Mod111 Mensual (Araba). Resultado no coincide.", commonTerritory.getResult(), araba.getResult());
-		Asserts.assertEqualsDouble("Mod111 Mensual (Bizkaia). Resultado no coincide.", commonTerritory.getResult(), bizkaia.getResult());
-		Asserts.assertEqualsDouble("Mod111 Mensual (Gipuzkoa). Resultado no coincide.", commonTerritory.getResult(), gipuzkoa.getResult());
-		Asserts.assertEqualsDouble("Mod111 Mensual (Navarra). Resultado no coincide.", commonTerritory.getResult(), navarra.getResult());
+		Asserts.assertEqualsDouble("Mod111 Mensual (Araba). Resultado no coincide.", commonTerritory.getDeclarationResult(), araba.getDeclarationResult());
+		Asserts.assertEqualsDouble("Mod111 Mensual (Bizkaia). Resultado no coincide.", commonTerritory.getDeclarationResult(), bizkaia.getDeclarationResult());
+		Asserts.assertEqualsDouble("Mod111 Mensual (Gipuzkoa). Resultado no coincide.", commonTerritory.getDeclarationResult(), gipuzkoa.getDeclarationResult());
+		Asserts.assertEqualsDouble("Mod111 Mensual (Navarra). Resultado no coincide.", commonTerritory.getDeclarationResult(), navarra.getDeclarationResult());
 		
 	}
 
@@ -55,10 +55,10 @@ public class Mod111InsertTest extends AbstractOccamTest {
 		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA, false);
 		Mod111 navarra = insertModel( Administration.NAVARRA, false);
 
-		Asserts.assertEqualsDouble("Mod111 Trimestral (Araba). Resultado no coincide.", commonTerritory.getResult(), araba.getResult());
-		Asserts.assertEqualsDouble("Mod111 Trimestral (Bizkaia). Resultado no coincide.", commonTerritory.getResult(), bizkaia.getResult());
-		Asserts.assertEqualsDouble("Mod111 Trimestral (Gipuzkoa). Resultado no coincide.", commonTerritory.getResult(), gipuzkoa.getResult());
-		Asserts.assertEqualsDouble("Mod111 Trimestral (Navarra). Resultado no coincide.", commonTerritory.getResult(), navarra.getResult());
+		Asserts.assertEqualsDouble("Mod111 Trimestral (Araba). Resultado no coincide.", commonTerritory.getDeclarationResult(), araba.getDeclarationResult());
+		Asserts.assertEqualsDouble("Mod111 Trimestral (Bizkaia). Resultado no coincide.", commonTerritory.getDeclarationResult(), bizkaia.getDeclarationResult());
+		Asserts.assertEqualsDouble("Mod111 Trimestral (Gipuzkoa). Resultado no coincide.", commonTerritory.getDeclarationResult(), gipuzkoa.getDeclarationResult());
+		Asserts.assertEqualsDouble("Mod111 Trimestral (Navarra). Resultado no coincide.", commonTerritory.getDeclarationResult(), navarra.getDeclarationResult());
 	}
 
 	private Mod111 insertModel( Administration admon, boolean monthly) {
@@ -66,7 +66,7 @@ public class Mod111InsertTest extends AbstractOccamTest {
 			.setIssueDate(new Date())
 			.setMonthly(monthly)
 			.setAdministration(admon);
-		Mod111 mod111 = FiscalFaker.getMod111(params);
+		Mod111 mod111 = FiscalFaker.createMod111(params);
 		MODEL111.save(getOccam(), mod111);
 		Mod111 actual = MODEL111.get(getOccam(), mod111.getId());  
 		Asserts.assertMod111(mod111, actual);

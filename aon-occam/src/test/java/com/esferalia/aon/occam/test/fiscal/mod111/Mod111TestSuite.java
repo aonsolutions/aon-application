@@ -9,6 +9,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod111ExpressionsTest.class,
 	Mod111DeleteTest.class,
 	Mod111InsertTest.class,
+	Mod111FinishTest.class,
+	Mod111ReopenTest.class,
 })
 public class Mod111TestSuite {
 

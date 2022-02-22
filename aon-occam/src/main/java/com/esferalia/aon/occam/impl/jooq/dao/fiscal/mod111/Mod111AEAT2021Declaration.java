@@ -75,7 +75,7 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 			, null
 			, null
 			, (ctx,mod) -> mod.putAmount(Mod111Key.CT_C29,mod.isComplementary()
-				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getResult).sum()
+				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
 				:0.0)
 			,null)
 		,CT_C30(Mod111Key.CT_C30
@@ -133,6 +133,11 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 	@Override
 	IMod111KeyDAO[] getKeys() {
 		return Mod111KeyDAO.values();
+	}
+
+	@Override
+	double getResult(Mod111 mod) {
+		return mod.getAmount(Mod111Key.CT_C30);
 	}
 
 }

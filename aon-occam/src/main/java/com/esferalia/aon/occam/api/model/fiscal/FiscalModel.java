@@ -51,6 +51,9 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	private String contactCellular;
 	private String contactEmail;
 	private String iban;
+	private Integer accountEntry;
+	private Double declarationResult;
+	private FiscalModelDeclarationType declarationResultType;
 
 	private String creationUser;
 	private Date creationDate;
@@ -434,44 +437,6 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return getMap().get(key);
 	}
 	
-	public static void map(FiscalModel from,FiscalModel to) {
-		to.setId(from.getId());
-		to.setAdministration(from.getAdministration());
-		to.setModel(from.getModel());
-		to.setYear(from.getYear());
-		to.setPeriod(from.getPeriod());
-		to.setReplacement(from.isReplacement());
-		to.setDomain(from.getDomain());
-		to.setFinance(from.getFinance());
-		to.setStatus(from.getStatus());
-		to.setConfidential(from.isConfidential());
-		to.setComplementary(from.isComplementary());
-		to.setWithoutActivity(from.isWithoutActivity());
-		to.setNumber(from.getNumber());
-		to.setReplacedNumber(from.getReplacedNumber());
-		to.setComments(from.getComments());
-		to.setDocument(from.getDocument());
-		to.setSurname(from.getSurname());
-		to.setName(from.getName());
-		to.setStreetInitial(from.getStreetInitial());
-		to.setStreetName(from.getStreetName());
-		to.setStreetNumber(from.getStreetNumber());
-		to.setStreetStair(from.getStreetStair());
-		to.setStreetFloor(from.getStreetFloor());
-		to.setStreetDoor(from.getStreetDoor());
-		to.setPhone(from.getPhone());
-		to.setTown(from.getTown());
-		to.setProvince(from.getProvince());
-		to.setZip(from.getZip());
-		to.setAdmonAeat(from.getAdmonAeat());
-		to.setContactPerson(from.getContactPerson());
-		to.setContactPhone(from.getContactPhone());
-		to.setContactCellular(from.getContactCellular());
-		to.setContactEmail(from.getContactEmail());
-		to.setIban(from.getIban());;
-		to.setMap(from.getMap());
-	}
-
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
@@ -506,74 +471,104 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-	public FiscalModelDeclarationType getDeclarationType() {
-		return FiscalModelDeclarationType.safeValueOf( getDescription( getDeclarationTypeKey() ));
-	}
-	public void setDeclarationType(FiscalModelDeclarationType type) {
-		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
-	}
-	public void setDeclarationType(String type) {
-		setDeclarationType( FiscalModelDeclarationType.safeValueOf(type));
-	}
-
-	public IFiscalModelKey getDeclarationTypeKey() {
-		return null;
-	}
-	
-	public double getResult() {
-		// REDEFINE
-		return 0;
-	}
-	public boolean isReplacedNumberAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isReplacementDeclarationAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isComplementaryNumberAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isComplementaryDeclarationAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isToDeduceAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isNegativeAvailable(){
-		// REDEFINE
-		return false;
-	}
-	
-	public void setDefaultDeclarationType(){
-		if (isAEAT()) {
-			if (AonMathUtils.isGreatherThanZero(getResult() )) {
-				setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
-			} else {
-				setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
-			}
-		}
-	}
-	
-	public boolean isDiffCalculationAvailable() {
-		// REDEFINE
-		return false;
-	}
-	
-	public boolean isDiffCalculationDisabled() {
-		// REDEFINE
-		return false;
-	}
-	
-	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
-		// REDEFINE
-	}
 	public boolean isStrictToDeposit() {
 		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT);
 	}
 	
+	public String getModelFullName() {
+		return AonStringUtils.defaultIfBlank(FiscalModelUtils.getModelName(this),
+				(getModel() != null?getModel().getName():"???") ) 
+			+ " de "
+			+ getYear()
+			+ "-"
+			+ (getPeriod() != null?getPeriod().getDescription() :"???");
+	}
+	
+	public Integer getAccountEntry() {
+		return accountEntry;
+	}
+	public FiscalModel setAccountEntry(Integer accountEntry) {
+		this.accountEntry = accountEntry;
+		return this;
+	}
+	public boolean isRecorded() {
+		return getAccountEntry() != null;
+	}
+	 
+	public Double getDeclarationResult() {
+		return declarationResult;
+	}
+	public FiscalModel setDeclarationResult(Double declarationResult) {
+		this.declarationResult = declarationResult;
+		return this;
+	}
+	
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return declarationResultType;
+	}
+	public FiscalModel setDeclarationResultType(FiscalModelDeclarationType declarationResultType) {
+		this.declarationResultType = declarationResultType;
+		return this;
+	}
+	
+	public void setDefaultDeclarationType(){
+		if (isAEAT()) {
+			if (AonMathUtils.isGreatherThanZero(getDeclarationResult() )) {
+				setDeclarationResultType(FiscalModelDeclarationType.DEPOSIT);
+			} else {
+				setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
+			}
+		}
+	}
+
+	// DEPRECATED METHODS
+	@Deprecated
+	public double getResult() {
+		return 0;
+	}
+	@Deprecated
+	public FiscalModelDeclarationType getDeclarationType() {
+		return FiscalModelDeclarationType.safeValueOf( getDescription( getDeclarationTypeKey() ));
+	}
+	@Deprecated
+	public void setDeclarationType(FiscalModelDeclarationType type) {
+		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
+	}
+	@Deprecated
+	public void setDeclarationType(String type) {
+		setDeclarationType( FiscalModelDeclarationType.safeValueOf(type));
+	}
+	@Deprecated
+	public IFiscalModelKey getDeclarationTypeKey() {
+		return null;
+	}
+	
+	public boolean isReplacedNumberAvailable() {
+		return false;
+	}
+	public boolean isReplacementDeclarationAvailable() {
+		return false;
+	}
+	public boolean isComplementaryNumberAvailable() {
+		return false;
+	}
+	public boolean isComplementaryDeclarationAvailable() {
+		return false;
+	}
+	public boolean isToDeduceAvailable() {
+		return false;
+	}
+	public boolean isNegativeAvailable(){
+		return false;
+	}
+	public boolean isDiffCalculationAvailable() {
+		return false;
+	}
+	public boolean isDiffCalculationDisabled() {
+		return false;
+	}
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		// REDEFINE
+	}
 }
+

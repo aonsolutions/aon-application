@@ -32,8 +32,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 
-@Deprecated
-public class FinishDeclarationPopup<T extends FiscalModel,O extends FiscalModelModuleOptions<T>> extends AonCustomDialog {
+public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalModelModuleOptions<T>> extends AonCustomDialog {
 	
 	static final FiscalMSServiceAsync SERVICE;
 	static {
@@ -48,22 +47,18 @@ public class FinishDeclarationPopup<T extends FiscalModel,O extends FiscalModelM
 	}
 	
 	protected final FlexTable tab = new FlexTable();
-	protected IFiscalModelCallback<T,O> callback;
-	protected IFinishDeclarationPopupCallback<T> finishPopupCallback;
 	protected int row = 0;
 	
-	public FinishDeclarationPopup(T model
+	public AonFinishDeclarationPopup(T model
 		,final IFiscalModelCallback<T,O> callback
 		,IFinishDeclarationPopupCallback<T> finishPopupCallback) {
-		this.callback = callback;
-		this.finishPopupCallback = finishPopupCallback;  
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		initializeTable();
 		paintResul(model);
-		paintDeclarationType(model);
-		paintButtons(model, callback.getOptions());
+		paintDeclarationType(model, callback);
+		paintButtons(model, callback, finishPopupCallback);
 		add(tab);
 	}
 
@@ -89,19 +84,19 @@ public class FinishDeclarationPopup<T extends FiscalModel,O extends FiscalModelM
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonFontLarger());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonPaddingRight());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-		tab.setWidget(row, 1, new Label( AON.FMT.format(model.getResult())));
+		tab.setWidget(row, 1, new Label( AON.FMT.format(model.getDeclarationResult())));
 		row++;
 	}
 
-	private void paintDeclarationType(T model) {
+	private void paintDeclarationType(T model,final IFiscalModelCallback<T,O> callback) {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.declarationType()));
 		
-		if (model.getDeclarationType() == FiscalModelDeclarationType.NEGATIVE
-		 || model.getDeclarationType() == FiscalModelDeclarationType.TO_DEDUCE) {
+		if (model.getDeclarationResultType() == FiscalModelDeclarationType.NEGATIVE
+		 || model.getDeclarationResultType() == FiscalModelDeclarationType.TO_DEDUCE) {
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonTextCenter());
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-			tab.setWidget(row, 1, new Label( model.getDeclarationType().getDescription() ));	
+			tab.setWidget(row, 1, new Label( model.getDeclarationResultType().getDescription() ));	
 			row++;
 		} else {
 			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getOccam());
@@ -116,7 +111,7 @@ public class FinishDeclarationPopup<T extends FiscalModel,O extends FiscalModelM
 			}
 			listBox.addChangeHandler(event -> {
 				FiscalModelDeclarationType type = FiscalModelDeclarationType.safeValueOf(listBox.getSelectedValue());
-				model.setDeclarationType( type );
+				model.setDeclarationResultType( type );
 				iban.setEnabled( type.isBankRequired() );
 				creditorBox.setEnabled(type.mustCreateFinance());
 			});
@@ -166,7 +161,9 @@ public class FinishDeclarationPopup<T extends FiscalModel,O extends FiscalModelM
 		
 	}
 	
-	private void paintButtons(T model, final FiscalModelModuleOptions<T> options) {
+	private void paintButtons(T model
+			,final IFiscalModelCallback<T,O> callback
+			,IFinishDeclarationPopupCallback<T> finishPopupCallback) {
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.setStyleName(AON.CSS.aonPadding());
@@ -180,7 +177,7 @@ public class FinishDeclarationPopup<T extends FiscalModel,O extends FiscalModelM
 			finishPopupCallback.onAccept(model);
 		});
 		flowPanel.add(acceptButton);
-		if (options.getConfiguration().fiscal().isCustomerCheckEnabled() 
+		if (callback.getOptions().getConfiguration().fiscal().isCustomerCheckEnabled() 
 			&& model.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
 			Button customerCheckButton = new Button();
 			customerCheckButton.setStyleName(AON.CSS.aonCheckButton());
