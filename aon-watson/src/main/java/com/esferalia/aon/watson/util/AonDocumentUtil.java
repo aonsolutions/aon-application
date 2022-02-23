@@ -274,6 +274,20 @@ public class AonDocumentUtil {
 		}
     	return (doc.matches("^(E).{8}"));
     }
+    
+    public static boolean isOwnerCommunity(String doc) {
+		if (doc == null || doc.length() != 9) {
+			return false;
+		}
+    	return (doc.matches("^(H).{8}"));
+    }
+    
+    public static boolean isCivilSociety(String doc) {
+		if (doc == null || doc.length() != 9) {
+			return false;
+		}
+    	return (doc.matches("^(J).{8}"));
+    }
 
 }
 
