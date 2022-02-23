@@ -345,7 +345,8 @@ public class FiscalParametersController implements Serializable {
 
 	public boolean isPersonaFisica() {
 		String document = getCompany().getDocument();
-		return !AonDocumentUtil.isValidCIF(document) || AonDocumentUtil.isAssetCommunity(document);
+		return !AonDocumentUtil.isValidCIF(document) || AonDocumentUtil.isAssetCommunity(document)
+			|| AonDocumentUtil.isOwnerCommunity(document) || AonDocumentUtil.isCivilSociety(document);
 	}
 	
 	public String getContactPerson() {
