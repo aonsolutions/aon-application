@@ -821,6 +821,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -971,6 +972,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				s -> {
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					showContractButtons();
+					hideMessage();
 					
 					// Check SS only if not RETA
 					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
@@ -998,6 +1000,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 				s -> {
+					hideMessage();
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					tabLayOutPanel.selectTab(selectedTab, true);
 					success.accept("");
@@ -1269,6 +1272,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1292,6 +1296,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1324,6 +1329,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								if (null == ssRegime || ssRegime != 3) 
 									checkStatus(contrataEmployeeObject);
 								
+								hideMessage();
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
@@ -1539,6 +1545,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1561,6 +1568,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1592,6 +1600,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1619,6 +1628,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1660,6 +1670,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								if (null == ssRegime || ssRegime != 3) 
 									checkStatus(this.contrataEmployeeObject);
 								
+								hideMessage();
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
