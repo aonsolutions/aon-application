@@ -2,10 +2,10 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.ifSistemaREDEnabled;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
@@ -56,9 +56,8 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
@@ -278,7 +277,7 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private AonToolbarButton up2DateSS;
 
-	private SuggestBox employeeSB;
+	private TextBox employeeSB;
 	private CheckBox inactiveContractsCB;
 	private ListBox workplaceLB;
 
@@ -830,20 +829,20 @@ public class MainContrataContract extends MainEntryPoint {
 	private void initEnterpriseSB() {
 		// Enteprise List
 
-		List<EmployeeContractInfo> employees = mainContrataContractObject.getAllEmployeesList();
-
-		List<String> enterprisesSuggest = new ArrayList<>();
-		for (EmployeeContractInfo employee : employees) {
-			String fullName = employee.getEmployeeInfo().getFullName();
-			String document = employee.getEmployeeInfo().getDocument();
-			String ssNumber = employee.getEmployeeInfo().getSsNumber();
-			
-			enterprisesSuggest.add(fullName + ", "+ document + ", " + ssNumber);
-		}
-			
-		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
-		orclEnterprise.addAll(enterprisesSuggest);
-		employeeSB.setAutoSelectEnabled(false);
+//		List<EmployeeContractInfo> employees = mainContrataContractObject.getAllEmployeesList();
+//
+//		List<String> enterprisesSuggest = new ArrayList<>();
+//		for (EmployeeContractInfo employee : employees) {
+//			String fullName = employee.getEmployeeInfo().getFullName();
+//			String document = employee.getEmployeeInfo().getDocument();
+//			String ssNumber = employee.getEmployeeInfo().getSsNumber();
+//			
+//			enterprisesSuggest.add(fullName + ", "+ document + ", " + ssNumber);
+//		}
+//			
+//		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
+//		orclEnterprise.addAll(enterprisesSuggest);
+//		employeeSB.setAutoSelectEnabled(false);
 
 		employeeSB.addKeyUpHandler(e -> {
 			String value = employeeSB.getValue();
@@ -1002,7 +1001,7 @@ public class MainContrataContract extends MainEntryPoint {
 		Label employeeL = new Label("Persona : ");
 		employeeL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		employeeL.getElement().getStyle().setMarginRight(10, Unit.PX);
-		employeeSB = new SuggestBox();
+		employeeSB = new TextBox();
 		employeeSB.getElement().getStyle().setWidth(300, Unit.PX);
 		employeePanel.add(employeeL);
 		employeePanel.add(employeeSB);
