@@ -80,7 +80,7 @@ public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorCon
 						try {
 							return AonDateUtils.add(noHoliday.getStartDate(), 
 								Calendar.DAY_OF_MONTH, 
-								(int)Math.ceil(Double.parseDouble(noHoliday.getExpression())));
+								(int)Math.ceil(Double.parseDouble(noHoliday.getExpression()))-1);
 						} catch ( NumberFormatException e ){
 							
 						}
