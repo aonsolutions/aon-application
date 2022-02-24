@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod140;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,14 +35,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -273,6 +269,12 @@ public class LroeModel140 extends DockLayoutPanel {
 		hp3.add(to);
 		vp.add(hp3);
 		
+		HorizontalPanel hp4 = new HorizontalPanel();
+		CheckBox cb1 = new CheckBox();
+		cb1.setText("S\u00f3lo Emitidas");
+		hp4.add(cb1);
+		vp.add(hp4);
+		
 		AonDialog draftDialog = new AonDialog("Descargar fichero", vp);
 
 		draftDialog.confirm(new AonAcceptDialogCallback() {
@@ -284,14 +286,13 @@ public class LroeModel140 extends DockLayoutPanel {
 			
 			@Override
 			public void onAccept() {
-				submitForm(epigraph.getValue(), from.format(), to.format());
+				submitForm(epigraph.getValue(), from.format(), to.format(), cb1.getValue());
 			}
 		});
 	}
 	
 	
-	private void submitForm(String epigraph, String from, String to) {
-
+	private void submitForm(String epigraph, String from, String to, boolean onlyEmitidas) {
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model140File");
 		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
@@ -327,6 +328,12 @@ public class LroeModel140 extends DockLayoutPanel {
 		toHidden.setName("toDate");
 		toHidden.setValue(to);
 		html.add(toHidden);
+		
+		Hidden onlyEmitidasHidden = new Hidden();
+		onlyEmitidasHidden.setName("onlyEmitidas");
+		onlyEmitidasHidden.setValue(Boolean.toString(onlyEmitidas));
+		html.add(onlyEmitidasHidden);
+
 		diskForm.setWidget(html);
 		diskForm.submit();
 	}
