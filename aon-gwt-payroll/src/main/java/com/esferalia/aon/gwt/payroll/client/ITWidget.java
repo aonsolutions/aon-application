@@ -256,7 +256,6 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- Constructor
 
 	protected ITWidget() {
-		LOGGER.info("ITWidget");
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
@@ -458,7 +457,8 @@ public abstract class ITWidget extends ResizeComposite {
 			
 	    	tooltip.setFullName(itEmployee.getEmployeeInfo().getFullName());
 	    	tooltip.setDocument(itEmployee.getEmployeeInfo().getDocument());
-	    	tooltip.setNaf(itEmployee.getEmployeeInfo().getSsNumber());
+			tooltip.setNaf(itEmployee.getEmployeeInfo().getSsNumber());
+	    	tooltip.setCompleteCCC(itEmployee.getContractInfo().getCompleteCCC());
 	    	tooltip.setComunicationBaja(bjOptional.isPresent() && bjOptional.get().getStatus().equals((byte)3) );
 	    	tooltip.setComunicationAlta(altaOptional.isPresent() && altaOptional.get().getStatus().equals((byte)3) );
 	    	tooltip.setITType(itInfo.getTypeLowPart());
@@ -554,7 +554,6 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- OnModuleLoad
 	
 	public void loadITWidget() {
-		LOGGER.info("loadITWidget");
 		getITEmployeeListDB(itEmployeeList -> {
 			itEmployeeIts = itEmployeeList;
 			this.expressionCallback = new ExpressionCallback();
@@ -1389,8 +1388,7 @@ public abstract class ITWidget extends ResizeComposite {
 		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
 		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
 			String json = e.getResults();
-			LOGGER.info(json);
-			
+
 			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
 		
 			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
@@ -1642,6 +1640,10 @@ public abstract class ITWidget extends ResizeComposite {
 				dialog.setViewPartComunica(part);
 			} 
 		}
+	}
+	
+	private void openITPartTooltip(ItNotExist itNotExist){
+
 	}
 	
 	private void onLeyend() {

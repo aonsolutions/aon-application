@@ -289,9 +289,8 @@ public class EmployeeITDAO {
 				employeeIt.setContract(contract.getId());
 				condition.and(CONTRACT_LEAVE.START_DATE.eq(itStartDate).and(CONTRACT_LEAVE.CONTRACT.eq(employeeIt.getContract())));
 			}
-			employeeIt.getEndDate().ifPresent(end-> condition.and(CONTRACT_LEAVE.END_DATE.le(toSql(end)) ) );
+//			employeeIt.getEndDate().ifPresent(end-> condition.and(CONTRACT_LEAVE.END_DATE.eq(toSql(end)) ) );
 		} 
-		
 	    return condition.fetchStreamInto(CONTRACT_LEAVE).findFirst();
 	}
 	
@@ -314,18 +313,18 @@ public class EmployeeITDAO {
 	private static ContractRecord getContract(DSLContext dslContext, EmployeeIT employeeIt) {
 		java.sql.Date itStartDate = new java.sql.Date(employeeIt.getStartDate().getTime());
 		return dslContext
-				.select()
-				.from(REGISTRY)
-				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-				.innerJoin(ENTERPRISE_CCC).onKey()
-				.where(ENTERPRISE_CCC.DOMAIN.eq(employeeIt.getDomain()))
-				.and(ENTERPRISE_CCC.CCC.eq(employeeIt.getCcc()))
-				.and(PERSON.SOCIAL_SECURITY_NUM.eq(employeeIt.getNss()))
-				.and(CONTRACT.START_DATE.le(itStartDate))
-				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-				.orderBy(CONTRACT.START_DATE.asc())
-				.fetchStreamInto(CONTRACT).findFirst().orElseThrow(() -> new EmployeeNotFoundexception() );
+		.select()
+		.from(REGISTRY)
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(ENTERPRISE_CCC).onKey()
+		.where(ENTERPRISE_CCC.DOMAIN.eq(employeeIt.getDomain()))
+		.and(ENTERPRISE_CCC.CCC.eq(employeeIt.getCcc()))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(employeeIt.getNss()))
+		.and(CONTRACT.START_DATE.le(itStartDate))
+		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+		.orderBy(CONTRACT.START_DATE.asc())
+		.fetchStreamInto(CONTRACT).findFirst().orElseThrow(EmployeeNotFoundexception::new);
 	}
 	
 	private static String getSSRegimeCode(Byte ordinal) {

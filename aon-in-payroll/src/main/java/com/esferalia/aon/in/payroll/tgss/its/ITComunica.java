@@ -79,7 +79,7 @@ public class ITComunica {
 		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
 	}
 	
-	public static List<String> communicateITs(final byte certificateData[], final String certificatePassword,
+	public static List<String> communicateITs(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, EmployeeIT employeeIt) {
 		 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
 		 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
