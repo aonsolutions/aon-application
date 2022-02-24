@@ -154,9 +154,9 @@ public abstract class ITWidget extends ResizeComposite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			fie.ensureDebugId("fie");
 			
-			sync = addItem("Sincronizar partes IT (TGSS)", new SyncITCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			sync.ensureDebugId("sync");
+			// sync = addItem("Sincronizar partes IT (TGSS)", new SyncITCommand(), 
+			// 		AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			// sync.ensureDebugId("sync");
 			
 		}
 

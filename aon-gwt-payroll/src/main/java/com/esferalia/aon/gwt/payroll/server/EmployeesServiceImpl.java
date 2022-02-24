@@ -300,6 +300,7 @@ import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.SexType;
+import aon.sepe.objects.CopyBasic;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.ServicioRED;
@@ -311,7 +312,6 @@ import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
-import solutions.aon.sepe.Contrata.FirmType;
 
 /**
  * The server side implementation of the RPC service.
@@ -6560,7 +6560,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String restContract = employeeContractInfo.getContractSpecificData().getBasicCopy();
 
 			Sepe.sendContratoCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), ipf, startDate,
-					endDate, FirmType.values()[signType], workplaceAddress, restContract);
+					endDate, CopyBasic.FirmType.values()[signType], workplaceAddress, restContract);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getCause().getMessage());
