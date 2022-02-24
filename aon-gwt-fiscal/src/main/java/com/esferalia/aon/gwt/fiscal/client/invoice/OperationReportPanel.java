@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import java.util.Map;
+
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -24,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
+@Deprecated
 public class OperationReportPanel extends ScrollPanel{
 		
 	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/OperationReportStream");

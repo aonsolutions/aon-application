@@ -29,6 +29,7 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 
 
 public class FiscalParametersController implements Serializable {
@@ -342,6 +343,12 @@ public class FiscalParametersController implements Serializable {
 		getParameters().get(FS_DEFAULT_ADMINISTRATION).setValue(defaultAdministration ==null?null:Integer.toString(defaultAdministration.ordinal()));
 	}
 
+	public boolean isPersonaFisica() {
+		String document = getCompany().getDocument();
+		return !AonDocumentUtil.isValidCIF(document) || AonDocumentUtil.isAssetCommunity(document)
+			|| AonDocumentUtil.isOwnerCommunity(document) || AonDocumentUtil.isCivilSociety(document);
+	}
+	
 	public String getContactPerson() {
 		String contact = getParameters().get(FS_CONCTACT_PERSON).getValue();
 		if (StringUtils.isBlank(contact)) {

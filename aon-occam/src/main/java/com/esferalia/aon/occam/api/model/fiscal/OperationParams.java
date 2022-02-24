@@ -9,14 +9,14 @@ public class OperationParams implements Serializable {
 	
 	private int domain;
 	
-	private Boolean expenses;   // Compras y Gastos (true) / Ventas e Ingresos (false)
+	private boolean expenses;   // Compras y Gastos (true) / Ventas e Ingresos (false)
 	private Date fromDate;      // Desde Fecha
 	private Date toDate;        // Hasta Fecha
 	private Integer activity;   // Actividad (ID)
 	private String activityDescription;  // Actividad (Descripción)
-	private Boolean irpf;       // Listado IRPF (true) / Listado IVA (false)
-	private Boolean aeatBook;     // Libro Registro AEAT
-	private Boolean unifiedBook;  // Libro AEAT Unificado (IVA e IRPF)
+	private boolean irpf;       // Listado IRPF (true) / Listado IVA (false)
+	private boolean aeatBook;     // Libro Registro AEAT
+	private boolean unifiedBook;  // Libro AEAT Unificado (IVA e IRPF)
 
 	public OperationParams() {
 		super();
@@ -45,17 +45,17 @@ public class OperationParams implements Serializable {
 		this.activityDescription = activityDescription;
 		return this;
 	}
-	public Boolean getExpenses() {
+	public boolean getExpenses() {
 		return expenses;
 	}
-	public OperationParams setExpenses(Boolean expenses) {
+	public OperationParams setExpenses(boolean expenses) {
 		this.expenses = expenses;
 		return this;
 	}
-	public Boolean getIrpf() {
+	public boolean getIrpf() {
 		return irpf;
 	}
-	public OperationParams setIrpf(Boolean irpf) {
+	public OperationParams setIrpf(boolean irpf) {
 		this.irpf = irpf;
 		return this;
 	}
@@ -73,17 +73,17 @@ public class OperationParams implements Serializable {
 		this.toDate = toDate;
 		return this;
 	}
-	public Boolean getAeatBook() {
+	public boolean getAeatBook() {
 		return aeatBook;
 	}
-	public OperationParams setAeatBook(Boolean aeatBook) {
+	public OperationParams setAeatBook(boolean aeatBook) {
 		this.aeatBook = aeatBook;
 		return this;
 	}
-	public Boolean getUnifiedBook() {
+	public boolean getUnifiedBook() {
 		return unifiedBook;
 	}
-	public OperationParams setUnifiedBook(Boolean unifiedBook) {
+	public OperationParams setUnifiedBook(boolean unifiedBook) {
 		this.unifiedBook = unifiedBook;
 		return this;
 	}

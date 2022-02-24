@@ -401,7 +401,22 @@ public class MainContrataITObject {
 			}}
 		);
 	}
-	
+
+	public void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.removeITParts(list, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}}
+		);
+	}
+
 	// --------------------------------------------------- DataBase Auxiliar Methods
 	
 	public boolean isUserComunica() {

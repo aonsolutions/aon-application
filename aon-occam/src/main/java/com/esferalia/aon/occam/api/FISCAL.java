@@ -978,7 +978,8 @@ public class FISCAL {
 					ctx.close();
 			}
 		}
-
+		
+		@Deprecated
 		public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, OperationParams params) {
 			AONContext ctx = null;
 			try {

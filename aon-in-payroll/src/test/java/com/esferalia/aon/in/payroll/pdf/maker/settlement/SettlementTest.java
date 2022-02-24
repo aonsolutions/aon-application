@@ -66,7 +66,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -85,7 +85,7 @@ public class SettlementTest {
 			OutputStream out = new ByteArrayOutputStream();
 
 			Settlement settle = null;
-			printSettlement(out, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -101,7 +101,7 @@ public class SettlementTest {
 		try
 		{
 			Settlement settle = null;
-			printSettlement(null, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(null, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (CanNotCreatePdfException e)
 		{
 			String msg = e.getMessage();
@@ -128,7 +128,7 @@ public class SettlementTest {
 			OutputStream out = new ByteArrayOutputStream();
 
 			Settlement settle = null;
-			printSettlement(out, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), null));
+			printSettlement(out, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), null, null));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -168,7 +168,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -206,7 +206,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -251,7 +251,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -300,7 +300,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -379,7 +379,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -458,7 +458,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -539,7 +539,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -587,7 +587,7 @@ public class SettlementTest {
 					.setDate(null).setLocation(null).setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -671,7 +671,7 @@ public class SettlementTest {
 					.setDate(null).setLocation(null).setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -750,7 +750,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), null, new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();

@@ -13,6 +13,8 @@ import { fillChat } from "./shared/fill.js";
 import { getFormMovJson } from "./forms/mov-ss.js";
 import { getFormTimeJson } from "./forms/time-control.js";
 import { getOfficeProjects } from "../../services/projectService.js";
+import { Workgroup } from "../../models/project/Workgroup.js";
+import { TaskHolder } from "../../models/project/TaskHolder.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -81,17 +83,22 @@ export class AonMessengerChat extends AonElement {
     if(myTaskHolder && myTaskHolder.id) 
       data.myTaskHolder = myTaskHolder;
       
-    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email)  
-      data.auth = this.applicationParentEl.cauData.auth;
+    if(this.applicationParentEl.cauInfo.auth && this.applicationParentEl.cauInfo.auth.email)  
+      data.auth = this.applicationParentEl.cauInfo.auth;
       
     this.setData(data); 
     this.task = new Task(this.getData());
+    this.task.onPropertyChanged = (propName, val) => {
+        if(propName == "project")
+          this.onChangeProject();
+    }
   }
 
   build() {
     this.paintView();
     //FILL CHATS WORKFLOW
-    if (this.task.id) this.getTaskWorkflow();
+    if (this.task.id) 
+      this.getTaskWorkflow();
     this.getAppParams();
   }
 
@@ -207,8 +214,12 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceQuery(){
     try {
+      if(this.isCau() && !this.task.id)
+        this.setCauData(this.task);
+        
       const data = await saveTask(this.task);
       this.task.editTask(data);
+
       checkFilesAddEventDescription(this.task);//check files description
 
       if(this.getData().id){
@@ -221,6 +232,12 @@ export class AonMessengerChat extends AonElement {
     } catch (error) {
       console.log(error);
       this.showError(error);
+    }
+  }
+
+  setCauData(){
+    if(this.applicationParentEl.cauInfo){
+      this.task.setDescriptionJson({cauInfo:this.applicationParentEl.cauInfo});
     }
   }
 
@@ -350,16 +367,68 @@ export class AonMessengerChat extends AonElement {
       this.task.addWorkflow({...this.task.getWorkflowTmp(), type: WORKFLOW_TYPES.OPEN}); // ADD WORKFLOW OPEN TASK
     }
   }
+
+  getTagsPanel() {
+    let tags =  this.getApplicationParent()._tags || [];
+    const tagsTask = this.task.getDescriptionJson().tags || [];
+    return tags.filter(tag => !tagsTask.some(t=> t.id ===tag.id));
+  }
   
   async getOfficeProjects(){
     if(!this.PROJECTS.length)
       this.PROJECTS = await getOfficeProjects().catch(()=>[]);
     return this.PROJECTS;
   }
-  
+
   back(){
-   this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
+    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
   }
+
+  //---------- TASK FUNCTIONS
+   /**
+   * CHANGE VALUES WHEN PROJECT CHANGE 
+   */
+  onChangeProject(){
+    if(this.task.isProject()){
+      const {projectHolder} = this.task.getProject();
+      const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : this.task.getWorkgroup();
+      this.task.setWorkgroup(new Workgroup(workgroup));
+      const taskHolder = projectHolder.taskHolder && projectHolder.taskHolder.id ? projectHolder.taskHolder : this.task.getTaskHolder();
+      this.task.setTaskHolder(taskHolder);
+    } else if(!this.task.getId()) {
+      this.task.setWorkgroup(new Workgroup());
+      this.task.setTaskHolder(new TaskHolder());
+    }
+
+    if(!this.task.getId())
+      this.task.setSender( new TaskHolder(this.task.senderCondition()));
+
+    this.task.setWorkflowTmp({
+      comment:"",
+      domain:this.task.getDomain().id,
+      task_holder: this.task.myTaskHolder,
+      task: this.task.getId(),
+      type: WORKFLOW_TYPES.COMMENT,
+      email: this.task.auth.email ? this.task.auth.email : undefined
+    });
+  }
+  
+  onChangeWhAndTh(appParams){
+    if(!this.task.getId() && this.task.isOtherDomain() && appParams){
+      if(!this.task.getWorkgroup().id){
+        const exist = appParams.find(({name})=> name ==="APP_DEFAULT_REQUESTS_WORKGROUP");
+        if(exist)
+          this.task.setWorkgroup({id: parseInt(exist.value)});
+      }
+      if(!this.task.getTaskHolder().id){
+        const exist = appParams.find(({name})=> name ==="APP_DEFAULT_REQUESTS_TASK_HOLDER");
+        if(exist) 
+          this.task.setTaskHolder({id:parseInt(exist.value)});
+      }
+    }
+  }
+  
+  
 }
 
 window.customElements.define("aon-messenger-chat", AonMessengerChat);

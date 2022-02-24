@@ -60,7 +60,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.annotation.WebServlet;
@@ -125,7 +124,6 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.AndEmployeeITStatus;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
@@ -149,12 +147,10 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -167,7 +163,6 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
-import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -196,22 +191,17 @@ import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.tgss.its.ITParse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.EmployeeIT;
-import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
-import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -310,19 +300,16 @@ import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.SexType;
+import aon.sepe.objects.CopyBasic;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
-import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
-import solutions.aon.seg.social.object.It;
 import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.WorkerLiquidation;
-import solutions.aon.sepe.Contrato.FirmType;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
 
@@ -1712,6 +1699,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			try {
 				SettleBuilder.printDraftSettle(settle, reportOut, new Locale("Es"),
+						Utilities.getLogo(domain).orElse(new ByteArrayInputStream(new byte[0])),
 						Utilities.getSignature(domain).orElse(new ByteArrayInputStream(new byte[0])));
 			} catch (CanNotCreatePdfException ignored) {
 			}
@@ -4601,7 +4589,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		ISalary salary = getSalary(domain, draft);
 		Settle settle = new Settle();
-
+		
 		settle.setEmployeeName(salary.getEmployeeName()).setEmployeeCategory(salary.getCategory())
 				.setEmployeeDocument(salary.getEmployeeDocument()).setEmployeeQuoteGroup(salary.getQuoteGroup())
 				.setEmployeeSeniorityDate(salary.getSeniorityDate()).setEnterpriseAddress(salary.getEnterpriseAddress())
@@ -4633,6 +4621,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				byte type = (byte) deduction.getType().ordinal();
 				String description = deduction.getDescription();
 				settle.addDeduction(type, name, description, deduction.getAmount(), type);
+			}
+		} catch (SalaryException ignored) {
+		}
+		
+		try {
+			for (IDeduction embargo : salary.getEmbargoS()) {
+				String description = embargo.getDescription();
+				settle.addEmbargo(description, embargo.getAmount());
 			}
 		} catch (SalaryException ignored) {
 		}
@@ -6138,8 +6134,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					certificate.getType(),
 					employee);
 			
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6180,8 +6176,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					certificate.getType(), 
 					employee);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6212,8 +6208,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					nss, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6251,8 +6247,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employee.getIpf(), 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6309,8 +6305,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					null, 
 					coef);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6359,8 +6355,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					Optional.of(tc2), 
 					null);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6407,8 +6403,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					grup_ctz, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6454,8 +6450,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					ocup, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6502,9 +6498,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					cat, 
 					fecha);
 
-		} catch (SQLException | SegSocialException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6564,7 +6560,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String restContract = employeeContractInfo.getContractSpecificData().getBasicCopy();
 
 			Sepe.sendContratoCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), ipf, startDate,
-					endDate, FirmType.values()[signType], workplaceAddress, restContract);
+					endDate, CopyBasic.FirmType.values()[signType], workplaceAddress, restContract);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getCause().getMessage());
@@ -6910,7 +6906,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				? workAddress.getCountry().getIsoCode() 
 				: Country.ES.getIsoCode());
 		builder.setCodMunWork(workAddress.getMunicipalityCode());
-		builder.setCodContract(employeeContractInfo.getContractInfo().getContractType());
+		Integer contractType = Integer.parseInt(employeeContractInfo.getContractInfo().getContractType());
+		builder.setCodContract(contractType.toString());
+		if(contractType == 410) {
+			String interimCause = employeeContractInfo.getContractSpecificData().getInterimCause();
+			if(AonStringUtils.isBlank(interimCause))
+				throw new IllegalArgumentException("La interinidad es obligatoria para este tipo de contrato. Debe rellenarlo en la pesta\u00F1a Datos SEPE");
+			builder.setInterinidad(interimCause);
+		}
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());

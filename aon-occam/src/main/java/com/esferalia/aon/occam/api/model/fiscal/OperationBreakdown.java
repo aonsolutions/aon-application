@@ -7,6 +7,7 @@ public class OperationBreakdown implements Serializable {
 
 	private static final long serialVersionUID = 7829297928785116306L;
 	
+	private Integer entryId;           // ID del apunte
 	private Date entryDate;            // Fecha del apunte
 	private Date taxDate;              // Fecha de IVA (facturas)	
 	private String account;            // Cuenta contable
@@ -96,6 +97,13 @@ public class OperationBreakdown implements Serializable {
 	}
 	public OperationBreakdown setTaxDate(Date taxDate) {
 		this.taxDate = taxDate;
+		return this;
+	}
+	public Integer getEntryId() {
+		return entryId;
+	}
+	public OperationBreakdown setEntryId(Integer entryId) {
+		this.entryId = entryId;
 		return this;
 	}
 	public Date getEntryDate() {

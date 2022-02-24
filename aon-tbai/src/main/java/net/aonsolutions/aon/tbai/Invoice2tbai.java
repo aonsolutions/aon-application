@@ -203,15 +203,15 @@ public class Invoice2tbai {
 		Emisor sender = new Emisor();
 		sender.setApellidosNombreRazonSocial(name);
 		sender.setNIF(document);
-		entities.setEmisor(sender);
-			
-		Destinatarios receivers = new Destinatarios();
-		
-		IDDestinatario receiver = new IDDestinatario();
-		receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
-		receiver.setCodigoPostal(invoice.getAddress().getZip());
-		receiver.setDireccion(invoice.getAddress().getFullAddress()); 
+		entities.setEmisor(sender);			
 		if(!AonStringUtils.isBlank(invoice.getRegistryDocument())) {
+			Destinatarios receivers = new Destinatarios();
+		
+			IDDestinatario receiver = new IDDestinatario();
+			receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
+			receiver.setCodigoPostal(invoice.getAddress().getZip());
+			receiver.setDireccion(invoice.getAddress().getFullAddress()); 
+
 			if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 				receiver.setNIF(invoice.getRegistryDocument().replace(" ", ""));			
 			} else {
@@ -221,12 +221,12 @@ public class Invoice2tbai {
 				other.setID(invoice.getRegistryDocument().replace(" ", ""));
 				receiver.setIDOtro(other);
 			}
-		}
 			
-		receivers.getIDDestinatario().add(receiver);
-		entities.setDestinatarios(receivers);
-		entities.setVariosDestinatarios(SiNoType.N);
-		entities.setEmitidaPorTercerosODestinatario(EmitidaPorTercerosType.N);
+			receivers.getIDDestinatario().add(receiver);
+			entities.setDestinatarios(receivers);
+			entities.setVariosDestinatarios(SiNoType.N);
+			entities.setEmitidaPorTercerosODestinatario(EmitidaPorTercerosType.N);
+		}
 		return entities;
 	}
 	
@@ -329,10 +329,13 @@ public class Invoice2tbai {
 			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
 			desgloseIVA.getDetalleIVA().add(detalleIVA);
 		});
-		detalleNoExenta.setDesgloseIVA(desgloseIVA);
-		noExenta.getDetalleNoExenta().add(detalleNoExenta);
-		if(!noExenta.getDetalleNoExenta().isEmpty())
-			sujeta.setNoExenta(noExenta);
+		
+		if(!desgloseIVA.getDetalleIVA().isEmpty()) {
+			detalleNoExenta.setDesgloseIVA(desgloseIVA);
+			noExenta.getDetalleNoExenta().add(detalleNoExenta);
+			if(!noExenta.getDetalleNoExenta().isEmpty())
+				sujeta.setNoExenta(noExenta);
+		}
 		
 		ExentaType exenta = new ExentaType();
 		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {

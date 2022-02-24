@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+@Deprecated
 public class OperationFormatter {
 
 	public static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");

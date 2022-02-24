@@ -148,5 +148,6 @@ export const PAYROLL_VIEWS = {
 }
 
 export const EXCEPTION_MESSAGE = {
-  "CertificateNotFoundException":"Agregue un certificado para conectarse a la Seguridad social"
+  "CertificateNotFoundException":"Agregue un certificado para conectarse a la Seguridad social",
+  "RevokedCertificateException":"El certificado que ésta usted utilizando está revocado"
 }

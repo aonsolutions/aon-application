@@ -596,7 +596,34 @@ public class EmployeeSalary extends Composite {
 	}
 	
 	public void onPDFSettle() {
-		onPDF("settle", "settleLetter");
+		//TODO METER EL NUEVO SERVLET
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "settlement_pdf/";
+
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(fileDownloadURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.ENTERPRISE.getName(), String.valueOf(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId())));
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.USER.getName(), Wnd.getCurrentUser()));
+		
+		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
+			flowPanel.add(new Hidden(PayrollPrintService.Parameter.ID.getName(), ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId()));
+		}
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.NAME.getName(), "settleLetter" + ".pdf"));
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> mainContainer.remove(formPanel));
+		mainContainer.add(formPanel);
+
+		formPanel.submit();
+		
+		
+		
+//		
+//		onPDF("settle", "settleLetter");
 	}
 	
 	private void onPDF(String type, String name ) {

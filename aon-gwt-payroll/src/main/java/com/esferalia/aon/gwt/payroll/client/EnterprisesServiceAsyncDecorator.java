@@ -174,6 +174,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
+	public void getAgreements(String domain, boolean allAgreements, AsyncCallback<List<Agreement>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getAgreements(domain, allAgreements, new AsyncCallbackWrapper<List<Agreement>>(callback));
+	}
+	
+	@Override
 	public void getTrashAgreements(String domain, int offset, int limit,
 			AsyncCallback<List<Agreement>> callback) {
 		AON.start();
@@ -933,4 +939,9 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.saveITParts(currentDomainName, currentUser, list, asyncCallback);
 	}
 	
+	@Override
+	public void removeITParts(String currentDomainName, String currentUser, List<ItNotExist> list, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.removeITParts(currentDomainName, currentUser, list, asyncCallback);
+	}
 }

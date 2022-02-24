@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.AndEmployeeITStatus;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
@@ -23,7 +22,6 @@ import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
-import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.SistemaRED;
@@ -45,7 +43,7 @@ public class ITStatusUtils {
 				
 				List<EmployeeIT> ssIts = new ArrayList<>();
 				
-				SistemaRED.getIts(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), 
+				SistemaRED.getIts(certificate.getData(), certificate.getPassword(), certificate.getType(), 
 						ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, Optional.empty()).forEach(it-> ssIts.add(ITParse.parseTGSSToAon(it)));
 				
 				if(!ssIts.isEmpty() && ssIts.get(0).getStartDate()!=null) {
@@ -56,9 +54,10 @@ public class ITStatusUtils {
 							.and(f.getCCCProperty().eq(ccc.getCccAccount()))
 					).collect(Collectors.toList());
 
-			
+					System.out.println("------------------NO EXIST EN AON------------------");
 					compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain);	//NO EXIST EN AON
 		
+					System.out.println("------------------NO EXIST EN SS------------------");
 					compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
 				}
 			} catch (Exception e) {
@@ -92,39 +91,35 @@ public class ITStatusUtils {
 				Optional<EmployeeITPart> ssITBaja = second.getItBaja();
 				List<EmployeeITPart> ssITConfirmations = second.getItConfirmations();
 				Optional<EmployeeITPart> ssITAlta = second.getItAlta();
-				
-				Date newStartDate = normalizeITToPaint(second.getType(), second.getStartDate(), second.getId()==null);
-				
-				List<EmployeeIT> aonEmployeeITs = firstList.stream()
-						.filter(e->e.getNss().equals(second.getNss()) && e.getStartDate().equals(newStartDate)).collect(Collectors.toList());
 
+				List<EmployeeIT> first = firstList.stream().filter(e->e.getNss().equals(second.getNss())).collect(Collectors.toList());
+					
 				if(ssITBaja.isPresent()) {
-					System.out.println("Baja isPresent NSS:"+second.getNss()+ " date:"+ssITBaja.get().getDate()+" toAon:"+ssITBaja.get().getId());
-					aonEmployeeITs.stream().map(EmployeeIT::getItBaja)
-					.filter(e-> e.isPresent())
-					.map(e->e.get())
-					.filter(e->e.getDate().equals(ssITBaja.get().getDate()))
-					.findFirst().ifPresentOrElse(e->{
+					Optional<EmployeeIT> exist = first.stream()
+					.filter(e-> e.getItBaja().isPresent() && e.getItBaja().get().getDate().equals(ssITBaja.get().getDate()))
+					.findFirst();
+					
+					if(exist.isPresent()) {
+					
+						second.setType(exist.get().getType());
 						if(ssITBaja.get().getId()!=null && !ssITBaja.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
 							ssITBaja.get().setStatus(ContractLeaveDetailStatus.PROCESSED);
 							change.getAndSet(true);
 						}
-					}, ()->{
+					} else {
+						System.out.println("BAJA NSS:"+second.getNss()+ " type: "+second.getType() +" date:"+ssITBaja.get().getDate()+" toAon:"+ssITBaja.get().getId());
 						employeeITStatus.and( 
 							new EnterpriseITStatus.ItNotExist()
 							.setEmployeeIT(second)
 							.setEmployeeITPart(ssITBaja.get())
 						);
-					});
+					}
 				}
 
 				if(ssITAlta.isPresent()) {
-					System.out.println();
-					System.out.println("Alta isPresent NSS:"+second.getNss()+ " date:"+ssITAlta.get().getDate()+" toAon:"+ssITAlta.get().getId());
-					System.out.println();
-					aonEmployeeITs.stream().map(EmployeeIT::getItAlta)
-					.filter(e-> e.isPresent())
-					.map(e->e.get())
+					first.stream().map(EmployeeIT::getItAlta)
+					.filter(Optional::isPresent)
+					.map(Optional::get)
 					.filter(e->e.getDate().equals(ssITAlta.get().getDate()))
 					.findFirst().ifPresentOrElse(e->{
 						if(ssITAlta.get().getId()!=null && !ssITAlta.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
@@ -132,6 +127,7 @@ public class ITStatusUtils {
 							change.getAndSet(true);
 						}
 					}, ()->{
+						System.out.println("ALTA NSS:"+second.getNss()+  " type: "+second.getType() +" date:"+ssITAlta.get().getDate()+" toAon:"+ssITAlta.get().getId());
 						employeeITStatus.and( 
 							new EnterpriseITStatus.ItNotExist()
 							.setEmployeeIT(second)
@@ -142,12 +138,13 @@ public class ITStatusUtils {
 				
 				if(!ssITConfirmations.isEmpty()) {
 					for (EmployeeITPart ssITConfirmation:ssITConfirmations) {
-						aonEmployeeITs.stream().map(EmployeeIT::getItConfirmations)
+						first.stream()
+						.map(EmployeeIT::getItConfirmations)
 						.flatMap(Collection::stream)
 						.filter(e-> e.getConfirmOrder().isPresent() && ssITConfirmation.getConfirmOrder().isPresent() ? 
 							(
-									e.getConfirmOrder().get().equals( ssITConfirmation.getConfirmOrder().get()) && 
-									e.getDate().equals(ssITConfirmation.getDate())
+								e.getConfirmOrder().get().equals( ssITConfirmation.getConfirmOrder().get()) && 
+								e.getDate().equals(ssITConfirmation.getDate())
 							) : 
 							e.getDate().equals(ssITConfirmation.getDate())
 						)
@@ -158,9 +155,9 @@ public class ITStatusUtils {
 							}
 						}, ()->{
 							employeeITStatus.and(
-									new EnterpriseITStatus.ItNotExist()
-									.setEmployeeIT(second)
-									.setEmployeeITPart(ssITConfirmation)
+								new EnterpriseITStatus.ItNotExist()
+								.setEmployeeIT(second)
+								.setEmployeeITPart(ssITConfirmation)
 							);
 						});
 					} // FOR CONFIRMATIONS
@@ -180,24 +177,17 @@ public class ITStatusUtils {
 	
 	
 	private static void itUpdate(Domain domain, List<EmployeeIT> employeeITs) {
-			try {
-				 AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		try {
+			 AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static java.sql.Date convertDateSql(Date utilDate) {
-		   return new java.sql.Date(utilDate.getTime());
+		return new java.sql.Date(utilDate.getTime());
 	}
-
-	private static Date normalizeITToPaint(ContractLeaveType type, Date date, boolean toAon) {
-		if(type.equals(ContractLeaveType.ACCIDENTE_LABORAL)) {
-			Date realStartDate = DateUtils.copyDateOnly(date);
-			return DateUtils.addDays2Date(realStartDate, toAon ? 1 : -1);
-		}
-		return date;
-	}
+	
 	private static Date getFirstDateOfMonth(Date date){
 	     Calendar cal = Calendar.getInstance();
 	     cal.setTime(date);

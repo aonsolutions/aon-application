@@ -1,8 +1,9 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.IJsonNames;
@@ -23,11 +24,7 @@ import es.translogia.tedi.json.TediJSONUtils;
 public class InvoiceJSON {
 
 	public static Invoice fromJSON(JSONObject json) {
-		Date date = TediJSONUtils.parseDate(json.optString("date"));
-		if(date == null) {
-			SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-			date = TediJSONUtils.parseDate(json.optString("date"), DATE_TIME_FORMAT);
-		}
+		Date date = JsonUtils.getDate(json, IJsonNames.DATE);
 		String category = json.optString(IJsonNames.CATEGORY);
 		InvoiceType type = getType(json.optString(IJsonNames.TYPE), category);
 	
@@ -72,6 +69,12 @@ public class InvoiceJSON {
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
 				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY));
+	}
+
+	public static JSONArray toJSON(List<Invoice> invoices) {
+		JSONArray array = new JSONArray();
+		invoices.stream().forEach(invoice -> array.put(toJSON(invoice)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(Invoice invoice) {

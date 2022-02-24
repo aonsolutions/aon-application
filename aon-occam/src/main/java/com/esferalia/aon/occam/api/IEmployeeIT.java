@@ -13,5 +13,7 @@ public interface IEmployeeIT {
 	public Stream<EmployeeIT> getEmployeesIT(AONContext ctx, ContractLeaveFilter filter);
 	
 	public EmployeeIT[] setEmployeeIT(AONContext aonContext, EmployeeIT... employeeITs);
+	
+	public void removeEmployeeIT(AONContext aonContext, Integer contractLeaveId, Integer ...partIds);
 
 }

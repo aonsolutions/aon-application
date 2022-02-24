@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsTreeToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Agreement.AgreementOwner;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -31,9 +30,10 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Agreements extends ResizeComposite implements
-		AgreementsTree.Listener, AonAgreementsTreeToolbar.Listener {
+public class Agreements extends ResizeComposite implements AgreementsTree.Listener, AonAgreementsTreeToolbar.Listener {
 
+	// ------------------------------------------- Listener
+	
 	interface Listener {
 
 		void onAgreementSupr(Agreement agreement);
@@ -46,6 +46,8 @@ public class Agreements extends ResizeComposite implements
 
 		void onShowMenuButtonClick();
 	}
+	
+	// ------------------------------------------- Toolbar
 	
 	interface Toolbar {
 		
@@ -65,14 +67,19 @@ public class Agreements extends ResizeComposite implements
 		
 		void onViewAgreements(Agreement agreement, Boolean allAgreements);
 	}
+	
+	// ------------------------------------------- Images
 
 	private static final Images IMAGES = GWT.create(Images.class);
 
-	interface Binder extends UiBinder<Widget, Agreements> {
-	}
-
+	// ------------------------------------------- UiBinder
+	
+	interface Binder extends UiBinder<Widget, Agreements> {}
+	
 	private static final Binder BINDER = GWT.create(Binder.class);
 
+	// ------------------------------------------- UiFields
+	
 	@UiField
 	MyStyle style;
 
@@ -87,46 +94,46 @@ public class Agreements extends ResizeComposite implements
 	
 	@UiField
 	AgreementsTree agreementsTree;
-
-	private static Integer newsIdCounter = 0;	
+	
+	// ------------------------------------------- Variables
+	
 	private Integer domain;
 	private List<Listener> listeners;
 	private List<Toolbar> toolbars;
+	
+	// ------------------------------------------- Constructor
 
 	public Agreements() {
 
 		initWidget(BINDER.createAndBindUi(this));
 		
-
-		this.listeners = new LinkedList<Listener>();
-		this.toolbars = new LinkedList<Toolbar>();
+		this.listeners = new LinkedList<>();
+		this.toolbars = new LinkedList<>();
 		
 		agreementsTree.addListener(this);
 		toolbar.addListener(this);
 		
-		agreementsTree.getEnterpriseService().getDomain(
-				new AsyncCallback<Integer>() {
+		agreementsTree.getEnterpriseService().getDomain(new AsyncCallback<Integer>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(Integer result) {
-						Agreements.this.domain = result;
-						toolbar.setEnabledViewAgreementsButton(false);
-						getAgreements();
-					}
-				});
+			@Override
+			public void onSuccess(Integer result) {
+				Agreements.this.domain = result;
+				toolbar.setEnabledViewAgreementsButton(false);
+				getAgreements();
+			}
+		});
 	}
+	
+	// ------------------------------------------- AgreementsTree
 	
 	@Override
 	public void getAgreements() {
 		agreementsTree.clearTree();
-		getAgreements(0, 10, s -> {
-			selectActiveAgreementOrFirst();
-			showAgreements(false); // Show active agreements
+		getAgreements(false, s -> {
 			agreementsTree.scrollToTop();
 			toolbar.setEnabledViewAgreementsButton(true);
 		}, f -> {});
@@ -134,13 +141,14 @@ public class Agreements extends ResizeComposite implements
 	
 	public void getAgreementsAndSelectImported(Integer agreementId, Consumer<Boolean> success) {
 		agreementsTree.clearTree();
-		getAgreements(0, 10, s -> {
+		getAgreements(true, s -> {
 			selectImportAgreement(agreementId, su -> success.accept(true));
-			showAgreements(false); // Show active agreements
 			agreementsTree.scrollToTop();
 			toolbar.setEnabledViewAgreementsButton(true);
 		}, f -> {});
 	}
+	
+	// ------------------------------------------- Listener
 
 	public void addListener(Listener listener) {
 		listeners.add(listener);
@@ -170,7 +178,14 @@ public class Agreements extends ResizeComposite implements
 		return this.domain;
 	}
 	
-	public void addNewItemTree(Agreement agreement) {
+	private void fireAgreementSelected(Agreement agreement) {
+		for (Listener listener : listeners)
+			listener.onAgreementSelected(agreement);
+	}
+	
+	// ------------------------------------------- New item
+	
+	public void addNewItemTree() {
 		List<Integer> selectedDates = new ArrayList<>();
 		selectedDates.add(2015); // Change this if own XML change dates
 		getAgreementsTree().getEnterpriseService().getServiAgreement("a0000001", selectedDates,
@@ -186,42 +201,17 @@ public class Agreements extends ResizeComposite implements
 				getAgreementsAndSelectImported(importedAgreementId, s -> {});
 			}
 		});
-				
-//		addAgreementItem(newAgreement());
-//		//Select the Last One
-//		agreementsTree.getTree().setSelectedItem(
-//				agreementsTree.getTree().getItem(
-//						agreementsTree.getTree().getItemCount() - 1));
 	}
 
-	// -------------------------------------------------------- Private methods
-
-	private void fireAgreementSelected(Agreement agreement) {
-		for (Listener listener : listeners)
-			listener.onAgreementSelected(agreement);
-	}
-
-	private synchronized Agreement newAgreement() {
-		Agreement agreement = new Agreement();
-		int newId = newsIdCounter--;
-		agreement.setId(newsIdCounter);
-		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
-		agreement.setSSNumber(null);
-		agreement.setDomain(getDomain());
-		agreement.setOwner(AgreementOwner.AONSOLUTIONS);
-
-		return agreement;
-	}
+	// ------------------------------------------- Private methods
 	
 	public TreeItem addAgreementItem(Agreement agreement) {
 		String description = agreement.getDescription();
-		if (agreement.isRedefined()) {
+		if (agreement.isRedefined())
 			description = "*" + description;
-		}
 
-		List<ImageResource> marks = new ArrayList<ImageResource>();
-		if (AonNumberUtils.notEquals(0, agreement.getDomain()) 
-				&& AonNumberUtils.notEquals(domain, agreement.getDomain()) )
+		List<ImageResource> marks = new ArrayList<>();
+		if (AonNumberUtils.notEquals(0, agreement.getDomain()) && AonNumberUtils.notEquals(domain, agreement.getDomain()) )
 			marks.add(IMAGES.parent());
 		
 		TreeItem agreementTreeItem = null;
@@ -243,7 +233,6 @@ public class Agreements extends ResizeComposite implements
 		return agreementTreeItem;
 	}
 
-
 	private Widget getNewOwnAgreementRow(String description) {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.addStyleName(style.treeItem()); 
@@ -255,6 +244,8 @@ public class Agreements extends ResizeComposite implements
 		return panel;
 	}
 
+	// ------------------------------------------- Abstract methods
+	
 	@Override
 	public boolean evaluateId(Agreement agreement) {
 		return agreement.getId() >= 0;
@@ -262,16 +253,15 @@ public class Agreements extends ResizeComposite implements
 
 	@Override
 	public void onAgreementCtrlC(Agreement agreement) {
-		if(agreement.getId() >= 0) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementCtrlC(agreement);
-		}
+		if(agreement.getId() >= 0)
+			for(Toolbar itToolbar : toolbars)
+				itToolbar.onAgreementCtrlC(agreement);
 	}
 
 	@Override
 	public void onAgreementCtrlV(Agreement agreement) {
-		for(Toolbar toolbar : toolbars)
-			toolbar.onAgreementCtrlV(agreement);
+		for(Toolbar itToolbar : toolbars)
+			itToolbar.onAgreementCtrlV(agreement);
 	}
 
 	@Override
@@ -290,11 +280,9 @@ public class Agreements extends ResizeComposite implements
 	}
 
 	@Override
-	public void onAgreementContextMenu(Agreement agreement,
-			ContextMenuEvent event) {
+	public void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event) {
 		for (Listener listener : listeners)
 			listener.onAgreementContextMenu(agreement, event);
-
 	}
 	
 	private void filter(String pattern) {
@@ -303,56 +291,44 @@ public class Agreements extends ResizeComposite implements
 			TreeItem item = tree.getItem(i);
 			Agreement agreement = (Agreement) item.getUserObject();
 			
-			boolean visible = AonStringUtils.isBlank(pattern) || 
-					( agreement.getDescription().toUpperCase().indexOf(pattern.trim().toUpperCase()) >= 0 );
-			
+			boolean visible = AonStringUtils.isBlank(pattern) || ( agreement.getDescription().toUpperCase().indexOf(pattern.trim().toUpperCase()) >= 0 );
 			item.setVisible(visible);
 		}
 	}
 	
-	private void getAgreements (int offset, int limit, Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		
-		agreementsTree.getEnterpriseService().getAgreements(offset, limit,
-				new AsyncCallback<List<Agreement>>() {
+	private void getAgreements (boolean allAgreements, Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
+		toolbar.setVisibleLoadingButton(true);
+		agreementsTree.getEnterpriseService().getAgreements(allAgreements, new AsyncCallback<List<Agreement>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
 						Window.alert(caught.getMessage());
+						failure.accept(caught);
 					}
 
 					@Override
 					public void onSuccess(List<Agreement> agreements) {
-						int item2Select = -1;
+						Agreement selectedAgreement = null == agreementsTree.getTree().getSelectedItem()
+								? null : (Agreement) agreementsTree.getTree().getSelectedItem().getUserObject();
+						
+						agreementsTree.getTree().clear();
+						if(null != selectedAgreement)
+							addAgreementItem(selectedAgreement);
+						
 						for (int i = 0; i < agreements.size(); i++) {
-
 							Agreement agreement = agreements.get(i);
 							if (evaluateId(agreement))
 								addAgreementItem(agreement);
-
-							if (agreement.isRedefined()) {
-								if (item2Select == -1)
-									item2Select = i;
-							}
-							if (agreement.getHasContract()) {
-								if (item2Select == -1)
-									item2Select = i;
-							}
-
 						}
 						
 						// Select the first one.
-						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
+						if (agreementsTree.getTree().getItemCount() > 0)
 							agreementsTree.getTree().setSelectedItem(
-									agreementsTree.getTree().getItem(
-											Math.max(item2Select, 0)), true);
-						// Get remainning
-						if ( agreements.size() == limit )
-							getAgreements(offset + limit, limit , s -> {
-								success.accept(agreements);
-							}, f -> {});
-						else
-							success.accept(agreements);
-
+									agreementsTree.getTree().getItem(0), 
+									false);
+						
+						toolbar.setVisibleLoadingButton(false);
+						success.accept(agreements);
 					}
 				});
 	}
@@ -371,15 +347,15 @@ public class Agreements extends ResizeComposite implements
 
 	@Override
 	public void onNewButtonClick(ClickEvent event) {
-		addNewItemTree(null);
+		addNewItemTree();
 	}
 
 	@Override
 	public void onDraftButtonClick(ClickEvent event) {
 		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
 		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onMoveToTrash((Agreement) object);
+			for(Toolbar itToolbar : toolbars)
+				itToolbar.onMoveToTrash((Agreement) object);
 		}
 	}
 
@@ -388,8 +364,8 @@ public class Agreements extends ResizeComposite implements
 		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
 		
 		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onCollapseMenuClick(event);
+			for(Toolbar itToolbar : toolbars)
+				itToolbar.onCollapseMenuClick(event);
 		}
 	}
 	
@@ -399,39 +375,10 @@ public class Agreements extends ResizeComposite implements
 
 	@Override
 	public void onViewAgreementsButtonClick(ClickEvent event, Boolean allAgreements) {
-		showAgreements(allAgreements);
-	}
-	
-	private void showAgreements(Boolean allAgreements) {
-		Tree tree = agreementsTree.tree;
-		for ( int i = 0; i < tree.getItemCount(); i++ ) {
-			TreeItem item = tree.getItem(i);
-			Agreement agreement = (Agreement) item.getUserObject();
-			
-			if(allAgreements)
-				item.setVisible(true);
-			else {
-				item.setVisible(agreement.getHasContract() || item.isSelected());
-			}
-		}
-	}
-	
-	private void selectActiveAgreementOrFirst() {
-		Tree tree = agreementsTree.tree;
-		boolean isSelected = false;
-		for ( int i = 0; i < tree.getItemCount(); i++ ) {
-			TreeItem item = tree.getItem(i);
-			Agreement agreement = (Agreement) item.getUserObject();
-			
-			if(agreement.getHasContract() && !isSelected) {
-				agreementsTree.tree.setSelectedItem(item, true);
-				isSelected = true;
-			}
-		}
-		
-		// If not exist active agreements.. select first
-		if(!isSelected)
-			agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
+		getAgreements(allAgreements, s -> {
+			agreementsTree.scrollToTop();
+			toolbar.setEnabledViewAgreementsButton(true);
+		}, f -> {});
 	}
 	
 	private void selectImportAgreement(Integer agreementId, Consumer<Boolean> success) {

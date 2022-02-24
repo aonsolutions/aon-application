@@ -19,7 +19,7 @@ public class DomainUserRolesController implements Serializable {
 	private DomainUserRoles dur;
 	
 	public DomainUserRolesController() {
-		loadDomainUserRoles();
+
 	}
 	
 	public DomainUserRoles getDur() {

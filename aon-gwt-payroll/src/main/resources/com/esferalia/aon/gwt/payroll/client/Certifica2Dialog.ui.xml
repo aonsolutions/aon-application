@@ -82,6 +82,25 @@
 		<g:HTMLPanel ui:field="toolbarPanel"/>
 		
 		<g:HTMLPanel styleName="{style.container}">
+		
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.bold} {style.title}">Datos Representante</g:Label>
+			</g:HTMLPanel>
+		
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Documento:</g:Label>
+					<g:Label ui:field="representativeDocumentL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Nombre:</g:Label>
+					<g:Label ui:field="representativeNameL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Apellido:</g:Label>
+					<g:Label ui:field="representativeSurnameL" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 	
 			<g:HTMLPanel styleName="{style.flex}">
 				<g:Label styleName="{style.bold} {style.title}">Datos Empresa/Actividad</g:Label>

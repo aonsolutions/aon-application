@@ -262,7 +262,11 @@ export class AonTax extends AonElement {
   }
 
   createFooterDialog(resp, dialog){
-    const buttonAccept = dialog.addSendAction(() => this.save(resp,dialog));
+    const buttonAccept = dialog.addSendAction(() =>{
+      this.save(resp).then(()=>{
+        dialog.close();
+      });
+    });
     const divAction = this.getElement(dialog.ACTION);
     const div = this.createElement(TAG.DIV);
     const checkBox = new AonCheckbox();
@@ -405,7 +409,7 @@ export class AonTax extends AonElement {
     }
   }
 
-  async save(resp, dialog){
+  async save(resp){
     this.applicationEl.startLoading();
     try {
       const form = {...resp,...this.getFormValues()};
@@ -415,7 +419,6 @@ export class AonTax extends AonElement {
     } catch (error) {
       this.showToast(error);
     }
-    dialog.close();
     this.applicationEl.stopLoading();
   }
 

@@ -35,6 +35,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AgreementsTree extends Composite implements KeyDownHandler, ContextMenuHandler {
 	
+	// ------------------------------------------- Listener
+	
 	interface Listener {
 		
 		boolean evaluateId(Agreement agreement);
@@ -52,23 +54,28 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		void getAgreements();
 	}
 	
+	// ------------------------------------------- Images
+	
 	private static final Images IMAGES = GWT.create(Images.class);
 
-	private static final ImageResource RESOURCES[][][] = {
-			{ { IMAGES.agreement(), IMAGES.agreement_warn() },
-				{ IMAGES.agreement_error(), IMAGES.agreement_error() } },
-			{
-					{ IMAGES.agreement_changed(),
-							IMAGES.agreement_changed_warn() },
-					{ IMAGES.agreement_changed_error(),
-							IMAGES.agreement_changed_error() } } };
+	private static final ImageResource[][][] RESOURCES = {
+		{ 
+			{ IMAGES.agreement(), IMAGES.agreement_warn() },
+			{ IMAGES.agreement_error(), IMAGES.agreement_error() } 
+		},
+		{
+			{ IMAGES.agreement_changed(), IMAGES.agreement_changed_warn() },
+			{ IMAGES.agreement_changed_error(), IMAGES.agreement_changed_error() } 
+		} 
+	};
 
+	// ------------------------------------------- UiBinder
+	
+	private static AgreementsTreeUiBinder uiBinder = GWT.create(AgreementsTreeUiBinder.class);
 
-	private static AgreementsTreeUiBinder uiBinder = GWT
-			.create(AgreementsTreeUiBinder.class);
-
-	interface AgreementsTreeUiBinder extends UiBinder<Widget, AgreementsTree> {
-	}
+	interface AgreementsTreeUiBinder extends UiBinder<Widget, AgreementsTree> {}
+	
+	// ------------------------------------------- UiFields
 	
 	@UiField
 	ScrollPanel scrollPanel;
@@ -76,32 +83,39 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 	@UiField
 	Tree tree;
 	
+	// ------------------------------------------- Variables
+	
 	private List<Listener> listeners;
 	
 	private EmployeesServiceAsync employeesServiceAsync;
 	private DomainEnterprisesServiceAsync enterpriseService;
+	
+	// ------------------------------------------- Constructor
 
 	public AgreementsTree() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.listeners = new ArrayList<Listener>();
+		this.listeners = new ArrayList<>();
 		this.tree.addKeyDownHandler(this);
 		this.tree.addDomHandler(this, ContextMenuEvent.getType());
 		
-		EmployeesServiceAsync employeesServiceRaw = GWT
-				.create(EmployeesService.class);
-		employeesServiceAsync = new EmployeesServiceAsyncDecorator(
-				employeesServiceRaw);
+		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
+		employeesServiceAsync = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
+		
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
 		enterpriseService = DomainEnterprisesServiceAsync.newInstance();
 	}
+	
+	// ------------------------------------------- UiHandlers
 	
 	@UiHandler("tree")
 	void onTreeItemSelected(SelectionEvent<TreeItem> event) {
 		for(Listener listener : listeners)
 			listener.onTreeItemSelected(event);
 	}
+	
+	// ------------------------------------------- ContextMenu
 	
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
@@ -113,26 +127,24 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		
 		if(object instanceof Agreement)
 			onAgreementContextMenu((Agreement) object, event);
-		
 	}
+	
+	// ------------------------------------------- KeyDown
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		int keyCode = event.getNativeKeyCode();
 		Object object = tree.getSelectedItem().getUserObject();
 		
-		if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_C)
-				&& (object instanceof Agreement)) {
+		if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_C) && (object instanceof Agreement))
 			onAgreementCtrlC((Agreement) object);
-		}
-		else if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_V)
-				&& (object instanceof Agreement)) {
+		else if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_V) && (object instanceof Agreement))
 			onAgreementCtrlV((Agreement) object);
-		}
-		else if(keyCode == KeyCodes.KEY_DELETE && object instanceof Agreement) {
+		else if(keyCode == KeyCodes.KEY_DELETE && object instanceof Agreement)
 			onAgreementSupr((Agreement) object);
-		}
 	}
+	
+	// ------------------------------------------- Listener
 	
 	public void addListener(Listener listener) {
 		listeners.add(listener);
@@ -140,26 +152,6 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 	
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
-	}
-	
-	public DomainEnterprisesServiceAsync getEnterpriseService() {
-		return enterpriseService;
-	}
-	
-	public EmployeesServiceAsync getEmployeesService() {
-		return employeesServiceAsync;
-	}
-	
-	public Tree getTree() {
-		return tree;
-	}
-	
-	public TreeItem getSelectedItem() {
-		return tree.getSelectedItem();
-	}
-	
-	public void clearTree() {
-		tree.clear();
 	}
 	
 	private void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event) {
@@ -182,17 +174,34 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 			listener.onAgreementSupr(agreement);
 	}
 	
-	// ------------------------------------------------------------------------
-	public static ImageResource getImageResource(boolean changes,
-			boolean errors, boolean warns) {
+	// ------------------------------------------- Getters
+	
+	public DomainEnterprisesServiceAsync getEnterpriseService() {
+		return enterpriseService;
+	}
+	
+	public EmployeesServiceAsync getEmployeesService() {
+		return employeesServiceAsync;
+	}
+	
+	public Tree getTree() {
+		return tree;
+	}
+	
+	public TreeItem getSelectedItem() {
+		return tree.getSelectedItem();
+	}
+	
+	public void clearTree() {
+		tree.clear();
+	}
+	
+	// ------------------------------------------- Images resources
+	
+	public static ImageResource getImageResource(boolean changes, boolean errors, boolean warns) {
 		return RESOURCES[changes ? 1 : 0][errors ? 1 : 0][warns ? 1 : 0];
 	}
 
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Generates SafeHtml for a tree item with an attached icon.
-	 */
 	static SafeHtml imageItemSafeHtml(ImageResource imageProto, String title) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
@@ -201,11 +210,10 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		return builder.toSafeHtml();
 	}
 	
-	static SafeHtml imageItemSafeHtml(String title, ImageResource imageProto,
-			ImageResource... imageMarks) {
+	static SafeHtml imageItemSafeHtml(String title, ImageResource imageProto, ImageResource... imageMarks) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
-		List<SafeUri> uris = new ArrayList<SafeUri>();
+		List<SafeUri> uris = new ArrayList<>();
 		uris.add(imageProto.getSafeUri());
 		for (ImageResource imageMark : imageMarks)
 			uris.add(imageMark.getSafeUri());
@@ -221,9 +229,10 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 	}
 	
 	public static ImageResource getImageResource(Agreement agreement) {
+		int categories = agreement.hasLevelsWithoutCategories() ? 1 : 0;
 		return agreement.getDomain() == 0 ?
 				IMAGES.logo() :
-				RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
+				RESOURCES[0][0][categories];
 	}
 	
 	public static ImageResource getImageResource(Agreement agreement, Integer actualDomain) {
@@ -263,7 +272,7 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		public static SafeHtml getSafeHtml(int left, int top, int width,
 				int height, boolean isDraggable, SafeUri... uris) {
 
-			StringBuffer background = new StringBuffer();
+			StringBuilder background = new StringBuilder();
 			for (SafeUri uri : uris) {
 				if (background.length() > 0)
 					background.append(", ");
@@ -276,13 +285,12 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 			builder.width(width, Unit.PX).height(height, Unit.PX)
 					.trustedNameAndValue("background", background.toString());
 
-			if (!isDraggable) {
+			if (!isDraggable)
 				return TEMPLATE.image(CLEARIMAGE, SafeStylesUtils
 						.fromTrustedString(builder.toSafeStyles().asString()));
-			} else {
+			else 
 				return DRAGGABLE_TEMPLATE.image(CLEARIMAGE, SafeStylesUtils
 						.fromTrustedString(builder.toSafeStyles().asString()));
-			}
 		}
 	}
 

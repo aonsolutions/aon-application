@@ -44,8 +44,8 @@ public class LROE140_3_1 extends LROE140 {
 				BienAltaType bien = new BienAltaType();
 				bien.setEpigrafe(detail.getInvestAssetData().getActivity().getEpigraph());
 				bien.setReferenciaBien(Integer.toString(detail.getInvestAssetData().getId()));
-				bien.setFechaInicioUtilizacion(AonDateUtils.format(detail.getInvestAssetData().getStartDate(), "dd-MM-yyyy"));
-				bien.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
+				bien.setFechaInicioUtilizacion(AonDateUtils.format(detail.getInvestAssetData().getStartDate(), DATE_FORMAT));
+				bien.setFechaOperacion(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 				bien.setMarcaBienInversionEfectosIVA(SiNoEnum.N);
 				bien.setPorcentajeAfectacion(new BigDecimal(detail.getInvestAssetData().getVatPercent()));
 				bien.setTipoBien(getTipoBien(detail.getInvestAssetData().getType()));

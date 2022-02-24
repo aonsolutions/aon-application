@@ -1,4 +1,4 @@
-import { API_URL, SIG_URL } from "../environments/environments.js";
+import { API_URL, SIG_SESSION_ID, SIG_URL } from "../environments/environments.js";
 import { get, post, remove, requestSig } from "./request.js";
 
 
@@ -21,7 +21,6 @@ export const isSigRemove = (url, data) => {
 
   
 //--------------------------------------SIG REQUEST
-const SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
 
 const getSig = (url, data) =>  new Promise((resolve, reject) => {
     requestSig("GET", url, SIG_SESSION_ID, data, (result, error) => {

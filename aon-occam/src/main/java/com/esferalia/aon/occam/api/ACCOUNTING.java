@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -37,6 +38,8 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccoun
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -299,17 +302,13 @@ public class ACCOUNTING {
 			int domain, String user, final AccountingReportParams params, int offset,
 			int limit) throws AonCoreException {
 	 	final AONContext ctx = AONContext.getAONContext(domainName, domain, user);
-	 	Stream<FlatAccountEntryDetail> stream = getAccounting().getLedger(ctx, params, offset, limit,
-				new IDAOCallback() {			
-					@Override
-					public void onFinish() {
-						if (ctx != null) {
-							ctx.close();
-						}
+	 	return getAccounting().getLedger(ctx, params, offset, limit,
+				() -> {
+					if (ctx != null) {
+						ctx.close();
 					}
-	 			}
+				}
 	 	);
-		return stream; 
 	}
 
 	public static AccountEntry save(String domainName, int domain, String user,
@@ -1045,5 +1044,9 @@ public class ACCOUNTING {
 		}
 	}
 
-
+	public static Stream<OperationBreakdown> getOperationBreakdown(Occam occam, OperationParams params) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getOperationBreakdown(ctx, occam.getDomain(), params);
+		}
+	}
 }

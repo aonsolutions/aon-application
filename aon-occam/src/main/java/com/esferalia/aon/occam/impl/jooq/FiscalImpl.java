@@ -538,6 +538,7 @@ public class FiscalImpl implements IFiscal {
 		
 		// ---------------------------------------------------- [Operation]
 		@Override
+		@Deprecated
 		public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params) {
 			return OperationDAO.getOperationBreakdown(ctx
 					,domain

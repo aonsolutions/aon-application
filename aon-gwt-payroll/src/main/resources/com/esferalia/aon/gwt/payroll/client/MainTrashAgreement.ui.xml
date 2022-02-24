@@ -22,7 +22,7 @@
 		border-right: 1px solid #ddd;
 	}
 	
-	.cmd_btn{
+	.cmdBtn{
 		background-position: center left;
 		background-repeat: no-repeat;
 		padding-left: 25px !important;

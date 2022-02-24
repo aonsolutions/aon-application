@@ -30,7 +30,6 @@ export class Task {
   workflowTmp;
   myTaskHolder;
   auth;
-  appParams;
   domainCompany;
   
   constructor(task) {
@@ -60,7 +59,7 @@ export class Task {
     }
   }
 
-//   task._onPropertyChanged = (name, val) => {
+//   task.onPropertyChanged = (name, val) => {
 //     console.log(change, val);
 // }
 
@@ -198,7 +197,7 @@ export class Task {
 
   setProject(project) {
     this.project = project;
-    this.changeProject();
+    this.onPropertyChanged('project', this.project);
   }
 
   getSource() {
@@ -334,14 +333,6 @@ export class Task {
     this.parent = parent;
   }
 
-  setAppParams(appParams){
-    this.appParams = appParams;
-  }
-
-  getAppParams(){
-    return this.appParams;
-  }
-
   isProject(){
     return this.project && this.project.id ? true : false;
   }
@@ -365,62 +356,6 @@ export class Task {
     return !this.isAdvisoryCompany() && this.isProject() && !this.isExternal() ? undefined : this.myTaskHolder;
   }
 
-  getWorkgroupDefault() {
-    let wg;
-    if(this.getAppParams()){
-      let exist = this.getAppParams().find(({name})=> name ==="APP_DEFAULT_REQUESTS_WORKGROUP");
-      if(exist) wg = parseInt(exist.value);
-    }
-    return wg;
-  }
-
-  getTaskHolderDefault() {
-    let th;
-    if(this.getAppParams()){
-      let exist = this.getAppParams().find(({name})=> name ==="APP_DEFAULT_REQUESTS_TASK_HOLDER");
-      if(exist) th = parseInt(exist.value);
-    }
-    return th;
-  }
-
-  changeWhAndTh(){
-    if(!this.id && this.isOtherDomain()){
-      if(!this.getWorkgroup().id && this.getWorkgroupDefault())
-        this.setWorkgroup({id: this.getWorkgroupDefault()});
-
-      if(!this.getTaskHolder().id && this.getTaskHolderDefault())
-        this.setTaskHolder({id: this.getTaskHolderDefault()});
-    }
-  }
-
-  /**
-   * CHANGE VALUES WHEN PROJECT CHANGE 
-   */
-  changeProject(){
-    if(this.isProject()){
-      const {projectHolder} = this.project;
-      const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : this.workgroup;
-      this.setWorkgroup(new Workgroup(workgroup));
-      const taskHolder = projectHolder.taskHolder && projectHolder.taskHolder.id ? projectHolder.taskHolder : this.task_holder;
-      this.setTaskHolder(taskHolder);
-    } else if(!this.id) {
-      this.setWorkgroup(new Workgroup());
-      this.setTaskHolder(new TaskHolder());
-    }
-
-    if(!this.id)
-     this.setSender( new TaskHolder(this.senderCondition()));
-
-    this.setWorkflowTmp({
-      comment:"",
-      domain:this.domain.id,
-      task_holder: this.myTaskHolder,
-      task: this.id,
-      type: WORKFLOW_TYPES.COMMENT,
-      email: this.auth.email ? this.auth.email : undefined
-    });
-  }
-  
   onPropertyChanged(propName, val){
     return (propName, val);
   }

@@ -1,10 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
-import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
@@ -322,8 +324,8 @@ public class InvoiceAutoComplete {
 	 * Aseguramos los detalles de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
-		if((inv.getDetails() == null || inv.getDetails().isEmpty()) && inv.getBreakdown() != null) {		
-			Account acc = ACCOUNTING.getAccount(ctx.getContext(), inv.getTediCategory());
+		if((inv.getDetails() == null || inv.getDetails().isEmpty()) && inv.getBreakdown() != null) {	
+			
 			LinkedList<InvoiceDetail> invoiceDetails = new LinkedList<>();
 			InvoiceBreakdown ret = inv.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
 			inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).forEach(b -> {
@@ -353,6 +355,13 @@ public class InvoiceAutoComplete {
 						.setDeductibleQuota(b.getQuota());
 				invoiceTax.add(it);
 				
+				Domain domain = DomainDAO.getDomain(ctx.getContext(), inv.getDomain());
+				Account acc = null;
+				if(domain.isEnableHeredity() && domain.getParentId() != null) {
+					Integer[] domains = {domain.getId(), domain.getParentId()};
+					acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.in(domains).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
+				} else acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.eq(domain.getId()).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
+
 				InvoiceDetail id = new InvoiceDetail()
 						.setAccount( acc != null ? acc.getId(): null)
 						.setAccountCode(acc != null ? acc.getCode() : null)
@@ -389,7 +398,13 @@ public class InvoiceAutoComplete {
 			}
 			
 			if(detail.getAccount() == null && detail.getAccountCode() != null) {
-				Account acc = AccountDAO.get(ctx.getContext(), detail.getAccountCode());
+				Domain domain = DomainDAO.getDomain(ctx.getContext(), inv.getDomain());
+				Account acc = null;
+				if(domain.isEnableHeredity() && domain.getParentId() != null) {
+					Integer[] domains = {domain.getId(), domain.getParentId()};
+					acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.in(domains).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
+				} else acc = AccountDAO.get(ctx.getContext(), ACCOUNT.DOMAIN.eq(domain.getId()).and(ACCOUNT.CODE.eq(inv.getTediCategory())));
+
 				if(acc != null && acc.getId() != null) {
 					detail.setAccount(acc.getId());
 					detail.setAccountDescription(acc.getDescription());
@@ -399,8 +414,11 @@ public class InvoiceAutoComplete {
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
 					&& !AonStringUtils.isBlank(detail.getAccountCode())) {
-				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDescriptionProperty().eq(detail.getDescription()).or(f.getProductCodeProperty().eq(detail.getAccountCode()))
-						.or(f.getProductNameProperty().eq(detail.getDescription())));
+				
+				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain()).and(
+						f.getDescriptionProperty().eq(detail.getDescription())
+						.or(f.getProductCodeProperty().eq(detail.getAccountCode()))
+						.or(f.getProductNameProperty().eq(detail.getDescription()))));
 				if(i.getId() == null) {
 					Product p = new Product();
 					p.setDomain(new Domain().setId(detail.getDomain()));

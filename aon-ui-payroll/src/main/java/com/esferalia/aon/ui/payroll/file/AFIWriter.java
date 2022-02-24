@@ -70,7 +70,7 @@ public class AFIWriter implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final String AFI 				= "AFI";
-	private final String WINSUITE_VERSION 	= "71WSxxx";
+	private final String WINSUITE_VERSION 	= "90WSxxx";
 	private final String TESTING_CHECK		= "P";
 	
 	private final String WHITESPACE_1  = " ";

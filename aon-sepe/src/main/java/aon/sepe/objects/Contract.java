@@ -1,6 +1,7 @@
 package aon.sepe.objects;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class Contract {
 	private String sepeId;
@@ -31,7 +32,8 @@ public class Contract {
 	private String durationTypeJndMin;
 	private String durationTypeCvnHour;
 	private String durationTypeCvnMin;
-	
+	private String interinidad;
+	private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 	
 	public String getSepeId() {
 		return sepeId;
@@ -144,6 +146,14 @@ public class Contract {
 	public String getDurationTypeCvnMin() {
 		return durationTypeCvnMin;
 	}
+	
+	public Optional<String> getInterinidad() {
+		return Optional.ofNullable(interinidad);
+	}
+	
+	public boolean getDiscontinuo() {
+		return discontinuo;
+	}
 
 	private Contract() {
 	}
@@ -177,6 +187,9 @@ public class Contract {
 		private String durationTypeJndMin;
 		private String durationTypeCvnHour;
 		private String durationTypeCvnMin;
+		private String interinidad;
+		
+		private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 
 		public ContractBuilder setCifEnterprise(String cifEnterprise) {
 			this.cifEnterprise = cifEnterprise;
@@ -318,6 +331,17 @@ public class Contract {
 			this.durationTypeCvnMin = durationTypeCvnMin;
 			return this;
 		}
+		
+		public ContractBuilder setInterinidad(String interinidad) {
+			this.interinidad = interinidad;
+			return this;
+		}
+		
+		public ContractBuilder setDiscontinuo(boolean discontinuo) {
+			this.discontinuo = discontinuo;
+			return this;
+		}
+
 
 		public ContractBuilder() {
 		}
@@ -352,6 +376,8 @@ public class Contract {
 			contract.durationTypeCvnHour = this.durationTypeCvnHour;
 			contract.durationTypeCvnMin = this.durationTypeCvnMin;
 			contract.sepeId = this.sepeId;
+			contract.interinidad = this.interinidad;
+			contract.discontinuo = this.discontinuo;
 			return contract;
 		}
 	}
@@ -435,7 +461,7 @@ public class Contract {
 				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", dateBirth="
 				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType
 				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
-				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin + "]";
+				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad+"]";
 	}
 	
 	

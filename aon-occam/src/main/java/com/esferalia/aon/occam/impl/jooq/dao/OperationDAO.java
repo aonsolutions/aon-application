@@ -38,7 +38,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-// Para el Panel de Compras y Gastos / Ventas e Ingresos 
+// Para el Panel de Compras y Gastos / Ventas e Ingresos
+@Deprecated
 public class OperationDAO {
 	
 	// ---------- STREAM FUNCTIONS ----------

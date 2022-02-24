@@ -35,6 +35,7 @@ public interface IFiscal {
 	public Stream<IrpfBreakdown> getIrpfBreakdown(AONContext ctx, IRPFParams params);
 	
 	//					OPERATION (PANEL INGRESOS Y GASTOS)
+	@Deprecated
 	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params);
 	
 	// 			        VAT

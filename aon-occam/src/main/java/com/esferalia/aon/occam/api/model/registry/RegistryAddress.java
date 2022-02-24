@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -284,6 +285,29 @@ public class RegistryAddress implements Serializable {
     	buf.append(AonStringUtils.isEmpty(getAddress3())?"":")");
     	return buf.toString();
     }
+	
+	public String getFullAddress(AonLanguage language) {
+		
+		String description = getStreetType() != null ? getStreetType().getDescription(language) : null;
+		
+		String st = getStreetType() == null 
+				|| StreetType.XX.equals(getStreetType())
+				|| StreetType.ZZ.equals(getStreetType())
+				|| AonStringUtils.isBlank(description)
+				? "": description.substring(0, 1) + description.substring(1).toLowerCase();
+		StringBuilder buf = new StringBuilder();
+		buf.append(AonStringUtils.defaultString(st));
+		buf.append(!AonStringUtils.isBlank(st) ? ". " : "");
+		buf.append(AonStringUtils.isEmpty(getAddress())? "":getAddress());
+		buf.append(AonStringUtils.isEmpty(getNumber())?"":" ");
+		buf.append(AonStringUtils.isEmpty(getNumber())?"":getNumber());
+		buf.append(AonStringUtils.isEmpty(getAddress2())?"":", ");
+		buf.append(AonStringUtils.isEmpty(getAddress2())?"":getAddress2());
+		buf.append(AonStringUtils.isEmpty(getAddress3())?"":" (");
+		buf.append(AonStringUtils.isEmpty(getAddress3())?"":getAddress3());
+		buf.append(AonStringUtils.isEmpty(getAddress3())?"":")");
+		return buf.toString();
+	}
 
 	public boolean isEmpty() {
 		return id == null && domain == null && registry == null

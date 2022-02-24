@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api.model;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.Properties.*;
 
-public interface Filter {
+public interface Filter extends Serializable{
 	
 	public interface Property<T> {
 		Filter eq(T t);
@@ -595,6 +597,26 @@ public interface Filter {
 	@FunctionalInterface
 	public interface InvoiceTaxFilter{
 		Filter filter(InvoiceTaxProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface InvoiceInfoFilter{
+		Filter filter(InvoiceInfoProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface InvoiceTrackingFilter{
+		Filter filter(InvoiceTrackingProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface InvoiceBatchFilter{
+		Filter filter(InvoiceBatchProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface InvoiceBatchDetailFilter{
+		Filter filter(InvoiceBatchDetailProperties properties);
 	}
 	
 	@FunctionalInterface

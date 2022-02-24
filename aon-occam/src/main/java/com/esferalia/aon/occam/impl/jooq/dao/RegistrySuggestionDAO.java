@@ -19,6 +19,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 
 public class RegistrySuggestionDAO {
@@ -55,7 +57,7 @@ public class RegistrySuggestionDAO {
 			
 			Table<Record1<Integer>> ar = s.asTable(AR);
 
-			return 	ctx.getDslContext().selectDistinct(REG_FIELD, REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME)
+			return 	ctx.getDslContext().selectDistinct(REG_FIELD, REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE)
 					.from(ar)
 					.join(REGISTRY).on(REGISTRY.ID.eq(REG_FIELD))
 					.where(REGISTRY_PROPERTIES.getConditions(filter))
@@ -65,13 +67,15 @@ public class RegistrySuggestionDAO {
 					.fetch()
 					.stream()
 					.map(r -> new Registry().setId(r.getValue(REGISTRY.ID)).setDocument(r.getValue(REGISTRY.DOCUMENT))
-							.setName(r.getValue(REGISTRY.NAME)));	
+							.setName(r.getValue(REGISTRY.NAME))
+							.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
+							.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))));	
 		}
 	}
 	
 	public static Stream<Registry> getSuggestionRegistries(AONContext ctx, RegistryFilter filter) {
 		ctx.checkRead();	
-		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME)
+		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE)
 			.from(REGISTRY)
 			.where(REGISTRY_PROPERTIES.getConditions(filter))
 			.orderBy(REGISTRY.NAME)
@@ -79,12 +83,14 @@ public class RegistrySuggestionDAO {
 			.fetch()
 			.stream()
 			.map(r -> new Registry().setId(r.getValue(REGISTRY.ID)).setDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setName(r.getValue(REGISTRY.NAME)));	
+					.setName(r.getValue(REGISTRY.NAME))
+					.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
+					.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))));	
 	}
 	
 	public static Stream<Registry> getGlobalSuggestionRegistries(RegistryFilter filter) {
 		try(AONContext ctx = GlobalDAO.getGlobalAONContext("")){
-			return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME)
+			return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE)
 					.from(REGISTRY)
 					.where(REGISTRY_PROPERTIES.getConditions(filter))
 					.orderBy(REGISTRY.NAME)
@@ -92,7 +98,9 @@ public class RegistrySuggestionDAO {
 					.fetch()
 					.stream()
 					.map(r -> new Registry().setId(r.getValue(REGISTRY.ID)).setDocument(r.getValue(REGISTRY.DOCUMENT))
-							.setName(r.getValue(REGISTRY.NAME)));	
+							.setName(r.getValue(REGISTRY.NAME))
+							.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
+							.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))));	
 		}		
 	}
 }

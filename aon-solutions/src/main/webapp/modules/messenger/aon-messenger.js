@@ -21,7 +21,7 @@ export class AonMessenger extends AonElement {
 	TASK_HOLDER;
 	TASK_HOLDER_ENTERPRISE;
 	cau; //BOOLEAN
-	cauData;
+	cauInfo;
 	dur;
 	constructor () {
 		super();
@@ -62,10 +62,10 @@ export class AonMessenger extends AonElement {
 
 		localStorage.setItem("taskCau", this.cau ? 1 : 0);
 
-		this.cauData = await getCauInfo();
+		this.cauInfo = await getCauInfo();
 
-		if(this.cauData && this.cauData.auth.email)
-			this._filter.email = this.cauData.auth.email;
+		if(this.cauInfo && this.cauInfo.auth.email)
+			this._filter.email = this.cauInfo.auth.email;
 			
 		this.paintView();
 		
@@ -258,7 +258,10 @@ export class AonMessenger extends AonElement {
 			let option = {
 				name: item.description,
 				icon: MATERIAL_ICONS.LABEL,
-				actions:[]
+				actions:[],
+				fn: () => {
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, {...this._filter, search:item.description});
+				}
 			};
 
 			if(manager)
@@ -318,8 +321,8 @@ export class AonMessenger extends AonElement {
 	updateCount(){
 		let application = this.applicationEl;
 		let filterCount= {};
-		if(this.cauData && this.cauData.auth)
-			filterCount.email = this.cauData.auth.email;
+		if(this.cauInfo && this.cauInfo.auth)
+			filterCount.email = this.cauInfo.auth.email;
 		if(this.TASK_HOLDER.id)
 			filterCount.task_holder = this.TASK_HOLDER.id;
 			
@@ -338,8 +341,8 @@ export class AonMessenger extends AonElement {
 		if(this._filter.source) 
 			filter.source = this._filter.source;
 
-		if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
-			filter.email = this.cauData.auth.email;
+		if((!this.TASK_HOLDER.id || this.cau) && this.cauInfo)
+			filter.email = this.cauInfo.auth.email;
 		else if(this.TASK_HOLDER.id && !this.getDur().isMessengerManager())
 			filter.task_holder = this.TASK_HOLDER.id;
 

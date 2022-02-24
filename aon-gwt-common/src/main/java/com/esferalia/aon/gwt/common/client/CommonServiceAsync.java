@@ -23,6 +23,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	void getAonConfiguration(String currentDomainName, int currentDomain, String user, AsyncCallback<AonConfiguration> callback);
 	void getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate, AsyncCallback<AonConfiguration> callback);
+	void getAonConfiguration(Occam occam, AsyncCallback<AonConfiguration> asyncCallback);
 	void getAonConfiguration(Occam occam, ConfigParams params, AsyncCallback<AonConfiguration> asyncCallback);
 
 	// **************************************************

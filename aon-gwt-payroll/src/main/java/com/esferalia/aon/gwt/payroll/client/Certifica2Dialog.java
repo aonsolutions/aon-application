@@ -59,6 +59,15 @@ public class Certifica2Dialog extends AonCustomDialog {
 	HTMLPanel toolbarPanel;
 	
 	@UiField
+	Label representativeDocumentL;
+	
+	@UiField
+	Label representativeNameL;
+	
+	@UiField
+	Label representativeSurnameL;
+	
+	@UiField
 	Label enterpriceDocumentL;
 	
 	@UiField
@@ -276,6 +285,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 	}
 	
 	private void fillFields() {
+		this.representativeDocumentL.setText(certifica2Info.getRepresentativeDocument());
+		this.representativeNameL.setText(certifica2Info.getRepresentativeName());
+		this.representativeSurnameL.setText(certifica2Info.getRepresentativeSurname());
 		this.enterpriceDocumentL.setText(certifica2Info.getEnterpriseDocument());
 		this.completeCCCL.setText(certifica2Info.getCompleteCCC());
 		this.documentL.setText(certifica2Info.getDocument());

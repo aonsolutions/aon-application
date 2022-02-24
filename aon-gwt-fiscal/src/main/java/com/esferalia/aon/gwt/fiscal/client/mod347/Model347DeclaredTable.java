@@ -163,9 +163,13 @@ public class Model347DeclaredTable extends SimpleLayoutPanel implements HasSelec
 			} else {
 				nameLabel.removeStyleName(AON.CSS.aonTextLineThrough());
 			}
-			
+			if ( this.model.isAEAT()) {
+				InlineLabel numberLabel = new InlineLabel( "" + (i + 2) );
+				numberLabel.setTitle("N\u00FAm. l\u00EDnea en el fichero AEAT");
+				row.addCell( numberLabel , AON.CSS.aonTextCenter(),AON.CSS.aonWidth20() );
+			}
 			row.addCell( new InlineLabel( detail.getType() == null?"":detail.getType().getValue() ) , AON.CSS.aonTextCenter(),AON.CSS.aonWidth20() )
-			.addCell( nameLabel ,AON.CSS.aonWidthAuto());
+				.addCell( nameLabel ,AON.CSS.aonWidthAuto());
 			i++;
 		}
 		if (resetSelection) {

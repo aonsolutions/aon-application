@@ -209,7 +209,7 @@ public class JooqContractTransform {
 			)).fetchOne(RADDRESS.MUNICIPALITY_CODE);
 		
 		// TRANSFORMACION
-		TRANSFORMACIONES transformaciones = createTransform(enterpriseCIF, completeCCC, municipalityCodeCT, contractTransform);
+		TRANSFORMACIONES transformaciones = createTransform(enterpriseCIF, completeCCC, municipalityCodeCT, contractTransform.getCno(), contractTransform);
 		
 		// ByteArrayOutputStream
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -246,7 +246,7 @@ public class JooqContractTransform {
 
 	// --------------------------------------------- Methods. createProrroga
 
-	private static TRANSFORMACIONES createTransform(String enterpriseCIF, String completeCCC, String municipalityCodeCT, ContractTransform contractTransform) {
+	private static TRANSFORMACIONES createTransform(String enterpriseCIF, String completeCCC, String municipalityCodeCT, String cno, ContractTransform contractTransform) {
 		TRANSFORMACIONES transformacion = new TRANSFORMACIONES();
 		ITransformacionType contractTransformType = getContractTransformType(contractTransform.getTc2());
 		
@@ -271,6 +271,7 @@ public class JooqContractTransform {
 		// Datos generales
 		DATOSGENERALESTRANSFORMACIONTYPE datosGeneralTransformacion = new DATOSGENERALESTRANSFORMACIONTYPE();
 		datosGeneralTransformacion.setFECHAINICIO(formatDate.format(contractTransform.getContractStartDate()));
+		datosGeneralTransformacion.setCODIGOOCUPACION(AonStringUtils.rightPad(cno, 8, ' '));
 		datosGeneralTransformacion.setMUNICIPIOCT(municipalityCodeCT);
 		datosGeneralTransformacion.setNACIONALIDADCT("724");
 		if(null != contractTransform.getDiscontinuosInd() && Boolean.TRUE.equals(contractTransform.getDiscontinuosInd()))

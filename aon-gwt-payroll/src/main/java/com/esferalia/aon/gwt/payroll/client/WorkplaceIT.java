@@ -153,9 +153,10 @@ public class WorkplaceIT extends Composite {
 		}
 
 		@Override
-		protected void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure){
+		protected void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure){}
 
-		}
+		@Override
+		protected void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure){}
 	}
 	
 	// --------------------------------------------------- Binder

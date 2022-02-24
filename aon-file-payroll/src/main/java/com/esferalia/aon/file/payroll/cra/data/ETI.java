@@ -15,8 +15,7 @@ public class ETI {
 	private String prueba;
 	private List<DDE> ddeList;
 	
-	public ETI() {
-		Date date = new Date();
+	public ETI(Date date) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		String f =  formatter.format(date);
 		fecha = Integer.parseInt(f);
@@ -25,7 +24,6 @@ public class ETI {
 		hora = Integer.parseInt(t);
 		formatter = new SimpleDateFormat("ddHHmmss");
 		nombreFichero =  formatter.format(date);
-		
 	}
 	
 	public String getClave() {

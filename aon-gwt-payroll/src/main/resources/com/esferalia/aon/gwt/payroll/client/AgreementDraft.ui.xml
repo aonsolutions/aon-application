@@ -370,6 +370,18 @@
 		.showExtra:hover{
 			background-color: transparent !important;
 		}
+		
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+			margin-top: 1rem;
+			align-items: center;
+		}
+		
+		.message {
+			font-weight: bold;
+			text-transform: uppercase;
+		}
 
 	</ui:style>
 
@@ -490,6 +502,9 @@
 				<p:FullViewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
 			</g:center>
 		</g:DockLayoutPanel>
+		<g:HTMLPanel styleName="{style.flexColumn}" ui:field="selectMessage">
+			<g:Label text="Seleccione un convenio para visualizarlo" styleName="{style.message}" />
+		</g:HTMLPanel>
 	</g:DeckLayoutPanel>
 
 </ui:UiBinder>

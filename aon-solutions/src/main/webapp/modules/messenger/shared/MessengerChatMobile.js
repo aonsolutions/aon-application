@@ -157,12 +157,16 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
 
 
 const changeStyleSectionComment = (divs) => {
-    divs.aonTextArea.style.fontSize = "15px";
-    divs.aonTextArea.style.margin = "0";
-    divs.aonTextArea.style.minHeight = "55px";
+    setStyles(divs.aonTextArea,{
+       fontSize: "15px",
+       margin:"0",
+       minHeight:"55px"
+    });
+
+    const size = "1.8em";
     divs.divComment.style.background = "#fff";
-    divs.iconOpenFull.querySelector("i").style.fontSize = "1.8em";
-    divs.iconSend.querySelector("i").style.fontSize = "1.8em";
+    divs.iconOpenFull.querySelector("i").style.fontSize = size;
+    divs.iconSend.querySelector("i").style.fontSize = size;
 }
 
 /**
@@ -179,8 +183,7 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
      const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0),
-       
+        title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0)
     });
     toolbar.style.width = "100%"; 
     
@@ -281,7 +284,6 @@ const createSecondDiv = (mainView) => {
             background: CSS.variable(COLORS.AON_WHITE),
             position: 'absolute',
             top: '0%',
-            // transition: '.5s',
             opacity: 0,
             zIndex: -9
         }

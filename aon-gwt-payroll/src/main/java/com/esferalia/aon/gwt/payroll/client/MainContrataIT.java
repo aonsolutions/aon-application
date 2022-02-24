@@ -159,6 +159,13 @@ public class MainContrataIT extends MainEntryPoint {
 					success::accept, 
 					failure::accept);
 		}
+
+		@Override
+		protected void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
+			mainContrataITObject.removeITParts(list,
+					success::accept, 
+					failure::accept);
+		}
 	}
 	
 	// --------------------------------------------------- Binder

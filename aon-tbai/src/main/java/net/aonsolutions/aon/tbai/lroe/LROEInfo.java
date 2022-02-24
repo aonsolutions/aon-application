@@ -3,6 +3,8 @@ package net.aonsolutions.aon.tbai.lroe;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 
@@ -50,6 +52,34 @@ public class LROEInfo {
 	
 	public String getSubcapitulo() {
 		return subcapitulo;
+	}
+	
+	public InvoiceCommunicationType getCommunicationType() {
+		if("1.1".equals(getSubcapitulo())) {
+			return InvoiceCommunicationType.LROE_1_1;
+		} else if("1.2".equals(getSubcapitulo())) {
+			return InvoiceCommunicationType.LROE_1_2;
+		} else if("1.3".equals(getSubcapitulo())) {
+			return InvoiceCommunicationType.LROE_1_3;
+		} else if("2.1".equals(getSubcapitulo())) {
+			return InvoiceCommunicationType.LROE_2_1;
+		} else if("2.2".equals(getSubcapitulo())) {
+			return InvoiceCommunicationType.LROE_2_2;
+		} else if("2".equals(getCapitulo())) {
+			return InvoiceCommunicationType.LROE_2;
+		}
+		return null;
+	}
+	
+	public InvoiceCommunicationOperation getCommunicationOperation() {
+		if(OperacionEnum.A_00.equals(getOperacion()) || OperacionEnum.A_01.equals(getOperacion())){
+			return InvoiceCommunicationOperation.REGISTER;
+		} else if(OperacionEnum.M_00.equals(getOperacion()) || OperacionEnum.M_01.equals(getOperacion())) {
+			return InvoiceCommunicationOperation.MODIFICATION;
+		} else if(OperacionEnum.AN_0.equals(getOperacion())) {
+			return InvoiceCommunicationOperation.ANNULMENT;
+		}
+		return null;
 	}
 	
 	public LROEInfo setSubcapitulo(String subcapitulo) {

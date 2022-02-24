@@ -40,6 +40,7 @@ public class LROE implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	protected static final String LROE = "LROE";
+	protected static final String DATE_FORMAT = "dd-MM-yyyy";
 	
 	public LROEResponse send(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
 		JSONObject responseJSON = new JSONObject();
@@ -59,6 +60,98 @@ public class LROE implements Serializable {
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
            
 			String uri = TbaiUri.getUrlEmision(tbaiConfiguration);
+			url = new URL(uri);
+			System.out.println("***** REQUEST *****");
+			System.out.println("[POST] " + uri);
+			System.out.println(json.toString());
+			String contentLength = Integer.toString(xml.length);
+			System.out.println("Content-Length: " + contentLength);
+			
+			HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+
+	        https.setHostnameVerifier(new TrustAllHosts());
+	        https.setRequestMethod("POST"); 
+			https.setRequestProperty("Accept-Encoding", "gzip");
+			https.setRequestProperty("Content-Encoding", "gzip");
+			https.setRequestProperty("Content-Length", contentLength);
+			https.setRequestProperty("Content-Type", "application/octet-stream");
+			https.setRequestProperty("eus-bizkaia-n3-version", "1.0");
+			https.setRequestProperty("eus-bizkaia-n3-content-type", "application/xml");
+			https.setRequestProperty("eus-bizkaia-n3-data", json.toString());
+			
+			https.setDoOutput(true);
+			https.setDoInput(true);
+			https.setUseCaches(false);
+			for( String str : https.getRequestProperties().keySet()) {
+				System.out.println(str + ": " + https.getRequestProperty(str));
+			}
+
+			
+			OutputStream os = https.getOutputStream();
+			os.write(xml);
+			os.close();
+
+			responseJSON.put("responseCode", https.getResponseCode());
+			System.out.println(https.getResponseCode());
+			responseJSON.put("responseMessage", https.getResponseMessage());
+			System.out.println(https.getResponseMessage());
+			responseJSON.put("responseContentType", https.getContentType());
+			responseJSON.put("responseContentLength", https.getContentLength());
+			for (String key2 : https.getHeaderFields().keySet()) {
+				if(key2 != null) {
+					responseJSON.put(key2, https.getHeaderField(key2));
+					System.out.println( key2 + " - " + https.getHeaderField(key2));
+				}
+			} 
+			
+			byte[] responseData = null;
+			try {
+				InputStream respons = https.getInputStream();
+				byte[] bytes = respons.readAllBytes();
+				responseData = decompress(bytes);
+				if(responseData != null) {
+					Document d = XMLUtils.getDocument(responseData);
+					System.out.println(XMLUtils.documentToString(d));
+					String status = d.getElementsByTagName("EstadoRegistro").item(0).getTextContent();
+					boolean error = "incorrecto".equalsIgnoreCase(status);
+					responseJSON.put("error", error);
+					if(error) {
+						String errorCode = d.getElementsByTagName("CodigoErrorRegistro").item(0).getTextContent();
+						String errorMessage = d.getElementsByTagName("DescripcionErrorRegistroES").item(0).getTextContent();
+
+						responseJSON.put("errorMessage", errorCode + " - " + errorMessage);
+					}
+				}
+			} catch (ParserConfigurationException | SAXException e) {
+				e.printStackTrace();
+			}
+			return new LROEResponse(responseJSON, responseData);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseJSON.put("error", true);
+			responseJSON.put("errorMessage", e.getMessage());
+			return new LROEResponse(responseJSON);
+		}
+	}
+	
+	public LROEResponse sendConsulta(TbaiConfiguration tbaiConfiguration, JSONObject json, byte[] xml) {
+		JSONObject responseJSON = new JSONObject();
+		URL url;
+		try {
+			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());	
+			KeyStore keyStore = KeyStore.getInstance("PKCS12");
+			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+   			kmf.init(keyStore, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+   	        
+            TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
+
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+			SSLContext.setDefault(sslContext);
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+           
+			String uri = TbaiUri.getUrlConsulta(tbaiConfiguration);
 			url = new URL(uri);
 			System.out.println("***** REQUEST *****");
 			System.out.println("[POST] " + uri);

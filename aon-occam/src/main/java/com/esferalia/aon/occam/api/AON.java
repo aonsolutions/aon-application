@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -168,8 +169,10 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -395,6 +398,11 @@ public class AON {
 	// ********************************************
 	// *************************** CONFIGURATION **
 	// ********************************************
+	public static AonConfiguration getConfiguration(Occam occam) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getConfiguration(ctx, null);
+		}
+	}
 	public static AonConfiguration getConfiguration(Occam occam,Date atDate) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getConfiguration(ctx, atDate);
@@ -7112,9 +7120,33 @@ public class AON {
 		}
 	}
 	
+	public static void removeEmployeeIT(Domain domain, User user, Integer contractLeaveId, Integer ...partIds) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			getEmployeeIT().removeEmployeeIT(ctx, contractLeaveId, partIds);
+		}
+	}
+	
 	public static void saveFacturaeCodeAsignacion(Domain domain, User user, Integer invoice, Integer registry, String code) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			getFinance().saveFacturaeCodeAsignacion(ctx, invoice, registry, code);
+		}
+	}
+	
+	public static InvoiceInfo getInvoiceInfo(Domain domain, User user, InvoiceInfoFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getInvoiceInfo(ctx, filter);
+		}
+	}
+
+	public static InvoiceInfo saveInvoiceInfo(Domain domain, User user, InvoiceInfo invoiceInfo) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().saveInvoiceInfo(ctx, invoiceInfo);
+		}
+	}
+	
+	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
 		}
 	}
 }

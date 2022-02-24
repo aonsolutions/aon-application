@@ -24,6 +24,24 @@
 			font-size: 14px;
 		}
 		
+		.loading{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel debugId='agreementsTreeToolbar' styleName="{style.toolbar}" ui:field='toolbar' />

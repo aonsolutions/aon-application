@@ -58,6 +58,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -239,6 +240,10 @@ public class PropertiesDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
 
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
+
+		// INVOICE COMMUNICATION
+		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
+		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}		
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {
@@ -894,7 +899,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getAttachProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.ATTACH);}
 	}
 	
-	protected static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
+	public static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, RegistryAddInfoFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
@@ -1080,8 +1085,10 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getDischargeCauseProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.DISCHARGE_CAUSE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_LEAVE.PARENT);}
 		
-		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
 		@Override public Property<String> getCCCProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.CCC);}
+		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
+		@Override public Property<String> getNameProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getDocumentProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 
 	}
 	

@@ -1405,21 +1405,33 @@ public class JooqEmployee {
 			// Actualizamos el existente
 			} else {
 				
-				if(payMethodType == (byte) 5)
-					dslContext.update(RPAYMETHOD)
-							.set(RPAYMETHOD.PAY_METHOD, payMethodId)
-							.set(RPAYMETHOD.RBANK, rbankTableId)
-							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-							.execute();
-				else {
-					
-					Integer rbank = null;
-					dslContext.update(RPAYMETHOD)
-						.set(RPAYMETHOD.PAY_METHOD, payMethodId)
-						.set(RPAYMETHOD.RBANK, rbank)
-						.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-						.execute();
+				if(AonStringUtils.isBlank(account)) {
+					rbankTableId = null;
+					employeeData.setRbankId(null);
 				}
+				
+				// Se le asigna el banco independiemente del tipo de metodo de pago
+				dslContext.update(RPAYMETHOD)
+					.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+					.set(RPAYMETHOD.RBANK, rbankTableId)
+					.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+					.execute();
+				
+//				if(payMethodType == (byte) 5)
+//					dslContext.update(RPAYMETHOD)
+//							.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+//							.set(RPAYMETHOD.RBANK, rbankTableId)
+//							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+//							.execute();
+//				else {
+//					
+//					Integer rbank = null;
+//					dslContext.update(RPAYMETHOD)
+//						.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+//						.set(RPAYMETHOD.RBANK, rbank)
+//						.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+//						.execute();
+//				}
 				
 			}
 		}

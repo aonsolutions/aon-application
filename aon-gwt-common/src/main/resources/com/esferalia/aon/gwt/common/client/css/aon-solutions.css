@@ -951,6 +951,7 @@
 	margin-left: 1em;
 	display: flex;
 	align-items: center;
+	gap: .5rem;
 }
 
 .aon_toolbar_small_button_container {
@@ -1030,6 +1031,27 @@
 .aon_toolbar_small_button {
 	width: 24px;
 	height: 24px;
+}
+
+.aon_toolbar_search_container {
+	display: flex;
+}
+	
+.aon_toolbar_search_box {
+	display: flex;
+	border-bottom: 2px solid #002469;
+}
+		
+.aon_toolbar_text_box {
+	box-shadow: none !important;
+	border: none !important;
+	outline: none !important;
+}
+		
+.aon_toolbar_text_box:focus {
+	box-shadow: none !important;
+	border: none !important;
+	outline: none !important;
 }
 
 .aon_button {

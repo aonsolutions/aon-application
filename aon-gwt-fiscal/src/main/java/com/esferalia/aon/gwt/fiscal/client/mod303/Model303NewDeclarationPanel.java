@@ -86,11 +86,11 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		
 		populate(model);
 		paintAdministration(model,callback,tab);
-		paintYear(model,tab);
+		paintYear(model,callback,tab);
 		paintPeriod(model,callback,tab);
 		paintDefaultVatRegime(model,tab);
-		paintComplementary(model,tab);
-		paintReplacement(model,tab);
+		paintComplementary(model,callback,tab);
+		paintReplacement(model,callback,tab);
 		paintWithoutActivity(model,tab);
 		paintDiffCalculation(model,tab);
 		paintProrrate(model,callback,tab);
@@ -102,33 +102,40 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	private void paintAdministration(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
-			Model303.service.declarationChanged(callback.getOptions().getOccam(),model,
-					new AsyncCallback<Mod303>() {
-						@Override
-						public void onSuccess(Mod303 result) {
-							paint(result,callback);
-						}
-		
-						@Override
-						public void onFailure(Throwable caught) {
-							callback.showError(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						}
-					});
+			declarationChanged(model,callback);
 		});
 		tab.addLabelWidgetRow(AON.MSG.administration(), admonList);
 	}
 	
-	private void paintYear(Mod303 model, AonDisplayTable tab) {
+	private void declarationChanged(Mod303 model, Model303Callback callback) {
+		Model303.service.declarationChanged(callback.getOptions().getOccam(),model,
+				new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 result) {
+						paint(result,callback);
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.showError(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+
+	private void paintYear(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
-		yearBox.addValueChangeHandler(event -> model.setYear(yearBox.getValue()));
+		yearBox.addValueChangeHandler(event -> {
+			model.setYear(yearBox.getValue());
+			declarationChanged(model,callback);
+		});
 		tab.addLabelWidgetRow(AON.MSG.year(), yearBox);
 	}
 
 	private void paintPeriod(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		periodList.addChangeHandler( event -> {
 			model.setPeriod( periodList.getValue());
-			paint(model,callback);
+			declarationChanged(model,callback);
 		});
 		tab.addLabelWidgetRow(AON.MSG.period(), periodList);
 	}
@@ -144,7 +151,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		}
 	}
 
-	private void paintComplementary(Mod303 model, AonDisplayTable tab) {
+	private void paintComplementary(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		if (model.isComplementaryDeclarationAvailable()) {
 			complementary.setText(AON.MSG.complementary());
 			complementary.addClickHandler(event -> {
@@ -153,13 +160,13 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 				if (AonEnumUtils.getBoolean(complementary.getValue())) {
 					replacement.setValue(false);
 				}
-				
+				declarationChanged(model,callback);
 			});
 			tab.addLabelWidgetRow("", complementary);
 		}
 	}
 
-	private void paintReplacement(Mod303 model, AonDisplayTable tab) {
+	private void paintReplacement(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
 		if (model.isReplacementDeclarationAvailable() ) {
 			replacement.setText(AON.MSG.replacement());
 			replacement.addClickHandler(event -> {
@@ -168,6 +175,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 				if (AonEnumUtils.getBoolean(replacement.getValue())) {
 					complementary.setValue(false);
 				}
+				declarationChanged(model,callback);
 			});
 			tab.addLabelWidgetRow("", replacement);
 		}

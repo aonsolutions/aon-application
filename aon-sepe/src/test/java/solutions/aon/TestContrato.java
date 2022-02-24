@@ -1,31 +1,39 @@
 package solutions.aon;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.Date;
+
 import org.junit.Ignore;
 import org.junit.Test;
+
 import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
+import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.SexType;
-import solutions.aon.sepe.Contrato;
-import solutions.aon.sepe.Contrato.FirmType;
+import aon.sepe.objects.CopyBasic;
+import aon.sepe.objects.CopyBasic.FirmType;
+import solutions.aon.sepe.Sepe;
 
 public class TestContrato {
 	
+	private static final String CERTIFICATE_PASSWORD = "aon@FNMT";
+	private static final String CERTIFICATE_TYPE = "pkcs12"; 
+	private static final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/eclipse-workspace/aon.parent/aon-sepe/src/test/resources/solutions/aon/SEPE.p12"; 
+
 	@Test
 	@Ignore
-	public void testContrato() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
+	public void sendContrato() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			String certificateType = "pkcs12";
 			@SuppressWarnings("deprecation")
-			Date fnac = new Date("1994/07/18");
+			Date fnac = new Date("1965/03/13");
 			@SuppressWarnings("deprecation")
-			Date fini = new Date("2021/01/28");
-			ContractBuilder bd = new ContractBuilder();
-			bd.setRegimen("0111")
+			Date fini = new Date("2022/03/01");
+			ContractBuilder bd = new ContractBuilder()
+			.setRegimen("0111")
 			.setCtaCti("01105360062")
 			.setCifEnterprise("B01487271")
 			.setIpf("16262835H")
@@ -34,11 +42,10 @@ public class TestContrato {
 			.setLastSurname("PEREZ")
 			.setDateBirth(fnac)
 			.setSex(SexType.HOMBRE)
-			.setCodNationality(862)
+			.setCodNationality(724)
 			.setCodPaisDom(724)
 			.setCodMunDom("01059") 
 			.setNss("010022757387")
-//			.setTypeJnd()
 			.setCodContract("401")
 			.setDateIniContract(fini)
 			.setCodFormativo(59)//review
@@ -47,8 +54,10 @@ public class TestContrato {
 			.setCodMunWork("01059")
 			.setOffer(OfferType.NO) //review
 			;
-			Contract cto = bd.build();
-			String ide = Contrato.contrato(certificateInputStream, certificatePassword, certificateType,  cto);
+//			bd.setInterinidad("H");
+
+
+			String ide = Sepe.sendContract(certificateInputStream, CERTIFICATE_PASSWORD, certificateType, bd.build());
 			System.out.println("ide: "+ide);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -57,17 +66,72 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void testCopyBasic() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
-			String certificateType = "pkcs12";
+	public void removeContrato() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {		
+			String ide = "0120220026115";
+			Sepe.removeContrato(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ide);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void sendTransformation() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
+			@SuppressWarnings("deprecation")
+			Date fini = new Date("2022/03/01");
+			@SuppressWarnings("deprecation")
+			Date fcomunicate = new Date("2022/03/02");
+			
+			ContractBuilder bd = new ContractBuilder()
+			.setCifEnterprise("B01487271")
+			.setIpf("16262835H")
+			.setCodContract("189") //189, 109
+			.setDateIniContract(fini)
+			.setDateComContract(fcomunicate)
+			.setJndType(JndType.JORNADA_MENSUAL)
+			.setDurationTypeJndHour("40")
+			.setDurationTypeJndMin("0")
+			.setCodOccupation("1311")
+			.setCodPaisWork(724)
+			.setCodMunWork("01059")
+			.setDiscontinuo(true) // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
+			;
+
+			CopyBasic copyBasic = new CopyBasic()
+			.setFirmType(FirmType.FIRMADA_REPRESENTANTES_LEGALES)
+			.setWorkAddress("CALLE WELLINGM, ALAVA")
+			.setRestContract("segun convenio");
+			
+			Sepe.sendTransformation(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,  bd.build(), copyBasic);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void RemoveTransformation() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
+			String ide = "0120220026115";
+			Sepe.removeTransformation(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ide);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void sendCopyBasic() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			String ipf = "16262835H";
 			@SuppressWarnings("deprecation")
 			Date fini = new Date("2021/01/28");
 			Date ffin = fini;
 			String workAddress = "CALLE WELLINGM, ALAVA";
 			String restContract = "segun convenio";
-			Contrato.contratoCopyBasic(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, FirmType.NO_FACILITADO_COPIA, workAddress, restContract);
+			Sepe.sendContratoCopyBasic(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin, FirmType.NO_FACILITADO_COPIA, workAddress, restContract);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,16 +139,14 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void testContratoPdf() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
-			String certificateType = "pkcs12";
+	public void getContratoPdf() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {		
 			@SuppressWarnings("deprecation")
-			Date fini =  new Date("2021/01/28");
+			Date fini =  new Date("2022/02/18");
 			@SuppressWarnings("deprecation")
-			Date ffin =  new Date("2021/01/28");
+			Date ffin =  new Date("2022/02/18");
 			String ipf = "16262835H";
-			byte[] pdf = Contrato.contratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin);
+			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -93,16 +155,14 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void testGetCopyBasicPdf() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
-			String certificateType = "pkcs12";
+	public void getCopyBasicPdf() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			@SuppressWarnings("deprecation")
 			Date fini =  new Date("2020/09/09");
 			@SuppressWarnings("deprecation")
 			Date ffin =  new Date("2021/01/01");
 			String ipf = "16262835H";
-			byte[] pdf = Contrato.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin);
+			byte[] pdf = Sepe.getCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,14 +171,12 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void testTransformacionsPdf() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
-			String certificateType = "pkcs12";
+	public void getTransformacionsPdf() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
 			@SuppressWarnings("deprecation")
 			Date fecha =  new Date("2016/05/06");
 			String ipf = "16262835H";
-			byte[] pdf = Contrato.transformacionsPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha);
+			byte[] pdf = Sepe.transformacionsPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fecha);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,29 +185,13 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void removeContrato() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
-			String certificateType = "pkcs12";
-			String ide = "0120210005805";
-			Contrato.removeContrato(certificateInputStream, certificatePassword, certificateType, ide);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	@Ignore
-	public void testGetContratoData() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
-			String certificateType = "pkcs12";
-			@SuppressWarnings("deprecation")
-			Date fini =  new Date("2020/01/09");
-			@SuppressWarnings("deprecation")
-			Date fend =  new Date("2020/09/09");
-			String ipf = "Y7514970X";
-			Contract contract = Contrato.getContractData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+	@SuppressWarnings("deprecation")
+	public void getContractData() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
+			Date fini =  new Date("2022/02/18");
+			Date fend =  new Date("2022/02/18");
+			String ipf = "16262835H";
+			Contract contract = Sepe.getContractData(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, fend);
 			System.out.println(contract.getSepeId());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,9 +200,9 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void testValidateCert() {
-		try (InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			Contrato.validateCert(certificateInputStream, "aon@FNMT", "pkcs12");
+	public void validateCert() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
+			Sepe.validateCert(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

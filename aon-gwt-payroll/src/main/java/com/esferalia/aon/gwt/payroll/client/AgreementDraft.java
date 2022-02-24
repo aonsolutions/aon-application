@@ -1423,7 +1423,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		contextMenu = new AddPaymentContextMenu();
 		
-		showDraft();
+//		showDraft();
+		showSelectMessage();
 		
 		// Add extra hide option
 		KeyDownHandler myHandler = new KeyDownHandler() {
@@ -2126,6 +2127,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 //		this.agreementDraftObject = object;
 		
 //		Window.alert("Draft StartDate : " + agreementDraftObject.getStartDate() + " Draft EndDate : " + agreementDraftObject.getEndDate());
+		
+//		Window.alert("CalculateSuccess start");
 
 		categoryButton = initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
 		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
@@ -2138,11 +2141,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() /*&& isOnCategoryTab*/ )
 			categoryButton.click();
 		else {
-			createSalaryTable();
+//			createSalaryTable();
 			agreementDraftObject.showValueVariables();
 			if(agreementDraftObject.getShownVariables().isEmpty())
 				agreementDraftObject.showNoValueVariables();
-			reloadSalaryTable();
+//			reloadSalaryTable();
+			createSalaryTable();
 		}
 		
 		clearPaymentsTable();
@@ -2178,6 +2182,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		boolean isServiAgreement = this.agreementDraftObject.isServiAgreement();
 		setVisible(serviAgreementPanel.getElement(), isServiAgreement);
 		setVisible(serviAgreementUpdateButton.getElement(), isServiAgreement);
+		
+//		Window.alert("CalculateSuccess end");
 		
 	}
 
@@ -4479,6 +4485,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private void showPreview() {
 		deckPanel.showWidget(deckPanel.getWidgetIndex(printPreviewPanel));
+	}
+	
+	private void showSelectMessage() {
+		deckPanel.showWidget(2);
 	}
 
 	private void printPreview() {

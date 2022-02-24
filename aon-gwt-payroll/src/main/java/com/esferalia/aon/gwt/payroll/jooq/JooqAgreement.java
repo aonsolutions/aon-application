@@ -74,6 +74,7 @@ import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.itextpdf.text.log.SysoLogger;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
@@ -467,6 +468,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				limit, domains);
 	}
 	
+	public static List<Agreement> getAgreements(Connection conn, boolean allAgreements, Integer... domains) throws SQLException {
+		return getAgreements(DSL.using(conn, getDefaultSettings()), allAgreements, domains);
+	}
+	
 	public static List<Agreement> getTrashAgreements(Connection conn, int offset,
 			int limit, Integer... domains) throws SQLException {
 		return getTrashAgreements(DSL.using(conn, getDefaultSettings()), offset,
@@ -484,7 +489,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		// @formatter:off
 		Result<AgreementRecord> result = dslContext.select().from(AGREEMENT)
 				.where(AGREEMENT.DOMAIN.in(domains))
-
 				.or(AGREEMENT.ID.in(
 						dslContext
 						.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
@@ -522,6 +526,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			//agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
 
 			boolean hasContracts = hasContract(dslContext, record.getId(), domains[0]);
+			if(Boolean.FALSE.equals(hasContracts))
+				continue;
 			agreement.setHasContract(hasContracts);
 			// agreement.setLevelsWithoutCategories(false);
 			// agreement.setEmployees(rs.getInt("EMPLOYEEs"));
@@ -530,13 +536,57 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		}
 		
-		agreements.sort(new Comparator<Agreement>() {
-			@Override
-			public int compare(Agreement agreement1, Agreement agreement2) {
-				return agreement1.getDescription().compareTo(agreement2.getDescription());
-			}
-		});
+		agreements.sort((a1, a2) -> a1.getDescription().compareTo(a2.getDescription()));
+		System.out.println("Agreements Size : " + agreements.size());
+		return agreements;
+	}
+	
+	public static List<Agreement> getAgreements(DSLContext dslContext, boolean allAgreements, Integer... domains) throws SQLException {
 		
+		// @formatter:off
+		Result<AgreementRecord> result = dslContext.select().from(AGREEMENT)
+				.where(AGREEMENT.DOMAIN.in(domains))
+				.or(AGREEMENT.ID.in(
+						dslContext
+						.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
+						.from(APP_PARAM)
+						.where(APP_PARAM.DOMAIN.in(domains))
+						.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
+				))
+				.or(AGREEMENT.ID.in(
+						dslContext
+						.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
+						.from(APP_PARAM)
+						.where(APP_PARAM.DOMAIN.equal(0))
+						.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
+				))
+				.or(AGREEMENT.ID.eq(0))
+				.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
+				.fetchInto(AGREEMENT);
+		// @formatter:on
+
+		List<Agreement> agreements = new ArrayList<Agreement>();
+		for (AgreementRecord record : result) {
+			Agreement agreement = new Agreement();
+
+			agreement.setId(record.getId()); // Not NULL
+			agreement.setDomain(record.getDomain());
+			agreement.setDescription(record.getDescription());
+			agreement.setSSNumber(record.getSsNumber());
+			agreement.setOwner(null == record.getOwner() || (byte)0 == record.getOwner() ? AgreementOwner.AONSOLUTIONS : AgreementOwner.SERVICONVENIOS);
+			
+			agreement.setLevels(Collections.emptySet());
+			
+			boolean hasContracts = hasContract(dslContext, record.getId(), domains[0]);
+			if(Boolean.FALSE.equals(allAgreements) && Boolean.FALSE.equals(hasContracts))
+				continue;
+			agreement.setHasContract(hasContracts);
+			agreements.add(agreement);
+
+		}
+		
+		agreements.sort((a1, a2) -> a1.getDescription().compareTo(a2.getDescription()));
+		System.out.println("Agreements Size : " + agreements.size());
 		return agreements;
 	}
 
@@ -1668,7 +1718,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				if(AonNumberUtils.equals(enterpriseId, infoRecord.get(REGISTRY.ID)))
 					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
 				else {
-					message += "<br><b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
+					message += "<br><b>" + infoRecord.get(REGISTRY.NAME) + "</b><br><br>";
 					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
 					enterpriseId = infoRecord.get(REGISTRY.ID);
 				}

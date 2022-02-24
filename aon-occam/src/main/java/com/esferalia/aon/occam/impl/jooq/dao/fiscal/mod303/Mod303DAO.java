@@ -82,8 +82,8 @@ public class Mod303DAO extends FiscalModelDAO {
 	public static Stream<Mod303> getMod303s(AONContext ctx,int domain) {
 		return getMod303s(ctx, domain, null);
 	}
-	public static Stream<Mod303> getPreviousModels(AONContext ctx, Mod303 mod303, boolean b) {
-		return FiscalModelDAO.getPreviousModels(ctx,mod303,true,Mod303::new);
+	public static Stream<Mod303> getPreviousModels(AONContext ctx, Mod303 mod303, boolean desc) {
+		return FiscalModelDAO.getPreviousModels(ctx,mod303,desc,Mod303::new);
 	}
 	public static Stream<Mod303> getSamePeriodModels(AONContext ctx, Mod303 mod303) {
 		return FiscalModelDAO.getSamePeriodModels(ctx,mod303,Mod303::new);
@@ -248,7 +248,6 @@ public class Mod303DAO extends FiscalModelDAO {
 						}
 						mod303.ensureDetail(Mod303Key.CM_071).addAmount( vat.getBase());		
 					});
-				
 				calculateProrrate(mod303);
 			}
 		}
