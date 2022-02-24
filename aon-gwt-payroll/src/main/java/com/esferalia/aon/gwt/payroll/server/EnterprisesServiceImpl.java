@@ -3577,7 +3577,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			System.out.println(employeeIt);
 			
-			List<String> messages = ITComunica.communicateITs(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), employeeIt);
+			List<String> messages = ITComunica.communicateITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIt);
 
 			if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
@@ -3605,9 +3605,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Optional<EmployeeITPart> baja = employeeIT.getItBaja();
 				
 				EmployeeITPart part = itNotExist.getEmployeeITPart();
+				
 				parts.add(part);
 				
-				if(baja.isPresent() && !part.getType().equals(ContractLeaveDetailType.BAJA)) 
+				ContractLeaveDetailType type = part.getType();
+				
+				if(type.equals(ContractLeaveDetailType.BAJA)) {
+					employeeIT.setEndDate(null).setDischargeCause(null);
+				} else if(baja.isPresent()) 
 					parts.add(baja.get());
 				
 				employeeIT.setITParts(parts);

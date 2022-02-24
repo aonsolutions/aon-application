@@ -796,20 +796,21 @@ public class Contrata {
 		for( DomNode p: texts) {
 			String pStr = Toolkit.removeNBSP(p.getVisibleText()).trim();
 			Integer pInt = pStr.length();
+			boolean b = false;
 			if(pInt > 0) {
 				if(pStr.indexOf("Identificador de la Comunicaci\u00F3n :")>=0) {
 					String[] parts = pStr.split(":");
-					if(parts.length > 0) {
+					if(parts.length > 0) 
 						msg = (parts[1]).trim().replaceAll("-", "");
-					}
-					break;
+					b = true;
 				} else if(pStr.indexOf("se ha realizado correctamente")>=0) {
 					msg = pStr;
-					break;
+					b = true;
 				} else if(pStr.indexOf("sin fecha de t\u00E9rmino")>=0 || pStr.indexOf("F\u00EDsica en la base de datos no coinciden")>=0) {
 					msg = "returnInit";
-					break;
+					b = true;
 				} 
+				if(b) break;
 			}
 		}
 		return msg;

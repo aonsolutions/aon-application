@@ -193,7 +193,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 			)
 		);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor add = new Anchor("a\u00f1adir");
+		Anchor add = new Anchor("aqu\u00ed");
 		add.addClickHandler(e -> onSaveITPart(status));
 		
 		add.getElement().getStyle().setColor("blue");
@@ -201,10 +201,10 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(add);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para guardarlo en aon Solutions o"));
+		horizontalPanel.add(new Label("para guardar en aon Solutions o"));
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor remove = new Anchor("eliminar");
+		Anchor remove = new Anchor("aqu\u00ed");
 		if(this.isUserComunica) {
 			remove.addClickHandler(e -> onRemoveITPartToSS(status));
 			remove.getElement().getStyle().setColor("red");
@@ -216,7 +216,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(remove);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para anularlo en SISTEMA RED."));
+		horizontalPanel.add(new Label("para eliminar en SISTEMA RED."));
 	}
 	
 	
@@ -248,16 +248,16 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(anchor);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para gestionarlo o"));
+		horizontalPanel.add(new Label("para comunicar o"));
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor remove = new Anchor("eliminar");
+		Anchor remove = new Anchor("aqu\u00ed");
 		remove.addClickHandler(e -> onRemoveITPartToAon(status));
 		remove.getElement().getStyle().setColor("red");
 		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 		horizontalPanel.add(remove);
 		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para anularlo en aon Solutions."));
+		horizontalPanel.add(new Label("para eliminar en aon Solutions."));
 	}
 
 	@Override
