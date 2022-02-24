@@ -39,6 +39,8 @@ public class Mod140File extends HttpServlet {
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String epigraph = req.getParameter("epigraph");
 			String fromDateParam = req.getParameter("fromDate");
+			String onlyEmitidasParam = req.getParameter("onlyEmitidas");		
+			boolean onlyEmitidas = Boolean.parseBoolean(onlyEmitidasParam);			
 			Date fromDate = null;
 			if (AonStringUtils.isNotBlank(fromDateParam)){
 				fromDate = DATE_FORMAT.parse(fromDateParam);
@@ -60,6 +62,7 @@ public class Mod140File extends HttpServlet {
 			params.setDomain(domainId);
 			params.setFromDate(fromDate);
 			params.setToDate(toDate);
+			params.setOnlyEmitidas(onlyEmitidas);
 			
 			ByteArrayOutputStream fos = new ByteArrayOutputStream();
 			OutputStreamWriter writer = new OutputStreamWriter(fos,"ISO-8859-1");

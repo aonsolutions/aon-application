@@ -67,6 +67,7 @@ public class Mod140DAO {
 				,INVOICE.WITHHOLDING_FARMER
 				,INVOICE.VAT_ACCRUAL_PAYMENT
 				,INVOICE.INVESTMENT
+				,INVOICE.INVEST_ASSET
 				,INVOICE.SERVICE
 				,INVOICE.TAXABLE_BASE
 				,INVOICE.VAT_QUOTA
@@ -75,6 +76,7 @@ public class Mod140DAO {
 				
 				,INVOICE_DETAIL.ID
 				,INVOICE_DETAIL.TAXABLE_BASE
+				,INVOICE_DETAIL.INVEST_ASSET
 				
 				,INVOICE_TAX.TAX_TYPE
 				,INVOICE_TAX.BASE
@@ -223,6 +225,9 @@ public class Mod140DAO {
 		inv.setVatQuota(record.getValue(INVOICE.VAT_QUOTA));
 		inv.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA));
 		inv.setTotal(record.getValue(INVOICE.TOTAL));
+		if(inv.isInvestment()) {
+			inv.setInvestAsset(record.getValue(INVOICE.INVEST_ASSET));
+		}
 	}
 
 
@@ -250,6 +255,9 @@ public class Mod140DAO {
 					?INVOICE.TAX_DATE
 					:INVOICE.ISSUE_DATE
 					).lessOrEqual(AonDateUtils.toSql( params.getToDate())));	
+		}
+		if(params.isOnlyEmitidas()) {
+			list.add(INVOICE.TYPE.eq(InvoiceType.SALES.value()));
 		}
 		return list;
 	}

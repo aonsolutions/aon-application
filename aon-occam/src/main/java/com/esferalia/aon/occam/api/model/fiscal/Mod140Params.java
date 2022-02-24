@@ -12,30 +12,45 @@ public class Mod140Params implements Serializable {
 	private boolean filterByTaxDateEnabled;
 	private Date fromDate;
 	private Date toDate;
+	private boolean onlyEmitidas;
 	
 	public int getDomain() {
 		return domain;
 	}
+	
 	public void setDomain(int domain) {
 		this.domain = domain;
 	}
+	
 	public boolean isFilterByTaxDateEnabled() {
 		return filterByTaxDateEnabled;
 	}
+	
 	public void setFilterByTaxDateEnabled(boolean filterByTaxDateEnabled) {
 		this.filterByTaxDateEnabled = filterByTaxDateEnabled;
 	}
+	
 	public Date getFromDate() {
 		return fromDate;
 	}
+	
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
+	
 	public Date getToDate() {
 		return toDate;
 	}
+	
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-
+	
+	public boolean isOnlyEmitidas() {
+		return onlyEmitidas;
+	}
+	
+	public void setOnlyEmitidas(boolean onlyEmitidas) {
+		this.onlyEmitidas = onlyEmitidas;
+	}
 }
