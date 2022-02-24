@@ -5495,7 +5495,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
 			
 			WorkplaceEmployees workplaceEmployees = JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
-			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainID));
+			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainID));
 			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
 			workplaceEmployees.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
@@ -5714,20 +5714,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String generateCertifaca2(String domainName, Integer contractId) {
+	public void generateCertifaca2(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqCertifica2.generateCertifica2(connection, domainId, contractId);
+			JooqCertifica2.createCertifica2DB(connection, domainId, contractId, null);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 	
 	@Override
-	public String generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info) {
+	public void generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqCertifica2.generateCertifica2(connection, domainId, contractId, certifica2Info);
+			if(AonStringUtils.isNotBlank(certifica2Info.getProfesionalCategory()))
+				JooqCertifica2.insertCNOToDB(connection, domainId, contractId, certifica2Info.getProfesionalCategory(), certifica2Info.getStartDate(), certifica2Info.getEndDate());
+			JooqCertifica2.createCertifica2DB(connection, domainId, contractId, certifica2Info.getSuspensionCode());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -6682,16 +6684,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public Certifica2Info getCertifica2Info(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			// Get suspensionReason Code
-			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, contractId);
-
-			// Get Certifica2Info
-			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, contractId, suspensionReasonCode);
-			
+			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, contractId, null);
 			System.out.println(certifica2Info);
-			
 			return certifica2Info;
-		} catch (SQLException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}

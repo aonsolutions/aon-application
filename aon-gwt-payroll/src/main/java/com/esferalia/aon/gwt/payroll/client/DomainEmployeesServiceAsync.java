@@ -491,11 +491,11 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
 	}
 
-	public void generateCertifaca2(Integer contractId, AsyncCallback<String> callback) {
+	public void generateCertifaca2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, callback);
 	}
 	
-	public void generateCertifaca2(Integer contractId, Certifica2Info certifica2Info, AsyncCallback<String> callback) {
+	public void generateCertifaca2(Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, certifica2Info, callback);
 	}
 	

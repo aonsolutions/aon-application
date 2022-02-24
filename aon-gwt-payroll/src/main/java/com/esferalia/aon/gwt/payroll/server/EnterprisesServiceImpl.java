@@ -1822,7 +1822,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			EnterpriseInfo enterpriseInfo = JooqEnterprise.getEnterpriseInfo(connection, enterpriseId);
-			enterpriseInfo.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainID, parentDomainID));
+			enterpriseInfo.setAgreements(JooqAgreement.getAgreements(connection, true, domainID, parentDomainID));
 			enterpriseInfo.setScopes(JooqEnterprise.getEnterpriseScopes(connection, enterpriseId));
 			
 			return enterpriseInfo;
@@ -3330,7 +3330,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			EnterpriseContext enterpriseContext = new EnterpriseContext();
 			enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
-			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainId));
+			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainId));
 			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
 			
