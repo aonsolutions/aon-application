@@ -438,6 +438,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 900.00);
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("totalPaymentLabel", 965.00);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("totalPaymentLabel", 1000.00);
 
 		draft("INDICADOR, PÚBLICO DE RENTA DE EFECTOS MÚLTIPLES");
 		calculate(Calendar.JANUARY,2019);

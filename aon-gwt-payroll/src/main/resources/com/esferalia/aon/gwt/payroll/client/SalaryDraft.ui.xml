@@ -398,6 +398,9 @@
 								<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="VARIABLES NO DEFINIDAS" checked="false" />
+								<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="CONCEPTOS NO ACTIVOS" checked="true" />
 								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="DIFERENCIAS" checked="false" />
@@ -530,8 +533,6 @@
 														<g:HTMLPanel>
 															<g:Label ui:field="employeeWorkedHoursTitle" styleName="{style.cell-label}" visible="false">HORAS TRABAJADAS</g:Label>
 															<g:Label ui:field="employeeWorkedHoursLabel" styleName="{style.cell-value}" visible="false">&nbsp;</g:Label>
-															<g:Label ui:field="employeeSalaryHoursTitle" styleName="{style.cell-label}" visible="false">HORAS NOMINA</g:Label>
-															<g:Label ui:field="employeeSalaryHoursLabel" styleName="{style.cell-value}" visible="false">&nbsp;</g:Label>
 															<g:Label ui:field="employeeWorkedDaysTitle" styleName="{style.cell-label}" visible="false">DIAS TRABAJADOS</g:Label>
 															<g:Label ui:field="employeeWorkedDaysLabel" styleName="{style.cell-value}" visible="false">&nbsp;</g:Label>
 														</g:HTMLPanel>
