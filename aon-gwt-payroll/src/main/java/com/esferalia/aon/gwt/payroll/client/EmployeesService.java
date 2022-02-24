@@ -228,10 +228,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	ArrayList<EventEmployee> setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees);
 
-	String generateCertifaca2(String currentDomainName, Integer contractId);
-
-	String generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info);
+	void generateCertifaca2(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 	
+	void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) throws IllegalArgumentException;
+
 	// Sistema RED w2.seg-social.es
 	
 //	EmployeeStatus register(String domain, Integer contractId);
@@ -337,6 +337,5 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 			Date endDate);
-
 	
 }

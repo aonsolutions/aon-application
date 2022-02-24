@@ -390,10 +390,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 				messageL.setText("Generando Certifica2...");
 				messagesPanel.setVisible(true);
 				
-				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<String>() {
+				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<Void>() {
 					
 					@Override
-					public void onSuccess(String result) {
+					public void onSuccess(Void result) {
 						messageL.setText("Descargando XML Certifica2...");
 						hasChange = false;
 						formPanelXML.submit();
@@ -418,10 +418,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 				messageL.setText("Generando nuevo Certifica2...");
 				messagesPanel.setVisible(true);
 				
-				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<String>() {
+				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<Void>() {
 					
 					@Override
-					public void onSuccess(String result) {
+					public void onSuccess(Void result) {
 						hasChange = false;
 						messageL.setText("Comunicando Certifica2 al SEPE...");
 						messagesPanel.setVisible(true);

@@ -728,10 +728,9 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String generateCertifaca2(String currentDomainName, Integer contractId) {
+	public void generateCertifaca2(String currentDomainName, Integer contractId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
-		return null;
 	}
 	
 	@Override
@@ -889,9 +888,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) {
+	public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

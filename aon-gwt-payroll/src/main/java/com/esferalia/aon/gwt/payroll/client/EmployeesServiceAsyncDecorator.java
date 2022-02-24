@@ -740,15 +740,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void generateCertifaca2(String domainName, Integer contractId, AsyncCallback<String> callback) {
+	public void generateCertifaca2(String domainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.generateCertifaca2(domainName, contractId, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.generateCertifaca2(domainName, contractId, new AsyncCallbackWrapper<Void>(callback));
 	} 
 	
 	@Override
-	public void generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<String> callback) {
+	public void generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.generateCertifaca2(domainName, contractId, certifica2Info, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.generateCertifaca2(domainName, contractId, certifica2Info, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override

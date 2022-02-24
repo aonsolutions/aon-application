@@ -283,7 +283,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void generateCertifaca2(String currentDomainName, Integer contractId,
-					AsyncCallback<String> callback) {
+					AsyncCallback<Void> callback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -435,7 +435,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info,
-					AsyncCallback<String> callback) {
+					AsyncCallback<Void> callback) {
 				// TODO Auto-generated method stub
 				
 			}

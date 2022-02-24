@@ -74,7 +74,7 @@ public class Certifica2Servlet extends HttpServlet {
 				
 				// If not exist, create it and get it
 				if(null == data) {
-					JooqCertifica2.generateCertifica2(domainName, contractId);
+					JooqCertifica2.createCertifica2DBServlet(domainName, contractId);
 					data = JooqCertifica2.getCertitica2Data(domainName, contractId);
 				}
 				
