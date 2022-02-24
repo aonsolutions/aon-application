@@ -5495,7 +5495,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
 			
 			WorkplaceEmployees workplaceEmployees = JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
-			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainID));
+			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainID));
 			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
 			workplaceEmployees.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
