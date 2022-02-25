@@ -191,14 +191,16 @@ public class JooqCertifica2 {
 
 		String quoteGroup = normalizeString(quoteGroupType);
 
-		String cnoType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("CNO"))
-				.fetchOne(CONTRACT_DATA.EXPRESSION);
+		List<String> cnoTypeList = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("CNO"))
+				.orderBy(CONTRACT_DATA.ID.desc())
+				.fetch(CONTRACT_DATA.EXPRESSION);
 
 		String cno = null;
 
-		if (AonStringUtils.isNotBlank(cnoType))
-			cno = normalizeString(cnoType);
+		if (!cnoTypeList.isEmpty())
+			cno = normalizeString(cnoTypeList.get(0));
 
 		certifica2Info.setDocument(dni);
 		certifica2Info.setSSNumber(ssNum);
@@ -296,6 +298,9 @@ public class JooqCertifica2 {
 				.and(SALARY.CCC.eq(certifica2Info.getCcc())).and(SALARY.TYPE.eq((byte) 0)).and(SALARY.END_DATE.ge(filterDate))
 				.and(SALARY.END_DATE.le(parseDateToSQL(certifica2Info.getEndDate()))).orderBy(SALARY.END_DATE.desc()).fetch();
 
+		// Using for agrarian only
+		Integer contractDuration = 0;
+		
 		for (Record salary : salariesRecords) {
 			if (maxDays > 180)
 				break;
@@ -306,9 +311,10 @@ public class JooqCertifica2 {
 			Date salaryEndDate = salary.get(SALARY.END_DATE);
 
 			Long salaryDaysBetween = null;
-			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
+			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163")) {
 				salaryDaysBetween = getAgrarianDays(dslContext, salaryId);
-			else
+				contractDuration += salaryDaysBetween.intValue();
+			} else
 				salaryDaysBetween = getDaysBetween(salaryStartDate, salaryEndDate);
 
 			List<String> baseCGCRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
@@ -372,6 +378,10 @@ public class JooqCertifica2 {
 
 			quoteDataList.add(quoteData);
 		}
+		
+		// Contract duration for agrarian only
+		if(contractDuration != 0)
+			certifica2Info.setContractDuration(contractDuration);
 
 		certifica2Info.setQuoteDataList(quoteDataList);
 	}
@@ -559,15 +569,9 @@ public class JooqCertifica2 {
 			cotizacionType.setMes(certifica2Map.get("monthCtz"));
 
 			if (AonStringUtils.isBlank(certifica2Map.get("daysCtz")))
-				cotizacionType.setNumJornadasCotizadas("000");
+				cotizacionType.setNumJornadasCotizadas("00");
 			else
-				cotizacionType.setNumJornadasCotizadas(StringUtils.leftPad(certifica2Map.get("daysCtz"), 3, '0'));
-
-			if (AonStringUtils.isBlank(certifica2Map.get("bccc")))
-				cotizacionType.setNumJornadasCotizadas("000000000");
-			else
-				cotizacionType.setNumJornadasCotizadas(
-						StringUtils.leftPad(format(certifica2Map.get("bccc")), 9, '0'));
+				cotizacionType.setNumJornadasCotizadas(StringUtils.leftPad(certifica2Map.get("daysCtz"), 2, '0'));
 
 			if (AonStringUtils.isBlank(certifica2Map.get("bcd")))
 				cotizacionType.setBaseCotizacionDesempleo("000000000");
@@ -703,14 +707,17 @@ public class JooqCertifica2 {
 		
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
-		dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.NAME, "CNO")
-				.set(CONTRACT_DATA.EXPRESSION, cno)
-				.set(CONTRACT_DATA.START_DATE, parseDateToSQL(startDate))
-				.set(CONTRACT_DATA.END_DATE, null == endDate ? null : parseDateToSQL(endDate))
-				.execute();
+		Result<Record> cnoRecords = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("CNO")).fetch();
+		
+		if(cnoRecords.isEmpty())
+			dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.NAME, "CNO")
+					.set(CONTRACT_DATA.EXPRESSION, cno)
+					.set(CONTRACT_DATA.START_DATE, parseDateToSQL(startDate))
+					.set(CONTRACT_DATA.END_DATE, null == endDate ? null : parseDateToSQL(endDate))
+					.execute();
 	}
 
 	
