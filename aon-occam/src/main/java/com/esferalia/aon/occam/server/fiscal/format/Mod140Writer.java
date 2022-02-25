@@ -262,11 +262,11 @@ public class Mod140Writer {
 				 )
 		,RETENCION(
 				 (writer,ctx,invoice,account,vatIdx) -> {
-					 if(invoice.isWithholding() && invoice.getWithholdingData().getPercentage() > 0 && invoice.getWithholdingData().getQuota() == 0.0) {
+					 if(invoice.isWithholding() && invoice.getWithholdingData() != null && invoice.getWithholdingData().getPercentage() > 0 && invoice.getWithholdingData().getQuota() == 0.0) {
 						 invoice.getWithholdingData().setQuota(AonMathUtils.round(invoice.getWithholdingData().getBase() * invoice.getWithholdingData().getPercentage() / 100));
 					 }
 					 writer.append(AonFiscalFileUtils.signedSpace( 
-						invoice.isWithholding() 
+						invoice.isWithholding() && invoice.getWithholdingData() != null 
 						 	? invoice.getWithholdingData().getQuota()
 						 	: 0.0, 14));}
 				 )
