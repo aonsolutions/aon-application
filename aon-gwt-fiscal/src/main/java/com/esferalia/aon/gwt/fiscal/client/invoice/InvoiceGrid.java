@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
@@ -84,9 +83,8 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 
 	Integer cont = 0;
 
-	boolean isFechaIVA = true;
+	boolean isFechaIVA = false;
 	
-	private API api;
 	private InvoiceParams filterParams;
 	private FiscalModelModuleOptions<FiscalModel> options;
 	

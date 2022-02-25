@@ -183,13 +183,13 @@ public class Mod140Writer {
 				 (writer,ctx,invoice,account,vatIdx) -> {writer.append(AonFiscalFileUtils.text(account,3));}
 				 )
 		,IMPORTE_INGRESO (
-//				(writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(account).get(vatIdx).getBase(), 14 ));}
-				 (writer,ctx,invoice,account,vatIdx) -> {
-					 writer.append( AonFiscalFileUtils.signedSpace(
-						 invoice.getWithholdingData()!=null
-						 	?invoice.getWithholdingData().getBase()
-						 	:0
-						 , 14 ));}
+				(writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(account).get(vatIdx).getBase(), 14 ));}
+//				 (writer,ctx,invoice,account,vatIdx) -> {
+//					 writer.append( AonFiscalFileUtils.signedSpace(
+//						 invoice.getWithholdingData()!=null
+//						 	?invoice.getWithholdingData().getBase()
+//						 	:0
+//						 , 14 ));}
 				 )
 		,CRITERIO_COBRO(
 				 (writer,ctx,invoice,account,vatIdx) -> {writer.append( 'N' );}
@@ -198,13 +198,13 @@ public class Mod140Writer {
 				 (writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( 0.0, 14 ));}
 				 )
 		,INGRESO_A_COMPUTAR(
-//				(writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(account).get(vatIdx).getBase(), 14 ));}
-				(writer,ctx,invoice,account,vatIdx) -> {
-					 writer.append( AonFiscalFileUtils.signedSpace(
-						 invoice.getWithholdingData()!=null
-						 	?invoice.getWithholdingData().getBase()
-						 	:0
-						 , 14 ));}
+				(writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(account).get(vatIdx).getBase(), 14 ));}
+//				(writer,ctx,invoice,account,vatIdx) -> {
+//					 writer.append( AonFiscalFileUtils.signedSpace(
+//						 invoice.getWithholdingData()!=null
+//						 	?invoice.getWithholdingData().getBase()
+//						 	:0
+//						 , 14 ));}
 				 )
 		,BASE_IMPONIBLE(
 				 (writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(account).get(vatIdx).getBase(), 14 ));}
