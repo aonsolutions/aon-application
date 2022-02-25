@@ -184,6 +184,7 @@ public class DataToolkit {
 	 * @return The content or empty byte array;
 	 */
 	public static byte[] ReadAllBytesSafely(InputStream input) {
+		if(null == input) return new byte[0]; 
 		try {
 			return input.readAllBytes();
 		}catch(Exception e) {
