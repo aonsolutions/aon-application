@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.isDisabled;
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.isEnabled;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
@@ -1376,6 +1377,7 @@ public class SalaryDraft extends ResizeComposite
 		T expressionWidget;
 		T descriptionWidget;
 		UIObject editButton;
+		HasVisibility hasVisibility;
 
 		public ItemChangeHandler(I item) {
 			this.item = item;
@@ -1542,6 +1544,18 @@ public class SalaryDraft extends ResizeComposite
 				}
 			});
 			
+		}
+		
+		public void setHasVisibility(HasVisibility hasVisibility) {
+			this.hasVisibility = hasVisibility;
+		}
+		
+		public boolean isVisible() {
+			return hasVisibility.isVisible();
+		}
+
+		public void setVisible(boolean visible) {
+			hasVisibility.setVisible(visible);
 		}
 
 		protected int getRowIndex(ClickEvent event) {
@@ -2624,10 +2638,6 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label employeeWorkedHoursTitle;
 	@UiField
-	Label employeeSalaryHoursLabel;
-	@UiField
-	Label employeeSalaryHoursTitle;
-	@UiField
 	Label employeeWorkedDaysLabel;
 	@UiField
 	Label employeeWorkedDaysTitle;
@@ -2720,6 +2730,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	CheckBox notDefinedVarsCheck;
 	@UiField
+	CheckBox disabledPaymentsCheck;
+	@UiField
 	CheckBox dbSalaryCheck;
 
 	@UiField
@@ -2794,6 +2806,7 @@ public class SalaryDraft extends ResizeComposite
 		zoom = Constants.DEFAULT_ZOOM;
 		initEvents();
 		initNotDefinedVarsCheck();
+		initDisabledPaymentsCheck();
 		initEventsStyles(style);
 		initSalaryDb();
 		initSalarySs();
@@ -3144,6 +3157,7 @@ public class SalaryDraft extends ResizeComposite
 		dbSalaryCheck.setVisible(hasDbSalary());
 		eventsCheck.setVisible(hasEvents());
 		notDefinedVarsCheck.setVisible(true);
+		disabledPaymentsCheck.setVisible(true);
 		
 		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
@@ -3168,6 +3182,8 @@ public class SalaryDraft extends ResizeComposite
 		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
 		notDefinedVarsCheck.setVisible(false);
+		disabledPaymentsCheck.setVisible(false);
+		
 	}
 
 	private void showIrpfPreview() {
@@ -3190,6 +3206,8 @@ public class SalaryDraft extends ResizeComposite
 		printPreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
 		notDefinedVarsCheck.setVisible(false);
+		disabledPaymentsCheck.setVisible(false);
+
 
 	}
 
@@ -3337,16 +3355,11 @@ public class SalaryDraft extends ResizeComposite
 		
 		boolean isPartial = getValuesOf("COEFICIENTE_PARCIALIDAD").map(  AonNumberUtils::todouble).anyMatch( d -> d < 1.00 );
 		
-		double salaryHours = getValuesOf("HORAS_NOMINA").collect(Collectors.summingDouble( AonNumberUtils::todouble));
-		employeeSalaryHoursLabel.setText(formatValue(salaryHours));
-		employeeSalaryHoursLabel.setVisible(isSalary() && isPartial &&  workHours == 0 && salaryHours > 0);
-		employeeSalaryHoursTitle.setVisible(employeeSalaryHoursLabel.isVisible());
-
-		employeeWorkedHoursButton.setVisible(employeeWorkedHoursLabel.isVisible() || employeeSalaryHoursLabel.isVisible());
+		employeeWorkedHoursButton.setVisible(employeeWorkedHoursLabel.isVisible() );
 
 		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
-		employeeWorkedDaysLabel.setVisible(isSalary() && !isPartial &&  workDays > 0 );
+		employeeWorkedDaysLabel.setVisible(isSalary() && workHours == 0 &&  workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
 		employeeWorkedDaysButton.setVisible(employeeWorkedDaysLabel.isVisible());
 		
@@ -3508,6 +3521,11 @@ public class SalaryDraft extends ResizeComposite
 			if (step.compareTo(scope) <= 0)
 				break;
 		}
+	}
+
+	private void onHideShowDisabledPayments() {
+		boolean showDisablePayments = disabledPaymentsCheck.getValue();
+		paymentChangeHandlers.forEach(p -> p.setVisible(showDisablePayments || isEnabled(p.item)));
 	}
 
 	private void initTgssCheck(){
@@ -3778,6 +3796,10 @@ public class SalaryDraft extends ResizeComposite
 		notDefinedVarsCheck.addValueChangeHandler(e -> onHideShowNotDefinedVars());
 	}
 
+	private void initDisabledPaymentsCheck() {
+		disabledPaymentsCheck.addValueChangeHandler(e -> onHideShowDisabledPayments());
+	}
+
 	private void initPaymentsTable() {
 
 		paymentsTable.setText(0, 0, "CUANTIA");
@@ -3961,8 +3983,6 @@ public class SalaryDraft extends ResizeComposite
 
 			int row = paymentsTable.getRowCount();
 
-			// if (!displayNow(payment))
-			// continue;
 			Event event = getEvent4(payment);
 			
 			if (payment.getAmount() != null && event == null) {
@@ -3971,22 +3991,22 @@ public class SalaryDraft extends ResizeComposite
 				dumpPayment(payment, row, getIconRowStyle(payment), handler);
 
 				handlers.add(handler);
+				handler.setHasVisibility(new VisibilityImpl(paymentsTable.getRowFormatter().getElement(row)));
+				handler.setVisible(disabledPaymentsCheck.getValue() || isEnabled(payment));
 
 			} else if (payment.getId() != null ) {
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(payment);
 				String styles[] = eventStyles.get(event == null ? Event.Type.WARNING : event.getType());
-				//dumpPayment(payment, row, styles[0], handler);
 				dumpPayment(payment, row, getIconRowStyle(payment), handler);
 				handlers.add(handler);
-				//addStyle(paymentsTable, row, styles[1]);
-
+				handler.setHasVisibility(new VisibilityImpl(paymentsTable.getRowFormatter().getElement(row)));
+				handler.setVisible(disabledPaymentsCheck.getValue() || isEnabled(payment));
 			} else {
 				String styles[] = eventStyles.get(event == null ? Event.Type.ERROR : event.getType());
-				//dumpDbItem(payment, row, styles[0], styles[1],
-				//		new RecoverPaymentHandler(payment), false);
 				dumpDbItem(payment, row,getIconRowStyle(payment), "none",
 						new RecoverPaymentHandler(payment), false);
 			}
+			
 		}
 
 		return handlers;

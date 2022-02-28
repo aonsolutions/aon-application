@@ -94,6 +94,8 @@ public class JooqContractTransform {
 		
 		Record oldContractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(oldContractId)).fetchOne();
 		
+		Date oldStartDate = oldContractRecord.get(CONTRACT.START_DATE);
+		
 		Integer newContractId = dslContext.insertInto(CONTRACT)
 			.set(CONTRACT.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
 			.set(CONTRACT.PERSON, oldContractRecord.get(CONTRACT.PERSON))
@@ -114,6 +116,17 @@ public class JooqContractTransform {
 			.set(CONTRACT.AGREEMENT_LEVEL, oldContractRecord.get(CONTRACT.AGREEMENT_LEVEL))
 			.returning(CONTRACT.ID)
 			.fetchOne().getId();
+		
+		// Save old contract start date
+		
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
+			.set(CONTRACT_DATA.NAME, "ORIGINAL_START_DATE")
+			.set(CONTRACT_DATA.CONTRACT, newContractId)
+			.set(CONTRACT_DATA.EXPRESSION, formatDate.format(oldStartDate))
+			.set(CONTRACT_DATA.START_DATE, parseDateToSQL(newStartDateContract))
+			.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+			.execute();
 		
 		// Copy contract data
 		

@@ -11,8 +11,74 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @SuppressWarnings("serial")
 public class Certifica2Info implements Serializable {
 	
+	public static class Certifica2Period {
+		
+		private String year;
+		private String month;
+		private Integer quotedDays;
+		private Double base_cgc;
+		private Double base_unemployment;
+		
+		public Certifica2Period(){
+			super();
+		}
+
+		public Certifica2Period(String year, String month, Integer quotedDays, Double base_cgc,
+				Double base_unemployment) {
+			super();
+			this.year = year;
+			this.month = month;
+			this.quotedDays = quotedDays;
+			this.base_cgc = base_cgc;
+			this.base_unemployment = base_unemployment;
+		}
+
+		public String getYear() {
+			return year;
+		}
+
+		public void setYear(String year) {
+			this.year = year;
+		}
+
+		public String getMonth() {
+			return month;
+		}
+
+		public void setMonth(String month) {
+			this.month = month;
+		}
+
+		public Integer getQuotedDays() {
+			return quotedDays;
+		}
+
+		public void setQuotedDays(Integer quotedDays) {
+			this.quotedDays = quotedDays;
+		}
+
+		public Double getBase_cgc() {
+			return base_cgc;
+		}
+
+		public void setBase_cgc(Double base_cgc) {
+			this.base_cgc = base_cgc;
+		}
+
+		public Double getBase_unemployment() {
+			return base_unemployment;
+		}
+
+		public void setBase_unemployment(Double base_unemployment) {
+			this.base_unemployment = base_unemployment;
+		}
+	}
+	
 	// ------------------------------------------ Variables
 	
+	private String representativeDocument;
+	private String representativeName;
+	private String representativeSurname;
 	private String regime;
 	private String ccc;
 	private String completeCCC;
@@ -46,6 +112,30 @@ public class Certifica2Info implements Serializable {
 
 	public String getRegime() {
 		return regime;
+	}
+
+	public String getRepresentativeDocument() {
+		return representativeDocument;
+	}
+
+	public void setRepresentativeDocument(String representativeDocument) {
+		this.representativeDocument = representativeDocument;
+	}
+
+	public String getRepresentativeName() {
+		return representativeName;
+	}
+
+	public void setRepresentativeName(String representativeName) {
+		this.representativeName = representativeName;
+	}
+
+	public String getRepresentativeSurname() {
+		return representativeSurname;
+	}
+
+	public void setRepresentativeSurname(String representativeSurname) {
+		this.representativeSurname = representativeSurname;
 	}
 
 	public void setRegime(String regime) {

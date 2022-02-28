@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -363,7 +364,7 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (SEPE Get files)
 
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getOriginalStartDate(), contractData.getOriginalStartDate(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -376,7 +377,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCto(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getOriginalStartDate(), contractData.getOriginalStartDate(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -390,7 +391,7 @@ public class ContrataEmployeeObject {
 	
 	public void getContratoSepe(Consumer<String> success, Consumer<Throwable> failure) {
 		String ipf = employeeContractData.getEmployeeInfo().getDocument();
-		Date startDate = employeeContractData.getContractInfo().getStartDate();
+		Date startDate = employeeContractData.getContractInfo().getOriginalStartDate();
 		Date endDate = employeeContractData.getContractInfo().getStartDate();
 		
 		enterprisesService.getContratoSepe(ipf, startDate, endDate, new AsyncCallback<String>() {
@@ -447,6 +448,39 @@ public class ContrataEmployeeObject {
 	
 	public void sendContract(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.sendContractoSEPE(employeeContractData, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void sendContractTransform(ContractTransform contractTransform, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.sendContractTransform(employeeContractData, contractTransform, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void removeContractTransform(Consumer<Void> success, Consumer<Throwable> failure) {
+		String ide = employeeContractData.getContractInfo().getSepeId();
+		employeesService.removeContractTransform(ide, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

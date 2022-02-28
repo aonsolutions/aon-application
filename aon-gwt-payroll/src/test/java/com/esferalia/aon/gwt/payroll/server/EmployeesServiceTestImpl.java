@@ -728,10 +728,9 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String generateCertifaca2(String currentDomainName, Integer contractId) {
+	public void generateCertifaca2(String currentDomainName, Integer contractId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
-		return null;
 	}
 	
 	@Override
@@ -889,9 +888,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) {
+	public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -1013,6 +1011,21 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendContractTransform(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractData, ContractTransform contractTransform)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeContractTransform(String currentDomainName, String currentUser, String ide)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		

@@ -148,6 +148,9 @@ public class EnterpriseIT extends Composite {
 
 		@Override
 		protected void saveITParts(List<ItNotExist> itNotExist,Consumer<Void> success, Consumer<Throwable> failure) {}
+
+		@Override
+		protected void removeITParts(List<ItNotExist> itNotExist,Consumer<Void> success, Consumer<Throwable> failure) {}
 		
 		@Override
 		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {}

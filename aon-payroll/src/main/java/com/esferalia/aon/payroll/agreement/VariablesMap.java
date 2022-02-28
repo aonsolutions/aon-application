@@ -680,6 +680,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_COMPENSACION_ANUAL", "PLUS_COMPENSACION");
 		variablesMap.put("PLUS_COMPENSACION_MENSUAL", "PLUS_COMPENSACION");
 		variablesMap.put("PLUS_CONVENIO_ANUAL", "PLUS_CONVENIO");
+		variablesMap.put("PLUS_CONVENIO_B_MENSUAL", "PLUS_CONVENIO_B");
 		variablesMap.put("PLUS_CONVENIO_DIARIO", "PLUS_CONVENIO");
 		variablesMap.put("PLUS_CONVENIO_HORAS", "PLUS_CONVENIO_HORAS");
 		variablesMap.put("PLUS_CONVENIO_MENSUAL", "PLUS_CONVENIO");
@@ -719,6 +720,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_DIARIO", "PLUS_FINDES");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_HORAS", "PLUS_FINDES");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_MENSUAL", "PLUS_FINDES");
+		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_MEDIA_JORNADA_DIARIO", "P_DOMIN_FEST_MJ");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_SIN_PRORRATEO_VACACIONES_ANUAL", "P_DOMIN_FEST_SP");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_SIN_PRORRATEO_VACACIONES_DIARIO", "P_DOMIN_FEST_SP");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_SIN_ANTIGUEDAD_DIARIO", "P_DOMIN_FEST_SA");
@@ -758,6 +760,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_FIESTAS_NAVIDEÑAS_MENSUAL", "PLUS_FIESTAS_NAVIDEÑAS");
 		variablesMap.put("PLUS_FIESTAS_PATRONALES_DIARIO", "PLUS_FIESTAS_PATRONALES");
 		variablesMap.put("PLUS_FESTIVOS_DIARIO", "PLUS_FESTIVO");
+		variablesMap.put("PLUS_FESTIVOS_MENSUAL", "PLUS_FESTIVO");
 		variablesMap.put("PLUS_FESTIVOS_ESPECIALES_DIARIO", "PLUS_FESTIVO_ESP");
 		variablesMap.put("PLUS_FESTIVO_NOCTURNO_DIARIO", "P_FESTIVO_NOCT_D");
 		variablesMap.put("PLUS_FIDELIDAD_MENSUAL", "PLUS_FIDELIDAD");
@@ -1035,6 +1038,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PRIMA_CONDUCTORES_SEGUNDO_AÑO_HORAS", "PRIMA_CONDUCTORES_2A");
 		variablesMap.put("PRIMA_RENDIMIENTO_OPTIMO_HORAS", "PRIMA_RENDIMIENTO_OPT");
 		variablesMap.put("PRIMA_DE_PRODUCCION_MENSUAL", "PRIMA_PRODUCCION");
+		variablesMap.put("PRIMA_DEMORA_ANUAL", "DEMORA");
 		variablesMap.put("PRIMA_DIARIO", "PRIMA");
 		variablesMap.put("PRIMA_HORAS", "PRIMA");
 		variablesMap.put("PRODUCTIVIDAD_ANUAL", "PRODUCTIVIDAD");

@@ -7126,6 +7126,12 @@ public class AON {
 		}
 	}
 	
+	public static void removeEmployeeIT(Domain domain, User user, Integer contractLeaveId, Integer ...partIds) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			getEmployeeIT().removeEmployeeIT(ctx, contractLeaveId, partIds);
+		}
+	}
+	
 	public static void saveFacturaeCodeAsignacion(Domain domain, User user, Integer invoice, Integer registry, String code) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			getFinance().saveFacturaeCodeAsignacion(ctx, invoice, registry, code);

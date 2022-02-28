@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -44,12 +45,14 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -219,6 +222,7 @@ public class LroeModel140 extends DockLayoutPanel {
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
+		searchBox.setAdvancedSearch(advancedSearchPanel());
 		toolbarPanel.showSearchPanel(searchBox);
 
 		sendButton = new AonToolbarButton("Enviar", AON.CSS.aonIconSend());
@@ -241,6 +245,76 @@ public class LroeModel140 extends DockLayoutPanel {
 		return toolbarPanel;
 	}
 	
+	private VerticalPanel advancedSearchPanel() {
+		VerticalPanel vp = new VerticalPanel();
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		Label label2 = new Label(AON.MSG.from());
+		label2.setWidth("50px");
+		label2.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp2.add(label2);
+		DateBoxEx from = new DateBoxEx();
+		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(30);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		});
+		hp2.add(from);
+		vp.add(hp2);
+		
+		HorizontalPanel hp3 = new HorizontalPanel();
+		Label label3 = new Label(AON.MSG.to());
+		label3.setWidth("50px");
+		label3.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp3.add(label3);
+		DateBoxEx to = new DateBoxEx();
+		to.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(30);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		});
+		hp3.add(to);
+		vp.add(hp3);
+		
+		HorizontalPanel hp4 = new HorizontalPanel();
+		Label label4 = new Label(AON.MSG.status());
+		label4.setWidth("50px");
+		label4.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp4.add(label4);
+
+		ListBox status = new ListBox();
+		status.addItem("-", "-");
+		for(InvoiceCommunicationStatus st : InvoiceCommunicationStatus.values()) {
+			status.addItem(getStatusName(st), st.name());
+		}
+
+		status.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				InvoiceCommunicationStatus st = InvoiceCommunicationStatus.safeValueOf(status.getSelectedValue());
+				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(30);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		});
+		hp4.add(status);
+		vp.add(hp4);
+		return vp;
+	}
+	
+	private String getStatusName(InvoiceCommunicationStatus st) {
+		if(InvoiceCommunicationStatus.ACCEPTED.equals(st)) return "Aceptada";
+		else if(InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(st)) return "Aceptada con Errores";
+		else if(InvoiceCommunicationStatus.ANNULLED.equals(st)) return "Anulada";
+		else if(InvoiceCommunicationStatus.WRONG.equals(st)) return "Incorrecta";
+		else return "Pendiente";
+	}
 	
 	private void draft() {
 		VerticalPanel vp = new VerticalPanel();
@@ -273,6 +347,12 @@ public class LroeModel140 extends DockLayoutPanel {
 		hp3.add(to);
 		vp.add(hp3);
 		
+		HorizontalPanel hp4 = new HorizontalPanel();
+		CheckBox cb1 = new CheckBox();
+		cb1.setText("S\u00f3lo Emitidas");
+		hp4.add(cb1);
+		vp.add(hp4);
+		
 		AonDialog draftDialog = new AonDialog("Descargar fichero", vp);
 
 		draftDialog.confirm(new AonAcceptDialogCallback() {
@@ -284,14 +364,13 @@ public class LroeModel140 extends DockLayoutPanel {
 			
 			@Override
 			public void onAccept() {
-				submitForm(epigraph.getValue(), from.format(), to.format());
+				submitForm(epigraph.getValue(), from.format(), to.format(), cb1.getValue());
 			}
 		});
 	}
 	
 	
-	private void submitForm(String epigraph, String from, String to) {
-
+	private void submitForm(String epigraph, String from, String to, boolean onlyEmitidas) {
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/ms/Model140File");
 		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
@@ -327,6 +406,12 @@ public class LroeModel140 extends DockLayoutPanel {
 		toHidden.setName("toDate");
 		toHidden.setValue(to);
 		html.add(toHidden);
+		
+		Hidden onlyEmitidasHidden = new Hidden();
+		onlyEmitidasHidden.setName("onlyEmitidas");
+		onlyEmitidasHidden.setValue(Boolean.toString(onlyEmitidas));
+		html.add(onlyEmitidasHidden);
+
 		diskForm.setWidget(html);
 		diskForm.submit();
 	}

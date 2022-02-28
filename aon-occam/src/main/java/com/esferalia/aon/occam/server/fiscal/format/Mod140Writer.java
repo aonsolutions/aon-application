@@ -260,8 +260,18 @@ public class Mod140Writer {
 		,NO_ANOTACION_RECTIFICADA(
 				(writer,ctx,invoice,account,vatIdx) -> {writer.append( AonStringUtils.repeat('0',6 ));}
 				 )
+		,RETENCION(
+				 (writer,ctx,invoice,account,vatIdx) -> {
+					 if(invoice.isWithholding() && invoice.getWithholdingData() != null && invoice.getWithholdingData().getPercentage() > 0 && invoice.getWithholdingData().getQuota() == 0.0) {
+						 invoice.getWithholdingData().setQuota(AonMathUtils.round(invoice.getWithholdingData().getBase() * invoice.getWithholdingData().getPercentage() / 100));
+					 }
+					 writer.append(AonFiscalFileUtils.signedSpace( 
+						invoice.isWithholding() && invoice.getWithholdingData() != null 
+						 	? invoice.getWithholdingData().getQuota()
+						 	: 0.0, 14));}
+				 )
 		,FILLER(
-				(writer,ctx,invoice,account,vatIdx) -> {writer.append( AonStringUtils.repeat(' ',33 ));}
+				(writer,ctx,invoice,account,vatIdx) -> {writer.append( AonStringUtils.repeat(' ', 19));}
 				 )
 		,CRLF(
 				 (writer,ctx,invoice,account,vatIdx) -> {writer.append( END_LINE);}
@@ -450,7 +460,11 @@ public class Mod140Writer {
 				 (writer,ctx,invoice,account,vatIdx) -> {writer.append(AonFiscalFileUtils.text(account,3));}
 				 )
 		,REFERENCIA_DEL_BIEN(
-				 (writer,ctx,invoice,account,vatIdx) -> {writer.append( AonStringUtils.repeat(' ', 10));}
+				 (writer,ctx,invoice,account,vatIdx) -> {writer.append(AonStringUtils.repeat(' ', 10));}
+//				 (writer,ctx,invoice,account,vatIdx) -> {writer.append( 
+//						 invoice.isInvestment() && invoice.getInvestAsset() != null
+//						 	? AonFiscalFileUtils.text(Integer.toString(invoice.getInvestAsset()), 10)
+//						 	: AonStringUtils.repeat(' ', 10));}
 				 )
 		,IMPORTE_GASTO (
 				 (writer,ctx,invoice,account,vatIdx) -> {writer.append( AonFiscalFileUtils.signedSpace( invoice.getInvoiceVATs().get(account).get(vatIdx).getBase(), 14 ));}
@@ -553,7 +567,6 @@ public class Mod140Writer {
 				}
 			}
 		}
-		
 	}
 
 	public static void fill(Writer writer, Mod140Context m140ctx, Mod140 invoice) throws IOException {
@@ -562,7 +575,17 @@ public class Mod140Writer {
 		} else {
 			Record5Bizkaia2015.fill(writer, m140ctx, invoice);
 		}
-		
 	}
+	
+//	public static void fillReg1(Writer writer, Mod140Context ctx) throws IOException {
+//		writer.append('1');									// 1 		Tipo de Registro
+//		writer.append("140"); 								// 2-4 		Modelo de presentación
+//		writer.append("2022");								// 5-8		Ejercicio
+//		writer.append(AonFiscalFileUtils.text(				// 9-17		NIF del declarante
+//				ctx.getCompany().getRegistry().getDocument(), 9));		
+//		writer.append(' ');									// 18		Declaración sustitutiva S o ' '
+//		writer.append(ctx.getCompany().getRegistry().getName());			// 19-58 	Apellidos y nombre o razon.
+//		writer.append(ctx.getCompany().getMedias().stream().filter(r -> r.getMedia().equals(MediaType.FIXED_PHONE)).findFirst().orElse(new RegistryMedia()).getValue());
+//	}
 	
 }

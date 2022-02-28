@@ -55,6 +55,9 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class VATDAO  {
 	
+	private VATDAO() {
+		
+	}
 	
 	private static final VATPropertiesDAO VAT_PROPERTIES = new VATPropertiesDAO();
 	private static class VATPropertiesDAO implements VATProperties {
@@ -69,24 +72,24 @@ public class VATDAO  {
 
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getInvoiceIdProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);}
-		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.REGISTRY);}
-		@Override public Property<Byte> getInvoiceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
-		@Override public Property<Byte> getInvoiceTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TRANSACTION);}
-		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ACTIVITY);}
-		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.INVESTMENT);}
-		@Override public Property<Byte> getServiceProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SERVICE);}
-		@Override public Property<Byte> getRectifiedProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.RECTIFICATION_TYPE);}
-		@Override public Property<Byte> getAccrualRegimeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.VAT_ACCRUAL_PAYMENT);}
-		@Override public Property<Byte> getFarmerRegimeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.WITHHOLDING_FARMER);}
-		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SURCHARGE);}
-		@Override public Property<Double> getPercentProperty() {return new FilterDAO.PropertyDAO<Double>(INVOICE_TAX.PERCENTAGE);}
-		@Override public Property<Double> getSurchargePercentProperty() {return new FilterDAO.PropertyDAO<Double>(INVOICE_TAX.SURCHARGE);}
+		@Override public Property<Integer> getInvoiceIdProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.ID);}
+		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.REGISTRY);}
+		@Override public Property<Byte> getInvoiceTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TYPE);}
+		@Override public Property<Byte> getInvoiceTransactionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TRANSACTION);}
+		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ACTIVITY);}
+		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.INVESTMENT);}
+		@Override public Property<Byte> getServiceProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERVICE);}
+		@Override public Property<Byte> getRectifiedProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.RECTIFICATION_TYPE);}
+		@Override public Property<Byte> getAccrualRegimeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getFarmerRegimeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.WITHHOLDING_FARMER);}
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SURCHARGE);}
+		@Override public Property<Double> getPercentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.PERCENTAGE);}
+		@Override public Property<Double> getSurchargePercentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.SURCHARGE);}
 	}
 
 	public static LinkedList<VatSummaryContext> getVatSummary(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
-		LinkedList<VatSummaryContext> list = new LinkedList<VatSummaryContext>();
+		LinkedList<VatSummaryContext> list = new LinkedList<>();
 		getVatBreakdown(ctx, fromDate, toDate, filter)
 				.peek( vat -> { 
 					if (vat.isSurcharge()) {
@@ -143,14 +146,7 @@ public class VATDAO  {
 	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, IFiscalModel mod) {
 		return getVatBreakdown(ctx, fromDate, toDate,null , mod);
 	}
-/*	
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod390HF mod) {
-		return getVatBreakdown(ctx, fromDate, toDate,null , mod);
-	}
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod390 mod) {
-		return getVatBreakdown(ctx, fromDate, toDate,null , mod);
-	}
-*/
+
 	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		return getVatBreakdown(ctx, fromDate, toDate,filter , null);
 	}
@@ -600,17 +596,17 @@ public class VATDAO  {
 	}
 
 	private static double getDeductibleQuota( Record rec) {
-		double ded_quota = rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA);
-		if (AonMathUtils.isZero(ded_quota)) {
+		double dedQuota = rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA);
+		if (AonMathUtils.isZero(dedQuota)) {
 			double percent = rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT);
 			double quota = getQuota(rec);
 			if (AonMathUtils.isZero(percent) || percent == 100) {
-				ded_quota = quota;
+				dedQuota = quota;
 			} else {
-				ded_quota = AonMathUtils.round(quota * percent / 100);
+				dedQuota = AonMathUtils.round(quota * percent / 100);
 			}
 		}
-		return ded_quota;
+		return dedQuota;
 	}
 	
 	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Date fromDate,Date toDate) {
@@ -711,11 +707,14 @@ public class VATDAO  {
 			double quota = AonMathUtils.round(base * vat.getPercentage() / 100);
 			double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
 			double deductibleQuota = AonMathUtils.round( (quota + surchargeQuota)  * vat.getDeductiblePercent() / 100);
-			vat.setBase(base);
-			vat.setQuota(quota);
-			vat.setSurchargeQuota(surchargeQuota);
-			vat.setDeductibleQuota(deductibleQuota);
-			return vat;
+			return vat
+				.setBase(base)
+				.setQuota(quota)
+				.setSurchargeQuota(surchargeQuota)
+				.setDeductibleQuota(deductibleQuota)
+				.setAmount347(!vat.isOtherISP()
+					?(base + quota + surchargeQuota)
+					:base);
 		}
 		
 	}
@@ -730,11 +729,14 @@ public class VATDAO  {
 			double quota = AonMathUtils.round(base * vat.getPercentage() / 100);
 			double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
 			double deductibleQuota = AonMathUtils.round( (quota + surchargeQuota)  * vat.getDeductiblePercent() / 100);
-			vat.setBase(base);
-			vat.setQuota(quota);
-			vat.setSurchargeQuota(surchargeQuota);
-			vat.setDeductibleQuota(deductibleQuota);
-			return vat;
+			return vat
+				.setBase(base)
+				.setQuota(quota)
+				.setSurchargeQuota(surchargeQuota)
+				.setDeductibleQuota(deductibleQuota)
+				.setAmount347(!vat.isOtherISP()
+					?(base + quota + surchargeQuota)
+					:base);
 		}
 		
 	}

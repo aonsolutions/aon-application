@@ -168,6 +168,8 @@ public class Mod140 implements Serializable {
 	private double retentionQuota;
 	private double total;
 	
+	private Integer investAsset;
+	
 	private HashMap<String, List<Mod140VAT>> invoiceVATs;
 	private Mod140Withholding withholdingData;
 	
@@ -434,6 +436,14 @@ public class Mod140 implements Serializable {
 		}
 		documentNumber += AonStringUtils.leftPad(Integer.toString(number), 6, "0");
 		return documentNumber;
+	}
+	
+	public Integer getInvestAsset() {
+		return investAsset;
+	}
+	
+	public void setInvestAsset(Integer investAsset) {
+		this.investAsset = investAsset;
 	}
 	
 	public Mod140 initialize() {

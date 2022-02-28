@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -421,11 +422,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 	
+	class SendContractTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			sendContractTransform();
+		}
+
+	}
+	
 	class RemoveContractCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
 			removeContract();
+		}
+
+	}
+	
+	class RemoveContractTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			removeContractTransform();
 		}
 
 	}
@@ -443,9 +462,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		private MenuItem sendBasicCopy;
 		private MenuItem sendContract;
+		private MenuItem sendContractTransform;
 		private MenuItem sepeIDE;
 		
 		private MenuItem removeContract;
+		private MenuItem removeContractTransform;
 		
 		public NewSEPEContextMenu() {
 			
@@ -491,6 +512,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sendContract.ensureDebugId("sendContract");
 			
+			sendContractTransform = addItem("Notificar Transformaci\u00f3n Contrato", new SendContractTransformCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			sendContractTransform.ensureDebugId("sendContractTransform");
+			
 			sepeIDE = addItem("Ver IDE Contrato", new SepeIDEContractCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sepeIDE.ensureDebugId("sepeIDE");
@@ -498,6 +523,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			removeContract = addItem("Eliminar Contrato", new RemoveContractCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			removeContract.ensureDebugId("removeContract");
+			
+			removeContractTransform = addItem("Eliminar Transformaci\u00f3n Contrato", new RemoveContractTransformCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			removeContractTransform.ensureDebugId("removeContractTransform");
 			
 		}
 
@@ -515,6 +544,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public MenuItem getSendContract() {
 			return sendContract;
+		}
+		
+		public MenuItem getSendContractTransform() {
+			return sendContractTransform;
 		}
 		
 		public MenuItem getSepeIDE() {
@@ -535,6 +568,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public MenuItem getRemoveContractExtension() {
 			return removeContractExtension;
+		}
+		
+		public MenuItem getRemoveContractTransform() {
+			return removeContractTransform;
 		}
 		
 	}
@@ -792,9 +829,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}, f -> {});
 				break;
 			case 1:
-				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
-						s -> {}, 
-						f -> showError("Error guardando Datos SEPE", f.getMessage()));
+				if(Boolean.FALSE.equals(this.contrataEmployeeObject.getContractData().isHasTransformation()))
+					contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
+							s -> {}, 
+							f -> showError("Error guardando Datos SEPE", f.getMessage()));
 				break;
 			case 2:
 				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -821,6 +859,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -840,10 +879,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.getContractSpecificData(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showContractButtons();
+					checkCertificateSEPE();
+					checkContractExtension();
+					checkContractTransform();
 					hideTgssOption();
 					showSepeOption();
 					contractSpecificData.setEmployeeContractInfo(
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
+							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
 							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
 					hideLoadingPanel();
 				}, f -> showError("Error obtenci\u00f3n Datos SEPE", f.getMessage()));
@@ -971,6 +1014,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				s -> {
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					showContractButtons();
+					hideMessage();
 					
 					// Check SS only if not RETA
 					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
@@ -998,6 +1042,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 				s -> {
+					hideMessage();
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					tabLayOutPanel.selectTab(selectedTab, true);
 					success.accept("");
@@ -1200,17 +1245,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showError(messageContainer, messageMap);
 			break;
 		case 1:
-			contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
-					s -> {
-						Map<String, String> messageSuccessMap = new HashMap<>();
-						messageSuccessMap.put("Guardado", "Los datos SEPE han sido actualizados correctamente");
-						AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
-						contrataEmployeeObject.getContractSpecificData(su -> 
-								contractSpecificData.setEmployeeContractInfo(
-										contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
-										contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
-							, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
-					}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
+			if(Boolean.FALSE.equals(this.contrataEmployeeObject.getContractData().isHasTransformation()))
+				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
+						s -> {
+							Map<String, String> messageSuccessMap = new HashMap<>();
+							messageSuccessMap.put("Guardado", "Los datos SEPE han sido actualizados correctamente");
+							AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
+							contrataEmployeeObject.getContractSpecificData(su -> 
+									contractSpecificData.setEmployeeContractInfo(
+											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
+											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
+											contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
+								, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
+						}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
 			break;
 		case 2:
 			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -1269,6 +1316,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1292,6 +1340,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1324,6 +1373,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								if (null == ssRegime || ssRegime != 3) 
 									checkStatus(contrataEmployeeObject);
 								
+								hideMessage();
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
@@ -1539,6 +1589,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1561,6 +1612,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1592,6 +1644,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(this.contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1619,6 +1672,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if (null == ssRegime || ssRegime != 3) 
 								checkStatus(contrataEmployeeObject);
 							
+							hideMessage();
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1637,7 +1691,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		new ContractTransformDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
 			@Override
 			protected void onTransformDone(Integer newContractId) {
-				showSuccess("Pr\u00F3rroga", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
+				showSuccess("Transformaci\u00F3n", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
 				onTransformContract(newContractId);
 			}
 
@@ -1646,6 +1700,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showError(messageContainer, errorMap);
 			}
 		};
+	}
+	
+	private void sendContractTransform() {
+		new ContractTransformSepeDialog() {
+			@Override
+			protected void onTransformAccept(ContractTransform contractTransform) {
+				showLoading("Notificando transformaci\u00f3n contrato...");
+				
+				contrataEmployeeObject.sendContractTransform(contractTransform, 
+						s -> showSuccess("Transformaci\u00F3n Contrato", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido notificada al SEPE correctamente"),
+						f -> showError("Error Transformaci\u00F3n Contrato", f.getMessage()));
+			}};
+	}
+	
+	private void removeContractTransform() {
+		contrataEmployeeObject.removeContractTransform(
+			s -> showSuccess("Transformaci\u00F3n Contrato", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido eliminada del SEPE correctamente"),
+			f -> showError("Error Transformaci\u00F3n Contrato", f.getMessage())
+		);
 	}
 	
 	private void deleteContractExtension() {
@@ -1660,6 +1733,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								if (null == ssRegime || ssRegime != 3) 
 									checkStatus(this.contrataEmployeeObject);
 								
+								hideMessage();
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
@@ -1944,6 +2018,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			 Integer contractTypeValue = Integer.parseInt(contractTypeStr);
 			 setVisible(sepeContextMenu.getContractExtension().getElement(), contractTypeValue >= 400);
 		 }
+		 
+	 	 setVisible(sepeContextMenu.getContractExtension().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getRemoveContractExtension().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getContractTransform().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getSendBasicCopy().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getSendContract().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getSendContractTransform().getElement(), Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getRemoveContractTransform().getElement(), Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 
 	}
 	
 	// ------------------------------------------------- TGSS status

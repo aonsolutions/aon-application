@@ -24,6 +24,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -48,6 +49,9 @@ public class ContractSpecificData extends ResizeComposite {
 
 	@UiField
 	MyStyle style;
+	
+	@UiField
+	DeckPanel deckPanel;
 	
 	@UiField
 	SuggestBox cnoSB;
@@ -338,10 +342,15 @@ public class ContractSpecificData extends ResizeComposite {
 		initializeView();
 	}
 	
-	public void setEmployeeContractInfo(String contractType, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
+	public void setEmployeeContractInfo(String contractType, boolean isTransformation, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
 		this.contractSpecificData = contractSpecificDataIn;
-		setDefaultView(contractType);
-		fillSpecificData();
+		if(Boolean.TRUE.equals(isTransformation))
+			showSepeMessage();
+		else {
+			showSepeData();
+			setDefaultView(contractType);
+			fillSpecificData();
+		}
 	}
 
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
@@ -2140,6 +2149,14 @@ public class ContractSpecificData extends ResizeComposite {
 	
 	public com.esferalia.aon.gwt.payroll.shared.ContractSpecificData getContractSpecificData() {
 		return this.contractSpecificData;
+	}
+	
+	private void showSepeData() {
+		deckPanel.showWidget(0);
+	}
+	
+	private void showSepeMessage() {
+		deckPanel.showWidget(1);
 	}
 
 }

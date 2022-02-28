@@ -134,7 +134,9 @@ export class AonElement extends HTMLElement{
   }
 
   createApplication(id, title, application) {
-    this.appendChild(this.createAonElement(application, id, title));
+    const app = this.createAonElement(application, id, title);
+    this.appendChild(app);
+    return app;
   }
 
   getApplicationParent(){

@@ -45,7 +45,7 @@ public class IRPFDAO {
 		
 	}
 	private static final IRPFPropertiesDAO IRPF_PROPERTIES = new IRPFPropertiesDAO();
-	private static class IRPFPropertiesDAO extends VATDAO implements IRPFProperties {
+	private static class IRPFPropertiesDAO implements IRPFProperties {
 
 		private Condition[] getConditions(IRPFFilter filter) {
 			if (filter == null) {

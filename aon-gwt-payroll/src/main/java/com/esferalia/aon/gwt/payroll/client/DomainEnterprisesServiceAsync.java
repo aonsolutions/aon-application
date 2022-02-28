@@ -600,6 +600,10 @@ public class DomainEnterprisesServiceAsync {
 	public void saveITParts(List<ItNotExist>itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
 		enterprisesServiceAsync.saveITParts(getCurrentDomainName(), getCurrentUser(), itNotExist, asyncCallback);
 	}
+
+	public void removeITParts(List<ItNotExist>itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
+		enterprisesServiceAsync.removeITParts(getCurrentDomainName(), getCurrentUser(), itNotExist, asyncCallback);
+	}
 	
 	// ----------------------------------------------------------------- static
 	

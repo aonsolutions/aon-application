@@ -25,5 +25,10 @@ public class EmployeeITImpl implements IEmployeeIT {
 	public EmployeeIT[] setEmployeeIT(AONContext ctx, EmployeeIT... employeeITs) {
 		return ctx.getDslContext().transactionResult(configuration -> EmployeeITDAO.setEmployeeIT(ctx, employeeITs));
 	}
+	
+	@Override
+	public void removeEmployeeIT(AONContext ctx, Integer contractLeaveId, Integer ...partIds) {
+		ctx.getDslContext().transaction(configuration -> EmployeeITDAO.removeEmployeeIT(ctx, contractLeaveId, partIds));
+	}
 
 }

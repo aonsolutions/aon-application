@@ -58,7 +58,7 @@ public class ITComunica {
 				
 				SistemaRED.getIts(certificateData, certificatePassword, certificateType, regime,
 						ccc, startDate, endDate, nss).stream()
-				.map(it -> employeeITs.add(ITParse.parseTGSSToAon(it)));
+				.forEach(it -> employeeITs.add(ITParse.parseTGSSToAon(it)));
 
 				saveITs(domain, employeeITs);
 			} catch (Exception e) {
@@ -73,18 +73,13 @@ public class ITComunica {
 		
 		employeeITs.stream().filter(e->e.getContract()==null)
 		.forEach(employeeIT->{
-//			ITComunica.contractIts(domain, employeeIT.getCcc(), employeeIT.getNss(), employeeIT.getStartDate(), employeeIT.getEndDate())
-//			.ifPresent(contract->{
-//				employeeIT.setContract(contract.getEmployeeId());
-//			});
-
 			employeeIT.setDomain(domain.getId());
 		});
 				
 		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
 	}
 	
-	public static List<String> communicateITs(final byte certificateData[], final String certificatePassword,
+	public static List<String> communicateITs(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, EmployeeIT employeeIt) {
 		 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
 		 Optional<EmployeeITPart> alta = employeeIt.getItAlta();

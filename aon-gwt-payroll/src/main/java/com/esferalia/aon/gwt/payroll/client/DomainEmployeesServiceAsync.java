@@ -491,11 +491,11 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
 	}
 
-	public void generateCertifaca2(Integer contractId, AsyncCallback<String> callback) {
+	public void generateCertifaca2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, callback);
 	}
 	
-	public void generateCertifaca2(Integer contractId, Certifica2Info certifica2Info, AsyncCallback<String> callback) {
+	public void generateCertifaca2(Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, certifica2Info, callback);
 	}
 	
@@ -597,6 +597,15 @@ public class DomainEmployeesServiceAsync {
 	
 	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), nif, endDate, callback);
+	}
+
+	public void sendContractTransform(EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractTransform(getCurrentDomainName(), getCurrentUser(), employeeContractData, contractTransform, callback);
+	}
+
+	public void removeContractTransform(String ide, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, callback);
 	}
 	
 	// ------------------------------------------------- SEPE Methods

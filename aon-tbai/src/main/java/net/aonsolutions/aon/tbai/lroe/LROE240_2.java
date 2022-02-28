@@ -18,11 +18,13 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveCodigoFacturaRectificativaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveTipoFacturaGastosEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.ClaveTipoRectificativaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.EstadoRegistroConsultaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.TipoCompraGastoBienEnum;
@@ -45,8 +47,12 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IVAFacturaRecibidaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.OtraInformacionTrascendenciaTributariaRecibidaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.CabeceraFacturaConsultaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FechaDesdeHastaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaFacturasRecibidasType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_altamodifpeticion_v1_0_1.LROEPJ240FacturasRecibidasAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_anulacionpeticion_v1_0_0.LROEPJ240FacturasRecibidasAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultapeticion_v1_0_0.LROEPJ240FacturasRecibidasConsultaPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -285,6 +291,51 @@ public class LROE240_2 extends LROE240 {
 			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
+		}
+	}
+	
+	private LROEPJ240FacturasRecibidasConsultaPeticion buildConsulta(Company company, Invoice invoice, LROEInfo info) {
+		LROEPJ240FacturasRecibidasConsultaPeticion lroe = new LROEPJ240FacturasRecibidasConsultaPeticion();
+		lroe.setCabecera(buildCabecera(company, info));
+		FiltroConsultaFacturasRecibidasType filtro = new FiltroConsultaFacturasRecibidasType(); 
+		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
+		filtro.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
+		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
+		filtro.setNumPaginaConsulta(1);
+		lroe.setFiltroConsultaFacturasRecibidas(filtro);
+		return lroe;
+	}
+	
+	private CabeceraFacturaConsultaType buildCabeceraFactura(Invoice invoice) {
+		CabeceraFacturaConsultaType cabecera = new CabeceraFacturaConsultaType();
+		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		cabecera.setFechaExpedicionFactura(fecha);
+
+		if(!AonStringUtils.isBlank(invoice.getSeries()))
+			cabecera.setSerieFactura(invoice.getSeries());
+		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
+		return cabecera;
+	}
+	
+	
+	public void consulta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+		try {
+			LROEInfo info = buildInfo(OperacionEnum.C_00);
+			LROEPJ240FacturasRecibidasConsultaPeticion lroe = buildConsulta(company, invoice, info);
+			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasRecibidasConsultaPeticion.class );
+			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
+
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			jaxbMarshaller.marshal( lroe, bos );
+			byte[] xml = bos.toByteArray();
+			byte[] data = toGzip(xml);
+			sendConsulta(tbaiConfiguration, buildJSON(company, info), data);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

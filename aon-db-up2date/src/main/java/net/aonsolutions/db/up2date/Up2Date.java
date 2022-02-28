@@ -30,7 +30,12 @@ import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;
 import net.aonsolutions.db.up2date.payroll.AgreementOwnerUpdate;
 import net.aonsolutions.db.up2date.payroll.AlterAgreement4Owner;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
-
+import net.aonsolutions.db.up2date.tgss.SMI2022Update;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
+import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
+import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
 
 
 public class Up2Date {
@@ -225,8 +230,10 @@ public class Up2Date {
     		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
     		//AddEpigrafe922.ADD_EPIGRAFE_922,
     		AlcatrazCreation.ALCATRAZ_CREATION,
-//    		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
-//    		RefreshMod111Result.REFRESH_MOD111_RESULT
+    		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
+    		RefreshMod111Result.REFRESH_MOD111_RESULT
+    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE
+    		SMI2022Update.SMI2022UPDATE
     };
     
 

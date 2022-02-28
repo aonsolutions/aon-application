@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
@@ -52,7 +53,7 @@ public class SettleBuilder {
 	 */
 	public static void printSettle(Settle settle, OutputStream out, Locale lang, InputStream logo)
 			throws CanNotCreatePdfException {
-		PdfMaker.printSettlement(out, new SettlePrintConfiguration(adaptToPDFObject(settle), logo, lang));
+		PdfMaker.printSettlement(out, new SettlePrintConfiguration(adaptToPDFObject(settle), logo, null, lang));
 	}
 	
 	/**
@@ -63,9 +64,9 @@ public class SettleBuilder {
 	 * @param lang   - Printing language
 	 * @throws CanNotCreatePdfException The PDF cannot print for some reason.
 	 */
-	public static void printDraftSettle(Settle settle, OutputStream out, Locale lang, InputStream logo)
+	public static void printDraftSettle(Settle settle, OutputStream out, Locale lang, InputStream logo, InputStream signature)
 			throws CanNotCreatePdfException {
-		PdfMaker.printSettlement(out, new SettlePrintConfiguration(adaptDraftToPDFObject(settle), logo, lang));
+		PdfMaker.printSettlement(out, new SettlePrintConfiguration(adaptDraftToPDFObject(settle), logo, signature, lang));
 	}
 
 	/**
@@ -87,7 +88,7 @@ public class SettleBuilder {
 				.setEndDate(settle.getIssueDate()).setExistRepresentative(settle.getRepresentativeDocument() != null);
 
 		// PAYMENTS
-		HashMap<Integer, ArrayList<PDFPayment>>	paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
+		HashMap<Integer, ArrayList<PDFPayment>>	paymentMap = new HashMap<>();
 		Collection<Payment>						payments   = settle.getPayments();
 		payments.stream().filter(SettleBuilder::filter).sorted(Comparator.comparing(p ->
 		{
@@ -105,7 +106,7 @@ public class SettleBuilder {
 
 			PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 			if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
-				paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
+				paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<>());
 
 			if (
 				paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(
@@ -120,34 +121,68 @@ public class SettleBuilder {
 		builder.setPayments(paymentMap);
 
 		// DEDUCTIONS
-		ArrayList<String> inserted = new ArrayList<String>();
+		ArrayList<String> inserted = new ArrayList<>();
 
 		Collection<com.esferalia.aon.occam.api.model.Salary.Deduction> deductions	 = settle.getDeductions();
-		HashMap<Integer, ArrayList<PDFDeduction>>					   deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
+		Collection<com.esferalia.aon.occam.api.model.Salary.Embargo>   embargos		 = settle.getEmbargos();
+		HashMap<Integer, ArrayList<PDFDeduction>>					   deductionsMap = new HashMap<>();
 
+		
+		embargos.stream().forEach(e -> {
+			try {
+				String desc = e.getDescription();
+
+				if (desc != null) {
+					desc	= desc.replace(" ", "").replace("%", "");
+				}
+
+			} catch (NumberFormatException ignored){}
+			
+			int	type = 5;
+			String desc	= e.getDescription() != null ? e.getDescription() : "Embargo";
+			PDFDeduction deduction = new PDFDeduction(e.getAmount(), desc, null);
+			
+			
+			if (!deductionsMap.containsKey(type))
+				deductionsMap.put(type, new ArrayList<>());
+
+			if (
+				deductionsMap.get(type).stream()
+						.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().get(),
+								deduction.getDescription().get()))
+			)
+			{
+				PDFDeduction ded = deductionsMap
+						.get(type).stream().filter(p -> AonStringUtils
+								.equalsIgnoreCase(deduction.getDescription().get(), p.getDescription().get()))
+						.findFirst().get();
+				ded.setAmount(ded.getAmount().get() + deduction.getAmount().get());
+			} else
+				deductionsMap.get(type).add(deduction);
+			inserted.add(Utilities.getDeductionType(DeductionType.EMBARGO.ordinal()));
+		});
+		
 		deductions.stream().forEach(d ->
 		{
 			Double percent = null;
 
-			try
-			{
-				String desc = d.getDescription();
-
+			String desc = d.getDescription();
+			try {
 				if (desc != null)
 				{
-					desc	= desc.replaceAll("\\s", "").replaceAll("%", "");
-					percent	= Double.parseDouble(desc);
+					percent	= Double.parseDouble(desc.replace(" ", "").replace("%", ""));
 				}
-
 			} catch (NumberFormatException ignored){}
 
 			int	   type	= getDeductionPDFType(d.getDeductionType().ordinal());
-			String desc	= getDeductionTypeDescription(d.getDeductionType().ordinal());
+			if (type <= 2) {				
+				desc	= getDeductionTypeDescription(d.getDeductionType().ordinal());
+			}
 
 			PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent);
 
 			if (!deductionsMap.containsKey(type))
-				deductionsMap.put(type, new ArrayList<PDFDeduction>());
+				deductionsMap.put(type, new ArrayList<>());
 
 			if (
 				deductionsMap.get(type).stream()
@@ -166,9 +201,9 @@ public class SettleBuilder {
 		});
 
 		if (deductionsMap.get(1) == null)
-			deductionsMap.put(1, new ArrayList<PDFDeduction>());
+			deductionsMap.put(1, new ArrayList<>());
 		if (deductionsMap.get(2) == null)
-			deductionsMap.put(2, new ArrayList<PDFDeduction>());
+			deductionsMap.put(2, new ArrayList<>());
 
 		if (!inserted.contains("CGC"))
 			deductionsMap.get(1).add(new PDFDeduction(0d, "Contingencias comunes", 0d));

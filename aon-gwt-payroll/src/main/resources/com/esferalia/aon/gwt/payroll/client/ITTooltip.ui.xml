@@ -37,6 +37,13 @@
 	<g:HTMLPanel ui:field="itTooltip" styleName="{style.flexColumn}">
 	
 		<g:Label ui:field="fullNameL" styleName="{style.fullName}"/>
+
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.bold}">Regimen:</g:Label>
+			<g:Label ui:field="regime"/>
+			<g:Label styleName="{style.bold}">CCC:</g:Label>
+			<g:Label ui:field="ccc"/>
+		</g:HTMLPanel>
 		
 		<g:HTMLPanel styleName="{style.flex}">
 			<g:Label styleName="{style.bold}">Doc:</g:Label>

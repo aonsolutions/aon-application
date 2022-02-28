@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.DeductionTypeVisitor;
+
 public class PayrollUtils {
 
 	public static int getDeductionPDFType(int type) {
@@ -50,7 +53,90 @@ public class PayrollUtils {
 
 	}
 	
-	
-	
+//	public static String getDeductionTypeDescription(DeductionType type) {
+//		if (type == null) {
+//			return "Otras deducciones";
+//		}
+//		StringBuilder retBuild = new StringBuilder("");
+//		type.accept(new DeductionTypeVisitor() {
+//
+//			@Override
+//			public void visitCommonContigency(DeductionType deductionType) {
+//				retBuild.append("Contingencias comunes");
+//			}
+//
+//			@Override
+//			public void visitProfessionalContigency(DeductionType deductionType) {
+//				retBuild.append("Otras deducciones");
+//				
+//			}
+//
+//			@Override
+//			public void visitUnemployent(DeductionType deductionType) {
+//				retBuild.append("Desempleo");
+//			}
+//
+//			@Override
+//			public void visitJobTraining(DeductionType deductionType) {
+//				retBuild.append("Formación profesional");
+//			}
+//
+//			@Override
+//			public void visitStructuralOvertime(DeductionType deductionType) {
+//				retBuild.append("Horas extraordinarias (Estruc.)");
+//			}
+//
+//			@Override
+//			public void visitNonStructuralOvertime(DeductionType deductionType) {
+//				retBuild.append("Horas extraordinarias (No "
+//						+ "Estruc.)");
+//			}
+//
+//			@Override
+//			public void visitIrpf(DeductionType deductionType) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void visitAdvancePayment(DeductionType deductionType) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void visitInkind(DeductionType deductionType) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void visitOther(DeductionType deductionType) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void visitFogasa(DeductionType deductionType) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void visitEmbargo(DeductionType deductionType) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void visitBonus(DeductionType deductionType) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//		});
+//
+//	}
+//	
 
 }

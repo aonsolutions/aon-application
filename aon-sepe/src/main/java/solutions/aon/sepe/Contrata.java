@@ -15,7 +15,7 @@ import java.util.Optional;
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -32,9 +32,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
+import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.SexType;
+import aon.sepe.objects.CopyBasic;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.sepe.exceptions.statusCode.StatusCodeException;
@@ -57,17 +59,16 @@ public class Contrata {
 			return null;
 	}
 	
-	public static String sendTransformation(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, Contract cto) throws SepeException {
+	public static void sendTransformation(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, Contract cto, CopyBasic copyBasic) throws SepeException {
 			try {
-				return sendTransformationImpl(certificateInputStream, certificatePassword, certificateType, cto);
+				sendTransformationImpl(certificateInputStream, certificatePassword, certificateType, cto, copyBasic);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
 			catch (Exception e) {throw new SepeException(e);}
-			return null;
 	}
 	
 	public static void validateCert(final InputStream certificateInputStream,
@@ -121,10 +122,10 @@ public class Contrata {
 			{// DATA ENTERPRISE
 				String ctaCti = cto.getCtaCti();
 				String regimen = cto.getRegimen();
-				if(cto.getCifEnterprise()!=null) {
-					form.getInputByName("cifnif").setValueAttribute(cto.getCifEnterprise());
-				}
 				
+				if(cto.getCifEnterprise()!=null) 
+					form.getInputByName("cifnif").setValueAttribute(cto.getCifEnterprise());
+
 				form.getInputByName("regimen").setValueAttribute(regimen);
 				form.getInputByName("numsecprov").setValueAttribute(ctaCti.substring(0,2));
 				form.getInputByName("numsec").setValueAttribute(ctaCti.substring(2,9));
@@ -235,10 +236,12 @@ public class Contrata {
 		return null;
 	}
 
-	private static String sendTransformationImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
+	private static void sendTransformationImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto, CopyBasic copyBasic) 
 			throws FailingHttpStatusCodeException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
+			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
+			webClient.setAlertHandler(alertHandler);
 			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
@@ -284,38 +287,61 @@ public class Contrata {
 				form.getInputByName("mes").setValueAttribute(dateComContract[1]);
 				form.getInputByName("annio").setValueAttribute(dateComContract[2]);	
 			}
+			
+			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
+			handleSepeExceptions(htmlPage);
+			handleSepeAlert(alertHandler.getCollectedAlerts());
+			
+			form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		
-			
-			{//DATA TRANSFORMATION
-//				if(cto.getDateFinContract()!=null) {
-//					String[] dateFinContract = Toolkit.dateString(cto.getDateFinContract());
-//					form.getInputByName("diafechafin").setValueAttribute(dateFinContract[0]);
-//					form.getInputByName("mesfechafin").setValueAttribute(dateFinContract[1]);
-//					form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
-//				}
+			{// DATA TRANSFORMATION
+				form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation()); // disabled
+				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
+				
+				((HtmlSelect)form.querySelector("select[name=nacionalidadCT]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
+				String municipio = cto.getCodMunWork().toString();
+				form.getInputByName("municipiocontrato").setValueAttribute(municipio);// repeat cod contract
+				form.getInputByName("municipioCT").setValueAttribute(municipio);// repeat cod contract
+				
+				DomNode fijoDiscontinuo = form.querySelector("[name=fijoDiscontinuo]");
+				if(fijoDiscontinuo!=null)
+					((HtmlSelect)fijoDiscontinuo).setSelectedAttribute(cto.getDiscontinuo() ? "003" : "004", true);
+
+				{//DATA JORNADA
+					DomNode tipoJornada = form.querySelector("select[name=tipoJornada]");
+					if(tipoJornada!=null &&cto.getJndType()!=null && cto.getDurationTypeJndHour()!=null && cto.getDurationTypeJndMin()!=null) {
+						((HtmlSelect)tipoJornada).setSelectedAttribute(cto.getJndType().getValue(), true);
+						String hours = "00"+cto.getDurationTypeJndHour();
+						String min = cto.getDurationTypeJndMin();
+						form.getInputByName("horas").setValueAttribute(hours);
+						form.getInputByName("minutos").setValueAttribute(min);
+						form.getInputByName("duracjornada").setValueAttribute(hours+min);
+					}
+				}
 			}
-//			
-//			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-//			handleSepeExceptions(htmlPage);
-//			
-//			String ide = null;
-//			String message = getSuccessMessage(htmlPage);
-//			
-//			if(message!=null && message.indexOf("returnInit")>=0) {
-//				htmlPage = sepe_return_init(htmlPage, cto); 
-//				message = getSuccessMessage(htmlPage); // message overwrite
-//			}
-//			
-//			if(message!=null && message.indexOf("E")>=0) {
-//				ide =  message.substring(1);
-//			}
-//			
-//			handleSepeExceptions(htmlPage);
-//			
-//	        return ide;
 			
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testTransformation.html");
-	        return null;
+			{//DATA COPY BASIC IF NO EXIST
+				DomNode codtipofirma = form.querySelector("select[name=codtipofirma]");
+				DomNode areadeDomicilio = form.querySelector("[name=areadeDomicilio]");
+				DomNode areadeTexto = form.querySelector("[name=areadeTexto]");
+				if(copyBasic!=null && codtipofirma!=null && areadeDomicilio!=null && areadeTexto!=null) {
+					  ((HtmlSelect)codtipofirma).setSelectedAttribute(copyBasic.getFirmType().getValue().toString(), true);
+				      ((HtmlTextArea)areadeDomicilio).setText(copyBasic.getWorkAddress());
+				      ((HtmlTextArea)areadeTexto).setText(copyBasic.getRestContract());
+				}
+			}
+			
+			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
+			handleSepeExceptions(htmlPage);
+			handleSepeAlert(alertHandler.getCollectedAlerts());
+			
+//			Toolkit.buildFile(form.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testTransformation.html");
+			
+	        String message = getSuccessMessage(htmlPage);
+			if(message!=null && message.contains("se ha realizado correctamente"))
+				System.out.println(message);
+			else 
+				throw new SepeException("no se ha realizado");
 		} 
 	}
 	
@@ -392,10 +418,10 @@ public class Contrata {
 		} 
 	}
 	
-	public static String contratoCopyBasic(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String ipf, Date fini, Date ffin, FirmType firmType, String workAddress, String restContract) throws SepeException {
+	public static String sendCopyBasic(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, CopyBasic copyBasic) throws SepeException {
 			try {
-				return contratoCopyBasicImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, firmType, workAddress, restContract);
+				return sendCopyBasicImpl(certificateInputStream, certificatePassword, certificateType, copyBasic);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -405,9 +431,9 @@ public class Contrata {
 			return null;
 	}
 	
-	private static String contratoCopyBasicImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, 
-			String ipf, Date fini, Date ffin, FirmType firmType, String workAddress, String restContract) 
-			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException {
+	private static String sendCopyBasicImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, 
+			CopyBasic copyBasic) 
+			throws FailingHttpStatusCodeException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
@@ -422,13 +448,13 @@ public class Contrata {
  
 	        HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 	        
-	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, ffin, ipf);
+	        htmlPage = page_contrac_or_cbasic(htmlPage, copyBasic.getFini().get(), copyBasic.getFend().get(), copyBasic.getIpf().get());
 	        
 	        form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 	      
-	        ((HtmlSelect)form.querySelector("select[name=codtipofirma]")).setSelectedAttribute(firmType.getValue().toString(), true);
-	        ((HtmlTextArea)form.querySelector("[name=areadeDomicilio]")).setText(workAddress);
-	        ((HtmlTextArea)form.querySelector("[name=areadeTexto]")).setText(restContract);
+	        ((HtmlSelect)form.querySelector("select[name=codtipofirma]")).setSelectedAttribute(copyBasic.getFirmType().getValue().toString(), true);
+	        ((HtmlTextArea)form.querySelector("[name=areadeDomicilio]")).setText(copyBasic.getWorkAddress());
+	        ((HtmlTextArea)form.querySelector("[name=areadeTexto]")).setText(copyBasic.getRestContract());
 	        
 	        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=enviar]")).click();
 	        handleSepeExceptions(htmlPage);
@@ -514,13 +540,20 @@ public class Contrata {
 	        
 	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
 	        HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-	        UnexpectedPage document = formDatos1.getInputByName("Boton_imprimir").click();
 	        
-	        InputStream inp = document.getWebResponse().getContentAsStream();
-	        byte[] pdf = inp.readAllBytes();
-	        inp.close();
-	        return pdf;
-		} 
+	    	Page page = formDatos1.getInputByName("Boton_imprimir").click();
+			if(page.isHtmlPage()) {
+				htmlPage = (HtmlPage) page;
+				handleSepeExceptions(htmlPage);
+			} else {
+				try{
+					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+					return pdf;
+				}
+				catch(Exception e){throw new InvalidDataException();}
+			}
+		}
+		return null; 
 	}
 	
 	private static byte[] getCopyBasicPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -545,12 +578,20 @@ public class Contrata {
 	        
 	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
 	        HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-	        UnexpectedPage document = formDatos1.getInputByName("Boton_imprimir").click();
-	        InputStream inp = document.getWebResponse().getContentAsStream();
-	        byte[] pdf = inp.readAllBytes();
-	        inp.close();
-	        return pdf;
+	        
+	     	Page page = formDatos1.getInputByName("Boton_imprimir").click();
+			if(page.isHtmlPage()) {
+				htmlPage = (HtmlPage) page;
+				handleSepeExceptions(htmlPage);
+			} else {
+				try{
+					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+					return pdf;
+				}
+				catch(Exception e){throw new InvalidDataException();}
+			}
 		}
+		return null;
 	}
 	
 	private static void removeContratoImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -567,7 +608,10 @@ public class Contrata {
 	        handleSepeExceptions(htmlPage);
 	        
 	        String message = getSuccessMessage(htmlPage);
-	        System.out.println(message);
+			if(message!=null && message.contains("se ha realizado correctamente")){
+				System.out.println(message);
+			} else 
+				throw new SepeException("no se ha realizado");
 		} 
 	}
 	
@@ -582,7 +626,10 @@ public class Contrata {
 	        
 	        htmlPage = last_page_anulacion(htmlPage, ide);
 	        String message = getSuccessMessage(htmlPage);
-	        System.out.println(message);
+			if(message!=null && message.contains("se ha realizado correctamente")){
+				System.out.println(message);
+			} else 
+				throw new SepeException("no se ha realizado");
 		} 
 	}
 	
@@ -670,7 +717,6 @@ public class Contrata {
 	
 	private static byte[] transformationsPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException {
-		byte[] pdf= null;
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	String[] fri = Toolkit.formatDate(fini);
 		    Integer ident  = 0; //NIF DEFAULT
@@ -700,12 +746,19 @@ public class Contrata {
 			htmlPage = formDatos.getInputByName("aceptar").click();
 			handleSepeExceptions(htmlPage);
 			
-		    UnexpectedPage document = htmlPage.getElementByName("Boton_imprimir").click();
-			InputStream inp = document.getWebResponse().getContentAsStream();
-			pdf = inp.readAllBytes();
-			inp.close();
-	        return pdf;
+	     	Page page = htmlPage.getElementByName("Boton_imprimir").click();
+			if(page.isHtmlPage()) {
+				htmlPage = (HtmlPage) page;
+				handleSepeExceptions(htmlPage);
+			} else {
+				try{
+					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+					return pdf;
+				}
+				catch(Exception e){throw new InvalidDataException();}
+			}
 		} 
+	    return null;
 	}
 	
 	private static HtmlPage first_page_sepe_contrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
@@ -743,20 +796,21 @@ public class Contrata {
 		for( DomNode p: texts) {
 			String pStr = Toolkit.removeNBSP(p.getVisibleText()).trim();
 			Integer pInt = pStr.length();
+			boolean b = false;
 			if(pInt > 0) {
 				if(pStr.indexOf("Identificador de la Comunicaci\u00F3n :")>=0) {
 					String[] parts = pStr.split(":");
-					if(parts.length > 0) {
+					if(parts.length > 0) 
 						msg = (parts[1]).trim().replaceAll("-", "");
-					}
-					break;
+					b = true;
 				} else if(pStr.indexOf("se ha realizado correctamente")>=0) {
 					msg = pStr;
-					break;
+					b = true;
 				} else if(pStr.indexOf("sin fecha de t\u00E9rmino")>=0 || pStr.indexOf("F\u00EDsica en la base de datos no coinciden")>=0) {
 					msg = "returnInit";
-					break;
+					b = true;
 				} 
+				if(b) break;
 			}
 		}
 		return msg;
@@ -781,12 +835,10 @@ public class Contrata {
 		} catch (NullPointerException e) {}
 	}
 	
-	
 	private static void handleSepeAlert(List<String> list) throws SepeException{
 		if(!list.isEmpty()) 
 			throw new SepeException(list.get(0));
 	}
-	
 	
 	private static void validateCertImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType)  throws SepeException, IOException{
@@ -821,23 +873,5 @@ public class Contrata {
             if(expiryDate.compareTo(cal.getTime()) < 0 ) 
             	throw new Exception("El certificado ha expirado");
         }
-	}
-	
-	public enum FirmType {
-		FIRMADA_REPRESENTANTES_LEGALES(1), 
-		NO_EXISTE_REPRESENTACION(2),
-		NO_FACILITADO_COPIA(3),
-		REHUSAN_FIRMAR(4);
-		
-		private Integer value;
-		
-		private FirmType(Integer value) {
-			this.value = value;
-		}
-		
-		public Integer getValue() {
-			return value;
-		}
-	}
-	
+	}	
 }
