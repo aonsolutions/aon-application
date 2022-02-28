@@ -229,11 +229,10 @@ public class Up2Date {
     		//FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
     		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
     		//AddEpigrafe922.ADD_EPIGRAFE_922,
+    		SMI2022Update.SMI2022UPDATE,
     		AlcatrazCreation.ALCATRAZ_CREATION,
     		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
-    		RefreshMod111Result.REFRESH_MOD111_RESULT
-    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE
-    		SMI2022Update.SMI2022UPDATE
+    		RefreshMod111Result.REFRESH_MOD111_RESULT,
     };
     
 
