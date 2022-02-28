@@ -421,6 +421,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 	
+	class SendContractTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			sendContractTransform();
+		}
+
+	}
+	
 	class RemoveContractCommand implements ScheduledCommand {
 
 		@Override
@@ -443,6 +452,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		private MenuItem sendBasicCopy;
 		private MenuItem sendContract;
+		private MenuItem sendContractTransform;
 		private MenuItem sepeIDE;
 		
 		private MenuItem removeContract;
@@ -491,6 +501,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sendContract.ensureDebugId("sendContract");
 			
+			sendContractTransform = addItem("Notificar Transformaci\u00f3n Contrato", new SendContractTransformCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			sendContractTransform.ensureDebugId("sendContractTransform");
+			
 			sepeIDE = addItem("Ver IDE Contrato", new SepeIDEContractCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sepeIDE.ensureDebugId("sepeIDE");
@@ -515,6 +529,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public MenuItem getSendContract() {
 			return sendContract;
+		}
+		
+		public MenuItem getSendContractTransform() {
+			return sendContractTransform;
 		}
 		
 		public MenuItem getSepeIDE() {
@@ -792,9 +810,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}, f -> {});
 				break;
 			case 1:
-				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
-						s -> {}, 
-						f -> showError("Error guardando Datos SEPE", f.getMessage()));
+				if(Boolean.FALSE.equals(this.contrataEmployeeObject.getContractData().isHasTransformation()))
+					contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
+							s -> {}, 
+							f -> showError("Error guardando Datos SEPE", f.getMessage()));
 				break;
 			case 2:
 				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -841,10 +860,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.getContractSpecificData(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showContractButtons();
+					checkCertificateSEPE();
+					checkContractExtension();
+					checkContractTransform();
 					hideTgssOption();
 					showSepeOption();
 					contractSpecificData.setEmployeeContractInfo(
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
+							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
 							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
 					hideLoadingPanel();
 				}, f -> showError("Error obtenci\u00f3n Datos SEPE", f.getMessage()));
@@ -1203,17 +1226,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showError(messageContainer, messageMap);
 			break;
 		case 1:
-			contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
-					s -> {
-						Map<String, String> messageSuccessMap = new HashMap<>();
-						messageSuccessMap.put("Guardado", "Los datos SEPE han sido actualizados correctamente");
-						AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
-						contrataEmployeeObject.getContractSpecificData(su -> 
-								contractSpecificData.setEmployeeContractInfo(
-										contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
-										contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
-							, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
-					}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
+			if(Boolean.FALSE.equals(this.contrataEmployeeObject.getContractData().isHasTransformation()))
+				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), 
+						s -> {
+							Map<String, String> messageSuccessMap = new HashMap<>();
+							messageSuccessMap.put("Guardado", "Los datos SEPE han sido actualizados correctamente");
+							AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
+							contrataEmployeeObject.getContractSpecificData(su -> 
+									contractSpecificData.setEmployeeContractInfo(
+											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
+											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
+											contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
+								, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
+						}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
 			break;
 		case 2:
 			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -1579,6 +1604,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							else
 								sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
 					});
+				},
+				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+	}
+	
+	private void sendContractTransform() {
+		showLoading("Notificando transformaci\u00f3n contrato...");
+		contrataEmployeeObject.sendContractTransform(
+				s -> {
+					showSuccess("Transformaci\u00f3n Comunicaci\u00F3n", "La transformac\u00f3n del contrato ha sido notificada correctamente al SEPE");
 				},
 				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
@@ -1955,6 +1989,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			 Integer contractTypeValue = Integer.parseInt(contractTypeStr);
 			 setVisible(sepeContextMenu.getContractExtension().getElement(), contractTypeValue >= 400);
 		 }
+		 
+	 	 setVisible(sepeContextMenu.getContractExtension().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getRemoveContractExtension().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getContractTransform().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getSendBasicCopy().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getSendContract().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getSendContractTransform().getElement(), Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 
 	}
 	
 	// ------------------------------------------------- TGSS status
