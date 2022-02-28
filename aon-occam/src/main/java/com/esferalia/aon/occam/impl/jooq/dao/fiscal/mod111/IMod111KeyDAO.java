@@ -15,6 +15,7 @@ public interface IMod111KeyDAO {
 	void initialize(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown  br);
 	void uniqueInitialize(AONContext ctx,Mod111 mod);
 	String getExpression();
+	String getTemplate();
 	
 }
 

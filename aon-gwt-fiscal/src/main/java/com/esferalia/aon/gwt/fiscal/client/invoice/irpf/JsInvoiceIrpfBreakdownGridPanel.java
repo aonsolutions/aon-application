@@ -4,13 +4,18 @@ import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class JsInvoiceIrpfBreakdownGridPanel extends FlowPanel {
+public class JsInvoiceIrpfBreakdownGridPanel extends FlowPanel implements HasSelectionHandlers<JsIRPFBreakdown>{
 	
 	private final Label title;
 	private final Label subTitle;
@@ -19,24 +24,23 @@ public class JsInvoiceIrpfBreakdownGridPanel extends FlowPanel {
 	private double sumQuota = 0.0;
 	
 	public JsInvoiceIrpfBreakdownGridPanel() {
-		setStyleName(AON.CSS.aonBackgroundLigthGray());
-		
 		title = new Label();
 		title.setStyleName(AON.CSS.aonMarginTop());
 		title.addStyleName(AON.CSS.aonBold());
 		title.addStyleName(AON.CSS.aonWidthAll());
 		title.addStyleName(AON.CSS.aonTextCenter());
 		title.addStyleName(AON.CSS.aonTextUppercase());
+		title.addStyleName(AON.CSS.aonFontXLarger());
 		add( title );
 		subTitle = new Label();	
 		subTitle.setStyleName(AON.CSS.aonMarginTop());
 		subTitle.addStyleName(AON.CSS.aonBold());
 		subTitle.addStyleName(AON.CSS.aonWidthAll());
 		subTitle.addStyleName(AON.CSS.aonTextCenter());
+		subTitle.addStyleName(AON.CSS.aonFontLarger());
 		add( subTitle );
 		grid = new AonDisplayGrid();
 		grid.addStyleName(AON.CSS.aonMarginTop());
-		grid.addStyleName(AON.CSS.aonFontSmaller());
 		grid.addStyleName(AON.CSS.aonBlockCenter());
 		paintHeader();
 		add( grid );
@@ -53,7 +57,7 @@ public class JsInvoiceIrpfBreakdownGridPanel extends FlowPanel {
 	
 	private void paintHeader() {
 		grid.addHeaderRow()
-			.addCell(new Label( "Tipo"),AON.CSS.aonWidth40())
+			.addCell(new Label("Tipo"),AON.CSS.aonWidth40())
 			.addCell(new Label("Tipo Ret."),AON.CSS.aonWidth100())
 			.addCell(new Label("Epigr."),AON.CSS.aonWidth80())
 			.addCell(new Label("N\u00BA Documento"),AON.CSS.aonWidth100())
@@ -80,7 +84,9 @@ public class JsInvoiceIrpfBreakdownGridPanel extends FlowPanel {
 	public void addRow(JsIRPFBreakdown br) {
 		InvoiceType invoiceType = InvoiceType.safeValueOf(br.getInvoiceType());
 		WithholdingType withholdingType = WithholdingType.safeValueOf(br.getWithholdingType());
-		grid.addRow()
+		AonDisplayGridRow row = grid.addRow();
+		row.addClickHandler(event -> SelectionEvent.fire(this, br));
+		row
 			.addCell(new Label(ensure(invoiceType,invoiceType::getAbbrDescription)))
 			.addCell(new Label(ensure(withholdingType,() -> AonStringUtils.substring(withholdingType.getDescription(),0,8))))
 			.addCell(new Label(ensure(br.getEpigraph(), br::getEpigraph, AonStringUtils.EMPTY)))
@@ -118,4 +124,8 @@ public class JsInvoiceIrpfBreakdownGridPanel extends FlowPanel {
 		this.title.setText(title);
 	}
 
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<JsIRPFBreakdown> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
+	}
 }

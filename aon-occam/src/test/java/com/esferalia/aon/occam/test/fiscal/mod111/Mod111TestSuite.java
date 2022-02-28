@@ -8,7 +8,13 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	Mod111ExpressionsTest.class,
 	Mod111DeleteTest.class,
-	Mod111InsertTest.class,
+	Mod111InsertMonthlyTest.class,
+	Mod111InsertMonthlyComplementaryTest.class,
+	Mod111InsertMonthlyReplacementTest.class,
+	Mod111DeleteTest.class,
+	Mod111InsertQuarterlyTest.class,
+	Mod111InsertQuarterlyComplementaryTest.class,
+	Mod111InsertQuarterlyReplacementTest.class,
 	Mod111FinishTest.class,
 	Mod111ReopenTest.class,
 })

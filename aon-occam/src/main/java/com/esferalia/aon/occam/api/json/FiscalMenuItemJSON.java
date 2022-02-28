@@ -100,15 +100,13 @@ public enum FiscalMenuItemJSON {
 	RESULT{
 		@Override
 		public JSONObject to(IFiscalModel model, JSONObject json) {
-			return json.put(IJsonNames.RESULT, model.getResult());
+			return json.put(IJsonNames.RESULT, model.getDeclarationResult());
 		}
 	},
 	DECLARATION_TYPE{
 		@Override
 		public JSONObject to(IFiscalModel model, JSONObject json) {
-			if ( model.getDeclarationTypeKey() != null) {
-				json.put(IJsonNames.TYPE, model.getDeclarationType());
-			}
+			json.put(IJsonNames.TYPE, model.getDeclarationResultType());
 			return json;
 		}
 	},

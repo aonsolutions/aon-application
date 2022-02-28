@@ -4132,5 +4132,11 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Error al cargar el \"m\u00F3dulo {0}\"")
 	String loadError(String module);
 
+	@DefaultMessage("Detalle del c\u00E1lculo")
+	String calcDetail();
+
+	@DefaultMessage("Facturas que afectan a la confecci\u00f3n del modelo {0}")
+	String modelRelatedInvoices(String modelFullName);
+
 }
 

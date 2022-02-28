@@ -26,7 +26,6 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 	private PeriodListBox periodList = new PeriodListBox(true);
 	private final CheckBox replacement = new CheckBox();
 	private final CheckBox complementary = new CheckBox();
-	private final CheckBox diffCalculation = new CheckBox();
 		
 	private FlowPanel rootPanel;
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
@@ -71,7 +70,6 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 		paintPeriod(model,callback,tab);
 		paintComplementary(model,tab);
 		paintReplacement(model,tab);
-		paintDiffCalculation(model,tab);
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
 	
@@ -135,13 +133,6 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 			tab.addLabelWidgetRow("", replacement);
 		}
 		
-	}
-
-	private void paintDiffCalculation(Mod111 model, AonDisplayTable tab) {
-		diffCalculation.setText(AON.MSG.diffCalculation());
-		diffCalculation.setValue(!model.isDiffCalculationDisabled());
-		diffCalculation.addClickHandler(event -> model.setDiffCalculationDisabled(!diffCalculation.getValue()));
-		tab.addLabelWidgetRow("", diffCalculation);
 	}
 
 	private FlowPanel getButtonsPanel(Mod111 model, final Model111Callback callback) {

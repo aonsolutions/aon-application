@@ -228,6 +228,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[K] 
 	String KEY = "key";
 	String KEYS = "keys";
+	String KEY_VALUES = "keyValues";
 	String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
 	String LANGUAGE = "language";

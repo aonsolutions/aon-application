@@ -1805,6 +1805,12 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Invoice getInvoice(Occam occam, Integer invoiceId){
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getFullInvoice(ctx, invoiceId);
+		}
+	}
+
 	public static Invoice getInvoice(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		return getInvoiceStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new Invoice());

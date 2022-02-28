@@ -1,8 +1,8 @@
 	package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import org.jooq.impl.DSL;
@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalMenuDAO {
@@ -88,7 +89,7 @@ public class FiscalMenuDAO {
 		}
 		if (params.isMadeModelsVisible()) {
 			IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
-				@Override public void visitM115() {}	// Resolved in visitM111() 
+				@Override public void visitM115() {}	// Resolved in visitM111()
 				@Override public void visitM123() {}	// Resolved in visitM111()
 				@Override public void visitM130() {}	// Resolved in visitM111()
 				@Override public void visitM131() {}	// Resolved in visitM111()
@@ -99,8 +100,21 @@ public class FiscalMenuDAO {
 				@Override 
 				public void visitM111() {
 					FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
+						.map(fm -> fm.setModel((fm.getModel() == FiscalModelType.M390)?FiscalModelType.M390_HF:fm.getModel())) 
+						.filter(fm -> fm.getModel() != FiscalModelType.M390_HF 
+							|| (fm.getModel() == FiscalModelType.M390_HF
+								&& ( params.getModel() == null 
+								  || params.getModel() == FiscalModelType.M390_HF))
+								)
+						.map( FiscalMenuItemJSON::toJSON )
+						.forEach( allModels::put );
+				}
+/*
+				@Override 
+				public void visitM115() {
+					com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
 						.map(record -> {
-							FiscalModel fm = FiscalModelDAO.map(record);
+							FiscalModel fm = com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO.map(record);
 							if (fm.getModel() == FiscalModelType.M390) {
 								fm.setModel(FiscalModelType.M390_HF);
 							}
@@ -116,7 +130,7 @@ public class FiscalMenuDAO {
 						.forEach( allModels::put )
 										;
 				}
-
+*/
 				@Override 
 				public void visitM347() {
 					if (params.getModel() == null  || FiscalModelType.M347 == params.getModel()) {

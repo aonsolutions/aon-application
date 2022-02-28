@@ -348,7 +348,7 @@ public class InvoiceFaker {
 				.setBase(detail.getTaxableBase())
 				.setPercentage( witholding.getPercentage())
 				.setSurcharge(0.0)
-				.setDeductiblePercent(getDeductiblePercent( AonRandom.number(0, 100)))
+				.setDeductiblePercent(getDeductiblePercent( AonRandom.number(0, 80)))
 				.setWithholdingType(witholding.getWithholdingType());
 				;
 			;

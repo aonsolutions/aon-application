@@ -8,16 +8,22 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsComputeInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsComputeKeyInfoGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfo;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsInvoiceIrpfBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsSalaryIrpfBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.Model111Callback;
@@ -28,6 +34,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPan
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.shared.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -42,6 +49,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -88,10 +96,10 @@ public abstract class Model111Base extends DockLayoutPanel {
 	
 	private final AonToolbar decToolbar = new AonToolbar();
 	private final InlineLabel dirtyLabel = new InlineLabel();
-	private final InlineLabel diffLabel = new InlineLabel();
 	private final InlineLabel adjLabel = new InlineLabel();
 	private final InlineLabel replacedLabel = new InlineLabel();
 	private final Label statusLabel = new Label();
+	private AonTextBox receiptBox;
 	
 	protected FormPanel diskForm = new FormPanel(BLANK);
 	protected Hidden mod111Hidden = new Hidden("mod111");
@@ -124,6 +132,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 		paintDeclarationTab(tabPanel);
 		paintLiquidationTab(tabPanel);
 		paintAdministrationTab(tabPanel);
+		
+		tabPanel.selectTab(2, false);
 	}
 	
 	public Model111Callback getCallback() {
@@ -247,16 +257,9 @@ public abstract class Model111Base extends DockLayoutPanel {
 		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
-		diffLabel.setStyleName(AON.CSS.aonMarginLeft());
-		diffLabel.addStyleName(AON.CSS.aonLabelWithIcon());
-		diffLabel.addStyleName(AON.CSS.aonIconDiff());
-		diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
-		marksPanels.add(diffLabel);
-
 		adjLabel.setStyleName(AON.CSS.aonMarginLeft());
 		adjLabel.addStyleName(AON.CSS.aonIconLabel());
-		adjLabel.addStyleName(AON.CSS.aonIconWrench());
-		adjLabel.addStyleName(AON.CSS.aonColorBlue());
+		adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
 		adjLabel.setTitle("Ajustes realizados");
 		marksPanels.add(adjLabel);
 
@@ -326,8 +329,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 
 	private void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
-		diffLabel.setVisible(!this.getModel().isDiffCalculationDisabled()); 		
-		
 		boolean adjusted = false;
 		for (FiscalModelDetail det : this.getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
@@ -825,6 +826,12 @@ public abstract class Model111Base extends DockLayoutPanel {
 		fieldsMap.put(key, input);
 		input.setEnabled(script.isEnabled()); 
 		input.setValue(det1.getAmount());
+		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
+			input.addStyleName(AON.CSS.aonChanged());
+			input.setTitle(AON.MSG.difCalc(
+					AON.FMT.format(det1.getResultAmount()),
+					AON.FMT.format(AonMathUtils.round( det1.getAdjustAmount() * -1))));
+		}
 		input.addValueChangeHandler(event -> {
 			if (event.getValue() == null) input.setValue(0.0, false);
 			double result = getModel().getResultAmount(key);
@@ -834,6 +841,15 @@ public abstract class Model111Base extends DockLayoutPanel {
 				getModel().ensureDetail(key).setAdjustAmount( result - amount);	
 			}
 			getModel().ensureDetail(key).setAmount(input.getValue());
+			if (AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
+				input.addStyleName(AON.CSS.aonChanged());
+				input.setTitle(AON.MSG.difCalc(
+					AON.FMT.format(getModel().ensureDetail(key).getResultAmount()),
+					AON.FMT.format(AonMathUtils.round( getModel().ensureDetail(key).getAdjustAmount() * -1))));
+			} else {
+				input.removeStyleName(AON.CSS.aonChanged());
+			}
+			
 			if (input.isEnabled()) {
 				calculateAndRefresh( callback );
 			}
@@ -850,7 +866,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 			buttonContainer.setStyleName(AON.CSS.aonNowrap());
 			infoKey.visit(new IFiscalModelKeyInfoVisitor<Void>() {
 
-				private void showCharInfo(AonTableButton button) {
+				private void showComputeKeyInfo(AonTableButton button) {
 					button.setEnabled(false);
 					Model111.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
 						@Override
@@ -861,8 +877,16 @@ public abstract class Model111Base extends DockLayoutPanel {
 	
 						@Override
 						public void onSuccess(String result) {
+							FlowPanel gridContainer = new FlowPanel();
+							Mod111Key key = script.getKeys()[0];
+							JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
+							JsComputeKeyInfoGridPanel grid = new JsComputeKeyInfoGridPanel();
+							grid.setTitle(AON.MSG.calcDetail());
+							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
+							grid.addContent(info);
+							gridContainer.add(grid);
+							callback.showInfoPanelWidget(gridContainer);
 							button.setEnabled(true);
-							callback.showInfoPanel(result);
 						}
 					});
 				}
@@ -879,8 +903,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 						@Override
 						public void onSuccess(String result) {
 							JsInvoiceIrpfBreakdownGridPanel grid = new JsInvoiceIrpfBreakdownGridPanel();
-							grid.setTitle("FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO "
-									+ getModel().getModelFullName());
+							grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
+							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
 							grid.setSubTitle(script.getLabel());
 							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
 							JsArray<JsIRPFBreakdown> array = arrayObject.cast();
@@ -935,10 +959,12 @@ public abstract class Model111Base extends DockLayoutPanel {
 							FlowPanel gridContainer = new FlowPanel();
 							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
 							JsArray<JsIRPFComputeInfo> array = arrayObject.cast();
+							
 							for (int i = 0; i < array.length(); i++) {
+								Mod111Key key = script.getKeys()[i];
 								JsComputeInfoGridPanel grid = new JsComputeInfoGridPanel();
-								grid.setTitle("DETALLE DEL C\u00C1LCULO");
-								grid.setSubTitle(script.getLabel());
+								grid.setTitle(AON.MSG.calcDetail());
+								grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
 								grid.addContent(array.get(i));
 								gridContainer.add(grid);
 							}
@@ -948,15 +974,15 @@ public abstract class Model111Base extends DockLayoutPanel {
 					});
 				}
 				
-				private AonTableButton addButton(String iconStyle) {
-					final AonTableButton button = new AonTableButton(infoKey.getLabel(),iconStyle);
+				private AonTableButton addButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
 					buttonContainer.add(button);
 					return button;
 				}
 				
 				@Override
 				public Void visitInvoice() {
-					final AonTableButton button = addButton(AON.CSS.aonIconList());
+					final AonTableButton button = addButton();
 					button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
 					return null;
 				}
@@ -967,44 +993,34 @@ public abstract class Model111Base extends DockLayoutPanel {
 				
 				@Override 
 				public Void visitSalary() { 
-					final AonTableButton button = addButton(AON.CSS.aonIconEuro());
+					final AonTableButton button = addButton();
 					button.addClickHandler(event -> showSalaryIrpfBreakdownInfo(button));
 					return null; 
 				}
 				@Override 
-				public Void visitSalaryInKind() { 
-					final AonTableButton button = addButton(AON.CSS.aonIconData());
-					button.addClickHandler(event -> showSalaryIrpfBreakdownInfo(button));
-					return null; 
+				public Void visitModelSalaryIrpfBreakdown() {
+					return visitSalary();
 				}
 
 				@Override public Void visitCompute() { 
-					final AonTableButton button = addButton(AON.CSS.aonIconCalc());
+					final AonTableButton button = addButton();
 					button.addClickHandler(event -> showComputeInfo(button));
 					return null; 
 				}
-				
-				// *******************************************
-				// *******************************************
-				// *******************************************
-				
 				@Override 
-				public Void visitDiffInvoice() {
-					final AonTableButton button = addButton(AON.CSS.aonIconDiff());
-					button.addClickHandler(event -> showCharInfo(button));
+				public Void visitComputeKey() {
+					final AonTableButton button = addButton();
+					button.addClickHandler(event -> showComputeKeyInfo(button));
 					return null; 
 				}
-				@Override 
-				public Void visitDiffSalary() {
-					return visitDiffInvoice();
-				}
-
+				
+				@Override public Void visitDiffInvoice() {return null;}
+				@Override public Void visitDiffSalary() { return null;}
 				@Override public Void visitNone() { return null; }
 				@Override public Void visitInAccrualInvoice() { return null; }
 				@Override public Void visitOutAccrualInvoice() { return null; }
 				@Override public Void visitDiffInAccrualInvoice() { return null; }
 				@Override public Void visitDiffOutAccrualInvoice() { return null; }
-				@Override public Void visitComputeKey() { return null; }
 				@Override public Void visitActAccount() { return null; }
 				@Override public Void visitTitle() { return null; }
 				@Override public Void visitIrpfActivity() { return null; }
@@ -1058,15 +1074,81 @@ public abstract class Model111Base extends DockLayoutPanel {
 		tabPanel.add(identificationData, AON.MSG.identification());
 	}
 
-	void decorateAdministrationTab() {
+	protected void decorateAdministrationTab() {
 		if (admonPanel != null) {
 			admonPanel.manageLinks();
 		}
 	}
 
-	void paintDeclarationTab(TabLayoutPanel tabPanel) {}
-	void paintAdministrationTab(TabLayoutPanel tabPanel) {}
-	void decorateDeclarationTab() {}
+	protected void paintDeclarationTab(TabLayoutPanel tabPanel) {
+		ScrollPanel declarationScrollPanel = new ScrollPanel();
+		FlowPanel container = new FlowPanel();
+		AonDisplayTable table = new AonDisplayTable();
+		table.addStyleName(AON.CSS.aonBlockCenter());
+		
+		receiptBox = new AonTextBox();
+		receiptBox.setVisibleLength(15);
+		receiptBox.setMaxLength(13);
+		receiptBox.setValue( getModel().getNumber() );
+		receiptBox.addValueChangeHandler( event -> {
+			getModel().setNumber(receiptBox.getValue());
+			markAsDirty();
+		});
+
+		table.addRow()
+			.addCell( new Label(AON.MSG.receipt()), AON.CSS.aonTableLabel())
+			.addCell(receiptBox);
+		
+		// Complementaria: Numero justificante de la declaración anterior
+		if (getModel().isComplementary()) {
+			final AonTextBox previousReceiptBox = new AonTextBox();
+			previousReceiptBox.setVisibleLength(15);
+			previousReceiptBox.setMaxLength(13);
+			previousReceiptBox.setValue( getModel().getReplacedNumber() );
+			previousReceiptBox.addValueChangeHandler( event -> {
+				getModel().setReplacedNumber(previousReceiptBox.getValue());
+				markAsDirty();
+			});
+			table.addRow()
+				.addCell( new Label(AON.MSG.previousReceipt()), AON.CSS.aonTableLabel())
+				.addCell(previousReceiptBox);
+		}	
+		container.add(table);
+		declarationScrollPanel.setWidget(container);
+		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
+	}
+
+	protected void decorateDeclarationTab() {
+		if (receiptBox != null) {
+			receiptBox.setValue( getModel().getNumber() );
+		}
+	}
+
+	private void showInvoice(JsIRPFBreakdown br) {
+		int invoiceId = br.getInvoice();
+		Model111.SERVICE.getInvoice(getCallback().getOptions().getOccam(), invoiceId,new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				AonCustomPopup dialog = new AonCustomPopup();
+				dialog.setWidth((Window.getClientWidth() - 100) + "px");
+				dialog.setHeight((Window.getClientHeight() - 100) + "px");
+				dialog.setAnimationEnabled(true);
+				dialog.setGlassEnabled(true);
+				dialog.setModal(true);
+				dialog.setCaption(AON.MSG.invoice());
+				dialog.add(new AonInvoiceViewer(inv));
+				dialog.center();
+				dialog.show();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().showError(caught.getMessage());
+			}
+		});
+	}
+
+	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {}
 
 	
 }

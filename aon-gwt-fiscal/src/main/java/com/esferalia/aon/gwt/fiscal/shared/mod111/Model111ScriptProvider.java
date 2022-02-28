@@ -4,6 +4,7 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVis
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.watson.AonError;
 
 public class Model111ScriptProvider {
 	private Model111ScriptProvider() {
@@ -14,10 +15,21 @@ public class Model111ScriptProvider {
 		IModelScript<Mod111Key>[] ms = mod111.getAdministration().visit(new IAdministrationVisitor<IModelScript<Mod111Key>[]>() {
 
 			@Override
+			public IModelScript<Mod111Key>[] visitCommonTerritory() {
+				return (mod111.getYear() > 2021)
+					?Model111AEAT2022Script.values()
+					:Model111AEATScript.values();
+			}
+
+
+			@Override
 			public IModelScript<Mod111Key>[] visitAlava() {
-				return (mod111.getYear() > 2015)
-					?Model111Araba2016Script.values()
-					:Model111ArabaScript.values();
+				if ( (mod111.getYear() > 2021) ) {
+					return  Model111Araba2022Script.values();
+				} else if (mod111.getYear() > 2015) {
+					return  Model111Araba2016Script.values();
+				} 
+				return Model111ArabaScript.values();
 			}
 
 			@Override
@@ -26,11 +38,10 @@ public class Model111ScriptProvider {
 					return (mod111.getPeriod().isQuarterPeriod())
 						?Model110Bizkaia2022Script.values()
 						:Model111Bizkaia2022Script.values();
-				} else {
-					return (mod111.getPeriod().isQuarterPeriod())
+				} 
+				return (mod111.getPeriod().isQuarterPeriod())
 						?Model110BizkaiaScript.values()
 						:Model111BizkaiaScript.values();
-				}
 			}
 
 			@Override
@@ -44,21 +55,15 @@ public class Model111ScriptProvider {
 			}
 
 			@Override
-			public IModelScript<Mod111Key>[] visitCommonTerritory() {
-				return (mod111.getYear() > 2021)
-					?Model111AEAT2022Script.values()
-					:Model111AEATScript.values();
-			}
-
-			@Override
 			public IModelScript<Mod111Key>[] visitUnknown() {
 				return null;
 			}
 		});
 		if (ms == null) {
-			throw new IllegalStateException(
-					"No hay declaración disponible para: " + mod111.getAdministration().toString() + " "
-							+ mod111.getYear() + " " + mod111.getPeriod().getDescription());
+			throw new IllegalStateException("No hay declaración disponible para: "
+					+ mod111.getAdministration().toString()
+					+ mod111.getYear()
+					+mod111.getPeriod().getDescription());
 		}
 		return ms;
 	}

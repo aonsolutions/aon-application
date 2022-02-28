@@ -89,6 +89,14 @@ public class AonDisplayTable extends FlowPanel {
 	public AonDisplayTable() {
 		setStyleName(AON.CSS.aonDisplayTable());
 	}
+	
+	public AonDisplayTableRow addRow(String ... styles) {
+		AonDisplayTableRow row = addRow();
+		for (String st : styles) {
+			row.addStyleName(st);
+		}
+		return row;
+	}
 
 	public AonDisplayTableRow addRow() {
 		AonDisplayTableRow row = new AonDisplayTableRow();

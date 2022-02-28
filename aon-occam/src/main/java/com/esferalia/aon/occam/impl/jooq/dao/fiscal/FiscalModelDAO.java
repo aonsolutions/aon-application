@@ -100,6 +100,7 @@ public class FiscalModelDAO {
 			T model = modelSupplier.get();
 			model.setId(rec.getValue(FS_MODEL.ID));
 			model.setDomain(rec.getValue(FS_MODEL.DOMAIN));
+			model.setDomainName(rec.getValue(DOMAIN.DESCRIPTION));
 			model.setYear(rec.getValue(FS_MODEL.YEAR));
 			model.setPeriod( Period.safeValueOf(rec.getValue(FS_MODEL.PERIOD)));
 			model.setAdministration(Administration.safeValueOf(rec.getValue(FS_MODEL.ADMINISTRATION)));
@@ -189,7 +190,7 @@ public class FiscalModelDAO {
 			.where(FS_MODEL_PROPERTIES.getConditions(filter))
 			.and(FS_MODEL.MODEL.eq(model.getValue()))
 			.and(FS_MODEL.DOMAIN.eq(domain))
-			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
+			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.ADMINISTRATION.desc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier));
@@ -209,7 +210,7 @@ public class FiscalModelDAO {
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.and(FS_MODEL.YEAR.eq(fm.getYear()))
 			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
-			.and(FS_MODEL.PERIOD.lessThan(fm.getPeriod().getValue()))
+			.and(FS_MODEL.PERIOD.lessThan(fm.getPeriod().value()))
 			.orderBy(desc?FS_MODEL.PERIOD.desc():FS_MODEL.PERIOD.asc())
 			.fetch()
 			.stream()
@@ -225,7 +226,7 @@ public class FiscalModelDAO {
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.and(FS_MODEL.YEAR.eq(fm.getYear()))
 			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
-			.and(FS_MODEL.PERIOD.eq(fm.getPeriod().getValue()))
+			.and(FS_MODEL.PERIOD.eq(fm.getPeriod().value()))
 			.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.notEqual(fm.getId()))
 			.fetch()
 			.stream()
@@ -259,7 +260,7 @@ public class FiscalModelDAO {
 			.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
 			.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
 			.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().value()))
-			.and(FS_MODEL.PERIOD.eq((byte) ( fiscalModel.getPeriod().getValue() - 1 )))
+			.and(FS_MODEL.PERIOD.eq((byte) ( fiscalModel.getPeriod().value() - 1 )))
 			.orderBy(FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc()
 					,FS_MODEL.REPLACEMENT.desc(),FS_MODEL.ID.desc())
 			.fetch()
@@ -304,7 +305,7 @@ public class FiscalModelDAO {
 			.insertInto(FS_MODEL)
 				.set(FS_MODEL.DOMAIN, fm.getDomain())
 				.set(FS_MODEL.YEAR, fm.getYear())
-				.set(FS_MODEL.PERIOD, fm.getPeriod().getValue() )
+				.set(FS_MODEL.PERIOD, fm.getPeriod().value() )
 				.set(FS_MODEL.ADMINISTRATION, fm.getAdministration().value() )
 				.set(FS_MODEL.STATUS, AonEnumUtils.getByte( fm.getStatus() ) )
 				.set(FS_MODEL.SECURITY_LEVEL,AonEnumUtils.getByte( fm.isConfidential() ))
@@ -433,7 +434,7 @@ public class FiscalModelDAO {
 	public static <T extends FiscalModel> void delete(AONContext ctx, T fm) {
 		ctx.checkWrite();
 		deleteDetails(ctx, fm);
-		FiscalModelInvoiceDAO.delete(ctx, fm);
+		AlcatrazDAO.deleteFiscalModel(ctx, fm);
 		int count = ctx.getDslContext()
 			.delete(FS_MODEL)
 				.where(FS_MODEL.ID.equal(fm.getId()))
@@ -581,4 +582,22 @@ public class FiscalModelDAO {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
+	
+	public static Stream<FiscalModel> getMatrixRecords(AONContext ctx,int domain, FiscalModelFilter filter)  {
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select()
+				.from(FS_MODEL)
+				.leftOuterJoin(DOMAIN).on(FS_MODEL.DOMAIN.equal(DOMAIN.ID))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.equal(SCOPE.ID))
+				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+				.where(FS_MODEL_PROPERTIES.getConditions(filter))
+				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
+				.fetch()
+				.stream()
+				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new));
+	}
+	
 }

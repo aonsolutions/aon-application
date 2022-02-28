@@ -14,106 +14,84 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mvel2.MVEL;
+import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.IrpfBreakdownJSON;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.impl.jooq.dao.IRPFFormatter;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod111InfoDAO {
-	public static final DecimalFormat DEC2 = new DecimalFormat("#,###.##");		
+	private static final DecimalFormat DEC2 = new DecimalFormat("#,##0.00");		
 	private static final String INFO_MSG = "<pre class='aon_margin_bottom'>{0}<pre>";
 	private static final String NONE_INFO = "No hay datos";
-	private enum Mod111KeyInfoDAO {
-		 NONE {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return MessageFormat.format(INFO_MSG, NONE_INFO);
-			}
-		}
-		,INVOICE {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return Objects.requireNonNullElse(
-						getInvoicesInfo(ctx, mod,keyDAO)
-							.map( IrpfBreakdownJSON::toJSON)
-							.collect(JSONArray::new,JSONArray::put,JSONArray::put)
-							,new JSONArray()).toString(); 
-			}
-		} 
-		,MODEL_INVOICE_IRPF_BREAKDOWN {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return Objects.requireNonNullElse(
-					getModelInvoicesInfo(ctx, mod,keyDAO)
-						.map( IrpfBreakdownJSON::toJSON)
-						.collect(JSONArray::new,JSONArray::put,JSONArray::put)
-						,new JSONArray()).toString(); 
-			}
-		}
-		,SALARY {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return Objects.requireNonNullElse(
-					getSalaryInfo(ctx, mod,keyDAO)
-						.map( IrpfBreakdownJSON::toJSON)
-						.collect(JSONArray::new,JSONArray::put,JSONArray::put)
-						,new JSONArray()).toString(); 
-			}
-		}
-		,SALARY_IN_KIND {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return Objects.requireNonNullElse(
-					getSalaryInfo(ctx, mod,keyDAO)
-						.map( IrpfBreakdownJSON::toJSON)
-						.collect(JSONArray::new,JSONArray::put,JSONArray::put)
-						,new JSONArray()).toString(); 
-			}
-		}
-		,COMPUTE {
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return Objects.requireNonNullElse(getExpression(mod, script),new JSONArray()).toString(); 
-			}
-		}
-		// **********************************************
-		// **********************************************
-		// **********************************************
-		,DIFF_INVOICE{
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO)); 
-			}
-		}
-		,DIFF_SALARY{
-			@Override
-			String obtain(AONContext ctx, Mod111 mod, IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-				return MessageFormat.format(INFO_MSG, getDiffSalaryInfo(ctx, mod, script,keyDAO));
-			}
-		}
-		;
+	
+	private Mod111InfoDAO() {
 		
-		abstract String obtain(AONContext ctx, Mod111 mod,IModelScript<Mod111Key> script,IMod111KeyDAO keyDAO);
 	}
 	
 	public static String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
-		Mod111KeyInfoDAO k = Mod111KeyInfoDAO.valueOf(infoKey.toString());
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		return Arrays.stream(dec.getKeys())
 			.filter( keyDAO -> keyDAO.getKey() == script.getKeys()[0])
-			.map(keyDAO -> k.obtain(ctx, mod111, script, keyDAO))
+			.map(keyDAO -> 	infoKey.visit( new IFiscalModelKeyInfoVisitor<String>() {
+					@Override public String visitInvoice() {return visitNone(); }
+					@Override public String visitInAccrualInvoice() {return visitNone(); }
+					@Override public String visitOutAccrualInvoice() {return visitNone(); }
+					@Override public String visitDiffInvoice() {return visitNone(); }
+					@Override public String visitDiffInAccrualInvoice() {return visitNone(); }
+					@Override public String visitDiffOutAccrualInvoice() {return visitNone(); }
+					@Override public String visitSalary() {return visitNone(); }
+					@Override public String visitDiffSalary() {return visitNone(); }
+					@Override public String visitActAccount() {return visitNone(); }
+					@Override public String visitTitle() {return visitNone(); }
+					@Override public String visitIrpfActivity() {return visitNone(); }
+					@Override public String visitCorporate() {return visitNone(); }
+					
+					@Override 
+					public String visitNone()    {
+						return MessageFormat.format(INFO_MSG, NONE_INFO); 
+					} 
+					
+					@Override 
+					public String visitCompute() {
+						return Objects.requireNonNullElse(getExpression(mod111, script),new JSONArray()).toString();
+					}
+					
+					@Override 
+					public String visitComputeKey() {
+						return new JSONObject( getComputeKey(ctx, mod111, script, keyDAO) ).toString();
+					}
+					
+					@Override 
+					public String visitModelInvoiceIrpfBreakdown() {
+						return Objects.requireNonNullElse(
+							getModelInvoicesInfo(ctx, mod111,keyDAO)
+								.map( IrpfBreakdownJSON::toJSON)
+								.collect(JSONArray::new,JSONArray::put,JSONArray::put)
+								,new JSONArray()).toString();
+					}
+					
+					@Override 
+					public String visitModelSalaryIrpfBreakdown() {
+						return Objects.requireNonNullElse(
+							getModelSalariesInfo(ctx, mod111,keyDAO)
+								.map( IrpfBreakdownJSON::toJSON)
+								.collect(JSONArray::new,JSONArray::put,JSONArray::put)
+								,new JSONArray()).toString();
+					}
+				})
+			)
 			.findFirst()
 			.orElse(null);
 	}
@@ -123,27 +101,19 @@ public class Mod111InfoDAO {
 			.filter( br ->  keyDAO.acceptValue(mod111, br));
 	}
 	
-	private static Stream<IrpfBreakdown> getInvoicesInfo(AONContext ctx, final Mod111 mod111, IMod111KeyDAO keyDAO) {
-		return IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111)
+	private static Stream<IrpfBreakdown> getModelSalariesInfo(AONContext ctx, final Mod111 mod111, IMod111KeyDAO keyDAO) {
+		return IRPFDAO.getModelSalaryIrpfBreakdown(ctx, mod111)
 			.filter( br ->  keyDAO.acceptValue(mod111, br));
 	}
 
-	private static Stream<IrpfBreakdown> getSalaryInfo(AONContext ctx, final Mod111 mod111, IMod111KeyDAO keyDAO) {
-		return IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
-			.filter( br ->  keyDAO.acceptValue(mod111, br) );
-	}
+	private static class Mod111MVELContext extends LinkedHashMap<String, Object> {
 
-	private static class Mod111MVELExpressionContext extends LinkedHashMap<String, Object> {
+		private static final long serialVersionUID = -8110340552664306400L;
 		
-		private static final long serialVersionUID = 7905148919414628166L;
+		protected Mod111 mod111;
+		protected final LinkedList<Mod111Key> keys = new LinkedList<>();
 		
-		private String expression;
-		private Mod111 mod111;
-		private final LinkedList<Mod111Key> keys = new LinkedList<>();
-
-		public Mod111MVELExpressionContext(String expression, final Mod111 mod111) {
-			super();
-			this.expression = expression;
+		public Mod111MVELContext(final Mod111 mod111) {
 			this.mod111 = mod111;
 			for (String keyValue : mod111.getMap().keySet()) {
 				Mod111Key mod111Key = Mod111Key.getKey(keyValue);
@@ -152,6 +122,24 @@ public class Mod111InfoDAO {
 					put(mod111Key.toString(), detail==null?0.0:detail.getAmount());
 				}
 			}
+		}
+		
+		@SuppressWarnings("unused")
+		// Used on templates
+		public String format(Double amount) {
+			return DEC2.format(amount);
+		}
+
+	}
+
+	private static class Mod111MVELExpressionContext extends Mod111MVELContext {
+		
+		private static final long serialVersionUID = 7905148919414628166L;
+		
+		private String expression;
+		public Mod111MVELExpressionContext(String expression, final Mod111 mod111) {
+			super(mod111);
+			this.expression = expression;
 		}
 		
 		@Override
@@ -178,18 +166,9 @@ public class Mod111InfoDAO {
 					 .toArray());
 		}
 		
-		@Override
-		public boolean equals(Object arg0) {
-			return super.equals(arg0);
-		}
 	}
 	
 	private static String getExpression(Mod111 mod111, IModelScript<Mod111Key> script) {
-		StringBuilder buf = new StringBuilder();
-		int headerLength = 100;
-		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
-		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.center("DETALLE DEL C\u00C1LCULO", headerLength)));
-		buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		JSONArray array = new JSONArray();
 		for (Mod111Key key : script.getKeys() ) {
@@ -201,14 +180,18 @@ public class Mod111InfoDAO {
 					.put(IJsonNames.EXPRESSION, keyDAO.getExpression())
 					.put(IJsonNames.PATTERN, mvelCtx.getExpression())
 					.put(IJsonNames.FORMULA, mvelCtx.getFormula())
+					.put(IJsonNames.KEY, key.toString())
 					.put(IJsonNames.RESULT, mvelCtx.getResult())
-					.put(IJsonNames.VALUE, ret)
+					.put(IJsonNames.VALUE, DEC2.format(ret))
 					;
 				JSONArray keysArray = new JSONArray();		
+				JSONArray keysValues = new JSONArray();
 				for (Mod111Key k : mvelCtx.getKeys()) {
 					keysArray.put(k);
+					keysValues.put( DEC2.format(mod111.getAmount(k)));
 				}
 				info.put(IJsonNames.KEYS, keysArray);
+				info.put(IJsonNames.KEY_VALUES, keysValues);
 				array.put(info);
 			}
 			
@@ -216,39 +199,23 @@ public class Mod111InfoDAO {
 		return array.toString();
 	}
 	
-	// *****************************************************
-	// *****************************************************
-	// *****************************************************
-	private static String getDiffSalaryInfo(AONContext ctx, final Mod111 mod111
-			, final IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-		return IRPFFormatter.formatDiffInvoices(
-				"DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-				,script.getLabel()
-				,script.getKeys()
-				,FiscalModelDAO.getEffectivePreviousModels(ctx,mod111,Mod111::new)
-				 .collect(Collectors.toCollection(LinkedList::new))	
-				,com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
-					.filter( br ->  keyDAO.acceptValue(mod111, br) )	
-					.collect(Collectors.toCollection(LinkedList::new))
-				);
-	}
-	
-	
-	private static String getDiffInvoicesInfo(AONContext ctx, final Mod111 mod111
-			, final IModelScript<Mod111Key> script, IMod111KeyDAO keyDAO) {
-		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-			+ FiscalModelUtils.getModelName(mod111) 
-			+ " DEL " + mod111.getPeriod().getDescription()
-			+ " DE " + mod111.getYear();
-		return IRPFFormatter.formatDiffInvoices(title
-			,script.getLabel()
-			,script.getKeys()
-			,FiscalModelDAO.getEffectivePreviousModels(ctx, mod111, Mod111::new)
-			 	.collect(Collectors.toCollection(LinkedList::new))	
-			,com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO.getInputInvoicesDiffIrpfBreakdown(ctx, mod111)
-				.filter( br ->  keyDAO.acceptValue(mod111, br) )	
-				.collect(Collectors.toCollection(LinkedList::new))
-		);
+	private static String getComputeKey(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script,IMod111KeyDAO keyDAO) {
+		Mod111MVELContext mvelCtx = new Mod111MVELContext(mod111); 
+		mvelCtx.put("mod", mod111);
+		mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod111, Mod111::new).collect(Collectors.toCollection(LinkedList::new)));
+		mvelCtx.put("lastPeriodModels", FiscalModelDAO.getLastPeriodModels(ctx, mod111, Mod111::new).collect(Collectors.toCollection(LinkedList::new)));
+		mvelCtx.put("models", Mod111DAO.getMod111s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+		StringBuilder buf = new StringBuilder();
+		for (Mod111Key key : script.getKeys() ) {
+			if (key != null) {
+				String template = keyDAO.getTemplate();
+				if (AonStringUtils.isNotBlank( template )) {
+					Object result = TemplateRuntime.eval(template, mvelCtx);
+					buf.append(result != null ? result.toString() : null);
+				}
+			}
+		}
+		return buf.toString();
 	}
 
 }

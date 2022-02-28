@@ -82,7 +82,6 @@ public class EnumVisitors {
 		T visitDiffInAccrualInvoice();
 		T visitDiffOutAccrualInvoice();
 		T visitSalary();
-		T visitSalaryInKind();
 		T visitDiffSalary();
 		T visitCompute();
 		T visitComputeKey();
@@ -91,6 +90,7 @@ public class EnumVisitors {
 		T visitIrpfActivity();
 		T visitCorporate();
 		T visitModelInvoiceIrpfBreakdown();
+		T visitModelSalaryIrpfBreakdown();
 	}
 	
 	public static interface IFiscalStatusVisitor<T> {

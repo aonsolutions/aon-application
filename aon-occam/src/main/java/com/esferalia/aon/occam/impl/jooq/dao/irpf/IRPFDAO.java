@@ -1,8 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao.irpf;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.FsModelInvoice.FS_MODEL_INVOICE;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
@@ -11,11 +12,15 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.Table;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -34,43 +39,17 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class IRPFDAO {
 	
+	private static final Field<Integer> ALCATRAZ_INVOICE_ID = ALCATRAZ.INVOICE.as("alcatrazInvoice");
+	private static final Field<Integer> ALCATRAZ_SALARY_ID = ALCATRAZ.SALARY.as("alcatrazSalary");
+
 	private IRPFDAO() {
 		
 	}
 	
-//	private static final IRPFPropertiesDAO IRPF_PROPERTIES = new IRPFPropertiesDAO();
-//	private static class IRPFPropertiesDAO implements IRPFProperties {
-//
-//		private Condition[] getConditions(IRPFFilter filter) {
-//			if (filter == null) {
-//				return new Condition[]{DSL.trueCondition()};
-//			}
-//			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-//			if (filterDAO == null)
-//				return new Condition[]{DSL.trueCondition()};
-//
-//			return new Condition[] { filterDAO.getCondition() };
-//		}
-//		@Override public Property<Integer> getInvoiceIdProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.ID);}
-//		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.DOMAIN);}
-//		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.REGISTRY);}
-//		@Override public Property<Byte> getInvoiceTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TYPE);}
-//		@Override public Property<Date> getInvoiceIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-//		@Override public Property<Byte> getInvoiceTransactionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TRANSACTION);}
-//		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ACTIVITY);}
-//		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.INVESTMENT);}
-//		@Override public Property<Byte> getServiceProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERVICE);}
-//		@Override public Property<Byte> getRectifiedProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.RECTIFICATION_TYPE);}
-//		@Override public Property<Byte> getAccrualRegimeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);}
-//		@Override public Property<Byte> getWithholdingTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.WITHHOLDING_TYPE);}
-//		@Override public Property<Double> getPercentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.PERCENTAGE);}
-//		@Override public Property<Double> getSurchargePercentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.SURCHARGE);}
-//	}
-	
 	public static Stream<IrpfBreakdown> getInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
 		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
 		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-		return getIrpBreakdownSelect(ctx)
+		return getInvoiceIrpBreakdownSelect(ctx)
 				.where(INVOICE.DOMAIN.equal(fm.getDomain()))
 				.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
 				.and(INVOICE.ISSUE_DATE.between(dateFrom,dateTo))
@@ -83,40 +62,43 @@ public class IRPFDAO {
 	}
 	
 	public static Stream<IrpfBreakdown> getModelInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
-		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
-		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-		return getIrpBreakdownSelect(ctx)
-			.innerJoin(FS_MODEL_INVOICE).on(FS_MODEL_INVOICE.INVOICE.equal(INVOICE.ID))
+		return getInvoiceIrpBreakdownSelect(ctx)
+			.innerJoin(ALCATRAZ).on(ALCATRAZ.INVOICE.equal(INVOICE.ID))
 			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
-				.and(FS_MODEL_INVOICE.FS_MODEL.eq(fm.getId()))
-				.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
-				.and(INVOICE.ISSUE_DATE.between(dateFrom,dateTo))
-				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.and(ALCATRAZ.FS_MODEL.eq(fm.getId()))
 			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
 			.map( new IrpfInvoiceBreakdownFiller() )
 			.map( br -> br.setInsidePeriod( FiscalUtils.isInPeriodRange(fm, br.getIssueDate() )));
 	}
-	
+
 	public static Stream<IrpfBreakdown> getNotInModelInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
 		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
 		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-		return getIrpBreakdownSelect(ctx)
-			.leftOuterJoin(FS_MODEL_INVOICE).on(FS_MODEL_INVOICE.INVOICE.equal(INVOICE.ID))
-			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
-				.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
-				.and(INVOICE.ISSUE_DATE.between(dateFrom,dateTo))
-				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
-				.and(FS_MODEL_INVOICE.ID.isNull())
-			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+
+		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select( ALCATRAZ_INVOICE_ID )
+			.from(ALCATRAZ)
+			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.where(FS_MODEL.YEAR.eq(fm.getYear()))
+			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+			.asTable("modelInvoice")
+		;
+		return getInvoiceIrpBreakdownSelect(ctx)
+				.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
+				.where(INVOICE.DOMAIN.equal(fm.getDomain()))
+					.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
+					.and(INVOICE.ISSUE_DATE.between(dateFrom,dateTo))
+					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
 			.map( new IrpfInvoiceBreakdownFiller() )		
 			.map( br -> br.setInsidePeriod( FiscalUtils.isInPeriodRange(fm, br.getIssueDate() )));
 	}
 
-	private static SelectOnConditionStep<? extends Record> getIrpBreakdownSelect(final AONContext ctx) {
+	private static SelectOnConditionStep<? extends Record> getInvoiceIrpBreakdownSelect(final AONContext ctx) {
 		return ctx.getDslContext().select( INVOICE.ID
 			,INVOICE.TYPE
 			,INVOICE.SERIES
@@ -145,75 +127,6 @@ public class IRPFDAO {
 		.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
 		.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 		;		
-	}
-
-	public static Stream<IrpfBreakdown> getSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
-		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));	
-		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-		final LinkedList<IrpfBreakdown> list = new LinkedList<>();
-		ctx.getDslContext()
-			.select(
-				 SALARY.ISSUE_DATE
-				,SALARY.EMPLOYEE_DOCUMENT
-				,SALARY.EMPLOYEE_NAME
-				,SALARY.IRPF_BASE
-				,SALARY.MONEY_IRPF_BASE
-				,SALARY.INKIND_IRPF_BASE
-				,SALARY.TOTAL_IRPF)
-			.from(SALARY)
-			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
-			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
-			.where(SALARY.DOMAIN.equal(fm.getDomain()))
-				.and(SALARY.ISSUE_DATE.between(dateFrom,dateTo))
-				.and(SALARY.IRPF_BASE.ne( 0.0 ))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
-				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
-			.fetch()
-			.stream()
-			.forEach( rec -> {
-				IrpfBreakdown br = new IrpfBreakdown()
-					.setFromSalary(true)
-					.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
-					.setName(rec.getValue(SALARY.EMPLOYEE_NAME))
-					.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
-					.setTaxDate(rec.getValue(SALARY.ISSUE_DATE))
-					.setInsidePeriod( FiscalUtils.isInPeriodRange(fm, rec.getValue(SALARY.ISSUE_DATE)) );
-				double base = rec.getValue(SALARY.IRPF_BASE);
-				double quota = rec.getValue(SALARY.TOTAL_IRPF);
-				double inKindBase = rec.getValue(SALARY.INKIND_IRPF_BASE);
-				if (AonMathUtils.isZero(inKindBase)) {
-					br.setInKind(false)
-					.setBase(AonMathUtils.round( base))
-					.setQuota(AonMathUtils.round( quota));
-					list.add(br);
-				} else {	
-					double moneyBase = base;
-					double moneyQuota = quota;
-					double inKindQuota = 0;
-					moneyBase = rec.getValue(SALARY.MONEY_IRPF_BASE);
-					moneyQuota = AonMathUtils.round( moneyBase * quota  / base ); 	
-					inKindQuota = AonMathUtils.round( quota - moneyQuota);
-					br.setInKind(true)
-					  .setBase(AonMathUtils.round( inKindBase))
-					  .setQuota(inKindQuota);
-					list.add(br);
-					if (AonMathUtils.isNotZero(moneyBase) || AonMathUtils.isNotZero(moneyQuota)) {
-						br = new IrpfBreakdown()
-								.setFromSalary(true)
-								.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
-								.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
-								.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
-								.setTaxDate(rec.getValue(SALARY.ISSUE_DATE))
-								.setInsidePeriod( FiscalUtils.isInPeriodRange(fm, rec.getValue(SALARY.ISSUE_DATE)) )
-								.setInKind(false)
-								.setBase(AonMathUtils.round( moneyBase))
-								.setQuota(moneyQuota);
-						list.add(br);
-					}
-				}
-			});
-		return list.stream();
-		
 	}
 
 	private static class IrpfInvoiceBreakdownFiller implements Function<Record, IrpfBreakdown> {
@@ -262,8 +175,133 @@ public class IRPFDAO {
 					;
 		}
 	}
+	 
+	private static SelectOnConditionStep<? extends Record> getSalaryIrpfBreakdownSelect(final AONContext ctx) {
+		return ctx.getDslContext().select(
+				 SALARY.ID	
+				,SALARY.ISSUE_DATE
+				,SALARY.EMPLOYEE_DOCUMENT
+				,SALARY.EMPLOYEE_NAME
+				,SALARY.IRPF_BASE
+				,SALARY.MONEY_IRPF_BASE
+				,SALARY.INKIND_IRPF_BASE
+				,SALARY.TOTAL_IRPF)
+			.from(SALARY)
+			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
+			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID));
+	}
 
+	public static Stream<IrpfBreakdown> getSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));	
+		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
+		return getSalaryIrpfBreakdownSelect(ctx) 
+			.where(SALARY.DOMAIN.equal(fm.getDomain()))
+				.and(SALARY.ISSUE_DATE.between(dateFrom,dateTo))
+				.and(SALARY.IRPF_BASE.ne( 0.0 ))
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+			.fetch()
+			.stream()
+			.map(rec -> new IrpfSalaryBreakdownFiller(FiscalUtils.isInPeriodRange(fm, rec.getValue(SALARY.ISSUE_DATE))).apply(rec) )
+			.flatMap(List::stream)
+			;
+	}
+	public static Stream<IrpfBreakdown> getNotInModelSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
+		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
+
+		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
+			.from(ALCATRAZ)
+			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.where(FS_MODEL.YEAR.eq(fm.getYear()))
+			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+			.asTable("modelSalary")
+		;
+		return getSalaryIrpfBreakdownSelect(ctx)
+			.leftAntiJoin(modelSalary).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
+			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
+				.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
+				.and(INVOICE.ISSUE_DATE.between(dateFrom,dateTo))
+				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+			.fetch()
+			.stream()
+			.map(rec -> new IrpfSalaryBreakdownFiller(FiscalUtils.isInPeriodRange(fm, rec.getValue(SALARY.ISSUE_DATE))).apply(rec) )
+			.flatMap(List::stream);
+	}
 	
+	public static Stream<IrpfBreakdown> getModelSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		return getSalaryIrpfBreakdownSelect(ctx)
+			.innerJoin(ALCATRAZ).on(ALCATRAZ.SALARY.equal(SALARY.ID))
+			.where(SALARY.DOMAIN.equal(fm.getDomain()))
+				.and(ALCATRAZ.FS_MODEL.eq(fm.getId()))
+			.orderBy(SALARY.ISSUE_DATE,SALARY.ID,SALARY.EMPLOYEE_NAME)
+			.fetch()
+			.stream()
+			.map(rec -> new IrpfSalaryBreakdownFiller(FiscalUtils.isInPeriodRange(fm, rec.getValue(SALARY.ISSUE_DATE))).apply(rec) )
+			.flatMap(List::stream);
+	}
+	
+	
+	
+	private static class IrpfSalaryBreakdownFiller implements Function<Record, List<IrpfBreakdown>> {
+		
+		private boolean inPeriodRange;
+		private IrpfSalaryBreakdownFiller( boolean inPeriodRange ) {
+			this.inPeriodRange = inPeriodRange;
+		}
+
+		@Override
+		public List<IrpfBreakdown> apply(Record rec) {
+			final LinkedList<IrpfBreakdown> list = new LinkedList<>();
+			IrpfBreakdown br = new IrpfBreakdown()
+					.setSalary(rec.getValue(SALARY.ID))
+					.setFromSalary(true)
+					.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
+					.setName(rec.getValue(SALARY.EMPLOYEE_NAME))
+					.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
+					.setTaxDate(rec.getValue(SALARY.ISSUE_DATE))
+					.setInsidePeriod( this.inPeriodRange );
+				double base = rec.getValue(SALARY.IRPF_BASE);
+				double quota = rec.getValue(SALARY.TOTAL_IRPF);
+				double inKindBase = rec.getValue(SALARY.INKIND_IRPF_BASE);
+				if (AonMathUtils.isZero(inKindBase)) {
+					br.setInKind(false)
+						.setBase(AonMathUtils.round( base))
+						.setQuota(AonMathUtils.round( quota));
+					list.add(br);
+				} else {	
+					double inKindQuota = 0;
+					double moneyBase = rec.getValue(SALARY.MONEY_IRPF_BASE);
+					double moneyQuota = AonMathUtils.round( moneyBase * quota  / base ); 	
+					inKindQuota = AonMathUtils.round( quota - moneyQuota);
+					br.setInKind(true)
+					  .setBase(AonMathUtils.round( inKindBase))
+					  .setQuota(inKindQuota);
+					list.add(br);
+					if (AonMathUtils.isNotZero(moneyBase) || AonMathUtils.isNotZero(moneyQuota)) {
+						br = new IrpfBreakdown()
+								.setSalary(rec.getValue(SALARY.ID))
+								.setFromSalary(true)
+								.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
+								.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
+								.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
+								.setTaxDate(rec.getValue(SALARY.ISSUE_DATE))
+								.setInsidePeriod( this.inPeriodRange )
+								.setInKind(false)
+								.setBase(AonMathUtils.round( moneyBase))
+								.setQuota(moneyQuota);
+						list.add(br);
+					}
+				}
+				return list;
+		}
+		
+	}
+	
+// ************************************************************************
+// ************************************************************************
 /*	
 	public static Stream<IrpfBreakdown> getSalaryDiffIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
 		return getSalaryIrpfBreakdown(ctx, fm, true);	

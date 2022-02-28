@@ -19,8 +19,8 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelInvoiceDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -104,10 +104,17 @@ public class Mod111DAO extends FiscalModelDAO {
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		dec.ensureDetails(mod111);
 		Set<Integer> invoices = dec.createFromInvoices(ctx,mod111);
-		dec.createFromSalary(ctx,mod111);
+		Set<Integer> salaries = dec.createFromSalary(ctx,mod111);
+		for (FiscalModelDetail detail : mod111.getMap().values()) {
+			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
+			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
+		}
 		dec.uniqueInitialize(ctx,mod111);
 		mod111 = save(ctx, mod111);
-		FiscalModelInvoiceDAO.save(ctx, mod111, invoices);
+		
+		AlcatrazDAO.deleteFiscalModel(ctx, mod111);
+		AlcatrazDAO.saveModelInvoices(ctx, mod111, invoices);
+		AlcatrazDAO.saveModelSalaries(ctx, mod111, salaries);
 		return mod111;
 	}
 	

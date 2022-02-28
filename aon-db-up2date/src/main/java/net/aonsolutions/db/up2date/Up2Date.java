@@ -225,8 +225,8 @@ public class Up2Date {
     		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
     		//AddEpigrafe922.ADD_EPIGRAFE_922,
     		AlcatrazCreation.ALCATRAZ_CREATION,
-    		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
-    		RefreshMod111Result.REFRESH_MOD111_RESULT
+//    		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
+//    		RefreshMod111Result.REFRESH_MOD111_RESULT
     };
     
 

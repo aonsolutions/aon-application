@@ -126,6 +126,7 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	// --------------------- FISCAL ------------------------------
 	// -----------------------------------------------------------
+	,FISCAL_SUITABLE_DECLARATION("No hay declaración disponible para: {0} {1} {2}")
 	,FISCAL_NO_REPLACED_DECLARATION("No existe una declaraci\u00F3n a la que sustituir/complementar.")
 	,FISCAL_DECLARATION_ALREADY_REPLACED("Ya existe una declaraci\u00F3n sustitutiva.")
 	,FISCAL_DECLARATION_ALREADY_EXISTS("Ya existe una declaraci\u00F3n en el periodo.")

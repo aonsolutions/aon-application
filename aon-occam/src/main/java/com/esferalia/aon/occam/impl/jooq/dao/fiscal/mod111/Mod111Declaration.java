@@ -23,6 +23,10 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod111Declaration {
+	enum ComplementaryBeahaviour {
+		COMPLEMENTARY,
+		REPLACEMENT;
+	}
 	
 	@FunctionalInterface
 	static interface IValueAccepter {
@@ -49,9 +53,9 @@ public abstract class Mod111Declaration {
 			throw new AonCoreException("No se ha indicado periodo para la declaración");	
 		}
 		if (Mod111AEAT2021Declaration.accept(mod)) 		return new Mod111AEAT2021Declaration();
+		if (Mod111Araba2021Declaration.accept(mod)) 	return new Mod111Araba2021Declaration();
 		if (Mod111Bizkaia2021Declaration.accept(mod)) 	return new Mod111Bizkaia2021Declaration();
 		if (Mod110Bizkaia2021Declaration.accept(mod)) 	return new Mod110Bizkaia2021Declaration();
-		if (Mod111Araba2021Declaration.accept(mod)) 	return new Mod111Araba2021Declaration();
 		if (Mod111Gipuzkoa2021Declaration.accept(mod)) 	return new Mod111Gipuzkoa2021Declaration();
 		if (Mod111Navarra2021Declaration.accept(mod)) 	return new Mod111Navarra2021Declaration();
 		
@@ -102,10 +106,10 @@ public abstract class Mod111Declaration {
 		}
 	}
 	static void addBase(Mod111Key key,Mod111 mod,IrpfBreakdown br) {
-		mod.ensureDetail(key).addAmount(br.getBase());
+		mod.ensureDetail(key).addAccumulatedAmount(br.getBase());
 	}
 	static void addQuota(Mod111Key key,Mod111 mod,IrpfBreakdown br) {
-		mod.ensureDetail(key).addAmount(br.getQuota());
+		mod.ensureDetail(key).addAccumulatedAmount(br.getQuota());
 	}
 	static void addDeponentDocument(AONContext ctx, Mod111 mod) {
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
@@ -127,17 +131,46 @@ public abstract class Mod111Declaration {
 			.forEach(key -> key.uniqueInitialize(ctx, mod111));
 	}
 
-	void createFromSalary(final AONContext ctx, final Mod111 mod111) {
+	Set<Integer> createFromSalary(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
-		IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
-			.forEach(br -> Arrays.stream( getKeys() )
-				.filter(key -> key.acceptValue(mod111,br))
-				.forEach(key -> key.initialize(ctx, mod111, docs, pdocs, br)));
+		final Set<Integer> salaries = new HashSet<>();
+		Stream<IrpfBreakdown> stream;
+		if ( mod111.isComplementary() && isComplementaryBehaviour(mod111)) {
+			stream = IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111);
+		} else {
+			stream = IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111);
+		}
+		stream.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
+			.map( kbr -> addSalary(salaries, kbr))
+			.forEach(kbr -> kbr.getKey().initialize(ctx, mod111, docs, pdocs, kbr.getIrpfBreakdown()))
+		;
+		return salaries; 
+	}
+	
+	private static class KeyedIrpfBreakdown {
+		private IMod111KeyDAO key;
+		private IrpfBreakdown br;
+		private KeyedIrpfBreakdown(IMod111KeyDAO key,IrpfBreakdown br) {
+			this.key = key;
+			this.br = br;
+		}
+		public IMod111KeyDAO getKey() {
+			return key;
+		}
+		public IrpfBreakdown getIrpfBreakdown() {
+			return br;
+		}
 	}
 
-	IrpfBreakdown addInvoice( Set<Integer> invoices, IrpfBreakdown br) {
-		invoices.add(br.getInvoice());
+	KeyedIrpfBreakdown addSalary( Set<Integer> salaries, KeyedIrpfBreakdown br) {
+		salaries.add(br.getIrpfBreakdown().getSalary());
+		return br;	
+	}
+
+	KeyedIrpfBreakdown addInvoice( Set<Integer> invoices, KeyedIrpfBreakdown br) {
+		invoices.add(br.getIrpfBreakdown().getInvoice());
 		return br;	
 	}
 	
@@ -146,16 +179,16 @@ public abstract class Mod111Declaration {
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream;
-		if ( mod111.isComplementary() ) {
+		if ( mod111.isComplementary() && isComplementaryBehaviour(mod111)) {
 			stream =  IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111);
 		} else {
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
 		}
-		stream
-			.map( br -> addInvoice(invoices,br))
-			.forEach(br -> Arrays.stream( getKeys() )
-				.filter(key -> key.acceptValue(mod111,br))
-				.forEach(key -> key.initialize(ctx, mod111, docs, pdocs, br)));
+		stream.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
+			.map( kbr -> addInvoice(invoices, kbr))
+			.forEach(kbr -> kbr.getKey().initialize(ctx, mod111, docs, pdocs, kbr.getIrpfBreakdown()))
+			;
 		return invoices;
 	}
 	
@@ -166,12 +199,15 @@ public abstract class Mod111Declaration {
 			mod111.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
 		}
 	}
+	
+	private boolean isComplementaryBehaviour(final Mod111 mod111) {
+		return getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.COMPLEMENTARY;
+	}
 
 	abstract IMod111KeyDAO valueOf(String string);
 	abstract IMod111KeyDAO[] getKeys();
 	abstract double getResult(final Mod111 mod111);
-	
-	
+	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
 	
 	
 }

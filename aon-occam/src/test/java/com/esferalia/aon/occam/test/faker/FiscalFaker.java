@@ -24,6 +24,8 @@ public class FiscalFaker {
 		private Date issueDate;
 		private Administration administration;
 		private boolean monthly;
+		private boolean complementary;
+		private boolean replacement;
 		
 		public FiscalFakerParams(AONContext ctx, Occam occam) {
 			this.ctx = ctx;
@@ -58,6 +60,22 @@ public class FiscalFaker {
 			this.administration = administration;
 			return this;
 		}
+
+		public boolean isComplementary() {
+			return complementary;
+		}
+		public FiscalFakerParams setComplementary(boolean complementary) {
+			this.complementary = complementary;
+			return this;
+		}
+		
+		public boolean isReplacement() {
+			return replacement;
+		}
+		public FiscalFakerParams setReplacement(boolean replacement) {
+			this.replacement = replacement;
+			return this;
+		}
 		
 	}
 	
@@ -82,6 +100,8 @@ public class FiscalFaker {
 			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
 		mod111.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		mod111.setComplementary(params.isComplementary());
+		mod111.setReplacement(params.isReplacement());
 		MODEL111.initialize( params.getOccam(), mod111);
 		return mod111;
 	}
