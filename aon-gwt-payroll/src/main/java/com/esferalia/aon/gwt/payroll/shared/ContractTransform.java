@@ -15,6 +15,9 @@ public class ContractTransform implements Serializable {
 	private String cno;
 	private String sepeId;
 	
+	private String signBasicCopy;
+	private String basicCopy;
+	
 	public ContractTransform() {
 		super();
 	}
@@ -81,5 +84,25 @@ public class ContractTransform implements Serializable {
 		this.cno = cno;
 		return this;
 	}
+
+	public String getSignBasicCopy() {
+		return signBasicCopy;
+	}
+
+	public ContractTransform setSignBasicCopy(String signBasicCopy) {
+		this.signBasicCopy = signBasicCopy;
+		return this;
+	}
+
+	public String getBasicCopy() {
+		return basicCopy;
+	}
+
+	public ContractTransform setBasicCopy(String basicCopy) {
+		this.basicCopy = basicCopy;
+		return this;
+	}
+	
+	
 	
 }

@@ -1015,4 +1015,19 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void sendContractTransform(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractData, ContractTransform contractTransform)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeContractTransform(String currentDomainName, String currentUser, String ide)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
 }

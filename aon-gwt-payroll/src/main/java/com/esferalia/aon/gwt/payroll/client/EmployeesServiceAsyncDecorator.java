@@ -904,6 +904,21 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getCertifica2PDF(currentDomainName, user, nif, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
+
+	@Override
+	public void sendContractTransform(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.sendContractTransform(currentDomainName, currentUser, employeeContractData, contractTransform, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void removeContractTransform(String currentDomainName, String currentUser, String ide,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.removeContractTransform(currentDomainName, currentUser, ide, new AsyncCallbackWrapper<Void>(callback));
+	}
 	
 	// ------------------------------------------------- SEPE Methods
 
