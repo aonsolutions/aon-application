@@ -221,7 +221,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Date startDate = !api.getParams().optString("startDate").isEmpty() ? AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE) : new Date();
 		Date endDate = !api.getParams().optString("endDate").isEmpty() ? AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE) : new Date();
 		
-		
 		PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").forEach(ccc -> {
 		  try {
 			  byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
@@ -237,7 +236,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		  } catch(InvalidCertificateException e) {
 		      e.printStackTrace();
 		      errors.add(e.getClass().getSimpleName());
-		  } catch(Exception e) {}
+		  } catch(Exception e) {
+			  e.printStackTrace();
+		  }
 		});	
 
 		if(!errors.isEmpty()) throw new Exception(errors.get(0));
