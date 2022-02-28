@@ -508,7 +508,7 @@ public class MainCertificates extends MainEntryPoint{
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		formPanel.addSubmitCompleteHandler(e -> {
 			saveButton.setEnabled(true);
-			showSuccess("Certitficado", "Los certidicados han sido actualizados correctamente");
+			showSuccess("Certitficado", "Los certificados han sido actualizados correctamente");
 			loadDigitalCertificates();
 		});
 		
