@@ -4932,7 +4932,7 @@ CREATE TABLE `alcatraz` (
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`invoice`) REFERENCES `Salary` (`id`)
+  CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 
