@@ -634,8 +634,6 @@ class SistemaREDMov {
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Confirmar]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}	
-			
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.dir")+"/Documentos/test.html");
 		} 
 	}
 	
@@ -678,8 +676,6 @@ class SistemaREDMov {
 		  DomNode message=htmlPage.querySelector(".INFO.mensaje");
 		  if(message!=null && !message.getVisibleText().isEmpty()) 
 				System.out.println(message.getVisibleText());
-		  
-		  Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.dir")+"/Documentos/test.html");
 		} 
 	}
 	
