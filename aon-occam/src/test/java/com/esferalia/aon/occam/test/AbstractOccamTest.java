@@ -94,10 +94,8 @@ public abstract class AbstractOccamTest {
 		shutUp();
 		if ( DOMAIN_ID == null) {
 			createDomain();
-		}
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
-		if (NEW_DOMAIN) {
-			ctx.getDslContext().transaction(configuration -> initializeDomain( ctx ));
+		} else {
+			ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 		}
 		System.setOut(System.out);
 		System.setErr(System.err);
@@ -171,7 +169,9 @@ public abstract class AbstractOccamTest {
 			context = new AONContext(connect());
 			AONContext contextBis = context;
 			Domain domain = context.getDslContext().transactionResult(configuration -> insertDomain(contextBis, DOMAIN_NAME)); 
-			DOMAIN_ID = domain.getId(); 
+			DOMAIN_ID = domain.getId();
+			ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);	
+			ctx.getDslContext().transaction(configuration -> initializeDomain( ctx ));
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -190,6 +190,7 @@ public abstract class AbstractOccamTest {
 				.fetchAny();
 
 		if (domainRecord != null) {
+			NEW_DOMAIN = false;
 			domain = new Domain();
 			domain.setId(domainRecord.get(DOMAIN.ID));
 			domain.setName(domainRecord.get(DOMAIN.NAME));
