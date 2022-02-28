@@ -25,8 +25,7 @@ public class IrpfBreakdown implements Serializable {
 	private Date issueDate;
 	private boolean fromSalary;
 	private boolean insidePeriod;
-	
-	// ------------------- facturas
+	private Integer salary;
 	private InvoiceType invoiceType;
 	private Integer invoice;
 	private String series;
@@ -112,7 +111,13 @@ public class IrpfBreakdown implements Serializable {
 		this.fromSalary = fromSalary;
 		return this;
 	}
-	
+	public Integer getSalary() {
+		return salary;
+	}
+	public IrpfBreakdown setSalary(Integer salary) {
+		this.salary = salary;
+		return this;
+	}
 	public boolean isInsidePeriod() {
 		return insidePeriod;
 	}
@@ -120,7 +125,6 @@ public class IrpfBreakdown implements Serializable {
 		this.insidePeriod = insidePeriod;
 		return this;
 	}
-	// ----------------------------------------------------------------
 	public InvoiceType getInvoiceType() {
 		return invoiceType;
 	}
@@ -244,8 +248,6 @@ public class IrpfBreakdown implements Serializable {
 	public String getDocumentNumber() {
 		return FinanceUtil.getDocumentNumber(getInvoiceType(), getSeries(), getNumber());
 	}
-	
-	//
 	public boolean isSalaryRetention() {
 		return isFromSalary() && !isInKind();
 	}

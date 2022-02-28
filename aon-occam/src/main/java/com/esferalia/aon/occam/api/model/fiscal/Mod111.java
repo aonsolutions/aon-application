@@ -15,30 +15,20 @@ public class Mod111 extends FiscalModel implements Serializable {
 	
 	@Override
 	public boolean isComplementaryDeclarationAvailable() {
-		if (getAdministration() == null) return false;
-		else if (isAEAT()) return true;
-		else if (isAraba()) return true;
-		else if (isBizkaia()) return true;
-		else if (isGipuzkoa()) return false;
-		else if (isNavarra()) return false;
-		return false;
+		return (getAdministration() != null);
 	}
 
 	@Override
 	public boolean isReplacementDeclarationAvailable() {
-		if (getAdministration() == null) return false;
-		else if (isAraba()) return true;
-		else if (isAEAT()) return false;
-		else if (isBizkaia()) return false;
-		else if (isGipuzkoa()) return false;
-		else if (isNavarra()) return false;
-		return false;
+		return (getAdministration() != null && isAraba());
 	}
 	
 	@Override
 	public boolean isReplacedNumberAvailable() {
-		if (getAdministration() == null) return false;
-		return  (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
+		return  getAdministration() != null 
+			&& (isComplementaryDeclarationAvailable() || isReplacementDeclarationAvailable()) 
+			&& (isAEAT() || isAraba())
+			&& (isComplementary() || isReplacement()); 
 	}
 	
 	@Override
@@ -54,10 +44,28 @@ public class Mod111 extends FiscalModel implements Serializable {
 	@Override
 	@Deprecated
 	public void setDefaultDeclarationType(){
-		throw new UnsupportedOperationException("Unsupported method! (use declaration.initializeDeclarationType())");
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
 	}
 	
-//	@Override
+	@Override
+	@Deprecated
+	public boolean isDiffCalculationAvailable() {
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	}
+	
+	@Override
+	@Deprecated
+	public boolean isDiffCalculationDisabled() {
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	}
+
+	@Override
+	@Deprecated
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	}
+
+	//	@Override
 //	public double getResult() {
 //		if (getAdministration() == null) return 0;
 //		else if (isAraba()) return getAmount(Mod111Key.AR_C87);
@@ -87,21 +95,5 @@ public class Mod111 extends FiscalModel implements Serializable {
 //			setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
 //		}
 //	}
-	
-	@Override
-	public boolean isDiffCalculationAvailable() {
-		// Disponible poder elegir si se cálcula por diferencia
-		return true;
-	}
-	
-	@Override
-	public boolean isDiffCalculationDisabled() {
-		return getAmount(Mod111Key.CM_001) == 1;
-	}
-
-	@Override
-	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
-		ensureDetail(Mod111Key.CM_001).setAmount(diffCalculationDisabled?1:0);
-	}
 	
 }

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public class Mod349 implements IFiscalModel, HasAudit {
@@ -313,6 +314,14 @@ public class Mod349 implements IFiscalModel, HasAudit {
 	public Mod349 setContactMail(String contactMail) {
 		this.contactMail = contactMail;
 		return this;
+	}
+	@Override
+	public Double getDeclarationResult() {
+		return null;
+	}
+	@Override
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return null;
 	}
 	
 }

@@ -481,7 +481,10 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 			+ " de "
 			+ getYear()
 			+ "-"
-			+ (getPeriod() != null?getPeriod().getDescription() :"???");
+			+ (getPeriod() != null?getPeriod().getDescription() :"???")
+			+ (isComplementary()?" (C)":"")
+			+ (isReplacement()?" (S)":"")
+			;
 	}
 	
 	public Integer getAccountEntry() {

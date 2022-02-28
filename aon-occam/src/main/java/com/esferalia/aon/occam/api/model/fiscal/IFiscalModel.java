@@ -23,19 +23,21 @@ public interface IFiscalModel extends Serializable {
 	String getName();
 	String getSurname();
 	String getFullName();
+	Double getDeclarationResult();
+	FiscalModelDeclarationType getDeclarationResultType();
 	
 	@Deprecated
 	IFiscalModelKey getDeclarationTypeKey();
 	@Deprecated
 	double getResult();
-	
-	public default Finance getFinance() {
-		return null;
-	}
+	@Deprecated
 	public default FiscalModelDeclarationType getDeclarationType() {
 		return null;
 	}
 	
+	public default Finance getFinance() {
+		return null;
+	}
 	public default boolean isFirstPeriod() {
 		return getPeriod() != null && getPeriod().isFirstPeriod();
 	}

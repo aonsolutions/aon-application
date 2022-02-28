@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -530,4 +531,12 @@ public class Mod2002018 implements IFiscalModel {
 		this.justActivos = justActivos;
 	}
 	
+	@Override
+	public Double getDeclarationResult() {
+		return null;
+	}
+	@Override
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return null;
+	}
 }
