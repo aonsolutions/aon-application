@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -439,6 +440,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 	
+	class RemoveContractTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			removeContractTransform();
+		}
+
+	}
+	
 	class NewSEPEContextMenu extends ContextMenu {
 		
 		private MenuItem cto;
@@ -456,6 +466,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem sepeIDE;
 		
 		private MenuItem removeContract;
+		private MenuItem removeContractTransform;
 		
 		public NewSEPEContextMenu() {
 			
@@ -513,6 +524,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			removeContract.ensureDebugId("removeContract");
 			
+			removeContractTransform = addItem("Eliminar Transformaci\u00f3n Contrato", new RemoveContractTransformCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			removeContractTransform.ensureDebugId("removeContractTransform");
+			
 		}
 
 		public MenuItem getCto() {
@@ -553,6 +568,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public MenuItem getRemoveContractExtension() {
 			return removeContractExtension;
+		}
+		
+		public MenuItem getRemoveContractTransform() {
+			return removeContractTransform;
 		}
 		
 	}
@@ -1608,15 +1627,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 	
-	private void sendContractTransform() {
-		showLoading("Notificando transformaci\u00f3n contrato...");
-		contrataEmployeeObject.sendContractTransform(
-				s -> {
-					showSuccess("Transformaci\u00f3n Comunicaci\u00F3n", "La transformac\u00f3n del contrato ha sido notificada correctamente al SEPE");
-				},
-				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
-	}
-	
 	private void sepeIDEContract() {
 		showInfo("IDE Sepe", "El IDE del SEPE generado para este contrato es " + contrataEmployeeObject.getContractData().getSepeId());
 	}
@@ -1681,7 +1691,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		new ContractTransformDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
 			@Override
 			protected void onTransformDone(Integer newContractId) {
-				showSuccess("Pr\u00F3rroga", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
+				showSuccess("Transformaci\u00F3n", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
 				onTransformContract(newContractId);
 			}
 
@@ -1690,6 +1700,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showError(messageContainer, errorMap);
 			}
 		};
+	}
+	
+	private void sendContractTransform() {
+		new ContractTransformSepeDialog() {
+			@Override
+			protected void onTransformAccept(ContractTransform contractTransform) {
+				showLoading("Notificando transformaci\u00f3n contrato...");
+				
+				contrataEmployeeObject.sendContractTransform(contractTransform, 
+						s -> showSuccess("Transformaci\u00F3n Contrato", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido notificada al SEPE correctamente"),
+						f -> showError("Error Transformaci\u00F3n Contrato", f.getMessage()));
+			}};
+	}
+	
+	private void removeContractTransform() {
+		contrataEmployeeObject.removeContractTransform(
+			s -> showSuccess("Transformaci\u00F3n Contrato", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido eliminada del SEPE correctamente"),
+			f -> showError("Error Transformaci\u00F3n Contrato", f.getMessage())
+		);
 	}
 	
 	private void deleteContractExtension() {
@@ -1996,6 +2025,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		 setVisible(sepeContextMenu.getSendBasicCopy().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
 		 setVisible(sepeContextMenu.getSendContract().getElement(), !Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
 		 setVisible(sepeContextMenu.getSendContractTransform().getElement(), Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
+		 setVisible(sepeContextMenu.getRemoveContractTransform().getElement(), Boolean.TRUE.equals(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation()));
 		 
 	}
 	
