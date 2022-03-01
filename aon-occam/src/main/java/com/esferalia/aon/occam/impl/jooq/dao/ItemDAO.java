@@ -210,11 +210,11 @@ public class ItemDAO {
 		
 		public static Item build(Record r) {
 			return new Item()
-				.setId(r.getValue(ITEM.ID))
-				.setDomain(new Domain().setId(r.getValue(ITEM.DOMAIN)))
+				.setId(getValue(r, ITEM.ID))
+				.setDomain(new Domain().setId(getValue(r, ITEM.DOMAIN)))
 				.setProduct(checkField(r, PRODUCT.ID)
 					? ProductFiller.buildProduct(r)
-					: new Product().setId(r.getValue(ITEM.PRODUCT)))
+					: new Product().setId(getValue(r, ITEM.PRODUCT)))
 				.setBarcode(getValue(r, ITEM.BARCODE))
 				.setDescription(getValue(r, ITEM.DESCRIPTION))
 				.setDetail(getValue(r, ITEM.DETAIL))

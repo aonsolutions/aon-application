@@ -1,6 +1,6 @@
 import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
-import { MATERIAL_ICONS, MSG } from '../../environments/environments.js';
+import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
 import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
@@ -58,25 +58,34 @@ export class AonMessenger extends AonElement {
 		};
 	}
 
- 	async build() {
+	build() {
+		this.applicationEl = this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
 
-		localStorage.setItem("taskCau", this.cau ? 1 : 0);
+		this.isTaskHolder().then(async(exist) => {
+			if(exist){
 
-		this.cauInfo = await getCauInfo();
+				if(this.cauInfo && this.cauInfo.auth.email)
+					this._filter.email = this.cauInfo.auth.email;
 
-		if(this.cauInfo && this.cauInfo.auth.email)
-			this._filter.email = this.cauInfo.auth.email;
-			
-		this.paintView();
-		
-		this.applicationEl = this.getApplication();
+				localStorage.setItem("taskCau", this.cau ? 1 : 0);
+				
+				this.cauInfo = await getCauInfo();
+				
+				this.buildToolbar();
 
-		this.buildToolbar();
-		
-		await getTaskHolder({reload:false}).then(th=>this.TASK_HOLDER = th);
+				this.init();
+				this.loadWorkgroup();
+			}
+		});		
+	}
 
-		this.init();
-		this.loadWorkgroup();
+	async isTaskHolder(){
+		this.TASK_HOLDER = await getTaskHolder({reload:false}).catch(e=>null);
+		if(!this.cau && !(this.TASK_HOLDER && this.TASK_HOLDER.id)){
+			this.showError({message:"Operario inexistente", type:CONSTANT.ERROR});
+			return false;
+		}
+		return true;
 	}
 
 	init(){
@@ -98,10 +107,6 @@ export class AonMessenger extends AonElement {
 		}
 
 		this.updateCount();
-	}
-
-	paintView(){
-		this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
 	}
 
 	async buildToolbar(){
