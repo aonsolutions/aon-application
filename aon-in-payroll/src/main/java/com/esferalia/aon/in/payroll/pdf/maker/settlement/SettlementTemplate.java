@@ -274,9 +274,8 @@ public class SettlementTemplate extends PdfFile {
 							{
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("CURRENCY");
 								String entryTxt	  = " por " + safeString(n.getDescription());
-
 								new PdfText(x(), y(), 60, 15, contents, entryValue, BLACK, HELVETICA, 9f, RIGHT).draw();
-								new PdfText(x() + 64, y(), 250, 15, contents, entryTxt, BLACK, HELVETICA, 9f, LEFT)
+								new PdfText(x() + 64, y(), 325, 15, contents, entryTxt, BLACK, HELVETICA, 9f, LEFT)
 										.draw();
 
 								down(10.5f);
