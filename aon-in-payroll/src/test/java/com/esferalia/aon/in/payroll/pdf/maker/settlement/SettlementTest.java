@@ -347,7 +347,7 @@ public class SettlementTest {
 			{
 				for (int i = 0; i < random(10) - 1; i++)
 				{
-					PDFPayment accrual = new PDFPayment(random(999999), "Descripcion por defecto.");
+					PDFPayment accrual = new PDFPayment(random(999999), "INDEMNIZACION POR DESPID POR CAUSAS OBJETIVAS");
 					payments.get(key).add(accrual);
 				}
 			}
@@ -360,6 +360,7 @@ public class SettlementTest {
 			deductions.put(3, new ArrayList<>());
 			deductions.put(4, new ArrayList<>());
 			deductions.put(5, new ArrayList<>());
+			deductions.put(6, new ArrayList<>());
 
 			keys = deductions.keySet();
 			for (Integer key : keys)
