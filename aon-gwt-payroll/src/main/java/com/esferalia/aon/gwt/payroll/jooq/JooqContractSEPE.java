@@ -94,7 +94,7 @@ public class JooqContractSEPE {
 		try {
 			Contrata contrata = new Contrata();
 			CONTRATOS contratos = contrata.getCONTRATOS(contractAttachRecord.get(CONTRACT_ATTACH.DATA));
-			if(null == contratos) return contractSpecificData;
+			if(null == contratos || null == contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150() || contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().isEmpty()) return contractSpecificData;
 			Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 			JooqContrata.completeContratosParams(obj, contractSpecificData);
 		} catch (Exception e) {
