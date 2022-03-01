@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.test.fiscal.mod111;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+import static org.junit.Assert.assertNull;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +32,10 @@ public class Mod111InsertQuarterlyReplacementTest extends AbstractOccamTest {
 	public void mod111InsertMonthlyComplementaryTest() {
 		List<Invoice> invoices = new LinkedList<>();
 		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesProfRetention(ctx,getConfiguration())));
-		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesRentingRetention(ctx,getConfiguration())));
-		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesCapitalRetention(ctx,getConfiguration())));
+		Invoice rentingInvoice = AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesRentingRetention(ctx,getConfiguration())); 
+		invoices.add( rentingInvoice );
+		Invoice capitalInvoice = AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesCapitalRetention(ctx,getConfiguration())); 
+		invoices.add(capitalInvoice);
 		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesTransportRetention(ctx,getConfiguration())));
 		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getPurchaseFarmerRetention(ctx,getConfiguration())));
 		Mod111 araba = insertModel( Administration.ALAVA);
@@ -38,6 +43,29 @@ public class Mod111InsertQuarterlyReplacementTest extends AbstractOccamTest {
 			, getWithHoldingQuota(invoices, araba)
 			, araba.getDeclarationResult());
 
+		assertNull("Factura de Arrendamiento encontrada en Alcatraz",
+			ctx.getDslContext().select( ALCATRAZ.ID )
+				.from(ALCATRAZ)
+				.where(ALCATRAZ.INVOICE.eq(rentingInvoice.getId()))
+				.and(ALCATRAZ.FS_MODEL.in( araba.getId()))
+				.fetch()
+				.stream()
+				.map(rec -> rec.getValue(ALCATRAZ.ID) )
+				.findFirst()
+				.orElse(null)
+			);
+			
+		assertNull("Factura de Capital mobiliario encontrada en Alcatraz",
+			ctx.getDslContext().select( ALCATRAZ.ID )
+				.from(ALCATRAZ)
+				.where(ALCATRAZ.INVOICE.eq(capitalInvoice.getId()))
+				.and(ALCATRAZ.FS_MODEL.in( araba.getId()))
+				.fetch()
+				.stream()
+				.map(rec -> rec.getValue(ALCATRAZ.ID) )
+				.findFirst()
+				.orElse(null)
+			);
 	}
 	
 	private Double getWithHoldingQuota(List<Invoice> invoices, Mod111 mod) {
