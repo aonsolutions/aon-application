@@ -225,8 +225,7 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		double expected = 1750.00 * workedDays / monthDays;
 		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment());
 		Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase());
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid());
-
+		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid(), DELTA);
 	
 		startDate = getFirstDayOfMonth(startContractDate);
 		endDate = getLastDayOfMonth(startDate);
