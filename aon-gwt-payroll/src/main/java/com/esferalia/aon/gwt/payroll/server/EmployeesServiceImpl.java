@@ -197,6 +197,8 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -6038,7 +6040,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Date startDate, Date endDate) throws IllegalArgumentException {
+	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6047,10 +6049,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-
-			byte[] pdfBytes = Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(),
-					certificate.getType(), ipf, startDate, endDate);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+			
+			byte[] pdfBytes = JooqContractAttach.getCopyBasic(connection, contractId);
+			
+			if(null == pdfBytes) {
+				pdfBytes = Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(),
+						certificate.getType(), ipf, startDate, endDate);
+				
+				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+				
+				Attach attach = new Attach()
+						.setAttachType(AttachType.CONTRACT)
+						.setDomain(domain)
+						.setAttachModule(contractId)
+						.setDescription("Copia Basica Contrato")
+						.setData(pdfBytes)
+						.setType((byte)3)
+						.setConfidential(false)
+						.setDate(new Date())
+						.setScope(null)
+						.setMimeType(MimeType.PDF);
+				
+				AON.insertAttach(domainName, domain.getId(), userLogin, attach);
+			} 
 
 			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
@@ -6063,12 +6085,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | SepeException | IOException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeCto(String domainName, String userLogin, String ipf, Date startDate, Date endDate) throws IllegalArgumentException {
+	public String getEmployeeCto(String domainName, String userLogin, String ipf, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6077,10 +6099,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+			
+			byte[] pdfBytes = JooqContractAttach.getCopyContract(connection, contractId);
 
-			byte[] pdfBytes = Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(),
-					certificate.getType(), ipf, startDate, endDate);
+			if(null == pdfBytes) {
+				pdfBytes = Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(),
+						certificate.getType(), ipf, startDate, endDate);
+				
+				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+				
+				Attach attach = new Attach()
+						.setAttachType(AttachType.CONTRACT)
+						.setDomain(domain)
+						.setAttachModule(contractId)
+						.setDescription("Copia Contrato")
+						.setData(pdfBytes)
+						.setType((byte)1)
+						.setConfidential(false)
+						.setDate(new Date())
+						.setScope(null)
+						.setMimeType(MimeType.PDF);
+				
+				AON.insertAttach(domainName, domain.getId(), userLogin, attach);
+			}
 
 			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
@@ -6093,7 +6135,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			return dataUri;
 		} catch (SQLException | SepeException | IOException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
