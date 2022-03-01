@@ -246,8 +246,8 @@ public class EmployeeIT implements Serializable {
 	public List<EmployeeITPart> getItConfirmations(){
 		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.CONFIRMACION)).collect(Collectors.toList());
 	}
-	
-	 @Override
+
+    @Override
     public String toString() {
         return "EmployeeIT{"
         		+ "id=" + id +","

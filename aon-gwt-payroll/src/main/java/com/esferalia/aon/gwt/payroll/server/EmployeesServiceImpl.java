@@ -300,6 +300,7 @@ import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
 import aon.sepe.objects.Contract.SexType;
+import aon.sepe.objects.CopyBasic;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.ServicioRED;
@@ -311,7 +312,6 @@ import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
-import solutions.aon.sepe.Contrata.FirmType;
 
 /**
  * The server side implementation of the RPC service.
@@ -5495,7 +5495,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
 			
 			WorkplaceEmployees workplaceEmployees = JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
-			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainID));
+			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainID));
 			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
 			workplaceEmployees.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
@@ -5714,20 +5714,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String generateCertifaca2(String domainName, Integer contractId) {
+	public void generateCertifaca2(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqCertifica2.generateCertifica2(connection, domainId, contractId);
+			JooqCertifica2.createCertifica2DB(connection, domainId, contractId, null);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 	
 	@Override
-	public String generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info) {
+	public void generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqCertifica2.generateCertifica2(connection, domainId, contractId, certifica2Info);
+			if(AonStringUtils.isNotBlank(certifica2Info.getProfesionalCategory()))
+				JooqCertifica2.insertCNOToDB(connection, domainId, contractId, certifica2Info.getProfesionalCategory(), certifica2Info.getStartDate(), certifica2Info.getEndDate());
+			JooqCertifica2.createCertifica2DB(connection, domainId, contractId, certifica2Info.getSuspensionCode());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -6560,7 +6562,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String restContract = employeeContractInfo.getContractSpecificData().getBasicCopy();
 
 			Sepe.sendContratoCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), ipf, startDate,
-					endDate, FirmType.values()[signType], workplaceAddress, restContract);
+					endDate, CopyBasic.FirmType.values()[signType], workplaceAddress, restContract);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getCause().getMessage());
@@ -6677,21 +6679,62 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 	
+	@Override
+	public void sendContractTransform(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, ContractTransform contractTransform) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+			
+			aon.sepe.objects.Contract cto = createContract(domainName, domainId, userLogin, employeeContractInfo,
+					employeeContractInfo.getEmployeeInfo().getDocument());
+			cto.setDiscontinuo(contractTransform.getDiscontinuosInd());
+			
+			System.out.println("CTO\n" + cto.toString());
+			
+			aon.sepe.objects.CopyBasic copyBasic = createCopyBasic(employeeContractInfo, contractTransform);
+			
+			System.out.println("COPY BASIC\n" + copyBasic.toString());
+			
+			Sepe.sendTransformation(certificateIS, certificate.getPassword(), certificate.getType(), cto, copyBasic);
+
+		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e.getCause().getMessage());
+		}
+	}
+
+	@Override
+	public void removeContractTransform(String domainName, String userLogin, String ide) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+			
+			Sepe.removeTransformation(certificateIS, certificate.getPassword(), certificate.getType(), ide);
+			
+		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e.getCause().getMessage());
+		}
+	}
+	
 	// ------------------------------------------------- SEPE Methods
 	
 	@Override
 	public Certifica2Info getCertifica2Info(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			// Get suspensionReason Code
-			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, contractId);
-
-			// Get Certifica2Info
-			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, contractId, suspensionReasonCode);
-			
+			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, contractId, null);
 			System.out.println(certifica2Info);
-			
 			return certifica2Info;
-		} catch (SQLException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -6869,6 +6912,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			builder.setRlce(rlce);
 		
 		return builder.build();
+	}
+	
+
+	
+	private CopyBasic createCopyBasic(EmployeeContractInfo employeeContractInfo, ContractTransform contractTransform) {
+		CopyBasic copyBasic = new CopyBasic();
+		copyBasic.setFini(employeeContractInfo.getContractInfo().getStartDate());
+		copyBasic.setFend(employeeContractInfo.getContractInfo().getEndDate());
+		copyBasic.setIpf(employeeContractInfo.getEmployeeInfo().getDocument());
+		copyBasic.setWorkAddress(employeeContractInfo.getContractInfo().getWorkplaceFullAddress());
+		
+		String signBasicCopy = contractTransform.getSignBasicCopy();
+		Integer signType = Integer.parseInt(AonStringUtils.isBlank(signBasicCopy) ? "1" : signBasicCopy);
+		copyBasic.setFirmType(CopyBasic.FirmType.values()[signType]);
+		
+		copyBasic.setRestContract(contractTransform.getBasicCopy());
+		
+		return copyBasic;
 	}
 
 	private aon.sepe.objects.Contract createContract(String domainName, Integer domainId, String login, EmployeeContractInfo employeeContractInfo, String ipf) {

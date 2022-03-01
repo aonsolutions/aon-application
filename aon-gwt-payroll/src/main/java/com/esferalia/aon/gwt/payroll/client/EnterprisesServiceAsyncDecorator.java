@@ -939,4 +939,9 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.saveITParts(currentDomainName, currentUser, list, asyncCallback);
 	}
 	
+	@Override
+	public void removeITParts(String currentDomainName, String currentUser, List<ItNotExist> list, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.removeITParts(currentDomainName, currentUser, list, asyncCallback);
+	}
 }

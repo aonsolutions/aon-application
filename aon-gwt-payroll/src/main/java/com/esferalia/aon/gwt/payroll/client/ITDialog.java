@@ -197,6 +197,9 @@ public abstract class ITDialog extends AonCustomDialog {
 	@UiField
 	HTMLPanel buttonsPanel;
 	
+	@UiField
+	HTMLPanel enterpriseData;
+	
 	//-------------COMMUNICATE
 	@UiField
 	HTMLPanel itBaja;
@@ -360,7 +363,6 @@ public abstract class ITDialog extends AonCustomDialog {
 	public ITDialog(String typeCaption) {	
 		String caption = "Parte IT / " + typeCaption;
 		onModuleLoad(caption);
-		
 		createITToolbar();
 		createFooterButtons();
 		
@@ -378,6 +380,29 @@ public abstract class ITDialog extends AonCustomDialog {
 		employeePanelNaf.clear();
 		employeePanelDoc.add(new Label(employeeInfo.getDocument()));
 		employeePanelNaf.add(new Label(employeeInfo.getSsNumber()));
+		updateEnterprisePanel();
+	}
+	
+	private void updateEnterprisePanel() {
+		enterpriseData.getElement().getStyle().setDisplay(Display.NONE);
+		enterpriseData.clear();
+		if(itDialogObject!=null) {
+			//---ENTERPRISE DATA
+			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
+			String regime = completeCcc.substring(0, 4);
+			String ccc = completeCcc.substring(4, itDialogObject.getContractInfo().getCompleteCCC().length());
+
+			Label regimeEl = new Label("R\u00e9gimen:");
+			regimeEl.setStyleName(style.subTitle());
+			enterpriseData.add(regimeEl);
+			enterpriseData.add(new Label(regime));
+
+			Label cccEl = new Label("CCC:");
+			cccEl.setStyleName(style.subTitle());
+			enterpriseData.add(cccEl);
+			enterpriseData.add(new Label(ccc));
+			enterpriseData.getElement().getStyle().clearDisplay();
+		}
 	}
 	
 	// --------------------------------------------------- onModuleLoad
@@ -396,6 +421,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		deckPanel.setWidth("620px");
 		confirmationsDataTable.getElement().getStyle().setDisplay(Display.NONE);
 		maternityDataTable.getElement().getStyle().setDisplay(Display.NONE);
+		enterpriseData.getElement().getStyle().setDisplay(Display.NONE);
+
 		showBaseCGC();
 		
 	}
@@ -597,19 +624,19 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		names.clear();
 		
-		for(ITEmployee itEmployee : this.itEmployeeList) {
-			String suggestStr = itEmployee.getEmployeeInfo().getFullName();
-			names.add(suggestStr);
-		}
+		for(ITEmployee itEmployee : this.itEmployeeList) 
+			names.add(itEmployee.getEmployeeInfo().getFullName());
 		
 		employeeSB.addSelectionHandler(e -> {
-			String employeeName = employeeSB.getValue();
-			if(itDialogObject == null) {
-				itEmployee = getITEmployee(employeeName);
-				setITDialogObject(new ITDialogObject(itEmployee));
+			
+			itEmployee = getITEmployee(employeeSB.getValue());
+			setITDialogObject(new ITDialogObject(itEmployee));
+
+			if(itDialogObject != null) {
 				updateEmployeePanel(itEmployee.getEmployeeInfo());
 				showListOption();
 			}
+			
 		});
 		
 		employeePanel.clear();
@@ -618,8 +645,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	public void setITEmployee(ITEmployee itEmployee) {
 		this.itEmployee = itEmployee;
-		ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
-		setITDialogObject(itDialogObject);
+		setITDialogObject(new ITDialogObject(itEmployee));
 		createEmployeePanel(itEmployee.getEmployeeInfo());
 	}
 	
@@ -1778,11 +1804,11 @@ public abstract class ITDialog extends AonCustomDialog {
 		labelM.setWidth("105px");
 		panel.add(labelM);
 
+		//---EMPLOYEE DATA
 		HTMLPanel flexColumn  = new HTMLPanel("");
 		flexColumn.setStyleName(style.flexColumn());
 		panel.add(flexColumn);
 
-		//-----EMPLOYEE DATA
 		HTMLPanel employeeData = new HTMLPanel("");
 		employeeData.setStyleName(style.flex());
 		flexColumn.add(employeeData);

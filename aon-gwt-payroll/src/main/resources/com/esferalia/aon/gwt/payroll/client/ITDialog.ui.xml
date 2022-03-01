@@ -84,6 +84,10 @@
 		.mt10{
 			margin-top: 10px;
 		}
+
+		.ml18{
+			margin:0 0 0 18px;
+		}
 	
 		.buttonsPanel{
 			display: flex;
@@ -123,20 +127,17 @@
 
 		<g:VerticalPanel>
 			<g:HTMLPanel ui:field="north" styleName="aon-width-all aon-height-all"></g:HTMLPanel>
-
 			<g:DeckPanel ui:field="deckPanel">
 				<g:VerticalPanel styleName="{style.paddingContainer}">
-
+					<g:HTMLPanel ui:field="enterpriseData" styleName="{style.flex} {style.ml18}"></g:HTMLPanel>
 					<g:VerticalPanel ui:field="itDataTable" styleName="{style.styleBorder}">
 						<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Parte IT</g:Label>
 						<g:HTMLPanel ui:field="itData" styleName="{style.flexColumn}">
 							<g:HTMLPanel styleName="{style.flex}">
 								<g:Label styleName='{style.subTitle}'>Trabajador:</g:Label>
 								<g:HTMLPanel ui:field="employeePanel"></g:HTMLPanel>
-
 								<g:Label styleName='{style.subTitle}'>Documento:</g:Label>
 								<g:HTMLPanel ui:field="employeePanelDoc"></g:HTMLPanel>
-
 								<g:Label styleName='{style.subTitle}'>NAF:</g:Label>
 								<g:HTMLPanel ui:field="employeePanelNaf"></g:HTMLPanel>
 							</g:HTMLPanel>

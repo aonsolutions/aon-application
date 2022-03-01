@@ -66,7 +66,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	}
 	
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
+		enterprisesService.getAgreements(true, new AsyncCallback<List<Agreement>>() {
 			
 			@Override
 			public void onSuccess(List<Agreement> result) {

@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
 import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract;
-import solutions.aon.sepe.Contrata.FirmType;
+import aon.sepe.objects.CopyBasic;
 import solutions.aon.sepe.exceptions.SepeException;
 
 public class Sepe {
@@ -44,8 +45,25 @@ public class Sepe {
 	}
 	
 	public static String sendContratoCopyBasic(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType,  String ipf, Date fini, Date ffin, FirmType typeFirm, String workAddress, String restContract) throws SepeException  {
-		return Contrata.contratoCopyBasic(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, typeFirm, workAddress, restContract);
+			final String certificateType,  String ipf, Date fini, Date fend, CopyBasic.FirmType firmType, String workAddress, String restContract) throws SepeException  {
+		CopyBasic copyBasic = new CopyBasic()
+		.setIpf(ipf)
+		.setFini(fini)
+		.setFend(fend)
+		.setFirmType(firmType)
+		.setWorkAddress(workAddress)
+		.setRestContract(restContract);
+		return sendCopyBasic(certificateInputStream, certificatePassword, certificateType, copyBasic);
+	}
+	
+	public static String sendCopyBasic(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType,  CopyBasic copyBasic) throws SepeException  {
+		return Contrata.sendCopyBasic(certificateInputStream, certificatePassword, certificateType, copyBasic);
+	}
+	
+	public static void sendTransformation(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, Contract cto, CopyBasic copyBasic) throws SepeException  {
+		Contrata.sendTransformation(certificateInputStream, certificatePassword, certificateType, cto, copyBasic);
 	}
 	
 	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword,

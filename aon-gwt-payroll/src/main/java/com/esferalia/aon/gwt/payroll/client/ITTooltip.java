@@ -26,7 +26,8 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 	private static TooltipUiBinder uiBinder = GWT.create(TooltipUiBinder.class);
 	
 	// --------------------------------------------------- UiFields
-
+	@UiField Label regime;
+	@UiField Label ccc;
 	@UiField Label fullNameL;
 	@UiField Label documentL;
 	@UiField Label nafL;
@@ -46,6 +47,7 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 	private String fullName;
 	private String document;
 	private String naf;
+	private String completeCCC;
 	private Boolean isComunicateBaja;
 	private Boolean isComunicateAlta;
 	private Byte itType;
@@ -77,6 +79,8 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 	// --------------------------------------------------- Show Tooltip.Methods
 
 	private void fillITTooltipInfo() {
+		this.regime.setText(getRegime());
+		this.ccc.setText(getCcc());
 		this.fullNameL.setText(this.fullName);
 		this.documentL.setText(this.document);
 		this.nafL.setText(this.naf);
@@ -146,6 +150,18 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 
 	public void setNaf(String naf) {
 		this.naf = naf;
+	}
+	
+	public void setCompleteCCC(String ccc) {
+		this.completeCCC = ccc;
+	}
+	
+	private String getRegime() {
+		return this.completeCCC.substring(0, 4);
+	}
+	
+	private String getCcc() {
+		return this.completeCCC.substring(4, completeCCC.length());
 	}
 	
 	public void setComunicationBaja(Boolean isComunicate) {
@@ -290,6 +306,6 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 	
 	// --------------------------------------------------- Abstract Methods
 	
-		protected abstract void onTooltipClick(Integer contractId, Integer itId);
+	protected abstract void onTooltipClick(Integer contractId, Integer itId);
 	
 }

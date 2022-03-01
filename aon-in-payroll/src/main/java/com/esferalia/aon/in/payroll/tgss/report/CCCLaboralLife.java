@@ -1,11 +1,5 @@
 package com.esferalia.aon.in.payroll.tgss.report;
 
-import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.apache.pdfbox.text.PDFTextStripper;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +12,13 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.text.PDFTextStripper;
+
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CCCLaboralLife {
 
@@ -48,7 +49,7 @@ public class CCCLaboralLife {
 	//PARSE A PAGE INFO
 	private static Collection<Employee> parseInfo(BufferedReader br, Employee.EmployeeBuilder builder) throws IOException, UnknownPDFException {
 
-		Matcher ccc_cif = 	find(br, CCC_CIF);
+		Matcher ccc_cif = findEnterpriseData(br, CCC_CIF);
 		String regime = 	ccc_cif.group("regime");
 		String province = 	ccc_cif.group("province");
 		String ccc = 		ccc_cif.group("ccc");
@@ -197,11 +198,24 @@ public class CCCLaboralLife {
 		reader.reset();
 		return Optional.empty();
 	}
+	
+	
+	//FIND A STRING THAT MATCHES THE REGEXP PATTERN
+	private static Matcher findEnterpriseData( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
+		String line  ;
+		while ( ( line = reader.readLine() ) != null  ) {
+			Matcher matcher = pattern.matcher(line) ;
+			if ( !matcher.find() ) continue;
+			return matcher;
+		}
+		throw new UnknownPDFException(String.format("Pattern: '%s' Not found" ,  pattern.pattern()) );
+	}
+
 
 
 	//	0111 01 105360062 9 0B01487271
 	private static final Pattern CCC_CIF =
-			Pattern.compile("^\\s*(?<regime>[0-9]+)\\s+(?<province>[0-9]+)\\s+(?<ccc>[0-9]+)\\s+[0-9]\\s+(?<cif>[A-Z,0-9]+)\\s*$"
+			Pattern.compile("\\s*(?<regime>[0-9]+)\\s+(?<province>[0-9]+)\\s+(?<ccc>[0-9]+)\\s+[0-9]\\s+(?<cif>[A-Z,0-9]+)\\s*$"
 					, Pattern.CASE_INSENSITIVE);
 
 	//	CL DUQUE DE WELLINGTON 52 B

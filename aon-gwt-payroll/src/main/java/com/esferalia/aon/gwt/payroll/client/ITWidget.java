@@ -154,9 +154,9 @@ public abstract class ITWidget extends ResizeComposite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			fie.ensureDebugId("fie");
 			
-			sync = addItem("Sincronizar partes IT (TGSS)", new SyncITCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			sync.ensureDebugId("sync");
+			// sync = addItem("Sincronizar partes IT (TGSS)", new SyncITCommand(), 
+			// 		AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			// sync.ensureDebugId("sync");
 			
 		}
 
@@ -256,7 +256,6 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- Constructor
 
 	protected ITWidget() {
-		LOGGER.info("ITWidget");
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
@@ -458,7 +457,8 @@ public abstract class ITWidget extends ResizeComposite {
 			
 	    	tooltip.setFullName(itEmployee.getEmployeeInfo().getFullName());
 	    	tooltip.setDocument(itEmployee.getEmployeeInfo().getDocument());
-	    	tooltip.setNaf(itEmployee.getEmployeeInfo().getSsNumber());
+			tooltip.setNaf(itEmployee.getEmployeeInfo().getSsNumber());
+	    	tooltip.setCompleteCCC(itEmployee.getContractInfo().getCompleteCCC());
 	    	tooltip.setComunicationBaja(bjOptional.isPresent() && bjOptional.get().getStatus().equals((byte)3) );
 	    	tooltip.setComunicationAlta(altaOptional.isPresent() && altaOptional.get().getStatus().equals((byte)3) );
 	    	tooltip.setITType(itInfo.getTypeLowPart());
@@ -554,7 +554,6 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- OnModuleLoad
 	
 	public void loadITWidget() {
-		LOGGER.info("loadITWidget");
 		getITEmployeeListDB(itEmployeeList -> {
 			itEmployeeIts = itEmployeeList;
 			this.expressionCallback = new ExpressionCallback();
@@ -1389,8 +1388,7 @@ public abstract class ITWidget extends ResizeComposite {
 		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
 		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
 			String json = e.getResults();
-			LOGGER.info(json);
-			
+
 			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
 		
 			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
@@ -1522,6 +1520,42 @@ public abstract class ITWidget extends ResizeComposite {
 				}
 				
 				@Override
+				protected void onRemoveITPartToSS(ItNotExist itNotEx) {
+					AonConfirmDialog confirmDialog = new AonConfirmDialog();
+					confirmDialog.confirm(
+							"BORRADO", 
+							String.valueOf("\u00BF") + "Realmente desea anular el parte IT del Sistema RED?",
+							new AonConfirmDialogCallback() {
+								@Override public void onCancel() {}
+								@Override
+								public void onAccept() {
+									List<ItNotExist> itNotExist  = new ArrayList<>();
+									itNotExist.add(itNotEx);
+									removeITPart(itNotExist);
+								}
+							}
+					);
+				}
+				
+				@Override
+				protected void onRemoveITPartToAon(ItNotExist itNotEx) {
+					AonConfirmDialog confirmDialog = new AonConfirmDialog();
+					confirmDialog.confirm(
+							"BORRADO", 
+							String.valueOf("\u00BF") + "Realmente desea eliminar el parte IT de aon Solutions?",
+							new AonConfirmDialogCallback() {
+								@Override public void onCancel() {}
+								@Override
+								public void onAccept() {
+									List<ItNotExist> itNotExist  = new ArrayList<>();
+									itNotExist.add(itNotEx);
+									removeITPart(itNotExist);
+								}
+							}
+					);
+				}
+				
+				@Override
 				public void onFinish() {
 					hideProgressPanel();
 				}
@@ -1549,6 +1583,21 @@ public abstract class ITWidget extends ResizeComposite {
 			dialog.warning();
 		});
 	}
+
+	private void removeITPart(List<ItNotExist> itNotExist) {
+		
+		setEmployeeData(itNotExist);
+		
+		showProgressPanel();
+		
+		removeITParts(itNotExist, s->{		
+			showDeleteMessage();
+			loadITWidget();
+		}, e->{
+			AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
+			dialog.warning();
+		});
+	}
 	
 	private void setEmployeeData(List<ItNotExist> itNotExist) {
 		for (ItNotExist notExist : itNotExist) {
@@ -1557,10 +1606,6 @@ public abstract class ITWidget extends ResizeComposite {
 					e.getEmployeeInfo().getSsNumber().equals(notExist.getNaf()) && 
 					e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()).equals(notExist.getCcc())
 				).forEach(e->{
-//					Integer contractId = e.getContractInfo().getContractId();
-//					if(contractId!=null)
-//						notExist.getEmployeeIT().setContract(contractId);
-					
 					notExist.getEmployeeIT().setNss(e.getEmployeeInfo().getSsNumber());
 					notExist.getEmployeeIT().setCcc(e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()));
 				});
@@ -1595,6 +1640,10 @@ public abstract class ITWidget extends ResizeComposite {
 				dialog.setViewPartComunica(part);
 			} 
 		}
+	}
+	
+	private void openITPartTooltip(ItNotExist itNotExist){
+
 	}
 	
 	private void onLeyend() {
@@ -1966,6 +2015,8 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);
+
+	protected abstract void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
 

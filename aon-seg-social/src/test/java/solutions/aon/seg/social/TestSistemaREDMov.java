@@ -68,7 +68,7 @@ public class TestSistemaREDMov {
 	}
 	
 	@Test
-//	@Ignore
+	@Ignore
 	public void testRemoveMovConsolidated() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
@@ -170,7 +170,7 @@ public class TestSistemaREDMov {
 					"0111", //REGIMEN
 					"01105360062", //CCC
 					"010022757387",//NSS 
-					fecha,// FECHA DE CAMBIO
+					fecha,// FECHA DE CAMBIOTestSistemaREDMov
 					Optional.of("502"), // CODIGO DEL CONTRATO (OPCIONAL) Optional.empty
 					"725" // COEFICIENTE 3 digits o null
 					

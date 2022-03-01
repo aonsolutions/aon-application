@@ -4698,6 +4698,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	
 	// ------------------------------------------------------------------------
 
+	protected static <T extends Item<?>> boolean isEnabled(T item) {
+		return !isDisabled(item) && !isRemove(item);
+	}
+
 	protected static <T extends Item<?>> boolean isDisabled(T item) {
 		return AonStringUtils.endsWithAny(item.getExpression(), ";REMOVE();");
 	}

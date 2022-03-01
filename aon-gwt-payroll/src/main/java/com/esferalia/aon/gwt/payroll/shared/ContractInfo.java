@@ -25,6 +25,7 @@ public class ContractInfo implements Serializable{
 	private Integer cccId;
 	private String completeCCC;
 	private String startDate;
+	private String originalStartDate; // For trasnformations
 	private String endDate;
 	private String seniorityDate;
 	private Integer activityId;
@@ -84,6 +85,7 @@ public class ContractInfo implements Serializable{
 	private String sepeId;
 	
 	private boolean hasExtension;
+	private boolean hasTransformation;
 	
 	public ContractInfo() {
 		super();
@@ -95,6 +97,7 @@ public class ContractInfo implements Serializable{
 		this.cccId = null;
 		this.completeCCC = null;
 		this.startDate = null;
+		this.originalStartDate = null;
 		this.endDate = null;
 		this.seniorityDate = null;
 		this.activityId = null;
@@ -131,6 +134,7 @@ public class ContractInfo implements Serializable{
 		this.contractSalariesInfo = new ArrayList<>();
 		
 		this.hasExtension = false;
+		this.hasTransformation = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -240,6 +244,14 @@ public class ContractInfo implements Serializable{
 
 	public void setStartDate(Date startDate) {
 		this.startDate = format(startDate);
+	}
+	
+	public Date getOriginalStartDate() {
+		return parse(originalStartDate);
+	}
+
+	public void setOriginalStartDate(Date originalStartDate) {
+		this.originalStartDate = format(originalStartDate);
 	}
 
 	public Date getEndDate() {
@@ -547,6 +559,13 @@ public class ContractInfo implements Serializable{
 		this.hasExtension = hasExtension;
 	}
 	
+	public boolean isHasTransformation() {
+		return hasTransformation;
+	}
+
+	public void setHasTransformation(boolean hasTransformation) {
+		this.hasTransformation = hasTransformation;
+	}
 	
 	public boolean isPartial() {
 		if(contractType!=null) {
@@ -604,6 +623,7 @@ public class ContractInfo implements Serializable{
 		result += "ContractType : " + contractType + "\n";
 		result += "Contract Modality : " + contractModel + "\n";
 		result += "Start Date : " + startDate + "\n";
+		result += "Original Start Date : " + originalStartDate + "\n";
 		result += "End Date : " + endDate + "\n";
 		result += "Seniority Date : " + seniorityDate + "\n";
 		result += "Agreement Id : " + agreementId + "\n";
