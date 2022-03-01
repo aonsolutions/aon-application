@@ -123,7 +123,7 @@ public class Invoice2tbai {
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
 			cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
-		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "dd-MM-yyyy"));
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
 		return cabecera;
 	}
 	

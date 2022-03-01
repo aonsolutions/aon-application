@@ -10,17 +10,27 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.EstadoRegistroConsultaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleRentaIngresosType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresoConSGCodificadoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresosConSGCodificadoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.RentaIngresosType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.CabeceraFacturaConsultaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FechaDesdeHastaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaIngresosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_altapeticion_v1_0_2.LROEPF140IngresosConFacturaConSGAltaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultapeticion_v1_0_0.LROEPF140IngresosConFacturaConSGConsultaPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -108,5 +118,77 @@ public class LROE140_1_1 extends LROE140 {
 		} catch (Exception e) {
 			return error(e);
 		}
+	}
+	
+	public void consulta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
+		try {
+			LROEInfo info = buildInfo(OperacionEnum.C_00);
+			LROEPF140IngresosConFacturaConSGConsultaPeticion lroe = buildConsulta(person, invoice, info);
+			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGConsultaPeticion.class );
+			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
+
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			jaxbMarshaller.marshal( lroe, bos );
+			byte[] xml = bos.toByteArray();
+			byte[] data = toGzip(xml);
+			sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private LROEPF140IngresosConFacturaConSGConsultaPeticion buildConsulta(Person person, Invoice invoice, LROEInfo info) {
+		LROEPF140IngresosConFacturaConSGConsultaPeticion lroe = new LROEPF140IngresosConFacturaConSGConsultaPeticion();
+		lroe.setCabecera(buildCabecera(person, info));
+		
+		FiltroConsultaIngresosConFacturaType filtro = new FiltroConsultaIngresosConFacturaType(); 
+		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
+		filtro.setDestinatario(buildDestinatario(invoice));
+		filtro.setEpigrafe(invoice.getEpigraph());
+		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
+		filtro.setNumPaginaConsulta(1);
+		lroe.setFiltroConsultaIngresosConSG(filtro);
+		return lroe;
+	}
+
+	private DocumentoType buildDestinatario(Invoice invoice) {
+		DocumentoType destinatario = new DocumentoType();
+		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
+			destinatario.setNIF(invoice.getRegistryDocument());
+		} else if(invoice.isIntracommunity()){
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			String document = invoice.getRegistryDocument();
+			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
+				document = invoice.getRegistryDocumentCountry().getIso2() + document;
+			}
+			otro.setID(document);
+			otro.setIDType(IDType.NIF_IVA.getName());
+			destinatario.setIDOtro(otro);
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			otro.setID(invoice.getRegistryDocument());
+			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
+			destinatario.setIDOtro(otro);
+		}
+		return destinatario;
+	}
+	
+	private CabeceraFacturaConsultaType buildCabeceraFactura(Invoice invoice) {
+		CabeceraFacturaConsultaType cabecera = new CabeceraFacturaConsultaType();
+		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		cabecera.setFechaExpedicionFactura(fecha);
+		
+		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
+		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+	
+		cabecera.setNumFactura(invoice.getReferenceCode());
+		return cabecera;
 	}
 }

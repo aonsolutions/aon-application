@@ -176,8 +176,8 @@ public class LroeData {
 				.setDataRequest(response.getDataRequest().getId());
 		
 		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
-
-		InvoiceBatch invoiceBatch = new InvoiceBatch()
+		if(invoice.getId() != null) {
+			InvoiceBatch invoiceBatch = new InvoiceBatch()
 				.setDomain(domain.getId())
 				.setDate(new Date())
 				.setType(info.getCommunicationType())
@@ -185,34 +185,34 @@ public class LroeData {
 				.setDataResponse(dr.getId())
 				.setCreationUser(user.getLogin());
 		
-		InvoiceBatchDetail invoiceBatchDetail = new InvoiceBatchDetail()
+			InvoiceBatchDetail invoiceBatchDetail = new InvoiceBatchDetail()
 				.setDomain(domain.getId())
 				.setInvoice(invoice.getId())
 				.setStatus(response.isOk()
 					? InvoiceCommunicationStatus.ACCEPTED
 					: InvoiceCommunicationStatus.WRONG);
 		
-		InvoiceTracking invoiceTracking = new InvoiceTracking()
+			InvoiceTracking invoiceTracking = new InvoiceTracking()
 				.setInvoiceBatch(invoiceBatch)
 				.setInvoiceBatchDetail(invoiceBatchDetail);
 		
-		AON.saveInvoiceTracking(domain, user, invoiceTracking);
+			AON.saveInvoiceTracking(domain, user, invoiceTracking);
 		
-		InvoiceInfo invoiceInfo = AON.getInvoiceInfo(domain, user, f-> f.getInvoiceProperty().eq(invoice.getId())
+			InvoiceInfo invoiceInfo = AON.getInvoiceInfo(domain, user, f-> f.getInvoiceProperty().eq(invoice.getId())
 				.and(f.getTypeProperty().eq(info.getCommunicationType().value())));
-		if(invoiceInfo.isEmpty()) invoiceInfo = new InvoiceInfo()
+			if(invoiceInfo.isEmpty()) invoiceInfo = new InvoiceInfo()
 				.setDomain(domain.getId())
 				.setInvoice(invoice.getId())
 				.setType(info.getCommunicationType());
-		if(invoiceBatch.getOperation().isAnnulment() && response.isOk()) {
-			invoiceInfo.setStatus(InvoiceCommunicationStatus.ANNULLED);
-		} else if(invoiceInfo.getStatus().isPending()) {
-			invoiceInfo.setStatus(response.isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
-		} else if(invoiceInfo.getStatus().isWrong() && response.isOk()) {
-			invoiceInfo.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+			if(invoiceBatch.getOperation().isAnnulment() && response.isOk()) {
+				invoiceInfo.setStatus(InvoiceCommunicationStatus.ANNULLED);
+			} else if(invoiceInfo.getStatus().isPending()) {
+				invoiceInfo.setStatus(response.isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
+			} else if(invoiceInfo.getStatus().isWrong() && response.isOk()) {
+				invoiceInfo.setStatus(InvoiceCommunicationStatus.ACCEPTED);
+			}
+			AON.saveInvoiceInfo(domain, user, invoiceInfo);
 		}
-		AON.saveInvoiceInfo(domain, user, invoiceInfo);
-		
 		DataResponseDetail drd1 = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
