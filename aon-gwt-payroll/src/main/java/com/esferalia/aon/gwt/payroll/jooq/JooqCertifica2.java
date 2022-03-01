@@ -404,8 +404,10 @@ public class JooqCertifica2 {
 					.where(SALARY_DATA.SALARY.eq(settlementId))
 					.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS")).fetch(SALARY_DATA.EXPRESSION);
 
-			String holidays = holidaysList.get(0);
-			Integer holidayDays = (int) (AonStringUtils.isBlank(holidays) ? 0 : Double.parseDouble(holidays));
+			Integer holidayDays = 0;
+			
+			for(String holidays : holidaysList)
+				holidayDays += (int) (AonStringUtils.isBlank(holidays) ? 0 : Double.parseDouble(holidays));
 
 			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(settlementId)).and(SALARY_PAYMENT.TYPE.eq((byte) 6)).fetchOne();
@@ -625,7 +627,7 @@ public class JooqCertifica2 {
 			.setName(certifica2Info.getRepresentativeName())
 			.setSurname(certifica2Info.getRepresentativeSurname())
 			.setLastSurname("")
-			.setIpf(certifica2Info.getEnterpriseDocument())
+			.setIpf(certifica2Info.getDocument())
 			.setRegimen(certifica2Info.getRegime())
 			.setCtaCti(certifica2Info.getCcc())
 			.setTypeContract(certifica2Info.getContractType())
