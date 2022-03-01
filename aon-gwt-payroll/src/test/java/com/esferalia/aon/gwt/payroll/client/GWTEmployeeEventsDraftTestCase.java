@@ -299,7 +299,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+			public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 					Date endDate, AsyncCallback<String> callback) {
 				// TODO Auto-generated method stub
 				
@@ -308,7 +308,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+			public void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 					Date endDate, AsyncCallback<String> callback) {
 				// TODO Auto-generated method stub
 				
