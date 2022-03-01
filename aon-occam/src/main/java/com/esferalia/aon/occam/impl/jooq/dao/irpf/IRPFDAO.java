@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
 
@@ -190,16 +191,23 @@ public class IRPFDAO {
 			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
 			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID));
 	}
-
-	public static Stream<IrpfBreakdown> getSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+	private static SelectConditionStep<? extends Record> getSalaryIrpfBreakdownSelectWhere(final AONContext ctx, final FiscalModel fm) {
+		return getSalaryIrpfBreakdownSelectWhere(getSalaryIrpfBreakdownSelect(ctx), fm);
+	}
+	private static SelectConditionStep<? extends Record> getSalaryIrpfBreakdownSelectWhere( SelectOnConditionStep<? extends Record> select, final FiscalModel fm) {
 		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));	
 		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-		return getSalaryIrpfBreakdownSelect(ctx) 
+		return select
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
-				.and(SALARY.ISSUE_DATE.between(dateFrom,dateTo))
-				.and(SALARY.IRPF_BASE.ne( 0.0 ))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
-				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+			.and(SALARY.ISSUE_DATE.between(dateFrom,dateTo))
+			.and(SALARY.IRPF_BASE.ne( 0.0 ))
+			.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+			.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+			;
+	}
+
+	public static Stream<IrpfBreakdown> getSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		return getSalaryIrpfBreakdownSelectWhere(ctx,fm) 
 			.fetch()
 			.stream()
 			.map(rec -> new IrpfSalaryBreakdownFiller(FiscalUtils.isInPeriodRange(fm, rec.getValue(SALARY.ISSUE_DATE))).apply(rec) )
@@ -207,9 +215,6 @@ public class IRPFDAO {
 			;
 	}
 	public static Stream<IrpfBreakdown> getNotInModelSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
-		java.sql.Date dateFrom = AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
-		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
-
 		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
 			.from(ALCATRAZ)
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
@@ -218,13 +223,10 @@ public class IRPFDAO {
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.asTable("modelSalary")
 		;
-		return getSalaryIrpfBreakdownSelect(ctx)
-			.leftAntiJoin(modelSalary).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
-			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
-				.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
-				.and(INVOICE.ISSUE_DATE.between(dateFrom,dateTo))
-				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
-			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+		return getSalaryIrpfBreakdownSelectWhere(
+			getSalaryIrpfBreakdownSelect(ctx)
+				.leftAntiJoin(modelSalary).on(ALCATRAZ_SALARY_ID.equal(SALARY.ID)) ,fm)
+			.orderBy(SALARY.ISSUE_DATE,SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
 			.fetch()
 			.stream()
 			.map(rec -> new IrpfSalaryBreakdownFiller(FiscalUtils.isInPeriodRange(fm, rec.getValue(SALARY.ISSUE_DATE))).apply(rec) )

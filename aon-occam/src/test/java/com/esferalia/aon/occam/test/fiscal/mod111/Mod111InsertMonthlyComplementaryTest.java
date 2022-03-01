@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
@@ -32,15 +33,41 @@ public class Mod111InsertMonthlyComplementaryTest extends AbstractOccamTest {
 		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesCapitalRetention(ctx,getConfiguration())));
 		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesTransportRetention(ctx,getConfiguration())));
 		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getPurchaseFarmerRetention(ctx,getConfiguration())));
-		Double quota = getWithHoldingQuota(invoices);
-		test(quota);	
+		
+		Mod111 commonTerritory = insertModel( Administration.COMMON_TERRITORY);
+		Asserts.assertEqualsDouble("AEAT - " + commonTerritory.getModelFullName() +". Resultado y facturas no coincide."
+			, getWithHoldingQuota(invoices, commonTerritory)
+			, commonTerritory.getDeclarationResult());
+		
+		Mod111 araba = insertModel( Administration.ALAVA);
+		Asserts.assertEqualsDouble("Araba - " + araba.getModelFullName() +". Resultado y facturas no coincide."
+			, getWithHoldingQuota(invoices, araba)
+			, araba.getDeclarationResult());
+		
+		Mod111 bizkaia = insertModel( Administration.BIZKAIA);
+		Asserts.assertEqualsDouble("Bizkaia - " + bizkaia.getModelFullName() +". Resultado y facturas no coincide."
+			, getWithHoldingQuota(invoices, bizkaia)
+			, bizkaia.getDeclarationResult());
+		
+		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA);
+		Asserts.assertEqualsDouble("Gipuzkoa - " + gipuzkoa.getModelFullName() +". Resultado y facturas no coincide."
+			, getWithHoldingQuota(invoices, gipuzkoa)
+			, gipuzkoa.getDeclarationResult());
+		
+		Mod111 navarra = insertModel( Administration.NAVARRA);
+		Asserts.assertEqualsDouble("Navarra - " + navarra.getModelFullName() +". Resultado y facturas no coincide."
+			, getWithHoldingQuota(invoices, navarra)
+			, navarra.getDeclarationResult());
 	}
 	
-	private Double getWithHoldingQuota(List<Invoice> invoices) {
+	private Double getWithHoldingQuota(List<Invoice> invoices, Mod111 mod) {
 		double quota = 0;
 		if (invoices != null && !invoices.isEmpty()) {
 			for (Invoice inv : invoices) {
-				if (inv != null && inv.getDetails() != null && !inv.getDetails().isEmpty()) {
+				if (inv != null
+					&& FiscalUtils.isInPeriodRange(mod, inv.getIssueDate() )
+					&& inv.getDetails() != null 
+					&& !inv.getDetails().isEmpty()) {
 					for (InvoiceDetail detail : inv.getDetails()) {
 						if (detail.getInvoiceTaxes() != null && !detail.getInvoiceTaxes().isEmpty()) {
 							for (InvoiceTax tax : detail.getInvoiceTaxes()) {
@@ -58,20 +85,6 @@ public class Mod111InsertMonthlyComplementaryTest extends AbstractOccamTest {
 			}
 		}
 		return quota;
-	}
-
-	private void test(Double quota) {
-		Mod111 commonTerritory = insertModel( Administration.COMMON_TERRITORY);
-		Mod111 araba = insertModel( Administration.ALAVA);
-		Mod111 bizkaia = insertModel( Administration.BIZKAIA);
-		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA);
-		Mod111 navarra = insertModel( Administration.NAVARRA);
-		
-		Asserts.assertEqualsDouble("Mod111 Mensual (AEAT). Resultado y facturas no coincide.", quota, commonTerritory.getDeclarationResult());
-		Asserts.assertEqualsDouble("Mod111 Mensual (Araba). Resultado y facturas no coincide.", quota, araba.getDeclarationResult());
-		Asserts.assertEqualsDouble("Mod111 Mensual (Bizkaia). Resultado y facturas no coincide.", quota, bizkaia.getDeclarationResult());
-		Asserts.assertEqualsDouble("Mod111 Mensual (Gipuzkoa). Resultado y facturas no coincide.", quota, gipuzkoa.getDeclarationResult());
-		Asserts.assertEqualsDouble("Mod111 Mensual (Navarra). Resultado y facturas no coincide.", quota, navarra.getDeclarationResult());
 	}
 
 	private Mod111 insertModel( Administration admon) {
