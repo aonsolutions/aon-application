@@ -118,6 +118,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 	}
 	
+	// ------------------------------------------------- ContractSpecificDataImpl
+	
+	public class ContractSpecificDataImpl extends ContractSpecificData {
+
+		@Override
+		protected void showErrorMessage(String title, String message) {
+			showError(title, message);
+		}
+
+		@Override
+		protected void showSuccessMessage(String title, String message) {
+			showSuccess(title, message);
+		}
+
+		@Override
+		protected void showLoadingMessage(String message) {
+			showLoading(message);
+		}}
+	
 	// ------------------------------------------------- ContractAttachUIImpl
 	
 	public class ContractAttachUIImpl extends ContractAttachUI {
@@ -705,7 +724,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		// Init Tabs Elements
 		contractEmployeeUI = new ContractEmployeeUIImpl();
-		contractSpecificData = new ContractSpecificData();
+		contractSpecificData = new ContractSpecificDataImpl();
 		contractOtherData = new ContractOtherData();
 		contractClauseUI = new ContractClauseUI();
 		contractAttachUI = new ContractAttachUIImpl();
@@ -887,6 +906,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contractSpecificData.setEmployeeContractInfo(
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
+							hasCertificateSEPE,
+							contrataEmployeeObject.getContractEmployeeInfo().getEmployeeInfo().getDocument(),
+							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getStartDate(),
+							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractId(),
 							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
 					hideLoadingPanel();
 				}, f -> showError("Error obtenci\u00f3n Datos SEPE", f.getMessage()));
@@ -1255,6 +1278,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									contractSpecificData.setEmployeeContractInfo(
 											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
 											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasTransformation(),
+											hasCertificateSEPE,
+											contrataEmployeeObject.getContractEmployeeInfo().getEmployeeInfo().getDocument(),
+											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getStartDate(),
+											contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractId(),
 											contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
 								, fa -> showError("Error obtenci\u00f3n Datos SEPE", fa.getMessage()));
 						}, f -> showError("Error guardando Datos SEPE", f.getMessage()));
