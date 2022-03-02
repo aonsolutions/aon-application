@@ -18,11 +18,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceTrackingProperties;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO.InvoiceBatchFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO.InvoiceBatchDetailFiller;
 
@@ -83,13 +85,15 @@ public class InvoiceTrackingDAO {
 	}
 	
 	public static InvoiceTracking save(AONContext ctx, InvoiceTracking invoiceTracking) {
-		InvoiceBatch invoiceBatch = InvoiceBatchDAO.save(ctx, invoiceTracking.getInvoiceBatch());
-		invoiceTracking.setInvoiceBatch(invoiceBatch);
+		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceTracking.getInvoiceBatchDetail().getInvoice());
+		if(inv != null && inv.getId() != null) {
+			InvoiceBatch invoiceBatch = InvoiceBatchDAO.save(ctx, invoiceTracking.getInvoiceBatch());
+			invoiceTracking.setInvoiceBatch(invoiceBatch);
 		
-		invoiceTracking.getInvoiceBatchDetail().setInvoiceBatch(invoiceBatch.getId());
-		InvoiceBatchDetail invoiceBatchDetail = InvoiceBatchDetailDAO.save(ctx, invoiceTracking.getInvoiceBatchDetail());
-		invoiceTracking.setInvoiceBatchDetail(invoiceBatchDetail);
-	
+			invoiceTracking.getInvoiceBatchDetail().setInvoiceBatch(invoiceBatch.getId());
+			InvoiceBatchDetail invoiceBatchDetail = InvoiceBatchDetailDAO.save(ctx, invoiceTracking.getInvoiceBatchDetail());
+			invoiceTracking.setInvoiceBatchDetail(invoiceBatchDetail);
+		}
 		return invoiceTracking;
 	}
 

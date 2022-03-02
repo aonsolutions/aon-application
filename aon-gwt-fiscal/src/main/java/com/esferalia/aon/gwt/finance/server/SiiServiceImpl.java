@@ -47,13 +47,28 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 
 	@Override
 	public List<Invoice> getInvoices(String domainName, int domainId, String user, InvoiceParams params) {
-		return AON_SOLUTIONS.getInvoices(domainName, domainId, user, f -> getFilter(f, params))
+		if(params.isTbaiDeleted()) return getTbaiDeletedInvoices(domainName, domainId, user);
+		else return AON_SOLUTIONS.getInvoices(domainName, domainId, user, f -> getFilter(f, params))
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	
+	public List<Invoice> getTbaiDeletedInvoices(String domainName, int domainId, String user) {
+		List<Invoice> invoices = AON_SOLUTIONS.getTbaiDeletedInvoices(domainName, domainId, user);
+		return invoices;
 	}
 	
 	public Filter getFilter(InvoiceProperties f, InvoiceParams params) {
 		Filter filter =  f.getDomainProperty().eq(params.getDomain())
 				.and(f.getNumberProperty().gt(0));
+
+		if(params.getFrom() != null) {
+			filter = filter.and(f.getStartIssueDateProperty().ge(params.getFrom()));
+		}
+		
+		if(params.getTo() != null) {
+			filter = filter.and(f.getStartIssueDateProperty().le(params.getTo()));			
+		}
 		
 		if(!params.getType().isEmpty()) {
 			Filter aux = f.getTypeProperty().eq(params.getType().get(0).value());
@@ -74,9 +89,9 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
     	}
     	
     	if(params.getCommunicationStatus() != null && params.getCommunicationStatus().isPending()) {
-    		filter = filter.and(f.getInvoiceInfoTypeProperty().eq(params.getCommunicationStatus().value()).or(f.getInvoiceInfoStatusProperty().isNull()));
+    		filter = filter.and(f.getInvoiceInfoStatusProperty().eq(params.getCommunicationStatus().value()).or(f.getInvoiceInfoStatusProperty().isNull()));
     	} else if(params.getCommunicationStatus() != null) {
-    		filter = filter.and(f.getInvoiceInfoTypeProperty().eq(params.getCommunicationStatus().value())); 
+    		filter = filter.and(f.getInvoiceInfoStatusProperty().eq(params.getCommunicationStatus().value())); 
     	}
     	
     	filter = filter.page(params.getPage());
@@ -191,6 +206,8 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
+			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
+			tbaiConfiguration.setCertificate(cert);
 			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);

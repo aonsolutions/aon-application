@@ -76,7 +76,7 @@ public class DataRequestDAO {
 		return dataRequest.setId(id);
 	}
 	
-	protected static class DataRequestFiller extends Filler implements Function<Record, DataRequest> {
+	public static class DataRequestFiller extends Filler implements Function<Record, DataRequest> {
 		
 		@Override
 		public DataRequest apply(Record r) {
