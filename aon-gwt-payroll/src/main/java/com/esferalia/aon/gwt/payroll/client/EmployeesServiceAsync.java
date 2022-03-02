@@ -272,10 +272,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
-	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
+	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
+	void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
@@ -319,6 +319,11 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
 
+	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData,
+			ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
+	void removeContractTransform(String currentDomainName, String currentUser, String ide, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
 	// ------------------------------------------------- SEPE Methods
 	
 	void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
@@ -359,5 +364,5 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
 			AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException;
-	
+
 }

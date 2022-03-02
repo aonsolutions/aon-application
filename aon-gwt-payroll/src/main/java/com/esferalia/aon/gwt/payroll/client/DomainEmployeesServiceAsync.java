@@ -531,12 +531,12 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setData(getCurrentDomainName(), getCurrentUser(), contractId, data, callback);
 	}
 	
-	public void getEmployeeCbc(String document, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
+	public void getEmployeeCbc(String document, Integer contractId, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, callback);
 	}
 
-	public void getEmployeeCto(String document, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
+	public void getEmployeeCto(String document, Integer contractId, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, callback);
 	}
 	
 	// ------------------------------------------------- TGSS Comunications
@@ -597,6 +597,15 @@ public class DomainEmployeesServiceAsync {
 	
 	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), nif, endDate, callback);
+	}
+
+	public void sendContractTransform(EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractTransform(getCurrentDomainName(), getCurrentUser(), employeeContractData, contractTransform, callback);
+	}
+
+	public void removeContractTransform(String ide, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, callback);
 	}
 	
 	// ------------------------------------------------- SEPE Methods

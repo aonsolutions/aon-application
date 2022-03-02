@@ -164,7 +164,7 @@
 							      		<g:Label>Datos SEPE</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<g:ScrollPanel ui:field="scrolledPanelContractSpecificData" styleName="{style.center}">
+							    		<g:ScrollPanel ui:field="scrolledPanelContractSpecificData" styleName="{style.center} {style.widthAll}">
 											<a:ContractSpecificData ui:field="contractSpecificData"/>
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>

@@ -154,6 +154,10 @@ public class Contract {
 	public boolean getDiscontinuo() {
 		return discontinuo;
 	}
+	
+	public void setDiscontinuo(boolean discontinuo) {
+		this.discontinuo = discontinuo;
+	}
 
 	private Contract() {
 	}

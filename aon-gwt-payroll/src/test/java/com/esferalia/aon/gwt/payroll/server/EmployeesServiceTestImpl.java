@@ -783,14 +783,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 			Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 			Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
@@ -1011,6 +1011,21 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void createContractVariable(String currentDomainName, Integer contractId, ContractVariable contractVariable)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendContractTransform(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractData, ContractTransform contractTransform)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeContractTransform(String currentDomainName, String currentUser, String ide)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		

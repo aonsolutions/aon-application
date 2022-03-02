@@ -304,7 +304,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+			public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 					Date endDate, AsyncCallback<String> callback) {
 				// TODO Auto-generated method stub
 				
@@ -313,7 +313,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+			public void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 					Date endDate, AsyncCallback<String> callback) {
 				// TODO Auto-generated method stub
 				
@@ -624,6 +624,25 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void createContractVariable(String currentDomainName, Integer contractId,
 					ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void sendContractTransform(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void removeContractTransform(String currentDomainName, String currentUser, String ide,
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
