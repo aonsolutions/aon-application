@@ -39,6 +39,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -6764,6 +6765,35 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getCause().getMessage());
+		}
+	}
+	
+	@Override
+	public Map<String, String> getSepeComunicationData(String domainName, String userLogin, String ipf, Date date, Integer contractId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+			
+			aon.sepe.objects.Contract sepeContractData = Sepe.getContractData(certificateIS, certificate.getPassword(), certificate.getType(), ipf, date, date);
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+			Map<String, String> result = new HashMap<>();
+			
+			result.put("ide", sepeContractData.getSepeId());
+			result.put("comunicationDate", dateFormat.format(sepeContractData.getDateComContract()));
+			
+			JooqContractSEPE.setSepeIde(connection, domainId, contractId, sepeContractData.getSepeId());
+			JooqContractSEPE.setSepeComunicationDate(connection, domainId, contractId, sepeContractData.getDateComContract());
+			
+			return result;
+			
+		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
