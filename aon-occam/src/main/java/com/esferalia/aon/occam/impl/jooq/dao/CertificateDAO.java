@@ -190,6 +190,7 @@ public class CertificateDAO {
 		Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
 				.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
 				.and(RATTACH.TYPE.eq((byte)4))
+				.and(RATTACH.DOMAIN.eq(domainId))
 				.fetch();
 		
 		for(Record certificateRecord : certificateRecords) {
@@ -291,7 +292,7 @@ public class CertificateDAO {
 		Integer registryUserId = userRecord.get(USER.REGISTRY);
 		
 		// User Registry
-		if(null == registryUserId) registryUserId = createRegistryForUser(ctx, userRecord, domainId);
+		if(null == registryUserId) registryUserId = createRegistryForUser(ctx, userRecord);
 		
 		// Description	
 		String description = parseDescriptionLength(certificate.getDescription(), certificate.getPassword());
@@ -453,12 +454,13 @@ public class CertificateDAO {
 		}
 	}
 
-	private static Integer createRegistryForUser(AONContext ctx, Record userRecord, Integer domainId) {
+	private static Integer createRegistryForUser(AONContext ctx, Record userRecord) {
 		String userName = userRecord.get(USER.NAME);
+		Integer userDomain = userRecord.get(USER.DOMAIN);
 		Integer userId = userRecord.get(USER.ID);
 		
 		RegistryRecord registryUserRecord = ctx.getDslContext().insertInto(REGISTRY)
-				.set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.DOMAIN, userDomain)
 				.set(REGISTRY.NAME, userName)
 				.returning(REGISTRY.ID)
 				.fetchOne();
