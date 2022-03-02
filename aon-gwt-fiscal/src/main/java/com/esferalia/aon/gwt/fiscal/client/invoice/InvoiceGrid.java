@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -293,12 +294,18 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 					icon = "archive";
 				else if(InvoiceType.UNDEDUCTIBLE.equals(object.getType()))
 					icon = "receipt";
-				sb.appendHtmlConstant( "<i class=\"material-icons\" style='font-size:16px;position:absolute;'>" + icon + "</i>" +  "<span style='padding-left:20px;'>"+ object.getReferenceCode());		
+				
+				String reference = AonStringUtils.isBlank(object.getSeries()) ? Integer.toString(object.getNumber()) : object.getSeries() + "/" + object.getNumber();
+				reference = AonStringUtils.isBlank(object.getReferenceCode()) || "null".equalsIgnoreCase(object.getReferenceCode())
+					? reference : object.getReferenceCode();
+				sb.appendHtmlConstant( "<i class=\"material-icons\" style='font-size:16px;position:absolute;'>" + icon + "</i>" +  "<span style='padding-left:20px;'>"+ reference);		
 			}
 			
 			@Override
 			public String getValue(Invoice object) {
-				return object.getReferenceCode();
+				String reference = AonStringUtils.isBlank(object.getSeries()) ? Integer.toString(object.getNumber()) : object.getSeries() + "/" + object.getNumber();
+				return AonStringUtils.isBlank(object.getReferenceCode()) || "null".equalsIgnoreCase(object.getReferenceCode())
+					? reference : object.getReferenceCode();
 			}
 
 		};
@@ -314,7 +321,6 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 		dataGrid.getColumnSortList().push(codeColumn);
 		dataGrid.addColumn(codeColumn, "Referencia");
 		dataGrid.setColumnWidth(codeColumn, 15, Unit.PCT);
-
 		/** VAT DATE Column **/
 		Column<Invoice, String> taxDateColumn = new Column<Invoice, String>(new TextCell()) {
 
@@ -342,8 +348,8 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 			@Override
 			public String getValue(Invoice object) {
 				if(isFechaIVA) {
-					return AonDateUtils.formatDate(object.getTaxDate());
-				} else return AonDateUtils.formatDate(object.getCreationDate());
+					return object.getTaxDate() != null ? AonDateUtils.formatDate(object.getTaxDate()) : "-";
+				} else return object.getCreationDate() != null ? AonDateUtils.formatDate(object.getCreationDate()) : "-";
 			}
 		};
 		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
@@ -381,28 +387,30 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 		dataGrid.getColumnSortList().push(contraparteColumn);
 		dataGrid.addColumn(contraparteColumn, "Contraparte");
 		dataGrid.setColumnWidth(contraparteColumn, 15, Unit.PCT);
-
+		
 		/** Status Column **/
 
 		Column<Invoice, String> statusColumn = new Column<Invoice, String>(new TextCell()) {
 			@Override
 			public void render(Context context, Invoice object, SafeHtmlBuilder sb) {
-				String color = "gray";
-				String status = "Pendiente";
-				if(object.getInvoiceInfo().getStatus().isAccepted()) {
-					color = "green";
-					status = "Aceptada";
-				} else if(object.getInvoiceInfo().getStatus().isAcceptedWithErrors()) {
-					color = "orange";
-					status = "Aceptada con Errores";
-				} else if(object.getInvoiceInfo().getStatus().isWrong()) {
-					color = "red";
-					status = "Incorrecta";
-				} else if(object.getInvoiceInfo().getStatus().isAnnulled()) {
-					color = "red";
-					status = "Anulada";
-				}
-				sb.appendHtmlConstant( "<i class=\"material-icons\" style='font-size:16px;position:absolute;color:"+ color +";'>circle</i>" +  "<span style='padding-left:20px;'>"+ status);
+				if(object.getInvoiceInfo() != null && !object.getInvoiceInfo().isEmpty()) {
+					String color = "gray";
+					String status = "Pendiente";
+					if(object.getInvoiceInfo().getStatus().isAccepted()) {
+						color = "green";
+						status = "Aceptada";
+					} else if(object.getInvoiceInfo().getStatus().isAcceptedWithErrors()) {
+						color = "orange";
+						status = "Aceptada con Errores";
+					} else if(object.getInvoiceInfo().getStatus().isWrong()) {
+						color = "red";
+						status = "Incorrecta";
+					} else if(object.getInvoiceInfo().getStatus().isAnnulled()) {
+						color = "red";
+						status = "Anulada";
+					}
+					sb.appendHtmlConstant( "<i class=\"material-icons\" style='font-size:16px;position:absolute;color:"+ color +";'>circle</i>" +  "<span style='padding-left:20px;'>"+ status);
+				} else sb.appendHtmlConstant("-");
 			}
 
 			@Override

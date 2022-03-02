@@ -75,11 +75,10 @@ public class TbaiMain {
 		DataRequest dr = AON.getDataRequest("despacho-serval.aibanez.net", 5749, "pramirez", f -> f.getIdProperty().eq(938));
 		JSONObject json = new JSONObject(dr.getBlackBox());
 		JSONObject invoiceJSON = json.getJSONObject("invoice");
-		Invoice invoice = InvoiceJSON.fromJSON(invoiceJSON);
-		
+		Invoice invoice = InvoiceJSON.fromJSON(invoiceJSON);		
 	}
 	
-	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
+	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws Exception, TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
 		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
 		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 			TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
@@ -114,7 +113,7 @@ public class TbaiMain {
 	}
 
 	public void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
-			throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
+			throws Exception {
 		TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
 		boolean send = true;
 		if(!tbaiConfiguration.isBizkaia()) {
@@ -193,7 +192,7 @@ public class TbaiMain {
 	}
 	
 	public void createAnulacionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
-			throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
+			throws Exception {
 		TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
 		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, tbaiConfiguration);
 
@@ -208,8 +207,7 @@ public class TbaiMain {
 
 		TbaiSign tbaiSign = new TbaiSign();
 		byte[] xml = tbaiSign.sign(tbaiConfiguration, data);
-		
-		DataRequest request = tbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
+		DataRequest request = tbaiData.saveRequestAnulacion(company.getDomain(), new User().setLogin(""), invoice, xml);
 		if (!tbaiConfiguration.isBizkaia()) {
 			String uri = TbaiUri.getUrlAnulacion(tbaiConfiguration);
 			TbaiResponse response = sendXML(uri, tbaiConfiguration, xml);
