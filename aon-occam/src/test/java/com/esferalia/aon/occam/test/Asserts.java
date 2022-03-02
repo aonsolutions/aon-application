@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -670,6 +671,24 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEmployee(Employee expected, Employee actual) {
+		assertEquals("Ccc",expected.getCcc(), actual.getCcc());
+		assertEquals("Naf", expected.getNaf(), actual.getNaf());
+		assertEquals("Dni",expected.getDni(), actual.getDni());
+		assertEquals("StartDate",expected.getStartDate(), actual.getStartDate());
+		assertEquals("EndDate",expected.getEndDate(), actual.getEndDate());
+		assertEquals("Name",expected.getName(), actual.getName());
+		assertEquals("Regime",expected.getRegime(), actual.getRegime());
+		assertEquals("Factor",expected.getFactor(), actual.getFactor());
+		assertEquals("Occupation",expected.getOccupation(), actual.getOccupation());
+		assertEquals("ContractType",expected.getContractType(), actual.getContractType());
+		assertEquals("Rlce",expected.getRlce(), actual.getRlce());
+		assertEquals("QuoteGroup",expected.getQuoteGroup(), actual.getQuoteGroup());
+		assertEquals("Category",expected.getCategory(), actual.getCategory());
+		assertEquals("Sex",expected.getSex(), actual.getSex());
+		assertEquals("BirthDate",expected.getBirthDate(), actual.getBirthDate());
+	}
+
 	public static <T extends FiscalModel> void assertFiscalModel(T expected, T actual) {
 		assertEquals("Id", expected.getId(), actual.getId());
 		assertEquals("Domain", expected.getDomain(), actual.getDomain());
