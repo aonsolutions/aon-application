@@ -532,6 +532,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 				AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void getSepeComunicationData(String currentDomainName, String currentUser, String document, Date date,
+				Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
 		}		
 	}
 
@@ -1048,6 +1055,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void removeContractTransform(String currentDomainName, String currentUser, String ide,
 							AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getSepeComunicationData(String currentDomainName, String currentUser, String document,
+							Date date, Integer contractId, AsyncCallback<Map<String, String>> callback)
+							throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}
