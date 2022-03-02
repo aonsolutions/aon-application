@@ -373,6 +373,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DESAYUNO_Y_CAMA_PORTUGAL_DIARIO", "DES_CAMA_PORT_D");
 		variablesMap.put("DIETAS_DIARIO", "DIETA");
 		variablesMap.put("DIETAS_EXTRANJERO_DIARIO", "DIETA_EXT");
+		variablesMap.put("DIETA_ESPECIAL_DIARIO", "DIETA_ESPECIAL");
 		variablesMap.put("DIETA_ALEMANIA_DIARIO", "DIETA_ALEMANIA");
 		variablesMap.put("DIETA_ALOJAMIENTO_DIARIO", "DIETA_ALOJAMIENTO");
 		variablesMap.put("DIETA_ALOJAMIENTO_MENSUAL", "DIETA_ALOJAMIENTO");
@@ -648,6 +649,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PAGA_EXTRA_NAVIDAD_MENSUAL", "PAGA_EXTRA_NAVIDAD");
 		variablesMap.put("PAGA_EXTRA_VERANO_MENSUAL", "PAGA_EXTRA_VERANO");
 		variablesMap.put("PANTALLA_MENSUAL", "PANTALLA_MENSUAL");
+		variablesMap.put("PARTES_PROPORCIONALES_HORAS", "PARTES_PROPORCIONALES");
 		variablesMap.put("PENSIONES_MENSUAL", "PENSIONES_M");
 		variablesMap.put("PERNOCTA_Y_DESAYUNO_DIARIO", "PERNOC_DESAYUNO_D");
 		variablesMap.put("PLUS_31_DE_DICIEMBRE_HORAS", "PLUS_31_DIC");
