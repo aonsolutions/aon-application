@@ -24,6 +24,7 @@ import javax.mail.BodyPart;
 import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -205,6 +206,7 @@ public class MessageController implements IWebMailConstants, Serializable {
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
 	            message.setFrom(new InternetAddress(from));
 	            Address replyTo = new InternetAddress(this.senderMailAccount.getEmail());
+	            message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
 	            message.setReplyTo(addresses);
 	            SES.sendEmail(message);
