@@ -701,6 +701,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Sustitutiva")
 	String replacement();
 	
+	@DefaultMessage("Tener en cuenta facturas y n\u00F3minas del ejercicio {0} sin incluir en ninguna declaraci\u00F3n")
+	String generateFromYearStart(int year);
+
 	@DefaultMessage("Sustit.")
 	String replacementAbbr();
 

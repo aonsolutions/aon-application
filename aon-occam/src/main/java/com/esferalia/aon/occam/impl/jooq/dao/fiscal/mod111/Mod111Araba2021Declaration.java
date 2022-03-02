@@ -181,5 +181,13 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 			?ComplementaryBeahaviour.COMPLEMENTARY
 			:ComplementaryBeahaviour.REPLACEMENT;
 	}
+	
+	@Override
+	Mod111 initialize(AONContext ctx, Mod111 mod111) {
+		mod111.setComplementaryDeclarationAvailable(true);
+		mod111.setReplacementDeclarationAvailable(true);
+		return super.initializeModel(ctx, mod111);
+	}
+	
 
 }

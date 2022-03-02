@@ -14,16 +14,6 @@ public class Mod111 extends FiscalModel implements Serializable {
 	}
 	
 	@Override
-	public boolean isComplementaryDeclarationAvailable() {
-		return (getAdministration() != null);
-	}
-
-	@Override
-	public boolean isReplacementDeclarationAvailable() {
-		return (getAdministration() != null && isAraba());
-	}
-	
-	@Override
 	public boolean isReplacedNumberAvailable() {
 		return  getAdministration() != null 
 			&& (isComplementaryDeclarationAvailable() || isReplacementDeclarationAvailable()) 

@@ -160,4 +160,11 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 		return ComplementaryBeahaviour.COMPLEMENTARY;
 	}
 
+	@Override
+	Mod111 initialize(AONContext ctx, Mod111 mod111) {
+		mod111.setComplementaryDeclarationAvailable(true);
+		mod111.setReplacementDeclarationAvailable(false);
+		return super.initializeModel(ctx, mod111);
+	}
+	
 }

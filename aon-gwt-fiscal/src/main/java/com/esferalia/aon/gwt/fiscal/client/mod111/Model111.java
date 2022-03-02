@@ -132,7 +132,7 @@ public class Model111 extends MainEntryPoint {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					showErrorMessage(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 				}
 			});
 		}

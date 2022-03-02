@@ -6,7 +6,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
@@ -44,13 +44,13 @@ public abstract class Mod111Declaration {
 	
 	static Mod111Declaration getInstance( Mod111 mod) {
 		if (mod.getAdministration() == null) {
-			throw new AonCoreException("No se ha indicado administración para la declaración");
+			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
 		if (mod.getYear() < 2010 && mod.getYear() > 2025) {
-			throw new AonCoreException("No se ha indicado una ejercicio válido para la declaración");
+			throw new AonCoreException("No se ha indicado una ejercicio válido para la declaraci\u00F3n");
 		}
 		if (mod.getPeriod() == null) {
-			throw new AonCoreException("No se ha indicado periodo para la declaración");	
+			throw new AonCoreException("No se ha indicado periodo para la declaraci\u00F3n");	
 		}
 		if (Mod111AEAT2021Declaration.accept(mod)) 		return new Mod111AEAT2021Declaration();
 		if (Mod111Araba2021Declaration.accept(mod)) 	return new Mod111Araba2021Declaration();
@@ -60,7 +60,7 @@ public abstract class Mod111Declaration {
 		if (Mod111Navarra2021Declaration.accept(mod)) 	return new Mod111Navarra2021Declaration();
 		
 		throw new AonCoreException(MessageFormat.format(
-			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
+			"No existe una declaraci\u00F3n para el modelo solicitado ({0} - {1} - {2})",
 			mod.getAdministration().getDescription()
 			,mod.getYear()
 			,mod.getPeriod().getDescription()));
@@ -75,7 +75,49 @@ public abstract class Mod111Declaration {
 		return null;
 	}
 
-	void initialize(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown  br) {
+	public Mod111 initializeModel(AONContext ctx, Mod111 mod111) {
+		initializeComplementaryAndReplacement(ctx,mod111);
+		initializePreviousData(ctx,mod111);
+		return mod111;
+	}
+
+	private void initializePreviousData(AONContext ctx, Mod111 mod111) {
+		mod111.getMessages().clear();		
+		mod111.setGenerateFromYearStartAvailable(!mod111.isFirstPeriod());
+		if (mod111.isGenerateFromYearStartAvailable()) {
+			Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod111);
+			boolean existsInvoices = invoices != null && !invoices.isEmpty();
+			if (existsInvoices) {
+				mod111.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
+						+ "de inicio de la declaraci\u00F3n.");
+			}
+			Map<Integer, Long> salaries = checkPreviousSalaries(ctx, mod111);
+			boolean existsSalaries = salaries != null && !salaries.isEmpty();			
+			if (existsSalaries) {
+				mod111.addMessage("Se encontraron " + salaries.size() + " n\u00F3minas no declaradas anteriores a la fecha "
+						+ "de inicio de la declaraci\u00F3n.");
+			}
+			mod111.setGenerateFromYearStartAvailable(existsInvoices || existsSalaries);
+			
+		}
+	}
+
+	private void initializeComplementaryAndReplacement(AONContext ctx, Mod111 mod111) {
+		mod111.setComplementaryDeclarationAvailable(false);
+		mod111.setReplacementDeclarationAvailable(false);
+		mod111.setReplacedNumber(null);
+		if ( mod111.isComplementaryDeclarationAvailable() || mod111.isReplacementDeclarationAvailable()) {
+			Mod111 previous = Mod111DAO.getSamePeriodFiscalModels(ctx, mod111).findFirst().orElse(null);
+			if (previous != null) {
+				mod111.setComplementary( mod111.isComplementaryDeclarationAvailable() );
+				mod111.setReplacement( mod111.isReplacementDeclarationAvailable() 
+					&& !mod111.isComplementary() );
+				mod111.setReplacedNumber(previous.getNumber());
+			}
+		}
+	}
+
+	void initializeKeys(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown  br) {
 		for (IMod111KeyDAO key : getKeys()) {
 			if (key.acceptValue(mod,br)) {
 				key.initialize(ctx, mod, docs, pdocs, br); 
@@ -130,18 +172,21 @@ public abstract class Mod111Declaration {
 		Arrays.stream( getKeys() )
 			.forEach(key -> key.uniqueInitialize(ctx, mod111));
 	}
+	
+	Map<Integer, Long>  checkPreviousSalaries(final AONContext ctx, final Mod111 mod111) {
+		return IRPFDAO.getPreviousNotInModelSalaryIrpfBreakdown(ctx, mod111)
+			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
+			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getSalary() 
+					, Collectors.counting()));
+	}
 
 	Set<Integer> createFromSalary(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> salaries = new HashSet<>();
-		Stream<IrpfBreakdown> stream;
-		if ( mod111.isComplementary() && isComplementaryBehaviour(mod111)) {
-			stream = IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111);
-		} else {
-			stream = IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111);
-		}
-		stream.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111)
+			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
 			.map( kbr -> addSalary(salaries, kbr))
 			.forEach(kbr -> kbr.getKey().initialize(ctx, mod111, docs, pdocs, kbr.getIrpfBreakdown()))
@@ -174,17 +219,20 @@ public abstract class Mod111Declaration {
 		return br;	
 	}
 	
+	Map<Integer, Long>  checkPreviousInvoices(final AONContext ctx, final Mod111 mod111) {
+		return IRPFDAO.getPreviousNotInModelInputInvoicesIrpfBreakdown(ctx, mod111)
+			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
+			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getInvoice() 
+					, Collectors.counting()));
+	}
+
 	Set<Integer> createFromInvoices(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> invoices = new HashSet<>();
-		Stream<IrpfBreakdown> stream;
-		if ( mod111.isComplementary() && isComplementaryBehaviour(mod111)) {
-			stream =  IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111);
-		} else {
-			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
-		}
-		stream.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+		IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111)
+			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
 			.map( kbr -> addInvoice(invoices, kbr))
 			.forEach(kbr -> kbr.getKey().initialize(ctx, mod111, docs, pdocs, kbr.getIrpfBreakdown()))
@@ -200,14 +248,10 @@ public abstract class Mod111Declaration {
 		}
 	}
 	
-	private boolean isComplementaryBehaviour(final Mod111 mod111) {
-		return getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.COMPLEMENTARY;
-	}
-
+	abstract Mod111 initialize(AONContext ctx, Mod111 mod111);
 	abstract IMod111KeyDAO valueOf(String string);
 	abstract IMod111KeyDAO[] getKeys();
 	abstract double getResult(final Mod111 mod111);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
-	
-	
+
 }

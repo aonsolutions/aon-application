@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -54,12 +55,20 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	private Integer accountEntry;
 	private Double declarationResult;
 	private FiscalModelDeclarationType declarationResultType;
+	
+	private boolean generateFromYearStart;
+	private boolean previousInvoicesAvailable;
+	private boolean previousSalariesAvailable;
+	private boolean generateFromYearStartAvailable;
+	private boolean complementaryDeclarationAvailable;
+	private boolean replacementDeclarationAvailable;
 
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
 	
+	private LinkedList<String> messages;
 	private LinkedHashMap<String,FiscalModelDetail> map;
 	
 	@Override
@@ -523,6 +532,64 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 			}
 		}
 	}
+	
+	public boolean isGenerateFromYearStart() {
+		return generateFromYearStart;
+	}
+	public FiscalModel setGenerateFromYearStart(boolean generateFromYearStart) {
+		this.generateFromYearStart = generateFromYearStart;
+		return this;
+	}
+	public boolean isPreviousInvoicesAvailable() {
+		return previousInvoicesAvailable;
+	}
+	public FiscalModel setPreviousInvoicesAvailable(boolean previousInvoicesAvailable) {
+		this.previousInvoicesAvailable = previousInvoicesAvailable;
+		return this;
+	}
+	public boolean isPreviousSalariesAvailable() {
+		return previousSalariesAvailable;
+	}
+	public FiscalModel setPreviousSalariesAvailable(boolean previousSalariesAvailable) {
+		this.previousSalariesAvailable = previousSalariesAvailable;
+		return this;
+	}
+	public boolean isGenerateFromYearStartAvailable() {
+		return generateFromYearStartAvailable;
+	}
+	public FiscalModel setGenerateFromYearStartAvailable(boolean generateFromYearStartAvailable) {
+		this.generateFromYearStartAvailable = generateFromYearStartAvailable;
+		return this;
+	}
+	
+	public boolean isComplementaryDeclarationAvailable() {
+		return this.complementaryDeclarationAvailable;
+	}
+	public FiscalModel setComplementaryDeclarationAvailable(boolean complementaryDeclarationAvailable) {
+		this.complementaryDeclarationAvailable = complementaryDeclarationAvailable;
+		return this;
+	}
+	public boolean isReplacementDeclarationAvailable() {
+		return this.replacementDeclarationAvailable;
+	}
+	public FiscalModel setReplacementDeclarationAvailable(boolean replacementDeclarationAvailable) {
+		this.replacementDeclarationAvailable = replacementDeclarationAvailable;
+		return this;
+	}
+	public LinkedList<String> getMessages() {
+		if (messages == null) {
+			messages = new LinkedList<>();
+		}
+		return messages;
+	}
+	public FiscalModel addMessage( String message ) {
+		getMessages().add(message);
+		return this;
+	}
+	public FiscalModel setMessages(LinkedList<String> messages) {
+		this.messages = messages;
+		return this;
+	}
 
 	// DEPRECATED METHODS
 	@Deprecated
@@ -549,13 +616,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public boolean isReplacedNumberAvailable() {
 		return false;
 	}
-	public boolean isReplacementDeclarationAvailable() {
-		return false;
-	}
 	public boolean isComplementaryNumberAvailable() {
-		return false;
-	}
-	public boolean isComplementaryDeclarationAvailable() {
 		return false;
 	}
 	public boolean isToDeduceAvailable() {

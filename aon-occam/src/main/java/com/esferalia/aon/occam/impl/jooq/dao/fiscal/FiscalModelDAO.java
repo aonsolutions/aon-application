@@ -219,7 +219,8 @@ public class FiscalModelDAO {
 			.filter(fim -> fim.getPeriod().isQuarterPeriod() == fm.getPeriod().isQuarterPeriod())
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
-	public static <T extends FiscalModel> Stream<T> getSamePeriodModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
+	
+	public static <T extends FiscalModel> Stream<T> getSamePeriodFiscalModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
 		ctx.checkRead();
 		return getSelect(ctx)
 			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
@@ -228,9 +229,14 @@ public class FiscalModelDAO {
 			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
 			.and(FS_MODEL.PERIOD.eq(fm.getPeriod().value()))
 			.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.notEqual(fm.getId()))
+			.orderBy(FS_MODEL.ID.desc())
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier))
+			;
+	}
+	public static <T extends FiscalModel> Stream<T> getSamePeriodModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
+		return getSamePeriodFiscalModels(ctx, fm, modelSupplier)
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
 	

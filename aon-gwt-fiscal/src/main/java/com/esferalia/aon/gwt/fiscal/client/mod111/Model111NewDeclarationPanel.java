@@ -12,10 +12,12 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
@@ -26,6 +28,7 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 	private PeriodListBox periodList = new PeriodListBox(true);
 	private final CheckBox replacement = new CheckBox();
 	private final CheckBox complementary = new CheckBox();
+	private final CheckBox generateFromYearStart = new CheckBox();
 		
 	private FlowPanel rootPanel;
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
@@ -58,6 +61,8 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 
 		rootPanel.clear();
 		
+		paintMessages(model,callback);
+		
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonMarginTop());
 		tab.addStyleName(AON.CSS.aonMarginBottom());
@@ -66,42 +71,89 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 		
 		populate(model);
 		paintAdministration(model,callback,tab);
-		paintYear(model,tab);
+		paintYear(model,callback,tab);
 		paintPeriod(model,callback,tab);
 		paintComplementary(model,tab);
 		paintReplacement(model,tab);
+		paintGenerateFromYearStart(model,tab);
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
 	
+	private void initialize(Mod111 model, Model111Callback callback) {
+		Model111.SERVICE.initialize(callback.getOptions().getOccam(),model,
+			new AsyncCallback<Mod111>() {
+				@Override
+				public void onSuccess(Mod111 m111) {
+					paint(m111,callback);
+				}
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+				}
+			}
+		);
+	}
+
 	private void populate(Mod111 model) {
 		admonList.setSelectedIndex( model.getAdministration().ordinal());
 		yearBox.setValue(model.getYear());
 		periodList.setValue(model.getPeriod());
 		complementary.setValue(model.isComplementary());
 		replacement.setValue(model.isReplacement());
+		generateFromYearStart.setValue(model.isGenerateFromYearStart());
+	}
+	private void paintMessages(Mod111 model, Model111Callback callback) {
+		if (model.getMessages() != null && !model.getMessages().isEmpty()) {
+			FlowPanel messages = new FlowPanel();
+			messages.setStyleName( AON.CSS.aonTextCenter() );
+			messages.addStyleName( AON.CSS.aonMarginBottom() );
+			messages.addStyleName( AON.CSS.aonBorder());
+			messages.addStyleName( AON.CSS.aonPadding());
+			messages.addStyleName( AON.CSS.aonBackgroundHighlightedOrange());
+			for (String msg : model.getMessages()) {
+				Label message = new Label(msg);
+				message.setStyleName(AON.CSS.aonLabelWithIcon());
+				message.addStyleName(AON.CSS.aonIconWarning());
+				message.addStyleName(AON.CSS.aonBold());
+				messages.add(message);
+			}
+			rootPanel.add(messages);
+		}
+		
 	}
 	
 	private void paintAdministration(Mod111 model, Model111Callback callback, AonDisplayTable tab) {
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
-			paint(model,callback);
+			initialize(model, callback );
 		});
-		tab.addLabelWidgetRow(AON.MSG.administration(), admonList);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.administration()),AON.CSS.aonTableLabel(),AON.CSS.aonWidth120() )
+			.addCell(admonList,AON.CSS.aonWidth400());
 	}
 
-	private void paintYear(Mod111 model, AonDisplayTable tab) {
+	private void paintYear(Mod111 model, Model111Callback callback, AonDisplayTable tab) {
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
-		yearBox.addValueChangeHandler(event -> model.setYear(yearBox.getValue()));
-		tab.addLabelWidgetRow(AON.MSG.year(), yearBox);
+		yearBox.addValueChangeHandler(event -> {
+			model.setYear(yearBox.getValue());
+			initialize(model, callback );
+		});
+		tab.addRow()
+			.addCell(new Label(AON.MSG.year()),AON.CSS.aonTableLabel())
+			.addCell(yearBox);
+		
 	}
 
 	private void paintPeriod(Mod111 model, Model111Callback callback, AonDisplayTable tab) {
 		periodList.addChangeHandler( event -> {
 			model.setPeriod( periodList.getValue());
-			paint(model,callback);
+			initialize(model, callback );
 		});
-		tab.addLabelWidgetRow(AON.MSG.period(), periodList);
+		tab.addRow()
+			.addCell(new Label(AON.MSG.period()),AON.CSS.aonTableLabel())
+			.addCell(periodList);
 	}
 	
 	
@@ -116,7 +168,9 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 				}
 				
 			});
-			tab.addLabelWidgetRow("", complementary);
+			tab.addRow()
+				.addCell(new Label(),AON.CSS.aonTableLabel())
+				.addCell(complementary);
 		}
 	}
 
@@ -130,9 +184,21 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 					complementary.setValue(false);
 				}
 			});
-			tab.addLabelWidgetRow("", replacement);
+			tab.addRow()
+				.addCell(new Label(),AON.CSS.aonTableLabel())
+				.addCell(replacement);
 		}
 		
+	}
+
+	private void paintGenerateFromYearStart(Mod111 model, AonDisplayTable tab) {
+		if (model.isGenerateFromYearStartAvailable() ) {
+			generateFromYearStart.setText(AON.MSG.generateFromYearStart( model.getYear() ));
+			generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
+			tab.addRow()
+				.addCell(new Label(),AON.CSS.aonTableLabel())
+				.addCell(generateFromYearStart,AON.CSS.aonWidth400());
+		}
 	}
 
 	private FlowPanel getButtonsPanel(Mod111 model, final Model111Callback callback) {

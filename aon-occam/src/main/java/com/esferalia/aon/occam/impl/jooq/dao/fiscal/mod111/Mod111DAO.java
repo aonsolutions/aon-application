@@ -41,6 +41,10 @@ public class Mod111DAO extends FiscalModelDAO {
 		return FiscalModelDAO.get(ctx,Mod111::new,id);
 	}
 	
+	public static Stream<Mod111> getSamePeriodFiscalModels(AONContext ctx,Mod111 fm) {
+		return FiscalModelDAO.getSamePeriodFiscalModels(ctx, fm, Mod111::new);
+	}
+
 	public static Stream<Mod111> getSamePeriodModels(AONContext ctx,Mod111 fm) {
 		return FiscalModelDAO.getSamePeriodModels(ctx, fm, Mod111::new);
 	}
@@ -89,6 +93,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		}
 		initializeFiscalModel(ctx, mod111);
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
+		dec.initialize( ctx, mod111 );
 		dec.ensureDetails(mod111);
 		return mod111;
 	}
