@@ -21,7 +21,7 @@ public class AlcatrazDAO {
 	protected AlcatrazDAO() {
 	}
 	private static void log(AONContext ctx, String msg, Object ... params ) {
-		ctx.log().info(msg,params);
+		ctx.log().debug(msg,params);
 	}
 	
 	public static <T extends FiscalModel> T saveModelInvoices(AONContext ctx, T fm, Set<Integer> invoices) {

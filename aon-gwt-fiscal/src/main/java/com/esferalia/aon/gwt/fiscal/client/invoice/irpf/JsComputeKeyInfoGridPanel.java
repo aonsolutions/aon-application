@@ -17,7 +17,7 @@ public class JsComputeKeyInfoGridPanel extends FlowPanel {
 		title.addStyleName(AON.CSS.aonWidthAll());
 		title.addStyleName(AON.CSS.aonTextCenter());
 		title.addStyleName(AON.CSS.aonTextUppercase());
-		title.addStyleName(AON.CSS.aonFontXLarger());
+		title.addStyleName(AON.CSS.aonFontLarger());
 		add( title );
 		subTitle = new Label();	
 		subTitle.addStyleName(AON.CSS.aonBold());

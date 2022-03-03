@@ -26,6 +26,7 @@ public class FiscalFaker {
 		private boolean monthly;
 		private boolean complementary;
 		private boolean replacement;
+		private boolean generateFromYearStart;
 		
 		public FiscalFakerParams(AONContext ctx, Occam occam) {
 			this.ctx = ctx;
@@ -76,7 +77,13 @@ public class FiscalFaker {
 			this.replacement = replacement;
 			return this;
 		}
-		
+		public boolean isGenerateFromYearStart() {
+			return generateFromYearStart;
+		}
+		public FiscalFakerParams setGenerateFromYearStart(boolean generateFromYearStart) {
+			this.generateFromYearStart = generateFromYearStart;
+			return this;
+		}
 	}
 	
 	public static Period getRandomPeriod() {
@@ -100,9 +107,10 @@ public class FiscalFaker {
 			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
 		mod111.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		MODEL111.initialize( params.getOccam(), mod111);
 		mod111.setComplementary(params.isComplementary());
 		mod111.setReplacement(params.isReplacement());
-		MODEL111.initialize( params.getOccam(), mod111);
+		mod111.setGenerateFromYearStart(mod111.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
 		return mod111;
 	}
 

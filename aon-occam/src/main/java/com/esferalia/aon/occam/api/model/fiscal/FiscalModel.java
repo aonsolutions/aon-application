@@ -487,9 +487,9 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public String getModelFullName() {
 		return AonStringUtils.defaultIfBlank(FiscalModelUtils.getModelName(this),
 				(getModel() != null?getModel().getName():"???") ) 
-			+ " de "
+			+ " "
 			+ getYear()
-			+ "-"
+			+ " "
 			+ (getPeriod() != null?getPeriod().getDescription() :"???")
 			+ (isComplementary()?" (C)":"")
 			+ (isReplacement()?" (S)":"")

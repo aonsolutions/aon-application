@@ -101,7 +101,15 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 				mod.isReplacement() 
 				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
 				:0.0)
-			,null,null)
+			,null
+			,"{messages : ["
+					+ "\"Declaraciones en el mismo periodo/ejercicio:\","
+					+ "@foreach{fm : periodModels}"
+					+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
+					+ "@end{}"
+					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C87)}\""
+				+"]}"
+			)
 		,AR_C84(Mod111Key.AR_C84,null,null,null,null,null)
 		,AR_C85(Mod111Key.AR_C85,null,null,null,null,null)
 		,AR_C87(Mod111Key.AR_C87, null,null,null, "AR_C82-AR_C83+AR_C84+AR_C85",null)

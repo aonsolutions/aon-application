@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
@@ -103,8 +104,6 @@ public abstract class Mod111Declaration {
 	}
 
 	private void initializeComplementaryAndReplacement(AONContext ctx, Mod111 mod111) {
-		mod111.setComplementaryDeclarationAvailable(false);
-		mod111.setReplacementDeclarationAvailable(false);
 		mod111.setReplacedNumber(null);
 		if ( mod111.isComplementaryDeclarationAvailable() || mod111.isReplacementDeclarationAvailable()) {
 			Mod111 previous = Mod111DAO.getSamePeriodFiscalModels(ctx, mod111).findFirst().orElse(null);
@@ -231,7 +230,13 @@ public abstract class Mod111Declaration {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> invoices = new HashSet<>();
-		IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111)
+		Stream<IrpfBreakdown> stream = null;
+		if (getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT) {
+			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
+		} else {
+			stream = IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111);	
+		}
+		stream
 			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
 			.map( kbr -> addInvoice(invoices, kbr))

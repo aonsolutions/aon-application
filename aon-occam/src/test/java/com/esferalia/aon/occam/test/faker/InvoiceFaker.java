@@ -344,21 +344,21 @@ public class InvoiceFaker {
 	private static InvoiceTax getRetentionInvoiceTax(InvoiceFakerParams params, Invoice invoice, InvoiceDetail detail) {
 		InvoiceWithholding witholding = getInvoiceWithholding(params,invoice);
 		InvoiceTax tax =  new InvoiceTax()
-				.setTaxType(TaxType.RETENTION)
-				.setBase(detail.getTaxableBase())
-				.setPercentage( witholding.getPercentage())
-				.setSurcharge(0.0)
-				.setDeductiblePercent(getDeductiblePercent( AonRandom.number(0, 80)))
-				.setWithholdingType(witholding.getWithholdingType());
-				;
+			.setTaxType(TaxType.RETENTION)
+			.setBase(detail.getTaxableBase())
+			.setPercentage( witholding.getPercentage())
+			.setSurcharge(0.0)
+			.setDeductiblePercent(getDeductiblePercent( AonRandom.number(0, 80)))
+			.setWithholdingType(witholding.getWithholdingType());
 			;
-			return calculate(tax);
+		;
+		return calculate(tax);
 	}
 
 	private static InvoiceWithholding getInvoiceWithholding(InvoiceFakerParams params, Invoice invoice) {
 		InvoiceWithholding withholding = params.getWithholding();
 		if (withholding == null && invoice.getDetails() != null) {
-			invoice.getDetails()
+			withholding = invoice.getDetails()
 				.stream()
 				.filter( det -> det.getInvoiceTaxes() != null)
 				.filter( det -> !det.getInvoiceTaxes().isEmpty())
@@ -371,6 +371,8 @@ public class InvoiceFaker {
 				.map(tax -> new InvoiceWithholding()
 						.setPercentage(tax.getPercentage())
 						.setWithholdingType(tax.getWithholdingType()))
+				.findFirst()
+				.orElse(null)
 			;
 		}
 		if (withholding == null ) {
@@ -556,42 +558,57 @@ public class InvoiceFaker {
 		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL_VAT_IMPORT.get(params);
 	}
 	public static Invoice getExpensesProfRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.PROFESSIONAL))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesProfRetention(invParams);
+	}
+	public static Invoice getExpensesProfRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.PROFESSIONAL))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getExpensesCapitalRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.MOVABLE_CAPITAL))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesCapitalRetention(invParams);
+	}
+	public static Invoice getExpensesCapitalRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.MOVABLE_CAPITAL))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getExpensesTransportRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.TRANSPORT_OPERATOR))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesTransportRetention(invParams);
+	}
+	public static Invoice getExpensesTransportRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.TRANSPORT_OPERATOR))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getExpensesRentingRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.RENTING))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesRentingRetention(invParams);
+	}
+	public static Invoice getExpensesRentingRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.RENTING))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getPurchaseFarmerRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.FARMER))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getPurchaseFarmerRetention(invParams);
+	}
+	public static Invoice getPurchaseFarmerRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.FARMER))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.PURCHASE_FARMER_RETENTION.get(invParams);
 	}

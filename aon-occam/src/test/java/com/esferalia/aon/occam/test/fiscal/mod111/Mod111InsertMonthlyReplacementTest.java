@@ -1,114 +1,71 @@
 package com.esferalia.aon.occam.test.fiscal.mod111;
 
-import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
-import static org.junit.Assert.assertNull;
-
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
+import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
-import com.esferalia.aon.occam.test.faker.InvoiceFaker;
-import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod111InsertMonthlyReplacementTest extends AbstractOccamTest {
 	
 	@Test
-	public void mod111InsertMonthlyComplementaryTest() {
-		List<Invoice> invoices = new LinkedList<>();
-		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesProfRetention(ctx,getConfiguration())));
-		Invoice rentingInvoice = AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesRentingRetention(ctx,getConfiguration()));
-		invoices.add(rentingInvoice);
-		Invoice capitalInvoice = AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesCapitalRetention(ctx,getConfiguration())); 
-		invoices.add(capitalInvoice);
-		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesTransportRetention(ctx,getConfiguration())));
-		invoices.add(AON.insertInvoice(getOccam(),InvoiceFaker.getPurchaseFarmerRetention(ctx,getConfiguration())));
-		
-		Mod111 araba = insertModel( Administration.ALAVA);
-		Asserts.assertEqualsDouble("Araba - " + araba.getModelFullName() +". Resultado y facturas no coincide."
-			, getWithHoldingQuota(invoices, araba)
-			, araba.getDeclarationResult());
-			
-		
-		assertNull("Factura de Arrendamiento encontrada en Alcatraz",
-				ctx.getDslContext().select( ALCATRAZ.ID )
-					.from(ALCATRAZ)
-					.where(ALCATRAZ.INVOICE.eq(rentingInvoice.getId()))
-					.and(ALCATRAZ.FS_MODEL.in( araba.getId()))
-					.fetch()
-					.stream()
-					.map(rec -> rec.getValue(ALCATRAZ.ID) )
-					.findFirst()
-					.orElse(null)
-				);
-			
-		assertNull("Factura de Capital mobiliario encontrada en Alcatraz",
-				ctx.getDslContext().select( ALCATRAZ.ID )
-					.from(ALCATRAZ)
-					.where(ALCATRAZ.INVOICE.eq(capitalInvoice.getId()))
-					.and(ALCATRAZ.FS_MODEL.in( araba.getId()))
-					.fetch()
-					.stream()
-					.map(rec -> rec.getValue(ALCATRAZ.ID) )
-					.findFirst()
-					.orElse(null)
-				);
-		
-	}
-	
-	private Double getWithHoldingQuota(List<Invoice> invoices, Mod111 mod) {
-		double quota = 0;
-		if (invoices != null && !invoices.isEmpty()) {
-			for (Invoice inv : invoices) {
-				if (inv != null
-					&& FiscalUtils.isInPeriodRange(mod, inv.getIssueDate() )
-					&& inv.getDetails() != null 
-					&& !inv.getDetails().isEmpty()) {
-					for (InvoiceDetail detail : inv.getDetails()) {
-						if (detail.getInvoiceTaxes() != null && !detail.getInvoiceTaxes().isEmpty()) {
-							for (InvoiceTax tax : detail.getInvoiceTaxes()) {
-								if (tax.getTaxType() == TaxType.RETENTION && 
-									tax.getWithholdingType() == WithholdingType.PROFESSIONAL
-									|| tax.getWithholdingType() == WithholdingType.FARMER
-									|| tax.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR) {
-									
-									quota = AonMathUtils.round(quota + tax.getDeductibleQuota());
-								}
-							}
-						};
-					}
-				}
+	public void mod111InsertMonthlyReplacementTest() {
+		AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration());
+		Date today = new Date();
+		for (Period period : Period.values()) {
+			if (period.isMonthPeriod()) {
+				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+				mod111InsertMonthlyReplacement(AonRandom.getRangeDate(start,end));
 			}
 		}
-		return quota;
+	}
+	
+	public void mod111InsertMonthlyReplacement(Date date) {
+		System.out.println( "\t ---------------------");
+		
+		Mod111 aeat  = insertModel( Administration.COMMON_TERRITORY,date);
+		insertModel( Administration.ALAVA,date);
+		
+		Map<Administration, Double> results = Mod111DAO.getMod111s(ctx, getOccam().getDomain())
+			.filter(mod -> mod.getYear() == aeat.getYear())
+			.filter(mod -> mod.getPeriod() == aeat.getPeriod())
+			.collect(Collectors.groupingBy(Mod111::getAdministration , Collectors.summingDouble(Mod111::getDeclarationResult)));
+			;
+		
+		Asserts.assertEqualsDouble("Sumatorios no coinciden."
+				, results.get(Administration.COMMON_TERRITORY)
+				, results.get(Administration.ALAVA));
+			
 	}
 
-	private Mod111 insertModel( Administration admon) {
+	private Mod111 insertModel( Administration admon, Date date) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-			.setIssueDate(new Date())
+			.setIssueDate(date)
 			.setMonthly(true)
 			.setAdministration(admon)
-			.setReplacement(true)
+			.setReplacement(admon == Administration.ALAVA)
+			.setComplementary(admon == Administration.COMMON_TERRITORY)
+			.setGenerateFromYearStart(true)
 			;
 		Mod111 mod111 = FiscalFaker.createMod111(params);
 		MODEL111.save(getOccam(), mod111);
 		Mod111 actual = MODEL111.get(getOccam(), mod111.getId());  
 		Asserts.assertMod111(mod111, actual);
+		Mod111TestSuite.printModel(actual);
 		return actual;
 	}
 }

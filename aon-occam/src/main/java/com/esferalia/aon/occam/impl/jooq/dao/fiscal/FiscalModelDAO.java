@@ -63,7 +63,7 @@ public class FiscalModelDAO {
 	}
 	
 	private static void log(AONContext ctx, String msg, Object ... params ) {
-		ctx.log().info(msg,params);
+		ctx.log().debug(msg,params);
 	}
 	
 	private static final FiscalModelPropertiesDAO FS_MODEL_PROPERTIES = new FiscalModelPropertiesDAO();
@@ -190,7 +190,7 @@ public class FiscalModelDAO {
 			.where(FS_MODEL_PROPERTIES.getConditions(filter))
 			.and(FS_MODEL.MODEL.eq(model.getValue()))
 			.and(FS_MODEL.DOMAIN.eq(domain))
-			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.ADMINISTRATION.desc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
+			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.ADMINISTRATION.desc(),FS_MODEL.PERIOD.desc(),FS_MODEL.ID.desc())
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier));
