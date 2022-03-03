@@ -88,7 +88,7 @@ public class TbaiSign {
 	}
 	
 	private KeyStore getKeyStore(Certificate cert) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		ByteArrayInputStream keyData = new ByteArrayInputStream(cert.getCertificate());
+		ByteArrayInputStream keyData = new ByteArrayInputStream(cert.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 		keyStore.load(keyData, cert.getPassword().toCharArray());
 		return keyStore;

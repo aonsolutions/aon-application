@@ -20,9 +20,9 @@ import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 
 public class ResponseHandler {
 
-	public static void HandleLroeResponse(LROEResponse response) throws TbaiException {
+	public static void HandleLroeResponse(LROEResponse response) throws Exception {
 		if(response.isError()) {
-			throw new TbaiException(response.getErrorMessage());
+			throw new Exception(response.getErrorMessage());
 		}
 		HandleStatusCode(response.getCode());
 	}

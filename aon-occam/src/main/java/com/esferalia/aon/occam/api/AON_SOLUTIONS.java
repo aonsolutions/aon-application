@@ -401,6 +401,12 @@ public class AON_SOLUTIONS {
 			return getApi().getInvoices(ctx, filter);
 		} 
 	}
+	
+	public static List<Invoice> getTbaiDeletedInvoices(String domainName, Integer domainId, String login) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getTbaiDeletedInvoices(ctx);
+		} 
+	}
 
 	public static TaskHolder getTaskHolder(AonToken aonToken) {
 		TaskHolder taskHolder = null;

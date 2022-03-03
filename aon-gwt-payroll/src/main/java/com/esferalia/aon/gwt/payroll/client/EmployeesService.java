@@ -254,9 +254,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
-	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate) throws IllegalArgumentException;
+	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
+			Date startDate, Date endDate) throws IllegalArgumentException;
 
-	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate) throws IllegalArgumentException;
+	String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
 	
@@ -301,6 +302,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			ContractTransform contractTransform) throws IllegalArgumentException;
 
 	void removeContractTransform(String currentDomainName, String currentUser, String ide) throws IllegalArgumentException;
+
+	Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
+			Date date, Integer contractId);
 	
 	// ------------------------------------------------- SEPE Methods
 	

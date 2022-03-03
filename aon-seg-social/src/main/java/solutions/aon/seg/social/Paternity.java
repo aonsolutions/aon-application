@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -21,18 +22,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.PaternityException;
-import solutions.aon.seg.social.exception.PaternityNotFoundException;
-import solutions.aon.seg.social.exception.PaternityWrongDataException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
@@ -42,20 +40,11 @@ import solutions.aon.seg.social.object.PaternityDetail;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-class Paternity {
+public class Paternity {
 	private static String DATE_FORMAT = "dd/MM/yyyy";
 	
-	final static String[] ID_TYPE = { "NIF", "NIE" };
 	// M -> Madre, P -> 'Otro progenitor', A -> Primer adoptante, B -> Segundo
-	// adoptante
-	final static String[] APPLICANT_TYPE = { "M", "P", "A", "B" };
-	final static String[] MOTHER_REASON = { "Nacimiento de hijo", "Fallecimiento de la madre",
-			"Cesión/Opción en favor del otro progenitor", "Parto múltiple",
-			"Inicio del descanso antes del parto (solo para madre biológica ET)" };
-	final static String[] FATHER_REASON = { "Nacimiento de hijo", "Parto múltiple" };
-	
-	// ADOPTERS es válido para las opciones del primer y segundo adoptante
-	
+
 	final static String ADOPTERS = "Adopción/Tutela/Acogimiento";
 
 	public static boolean grabarCertificado(final InputStream certificateInputStream, final String certificatePassword,
@@ -193,28 +182,39 @@ class Paternity {
 			throw new UnfilledMandatory();
 		}
 	}
+	
+	public static List<PaternityCertificate> getPaternitysDetail(
+			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
+			String regime, String ccc,  Date dateFrom,  Date dateTo,  Optional<String> nss, Optional<Date> startDate) throws SegSocialException, InterruptedException, IOException {
+		return getPaternitysCondition(certificateInputStream, certificatePassword, certificateType, true, regime, ccc, dateFrom, dateTo, nss, startDate);
+	}
 
 	public static List<PaternityCertificate> getPaternitys(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
-			String regime, String ccc,  Date dateFrom,  Date dateTo,  Optional<String> nss, Optional<Date> startDate) throws SegSocialException {
+			String regime, String ccc,  Date dateFrom,  Date dateTo,  Optional<String> nss, Optional<Date> startDate) throws SegSocialException, InterruptedException, IOException {
+		return getPaternitysCondition(certificateInputStream, certificatePassword, certificateType, false, regime, ccc, dateFrom, dateTo, nss, startDate);
+	}
+	
+	private static List<PaternityCertificate> getPaternitysCondition(
+			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, boolean details,
+			String regime, String ccc,  Date dateFrom,  Date dateTo,  Optional<String> nss, Optional<Date> startDate) throws SegSocialException, InterruptedException, IOException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
-			// MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
-			HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
-			htmlPage = formDatos.getInputByValue("Consultar certificado").click();
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
+			
+			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
+			
+			htmlPage = ((HtmlSubmitInput)formDatos.getInputByName("SPM.ACC.AC_TAB2")).click();
+			checkErrors(htmlPage);		
+			
 			formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
-			// REGIME
+
 			formDatos.getInputByName("regimen").setValueAttribute(regime);
-			// CCC
 			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
 			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
-			// DATE FROM
 			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
-			// END DATE
 			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
 			// NAF
 			if(nss.isPresent()) {
@@ -229,39 +229,64 @@ class Paternity {
 
 			// SUBMIT
 			htmlPage = formDatos.getInputByValue("Buscar").click();
-			
 			checkErrors(htmlPage);
 
 			// CHECKING IF THE PAGE THREW RESULTS
 			try {
-				HtmlTable resultTable = (HtmlTable) htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
-				int rows = resultTable.getRowCount() - 1;
-				formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
+				
 				ArrayList<PaternityCertificate> paternityCertificates = new ArrayList<>();
-				for (int i = 1; i <= rows; i++) {
-					HtmlTableCell resultCell = resultTable.getCellAt(i, 0);
-					
-					try {
-						HtmlInput resultInput = (HtmlInput) resultCell.getFirstElementChild();
-						htmlPage = resultInput.click();
-						HtmlPage htmlAux = formDatos.getInputByValue("Ver detalle").click();
-
-						PaternityCertificate pcb = new PaternityCertificate();
-							
-						setDataGeneral(htmlAux, pcb);
-						
-						setDataBases(htmlAux, pcb);
-//						
-						setDataDetail(htmlAux, pcb);
-//	
-						setPdf(htmlAux, pcb);
+				
+				boolean last = false;
 	
-						paternityCertificates.add(pcb);
-					} catch (NullPointerException | ElementNotFoundException e) {
-						e.printStackTrace();
+				while (!last) {
+					ArrayList<PaternityCertificate> certificates = new ArrayList<>();
+					int i = 0;
+					formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
+					HtmlTable table = (HtmlTable) formDatos.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
+
+					for (final HtmlTableRow row : table.getRows()) {
+						try {
+							if(i>0) {
+								DomNode detail = formDatos.querySelector("[name='SPM.ACC.AC_CO_DETALLE']");
+
+								PaternityCertificate pcb = new PaternityCertificate()
+								.setCcc(ccc);
+								
+								setData(row, pcb);
+				
+								if(details && !pcb.getCanceled()) {
+									try {
+										HtmlInput resultInput = (HtmlInput) row.getCell(0).getFirstElementChild();
+										resultInput.click();
+										HtmlPage htmlAux = ((HtmlInput)detail).click();
+
+										setDataGeneral(htmlAux, pcb);
+										setDataBases(htmlAux, pcb);
+										setDataDetail(htmlAux, pcb);
+//										setPdf(htmlAux, pcb);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+								certificates.add(pcb);
+							}
+						} catch (NullPointerException | ElementNotFoundException e) {
+							e.printStackTrace();
+						}
+						i++;
 					}
+			        
+					DomNode next = formDatos.querySelector("[name='SPM.ACC.AC_CO_SIGUIENTE']");
+					if(next!=null) {
+						htmlPage =((HtmlSubmitInput) next).click();
+					} else {
+						last = true;
+					}
+					paternityCertificates.addAll(certificates);
 				}
-				return paternityCertificates;
+				
+//				Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testPaternity.html");
+				return paternityCertificates.stream().sorted((o1, o2)-> o1.getStartDate().compareTo(o2.getStartDate())).collect(Collectors.toList());
 			} catch (NullPointerException | ElementNotFoundException e) {
 				checkErrors(htmlPage);
 			}
@@ -278,6 +303,30 @@ class Paternity {
 		}
 		return null;
 	}
+	
+	private static void setData(HtmlTableRow row, PaternityCertificate pcb) {
+		pcb.setWorkerNaf(Toolkit.noSpaces(row.getCell(1).getVisibleText()));
+		
+		String startStr = Toolkit.removeNBSP(row.getCell(2).getVisibleText().trim());
+		if(!startStr.isEmpty())
+			pcb.setStartDate(Toolkit.parseDate(startStr, DATE_FORMAT));
+
+		String endDateStr = Toolkit.removeNBSP(row.getCell(3).getVisibleText().trim());
+		if(!endDateStr.isEmpty())
+			pcb.setEndDate(Toolkit.parseDate(endDateStr, DATE_FORMAT));
+		
+		pcb.setWorkerApplicantType(PaternityCertificate.ApplicantType.safeValueOf(row.getCell(4).getVisibleText().trim()));
+		
+		String receptionStr = Toolkit.removeNBSP(row.getCell(5).getVisibleText().trim());
+		if(!receptionStr.isEmpty())
+			pcb.setReceptionDate(Toolkit.parseDate(receptionStr, DATE_FORMAT));
+		
+		if(row.getCell(6).getVisibleText().contains("Anulado")) {
+			pcb.setCanceled(true);
+		}
+		
+	}
+	
 
 	private static void setDataBases(HtmlPage htmlPage, PaternityCertificate pcb) {
 		DomNodeList<DomNode> tdList1 = htmlPage.querySelectorAll("table[class='margenIzq12 rellenoIzq12 ancho60 clearL'] td");
@@ -291,7 +340,7 @@ class Paternity {
 		if(!endStr.isEmpty())
 			pcb.setEndDate(Toolkit.parseDate(endStr, DATE_FORMAT));
 		
-		pcb.setPartiality(Toolkit.removeNBSP(tdList1.get(3).getVisibleText().trim()));
+		pcb.setPartiality( Toolkit.parseStringToFloat(tdList1.get(3).getVisibleText()) );
 	}
 	
 	private static void setDataDetail(HtmlPage htmlPage, PaternityCertificate pcb) {
@@ -301,9 +350,10 @@ class Paternity {
 			String dateStr = Toolkit.removeNBSP(tds.get(2).getVisibleText().trim());
 			if(!dateStr.isEmpty()) {
 				Date date = Toolkit.parseDate(dateStr, "yyyy/MM");
-				String baseCCStr = Toolkit.removeNBSP(tds.get(3).getVisibleText().trim());
-				String baseCPStr = Toolkit.removeNBSP(tds.get(4).getVisibleText().trim());
-				String daysStr = Toolkit.removeNBSP(tds.get(5).getVisibleText().trim());
+				
+			String baseCCStr = Toolkit.removeNBSP(tds.get(3).getVisibleText().trim());
+			String baseCPStr = Toolkit.removeNBSP(tds.get(4).getVisibleText().trim());
+			String daysStr = Toolkit.removeNBSP(tds.get(5).getVisibleText().trim());
 	
 				pcb.addPaternityDetail(
 						new PaternityDetail().setDate(date)
@@ -330,7 +380,7 @@ class Paternity {
 			is.close();
 		} catch (Exception e) {}
 	}
-	
+
 	private static void setDataGeneral(HtmlPage htmlPage, PaternityCertificate pcb) {
 		htmlPage.querySelectorAll("fieldset dt").forEach(dt->{
 			String text = Toolkit.removeNBSP(dt.getVisibleText()).trim();
@@ -338,7 +388,7 @@ class Paternity {
 			if(!value.isEmpty()) {
 				if (text.indexOf("C.C.C:")>=0) {
 					pcb.setCcc(value.replaceAll("\\D+", ""));
-				} else if (text.indexOf("Código Postal:")>=0) {
+				} else if (text.indexOf("C\u00f3digo Postal:")>=0) {
 					pcb.setPostCode(value);
 				} else if (text.indexOf("Domicilio:")>=0) {
 					pcb.setAddress(value);
@@ -347,7 +397,7 @@ class Paternity {
 				} else if (text.indexOf("Localidad:")>=0) {
 					pcb.setMunicipality(value);
 				} else if (text.indexOf("Motivo:")>=0) {
-					pcb.setReason(value);
+					pcb.setReason(PaternityCertificate.ReasonType.safeValueOf(value));
 				} else if (text.indexOf("Fecha de recepción:")>=0) {
 					pcb.setReceptionDate(Toolkit.parseDate(value, DATE_FORMAT));
 				} else if (text.indexOf("Trabajador")>=0) {
@@ -356,19 +406,19 @@ class Paternity {
 					pcb.setWorkerNif(Toolkit.removeExtraZeros(value));
 				} else if (text.indexOf("N.A.F.:")>=0) {
 					pcb.setWorkerNaf(Toolkit.removeExtraZeros(value));
-				} else if (text.indexOf("Grupo cotización:")>=0) {
+				} else if (text.indexOf("Grupo cotizaci\u00f3n:")>=0) {
 					pcb.setWorkerGroup(value);
 				} else if (text.indexOf("F. alta empresa:")>=0) {
 					pcb.setWorkerDischargeDate(Toolkit.parseDate(value, DATE_FORMAT));
 				} else if (text.indexOf("F. baja empresa:")>=0) {
 					pcb.setWorkerWithdrawalDate(Toolkit.parseDate(value, DATE_FORMAT));
-				} else if (text.indexOf("Código contrato:")>=0) {
+				} else if (text.indexOf("C\u00f3digo contrato:")>=0) {
 					pcb.setWorkerContractCode(value);
 				} else if (text.indexOf("Tipo contrato:")>=0) {
 					pcb.setWorkerContractType(value);
 				} else if (text.indexOf("Coef. t. parcial:")>=0) {
 					pcb.setWorkerPartialTimeCoef(Toolkit.parseStringToFloat(value));
-				} else if (text.indexOf("ES EMPLEADO PÚBLICO")>=0) {
+				} else if (text.indexOf("ES EMPLEADO P\u00daBLICO")>=0) {
 					if (value.indexOf("NO")>=0) {
 						pcb.setIsPublicEmployee(false);
 					} else if (value.equalsIgnoreCase("")) {
@@ -451,7 +501,6 @@ class Paternity {
 		return null;
 	}
 
-	
 	private static void checkErrors(HtmlPage htmlPage) throws InvalidDataException {
 		DomNode errors = htmlPage.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
 		if (errors != null)

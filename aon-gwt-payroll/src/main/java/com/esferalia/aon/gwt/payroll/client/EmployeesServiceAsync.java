@@ -272,10 +272,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
-	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
+	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
+	void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
@@ -323,6 +323,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void removeContractTransform(String currentDomainName, String currentUser, String ide, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void getSepeComunicationData(String currentDomainName, String currentUser, String document, Date date, Integer contractId,
+			AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
 	
 	// ------------------------------------------------- SEPE Methods
 	

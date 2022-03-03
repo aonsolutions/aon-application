@@ -643,8 +643,7 @@ class SistemaREDITParts {
 	// GET ALL THE ITPARTS
 	private static Collection<ITPart> getFullItPartsImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss)
-			throws FailingHttpStatusCodeException, IOException, InterruptedException, InvalidCertificateException,
-			InvalidDataException {
+			throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
 		Toolkit.verifyData(new Object[] { regime, ccc, from, to });
 		checkCertificate(certificateInputStream);
@@ -657,14 +656,22 @@ class SistemaREDITParts {
 
 			ArrayList<ITPart> itParts = new ArrayList<>();
 			
-			HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
-			HtmlPage document = wait4(origen, p -> p.getAnchorByHref(URL_BASE)).orElseThrow().click();
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
+			handleItPartErrors(htmlPage);
+
+			Optional<DomNode> element = wait4(htmlPage, p -> p.querySelector("[href='"+URL_BASE+"']"));
+			if(element.isPresent()) 
+				htmlPage = ((HtmlAnchor)element.get()).click();
+			else 
+				throw new SegSocialException("Sin permisos para ver esta opci\\u00f3n en TGSS");
+
+			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
 			
-			document = document.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
+			handleItPartErrors(htmlPage);
 			
-			HtmlForm formularioPartes = document.getFormByName("BuscaPartesForm");
+			HtmlForm formularioPartes = htmlPage.getFormByName("BuscaPartesForm");
 			formularioPartes.getInputByName("regimen").setValueAttribute(regime);
-			document.getElementById("ccc1").setAttribute("value", ccc.substring(0, 2));
+			htmlPage.getElementById("ccc1").setAttribute("value", ccc.substring(0, 2));
 			formularioPartes.getInputByName("ccc2").setValueAttribute(ccc.substring(2));
 
 			Integer[] fromArray = Toolkit.getDateArray(from);
@@ -686,13 +693,13 @@ class SistemaREDITParts {
 
 			webClient.getOptions().setJavaScriptEnabled(true);
 			HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
-			document = show.click();
-			handleItPartErrors(document);
+			htmlPage = show.click();
+			handleItPartErrors(htmlPage);
 			
 			boolean last = false;
 			
 			while (!last) {
-				DomNode node = document.querySelector(".resultados");
+				DomNode node = htmlPage.querySelector(".resultados");
 				if(node instanceof HtmlTable) {
 					HtmlTable table = (HtmlTable)node;
 					int i = 0;
@@ -706,10 +713,10 @@ class SistemaREDITParts {
 							if(Boolean.FALSE.equals(cancelled) && Boolean.FALSE.equals(wrong)) {
 
 								HtmlAnchor desc = (HtmlAnchor) row.getCell(0).getFirstElementChild();
-								HtmlPage htmlPage = HtmlUnitToolkit.setUrlParse(document, desc).click();
+								HtmlPage document = HtmlUnitToolkit.setUrlParse(htmlPage, desc).click();
 						
-								handleItPartErrors(htmlPage);
-								ITPart part = infoPart(htmlPage);
+								handleItPartErrors(document);
+								ITPart part = infoPart(document);
 								if (!itParts.contains(part))
 									itParts.add(part);
 							}
@@ -718,7 +725,7 @@ class SistemaREDITParts {
 					}
 				}
 
-				DomNode next = HtmlUnitToolkit.getElConstains(document, ".derecha a", "Siguiente");
+				DomNode next = HtmlUnitToolkit.getElConstains(htmlPage, ".derecha a", "Siguiente");
 	
 				if(next instanceof HtmlAnchor) {
 					
@@ -735,7 +742,7 @@ class SistemaREDITParts {
 		    	    }) .collect(Collectors.joining("&"));
 				    
 					anchor.setAttribute("href", "https://w2.seg-social.es"+urlBase+decodedQuery);
-					document = anchor.click();
+					htmlPage = anchor.click();
 				}  else
 					last = true;
 			}

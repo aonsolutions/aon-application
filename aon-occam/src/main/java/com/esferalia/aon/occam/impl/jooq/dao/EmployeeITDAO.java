@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.EmployeeNotFoundexception;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
@@ -43,7 +45,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class EmployeeITDAO {
 	
-//	private static String CONTRACT_DATA_NAMES [] = {"INICIO_PAGO_DIRECTO", "TIPO_SOLICITANTE_MAT_PAT", "MOTIVO_MAT_PAT", "BASE_REGULADORA", "COEFICIENTE_MATERNIDAD", "COEFICIENTE_PATERNIDAD"};
+	private static String[] CONTRACT_DATA_NAMES = {"INICIO_PAGO_DIRECTO", "BASE_REGULADORA", "TIPO_SOLICITANTE_MAT_PAT", "MOTIVO_MAT_PAT", "COEFICIENTE_MATERNIDAD", "COEFICIENTE_PATERNIDAD"};
 	
 	public static Optional<EmployeeIT> get(AONContext ctx, ContractLeaveFilter filter ) {
 		ctx.checkRead();
@@ -58,10 +60,8 @@ public class EmployeeITDAO {
 
 	public static Stream<EmployeeIT> getStream(AONContext ctx, ContractLeaveFilter filter) {
 		ctx.checkRead();
-		DSLContext dslContext = ctx.getDslContext();
 		
-		Map<EmployeeIT, List<EmployeeITPart>> employeeITMap = 
-		dslContext
+		Map<EmployeeIT, List<EmployeeITPart>> employeeITMap = ctx.getDslContext()
 		.select()
 		.from(CONTRACT_LEAVE)
 		.innerJoin(CONTRACT_LEAVE_DETAIL).onKey()
@@ -69,8 +69,7 @@ public class EmployeeITDAO {
 		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
-		.where(new ContractLeavePropertiesDAO().getConditions(filter))
-		.fetchGroups( r -> 
+		.where(new ContractLeavePropertiesDAO().getConditions(filter)).fetchGroups( r -> 
 			new EmployeeIT()
 			.setId(r.get(CONTRACT_LEAVE.ID))
 			.setDomain(r.get(CONTRACT_LEAVE.DOMAIN))
@@ -80,9 +79,7 @@ public class EmployeeITDAO {
 			.setStartDate(r.get(CONTRACT_LEAVE.START_DATE))
 			.setEndDate(r.get(CONTRACT_LEAVE.END_DATE))
 			.setDailyCgcBase(r.get(CONTRACT_LEAVE.DAILY_CGC_BASE))
-			.setDailyCgpBase(r.get(CONTRACT_LEAVE.DAILY_CGP_BASE))
 			.setParent(r.get(CONTRACT_LEAVE.PARENT))
-			.setDailyRegBase(r.get(CONTRACT_LEAVE.DAILY_REG_BASE))
 			
 			.setRegime(getSSRegimeCode(r.get(CONTRACT.SS_REGIME)))
 			.setCcc(r.get(ENTERPRISE_CCC.CCC))
@@ -114,8 +111,9 @@ public class EmployeeITDAO {
 			return new EmployeeIT[0];
 		
 		for (EmployeeIT employeeIT : employeeIts) {
-			ContractLeaveRecord contractLeaveRecord = setContractLeave(ctx.getDslContext(), employeeIT);
-			setContractLeaveDetail(ctx.getDslContext(), contractLeaveRecord, employeeIT.getITsParts());
+			ContractLeaveRecord contractLeaveRecord = setContractLeave(ctx, employeeIT);
+			setContractLeaveDetail(ctx, contractLeaveRecord, employeeIT.getITsParts());
+			setContractData(ctx, contractLeaveRecord, employeeIT.getContractDatas());
 		}
 		
 		return employeeIts;
@@ -133,11 +131,13 @@ public class EmployeeITDAO {
 			
 			if(baja.isPresent()) {
 				removeLeaveBatch(dslContext, employeeIT.getITsParts());
-
+				
 				dslContext.batch(	
 						dslContext.delete(CONTRACT_LEAVE_DETAIL).where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(employeeIT.getId())),
 						dslContext.delete(CONTRACT_LEAVE).where(CONTRACT_LEAVE.ID.eq(employeeIT.getId()))
 				).execute();
+
+				removeContractData(dslContext, employeeIT.getContract(), employeeIT.getStartDate());
 			} else {
 		
 				removeLeaveBatch(dslContext, parts);	
@@ -168,9 +168,17 @@ public class EmployeeITDAO {
 		).execute();
 	}
 	
+	private static void removeContractData(DSLContext dslContext, Integer contractId, Date startDate) {
+		dslContext.delete(CONTRACT_DATA)
+		.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+		.and(CONTRACT_DATA.START_DATE.eq(toSql(startDate)))
+		.and(CONTRACT_DATA.NAME.in(CONTRACT_DATA_NAMES))
+		.execute();
+	}
+	
 
-	private static ContractLeaveRecord setContractLeave(DSLContext dslContext, EmployeeIT employeeIt) {
-			
+	private static ContractLeaveRecord setContractLeave(AONContext ctx, EmployeeIT employeeIt) {
+			DSLContext dslContext = ctx.getDslContext();
 			Optional<ContractLeaveRecord> exists = getContractLeave(dslContext, employeeIt);
 			
 			ContractLeaveRecord contractLeaveRecord;
@@ -185,10 +193,6 @@ public class EmployeeITDAO {
 				
 				employeeIt.getDailyCgcBase().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.DAILY_CGC_BASE, d) );
 
-				employeeIt.getDailyCgpBase().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.DAILY_CGP_BASE, d) );
-
-				employeeIt.getDailyRegBase().ifPresent(d-> contractLeaveRecord.set(CONTRACT_LEAVE.DAILY_REG_BASE, d) );
-				
 				 if(null!=employeeIt.getDischargeCause()) 
 					 contractLeaveRecord.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, employeeIt.getDischargeCause().value());
 				 
@@ -210,10 +214,6 @@ public class EmployeeITDAO {
 				employeeIt.getParent().ifPresent(d-> sets.set(CONTRACT_LEAVE.PARENT, d) );
 				
 				employeeIt.getDailyCgcBase().ifPresent(d-> sets.set(CONTRACT_LEAVE.DAILY_CGC_BASE, d) );
-
-				employeeIt.getDailyCgpBase().ifPresent(d-> sets.set(CONTRACT_LEAVE.DAILY_CGP_BASE, d) );
-
-				employeeIt.getDailyRegBase().ifPresent(d-> sets.set(CONTRACT_LEAVE.DAILY_REG_BASE, d) );
 				
 				 if(null!=employeeIt.getDischargeCause()) 
 					 sets.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, employeeIt.getDischargeCause().value());
@@ -224,8 +224,8 @@ public class EmployeeITDAO {
 		 return contractLeaveRecord;
 	}
 	
-	private static void setContractLeaveDetail(DSLContext dslContext, ContractLeaveRecord contractLeaveRecord, List<EmployeeITPart> parts) {
-
+	private static void setContractLeaveDetail(AONContext ctx, ContractLeaveRecord contractLeaveRecord, List<EmployeeITPart> parts) {
+		DSLContext dslContext = ctx.getDslContext();
 		InsertSetMoreStep<ContractLeaveDetailRecord> insertContractLeaveDetail = null;
 		
 		List<EmployeeITPart> partsSort= parts.stream().sorted((o1, o2)-> o1.getDate().compareTo(o2.getDate())).collect(Collectors.toList());
@@ -274,6 +274,22 @@ public class EmployeeITDAO {
 		if(null!=insertContractLeaveDetail) insertContractLeaveDetail.execute();
 	}
 	
+	/**
+	 * SAVE AND UPDATE CONTRACT_DATA
+	 * @param ctx AONContext
+	 * @param contractLeaveRecord ContractLeaveRecord
+	 * @param contractDatas  List contractDatas(name, expression, startDate, endDate)
+	 */
+	private static void setContractData(AONContext ctx, ContractLeaveRecord contractLeaveRecord, List<ContractData> contractDatas) {
+		if(!contractDatas.isEmpty()) {
+			EmployeeDAO.setContractData(ctx, 
+				ctx.getDomainName(), 
+				f->f.getDomainProperty().eq(contractLeaveRecord.getDomain()).and(f.getIdProperty().eq(contractLeaveRecord.getContract())), 
+				contractDatas.toArray(ContractData[]::new)
+			);
+		}
+	}
+	
 	private static Optional<ContractLeaveRecord> getContractLeave(DSLContext dslContext, EmployeeIT employeeIt) {
 		SelectConditionStep<Record> condition = dslContext
 		.select()
@@ -311,7 +327,7 @@ public class EmployeeITDAO {
 	}
 	
 	private static ContractRecord getContract(DSLContext dslContext, EmployeeIT employeeIt) {
-		java.sql.Date itStartDate = new java.sql.Date(employeeIt.getStartDate().getTime());
+		java.sql.Date itStartDate = toSql(employeeIt.getStartDate());
 		return dslContext
 		.select()
 		.from(REGISTRY)
@@ -339,14 +355,15 @@ public class EmployeeITDAO {
 		return types[ordinal].getCode();
 	}
 	
-	private static java.sql.Date toSql(Date date) {
-		return null!= date ? new java.sql.Date(date.getTime()) : null;
-	}
-	
 	private static java.sql.Date normalizeStartDateToSave(ContractLeaveType contractLeaveType, Date date) {
 		if(contractLeaveType!=null && contractLeaveType.equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
 			date = AonDateUtils.addDays(date, 1);
 		
-		return new java.sql.Date(date.getTime());
+		return toSql(date);
 	}	
+	
+	private static java.sql.Date toSql(Date date) {
+		return null!= date ? new java.sql.Date(date.getTime()) : null;
+	}
+	
 }

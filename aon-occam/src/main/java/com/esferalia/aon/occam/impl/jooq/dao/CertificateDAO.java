@@ -140,7 +140,7 @@ public class CertificateDAO {
 		
 		// TGSS CERTIFICATE
 		if(certificate.getOwner() == CertificateOwner.USER)
-			saveUserCertificate(ctx, domainId, userId, certificate);
+			saveUserCertificate(ctx, userId, certificate);
 		
 		// SEPE CERTIFICATE
 		if(certificate.getOwner() == CertificateOwner.ENTERPRISE)
@@ -190,6 +190,7 @@ public class CertificateDAO {
 		Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
 				.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
 				.and(RATTACH.TYPE.eq((byte)4))
+				.and(RATTACH.DOMAIN.eq(domainId))
 				.fetch();
 		
 		for(Record certificateRecord : certificateRecords) {
@@ -286,25 +287,26 @@ public class CertificateDAO {
 
 	// -------------------------- Methods auxiliar methods (save)
 	
-	private static void saveUserCertificate(AONContext ctx, Integer domainId, Integer userId, Certificate certificate) {
+	private static void saveUserCertificate(AONContext ctx, Integer userId, Certificate certificate) {
 		Record userRecord = ctx.getDslContext().select().from(USER).where(USER.ID.eq(userId)).fetchOne();
 		Integer registryUserId = userRecord.get(USER.REGISTRY);
+		Integer userDomain = userRecord.get(USER.DOMAIN);
 		
 		// User Registry
-		if(null == registryUserId) registryUserId = createRegistryForUser(ctx, userRecord, domainId);
+		if(null == registryUserId) registryUserId = createRegistryForUser(ctx, userRecord);
 		
 		// Description	
 		String description = parseDescriptionLength(certificate.getDescription(), certificate.getPassword());
 		certificate.setDescription(description);
 		
-		if(null == certificate.getId()) certificate.setId(insert(ctx, domainId, registryUserId, certificate));
+		if(null == certificate.getId()) certificate.setId(insert(ctx, userDomain, registryUserId, certificate));
 		else update(ctx, certificate);
 		
 		// Update Password
 		if(null != certificate.getPasswordId()) updatePassword(ctx, certificate);
 			
 		// Rattach Tags
-		updateCertificateTags(ctx, domainId, certificate);
+		updateCertificateTags(ctx, userDomain, certificate);
 	}
 	
 	private static void saveEnterpriseCertificate(AONContext ctx, Integer domainId, Certificate certificate) {
@@ -453,12 +455,13 @@ public class CertificateDAO {
 		}
 	}
 
-	private static Integer createRegistryForUser(AONContext ctx, Record userRecord, Integer domainId) {
+	private static Integer createRegistryForUser(AONContext ctx, Record userRecord) {
 		String userName = userRecord.get(USER.NAME);
+		Integer userDomain = userRecord.get(USER.DOMAIN);
 		Integer userId = userRecord.get(USER.ID);
 		
 		RegistryRecord registryUserRecord = ctx.getDslContext().insertInto(REGISTRY)
-				.set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.DOMAIN, userDomain)
 				.set(REGISTRY.NAME, userName)
 				.returning(REGISTRY.ID)
 				.fetchOne();

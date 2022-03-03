@@ -804,17 +804,17 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getEmployeeCbc(String currentDomainName, String user, String document, Date startDate,
+	public void getEmployeeCbc(String currentDomainName, String user, String document, Integer contractId, Date startDate,
 			Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeCbc(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeCbc(currentDomainName, user, document, contractId, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void getEmployeeCto(String currentDomainName, String user, String document, Date startDate,
+	public void getEmployeeCto(String currentDomainName, String user, String document, Integer contractId, Date startDate,
 			Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, contractId, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	// ------------------------------------------------- TGSS Comunications
@@ -918,6 +918,13 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.removeContractTransform(currentDomainName, currentUser, ide, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getSepeComunicationData(String currentDomainName, String currentUser, String document, Date date,
+			Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getSepeComunicationData(currentDomainName, currentUser, document, date, contractId, new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}
 	
 	// ------------------------------------------------- SEPE Methods

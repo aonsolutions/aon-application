@@ -756,6 +756,7 @@ public class JooqEmployee {
 		
 		contractData.setContractId(contract);
 		contractData.setStartDate(contractTable.get(CONTRACT.START_DATE));
+		contractData.setOriginalStartDate(contractTable.get(CONTRACT.START_DATE));
 		contractData.setEndDate(contractTable.get(CONTRACT.END_DATE));
 		contractData.setSeniorityDate(contractTable.get(CONTRACT.SENIORITY_DATE));
 		contractData.setAgreementCategory(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
