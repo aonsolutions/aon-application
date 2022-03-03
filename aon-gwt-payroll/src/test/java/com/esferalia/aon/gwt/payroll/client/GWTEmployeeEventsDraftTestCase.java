@@ -641,6 +641,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				// TODO Auto-generated method stub
 				
 			}
+
+
+
+			@Override
+			public void getSepeComunicationData(String currentDomainName, String currentUser, String document,
+					Date date, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
 			
 		};
 

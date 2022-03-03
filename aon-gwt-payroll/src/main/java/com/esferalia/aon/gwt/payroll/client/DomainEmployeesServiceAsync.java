@@ -607,6 +607,10 @@ public class DomainEmployeesServiceAsync {
 	public void removeContractTransform(String ide, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.removeContractTransform(getCurrentDomainName(), getCurrentUser(), ide, callback);
 	}
+
+	public void getSepeComunicationData(String document, Date fini, Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getSepeComunicationData(getCurrentDomainName(), getCurrentUser(), document, fini, contractId, callback);
+	}
 	
 	// ------------------------------------------------- SEPE Methods
 	

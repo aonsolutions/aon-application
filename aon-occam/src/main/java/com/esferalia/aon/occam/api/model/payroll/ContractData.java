@@ -6,8 +6,6 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.HasEndDate;
 import com.esferalia.aon.occam.api.model.HasStartDate;
 
-import jdk.internal.module.ModuleHashes.HashSupplier;
-
 @SuppressWarnings("serial")
 public class ContractData implements Serializable, HasStartDate, HasEndDate{
 
@@ -85,5 +83,17 @@ public class ContractData implements Serializable, HasStartDate, HasEndDate{
 		this.endDate = endDate;
 		return this;
 	}
-
+	
+		
+   @Override
+    public String toString() {
+        return "ContractData{"
+        		+ "id=" + id +","
+        		+ "domain=" + domain +","
+        		+ "name=" + name +","
+        		+ "contract=" + contract +","
+        		+ "expression=" + expression +","
+        		+ "startDate=" + startDate +","
+        		+ "endDate=" + endDate+ "}";
+    }
 }

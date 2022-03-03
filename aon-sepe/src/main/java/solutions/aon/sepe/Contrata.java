@@ -44,7 +44,12 @@ import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
 import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrata {
-//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testTransformation.html");
+	
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testTransformation.html");
+	
+	private Contrata() {
+		throw new IllegalStateException("Utility class");
+	}
 	  
 	public static String sendContrata(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Contract cto) throws SepeException {
@@ -52,10 +57,10 @@ public class Contrata {
 				return sendContrataImpl(certificateInputStream, certificatePassword, certificateType, cto);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-			catch (MalformedURLException e) {throw new SepeException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e);
+			}
 			return null;
 	}
 	
@@ -83,7 +88,8 @@ public class Contrata {
 	}
 	
 	private static String sendContrataImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
-			throws FailingHttpStatusCodeException, IOException, InterruptedException, SepeException {
+			throws SepeException, FailingHttpStatusCodeException, InterruptedException, MalformedURLException, IOException {
+		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
@@ -93,6 +99,7 @@ public class Contrata {
 
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
 	        handleSepeExceptions(htmlPage);
+	        
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 	        handleSepeExceptions(htmlPage);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/atraves_comunicacion.jsp").click();
@@ -144,35 +151,56 @@ public class Contrata {
 	
 				form.getInputByName("nombre").setValueAttribute(cto.getName());
 				form.getInputByName("apellido1").setValueAttribute(cto.getSurname());
-				if(cto.getLastSurname()!=null)form.getInputByName("apellido2").setValueAttribute(cto.getLastSurname());
-				if(cto.getSex()!=null)((HtmlSelect)form.querySelector("select[name=codsexo]")).setSelectedAttribute(cto.getSex().getValue().toString(), true);//SELECT  ("-1"=>"","1"=>"HOMBRE","2"=>"MUJER")
 				
+				if(cto.getLastSurname()!=null)
+					form.getInputByName("apellido2").setValueAttribute(cto.getLastSurname());
+				
+				if(cto.getSex()!=null)
+					((HtmlSelect)form.querySelector("select[name=codsexo]")).setSelectedAttribute(cto.getSex().getValue().toString(), true);//SELECT  ("-1"=>"","1"=>"HOMBRE","2"=>"MUJER")
 
-				String[] dateBirth = Toolkit.dateString(cto.getDateBirth());
-				form.getInputByName("diafechanac").setValueAttribute(dateBirth[0]);
-				form.getInputByName("mesfechanac").setValueAttribute(dateBirth[1]);
-				form.getInputByName("anniofechanac").setValueAttribute(dateBirth[2]);
+				if(cto.getDateBirth()!=null) {
+					String[] dateBirth = Toolkit.dateString(cto.getDateBirth());
+					form.getInputByName("diafechanac").setValueAttribute(dateBirth[0]);
+					form.getInputByName("mesfechanac").setValueAttribute(dateBirth[1]);
+					form.getInputByName("anniofechanac").setValueAttribute(dateBirth[2]);
+				}
 
 				((HtmlSelect)form.querySelector("select[name=nacionalidad]")).setSelectedAttribute(cto.getCodNationality().toString(), true);
 				((HtmlSelect)form.querySelector("select[name=codpaisdomicilio]")).setSelectedAttribute(cto.getCodPaisDom().toString(), true);
-				form.getInputByName("municipio").setValueAttribute(cto.getCodMunDom().toString());
+
+				if(cto.getCodMunDom()!=null)
+					form.getInputByName("municipio").setValueAttribute(cto.getCodMunDom());
+				
 				form.getInputByName("nass1").setValueAttribute(nss.substring(0, 2));
+
 				form.getInputByName("nass2").setValueAttribute(nss.substring(2, 10));
+
 				form.getInputByName("nass3").setValueAttribute(nss.substring(10));
+				
 			}
-
+			
 			{//DATA CONTRACT
-				String[] dateInitContract = Toolkit.dateString(cto.getDateIniContract());
-				form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
-				form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
-				form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
-				if(cto.getCodFormativo() > 0) 
-					((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
-				form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation()); // disabled
-				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
-				((HtmlSelect)form.querySelector("select[name=codpais]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
-				form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork().toString());//disabled
+				if(cto.getDateIniContract()!=null) {
+					String[] dateInitContract = Toolkit.dateString(cto.getDateIniContract());
 
+					form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
+					form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
+					form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
+					if(cto.getCodFormativo()!=null && cto.getCodFormativo() > 0) 
+						((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
+				}
+	
+				if(cto.getCodOccupation()!=null) {
+					form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation()); // disabled
+					form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
+				}
+
+				if(cto.getCodPaisWork()!=null) 
+					((HtmlSelect)form.querySelector("select[name=codpais]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
+				
+				if(cto.getCodMunWork()!=null) 
+					form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork());//disabled
+		
  				((HtmlSelect)form.querySelector("select[name=procedeDeOfertaEmpleo]")).setSelectedAttribute(cto.getOffer().getValue(), true);
 			}
 			
@@ -217,9 +245,8 @@ public class Contrata {
 					((HtmlSelect)form.querySelector("select[name=codobjetointerinidad]")).setSelectedAttribute(interinidad.get(), true);
 				}
 			}
-
+			
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-
 			handleSepeExceptions(htmlPage);
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 
@@ -334,8 +361,6 @@ public class Contrata {
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 			handleSepeExceptions(htmlPage);
 			handleSepeAlert(alertHandler.getCollectedAlerts());
-			
-//			Toolkit.buildFile(form.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testTransformation.html");
 			
 	        String message = getSuccessMessage(htmlPage);
 			if(message!=null && message.contains("se ha realizado correctamente"))
@@ -769,7 +794,7 @@ public class Contrata {
 		  return htmlPage;
 	}
 	
-	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto) throws ElementNotFoundException, IOException {
+	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto) throws ElementNotFoundException, IOException, SepeException {
 		String href = null;
         String oneCodCto = codCto.substring(0,1);
         switch (oneCodCto) {
@@ -779,12 +804,17 @@ public class Contrata {
 			case "2": // INDEFINIDO_TIEMPO_PARCIAL
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=2";
 			break;
+			case "3": // Fijo discontinuo
+				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=3";
+			break;
 			case "4": // TEMPORAL_TIEMPO_COMPLETO
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=4";
 			break;
 			case "5": // TEMPORAL_TIEMPO_PARCIAL
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=5";
 			break;
+			default:
+				throw new SepeException("Contrato no soportado");
 		}
         htmlPage = htmlPage.getAnchorByHref(href).click();
         return htmlPage;

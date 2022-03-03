@@ -11,6 +11,8 @@ public class ContractSpecificData implements Serializable {
 	
 	private Integer id;
 	private String cno;
+	private String ide;
+	private Date comunicationDate;
 	private String calendarFormativeStartDate;
 	private String calendarFormativeEndDate;
 	private String formativeLevel;
@@ -88,6 +90,22 @@ public class ContractSpecificData implements Serializable {
 
 	public void setCno(String cno) {
 		this.cno = cno;
+	}
+
+	public String getIde() {
+		return ide;
+	}
+
+	public void setIde(String ide) {
+		this.ide = ide;
+	}
+
+	public Date getComunicationDate() {
+		return comunicationDate;
+	}
+
+	public void setComunicationDate(Date comunicationDate) {
+		this.comunicationDate = comunicationDate;
 	}
 
 	public Date getCalendarFormativeStartDate() {
