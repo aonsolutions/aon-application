@@ -27,26 +27,25 @@ public class TestContrato {
 	@Ignore
 	public void sendContrato() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
-			String certificateType = "pkcs12";
 			@SuppressWarnings("deprecation")
 			Date fnac = new Date("1965/03/13");
 			@SuppressWarnings("deprecation")
 			Date fini = new Date("2022/03/01");
 			ContractBuilder bd = new ContractBuilder()
 			.setRegimen("0111")
-			.setCtaCti("01105360062")
-			.setCifEnterprise("B01487271")
-			.setIpf("16262835H")
-			.setName("JULIO")
-			.setSurname("GARCIA")
-			.setLastSurname("PEREZ")
+			.setCtaCti("28231545357")
+			.setCifEnterprise("B87812889")
+			.setIpf("29128959B")
+			.setName("MARCOS")
+			.setSurname("SÁNCHEZ")
+			.setLastSurname("HERNÁNDEZ")
 			.setDateBirth(fnac)
 			.setSex(SexType.HOMBRE)
 			.setCodNationality(724)
 			.setCodPaisDom(724)
 			.setCodMunDom("01059") 
-			.setNss("010022757387")
-			.setCodContract("401")
+			.setNss("501012426156")
+			.setCodContract("300")
 			.setDateIniContract(fini)
 			.setCodFormativo(59)//review
 			.setCodOccupation("1311")//review
@@ -57,7 +56,7 @@ public class TestContrato {
 //			bd.setInterinidad("H");
 
 
-			String ide = Sepe.sendContract(certificateInputStream, CERTIFICATE_PASSWORD, certificateType, bd.build());
+			String ide = Sepe.sendContract(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, bd.build());
 			System.out.println("ide: "+ide);
 		} catch (Exception e) {
 			e.printStackTrace();
