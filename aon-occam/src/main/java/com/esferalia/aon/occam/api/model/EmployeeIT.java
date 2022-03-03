@@ -1,20 +1,32 @@
 package com.esferalia.aon.occam.api.model;
 
+import static com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType.ALTA;
+import static com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType.BAJA;
+import static com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType.CONFIRMACION;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 
 
 public class EmployeeIT implements Serializable {
-
+	
+	private static final String INICIO_PAGO_DIRECTO = "INICIO_PAGO_DIRECTO";
+	private static final String BASE_REGULADORA = "BASE_REGULADORA";
+	private static final String TIPO_SOLICITANTE_MAT_PAT = "TIPO_SOLICITANTE_MAT_PAT";
+	private static final String MOTIVO_MAT_PAT = "MOTIVO_MAT_PAT";
+	private static final String COEFICIENTE_MATERNIDAD = "COEFICIENTE_MATERNIDAD";
+	private static final String COEFICIENTE_PATERNIDAD = "COEFICIENTE_PATERNIDAD";
 	
 	/**
 	 * 
@@ -31,11 +43,8 @@ public class EmployeeIT implements Serializable {
 	Date endDate;
 	Integer parent;
 	ContractLeaveDischargeCause dischargeCause;
-	List<EmployeeITPart> itParts;
-	
-	Double dailyCgpBase;	
-	Double dailyRegBase;	
-	
+	ContractType contractType;
+
 	Double dailyCgcBase;	//base TGSS
 	Integer quoteDays;	// day TGSS
 	
@@ -44,10 +53,16 @@ public class EmployeeIT implements Serializable {
 	String name;
 	String nss;
 	String dni;
-	ContractType contractType;
+
+	
+	private List<EmployeeITPart> itParts;
+	
+	private Map<String, ContractData> contractDatas;
+	
 	
 	public EmployeeIT() {
 		this.itParts = new ArrayList<>();
+		this.contractDatas = new HashMap<>();
 	}
 	
 	public Integer getId() {
@@ -121,19 +136,6 @@ public class EmployeeIT implements Serializable {
 		this.dailyCgcBase = dailyCgcBase;
 		return this;
 	}
-
-	public Optional<Double> getDailyCgpBase() {
-		return Optional.ofNullable(dailyCgpBase);
-	}
-	
-	public EmployeeIT setDailyRegBase(Double dailyRegBase) {
-		this.dailyRegBase = dailyRegBase;
-		return this;
-	}
-
-	public Optional<Double> getDailyRegBase() {
-		return Optional.ofNullable(dailyRegBase);
-	}
 	
 	public EmployeeIT setQuoteDays(Integer quoteDays) {
 		this.quoteDays = quoteDays;
@@ -198,11 +200,6 @@ public class EmployeeIT implements Serializable {
 	public ContractType getContractType() {
 		return contractType;
 	}
-	
-	public EmployeeIT setDailyCgpBase(Double dailyCgpBase) {
-		this.dailyCgpBase = dailyCgpBase;
-		return this;
-	}
 
 	public Optional<Integer> getParent() {
 		return Optional.ofNullable(parent);
@@ -236,16 +233,61 @@ public class EmployeeIT implements Serializable {
 	}
 	
 	public Optional<EmployeeITPart> getItBaja(){
-		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.BAJA)).findFirst();
+		return itParts.stream().filter(x->x.getType().equals(BAJA)).findFirst();
 	}
 	
 	public Optional<EmployeeITPart> getItAlta(){
-		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.ALTA)).findFirst();
+		return itParts.stream().filter(x->x.getType().equals(ALTA)).findFirst();
 	}
 
 	public List<EmployeeITPart> getItConfirmations(){
-		return itParts.stream().filter(x->x.getType().equals(ContractLeaveDetailType.CONFIRMACION)).collect(Collectors.toList());
+		return itParts.stream().filter(x->x.getType().equals(CONFIRMACION)).collect(Collectors.toList());
 	}
+	
+	//  ---------------------ADD CONTRACT DATA
+	
+	public EmployeeIT addContractData(String name, String expression) {
+		addContractData(name, expression, this.startDate, this.endDate);
+		return this;
+	}
+	public EmployeeIT setPaternityType(String expression) {
+		addContractData(TIPO_SOLICITANTE_MAT_PAT, expression, this.startDate, this.endDate);
+		return this;
+	}
+	public EmployeeIT setPaternityReason(String expression) {
+		addContractData(MOTIVO_MAT_PAT, expression, this.startDate, this.endDate);
+		return this;
+	}
+	public EmployeeIT setDirectPay(String expression) {
+		addContractData(INICIO_PAGO_DIRECTO, expression, this.startDate, this.endDate);
+		return this;
+	}
+	public EmployeeIT setRegulationBase(Double baseReg) {
+		addContractData(BASE_REGULADORA, baseReg.toString(), this.startDate, this.endDate);
+		return this;
+	}
+	public EmployeeIT setPaternityParciality(Double parciality) {
+		String tmp = getType()!=null && getType().equals(ContractLeaveType.PATERNIDAD) ? COEFICIENTE_PATERNIDAD : COEFICIENTE_MATERNIDAD;
+		addContractData(tmp, parciality.toString(), this.startDate, this.endDate);
+		return this;
+	}
+
+	public List<ContractData> getContractDatas() {
+		return new ArrayList<>(contractDatas.values());
+	}
+	
+	private EmployeeIT addContractData(String name, String expression, Date startDate, Date endDate) {
+		contractDatas.put(name, 
+			new ContractData()
+			.setName(name)
+			.setEndDate(endDate)
+			.setStartDate(startDate)
+			.setExpression(expression)
+		);
+		
+		return this;
+	}
+	//  ---------------------ADD CONTRACT DATA
 
     @Override
     public String toString() {
@@ -262,12 +304,11 @@ public class EmployeeIT implements Serializable {
         		+ "endDate=" + endDate +","
         		+ "dailyCgcBase=" + dailyCgcBase +","
         		+ "quoteDays=" + quoteDays +","
-        		+ "dailyCgpBase=" + dailyCgpBase +","
         		+ "parent=" + parent +","
-        		+ "dailyRegBase=" + dailyRegBase +","
         		+ "dischargeCause=" + dischargeCause +","
         		+ "contractType=" + contractType +","
-        		+ "itParts=[" + itParts.toString() +"]"
+        		+ "itParts=[" + itParts.toString() +"],"
+        		+ "contractDatas=[" + getContractDatas()+"]"
         +  "}";
     }
 
@@ -275,6 +316,7 @@ public class EmployeeIT implements Serializable {
 	public int hashCode() {
 		return Objects.hashCode(id);
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof EmployeeIT ) )
@@ -284,7 +326,6 @@ public class EmployeeIT implements Serializable {
 		
 		return Objects.equals(id, employeeIt.id);
 	}
-	
 	
 	// CONTRACTS
 	public enum ContractType {
@@ -304,5 +345,4 @@ public class EmployeeIT implements Serializable {
 			return ContractType.values()[i];
 		}
 	}
-
 }
