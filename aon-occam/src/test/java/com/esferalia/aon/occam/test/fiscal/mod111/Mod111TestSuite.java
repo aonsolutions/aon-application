@@ -23,7 +23,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod111InsertQuarterlyReplacementTest.class,
 	Mod111FinishTest.class,
 	Mod111ReopenTest.class,
+	Mod111MarkAsCustomerCheckTest.class,
 	Mod111FinishTest.class,
+	Mod111SentTest.class,
 })
 public class Mod111TestSuite {
 
