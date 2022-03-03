@@ -20,7 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
-import net.aonsolutions.db.up2date.tgss.SMI2022Update;
+import net.aonsolutions.db.up2date.user.CertificateDomainFix;
 
 
 public class Up2Date {
@@ -209,9 +209,10 @@ public class Up2Date {
     		//IrpfQuotasCheck.IRPFQUOTASCHECK,
     		//AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
     		//AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
-    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE
+    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
     		//SMI2022Update.SMI2022UPDATE
-    		PrestITFactorUpdate.PRESTITFACTORUPDATE
+    		PrestITFactorUpdate.PRESTITFACTORUPDATE,
+    		CertificateDomainFix.CERTIFICATEDOMAINFIX
     };
     
 
