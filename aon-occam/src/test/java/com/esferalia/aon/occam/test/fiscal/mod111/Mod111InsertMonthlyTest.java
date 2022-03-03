@@ -40,7 +40,6 @@ public class Mod111InsertMonthlyTest extends AbstractOccamTest {
 		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA, date);
 		Mod111 navarra = insertModel( Administration.NAVARRA, date);
 		
-		
 		Asserts.assertEqualsDouble("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), araba.getDeclarationResult());
 		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), bizkaia.getDeclarationResult());
 		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), gipuzkoa.getDeclarationResult());

@@ -1,80 +1,61 @@
 package com.esferalia.aon.occam.test.fiscal.mod111;
 
-import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
-import static org.junit.Assert.assertNull;
-
 import java.util.Date;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
+import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
-import com.esferalia.aon.occam.test.faker.InvoiceFaker;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod111InsertQuarterlyTest extends AbstractOccamTest {
 	
 	@Test
 	public void mod111InsertQuarterlyTest() {
-		
-		AON.insertInvoice(getOccam(), InvoiceFaker.getExpensesProfRetention(ctx,getConfiguration()));
-		Invoice rentingInvoice = AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesRentingRetention(ctx,getConfiguration())); 
-		Invoice capitalInvoice = AON.insertInvoice(getOccam(),InvoiceFaker.getExpensesCapitalRetention(ctx,getConfiguration())); 
-		AON.insertInvoice(getOccam(), InvoiceFaker.getExpensesTransportRetention(ctx,getConfiguration()));
-		AON.insertInvoice(getOccam(), InvoiceFaker.getPurchaseFarmerRetention(ctx,getConfiguration()));
-		
-		Mod111 commonTerritory = insertModel( Administration.COMMON_TERRITORY);
-		Mod111 araba = insertModel( Administration.ALAVA);
-		Mod111 bizkaia = insertModel( Administration.BIZKAIA);
-		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA);
-		Mod111 navarra = insertModel( Administration.NAVARRA);
-		
-		Asserts.assertEqualsDouble("Mod111 Trim (Araba). Resultado no coincide.", commonTerritory.getDeclarationResult(), araba.getDeclarationResult());
-		Asserts.assertEqualsDouble("Mod111 Trim (Bizkaia). Resultado no coincide.", commonTerritory.getDeclarationResult(), bizkaia.getDeclarationResult());
-		Asserts.assertEqualsDouble("Mod111 Trim (Gipuzkoa). Resultado no coincide.", commonTerritory.getDeclarationResult(), gipuzkoa.getDeclarationResult());
-		Asserts.assertEqualsDouble("Mod111 Trim (Navarra). Resultado no coincide.", commonTerritory.getDeclarationResult(), navarra.getDeclarationResult());
-		
-		
-		assertNull("Factura de Arrendamiento encontrada en Alcatraz",
-				ctx.getDslContext().select( ALCATRAZ.ID )
-					.from(ALCATRAZ)
-					.where(ALCATRAZ.INVOICE.eq(rentingInvoice.getId()))
-					.and(ALCATRAZ.FS_MODEL.in( commonTerritory.getId(),araba.getId(),bizkaia.getId(),gipuzkoa.getId(),navarra.getId()))
-					.fetch()
-					.stream()
-					.map(rec -> rec.getValue(ALCATRAZ.ID) )
-					.findFirst()
-					.orElse(null)
-				);
-			
-		assertNull("Factura de Capital mobiliario encontrada en Alcatraz",
-				ctx.getDslContext().select( ALCATRAZ.ID )
-					.from(ALCATRAZ)
-					.where(ALCATRAZ.INVOICE.eq(capitalInvoice.getId()))
-					.and(ALCATRAZ.FS_MODEL.in( commonTerritory.getId(),araba.getId(),bizkaia.getId(),gipuzkoa.getId(),navarra.getId()))
-					.fetch()
-					.stream()
-					.map(rec -> rec.getValue(ALCATRAZ.ID) )
-					.findFirst()
-					.orElse(null)
-				);
+		AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration());
+		Date today = new Date();
+		for (Period period : Period.values()) {
+			if (period.isQuarterPeriod()) {
+				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+				mod111InsertQuarterly(AonRandom.getRangeDate(start,end));
+			}
+		}
 	}
 
-	private Mod111 insertModel( Administration admon) {
+	public void mod111InsertQuarterly(Date date) {
+		System.out.println( "\t ---------------------");
+		
+		Mod111 aeat = insertModel( Administration.COMMON_TERRITORY, date);
+		Mod111 araba = insertModel( Administration.ALAVA, date);
+		Mod111 bizkaia = insertModel( Administration.BIZKAIA, date);
+		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA, date);
+		Mod111 navarra = insertModel( Administration.NAVARRA, date);
+		
+		Asserts.assertEqualsDouble("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), araba.getDeclarationResult());
+		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), bizkaia.getDeclarationResult());
+		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), gipuzkoa.getDeclarationResult());
+		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), navarra.getDeclarationResult());
+	}
+
+	private Mod111 insertModel( Administration admon, Date date) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-			.setIssueDate(new Date())
+			.setIssueDate(date)
 			.setMonthly(false)
 			.setAdministration(admon);
 		Mod111 mod111 = FiscalFaker.createMod111(params);
 		MODEL111.save(getOccam(), mod111);
 		Mod111 actual = MODEL111.get(getOccam(), mod111.getId());  
 		Asserts.assertMod111(mod111, actual);
+		Mod111TestSuite.printModel(actual);
 		return actual;
 	}
 }

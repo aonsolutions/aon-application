@@ -17,12 +17,13 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod111InsertMonthlyTest.class,
 	Mod111InsertMonthlyComplementaryTest.class,
 	Mod111InsertMonthlyReplacementTest.class,
-//	Mod111DeleteTest.class,
-//	Mod111InsertQuarterlyTest.class,
-//	Mod111InsertQuarterlyComplementaryTest.class,
-//	Mod111InsertQuarterlyReplacementTest.class,
-//	Mod111FinishTest.class,
-//	Mod111ReopenTest.class,
+	Mod111DeleteTest.class,
+	Mod111InsertQuarterlyTest.class,
+	Mod111InsertQuarterlyComplementaryTest.class,
+	Mod111InsertQuarterlyReplacementTest.class,
+	Mod111FinishTest.class,
+	Mod111ReopenTest.class,
+	Mod111FinishTest.class,
 })
 public class Mod111TestSuite {
 
