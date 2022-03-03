@@ -228,10 +228,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	ArrayList<EventEmployee> setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees);
 
-	String generateCertifaca2(String currentDomainName, Integer contractId);
-
-	String generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info);
+	void generateCertifaca2(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 	
+	void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) throws IllegalArgumentException;
+
 	// Sistema RED w2.seg-social.es
 	
 //	EmployeeStatus register(String domain, Integer contractId);
@@ -254,9 +254,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
-	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate) throws IllegalArgumentException;
+	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
+			Date startDate, Date endDate) throws IllegalArgumentException;
 
-	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate) throws IllegalArgumentException;
+	String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
 	
@@ -297,6 +298,14 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;
 
+	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData,
+			ContractTransform contractTransform) throws IllegalArgumentException;
+
+	void removeContractTransform(String currentDomainName, String currentUser, String ide) throws IllegalArgumentException;
+
+	Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
+			Date date, Integer contractId);
+	
 	// ------------------------------------------------- SEPE Methods
 	
 	Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId) throws IllegalArgumentException;
@@ -338,5 +347,4 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 			Date endDate);
 
-	
 }

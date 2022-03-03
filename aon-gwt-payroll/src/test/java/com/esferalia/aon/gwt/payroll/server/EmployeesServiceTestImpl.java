@@ -728,10 +728,9 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String generateCertifaca2(String currentDomainName, Integer contractId) {
+	public void generateCertifaca2(String currentDomainName, Integer contractId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
-		return null;
 	}
 	
 	@Override
@@ -784,14 +783,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 			Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 			Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
@@ -889,9 +888,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) {
+	public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -1016,5 +1014,27 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void sendContractTransform(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractData, ContractTransform contractTransform)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeContractTransform(String currentDomainName, String currentUser, String ide)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
+			Date date, Integer contractId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

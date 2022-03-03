@@ -3,6 +3,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +41,10 @@ public class TestPaternity {
 	//ADOPTERS es válido para las opciones del primer y segundo adoptante
 	final static String ADOPTERS= "Adopción/Tutela/Acogimiento";
 	final static String CERTIFICATE="src/test/resources/aon/solutions/FNMT.p12";
+	
+	private static final String CERTIFICATE_PASSWORD = "1234";
+	private static final String CERTIFICATE_TYPE = "pkcs12"; 
+	private static final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/CERT.pfx"; 
 
 	@Test
 	@Ignore
@@ -533,18 +538,18 @@ public class TestPaternity {
 	
 
 	@Test
-//	@Ignore
+	@Ignore
 	public void testConsultCertificatesPdfOk() {
-		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2020");
-			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("10-01-2021");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("10-01-2022");
 			Optional<String> nss = Optional.of("281468615302");
-			 List<PaternityCertificate> paternityCertificates = Paternity.getPaternitys(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062", startDate, endDate, nss, Optional.empty());	
+		    List<PaternityCertificate> paternityCertificates = Paternity.getPaternitys(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, "0111", "01105360062", startDate, endDate, nss, Optional.empty());	
 			for (PaternityCertificate paternity : paternityCertificates) {
 				System.out.println(paternity);
 			}
-			
+			System.out.println(paternityCertificates.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 

@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -69,17 +70,18 @@ public class SIIServlet extends HttpServlet{
 		Integer[] ids = new Integer[1];
 		ids[0] = Integer.parseInt(idStr);
 
-		if(true){
-			String action = parameters.get("action"); // consulta || suministro || anulacion
-			String option = parameters.get("option"); 
-			String terceros = parameters.get("terceros"); 
-
-			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));		
-			Company company = AON.getCompany(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId()));
+		String action = parameters.get("action"); // consulta || suministro || anulacion
+		String option = parameters.get("option"); 
+		String terceros = parameters.get("terceros"); 
+		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));		
+		Company company = AON.getCompany(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId()));
 			
-			AccountingReportParams params = new AccountingReportParams();
-			params.setDomain(domain.getId());
-			params.setInvoices(ids);
+		AccountingReportParams params = new AccountingReportParams();
+		params.setDomain(domain.getId());
+		params.setInvoices(ids);
+				
+		if(ids.length > 0) {
+			Invoice invoice = AON.getInvoice(domain.getName(), domain.getId(), login, ids[0]);//AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), login, ids[0]);	
 			
 			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
 					.collect(Collectors.toCollection(LinkedList::new));
@@ -99,9 +101,10 @@ public class SIIServlet extends HttpServlet{
 			if(AonStringUtils.isBlank(pass)) {
 				pass = attach.getDescription().split("HIDE\\(")[1].split("\\)")[0];
 			}
+			
 			SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
 			siiConfiguration.setCertificate(new Certificate()
-					.setCertificate(attach.getData())
+					.setData(attach.getData())
 					.setPassword(pass)
 					.setType(CertificateType.AEAT.name()));
 			try{
@@ -115,23 +118,21 @@ public class SIIServlet extends HttpServlet{
 				} else if("cp_pagos".equals(option)){
 					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
 					object = manager.suministroFacturasRecibidasPagos(domain, login, company, financeList, ids[0]);
-				} else if("intracomunitarias".equals(option)){
+				} else if("intracomunitarias".equals(option)) {
 					String tipoOp = parameters.get("tipo_operacion");
-					if(isSuministro(action)){
+					if(isSuministro(action)) {
 						object = manager.suministroOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, tipoOp, terceros);
-					}else if(isBaja(action)){
+					} else if(isBaja(action)){
 						object = manager.bajaOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, terceros);
 					}
-				} else if(option.contains("fe_")){
-					if(isSuministro(action)){
+				} else if(option.contains("fe_") || option.contains("fr_")){
+					if(isSuministro(action) && invoice.isSales()){
 						object = manager.suministroFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
-					} else if(isBaja(action)){
+					} else if(isBaja(action) && invoice.isSales() ){
 						object = manager.bajaFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
-					}
-				} else if(option.contains("fr_")){
-					if(isSuministro(action)){
+					} else if(isSuministro(action) && !invoice.isSales()){
 						object = manager.suministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros, false);
-					} else if(isBaja(action)){
+					} else if(isBaja(action) && !invoice.isSales()){
 						object = manager.bajaFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("bienes".equalsIgnoreCase(option)){

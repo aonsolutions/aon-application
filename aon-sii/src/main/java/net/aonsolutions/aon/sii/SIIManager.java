@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
@@ -90,11 +89,6 @@ public class SIIManager {
 			}
 		}
 		return null;
-	}
-	
-	protected JSONArray suministroFacturasEmitidas(Company company, Invoice invoice) {
-		String uri = SIIUri.getInstance().getURI(getSiiConfiguration(), SIIType.FACTURAS_EMITIDAS);
-		return new JSONArray();
 	}
 	
 	protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {

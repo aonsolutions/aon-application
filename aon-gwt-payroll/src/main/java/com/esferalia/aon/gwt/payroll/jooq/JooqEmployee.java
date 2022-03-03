@@ -33,6 +33,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -71,6 +73,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class JooqEmployee {
 
 	private static Settings SETTINGS = null;
+	private static SimpleDateFormat formatDate = new SimpleDateFormat("yyyyMMdd");
 	
 	protected static Settings getDefaultSettings() {
 		if (SETTINGS == null) {
@@ -753,6 +756,7 @@ public class JooqEmployee {
 		
 		contractData.setContractId(contract);
 		contractData.setStartDate(contractTable.get(CONTRACT.START_DATE));
+		contractData.setOriginalStartDate(contractTable.get(CONTRACT.START_DATE));
 		contractData.setEndDate(contractTable.get(CONTRACT.END_DATE));
 		contractData.setSeniorityDate(contractTable.get(CONTRACT.SENIORITY_DATE));
 		contractData.setAgreementCategory(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
@@ -910,6 +914,14 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "RLCE")) {
 				contractData.setRlceId(r.get(CONTRACT_DATA.ID));
 				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "ORIGINAL_START_DATE")) {
+				contractData.setHasTransformation(true);
+				try {
+					contractData.setOriginalStartDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
+				} catch (ParseException e) {
+					contractData.setOriginalStartDate(contractTable.get(CONTRACT.START_DATE));
+					e.printStackTrace();
+				}
 			}
 			
 		}

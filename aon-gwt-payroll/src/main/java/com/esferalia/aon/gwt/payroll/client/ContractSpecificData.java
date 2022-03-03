@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
@@ -18,12 +20,14 @@ import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -36,7 +40,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ContractSpecificData extends ResizeComposite {
+public abstract class ContractSpecificData extends ResizeComposite {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
@@ -50,7 +54,19 @@ public class ContractSpecificData extends ResizeComposite {
 	MyStyle style;
 	
 	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
 	SuggestBox cnoSB;
+	
+	@UiField
+	TextBox ideTB;
+	
+	@UiField (provided = true)
+	AonToolbarSmallButton updateSepeInfoBtn;
+	
+	@UiField
+	DateBoxEx comunicationDateBx;
 	
 	@UiField
 	TableElement otherDataTableElement;
@@ -327,25 +343,71 @@ public class ContractSpecificData extends ResizeComposite {
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	private DomainEmployeesServiceAsync implEmployee = DomainEmployeesServiceAsync.newInstance();
 	private com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificData;
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("yyyyMMdd");
 	private Map<String, CNO> cnoMap;
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
 	
 	public ContractSpecificData() {
+		providedButton();
 		initWidget(uiBinder.createAndBindUi(this));
 		cnoMap = new HashMap<>();
 		initializeView();
 	}
 	
-	public void setEmployeeContractInfo(String contractType, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
-		this.contractSpecificData = contractSpecificDataIn;
-		setDefaultView(contractType);
-		fillSpecificData();
+	private void providedButton() {
+		updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n Sepe", AON.CSS.aonIconCloudImport());
 	}
 
-	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
+	public void setEmployeeContractInfo(String contractType, boolean isTransformation, boolean isComunica, String document, Date fini, Integer contractId, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
+		this.contractSpecificData = contractSpecificDataIn;
+		if(Boolean.TRUE.equals(isTransformation))
+			showSepeMessage();
+		else {
+			showSepeData();
+			setDefaultView(contractType);
+			fillSpecificData();
+			createUpdateSepeInfo(isComunica, document, fini, contractId);
+		}
+	}
+
+	private void createUpdateSepeInfo(boolean isComunica, String document, Date fini, Integer contractId) {
+		if(Boolean.FALSE.equals(isComunica))
+			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
+		else {
+			updateSepeInfoBtn.addClickHandler(e -> {
+				showLoadingMessage("Obteniendo informaci\u00f3n del Sepe");
+				implEmployee.getSepeComunicationData(document, fini, contractId, new AsyncCallback<Map<String,String>>() {
+					@Override
+					public void onSuccess(Map<String, String> sepeData) {
+						ideTB.setValue(sepeData.getOrDefault("ide", null));
+						String communicationDate = sepeData.getOrDefault("comunicationDate", null);
+						comunicationDateBx.setValue(AonStringUtils.isBlank(communicationDate) ? null : formatDate.parse(communicationDate));
+						showSuccessMessage("Sincronizaci\u00f3n Sepe", "Sincronizaci\u00f3n con el Sepe realizada correctamente");
+						
+						contractSpecificData.setIde(sepeData.getOrDefault("ide", null));
+						contractSpecificData.setComunicationDate(AonStringUtils.isBlank(communicationDate) ? null : formatDate.parse(communicationDate));
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage("Error sincronizaci\u00f3n Sepe", caught.getMessage());
+					}
+				});
+			});
+		}
+	}
 	
+	// --------------------------------------------------------- Abstract Methods --------------------------------------------------
+
+	protected abstract void showErrorMessage(String title, String message);
+	protected abstract void showSuccessMessage(String title, String message);
+	protected abstract void showLoadingMessage(String message);
+	
+	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
+
 	@UiHandler("cnoSB")
 	void onCNOSBChange(SelectionEvent<Suggestion> event) {
 		String cnoStr = cnoSB.getValue();
@@ -1361,6 +1423,8 @@ public class ContractSpecificData extends ResizeComposite {
 	
 	private void setDefaultView(String contractType) {
 		this.cnoSB.setValue("");
+		this.ideTB.setValue("");
+		this.comunicationDateBx.setValue(null);
 		this.formativeLevelLB.setSelectedIndex(0);
 		this.signBasicCopyLB.setSelectedIndex(0);
 		this.basicCopyTA.setValue("");
@@ -2005,6 +2069,9 @@ public class ContractSpecificData extends ResizeComposite {
 		if(null != cnoObj)
 			cnoSB.setText(codeCNO + " - " + cnoObj.getTitle());
 		
+		ideTB.setValue(this.contractSpecificData.getIde());
+		comunicationDateBx.setValue(this.contractSpecificData.getComunicationDate());
+		
 		calendarFormativeStartDate.setValue(this.contractSpecificData.getCalendarFormativeStartDate());
 		calendarFormativeEndDate.setValue(this.contractSpecificData.getCalendarFormativeEndDate());
 		setSelectedValueLB(formativeLevelLB, this.contractSpecificData.getFormativeLevel());
@@ -2140,6 +2207,14 @@ public class ContractSpecificData extends ResizeComposite {
 	
 	public com.esferalia.aon.gwt.payroll.shared.ContractSpecificData getContractSpecificData() {
 		return this.contractSpecificData;
+	}
+	
+	private void showSepeData() {
+		deckPanel.showWidget(0);
+	}
+	
+	private void showSepeMessage() {
+		deckPanel.showWidget(1);
 	}
 
 }

@@ -100,8 +100,10 @@ public class JooqPDFSettlementBuilder {
 	}
 	
 	public void write() throws CanNotCreatePdfException, IOException {
-		try (InputStream logoIS = new ByteArrayInputStream(this.logo);
-			 InputStream signatureIS = new ByteArrayInputStream(this.signature);) {
+		try (
+			InputStream logoIS = null == this.logo ? null : new ByteArrayInputStream(this.logo);
+			InputStream signatureIS = null == this.signature ? null : new ByteArrayInputStream(this.signature);) {
+			
 			printSettlement(os, new SettlePrintConfiguration(this.settlement, logoIS, signatureIS, new Locale("Es")));
 		}
 	}

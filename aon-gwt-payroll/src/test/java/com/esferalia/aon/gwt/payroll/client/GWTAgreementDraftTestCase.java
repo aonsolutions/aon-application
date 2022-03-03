@@ -253,7 +253,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void generateCertifaca2(String currentDomainName, Integer contractId,
-				AsyncCallback<String> callback) {
+				AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -266,14 +266,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+		public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 				Date endDate, AsyncCallback<String> callback) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+		public void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 				Date endDate, AsyncCallback<String> callback) {
 			// TODO Auto-generated method stub
 			
@@ -372,7 +372,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info,
-				AsyncCallback<String> callback) {
+				AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -515,6 +515,28 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void createContractVariable(String currentDomainName, Integer contractId,
 				ContractVariable contractVariable, AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendContractTransform(String currentDomainName, String currentUser,
+				EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void removeContractTransform(String currentDomainName, String currentUser, String ide,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getSepeComunicationData(String currentDomainName, String currentUser, String document, Date date,
+				Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}		
@@ -735,7 +757,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void generateCertifaca2(String currentDomainName, Integer contractId,
-							AsyncCallback<String> callback) {
+							AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
@@ -767,14 +789,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void getEmployeeCbc(String currentDomainName, String currentUser, String document,
+					public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
 							Date startDate, Date endDate, AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						
 					}
 
 					@Override
-					public void getEmployeeCto(String currentDomainName, String currentUser, String document,
+					public void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId,
 							Date startDate, Date endDate, AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						
@@ -873,7 +895,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void generateCertifaca2(String currentDomainName, Integer contractId,
-							Certifica2Info certifica2Info, AsyncCallback<String> callback) {
+							Certifica2Info certifica2Info, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
@@ -1017,6 +1039,29 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void createContractVariable(String currentDomainName, Integer contractId,
 							ContractVariable contractVariable, AsyncCallback<Void> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void sendContractTransform(String currentDomainName, String currentUser,
+							EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void removeContractTransform(String currentDomainName, String currentUser, String ide,
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getSepeComunicationData(String currentDomainName, String currentUser, String document,
+							Date date, Integer contractId, AsyncCallback<Map<String, String>> callback)
 							throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						

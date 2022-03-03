@@ -227,6 +227,16 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase(),DELTA);
 		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid(), DELTA);
 
+		// *************** EUKE
+		// Añado DELTA al assert
+		// aunque realmente no se si la filosofía de los test es que el resultado sea exactamente igual
+		// en tal caso, salary.getTotalLiquid() no está redondeado. o algo así ...
+		// 
+		// El error era:
+		// 		junit.framework.AssertionFailedError: 
+		//				TOTAL_LIQUIDO : expected:<792.8675> but was:<792.8675000000001>
+		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid(), DELTA);
+		// ***************
 	
 		startDate = getFirstDayOfMonth(startContractDate);
 		endDate = getLastDayOfMonth(startDate);

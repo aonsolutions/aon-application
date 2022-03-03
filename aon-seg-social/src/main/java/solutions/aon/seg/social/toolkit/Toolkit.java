@@ -300,8 +300,11 @@ public class Toolkit {
 	}
 
 	public static Float parseStringToFloat(String d) {
-		String newValue = removeNBSP(d.trim().replace(".", "").replace(',', '.'));
-		return parseFloat(removeNBSP(newValue));
+		if(d!=null) {
+			String newValue = removeNBSP(d.trim().replace(".", "").replace(',', '.'));
+			return parseFloat(removeNBSP(newValue));
+		}
+		return null;
 	}
 	
 	// CHECK DISPONIBILITY BEFORE TEST

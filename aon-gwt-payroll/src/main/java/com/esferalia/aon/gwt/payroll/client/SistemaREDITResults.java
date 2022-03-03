@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.TextDecoration;
@@ -180,13 +181,13 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	}
 	
 	private void itNoExistToAon(HorizontalPanel horizontalPanel, ItNotExist status) {
-		String confirmOrder = status.getConfirmOrder().isPresent() ? " #"+status.getConfirmOrder().get() : "";
-		
+		String confirmOrder = status.getConfirmOrder().isPresent() ? "#"+status.getConfirmOrder().get() : "";
+		String reason = status.getType()!=null ? "por "+status.getType().getName(): "";
 		horizontalPanel.add(
 			new Label(
 				"Afiliado '"
 				+status.getName()
-				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
+				+" parte de "+getPartStr(status.getPart())+" "+confirmOrder+" "+reason+" "
 				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
 				+" ) no encontrada en aon Solutions."
 			   +" Pulse"
@@ -205,7 +206,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
 		Anchor remove = new Anchor("aqu\u00ed");
-		if(this.isUserComunica) {
+		if(this.isUserComunica && !isPaternity(status.getType()) ) {
 			remove.addClickHandler(e -> onRemoveITPartToSS(status));
 			remove.getElement().getStyle().setColor("red");
 		} else {
@@ -222,12 +223,12 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	
 	private void itNoExistToSS(HorizontalPanel horizontalPanel, ItNotExist status) {
 		String confirmOrder = status.getConfirmOrder().isPresent() ? " #"+status.getConfirmOrder().get() : "";
-		
+		String reason = status.getType()!=null ? "por "+status.getType().getName(): "";
 		horizontalPanel.add(
 			new Label(
 				"Afiliado '"
 				+status.getName()
-				+" parte de "+getPartStr(status.getPart())+confirmOrder+" "
+				+" parte de "+getPartStr(status.getPart())+" "+confirmOrder+" "+reason+" "
 				+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
 				+" ) no encontrada en SISTEMA RED."
 			   +" Pulse"
@@ -236,10 +237,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
 		Anchor anchor = new Anchor("aqu\u00ed");
-		if(this.isUserComunica) {
-			anchor.addClickHandler(e -> {
-				onOpenITPart(status);
-			});
+		if(this.isUserComunica && !isPaternity(status.getType()) ) {
+			anchor.addClickHandler(e -> onOpenITPart(status) );
 			anchor.getElement().getStyle().setColor("blue");
 		} else {
 			anchor.getElement().getStyle().setColor("grey");
@@ -252,6 +251,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
 		Anchor remove = new Anchor("aqu\u00ed");
+		
 		remove.addClickHandler(e -> onRemoveITPartToAon(status));
 		remove.getElement().getStyle().setColor("red");
 		remove.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
@@ -289,6 +289,10 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	public void updatedEnterprise() {}
 	
 	public void onFinish() {}
+	
+	private boolean isPaternity(ContractLeaveType type) {
+		return type !=null && ( type.equals(ContractLeaveType.MATERNIDAD) || type.equals(ContractLeaveType.PATERNIDAD) );
+	}
 	
 	protected void onOpenITPart(ItNotExist itNotExist) {}
 	

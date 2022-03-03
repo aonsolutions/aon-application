@@ -6,13 +6,10 @@ import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 
 public abstract class EnterpriseITStatus implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	public static interface Visitor  {
 		void up2DateEnterprise();
@@ -116,6 +113,10 @@ public abstract class EnterpriseITStatus implements Serializable {
 		public String getName() {
 			Optional<String> tmp = getEmployeeIT().getName();
 			return tmp.isPresent() ? tmp.get() : "";
+		}
+		
+		public ContractLeaveType getType() {
+			return getEmployeeIT().getType();
 		}
 		
 		public Byte getPart() {
