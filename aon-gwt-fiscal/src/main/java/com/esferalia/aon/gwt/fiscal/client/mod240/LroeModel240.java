@@ -164,7 +164,7 @@ public class LroeModel240 extends DockLayoutPanel {
 	
 	private AonMenu getMenu() {
 		AonMenu aonMenu = new AonMenu();
-		if(getOptions().getDomainName().contains("serval.aibanez.net") && getOptions().getDomain() == 5749)
+		if(getOptions().getDomainName().contains("serval.aonsolutions.net") && getOptions().getDomain() == 5749)
 			aonMenu.addItem(chapter1TbaiDeleted);
 		else aonMenu.addItem(chapter1);
 		aonMenu.addItem(chapter2);
