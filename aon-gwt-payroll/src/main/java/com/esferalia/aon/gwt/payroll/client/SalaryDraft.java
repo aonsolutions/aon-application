@@ -327,6 +327,8 @@ public class SalaryDraft extends ResizeComposite
 			"COEFICIENTE_ERE_FZA_EXONERADO",	
 			"COEFICIENTE_HUELGA",
 			
+			"COEFICIENTE_IT",	
+			
 			"ERE_TOTAL",
 			"REINCORPORADO_ERE",
 			
