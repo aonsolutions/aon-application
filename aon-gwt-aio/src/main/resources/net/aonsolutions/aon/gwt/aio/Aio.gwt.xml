@@ -22,7 +22,6 @@
 	<inherits name='net.aonsolutions.aon.gwt.commercial.CommercialAio' />
 	<inherits name='com.esferalia.aon.gwt.fiscal.deposit.DepositAio' />
 	<inherits name="net.aonsolutions.polymer.Elements"/>
-	<inherits name='com.esferalia.aon.gwt.payroll.PayrollAio' />
 	
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 	
