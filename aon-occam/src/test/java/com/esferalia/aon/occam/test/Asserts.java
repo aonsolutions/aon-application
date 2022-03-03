@@ -57,7 +57,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Asserts {
 	
-	private static final double DELTA = 1e-15;
+	private static final double DELTA = 1e-8;
 	
 	public static void assertEqualsDouble(String msg,double expected,double actual) {
 		assertEquals(msg, expected, actual, DELTA);		
