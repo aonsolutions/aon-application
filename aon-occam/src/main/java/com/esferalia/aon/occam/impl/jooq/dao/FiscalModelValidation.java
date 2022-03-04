@@ -228,8 +228,7 @@ public class FiscalModelValidation {
 					,FiscalStatus.SENT
 					,FiscalStatus.MISSING
 					,FiscalStatus.CUSTOMER_CHECK
-					,FiscalStatus.CUSTOMER_ACCEPTED
-					,FiscalStatus.CUSTOMER_REJECTED);
+					,FiscalStatus.CUSTOMER_ACCEPTED);
 			}
 			@Override 
 			public FiscalModel visitCustomerAccepted() {

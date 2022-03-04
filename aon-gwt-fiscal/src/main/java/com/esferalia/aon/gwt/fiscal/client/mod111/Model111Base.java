@@ -66,7 +66,8 @@ import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class Model111Base extends DockLayoutPanel {
 	protected FiscalModelAdmonPanel<Mod111, Model111ModuleOptions> admonPanel;
-
+	private AonFiscalModelIdentificationPanel<Mod111> identificationData; 
+			
 	private static final String WIDTH_140PX = "140px";
 	private static final String BLANK = "_blank";
 	private static final int MAX_LABEL_LENGTH = 100;
@@ -161,6 +162,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	}
 	
 	private void populate(Mod111 mod111) {
+		identificationData.populate(mod111);
 		for (Entry<Mod111Key, AonDoubleBox> entry : fieldsMap.entrySet()) {
 			double d1 = mod111.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
@@ -829,7 +831,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox();
 		fieldsMap.put(key, input);
-		input.setEnabled(script.isEnabled()); 
+		input.setEnabled(model.isEditable() && script.isEnabled()); 
 		input.setValue(det1.getAmount());
 		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
 			input.addStyleName(AON.CSS.aonChanged());
@@ -1071,7 +1073,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	}
 	
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		AonFiscalModelIdentificationPanel<Mod111> identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
+		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
 		identificationData.addValueChangeHandler(event -> {
 			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 			markAsDirty();			
@@ -1095,6 +1097,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		receiptBox.setVisibleLength(15);
 		receiptBox.setMaxLength(13);
 		receiptBox.setValue( getModel().getNumber() );
+		receiptBox.setEnabled(model.isEditable());
 		receiptBox.addValueChangeHandler( event -> {
 			getModel().setNumber(receiptBox.getValue());
 			markAsDirty();
@@ -1110,6 +1113,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 			previousReceiptBox.setVisibleLength(15);
 			previousReceiptBox.setMaxLength(13);
 			previousReceiptBox.setValue( getModel().getReplacedNumber() );
+			previousReceiptBox.setEnabled(model.isEditable());
 			previousReceiptBox.addValueChangeHandler( event -> {
 				getModel().setReplacedNumber(previousReceiptBox.getValue());
 				markAsDirty();

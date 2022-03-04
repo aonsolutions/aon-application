@@ -112,6 +112,9 @@ public abstract class Mod111Declaration {
 				mod111.setReplacement( mod111.isReplacementDeclarationAvailable() 
 					&& !mod111.isComplementary() );
 				mod111.setReplacedNumber(previous.getNumber());
+			} else {
+				mod111.setComplementary( false );
+				mod111.setReplacement( false );
 			}
 		}
 	}

@@ -374,7 +374,9 @@ public class FiscalModelUtils {
 			@Override 
 			public Boolean visitPending() {
 				return model.getStatus() != FiscalStatus.PENDING &&
-					falseIfTransitionFrom(model, FiscalStatus.BATCHED,FiscalStatus.BLOCKED);
+					falseIfTransitionFrom(model, FiscalStatus.BATCHED
+							,FiscalStatus.CUSTOMER_REJECTED
+							,FiscalStatus.BLOCKED);
 			}
 			@Override 
 			public Boolean visitFinished() {
@@ -383,7 +385,7 @@ public class FiscalModelUtils {
 						,FiscalStatus.SENT
 						,FiscalStatus.MISSING
 						,FiscalStatus.CUSTOMER_CHECK
-						,FiscalStatus.CUSTOMER_REJECTED
+						,FiscalStatus.CUSTOMER_ACCEPTED
 						,FiscalStatus.BATCHED
 						,FiscalStatus.BLOCKED);
 			}
