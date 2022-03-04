@@ -1,29 +1,46 @@
 package com.esferalia.aon.in.payroll;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
+import com.esferalia.aon.in.payroll.tgss.its.ITParse;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
+import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
+import com.esferalia.aon.occam.api.model.type.Gender;
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 
+import solutions.aon.seg.social.Paternity;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.TestItRegister;
 import solutions.aon.seg.social.TestSistemaREDI;
+import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.It;
+import solutions.aon.seg.social.object.PaternityCertificate;
 
 public class ITComunicaTest {
+	
+	private static final String CERTIFICATE_PASSWORD = "1234";
+	private static final String CERTIFICATE_TYPE = "pkcs12"; 
+	private static final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/CERT.pfx"; 
 	
 	@Test
 	@Ignore
@@ -58,7 +75,6 @@ public class ITComunicaTest {
 			e.printStackTrace();
 		}
 	}
-	
 	
 	@Test
 	@Ignore
@@ -138,6 +154,77 @@ public class ITComunicaTest {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+		
+	//	---------------------------PATERNITY---------------------------------------------
+	@Test
+	@Ignore
+	public void getITPaternity() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
+				
+				Optional<String> nss = Optional.empty();
+				Domain domain = new Domain().setName("test-ayudat.rvasquez.net").setId(11950);
+				
+				Date startDate = new Date("2020/01/01");
+				Date endDate = new Date("2021/12/01");
+				
+				Certificate certificate = new Certificate()
+						.setData(certificateInputStream.readAllBytes())
+						.setType(CERTIFICATE_TYPE)
+						.setPassword(CERTIFICATE_PASSWORD);
+				
+				CCCInfo ccc = new CCCInfo();
+				ccc.setCccRegimeCode("0111");
+				ccc.setCccAccount("01105360062");
+						
+				List<EmployeeIT> list = getITFromTGSSPaternity(domain, certificate, startDate, endDate, ccc, nss);
+				for (EmployeeIT employeeIT : list) {
+					System.out.println(employeeIT);
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//PATERNITY
+	private static List<EmployeeIT> getITFromTGSSPaternity(Domain domain, Certificate certificate, Date startDate, Date endDate, CCCInfo ccc, Optional<String>nssOpt) throws SegSocialException, ElementNotFoundException, InterruptedException, IOException {
+		List<EmployeeIT> ssIts = new ArrayList<>();
+		
+		List<PaternityCertificate> paternitys = Paternity.getPaternitys(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+				 ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, nssOpt, Optional.empty()
+		);
+
+		setEmployeeeData(domain, paternitys);
+		
+		paternitys.forEach(paternity->{
+			ssIts.add( ITParse.parsePaternityTGSSToAon(paternity).setDomain(domain.getId()) );
+		});
+		
+		if(!ssIts.isEmpty() && ssIts.get(0).getStartDate()!=null)
+			return ssIts;
+		return null;
+	} 
+	
+	private static void setEmployeeeData(Domain domain, List<PaternityCertificate> paternitys) {
+		List<PaternityCertificate> list = paternitys.stream()
+				.filter(it-> it.getWorkerName().isEmpty() && !it.getWorkerNaf().isEmpty())
+				.filter(ITComunica.distinctByKey(p-> p.getWorkerNaf().get())).collect(Collectors.toList());
+
+		if(!list.isEmpty()) {
+			String[] nssAll = list.stream().map(p-> p.getWorkerNaf().get()).toArray(String[]::new);
+			
+			AON.getPersonList(domain.getName(), domain.getId(), "", f->f.getSocialSecurityNumProperty().in(nssAll)).forEach(person->{
+				paternitys
+				.stream()
+				.filter(n-> n.getWorkerNaf().get().contentEquals(person.getSocialSecurityNum()))
+				.forEach(p-> {
+					Gender gender = person.getGender();
+					p.setWorkerName(person.getName())
+					.setWorkerNif(person.getDocument())
+					.setIsFather(gender!=null && gender.ordinal()==0 ? true : false);
+				});
+			});
 		}
 	}
 }

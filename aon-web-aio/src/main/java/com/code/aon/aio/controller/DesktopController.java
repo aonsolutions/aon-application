@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 import javax.faces.model.DataModel;
 
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ public class DesktopController implements Serializable {
 	
 	private static final String HOMEPAGE_DESKTOP = "/homepage.xhtml";
 	private static final String PORTAL_TEMPLATE = "/facelet/portal/portal.xhtml";
-	private static final String PORTAL_NEW_SUITE_TEMPLATE = "/facelet/portal/aonDesktop.xhtml";
+//	private static final String PORTAL_NEW_SUITE_TEMPLATE = "/facelet/portal/aonDesktop.xhtml";
 	private static final String DESKTOP_TEMPLATE = "/facelet/homepage/desktop.xhtml";
 	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
 	private static final String INIT_ACTION_TEMPLATE = "/facelet/homepage/initAction.xhtml";
@@ -141,11 +140,9 @@ public class DesktopController implements Serializable {
 			return INIT_ACTION_TEMPLATE;
 		} else if ( getState().isAdminDomain() ) {
 			return ADMIN_TEMPLATE;
-		} else if ( isPortalActive() ) {
+		} else if ( isPortalActive() || isPortalNewSuiteActive()) {
 			return PORTAL_TEMPLATE;
-		} else if ( isPortalNewSuiteActive()) {
-			return PORTAL_NEW_SUITE_TEMPLATE;
-		}
+		} 
 		return DESKTOP_TEMPLATE;
 	}
 

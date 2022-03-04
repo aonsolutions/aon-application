@@ -206,6 +206,30 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.TYPE, (byte)99)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
 				.execute();
-	}	
+	}
+	
+	// ------------------------------------------ CopyBasic
+
+	public static byte[] getCopyBasic(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> copyBasicRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)3))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetch();
+		
+		return copyBasicRecords.isEmpty() ? null : copyBasicRecords.get(0).get(CONTRACT_ATTACH.DATA);
+	}
+	
+	public static byte[] getCopyContract(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> copyBasicRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)1))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetch();
+		
+		return copyBasicRecords.isEmpty() ? null : copyBasicRecords.get(0).get(CONTRACT_ATTACH.DATA);
+	}
 	
 }

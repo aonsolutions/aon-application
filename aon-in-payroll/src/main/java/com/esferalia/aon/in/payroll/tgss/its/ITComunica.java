@@ -41,7 +41,7 @@ public class ITComunica {
 	}
 
 	// SINCRONIZAR ITS
-	public static void syncUpITs(final byte certificateData[], final String certificatePassword,
+	public static void syncUpITs(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Domain domain, Optional<String> nss) throws IllegalArgumentException {
 
 		List<CCCInfo> cccs = getCccs(domain);
@@ -75,7 +75,7 @@ public class ITComunica {
 		.forEach(employeeIT->{
 			employeeIT.setDomain(domain.getId());
 		});
-				
+
 		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
 	}
 	
@@ -87,7 +87,7 @@ public class ITComunica {
 
 		 List<String> messages = new ArrayList<>();
 		 
-		 if(baja.isPresent()) 
+		 if(!baja.isEmpty()) 
 			 registerITBaja(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
 		 
 		 if(!confirmations.isEmpty()) {
@@ -95,13 +95,13 @@ public class ITComunica {
 				registerITConfirmation(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
 			 );
 		 }
-		 if(alta.isPresent()) 
+		 if(!alta.isEmpty()) 
 			 registerITAlta(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
 		 
 		 return messages;
 	}
 	
-	public static List<String> removeITs(final byte certificateData[], final String certificatePassword,
+	public static List<String> removeITs(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, EmployeeIT employeeIt) {
 		
 		 List<String> messages = new ArrayList<>();
@@ -109,7 +109,7 @@ public class ITComunica {
 		 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
 		 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
 		 
-		 if(baja.isPresent()) 
+		 if(!baja.isEmpty()) 
 			 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
 		 
 		 if(!confirmations.isEmpty()) {
@@ -118,7 +118,7 @@ public class ITComunica {
 			 );
 		 }
 	
-		 if(alta.isPresent()) 
+		 if(!alta.isEmpty()) 
 			 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
 		 
 		 return messages;
@@ -127,12 +127,13 @@ public class ITComunica {
 	private static void registerITBaja(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
 			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart,  List<String> messages) {
 			try {
+				Optional<Double> baseOptional = employeeIt.getDailyCgcBase();
 				verifyData(new Object[] { 
-						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getDailyCgcBase().get(), employeeIt.getQuoteDays(), 
+						 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), baseOptional.get(), employeeIt.getQuoteDays(), 
 						 employeeIt.getType(),  itPart.getDate(), employeeIt.getContractType()
 				});    
 	
-				Double base = employeeIt.getDailyCgcBase().get();
+				Double base = baseOptional.get();
 				float baseCgc   = base.floatValue();
 				int quoteDays = employeeIt.getQuoteDays();
 				String regime = employeeIt.getRegime();
@@ -150,7 +151,7 @@ public class ITComunica {
 				Optional<String> occupation = Optional.empty();
 				Optional<String> cias = itPart.getCias();
 				Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
-				Optional<String> collegeNumber = itPartCollegeNumber.isPresent() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
+				Optional<String> collegeNumber = !itPartCollegeNumber.isEmpty() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
 	
 				SistemaRED.registerITBaja(
 						byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
@@ -183,7 +184,7 @@ public class ITComunica {
 			String nss = employeeIt.getNss();
 			Date fconfirmation = itPart.getDate();
 			Optional<Byte> confirm = itPart.getConfirmOrder();
-			Optional<String> npartConfimation = confirm.isPresent() ? Optional.of(confirm.get().intValue()+"") : Optional.empty();
+			Optional<String> npartConfimation = !confirm.isEmpty() ? Optional.of(confirm.get().intValue()+"") : Optional.empty();
 			
 
 			Contingencies contingencie = SistemaRED.Contingencies.safeValueOf(employeeIt.getType().getValueTGSS()-1); 
@@ -191,7 +192,7 @@ public class ITComunica {
 	
 			Optional<String> cias = itPart.getCias();
 			Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
-			Optional<String> collegeNumber = itPartCollegeNumber.isPresent() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
+			Optional<String> collegeNumber = !itPartCollegeNumber.isEmpty() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
 
 			SistemaRED.registerITConfirmation(byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
 					regime, ccc, nss, contingencie, situation, collegeNumber, cias, fbaja, fconfirmation, npartConfimation);
@@ -230,7 +231,7 @@ public class ITComunica {
 	
 			Optional<String> cias = itPart.getCias();
 			Optional<String> itPartCollegeNumber = itPart.getCollegeNumber();
-			Optional<String> collegeNumber = itPartCollegeNumber.isPresent() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
+			Optional<String> collegeNumber = !itPartCollegeNumber.isEmpty() && Integer.parseInt(itPartCollegeNumber.get())>0 ?	itPart.getCollegeNumber() :	Optional.empty();
 			Optional<Date> fATEP = Optional.empty();
 			
 			SistemaRED.registerITAlta(
@@ -282,12 +283,11 @@ public class ITComunica {
 		}
 	}
 	
-	private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
 		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
 		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}
 
-	
 	public static List<CCCInfo> getCccs(Domain domain) {
 		return PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").filter(distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
 	}

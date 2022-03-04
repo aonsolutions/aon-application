@@ -465,7 +465,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
+	public static JSONObject acceptInvoice(AonApiData api) throws Exception {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
@@ -486,7 +486,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, TbaiException {
+	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws Exception {
 		if(invoice.isSales() && tbaiConfiguration.isActive()) {
 			TbaiMain tbai = new TbaiMain();
 			tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);

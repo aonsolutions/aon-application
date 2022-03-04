@@ -6,6 +6,7 @@ import java.util.Base64;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
+import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
@@ -162,6 +163,7 @@ public class SendEmailServlet extends HttpServlet{
 	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
 	            message.setFrom(new InternetAddress(from));
 	            Address replyTo = new InternetAddress(ma.getEmail());
+	            message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
 	            message.setReplyTo(addresses);
 	            SES.sendEmail(message);

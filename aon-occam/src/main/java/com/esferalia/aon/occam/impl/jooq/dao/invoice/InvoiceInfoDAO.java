@@ -13,11 +13,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceInfoProperties;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -61,9 +63,12 @@ public class InvoiceInfoDAO {
 	public static InvoiceInfo save(AONContext ctx, InvoiceInfo invoiceInfo) {
 		InvoiceInfoValidation.autoComplete(ctx, invoiceInfo);
 		InvoiceInfoValidation.validate(ctx, invoiceInfo);
-		invoiceInfo = invoiceInfo.getId() != null 
-			? update(ctx, invoiceInfo)
-			: insert(ctx, invoiceInfo);
+		Invoice inv = InvoiceDAO.getInvoice(ctx, invoiceInfo.getInvoice());
+		if(inv != null && inv.getId() != null) {
+			invoiceInfo = invoiceInfo.getId() != null 
+					? update(ctx, invoiceInfo)
+					: insert(ctx, invoiceInfo);
+		}
 		return invoiceInfo;
 	}
 	

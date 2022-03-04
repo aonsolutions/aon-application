@@ -1,6 +1,8 @@
 package net.aonsolutions.aon.tbai.exceptions;
 
-public class TbaiException extends Exception{
+import java.io.Serializable;
+
+public class TbaiException extends Exception  implements Serializable{
 
 	private static final long serialVersionUID = 1088764044366567246L;
 	

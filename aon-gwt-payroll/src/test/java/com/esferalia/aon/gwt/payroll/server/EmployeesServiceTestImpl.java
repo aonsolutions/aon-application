@@ -783,14 +783,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 			Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
 			Date endDate) {
 		// TODO Auto-generated method stub
 		return null;
@@ -1029,5 +1029,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
+			Date date, Integer contractId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

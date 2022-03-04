@@ -19,21 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.AddEpigrafe922;
-import net.aonsolutions.db.up2date.finance.InsertInvoiceInfoLroe;
-import net.aonsolutions.db.up2date.finance.InvoiceBatchCreation;
-import net.aonsolutions.db.up2date.fiscal.FsModelInvoiceCreation;
-import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
-import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;
-import net.aonsolutions.db.up2date.payroll.AgreementOwnerUpdate;
-import net.aonsolutions.db.up2date.payroll.AlterAgreement4Owner;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
-import net.aonsolutions.db.up2date.tgss.SMI2022Update;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
-import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
-import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
+import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
+import net.aonsolutions.db.up2date.user.CertificateDomainFix;
 
 
 public class Up2Date {
@@ -137,7 +124,7 @@ public class Up2Date {
     		//RealDecreeLaw182020Update.REALDECREELAW182020UPDATE
     		//DefaultAgreementDeleteWarn.DEFAULTAGREEMENTDELETEWARN
     		//RealDecreeLaw182020UpdateII.REALDECREELAW182020UPDATEII
-    		//AuthCreation.AUTH_CREATION,
+    		//SnapshotCreation.AUTH_CREATION,
     		//SalaryHoursUpdateMonthDays.SALARYHOURSUPDATEMONTHDAYS,
     		//RealDecreeLaw182020UpdateIII.REALDECREELAW182020UPDATEIII,
     		//AlterFsMod2002019.ALTER_FS_MODEL_200_2019
@@ -222,8 +209,10 @@ public class Up2Date {
     		//IrpfQuotasCheck.IRPFQUOTASCHECK,
     		//AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
     		//AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
-    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE
-    		SMI2022Update.SMI2022UPDATE
+    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
+    		//SMI2022Update.SMI2022UPDATE
+    		PrestITFactorUpdate.PRESTITFACTORUPDATE,
+    		CertificateDomainFix.CERTIFICATEDOMAINFIX
     };
     
 

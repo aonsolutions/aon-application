@@ -22,6 +22,8 @@ public class InvoiceParams implements Serializable {
 	private InvoiceCommunicationStatus communicationStatus;
 	private int page;
 	private int perPage;
+	
+	private boolean tbaiDeleted;
 
 	public InvoiceParams() {
 		this.page = 1;
@@ -121,5 +123,13 @@ public class InvoiceParams implements Serializable {
 	public InvoiceParams setPerPage(int perPage) {
 		this.perPage = perPage;
 		return this;
+	}
+	
+	public boolean isTbaiDeleted() {
+		return tbaiDeleted;
+	}
+	
+	public void setTbaiDeleted(boolean tbaiDeleted) {
+		this.tbaiDeleted = tbaiDeleted;
 	}
 }

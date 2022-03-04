@@ -825,8 +825,8 @@ public class JooqContrata {
 	}
 
 	public static IContratoType createCONTRATOS(EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		String tc2 = employeeContractInfo.getContractInfo().getContractType();
 		try {
-			String tc2 = employeeContractInfo.getContractInfo().getContractType();
 			if(AonStringUtils.isBlank(tc2))
 				return null;
 			IContratoType contratoType = createContratoModel(tc2);
@@ -901,6 +901,8 @@ public class JooqContrata {
 			
 			return contratoType;
 		} catch (Exception e) {
+			if(AonStringUtils.isNotBlank(tc2) && AonStringUtils.equals(tc2.substring(tc2.length() - 1), "9"))
+				return null;
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
