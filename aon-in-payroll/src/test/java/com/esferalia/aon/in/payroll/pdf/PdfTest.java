@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,8 +18,6 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
-import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -28,8 +25,19 @@ import com.esferalia.aon.salary.payment.IPayment;
 
 @Ignore
 public class PdfTest {
-	
-	
+//	@Ignore
+	@Test
+	public void testOmega() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("omega/COVAIN.pdf") ){
+			SalaryPDFParser.parseOmega(is, new SalaryBuilder() {
+//				@Override
+//				public void setEmployeeName(String employeeName) {
+//					System.out.println(employeeName);
+//					
+//				}
+			});
+		}
+	}
 	
 	
 	
