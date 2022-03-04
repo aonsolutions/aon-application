@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
@@ -131,11 +132,13 @@ public class Mod111DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod111 markAsFinished(AONContext ctx,Mod111 mod111) {
+		FiscalModelValidation.statusChange(mod111, FiscalStatus.FINISHED);
 		mod111 = FiscalModelDAO.finish(ctx, mod111);
 		return save(ctx, mod111);
 	}
 	
 	public static Mod111 markAsPending(AONContext ctx,Mod111 mod111) {
+		FiscalModelValidation.statusChange(mod111, FiscalStatus.PENDING);
 		mod111.setStatus(FiscalStatus.PENDING);
 		mod111.setDeclarationResult(null);
 		mod111.setDeclarationResultType(null);
@@ -147,16 +150,41 @@ public class Mod111DAO extends FiscalModelDAO {
 		}
 		return mod111;
 	}
-	
+
 	public static Mod111 markAsSent(AONContext ctx,Mod111 mod111) {
+		FiscalModelValidation.statusChange(mod111, FiscalStatus.SENT);
 		mod111.setStatus(FiscalStatus.SENT);
 		mod111 = save(ctx, mod111);
 		return mod111;
 	}
 	
 	public static Mod111 markAsCustomerCheck(AONContext ctx,Mod111 mod111) {
+		FiscalModelValidation.statusChange(mod111, FiscalStatus.CUSTOMER_CHECK);
 		mod111 = FiscalModelDAO.finish(ctx, mod111);
 		mod111.setStatus(FiscalStatus.CUSTOMER_CHECK);
+		mod111 = save(ctx, mod111);
+		return mod111;
+	}
+
+	public static Mod111 markAsCustomerAccepted(AONContext ctx,Mod111 mod111) {
+		FiscalModelValidation.statusChange(mod111, FiscalStatus.CUSTOMER_ACCEPTED);
+		mod111.setStatus(FiscalStatus.CUSTOMER_ACCEPTED);
+		mod111 = save(ctx, mod111);
+		return mod111;
+	}
+
+	public static Mod111 markAsCustomerRejected(AONContext ctx,Mod111 mod111, String reason) {
+		FiscalModelValidation.statusChange(mod111, FiscalStatus.CUSTOMER_REJECTED);
+		mod111.setStatus(FiscalStatus.CUSTOMER_REJECTED);
+		if (AonStringUtils.isNotBlank(reason)) {
+			String comments = mod111.getComments();
+			if (AonStringUtils.isNotBlank(comments)) {
+				comments = AonStringUtils.join(comments, "\n", reason);
+			} else {
+				comments = reason; 
+			}
+			mod111.setComments( comments );
+		}
 		mod111 = save(ctx, mod111);
 		return mod111;
 	}

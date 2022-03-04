@@ -10,15 +10,15 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 
-public class Mod111SentTest extends AbstractOccamTest {
+public class Mod111MarkAsCustomerAcceptedTest extends AbstractOccamTest {
 	
 	@Test
-	public void testSent() {
+	public void markAsCustomerAcceptedTest() {
 		for (Mod111 model : MODEL111.getMod111s(getOccam()) ) {
 			Mod111 mod111 = MODEL111.get(getOccam(), model.getId());
-			MODEL111.markAsSent(getOccam(), mod111);
+			MODEL111.markAsCustomerAccepted(getOccam(), mod111);
 			Mod111 mod111Bis = MODEL111.get(getOccam(), model.getId());
-			assertEquals("Status not SENT", FiscalStatus.SENT, mod111Bis.getStatus());
+			assertEquals("Status not CUSTOMER_ACCEPTED", FiscalStatus.CUSTOMER_ACCEPTED, mod111Bis.getStatus());
 			assertNotNull("Mod111. Tipo resultado NULL",mod111Bis.getDeclarationResultType());
 		}
 	}

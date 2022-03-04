@@ -101,6 +101,8 @@ public class EnumVisitors {
 		T visitSent();
 		T visitMissing();
 		T visitCustomerCheck();
+		T visitCustomerAccepted();
+		T visitCustomerRejected();
 	}
 	
 	public static interface IAdministrationVisitor<T> {

@@ -76,6 +76,18 @@ public class MODEL111 {
 		}
 	}
 
+	public static Mod111 markAsCustomerAccepted(Occam occam, Mod111 mod111) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerAccepted(ctx, mod111);
+		}
+	}
+
+	public static Mod111 markAsCustomerRejected(Occam occam, Mod111 mod111, String reason) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerRejected(ctx, mod111, reason);
+		}
+	}
+
 	public static void delete(Occam occam, Mod111 mod111) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod111);

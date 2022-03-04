@@ -67,6 +67,18 @@ public class MODEL111Impl implements IMODEL111 {
 	}
 
 	@Override
+	public Mod111 markAsCustomerAccepted(AONContext ctx, Mod111 mod111) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsCustomerAccepted(ctx, mod111));		
+	}
+
+	@Override
+	public Mod111 markAsCustomerRejected(AONContext ctx, Mod111 mod111, String reason) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsCustomerRejected(ctx, mod111, reason));		
+	}
+
+	@Override
 	public void delete(AONContext ctx, Mod111 mod111) {
 		ctx.getDslContext().transaction(
 				configuration -> FiscalModelDAO.delete(ctx, mod111));

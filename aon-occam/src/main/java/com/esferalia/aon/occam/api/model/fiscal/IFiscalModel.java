@@ -65,20 +65,41 @@ public interface IFiscalModel extends Serializable {
 	public default boolean isAEAT() {
 		return (getAdministration() == Administration.COMMON_TERRITORY);
 	}
+	public default boolean isStrictToDeposit() {
+		return false;
+	};
+	
+	
+	public default boolean isEditable() {
+		return isPending() || isCustomerRejected(); 
+	}
+	public default boolean isNotEditable() {
+		return !isEditable(); 
+	}
+	public default boolean isPending() {
+		return getStatus() == FiscalStatus.PENDING;
+	}
 	public default boolean isFinished() {
 		return getStatus() == FiscalStatus.FINISHED;
 	}
 	public default boolean isSent() {
 		return getStatus() == FiscalStatus.SENT;
 	}
+	@Deprecated
 	public default boolean isNotFinished() {
-		return getStatus() != FiscalStatus.FINISHED;
+		return isEditable();
 	}
 	public default boolean isBlocked() {
 		return getStatus() == FiscalStatus.BLOCKED;
 	}
-	public default boolean isStrictToDeposit() {
-		return false;
-	};
+	public default boolean isCustomerCheck() {
+		return getStatus() == FiscalStatus.CUSTOMER_CHECK;
+	}
+	public default boolean isCustomerAccepted() {
+		return getStatus() == FiscalStatus.CUSTOMER_ACCEPTED;
+	}
+	public default boolean isCustomerRejected() {
+		return getStatus() == FiscalStatus.CUSTOMER_REJECTED;
+	}
 	
 }

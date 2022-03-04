@@ -55,7 +55,7 @@ public class Mod111 extends FiscalModel implements Serializable {
 		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
 	}
 
-	//	@Override
+//	@Override
 //	public double getResult() {
 //		if (getAdministration() == null) return 0;
 //		else if (isAraba()) return getAmount(Mod111Key.AR_C87);

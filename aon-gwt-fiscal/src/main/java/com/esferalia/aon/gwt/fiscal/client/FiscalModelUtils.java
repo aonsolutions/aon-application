@@ -59,13 +59,16 @@ public class FiscalModelUtils {
 	}
 
 	private static class FiscalStatusBackgroundRGB implements IFiscalStatusVisitor<String> {
-		@Override public String visitPending() 	{return "LightGray";}
-		@Override public String visitFinished() {return "#e3ffab";}
-		@Override public String visitBatched() 	{return "#b8dc6f";}
-		@Override public String visitBlocked() 	{return "#ff8080";}
-		@Override public String visitSent() 	{return "#3EC946";}
 		@Override public String visitMissing() 	{return "White";}
+		@Override public String visitPending() 	{return "LightGray";}
 		@Override public String visitCustomerCheck() {return "LightYellow";}
+		@Override public String visitBatched() 	{return "DarkOrchid";}
+		@Override public String visitBlocked() 	{return "red";}
+		@Override public String visitFinished() {return "#e3ffab";}
+		@Override public String visitCustomerAccepted() {return "#e9ffdb"; }
+		@Override public String visitCustomerRejected() {return "DarkRed";}
+		@Override public String visitSent() 	{return "#3EC946";}   
+		
 	}
 	private static final IFiscalStatusVisitor<String> FISCAL_STATUS_BACKGROUND_RGB = new FiscalStatusBackgroundRGB();
 	public static String getStatusBckColorRGB(FiscalStatus status) {
@@ -80,6 +83,8 @@ public class FiscalModelUtils {
 		@Override public String visitSent() 	{return "white";}
 		@Override public String visitMissing() 	{return "black";}
 		@Override public String visitCustomerCheck() {return "black";}
+		@Override public String visitCustomerAccepted() {return "black"; }
+		@Override public String visitCustomerRejected() {return "white";}
 	}
 	private static final IFiscalStatusVisitor<String> FISCAL_STATUS_FOREGROUND_RGB = new FiscalStatusForegroundRGB();
 	public static String getStatusFrgColorRGB(FiscalStatus status) {
