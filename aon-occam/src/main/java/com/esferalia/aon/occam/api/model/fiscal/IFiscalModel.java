@@ -85,10 +85,6 @@ public interface IFiscalModel extends Serializable {
 	public default boolean isSent() {
 		return getStatus() == FiscalStatus.SENT;
 	}
-	@Deprecated
-	public default boolean isNotFinished() {
-		return isEditable();
-	}
 	public default boolean isBlocked() {
 		return getStatus() == FiscalStatus.BLOCKED;
 	}
@@ -102,4 +98,8 @@ public interface IFiscalModel extends Serializable {
 		return getStatus() == FiscalStatus.CUSTOMER_REJECTED;
 	}
 	
+	@Deprecated
+	public default boolean isNotFinished() {
+		return isEditable();
+	}
 }

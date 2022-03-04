@@ -222,7 +222,7 @@ public class FiscalModelValidation {
 			@Override 
 			public FiscalModel visitCustomerCheck() {
 				return throwIfTransitionFrom(model
-					,FiscalStatus.PENDING
+					,FiscalStatus.FINISHED
 					,FiscalStatus.BATCHED
 					,FiscalStatus.BLOCKED
 					,FiscalStatus.SENT

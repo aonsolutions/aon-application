@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.util.Arrays;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalStatusVisitor;
@@ -7,6 +9,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Anchor;
@@ -358,6 +362,98 @@ public class FiscalModelUtils {
 		if (status  == FiscalStatus.MISSING)	return AON.AON_CSS.aonIconQuestion();
 		return AON.AON_CSS.aonIconPointOrange();
 	}
+	
+	public static boolean canChangeStatus(final FiscalModel model, final FiscalStatus newStatus) {
+		return newStatus.visit( new IFiscalStatusVisitor<Boolean>() {
+
+			private boolean falseIfTransitionFrom(FiscalModel model, FiscalStatus ... statuses) {
+				return Arrays.stream(statuses)
+						.noneMatch( st -> st == model.getStatus() );
+			}
+			
+			@Override 
+			public Boolean visitPending() {
+				return model.getStatus() != FiscalStatus.PENDING &&
+					falseIfTransitionFrom(model, FiscalStatus.BATCHED,FiscalStatus.BLOCKED);
+			}
+			@Override 
+			public Boolean visitFinished() {
+				return model.getStatus() != FiscalStatus.FINISHED &&
+					falseIfTransitionFrom(model
+						,FiscalStatus.SENT
+						,FiscalStatus.MISSING
+						,FiscalStatus.CUSTOMER_CHECK
+						,FiscalStatus.CUSTOMER_REJECTED
+						,FiscalStatus.BATCHED
+						,FiscalStatus.BLOCKED);
+			}
+			@Override 
+			public Boolean visitBatched() {
+				return model.getStatus() != FiscalStatus.BATCHED &&
+					falseIfTransitionFrom(model, FiscalStatus.BLOCKED);
+			}
+			@Override 
+			public Boolean visitBlocked() {
+				return model.getStatus() != FiscalStatus.BLOCKED &&
+					falseIfTransitionFrom(model, FiscalStatus.BATCHED);
+			}
+
+			@Override 
+			public Boolean visitSent() {
+				return model.getStatus() != FiscalStatus.SENT &&
+					falseIfTransitionFrom(model
+						,FiscalStatus.MISSING
+						,FiscalStatus.PENDING
+						,FiscalStatus.BATCHED
+						,FiscalStatus.BLOCKED
+						,FiscalStatus.CUSTOMER_CHECK
+						,FiscalStatus.CUSTOMER_REJECTED);
+			}
+
+			@Override 
+			public Boolean visitMissing() {
+				return model.getStatus() != FiscalStatus.MISSING &&
+					falseIfTransitionFrom(model, FiscalStatus.BATCHED,FiscalStatus.BLOCKED);
+			}
+			@Override 
+			public Boolean visitCustomerCheck() {
+				return model.getStatus() != FiscalStatus.CUSTOMER_CHECK &&
+					falseIfTransitionFrom(model
+						,FiscalStatus.PENDING
+						,FiscalStatus.BATCHED
+						,FiscalStatus.BLOCKED
+						,FiscalStatus.MISSING
+						,FiscalStatus.CUSTOMER_ACCEPTED
+						,FiscalStatus.CUSTOMER_REJECTED);
+			}
+			@Override 
+			public Boolean visitCustomerAccepted() {
+				return model.getStatus() != FiscalStatus.CUSTOMER_ACCEPTED &&
+					falseIfTransitionFrom(model, 
+						FiscalStatus.PENDING,
+						FiscalStatus.FINISHED,
+						FiscalStatus.BATCHED,
+						FiscalStatus.BLOCKED,
+						FiscalStatus.SENT,
+						FiscalStatus.MISSING,
+						FiscalStatus.CUSTOMER_REJECTED);
+			}
+			@Override 
+			public Boolean visitCustomerRejected() {
+				return model.getStatus() != FiscalStatus.CUSTOMER_REJECTED &&
+					falseIfTransitionFrom(model, 
+						FiscalStatus.PENDING,
+						FiscalStatus.FINISHED,
+						FiscalStatus.BATCHED,
+						FiscalStatus.BLOCKED,
+						FiscalStatus.SENT,
+						FiscalStatus.MISSING,
+						FiscalStatus.CUSTOMER_ACCEPTED);
+						
+			}
+		});
+	}
+	
 
 }
 

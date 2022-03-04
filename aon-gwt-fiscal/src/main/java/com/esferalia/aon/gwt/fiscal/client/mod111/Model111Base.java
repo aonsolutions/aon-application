@@ -164,6 +164,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		for (Entry<Mod111Key, AonDoubleBox> entry : fieldsMap.entrySet()) {
 			double d1 = mod111.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
+			entry.getValue().setEnabled(mod111.isEditable());
 			if (!AonNumberUtils.equals(d1, d2)) {
 				entry.getValue().setValue(d1,false,true);
 			}
@@ -341,25 +342,29 @@ public abstract class Model111Base extends DockLayoutPanel {
 
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(model.getDocument(),AonStringUtils.SPACE,model.getFullName()));
-		resetButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
-		auditButton.setVisible(!model.isNew());
 		newButton.setVisible(!model.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
-		saveButton.setVisible(!model.isFinished() && !model.isSent());
-		deleteButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
+		saveButton.setVisible(model.isEditable());
+		deleteButton.setVisible(!model.isNew() && model.isEditable());
+		resetButton.setVisible(!model.isNew() && model.isEditable());
+		auditButton.setVisible(!model.isNew());
 		printButton.setVisible(!model.isNew());
-		markAsPendingButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED 
-				|| model.getStatus() == FiscalStatus.BATCHED
-				|| model.getStatus() == FiscalStatus.SENT
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.BLOCKED));
-		markAsFinishedButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.PENDING
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED));
+		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));
+		markAsFinishedButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.FINISHED));
+		markAsSentButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.SENT));
+				
+//		markAsPendingButton.setVisible(!model.isNew() &&
+//				(model.getStatus() == FiscalStatus.FINISHED 
+//				|| model.getStatus() == FiscalStatus.BATCHED
+//				|| model.getStatus() == FiscalStatus.SENT
+//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
+//				|| model.getStatus() == FiscalStatus.BLOCKED));
+//		markAsFinishedButton.setVisible(!model.isNew() &&
+//				(model.getStatus() == FiscalStatus.PENDING
+//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
+//				|| model.getStatus() == FiscalStatus.MISSING));
+//		markAsSentButton.setVisible(!model.isNew() &&
+//				(model.getStatus() == FiscalStatus.FINISHED));
 	}
 	
 	private void styleStatusLabel(Mod111 mod111) {
@@ -658,7 +663,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 			this.remove(paymentContainer);
 			this.forceLayout();
 		}
-		if (mod.isFinished() || mod.isSent()) {
+		if (!mod.isNew()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
 			buff.append(AON.FMT.format(mod.getDeclarationResult()));
