@@ -2011,9 +2011,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch ( Exception e ) {
 		}
 		try {
-			salaryBuilder.setTimeUnits(ctx.getExpressionContext().getVariables(ContextVariable.QUOTE_DAYS).stream()
-					.map(var -> (Number) var.getValue(var.getPeriod()))
-					.collect(Collectors.summingDouble(number -> number.doubleValue())).intValue());
+			salaryBuilder.setTimeUnits(
+			ctx.getExpressionContext().eval(ContextVariable.QUOTE_DAYS.getName(), ctx.getStartDate(), ctx.getEndDate(), Number.class).stream()
+			.map(result -> result.getValue(result.getPeriod()))
+			.collect(Collectors.summingDouble(Number::doubleValue)).intValue());
 			return;
 		} catch (Exception e) {
 		}
