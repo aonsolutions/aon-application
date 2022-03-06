@@ -1,11 +1,18 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
@@ -19,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -276,7 +284,7 @@ public class ContractLeaveLoader {
 		}
 		exprCtx.addLazyExpression(exp, start, end);
 
-		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
+		exprCtx.setVariable(LEAVE_FACTOR, 1.00, start, end );
 
 		type.accept(new LeaveTypeVisitor<Void>() {
 
@@ -417,6 +425,8 @@ public class ContractLeaveLoader {
 				List<ITimedVariable<Number>> factors = exprCtx.getVariables(factorVariable, start, end);
 				List<Period> periods = new ArrayList<Period>();
 
+				List<Period> leavePeriods = exprCtx.getPeriods(LEAVE_DAYS);
+
 				for (ITimedVariable<Number> factor : factors) {
 
 					Period period = factor.getPeriod();
@@ -442,35 +452,56 @@ public class ContractLeaveLoader {
 							return leaveDays * value;
 						}
 					});
-
-					exprCtx.putVariable(ContextVariable.WORKED_DAYS, new ITimedVariable<Double>() {
-
-						@Override
-						public Period getPeriod() {
-							return period;
-						}
-
-						@Override
-						public Double getValue(Period period) {
-
-							ExpressionContext.getCurrentBindings().get(factorVariable, value -> value, 1.00);
-
-							return getQuoteDays(exprCtx, period) * (1.00 - value);
-						}
-					});
-					exprCtx.putVariable(ContextVariable.WORKED_FACTOR, new ITimedVariable<Double>() {
-
-						@Override
-						public Period getPeriod() {
-							return period;
-						}
-
-						@Override
-						public Double getValue(Period period) {
-
-							return (1.00 - value);
-						}
-					});
+					
+					for ( Period leavePeriod : Period.intersect(Collections.singletonList(period), leavePeriods) ) { 
+						
+						exprCtx.putVariable(ContextVariable.LEAVE_FACTOR, new ITimedVariable<Double>() {
+							
+							@Override
+							public Period getPeriod() {
+								return leavePeriod;
+							}
+	
+							@Override
+							public Double getValue(Period period) {
+	
+								return (1.00 - value);
+							}
+						});
+					} 
+					
+					for( Period workedPeriod : Period.sub(Collections.singletonList(period), leavePeriods)) {
+						
+						exprCtx.putVariable(ContextVariable.WORKED_DAYS, new ITimedVariable<Double>() {
+	
+							@Override
+							public Period getPeriod() {
+								return workedPeriod;
+							}
+	
+							@Override
+							public Double getValue(Period period) {
+	
+								ExpressionContext.getCurrentBindings()
+								.get(factorVariable, value -> value, 1.00);
+	
+								return getQuoteDays(exprCtx, workedPeriod) * (1.00 - value);
+							}
+						});
+						exprCtx.putVariable(ContextVariable.WORKED_FACTOR, new ITimedVariable<Double>() {
+	
+							@Override
+							public Period getPeriod() {
+								return workedPeriod;
+							}
+	
+							@Override
+							public Double getValue(Period period) {
+	
+								return (1.00 - value);
+							}
+						});
+					}
 					// exprCtx.setVariable(ContextVariable.WORKED_DAYS,
 					// leaveDays * (1.00 - value) ,
 					// period.getStart(),
@@ -508,6 +539,7 @@ public class ContractLeaveLoader {
 			}
 
 		});
+		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
 		add(new Leave(id, start, end, type, (int) parentDays));
 	}
 
@@ -542,6 +574,7 @@ public class ContractLeaveLoader {
 		exprCtx.removeVariable(ContextVariable.BR, leave.getStart(), leave.getEnd());
 
 		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.LEAVE_FACTOR, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.IT_LENGTH, leave.getStart(), leave.getEnd());
@@ -549,6 +582,7 @@ public class ContractLeaveLoader {
 	}
 
 	// ---------------------------------------------------------------- Private
+	
 
 	protected double getQuoteDays(ExpressionContext ctx, Period p) {
 

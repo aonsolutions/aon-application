@@ -119,6 +119,8 @@ public interface ISecurity {
 	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf);
 	public LinkedList<AuthDevice> getAuthDevices(AONContext ctx, AuthDeviceFilter adf);
 	
+	public void saveDomainMaxDefinedUser(AONContext ctx, Integer maxDefinedUser);
+	
 	@Deprecated
 	public void saveUserFinancePortal(AONContext ctx, Integer userId);
 

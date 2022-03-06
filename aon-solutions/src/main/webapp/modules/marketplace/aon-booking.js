@@ -2,19 +2,27 @@ import {AonElement} from '../../components/AonElement.js';
 import {Apps, ClassicApps, Services, Packs} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import {App} from '../../models/enums.js';
+import {App, ToolbarType} from '../../models/enums.js';
+import { AonToolbar } from '../../components/aon-toolbar.js';
 
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon-button.js';
 import '../../components/aon-icon.js';
 
-import { CSS, MSG, TAG } from '../../environments/environments.js'; 
+import { CSS, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import * as ACTION from '../actions.js';
+import { AonInput } from '../../components/aon-input.js';
+import { AonToast } from '../../components/aon-toast.js';
+import { IFRAME } from '../../environments/aonTag.js';
+export class AonBooking extends AonElement {
 
-export class AonMarketplace extends AonElement {
-
+	TOOLBAR;
+	USER_NUMBER;
 	APP;
 	apps;
+	users;
+	definedUsers;
 
 	get id() {
 		return this.getAttribute('id');
@@ -30,60 +38,66 @@ export class AonMarketplace extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		getDomainUserRoles({}).then(r => {
+		getDomainUserRoles({reload: true}).then(r => {
 			const dur = new DomainUserRoles(r);
-			for(let i in dur.getDomainApps()){
-				this.apps.push(dur.getDomainApps()[i]);
-			}
+			this.apps = dur.getDomainApps();
+			this.users = dur.maxDefinedUsers;
+			this.definedUsers = dur.definedUsers;
 			this.build(dur);
 		});
 	}
 
 	initialize() {
-		this.id = this.id || 'aonMarketplace';
+		this.id = this.id || 'aonBooking';
 		this.APP = this.id + 'App';
+		this.TOOLBAR = this.id + 'Toolbar';
+		this.USER_NUMBER = this.id + 'UserNumber';
 		this.apps = [];
 	}
 
 	build(dur) {
-		let cbutton = document.createElement('button');
-		cbutton.id = 'aonMarketplaceContractButton';
-		cbutton.className = 'aonButton';
-		cbutton.style.width = '110px';
-		cbutton.style.padding = '0.3rem 0.8rem';
-		cbutton.style.borderRadius = '25px';
-		cbutton.innerHTML = MSG.CONTRACT;
-		cbutton.style.backgroundColor = '#12ccd1';
-		cbutton.style.position = 'absolute';
-		cbutton.style.right = '70px';
-		cbutton.style.top = '15px';
-		cbutton.addEventListener('click', (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			this.save();
-		});
-		this.appendChild(cbutton);
+		let toolbar = new AonToolbar();
+		toolbar.id = this.TOOLBAR;
+		toolbar.type = ToolbarType.SECONDARY;
+		toolbar.title = 'CONTRATACIÓN';
+		this.appendChild(toolbar);
+		toolbar.addButton2(ACTION.SAVE, () => this.save());
 
-		this.buildTitle('Packs');
-		this.buildApps(Packs, dur);
+		let content = this.createElement(TAG.DIV);
+		content.className = CSS.AON_SUB_CONTENT;
+		this.appendChild(content);
 
-		this.buildTitle(MSG.APPLICATIONS);
-		this.buildApps(Apps, dur);
+		let users = new AonInput();
+		users.description = 'Número de Usuarios';
+		users.deion = 'Número de Usuarios';
+		users.value = this.users;
+		users.style.position = 'absolute';
+		users.style.right = '70px';
+		users.style.top = '5px';
+		content.appendChild(users);
+		users.onChange(r => this.users = users.value);
+		users.addIconWithRemove(MATERIAL_ICONS.PERSON, undefined, () => users.value = '0');	
 
-		this.buildTitle(MSG.SERVICES);
-		this.buildApps(Services, dur);
+		this.buildTitle(content, 'Packs');
+		this.buildApps(content, Packs, dur);
 
-		this.buildTitle(MSG.CLASSIC_APPLICATIONS);
-		this.buildApps(ClassicApps, dur);
+		this.buildTitle(content, MSG.APPLICATIONS);
+		this.buildApps(content, Apps, dur);
+
+		this.buildTitle(content, MSG.SERVICES);
+		this.buildApps(content, Services, dur);
+
+		this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
+		this.buildApps(content, ClassicApps, dur);
 	}
 
-	buildApps(apps, dur) {
+	buildApps(content, apps, dur) {
 		let ul = document.createElement(TAG.UL);
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP_TOP);
 		ul.style.marginLeft = '60px';
 		ul.style.marginRight = '60px';
-		this.appendChild(ul);
+		content.appendChild(ul);
 		for (let key in apps){
 			const app = apps[key];
 			let contratado = this.hasApp(dur, app.app.toUpperCase());
@@ -175,10 +189,13 @@ export class AonMarketplace extends AonElement {
 		contractButton.style.opacity = contract ? '0.3' : '1';
 
 		if(contract && !disabled) {
-			this.apps.push(app.app.toUpperCase());
+			if(!this.apps.includes(app.app.toUpperCase()))
+				this.apps.push(app.app.toUpperCase());
 		} else if(this.apps.includes(app.app.toUpperCase())) {
-			const index = this.apps.indexOf(app.app.toUpperCase());
-			this.apps.splice(index, 1);
+			this.apps.forEach((r, i) => {
+				if(r === app.app.toUpperCase())
+					this.apps.splice(i, 1);
+			});
 		}
 
 		if((contract && disabled) || app.disabled) {
@@ -204,29 +221,44 @@ export class AonMarketplace extends AonElement {
 	}
 
 	save() {
-		setDomainApp({
-			apps: this.apps
-		}).then(() => {
-			let aonApplication = document.querySelector('aon-application');
-			let toast = this.getElement(aonApplication.TOAST);
+		let tID = this.id + 'Toast';
+		let toast = this.getElement(tID);
+		if(!toast){
+			toast = new AonToast(); 
+			toast.id = tID;
+			this.appendChild(toast);
+		}
+
+		if(this.definedUsers > this.users) {
 			toast.start({
-				type: 'success',
-				message: 'Datos Guardados Correctamente'
+				type: 'error',
+				message: 'El número de usuarios no puede ser mayor que el número de usuarios contratados'
 			});
-			getDomainUserRoles({reload:true}).then(r => {
-				//this.build(new DomainUserRoles(r));
+		} else {
+			setDomainApp({
+				apps: this.apps,
+				users: this.users
+			}).then(() => {
+				toast.start({
+					type: 'success',
+					message: 'Datos Guardados Correctamente'
+				});
+				getDomainUserRoles({reload:true}).then(r => {
+					//this.build(new DomainUserRoles(r));
+				});
 			});
-		});
+	
+		}
 	}
 
-	buildTitle(title) {
+	buildTitle(content, title) {
 		let div = document.createElement('div');
 		div.style.color = 'gray';
 		div.style.paddingTop = '20px';
 		div.style.paddingBottom = '20px';
 		div.style.marginLeft = '60px';
 		div.innerHTML = title.toUpperCase();
-		this.appendChild(div);
+		content.appendChild(div);
 	}
 
 	hasApp(dur, app) {
@@ -320,6 +352,6 @@ export class AonMarketplace extends AonElement {
 		else return false;
 	}
 }
-if(!window.customElements.get('aon-marketplace')){
-	window.customElements.define('aon-marketplace', AonMarketplace);
+if(!window.customElements.get('aon-booking')){
+	window.customElements.define('aon-booking', AonBooking);
 }

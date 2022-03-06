@@ -271,7 +271,7 @@ public class UserServlet extends AonApiHttpServlet {
 					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		}
 		JSONObject json = new JSONObject();
-		json.put("id",user.getId());
+		json.put("id", user.getId());
 		json.put("name", user.getName());
 		json.put("login", user.getLogin());
 		json.put("newAon", UserToolbar.AON_SOLUTIONS.equals(user.getToolbar()));

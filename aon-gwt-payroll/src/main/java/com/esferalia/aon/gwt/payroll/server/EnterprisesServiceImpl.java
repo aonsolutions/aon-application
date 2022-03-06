@@ -3658,15 +3658,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public EnterpriseITStatus getEnterpriseITStatus(String domainName, String login) {
-		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
-			Domain domain = new Domain().setId(domainId).setName(domainName);
-			return ITStatusUtils.getEnterpriseITStatus(domain, login, userId);
-		} catch ( CertificateNotFoundException e) {
-			return new EnterpriseITStatus.CredentialsNotFound();
+		try  {
+			Domain domain = new Domain().setId(AonServletUtils.getDomainID(domainName)).setName(domainName);
+			User user = AON.getUser(domain.getName(), domain.getId(), login);
+			return ITStatusUtils.getEnterpriseITStatus(domain, user);
 		} catch ( Exception e  ) {
+			e.printStackTrace();
 			return new EnterpriseITStatus.UnknownError().setMessage(e.getMessage());
 		}
 	}

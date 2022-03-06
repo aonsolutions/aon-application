@@ -18,13 +18,13 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Module;
-import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
@@ -446,7 +446,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				dapp.setApp(AonApp.PAYROLL);
 				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp, false);
 			}
-			if(dapp.getApp() != null && dapp.getActive())
+			if(dapp.getApp() != null && dapp.isActive())
 				array.put(dapp.getApp().name().toLowerCase());
 
 		});			
@@ -455,6 +455,10 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject setDomainApp(AonApiData api){
 		JSONArray array = api.getData().optJSONArray("apps");
+		Integer users = JsonUtils.getInteger(api.getData(), "users");
+		if(users != null) {
+			AON_SOLUTIONS.saveDomainMaxDefinedUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), users);
+		}
 		LinkedList<AonApp> apps = new LinkedList<>();
 		for(int i = 0; i < array.length(); i++) {
 			AonApp app = AonApp.safeValueOf(array.optString(i));

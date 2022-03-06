@@ -277,6 +277,19 @@ public class DomainUserRoles implements Serializable {
 		return hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
 	}
 	
+
+	// NOTES - NOTAS
+	
+	public boolean hasNotes() {
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) 
+				|| hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING)
+				|| hasApp(AonApp.NOTES);
+	}
+
+	public Boolean isNotes() {
+		return hasNotes() && (isAdmin() || hasRole(AonRole.NOTES));
+	}
+	
 	// INVOICE - FACTURAS
 	
 	public boolean hasInvoice() {

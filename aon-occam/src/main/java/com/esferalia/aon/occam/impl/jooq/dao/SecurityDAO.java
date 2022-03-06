@@ -294,7 +294,7 @@ public class SecurityDAO {
 		Integer id = ctx.getDslContext().insertInto(DOMAIN_APP)
 			.set(DOMAIN_APP.DOMAIN, domainApp.getDomain())
 			.set(DOMAIN_APP.APP, domainApp.getApp().value())
-			.set(DOMAIN_APP.ACTIVE, domainApp.getActive() ? (byte) 1 : (byte) 0)
+			.set(DOMAIN_APP.ACTIVE, domainApp.isActive() ? (byte) 1 : (byte) 0)
 			.execute();
 		ctx.log().info("\tINSERT DOMAIN APP id: " + id);
 		return domainApp.setId(id);
@@ -302,8 +302,9 @@ public class SecurityDAO {
 	
 	private static DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp) {
 		ctx.getDslContext().update(DOMAIN_APP)
-			.set(DOMAIN_APP.ACTIVE, domainApp.getActive() ? (byte) 1 : (byte) 0)
-			.where(DOMAIN_APP.ID.eq(domainApp.getId()))
+			.set(DOMAIN_APP.ACTIVE, domainApp.isActive() ? (byte) 1 : (byte) 0)
+			.where(DOMAIN_APP.DOMAIN.eq(domainApp.getDomain()))
+			.and(DOMAIN_APP.APP.eq(domainApp.getApp().value()))
 			.execute();
 		ctx.log().info("\tUPDATE DOMAIN APP id: " + domainApp.getId());
 		return domainApp;
@@ -1561,6 +1562,13 @@ public class SecurityDAO {
 				.isPresent();
 		}
 		return false;
+	}
+	
+	public static void saveDomainMaxDefinedUser(AONContext ctx, Integer maxDefinedUser) {
+		ctx.getDslContext().update(DOMAIN)
+			.set(DOMAIN.MAXDEFINEDUSERS, maxDefinedUser)
+			.where(DOMAIN.ID.eq(ctx.getDomainId()))
+			.execute();
 	}
 	
 	@Deprecated

@@ -1,15 +1,15 @@
 package com.esferalia.aon.payroll.calculator;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.watson.util.AonNumberUtils.zeroIfNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -26,8 +26,10 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<T>{
+	
 
 	private Object contract;
 	private String ccc;
@@ -83,6 +85,8 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	private Collection<Deduction> zeroDeductions;
 	
 	
+	private ISalaryBuilderListener listener;
+	private Collection<ExpressionContext> expressionContexts;
 	
 	private static class Data {
 		String name;
@@ -507,7 +511,11 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	}
 	
 	public void collect(ISalaryBuilder<?>  builder) {
+		
+		builder.setListener(listener);
+		
 		builder.createNewSalary();
+		builder.setExpressionContext(getExpressionContext());
 		// 
 		builder.setContract(contract);
 		builder.setCcc(ccc);
@@ -655,6 +663,16 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	}
 	
 	@Override
+	public void setListener(ISalaryBuilderListener listener) {
+		this.listener = listener;
+	}
+
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		this.expressionContexts.add(context);
+	}
+	
+	@Override
 	public void setContract(Object contract) {
 		this.contract = contract;
 	}
@@ -761,92 +779,92 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 
 	@Override
 	public void setTimeUnits(Integer timeUnits) {
-		this.timeUnits += timeUnits;
+		this.timeUnits += zeroIfNull(timeUnits);
 	}
 
 	@Override
 	public void setItBase(Double itBase) {
-		this.itBase += itBase;
+		this.itBase += zeroIfNull(itBase);
 	}
 
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
-		this.rawCgcBase += rawCgcBase;
+		this.rawCgcBase += zeroIfNull(rawCgcBase);
 	}
 
 	@Override
 	public void setCgcBase(Double cgcBase) {
-		this.cgcBase += cgcBase;
+		this.cgcBase += zeroIfNull(cgcBase);
 	}
 
 	@Override
 	public void setCgpBase(Double cgpBase) {
-		this.cgpBase += cgpBase;
+		this.cgpBase += zeroIfNull(cgpBase);
 	}
 
 	@Override
 	public void setRemuneration(Double remuneration) {
-		this.remuneration += remuneration;
+		this.remuneration += zeroIfNull(remuneration);
 	}
 
 	@Override
 	public void setProExtBase(Double proExtBase) {
-		this.proExtBase += proExtBase;
+		this.proExtBase += zeroIfNull(proExtBase);
 	}
 
 	@Override
 	public void setIrpfBase(Double irpfBase) {
-		this.irpfBase += irpfBase;
+		this.irpfBase += zeroIfNull(irpfBase);
 	}
 
 	@Override
 	public void setMoneyIrpfBase(Double moneyIrpfBase) {
-		this.moneyIrpfBase += moneyIrpfBase;
+		this.moneyIrpfBase += zeroIfNull(moneyIrpfBase);
 	}
 
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
-		this.inkindIrpfBase += inkindIrpfBase;
+		this.inkindIrpfBase += zeroIfNull(inkindIrpfBase);
 	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
-		this.hExtraBase += hExtraBase;
+		this.hExtraBase += zeroIfNull(hExtraBase);
 	}
 
 	@Override
 	public void setNonHExtraBase(Double nonHExtraBase) {
-		this.nonHExtraBase += nonHExtraBase;
+		this.nonHExtraBase += zeroIfNull(nonHExtraBase);
 	}
 
 	@Override
 	public void setTotalSS(Double totalSS) {
-		this.totalSS += totalSS;
+		this.totalSS += zeroIfNull(totalSS);
 	}
 
 	@Override
 	public void setTotalIrpf(Double totalIrpf) {
-		this.totalIrpf += totalIrpf;
+		this.totalIrpf += zeroIfNull(totalIrpf);
 	}
 
 	@Override
 	public void setTotalDeduction(Double totalDeduction) {
-		this.totalDeduction += totalDeduction;
+		this.totalDeduction += zeroIfNull(totalDeduction);
 	}
 
 	@Override
 	public void setTotalLiquid(Double totalLiquid) {
-		this.totalLiquid += totalLiquid;
+		this.totalLiquid += zeroIfNull(totalLiquid);
 	}
 
 	@Override
 	public void setTotalPayment(Double totalPayment) {
-		this.totalPayment += totalPayment;
+		this.totalPayment += zeroIfNull(totalPayment);
 	}
 
 	@Override
 	public void setTotalEnterprise(Double totalEnterprise) {
-		this.totalEnterprise += totalEnterprise;
+		this.totalEnterprise += zeroIfNull(totalEnterprise);
 	}
 
 	@Override
@@ -898,17 +916,6 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 		zeroEmbargos.add(new Embargo(id, null, null, embargo, context));
 	}
 
-	@Override
-	public void setListener(ISalaryBuilderListener listener) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setExpressionContext(ExpressionContext context) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	// ------------------------------------------------------------------------
 	
 	private void reset() {
@@ -935,15 +942,23 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 		this.itBase = 0.00 ;
 		this.timeUnits = 0 ;
 		
-		datas = new ArrayList<Data>();
-		costs = new ArrayList<Cost>();
-		bonuses = new ArrayList<Bonus>();
-		embargos = new ArrayList<Embargo>();
-		payments = new ArrayList<Payment>();
-		zeroPayments = new ArrayList<Payment>();
-		deductions = new ArrayList<Deduction>();
-		zeroDeductions = new ArrayList<Deduction>();
+		datas = new ArrayList<>();
+		costs = new ArrayList<>();
+		bonuses = new ArrayList<>();
+		embargos = new ArrayList<>();
+		payments = new ArrayList<>();
+		zeroPayments = new ArrayList<>();
+		deductions = new ArrayList<>();
+		zeroDeductions = new ArrayList<>();
 		
+		expressionContexts = new ArrayList<>();
+		
+	}
+	
+	private ExpressionContext getExpressionContext() {
+		ExpressionContext expressionContext = new ExpressionContext();
+		expressionContexts.forEach(expressionContext::add);
+		return expressionContext;
 	}
 	
 
