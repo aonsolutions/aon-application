@@ -314,6 +314,9 @@ public class FDIWriter implements Serializable {
 		odp.setNumero(detail.getConfirmOrder());
 		odp.setEntidadAseguradora(0);
 		odp.setFechaCambioEntidad(0);
+		Date startDate = detail.getContractLeave().getStartDate();
+		startDate = DateUtils.addYears(startDate, 1);
+		odp.setFechaCumplimiento(Integer.parseInt(dateFormatter.format(startDate)));
 		return odp;
 	}
 

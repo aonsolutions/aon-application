@@ -6,6 +6,7 @@
 	<field name="numero" value="bean" bean="ODP" property="numero" format="Numeric" pattern="9(2)" />
 	<field name="entidadAseguradora" value="bean" bean="ODP" property="entidadAseguradora" format="Numeric" pattern="9(3)" />
 	<field name="fechaCambioEntidad" value="bean" bean="ODP" property="fechaCambioEntidad" format="Numeric" pattern="9(8)" />
-	<field name="free1" value=" " format="AlphaNumeric" pattern="X(46)" />
+	<field name="fechaCumplimiento" value="bean" bean="ODP" property="fechaCumplimiento" format="Numeric" pattern="9(8)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(38)" />
 </register>
 

@@ -3646,7 +3646,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
 				 	
 					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			    	ITComunica.removeITs(new ByteArrayInputStream(certificate.getData()).readAllBytes(), certificate.getPassword(), certificate.getType(), employeeIT);
+			    	ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
 			    }
 			    System.out.println("REMOVE IT>> "+employeeIT);	
 			 }

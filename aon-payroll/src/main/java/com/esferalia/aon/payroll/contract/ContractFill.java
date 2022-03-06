@@ -1,8 +1,11 @@
 package com.esferalia.aon.payroll.contract;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,53 +15,69 @@ import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class ContractFill {
 	
-	@SuppressWarnings("serial")
-	private static final Map<String, String> FIELDNAMESTOMAP = new HashMap<String,String>(){
-		{
-			put("Texto10", "ENTERPRISE_COUNTRY_CODE");
-			put("Texto14", "ENTERPRISE_MUNICIPALITY_CODE");
-			put("Texto19", "ENTERPRISE_ZIP");
-			put("REG_CCC", "ENTERPRISE_CCC_REG");
-			put("PRV_CCC", "ENTERPRISE_CCC_PRV");
-			put("NUM_CCC", "ENTERPRISE_CCC_NUM");
-			put("DC_CCC", "ENTERPRISE_CCC_DC");
-			put("Texto3441", "ENTERPRISE_ACTIVITY_CODE");
-			put("COD_PAISCT", "WORKPLC_COUNTRY_CODE");
-			put("COD_MUNCT", "WORKPLC_MUNICIPALITY_CODE");
-			put("COD_NACTRA", "E_NATIONALITY_CODE");
-			put("COD_MUNDO", "E_MUNICIPALITY_ADDR_CODE");
-			put("COD_PAISDO", "E_COUNTRY_ADDR_CODE");
-			put("PRV_NASS", "E_SS1");
-			put("NUM_NASS", "E_SS2");
-			put("DC_NASS", "E_SS3");
-			put("DEN_NVFOR", "E_FORMATIVE_LVL");
-			put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
-		}
-	};
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static final Map<String, String> FIELDNAMESTOMAP = new HashMap<>();
 	
-	public static byte[] fillContract(Integer contractType, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	public static byte[] fillContract(
+			Integer contractType, 
+			String sepeIde, 
+			Date comunicationDate, 
+			Map<String, String> contractOtherInfo, 
+			Map<String, String> contractFillInfo, 
+			Map<String, String> contractClauses) {
+		
 		if(null == contractType)
 			return null;
 		
+		initializeFieldNames();
+		
 		if(contractType >= 100 && contractType <= 400) 
-			return fillIndefiniteContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
+			return fillIndefiniteContract(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 		else if (contractType == 421) 
-			return fillFormationContract(contractOtherInfo, contractFillInfo, contractClauses);
+			return fillFormationContract(sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 		else if (contractType == 420 || contractType == 520) 
-			return fillPracticeContract(contractOtherInfo, contractFillInfo, contractClauses);
+			return fillPracticeContract(sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 		else 
-			return fillTemporalContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
+			return fillTemporalContract(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 		
 	}
 	
-	private static byte[] fillIndefiniteContract(Integer contractType, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static void initializeFieldNames() {
+		FIELDNAMESTOMAP.clear();
+		FIELDNAMESTOMAP.put("Texto10", "ENTERPRISE_COUNTRY_CODE");
+		FIELDNAMESTOMAP.put("Texto14", "ENTERPRISE_MUNICIPALITY_CODE");
+		FIELDNAMESTOMAP.put("Texto19", "ENTERPRISE_ZIP");
+		FIELDNAMESTOMAP.put("REG_CCC", "ENTERPRISE_CCC_REG");
+		FIELDNAMESTOMAP.put("PRV_CCC", "ENTERPRISE_CCC_PRV");
+		FIELDNAMESTOMAP.put("NUM_CCC", "ENTERPRISE_CCC_NUM");
+		FIELDNAMESTOMAP.put("DC_CCC", "ENTERPRISE_CCC_DC");
+		FIELDNAMESTOMAP.put("Texto3441", "ENTERPRISE_ACTIVITY_CODE");
+		FIELDNAMESTOMAP.put("COD_PAISCT", "WORKPLC_COUNTRY_CODE");
+		FIELDNAMESTOMAP.put("COD_MUNCT", "WORKPLC_MUNICIPALITY_CODE");
+		FIELDNAMESTOMAP.put("COD_NACTRA", "E_NATIONALITY_CODE");
+		FIELDNAMESTOMAP.put("COD_MUNDO", "E_MUNICIPALITY_ADDR_CODE");
+		FIELDNAMESTOMAP.put("COD_PAISDO", "E_COUNTRY_ADDR_CODE");
+		FIELDNAMESTOMAP.put("PRV_NASS", "E_SS1");
+		FIELDNAMESTOMAP.put("NUM_NASS", "E_SS2");
+		FIELDNAMESTOMAP.put("DC_NASS", "E_SS3");
+		FIELDNAMESTOMAP.put("DEN_NVFOR", "E_FORMATIVE_LVL");
+		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
+	}
+
+	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -122,18 +141,12 @@ public class ContractFill {
 			pdfDocument.setAllSecurityToBeRemoved(true);
 	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
 	        dictionary.removeItem(COSName.PERMS);
-			
-			// vvv--- new 
-//			COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-//			dictionary.setNeedToBeUpdated(true);
-//			dictionary = (COSDictionary) dictionary.getDictionaryObject(COSName.ACRO_FORM);
-//			dictionary.setNeedToBeUpdated(true);
-//			COSArray array = (COSArray) dictionary.getDictionaryObject(COSName.FIELDS);
-//			array.setNeedToBeUpdated(true);
-			// ^^^--- new 
-			
-//			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
 	        
+	        // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+	        
+	        // Remove unsed pages
 	        removeIndefiniteNotUsingPage(contractType, pdfDocument);
 	        
 			pdfDocument.save(out);
@@ -208,7 +221,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillFormationContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillFormationContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -267,19 +280,12 @@ public class ContractFill {
 			pdfDocument.setAllSecurityToBeRemoved(true);
 	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
 	        dictionary.removeItem(COSName.PERMS);
-			
-			// vvv--- new 
-//			COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-//			dictionary.setNeedToBeUpdated(true);
-//			dictionary = (COSDictionary) dictionary.getDictionaryObject(COSName.ACRO_FORM);
-//			dictionary.setNeedToBeUpdated(true);
-//			COSArray array = (COSArray) dictionary.getDictionaryObject(COSName.FIELDS);
-//			array.setNeedToBeUpdated(true);
-			// ^^^--- new 
 
-//			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
-
-	        // Remove unused pages
+	        // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+	        
+	        // Remove unsed pages
 	        pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
@@ -296,7 +302,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillPracticeContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillPracticeContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -356,18 +362,11 @@ public class ContractFill {
 	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
 	        dictionary.removeItem(COSName.PERMS);
 			
-			// vvv--- new 
-//			COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-//			dictionary.setNeedToBeUpdated(true);
-//			dictionary = (COSDictionary) dictionary.getDictionaryObject(COSName.ACRO_FORM);
-//			dictionary.setNeedToBeUpdated(true);
-//			COSArray array = (COSArray) dictionary.getDictionaryObject(COSName.FIELDS);
-//			array.setNeedToBeUpdated(true);
-			// ^^^--- new 
-
-//			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
-			
-	        // Remove unused pages
+	        // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+	        
+	        // Remove unsed pages
 	        pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
@@ -385,7 +384,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillTemporalContract(Integer contractType, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillTemporalContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -447,17 +446,11 @@ public class ContractFill {
 	        COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
 	        dictionary.removeItem(COSName.PERMS);
 			
-			// vvv--- new 
-//			COSDictionary dictionary = pdfDocument.getDocumentCatalog().getCOSObject();
-//			dictionary.setNeedToBeUpdated(true);
-//			dictionary = (COSDictionary) dictionary.getDictionaryObject(COSName.ACRO_FORM);
-//			dictionary.setNeedToBeUpdated(true);
-//			COSArray array = (COSArray) dictionary.getDictionaryObject(COSName.FIELDS);
-//			array.setNeedToBeUpdated(true);
-			// ^^^--- new 
-
-//			pdfDocument.save("/Users/sergio/Desktop/contrato.pdf");
-			
+	        // Add Sepe info if exists
+	        if(AonStringUtils.isNotBlank(sepeIde))
+	        	addSepeInfo(pdfDocument, sepeIde, comunicationDate);
+	        
+	        // Remove unsed pages
 	        removeTemporalPages(contractType, pdfDocument);
 	        
 	        pdfDocument.save(out);
@@ -547,21 +540,10 @@ public class ContractFill {
 	        System.out.println("Original value: " + field.getValueAsString());
 	        field.setValue(value);
 	        ((PDTextField) field).setDefaultValue(value);
-//	        ((PDTextField) field).setDefaultAppearance(value);
 	        System.out.println("New value: " + field.getValueAsString());
 	    } else {
 	        System.out.println("Tipo no identificado");
 	    }
-
-//	    COSDictionary fieldDictionary = field.getCOSObject();
-//	    COSDictionary dictionary = (COSDictionary) fieldDictionary.getDictionaryObject(COSName.AP);
-//	    dictionary.setNeedToBeUpdated(true);
-//	    COSStream stream = (COSStream) dictionary.getDictionaryObject(COSName.N);
-//	    stream.setNeedToBeUpdated(true);
-//	    while (fieldDictionary != null) {
-//	        fieldDictionary.setNeedToBeUpdated(true);
-//	        fieldDictionary = (COSDictionary) fieldDictionary.getDictionaryObject(COSName.PARENT);
-//	    }
 	}
 	
 	public static void setAditionalClauses(PDField field, Map<String, String> contractClauses) throws IOException {
@@ -582,6 +564,70 @@ public class ContractFill {
 		
 		System.out.println("New value: " + field.getValueAsString());
 		
+	}
+	
+	private static void addSepeInfo(PDDocument document, String sepeIde, Date comunicationDate) {
+		// Create a document and add a page to it
+		PDPage page = document.getPage(0);
+
+		// Create a new font object selecting one of the PDF base fonts
+		PDFont font = PDType1Font.HELVETICA_BOLD;
+
+		// Start a new content stream which will "hold" the to be created content
+		try {
+			PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
+			
+			// Se imprime en orden inverso, ¿por que?, no lo se, creo que por el APPEND
+			
+			// Define a text content stream using the selected font, moving the cursor and drawing the text "Hello World"
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.RED);
+			contentStream.setNonStrokingColor(Color.RED);
+			contentStream.setFont( font, 12 );
+			contentStream.newLineAtOffset( 300, 785 );
+			contentStream.showText("Registro SEPE");
+			contentStream.endText();
+			
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.RED);
+			contentStream.setNonStrokingColor(Color.RED);
+			contentStream.setFont( font, 10 );
+			contentStream.newLineAtOffset( 270, 765 );
+			contentStream.showText("IDE : " + sepeIde);
+			contentStream.endText();
+			
+			contentStream.beginText();
+			contentStream.setStrokingColor(Color.RED);
+			contentStream.setNonStrokingColor(Color.RED);
+			contentStream.setFont( font, 10 );
+			contentStream.newLineAtOffset( 270, 750 );
+			contentStream.showText("F. Comunicaci\u00f3n : " + dateFormat.format(comunicationDate));
+			contentStream.endText();
+			
+			contentStream.setNonStrokingColor(Color.RED);
+			
+			contentStream.moveTo(260, 805);
+			contentStream.lineTo(420, 805);
+			contentStream.stroke();
+			
+			contentStream.moveTo(260, 805);
+			contentStream.lineTo(260, 740);
+			contentStream.stroke();
+			
+			contentStream.moveTo(420, 805);
+			contentStream.lineTo(420, 740);
+			contentStream.stroke();
+			
+			contentStream.moveTo(260, 740);
+			contentStream.lineTo(420, 740);
+			contentStream.stroke();
+
+			// Make sure that the content stream is closed:
+			contentStream.close();
+		} catch (IOException e) {
+			System.err.println("ERROR SEPE PDF");
+			e.printStackTrace();
+		}
 	}
 
 }
