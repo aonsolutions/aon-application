@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkplaceDraft extends Composite {
@@ -43,7 +44,7 @@ public class WorkplaceDraft extends Composite {
 
 		@Override
 		public void onWorkplaceAgreementChange(Integer agreementId) {
-			workplaceDraftObject.setWorkplaceAgreement(AonNumberUtils.equals(-1, agreementId) ? null : agreementId);
+			workplaceDraftObject.setWorkplaceAgreement(agreementId);
 		}
 
 		@Override
@@ -159,7 +160,8 @@ public class WorkplaceDraft extends Composite {
 			setSelectedValueLB((ListBox) workplace.workplaceAddressPanel.getWidget(0), workplaceDraftObject.getWorkplaceAddress());
 		setSelectedValueLB(workplace.workplaceEconomicConcert, workplaceDraftObject.getWorkplaceEconomicConcert());	
 		if(!workplaceDraftObject.getWorkplaceAgreements().isEmpty()) 
-			setSelectedValueLB((ListBox) workplace.workplaceAgreementPanel.getWidget(0), workplaceDraftObject.getWorkplaceAgreement());
+			((SuggestBox) workplace.workplaceAgreementPanel.getWidget(0)).setValue(workplaceDraftObject.getAgreementDescription());
+//			setSelectedValueLB((ListBox) workplace.workplaceAgreementPanel.getWidget(0), workplaceDraftObject.getWorkplaceAgreement());
 		if(!workplaceDraftObject.getWorkplaceActivities().isEmpty())
 			setSelectedValueLB((ListBox) workplace.workplaceActivityPanel.getWidget(0), workplaceDraftObject.getWorkplaceActivity());
 	}
