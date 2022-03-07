@@ -104,7 +104,7 @@ public class SearchFiles {
 			fl = drive.files()
 					.list()
 					.setQ("'"+parent+"' in parents and trashed=false")
-					.setFields("files(parents, id, name, webContentLink, )")
+					.setFields("files(parents, id, name, webContentLink, webViewLink)")
 					.execute();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -31,15 +31,7 @@
 		<servlet-name>TestServlet</servlet-name>
 		<url-pattern>/testServlet</url-pattern>
 	</servlet-mapping>
-	<!-- -Download Servlet -->
-	<servlet>
-		<servlet-name>DownloadDataServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.dump.server.DownloadDataServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DownloadDataServlet</servlet-name>
-		<url-pattern>/downloadDataServlet</url-pattern>
-	</servlet-mapping>
+
 
 	<!-- -Login Servlet -->
 	<servlet>
@@ -90,100 +82,6 @@
 	<servlet-mapping>
 		<servlet-name>RSSServlet</servlet-name>
 		<url-pattern>/aonFeed/*</url-pattern>
-	</servlet-mapping>
-
-	<!-- GWT RPC Servlets -->
-	<servlet>
-		<servlet-name>Jasper Image Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.JasperImageServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Jasper Image Servlet</servlet-name>
-		<url-pattern>/jasper_image/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>Employees Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Employees Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/employees</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>Agreeement Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Agreeement Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/agreement</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>Enterprises Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.EnterprisesServiceImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Enterprises Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/enterprises</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>Salary Export Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.SalaryExporterServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Salary Export Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/salary/*</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>Irpf Export Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.IrpfExporterServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Irpf Export Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/irpf/*</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>Caculate Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.CalculateServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Caculate Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/calculate</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>Share Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.ShareServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Share Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/share</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>DSI Import Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.connect.server.DSIImportServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DSI Import Servlet</servlet-name>
-		<url-pattern>/aon_gwt_connect/dsiimport</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>BOE Import Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.connect.server.BOEImportServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>BOE Import Servlet</servlet-name>
-		<url-pattern>/aon_gwt_connect/boeimport</url-pattern>
-	</servlet-mapping>
-	
-	<!-- Payroll Activity Summary -->
-
-	<servlet>
-		<servlet-name>ActivitySummaryServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.ActivitySummaryServiceImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ActivitySummaryServlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/activity_summary</url-pattern>
 	</servlet-mapping>
 
 	<!-- Payroll Contract Image Servlet -->
@@ -250,37 +148,6 @@
 	<servlet-mapping>
 		<servlet-name>GithubLoginCallbackServlet</servlet-name>
 		<url-pattern>/githubLoginPopupClose/*</url-pattern>
-	</servlet-mapping>
-
-	<!-- Aon GWT Template -->
-
-	<servlet>
-		<servlet-name>TemplateGwtServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.template.server.TemplatesServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>TemplateGwtServlet</servlet-name>
-		<url-pattern>/aon_gwt_aio/gwt_template</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>UploadProducts</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.template.server.UploadProductsServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UploadProducts</servlet-name>
-		<url-pattern>/aon_gwt_aio/gwt_upload</url-pattern>
-	</servlet-mapping>
-
-	<!-- Aon GWT Marketplace -->
-
-	<servlet>
-		<servlet-name>MarketplaceGwtServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.template.server.marketplace.MarketplaceImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>MarketplaceGwtServlet</servlet-name>
-		<url-pattern>/aon_gwt_aio/gwt_marketplace</url-pattern>
 	</servlet-mapping>
 
 	<!-- SignIn with Google Servlet -->
@@ -589,10 +456,6 @@
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>gwt_fiscal</web-resource-name>
-			<url-pattern>/aon_gwt_fiscal/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>User</role-name>

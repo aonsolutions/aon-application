@@ -45,7 +45,7 @@ public class HelpController implements Serializable {
 	
 	public String getPayrollVideo() {
 		LinkedList<GFile> files = drive.ListDirectory(Optional.of("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN"));
-		return files.get(0).getPreviewUrl();
+		return ""; // files.get(0).getPreviewUrl();
 	}
 	
 	
