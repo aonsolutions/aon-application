@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
@@ -382,7 +381,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 				r -> {
 					// Init toolbar
 					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
-					getExportContract().getElement().getStyle().setDisplay(Display.NONE);
 					employee.initializeView();
 					initLogicWindow();
 					initializeIdcMonthListBox();
@@ -724,7 +722,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract TabLayoutPanel getFootTabPanel();
 	protected abstract SplitLayoutPanel getSplitLayoutPanel();
 	protected abstract AonToolbar getToolbar();
-	protected abstract AonToolbarButton getExportContract();
 	protected abstract MenuItem getAFIEnd();
 	protected abstract MenuItem getTaEnd();
 	protected abstract MinimizePanel getFootPanel();
