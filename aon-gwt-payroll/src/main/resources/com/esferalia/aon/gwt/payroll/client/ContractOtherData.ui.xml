@@ -47,10 +47,18 @@
 					    </tr>
 					    <tr>
 							<td style="background-color: #eaeaea; width: 400px;">
-								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (nombre)</g:Label>
 							</td>
 							<td>
-							    <g:TextBox ui:field="enterpriseAgentTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							    <g:TextBox ui:field="enterpriseAgentNameTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						 <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (apellidos)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentSurnameTB" styleName='{style.maxWidthTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -453,10 +461,18 @@
 					    </tr>
 					    <tr>
 							<td style="background-color: #eaeaea; width: 400px;">
-								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (nombre)</g:Label>
 							</td>
 							<td>
-							    <g:TextBox ui:field="enterpriseAgentTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							    <g:TextBox ui:field="enterpriseAgentNameTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						 <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (apellidos)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentSurnameTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -843,13 +859,21 @@
 					    </tr>
 					    <tr>
 							<td style="background-color: #eaeaea; width: 400px;">
-								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (nombre)</g:Label>
 							</td>
 							<td>
-							    <g:TextBox ui:field="enterpriseAgentFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							    <g:TextBox ui:field="enterpriseAgentNameFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
 							</td>
 						</tr>
-						<tr>
+						 <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (apellidos)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentSurnameFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+					    <tr>
 							<td style="background-color: #eaeaea; width: 400px;">
 								<g:Label styleName='{style.firstColumnTextStyle}'>NIF del representante</g:Label>
 							</td>
@@ -1009,10 +1033,18 @@
 					    </tr>
 					    <tr>
 							<td style="background-color: #eaeaea; width: 400px;">
-								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (nombre)</g:Label>
 							</td>
 							<td>
-							    <g:TextBox ui:field="enterpriseAgentPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							    <g:TextBox ui:field="enterpriseAgentNamePracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						 <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa (apellidos)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentSurnamePracTB" styleName='{style.maxWidthTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>

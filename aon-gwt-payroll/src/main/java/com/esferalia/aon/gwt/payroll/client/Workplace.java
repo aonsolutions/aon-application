@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,9 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -20,9 +24,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public abstract class Workplace extends ResizeComposite{
 	
@@ -77,6 +84,7 @@ public abstract class Workplace extends ResizeComposite{
 	// ------------------------------------------------ Variables
 	
 	private static final String STYLESELECT = "aon-selectOneMenu";
+	private List<Agreement> workplacesAgreements;
 
 	// ------------------------------------------------ Constructor
 
@@ -224,21 +232,45 @@ public abstract class Workplace extends ResizeComposite{
 		if(workplacesAgreements.isEmpty())
 			workplaceAgreementWidget = createEmptyLabel();
 		else{
-			ListBox agreementListBox = new ListBox();
-			agreementListBox.setStyleName(STYLESELECT);
-			agreementListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
+			SuggestBox agreementSuggestBox = new SuggestBox();
+			agreementSuggestBox.setStyleName(STYLESELECT);
+			agreementSuggestBox.getElement().getStyle().setWidth(98.00, Unit.PCT);
 			
-			agreementListBox.addItem("-", "-1");
+			this.workplacesAgreements = workplacesAgreements;
 			
-			for(Agreement agreement : workplacesAgreements)
-				agreementListBox.addItem(agreement.getDescription(), agreement.getId().toString());
+			List<String> agreementDescriptions = new ArrayList<>();
 			
-			agreementListBox.addChangeHandler(e -> {
-				Integer agreementId = Integer.valueOf(agreementListBox.getSelectedValue());
-				onWorkplaceAgreementChange(agreementId);
+			for (Agreement agreement : this.workplacesAgreements)
+				agreementDescriptions.add(agreement.getDescription());
+			
+			MultiWordSuggestOracle orclAgreements = (MultiWordSuggestOracle) agreementSuggestBox.getSuggestOracle();
+			orclAgreements.addAll(agreementDescriptions);
+			orclAgreements.setDefaultSuggestionsFromText(agreementDescriptions);
+			agreementSuggestBox.setAutoSelectEnabled(true);
+			agreementSuggestBox.getElement().setPropertyString("placeholder", "Escriba el nombre del convenio... (Ctrl + espacio para ver sugerencias)");
+			
+			agreementSuggestBox.getValueBox().addKeyUpHandler(e -> {
+				if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+					agreementSuggestBox.setText("");
+					agreementSuggestBox.showSuggestionList();
+				} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+					agreementSuggestBox.hideSuggestionList();
 			});
 			
-			workplaceAgreementWidget = agreementListBox;
+			agreementSuggestBox.addSelectionHandler(e -> {
+				String agreementDescription = agreementSuggestBox.getValue();
+				for(Agreement agreement : this.workplacesAgreements)
+					if(AonStringUtils.equalsIgnoreCase(agreement.getDescription(), agreementDescription))
+						onWorkplaceAgreementChange(agreement.getId());		
+			});
+			
+			agreementSuggestBox.addValueChangeHandler(e -> {
+				String agreementDescription = agreementSuggestBox.getValue();
+				if(AonStringUtils.isBlank(agreementDescription))
+					onWorkplaceAgreementChange(null);
+			});
+			
+			workplaceAgreementWidget = agreementSuggestBox;
 		}
 		
 		workplaceAgreementPanel.add(workplaceAgreementWidget);

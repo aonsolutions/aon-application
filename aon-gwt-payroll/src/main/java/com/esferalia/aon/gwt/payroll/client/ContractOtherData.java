@@ -42,7 +42,10 @@ public class ContractOtherData extends ResizeComposite {
 	VerticalPanel indefiniteTable;
 
 	@UiField
-	TextBox enterpriseAgentTB;
+	TextBox enterpriseAgentNameTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnameTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFTB;
@@ -194,7 +197,10 @@ public class ContractOtherData extends ResizeComposite {
 	VerticalPanel temporalTable;
 	
 	@UiField
-	TextBox enterpriseAgentTempTB;
+	TextBox enterpriseAgentNameTempTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnameTempTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFTempTB;
@@ -340,7 +346,10 @@ public class ContractOtherData extends ResizeComposite {
 	VerticalPanel formationTable;
 	
 	@UiField
-	TextBox enterpriseAgentFormTB;
+	TextBox enterpriseAgentNameFormTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnameFormTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFFormTB;
@@ -402,7 +411,10 @@ public class ContractOtherData extends ResizeComposite {
 	VerticalPanel practiceTable;
 	
 	@UiField
-	TextBox enterpriseAgentPracTB;
+	TextBox enterpriseAgentNamePracTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnamePracTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFPracTB;
@@ -504,12 +516,24 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Indefinite Table
 	
-	@UiHandler("enterpriseAgentTB")
-	void onEnterpriseAgentTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentTB.getValue();
-		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNameTB")
+	void onEnterpriseAgentNameTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME", getFullName());
 	}
 	
+	@UiHandler("enterpriseAgentSurnameTB")
+	void onEnterpriseAgentSurnameTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME", getFullName());
+	}
+	
+	private String getFullName() {
+		String name = enterpriseAgentNameTB.getValue();
+		String surname = enterpriseAgentSurnameTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
+	}
+
 	@UiHandler("enterpriseAgentNIFTB")
 	void onEnterpriseAgentNIFTBChange(ValueChangeEvent<String> event) {
 		String value = enterpriseAgentNIFTB.getValue();
@@ -850,10 +874,22 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Temporal Table
 	
-	@UiHandler("enterpriseAgentTempTB")
-	void onEnterpriseAgentTempTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentTempTB.getValue();
-		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNameTempTB")
+	void onEnterpriseAgentNameTempTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", getFullNameTmp());
+	}
+	
+	@UiHandler("enterpriseAgentSurnameTempTB")
+	void onEnterpriseAgentSurnameTempTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", getFullNameTmp());
+	}
+	
+	private String getFullNameTmp() {
+		String name = enterpriseAgentNameTempTB.getValue();
+		String surname = enterpriseAgentSurnameTempTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
 	}
 	
 	@UiHandler("enterpriseAgentNIFTempTB")
@@ -1154,10 +1190,22 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Formation Table
 	
-	@UiHandler("enterpriseAgentFormTB")
-	void onEnterpriseAgentFormTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentFormTB.getValue();
-		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNameFormTB")
+	void onEnterpriseAgentNameFormTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", getFullNameForm());
+	}
+	
+	@UiHandler("enterpriseAgentSurnameFormTB")
+	void onEnterpriseAgentSurnameFormTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", getFullNameForm());
+	}
+	
+	private String getFullNameForm() {
+		String name = enterpriseAgentNameFormTB.getValue();
+		String surname = enterpriseAgentSurnameFormTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
 	}
 	
 	@UiHandler("enterpriseAgentNIFFormTB")
@@ -1290,10 +1338,22 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Practice Table
 	
-	@UiHandler("enterpriseAgentPracTB")
-	void onEnterpriseAgentPracTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentPracTB.getValue();
-		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNamePracTB")
+	void onEnterpriseAgentNamePracTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", getFullNamePrac());
+	}
+	
+	@UiHandler("enterpriseAgentSurnamePracTB")
+	void onEnterpriseAgentSurnamePracTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", getFullNamePrac());
+	}
+	
+	private String getFullNamePrac() {
+		String name = enterpriseAgentNamePracTB.getValue();
+		String surname = enterpriseAgentSurnamePracTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
 	}
 	
 	@UiHandler("enterpriseAgentNIFPracTB")
@@ -1483,7 +1543,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Indefinite Table
 		
-		this.enterpriseAgentTB.setValue("");
+		this.enterpriseAgentNameTB.setValue("");
+		this.enterpriseAgentSurnameTB.setValue("");
 		this.enterpriseAgentNIFTB.setValue("");
 		this.enterpriseAgentPositionTB.setValue("");
 		this.minorAgentTB.setValue("");
@@ -1535,7 +1596,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Temporal Table
 		
-		this.enterpriseAgentTempTB.setValue("");
+		this.enterpriseAgentNameTempTB.setValue("");
+		this.enterpriseAgentSurnameTempTB.setValue("");
 		this.enterpriseAgentNIFTempTB.setValue("");
 		this.enterpriseAgentPositionTempTB.setValue("");
 		this.minorAgentTempTB.setValue("");
@@ -1585,7 +1647,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Formation Table
 		
-		this.enterpriseAgentFormTB.setValue("");
+		this.enterpriseAgentNameFormTB.setValue("");
+		this.enterpriseAgentSurnameFormTB.setValue("");
 		this.enterpriseAgentNIFFormTB.setValue("");
 		this.enterpriseAgentPositionFormTB.setValue("");
 		this.minorAgentFormTB.setValue("");
@@ -1607,7 +1670,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Practice Table
 		
-		this.enterpriseAgentPracTB.setValue("");
+		this.enterpriseAgentNamePracTB.setValue("");
+		this.enterpriseAgentSurnamePracTB.setValue("");
 		this.enterpriseAgentNIFPracTB.setValue("");
 		this.enterpriseAgentPositionPracTB.setValue("");
 		this.minorAgentPracTB.setValue("");
@@ -1806,9 +1870,18 @@ public class ContractOtherData extends ResizeComposite {
 			fillContractOtherDataTemp();
 		}
 	}
+	
+	private String getEnterpriseAgentName(String fullName) {
+		return AonStringUtils.isNotBlank(fullName) && AonStringUtils.containsIgnoreCase(fullName, ",") ? fullName.split(",")[1].trim() : null;
+	}
+	
+	private String getEnterpriseAgentSurname(String fullName) {
+		return AonStringUtils.isNotBlank(fullName) && AonStringUtils.containsIgnoreCase(fullName, ",") ? fullName.split(",")[0].trim() : fullName;
+	}
 
 	private void fillContractOtherData() {
-		enterpriseAgentTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNameTB.setValue(getEnterpriseAgentName(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnameTB.setValue(getEnterpriseAgentSurname(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentTB.setValue(getContractOtherData("I_LEGAL_REPRESENTATIVE_NAME"));
@@ -1860,7 +1933,8 @@ public class ContractOtherData extends ResizeComposite {
 	}
 	
 	private void fillContractOtherDataTemp() {
-		enterpriseAgentTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNameTempTB.setValue(getEnterpriseAgentName(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnameTempTB.setValue(getEnterpriseAgentSurname(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentTempTB.setValue(getContractOtherData("T_LEGAL_REPRESENTATIVE_NAME"));
@@ -1910,7 +1984,8 @@ public class ContractOtherData extends ResizeComposite {
 	}
 	
 	private void fillContractOtherDataFormation() {
-		enterpriseAgentFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNameFormTB.setValue(getEnterpriseAgentName(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnameFormTB.setValue(getEnterpriseAgentSurname(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_NAME"));
@@ -1932,7 +2007,8 @@ public class ContractOtherData extends ResizeComposite {
 	}
 	
 	private void fillContractOtherDataPractice() {
-		enterpriseAgentPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNamePracTB.setValue(getEnterpriseAgentName(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnamePracTB.setValue(getEnterpriseAgentSurname(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentPracTB.setValue(getContractOtherData("P_LEGAL_REPRESENTATIVE_NAME"));
