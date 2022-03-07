@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div rendered="#{!emailVerify.isVerified() and domainSwitcher.betaUser}" style="margin-bottom: 10px;" styleClass="aon-support" >
+		<aon:div>
+			<aon:div style="font-size: 1.1em;">
+				<aon:outputText value="Verificar Email" />
+			</aon:div>
+			<aon:div style="font-size: 1.1em;">
+				<aon:inputText id="verify_email"
+					value="#{emailVerify.email}" />
+			</aon:div>
+			<aon:div styleClass="aon-margin-top aon-margin-bottom">
+				<aon:commandButton value="Verificar Email"
+					actionListener="#{emailVerify.onVerify}"/>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

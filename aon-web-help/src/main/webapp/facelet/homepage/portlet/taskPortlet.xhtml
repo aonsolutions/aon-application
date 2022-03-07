@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:if test="#{!task.parentDomain}">
+				<aon:commandLink id="desktop_groupware_taskInbox"
+					action="task_list"
+					actionListener="#{task.onLaunch}">
+					<aon:outputText value="#{bundle.aon_tasks}" 
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
+				</aon:commandLink>
+			</aon:if>
+			<aon:if test="#{task.parentDomain}">
+				<aon:outputText value="#{bundle.aon_tasks}" 
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>	
+			</aon:if>
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body">
+			<aon:panelGrid columns="3" styleClass="aon-width-all"
+				rowClasses="aon-table-portlet-row"
+				columnClasses="aon-table-portlet-column,aon-table-portlet-column,aon-table-portlet-column">
+				
+				<aon:outputText value="&#160;" styleClass="aon-icon-contact" style="padding-left: 15px;"/>
+				<aon:outputText value="#{bundle.groupware_in_progress}: " />
+				<aon:div styleClass="aon-text-right">
+					<aon:outputText value="#{desktop.taskInfo.inProgressUserTasks + desktop.taskInfo.expiredInProgressUserTasks}"/>
+					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredInProgressUserTasks gt 0}"/>
+					<aon:outputText value="#{desktop.taskInfo.expiredInProgressUserTasks}" style="color:red;"
+						rendered="#{desktop.taskInfo.expiredInProgressUserTasks gt 0}"/>
+				</aon:div>
+				
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{bundle.aon_pendings}: " />
+				<aon:div styleClass="aon-text-right">
+					<aon:outputText value="#{desktop.taskInfo.pendingUserTasks + desktop.taskInfo.expiredPendingUserTasks}"/>
+					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredPendingUserTasks gt 0}"/>
+					<aon:outputText value="#{desktop.taskInfo.expiredPendingUserTasks}" style="color:red;"
+						rendered="#{desktop.taskInfo.expiredPendingUserTasks gt 0}"/>
+				</aon:div>
+				
+				<aon:outputText value="&#160;" styleClass="aon-icon-contactGroup" style="padding-left: 15px;"/>
+				<aon:outputText value="#{bundle.aon_pendings}: " />
+				<aon:div styleClass="aon-text-right">
+					<aon:outputText value="#{desktop.taskInfo.pendingGroupTasks + desktop.taskInfo.expiredPendingGroupTasks}"/>
+					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredPendingGroupTasks gt 0}"/>
+					<aon:outputText value="#{desktop.taskInfo.expiredPendingGroupTasks}" style="color:red;"
+						rendered="#{desktop.taskInfo.expiredPendingGroupTasks gt 0}"/>
+				</aon:div>
+				
+				<!-- GOOGLE TASK -->
+				<aon:if test="#{googleTask.google}">
+					<aon:outputText value="&#160;" styleClass="aon-icon-google-task" style="padding-left: 15px;"/>
+					<aon:commandLink id="googleTask-sync" actionListener="#{googleTask.sync}">			
+						<aon:outputText value="#{bundle.google_task}" />
+					</aon:commandLink>
+					<aon:div styleClass="aon-text-right">
+					
+					</aon:div>
+				</aon:if>
+				
+				
+			</aon:panelGrid>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

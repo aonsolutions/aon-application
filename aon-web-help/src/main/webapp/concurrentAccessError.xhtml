@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:c="http://java.sun.com/jstl/core"			
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<f:view>
+<head>
+<style type="text/css">
+	body {color:#222; font-size:12px;font-family: sans-serif; background:#fff url('images/errorLoginBack.png') left top repeat-x;}
+	h1 {font-size:150%;font-family:'Trebuchet MS', Verdana, sans-serif; color:#000}
+	#page {font-size:122%;width:720px; margin:144px auto 0 auto;text-align:left;line-height:1.2;}
+	#message {padding-right:400px;min-height:360px;background:transparent url('images/errorLogin.png') right top no-repeat;}
+	.aon-commandButton{font-size:12px;font-family:Verdana,Helvetica;font-weight:bold;cursor:pointer;padding:10px 15px;color:white;background:#638cb5;}	
+</style>
+<meta http-equiv="Content-Type" content="application/xhtml; charset=utf-8" />
+<link rel="shortcut icon" href="http://www.aonsolutions.es/favicon.ico" type="image/x-icon" />
+<title>#{bundle.aon_session_expired}</title>
+</head>
+<body>
+<div id="page">
+	<div id="message">
+		<h1>SU SESIÓN HA SIDO CANCELADA</h1>
+		<p>Compruebe que no existe otro navegador con su mismo usuario activo, o que otra persona haya accedido con su mismo usuario desde otro navegador. Le aconsejamos que hable con su administrador y cambie su clave para evitar accesos no deseados por parte de terceros.</p>
+		<p>&#160;</p>
+		<h:form>
+			<h:outputLink styleClass="aon-commandButton"
+				title="#{bundle.aon_back}"
+				value="#{facesContext.externalContext.requestContextPath}">
+				<h:outputText value="#{bundle.aon_back}" />
+			</h:outputLink>						
+		</h:form>
+	</div>
+</div>
+</body>
+</f:view>
+</html>

@@ -98,6 +98,21 @@ public class SearchFiles {
 		return fl;		
 	}
 
+	public static FileList searchByParentNotTrashed(Drive drive, String parent){
+		FileList fl = new FileList();
+		try {
+			fl = drive.files()
+					.list()
+					.setQ("'"+parent+"' in parents and trashed=false")
+					.setFields("files(parents, id, name, webContentLink, )")
+					.execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fl;		
+	}
+
+	
 	public static FileList searchFilesMimetypeAndTitle(Drive drive, String searcher1, String searcher2) throws IOException{
 		FileList fl = drive.files().list().setQ("mimetype = '"+searcher1+"' and name = '"+searcher2+"'").execute();
 		System.out.println(fl);
