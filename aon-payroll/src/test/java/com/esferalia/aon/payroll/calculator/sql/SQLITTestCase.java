@@ -4403,6 +4403,65 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testITPrevious2ContractStartV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				getToday(),
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+
+		//@formatter:on
+
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Date startITDate = add(contract.getStartDate(), DAY_OF_MONTH, -19 ); 
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		Date startDate = getFirstDayOfMonth(contract.getStartDate());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getExpression() +":" + p.getAmount() ));
+		
+		int it21Days =  get(endDate, DAY_OF_MONTH) - get(contract.getStartDate(),DAY_OF_MONTH);
+		
+		Assert.assertEquals(
+				0.75 * 1750.00/30.00 * it21Days 
+				+  0.60 * 1750.00/30.00 , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * ( it21Days + 1 ), salary.getCommonBase(), DELTA);
+	}
+
+	@Test
 	public void testITWithConstantI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
