@@ -95,7 +95,7 @@ public class Contrata {
 			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
 			webClient.setAlertHandler(alertHandler);
 
-			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
 	        handleSepeExceptions(htmlPage);
@@ -142,7 +142,7 @@ public class Contrata {
 
 			{//DATA EMPLOYEE
 				String tipodoc =  "D";
-				if(Toolkit.identity(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
+				if(Toolkit.getIdentityType(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
 			
 				String nss = cto.getNss();
 				((HtmlSelect)form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
@@ -269,7 +269,7 @@ public class Contrata {
 			webClient.getOptions().setUseInsecureSSL(true);
 			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
 			webClient.setAlertHandler(alertHandler);
-			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
 	        handleSepeExceptions(htmlPage);
@@ -294,7 +294,7 @@ public class Contrata {
 
 			{//DATA EMPLOYEE
 				String tipodoc =  "D";
-				if(Toolkit.identity(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
+				if(Toolkit.getIdentityType(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
 
 				((HtmlSelect)form.querySelector("select[name=tipodocumento]")).setSelectedAttribute(tipodoc, true);
 
@@ -388,7 +388,7 @@ public class Contrata {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	webClient.getOptions().setUseInsecureSSL(true);
 	    	
-	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
 	        handleSepeExceptions(htmlPage);
@@ -403,6 +403,7 @@ public class Contrata {
 	        handleSepeExceptions(htmlPage);
 
 	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
+
 	    	HtmlForm form = htmlPage.querySelector("form[name=datos]");
 	    	DomNodeList<DomNode> data =form.querySelectorAll("fieldset > div > div[class*=titulo]");
 	    	
@@ -461,7 +462,7 @@ public class Contrata {
 			throws FailingHttpStatusCodeException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=copiabasica").click(); 
 	        handleSepeExceptions(htmlPage);
 	        
@@ -549,7 +550,7 @@ public class Contrata {
 	private static byte[] contratoPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
 	        handleSepeExceptions(htmlPage);
@@ -585,7 +586,7 @@ public class Contrata {
 			final String certificateType, String ipf, Date fini, Date fend ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 		    
-	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
 	        handleSepeExceptions(htmlPage);
@@ -623,7 +624,7 @@ public class Contrata {
 			final String certificateType, String ide)  throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException, ElementNotFoundException, InterruptedException {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
-	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 
 	    	htmlPage = first_page_remove(htmlPage);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initC").click(); 
@@ -644,7 +645,7 @@ public class Contrata {
 			final String certificateType, String ide) throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException, ElementNotFoundException, InterruptedException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
-	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 	    	htmlPage = first_page_remove(htmlPage);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initT").click(); 
 	        handleSepeExceptions(htmlPage);
@@ -704,7 +705,7 @@ public class Contrata {
     	String[] fri = Toolkit.formatDate(fini);
     	String[] fre = Toolkit.formatDate(fend);
 	    Integer ident  = 0; //NIF DEFAULT
-	    if(Toolkit.identity(ipf).equals("6")) ident = 1; // NIE
+	    if(Toolkit.getIdentityType(ipf).equals("6")) ident = 1; // NIE
 	    
 		HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodoc2]>option").get(ident);				
@@ -745,9 +746,9 @@ public class Contrata {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	String[] fri = Toolkit.formatDate(fini);
 		    Integer ident  = 0; //NIF DEFAULT
-		    if(Toolkit.identity(ipf).equals("6")) ident = 1; // NIE
+		    if(Toolkit.getIdentityType(ipf).equals("6")) ident = 1; // NIE
 		    
-	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 		
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
 	        handleSepeExceptions(htmlPage);
@@ -786,12 +787,11 @@ public class Contrata {
 	    return null;
 	}
 	
-	private static HtmlPage first_page_sepe_contrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+	private static HtmlPage getFirstPageSepeContrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 		  webClient.getOptions().setJavaScriptEnabled(true);
 		  webClient.getOptions().setThrowExceptionOnScriptError(false);
 		  webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
-	      HtmlPage htmlPage = webClient.getPage("https://www.sepe.es:444/ccomunicacto/servlet/ServletInicio?CCAA=99&idioma=14");
-		  return htmlPage;
+	      return webClient.getPage("https://www.sepe.es:444/ccomunicacto/servlet/ServletInicio?CCAA=99&idioma=14");
 	}
 	
 	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto) throws ElementNotFoundException, IOException, SepeException {
@@ -875,7 +875,7 @@ public class Contrata {
 		byte[] certByte = certificateInputStream.readAllBytes();
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte), certificatePassword, certificateType)) {
 	    	validateCertExpired( new ByteArrayInputStream(certByte), certificatePassword);
-	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
 	        handleSepeExceptions(htmlPage);
 	        DomNode fielset = htmlPage.querySelector("form > fieldset");

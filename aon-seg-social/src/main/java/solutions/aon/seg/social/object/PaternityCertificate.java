@@ -48,7 +48,7 @@ public class PaternityCertificate {
 	}
 	
 	public boolean getCanceled() {
-		return canceled;
+		return canceled!=null && canceled;
 	}
 	
 	public PaternityCertificate setCcc(String ccc) {
@@ -288,20 +288,26 @@ public class PaternityCertificate {
 				&& Objects.equals(startDate, certificate.startDate)
 				&& Objects.equals(endDate, certificate.endDate);
 	}
-	
+
 	public enum ApplicantType{
-		MADRE_BIOLOGICA("MADRE BIOL\u00f3GICA"), 
-		OTRO_PROGENITOR("OTRO PROGRENITOR"),
-		PRIMER_ADOPTANTE("PRIMER ADOPTANTE"), 
-		SEGUNDO_ADOPTANTE("SEGUNDO ADOPTANTE");
+		MADRE_BIOLOGICA("MADRE BIOL\u00f3GICA", "M"), 
+		OTRO_PROGENITOR("OTRO PROGRENITOR", "P"),
+		PRIMER_ADOPTANTE("PRIMER ADOPTANTE", "A"), 
+		SEGUNDO_ADOPTANTE("SEGUNDO ADOPTANTE", "B");
 	
 		private String value;
-		private ApplicantType(String value) {
+		private String valueTGSS;
+		private ApplicantType(String value, String valueTGSS) {
 			this.value = value;
+			this.valueTGSS = valueTGSS;
 		}
 		
 		public String getValue() {
 			return value;
+		}
+		
+		public String getValueTGSS() {
+			return valueTGSS;
 		}
 		
 		public byte value(){
@@ -329,19 +335,26 @@ public class PaternityCertificate {
 	}
 	
 	public enum ReasonType{
-		NACIMIENTO_HIJO("Nacimiento de hijo"), 
-		FALLECIMIENTO_MADRE("Fallecimiento de la madre"),
-		OPCION_OTRO_PROGENITOR("Cesi\u00f3n/Opci\u00f3n en favor del otro progenitor"), 
-		PARTO_MULTIPLE("Parto m\u00faltiple"),
-		DESCANSO_ANTES_PARTO("Inicio del descanso antes del parto (solo para madre biol\u00f3gica ET)"),
-		ADOPCION_TUTELA("Adopci\u00f3n/Tutela/Acogimiento");
+		NACIMIENTO_HIJO("Nacimiento de hijo", "1"), 
+		FALLECIMIENTO_MADRE("Fallecimiento de la madre", "3"),
+		OPCION_OTRO_PROGENITOR("Cesi\u00f3n/Opci\u00f3n en favor del otro progenitor", "6"), 
+		PARTO_MULTIPLE("Parto m\u00faltiple", "2"),
+		DESCANSO_ANTES_PARTO("Inicio del descanso antes del parto (solo para madre biol\u00f3gica ET)", "7"),
+		ADOPCION_TUTELA("Adopci\u00f3n/Tutela/Acogimiento", "4");
 	
 		private String value;
-		private ReasonType(String value) {
+		private String valueTGSS;
+		private ReasonType(String value, String valueTGSS) {
 			this.value = value;
+			this.valueTGSS = valueTGSS;
 		}
+		
 		public String getValue() {
 			return value;
+		}
+		
+		public String getValueTGSS() {
+			return valueTGSS;
 		}
 		
 		public byte value(){

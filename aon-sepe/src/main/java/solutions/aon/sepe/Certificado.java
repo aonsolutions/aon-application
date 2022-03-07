@@ -124,9 +124,9 @@ public class Certificado {
 
 	    	String tipodocManager =  "NIF";
 	    	
-	    	if(Toolkit.identity(ipfManager).equals("4")) 
+	    	if(Toolkit.getIdentityType(ipfManager).equals("4")) 
 	    		tipodocManager = "CIF";
-	    	else if(Toolkit.identity(ipfManager).equals("6")) 
+	    	else if(Toolkit.getIdentityType(ipfManager).equals("6")) 
 	    		tipodocManager = "NIE"; 
 	    	
 	    	String[] fAE = Toolkit.formatDate(certificates.getfAEd());
