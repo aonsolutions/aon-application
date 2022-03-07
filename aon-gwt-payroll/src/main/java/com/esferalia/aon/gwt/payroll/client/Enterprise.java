@@ -20,6 +20,8 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -128,7 +131,11 @@ public abstract class Enterprise extends ResizeComposite {
 	TextBox enterprisePaysheetSendEmail;
 	
 	@UiField
-	ListBox enterpriseAgreement;
+	SuggestBox enterpriseAgreement;
+	
+	// -------------------------------------------------- Variables
+	
+	private List<Agreement> enterpriseAgreements;
 
 	// -------------------------------------------------- Constructor
 
@@ -175,7 +182,7 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterpriseCostModel.clear();
 		this.enterprisePaysheetSendType.clear();
 		this.enterprisePaysheetSendEmail.setValue(null);
-		this.enterpriseAgreement.clear();
+		this.enterpriseAgreement.setValue(null);
 	}
 
 	private void initializeListBox() {
@@ -306,8 +313,18 @@ public abstract class Enterprise extends ResizeComposite {
 	}
 	
 	@UiHandler("enterpriseAgreement")
-	void onEnterpriseAgreementChangeValue(ChangeEvent event) {
-		onEnterpriseAgreementChange();
+	void onEnterpriseAgreementSelection(SelectionEvent<Suggestion> event) {
+		String agreementDescription = enterpriseAgreement.getValue();
+		for(Agreement agreement : this.enterpriseAgreements)
+			if(AonStringUtils.equalsIgnoreCase(agreement.getDescription(), agreementDescription))
+				onEnterpriseAgreementChange(agreement.getId());		
+	}
+	
+	@UiHandler("enterpriseAgreement")
+	void onEnterpriseAgreementValueChange(ValueChangeEvent<String> event) {
+		String agreementDescription = enterpriseAgreement.getValue();
+		if(AonStringUtils.isBlank(agreementDescription))
+			onEnterpriseAgreementChange(null);
 	}
 	
 	// ------------------------------------------------- Abstract Methods
@@ -335,7 +352,7 @@ public abstract class Enterprise extends ResizeComposite {
 	public abstract void onEnterpriseCostModelChange();
 	public abstract void onEnterprisePaysheetSendTypeChange();
 	public abstract void onEnterprisePaysheetSendEmailChange();
-	public abstract void onEnterpriseAgreementChange();
+	public abstract void onEnterpriseAgreementChange(Integer agreementId);
 	public abstract void onEnterpriseScopeChange(Integer scopeId);
 	
 	public abstract void fireErrorMessage(Map<String, String> errorMap);
@@ -444,10 +461,26 @@ public abstract class Enterprise extends ResizeComposite {
 	}
 
 	public void initializeAgreementCell(List<Agreement> enterpriseAgreements) {
-		enterpriseAgreement.addItem("-", "-1");
+		this.enterpriseAgreements = enterpriseAgreements;
 		
-		for (Agreement agreement : enterpriseAgreements)
-			enterpriseAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+		List<String> agreementDescriptions = new ArrayList<>();
+		
+		for (Agreement agreement : this.enterpriseAgreements)
+			agreementDescriptions.add(agreement.getDescription());
+		
+		MultiWordSuggestOracle orclAgreements = (MultiWordSuggestOracle) enterpriseAgreement.getSuggestOracle();
+		orclAgreements.addAll(agreementDescriptions);
+		orclAgreements.setDefaultSuggestionsFromText(agreementDescriptions);
+		enterpriseAgreement.setAutoSelectEnabled(true);
+		enterpriseAgreement.getElement().setPropertyString("placeholder", "Escriba el nombre del convenio... (Ctrl + espacio para ver sugerencias)");
+		
+		enterpriseAgreement.getValueBox().addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				enterpriseAgreement.setText("");
+				enterpriseAgreement.showSuggestionList();
+			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+				enterpriseAgreement.hideSuggestionList();
+		});
 	}
 	
 	public Label createEmptyListLabel() {
