@@ -91,7 +91,7 @@ public enum FiscalMenuItemJSON {
 			return json.put(IJsonNames.IBAN, (model.getFinance() != null && model.getFinance().getBankAccount() != null)?model.getFinance().getBankAccount().getIban():"");
 		}
 	},
-	BANNK_ALIAS{
+	BANK_ALIAS{
 		@Override
 		public JSONObject to(IFiscalModel model, JSONObject json) {
 			return json.put(IJsonNames.BANK_ALIAS, (model.getFinance() != null)?model.getFinance().getBankAlias():"");

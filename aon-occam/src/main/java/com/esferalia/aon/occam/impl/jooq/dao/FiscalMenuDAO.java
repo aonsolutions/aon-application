@@ -50,42 +50,7 @@ public class FiscalMenuDAO {
 	
 	private static JSONArray getDomainModels(AONContext ctx, final Domain domain, JSONArray allModels,FiscalMatrixParams params) {
 		if (params.isConfiguredVisible()) {
-			AppParam admonAppParam = APP_PARAM.as("admonAppParam");
-			ctx.getDslContext()
-				.select( APP_PARAM.NAME
-						,APP_PARAM.VALUE
-						,DOMAIN.ID
-						,DOMAIN.DESCRIPTION
-						,REGISTRY.DOCUMENT
-						,REGISTRY.NAME
-						,admonAppParam.VALUE
-						)
-				.from(APP_PARAM)
-				.join(DOMAIN).on( APP_PARAM.DOMAIN.equal(DOMAIN.ID))
-				.join(COMPANY).on( APP_PARAM.DOMAIN.equal(COMPANY.DOMAIN))
-				.join(REGISTRY).on( REGISTRY.ID.equal(COMPANY.REGISTRY))
-				.leftOuterJoin(admonAppParam).on( APP_PARAM.DOMAIN.equal(admonAppParam.DOMAIN)
-						.and(admonAppParam.NAME.eq(com.esferalia.aon.occam.api.model.type.AppParam.FS_DEFAULT_ADMINISTRATION.toString())))
-				.where(APP_PARAM.DOMAIN.equal(domain.getId()).or(DOMAIN.PARENT.equal(domain.getId())))
-				.and(APP_PARAM.NAME.like( params.getModel()  == null ? PARAM_PREFIX_LIKE : PARAM_PREFIX + params.getModel().toString() + "%"))
-				.and(params.getScope() == null?DSL.trueCondition():DOMAIN.SCOPE.eq( params.getScope()))
-				.orderBy(APP_PARAM.NAME)
-				.fetch()
-				.stream()
-				.filter(rec -> AonStringUtils.containsAny(rec.getValue(APP_PARAM.VALUE), "YQM"))
-				.map( rec -> new FiscalModel()
-						.setDomain(rec.getValue(DOMAIN.ID))
-						.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-						.setAdministration( AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)))
-						.setModel( fromAppParamName(rec.getValue(APP_PARAM.NAME)) )
-						.setDocument(rec.getValue(REGISTRY.DOCUMENT))
-						.setName(rec.getValue(REGISTRY.NAME))
-						.setStatus( FiscalStatus.MISSING)
-						.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01)
-				)
-				.map( FiscalMenuItemJSON::toJSON )
-				.forEach( allModels::put )
-				;
+			addConfiguredModels(ctx, domain, allModels,params);
 		}
 		if (params.isMadeModelsVisible()) {
 			IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
@@ -133,7 +98,7 @@ public class FiscalMenuDAO {
 */
 				@Override 
 				public void visitM347() {
-					if (params.getModel() == null  || FiscalModelType.M347 == params.getModel()) {
+					if (params.accept( FiscalModelType.M347 )) {
 						Mod347DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -143,7 +108,7 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM349() {
-					if (params.getModel() == null  || FiscalModelType.M349 == params.getModel()) {
+					if (params.accept( FiscalModelType.M349 )) {
 						Mod349DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -153,7 +118,7 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM390() {
-					if (params.getModel()  == null  || FiscalModelType.M390 == params.getModel()) {
+					if (params.accept( FiscalModelType.M390)) {
 						Mod390DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -163,7 +128,7 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM180() {
-					if (params.getModel()  == null  || FiscalModelType.M180 == params.getModel()) {
+					if (params.accept( FiscalModelType.M180 )) {
 						Mod180DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -173,7 +138,7 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM184() {
-					if (params.getModel()  == null  || FiscalModelType.M184 == params.getModel()) {
+					if (params.accept( FiscalModelType.M184 )) {
 						Mod184DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -183,7 +148,7 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM190() {
-					if (params.getModel()  == null  || FiscalModelType.M190 == params.getModel()) {
+					if (params.accept( FiscalModelType.M190 )) {
 						Mod190DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -193,7 +158,7 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM193() {
-					if (params.getModel()  == null  || FiscalModelType.M193.getName().equals(params.getModel())) {
+					if (params.accept( FiscalModelType.M193 )) {
 						Mod193DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -203,7 +168,7 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM200() {
-					if (params.getModel() == null || FiscalModelType.M200 == params.getModel()) {
+					if (params.accept( FiscalModelType.M200 )) {
 						Mod200DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
@@ -219,6 +184,45 @@ public class FiscalMenuDAO {
 		return allModels;
 	}
 	
+	private static void addConfiguredModels(AONContext ctx, final Domain domain, JSONArray allModels,FiscalMatrixParams params) {
+		AppParam admonAppParam = APP_PARAM.as("admonAppParam");
+		ctx.getDslContext()
+			.select( APP_PARAM.NAME
+					,APP_PARAM.VALUE
+					,DOMAIN.ID
+					,DOMAIN.DESCRIPTION
+					,REGISTRY.DOCUMENT
+					,REGISTRY.NAME
+					,admonAppParam.VALUE
+					)
+			.from(APP_PARAM)
+			.join(DOMAIN).on( APP_PARAM.DOMAIN.equal(DOMAIN.ID))
+			.join(COMPANY).on( APP_PARAM.DOMAIN.equal(COMPANY.DOMAIN))
+			.join(REGISTRY).on( REGISTRY.ID.equal(COMPANY.REGISTRY))
+			.leftOuterJoin(admonAppParam).on( APP_PARAM.DOMAIN.equal(admonAppParam.DOMAIN)
+					.and(admonAppParam.NAME.eq(com.esferalia.aon.occam.api.model.type.AppParam.FS_DEFAULT_ADMINISTRATION.toString())))
+			.where(APP_PARAM.DOMAIN.equal(domain.getId()).or(DOMAIN.PARENT.equal(domain.getId())))
+			.and(APP_PARAM.NAME.like( params.getModel()  == null ? PARAM_PREFIX_LIKE : PARAM_PREFIX + params.getModel().toString() + "%"))
+			.and(params.getScope() == null?DSL.trueCondition():DOMAIN.SCOPE.eq( params.getScope()))
+			.orderBy(APP_PARAM.NAME)
+			.fetch()
+			.stream()
+			.filter(rec -> AonStringUtils.containsAny(rec.getValue(APP_PARAM.VALUE), "YQM"))
+			.map( rec -> new FiscalModel()
+					.setDomain(rec.getValue(DOMAIN.ID))
+					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+					.setAdministration( AppParamDAO.parseDefaultAdministration(rec.getValue(admonAppParam.VALUE)))
+					.setModel( fromAppParamName(rec.getValue(APP_PARAM.NAME)) )
+					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+					.setName(rec.getValue(REGISTRY.NAME))
+					.setStatus( FiscalStatus.MISSING)
+					.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01)
+			)
+			.map( FiscalMenuItemJSON::toJSON )
+			.forEach( allModels::put )
+			;
+	}
+
 	private static FiscalModelType fromAppParamName( String name ) {
 		String model = AonStringUtils.substringAfter(name,PARAM_PREFIX);
 		FiscalModelType fmt = FiscalModelType.valueOf(model);
