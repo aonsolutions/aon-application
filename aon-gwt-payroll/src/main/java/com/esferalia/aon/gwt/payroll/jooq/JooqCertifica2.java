@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Certifica2Batch.CERTIFICA2_BATCH;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
@@ -126,7 +127,7 @@ public class JooqCertifica2 {
 		// Representative Data
 
 		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
-		getReprensentativeData(dslContext, certifica2Info, domainId);
+		getReprensentativeData(dslContext, certifica2Info, domainId, contractRecord);
 
 		// Enterprise Data
 
@@ -242,38 +243,70 @@ public class JooqCertifica2 {
 	}
 
 	private static void getReprensentativeData(DSLContext dslContext, com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, 
-			Integer domainId) {
+			Integer domainId, Record contractRecord) {
 		
-		Integer enterpriseRegisty = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
-				.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
-
+		Integer contractId = contractRecord.get(CONTRACT.ID);
+		String staffFullname = dslContext.select(CONTRACT_INFO.EXPRESSION)
+				.from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("I_ENTERPRISE_DIR_STAFF_NAME")
+					.or(CONTRACT_INFO.NAME.eq("T_ENTERPRISE_DIR_STAFF_NAME"))
+					.or(CONTRACT_INFO.NAME.eq("L_ENTERPRISE_DIR_STAFF_NAME"))
+					.or(CONTRACT_INFO.NAME.eq("P_ENTERPRISE_DIR_STAFF_NAME"))
+				).fetchOne(CONTRACT_INFO.EXPRESSION);
+		
 		String representativeDocument = "";
 		String representativeName = "";
 		String representativeSurname = "";
-
-		Result<Record> staffRecords = dslContext.select().from(RDIR_STAFF)
-				.where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty)).fetch();
-
-		// Hay representante de empresa
-		if (staffRecords.isNotEmpty()) {
-			// Cogemos el primer representate
-			Record staffRecord = staffRecords.get(0);
-			representativeDocument = staffRecord.get(RDIR_STAFF.DOCUMENT);
-			String fullName = staffRecord.get(RDIR_STAFF.NAME);
-
-			if (fullName.contains(",")) {
-				representativeName = fullName.split(",")[1].trim();
-				representativeSurname = fullName.split(",")[0].trim();
+		
+		if(AonStringUtils.isNotBlank(staffFullname)) {
+			if (staffFullname.contains(",")) {
+				representativeName = staffFullname.split(",")[1].trim();
+				representativeSurname = staffFullname.split(",")[0].trim();
 			} else
-				representativeName = fullName.trim();
-
-			// No hay representante
+				representativeName = staffFullname.trim();
 		} else {
-			Record enterpriseRegistry = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(enterpriseRegisty))
-					.fetchOne();
-			representativeDocument = enterpriseRegistry.get(REGISTRY.DOCUMENT);
-			representativeName = enterpriseRegistry.get(REGISTRY.NAME);
+			Integer enterpriseRegisty = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
+					.where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
+
+			Result<Record> staffRecords = dslContext.select().from(RDIR_STAFF)
+					.where(RDIR_STAFF.REGISTRY.eq(enterpriseRegisty)).fetch();
+
+			// Hay representante de empresa
+			if (staffRecords.isNotEmpty()) {
+				// Cogemos el primer representate
+				Record staffRecord = staffRecords.get(0);
+				representativeDocument = staffRecord.get(RDIR_STAFF.DOCUMENT);
+				String fullName = staffRecord.get(RDIR_STAFF.NAME);
+
+				if (fullName.contains(",")) {
+					representativeName = fullName.split(",")[1].trim();
+					representativeSurname = fullName.split(",")[0].trim();
+				} else
+					representativeName = fullName.trim();
+
+				// No hay representante
+			} else {
+				Record enterpriseRegistry = dslContext.select().from(REGISTRY)
+						.where(REGISTRY.ID.eq(enterpriseRegisty))
+						.fetchOne();
+				
+				representativeDocument = enterpriseRegistry.get(REGISTRY.DOCUMENT);
+				representativeName = enterpriseRegistry.get(REGISTRY.NAME);
+			}
 		}
+		
+		String staffDocument = dslContext.select(CONTRACT_INFO.EXPRESSION)
+				.from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.and(CONTRACT_INFO.NAME.eq("I_ENTERPRISE_DIR_STAFF_NIF")
+					.or(CONTRACT_INFO.NAME.eq("T_ENTERPRISE_DIR_STAFF_NIF"))
+					.or(CONTRACT_INFO.NAME.eq("L_ENTERPRISE_DIR_STAFF_NIF"))
+					.or(CONTRACT_INFO.NAME.eq("P_ENTERPRISE_DIR_STAFF_NIF"))
+				).fetchOne(CONTRACT_INFO.EXPRESSION);
+		
+		if(AonStringUtils.isNotBlank(staffDocument))
+			representativeDocument = staffDocument;
 
 		certifica2Info.setRepresentativeDocument(representativeDocument);
 		certifica2Info.setRepresentativeName(representativeName);
