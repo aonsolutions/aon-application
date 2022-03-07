@@ -13,11 +13,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.regex.Pattern;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ScriptException;
@@ -32,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.RevokedCertificateException;
@@ -39,8 +37,8 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Employee;
-import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -231,7 +229,7 @@ class SistemaREDMov {
 	) throws Exception  {
 			String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
 	    	Integer mov = 0;
-			String ident = identity(employee.getIpf());
+			String ident = Toolkit.getIdentityType(employee.getIpf());
 			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
  			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
  			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
@@ -300,7 +298,7 @@ class SistemaREDMov {
 	) throws Exception {
     	String situation = employee.getSituacion()!=null ? employee.getSituacion() : "93";
     	Integer mov = 1;
-		String ident = identity(employee.getIpf());
+		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 		
 		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
@@ -412,7 +410,7 @@ class SistemaREDMov {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR02&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
-			String ident = identity(ipf);
+			String ident = Toolkit.getIdentityType(ipf);
 			String dni =  Toolkit.fillStringLeft(ipf, "0", 10);
 			String[] fra = formatDate(date); //fecha [dia,mes,año]
 			
@@ -500,7 +498,7 @@ class SistemaREDMov {
 	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
 	      Integer ident  = 1; //NIF DEFAULT
-	      if(identity(ipf).equals("6")) ident = 3; // NIE
+	      if(Toolkit.getIdentityType(ipf).equals("6")) ident = 3; // NIE
 
 	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
      
@@ -585,7 +583,7 @@ class SistemaREDMov {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 
 	        Integer ident  = 1; 
-		    if(identity(ipf).equals("6")) 
+		    if(Toolkit.getIdentityType(ipf).equals("6")) 
 		    	ident = 3; // NIE
  			//Date
  			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
@@ -649,7 +647,7 @@ class SistemaREDMov {
 	      HtmlPage htmlPage = webClient.getPage(url);
 	     
 	      Integer ident  = 1; 
-	      if(identity(ipf).equals("6")) ident = 3; // NIE
+	      if(Toolkit.getIdentityType(ipf).equals("6")) ident = 3; // NIE
 	      
 	      String[] fr = formatDate(fecha); //fecha [dia,mes,año]
 
@@ -701,51 +699,6 @@ class SistemaREDMov {
 			if(error!=null && !error.getVisibleText().isEmpty()) 
 				throw new InvalidDataException(error.getVisibleText());
 		} catch (NullPointerException e) {}
-	}
-	
-	private static String identity(String ipf) {
-		ipf = Toolkit.removeExtraZeros(ipf);
-		Pattern nif  = Pattern.compile(
-				//  -------- LEGAL_PERSON_NIF PATTERN  
-				// -------- (1) --> X00000000
-					"^[A-JUV]"
-					+"[\\s-_/]?"
-					+"[0-9]{2}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}$"
-					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		Pattern dni  = Pattern.compile(
-					"[0-9]?"
-					+"[0-9]"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/]?"
-					+"[A-Z]"
-					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-				//  -------- NIE PATTERN 
-				// -------- (1) --> X0000000X
-		Pattern nie  = Pattern.compile(
-					"[XYZ]"
-					+"[\\s-_/]?"
-					+"[0-9]{7}"
-					+"[\\s-_/]?"
-					+"[A-HJ-NP-TV-Z]"
-				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		
-		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
-		patterns.put(nif, 1);
-		patterns.put(dni, 1);
-		patterns.put(nie, 6);
-		
-		String identity = "";
-		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
-			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
-		}
-		return identity;
 	}
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,

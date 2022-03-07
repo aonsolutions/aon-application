@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.pdf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -25,9 +26,20 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-import com.mysql.cj.protocol.Resultset;
 @Ignore
 public class JooqPdfTest {
+	@Test
+	public void testOmega() throws IOException, UnknownPDFException, SQLException {
+		try (InputStream is = PdfTest.class.getResourceAsStream("omega/COVAIN.pdf");
+				Connection connection = DriverManager
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
+				AONContext aonContext = new AONContext(connection)) {
+			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
+					"ayudat.aonsolutions.net");
+			SalaryPDFParser.parseOmega(is, builder);
+			builder.execute();
+		}
+	}
 
 	@Test
 	@Ignore

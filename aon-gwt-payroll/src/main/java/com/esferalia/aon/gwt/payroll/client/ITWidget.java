@@ -146,7 +146,7 @@ public abstract class ITWidget extends ResizeComposite {
 	class TGSSContextMenu extends ContextMenu {
 		
 		private MenuItem fie;
-		private MenuItem sync;
+//		private MenuItem sync;
 		
 		public TGSSContextMenu() {
 			
@@ -1474,11 +1474,21 @@ public abstract class ITWidget extends ResizeComposite {
 			SistemaREDITResults results = new SistemaREDITResults() {
 				@Override
 				public void run() {
-					
+					showProgressPanel();
 					checkStatus(status -> {
 						removeAll();
 						status.visit(this);
 					}, throwable -> {});
+				}
+				
+				@Override
+				protected void collapse(boolean collapse) {
+					if(collapse) {
+						minimizedByUser = true;
+						closeFootPanel();
+					} else {
+						 showFootPanel();
+					}
 				}
 				
 				@Override
@@ -1724,8 +1734,10 @@ public abstract class ITWidget extends ResizeComposite {
 			@Override
 			protected void onCommunicateITPart(IT it, ITPart part) {
 				startLoading(true);
-				communicateITPart(itEmployee, it, part, s->{		
-				
+				communicateITPart(itEmployee, it, part, s->{	
+					
+					getITCertificatePDF(itEmployee, it);
+					
 					normalizeITToSave();
 				
 					acceptUpdate(itEmployee);
@@ -1951,7 +1963,7 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private void showResultsPanel() {
-		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information(), AON.CSS.aonIconHistory()));
+		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information()+" TGSS", AON.CSS.aonIconHistory()));
 		tabLayout.selectTab(resultsPanel);
 	}
 	

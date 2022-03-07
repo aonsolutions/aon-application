@@ -145,8 +145,7 @@
 									</td>
 									<td>
 										<g:HTMLPanel styleName="{style.row}">
-											<g:TextBox ui:field="ideTB" styleName='{style.maxWidthTB} {style.textCenter}' />
-											<s:AonToolbarSmallButton ui:field="updateSepeInfoBtn" />
+											<g:HTMLPanel ui:field="idePanel" styleName='{style.row}'/>
 										</g:HTMLPanel>
 									</td>
 								</tr>

@@ -1066,6 +1066,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 				s -> {
 					hideMessage();
+					
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					tabLayOutPanel.selectTab(selectedTab, true);
 					success.accept("");

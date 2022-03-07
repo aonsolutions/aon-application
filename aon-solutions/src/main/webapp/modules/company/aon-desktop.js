@@ -204,7 +204,7 @@ export class AonDesktop extends AonElement {
 		if(this.getDur().isAon()){
 			classicOptions.push({
 				name: 'aonSolutions',
-				img: 'assets/apps/aon.png',
+				img: 'assets/aon.png',
 				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
 			});
 		}
@@ -289,7 +289,7 @@ export class AonDesktop extends AonElement {
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
-			span.innerHTML = `<aon-icon icon="aon_app" color="black" size="30px"></aon-icon>`;
+			span.innerHTML = `<aon-icon icon="aon_settings" color="black" size="30px"></aon-icon>`;
 
 			let span2 = this.createElement(TAG.SPAN);
 			span2.className = 'aonAppTitle';

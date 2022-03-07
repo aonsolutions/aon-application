@@ -31,6 +31,8 @@ import solutions.aon.seg.social.SistemaRED.SituationEmployee;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.object.PaternityCertificate.ApplicantType;
+import solutions.aon.seg.social.object.PaternityCertificate.ReasonType;
 
 public class ITComunica {
 	
@@ -87,18 +89,65 @@ public class ITComunica {
 
 		 List<String> messages = new ArrayList<>();
 		 
-		 if(!baja.isEmpty()) 
-			 registerITBaja(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
-		 
-		 if(!confirmations.isEmpty()) {
-			 confirmations.forEach(itPart-> 
-				registerITConfirmation(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
-			 );
+		 if(employeeIt.isPaternity()) {
+			 communicatePaternity(certificateData, certificatePassword, certificateType, employeeIt, messages);
+		 } else {
+			 if(!baja.isEmpty()) 
+				 registerITBaja(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
+			 
+			 if(!confirmations.isEmpty()) {
+				 confirmations.forEach(itPart-> 
+					registerITConfirmation(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
+				 );
+			 }
+			 if(!alta.isEmpty()) 
+				 registerITAlta(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
 		 }
-		 if(!alta.isEmpty()) 
-			 registerITAlta(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
 		 
 		 return messages;
+	}
+	
+	private static void communicatePaternity(final byte[] certificateData, final String certificatePassword,
+			final String certificateType, EmployeeIT employeeIt, List<String> messages){
+		try {
+			String regime = employeeIt.getRegime();
+			String ccc = employeeIt.getCcc();
+			String nss = employeeIt.getNss();
+			
+			Optional<String> type = employeeIt.getPaternityType();
+			Optional<String> reasonOpt = employeeIt.getPaternityReason();
+			Optional<Date> endDate = employeeIt.getEndDate();
+			Optional<String> dni = employeeIt.getDni();
+			Optional<Double> baseCgcOpt = employeeIt.getDailyCgcBase();
+			Optional<Double> baseCgpOpt = employeeIt.getDailyCgpBase();
+
+			Integer days = employeeIt.getQuoteDays();
+			Date dateFrom = employeeIt.getStartDate();
+			
+			ApplicantType applicantType = ApplicantType.safeValueOf( Integer.parseInt(type.get()) );
+			
+			ReasonType reason = ReasonType.safeValueOf( Integer.parseInt(reasonOpt.get()) );
+			
+			float baseCC = baseCgcOpt.get().floatValue();
+	
+			float baseCP = baseCgpOpt.get().floatValue();
+			
+			Date dateTo = endDate.isPresent() ? endDate.get() : AonDateUtils.addDays(dateFrom, (16*7));
+			if(applicantType.equals(ApplicantType.OTRO_PROGENITOR))
+				dateTo = endDate.isPresent() ? endDate.get() : AonDateUtils.addDays(dateFrom, (12*7));
+				
+			dateTo = AonDateUtils.addDays(dateTo, -1);
+	
+			System.out.println(nss+", "+regime+", "+ccc+", "+dni.get()+", "+applicantType+", "+reason+", "+dateFrom+", "+dateTo+", "+baseCC+", "+baseCP+", "+days);
+			
+			SistemaRED.sendPaternity(certificateData, certificatePassword, certificateType, 
+						nss, regime, ccc, dni.get(), applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+			
+			messages.add("ERROR TEST");
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.add(e.getMessage());
+		}
 	}
 	
 	public static List<String> removeITs(final byte[] certificateData, final String certificatePassword,
@@ -125,7 +174,7 @@ public class ITComunica {
 	}
 	
 	private static void registerITBaja(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
-			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart,  List<String> messages) {
+			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart, List<String> messages) {
 			try {
 				Optional<Double> baseOptional = employeeIt.getDailyCgcBase();
 				verifyData(new Object[] { 

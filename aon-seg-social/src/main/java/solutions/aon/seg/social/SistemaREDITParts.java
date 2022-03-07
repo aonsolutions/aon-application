@@ -68,6 +68,7 @@ class SistemaREDITParts {
 		checkCertificate(certificateInputStream);
 
 		ArrayList<It> its = new ArrayList<>();
+		
 		ArrayList<ITPart> itParts = (ArrayList<ITPart>) getFullItParts(certificateInputStream, certificatePassword,
 				certificateType, regime, ccc, from, to, nss);
 		
@@ -643,11 +644,10 @@ class SistemaREDITParts {
 	// GET ALL THE ITPARTS
 	private static Collection<ITPart> getFullItPartsImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss)
-			throws SegSocialException, FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+			throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
 
 		Toolkit.verifyData(new Object[] { regime, ccc, from, to });
-		checkCertificate(certificateInputStream);
-
+		
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setJavaScriptEnabled(false);
 
@@ -696,55 +696,57 @@ class SistemaREDITParts {
 			htmlPage = show.click();
 			handleItPartErrors(htmlPage);
 			
-			boolean last = false;
+			DomNode node = htmlPage.querySelector(".resultados");
+			if(node!=null) {
+				boolean last = false;
+				while (!last) {
+					node = htmlPage.querySelector(".resultados");
+					if(node instanceof HtmlTable) {
+						HtmlTable table = (HtmlTable)node;
+						int i = 0;
+						for (final HtmlTableRow row : table.getRows()) {
+							if(i>0) {
+								int cellSize = row.getCells().size();
 			
-			while (!last) {
-				DomNode node = htmlPage.querySelector(".resultados");
-				if(node instanceof HtmlTable) {
-					HtmlTable table = (HtmlTable)node;
-					int i = 0;
-					for (final HtmlTableRow row : table.getRows()) {
-						if(i>0) {
-							int cellSize = row.getCells().size();
-		
-							Boolean cancelled = Toolkit.toBoolean(row.getCell(cellSize-2).getVisibleText());
-							Boolean wrong = Toolkit.toBoolean(row.getCell(cellSize-1).getVisibleText());
+								Boolean cancelled = Toolkit.toBoolean(row.getCell(cellSize-2).getVisibleText());
+								Boolean wrong = Toolkit.toBoolean(row.getCell(cellSize-1).getVisibleText());
 
-							if(Boolean.FALSE.equals(cancelled) && Boolean.FALSE.equals(wrong)) {
+								if(Boolean.FALSE.equals(cancelled) && Boolean.FALSE.equals(wrong)) {
 
-								HtmlAnchor desc = (HtmlAnchor) row.getCell(0).getFirstElementChild();
-								HtmlPage document = HtmlUnitToolkit.setUrlParse(htmlPage, desc).click();
-						
-								handleItPartErrors(document);
-								ITPart part = infoPart(document);
-								if (!itParts.contains(part))
-									itParts.add(part);
+									HtmlAnchor desc = (HtmlAnchor) row.getCell(0).getFirstElementChild();
+									HtmlPage document = HtmlUnitToolkit.setUrlParse(htmlPage, desc).click();
+							
+									handleItPartErrors(document);
+									ITPart part = infoPart(document);
+									if (!itParts.contains(part))
+										itParts.add(part);
+								}
 							}
+							i++;
 						}
-						i++;
 					}
+
+					DomNode next = HtmlUnitToolkit.getElConstains(htmlPage, ".derecha a", "Siguiente");
+		
+					if(next instanceof HtmlAnchor) {
+						
+						HtmlAnchor anchor = (HtmlAnchor)next;
+
+						String urlBase = "/isincaA/buscaPartes.do?";
+						String query = anchor.getHrefAttribute().replace(urlBase, "");
+
+					    String decodedQuery = Arrays.stream(query.split("&"))
+			    	    .map(param -> {
+			    	    	param = param.trim();
+			    	    	return param.isEmpty() ? "" : param.split("=")[0] + "=" + 
+					    	    	(param.split("=").length>1 ? encode(param.split("=")[1]): "");
+			    	    }) .collect(Collectors.joining("&"));
+					    
+						anchor.setAttribute("href", "https://w2.seg-social.es"+urlBase+decodedQuery);
+						htmlPage = anchor.click();
+					}  else
+						last = true;
 				}
-
-				DomNode next = HtmlUnitToolkit.getElConstains(htmlPage, ".derecha a", "Siguiente");
-	
-				if(next instanceof HtmlAnchor) {
-					
-					HtmlAnchor anchor = (HtmlAnchor)next;
-
-					String urlBase = "/isincaA/buscaPartes.do?";
-					String query = anchor.getHrefAttribute().replace(urlBase, "");
-
-				    String decodedQuery = Arrays.stream(query.split("&"))
-		    	    .map(param -> {
-		    	    	param = param.trim();
-		    	    	return param.isEmpty() ? "" : param.split("=")[0] + "=" + 
-				    	    	(param.split("=").length>1 ? encode(param.split("=")[1]): "");
-		    	    }) .collect(Collectors.joining("&"));
-				    
-					anchor.setAttribute("href", "https://w2.seg-social.es"+urlBase+decodedQuery);
-					htmlPage = anchor.click();
-				}  else
-					last = true;
 			}
 			return itParts;
 		}

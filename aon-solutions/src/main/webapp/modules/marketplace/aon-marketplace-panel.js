@@ -1,7 +1,7 @@
 // COMPONENTS
 import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
-import './aon-marketplace.js';
+import './aon-booking.js';
 import '../../css/aon.css'
 // CONSTANTS
 import { CONSTANT, MSG } from '../../environments/environments.js'; 
@@ -32,7 +32,7 @@ export class AonMarketplacePanel extends AonElement {
 		if(application) {
 			application.closeSidenav();
 			application.setContentHTML(
-				`<aon-marketplace id="aonMarketplace" > </aon-marketplace>`
+				`<aon-booking id="aonMarketplace"></aon-booking>`
 			);
 		}
 
