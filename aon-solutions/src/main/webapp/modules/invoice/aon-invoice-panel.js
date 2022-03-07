@@ -155,7 +155,7 @@ export class AonInvoicePanel extends AonElement {
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
-				// this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel())
+				this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel())
 			}
 		}
 		const btnSearch = this.getApplication().addSearchOption();
@@ -167,9 +167,9 @@ export class AonInvoicePanel extends AonElement {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 
 		let data = {
-			domain_id: localStorage.getItem('aon_domain_id'),
-			domain_name: localStorage.getItem('aon_domain_name'),
-			domain_login: localStorage.getItem('aon_domain_login'),
+			domainId: localStorage.getItem('aon_domain_id'),
+			domainName: localStorage.getItem('aon_domain_name'),
+			domainLogin: localStorage.getItem('aon_domain_login'),
 			ids: aonInvoiceTable.selected.map(r => r.id),
 			status: this.getFilter().status
 		};

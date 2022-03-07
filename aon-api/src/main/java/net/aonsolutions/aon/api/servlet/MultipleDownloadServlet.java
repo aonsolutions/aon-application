@@ -28,6 +28,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -66,9 +68,9 @@ public class MultipleDownloadServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JSONObject json = new JSONObject(decode(req.getParameter("json").getBytes()));
-		Integer domainId = json.getInt("domain_id");
-		String domainName = json.getString("domain_name");
-		String login = json.getString("domain_login");
+		Integer domainId = JsonUtils.getInteger(json, IJsonNames.DOMAIN_ID);
+		String domainName = JsonUtils.getString(json, IJsonNames.DOMAIN_NAME);
+		String login = JsonUtils.getString(json, IJsonNames.DOMAIN_LOGIN);
 		Domain domain = AON.getDomain(domainName, domainId, login);
 		User user = AON.getUser(domainName, domainId, login);
 		

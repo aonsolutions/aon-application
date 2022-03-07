@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -49,7 +50,8 @@ public class Invoice implements Serializable, HasAudit {
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryName;
-
+	private Account registryAccount;
+	
 	private Scope scope;
 	private InvoiceType type;
 	private InvoiceTransactionType transaction;
@@ -551,6 +553,15 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setFiscal(InvoiceFiscal fiscal) {
 		this.fiscal = fiscal;
+		return this;
+	}
+	
+	public Account getRegistryAccount() {
+		return registryAccount;
+	}
+	
+	public Invoice setRegistryAccount(Account registryAccount) {
+		this.registryAccount = registryAccount;
 		return this;
 	}
 	

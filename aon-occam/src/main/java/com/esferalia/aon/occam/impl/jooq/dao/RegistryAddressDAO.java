@@ -14,6 +14,7 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Geozone;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -74,6 +75,10 @@ public class RegistryAddressDAO {
 		public static RegistryAddress build(Record r) {
 			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
 			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
+			return build(r, parent, child);
+		}
+		
+		public static RegistryAddress build(Record r, Geozone parent, Geozone child) {
 			return new RegistryAddress()
 					.setId(r.getValue(RADDRESS.ID))
 					.setDomain(r.getValue(RADDRESS.DOMAIN))

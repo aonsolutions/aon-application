@@ -450,6 +450,8 @@ public class InvoiceImport {
 			inv.setInvestment(IConstants.TRUE.equalsIgnoreCase(val) || IConstants.SI.equalsIgnoreCase(val));
 			return;
 		}
+		
+		// TODO SUPLIDO, CUENTA CONTRAPARTE
 	}
 
 	public static Error insertInvoices(Domain domain, User user, Integer i, LinkedList<InvoiceImportClass> ivs) {
