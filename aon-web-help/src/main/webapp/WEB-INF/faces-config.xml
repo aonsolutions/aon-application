@@ -327,11 +327,7 @@
 			<value>#{customerFeeChildListener}</value>
 			<!-- aon-ui-project-->
 			<value>#{customerProjectListener}</value>
-			<!-- aon-ui-academy-->
-			<value>#{customerAbsenceChildListener}</value>
-			<value>#{customerAlumnLoanChildListener}</value>
-			<value>#{customerAlumnCourseChildListener}</value>
-			<value>#{alumnControllerListener}</value>
+
 			<!--  aon.ui.customer -->
 			<value>#{customerPersonListener}</value>
 			<!--  aon.ui.registry -->

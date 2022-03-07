@@ -40,7 +40,6 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.faces.controller.IRichConstants;
 import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.groupware.Note;
@@ -49,7 +48,6 @@ import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.PortalInfo;
 import com.code.aon.ui.admin.controller.MarketplaceController;
@@ -62,7 +60,6 @@ import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.audit.controller.MenuParser;
-import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
@@ -83,6 +80,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class DesktopState implements Serializable {
 
@@ -400,7 +400,7 @@ public class DesktopState implements Serializable {
 		if (! adc.isDeniedModule(Module.GARAGE.getName()) ) {
 			AonUtil.setBeanValue(ConfigConstants.SERIES, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
 			AonUtil.setBeanValue(IFinanceConstants.INCOME_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
-			AonUtil.setBeanValue(ICommercialConstants.OFFER_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
+			//AonUtil.setBeanValue(ICommercialConstants.OFFER_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
 			AonUtil.setBeanValue(IWarehouseConstants.DELIVERY_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
 			AonUtil.setBeanValue(IWarehouseConstants.INCOME_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
 			AonUtil.setBeanValue(ISalesConstants.SALES_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);

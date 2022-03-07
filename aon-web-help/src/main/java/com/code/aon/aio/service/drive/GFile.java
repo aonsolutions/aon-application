@@ -46,10 +46,7 @@ public class GFile {
 			;
 		
 		return builder.build();
-	}
-	
-	
-	
+	}	
 	
 	public static class GFileBuilder {
 		

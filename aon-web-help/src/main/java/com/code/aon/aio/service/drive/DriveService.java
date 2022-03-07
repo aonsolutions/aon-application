@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Scanner;
 
+import com.code.aon.aio.service.drive.GFile.GFileBuilder;
 import com.code.aon.aio.service.drive.exception.GoogleDriveException;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.google.api.services.drive.Drive;
@@ -68,17 +69,23 @@ public class DriveService {
 	}	
 	
 	
-	public GFile getFile(Optional<String> id) {
+	public GFile getFile(Optional<String> parent, Optional<String> name) {
 		
-		final FileList files = SearchFiles.searchFilesTitleAndParent(drive, "intro.mp4", id.orElse("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN"));		
+		final FileList files = SearchFiles.searchFilesTitleAndParent(drive, parent.orElse(""), parent.orElse("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN"));		
 	
 		if(files == null)
 			return null;
 		
-		System.out.println("FILES SEARCHED : " + files.size());
+		// TODO Something is wrong with the API call,
+		// we need to figure this out soon.
+		System.out.println("FILES SEARCHED : " + files.getFiles().size());
 		
+		// Nothing showing here
 		final File f = (File) files.get(0);
-		return GFile.from(f);
+		System.out.println(files);		
+		
+		//Empty return (temporary)
+		return new GFileBuilder().setId("").setDownloadUrl("").setPreviewUrl("").build();
 	}
 	
 }

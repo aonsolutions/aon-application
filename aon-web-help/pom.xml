@@ -110,18 +110,13 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.account</artifactId>
+     <dependency>
+      <groupId>com.esferalia.aon</groupId>
+      <artifactId>aon.ui.payroll</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.academy</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
+    </dependency> 
+
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.accounting</artifactId>
@@ -152,12 +147,7 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.commercial</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
+
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.company</artifactId>
@@ -170,12 +160,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.config</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
+    
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.db.manager</artifactId>
@@ -194,12 +179,7 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.fiscal</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
+
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.form</artifactId>
@@ -212,19 +192,7 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>com.esferalia.aon</groupId>
-      <artifactId>aon.ui.payroll</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.esferalia.aon</groupId>
-      <artifactId>aon.gwt.common</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
- 
+    
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.product</artifactId>
@@ -291,12 +259,7 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.warehouse</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
+
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.webmail</artifactId>
@@ -343,18 +306,6 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-    <!--dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.conexflow</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.hhg.webservice</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency-->
     <dependency>
       <groupId>net.aonsolutions</groupId>
       <artifactId>aon.webservice</artifactId>
