@@ -2922,10 +2922,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			days = JooqEmployee.getDays(connection, docNum, dateFrom);
 			
-			Boolean recordCertificate = SistemaRED.recordCertificate(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
-			return recordCertificate;
-		
-		} catch (SQLException | SegSocialException e) {
+//			return SistemaRED.sendPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+			return false;
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -2942,7 +2941,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			SistemaRED.voidPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
+			SistemaRED.removePaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -3546,38 +3545,39 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			
 			//PAMETERS REQUIRED
-			EmployeeIT employeeIt =  new EmployeeIT()
+			EmployeeIT employeeIT =  new EmployeeIT()
 			.setDomain(domainId)
 			.setContract(contractInfo.getContractId())
 			.setRegime(regime)
 			.setCcc(ccc)
 			.setNss(employeeInfo.getSsNumber())
+			.setDni(employeeInfo.getDocument())
 			.setStartDate(it.getStartDate()) //FECHA DE BAJA
 			.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()))
 			;
 			
 			if(it.getEndDate()!=null) 
-				employeeIt.setEndDate(it.getEndDate());
+				employeeIT.setEndDate(it.getEndDate());
 			
 			//EXAMPLE IT BAJA
 			EmployeeITPart newPart = parseITPart(part);
 			switch (newPart.getType()) {
 				case BAJA:
-					employeeIt.setDailyCgcBase(it.getRegulationBase()).setQuoteDays(it.getQuoteDays())
-					.setContractType(contractInfo.isPartial() ? EmployeeIT.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL : EmployeeIT.ContractType.RESTO_Y_AUTONOMOS);
+					parseITData(employeeIT, it);
+					employeeIT.setContractType(contractInfo.isPartial() ? EmployeeIT.ContractType.FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL : EmployeeIT.ContractType.RESTO_Y_AUTONOMOS);
 				break;
 				case CONFIRMACION:
 				break;
 				case ALTA:
-					employeeIt.setDischargeCause(ContractLeaveDischargeCause.safeValueOf(it.getTypeHighPart()));
+					employeeIT.setDischargeCause(ContractLeaveDischargeCause.safeValueOf(it.getTypeHighPart()));
 				break;
 			}
 			
-			employeeIt.addITPart(newPart);
+			employeeIT.addITPart(newPart);
 			
-			System.out.println(employeeIt);
+			System.out.println(employeeIT);
 			
-			List<String> messages = ITComunica.communicateITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIt);
+			List<String> messages = ITComunica.communicateITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
 
 			if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
@@ -3589,7 +3589,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
 
 	@Override
 	public void saveITParts(String domainName, String userLogin, List<ItNotExist> itNotExists)  throws IllegalArgumentException {
@@ -3668,6 +3667,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	
+	private static void parseITData(EmployeeIT employeeIT, IT it) {
+		
+		if(it.getQuoteDays()!=null)
+			employeeIT.setQuoteDays(it.getQuoteDays());
+
+		if(it.getMaternityType()!=null) 
+			employeeIT.setPaternityType(it.getMaternityType()+"");
+		
+		if(it.getMaternityReason()!=null) 
+			employeeIT.setPaternityReason(it.getMaternityReason()+"");
+		
+		if(it.getRegulationBase()!=null)
+			employeeIT.setDailyCgcBase(it.getRegulationBase());
+		
+		if(it.getDailyCGPBase()!=null)
+			employeeIT.setDailyCgpBase(it.getDailyCGPBase());
+	
+		if(it.getDailyCGCBase()!=null) 
+			employeeIT.setRegulationBase(it.getDailyCGCBase());
+	}
 	
 	private static EmployeeITPart parseITPart(ITPart part) {
 		return new EmployeeITPart()

@@ -19,6 +19,7 @@ import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.It;
+import solutions.aon.seg.social.object.PaternityCertificate;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SituationType;
@@ -517,44 +518,44 @@ public class SistemaRED {
 	}
 
 
-	public static boolean recordCertificate(final InputStream certificateInputStream, final String certificatePassword,
+	public static boolean sendPaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docType, final String docNum, final String applicantType,
-			final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
+			final String contributionAccount, final String docNum, final PaternityCertificate.ApplicantType applicantType,
+			PaternityCertificate.ReasonType reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
 			final int days) throws SegSocialException {
-		return Paternity.grabarCertificado(certificateInputStream, certificatePassword, certificateType,
-				affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom,
+		return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType,
+				affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom,
 				dateTo, baseCC, baseCP, days);
 	}
 
-	public static boolean recordCertificate(final byte[] certificateData, final String certificatePassword,
+	public static boolean sendPaternity(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docType, final String docNum, final String applicantType,
-			final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
+			final String contributionAccount, final String docNum, final PaternityCertificate.ApplicantType applicantType,
+			PaternityCertificate.ReasonType reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
 			final int days) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return Paternity.grabarCertificado(certificateInputStream, certificatePassword, certificateType,
-					affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom,
+			return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType,
+					affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom,
 					dateTo, baseCC, baseCP, days);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
 	}
 
-	public static void voidPaternity(final InputStream certificateInputStream, final String certificatePassword,
+	public static void removePaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String nss, final String regime,
 			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
-		Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, nss, regime,
+		Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss, regime,
 				ccc, dateFrom, dateTo, startDate);
 	}
 
-	public static void voidPaternity(final byte[] certificateData, final String certificatePassword,
+	public static void removePaternity(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String nss, final String regime,
 			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, nss,
+			Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss,
 					regime, ccc, dateFrom, dateTo, startDate);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
