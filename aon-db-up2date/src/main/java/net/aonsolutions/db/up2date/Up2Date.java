@@ -233,7 +233,7 @@ public class Up2Date {
     		//AddEpigrafe922.ADD_EPIGRAFE_922,
     		SMI2022Update.SMI2022UPDATE,
     		PrestITFactorUpdate.PRESTITFACTORUPDATE,
-    		CertificateDomainFix.CERTIFICATEDOMAINFIX
+    		CertificateDomainFix.CERTIFICATEDOMAINFIX,
     		AlcatrazCreation.ALCATRAZ_CREATION,
     		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
     		RefreshMod111Result.REFRESH_MOD111_RESULT,
