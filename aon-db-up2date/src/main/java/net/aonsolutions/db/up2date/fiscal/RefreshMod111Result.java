@@ -37,10 +37,13 @@ public class RefreshMod111Result implements Update {
 				byte pending = 0;
 				byte finished = 1;
 				byte sent = 4;
+				byte customerCheck = 6;
+				byte customerAccepted = 7;
+				byte customerRejected = 8;
 				dslContext.select(FS_MODEL.ID,FS_MODEL.ADMINISTRATION,FS_MODEL.DOMAIN )
 					.from(FS_MODEL)
 					.where(FS_MODEL.MODEL.eq("111"))
-					.and(FS_MODEL.STATUS.in(pending,finished,sent))
+					.and(FS_MODEL.STATUS.in(pending,finished,sent,customerCheck,customerAccepted,customerRejected))
 					.fetch()
 					.stream()
 					.forEach(reco -> {
