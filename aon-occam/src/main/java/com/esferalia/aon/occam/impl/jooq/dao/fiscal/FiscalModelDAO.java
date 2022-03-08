@@ -229,7 +229,7 @@ public class FiscalModelDAO {
 			.and(FS_MODEL.YEAR.eq(fm.getYear()))
 			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
 			.and(FS_MODEL.PERIOD.eq(fm.getPeriod().value()))
-			.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.notEqual(fm.getId()))
+			.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.lt(fm.getId()))
 			.orderBy(FS_MODEL.ID.desc())
 			.fetch()
 			.stream()

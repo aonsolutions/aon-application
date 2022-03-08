@@ -1,11 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod111;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_SALARY;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_SALARY_IRPF_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.SALARY;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.SALARY_IN_KIND;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -15,7 +13,7 @@ import com.esferalia.aon.occam.api.model.type.Mod111Key;
 public enum Model110Bizkaia2022Script implements IModelScript<Mod111Key> {
 	
 	 R00 ("Rendimientos procedentes de trabajos o servicios que se presten en Bizkaia"
-			 ,new Mod111Key[]{Mod111Key.BZ_C01,Mod111Key.BZ_C12,Mod111Key.BZ_C23},SALARY,DIFF_SALARY)
+			 ,new Mod111Key[]{Mod111Key.BZ_C01,Mod111Key.BZ_C12,Mod111Key.BZ_C23},MODEL_SALARY_IRPF_BREAKDOWN)
 	,R01 ("Retribuciones de miembros de Consejos de Administraci\u00F3n y Juntas que hagan sus veces de empresas o entidades con domicilio fiscal en Bizkaia"
 			,new Mod111Key[]{Mod111Key.BZ_C02,Mod111Key.BZ_C13,Mod111Key.BZ_C24},NONE)
 	,R02 ("Retribuciones de las personas a que se refiere el apartado anterior de empresas o entidades que tributen en proporci\u00F3n al volumen de operaciones (previa aplicaci\u00F3n del porcentaje)"
@@ -33,7 +31,7 @@ public enum Model110Bizkaia2022Script implements IModelScript<Mod111Key> {
 	,R08 ("Retenciones sobre rendimientos de actividades agr\u00EDcolas, ganaderas y forestales"
 			,new Mod111Key[]{Mod111Key.BZ_C08,Mod111Key.BZ_C19,Mod111Key.BZ_C30},MODEL_INVOICE_IRPF_BREAKDOWN)
 	,R09 ("Retribuciones en especie"
-			,new Mod111Key[]{Mod111Key.BZ_C09,Mod111Key.BZ_C20,Mod111Key.BZ_C31},SALARY_IN_KIND,DIFF_SALARY)
+			,new Mod111Key[]{Mod111Key.BZ_C09,Mod111Key.BZ_C20,Mod111Key.BZ_C31},MODEL_SALARY_IRPF_BREAKDOWN)
 	,R10 ("Premios"
 			,new Mod111Key[]{Mod111Key.BZ_C10,Mod111Key.BZ_C21,Mod111Key.BZ_C32},NONE)
 	,R11 ("Rendimientos no comprendidos en apartados anteriores"
