@@ -89,6 +89,7 @@ public class Invoice implements Serializable, HasAudit {
 	private InvoiceFiscal fiscal;
 	
 	private String tediCategory;
+	private String fileUrl;
 	
 	// ***************************
 	// ATRIBUTOS CON DUDOSO FUTURO
@@ -658,6 +659,15 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setSiiStatus(String siiStatus) {
 		this.siiStatus = siiStatus;
+		return this;
+	}
+	
+	public String getFileUrl() {
+		return fileUrl;
+	}
+	
+	public Invoice setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
 		return this;
 	}
 	

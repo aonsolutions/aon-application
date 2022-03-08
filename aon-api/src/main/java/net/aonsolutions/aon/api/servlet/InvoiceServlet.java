@@ -13,13 +13,10 @@ import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -74,7 +71,6 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
-import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -89,7 +85,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		String[] types;
 		Integer page;
 		Integer perPage;
-		 
+		
+		Date from;
+		Date to;
+		
 		public String getDescription() {
 			return description;
 		}
@@ -132,6 +131,24 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		public InvoiceFilter setPerPage(Integer perPage) {
 			this.perPage = perPage;
+			return this;
+		}
+		
+		public Date getFrom() {
+			return from;
+		}
+		
+		public InvoiceFilter setFrom(Date from) {
+			this.from = from;
+			return this;
+		}
+		
+		public Date getTo() {
+			return to;
+		}
+		
+		public InvoiceFilter setTo(Date to) {
+			this.to = to;
 			return this;
 		}
 	}
@@ -246,11 +263,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			return getInvoice(api.getDomain(), api.getUser().getLogin(), id);
 		} else {
 			InvoiceFilter filter = new InvoiceFilter()
-					.setDescription(api.getParams().optString("description"))
-					.setStatus(api.getParams().optString(IConstants.STATUS))
-					.setTypes(api.getParams().opt(IConstants.TYPE) != null ? api.getParams().optString(IConstants.TYPE).split(","): null)
-					.setPage(api.getParams().optInt("page"))
-					.setPerPage(api.getParams().optInt("per_page"));
+				.setDescription(api.getParams().optString("description"))
+				.setStatus(api.getParams().optString(IConstants.STATUS))
+				.setTypes(api.getParams().opt(IConstants.TYPE) != null ? api.getParams().optString(IConstants.TYPE).split(","): null)
+				.setFrom(JsonUtils.getDate(api.getParams(), IJsonNames.FROM))
+				.setTo(JsonUtils.getDate(api.getParams(), IJsonNames.TO))
+				.setPage(api.getParams().optInt("page"))
+				.setPerPage(api.getParams().optInt("per_page"));
 			return getInvoices(api.getDomain(), api.getUser().getLogin(), filter);
 		}
 	}
@@ -316,15 +335,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
-    	
-    	InvoiceStatus st = getInvoiceStatus(invoiceFilter.getStatus());
-    	if(st != null) {
-    		//filter = filter.and(f.getStatusProperty().eq(st.value())); 
-    	}
+    
     	if(invoiceFilter.getDescription() != null) {
     		filter = filter.and(
-    				f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
-    				.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
+    			f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
+    			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%")));
     	}
 
     	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
@@ -332,9 +347,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
     				.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0].toUpperCase()).value()));
     		for(Integer i = 1; i < invoiceFilter.getTypes().length; i++) {
     			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()))
-    					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
+   					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
     		}
     		filter = filter.and(filter2); 
+    	}
+    	
+    	if(invoiceFilter.getFrom() != null) {
+    		filter = filter.and(f.getStartIssueDateProperty().ge(invoiceFilter.getFrom()));
+    	}
+    	
+    	if(invoiceFilter.getTo() != null) {
+    		filter = filter.and(f.getEndIssueDateProperty().le(invoiceFilter.getTo()));
     	}
     	
     	if(invoiceFilter.getPage() != null) {
@@ -396,26 +419,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	
-	
 	private static JSONArray getInvoices(Domain domain, String login, InvoiceFilter filter) {
 		JSONArray jsArray = new JSONArray();
-		if(isContabilizada(filter.getStatus())) {
-			//Company company = AON.getCompany(domain.getName(), domain.getId(), "api", f -> f.getDomainProperty().eq(domain.getId()));
+		if(!isRawdoc(filter.getStatus())) {
 			AON_SOLUTIONS.getInvoices(domain.getName(), domain.getId(), "api", f -> invoiceFilter(f, domain.getId(), filter))
 				.forEach(invoice -> jsArray.put(invoiceList2JSON(invoice)));
-		
 		} else {
 			RawdocStatus rs = getRawdocStatus(filter.getStatus());
-
 			AON.getRawdocStream(domain.getName(), domain.getId(), login, 
 				f -> f.getDomainProperty().eq(domain.getId())
 					.and(f.getStatusProperty().eq(rs.value())))
 			.forEach(r -> { 
-
 				JSONObject json = new JSONObject(r.getJson());
-				json.put("id", r.getId());
-				json.put("status", getRawdocStatus(r.getStatus()));
+				json.put(IJsonNames.ID, r.getId());
+				json.put(IJsonNames.STATUS, r.getStatus() != null ? r.getStatus().getName() : IConstants.INBOX);
 				if(r.getMimeType() != null){
 					JSONObject data = new JSONObject();
 					data.put("domain_name", domain.getName());
@@ -732,39 +749,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		AON.saveTbaiConfiguration(api.getDomain(), api.getUser(), t);
 		return json;
 	}
-
-
-	private static InvoiceStatus getInvoiceStatus(String status) {
-		InvoiceStatus st = InvoiceStatus.safeValueOf(status);
-		if(st == null) {
-			if("inbox".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status)
-					|| "verified".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.PENDING;
-			} else if("accepted".equalsIgnoreCase(status) || "scored".equalsIgnoreCase(status) || "accounting".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.SCORED;
-			} else if("refused".equalsIgnoreCase(status) || "rejected".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.REFUSED; 
-			} else if("trash".equalsIgnoreCase(status) || "draft".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.TRASH;
-			}
-		}
-		return st;
-	}
 	
 	private static RawdocStatus getRawdocStatus(String status) {
-		RawdocStatus st = RawdocStatus.safeValueOf(status);
-		if(st == null) {
-			if("refused".equalsIgnoreCase(status)) {
-				st = RawdocStatus.REJECTED; 
-			} else if("trash".equalsIgnoreCase(status)) {
-				st = RawdocStatus.DRAFT;
-			} else st = RawdocStatus.INBOX;
-		}
-		return st;
+		return RawdocStatus.safeValueOf(status);
 	}
 	
 	
 	private static String getRawdocStatus(RawdocStatus status) {
+		
 		if(RawdocStatus.REJECTED.equals(status)) {
 			return "refused";
 		} else if(RawdocStatus.DRAFT.equals(status)) {
@@ -772,8 +764,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		} else return "inbox";
 	}
 	
-	private static Boolean isContabilizada(String status) {
-		return "accounting".equalsIgnoreCase(status);
+	private static boolean isRawdoc(String status) {
+		return getRawdocStatus(status) != null;
 	}
 	
 	private static JSONObject initInvoice() {

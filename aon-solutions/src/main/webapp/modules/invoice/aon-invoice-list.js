@@ -202,10 +202,10 @@ export class AonInvoiceList extends AonElement {
 			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
-		} else if(this.getFilter().status === 'refused' || this.getFilter().status === 'rejected'){
+		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
 			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
-		} else if(this.getFilter().status === 'trash' || this.getFilter().status === 'draft'){
+		} else if(this.getFilter().status ===  CONSTANT.TRASH || this.getFilter().status === CONSTANT.DRAFT){
 			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
 			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status === 'accounting'){
@@ -218,7 +218,7 @@ export class AonInvoiceList extends AonElement {
 		let cont = 0;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		aonInvoiceTable.selected.forEach((invoice, i) => {
-			invoice.status = CONSTANT.TRASH;
+			invoice.status = CONSTANT.DRAFT;
 			insertInvoice(invoice).then(() => {
 				cont = cont + 1;
 				if(cont === aonInvoiceTable.selected.length) {
@@ -244,7 +244,7 @@ export class AonInvoiceList extends AonElement {
 		let cont = 0;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		aonInvoiceTable.selected.forEach((invoice, i) => {
-			invoice.status = CONSTANT.REFUSED;
+			invoice.status = CONSTANT.REJECTED;
 			insertInvoice(invoice).then(() => {
 				cont = cont + 1;
 				if(cont === aonInvoiceTable.selected.length) {

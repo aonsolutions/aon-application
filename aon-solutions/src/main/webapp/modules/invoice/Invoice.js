@@ -302,11 +302,11 @@ export class Invoice {
   }
 
   isRejected() {
-    return this.status.toLowerCase() === 'refused' || this.status.toLowerCase()  === 'rejected';
+    return this.status.toLowerCase() === CONSTANT.REFUSED || this.status.toLowerCase()  === CONSTANT.REJECTED;
   }
 
   isDraft() {
-    return this.status.toLowerCase() === 'trash' || this.status.toLowerCase() === 'draft';
+    return this.status.toLowerCase() === CONSTANT.TRASH || this.status.toLowerCase() === CONSTANT.DRAFT;
   }
 
   isPending() {

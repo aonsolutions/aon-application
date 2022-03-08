@@ -5,7 +5,9 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
@@ -16,6 +18,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceExcelExport extends ExcelExport {
 
@@ -72,6 +76,7 @@ public class InvoiceExcelExport extends ExcelExport {
         columns.add(new AonExcelColumn("Total", 12));
         columns.add(new AonExcelColumn("Clave Retención", 12));
         columns.add(new AonExcelColumn("Subclave Retención", 12));
+        columns.add(new AonExcelColumn("Fichero", 12));
 	}
 	
 	private void buildContent() {
@@ -90,6 +95,11 @@ public class InvoiceExcelExport extends ExcelExport {
 	        	Cell celda = row.createCell(i);
 	        	celda.setCellValue( getCellValue(invoice, detail, columns.get(i).getValue()));
 	        	celda.setCellStyle(style);
+	        	if("Fichero".equalsIgnoreCase(columns.get(i).getValue()) && !AonStringUtils.isBlank(invoice.getFileUrl())) {
+	        		Hyperlink link = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
+	        		link.setAddress(invoice.getFileUrl());
+	        		celda.setHyperlink(link);
+	        	}
 	        }
 		});
 	}
@@ -132,12 +142,12 @@ public class InvoiceExcelExport extends ExcelExport {
 				? invoice.getAddress().getCountry().getIso2()
 				: Country.ES.getIso2();
 		case "Cuenta Explotación":
-			return "";
+			return detail.getAccountCode();
 		case "Descripción Cuenta":
-			return "";
+			return detail.getAccountDescription();
 		case "Suplido":
 			return detail.isPrepayment() ? "Si" : "No";
-		case "Base Inponible":
+		case "Base Imponible":
 			return Double.toString(vat.getBase());
 		case "%IVA":
 			return Double.toString(vat.getPercentage());
@@ -152,11 +162,13 @@ public class InvoiceExcelExport extends ExcelExport {
 		case "Cuota Retención":
 			return Double.toString(retention.getQuota());
 		case "Total":
-			return "";
+			return Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota() + vat.getSurchargeQuota() - retention.getQuota()));
 		case "Clave Retención":
 			return "";
 		case "Subclave Retención":
 			return "";
+		case "Fichero":
+			return AonStringUtils.isBlank(invoice.getFileUrl()) ? "" : "Descargar";
 		default:
 			return "";
 		}

@@ -271,11 +271,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 				st = InvoiceStatus.PENDING;
 			} else if("accepted".equalsIgnoreCase(status) || "scored".equalsIgnoreCase(status) || "accounting".equalsIgnoreCase(status)) {
 				st = InvoiceStatus.SCORED;
-			} else if("refused".equalsIgnoreCase(status) || "rejected".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.REFUSED; 
-			} else if("trash".equalsIgnoreCase(status) || "draft".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.TRASH;
-			}
+			} 
 		}
 		return st;
 	}

@@ -5,8 +5,6 @@ import java.io.Serializable;
 public enum InvoiceStatus implements Serializable {
 	 PENDING("Pendiente")
 	,SCORED("Contabilizada")
-	,REFUSED("Rechazada")
-	,TRASH("Papelera")
 	;
 	
 	private String name;

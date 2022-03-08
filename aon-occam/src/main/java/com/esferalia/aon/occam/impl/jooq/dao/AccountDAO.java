@@ -47,7 +47,7 @@ public class AccountDAO {
 		@Override public Property<String> getCostCenterProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.COST_CENTER);}
 	}
 	
-	public static class FullAccountFiller  implements Function<Record,Account> {
+	public static class FullAccountFiller extends Filler implements Function<Record,Account> {
 		@Override
 		public Account apply(Record r) {
 			return build(r);
@@ -65,7 +65,7 @@ public class AccountDAO {
 				.setDescription(r.getValue(alias.DESCRIPTION))
 				.setAlias(r.getValue(alias.ALIAS))
 				.setEntryEnabled( AonEnumUtils.getBoolean(r.getValue(alias.ENTRYENABLED)))
-				.setLevel(r.getValue(alias.LEVEL))
+				.setLevel(getByte(r, alias.LEVEL))
 				.setActive(AonEnumUtils.getBoolean(r.getValue(alias.ACTIVE)))
 				.setCostCenter(r.getValue(alias.COST_CENTER));
 		}

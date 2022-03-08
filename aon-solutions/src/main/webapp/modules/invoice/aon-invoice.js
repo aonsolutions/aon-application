@@ -1608,7 +1608,7 @@ export class AonInvoice extends AonElement {
 				};
 				this.invoice.remarks.push(comment);
 			}
-			this.invoice.status = CONSTANT.REFUSED;
+			this.invoice.status = CONSTANT.REJECTED;
 			this.build();
 			this.save();
 		});
@@ -1812,7 +1812,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	trashInvoice() {
-		this.getInvoice().status = CONSTANT.TRASH;
+		this.getInvoice().status = CONSTANT.DRAFT;
 		this.save(MSG.MOVED_TO_TRASH);
 		this.reload();
 	}

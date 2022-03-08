@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.server.imports;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,8 +21,12 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "DownloadInvoiceExcelTemplate", urlPatterns = { "/ms/api/downloadInvoiceExcel"
 														,"/aon_gwt_template/downloadInvoiceExcel/*"
@@ -45,11 +50,8 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
 		String login = JsonUtils.getString(json, IJsonNames.DOMAIN_LOGIN);
 		Domain domain = AON.getDomain(domainName, domainId, login);
 		User user = AON.getUser(domainName, domainId, login);
-			
-		List<Integer> ids = toList(json.optJSONArray("ids"));
-		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
-		
-		List<Invoice> invoices = DBInvoice.getInvoices(domain, user, f -> f.getIdProperty().in(idsArray));
+
+		List<Invoice> invoices = DBInvoice.getInvoices(domain, user, f -> invoiceFilter(f, domainId, json));
 		try {
 			resp.setContentType("application/msexcel");
 			resp.addHeader("Content-Disposition","attachment; filename=\"" + "Facturas.xls" +"\"");
@@ -59,6 +61,46 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
 			e.printStackTrace();
 		}
     }
+	
+	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, JSONObject json ) {
+    	Filter filter =  f.getDomainProperty().eq(domainId);
+    
+		String description = JsonUtils.getString(json, IJsonNames.DESCRIPTION);
+    	if(!AonStringUtils.isBlank(description)) {
+    		filter = filter.and(
+    			f.getReferenceCodeProperty().like("%" + description + "%")
+    			.or(f.getRegistryNameProperty().like("%" + description + "%")));
+    	}
+    	String[] types = json.opt("type") != null ? json.optString("type").split(","): null;
+    	if(types != null && types.length > 0) {
+    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(types[0]).value())
+    				.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(types[0].toUpperCase()).value()));
+    		for(Integer i = 1; i < types.length; i++) {
+    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(types[i]).value()))
+   					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(types[i].toUpperCase()).value()));
+    		}
+    		filter = filter.and(filter2); 
+    	}
+    	
+    	Date from = JsonUtils.getDate(json, IJsonNames.FROM);
+    	if(from != null) {
+    		filter = filter.and(f.getStartIssueDateProperty().ge(from));
+    	}
+    	
+    	Date to = JsonUtils.getDate(json, IJsonNames.TO);
+    	if(to != null) {
+    		filter = filter.and(f.getStartIssueDateProperty().ge(to));
+    	}
+	
+		List<Integer> ids = toList(json.optJSONArray("ids"));
+		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
+		if(idsArray.length > 0) {
+			filter = filter.and(f.getIdProperty().in(idsArray));
+		}
+		
+		return filter;
+    }
+	
 	
 	public static List<Integer> toList(JSONArray array) {
 	    if(array==null || array.isEmpty())

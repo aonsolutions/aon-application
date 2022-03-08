@@ -4,19 +4,29 @@ import java.io.Serializable;
 
 public enum RawdocStatus implements Serializable {
 	
-	 INBOX("Inbox")
-	,REJECTED("Rechazado")
-	,DRAFT("Papelera")
+	 INBOX("Inbox", "inbox")
+	,REJECTED("Rechazado", "refused")
+	,DRAFT("Papelera", "trash")
 	;
 
 	private String description;
+	private String tediName;
 	
-	private RawdocStatus(String description) {
+	private RawdocStatus(String description, String tediName) {
 		this.description = description;
+		this.tediName = tediName;
 	}
 	
 	public String getDescription() {
 		return description;
+	}
+	
+	public String getTediName() {
+		return tediName;
+	}
+	
+	public String getName() {
+		return this.name().toLowerCase();
 	}
 	
 	public byte value() {
@@ -35,7 +45,7 @@ public enum RawdocStatus implements Serializable {
 	
 	public static RawdocStatus safeValueOf( String i ) {
 		for (RawdocStatus rs : values()) {
-			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()))
+			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()) || rs.getTediName().equalsIgnoreCase(i))
 				return rs;
 		}
 		return null;
