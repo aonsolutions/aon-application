@@ -1692,6 +1692,7 @@ public abstract class ITWidget extends ResizeComposite {
     	};
     	
     	itDialog.setEmployeesList(getActiveEmployeesList());
+		itDialog.setIsUserComunica(isUserComunica());
     	itDialog.initConfirmationsTable();
 		itDialog.setModal(true);
     	itDialog.setAnimationEnabled(true);
