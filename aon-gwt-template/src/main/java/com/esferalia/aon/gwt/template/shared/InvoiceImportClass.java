@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -389,6 +390,25 @@ public class InvoiceImportClass implements IsSerializable {
 			} catch (Exception e) {
 				return null;
 			}
+		}
+		
+		public static InvoiceOpType safeValueOf(InvoiceTransactionType value) {
+			if(value == null) return null;
+			try {
+				if(InvoiceTransactionType.NATIONAL.equals(value))
+					return NAC;
+				else if(InvoiceTransactionType.INTRACOMMUNITY.equals(value))
+					return INT;
+				else if(InvoiceTransactionType.EXTRACOMMUNITY.equals(value))
+					return EXT;
+				else if(InvoiceTransactionType.CAN_CEU_MEL.equals(value))
+					return CCM;
+				else if(InvoiceTransactionType.OTHER_ISP.equals(value))
+					return ISP;
+			} catch (Exception e) {
+				return null;
+			}
+			return null;
 		}
 	}
 	

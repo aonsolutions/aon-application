@@ -104,7 +104,7 @@ export class AonInvoicePanel extends AonElement {
 			page: 0,
 			per_page: 50
 		}
-		this.option = this.option || (CONSTANT.REFUSED === this.status
+		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
 	}
 
@@ -155,7 +155,11 @@ export class AonInvoicePanel extends AonElement {
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
-				// this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel())
+				if(this.selectedOption && (OPTION.INVOICE_ISSUED.id === this.selectedOption.id 
+					|| OPTION.CREATE_INVOICE_RECEIVED.id === this.selectedOption.id 
+					|| OPTION.CREATE_INVOICE_TICKET.id === this.selectedOption.id)){
+						this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+					}
 			}
 		}
 		const btnSearch = this.getApplication().addSearchOption();
@@ -165,13 +169,18 @@ export class AonInvoicePanel extends AonElement {
 
 	downloadInvoiceExcel() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-
+		
 		let data = {
-			domain_id: localStorage.getItem('aon_domain_id'),
-			domain_name: localStorage.getItem('aon_domain_name'),
-			domain_login: localStorage.getItem('aon_domain_login'),
+			domainId: localStorage.getItem('aon_domain_id'),
+			domainName: localStorage.getItem('aon_domain_name'),
+			domainLogin: localStorage.getItem('aon_domain_login'),
 			ids: aonInvoiceTable.selected.map(r => r.id),
-			status: this.getFilter().status
+			description: this.getFilter().description,
+			status: this.getFilter().status,
+			type: this.getFilter().type,
+			from: this.getFilter().from,
+			to: this.getFilter().to
+
 		};
 		let json = btoa(JSON.stringify(data));
 		downloadInvoiceExcel(json);
@@ -572,10 +581,10 @@ export class AonInvoicePanel extends AonElement {
 				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'ticket'});
 				break;
 			case OPTION.RAWDOC_REJECT.id:
-				this.aonInvoiceList({status: CONSTANT.REFUSED});
+				this.aonInvoiceList({status: CONSTANT.REJECTED});
 				break;
 			case OPTION.RAWDOC_DRAFT.id:
-				this.aonInvoiceList({status: CONSTANT.TRASH});
+				this.aonInvoiceList({status: CONSTANT.DRAFT});
 				break;
 			case OPTION.INVOICE_ISSUED.id:
 				this.aonInvoiceList({status:'accounting', type:'sales', page:1, per_page: 50});

@@ -47,23 +47,27 @@ public class AccountDAO {
 		@Override public Property<String> getCostCenterProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.COST_CENTER);}
 	}
 	
-	public static class FullAccountFiller  implements Function<Record,Account> {
+	public static class FullAccountFiller extends Filler implements Function<Record,Account> {
 		@Override
 		public Account apply(Record r) {
 			return build(r);
 		}
 		
 		public static Account build(Record r) {
+			return build(r, ACCOUNT);
+		}
+
+		public static Account build(Record r, com.esferalia.aon.jooq.tables.Account alias) {
 			return new Account()
-				.setId(r.getValue(ACCOUNT.ID))
-				.setDomain(r.getValue(ACCOUNT.DOMAIN))
-				.setCode(r.getValue(ACCOUNT.CODE))
-				.setDescription(r.getValue(ACCOUNT.DESCRIPTION))
-				.setAlias(r.getValue(ACCOUNT.ALIAS))
-				.setEntryEnabled( AonEnumUtils.getBoolean(r.getValue(ACCOUNT.ENTRYENABLED)))
-				.setLevel(r.getValue(ACCOUNT.LEVEL))
-				.setActive(AonEnumUtils.getBoolean(r.getValue(ACCOUNT.ACTIVE)))
-				.setCostCenter(r.getValue(ACCOUNT.COST_CENTER));
+				.setId(r.getValue(alias.ID))
+				.setDomain(r.getValue(alias.DOMAIN))
+				.setCode(r.getValue(alias.CODE))
+				.setDescription(r.getValue(alias.DESCRIPTION))
+				.setAlias(r.getValue(alias.ALIAS))
+				.setEntryEnabled( AonEnumUtils.getBoolean(r.getValue(alias.ENTRYENABLED)))
+				.setLevel(getByte(r, alias.LEVEL))
+				.setActive(AonEnumUtils.getBoolean(r.getValue(alias.ACTIVE)))
+				.setCostCenter(r.getValue(alias.COST_CENTER));
 		}
 	}
 	private static SelectConditionStep<AccountRecord> select(AONContext ctx, AccountFilter filter) {

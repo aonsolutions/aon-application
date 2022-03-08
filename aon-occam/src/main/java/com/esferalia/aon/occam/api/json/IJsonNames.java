@@ -133,7 +133,7 @@ public interface IJsonNames {
 	String DOCUMENT_TYPE = "documentType";
 	String DOMAIN = "domain";
 	String DOMAIN_ID = "domainId";
-	String DOMAIN_LOGIN = "domain_login";
+	String DOMAIN_LOGIN = "domainLogin";
 	String DOMAIN_MANAGEMENT = "domainManagement";
 	String DOMAIN_NAME = "domainName";
 	String DOMAIN_TYPE = "domainType";
@@ -223,8 +223,11 @@ public interface IJsonNames {
 	String IRPF_REGIME = "irpfRegime";
 	String ISSUE_DATE = "issueDate";
 	String ITEM = "item";
+
 	// ---------------------------------------------------------------------------------------------	[J] 
+	String JSON = "json";
 	String JOURNAL = "journal";
+	
 	// ---------------------------------------------------------------------------------------------	[K] 
 	String KEY = "key";
 	String KEYS = "keys";
