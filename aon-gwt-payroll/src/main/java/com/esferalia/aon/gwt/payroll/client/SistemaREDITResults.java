@@ -134,12 +134,12 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 
 	@UiHandler("expandAllButton")
 	void onClickExpandAllButton(ClickEvent event ){
-		expandAll();
+		collapse(false);
 	}
 	
 	@UiHandler("collapseAllButton")
 	void onClickCollapseAllButton(ClickEvent event ){
-		collapseAll();
+		collapse(true);
 	}
 	
 	// --------------------------------------------------------- RequiresResize
@@ -237,7 +237,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
 		Anchor anchor = new Anchor("aqu\u00ed");
-		if(this.isUserComunica && !isPaternity(status.getType()) ) {
+		if(this.isUserComunica) {
 			anchor.addClickHandler(e -> onOpenITPart(status) );
 			anchor.getElement().getStyle().setColor("blue");
 		} else {
@@ -301,6 +301,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	protected void onRemoveITPartToAon(ItNotExist itNotExist) {}
 	
 	protected void onRemoveITPartToSS(ItNotExist itNotExist) {}
+	
+	protected void collapse(boolean collapse) {}
 	
 	// ------------------------------------------------------------------------
 	
@@ -445,18 +447,6 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		notFoundItem.addItem(treeItem);
 		return treeItem;
 	}
-
-	protected void expandAll() {
-		errorsItem.setState(true);
-		warningsItem.setState(true);
-	}
-
-
-	protected void collapseAll() {
-		errorsItem.setState(false);
-		warningsItem.setState(false);
-	}
-
 	
 	// ------------------------------------------------------------------------
 

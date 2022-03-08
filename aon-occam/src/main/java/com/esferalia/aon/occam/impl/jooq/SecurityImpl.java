@@ -406,5 +406,10 @@ public class SecurityImpl implements ISecurity {
 	            configuration -> SecurityDAO.saveUserFinancePortal(ctx, userId)
 	    );
 	}
+
+	@Override
+	public void saveDomainMaxDefinedUser(AONContext ctx, Integer maxDefinedUser) {
+		ctx.getDslContext().transaction(configuration -> SecurityDAO.saveDomainMaxDefinedUser(ctx, maxDefinedUser));
+	}
 	
 }

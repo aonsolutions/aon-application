@@ -275,10 +275,16 @@ public class Invoice2tbai {
 				description.substring(0, 249);
 			}
 			detalle.setDescripcionDetalle(description);
-			detalle.setDescuento(AonStringUtils.isBlank(detail.getDiscountExpression()) ? "0.0" : detail.getDiscountExpression());
 			detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice())));
 
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
+			
+			double descuento = 0.0;
+			if(!AonStringUtils.isBlank(detail.getDiscountExpression())) {
+				descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
+			}
+			detalle.setDescuento(Double.toString(descuento));
+			
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}

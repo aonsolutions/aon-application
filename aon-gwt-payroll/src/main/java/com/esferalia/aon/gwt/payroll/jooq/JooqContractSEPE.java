@@ -227,12 +227,12 @@ public class JooqContractSEPE {
 	private static void updateContractCNO(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, String cno) {
 		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("CNO"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+		
 		if(AonStringUtils.isNotBlank(cno)) {
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("CNO"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.execute();
-			
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domainId)
 				.set(CONTRACT_DATA.NAME, "CNO")
@@ -247,12 +247,12 @@ public class JooqContractSEPE {
 	private static void updateContractIDE(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, String ide) {
 		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("IDE"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+		
 		if(AonStringUtils.isNotBlank(ide)) {
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("IDE"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.execute();
-			
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domainId)
 				.set(CONTRACT_DATA.NAME, "IDE")
@@ -267,12 +267,12 @@ public class JooqContractSEPE {
 	private static void updateContractComunicationDate(DSLContext dslContext, Integer domainId, Integer contractId, Date startDate,
 			Date endDate, java.util.Date comunicationDate) {
 		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.execute();
+		
 		if(null != comunicationDate) {
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.execute();
-			
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domainId)
 				.set(CONTRACT_DATA.NAME, "COMUNICATION_DATE")

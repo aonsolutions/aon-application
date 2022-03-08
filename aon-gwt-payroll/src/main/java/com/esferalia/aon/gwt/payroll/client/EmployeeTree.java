@@ -247,8 +247,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise);
 			workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 			enterpriseContextMenu.hide();
-			workplaceDialog.center();
-			workplaceDialog.show();
 		}
 	}
 
@@ -4016,8 +4014,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		WorkplaceDialog workplaceDialog = new WorkplaceDialog();
 		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise);
 		workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
-		workplaceDialog.center();
-		workplaceDialog.show();
 	}
 
 	protected static void showNewActivity() {

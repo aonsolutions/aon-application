@@ -26,7 +26,9 @@ public enum AonApp implements Serializable{
 	PACK_PAYROLL(getPayrollModules()),
 	PACK_FISCAL_ACCOUNTING(getPackFiscalAccountingModules()),
 	SELFCONTA(getEmptyModules()),
-	CUSTOM_VIEW(getEmptyModules())
+	CUSTOM_VIEW(getEmptyModules()),
+	AULA(getEmptyModules()),
+	NOTES(getEmptyModules())
 	;
 	
 	LinkedList<Module> modules;

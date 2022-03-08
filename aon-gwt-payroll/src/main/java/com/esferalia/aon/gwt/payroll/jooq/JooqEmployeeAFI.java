@@ -336,8 +336,16 @@ public class JooqEmployeeAFI {
 			.fetchOne();
 		
 		String firstSurname = personRecord.get(PERSON.FIRST_SURNAME);
+		if(AonStringUtils.isNotBlank(firstSurname))
+			firstSurname = stripDiacritics(firstSurname);
+		
 		String secondSurname = personRecord.get(PERSON.SECOND_SURNAME);
+		if(AonStringUtils.isNotBlank(secondSurname))
+			secondSurname = stripDiacritics(secondSurname);
+		
 		String name = personRecord.get(PERSON.NAME);
+		if(AonStringUtils.isNotBlank(name))
+			name = stripDiacritics(name);
 		
 		json.put("firstSurname", firstSurname);
 		json.put("secondSurname", secondSurname);

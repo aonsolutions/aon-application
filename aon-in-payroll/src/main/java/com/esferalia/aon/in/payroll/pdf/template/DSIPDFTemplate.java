@@ -167,7 +167,11 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 
 				}
 				line = reader.readLine();
-				matcher = TOTAL_PAYMENT.matcher(line);
+				try {					
+					matcher = TOTAL_PAYMENT.matcher(line);
+				} catch (Exception e) {
+					throw new UnknownPDFException();
+				}
 
 			}
 

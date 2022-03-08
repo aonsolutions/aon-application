@@ -49,6 +49,7 @@ import com.esferalia.aon.payroll.enumeration.ss.T36;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class FDIWriter implements Serializable {
@@ -292,7 +293,7 @@ public class FDIWriter implements Serializable {
 		if( StringUtils.isBlank(detail.getCollegeNumber()) && StringUtils.isBlank(detail.getCias()) ){
 			AonUtil.addErrorMessage("Ausencia de nº de colegiado o CIAS para el parte de "+detail.getContractLeave().getContract().getPerson().getFullName());
 		}
-		dit.setNumeroColegiado(detail.getCollegeNumber());
+		dit.setNumeroColegiado(AonStringUtils.isBlank(detail.getCollegeNumber()) ? "00000000" : detail.getCollegeNumber());
 		dit.setCias(detail.getCias());
 		if (StringUtils.isNotBlank(dit.getNumeroColegiado())) {
 			String prov = dit.getNumeroColegiado().substring(0, 2);
@@ -314,6 +315,9 @@ public class FDIWriter implements Serializable {
 		odp.setNumero(detail.getConfirmOrder());
 		odp.setEntidadAseguradora(0);
 		odp.setFechaCambioEntidad(0);
+		Date startDate = detail.getContractLeave().getStartDate();
+		startDate = DateUtils.addYears(startDate, 1);
+		odp.setFechaCumplimiento(Integer.parseInt(dateFormatter.format(startDate)));
 		return odp;
 	}
 

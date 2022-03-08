@@ -240,6 +240,8 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	private ITPart itPartTmp = null;
 	AonLoadingPanel loading = new AonLoadingPanel("Espere...");
+
+	private DoubleBox baseCP;
 	
 	// --------------------------------------------------- ProvideITDataGrid
 	
@@ -592,6 +594,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			setSelectedValueLB(applicantTypeList, null == it.getMaternityType() ? "-1" : it.getMaternityType().toString());
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), applicantTypeList);
 			setSelectedValueLB(applicantReasonList, null == it.getMaternityReason() ? "-1" : it.getMaternityReason().toString());
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), applicantReasonList);
 			this.baseRDBx.setValue(it.getRegulationBase());
 			this.partialityCoefDBx.setValue(it.getPartialityCoef());
 		} else 
@@ -887,6 +890,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiHandler("applicantReasonList")
 	public void onApplicantReasonListChange(ChangeEvent event) {
+		LOGGER.info(applicantReasonList.getSelectedItemText()+" "+applicantReasonList.getSelectedValue());
 		this.it.setMaternityReason(Byte.parseByte(applicantReasonList.getSelectedValue()));
 	}
 	
@@ -919,7 +923,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 
 	private void checkConfirmationParts() {
-		List<ITPart> newITParts = new ArrayList<ITPart>();
+		List<ITPart> newITParts = new ArrayList<>();
 		
 		for(ITPart itPart : this.it.getITParts()) {
 			if(itPart.getType() == (byte)1 || itPart.getType().equals((byte)1))
@@ -958,7 +962,7 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	private void setDateLowPart(Date date) {
 		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
+			List<ITPart> itParts = new ArrayList<>();
 			
 			ITPart itPart = new ITPart()
 			.setType((byte) 0) // BAJA
@@ -978,7 +982,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void setCauseLowPart() {
 		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
+			List<ITPart> itParts = new ArrayList<>();
 			
 			ITPart itPart = new ITPart();
 			itPart.setType((byte) 0); // BAJA
@@ -1339,6 +1343,10 @@ public abstract class ITDialog extends AonCustomDialog {
 			default:
 				return "-";
 		}
+	}
+	
+	private boolean isPaternity() {
+		return it.getTypeLowPart()!=null && (it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3);
 	}
 	
 	private String parseShortLowCauseByte(Byte typeLowPart) {
@@ -1859,7 +1867,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		panel.setStyleName(style.flex());
 		flexColumn.add(panel);
 
-		Label baseEl = new Label("Base cotizaci\u00F3n");
+		//BASE CC
+		Label baseEl = new Label("Base CC");
 		baseEl.setStyleName(style.subTitle());
 		panel.add(baseEl);
 
@@ -1870,6 +1879,21 @@ public abstract class ITDialog extends AonCustomDialog {
 			it.setRegulationBase(baseCC.getValue());
 		});
 		
+		//BASE CP
+		Label baseCPEl = new Label("Base CP");
+		baseCPEl.setStyleName(style.subTitle());
+		panel.add(baseCPEl);
+
+		baseCP = new DoubleBox();
+		baseCP.setStyleName("aon-inputText");
+		panel.add(baseCP);
+		baseCP.addChangeHandler(event->{
+			it.setDailyCGPBase(baseCP.getValue());
+		});
+		baseCPEl.setVisible(isPaternity());
+		baseCP.setVisible(isPaternity());
+
+	
 		Label quoteDayEl = new Label("D\u00EDas cotizados");
 		quoteDayEl.setStyleName(style.subTitle());
 		panel.add(quoteDayEl);
@@ -1937,6 +1961,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			tramos.add(list);
 
 			Double base = 0.0;
+			Double baseCp = 0.0;
 			Boolean cgp = this.it.getTypeLowPart()!=null && this.it.getTypeLowPart()==(byte)1 ? true : false; // si es accidente laboral
 			Integer quoteDay = 0;
 			
@@ -1982,6 +2007,7 @@ public abstract class ITDialog extends AonCustomDialog {
 				list.add(row);
 
 				base+= cgp ? data.getBaseUnemployment() : data.getBaseCgc();
+				baseCp+= data.getBaseUnemployment();
 				quoteDay+=data.getSettleQuoteDays();
 				
 				if((isPartial && quoteDay>=84) || (!isPartial && quoteDay>=28)) 
@@ -1990,8 +2016,11 @@ public abstract class ITDialog extends AonCustomDialog {
             
             Double tmp = Math.round(base*100.0)/100.0;
             baseCC.setValue(tmp);
+            Double tmp1 = Math.round(baseCp*100.0)/100.0;
+            baseCP.setValue(tmp1);
             quoteDayInput.setValue(quoteDay.doubleValue());
         	it.setRegulationBase(tmp);
+        	it.setDailyCGPBase(tmp1);
     		it.setQuoteDays(quoteDay);
         }
 	}

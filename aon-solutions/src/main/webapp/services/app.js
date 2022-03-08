@@ -1,14 +1,12 @@
-import { AON_ICON } from '../environments/aonTag.js';
 import { MSG, CONSTANT, AON_ICONS } from '../environments/environments.js';
-import { CONTACT } from '../environments/msg-en.js';
 import * as GWT from '../gwt/gwt.js';
 
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
   title: MSG.TIMECONTROL,
   description: MSG.TIMECONTROL,
-  icon: AON_ICONS.AON_APP,
-  color: '#9966cc',
+  icon: AON_ICONS.AON_TIMECONTROL,
+  color: '#D1C36D',
   access: [{
       value: 'Asesor',
       name: 'Asesor'
@@ -19,7 +17,7 @@ export const TIMECONTROL = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ', //'-',
+  price: ' ', //  '-',
   disabled: true,
   options: {
     menu: false,
@@ -33,8 +31,8 @@ export const ACCOUNTING = {
   app: CONSTANT.ACCOUNTING,
   title: MSG.ACCOUNTING,
   description: MSG.ACCOUNTING,
-  icon: AON_ICONS.AON_APP,
-  color: '#1FD8B9',
+  icon: AON_ICONS.AON_ACCOUNTING,
+  color: '#002469',
   access: [{
       value: 'Asesor',
       name: 'Asesor'
@@ -42,7 +40,7 @@ export const ACCOUNTING = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: ' ', // '75€/mes'
+  price: ' ', // '60€/mes',
   options: {
     menu: true,
     add: false,
@@ -55,8 +53,8 @@ export const FISCAL = {
   app: CONSTANT.FISCAL,
   title: MSG.FISCAL,
   description: MSG.FISCAL,
-  icon: AON_ICONS.AON_APP,
-  color: '#1FBCE5',
+  icon: AON_ICONS.AON_FISCAL,
+  color: '#002469',
   access: [{
       value: 'Asesor',
       name: 'Asesor'
@@ -64,7 +62,7 @@ export const FISCAL = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: ' ', // '75€/mes'
+  price: ' ', // '60€/mes',
   options: {
     menu: true,
     add: false,
@@ -77,8 +75,8 @@ export const PAYROLL = {
   app: CONSTANT.PAYROLL,
   title: MSG.PAYROLL,
   description: MSG.PAYROLL,
-  icon: AON_ICONS.AON_APP,
-  color: '#1F8CFF',
+  icon: AON_ICONS.AON_PAYROLL,
+  color: '#002469',
   access: [{
       value: 'Asesor',
       name: 'Asesor'
@@ -89,7 +87,7 @@ export const PAYROLL = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ', // '90€/mes'
+  price: ' ', // '90€/mes',
   options: {
     menu: true,
     add: false,
@@ -102,8 +100,8 @@ export const COMUNICA = {
   app: CONSTANT.COMUNICA,
   title: MSG.COMUNICA,
   description: MSG.COMUNICA,
-  icon: AON_ICONS.AON_APP,
-  color: '#6C75AB',
+  icon: AON_ICONS.AON_COMUNICA,
+  color: '#002469',
   access: [{
       value: 'Asesor',
       name: 'Asesor'
@@ -122,7 +120,7 @@ export const DOCUMENTAL = {
   app: CONSTANT.DOCUMENTAL,
   title: MSG.DOCUMENTARY,
   description: MSG.DOCUMENTARY,
-  icon: AON_ICONS.AON_APP,
+  icon: AON_ICONS.AON_DOCUMENTAL,
   color: '#6986BB',
   access: [{
       value: 'Asesor',
@@ -148,8 +146,8 @@ export const INVOICE = {
   app: CONSTANT.INVOICE,
   title: MSG.INVOICES,
   description: MSG.INVOICES,
-  icon: AON_ICONS.AON_APP,
-  color: '#B50061',
+  icon: AON_ICONS.AON_INVOICE,
+  color: '#4472C4',
   access: [{
       value: 'Asesor',
       name: 'Asesor'
@@ -160,7 +158,7 @@ export const INVOICE = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ', //'-'
+  price: ' ', // '-',
   disabled: true,
   options: {
     menu: false,
@@ -174,7 +172,7 @@ export const CONFIGURATION = {
   app: CONSTANT.CONFIGURATION,
   title: MSG.CONFIGURATION,
   description: MSG.CONFIGURATION,
-  icon: AON_ICONS.AON_APP,
+  icon: AON_ICONS.AON_SETTINGS,
   color: 'black',
 };
 
@@ -182,8 +180,8 @@ export const MESSENGER = {
   app: CONSTANT.MESSENGER,
   title: MSG.REQUESTS,
   description: MSG.REQUESTS,
-  icon: AON_ICONS.AON_APP,
-  color: '#CADEFF',
+  icon: AON_ICONS.AON_MESSENGER,
+  color: '#1fd8b9',
   access: [{
       value: 'Asesor',
       name: 'Asesor'
@@ -194,7 +192,7 @@ export const MESSENGER = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ', //'-',
+  price: ' ', // '-',
   disabled: true,
   options: {
     menu: false,
@@ -207,25 +205,25 @@ export const MESSENGER = {
 export const TOOLS = {
   app: CONSTANT.TOOLS,
   title: MSG.TOOLS,
-  icon: AON_ICONS.AON_APP,
+  icon: AON_ICONS.AON_TOOLS,
   color: '#535353',
-  price: ' ', //'-'
+  price: ' ' // '-'
 };
 
 export const NOTES = {
   app: "note",
   title: MSG.NOTES,
-  icon: AON_ICONS.AON_APP,
-  color: '#ffd700',
-  price: ' ', //'-'
+  icon: AON_ICONS.AON_NOTES,
+  color: '#ffc000',
+  price: ' ' // '-'
 };
 
 export const AON_SOLUTIONS = {
   app: 'aio',
   title: 'aonSolutions',
   description: 'aonSolutions.',
-  logo: '../assets/apps/aon.png',
-  price: ' ', //'-'
+  logo: '../assets/aon.png',
+  price: ' ' //  '-'
 };
 
 export const BIDOQ = {
@@ -233,7 +231,7 @@ export const BIDOQ = {
   title: 'Bidoq',
   description: 'Bidoq.',
   logo: '../assets/apps/bidoq.png',
-  price: ' ', //'-'
+  price: ' ' // '-'
 };
 
 export const SELFCONTA = {
@@ -241,7 +239,7 @@ export const SELFCONTA = {
   title: 'Selfconta',
   description: 'Selfconta.',
   logo: '../assets/apps/selfconta.png',
-  price: ' ', //'-'
+  price: ' ' // '-'
 };
 
 export const ALMA = {
@@ -256,59 +254,37 @@ export const OCR = {
   app: 'ocr',
   title: 'OCR',
   description: 'Gestor OCR.',
-  icon: 'aon_app',
-  color: '#535353',
-  price: ' ', // 'Desde 45€/mes'
+  icon: AON_ICONS.AON_OCR,
+  color: '#EA6D41',
+  price: ' ' // 'Desde 45€/mes'
 };
 
 export const CONVENIOS = {
  app: 'convenios',
  title: 'Convenios',
  description: 'Convenios',
- icon: 'aon_app',
- color: '#329905',
- price: ' ', // 'Desde 45€/mes'
+ icon: AON_ICONS.AON_CONVENIOS,
+ color: '#EA6D41',
+ price: ' ' // 'Desde 45€/mes'
 };
 
 export const BANK = {
   app: 'bank',
   title: 'Bank',
   description: 'Gestor de Bancos.',
-  icon: 'aon_app',
-  color: '#D38C5B',
-  price:  ' ', // 'Desde 45€/mes'
+  icon: AON_ICONS.AON_BANK,
+  color: '#EA6D41',
+  price: ' ' // 'Desde 45€/mes'
 };
 
-export const FORMACION = {
-  app: 'formacion',
-  title: 'Formación',
-  description: 'Formación.',
-  icon: 'ayudat',
-  color: '#7792d1',
-  moreInfo: 'https://ayudatpymes.com/formacion/formacion-bonificada/',
-  price: ' ', //'-',
-  disabled: true
-};
-
-export const ACELERA = {
-  app: 'acelera',
-  title: 'Acelera',
-  description: 'Acelera.',
-  icon: 'ayudat',
-  color: '#ff5c41',
-  moreInfo: 'https://ayudatpymes.com/despachos/aceleratudespacho/',
-  price: ' ', //'-',
-  disabled: true
-};
-
-export const OUTSOURCING = {
-  app: 'outsourcing',
-  title: 'Outsourcing',
-  description: 'Outsourcing.',
-  icon: 'ayudat',
-  color: '#535353',
-  moreInfo: 'https://ayudatpymes.com/despachos/outsourcing/',
-  price: ' ', //'-',
+export const AULA = {
+  app: 'aula',
+  title: 'Aula',
+  description: 'Aula.',
+  icon:  AON_ICONS.AON_AULA,
+  color: '#000000',
+  moreInfo: 'https://faqs.aonsolutions.es/',
+  price: ' ', // '-',
   disabled: true
 };
 
@@ -316,7 +292,7 @@ export const CUSTOM_VIEW = {
   app: 'custom_view',
   title: MSG.CUSTOM_VIEW,
   description: MSG.CUSTOM_VIEW,
-  icon: 'aon_app',
+  icon: 'aon_custom',
   color: '#CAF509',
   price:  ' '
 };
@@ -332,8 +308,7 @@ export const Apps = { ACCOUNTING, FISCAL,PAYROLL, COMUNICA, DOCUMENTAL,
    TIMECONTROL, INVOICE, MESSENGER, NOTES};
 export const AuxApps = {TOOLS};
 export const ClassicApps = {AON_SOLUTIONS, BIDOQ, SELFCONTA};
-export const Services = {OCR, CONVENIOS, BANK};
-export const OtherServices = {FORMACION, ACELERA, OUTSOURCING, CUSTOM_VIEW };
+export const Services = {OCR, CONVENIOS, BANK, AULA, CUSTOM_VIEW};
 
 export const AllApps = { ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL,
    TIMECONTROL, INVOICE, MESSENGER, OCR, CONVENIOS, BANK, AON_SOLUTIONS, BIDOQ, SELFCONTA};
@@ -354,12 +329,6 @@ export const getApp = (name) => {
   for(let key in ClassicApps) {
     if(name.toLowerCase() === ClassicApps[key].app){
       return ClassicApps[key];
-    }
-  }
-
-  for(let key in OtherServices) {
-    if(name.toLowerCase() === OtherServices[key].app){
-      return OtherServices[key];
     }
   }
   return undefined;
@@ -752,38 +721,36 @@ export const AeatFiscalMenu =
       title: 'Suite Completa',
       subtitle: ' Portal Asesor | Pack Cotización | Pack Tributación',
       color: 'black',
-      apps: [Apps.ACCOUNTING, Apps.FISCAL, Apps.PAYROLL, Apps.COMUNICA, Apps.DOCUMENTAL, Apps.TIMECONTROL, Apps.INVOICE, Apps.MESSENGER],
-      price: ' ', // '295€/mes'
+      apps: [Apps.ACCOUNTING, Apps.FISCAL, Apps.PAYROLL, Apps.COMUNICA, Apps.DOCUMENTAL, Apps.TIMECONTROL, Apps.INVOICE, Apps.MESSENGER, Apps.NOTES],
+      price: ' ' // '295€/mes'
     },
     PORTAL: {
       app: 'pack_portal',
-      icon: 'aon_app',
+      icon: 'aon_portal',
       title: 'Pack Portal',
       subtitle: ' Documental | Horario | Facturas | Mensajería',
       color: '#002469',
-      apps: [Apps.DOCUMENTAL, Apps.TIMECONTROL, Apps.INVOICE, Apps.MESSENGER],
-      price: ' ', //'120€/mes'
+      apps: [Apps.DOCUMENTAL, Apps.TIMECONTROL, Apps.INVOICE, Apps.MESSENGER, Apps.NOTES],
+      price: ' ' // '120€/mes'
     },
     PAYROLL: {
       app: 'pack_payroll',
-      icon: 'aon_app',
+      icon: 'aon_pack',
       title: 'Pack Cotización',
       subtitle: ' Laboral | Comunic@ | Horario',
       color: '#002469',
-      apps: [Apps.PAYROLL, Apps.COMUNICA, Apps.TIMECONTROL],
-      price: ' ',  //'120€/mes'
+      apps: [Apps.PAYROLL, Apps.COMUNICA, Apps.TIMECONTROL, Apps.NOTES],
+      price: ' ' // '120€/mes'
     }, 
     FISCAL_ACCOUNTING: {
       app: 'pack_fiscal_accounting',
-      icon: 'aon_app',
+      icon: 'aon_pack',
       title: 'Pack Tributación',
       subtitle: ' Fiscal | Contabilidad',
       color: '#002469',
-      apps: [Apps.FISCAL, Apps.ACCOUNTING],
-      price: ' ', // '120€/mes'
+      apps: [Apps.FISCAL, Apps.ACCOUNTING, Apps.NOTES],
+      price: ' ' // '120€/mes'
     }
   };
 
 export default Apps;
-// String SQL1 = "alter table `domain_app` drop index IDX_UNQ_DOMAIN_APP;";
-// String SQL2 = "alter table `user_app_role` drop index IDX_UNQ_USER_APP_ROLE;";

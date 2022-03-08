@@ -82,8 +82,8 @@ export const DEPOSIT = {
 
 export const EMPLOYEES = {
   title:'Integral de Nóminas',
-  module: GWT_AIO,
-  entryPoint: 'employees'
+  module: GWT_PAYROLL,
+  entryPoint: 'EmployeeTree'
 };
 
 export const CONVENIOS = {

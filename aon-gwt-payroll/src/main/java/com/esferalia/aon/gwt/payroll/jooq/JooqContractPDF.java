@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -14,6 +15,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,7 @@ public class JooqContractPDF {
 	// ---------------------------------------------------- Settings
 
 	private static Settings settings = null;
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	
 	protected static Settings getDefaultSettings() {
 		if (settings == null) {
@@ -92,10 +95,35 @@ public class JooqContractPDF {
 				contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
 				contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
 				
-				return ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
+				String sepeIde = getSepeIde(dslContext, contractId);
+				java.util.Date comunicationDate = getComunicationDate(dslContext, contractId);
+				
+				return ContractFill.fillContract(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException(e.getMessage());
 			}
+	}
+
+	private static String getSepeIde(DSLContext dslContext, Integer contractId) {
+		Result<Record> ideRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("IDE"))
+				.fetch();
+		
+		return ideRecords.isEmpty() ? null : ideRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+	}
+
+	private static java.util.Date getComunicationDate(DSLContext dslContext, Integer contractId) {
+		Result<Record> comunicationDateRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("COMUNICATION_DATE"))
+				.fetch();
+		
+		try {
+			return comunicationDateRecords.isEmpty() ? null : dateFormat.parse(comunicationDateRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+		} catch (IllegalArgumentException | ParseException e) {
+			return null;
+		}
 	}
 
 	public static byte[] contractFill(String domainName, Integer contractId, String contractTypeStr, String formativeLevelCode) throws IllegalArgumentException {
@@ -236,9 +264,11 @@ public class JooqContractPDF {
 			}
 			
 			String ssNum = contractRecord.get(PERSON.SOCIAL_SECURITY_NUM);
-			contractFillData.put("E_SS1", ssNum.substring(0, 2));
-			contractFillData.put("E_SS2", ssNum.substring(2, 10));
-			contractFillData.put("E_SS3", ssNum.substring(10, 12));
+			if(AonStringUtils.isNotBlank(ssNum) && ssNum.length() == 12) {
+				contractFillData.put("E_SS1", ssNum.substring(0, 2));
+				contractFillData.put("E_SS2", ssNum.substring(2, 10));
+				contractFillData.put("E_SS3", ssNum.substring(10, 12));
+			}
 			
 			String nationality = contractRecord.get(REGISTRY.NATIONALITY);
 			contractFillData.put("E_NATIONALITY", Country.valueOf(nationality).getName());

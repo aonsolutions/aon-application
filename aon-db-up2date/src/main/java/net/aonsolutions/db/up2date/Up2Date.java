@@ -36,6 +36,8 @@ import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
 import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
 import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
+import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
+import net.aonsolutions.db.up2date.user.CertificateDomainFix;
 
 
 public class Up2Date {
@@ -139,7 +141,7 @@ public class Up2Date {
     		//RealDecreeLaw182020Update.REALDECREELAW182020UPDATE
     		//DefaultAgreementDeleteWarn.DEFAULTAGREEMENTDELETEWARN
     		//RealDecreeLaw182020UpdateII.REALDECREELAW182020UPDATEII
-    		//AuthCreation.AUTH_CREATION,
+    		//SnapshotCreation.AUTH_CREATION,
     		//SalaryHoursUpdateMonthDays.SALARYHOURSUPDATEMONTHDAYS,
     		//RealDecreeLaw182020UpdateIII.REALDECREELAW182020UPDATEIII,
     		//AlterFsMod2002019.ALTER_FS_MODEL_200_2019
@@ -230,6 +232,8 @@ public class Up2Date {
     		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
     		//AddEpigrafe922.ADD_EPIGRAFE_922,
     		SMI2022Update.SMI2022UPDATE,
+    		PrestITFactorUpdate.PRESTITFACTORUPDATE,
+    		CertificateDomainFix.CERTIFICATEDOMAINFIX
     		AlcatrazCreation.ALCATRAZ_CREATION,
     		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
     		RefreshMod111Result.REFRESH_MOD111_RESULT,

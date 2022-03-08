@@ -53,6 +53,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	@UiField
 	MyStyle style;
 	
+	interface MyStyle extends CssResource {
+		String maxWidthTB();
+	}
+
 	@UiField
 	DeckPanel deckPanel;
 	
@@ -60,10 +64,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	SuggestBox cnoSB;
 	
 	@UiField
-	TextBox ideTB;
-	
-	@UiField (provided = true)
-	AonToolbarSmallButton updateSepeInfoBtn;
+	HTMLPanel idePanel;
 	
 	@UiField
 	DateBoxEx comunicationDateBx;
@@ -338,8 +339,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	@UiField
 	TextBox journeyPercentTB;
 	
-	interface MyStyle extends CssResource {}
-	
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
@@ -347,18 +346,14 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	private com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificData;
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("yyyyMMdd");
 	private Map<String, CNO> cnoMap;
+	private TextBox ideTB;
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
 	
-	public ContractSpecificData() {
-		providedButton();
+	protected ContractSpecificData() {
 		initWidget(uiBinder.createAndBindUi(this));
 		cnoMap = new HashMap<>();
 		initializeView();
-	}
-	
-	private void providedButton() {
-		updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n Sepe", AON.CSS.aonIconCloudImport());
 	}
 
 	public void setEmployeeContractInfo(String contractType, boolean isTransformation, boolean isComunica, String document, Date fini, Integer contractId, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
@@ -368,12 +363,20 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		else {
 			showSepeData();
 			setDefaultView(contractType);
-			fillSpecificData();
 			createUpdateSepeInfo(isComunica, document, fini, contractId);
+			fillSpecificData();
 		}
 	}
 
 	private void createUpdateSepeInfo(boolean isComunica, String document, Date fini, Integer contractId) {
+		// Reiniciar el boton por que se estaban acumulando los click handler
+		idePanel.clear();
+		this.ideTB = new TextBox();
+		this.ideTB.addStyleName(style.maxWidthTB());
+		this.ideTB.addChangeHandler(e -> contractSpecificData.setIde(ideTB.getValue()));
+		idePanel.add(ideTB);
+		
+		AonToolbarSmallButton updateSepeInfoBtn = new AonToolbarSmallButton("Actualizar datos comunicaci\u00f3n Sepe", AON.CSS.aonIconCloudImport());
 		if(Boolean.FALSE.equals(isComunica))
 			updateSepeInfoBtn.getElement().getStyle().setDisplay(Display.NONE);
 		else {
@@ -398,6 +401,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 				});
 			});
 		}
+		idePanel.add(updateSepeInfoBtn);
 	}
 	
 	// --------------------------------------------------------- Abstract Methods --------------------------------------------------
@@ -416,6 +420,16 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			cno = cnoStr.split(" -")[0];
 		
 		this.contractSpecificData.setCno(cno);	
+	}
+	
+//	@UiHandler("ideTB")
+//	void onIdeTBChange(ValueChangeEvent<String> event) {
+//		this.contractSpecificData.setIde(event.getValue());
+//	}
+	
+	@UiHandler("comunicationDateBx")
+	void oncomunicationDateBxChange(ValueChangeEvent<Date> event) {
+		this.contractSpecificData.setComunicationDate(event.getValue());
 	}
 	
 	@UiHandler("calendarFormativeStartDate")
@@ -1423,7 +1437,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	
 	private void setDefaultView(String contractType) {
 		this.cnoSB.setValue("");
-		this.ideTB.setValue("");
 		this.comunicationDateBx.setValue(null);
 		this.formativeLevelLB.setSelectedIndex(0);
 		this.signBasicCopyLB.setSelectedIndex(0);
@@ -1627,8 +1640,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);

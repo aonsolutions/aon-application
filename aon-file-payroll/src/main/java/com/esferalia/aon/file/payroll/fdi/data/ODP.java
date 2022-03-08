@@ -5,11 +5,18 @@ public class ODP {
 	Integer numero;
 	Integer entidadAseguradora;
 	Integer fechaCambioEntidad;
+	Integer fechaCumplimiento;
 	public Integer getFecha() {
 		return fecha;
 	}
 	public void setFecha(Integer fecha) {
 		this.fecha = fecha;
+	}
+	public Integer getFechaCumplimiento() {
+		return fechaCumplimiento;
+	}
+	public void setFechaCumplimiento(Integer fechaCumplimiento) {
+		this.fechaCumplimiento = fechaCumplimiento;
 	}
 	public Integer getNumero() {
 		return numero;

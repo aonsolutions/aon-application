@@ -7,7 +7,6 @@ import static com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType.CON
 import static com.esferalia.aon.occam.api.model.type.ContractLeaveType.MATERNIDAD;
 import static com.esferalia.aon.occam.api.model.type.ContractLeaveType.PATERNIDAD;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
@@ -146,11 +145,5 @@ public class ITParse {
 		cias.ifPresent(itPart::setCias);
 
 		return itPart;
-	}
-	
-	private static String getExpressionDirectPay(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		return "FECHA(" + cal.get(Calendar.YEAR) + "," + (cal.get(Calendar.MONTH) + 1) + "," + cal.get(Calendar.DAY_OF_MONTH) + ")";
 	}
 }

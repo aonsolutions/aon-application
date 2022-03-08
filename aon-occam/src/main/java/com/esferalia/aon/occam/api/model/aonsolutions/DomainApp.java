@@ -6,19 +6,13 @@ import org.json.JSONObject;
 
 public class DomainApp implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
 	private Integer domain;
 	private AonApp app;
-	private Boolean active;
+	private boolean active;
 	
-	public DomainApp() {
-	
-	}
 
 	public Integer getId() {
 		return id;
@@ -47,11 +41,7 @@ public class DomainApp implements Serializable{
 		return this;
 	}
 
-	public Boolean isActive() {
-		return active;
-	}
-	
-	public Boolean getActive() {
+	public boolean isActive() {
 		return active;
 	}
 
@@ -65,13 +55,13 @@ public class DomainApp implements Serializable{
 		json.put("id", getId());
 		json.put("domain", getDomain());
 		json.put("app", getApp().name());
-		json.put("active", getActive());
+		json.put("active", isActive());
 		return json;
 	}
 	
 	public boolean isEmpty() {
 		return getId() == null && getApp() == null 
-			&& getActive() == null && getDomain() == null;
+			&& getDomain() == null;
 	}
 
 }

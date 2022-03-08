@@ -223,8 +223,9 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		int workedDays = get(endContractDate, Calendar.DAY_OF_MONTH);
 		double expected = 1750.00 * workedDays / monthDays;
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment());
-		Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase());
+		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment(),DELTA);
+		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase(),DELTA);
+		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00) - 26.57 , salary.getTotalLiquid(), DELTA);
 
 		// *************** EUKE
 		// Añado DELTA al assert
@@ -256,9 +257,9 @@ public class SQLSpecialDeductionsTestCase extends AbstractSQLTestCase {
 		monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		workedDays = monthDays - ( get(startContractDate, Calendar.DAY_OF_MONTH) -1 );
 		expected = 1750.00 * workedDays / monthDays;
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment());
-		Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase());
-		Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00), salary.getTotalLiquid(), DELTA);
+		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_PAYMENT), expected, salary.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.CGC_BASE), expected , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(String.format("%s :", ContextVariable.TOTAL_LIQUID), expected - ( expected * 6.35/100.00), salary.getTotalLiquid(), DELTA);
 	}
 
 	// ------------------------------------------------------------------------

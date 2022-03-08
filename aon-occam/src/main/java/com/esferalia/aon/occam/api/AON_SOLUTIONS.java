@@ -394,6 +394,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static void saveDomainMaxDefinedUser(String domainName, Integer domainId, String login, Integer maxDefinedUser) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getSecurity().saveDomainMaxDefinedUser(ctx, maxDefinedUser);
+		}
+	}
+	
 	// INVOICE
 	
 	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {

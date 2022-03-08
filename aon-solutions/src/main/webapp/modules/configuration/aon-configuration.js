@@ -22,7 +22,7 @@ import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
-import { AonMarketplace } from "../marketplace/aon-marketplace.js";
+import { AonBooking } from '../marketplace/aon-booking.js';
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -284,7 +284,7 @@ export class AonConfiguration extends AonElement {
   buildStore() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
     aonConfiguration.removeToolbarOptions();
-    let marketplace = new AonMarketplace();
+    let marketplace = new AonBooking();
     marketplace.id = 'aonMarketplace';
     aonConfiguration.setContent(marketplace);
   }

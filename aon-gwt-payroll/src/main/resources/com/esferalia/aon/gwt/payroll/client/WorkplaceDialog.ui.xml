@@ -14,8 +14,8 @@
 		}
 		
 		.container{
-			min-width: 600px;
-			margin-top: 10px;
+			min-width: 700px;
+			padding: 10px;
 		}
 		
 		.buttonsPanel{
