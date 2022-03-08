@@ -1,7 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal;
 
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -93,6 +98,11 @@ public class AlcatrazDAO {
 			.select()
 			.from(ALCATRAZ)
 			.leftOuterJoin(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.leftOuterJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL.DOMAIN))
+			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+			.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 			.where(ALCATRAZ.INVOICE.eq(invoiceId))
 			.fetch()
 			.stream()

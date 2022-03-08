@@ -246,7 +246,7 @@ public class InvoiceValidation {
 	/**
 	 * La factura ha sido utilizada para los calculos de los modelos fiscales.
 	 */
-	public static BiConsumer<Invoice, AonConfigurationContext> FS_MODEL = (inv,ctx) -> {
+	public static BiConsumer<Invoice, AonConfigurationContext> ALCATRAZ = (inv,ctx) -> {
 		List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared(ctx.getContext(), inv.getId() );
 		if (models != null && !models.isEmpty()) {
 			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
@@ -325,7 +325,7 @@ public class InvoiceValidation {
 		.andThen(OPERATIONS_DEADLINE)
 		.andThen(SII)
 		.andThen(TBAI)
-		.andThen(FS_MODEL)
+		.andThen(ALCATRAZ)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 

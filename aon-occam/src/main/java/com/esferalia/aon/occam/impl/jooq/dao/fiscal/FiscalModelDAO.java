@@ -158,10 +158,11 @@ public class FiscalModelDAO {
 		}
 	}
 
-	private static SelectOnConditionStep<Record> getSelect(final AONContext ctx) {
+	public static SelectOnConditionStep<Record> getSelect(final AONContext ctx) {
 		return ctx.getDslContext()
 			.select()
 			.from(FS_MODEL)
+			.join(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL.DOMAIN))
 			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
 			.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))

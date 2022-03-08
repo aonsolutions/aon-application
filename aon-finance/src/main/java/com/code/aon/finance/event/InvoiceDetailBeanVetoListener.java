@@ -35,6 +35,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
 		setDefaultValues(invoiceDetail);
 		checkLimitDate(invoiceDetail.getInvoice());
+		FinanceUtil.checkAlcatraz(invoiceDetail.getInvoice());
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
 			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
 			if (invoiceDetail.getItem().getProduct().isInventoriable()) {
@@ -52,6 +53,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
 		setDefaultValues(invoiceDetail);
 		checkLimitDate(invoiceDetail.getInvoice());
+		FinanceUtil.checkAlcatraz(invoiceDetail.getInvoice());
 		if (invoiceDetail.isUpdateEnabled() && invoiceDetail.getItem() != null) {
 			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
 			try {
@@ -66,6 +68,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
 		checkLimitDate(invoiceDetail.getInvoice());
+		FinanceUtil.checkAlcatraz(invoiceDetail.getInvoice());
 		try {
 			removeInvoiceTax(invoiceDetail);
 		} catch (ManagerBeanException e) {
