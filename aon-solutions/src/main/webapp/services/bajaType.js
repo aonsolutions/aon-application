@@ -1,4 +1,4 @@
-[
+export const bajaType = [
     {
       "value": "51",
       "name": "Baja voluntaria"
@@ -39,5 +39,5 @@
       "value": "94",
       "name": "Baja inact fijo disc"
     }
-]
+];
   
