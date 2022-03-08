@@ -1,13 +1,14 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod111;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer.IMod111Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer.IMod111Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 

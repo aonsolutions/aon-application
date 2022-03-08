@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public class Mod111 extends FiscalModel implements Serializable {
@@ -20,7 +21,13 @@ public class Mod111 extends FiscalModel implements Serializable {
 			&& (isAEAT() || isAraba())
 			&& (isComplementary() || isReplacement()); 
 	}
-	
+
+	@Override
+	public boolean isStrictToDeposit() {
+		return (isFinished() || isCustomerAccepted() ||isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
+	}
+
 	@Override
 	@Deprecated
 	public double getResult() {

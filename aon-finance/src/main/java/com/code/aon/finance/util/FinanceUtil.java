@@ -27,7 +27,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddInfo;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 

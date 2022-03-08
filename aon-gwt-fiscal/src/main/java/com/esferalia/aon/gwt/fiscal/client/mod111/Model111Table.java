@@ -92,6 +92,12 @@ class Model111Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 
 	private Widget getToolbarPanel(Model111Callback cbk) {
 		AonToolbar toolbar = new AonToolbar( AON.MSG.fiscalModelDescriptionlong( FiscalModelType.M111));
+
+		if (cbk.getOptions().isBackButtonVisible() && cbk.getOptions().hasExternalCallback()) {
+			final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.backAction(),AON.CSS.aonIconBack());
+			cancelButton.addClickHandler(event ->  cbk.getOptions().getExternalCallback().onExit( null ) );
+			toolbar.add(cancelButton);
+		}
 		
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler( event -> cbk.onNew());

@@ -100,12 +100,16 @@ public class Model111 extends MainEntryPoint {
 
 		@Override
 		public void onCancel(Mod111 model) {
-			cleanInfoPanel();
-			hideError();
-			declarationContainer.setWidget(model111Table);
-			model111Table.refresh( new Model111Callback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				cleanInfoPanel();
+				hideError();
+				declarationContainer.setWidget(model111Table);
+				model111Table.refresh( new Model111Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 
 		@Override

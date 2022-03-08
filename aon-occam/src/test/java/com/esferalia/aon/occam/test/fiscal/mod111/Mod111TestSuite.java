@@ -12,35 +12,35 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	// MVEL expresions syntax check en las declaraciones
-	Mod111ExpressionsTest.class,
-	// Modelos mensuale
-	Mod111DeleteTest.class,
-	Mod111InsertMonthlyTest.class,
-	Mod111InsertMonthlyComplementaryTest.class,
-	Mod111InsertMonthlyReplacementTest.class,
-	
-	// Modelos trimestrales
-	Mod111DeleteTest.class,
-	Mod111InsertQuarterlyTest.class,
-	Mod111InsertQuarterlyComplementaryTest.class,
-	Mod111InsertQuarterlyReplacementTest.class,
-	// Flujo de estados
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111FinishTest.class,					// Finalizado
-	Mod111SentTest.class,					// Presentado
+//	// MVEL expresions syntax check en las declaraciones
+//	Mod111ExpressionsTest.class,
+//	// Modelos mensuale
+//	Mod111DeleteTest.class,
+//	Mod111InsertMonthlyTest.class,
+//	Mod111InsertMonthlyComplementaryTest.class,
+//	Mod111InsertMonthlyReplacementTest.class,
+//	
+//	// Modelos trimestrales
+//	Mod111DeleteTest.class,
+//	Mod111InsertQuarterlyTest.class,
+//	Mod111InsertQuarterlyComplementaryTest.class,
+//	Mod111InsertQuarterlyReplacementTest.class,
+//	// Flujo de estados
+//	Mod111ReopenTest.class,					// Pendiente
+//	Mod111FinishTest.class,					// Finalizado
+//	Mod111SentTest.class,					// Presentado
 	// Flujo de estados
 	Mod111ReopenTest.class,					// Pendiente
 	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
 	Mod111MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod111SentTest.class,					// Presentado
-	// Flujo de estados 
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerRejectedTest.class, // Rechazado por cliente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod111SentTest.class,					// Presentado
+//	Mod111SentTest.class,					// Presentado
+//	// Flujo de estados 
+//	Mod111ReopenTest.class,					// Pendiente
+//	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
+//	Mod111MarkAsCustomerRejectedTest.class, // Rechazado por cliente
+//	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
+//	Mod111MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
+//	Mod111SentTest.class,					// Presentado
 	
 })
 public class Mod111TestSuite {

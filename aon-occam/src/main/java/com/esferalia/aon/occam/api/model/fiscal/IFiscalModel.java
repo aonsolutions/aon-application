@@ -70,11 +70,14 @@ public interface IFiscalModel extends Serializable {
 	};
 	
 	
-	public default boolean isEditable() {
-		return isPending() || isCustomerRejected(); 
+	public default boolean canBeSent() {
+		return isFinished() || isCustomerAccepted(); 
 	}
 	public default boolean isNotEditable() {
 		return !isEditable(); 
+	}
+	public default boolean isEditable() {
+		return isPending() || isCustomerRejected(); 
 	}
 	public default boolean isPending() {
 		return getStatus() == FiscalStatus.PENDING;
