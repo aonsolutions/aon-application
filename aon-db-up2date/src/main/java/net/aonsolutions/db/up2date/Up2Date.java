@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.AddEpigrafe922;
+import net.aonsolutions.db.up2date.finance.FsModelInvoiceDrop;
 import net.aonsolutions.db.up2date.finance.InsertInvoiceInfoLroe;
 import net.aonsolutions.db.up2date.finance.InvoiceBatchCreation;
 import net.aonsolutions.db.up2date.fiscal.AlterFsModelResult;
@@ -235,6 +236,7 @@ public class Up2Date {
     		PrestITFactorUpdate.PRESTITFACTORUPDATE,
     		CertificateDomainFix.CERTIFICATEDOMAINFIX,
     		AlcatrazCreation.ALCATRAZ_CREATION,
+    		FsModelInvoiceDrop.FS_MODEL_INVOICE_DROP,
     		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
     		RefreshMod111Result.REFRESH_MOD111_RESULT,
     };
