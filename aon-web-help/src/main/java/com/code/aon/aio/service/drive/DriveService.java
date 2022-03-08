@@ -22,6 +22,7 @@ import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 public class DriveService {
 
 	private Drive drive;
+	public static String BASE_ID = "1nlCD6BVTPk98UIy96pxd5MevesBCmiIN";
 	
 	public DriveService() throws GoogleDriveException{
 		
@@ -68,24 +69,35 @@ public class DriveService {
 		return files;		
 	}	
 	
+	/**
+	 * Download a file from google drive by name and parent
+	 * @param name The name of the file
+	 * @param parent The parent
+	 * @return InputStream containing the data
+	 */
+	public Optional<InputStream> downloadVideoByNameAndParentNotTrashed(Optional<String> name, Optional<String> parent) {
+		InputStream response = SearchFiles.downloadByNameAndParentAndNotTrashed(drive, name.orElse(""), parent.orElse(BASE_ID));		
+		return Optional.ofNullable(response);
+	}
 	
-	public GFile getFile(Optional<String> parent, Optional<String> name) {
+	/**
+	 * Get a GFile by parent and name
+	 * @param parent - The parent ID
+	 * @param name - The name of the file
+	 * @return optional File or empty 
+	 */
+	public Optional<GFile> getFile(Optional<String> parent, Optional<String> name) {
 		
-		final FileList files = SearchFiles.searchFilesTitleAndParent(drive, parent.orElse(""), parent.orElse("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN"));		
-	
-		if(files == null)
-			return null;
-		
-		// TODO Something is wrong with the API call,
-		// we need to figure this out soon.
+		final FileList files = SearchFiles.searchByNameAndParentNotThrashed(drive, name.orElse(""), parent.orElse(BASE_ID));
 		System.out.println("FILES SEARCHED : " + files.getFiles().size());
+		System.out.println("RESPONSE : " + files.getFiles());
 		
-		// Nothing showing here
-		final File f = (File) files.get(0);
-		System.out.println(files);		
+		if(files.size() == 0) {
+			return Optional.empty();
+		}
 		
-		//Empty return (temporary)
-		return new GFileBuilder().setId("").setDownloadUrl("").setPreviewUrl("").build();
+		final File firstEntry = (File) files.getFiles().get(0);
+		return Optional.ofNullable(GFile.from(firstEntry));
 	}
 	
 }

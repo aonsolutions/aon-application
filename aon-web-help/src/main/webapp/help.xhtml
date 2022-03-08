@@ -4,221 +4,263 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
-	
+
 	<style>
-		.title { 
-			font-size: 2.5rem;		
-			text-align: center;	
-		}
-		
-		.div-horizontal-center {
-			display: flex;
-			justify-content: center;
-		}
-		
-		.box-column {
-			display : flex;
-			flex-direction:column;
-		}
-		
-		.list {
-			padding: 0 5rem;
-		}
-		
-		.list > .list-item {
-			height: 3rem;
-			border-bottom: 1px solid #f1f1f1;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: 1rem 2rem;
-			transition: background-color .25s;
-			border-radius: .25rem;
-		} 
-		
-		.list > .list-item:hover {
-			/*background-color: #f6f6f6;*/
-		}
-		
-		.list > .list-item > .button {
-			height: 100%;
-			background-size: 3rem;
-			padding: 0;
-			padding-left: 4.5rem;
-			display: flex;
-			align-items: center;
-			font-size: 1.25rem;
-			background-position: left center;
-		}
-		
-		.list > .list-item > .button:hover {
-			transform: none;
-		}
-		
-		
-		.list > .list-item > .icon-toolbar .icon{
-			margin-left: .3rem;
-			border-radius: 100%;
-			padding: .2rem;
-			cursor : pointer;
-			color: #ccc;
-			transition: color .15s, transform .15s;
-		}
-		
-		
-		.list > .list-item .icon-toolbar .icon:hover {
-			color: #163776;
-			transform: scale(1.1);
-		}
+.title {
+	font-size: 2.5rem;
+	text-align: center;
+}
+
+.div-horizontal-center {
+	display: flex;
+	justify-content: center;
+}
+
+.box-column {
+	display: flex;
+	flex-direction: column;
+}
+
+.list {
+	padding: 0 5rem;
+}
+
+.list>.list-item {
+	height: 3rem;
+	border-bottom: 1px solid #f1f1f1;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 2rem;
+	transition: background-color .25s;
+	border-radius: .25rem;
+}
+
+.list>.list-item:hover {
+	/*background-color: #f6f6f6;*/
 	
-	</style>
+}
+
+.list>.list-item>.button {
+	height: 100%;
+	background-size: 3rem;
+	padding: 0;
+	padding-left: 4.5rem;
+	display: flex;
+	align-items: center;
+	font-size: 1.25rem;
+	background-position: left center;
+}
+
+.list>.list-item>.button:hover {
+	transform: none;
+}
+
+.list>.list-item>.icon-toolbar .icon {
+	margin-left: .3rem;
+	border-radius: 100%;
+	padding: .2rem;
+	cursor: pointer;
+	color: #ccc;
+	transition: color .15s, transform .15s;
+}
+
+.list>.list-item .icon-toolbar .icon:hover {
+	color: #163776;
+	transform: scale(1.1);
+}
+
+video {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	border-radius: .35rem;
+	box-shadow: 0px 0.25rem .5rem rgba(0, 0, 0, .15);
+}
+</style>
+	<script>
+		const VIDEOS = {
+			Accounting : "Contabilidad.mp4",
+			Fiscal : "Fiscal.mp4",
+			Payroll : "Laboral.mp4",
+			Documental : "Documental.mp4",
+			Invoice : "Facturas.mp4",
+			TimeControl : "Control Horario.mp4",
+			Messenger : "Solicitudes.mp4",
+		}
+
+		function showVideo(video) {
+			const source = document.querySelector("#video-player > source");
+			const player = document.querySelector("#video-player");
+
+			if (!player || !source)
+				return;
+
+			console.log(source, player);
+
+			source.src = "http://ayudat.aonsolutions.net:8080/aon-aio/DriveServlet?action=video&amp;name="
+					+ VIDEOS[video] + "&amp;parent=";
+			player.load();
+			player.play();
+		}
+	</script>
+
 
 	<div class="div-horizontal-center box-column">
-		
+
 		<h1 class="title">PLATAFORMA DE AYUDA</h1>
-		
 		<aon:div styleClass="box-column list">
-		
+
+			<video width="100%" controls="true" id="video-player"> 
+				<source
+					src="http://ayudat.aonsolutions.net:8080/aon-aio/DriveServlet?action=video&amp;name=intro.mp4&amp;parent="
+					type="video/mp4" /> 
+			</video>
+
+
 			<!-- ACCOUNTING -->
-			<aon:if test="#{true}"> <!-- (aonRole.accountingOperator || dur.accounting) and !domainSwitcher.domainManagementAvailable -->
-				<aon:div styleClass="list-item" >
-					<aon:commandLink 
-							id="new_menu_accounting"
-							immediate="true"
-							action="portal_accounting"
-							value="#{bundle.aon_module_accounting}"
-							styleClass="button aon-button-account "
-						/>
-						
+			<aon:if test="#{true}">
+				<!-- (aonRole.accountingOperator || dur.accounting) and !domainSwitcher.domainManagementAvailable -->
+				<aon:div styleClass="list-item">
+					<aon:commandLink id="new_menu_accounting" immediate="true"
+						action="portal_accounting" value="#{bundle.aon_module_accounting}"
+						styleClass="button aon-button-account " />
+
 					<aon:div styleClass="icon-toolbar" id="accounting">
-						<aon:outputText value="question_mark" styleClass="icon material-icons" />
+
+						<aon:outputText value="question_mark"
+							styleClass="icon material-icons" />
+
 						<aon:outputText value="school" styleClass="icon material-icons" />
-						<aon:outputText value="play_circle" styleClass="icon material-icons" />
+						<aon:form>
+							<span onclick="showVideo('Accounting')"> 
+								<aon:outputText	value="play_circle" styleClass="icon material-icons" />
+							</span>
+						</aon:form>
 					</aon:div>
-					
+
 				</aon:div>
 			</aon:if>
-			
+
 			<!-- FISCAL -->
-			<aon:if test="#{true}"> <!-- (aonRole.fiscal or dur.fiscal) and !domainSwitcher.domainManagementAvailable -->
+			<aon:if test="#{true}">
+				<!-- (aonRole.fiscal or dur.fiscal) and !domainSwitcher.domainManagementAvailable -->
 				<aon:div styleClass="list-item">
-					<aon:commandLink 
-							id="new_menu_fiscal"
-							immediate="true"
-							action="portal_fiscal"
-							value="#{bundle.aon_module_fiscal}"
-							styleClass="button aon-button-fiscal "
-						/>
-						
+					<aon:commandLink id="new_menu_fiscal" immediate="true"
+						action="portal_fiscal" value="#{bundle.aon_module_fiscal}"
+						styleClass="button aon-button-fiscal " />
+
 					<aon:div styleClass="icon-toolbar">
-						<aon:outputText value="question_mark" styleClass="icon material-icons" />
+						<aon:outputText value="question_mark"
+							styleClass="icon material-icons" />
 						<aon:outputText value="school" styleClass="icon material-icons" />
-						<aon:outputText value="play_circle" styleClass="icon material-icons" />
+						<span onclick="showVideo('Fiscal')"> 
+							<aon:outputText	value="play_circle" styleClass="icon material-icons" />
+						</span>
 					</aon:div>
 				</aon:div>
 			</aon:if>
-		
+
 			<!-- PAYROLL -->
-			<aon:if test="#{true}"> <!-- (aonRole.payroll or dur.payroll) and !domainSwitcher.domainManagementAvailable} -->
+			<aon:if test="#{true}">
+				<!-- (aonRole.payroll or dur.payroll) and !domainSwitcher.domainManagementAvailable} -->
 				<aon:div styleClass="list-item">
-					<aon:commandLink 
-							id="new_menu_payroll"
-							immediate="true"
-							action="portal_payroll"
-							value="#{bundle.aon_module_payroll}"
-							styleClass="button aon-button-payroll "
-						/>
-	  				<a href="#{help.payrollVideo}" > CLIIICK</a>
-						
+					<aon:commandLink id="new_menu_payroll" immediate="true"
+						action="portal_payroll" value="#{bundle.aon_module_payroll}"
+						styleClass="button aon-button-payroll " />
+
 					<aon:div styleClass="icon-toolbar">
-						<aon:outputText value="question_mark" styleClass="icon material-icons" />
+						<aon:outputText value="question_mark"
+							styleClass="icon material-icons" />
 						<aon:outputText value="school" styleClass="icon material-icons" />
-						<aon:outputText value="play_circle" styleClass="icon material-icons" />
-					</aon:div>	
-					
+						<span onclick="showVideo('Payroll')"> 
+							<aon:outputText	value="play_circle" styleClass="icon material-icons" />
+						</span>
+					</aon:div>
+
 				</aon:div>
 			</aon:if>
-			
-			
+
 			<!-- DOCUMENTAL -->
-			<aon:if test="#{true}"> <!-- aonRole.document or dur.documental -->
+			<aon:if test="#{true}">
+				<!-- aonRole.document or dur.documental -->
 				<aon:div styleClass="list-item">
-					<aon:commandLink 
-							id="new_menu_document"
-							immediate="true"
-							action="portal_documental"
-							value="#{bundle.aon_module_document}"
-							styleClass="button aon-button-document"
-						/>
-						
+					<aon:commandLink id="new_menu_document" immediate="true"
+						action="portal_documental" value="#{bundle.aon_module_document}"
+						styleClass="button aon-button-document" />
+
 					<aon:div styleClass="icon-toolbar">
-						<aon:outputText value="question_mark" styleClass="icon material-icons" />
+						<aon:outputText value="question_mark"
+							styleClass="icon material-icons" />
 						<aon:outputText value="school" styleClass="icon material-icons" />
-						<aon:outputText value="play_circle" styleClass="icon material-icons" />
+						<span onclick="showVideo('Documental')"> 
+							<aon:outputText	value="play_circle" styleClass="icon material-icons" />
+						</span>
 					</aon:div>
 				</aon:div>
 			</aon:if>
-			
+
 			<!-- INVOICE -->
-			<aon:if test="#{true}"> <!-- dur.invoice and !domainSwitcher.domainManagementAvailable -->
+			<aon:if test="#{true}">
+				<!-- dur.invoice and !domainSwitcher.domainManagementAvailable -->
 				<aon:div styleClass="list-item">
-					<aon:commandLink 
-							id="new_menu_invoice"
-							immediate="true"
-							action="portal_invoice"
-							value="#{bundle.aon_invoices}"
-							styleClass="button aon-button-invoice"
-						/>
-						
+					<aon:commandLink id="new_menu_invoice" immediate="true"
+						action="portal_invoice" value="#{bundle.aon_invoices}"
+						styleClass="button aon-button-invoice" />
+
 					<aon:div styleClass="icon-toolbar">
-						<aon:outputText value="question_mark" styleClass="icon material-icons" />
+						<aon:outputText value="question_mark"
+							styleClass="icon material-icons" />
 						<aon:outputText value="school" styleClass="icon material-icons" />
-						<aon:outputText value="play_circle" styleClass="icon material-icons" />
+						<span onclick="showVideo('Invoice')"> 
+							<aon:outputText	value="play_circle" styleClass="icon material-icons" />
+						</span>
 					</aon:div>
 				</aon:div>
 			</aon:if>
 
 
 			<!-- TIME CONTROL -->
-			<aon:if test="#{true}"> <!-- dur.timecontrol and !domainSwitcher.domainManagementAvailable -->
+			<aon:if test="#{true}">
+				<!-- dur.timecontrol and !domainSwitcher.domainManagementAvailable -->
 				<aon:div styleClass="list-item">
-					<aon:commandLink 
-							id="new_menu_timecontrol"
-							immediate="true"
-							action="portal_timecontrol"
-							value="#{bundle.aon_timecontrol}"
-							styleClass="button aon-button-timecontrol"
-						/>
-						
+					<aon:commandLink id="new_menu_timecontrol" immediate="true"
+						action="portal_timecontrol" value="#{bundle.aon_timecontrol}"
+						styleClass="button aon-button-timecontrol" />
+
 					<aon:div styleClass="icon-toolbar">
-						<aon:outputText value="question_mark" styleClass="icon material-icons" />
+						<aon:outputText value="question_mark"
+							styleClass="icon material-icons" />
 						<aon:outputText value="school" styleClass="icon material-icons" />
-						<aon:outputText value="play_circle" styleClass="icon material-icons" />
+							<span onclick="showVideo('TimeControl')"> 
+							<aon:outputText	value="play_circle" styleClass="icon material-icons" />
+						</span>
 					</aon:div>
 				</aon:div>
-			</aon:if>		
-		
+			</aon:if>
+
 
 			<!-- MESSENGER -->
-			<aon:if test="#{true}"> <!-- dur.messenger and dur.beta and !domainSwitcher.domainManagementAvailable -->
+			<aon:if test="#{true}">
+				<!-- dur.messenger and dur.beta and !domainSwitcher.domainManagementAvailable -->
 				<aon:div styleClass="list-item">
-					<aon:commandLink 
-							id="new_menu_messenger"
-							immediate="true"
-							action="portal_messenger"
-							value="#{bundle.aon_messenger}"
-							styleClass="button aon-button-messenger"
-						/>
-						
+					<aon:commandLink id="new_menu_messenger" immediate="true"
+						action="portal_messenger" value="#{bundle.aon_messenger}"
+						styleClass="button aon-button-messenger" />
+
 					<aon:div styleClass="icon-toolbar">
-						<aon:outputText value="question_mark" styleClass="icon material-icons" />
+						<aon:outputText value="question_mark"
+							styleClass="icon material-icons" />
 						<aon:outputText value="school" styleClass="icon material-icons" />
-						<aon:outputText value="play_circle" styleClass="icon material-icons" />
+							<span onclick="showVideo('Messenger')"> 
+							<aon:outputText	value="play_circle" styleClass="icon material-icons" />
+						</span>
 					</aon:div>
 				</aon:div>
-			</aon:if>				
-		
-		
+			</aon:if>
+
+
 		</aon:div>
 	</div>
 

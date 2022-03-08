@@ -57,8 +57,7 @@ public class GFile {
 		private String previewUrl;
 		
 		
-		public GFileBuilder() {
-			
+		public GFileBuilder() {			
 		}
 		
 		public GFileBuilder setId(String id) {

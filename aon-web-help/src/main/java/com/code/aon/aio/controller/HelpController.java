@@ -1,54 +1,37 @@
 package com.code.aon.aio.controller;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.HashMap;
 
 import com.code.aon.aio.service.drive.DriveService;
-import com.code.aon.aio.service.drive.GFile;
-import com.code.aon.aio.service.drive.MimeTypes;
-import com.code.aon.aio.service.drive.exception.GoogleDriveException;
 
 public class HelpController implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private DriveService drive;
-
+	private String selected;
+	public final HashMap<String,String> VIDEOS = new HashMap<>();
 	
 	public HelpController() {
-		try {
-			this.drive = new DriveService();
-		} catch (GoogleDriveException e) {
-			e.printStackTrace();
-		}
+		VIDEOS.put("Intro", "Intro.mp4");
+		VIDEOS.put("Contabilidad", "Contabilidad.mp4");
+		VIDEOS.put("Fiscal", "Fiscal.mp4");
+		VIDEOS.put("Laboral", "Laboral.mp4");
+		VIDEOS.put("Documental", "Documental.mp4");
+		VIDEOS.put("Facturas", "Facturas.mp4");
+		
+		
+		this.selected = "Intro";
 	}
 	
-	public LinkedList<GFile> getCreta() {
-		LinkedList<GFile> files = drive.ListDirectory(Optional.of("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN"));
-		return files;
-	}
-
-	
-	public LinkedList<GFile> getFolder(final String id) {
-		return null;
+	public String getSelectedVideo() {		
+		return this.selected;
 	}
 	
-	
-	/**
-	 * ---------------------------------------------------------------------------
-	 *   
-	 *   BAREBONE HELP PAGE FUNCTIONS
-	 *   
-	 * ---------------------------------------------------------------------------
-	 */
-	
-	
-	public String getPayrollVideo() {
-		GFile files = drive.getFile(Optional.empty(), Optional.of("intro.mp4"));
-		return ""; // files.get(0).getPreviewUrl();
+	public void setSelectedVideo(String selected) {
+		this.selected = selected;
 	}
 	
-	
-	
-	
+	public HashMap<String,String> getVideos() {
+		return this.VIDEOS;
+	}
 }
