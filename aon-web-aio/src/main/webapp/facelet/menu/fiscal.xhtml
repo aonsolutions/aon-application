@@ -81,12 +81,20 @@
 										
 										<aon:outputText value="Modelos tributarios" styleClass="aon-padding-left"/>
 										
-										<aon:commandLink id="gwt_fiscalConfig-child"
-											action="gwt_fiscalConfig-child"
-											style="padding-left: 20px; height: 25px; display: inline-block; margin-right: 0px;"
-											styleClass="aon-menu-fiscal-model aon-icon-config"
-											title="Configuración">
-										</aon:commandLink>
+										<aon:panelGroup>
+											<aon:commandLink id="gwt_modelMatrix-child" 
+												action="gwt_modelMatrix-child"
+												style="padding-left: 20px; height: 25px; display: inline; margin-right: 0px;"
+												styleClass="aon-menu-fiscal-model aon-icon-tree"
+												title="Matriz de empresas y modelos fiscales" >												
+											</aon:commandLink>
+											<aon:commandLink id="gwt_fiscalConfig-child"
+												action="gwt_fiscalConfig-child"
+												style="padding-left: 20px; height: 25px; display: inline; margin-right: 0px;"
+												styleClass="aon-menu-fiscal-model aon-icon-config"
+												title="Configuración">
+											</aon:commandLink>
+										</aon:panelGroup>
 									</h:panelGrid>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list aon-width-all">

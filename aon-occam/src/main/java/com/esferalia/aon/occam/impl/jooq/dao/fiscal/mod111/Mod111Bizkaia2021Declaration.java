@@ -18,80 +18,80 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		 BZ_C01 (Mod111Key.BZ_C01 
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C01,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C12 (Mod111Key.BZ_C12 
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C12,mod,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C23 (Mod111Key.BZ_C23
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C23,mod,br)
-			,null,null)
-		,BZ_C02 (Mod111Key.BZ_C02,null,null,null,null)
-		,BZ_C13 (Mod111Key.BZ_C13,null,null,null,null)
-		,BZ_C24 (Mod111Key.BZ_C24,null,null,null,null)
-		,BZ_C03 (Mod111Key.BZ_C03,null,null,null,null)
-		,BZ_C14 (Mod111Key.BZ_C14,null,null,null,null)
-		,BZ_C25 (Mod111Key.BZ_C25,null,null,null,null)
-		,BZ_C04 (Mod111Key.BZ_C04,null,null,null,null)
-		,BZ_C15 (Mod111Key.BZ_C15,null,null,null,null)
-		,BZ_C26 (Mod111Key.BZ_C26,null,null,null,null)
-		,BZ_C05 (Mod111Key.BZ_C05,null,null,null,null)
-		,BZ_C16 (Mod111Key.BZ_C16,null,null,null,null)
-		,BZ_C27 (Mod111Key.BZ_C27,null,null,null,null)
-		,BZ_C06 (Mod111Key.BZ_C06,null,null,null,null)
-		,BZ_C17 (Mod111Key.BZ_C17,null,null,null,null)
-		,BZ_C28 (Mod111Key.BZ_C28,null,null,null,null)
+			,null,null,null)
+		,BZ_C02 (Mod111Key.BZ_C02,null,null,null,null,null)
+		,BZ_C13 (Mod111Key.BZ_C13,null,null,null,null,null)
+		,BZ_C24 (Mod111Key.BZ_C24,null,null,null,null,null)
+		,BZ_C03 (Mod111Key.BZ_C03,null,null,null,null,null)
+		,BZ_C14 (Mod111Key.BZ_C14,null,null,null,null,null)
+		,BZ_C25 (Mod111Key.BZ_C25,null,null,null,null,null)
+		,BZ_C04 (Mod111Key.BZ_C04,null,null,null,null,null)
+		,BZ_C15 (Mod111Key.BZ_C15,null,null,null,null,null)
+		,BZ_C26 (Mod111Key.BZ_C26,null,null,null,null,null)
+		,BZ_C05 (Mod111Key.BZ_C05,null,null,null,null,null)
+		,BZ_C16 (Mod111Key.BZ_C16,null,null,null,null,null)
+		,BZ_C27 (Mod111Key.BZ_C27,null,null,null,null,null)
+		,BZ_C06 (Mod111Key.BZ_C06,null,null,null,null,null)
+		,BZ_C17 (Mod111Key.BZ_C17,null,null,null,null,null)
+		,BZ_C28 (Mod111Key.BZ_C28,null,null,null,null,null)
 		,BZ_C07 (Mod111Key.BZ_C07 
 			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C07,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C18 (Mod111Key.BZ_C18 
 			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C18,mod,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C29 (Mod111Key.BZ_C29 
 			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C29,mod,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C08 (Mod111Key.BZ_C08
 			, (mod,br) ->  br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C08,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C19 (Mod111Key.BZ_C19
 			, (mod,br) ->  br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C19,mod,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C30 (Mod111Key.BZ_C30
 			, (mod,br) ->  br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C30,mod,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C09 (Mod111Key.BZ_C09 
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C09,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C20 (Mod111Key.BZ_C20
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C20,mod,br)
-			,null,null)
+			,null,null,null)
 		,BZ_C31 (Mod111Key.BZ_C31
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C31,mod,br)
-			,null,null)
-		,BZ_C10 (Mod111Key.BZ_C10,null,null,null,null)
-		,BZ_C21 (Mod111Key.BZ_C21,null,null,null,null)
-		,BZ_C32 (Mod111Key.BZ_C32,null,null,null,null)
-		,BZ_C11 (Mod111Key.BZ_C11,null,null,null,null)
-		,BZ_C22 (Mod111Key.BZ_C22,null,null,null,null)
-		,BZ_C33 (Mod111Key.BZ_C33,null,null,null,null)
+			,null,null,null)
+		,BZ_C10 (Mod111Key.BZ_C10,null,null,null,null,null)
+		,BZ_C21 (Mod111Key.BZ_C21,null,null,null,null,null)
+		,BZ_C32 (Mod111Key.BZ_C32,null,null,null,null,null)
+		,BZ_C11 (Mod111Key.BZ_C11,null,null,null,null,null)
+		,BZ_C22 (Mod111Key.BZ_C22,null,null,null,null,null)
+		,BZ_C33 (Mod111Key.BZ_C33,null,null,null,null,null)
 		,BZ_C34M(Mod111Key.BZ_C34T
-			, null,null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C08+BZ_C09+BZ_C10+BZ_C11")
+			, null,null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C08+BZ_C09+BZ_C10+BZ_C11",null)
 		,BZ_C35M(Mod111Key.BZ_C35T
-			, null,null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C19+BZ_C20+BZ_C21+BZ_C22")
+			, null,null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C19+BZ_C20+BZ_C21+BZ_C22",null)
 		,BZ_C36M(Mod111Key.BZ_C36T
-			, null,null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C30+BZ_C31+BZ_C32+BZ_C33")
-		,BZ_C39T(Mod111Key.BZ_C39, null,null,null, "BZ_C36T")
-		,BZ_TIP (Mod111Key.BZ_TIP, null,null,null,null)
+			, null,null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C30+BZ_C31+BZ_C32+BZ_C33",null)
+		,BZ_C39T(Mod111Key.BZ_C39, null,null,null, "BZ_C36T",null)
+		,BZ_TIP (Mod111Key.BZ_TIP, null,null,null,null,null)
 		;
 		
 		
@@ -100,39 +100,50 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		private IValueIntializer initializer;
 		private IValueUniqueIntializer uniqueInitializer;
 		private String expression;
+		private String template;
 	
 		private Mod111KeyDAO(Mod111Key key
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueUniqueIntializer uniqueInitializer
-				, String expression) {
+				, String expression
+				, String template) {
 			this.key = key;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.uniqueInitializer = uniqueInitializer;
 			this.expression =  expression;
+			this.template =  template;
 		}
 		
-		
+		@Override
 		public Mod111Key getKey() {
 			return key;
 		}
+		@Override
 		public boolean acceptValue(Mod111 mod,IrpfBreakdown  br) {
 			return  acceptValue != null &&  acceptValue.accept(mod,br);
 		}
+		@Override
 		public void initialize(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs
 				,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown  br) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, docs, pdocs, br);
 			}
 		}
+		@Override
 		public void uniqueInitialize(AONContext ctx,Mod111 mod) {
 			if (uniqueInitializer != null) {
 				uniqueInitializer.initialize(ctx, mod);
 			}
 		}
+		@Override
 		public String getExpression() {
 			return expression;
+		}
+		@Override
+		public String getTemplate() {
+			return template;
 		}
 		
 	}
@@ -145,6 +156,23 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 	@Override
 	IMod111KeyDAO[] getKeys() {
 		return Mod111KeyDAO.values();
+	}
+
+	@Override
+	double getResult(Mod111 mod) {
+		return mod.getAmount(Mod111Key.BZ_C39);
+	}
+
+	@Override
+	ComplementaryBeahaviour getComplementaryBehaviour(Mod111 mod) {
+		return ComplementaryBeahaviour.COMPLEMENTARY;
+	}
+	
+	@Override
+	Mod111 initialize(AONContext ctx, Mod111 mod111) {
+		mod111.setComplementaryDeclarationAvailable(true);
+		mod111.setReplacementDeclarationAvailable(false);
+		return super.initializeModel(ctx, mod111);
 	}
 
 }

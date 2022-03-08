@@ -1,28 +1,20 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
@@ -33,7 +25,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -49,14 +40,6 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
 			AEAT_BG };
 	
-	protected  static final String[] IMAGES = new String[] { 
-			"/com/esferalia/aon/gwt/common/client/css/images/aon-araba-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-bizkaia-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-gipuzkoa-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-navarra-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-aeat-header-image.png"
-	};
-	
 	protected Font idFont;
 	protected XSSFCellStyle rowStyle;
 	protected XSSFCellStyle idCellStyle;
@@ -68,7 +51,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 	
 	protected T model;
 	
-	public ModelIRPFExcelAction(T model) {
+	protected ModelIRPFExcelAction(T model) {
 		this.model = model;
 	}
 	
@@ -141,33 +124,13 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 
-		try {
-			InputStream inputStream = ModelIRPFExcelAction.class.getResourceAsStream(
-					IMAGES[ model.getAdministration().ordinal()]);
-			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
-			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
-			inputStream.close();
-			CreationHelper helper = workbook.getCreationHelper();
-			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-			anchor.setCol1(0);
-			anchor.setRow1(0);
-			anchor.setDx1(40);
-			anchor.setDy1(40);
-			Picture pict = drawing.createPicture(anchor, pictureureIdx);
-			pict.resize();
-		} catch (IOException e) {
-			e.printStackTrace();
-			// Sin Imagen,.
-		}
-		CellUtil.createCell(row, 0,"");
-		sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 0));
-		CellUtil.createCell(row, 1, getTitle(),
-				headerCellStyle);
+		CellUtil.createCell(row, 0, FiscalModelUtils.getModelName(model),headerCellStyle);
+		sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
+		
+		CellUtil.createCell(row, 1, getTitle(), headerCellStyle);
 
-		CellUtil.createCell(row, 7, FiscalModelUtils.getModelName(model),headerCellStyle);
-		row = sheet.createRow(rowCount++);
+//		CellUtil.createCell(row, 7, "",headerCellStyle);
+//		row = sheet.createRow(rowCount++);
 		CellUtil.createCell(row, 7, AonNumberUtils.toString(model.getYear()), headerCellStyle);		
 		row = sheet.createRow(rowCount++);
 		
@@ -183,7 +146,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		else description = model.getPeriod().getDescription();
 		
 		CellUtil.createCell(row, 7, description, headerCellStyle);
-		sheet.addMergedRegion(new CellRangeAddress(0, 2, 1, 6));
+		sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 6));
 
 		row = sheet.createRow(rowCount++);
 
@@ -248,7 +211,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 	public void beforeFinalize() {
 		if (model.isFinished()) {
 			DecimalFormat format = new DecimalFormat("#,##0.00");
-			String paymentInfo = "Resultado: " + format.format(model.getResult())
+			String paymentInfo = "Resultado: " + format.format(model.getDeclarationResult())
 					+ AonStringUtils.SPACE + getDeclarationType()
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceBankAlias())
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceMaskedIban())
@@ -341,8 +304,8 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 	}
 
 	protected String getDeclarationType() {
-		return (model.getDeclarationType()!=null
-				?model.getDeclarationType().getDescription()
+		return (model.getDeclarationResultType()!=null
+				?model.getDeclarationResultType().getDescription()
 				:AonStringUtils.EMPTY);
 	}
 	

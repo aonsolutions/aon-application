@@ -164,7 +164,6 @@ public class ITStatusUtils {
 		if(!paternitys.isEmpty()) {
 			setEmployeeData(domain, user, paternitys);
 			paternitys.stream().filter(p-> p.getWorkerNif().isPresent()) .forEach(paternity->{
-				
 				ssIts.add( ITParse.parsePaternityTGSSToAon(paternity).setDomain(domain.getId()) );
 			});
 		}

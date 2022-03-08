@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalMenuItem implements IFiscalModel {
@@ -19,15 +20,16 @@ public class FiscalMenuItem implements IFiscalModel {
 	private Period period;
 	private Administration administration;
 	private FiscalStatus status;
-	private IFiscalModelKey declarationTypeKey;
-	private FiscalModelDeclarationType declarationType;
+	private FiscalModelDeclarationType declarationResultType;
 	private boolean complementary;
 	private boolean replacement;
 	private String document;
 	private String name;
 	private String surname;
-	private double result;
+	private Double declarationResult;
 	private Finance finance;
+	@Deprecated
+	private IFiscalModelKey declarationTypeKey;
 	
 	@Override
 	public Integer getId() {
@@ -102,20 +104,33 @@ public class FiscalMenuItem implements IFiscalModel {
 	}
 	
 	@Override
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return declarationResultType;
+	}
+	public FiscalMenuItem setDeclarationResultType(FiscalModelDeclarationType declarationResultType) {
+		this.declarationResultType = declarationResultType;
+		return this;
+	}
+
+	@Override
+	@Deprecated
 	public IFiscalModelKey getDeclarationTypeKey() {
 		return declarationTypeKey;
 	}
+	@Deprecated
 	public FiscalMenuItem setDeclarationTypeKey(IFiscalModelKey declarationTypeKey) {
 		this.declarationTypeKey = declarationTypeKey;
 		return this;
 	}
 	
 	@Override
+	@Deprecated
 	public FiscalModelDeclarationType getDeclarationType() {
-		return declarationType;
+		return declarationResultType;
 	}
+	@Deprecated
 	public FiscalMenuItem setDeclarationType(FiscalModelDeclarationType declarationType) {
-		this.declarationType = declarationType;
+		this.declarationResultType = declarationType;
 		return this;
 	}
 	
@@ -165,12 +180,17 @@ public class FiscalMenuItem implements IFiscalModel {
 	}
 	
 	@Override
-	public double getResult() {
-		return result;
+	public Double getDeclarationResult() {
+		return declarationResult;
 	}
-	public FiscalMenuItem setResult(double result) {
-		this.result = result;
+	public FiscalMenuItem setDeclarationResult(Double declarationResult) {
+		this.declarationResult = declarationResult;
 		return this;
+	}
+	@Override
+	@Deprecated
+	public double getResult() {
+		return AonNumberUtils.todouble(getDeclarationResult());
 	}
 	
 	
@@ -194,6 +214,5 @@ public class FiscalMenuItem implements IFiscalModel {
 	public boolean isEntity() {
 		return AonDocumentUtil.isEntity(getDocument());
 	}
-	
-	
+
 }

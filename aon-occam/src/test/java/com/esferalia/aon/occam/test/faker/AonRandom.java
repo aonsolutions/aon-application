@@ -7,10 +7,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
@@ -20,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -53,6 +57,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
+import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -145,6 +150,13 @@ public class AonRandom {
     }
     public static Date tomorrow( ) {
     	return Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    
+    public static Date getRangeDate( Date start, Date end ) {
+    	return faker.date().between(start, end);
+    }
+    public static Date getYearDay( Date date ) {
+    	return faker.date().between(AonDateUtils.getYearFirstDay(date), AonDateUtils.getYearLastDay(date));
     }
     
     public static Date getFutureDate( int threshold ) {
@@ -423,6 +435,36 @@ public class AonRandom {
 		return gt(nullThreshold)
 			?StreetType.values()[faker.random().nextInt(StreetType.values().length)]
 			:null;
-	} 
+	}
+	
+	public static void generateRandomRetentionInvoices(AONContext ctx, Occam occam, AonConfiguration configuration) {
+		Date today = new Date();
+		Stream.of(AonRandom.getInt(0, 50))
+			.map(i -> AonRandom.getYearDay(today))
+			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesProfRetention(params)))
+			;
+		Stream.of(AonRandom.getInt(0, 50))
+			.map(i -> AonRandom.getYearDay(today))
+			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesRentingRetention(params)))
+			;
+		Stream.of(AonRandom.getInt(0, 50))
+			.map(i -> AonRandom.getYearDay(today))
+			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesCapitalRetention(params)))
+			;
+		Stream.of(AonRandom.getInt(0, 50))
+			.map(i -> AonRandom.getYearDay(today))
+			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesTransportRetention(params)))
+			;
+		Stream.of(AonRandom.getInt(0, 50))
+			.map(i -> AonRandom.getYearDay(today))
+			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getPurchaseFarmerRetention(params)))
+			;
+	}
+	
 }
 

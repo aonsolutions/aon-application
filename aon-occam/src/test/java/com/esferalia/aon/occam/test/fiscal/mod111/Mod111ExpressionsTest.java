@@ -17,7 +17,7 @@ public class Mod111ExpressionsTest extends AbstractOccamTest {
 	public void testCommonTerritoryExpressions() {
 		test( Administration.COMMON_TERRITORY );
 	}
-
+	
 	@Test
 	public void testArabaExpressions() {
 		test( Administration.ALAVA);
@@ -36,7 +36,7 @@ public class Mod111ExpressionsTest extends AbstractOccamTest {
 	public void testNavarraExpression() {
 		test( Administration.NAVARRA);
 	}
-	
+
 	private void test( Administration admon) {
 		test(admon, true);
 		test(admon, false);

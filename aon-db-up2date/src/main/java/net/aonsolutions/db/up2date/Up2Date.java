@@ -19,6 +19,24 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.AddEpigrafe922;
+import net.aonsolutions.db.up2date.finance.FsModelInvoiceDrop;
+import net.aonsolutions.db.up2date.finance.InsertInvoiceInfoLroe;
+import net.aonsolutions.db.up2date.finance.InvoiceBatchCreation;
+import net.aonsolutions.db.up2date.fiscal.AlterFsModelResult;
+import net.aonsolutions.db.up2date.fiscal.AlcatrazCreation;
+import net.aonsolutions.db.up2date.fiscal.RefreshMod111Result;
+import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
+import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;
+import net.aonsolutions.db.up2date.payroll.AgreementOwnerUpdate;
+import net.aonsolutions.db.up2date.payroll.AlterAgreement4Owner;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
+import net.aonsolutions.db.up2date.tgss.SMI2022Update;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
+import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
+import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
 import net.aonsolutions.db.up2date.user.CertificateDomainFix;
 
@@ -210,9 +228,17 @@ public class Up2Date {
     		//AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
     		//AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
     		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
-    		//SMI2022Update.SMI2022UPDATE
+    		//InvoiceBatchCreation.INVOICE_BATCH_CREATION,
+    		//FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
+    		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
+    		//AddEpigrafe922.ADD_EPIGRAFE_922,
+    		SMI2022Update.SMI2022UPDATE,
     		PrestITFactorUpdate.PRESTITFACTORUPDATE,
-    		CertificateDomainFix.CERTIFICATEDOMAINFIX
+    		CertificateDomainFix.CERTIFICATEDOMAINFIX,
+    		AlcatrazCreation.ALCATRAZ_CREATION,
+    		FsModelInvoiceDrop.FS_MODEL_INVOICE_DROP,
+    		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
+    		RefreshMod111Result.REFRESH_MOD111_RESULT,
     };
     
 

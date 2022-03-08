@@ -125,6 +125,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		checkLimitDate(invoice);
+		FinanceUtil.checkAlcatraz(invoice);
 		try {
 			if (isRemovable(invoice)) {
 				removeFinanceTrackings(invoice);
@@ -158,6 +159,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
 	private void checkInvoice(Invoice invoice, Company company) throws ManagerBeanVetoListenerException {
 		checkLimitDate(invoice);
+		FinanceUtil.checkAlcatraz(invoice);
 		checkInvoiceYear(invoice);
 		if (!invoice.isRectifier()) {
 			if (StringUtils.isEmpty(invoice.getRegistryName())) {

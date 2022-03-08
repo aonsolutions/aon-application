@@ -158,6 +158,7 @@ public interface IJsonNames {
 	String EXPENSES_FIXED = "expensesFixed";
 	String EXPENSES_PERCENT = "expensesPercent";
 	String EXPENSES_RATIO = "expensesRatio";
+	String EXPRESSION = "expression";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	String FARMER_REGIME = "farmerRegime";
 	String FAX = "fax";
@@ -169,9 +170,11 @@ public interface IJsonNames {
 	String FINANCES = "finances";
 	String FOOTER = "footer";
 	String FOOTER_TEXT = "footerText";
+	String FORMULA = "formula";
+	String FROM = "from";
 	String FROM_DATE = "fromDate";
 	String FROM_DUE_DATE = "fromDueDate";
-	String FROM = "from";
+	String FROM_SALARY = "fromSalary";
 	String FROM_NUMBER = "fromNumber";
 	// ---------------------------------------------------------------------------------------------	[G] 
 	String GLOBAL = "global";
@@ -189,6 +192,7 @@ public interface IJsonNames {
 	String IAE = "iae";
 	String IBAN = "iban";
 	String ID = "id";
+	String IN_KIND = "inKind";
 	String IN_PERIOD_BEFORE_CREDIT = "inPeriodBeforeCredit";
 	String IN_PERIOD_BEFORE_DEBIT = "inPeriodBeforeDebit";
 	String IN_PERIOD_CREDIT = "inPeriodCredit";
@@ -216,12 +220,15 @@ public interface IJsonNames {
 	String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
 	String IRPF = "irpf";
 	String IRPF_PARAMS = "irpfParams";
-	String ISSUE_DATE = "irpf";
+	String IRPF_REGIME = "irpfRegime";
+	String ISSUE_DATE = "issueDate";
 	String ITEM = "item";
 	// ---------------------------------------------------------------------------------------------	[J] 
 	String JOURNAL = "journal";
 	// ---------------------------------------------------------------------------------------------	[K] 
 	String KEY = "key";
+	String KEYS = "keys";
+	String KEY_VALUES = "keyValues";
 	String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
 	String LANGUAGE = "language";
@@ -295,6 +302,7 @@ public interface IJsonNames {
 	String PARENT = "parent";
 	String PARENT_ID = "parentId";
 	String PASSWORD = "password";
+	String PATTERN = "pattern";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
 	String PAYMETHOD = "paymethod";

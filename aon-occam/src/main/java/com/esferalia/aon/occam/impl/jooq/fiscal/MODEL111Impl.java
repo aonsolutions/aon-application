@@ -41,7 +41,7 @@ public class MODEL111Impl implements IMODEL111 {
 	}
 	@Override
 	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111){
-		return FiscalModelDAO.initializeForFinish(ctx, mod111);
+		return Mod111DAO.initializeForFinish(ctx, mod111);
 	}
 	@Override
 	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111){
@@ -64,6 +64,18 @@ public class MODEL111Impl implements IMODEL111 {
 	public Mod111 markAsCustomerCheck(AONContext ctx, Mod111 mod111) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod111DAO.markAsCustomerCheck(ctx, mod111));		
+	}
+
+	@Override
+	public Mod111 markAsCustomerAccepted(AONContext ctx, Mod111 mod111) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsCustomerAccepted(ctx, mod111));		
+	}
+
+	@Override
+	public Mod111 markAsCustomerRejected(AONContext ctx, Mod111 mod111, String reason) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsCustomerRejected(ctx, mod111, reason));		
 	}
 
 	@Override

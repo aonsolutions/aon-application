@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -243,6 +244,8 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	private DoubleBox baseCP;
 	
+	private boolean userComunica = false;
+	
 	// --------------------------------------------------- ProvideITDataGrid
 	
 	private void provideITDataGrid() {
@@ -309,7 +312,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			@Override
 			public void render(Context context, IT it, SafeHtmlBuilder sb) {
 				if(null != it) {
-					sb.appendHtmlConstant("<span title=\"" + parseLowCauseByte(it.getTypeLowPart()) + "\">" + parseShortLowCauseByte(it.getTypeLowPart()) + "</span>");
+					sb.appendHtmlConstant("<span title=\"" + getSelectedTextByValue(causeLowPart, it.getTypeLowPart()) + "\">" + parseShortLowCauseByte(it.getTypeLowPart()) + "</span>");
 				}
 			}
 		};
@@ -332,7 +335,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	    TextColumn<IT> highCauseColumn = new TextColumn<IT>() {
 	      @Override
 	      public String getValue(IT it) {
-	        return parseHighCauseByte(it.getTypeHighPart());
+	    	return getSelectedTextByValue(causeHighPart, it.getTypeHighPart());
 	      }
 	    };
 
@@ -437,28 +440,28 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		causeLowPart.clear();
 		causeLowPart.addItem("-", "-1");
-		causeLowPart.addItem("Enfermedad Com" + String.valueOf("\u00FA") + "n", "0");
+		causeLowPart.addItem("Enfermedad Com\u00Fan", "0");
 		causeLowPart.addItem("Accidente de trabajo", "1");
 		causeLowPart.addItem("Maternidad", "2");
 		causeLowPart.addItem("Paternidad", "3");
 		causeLowPart.addItem("Riesgo para el embarazo", "4");
 		causeLowPart.addItem("Riesgo durante la lactancia", "5");
 		causeLowPart.addItem("Accidente no laboral", "6");
-		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia", "7");
-		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)", "8");
+		causeLowPart.addItem("Enfermedad com\u00Fan periodo de carencia", "7");
+		causeLowPart.addItem("Enfermedad com\u00Fan, prestaci\u00F3n profesional (COVID-19)", "8");
 		
 		causeHighPart.clear();
 		causeHighPart.addItem("-", "-1");
-		causeHighPart.addItem("Curaci" + String.valueOf("\u00F3") + "n", "0");
+		causeHighPart.addItem("Curaci\u00F3n", "0");
 		causeHighPart.addItem("Fallecimiento", "1");
-		causeHighPart.addItem("Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica", "2");
+		causeHighPart.addItem("Inspecci\u00F3n m\u00e9dica", "2");
 		causeHighPart.addItem("Propuesta incapacidad", "3");
 		causeHighPart.addItem("Agotamiento de plazo", "4");
-		causeHighPart.addItem("Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual", "5");
+		causeHighPart.addItem("Mejor\u00eda que permite realizar el trabajo habitual", "5");
 		causeHighPart.addItem("Incomparecencia", "6");
-		causeHighPart.addItem("Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses", "7");
-		causeHighPart.addItem("Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional", "8");
-		causeHighPart.addItem("Incomparecencia contratos de formaci" + String.valueOf("\u00F3") + "n", "9");
+		causeHighPart.addItem("Control INSS duraci\u00F3n 12 meses", "7");
+		causeHighPart.addItem("Recuperaci\u00F3n capacidad profesional", "8");
+		causeHighPart.addItem("Incomparecencia contratos de formaci\u00F3n", "9");
 		
 		applicantTypeList.addItem("Madre biologica", "0");
 		applicantTypeList.addItem("Otro progenitor", "1");
@@ -541,6 +544,11 @@ public abstract class ITDialog extends AonCustomDialog {
 				showConfirmationParts();
 			}
 		}
+		
+		//PRINT BTN IT COMUNICA
+		if(this.it!=null && this.userComunica)
+			printBtnCommunicate();
+		
 	}
 	
 	// --------------------------------------------------- PaintIt
@@ -1278,6 +1286,22 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 2, collegeNumberTB);
 		confirmationPartDataTable.setWidget(row, 3, ciasTB);
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
+		
+		if(this.userComunica) {
+			boolean communicated = itPart.getStatus()!=null && itPart.getStatus() == (byte)3;
+			String title = communicated ? "Parte IT comunicada" : "Comunicar Confirmaci\u00f3n";
+			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+		
+			AonTableButton communicate = new AonTableButton(title, icon);
+			
+			if(!communicated && isCommunicatePart(itPart)) {
+				communicate.addClickHandler((e) -> {
+					setViewPartComunica(itPart);
+				});
+			}
+	
+//			confirmationPartDataTable.setWidget(row, 5, communicate);
+		}
 	}
 	
 	// --------------------------------------------------- ITDIalog.ShowHide_Elements
@@ -1314,37 +1338,14 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- ITDIalog.Auxiliar_Methods
 	
-	public void setIsUserComunica(boolean userComunica) {}
+	public void setIsUserComunica(boolean userComunica) {
+		this.userComunica = userComunica;
+	}
 	
 	private boolean notSelectedId(Integer itId) {
 		return (null == this.it || null == this.it.getId()) ? true : (this.it.getId() == itId || this.it.getId().equals(itId));
 	}
 
-	private String parseLowCauseByte(Byte typeLowPart) {
-		switch (typeLowPart) {
-			case (byte)0:
-				return "Enfermedad Com" + String.valueOf("\u00FA") + "n";
-			case (byte)1:
-				return "Accidente de trabajo";
-			case (byte)2:
-				return "Maternidad";
-			case (byte)3:
-				return "Paternidad";
-			case (byte)4:
-				return "Riesgo para el embarazo";
-			case (byte)5:
-				return "Riesgo durante la lactancia";
-			case (byte)6:
-				return "Accidente no laboral";
-			case (byte)7:
-				return "Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia";
-			case (byte)8:
-				return "Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)";
-			default:
-				return "-";
-		}
-	}
-	
 	private boolean isPaternity() {
 		return it.getTypeLowPart()!=null && (it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3);
 	}
@@ -1373,36 +1374,6 @@ public abstract class ITDialog extends AonCustomDialog {
 				return "-";
 		}
 	}
-	
-	private String parseHighCauseByte(Byte typeHighPart) {
-		if(null == typeHighPart)
-			return "-";
-		
-		switch (typeHighPart) {
-			case (byte)0:
-				return "Curaci" + String.valueOf("\u00F3") + "n";
-			case (byte)1:
-				return "Fallecimiento";
-			case (byte)2:
-				return "Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica";
-			case (byte)3:
-				return "Propuesta incapacidad";
-			case (byte)4:
-				return "Agotamiento de plazo";
-			case (byte)5:
-				return "Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual";
-			case (byte)6:
-				return "Incomparecencia";
-			case (byte)7:
-				return "Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses";
-			case (byte)8:
-				return "Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional";
-			case (byte)9:
-				return "Incomparecencia contratos de formaci" + String.valueOf("\u00F3") + "n";
-			default:
-				return "-";
-		}
-	}
 
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
@@ -1415,6 +1386,18 @@ public abstract class ITDialog extends AonCustomDialog {
 	    }
 	    lBox.setSelectedIndex(indexToFind);
 	}
+	
+	private String getSelectedTextByValue(ListBox lBox, Byte value) {
+		if(value!=null) {
+		    String text = value.toString();
+		    for (int i = 0; i < lBox.getItemCount(); i++) {
+		        if (lBox.getValue(i).equals(text)) 
+		            return lBox.getSelectedItemText();
+		    }
+		}
+	    return "-";
+	}
+	
 	
 	// --------------------------------------------------- Toolbar
 	
@@ -1491,7 +1474,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(null != this.it.getId()) {
 			if(this.it.getIsParent()) {
 				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Reca"+ String.valueOf("\u00ED") + "da", "No se puede eliminar este parte por que tiene reca" + String.valueOf("\u00ED") + "da.");
+				dialog.info("AVISO: Reca\u00edda", "No se puede eliminar este parte por que tiene reca\\u00edda.");
 			} else {
 				AonConfirmDialog confirmDialog = new AonConfirmDialog();
 				confirmDialog.confirm(
@@ -1505,8 +1488,7 @@ public abstract class ITDialog extends AonCustomDialog {
 								hide();
 								ITDialog.this.hide();
 							}
-
-							@Override
+							
 							public void onCancel() {}
 						}
 				);
@@ -1585,6 +1567,72 @@ public abstract class ITDialog extends AonCustomDialog {
 		this.observationTB.setText("");
 		
 		this.confirmationPartDataTable.clear();
+	}
+	
+	//--------------COMMUNICATE IT PART
+	
+	private void printBtnCommunicate(){
+		
+		LOGGER.info("IT_ID:"+ it.getId());
+		for(ITPart itPart : it.getITParts()) {
+			LOGGER.info("IT_PART:"+itPart.getId()+" TYPE:"+itPart.getType().toString());
+		}
+		
+		
+		Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
+		Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
+		
+		if(bjOptional.isPresent()) {
+			ITPart bj = bjOptional.get();
+			boolean communicated = bj.getStatus()!=null && bj.getStatus() == (byte)3;
+			String title = communicated ? "Parte IT comunicada" : "Comunicar Baja";
+			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+		
+			AonTableButton btnBaja = new AonTableButton(title, icon); 
+
+			if(!communicated && isCommunicatePart(bj)) {
+				btnBaja.addClickHandler((e) -> {
+					ITPart part = new ITPart()
+					.setId(bj.getId())
+					.setDate(it.getStartDate())
+					.setType((byte) 0)
+					.setCollegeNumber(collegiateNumberITPart.getValue())
+					.setCias(ciasITPart.getValue());
+
+					setViewPartComunica(part);
+				});
+			}
+
+			itBaja.add(btnBaja);
+		}
+
+		if(altaOptional.isPresent()) {
+			
+			ITPart alt = altaOptional.get();
+			boolean communicated = alt.getStatus()!=null && alt.getStatus() == (byte)3;
+			String title = communicated ? "Parte IT comunicada" : "Comunicar Alta";
+			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+		
+			AonTableButton btnAlta = new AonTableButton(title, icon); 
+			if(!communicated && isCommunicatePart(alt)) {
+				btnAlta.addClickHandler((e) -> {
+					ITPart part = new ITPart()
+					.setId(alt.getId())
+					.setDate(it.getEndDate())
+					.setType((byte) 2)
+					.setCollegeNumber(collegiateNumberITPart.getValue())
+					.setCias(ciasITPart.getValue());
+	
+					setViewPartComunica(part);
+				});
+			}
+		
+			itAlta.add(btnAlta);
+		}
+	}
+	
+	private boolean isCommunicatePart(ITPart itPart){
+		return it.getId()!=null && itPart.getId()!=null && itPart.getStatus() != (byte)3;
 	}
 	
 	private void onNewConfirmationPart(ClickEvent e) {
@@ -1790,13 +1838,13 @@ public abstract class ITDialog extends AonCustomDialog {
 		String cause = null;
 		switch(itPart.getType()){
 			case (byte)0:
-				cause = parseLowCauseByte(it.getTypeLowPart());
+				cause = getSelectedTextByValue(causeLowPart, it.getTypeLowPart());
 			break;
 			case (byte)1:
 				cause = "Confirmaci\u00F3n";
 			break;
 			case (byte)2:
-				cause = parseHighCauseByte(it.getTypeHighPart());
+				cause = getSelectedTextByValue(causeHighPart, it.getTypeHighPart());
 			break;
 			default:
 				cause = "";

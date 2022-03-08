@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 
@@ -45,10 +46,6 @@ public class CRUDETest extends AbstractOccamTest {
 		}
 
 		for ( int i = 0; i < addEmployees.length; i++ ) {
-			printf(addEmployees[i]);
-		}
-
-		for ( int i = 0; i < addEmployees.length; i++ ) {
 			PAYROLL.addEmployee(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), addEmployees[i]);
 		}
 		
@@ -64,14 +61,10 @@ public class CRUDETest extends AbstractOccamTest {
 								).orElseThrow();
 		}
 		
-		//for ( int i = 0; i < getEmployees.length; i++ ) {
-		//printf(getEmployees[i]);
-		//}
-		
 		for ( int i = 0; i < getEmployees.length; i++ ) {
 			Employee addEmployee = addEmployees[i];
 			Employee getEmployee = getEmployees[i];
-			assertEquals(addEmployee, getEmployee);
+			Asserts.assertEmployee(addEmployee, getEmployee);
 		}
 		
 		String nafs [] = Arrays.stream(addEmployees).map( e -> e.getNaf()).toArray(String[]::new);
@@ -91,7 +84,7 @@ public class CRUDETest extends AbstractOccamTest {
 		for ( int i = 0; i < addEmployees.length; i++ ) {
 			Employee addEmployee = addEmployees[i];
 			Employee getEmployee = getEmployeesMap.get(addEmployee.getNaf());
-			assertEquals(addEmployee, getEmployee);
+			Asserts.assertEmployee(addEmployee, getEmployee);
 		}
 		
 		
@@ -110,46 +103,9 @@ public class CRUDETest extends AbstractOccamTest {
 		for (int i = 0; i < cccEmployeesLength; i++) {
 			Employee addEmployee = addEmployees[i];
 			Employee getEmployee = getEmployeesMap.get(addEmployee.getNaf());
-			assertEquals(addEmployee, getEmployee);
+			Asserts.assertEmployee(addEmployee, getEmployee);
 		}
 		
 	}
 	
-	private void assertEquals(Employee addEmployee, Employee getEmployee) {
-		Assert.assertEquals(addEmployee.getCcc(), getEmployee.getCcc());
-		Assert.assertEquals(addEmployee.getNaf(), getEmployee.getNaf());
-		Assert.assertEquals(addEmployee.getDni(), getEmployee.getDni());
-		//Assert.assertEquals(addEmployee.getCif(), getEmployee.getCif());
-		Assert.assertEquals(addEmployee.getStartDate(), getEmployee.getStartDate());
-		Assert.assertEquals(addEmployee.getEndDate(), getEmployee.getEndDate());
-		Assert.assertEquals(addEmployee.getName(), getEmployee.getName());
-		
-		Assert.assertEquals(addEmployee.getRegime(), getEmployee.getRegime());
-		
-		Assert.assertEquals(addEmployee.getFactor(), getEmployee.getFactor());
-		Assert.assertEquals(addEmployee.getOccupation(), getEmployee.getOccupation());
-		Assert.assertEquals(addEmployee.getContractType(), getEmployee.getContractType());
-		Assert.assertEquals(addEmployee.getRlce(), getEmployee.getRlce());
-		Assert.assertEquals(addEmployee.getQuoteGroup(), getEmployee.getQuoteGroup());
-
-		Assert.assertEquals(addEmployee.getCategory(), getEmployee.getCategory());
-
-		Assert.assertEquals(addEmployee.getSex(), getEmployee.getSex());
-		//Assert.assertEquals(addEmployee.getPhone(), getEmployee.getPhone());
-		Assert.assertEquals(addEmployee.getBirthDate(), getEmployee.getBirthDate());
-	}
-
-	private void printf(Employee employee) {
-		
-		System.out.printf("%s [%2$td/%2$tm/%2$ty-%3$td/%3$tm/%3$ty]: CCC: %4$s, NAF: %5$s , GC=%6$s, TC2=%7$s, PARCIALIDAD=%8$f \r\n",  
-				employee.getName().orElse("-"), 
-				employee.getStartDate(),
-				employee.getEndDate().orElse(null),
-				employee.getCcc(),
-				employee.getNaf(),
-				employee.getQuoteGroup().orElse(null),
-				employee.getContractType().orElse(null),
-				employee.getFactor().orElse(null)
-		);
-	}
 }
