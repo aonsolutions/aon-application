@@ -1,4 +1,4 @@
-package net.aonsolutions.db.up2date.fiscal;
+package net.aonsolutions.db.up2date.finance;
 
 import java.sql.Connection;
 

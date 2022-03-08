@@ -1,24 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod130;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -27,7 +19,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -48,26 +39,6 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 
-		try {
-			InputStream inputStream = Mod130ExcelAction.class.getResourceAsStream(
-					IMAGES[ model.getAdministration().ordinal()]);
-			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
-			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
-			inputStream.close();
-			CreationHelper helper = workbook.getCreationHelper();
-			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-			anchor.setCol1(0);
-			anchor.setRow1(0);
-			anchor.setDx1(20);
-			anchor.setDy1(20);
-			Picture pict = drawing.createPicture(anchor, pictureureIdx);
-			pict.resize();
-		} catch (IOException e) {
-			e.printStackTrace();
-			// Sin Imagen,.
-		}
 		CellUtil.createCell(row, 0,"");
 		sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 0));
 		CellUtil.createCell(row, 1, getTitle(), headerCellStyle);

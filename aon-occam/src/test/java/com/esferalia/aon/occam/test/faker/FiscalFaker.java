@@ -24,6 +24,9 @@ public class FiscalFaker {
 		private Date issueDate;
 		private Administration administration;
 		private boolean monthly;
+		private boolean complementary;
+		private boolean replacement;
+		private boolean generateFromYearStart;
 		
 		public FiscalFakerParams(AONContext ctx, Occam occam) {
 			this.ctx = ctx;
@@ -58,7 +61,29 @@ public class FiscalFaker {
 			this.administration = administration;
 			return this;
 		}
+
+		public boolean isComplementary() {
+			return complementary;
+		}
+		public FiscalFakerParams setComplementary(boolean complementary) {
+			this.complementary = complementary;
+			return this;
+		}
 		
+		public boolean isReplacement() {
+			return replacement;
+		}
+		public FiscalFakerParams setReplacement(boolean replacement) {
+			this.replacement = replacement;
+			return this;
+		}
+		public boolean isGenerateFromYearStart() {
+			return generateFromYearStart;
+		}
+		public FiscalFakerParams setGenerateFromYearStart(boolean generateFromYearStart) {
+			this.generateFromYearStart = generateFromYearStart;
+			return this;
+		}
 	}
 	
 	public static Period getRandomPeriod() {
@@ -77,12 +102,20 @@ public class FiscalFaker {
 	public static Mod111 getMod111( FiscalFakerParams params) {
 		Mod111 mod111 = new Mod111();
 		mod111.setDomain(params.getOccam().getDomain());
-		MODEL111.initialize( params.getOccam(), mod111);
 		mod111.setYear(AonDateUtils.getYear(params.getIssueDate()));
 		mod111.setPeriod( params.isMonthly()
 			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
 		mod111.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		MODEL111.initialize( params.getOccam(), mod111);
+		mod111.setComplementary(params.isComplementary());
+		mod111.setReplacement(params.isReplacement());
+		mod111.setGenerateFromYearStart(mod111.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
+		return mod111;
+	}
+
+	public static Mod111 createMod111( FiscalFakerParams params) {
+		Mod111 mod111 = getMod111( params );
 		MODEL111.create(params.getOccam(), mod111);
 		return mod111;
 	}

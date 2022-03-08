@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -108,5 +109,9 @@ public class Mod111ServiceAsyncDecorator implements Mod111ServiceAsync {
 		AON.start();
 		fsa.getInfo(occam, mod111, script, infoKey,new AsyncCallbackWrapper<>(callback));
 	}
-
+	@Override
+	public void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback) {
+		AON.start();
+		fsa.getInvoice(occam, invoiceId, new AsyncCallbackWrapper<>(callback));
+	}
 }

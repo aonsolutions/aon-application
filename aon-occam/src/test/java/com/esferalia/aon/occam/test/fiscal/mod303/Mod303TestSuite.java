@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	Mod303ExpressionsTest.class,
 	Mod303DeleteTest.class,
-	Mod303InsertTest.class,
+//	Mod303InsertTest.class,
 })
 public class Mod303TestSuite {
 

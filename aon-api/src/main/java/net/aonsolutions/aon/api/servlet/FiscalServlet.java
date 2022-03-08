@@ -63,6 +63,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			error(req, resp, e);
 		}
 	}

@@ -4902,30 +4902,38 @@ CREATE TABLE `fs_model` (
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `account_entry` int(4) DEFAULT NULL Comment 'identificador del apunte',
+  `result` double(15,3) DEFAULT NULL COMMENT 'Resultado',
+  `declaration_type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de resultado',  
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL_FINANCE` (`finance`),
+  KEY `IDX_FS_MODEL_ACCOUNT_ENTRY` (`account_entry`),
   CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
+  CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
+  CONSTRAINT `FK_FS_MODEL_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
 
 #
-# Structure for the `fs_model_invoice` table :
+# Structure for the `alkatraz` table :
 #
 
-CREATE TABLE `fs_model_invoice` (
+CREATE TABLE `alcatraz` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `fs_model` int(4) NOT NULL COMMENT 'Identificador del Modelo',
-  `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
+  `fs_model` int(4) DEFAULT NULL COMMENT 'Identificador del Modelo',
+  `invoice` int(4) DEFAULT NULL COMMENT 'Identificador de la Factura',
+  `salary` int(4) DEFAULT NULL COMMENT 'Identificador de la Nomina',
   PRIMARY KEY (`id`),
-  KEY `IDX_FS_MODEL_INVOICE_DOMAIN` (`domain`),
-  KEY `IDX_FS_MODEL_INVOICE_FS_MODEL` (`fs_model`),
-  KEY `IDX_FS_MODEL_INVOICE_INVOICE` (`invoice`),
-  CONSTRAINT `FK_FS_MODEL_INVOICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_MODEL_INVOICE_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
-  CONSTRAINT `FK_FS_MODEL_INVOICE_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Facturas del Modelo';
+  KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
+  KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
+  KEY `IDX_ALCATRAZ_INVOICE` (`invoice`),
+  KEY `IDX_ALCATRAZ_SALARY` (`salary`),
+  CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 
 #

@@ -13,6 +13,8 @@ public enum FiscalStatus implements Serializable {
 	SENT("Presentado")		{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitSent();} },
 	MISSING("Desconocido")	{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitMissing();} },
 	CUSTOMER_CHECK("Envio a cliente"){ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitCustomerCheck();} },
+	CUSTOMER_ACCEPTED("Aceptado por cliente"){ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitCustomerAccepted();} },
+	CUSTOMER_REJECTED("Rechazado por cliente"){ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitCustomerRejected();} },
 	;
 	
 	private String name;

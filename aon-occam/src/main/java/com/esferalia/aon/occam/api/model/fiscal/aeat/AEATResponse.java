@@ -30,7 +30,7 @@ public class AEATResponse implements Serializable {
 	private String presentacionLotes;
 
 	public boolean isWrong() {
-		return getErrores() != null || getErrores().isEmpty();
+		return getErrores() != null && !getErrores().isEmpty();
 	}
 	
 	public boolean isCorrect() {

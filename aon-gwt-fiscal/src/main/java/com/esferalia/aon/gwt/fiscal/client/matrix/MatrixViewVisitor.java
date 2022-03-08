@@ -74,7 +74,9 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 		this.model = model;
 		this.callback = callback;
 	}
-	
+	private AonCustomPopup getModelDialog() {
+		return getModelDialog(null);
+	}
 	private AonCustomPopup getModelDialog(String caption) {
 		AonCustomPopup modelDialog = new AonCustomPopup( false );
 		modelDialog.setWidth((Window.getClientWidth() - 50) + "px");
@@ -88,8 +90,7 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 
 	@Override 
 	public void visitM111() {
-		LOGGER.info("Before visitM111");
-		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		AonCustomPopup modelDialog = getModelDialog();
 		try {
 			Model111 model111 = new Model111();
 			Model111ModuleOptions options = new Model111ModuleOptions();

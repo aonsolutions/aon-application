@@ -61,6 +61,7 @@ public class IRPFDAO {
 		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
 		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<Integer>(INVOICE.REGISTRY);}
 		@Override public Property<Byte> getInvoiceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
+		@Override public Property<Date> getInvoiceIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<Byte> getInvoiceTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TRANSACTION);}
 		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ACTIVITY);}
 		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.INVESTMENT);}
