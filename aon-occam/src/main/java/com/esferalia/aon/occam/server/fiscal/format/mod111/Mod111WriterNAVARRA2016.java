@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod111;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -6,9 +6,10 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer.IMod111Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer.IMod111Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -36,7 +37,7 @@ public class Mod111WriterNAVARRA2016 implements IMod111Writer{
 			,(wr, mod) -> wr.append((mod.isReplacement()?"S":(mod.isComplementary()?"C":" ")))
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getReplacedNumber(),13))
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceCCC(),20))
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT?"1":"0",1))				
+			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT?"1":"0",1))				
 			,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 22))
 			,(wr, mod) -> wr.append(AonStringUtils.repeat('0', 8))
 			,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 28))

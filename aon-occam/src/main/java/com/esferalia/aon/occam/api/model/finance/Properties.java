@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.model.Filter.Property;
 public class Properties  {
 
@@ -26,6 +28,7 @@ public class Properties  {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getRegistryProperty();
 		Property<Byte> getInvoiceTypeProperty();
+		Property<Date> getInvoiceIssueDateProperty();
 		Property<Byte> getInvoiceTransactionProperty();
 		Property<Byte> getWithholdingTypeProperty();
 		Property<Integer> getActivityProperty();

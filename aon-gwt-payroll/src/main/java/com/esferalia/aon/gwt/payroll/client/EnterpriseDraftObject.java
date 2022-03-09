@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EnterpriseDraftObject extends AbstractDraftObject {
@@ -194,6 +195,19 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	public String getAgreement() {
 		return this.enterpriseInfo.getEnterpriseAgreementId();
+	}
+	
+	public String getAgreementDescription() {
+		String enterpriseAgreementId = getAgreement();
+		if(AonStringUtils.isBlank(enterpriseAgreementId))
+			return null;
+		else {
+			Integer agreementId = Integer.parseInt(enterpriseAgreementId);
+			for(Agreement agreement : agreements)
+				if(agreement.getId().equals(agreementId))
+					return agreement.getDescription();
+		}
+		return null;
 	}
 	
 	// ----------------------------------------------  SETTERS  -------------------------------------------------

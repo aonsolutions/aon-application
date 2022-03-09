@@ -19,7 +19,6 @@ public class JsonAccountingReportParamsTest extends AbstractOccamTest {
 	public void test() {
 		AccountingReportParams expected = AonFaker.getAccountingReportParams( ctx );
 		JSONObject json = AccountingReportParamsJSON.toJSON(expected);
-		System.out.println( json.toString(2) );
 		AccountingReportParams actual = AccountingReportParamsJSON.fromJSON(json);
 		Asserts.assertEqualsAccountingReportParams(expected, actual);
 		

@@ -145,13 +145,8 @@ public abstract class EnterpriseDraft extends Composite {
 		}
 		
 		@Override
-		public void onEnterpriseAgreementChange() {
-			if (this.enterpriseAgreement.getSelectedIndex() == 0 ) {
-				enterpriseDraftObject.setAgreement(null);
-			} else {
-				String agreementId = String.valueOf(this.enterpriseAgreement.getSelectedValue()); 
-				enterpriseDraftObject.setAgreement(agreementId);
-			}
+		public void onEnterpriseAgreementChange(Integer agreementId) {
+			enterpriseDraftObject.setAgreement(null == agreementId ? null : agreementId.toString());
 		}
 
 		@Override
@@ -332,7 +327,7 @@ public abstract class EnterpriseDraft extends Composite {
 		setSelectedValueLB(enterprise.enterprisePaysheetSendType, enterpriseDraftObject.getPaysheetSend());
 		enterprise.checkPaysheetSendType(enterpriseDraftObject.getPaysheetSendEmail());
 		
-		setSelectedValueLB(enterprise.enterpriseAgreement, enterpriseDraftObject.getAgreement());
+		enterprise.enterpriseAgreement.setValue(enterpriseDraftObject.getAgreementDescription());
 	}
 	
 	public EnterpriseDraftObject getEnterpriseDraftObject() {

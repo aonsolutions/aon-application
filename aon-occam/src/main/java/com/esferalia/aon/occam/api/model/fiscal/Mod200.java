@@ -5,6 +5,7 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -249,4 +250,12 @@ public class Mod200 implements IFiscalModel, HasAudit {
 		return Period.YEAR;
 	}
 
+	@Override
+	public Double getDeclarationResult() {
+		return null;
+	}
+	@Override
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return null;
+	}
 }

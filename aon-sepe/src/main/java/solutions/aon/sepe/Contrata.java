@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -831,12 +832,12 @@ public class Contrata {
 				if(pStr.indexOf("Identificador de la Comunicaci\u00F3n :")>=0) {
 					String[] parts = pStr.split(":");
 					if(parts.length > 0) 
-						msg = (parts[1]).trim().replaceAll("-", "");
+						msg = (parts[1]).trim().replace("-", "");
 					b = true;
 				} else if(pStr.indexOf("se ha realizado correctamente")>=0) {
 					msg = pStr;
 					b = true;
-				} else if(pStr.indexOf("sin fecha de t\u00E9rmino")>=0 || pStr.indexOf("F\u00EDsica en la base de datos no coinciden")>=0) {
+				} else if(Arrays.asList("sin fecha de t\u00E9rmino", "F\u00EDsica en la base de datos no coinciden").contains(pStr)) {
 					msg = "returnInit";
 					b = true;
 				} 

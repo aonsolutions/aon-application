@@ -1062,7 +1062,7 @@ public class AonDateUtils {
 		if(AonStringUtils.isBlank(date)) return null;
 		date = date.replace(" ", "");
 		Date d = null;
-		if(d == null && isSimpleDateFormat(date)) parse(date, SIMPLE_DATE_FORMAT);
+		if(isSimpleDateFormat(date)) d = parse(date, SIMPLE_DATE_FORMAT);
 		if(d == null && isSimpleDateFormat2(date)) d = parse(date, SIMPLE_DATE_FORMAT2);
 		if(d == null && isSimpleDateFormat3(date)) d = parse(date, SIMPLE_DATE_FORMAT3);
 		if(d == null && isSimpleDateFormat4(date)) d = parse(date, SIMPLE_DATE_FORMAT4);

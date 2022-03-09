@@ -1,5 +1,8 @@
-import { post, get, openFile, requestJsonAsset } from "./request.js";
+import { post, get, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
+import { regimeType } from "./regimeType.js";
+import { bajaType } from "./bajaType.js";
+import { contractType } from "./contractType.js";
 
 export const getWorkplaceCCCs = () => get(`${API_URL}/workplace_ccc`);
 
@@ -42,28 +45,19 @@ export const getQuoteType = (data) => new Promise(async (resolve) => {
   resolve(json.find((r) => r.value == data));
 });
 
-export const getTipoJornada = () => [
-    { id: 1, name: "Semanal", value: "semanal"},
-    { id: 2, name: "Diaria", value: "diaria"}
-];
-
-export const getAllTipoCtz = () => requestJsonAsset("type_ctz.json"); 
-
-export const getCodBaja = () => requestJsonAsset("cod_baja.json"); 
-
-export const getContractType = () =>  requestJsonAsset("type_contract.json"); 
-
 export const getRlce = (data) => get(`${API_URL}/comunica/rlce`, data);
 
 export const getOccupation = (data) =>  get(`${API_URL}/comunica/occupation`, data);
  
 export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);
- 
-// {
-//   const resp = await get(`${API_URL}/comunica/contract-type`, data);
-//   let options = [];
-//   // for (const key in resp) {
-//   //   if(key)  options.push({value: key, name: resp[key] });
-//   // }
-//   return options;
-// };
+
+export const getAllTipoCtz = () => Promise.resolve( regimeType ); 
+
+export const getCodBaja = () => Promise.resolve( bajaType );  
+
+export const getContractType = () => Promise.resolve( contractType ); 
+
+export const getJourneyType = () =>[
+  { id: 1, name: "Semanal", value: "semanal"},
+  { id: 2, name: "Diaria", value: "diaria"}
+];

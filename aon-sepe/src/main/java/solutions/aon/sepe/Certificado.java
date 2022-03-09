@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
@@ -178,7 +180,7 @@ public class Certificado {
 				form.getInputByName("orDatosTrabajador.srDuracionContratoTrab").setValueAttribute(certificates.getDurationContract().toString());
 				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csIndicadorDuracionContrato.valor\"]")).setSelectedAttribute(certificates.getTypeDuration().getValue(), true);
 				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoProfesion.valor\"]")).setSelectedAttribute(certificates.getCatProfessional(), true);
-				if(typeContract.substring(0,1).equalsIgnoreCase("2") || typeContract.substring(0,1).equalsIgnoreCase("5")) {
+				if( Arrays.asList("2","5").contains( typeContract.substring(0,1) ) ) {
 					form.getInputByName("orDatosTrabajador.existenDetalles").setChecked(true);
 				}
 				if(certificates.getPublicPosition()!=null) {
@@ -220,14 +222,15 @@ public class Certificado {
 						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion")
 						.setValueAttribute(qdata.getDays().toString());
 						
-						if(qdata.getBccc().isPresent()) {
+						Optional<Double> bccc = qdata.getBccc();
+						if(bccc.isPresent()) {
 							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes")
-							.setValueAttribute(decimalFormat.format(qdata.getBccc().get()));
+							.setValueAttribute(decimalFormat.format(bccc.get()));
 						}
-						
-						if(qdata.getBcd().isPresent()) {
+						Optional<Double> bcd = qdata.getBcd();
+						if(bcd.isPresent()) {
 							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo")
-							.setValueAttribute(decimalFormat.format(qdata.getBcd().get()));
+							.setValueAttribute(decimalFormat.format(bcd.get()));
 						}
 						htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btAnadir]")).click();
 					}
@@ -251,9 +254,7 @@ public class Certificado {
 					handleSepeExceptions((HtmlPage) page);
 				} else {
 					try{
-						byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-//						System.out.println(Base64.getEncoder().encodeToString(pdf));
-						return pdf;
+						return page.getWebResponse().getContentAsStream().readAllBytes();
 					}
 					catch(Exception e){throw new InvalidDataException();}
 				}

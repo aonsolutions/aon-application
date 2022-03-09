@@ -15,92 +15,105 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 AR_907(Mod111Key.AR_907,null,null,null,null)
-		,AR_908(Mod111Key.AR_908,null,null,null,null)
-		,AR_909(Mod111Key.AR_909,null,null,null,null)
+		 AR_907(Mod111Key.AR_907,null,null,null,null,null)
+		,AR_908(Mod111Key.AR_908,null,null,null,null,null)
+		,AR_909(Mod111Key.AR_909,null,null,null,null,null)
 		,AR_C50(Mod111Key.AR_C50
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C50,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,AR_C60(Mod111Key.AR_C60
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C60,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C70(Mod111Key.AR_C70
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C70,mod,br)
-			,null,null)
-		,AR_C51(Mod111Key.AR_C51,null,null,null,null)
-		,AR_C61(Mod111Key.AR_C61,null,null,null,null)
-		,AR_C71(Mod111Key.AR_C71,null,null,null,null)
-		,AR_C52(Mod111Key.AR_C52,null,null,null,null)
-		,AR_C62(Mod111Key.AR_C62,null,null,null,null)
-		,AR_C72(Mod111Key.AR_C72,null,null,null,null)
-		,AR_C53(Mod111Key.AR_C53,null,null,null,null)
-		,AR_C63(Mod111Key.AR_C63,null,null,null,null)
-		,AR_C73(Mod111Key.AR_C73,null,null,null,null)
+			,null,null,null)
+		,AR_C51(Mod111Key.AR_C51,null,null,null,null,null)
+		,AR_C61(Mod111Key.AR_C61,null,null,null,null,null)
+		,AR_C71(Mod111Key.AR_C71,null,null,null,null,null)
+		,AR_C52(Mod111Key.AR_C52,null,null,null,null,null)
+		,AR_C62(Mod111Key.AR_C62,null,null,null,null,null)
+		,AR_C72(Mod111Key.AR_C72,null,null,null,null,null)
+		,AR_C53(Mod111Key.AR_C53,null,null,null,null,null)
+		,AR_C63(Mod111Key.AR_C63,null,null,null,null,null)
+		,AR_C73(Mod111Key.AR_C73,null,null,null,null,null)
 		,AR_C54(Mod111Key.AR_C54
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C54,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,AR_C64(Mod111Key.AR_C64
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C64,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C74(Mod111Key.AR_C74
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C74,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C58(Mod111Key.AR_C58
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C58,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,AR_C68(Mod111Key.AR_C68
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C68,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C78(Mod111Key.AR_C78
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C78,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C55(Mod111Key.AR_C55
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C55,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,AR_C65(Mod111Key.AR_C65
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C65,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C75(Mod111Key.AR_C75
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C75,mod,br)
-			,null,null)
-		,AR_C56(Mod111Key.AR_C56,null,null,null,null)
-		,AR_C66(Mod111Key.AR_C66,null,null,null,null)
-		,AR_C76(Mod111Key.AR_C76,null,null,null,null)
+			,null,null,null)
+		,AR_C56(Mod111Key.AR_C56,null,null,null,null,null)
+		,AR_C66(Mod111Key.AR_C66,null,null,null,null,null)
+		,AR_C76(Mod111Key.AR_C76,null,null,null,null,null)
 		,AR_C57(Mod111Key.AR_C57
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C56,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,AR_C67(Mod111Key.AR_C67
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C66,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C77(Mod111Key.AR_C77
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C76,mod,br)
-			,null,null)
+			,null,null,null)
 		,AR_C80(Mod111Key.AR_C80
-			, null,null,null, "AR_C50+AR_C51+AR_C52+AR_C53+AR_C54+AR_C58+AR_C55+AR_C56+AR_C57")
+			, null,null,null, "AR_C50+AR_C51+AR_C52+AR_C53+AR_C54+AR_C58+AR_C55+AR_C56+AR_C57",null)
 		,AR_C81(Mod111Key.AR_C81
-			, null,null,null, "AR_C60+AR_C61+AR_C62+AR_C63+AR_C64+AR_C68+AR_C65+AR_C66+AR_C67")
+			, null,null,null, "AR_C60+AR_C61+AR_C62+AR_C63+AR_C64+AR_C68+AR_C65+AR_C66+AR_C67",null)
 		,AR_C82(Mod111Key.AR_C82
-			, null,null,null, "AR_C70+AR_C71+AR_C72+AR_C73+AR_C74+AR_C78+AR_C75+AR_C76+AR_C77")
-		,AR_C83(Mod111Key.AR_C83,null,null,null,null)
-		,AR_C84(Mod111Key.AR_C84,null,null,null,null)
-		,AR_C85(Mod111Key.AR_C85,null,null,null,null)
-		,AR_C87(Mod111Key.AR_C87, null,null,null, "AR_C82-AR_C83+AR_C84+AR_C85")
-		,AR_TIP(Mod111Key.AR_TIP, null,null,null,null)
+			, null,null,null, "AR_C70+AR_C71+AR_C72+AR_C73+AR_C74+AR_C78+AR_C75+AR_C76+AR_C77",null)
+		,AR_C83(Mod111Key.AR_C83,null,null
+			, (ctx,mod) -> mod.putAmount(Mod111Key.AR_C83,
+				mod.isReplacement() 
+				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
+				:0.0)
+			,null
+			,"{messages : ["
+					+ "\"Declaraciones en el mismo periodo/ejercicio:\","
+					+ "@foreach{fm : periodModels}"
+					+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
+					+ "@end{}"
+					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C87)}\""
+				+"]}"
+			)
+		,AR_C84(Mod111Key.AR_C84,null,null,null,null,null)
+		,AR_C85(Mod111Key.AR_C85,null,null,null,null,null)
+		,AR_C87(Mod111Key.AR_C87, null,null,null, "AR_C82-AR_C83+AR_C84+AR_C85",null)
+		,AR_TIP(Mod111Key.AR_TIP, null,null,null,null,null)
 		;
 		
 		private Mod111Key key;
@@ -108,41 +121,51 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 		private IValueIntializer initializer;
 		private IValueUniqueIntializer uniqueInitializer;
 		private String expression;
+		private String template;
 	
 		private Mod111KeyDAO(Mod111Key key
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueUniqueIntializer uniqueInitializer
-				, String expression) {
+				, String expression
+				, String template) {
 			this.key = key;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.uniqueInitializer = uniqueInitializer;
 			this.expression =  expression;
+			this.template =  template;
 		}
 		
-		
+		@Override
 		public Mod111Key getKey() {
 			return key;
 		}
+		@Override
 		public boolean acceptValue(Mod111 mod,IrpfBreakdown  br) {
 			return  acceptValue != null &&  acceptValue.accept(mod,br);
 		}
+		@Override
 		public void initialize(AONContext ctx,Mod111 mod,Map<Mod111Key,Set<String>> docs
 				,Map<Mod111Key,Set<String>> pdocs,IrpfBreakdown  br) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, docs, pdocs, br);
 			}
 		}
+		@Override
 		public void uniqueInitialize(AONContext ctx,Mod111 mod) {
 			if (uniqueInitializer != null) {
 				uniqueInitializer.initialize(ctx, mod);
 			}
 		}
+		@Override
 		public String getExpression() {
 			return expression;
 		}
-		
+		@Override
+		public String getTemplate() {
+			return template;
+		}
 	}
 
 	@Override
@@ -154,5 +177,25 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 	IMod111KeyDAO[] getKeys() {
 		return Mod111KeyDAO.values();
 	}
+
+	@Override
+	double getResult(Mod111 mod) {
+		return mod.getAmount(Mod111Key.AR_C87);
+	}
+
+	@Override
+	ComplementaryBeahaviour getComplementaryBehaviour(Mod111 mod) {
+		return  mod.isComplementary()
+			?ComplementaryBeahaviour.COMPLEMENTARY
+			:ComplementaryBeahaviour.REPLACEMENT;
+	}
+	
+	@Override
+	Mod111 initialize(AONContext ctx, Mod111 mod111) {
+		mod111.setComplementaryDeclarationAvailable(true);
+		mod111.setReplacementDeclarationAvailable(true);
+		return super.initializeModel(ctx, mod111);
+	}
+	
 
 }

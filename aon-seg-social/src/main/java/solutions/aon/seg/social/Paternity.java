@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -91,7 +92,7 @@ public class Paternity {
 			String reasonNameInput = "motivoMadreBiologica";
 			if(applicantType.equals(ApplicantType.OTRO_PROGENITOR)) {
 				reasonNameInput = "motivoOtroProgenitor";
-			} else if(applicantType.equals(ApplicantType.PRIMER_ADOPTANTE) || applicantType.equals(ApplicantType.SEGUNDO_ADOPTANTE)) {
+			} else if(Arrays.asList(ApplicantType.PRIMER_ADOPTANTE, ApplicantType.SEGUNDO_ADOPTANTE).contains(applicantType) ) {
 				reasonNameInput = "motivoAdoptantes";
 			}
 			HtmlSelect reasonSelect = formDatos.getSelectByName(reasonNameInput);

@@ -1692,6 +1692,7 @@ public abstract class ITWidget extends ResizeComposite {
     	};
     	
     	itDialog.setEmployeesList(getActiveEmployeesList());
+		itDialog.setIsUserComunica(isUserComunica());
     	itDialog.initConfirmationsTable();
 		itDialog.setModal(true);
     	itDialog.setAnimationEnabled(true);
@@ -1736,7 +1737,7 @@ public abstract class ITWidget extends ResizeComposite {
 				startLoading(true);
 				communicateITPart(itEmployee, it, part, s->{	
 					
-					getITCertificatePDF(itEmployee, it);
+//					getITCertificatePDF(itEmployee, it);
 					
 					normalizeITToSave();
 				

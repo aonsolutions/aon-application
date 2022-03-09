@@ -10,7 +10,7 @@ public enum ContractLeaveType {
 	RIESGO_LACTANCIA(9, "Riesgo durante la lactancia"),
 	ACCIDENTE_NO_LABORAL(2, "Accidente no laboral"),
 	ENFERMEDAD_COMUN_CARENCIA(5, "Enfermedad com\u00fan periodo de carencia"),
-	ENFERMEDAD_COMUN_PRESTACION(3,"Enfermedad com\u00fan, prestación profesional (COVID-19)"),
+	ENFERMEDAD_COMUN_PRESTACION(3,"Enfermedad com\u00fan, prestaci\u00f3n profesional (COVID-19)"),
 	;
 	
 //  TGSS

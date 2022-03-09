@@ -46,7 +46,7 @@ public class Model111Araba2016 extends Model111Base {
 		
 		table.setWidget(row, 1, new AonBoxLabel(Mod111Key.AR_907.getBox()));
 		final CheckBox w907 = new CheckBox();
-		w907.setEnabled(getModel().isNotFinished());
+		w907.setEnabled(getModel().isEditable());
 		w907.setValue(ar907.getAmount() == 1);
 		w907.addClickHandler(event -> {
 			ar907.setAmount(w907.getValue().booleanValue()?1.0:0.0);
@@ -64,7 +64,7 @@ public class Model111Araba2016 extends Model111Base {
 		
 		table.setWidget(row, 1, new AonBoxLabel(Mod111Key.AR_908.getBox()));
 		final ListBox w908 = new ListBox();
-		w908.setEnabled(getModel().isNotFinished());
+		w908.setEnabled(getModel().isEditable());
 		w908.addItem("---");
 		w908.addItem(AON.MSG.preInsolvencyState());
 		w908.addItem(AON.MSG.postInsolvencyState());
@@ -85,7 +85,7 @@ public class Model111Araba2016 extends Model111Base {
 		
 		table.setWidget(row, 1, new AonBoxLabel(Mod111Key.AR_909.getBox()));
 		final AonDateBox w909 = new AonDateBox();
-		w909.setEnabled(getModel().isNotFinished());
+		w909.setEnabled(getModel().isEditable());
 		if (AonStringUtils.isNotEmpty( ar909.getDescription() ) ) {
 			w909.setValue( w909.parse(ar909.getDescription() , false) );
 		}

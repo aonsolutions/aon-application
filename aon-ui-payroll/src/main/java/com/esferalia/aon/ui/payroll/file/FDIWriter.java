@@ -20,10 +20,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Enterprise;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.fdi.FDI;
@@ -36,7 +34,6 @@ import com.esferalia.aon.file.payroll.fdi.data.ODP;
 import com.esferalia.aon.file.payroll.fdi.data.TRA;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
-import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.DischargeCause;
@@ -46,9 +43,12 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T34;
 import com.esferalia.aon.payroll.enumeration.ss.T35;
 import com.esferalia.aon.payroll.enumeration.ss.T36;
-import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class FDIWriter implements Serializable {
@@ -292,7 +292,7 @@ public class FDIWriter implements Serializable {
 		if( StringUtils.isBlank(detail.getCollegeNumber()) && StringUtils.isBlank(detail.getCias()) ){
 			AonUtil.addErrorMessage("Ausencia de nº de colegiado o CIAS para el parte de "+detail.getContractLeave().getContract().getPerson().getFullName());
 		}
-		dit.setNumeroColegiado(detail.getCollegeNumber());
+		dit.setNumeroColegiado(AonStringUtils.isBlank(detail.getCollegeNumber()) ? "00000000" : detail.getCollegeNumber());
 		dit.setCias(detail.getCias());
 		if (StringUtils.isNotBlank(dit.getNumeroColegiado())) {
 			String prov = dit.getNumeroColegiado().substring(0, 2);
@@ -324,18 +324,25 @@ public class FDIWriter implements Serializable {
 		DEC dec = new DEC();
 		// TODO DAR SOPORTE A LA OBTENCION DE LAS BASES Y DIAS COTIZADOS
 		String code = getContractCode(detail.getContractLeave().getContract()).getValue();
-		Double baseReg = getBaseReg(detail);
-		if(baseReg==null){
-			baseReg = 0.0;
-			AonUtil.addErrorMessage("No se ha encontrado la base reguladora de " 
-					+ detail.getContractLeave().getContract().getPerson().getFullName());
-		}
+		
 		if(code.startsWith("1") || code.startsWith("4")){
-			dec.setBaseCotizacion( baseReg * 30 );
-			dec.setDiasCotizados( 30 );
+			Double baseReg = getBaseReg(detail);
+			if(baseReg==null){
+				baseReg = 0.0;
+				AonUtil.addErrorMessage("No se ha encontrado la base reguladora de " 
+						+ detail.getContractLeave().getContract().getPerson().getFullName());
+			}
+			dec.setBaseCotizacion( baseReg );
+			dec.setDiasCotizados( PayrollUtils.getInstance().getDiasCotizados(detail.getContractLeave().getContract(), detail.getDate()) );
 		} else {
-			dec.setSumaBasesCotizacion( baseReg * 30 );
-			dec.setSumaDiasCotizados( 30 );
+			Double baseRegPartial = getBaseRegPartial(detail);
+			if(baseRegPartial==null){
+				baseRegPartial = 0.0;
+				AonUtil.addErrorMessage("No se ha encontrado la base reguladora de " 
+						+ detail.getContractLeave().getContract().getPerson().getFullName());
+			}
+			dec.setSumaBasesCotizacion( baseRegPartial );
+			dec.setSumaDiasCotizados( PayrollUtils.getInstance().getDiasCotizadosPartial(detail.getContractLeave().getContract(), detail.getDate()) );
 		}
 		dec.setCotizacionAnteriorHorasExtras(0.0);
 		dec.setCotizacionAnteriorOtros(0.0);
@@ -363,20 +370,55 @@ public class FDIWriter implements Serializable {
 			base = detail.getContractLeave().getDailyCgcBase();
 		}
 		try {
-			if(base==null){
-				ISalary salary = PayrollUtils.getInstance().getSalary(detail.getContractLeave().getContract(), detail.getDate(), detail.getDate());
-				if(salary!=null){
-					Date start = DateUtils.setDays(detail.getDate(), 1);
-					Date end = DateUtils.addMonths(detail.getDate(), 1);
-					end = DateUtils.setDays(end, 1);
-					end = DateUtils.addDays(end, -1);
-					List<SalaryData> list = SEPEUtils.getInstance()
-							.getSalaryDataList(salary, start, end,
-									ContextVariable.REGULATORY_BASE.getName());
-					if(list!=null && !list.isEmpty()){
-						base = Double.valueOf(list.get(0).getExpression());
-					}
-				} else {
+			if(base==null) {
+				try {
+					base = PayrollUtils.getInstance().getBaseReg(detail.getContractLeave().getContract(), detail.getDate(), detail.getContractLeave().getType());
+				} catch (Exception e) {
+					AonUtil.addErrorMessage("No hay nomina de la que obtener la base reguladora de " 
+							+ detail.getContractLeave().getContract().getPerson().getFullName());
+				}
+			}
+//			
+//			if(base==null){
+//				ISalary salary = PayrollUtils.getInstance().getSalary(detail.getContractLeave().getContract(), detail.getDate(), detail.getDate());
+//				if(salary!=null){
+//					Date start = DateUtils.setDays(detail.getDate(), 1);
+//					Date end = DateUtils.addMonths(detail.getDate(), 1);
+//					end = DateUtils.setDays(end, 1);
+//					end = DateUtils.addDays(end, -1);
+//					List<SalaryData> list = SEPEUtils.getInstance()
+//							.getSalaryDataList(salary, start, end,
+//									ContextVariable.REGULATORY_BASE.getName());
+//					if(list!=null && !list.isEmpty()){
+//						base = Double.valueOf(list.get(0).getExpression());
+//					} else {
+//						AonUtil.addErrorMessage("Get Base Reguladora\nContract: " +  detail.getContractLeave().getContract().getId() + "\nDate: " + detail.getDate());
+//						base = PayrollUtils.getInstance().getBaseReg(detail.getContractLeave().getContract());
+//					}
+//				} else {
+//					AonUtil.addErrorMessage("No hay nomina de la que obtener la base reguladora de " 
+//							+ detail.getContractLeave().getContract().getPerson().getFullName());
+//				}
+//			}
+		} catch (Exception e) {
+			AonUtil.addErrorMessage("ERROR al obtener la base reguladora de " 
+					+ detail.getContractLeave().getContract().getPerson().getFullName());
+		}
+		return base;
+	}
+	
+	private Double getBaseRegPartial(ContractLeaveDetail detail) {
+		Double base = null;
+		if(detail.getContractLeave().getType()==LeaveType.OCCUPATIONAL_DISEASE){
+			base = detail.getContractLeave().getDailyCgpBase();
+		} else {
+			base = detail.getContractLeave().getDailyCgcBase();
+		}
+		try {
+			if(base==null) {
+				try {
+					base = PayrollUtils.getInstance().getBaseRegPartial(detail.getContractLeave().getContract(), detail.getDate(), detail.getContractLeave().getType());
+				} catch (Exception e) {
 					AonUtil.addErrorMessage("No hay nomina de la que obtener la base reguladora de " 
 							+ detail.getContractLeave().getContract().getPerson().getFullName());
 				}

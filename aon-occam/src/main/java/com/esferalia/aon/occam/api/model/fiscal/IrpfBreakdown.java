@@ -3,14 +3,14 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class IrpfBreakdown implements Serializable{
+public class IrpfBreakdown implements Serializable {
 	
 	private static final long serialVersionUID = 8600299724576523607L;
 	
@@ -25,8 +25,7 @@ public class IrpfBreakdown implements Serializable{
 	private Date issueDate;
 	private boolean fromSalary;
 	private boolean insidePeriod;
-	
-	// ------------------- facturas
+	private Integer salary;
 	private InvoiceType invoiceType;
 	private Integer invoice;
 	private String series;
@@ -112,7 +111,13 @@ public class IrpfBreakdown implements Serializable{
 		this.fromSalary = fromSalary;
 		return this;
 	}
-	
+	public Integer getSalary() {
+		return salary;
+	}
+	public IrpfBreakdown setSalary(Integer salary) {
+		this.salary = salary;
+		return this;
+	}
 	public boolean isInsidePeriod() {
 		return insidePeriod;
 	}
@@ -120,7 +125,6 @@ public class IrpfBreakdown implements Serializable{
 		this.insidePeriod = insidePeriod;
 		return this;
 	}
-	// ----------------------------------------------------------------
 	public InvoiceType getInvoiceType() {
 		return invoiceType;
 	}
@@ -242,19 +246,8 @@ public class IrpfBreakdown implements Serializable{
 	}
 	
 	public String getDocumentNumber() {
-		String documentNumber = ((InvoiceType.SALES == getInvoiceType()) ? 
-				"E" 
-				: (InvoiceType.UNDEDUCTIBLE == getInvoiceType()) 
-				? "G" 
-				: "R") + "-";
-		if (!AonStringUtils.isEmpty(getSeries())) {
-			documentNumber += series + "/";
-		}
-		documentNumber += AonStringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-		return documentNumber;
+		return FinanceUtil.getDocumentNumber(getInvoiceType(), getSeries(), getNumber());
 	}
-	
-	//
 	public boolean isSalaryRetention() {
 		return isFromSalary() && !isInKind();
 	}
