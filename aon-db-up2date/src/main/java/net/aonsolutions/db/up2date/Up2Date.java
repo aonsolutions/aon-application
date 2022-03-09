@@ -19,26 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.AddEpigrafe922;
 import net.aonsolutions.db.up2date.finance.FsModelInvoiceDrop;
-import net.aonsolutions.db.up2date.finance.InsertInvoiceInfoLroe;
-import net.aonsolutions.db.up2date.finance.InvoiceBatchCreation;
-import net.aonsolutions.db.up2date.fiscal.AlterFsModelResult;
 import net.aonsolutions.db.up2date.fiscal.AlcatrazCreation;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod111Result;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod115Result;
-import net.aonsolutions.db.up2date.irpf.IrpfQuotasCheck;
-import net.aonsolutions.db.up2date.irpf.IrpfQuotasInsert;
-import net.aonsolutions.db.up2date.payroll.AgreementOwnerUpdate;
-import net.aonsolutions.db.up2date.payroll.AlterAgreement4Owner;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
-import net.aonsolutions.db.up2date.tgss.SMI2022Update;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
-import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
-import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
+import net.aonsolutions.db.up2date.tgss.SMI2022Update;
 import net.aonsolutions.db.up2date.user.CertificateDomainFix;
 
 
@@ -239,7 +224,7 @@ public class Up2Date {
     		//AlcatrazCreation.ALCATRAZ_CREATION,
     		//FsModelInvoiceDrop.FS_MODEL_INVOICE_DROP,
     		//AlterFsModelResult.ALTER_FS_MODEL_RESULT,
-    		//RefreshMod111Result.REFRESH_MOD111_RESULT,
+//    		RefreshMod111Result.REFRESH_MOD111_RESULT,
     		RefreshMod115Result.REFRESH_MOD115_RESULT,
     };
     
