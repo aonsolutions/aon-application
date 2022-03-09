@@ -82,10 +82,10 @@ public class ConsumptionPage extends Composite{
 	Map<String, String> hwMap;
 	
 	List<Hotel> hotels;
-	LinkedList<TemplateInfo> templateList;
+	List<TemplateInfo> templateList;
 	Boolean detail = false;
 	
-	public ConsumptionPage(AonData aonData, LinkedList<TemplateInfo> templateList) {
+	public ConsumptionPage(AonData aonData, List<TemplateInfo> templateList) {
 		this.aonData = aonData;
 		this.templateList = templateList;
 		titleLabel = new Label();
@@ -120,10 +120,10 @@ public class ConsumptionPage extends Composite{
 	
 	private void init() {
 		
-	item.getProductCategories(getDomain(), getUser(), new AsyncCallback<LinkedList<ProductCategory>>() {
+	item.getProductCategories(getDomain(), getUser(), new AsyncCallback<List<ProductCategory>>() {
 		
 		@Override
-		public void onSuccess(LinkedList<ProductCategory> result) {
+		public void onSuccess(List<ProductCategory> result) {
 			categoryListBox.addItem("-", "0");
 			result.stream().forEach(c -> {				
 				categoryListBox.addItem(c.getName(), c.getId().toString());
@@ -186,10 +186,10 @@ public class ConsumptionPage extends Composite{
 			}
 		});
 
-		item.getWorkplacesToConsumption(getDomain(), getUser(), new AsyncCallback<LinkedList<Hotel>>() {
+		item.getWorkplacesToConsumption(getDomain(), getUser(), new AsyncCallback<List<Hotel>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Hotel> result) {
+			public void onSuccess(List<Hotel> result) {
 				hotels = result;
 				for(Hotel h : result){
 					hotelBox.addItem(h.getName(), h.getId().toString());
@@ -242,10 +242,10 @@ public class ConsumptionPage extends Composite{
 					Hotel hotel = hotels.get(index);
 					if(hotel.getWarehouses() == null || hotel.getWarehouses().isEmpty()){
 						indexAux = index;
-						item.getWarehousesToConsumption(getDomain(), getUser(), hotel.getId(), new AsyncCallback<LinkedList<Warehouse>>() {
+						item.getWarehousesToConsumption(getDomain(), getUser(), hotel.getId(), new AsyncCallback<List<Warehouse>>() {
 							Integer index = indexAux;
 							@Override
-							public void onSuccess(LinkedList<Warehouse> result) {
+							public void onSuccess(List<Warehouse> result) {
 								Hotel hotel = hotels.get(index);
 								hotel.setWarehouses(result);
 								warehouseCheckBox.setValue(map.get(hotel.getId().toString()));

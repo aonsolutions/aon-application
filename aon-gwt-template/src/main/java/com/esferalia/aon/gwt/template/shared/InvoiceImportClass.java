@@ -20,6 +20,7 @@ public class InvoiceImportClass implements IsSerializable {
 	String ref;
 	String nif;
 	String name;
+	String registryAccount;
 	String third;
 	String concept;
 	String address;
@@ -93,6 +94,15 @@ public class InvoiceImportClass implements IsSerializable {
 
 	public InvoiceImportClass setName(String name) {
 		this.name = name;
+		return this;
+	}
+	
+	public String getRegistryAccount() {
+		return registryAccount;
+	}
+	
+	public InvoiceImportClass setRegistryAccount(String registryAccount) {
+		this.registryAccount = registryAccount;
 		return this;
 	}
 
@@ -354,7 +364,7 @@ public class InvoiceImportClass implements IsSerializable {
 		return this;
 	}
 	
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return getType() == null && getDate() == null && getRef() == null
 			&& getSerie() == null && getNumber() == null && getName() == null
 			&& getNif() == null && getThird() == null && getConcept() == null

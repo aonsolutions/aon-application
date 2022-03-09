@@ -136,7 +136,7 @@ public class DownloadFeeServlet extends HttpServlet {
         		} else if(IConstants.FECHA_FIN.equalsIgnoreCase(title) && fee.getEndDate() != null) {
         			cell.setCellValue(fee.getEndDate());
         			cell.setCellStyle(dateStyle);
-        		} else if((IConstants.FECHA_FACTURACION.equalsIgnoreCase(title) || IConstants.FECHA_FACTURACIÓN.equalsIgnoreCase(title))&& fee.getBillingDate() != null) {
+        		} else if((IConstants.FECHA_FACTURACION.equalsIgnoreCase(title) || IConstants.FECHA_FACTURACION2.equalsIgnoreCase(title))&& fee.getBillingDate() != null) {
         			cell.setCellValue(fee.getBillingDate());
         			cell.setCellStyle(dateStyle);
         		} else if(IConstants.PERIODO.equalsIgnoreCase(title)) {
@@ -147,12 +147,12 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getSeller().getName());
         		} else if(IConstants.CENTRO_DE_TRABAJO.equalsIgnoreCase(title) || IConstants.CENTRO_TRABAJO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getWorkplace().getDescription());
-        		} else if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACIÓN.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)
-        				|| IConstants.GRUPO_DE_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_DE_FACTURACIÓN.equalsIgnoreCase(title)) {
+        		} else if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACION2.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)
+        				|| IConstants.GRUPO_DE_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_DE_FACTURACION2.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getInvoicingGroup().getDescription());
         		} else if(IConstants.CONFIDENCIAL.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.isConfidential());
-        		} else if(IConstants.DESCRIPCION.equalsIgnoreCase(title) || IConstants.DESCRIPCIÓN.equalsIgnoreCase(title)) {
+        		} else if(IConstants.DESCRIPCION.equalsIgnoreCase(title) || IConstants.DESCRIPCION2.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getDescription());
         		} else if(IConstants.EXPEDIENTE.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getProject().getName());
@@ -162,13 +162,13 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getItem().getDetail2());
         		} else if(IConstants.DETALLE_3.equalsIgnoreCase(title) || IConstants.DETALLE3.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getItem().getDetail3());
-        		} else if(IConstants.CODIGO_DE_BARRAS.equalsIgnoreCase(title) || IConstants.CÓDIGO_DE_BARRAS.equalsIgnoreCase(title) || IConstants.BARCODE.equalsIgnoreCase(title)
-        				|| IConstants.CODIGO_BARRAS.equalsIgnoreCase(title) || IConstants.CÓDIGO_BARRAS.equalsIgnoreCase(title)) {
+        		} else if(IConstants.CODIGO_DE_BARRAS.equalsIgnoreCase(title) || IConstants.CODIGO_DE_BARRAS2.equalsIgnoreCase(title) || IConstants.BARCODE.equalsIgnoreCase(title)
+        				|| IConstants.CODIGO_BARRAS.equalsIgnoreCase(title) || IConstants.CODIGO_BARRAS2.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getItem().getBarcode());
-        		} else if(IConstants.NÚMERO_DE_SERIE.equalsIgnoreCase(title) || IConstants.NUMERO_DE_SERIE.equalsIgnoreCase(title) || IConstants.SERIAL_NUMBER.equalsIgnoreCase(title)
-        				|| IConstants.NÚMERO_SERIE.equalsIgnoreCase(title) || IConstants.NUMERO_SERIE.equalsIgnoreCase(title)) {
+        		} else if(IConstants.NUMERO_DE_SERIE2.equalsIgnoreCase(title) || IConstants.NUMERO_DE_SERIE.equalsIgnoreCase(title) || IConstants.SERIAL_NUMBER.equalsIgnoreCase(title)
+        				|| IConstants.NUMERO_SERIE2.equalsIgnoreCase(title) || IConstants.NUMERO_SERIE.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getItem().getSerialNumber());
-        		} else if(IConstants.LINEA.equalsIgnoreCase(title) || IConstants.LÍNEA.equalsIgnoreCase(title)) {
+        		} else if(IConstants.LINEA.equalsIgnoreCase(title) || IConstants.LINEA2.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getLine());
         		}
         	}

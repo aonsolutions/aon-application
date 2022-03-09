@@ -262,10 +262,10 @@ public class ProductTemplates  extends ResizeComposite{
 		ecommerce();
 	}
 	public void ecommerce(){
-		item.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
+		item.getSellerList(getDomain(), getUser(), new AsyncCallback<List<Seller>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Seller> result) {
+			public void onSuccess(List<Seller> result) {
 				importEcommerce(result, null);				
 			}
 			
@@ -274,10 +274,10 @@ public class ProductTemplates  extends ResizeComposite{
 		});
 	}
 	public void ecommerce(final EcommerceProduct object){
-		item.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
+		item.getSellerList(getDomain(), getUser(), new AsyncCallback<List<Seller>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Seller> result) {
+			public void onSuccess(List<Seller> result) {
 				importEcommerce(result, object);				
 			}
 			
@@ -380,10 +380,10 @@ public class ProductTemplates  extends ResizeComposite{
 	}
 	
 	private void exportEcommerce(){
-		item.getTypeList(getDomain(), getUser(), new AsyncCallback<LinkedList<String>>() {
+		item.getTypeList(getDomain(), getUser(), new AsyncCallback<List<String>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<String> result) {
+			public void onSuccess(List<String> result) {
 				Dialog d = new Dialog("Exportar Productos Ecommerce","Exportar",true,"Cancelar",true,"exportEcommerce");
 				d.setUrl(GWT.getModuleBaseURL());
 				d.setTypeList(result);

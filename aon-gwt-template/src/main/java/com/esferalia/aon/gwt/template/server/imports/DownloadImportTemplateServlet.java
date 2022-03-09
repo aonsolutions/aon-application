@@ -53,16 +53,16 @@ public class DownloadImportTemplateServlet extends HttpServlet {
         columnList.add(IConstants.CUENTA_CONTABLE);
         columnList.add(IConstants.CIF);
         columnList.add(IConstants.NOMBRE);
-        columnList.add(IConstants.DIRECCIÓN);
-        columnList.add(IConstants.CÓDIGO_POSTAL);
+        columnList.add(IConstants.DIRECCION2);
+        columnList.add(IConstants.CODIGO_POSTAL2);
         columnList.add(IConstants.CIUDAD);
         columnList.add(IConstants.PROVINCIA);
-        columnList.add(IConstants.PAÍS);
+        columnList.add(IConstants.PAIS2);
         columnList.add(IConstants.IBAN);
         columnList.add(IConstants.CCC);
         columnList.add(IConstants.FORMA_DE_PAGO);
         columnList.add(IConstants.EMAIL);
-        columnList.add(IConstants.TELÉFONO);
+        columnList.add(IConstants.TELEFONO2);
         return columnList;
 	}
 	

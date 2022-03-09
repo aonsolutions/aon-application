@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.common.shared.AonData;
@@ -72,8 +73,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	HandlerRegistration handler;
 	TemplateInfo ti;
 	Dialog d;
-	LinkedList<TemplateInfo> tlist;
-	LinkedList<Warehouse> w;
+	List<TemplateInfo> tlist;
+	List<Warehouse> w;
 	LinkedList<Series> series;
 	Boolean closed;
 	
@@ -229,9 +230,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				if(lb.getSelectedItemText().equalsIgnoreCase(MSG.product()))
 					 importProduct(dialog.getUrl(),dialog.getTemplateList());
 				else if(lb.getSelectedItemText().equalsIgnoreCase(MSG.stock()))
-					item.getWarehouses(getDomain(), getUser(), new AsyncCallback<LinkedList<Warehouse>>() {
+					item.getWarehouses(getDomain(), getUser(), new AsyncCallback<List<Warehouse>>() {
 						@Override
-						public void onSuccess(LinkedList<Warehouse> result) {
+						public void onSuccess(List<Warehouse> result) {
 							dialog.setWarehouses(result);
 							importStock(dialog);
 						}
@@ -416,7 +417,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void exportProposal(String url, LinkedList<TemplateInfo> templates){
+	private void exportProposal(String url, List<TemplateInfo> templates){
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -476,7 +477,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 
 	
-	private void importProposal(String url, LinkedList<TemplateInfo> templates) {
+	private void importProposal(String url, List<TemplateInfo> templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -498,7 +499,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void exportCatalogue(LinkedList<TemplateInfo> templateList) {
+	private void exportCatalogue(List<TemplateInfo> templateList) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -514,10 +515,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label(MSG.template()));
 		flex_table.setWidget(0, 1, lb0);
 		
-		item.getWorkplaces(getDomain(), getUser(), new AsyncCallback<LinkedList<WorkPlace>>() {
+		item.getWorkplaces(getDomain(), getUser(), new AsyncCallback<List<WorkPlace>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<WorkPlace> result) {
+			public void onSuccess(List<WorkPlace> result) {
 
 				ListBox lb1 = new ListBox();
 				lb1.addItem("-");
@@ -529,10 +530,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					ListBox lb = lbaux;
 					@Override
 					public void onChange(ChangeEvent event) {
-						item.getDepartments(getDomain(), getUser(), lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<LinkedList<Department>>() {
+						item.getDepartments(getDomain(), getUser(), lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<List<Department>>() {
 							
 							@Override
-							public void onSuccess(LinkedList<Department> result) {
+							public void onSuccess(List<Department> result) {
 								ListBox lb2 = new ListBox();
 								lb2.addItem("-");
 								for(Department w : result){
@@ -627,7 +628,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		scroll.add(vp);
 	}
 	
-	private void exportProduct(LinkedList<TemplateInfo> templates){	
+	private void exportProduct(List<TemplateInfo> templates){	
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -643,15 +644,15 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void exportFee(LinkedList<TemplateInfo> templates){
+	private void exportFee(List<TemplateInfo> templates){
 		//TODO 
 	}
 	
-	private void exportTransferStock(LinkedList<TemplateInfo> templates){
+	private void exportTransferStock(List<TemplateInfo> templates){
 		//TODO 
 	}
 	
-	private void exportStock(LinkedList<TemplateInfo> templates){
+	private void exportStock(List<TemplateInfo> templates){
 		//TODO 
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
@@ -711,7 +712,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void importProduct(String url,LinkedList<TemplateInfo> templates) {
+	private void importProduct(String url, List<TemplateInfo> templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -730,10 +731,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(1, 0, new Label(MSG.file()));
 		flex_table.setWidget(1, 1, upload);
 		
-		item.getProductRoles(getDomain(), getUser(), new AsyncCallback<LinkedList<String>>() {
+		item.getProductRoles(getDomain(), getUser(), new AsyncCallback<List<String>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<String> result) {
+			public void onSuccess(List<String> result) {
 				ListBox lb2 = new ListBox();
 				lb2.addItem(MSG.purchaseSale(), "0");
 				for (String role : result) {
@@ -754,7 +755,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void importFee(String url, LinkedList<TemplateInfo> templates) {
+	private void importFee(String url, List<TemplateInfo> templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -847,10 +848,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			public void onChange(ChangeEvent event) {
 				ListBox lb = (ListBox)flex_table.getWidget(1, 1);
 				if(!lb.getSelectedItemText().equals("-")){
-				item.getSeries(getDomain(), getUser(), lb.getSelectedItemText(), new AsyncCallback<LinkedList<Series>>() {
+				item.getSeries(getDomain(), getUser(), lb.getSelectedItemText(), new AsyncCallback<List<Series>>() {
 					
 					@Override
-					public void onSuccess(LinkedList<Series> result) {
+					public void onSuccess(List<Series> result) {
 						
 						ListBox lb4 = (ListBox) flex_table.getWidget(2, 1);
 						String w2 = lb4.getSelectedItemText();
@@ -859,10 +860,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 							
 							series = new LinkedList<Series>();
 							series.addAll(result);
-							item.getSeries(getDomain(), getUser(), w2, new AsyncCallback<LinkedList<Series>>() {
+							item.getSeries(getDomain(), getUser(), w2, new AsyncCallback<List<Series>>() {
 								LinkedList<Series> series2 = series;
 								@Override
-								public void onSuccess(LinkedList<Series> result) {
+								public void onSuccess(List<Series> result) {
 									
 									for (Series series : result) {
 										if(!esta(series, series2)){
@@ -915,21 +916,21 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			@Override
 			public void onChange(ChangeEvent event) {
 				ListBox lb = (ListBox)flex_table.getWidget(2, 1);
-				item.getSeries(getDomain(), getUser(), lb.getSelectedItemText(), new AsyncCallback<LinkedList<Series>>() {
+				item.getSeries(getDomain(), getUser(), lb.getSelectedItemText(), new AsyncCallback<List<Series>>() {
 					
 					@Override
-					public void onSuccess(LinkedList<Series> result) {
+					public void onSuccess(List<Series> result) {
 						
 						ListBox lb2 = (ListBox) flex_table.getWidget(1, 1);
 						String w2 = lb2.getSelectedItemText();
 						
 						if(!w2.equals("-")){
-							series = new LinkedList<Series>();
+							series = new LinkedList<>();
 							series.addAll(result);
-							item.getSeries(getDomain(), getUser(), w2, new AsyncCallback<LinkedList<Series>>() {
+							item.getSeries(getDomain(), getUser(), w2, new AsyncCallback<List<Series>>() {
 								LinkedList<Series> series2 = series;
 								@Override
-								public void onSuccess(LinkedList<Series> result) {
+								public void onSuccess(List<Series> result) {
 									for (Series series : result) {
 										if(!esta(series, series2)){
 											series2.add(series);
