@@ -354,19 +354,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));
 		markAsFinishedButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.FINISHED));
 		markAsSentButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.SENT));
-				
-//		markAsPendingButton.setVisible(!model.isNew() &&
-//				(model.getStatus() == FiscalStatus.FINISHED 
-//				|| model.getStatus() == FiscalStatus.BATCHED
-//				|| model.getStatus() == FiscalStatus.SENT
-//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| model.getStatus() == FiscalStatus.BLOCKED));
-//		markAsFinishedButton.setVisible(!model.isNew() &&
-//				(model.getStatus() == FiscalStatus.PENDING
-//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| model.getStatus() == FiscalStatus.MISSING));
-//		markAsSentButton.setVisible(!model.isNew() &&
-//				(model.getStatus() == FiscalStatus.FINISHED));
 	}
 	
 	private void styleStatusLabel(Mod111 mod111) {

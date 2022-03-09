@@ -130,12 +130,5 @@ public class Model115AEAT extends Model115Base {
 		admonPanel = new FiscalModelAdmonPanel<>(cbk);
 		tabPanel.add( admonPanel, AON.MSG.administrationName(getModel().getAdministration()));		
 	}
-	
-	@Override
-	void decorateDeclarationTab() {
-		if (receiptBox != null) {
-			receiptBox.setValue( getModel().getNumber() );
-		}
-	}
 
 }

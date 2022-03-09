@@ -4,7 +4,6 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVis
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.watson.AonError;
 
 public class Model111ScriptProvider {
 	private Model111ScriptProvider() {
