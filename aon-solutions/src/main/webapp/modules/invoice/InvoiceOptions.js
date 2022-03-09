@@ -130,6 +130,18 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.PAYMENT
   }
 
+  export const VAT_PANEL = {
+    id: CONSTANT.VAT_PANEL.initCap(),
+    name: MSG.VAT_PANEL,
+    icon: MATERIAL_ICONS.PAYMENT
+  }
+
+  export const RETENTION_PANEL = {
+    id: CONSTANT.RETENTION_PANEL.initCap(),
+    name: MSG.RETENTION_PANEL,
+    icon: MATERIAL_ICONS.PAYMENT
+  }
+
   export const INVEST = {
     id: CONSTANT.INVEST_ASSET.initCap(),
     name: MSG.INVEST_ASSET,
