@@ -50,12 +50,15 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 		exprCtx.getVariable(ContextVariable.CONTRACT_START, startDate, endDate);
 		Date contractStart = (Date) contractStartVar.getValue(contractStartVar.getPeriod());
 
+		Date lastStartDate = Period.max(startDate, contractStart);
+		
 		final long parentDays = rs
 				.getLong(SQLContractSalaryCalculatorContext.CLEAVE_SQL_PARENT_DAYS)
-				+ (leaveStart.before(startDate) ? CommonUtil
-						.getDaysBetweenDates(leaveStart, startDate) : 0)
-				+ (leaveStart.before(contractStart) ? CommonUtil
-						.getDaysBetweenDates(leaveStart, contractStart) : 0);
+				+ (leaveStart.before(lastStartDate) ? CommonUtil
+						.getDaysBetweenDates(leaveStart, lastStartDate) : 0)
+//				+ (leaveStart.before(contractStart) ? CommonUtil
+//						.getDaysBetweenDates(leaveStart, contractStart) : 0)
+				;
 		
 		LeaveType type = LeaveType.values()[rs
 				.getInt(ContractLeaveColumns.TYPE)];

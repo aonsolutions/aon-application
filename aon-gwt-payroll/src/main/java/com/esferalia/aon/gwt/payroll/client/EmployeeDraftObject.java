@@ -333,7 +333,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	public void setNationality(String nationality) {
 		add(employeeData::setNationality, 
-				employeeData.getNationality(), 
+				employeeData.getNationalityCode(), 
 				nationality );
 		
 		employeeData.setNationality(nationality);	
