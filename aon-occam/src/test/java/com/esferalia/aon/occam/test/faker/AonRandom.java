@@ -73,6 +73,9 @@ public class AonRandom {
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) >= threshold;
 	}
+    public static String uuid( int maxLength ) {
+    	return AonStringUtils.substring(faker.internet().uuid(),0 ,maxLength);
+    }
 
     public static String string( int nullThreshold, int minLength, int maxLength ) {
     	return ( gt(nullThreshold) )

@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115.Model115Callback;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -91,8 +92,14 @@ class Model115Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 	
 	
 	private Widget getToolbarPanel(Model115Callback cbk) {
-		AonToolbar toolbar = new AonToolbar( AON.MSG.retentionAccount());
+		AonToolbar toolbar = new AonToolbar( AON.MSG.fiscalModelDescriptionlong( FiscalModelType.M115));
 		
+		if (cbk.getOptions().isBackButtonVisible() && cbk.getOptions().hasExternalCallback()) {
+			final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.backAction(),AON.CSS.aonIconBack());
+			cancelButton.addClickHandler(event ->  cbk.getOptions().getExternalCallback().onExit( null ) );
+			toolbar.add(cancelButton);
+		}
+
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler( event -> cbk.onNew());
 		toolbar.add(newButton);
@@ -117,6 +124,7 @@ class Model115Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		, RST(AON.MSG.result()		, 100,AON.CSS.aonTextRight())
 	    , ACT(AonStringUtils.EMPTY	, 100,AON.CSS.aonTextCenter())
 	    , VST(AON.MSG.financeStatus(),100,AON.CSS.aonTextCenter())
+	    , ACC(AON.MSG.recordedAbbr() ,20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -193,17 +201,27 @@ class Model115Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod115.getStatus()) );
 			row.add( statusCell );
 			
+			InlineLabel acc = new InlineLabel();
+			acc.setTitle( AON.MSG.recorded());
+			acc.setStyleName(AON.CSS.aonIconLabel());
+			acc.addStyleName( mod115.isRecorded()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
+			
+			InlineLabel declarationResult = new InlineLabel();
+			if (mod115.getDeclarationResult() != null) {
+				declarationResult.setText(AON.FMT.format(mod115.getDeclarationResult()));
+			}
 			row.addCell( comp , AON.CSS.aonTextCenter())
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod115.getDocument()))
 				.addCell( new InlineLabel(mod115.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod115.getResult())), AON.CSS.aonTextRight())
-				.addCell( new InlineLabel(mod115.getDeclarationType() == null ? "" : mod115.getDeclarationType().getDescription()))
+				.addCell( declarationResult, AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod115.getDeclarationResultType() == null ? "" : mod115.getDeclarationResultType().getDescription()))
 				.addCell( new InlineLabel(
 						(mod115.getFinance() != null && mod115.getFinance().getFinanceStatus() != null)
 							?mod115.getFinance().getFinanceStatus().getDescription()
 							:""
 						), AON.CSS.aonTextCenter())
+				.addCell( acc , AON.CSS.aonTextCenter())
 				;
 		}
 		

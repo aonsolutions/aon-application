@@ -15,6 +15,7 @@ public class Mod115 extends FiscalModel implements Serializable {
 		setModel(FiscalModelType.M115);
 	}
 	
+	@Override
 	public boolean isComplementaryDeclarationAvailable() {
 		if (getAdministration() == null) return false;
 		else if (isAEAT()) return true;
@@ -25,6 +26,7 @@ public class Mod115 extends FiscalModel implements Serializable {
 		return false;
 	}
 
+	@Override
 	public boolean isReplacementDeclarationAvailable() {
 		if (getAdministration() == null) return false;
 		else if (isAraba()) return true;
@@ -35,11 +37,13 @@ public class Mod115 extends FiscalModel implements Serializable {
 		return false;
 	}
 	
+	@Override
 	public boolean isReplacedNumberAvailable() {
 		if (getAdministration() == null) return false;
 		return  (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
 	}
 	
+	@Override
 	public double getResult() {
 		if (getAdministration() == null) return 0;
 		else if (isAraba()) return getAmount(Mod115Key.AR_C11);
@@ -50,6 +54,7 @@ public class Mod115 extends FiscalModel implements Serializable {
 		return 0;
 	}
 	
+	@Override
 	public Mod115Key getDeclarationTypeKey() {
 		if (getAdministration() == null) return null;
 		else if (isAraba()) return Mod115Key.AR_TIP;
@@ -60,6 +65,7 @@ public class Mod115 extends FiscalModel implements Serializable {
 		return null;
 	}
 	
+	@Override
 	public void setDefaultDeclarationType(){
 		if (AonMathUtils.isGreatherThanZero(getResult() )) {
 			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
