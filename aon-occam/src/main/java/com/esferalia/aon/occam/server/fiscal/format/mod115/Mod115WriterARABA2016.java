@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod115;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -21,9 +21,10 @@ import org.w3c.dom.Element;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer.IMod115Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer.IMod115Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -178,7 +179,7 @@ public class Mod115WriterARABA2016 implements IMod115Writer{
 			datos.appendChild(e3);
 			Element e4 = doc.createElement(DATO);
 			e4.setAttribute(NOMBRE,RESULTADO);
-			e4.setAttribute(VALOR, formatNumber( mod115.getResult() ));
+			e4.setAttribute(VALOR, formatNumber( mod115.getDeclarationResult() ));
 			datos.appendChild(e4);
 			Element e5 = doc.createElement(DATO);
 			e5.setAttribute(NOMBRE,CCC1);

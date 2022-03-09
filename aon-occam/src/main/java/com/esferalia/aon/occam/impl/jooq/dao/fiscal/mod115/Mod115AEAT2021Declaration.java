@@ -28,11 +28,20 @@ public class Mod115AEAT2021Declaration extends Mod115Declaration {
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod115Key.CT_C03, mod, br)
 			,null,null,null)
 		,CT_C04(Mod115Key.CT_C04
-			,null,null
-			, (ctx,mod) -> mod.putAmount(Mod115Key.CT_C04,mod.isComplementary()
-				?Mod115DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod115::getDeclarationResult).sum()
-				:0.0)
-			,null,null)
+				, null
+				, null
+				, (ctx,mod) -> mod.putAmount(Mod115Key.CT_C04,mod.isComplementary()
+					?Mod115DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod115::getDeclarationResult).sum()
+					:0.0)
+				,null
+				,"{messages : ["
+					+ "\"Declaraciones en el mismo periodo/ejercicio:\","
+					+ "@foreach{fm : periodModels}"
+					+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
+					+ "@end{}"
+					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(CT_C04)}\""
+				+"]}"
+				)
 		,CT_C05(Mod115Key.CT_C05
 			, null,null,null, "CT_C03-CT_C04" ,null)
 		,CT_TIP(Mod115Key.CT_TIP, null,null,null,null,null)

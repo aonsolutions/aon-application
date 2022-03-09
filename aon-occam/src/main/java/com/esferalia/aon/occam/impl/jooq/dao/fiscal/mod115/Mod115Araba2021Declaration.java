@@ -34,7 +34,20 @@ public class Mod115Araba2021Declaration extends Mod115Declaration {
 		,AR_C05(Mod115Key.AR_C05, null,null,null,null,null)
 		,AR_C06(Mod115Key.AR_C06, null,null,null,null,null)
 		,AR_C07(Mod115Key.AR_C07, null,null,null,"AR_C03+AR_C06",null)
-		,AR_C08(Mod115Key.AR_C08, null,null,null,null,null)
+		,AR_C08(Mod115Key.AR_C08,null,null
+				, (ctx,mod) -> mod.putAmount(Mod115Key.AR_C08,
+					mod.isReplacement() 
+					?Mod115DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod115::getDeclarationResult).sum()
+					:0.0)
+				,null
+				,"{messages : ["
+						+ "\"Declaraciones en el mismo periodo/ejercicio:\","
+						+ "@foreach{fm : periodModels}"
+						+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
+						+ "@end{}"
+						+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C08)}\""
+					+"]}"
+		)
 		,AR_C09(Mod115Key.AR_C09, null,null,null,null,null)
 		,AR_C10(Mod115Key.AR_C10, null,null,null,null,null)
 		,AR_C11(Mod115Key.AR_C11, null,null,null,"AR_C07-AR_C08+AR_C09+AR_C10",null)

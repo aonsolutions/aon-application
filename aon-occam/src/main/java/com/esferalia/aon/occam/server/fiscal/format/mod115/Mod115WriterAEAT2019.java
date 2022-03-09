@@ -1,21 +1,22 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod115;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer.IMod115Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer.IMod115Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod115WriterAEAT2016 implements IMod115Writer{ 
+public class Mod115WriterAEAT2019 implements IMod115Writer{ 
 
-	private static enum Mod115File {
+	private enum Mod115File {
 		
-		AEAT_2016 ( mod115 -> true ,new IPropertyFiller[] { 
+		AEAT_2019 ( mod115 -> true ,new IPropertyFiller[] { 
 				(wr, mod) -> wr.append("<T")
 			   ,(wr, mod) -> wr.append("115")
 			   ,(wr, mod) -> wr.append("0")
@@ -24,15 +25,15 @@ public class Mod115WriterAEAT2016 implements IMod115Writer{
 			   ,(wr, mod) -> wr.append("0000>")
 			   ,(wr, mod) -> wr.append("<AUX>")
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 70))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text("2020", 4))
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 9))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(AonFiscalFileUtils.DEVELOPER_NIF, 9))
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 213))
 			   ,(wr, mod) -> wr.append("</AUX>")
 			   
 			   ,(wr, mod) -> wr.append("<T11501000>")
 			   ,(wr, mod) -> wr.append(" ")
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType().getValue(), 1))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?mod.getName():mod.getSurname(),60))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?" ":mod.getName(),20))
@@ -58,7 +59,6 @@ public class Mod115WriterAEAT2016 implements IMod115Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getPeriod().getName(), 2))
 			   ,(wr, mod) -> wr.append("0000>")
-			   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			})
 		;
 		

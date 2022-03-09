@@ -91,14 +91,7 @@ public abstract class Mod115Declaration {
 				mod115.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
 						+ "de inicio de la declaraci\u00F3n.");
 			}
-			Map<Integer, Long> salaries = checkPreviousSalaries(ctx, mod115);
-			boolean existsSalaries = salaries != null && !salaries.isEmpty();			
-			if (existsSalaries) {
-				mod115.addMessage("Se encontraron " + salaries.size() + " n\u00F3minas no declaradas anteriores a la fecha "
-						+ "de inicio de la declaraci\u00F3n.");
-			}
-			mod115.setGenerateFromYearStartAvailable(existsInvoices || existsSalaries);
-			
+			mod115.setGenerateFromYearStartAvailable(existsInvoices);
 		}
 	}
 
@@ -174,27 +167,6 @@ public abstract class Mod115Declaration {
 			.forEach(key -> key.uniqueInitialize(ctx, mod115));
 	}
 	
-	Map<Integer, Long>  checkPreviousSalaries(final AONContext ctx, final Mod115 mod115) {
-		return IRPFDAO.getPreviousNotInModelSalaryIrpfBreakdown(ctx, mod115)
-			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
-			.filter(kbr -> kbr.getKey().acceptValue(mod115,kbr.getIrpfBreakdown()))
-			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getSalary() 
-					, Collectors.counting()));
-	}
-
-	Set<Integer> createFromSalary(final AONContext ctx, final Mod115 mod115) {
-		final Map<Mod115Key,Set<String>> docs = new EnumMap<>(Mod115Key.class); 
-		final Map<Mod115Key,Set<String>> pdocs = new EnumMap<>(Mod115Key.class);
-		final Set<Integer> salaries = new HashSet<>();
-		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod115)
-			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
-			.filter(kbr -> kbr.getKey().acceptValue(mod115,kbr.getIrpfBreakdown()))
-			.map( kbr -> addSalary(salaries, kbr))
-			.forEach(kbr -> kbr.getKey().initialize(ctx, mod115, docs, pdocs, kbr.getIrpfBreakdown()))
-		;
-		return salaries; 
-	}
-	
 	private static class KeyedIrpfBreakdown {
 		private IMod115KeyDAO key;
 		private IrpfBreakdown br;
@@ -208,11 +180,6 @@ public abstract class Mod115Declaration {
 		public IrpfBreakdown getIrpfBreakdown() {
 			return br;
 		}
-	}
-
-	KeyedIrpfBreakdown addSalary( Set<Integer> salaries, KeyedIrpfBreakdown br) {
-		salaries.add(br.getIrpfBreakdown().getSalary());
-		return br;	
 	}
 
 	KeyedIrpfBreakdown addInvoice( Set<Integer> invoices, KeyedIrpfBreakdown br) {

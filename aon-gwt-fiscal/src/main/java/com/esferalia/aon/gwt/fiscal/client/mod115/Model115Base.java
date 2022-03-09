@@ -645,7 +645,7 @@ public abstract class Model115Base extends DockLayoutPanel {
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
-			buff.append(AON.FMT.format(mod.getResult()));
+			buff.append(AON.FMT.format(mod.getDeclarationResult()));
 			if (mod.getDeclarationResultType() != null) {
 				buff.append(AonStringUtils.SPACE);
 				buff.append(mod.getDeclarationResultType().getDescription());

@@ -109,7 +109,6 @@ public class Mod115DAO extends FiscalModelDAO {
 		Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
 		dec.ensureDetails(mod115);
 		Set<Integer> invoices = dec.createFromInvoices(ctx,mod115);
-		Set<Integer> salaries = dec.createFromSalary(ctx,mod115);
 		for (FiscalModelDetail detail : mod115.getMap().values()) {
 			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
 			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
@@ -119,7 +118,6 @@ public class Mod115DAO extends FiscalModelDAO {
 		
 		AlcatrazDAO.deleteFiscalModel(ctx, mod115);
 		AlcatrazDAO.saveModelInvoices(ctx, mod115, invoices);
-		AlcatrazDAO.saveModelSalaries(ctx, mod115, salaries);
 		return mod115;
 	}
 	

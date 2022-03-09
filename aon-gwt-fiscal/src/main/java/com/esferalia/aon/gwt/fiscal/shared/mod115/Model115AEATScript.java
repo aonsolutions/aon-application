@@ -1,19 +1,19 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod115;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
 
 public enum Model115AEATScript implements IModelScript<Mod115Key> {
 	
-	 R00 ("Retenciones e ingresos a cuenta",new Mod115Key[]{Mod115Key.CT_C01,Mod115Key.CT_C02,Mod115Key.CT_C03},MODEL_INVOICE_IRPF_BREAKDOWN)
+	 R00 ("Retenciones e ingresos a cuenta",new Mod115Key[]{Mod115Key.CT_C01,Mod115Key.CT_C02,Mod115Key.CT_C03},NONE)
 	,R01 ("A deducir. Resultados a ingresar de anteriores autoliquidaciones por el mismo concepto, ejercicio y periodo." 
-			,new Mod115Key[]{Mod115Key.CT_C04},NONE)
+			,new Mod115Key[]{Mod115Key.CT_C04},COMPUTE_KEY)
 	,R02 ("Resultado a ingresar",new Mod115Key[]{Mod115Key.CT_C05},COMPUTE)
 	;
 	

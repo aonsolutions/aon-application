@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 
 public enum Model760NavarraScript implements IModelScript<Mod115Key> {
 	
-	 R00 ("Deuda tributaria a ingresar",new Mod115Key[]{Mod115Key.NF_C01},FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN)
+	 R00 ("Deuda tributaria a ingresar",new Mod115Key[]{Mod115Key.NF_C01},FiscalModelKeyInfo.NONE)
 	;
 	
 	private String label;
