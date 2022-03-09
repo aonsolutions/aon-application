@@ -263,12 +263,7 @@ public abstract class Employee extends ResizeComposite {
 
 	protected Employee() {
 		//Initialize Nationality SuggestBox
-		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
-		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
-		for (Country c : countries)
-			oracleCountries.add(c.getName());
-		this.nationality = new SuggestBox(oracleCountries);
-		this.nationality.setAutoSelectEnabled(true);
+		providedNationality();
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
@@ -286,6 +281,15 @@ public abstract class Employee extends ResizeComposite {
 		horizontalPanel.add(documentType);	
 	}
 	
+	private void providedNationality() {
+		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
+		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
+		for (Country c : countries)
+			oracleCountries.add(c.getName());
+		this.nationality = new SuggestBox(oracleCountries);
+		this.nationality.setAutoSelectEnabled(true);
+	}
+
 	// ------------------------------------------------- UiHandlers
 	
 	// TABLA DATOS CONTRATO
@@ -314,15 +318,20 @@ public abstract class Employee extends ResizeComposite {
 			showNationality(documentTypeStr);	
 			
 			onEmployeeDocumentChange(documentStr, documentTypeStr);
-		} else {
+		} else
 			removeErrorBorder(this.document);
-		}	
+	}
+	
+	@UiHandler("nationality")
+	void onNationalitySelectionValue(SelectionEvent<Suggestion> event) {
+		String countryIso2 = getIso2(this.nationality.getValue());
+//		Window.alert("Name : " + this.nationality.getValue() + "\nIso2 : " + countryIso2);
+		onEmployeeNationalityChange(countryIso2);
 	}
 	
 	@UiHandler("nationality")
 	void onNationalityChangeValue(ValueChangeEvent<String> event) {
-		String countryIso2 = getIso2(this.nationality.getValue());
-		onEmployeeNationalityChange(countryIso2);
+		if(AonStringUtils.isBlank(event.getValue())) onEmployeeNationalityChange(null);
 	}
 	
 	@UiHandler("securitySocialNum")
@@ -1287,8 +1296,7 @@ public abstract class Employee extends ResizeComposite {
 		} else {
 			nationalityLabelCell.getStyle().setDisplay(Display.NONE);
 			nationalityCell.getStyle().setDisplay(Display.NONE);
-			nationality.setValue("ESPA\u00D1A");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), nationality);
+			nationality.setValue("");
 		}
 	}
 	
