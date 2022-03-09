@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -74,10 +75,6 @@ public class InvoiceImport {
 		return new InvoiceImport();
 	}
 
-	public InvoiceImport() {
-
-	}
-	
 	InvoiceImportClass inv; 
 	InvoiceImportClass ant;
 
@@ -106,7 +103,7 @@ public class InvoiceImport {
 						titleList.add(cell.getStringCellValue().trim());
 					} else if(cell.getColumnIndex() < titleList.size()){
 						String title = titleList.get(cell.getColumnIndex());
-						check(domain, login, title, cell);			
+						check(title, cell);			
 					}
 				});
 				if(ant != null && isSameReference(ant.getRef(), ant.getSerie(), ant.getNumber(), inv)) {
@@ -162,7 +159,7 @@ public class InvoiceImport {
 						titleList.add(cell.getStringCellValue().trim());
 					} else if(cell.getColumnIndex() < titleList.size()){
 						String title = titleList.get(cell.getColumnIndex());
-						check(domain, login, title, cell);			
+						check(title, cell);			
 					}
 				});
 				
@@ -190,7 +187,7 @@ public class InvoiceImport {
 		return null;
 	}
 
- 	private void check(Domain domain , String login, String title, Cell cell) {
+ 	private void check(String title, Cell cell) {
 		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
 	
@@ -254,6 +251,11 @@ public class InvoiceImport {
 			return ;
 		}
 		
+		if("CUENTA CONTRAPARTE".equalsIgnoreCase(title)) {
+			// TODO inv.setName(o.toString());
+			return ;
+		}
+		
 		if("TERCERO".equalsIgnoreCase(title)) {
 			inv.setThird(o.toString());
 			return;
@@ -312,6 +314,11 @@ public class InvoiceImport {
 		if("DESCRIPCIÓN CUENTA".equalsIgnoreCase(title)
 				|| "DESCRIPCION CUENTA".equalsIgnoreCase(title)){
 			inv.setAccountDescription(o.toString());
+			return;
+		}
+		if("CONCEPTO DETALLE".equalsIgnoreCase(title)) {
+			
+			inv.setBase(Utils.parseDouble(o));
 			return;
 		}
 		if("BASE".equalsIgnoreCase(title)
@@ -454,7 +461,7 @@ public class InvoiceImport {
 		// TODO SUPLIDO, CUENTA CONTRAPARTE
 	}
 
-	public static Error insertInvoices(Domain domain, User user, Integer i, LinkedList<InvoiceImportClass> ivs) {
+	public static Error insertInvoices(Domain domain, User user, Integer i, List<InvoiceImportClass> ivs) {
 		Error error = new Error().setError(true);
 		if(i >= ivs.size()) {
 			error.setLine(i);
@@ -469,90 +476,13 @@ public class InvoiceImport {
 		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 		
 		try {
-			if(ivs.get(i).getAccount() == null || ivs.get(i).getAccount().isBlank()) {
-				throw new Exception("La cuenta contable es un dato obligatorio.");
-			}
-			
-			if(ivs.get(i).getRef() == null && ivs.get(i).getNumber() == null) {
-				throw new Exception("La Referencia o Serie/Número son incorrectas.");
-			}
-			
-			if(ivs.get(i).getSerie() != null && ivs.get(i).getSerie().length() > 5) {
-				throw new Exception("La serie no puede tener más de 5 carácteres");
-			}
-			
+			validate(ivs.get(i));
 			AccountingInvoice ai = new AccountingInvoice();
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
-			Invoice invoice = new Invoice();
-			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
-			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
-			invoice.setTransaction(getTransaction(ivs.get(i)));
-			invoice.setInvestment(ivs.get(i).isInvestment() != null && ivs.get(i).isInvestment());
-			invoice.setDomain(domain.getId());
-			invoice.setIssueDate(ivs.get(i).getDate());
-			invoice.setTaxDate(ivs.get(i).getDate());
-			invoice.setType(ivs.get(i).getInvoiceType() != null
-				? ivs.get(i).getInvoiceType()
-				: getInvoiceType(ivs.get(i).getAccount()));
-			if(ivs.get(i).getSerie() != null && invoice.isSales()) {
-				invoice.setSeries(ivs.get(i).getSerie());
-			} 
-			
-			if(ivs.get(i).getNumber() != null && invoice.isSales()) {
-				invoice.setNumber(ivs.get(i).getNumber());	
-			}
-			
-			invoice.setReferenceCode(ivs.get(i).getRef() != null ? ivs.get(i).getRef() 
-					: (invoice.getSeries() != null ? invoice.getSeries() + "/" : "") 
-					+ AonStringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0"));
-			
-			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
-				&& ivs.get(i).getRetentionQuota() != 0);
-			invoice.setRemarks(ivs.get(i).getConcept());
-			invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
-			if(ivs.get(i).getTotal() < 0) {
-				invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
-			}
-		
-			RAddress address = new RAddress();
-			address.setDomain(domain.getId());
-			address.setType((byte) 0);
-			address.setAddress(ivs.get(i).getAddress());
-			address.setCity(ivs.get(i).getCity());
-			address.setZip(ivs.get(i).getZip() != null && ivs.get(i).getZip().length() < 5 
-				? "0" + ivs.get(i).getZip() : ivs.get(i).getZip());
-			if(ivs.get(i).getProvince() != null) {
-				GeoZone prgz = null;
-				GeoZone crgz = null;
-				Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
-				if(pr == null && address.getZip() != null ) {
-					pr = Provinces.getProvinceById(address.getZip().substring(0,2));
-				}
-				for(GeoZone gz : aonCtx.getGeozones()) {
-					if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
-						crgz = gz;
-					}
-					if(pr != null && gz.getCode().equals(pr.getId())) {
-						prgz = gz;
-					}
-				}
-			
-				if(prgz != null) {
-					address.setGeozone(prgz.getId());
-					address.setGeozoneCode(prgz.getCode());
-					address.setGeozoneName(prgz.getName());
-				} else if(crgz != null) {
-					address.setGeozone(crgz.getId());
-					address.setGeozoneCode(crgz.getCode());
-					address.setGeozoneName(crgz.getName());
-				}
-			}
-
-			String nif = ivs.get(i).getNif();
-			String name = ivs.get(i).getName();
-			
-			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address, ivs.get(i).getCountry());			
+			RegistryAddress address = buildAddress(aonCtx, domain, ivs.get(i));
+			Invoice invoice = buildInvoice(domain, user, ivs.get(i));
+			AccountingRegistry ar = getRegistry(domain, user, invoice, ivs.get(i), address);			
 			invoice.setRegistry(ar.getId());
 			ai.setRegistry(ar);
 			ai.setInvoice(invoice);
@@ -730,6 +660,91 @@ public class InvoiceImport {
 		error.setLine(i);
 		return error;
 	}
+
+	private static void validate(InvoiceImportClass iic) throws Exception {
+		if(iic.getAccount() == null || iic.getAccount().isBlank()) {
+			throw new Exception("La cuenta contable es un dato obligatorio.");
+		}
+		
+		if(iic.getRef() == null && iic.getNumber() == null) {
+			throw new Exception("La Referencia o Serie/Número son incorrectas.");
+		}
+		
+		if(iic.getSerie() != null && iic.getSerie().length() > 5) {
+			throw new Exception("La serie no puede tener más de 5 carácteres");
+		}
+	}
+	
+	private static Invoice buildInvoice(Domain domain, User user, InvoiceImportClass iic) {
+		Invoice invoice = new Invoice();
+		invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+		invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
+		invoice.setTransaction(getTransaction(iic));
+		invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
+		invoice.setDomain(domain.getId());
+		invoice.setIssueDate(iic.getDate());
+		invoice.setTaxDate(iic.getDate());
+		invoice.setType(iic.getInvoiceType() != null
+			? iic.getInvoiceType()
+			: getInvoiceType(iic.getAccount()));
+		if(iic.getSerie() != null && invoice.isSales()) {
+			invoice.setSeries(iic.getSerie());
+		} 
+		
+		if(iic.getNumber() != null && invoice.isSales()) {
+			invoice.setNumber(iic.getNumber());	
+		}
+		
+		invoice.setReferenceCode(iic.getRef() != null ? iic.getRef() 
+				: (invoice.getSeries() != null ? invoice.getSeries() + "/" : "") 
+				+ AonStringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0"));
+		
+		invoice.setWithholding(iic.getRetentionQuota() != null 
+			&& iic.getRetentionQuota() != 0);
+		invoice.setRemarks(iic.getConcept());
+		invoice.setSurcharge(iic.getRePercentage() != null && iic.getPercentage() > 0);
+		if(iic.getTotal() < 0) {
+			invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
+		}
+		return invoice;
+	}
+
+	private static RegistryAddress buildAddress(AonConfiguration aonCtx, Domain domain, InvoiceImportClass iic) {
+		RegistryAddress ra = new RegistryAddress()
+				.setDomain(domain.getId())
+				.setAddress(iic.getAddress())
+				.setCity(iic.getCity())
+				.setZip(iic.getZip() != null && iic.getZip().length() < 5 
+					? "0" + iic.getZip() : iic.getZip());
+
+		if(iic.getProvince() != null) {
+			GeoZone prgz = null;
+			GeoZone crgz = null;
+			Provinces pr = Provinces.getProvince(iic.getProvince());
+			if(pr == null && ra.getZip() != null ) {
+				pr = Provinces.getProvinceById(ra.getZip().substring(0,2));
+			}
+			for(GeoZone gz : aonCtx.getGeozones()) {
+				if(gz.getCode().equals(iic.getCountry().getIso2())) {
+					crgz = gz;
+				}
+				if(pr != null && gz.getCode().equals(pr.getId())) {
+					prgz = gz;
+				}
+			}
+			
+			if(prgz != null) {
+				ra.setGeozone(prgz.getId());
+				ra.setGeozoneCode(prgz.getCode());
+				ra.setGeozoneName(prgz.getName());
+			} else if(crgz != null) {
+				ra.setGeozone(crgz.getId());
+				ra.setGeozoneCode(crgz.getCode());
+				ra.setGeozoneName(crgz.getName());
+			}
+		}
+		return ra;
+	}
 	
 	private static void insertFinances(Domain domain, String login, AccountingInvoice ai, Finance f) {
 		f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
@@ -803,44 +818,12 @@ public class InvoiceImport {
 				invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 			}
 		
-			RAddress address = new RAddress();
-			address.setDomain(domain.getId());
-			address.setType((byte) 0);
-			address.setAddress(iic.getAddress());
-			address.setCity(iic.getCity());
-			address.setZip(iic.getZip() != null && iic.getZip().length() < 5 
-				? "0" + iic.getZip() : iic.getZip());
-			if(iic.getProvince() != null) {
-				GeoZone prgz = null;
-				GeoZone crgz = null;
-				Provinces pr = Provinces.getProvince(iic.getProvince());
-				if(pr == null && address.getZip() != null ) {
-					pr = Provinces.getProvinceById(address.getZip().substring(0,2));
-				}
-				for(GeoZone gz : aonCtx.getGeozones()) {
-					if(gz.getCode().equals(iic.getCountry().getIso2())) {
-						crgz = gz;
-					}
-					if(pr != null && gz.getCode().equals(pr.getId())) {
-						prgz = gz;
-					}
-				}
-			
-				if(prgz != null) {
-					address.setGeozone(prgz.getId());
-					address.setGeozoneCode(prgz.getCode());
-					address.setGeozoneName(prgz.getName());
-				} else if(crgz != null) {
-					address.setGeozone(crgz.getId());
-					address.setGeozoneCode(crgz.getCode());
-					address.setGeozoneName(crgz.getName());
-				}
-			}
+			RegistryAddress address = buildAddress(aonCtx, domain, iic);
 
-			String nif = iic.getNif();
-			String name = iic.getName();
+//			String nif = iic.getNif();
+//			String name = iic.getName();
 			
-			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address, iic.getCountry());			
+			AccountingRegistry ar = getRegistry(domain, user, invoice, iic, address);			
 			invoice.setRegistry(ar.getId());
 			ai.setRegistry(ar);
 			ai.setInvoice(invoice);
@@ -987,9 +970,7 @@ public class InvoiceImport {
 				} 
 			}
 
-
 			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
-				
 
 			if(financeAccount == null || financeAccount.getId() == null) {
 				if(iic.getFinances().isEmpty()) {
@@ -1063,47 +1044,37 @@ public class InvoiceImport {
 		}
 		return WithholdingType.PROFESSIONAL;
 	}
-	private static Registry getDomainRegistry(Domain domain, String login, String nif) {
-		Integer[] rdomains = new Integer[] {domain.getId(), domain.getParentId(), 0};
-		LinkedList<Registry> r = AON.getRegistryStream(domain.getName(), domain.getId(), login, f ->
-			f.getDomainProperty().in(rdomains)
-			.and(f.getDocumentProperty().eq(nif)))
-			.collect(Collectors.toCollection(LinkedList::new));
-		if(r.stream().filter(f-> f.getDomain().equals(domain.getId())).count() > 0) {
-			return r.stream().filter(f-> f.getDomain().equals(domain.getId())).findFirst().get();
-		} else if(domain.getParentId() != null && r.stream().filter(f-> f.getDomain().equals(domain.getParentId())).count() > 0) {
-			return r.stream().filter(f-> f.getDomain().equals(domain.getParentId())).findFirst().get();
-		} else if(r.stream().filter(f-> f.getDomain().equals(0)).count() > 0) {
-			return r.stream().filter(f-> f.getDomain().equals(0)).findFirst().get();
-		} 
-		return null;
-	}
-	
-	private static AccountingRegistry getRegistry(Domain domain, User user, InvoiceType type, String nif, String name, InvoiceTransactionType transaction, RAddress address, Country country) {
-		// TODO Auto-generated method stub
+
+	private static AccountingRegistry getRegistry(Domain domain, User user, Invoice invoice, InvoiceImportClass iic, RegistryAddress address) {		
+		InvoiceType type = invoice.getType();
+		InvoiceTransactionType transaction = invoice.getTransaction();
+		String nif = iic.getNif();
+		String name = iic.getName();
+		Country country = iic.getCountry();
+		
+		Registry reg = AON.getRegistry(domain, user, f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getDocumentProperty().eq(nif)));
+		if(reg == null || reg.isEmpty()) {
+			reg = reg != null ? reg : new Registry();
+			DocumentType dtype = DocumentType.OTHER;
+			if(Country.ES.equals(country) && AonDocumentUtil.isValidCIF(nif)) {
+				dtype = DocumentType.CIF;
+			} else if(Country.ES.equals(country) && AonDocumentUtil.isValidDNI(nif)) {
+				dtype = DocumentType.NIF;
+			}
+			reg.setDomain(domain)
+				.setDocument(nif)
+				.setDocumentCountry(country)
+				.setDocumentType(dtype)
+				.setName(name)
+				.setNationality(country);
+		}
+		
 		if(InvoiceType.SALES.equals(type)) {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif)));
-
-			if(customer == null || customer.getId() == null) {
-				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
-				if(reg == null || !reg.getDomain().equals(domain.getId())) {
-					reg = reg != null ? reg : new Registry();
-					DocumentType dtype = DocumentType.OTHER;
-					if(Country.ES.equals(country) && AonDocumentUtil.isValidCIF(nif)) {
-						dtype = DocumentType.CIF;
-					} else if(Country.ES.equals(country) && AonDocumentUtil.isValidDNI(nif)) {
-						dtype = DocumentType.NIF;
-					}
-					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
-						.setDomain(domain)
-						.setDocument(nif)
-						.setDocumentCountry(country)
-						.setDocumentType(dtype)
-						.setName(name)
-						.setNationality(country));
-				}	
+			if(customer.isEmpty()) {	
 				customer = new Customer()
 					.copy(reg)
 					.setStatus(RegistryStatus.ACTIVE)
@@ -1112,12 +1083,12 @@ public class InvoiceImport {
 				customer.setDomain(domain);
 				customer.setName(reg.getName());
 				customer.setId(reg.getId());
-				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
+				AON.saveCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
 			}
 			RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), user.getLogin(), customer.getId());
 			if(ra == null || ra.getId() == null) {
 				address.setRegistry(customer.getId());
-				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
+				AON.save(domain, user.getLogin(), address);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.CUSTOMER)
@@ -1129,23 +1100,6 @@ public class InvoiceImport {
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif))).orElse(new Supplier());
 			if(supplier == null || supplier.getId() == null) {
-				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
-				if(reg == null || !reg.getDomain().equals(domain.getId())) {
-					reg = reg != null ? reg : new Registry();
-					DocumentType dtype = DocumentType.OTHER;
-					if(Country.ES.equals(country) && AonDocumentUtil.isValidCIF(nif)) {
-						dtype = DocumentType.CIF;
-					} else if(Country.ES.equals(country) && AonDocumentUtil.isValidDNI(nif)) {
-						dtype = DocumentType.NIF;
-					}
-					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
-						.setDomain(domain)
-						.setDocument(nif)
-						.setDocumentCountry(country)
-						.setDocumentType(dtype)
-						.setName(name)
-						.setNationality(country));
-				}			
 				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
@@ -1158,12 +1112,12 @@ public class InvoiceImport {
 				supplier.setDomain(domain);
 				supplier.setId(reg.getId());
 				supplier.setName(reg.getName());
-				AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), supplier);
+				AON.saveSupplier(domain.getName(), domain.getId(), user.getLogin(), supplier);
 			}
 			RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), user.getLogin(), supplier.getId());
 			if(ra == null || ra.getId() == null) {
 				address.setRegistry(supplier.getId());
-				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
+				AON.save(domain, user.getLogin(), address);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.SUPPLIER)
@@ -1175,23 +1129,6 @@ public class InvoiceImport {
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif))).orElse(new Creditor());
 			if(creditor == null || creditor.getId() == null) {
-				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
-				if(reg == null || !reg.getDomain().equals(domain.getId())) {
-					reg = reg != null ? reg : new Registry();
-					DocumentType dtype = DocumentType.OTHER;
-					if(Country.ES.equals(country) && AonDocumentUtil.isValidCIF(nif)) {
-						dtype = DocumentType.CIF;
-					} else if(Country.ES.equals(country) && AonDocumentUtil.isValidDNI(nif)) {
-						dtype = DocumentType.NIF;
-					}
-					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
-						.setDomain(domain)
-						.setDocument(nif)
-						.setDocumentCountry(country)
-						.setDocumentType(dtype)
-						.setName(name)
-						.setNationality(country));
-				}			
 				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
@@ -1204,12 +1141,12 @@ public class InvoiceImport {
 						.setScope(getScopeId(domain, user));
 				creditor.setDomain(domain);
 				creditor.setId(reg.getId());
-				AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), creditor);
+				AON.saveCreditor(domain.getName(), domain.getId(), user.getLogin(), creditor);
 			}
 			RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), user.getLogin(), creditor.getId());
 			if(ra == null || ra.getId() == null) {
 				address.setRegistry(creditor.getId());
-				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
+				AON.save(domain, user.getLogin(), address);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.CREDITOR)
@@ -1324,6 +1261,4 @@ public class InvoiceImport {
 		}
 		return snBool || (reference != null && reference.equals(iic.getRef()));
 	}
-	
-
 }
