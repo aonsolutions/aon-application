@@ -354,19 +354,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));
 		markAsFinishedButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.FINISHED));
 		markAsSentButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.SENT));
-				
-//		markAsPendingButton.setVisible(!model.isNew() &&
-//				(model.getStatus() == FiscalStatus.FINISHED 
-//				|| model.getStatus() == FiscalStatus.BATCHED
-//				|| model.getStatus() == FiscalStatus.SENT
-//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| model.getStatus() == FiscalStatus.BLOCKED));
-//		markAsFinishedButton.setVisible(!model.isNew() &&
-//				(model.getStatus() == FiscalStatus.PENDING
-//				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-//				|| model.getStatus() == FiscalStatus.MISSING));
-//		markAsSentButton.setVisible(!model.isNew() &&
-//				(model.getStatus() == FiscalStatus.FINISHED));
 	}
 	
 	private void styleStatusLabel(Mod111 mod111) {
@@ -689,14 +676,20 @@ public abstract class Model111Base extends DockLayoutPanel {
 		FlexTable table = new FlexTable();
 		container.add(table);
 		defineTable(table);
-		for (IModelScript<Mod111Key> ms : Model111ScriptProvider.obtainScript(getModel())) {
-			if (ms.paintHeaderBefore()) {
-				paintHeader(table);
+		IModelScript<Mod111Key>[] script = null;
+		try {
+			script = Model111ScriptProvider.obtainScript(getModel());
+			for (IModelScript<Mod111Key> ms : script) {
+				if (ms.paintHeaderBefore()) {
+					paintHeader(table);
+				}
+				paintRow(table,getCallback(),ms);	
 			}
-			paintRow(table,getCallback(),ms);	
+			liquidationScrollPanel.setWidget(container);
+			tabPanel.add(liquidationScrollPanel, AON.MSG.liquidacion());
+		} catch (Exception e) {
+			getCallback().showError(e.getMessage());
 		}
-		liquidationScrollPanel.setWidget(container);
-		tabPanel.add(liquidationScrollPanel, AON.MSG.liquidacion());
 	}
 	
 	private void defineTable(FlexTable table) {
@@ -848,7 +841,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 			} else {
 				input.removeStyleName(AON.CSS.aonChanged());
 			}
-			
 			if (input.isEnabled()) {
 				calculateAndRefresh( callback );
 			}
@@ -961,7 +953,15 @@ public abstract class Model111Base extends DockLayoutPanel {
 							
 							for (int i = 0; i < array.length(); i++) {
 								Mod111Key key = script.getKeys()[i];
-								JsComputeInfoGridPanel grid = new JsComputeInfoGridPanel();
+								JsComputeInfoGridPanel grid = new JsComputeInfoGridPanel() {
+
+									@Override
+									protected String resolveKey(String keyString) {
+										Mod111Key key = Mod111Key.valueOf(keyString);
+										return key.getBoxAsString();
+									}
+									
+								};
 								grid.setTitle(AON.MSG.calcDetail());
 								grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
 								grid.addContent(array.get(i));
@@ -1100,7 +1100,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 			.addCell(receiptBox);
 		
 		// Complementaria: Numero justificante de la declaración anterior
-		if (getModel().isComplementary()) {
+		if (getModel().isComplementary() || getModel().isReplacement()) {
 			final AonTextBox previousReceiptBox = new AonTextBox();
 			previousReceiptBox.setVisibleLength(15);
 			previousReceiptBox.setMaxLength(13);

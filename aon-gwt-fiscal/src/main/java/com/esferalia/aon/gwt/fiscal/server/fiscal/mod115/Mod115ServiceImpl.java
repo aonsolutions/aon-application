@@ -6,8 +6,10 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Mod115Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -25,7 +27,7 @@ public class Mod115ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public Mod115 getMod115(Occam occam,int id) throws AonCoreException {
-		return MODEL115.getMod115(occam, id);
+		return MODEL115.get(occam, id);
 	}
 
 	@Override
@@ -75,26 +77,30 @@ public class Mod115ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod115 initialize(Occam occam, Mod115 mod115) {
-		return MODEL115.initializeMod115(occam, mod115);
+		return MODEL115.initialize(occam, mod115);
 	}
 
 	@Override
 	public Mod115 create(Occam occam, Mod115 mod115) {
-		return MODEL115.createMod115(occam, mod115);
+		return MODEL115.create(occam, mod115);
 	}
 
 	@Override
 	public Mod115 reset(Occam occam, Mod115 mod115) {
-		return MODEL115.resetMod115(occam, mod115);
+		return MODEL115.reset(occam, mod115);
 	}
 
 	@Override
 	public void delete(Occam occam, Mod115 mod115) {
-		MODEL115.deleteMod115(occam, mod115);
+		MODEL115.delete(occam, mod115);
 	}
 	@Override
 	public String getInfo(Occam occam, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException {
-		return MODEL115.getMod115Info(occam, mod115, script, infoKey);
-		
+		return MODEL115.getInfo(occam, mod115, script, infoKey);
+	}
+
+	@Override
+	public Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException {
+		return AON.getInvoice(occam, invoiceId);
 	}
 }
