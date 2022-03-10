@@ -51,8 +51,8 @@ import net.aonsolutions.aon.tbai.TbaiData;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DownloadInvoicePdf", urlPatterns = {"/ms/api/download_invoice_pdf/*",
-														"/aon_gwt_aio/download_invoice_pdf/*",
-														"/dip/*"})
+														"/aon_gwt_aio/download_invoice_pdf/*"
+														})
 public class InvoicePdfServlet extends AonApiHttpServlet {
 	
 	@Override
