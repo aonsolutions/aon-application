@@ -127,8 +127,15 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
+      <groupId>net.aonsolutions.polymer</groupId>
+      <artifactId>aon.gwt.polymer</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <classifier>sources</classifier>
+    </dependency>
+
+	<dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.4</version>

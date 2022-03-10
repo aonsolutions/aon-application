@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
-import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.google.gwt.core.client.EntryPoint;
@@ -55,6 +54,7 @@ import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 
+import net.aonsolutions.aon.gwt.polymer.client.AonToolbar;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.AonIconsElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -185,6 +185,7 @@ public class Documental implements EntryPoint {
 	}
 	
 	private void createAonToolbar(){
+		
 		toolbar.add(new AonToolbar("Documental") {
 
 			@Override protected void onMenuButtonClick() {

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.client.polymer;
+package net.aonsolutions.aon.gwt.polymer.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

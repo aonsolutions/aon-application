@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.product.JsProduct;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
-import com.esferalia.aon.gwt.common.client.widget.FilterPanel;
+import net.aonsolutions.aon.gwt.polymer.client.FilterPanel;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;

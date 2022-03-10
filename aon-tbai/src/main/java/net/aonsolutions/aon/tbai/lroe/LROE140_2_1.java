@@ -166,6 +166,9 @@ public class LROE140_2_1 extends LROE140 {
 			
 			r.setBaseImponible(Double.toString(tax.getBase()));	
 			r.setTipoImpositivo(Double.toString(tax.getPercentage()));
+			if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
+				tax.setDeductibleQuota(AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100));
+			}
 			r.setCuotaIVADeducible(Double.toString(tax.getDeductibleQuota()));
 			r.setCuotaIVASoportada(Double.toString(tax.getQuota()));
 
@@ -197,12 +200,14 @@ public class LROE140_2_1 extends LROE140 {
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
-		return alta(tbaiConfiguration, person, invoices);
+		boolean mod = invoice.getInvoiceInfo().getStatus().isAccepted() || invoice.getInvoiceInfo().getStatus().isAcceptedWithErrors();
+		return alta(tbaiConfiguration, person, invoices, mod);
 	}
 	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices) {
+	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices, boolean mod) {
 		try {
-			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00);
+			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, 
+					mod ? OperacionEnum.M_00 : OperacionEnum.A_00);
 			final LROEPF140GastosConFacturaAltaModifPeticion p140 = build(person, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	

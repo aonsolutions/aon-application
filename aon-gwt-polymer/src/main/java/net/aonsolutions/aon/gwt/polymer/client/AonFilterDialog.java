@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.client.polymer;
+package net.aonsolutions.aon.gwt.polymer.client;
 
 import java.util.HashMap;
 import java.util.LinkedList;

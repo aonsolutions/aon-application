@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
-import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
+import net.aonsolutions.aon.gwt.polymer.client.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
