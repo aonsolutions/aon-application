@@ -205,6 +205,7 @@ export const REJECT_INVOICE = 'rejectInvoice';
 export const REJECTED = 'rejected';
 export const REMARKS = 'remarks';
 export const RENTING = 'renting';
+export const RETENTION_PANEL = 'retentionPanel';
 export const RETENTION_PERCENT = 'retentionPercent';
 export const REQUIRED = 'required';
 export const RESTORE = 'restore';
@@ -262,6 +263,7 @@ export const USERS = 'users';
 
 export const VALUE = 'value';
 export const VAT = 'vat';
+export const VAT_PANEL = 'vatPanel';
 export const VAT_PERCENT = 'vatPercent';
 export const VAT_ACCRUAL_PAYMENT = 'vatAccrualPayment';
 export const VISIBLE = 'visible';

@@ -1,9 +1,8 @@
 package com.esferalia.aon.gwt.template.jooq;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
-import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -12,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -38,7 +38,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceAddressFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
@@ -145,7 +144,7 @@ public class DBInvoice {
 			json.put("domain_name", domain.getName());
 			json.put("login", login);
 			String result = Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
-			url = domain.getName() + ":8080/aon-aio/ms/api/download_invoice_pdf?json=" + result;	
+			url = "https://" + domain.getName() + "/ms/api/download_invoice_pdf?json=" + result;	
 		} else {
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getAttachModuleProperty().eq(invoice.getId()), AttachType.INVOICE, false);
 			if(attach != null && !attach.isEmpty()) {
@@ -155,7 +154,7 @@ public class DBInvoice {
 				data.put("id", attach.getId());
 				data.put("attach_type", AttachType.INVOICE.getName());
 				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-				url = domain.getName() + ":8080/aon-aio/ms/api/file/" +  result;
+				url = "https://" + domain.getName() + "/ms/api/file/" +  result;
 			}
 		}
 		return url;

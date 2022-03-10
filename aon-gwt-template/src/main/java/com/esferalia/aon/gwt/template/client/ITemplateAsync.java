@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
 import com.esferalia.aon.gwt.template.shared.AccountImportClass;
@@ -29,21 +29,21 @@ public interface ITemplateAsync {
 
 	void newTemplate(Domain domain, User user, TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
 
-	void getTemplates(Domain domain, User user, AsyncCallback<LinkedList<TemplateInfo>> callback);
+	void getTemplates(Domain domain, User user, AsyncCallback<List<TemplateInfo>> callback);
 
 	void editTemplate(Domain domain, User user, TemplateInfo ti, AsyncCallback<TemplateInfo> callback);
 
 	void deleteTemplate(Domain domain, User user, TemplateInfo ti, AsyncCallback<Void> callback);
 
-	void searchTypeTemplate(String searchStr, LinkedList<TemplateInfo> templates, AsyncCallback<LinkedList<TemplateInfo>> callback);
+	void searchTypeTemplate(String searchStr, List<TemplateInfo> templates, AsyncCallback<List<TemplateInfo>> callback);
 
-	void searchNameTemplate(String searchStr, LinkedList<TemplateInfo> templates, AsyncCallback<LinkedList<TemplateInfo>> callback);
+	void searchNameTemplate(String searchStr, List<TemplateInfo> templates, AsyncCallback<List<TemplateInfo>> callback);
 	
 	void insertStock(Domain domain, User user, AsyncCallback<Error> callback);
 
-	void getWarehouses(Domain domain, User user, AsyncCallback<LinkedList<Warehouse>> callback);
+	void getWarehouses(Domain domain, User user, AsyncCallback<List<Warehouse>> callback);
 
-	void getSeries(Domain domain, User user, String warehouse, AsyncCallback<LinkedList<Series>> callback);
+	void getSeries(Domain domain, User user, String warehouse, AsyncCallback<List<Series>> callback);
 
 	void executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 			Integer inventory, String warehouse1, String warehouse2, String series, String comments, Boolean istransfer,
@@ -69,41 +69,41 @@ public interface ITemplateAsync {
 
 	void insertTransferStock(Domain domain, User user, AsyncCallback<Error> callback);
 
-	void getWorkplaces(Domain domain, User user, AsyncCallback<LinkedList<WorkPlace>> callback);
+	void getWorkplaces(Domain domain, User user, AsyncCallback<List<WorkPlace>> callback);
 
 	void getDepartments(Domain domain, User user, String workplace,
-			AsyncCallback<LinkedList<Department>> callback);
+			AsyncCallback<List<Department>> callback);
 
 	void insertProposal(Domain domain, User user, Integer proposal, Integer workplace, AsyncCallback<Error> callback);
 
-	void getSeries(Domain domain, User user, AsyncCallback<LinkedList<Series>> callback);
+	void getSeries(Domain domain, User user, AsyncCallback<List<Series>> callback);
 
-	void getWarehousesToConsumption(Domain domain, User user, AsyncCallback<LinkedList<Warehouse>> callback);
+	void getWarehousesToConsumption(Domain domain, User user, AsyncCallback<List<Warehouse>> callback);
 
-	void getHotelsToConsumption(Domain domain, User user, AsyncCallback<LinkedList<Hotel>> callback);
+	void getHotelsToConsumption(Domain domain, User user, AsyncCallback<List<Hotel>> callback);
 
-	void getWorkplacesToConsumption(Domain domain, User user, AsyncCallback<LinkedList<Hotel>> callback);
+	void getWorkplacesToConsumption(Domain domain, User user, AsyncCallback<List<Hotel>> callback);
 
-	void getWarehousesToConsumption(Domain domain, User user, Integer workplaceId, AsyncCallback<LinkedList<Warehouse>> callback);
+	void getWarehousesToConsumption(Domain domain, User user, Integer workplaceId, AsyncCallback<List<Warehouse>> callback);
 
-	void getProductCategories(Domain domain, User user, AsyncCallback<LinkedList<ProductCategory>> callback);
+	void getProductCategories(Domain domain, User user, AsyncCallback<List<ProductCategory>> callback);
 
-	void generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative,
+	void generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative,
 			Boolean detail, Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif, AsyncCallback<String> callback);
 	
 	void excelRowNumber(Domain domain, User user, AsyncCallback<Integer> callback);
 
 	void executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce, Seller seller, String type, Tag tag, AsyncCallback<Error> callback);
 
-	void getSellerList(Domain domain, User user, AsyncCallback<LinkedList<Seller>> callback);
+	void getSellerList(Domain domain, User user, AsyncCallback<List<Seller>> callback);
 
-	void getProductRoles(Domain domain, User user, AsyncCallback<LinkedList<String>> callback);
+	void getProductRoles(Domain domain, User user, AsyncCallback<List<String>> callback);
 
-	void getTypeList(Domain domain, User user, AsyncCallback<LinkedList<String>> callback);
+	void getTypeList(Domain domain, User user, AsyncCallback<List<String>> callback);
 
 	void print(String text, AsyncCallback<Void> callback);
 
-	void generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative,
+	void generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative,
 			Boolean detail, Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif,
 			AsyncCallback<String> callback);
 	
@@ -114,17 +114,17 @@ public interface ITemplateAsync {
 
 	void insertInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index, AsyncCallback<Error> callback);
 
-	void executeInvoice(Domain domain, User user, String data, AsyncCallback<LinkedList<InvoiceImportClass>> callback);
+	void executeInvoice(Domain domain, User user, String data, AsyncCallback<List<InvoiceImportClass>> callback);
 
 	void executeRegistry(Domain domain, User user, String data,
-			AsyncCallback<LinkedList<RegistryImportClass>> callback);
+			AsyncCallback<List<RegistryImportClass>> callback);
 
-	void executePGC(Domain domain, User user, String data, AsyncCallback<LinkedList<AccountImportClass>> callback);
+	void executePGC(Domain domain, User user, String data, AsyncCallback<List<AccountImportClass>> callback);
 
 	void executeDiary(Domain domain, User user, String data,
-			AsyncCallback<LinkedList<AccountEntryImportClass>> callback);
+			AsyncCallback<List<AccountEntryImportClass>> callback);
 
-	void executeFee(Domain domain, User user, String data, AsyncCallback<LinkedList<FeeInfo>> callback);
+	void executeFee(Domain domain, User user, String data, AsyncCallback<List<FeeInfo>> callback);
 
 	void insertRegistry(Domain domain, User user, RegistryImportClass registry, Integer index,
 			AsyncCallback<Error> callback);

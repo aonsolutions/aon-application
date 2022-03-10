@@ -174,10 +174,10 @@ public class TemplatesPage extends Composite{
 	AonData aonData;
 	Integer column = 1;
 	ListBox list_box = new ListBox();
-	LinkedList<TemplateInfo> templateList;
+	List<TemplateInfo> templateList;
 	TemplatesDialog popup;
 	
-	public TemplatesPage(AonData aonData, LinkedList<TemplateInfo> template_list) {
+	public TemplatesPage(AonData aonData, List<TemplateInfo> template_list) {
 		this.aonData = aonData;
 		this.templateList = template_list;
 		
@@ -623,10 +623,10 @@ public class TemplatesPage extends Composite{
 		vaux.addAll(templateList);
 		//dataProvider.getList().stream().forEach(f-> vaux.add(f));
  		
-		item.searchNameTemplate(searchStr, vaux, new AsyncCallback<LinkedList<TemplateInfo>>() {
+		item.searchNameTemplate(searchStr, vaux, new AsyncCallback<List<TemplateInfo>>() {
 
 			@Override
-			public void onSuccess(LinkedList<TemplateInfo> result) {
+			public void onSuccess(List<TemplateInfo> result) {
 				dataProvider = new ListDataProvider<TemplateInfo>(result);
 				dataProvider.addDataDisplay(dataGrid);
 				dataGrid.redraw();
@@ -643,13 +643,13 @@ public class TemplatesPage extends Composite{
 	void typesbutton(ClickEvent event) {
 		nameSearchBox.setText("");
 		String searchStr = typeSearchBox.getText();
-		LinkedList<TemplateInfo> vaux = new LinkedList<TemplateInfo>();
+		LinkedList<TemplateInfo> vaux = new LinkedList<>();
 		vaux.addAll(templateList); 		
-		item.searchTypeTemplate(searchStr, vaux, new AsyncCallback<LinkedList<TemplateInfo>>() {
+		item.searchTypeTemplate(searchStr, vaux, new AsyncCallback<List<TemplateInfo>>() {
 
 			@Override
-			public void onSuccess(LinkedList<TemplateInfo> result) {
-				dataProvider = new ListDataProvider<TemplateInfo>(result);
+			public void onSuccess(List<TemplateInfo> result) {
+				dataProvider = new ListDataProvider<>(result);
 				dataProvider.addDataDisplay(dataGrid);
 				dataGrid.redraw();
 			}

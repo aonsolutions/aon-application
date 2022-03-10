@@ -267,7 +267,7 @@ public class DiaryImport {
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setAccountCode(Utils.calculateAccount(acc));
 			return ;
 		}
-		if(IConstants.TITULO_DE_SUBCUENTA.equalsIgnoreCase(title) || IConstants.TÍTULO_DE_SUBCUENTA.equalsIgnoreCase(title)
+		if(IConstants.TITULO_DE_SUBCUENTA.equalsIgnoreCase(title) || IConstants.TITULO_DE_SUBCUENTA2.equalsIgnoreCase(title)
 				|| IConstants.DESC_CUENTA.equalsIgnoreCase(title)) {
 			String subAccountTitle = o.toString();	
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setAccountDescription(subAccountTitle);

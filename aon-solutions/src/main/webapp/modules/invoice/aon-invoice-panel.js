@@ -231,7 +231,7 @@ export class AonInvoicePanel extends AonElement {
 	buildSettingOptions() {
 		let settingOptions = [];
 		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS, OPTION.CHARGES_PAYMENTS ];
+			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS, OPTION.CHARGES_PAYMENTS, OPTION.VAT_PANEL, OPTION.RETENTION_PANEL ];
 		} else settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
 
 
@@ -629,6 +629,12 @@ export class AonInvoicePanel extends AonElement {
 				break;
 			case OPTION.CHARGES_PAYMENTS.id:
 				GWT.load(GWT.FINANCE, this.getApplication().CONTENT);
+				break;
+			case OPTION.VAT_PANEL.id:
+				GWT.load(GWT.VAT_REPORT, this.getApplication().CONTENT);
+				break;
+			case OPTION.RETENTION_PANEL.id:
+				GWT.load(GWT.IRPF_REPORT, this.getApplication().CONTENT);
 				break;
 			default:
 				this.aonInvoiceList({status: CONSTANT.INBOX});
