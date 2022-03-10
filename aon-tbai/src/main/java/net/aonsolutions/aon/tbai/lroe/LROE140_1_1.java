@@ -31,6 +31,7 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.F
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_altapeticion_v1_0_2.LROEPF140IngresosConFacturaConSGAltaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultapeticion_v1_0_0.LROEPF140IngresosConFacturaConSGConsultaPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultarespuesta_v1_0_1.LROEPF140IngresosConFacturaConSGConsultaRespuesta;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -133,12 +134,15 @@ public class LROE140_1_1 extends LROE140 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			LROEPF140IngresosConFacturaConSGConsultaRespuesta resp = (LROEPF140IngresosConFacturaConSGConsultaRespuesta) 
+					unmarshal(LROEPF140IngresosConFacturaConSGConsultaRespuesta.class, response.getResponseDataStr());
+			System.out.println(resp.getResultadoConsulta().getExistenRegistros());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private LROEPF140IngresosConFacturaConSGConsultaPeticion buildConsulta(Person person, Invoice invoice, LROEInfo info) {
 		LROEPF140IngresosConFacturaConSGConsultaPeticion lroe = new LROEPF140IngresosConFacturaConSGConsultaPeticion();
 		lroe.setCabecera(buildCabecera(person, info));

@@ -78,4 +78,16 @@ public class SiiServiceAsyncDecorator implements SiiServiceAsync {
 		ssa.bajaSii(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
 	
+	@Override
+	public void refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.refresh140(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.refresh240(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
 }
