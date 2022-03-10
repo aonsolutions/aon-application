@@ -7,7 +7,8 @@ public interface PayrollPrintService {
 		ID ("id"),
 		NAME ("name"),
 		DOMAIN ("domain"),
-		USER ("user");
+		USER ("user"),
+		COMPLEMENTARY_LIMIT("complementary_limit");
 		
 		private String name;
 		

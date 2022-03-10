@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -43,10 +43,20 @@ public class PayrollPrintServlet extends HttpServlet {
 		for (int i = 0; i < ids.length; i++)
 			ids[i] = Integer.parseInt(req.getParameterValues("id")[i]);
 		resp.setContentType(MimeType.MIME_PDF.getName());
+		String cLimitStr = req.getParameter(PayrollPrintService.Parameter.COMPLEMENTARY_LIMIT.getName());
+		Double cLimit = null;
+		try {
+			if (cLimitStr != null) {
+				cLimit = Double.parseDouble(cLimitStr);
+			}
+		} catch (NumberFormatException e) {
+			cLimit = null;
+		}
 //		resp.setHeader("Content-disposition", "attachment; filename=\""+req.getParameter("name")+"\";");
 		JooqPayrollBuilder.generatePayroll(Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()))
 				, req.getParameter(PayrollPrintService.Parameter.DOMAIN.getName())
 				, resp.getOutputStream()
+				, Optional.ofNullable(cLimit)
 				, ids);
 		
 	}
