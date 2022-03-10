@@ -17,6 +17,8 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import net.aonsolutions.aon.gwt.polymer.client.FilterPanel;
+
 public class QualityPrincipal extends Composite{
 	
 	interface Binder extends UiBinder<Widget, QualityPrincipal> {}
@@ -58,7 +60,7 @@ public class QualityPrincipal extends Composite{
 	
 	public void filterContent(){			
 		// TODO
-		com.esferalia.aon.gwt.common.client.widget.FilterPanel fp = parent.filterPanel();
+		FilterPanel fp = parent.filterPanel();
 		northContent.setWidget(fp);
 		// northContent.setWidget(new FilterPanel(this));
 	}

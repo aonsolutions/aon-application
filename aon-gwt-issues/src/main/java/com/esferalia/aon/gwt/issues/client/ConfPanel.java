@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.api.client.incidence.JsGithub;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
-import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -42,6 +41,7 @@ import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
 
+import net.aonsolutions.aon.gwt.polymer.client.AonToolbar;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class ConfPanel extends Composite {

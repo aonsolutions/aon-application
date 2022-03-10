@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.api.client.project.JsProject;
 import com.esferalia.aon.gwt.api.client.registry.JsProfile;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -78,6 +77,7 @@ import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
+import net.aonsolutions.aon.gwt.polymer.client.AonToolbar;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 
