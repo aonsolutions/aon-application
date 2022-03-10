@@ -5,6 +5,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 
 public class Model115ScriptProvider {
+	
+	private Model115ScriptProvider() {
+		
+	}
+	
 	private enum Model115Script {
 		AEAT_2022_SCRIPT {
 			@Override
@@ -97,7 +102,7 @@ public class Model115ScriptProvider {
 		,GIPUZKOA_SCRIPT {
 			@Override
 			boolean accept(Mod115 mod115) {
-				return mod115.isGipuzkoa() && mod115.getYear() < 2022;
+				return mod115.isGipuzkoa();
 			}
 	
 			@Override
@@ -120,6 +125,7 @@ public class Model115ScriptProvider {
 		abstract boolean accept(Mod115 mod115);
 		abstract IModelScript<Mod115Key>[] getScript();
 	}
+	
 	public static IModelScript<Mod115Key>[] obtainScript(Mod115 mod115) {
 		IModelScript<Mod115Key>[] ms = null;
 		for ( Model115Script script : Model115Script.values()) {
@@ -129,10 +135,10 @@ public class Model115ScriptProvider {
 			}
 		}
 		if (ms == null) {
-			throw new IllegalStateException("No hay declaración disponible para: "
-					+ mod115.getAdministration().toString()
-					+ mod115.getYear()
-					+mod115.getPeriod().getDescription());
+			throw new IllegalStateException("No hay declaraci\u00F3n disponible para: "
+					+ mod115.getAdministration().getDescription()
+					+ " - " 
+					+ mod115.getModelFullName());
 		}
 		return ms;
 	}

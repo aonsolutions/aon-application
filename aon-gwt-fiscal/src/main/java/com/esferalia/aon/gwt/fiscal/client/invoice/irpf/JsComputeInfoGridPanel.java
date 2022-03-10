@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.irpf;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
-import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -11,7 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class JsComputeInfoGridPanel extends FlowPanel {
+public abstract class JsComputeInfoGridPanel extends FlowPanel {
 	
 	private final Label title;
 	private final Label subTitle;
@@ -79,16 +78,15 @@ public class JsComputeInfoGridPanel extends FlowPanel {
 		String pattern = info.getPattern();
 		for (String keyString  : info.getKeys()) {
 			String searchPattern = "{"+i+"}";
-			Mod111Key key = Mod111Key.valueOf(keyString);
-			String box = template.text(key.getBoxAsString()).asString();
+			String box = template.text( resolveKey(keyString) ).asString();
 			pattern = AonStringUtils.replace(pattern, searchPattern, box);
 			i++;
 		}
-		Mod111Key key = Mod111Key.valueOf(info.getKey());
-		pattern += " = " + template.text(key.getBoxAsString()).asString();  
+		pattern += " = " + template.text(resolveKey(info.getKey())).asString();  
 		return new HTMLPanel(pattern);
 	}
 	
+
 	private HTMLPanel getResult(JsIRPFComputeInfo info) {
 		int i = 0;
 		String pattern = info.getPattern();
@@ -101,4 +99,6 @@ public class JsComputeInfoGridPanel extends FlowPanel {
 		pattern += " = " + template.text(info.getValue()).asString();  
 		return new HTMLPanel(pattern);
 	}
+	
+	protected abstract String resolveKey(String keyString);
 }

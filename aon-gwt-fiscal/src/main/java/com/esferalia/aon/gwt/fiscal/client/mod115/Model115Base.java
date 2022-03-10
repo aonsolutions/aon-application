@@ -674,14 +674,20 @@ public abstract class Model115Base extends DockLayoutPanel {
 		FlexTable table = new FlexTable();
 		container.add(table);
 		defineTable(table);
-		for (IModelScript<Mod115Key> ms : Model115ScriptProvider.obtainScript(getModel())) {
-			if (ms.paintHeaderBefore()) {
-				paintHeader(table);
+		IModelScript<Mod115Key>[] script = null;
+		try {
+			script = Model115ScriptProvider.obtainScript(getModel());
+			for (IModelScript<Mod115Key> ms : script) {
+				if (ms.paintHeaderBefore()) {
+					paintHeader(table);
+				}
+				paintRow(table,getCallback(),ms);	
 			}
-			paintRow(table,getCallback(),ms);	
+			liquidationScrollPanel.setWidget(container);
+			tabPanel.add(liquidationScrollPanel, AON.MSG.liquidacion());
+		} catch (Exception e) {
+			getCallback().showError(e.getMessage());
 		}
-		liquidationScrollPanel.setWidget(container);
-		tabPanel.add(liquidationScrollPanel, AON.MSG.liquidacion());
 	}
 	
 	private void defineTable(FlexTable table) {
@@ -803,7 +809,7 @@ public abstract class Model115Base extends DockLayoutPanel {
 		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox();
 		fieldsMap.put(key, input);
-		input.setEnabled(script.isEnabled()); 
+		input.setEnabled(model.isEditable() && script.isEnabled()); 
 		input.setValue(det1.getAmount());
 		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
 			input.addStyleName(AON.CSS.aonChanged());
@@ -912,7 +918,16 @@ public abstract class Model115Base extends DockLayoutPanel {
 							
 							for (int i = 0; i < array.length(); i++) {
 								Mod115Key key = script.getKeys()[i];
-								JsComputeInfoGridPanel grid = new JsComputeInfoGridPanel();
+								JsComputeInfoGridPanel grid = new JsComputeInfoGridPanel() {
+
+									@Override
+									protected String resolveKey(String keyString) {
+										Mod115Key key = Mod115Key.valueOf(keyString);
+										return key.getBoxAsString();
+									}
+									
+								};
+
 								grid.setTitle(AON.MSG.calcDetail());
 								grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
 								grid.addContent(array.get(i));
@@ -1036,7 +1051,7 @@ public abstract class Model115Base extends DockLayoutPanel {
 			.addCell(receiptBox);
 		
 		// Complementaria: Numero justificante de la declaración anterior
-		if (getModel().isComplementary()) {
+		if (getModel().isComplementary() || getModel().isReplacement()) {
 			final AonTextBox previousReceiptBox = new AonTextBox();
 			previousReceiptBox.setVisibleLength(15);
 			previousReceiptBox.setMaxLength(13);

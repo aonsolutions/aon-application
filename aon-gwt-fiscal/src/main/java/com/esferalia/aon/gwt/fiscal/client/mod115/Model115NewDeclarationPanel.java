@@ -165,6 +165,7 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 				replacement.setEnabled(!complementary.getValue());
 				if (AonEnumUtils.getBoolean(complementary.getValue())) {
 					replacement.setValue(false);
+					model.setReplacement(false);
 				}
 				
 			});
@@ -182,6 +183,7 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 				complementary.setEnabled(!replacement.getValue());
 				if (AonEnumUtils.getBoolean(replacement.getValue())) {
 					complementary.setValue(false);
+					model.setComplementary(false);
 				}
 			});
 			tab.addRow()
