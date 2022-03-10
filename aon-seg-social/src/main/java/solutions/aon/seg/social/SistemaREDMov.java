@@ -240,7 +240,7 @@ class SistemaREDMov {
 	    	
  			HtmlPage htmlPage = firstPageAltaBaja(
 					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
-					employee.getRegime(),  dni, ident, employee.getFra()
+					employee.getRegime(),  dni, ident
 	    	);
 	
 			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
@@ -307,7 +307,7 @@ class SistemaREDMov {
 		HtmlPage htmlPage = firstPageAltaBaja(
     			webClient,
 				mov, employee.getNss(), employee.getCtaCti().get(),
-				employee.getRegime(),  dni, ident, employee.getFra()
+				employee.getRegime(),  dni, ident
     	);
 
 		HtmlForm jacadaForm1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
@@ -702,7 +702,7 @@ class SistemaREDMov {
 	}
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
-			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident, Date fecha) throws Exception {
+			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident) throws Exception {
 		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 		
