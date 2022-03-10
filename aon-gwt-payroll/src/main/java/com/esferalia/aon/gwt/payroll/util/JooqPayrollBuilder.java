@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+import static com.esferalia.aon.watson.server.AonDateUtils.getDayOfWeek;
 import static com.esferalia.aon.watson.util.AonStringUtils.containsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
@@ -19,13 +20,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,6 +42,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams.PartTimeEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -47,14 +55,19 @@ import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * Class containing method/s to print payrolls from database data
  */
 public class JooqPayrollBuilder {
+	
+	private static String[] WEEK_DAYS = {"DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"};
+	
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the
 	 * OutputStream passed as parameter
@@ -66,11 +79,11 @@ public class JooqPayrollBuilder {
 	 * @param salaryIds    The IDs of the salaries in database
 	 */
 	public static void generatePayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
-			Integer... salaryIds) {
+			Optional<Double> complementaryLimit, Integer... salaryIds) {
 		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
-			fillPayroll(outputStream, dpt, dpb, aonContext, salaryIds);
+			fillPayroll(outputStream, dpt, dpb, aonContext, salaryIds, complementaryLimit);
 		}
 	}
 
@@ -84,8 +97,8 @@ public class JooqPayrollBuilder {
 	 * @param salaryIds    The IDs of the salaries in database
 	 */
 	public static void generatePayroll(Integer enterpriseId, String domainName, OutputStream outputStream,
-			Integer... salaryIds) {
-		generatePayroll(enterpriseId, domainName, "", outputStream, salaryIds);
+			Optional<Double> complementaryLimit, Integer... salaryIds) {
+		generatePayroll(enterpriseId, domainName, "", outputStream, complementaryLimit, salaryIds);
 	}
 
 	/**
@@ -96,15 +109,44 @@ public class JooqPayrollBuilder {
 	 * @param outputStream The output stream which the PDF will be written on
 	 * @param salaryIds    The IDs of the salaries in database
 	 */
-	public static void generatePayroll(String domainName, OutputStream outputStream, Integer... salaryIds) {
-		generatePayroll(null, domainName, "", outputStream, salaryIds);
+	public static void generatePayroll(String domainName, OutputStream outputStream, Optional<Double> complementaryLimit, Integer... salaryIds) {
+		generatePayroll(null, domainName, "", outputStream, complementaryLimit, salaryIds);
 	}
 
 	private static void fillPayroll(OutputStream outputStream, PayrollTemplate payrollTemplate, DefaultPayrollBuilder payrollBuilder,
-			AONContext aonContext, Integer[] salaryIds) {
+			AONContext aonContext, Integer[] salaryIds, Optional<Double> complementaryLimit) {
 		
 		// PICK UP THE SALARIES
 		Stream<Salary> salaries = AON.getSalaries(aonContext, p -> p.getIdProperty().in(salaryIds));
+		
+		// LOGO
+		Optional<InputStream> optLogo = Optional.empty();
+		{
+
+			Attach attach1 = AON.getAttach(
+				aonContext.getDomainName(),
+				aonContext.getDomainId(),
+				aonContext.getUser(),
+				f -> f.getTypeProperty().eq(SIGNATURE.value()
+			)
+			.and(f.getDomainProperty()
+			.eq(aonContext.getDomainId())),REGISTRY);
+			
+			if (attach1 == null || attach1.getData() == null)
+				attach1 = AON.getAttach(
+							aonContext.getDomainName(), 
+							aonContext.getDomainId(), 
+							aonContext.getUser(),
+							f -> f.getTypeProperty().eq(LOGO.value()).and(f.getDomainProperty().eq(aonContext.getDomainId())),
+							REGISTRY
+						);
+
+			if (attach1 != null && attach1.getData() != null)
+				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
+		}
+		final byte[] logo = getBytes(optLogo);
+
+		
 		Collection<DefaultPayroll> payrolls = salaries.map(salary -> {
 
 			// PAYROLL RELATED DATA
@@ -233,7 +275,7 @@ public class JooqPayrollBuilder {
 			double nonStructBase[] = new double[]{ 0d };
 			double forceMajeureBase[] = new double[]{ 0d };
 			
-			{	
+			{
 				payrollBuilder.setAccrualTotal(salary.getTotalPayment());
 				HashMap<Integer, ArrayList<PDFPayment>> paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
 				salary.getPayments()
@@ -479,9 +521,7 @@ public class JooqPayrollBuilder {
 											costBuilder.setNoStructType(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
 										else
 											costBuilder.setNoStructType(Optional.of(-1.00));
-									}			
-									
-									System.out.println(costName);
+									}
 								}
 							});
 				}
@@ -499,40 +539,135 @@ public class JooqPayrollBuilder {
 				payrollBuilder.setContingencies(costBuilder.build());
 			}
 			payrollBuilder.setPayrollTotal(salary.getTotalLiquid());
+			
+			
+			//-----PART TIME-----
+			Map<String, List<ContextData>> salaryData = salary.getContextData();
+			List<ContextData> partialities = salaryData.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList());
+			List<ContextData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
+			boolean isPartiality = partialities.stream().anyMatch(sd -> getExpressionValue(sd.getExpression()) != null && getExpressionValue(sd.getExpression()) < 1);
+			
+			if (SalaryType.SALARY.equals(salary.getSalaryType()) && isPartiality && !workedDays.isEmpty()) {
+				Date date = salary.getStartDate();
+				double contractHours = 0;
+				PartTimeParams params = new PartTimeParams(date)
+						.setEnterpriseCCC(salary.getEnterpriseCCC())
+						.setEnterpriseDocument(salary.getEnterpriseDocument())
+						.setEnterpriseName(salary.getEnterpriseName())
+						.setEmployeeName(salary.getEmployeeName())
+						.setPaymentDate(salary.getIssueDate());
+				Set<Date> workedDaysSet = new LinkedHashSet<>();
+				while (date.compareTo(salary.getEndDate()) <= 0) {
+					int day = AonDateUtils.getDay(date);
+					PartTimeEntry entry = new PartTimeEntry();
+					if (isWorkedDay(date, salaryData, salary.getEndDate())) {
+						entry.setOrdinary(getDayHours(date, salaryData, salary.getEndDate()));
+						Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
+						if (dayHours != null && dayHours > 0) {
+							boolean daysData = areThereDaysData(date, salaryData, salary.getEndDate());
+							if (daysData || (!daysData && getDayOfWeek(date) > 1 && getDayOfWeek(date) < 7)) {
+								params.addEntry(day, entry);
+								workedDaysSet.add(date);
+								contractHours += dayHours;
+							}
+						}
+					}
+					date = AonDateUtils.addDays(date, 1);
+				}
+				params.setContractHours(contractHours);
+				
+				date = salary.getStartDate();
+				double limit = complementaryLimit.orElse(1d);
+				
+				List<ContextData> complementaryHours = salaryData.getOrDefault("HORAS_COMPLEMENTARIAS", Collections.emptyList());
+				
+				for (ContextData sd : complementaryHours) {
+					Date sdStart = sd.getStartDate();
+					Date sdEnd = sd.getEndDate() != null ? sd.getEndDate() : salary.getEndDate();
+					Period period = new Period(sdStart, sdEnd);
+					Double value = getExpressionValue(sd.getExpression());
+					if (value != null && value > 0) {						
+						List<Date> daysList = workedDaysSet.stream().filter(period::contains).collect(Collectors.toList());
+						if (!daysList.isEmpty()) {
+							int days = daysList.size();
+							while (daysList.size() > 1 && value / days < limit) {
+								daysList.remove(daysList.size() - 1);
+								days = daysList.size();
+							}
+							final double valuePerDay = value / days;
+							workedDaysSet.forEach(d -> {
+								int day = AonDateUtils.getDay(d);
+								params.getEntry(day).setComplementary(valuePerDay);
+							});
+						}
+					}
+				}
+				
+				if (logo != null) {
+					params.setEnterpriseSignature(logo);
+				}
+				payrollBuilder.setPartTimeParams(Optional.of(params));
+			}
+			//-------------------
 
 			return payrollBuilder.build();
 		}).collect(Collectors.toList());
-
-		// LOGO
-		Optional<InputStream> optLogo = Optional.empty();
-		{
-
-			Attach attach1 = AON.getAttach(
-				aonContext.getDomainName(),
-				aonContext.getDomainId(),
-				aonContext.getUser(),
-				f -> f.getTypeProperty().eq(SIGNATURE.value()
-			)
-			.and(f.getDomainProperty()
-			.eq(aonContext.getDomainId())),REGISTRY);
-			
-			if (attach1 == null || attach1.getData() == null)
-				attach1 = AON.getAttach(
-							aonContext.getDomainName(), 
-							aonContext.getDomainId(), 
-							aonContext.getUser(),
-							f -> f.getTypeProperty().eq(LOGO.value()).and(f.getDomainProperty().eq(aonContext.getDomainId())),
-							REGISTRY
-						);
-
-			if (attach1 != null && attach1.getData() != null)
-				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
-		}
+		
 		// PRINT
 		try {
-			PayrollTemplate.print(outputStream, payrolls, optLogo, Optional.ofNullable(new Locale("es")));
+			PayrollTemplate.print(outputStream, payrolls, Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null), Optional.ofNullable(new Locale("es")));
 		} catch (CanNotCreatePdfException | IOException ignored) {}
+		
+		
+		
+		
 	}
+	
+	private static byte[] getBytes(Optional<InputStream> optLogo) {
+		try {
+			return optLogo.isPresent() ? optLogo.get().readAllBytes() : null;
+		} catch (IOException e1) {
+			return null;
+		}
+	}
+
+	private static Double getDayHours(Date date, Map<String, List<ContextData>> salaryData, Date salaryEnd) {
+		if (date == null || salaryData == null || salaryEnd == null)
+			return null;
+		String name = "HORAS_" + WEEK_DAYS[AonDateUtils.getDayOfWeek(date) - 1];
+		Optional<ContextData> optHoursData = salaryData.getOrDefault(name, Collections.emptyList()).stream().filter(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)).findFirst();
+		if (optHoursData.isPresent()) {
+			return getExpressionValue(optHoursData.get().getExpression());
+		}
+		Optional<ContextData> optPartiality = salaryData.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList()).stream().filter(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)).findFirst();
+		if (optPartiality.isPresent()) {
+			Double coef = getExpressionValue(optPartiality.get().getExpression());
+			return coef != null ? coef * 8 : null;
+		}
+		return 8d;
+	}
+
+	private static boolean areThereDaysData(Date date, Map<String, List<ContextData>> salaryData, Date salaryEnd) {
+		if (salaryData == null || date == null || salaryEnd == null)
+			return false;
+		List<String> days = Arrays.asList(WEEK_DAYS);
+		return days.stream().anyMatch(day -> salaryData.containsKey("HORAS_" + day) && salaryData.get("HORAS_" + day).stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)));
+	}
+
+	private static boolean isWorkedDay(Date date, Map<String, List<ContextData>> salaryData, Date salaryEnd) {
+		if (salaryData == null || date == null || salaryEnd == null)
+			return false;
+		List<ContextData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
+		boolean isInWorkPeriod = workedDays.stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date));
+		if (isInWorkPeriod) {
+			if (areThereDaysData(date, salaryData, salaryEnd)) {
+				return true;
+			}
+			return AonDateUtils.getDayOfWeek(date) > 1 && AonDateUtils.getDayOfWeek(date) < 7;
+		}
+		return false;
+	}
+	
 
 	/**
 	 * Returns if amount and quote are empty
@@ -561,4 +696,13 @@ public class JooqPayrollBuilder {
 		return value != null ? value : "";
 	}
 	
+	private static Double getExpressionValue(String expression) {
+		if (expression == null)
+			return null;
+		try {
+			return Double.parseDouble(expression);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
 }

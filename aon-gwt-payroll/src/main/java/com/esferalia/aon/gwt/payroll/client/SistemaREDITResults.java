@@ -52,7 +52,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 
 		@Template("<span style=\"{0}\">"
 				+ "Para acceder al SISTEMA RED se requiere un certificado aceptado por la Seguridad Social."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un certificado.</span>")
+//				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un certificado.</span>"
+				)
 		SafeHtml noCertificateTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle);
 
 	}
@@ -162,7 +163,17 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		syncMessages();
 	}
 	
-	protected void credentialsFound() {}
+	protected void credentialsFound() {
+		addError(new SaltraEvent() {
+			
+			@Override
+			public void append(SafeHtmlBuilder builder) {
+				builder.append(TEMPLATE.noCertificateTreeItem(getMainStyle(), getAnchorStyle()));
+			}
+		});
+		
+		syncErrors();
+	}
 
 	@Override
 	public void itNotExist(ItNotExist status) {
