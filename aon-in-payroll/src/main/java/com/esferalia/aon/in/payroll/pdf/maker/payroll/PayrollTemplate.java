@@ -142,8 +142,7 @@ public class PayrollTemplate {
 		if (logo.isPresent())
 			bLogo = logo.get().readAllBytes();
 
-		for (DefaultPayroll payroll : payrolls)
-		{
+		for (DefaultPayroll payroll : payrolls) {
 			if (bLogo != null)
 				logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
 
@@ -162,8 +161,7 @@ public class PayrollTemplate {
 			template.doc  = doc;
 			template.logo = logo;
 
-			if (jump)
-			{
+			if (jump) {
 				template.drawPayments();
 				drawBorderedBox(template.contents, 10, 10, 575, 695, LIGHT_GRAY);
 				template.contents.close();
@@ -178,14 +176,16 @@ public class PayrollTemplate {
 
 				template.drawDeductions();
 				template.drawFooter();
-			} else
-			{
+			} else {
 				drawBorderedBox(template.contents, 10, 185, 575, 520, LIGHT_GRAY);
 				template.drawPayments();
 				template.drawDeductions();
 				template.drawFooter();
 			}
 			template.contents.close();
+			if (payroll.getPartTimeParams().isPresent()) {				
+				PartTimeTemplate.append(doc, payroll.getPartTimeParams().get());
+			}
 		}
 		return doc;
 	}
