@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
@@ -1487,15 +1488,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			}
 
 			@Override
-			protected void onComunicateIT(IT it) {
-				// Not use on this implementation
-			}
+			protected void onCommunicateITPart(IT it, ITPart itPart) {}
 
 			@Override
-			protected void onCommunicateITPart(IT it, ITPart itPart) {
-				// TODO Auto-generated method stub
-				
-			}
+			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {}
     		
     	};
     	
@@ -1536,19 +1532,16 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				getITCertificatePDF(itEmployee, it);
 			}
 
-			@Override
-			protected void onComunicateIT(IT it) {
-				// Paternity / Maternity
-				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
-					comunicatePaternityIT(itEmployee, it);
-				else
-					comunicateIT(itEmployee, it);
+	        @Override
+			protected void onCommunicateITPart(IT it, ITPart part) {
+				AonDialog dialog = new AonDialog("Info", new HTML("Implementada en el apartado  Laboral Partes IT"));
+				dialog.info();
 			}
 
 			@Override
-			protected void onCommunicateITPart(IT it, ITPart itPart) {
-				// TODO Auto-generated method stub
-				
+			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
+				AonDialog dialog = new AonDialog("Info", new HTML("Im en el apartado  Laboral Partes IT"));
+				dialog.info();
 			}
 			
     	};
