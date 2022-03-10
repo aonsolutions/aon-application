@@ -22,12 +22,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
-import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
@@ -1293,19 +1292,9 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
 		
 		if(this.userComunica) {
-			boolean communicated = itPart.getStatus()!=null && itPart.getStatus() == (byte)3;
-			String title = communicated ? "Parte IT comunicada" : "Comunicar Confirmaci\u00f3n";
-			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
-		
-			AonTableButton communicate = new AonTableButton(title, icon);
-			
-			if(!communicated && isCommunicatePart(itPart)) {
-				communicate.addClickHandler((e) -> {
-					setViewPartComunica(itPart);
-				});
-			}
-	
-			confirmationPartDataTable.setWidget(row, 5, communicate);
+			buildBtnPart(itPart).ifPresent(btn->
+				confirmationPartDataTable.setWidget(row, 5, btn)
+			);
 		}
 	}
 	
@@ -1583,22 +1572,26 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
 		
-		bjOptional.ifPresent(part-> itBaja.add(buildBtnPart(part)) );
+		bjOptional.ifPresent(part-> 
+			buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) )
+		);
 		
 		if(!isPaternity()) {
 			Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
-			altaOptional.ifPresent(part-> itAlta.add(buildBtnPart(part)) );
+			altaOptional.ifPresent(part->
+				buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) )
+			);
 		}
 	
 	}
 	
-	private AonTableButton buildBtnPart(ITPart part) {
-		boolean communicated = part.getStatus()!=null && part.getStatus() == (byte)3;
-		String title = communicated ? "Parte IT comunicada" : "Comunicar parte";
-		String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
-	
-		AonTableButton btn = new AonTableButton(title, icon); 
+	private Optional<AonTableButton> buildBtnPart(ITPart part) {
 		if(it.getId()!=null && part.getId()!=null) {
+			boolean communicated = part.getStatus()!=null && part.getStatus() == (byte)3;
+			String title = communicated ? "Borrar Parte IT comunicada" : "Comunicar parte";
+			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+		
+			AonTableButton btn = new AonTableButton(title, icon); 
 			btn.addClickHandler(e-> {
 				if(communicated) {
 					removeITPartTGSS(part);
@@ -1606,13 +1599,9 @@ public abstract class ITDialog extends AonCustomDialog {
 					setViewPartComunica(part);
 				}
 			});
+			return Optional.of(btn);
 		}
-	
-		return btn;
-	}
-	
-	private boolean isCommunicatePart(ITPart itPart){
-		return it.getId()!=null && itPart.getId()!=null && itPart.getStatus() != (byte)3;
+		return Optional.empty();
 	}
 	
 	private void removeITPartTGSS(ITPart part) {
