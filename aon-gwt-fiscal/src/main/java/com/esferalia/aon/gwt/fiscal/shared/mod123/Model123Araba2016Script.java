@@ -1,14 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod123;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 
 public enum Model123Araba2016Script implements IModelScript<Mod123Key> {
@@ -18,7 +16,7 @@ public enum Model123Araba2016Script implements IModelScript<Mod123Key> {
 	,R02 ("Si se ha dictado auto de declaraci\u00F3n de concurso en este per\u00EDodo, indique el tipo de autoliquidaci\u00F3n"
 			,new Mod123Key[]{Mod123Key.AR_908},NONE)
 	,R03 ("Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso",new Mod123Key[]{Mod123Key.AR_909},NONE)
-	,R04 ("Retenciones e ingresos a cuenta",new Mod123Key[]{Mod123Key.AR_C01,Mod123Key.AR_C02,Mod123Key.AR_C03},INVOICE,DIFF_INVOICE)
+	,R04 ("Retenciones e ingresos a cuenta",new Mod123Key[]{Mod123Key.AR_C01,Mod123Key.AR_C02,Mod123Key.AR_C03},NONE)
 	,R05 ("Periodificaci\u00F3n. Ingresos de ejercicios anteriores.",new Mod123Key[]{Mod123Key.AR_C04},NONE)
 	,R06 ("Periodificaci\u00F3n. Regularizaci\u00F3n.",new Mod123Key[]{Mod123Key.AR_C05},NONE)
 	,R07 ("Suma de retenciones e ingresos a cuenta.",new Mod123Key[]{Mod123Key.AR_C06},COMPUTE)

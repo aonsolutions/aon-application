@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
-import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.google.gwt.core.client.GWT;
@@ -63,7 +62,6 @@ public class Model123 extends MainEntryPoint {
 		public void showError(String msg) {
 			showErrorMessage(msg);
 		}
-		
 		@Override
 		public void hideError() {
 			aonLayout.hideErrorPanel();
@@ -71,10 +69,14 @@ public class Model123 extends MainEntryPoint {
 
 		@Override
 		public void showInfoPanel(String htmlText) {
+			showInfoPanelWidget(new HTMLPanel(htmlText));	
+		}
+		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
+			breakdownPanel.setWidget(widget);
 			breakdownPanel.scrollToTop();
 		}
 		
@@ -98,12 +100,16 @@ public class Model123 extends MainEntryPoint {
 
 		@Override
 		public void onCancel(Mod123 model) {
-			cleanInfoPanel();
-			declarationContainer.setWidget(model123Table);
-			model123Table.refresh( new Model123Callback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
-			
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				cleanInfoPanel();
+				hideError();
+				declarationContainer.setWidget(model123Table);
+				model123Table.refresh( new Model123Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 
 		@Override
@@ -124,13 +130,13 @@ public class Model123 extends MainEntryPoint {
 					cleanInfoPanel();
 					tabLayout.selectTab(INFORMATION_TAB);
 					closeFootPanel();
-					showNewDeclarationPopup(m123);
+					showNewDeclarationPanel(m123);
 				}
 
 
 				@Override
 				public void onFailure(Throwable caught) {
-					showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					showErrorMessage(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 				}
 			});
 		}
@@ -253,7 +259,7 @@ public class Model123 extends MainEntryPoint {
 					public void onSuccess(Mod123 m123) {
 						tabLayout.selectTab(INFORMATION_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup( m123 );
+						showNewDeclarationPanel( m123 );
 					}
 
 
@@ -357,22 +363,6 @@ public class Model123 extends MainEntryPoint {
 		}
 	}
 
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	
-
 	private void onSelectionChange(SelectionEvent<Mod123> event) {
 		Mod123 sel = event.getSelectedItem();
 		SERVICE.getMod123(getOptions().getOccam(),sel.getId(), new AsyncCallback<Mod123>() {
@@ -392,36 +382,27 @@ public class Model123 extends MainEntryPoint {
 		});
 	}
 	
-	private void showNewDeclarationPopup( Mod123 m123 ) {
-		NewDeclarationPopup<Mod123,Model123ModuleOptions> newDialog = new NewDeclarationPopup<>( m123,
-			new Model123Callback() { 
+	private void showNewDeclarationPanel( Mod123 m123) {
+		Model123NewDeclarationPanel newDeclarationPanel = new Model123NewDeclarationPanel(m123,new Model123Callback() { 
+			@Override
+			public void onAccept(Mod123 mod123) {
+				SERVICE.create(getOptions().getOccam(),mod123,
+					new AsyncCallback<Mod123>() {
+						@Override
+						public void onSuccess(Mod123 m123) {
+							select(m123);
+						}
 
-					@Override
-					public void onAccept(Mod123 mod123) {
-						SERVICE.create(getOptions().getOccam(),mod123,
-							new AsyncCallback<Mod123>() {
-								@Override
-								public void onSuccess(Mod123 m123) {
-									select(m123);
-								}
-	
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-								}
-							});
-					}
-					@Override
-					public void onCancel(Mod123 model) {
-						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-							getOptions().getExternalCallback().onExit(model);
-						}						
-					}
-					
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
+			}
+		}); 
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 
 	private void showErrorMessage(String msg) {

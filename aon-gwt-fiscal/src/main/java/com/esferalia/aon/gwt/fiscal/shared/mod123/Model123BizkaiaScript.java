@@ -1,18 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod123;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public enum Model123BizkaiaScript implements IModelScript<Mod123Key> {
 	
-	 R00 ("Retenciones e ingresos a cuenta",new Mod123Key[]{Mod123Key.BZ_C01,Mod123Key.BZ_C02,Mod123Key.BZ_C03},INVOICE,DIFF_INVOICE)
+	 R00 ("Retenciones e ingresos a cuenta",new Mod123Key[]{Mod123Key.BZ_C01,Mod123Key.BZ_C02,Mod123Key.BZ_C03},NONE)
 	,R01 ("Periodificaci\u00F3n. Ingresos de ejercicios anteriores.",new Mod123Key[]{Mod123Key.BZ_C04},NONE)
 	,R02 ("Periodificaci\u00F3n. Regularizaci\u00F3n.",new Mod123Key[]{Mod123Key.BZ_C05},NONE)
 	,R03 ("A Ingresar",new Mod123Key[]{Mod123Key.BZ_C06},COMPUTE)

@@ -3,8 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Mod123Key;
-import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
 
 public class Mod123 extends FiscalModel implements Serializable {
 	
@@ -15,6 +14,57 @@ public class Mod123 extends FiscalModel implements Serializable {
 		setModel(FiscalModelType.M123);
 	}
 	
+	@Override
+	public boolean isReplacedNumberAvailable() {
+		return  getAdministration() != null 
+				&& (isComplementaryDeclarationAvailable() || isReplacementDeclarationAvailable()) 
+				&& (isAEAT() || isAraba() || isNavarra())
+				&& (isComplementary() || isReplacement()); 
+	}
+
+	@Override
+	public boolean isStrictToDeposit() {
+		return (isFinished() || isCustomerAccepted() ||isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
+	}
+
+	@Override
+	@Deprecated
+	public double getResult() {
+		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResult())");
+	}
+	
+	@Override
+	@Deprecated
+	public Mod115Key getDeclarationTypeKey() {
+		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
+	}
+	
+	@Override
+	@Deprecated
+	public void setDefaultDeclarationType(){
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	}
+
+	@Override
+	@Deprecated
+	public boolean isDiffCalculationAvailable() {
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	}
+	
+	@Override
+	@Deprecated
+	public boolean isDiffCalculationDisabled() {
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	}
+
+	@Override
+	@Deprecated
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	}
+	
+	/*
 	@Override
 	public boolean isComplementaryDeclarationAvailable() {
 		if (getAdministration() == null) return false;
@@ -35,12 +85,6 @@ public class Mod123 extends FiscalModel implements Serializable {
 		else if (isGipuzkoa()) return false;
 		else if (isNavarra()) return false;
 		return false;
-	}
-	
-	@Override
-	public boolean isReplacedNumberAvailable() {
-		if (getAdministration() == null) return false;
-		return  (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
 	}
 	
 	@Override
@@ -94,5 +138,5 @@ public class Mod123 extends FiscalModel implements Serializable {
 		ensureDetail(Mod123Key.CM_001).setAmount(diffCalculationDisabled?0:1);
 	}
 
-
+*/
 }
