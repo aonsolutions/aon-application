@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.polymer.client;
+package net.aonsolutions.aon.gwt.vaadin.client;
 
 import java.util.Date;
 import java.util.HashMap;

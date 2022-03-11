@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronList;
 import com.vaadin.polymer.paper.widget.PaperButton;
 
-import net.aonsolutions.aon.gwt.polymer.client.AonToolbar;
+import net.aonsolutions.aon.gwt.vaadin.client.AonToolbar;
 
 
 public class IssueList extends Composite {
