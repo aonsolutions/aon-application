@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod123;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -26,4 +27,5 @@ public interface Mod123ServiceAsync {
 	void create(Occam occam, Mod123 mod123, AsyncCallback<Mod123> callback);
 	void reset(Occam occam, Mod123 model, AsyncCallback<Mod123> asyncCallback);
 	void getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
+	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback);
 }

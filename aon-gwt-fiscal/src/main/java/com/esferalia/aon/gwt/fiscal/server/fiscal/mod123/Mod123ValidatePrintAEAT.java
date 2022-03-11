@@ -82,7 +82,7 @@ public class Mod123ValidatePrintAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod123 mod123 = MODEL123.getMod123(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod123 mod123 = MODEL123.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (mod123 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}
