@@ -1,19 +1,20 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod123;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer.IMod123Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer.IMod123Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod123WriterAEAT2019 implements IMod123Writer{ 
 
-	private static enum Mod123File {
+	private enum Mod123File {
 		
 		AEAT_2019 ( mod123 -> true ,new IPropertyFiller[] { 
 				(wr, mod) -> wr.append("<T")
@@ -32,7 +33,7 @@ public class Mod123WriterAEAT2019 implements IMod123Writer{
 			   
 			   ,(wr, mod) -> wr.append("<T12301000>")
 			   ,(wr, mod) -> wr.append(" ")
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType().getValue(), 1))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?mod.getName():mod.getSurname(),60))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isEntity()?" ":mod.getName(),20))

@@ -1050,8 +1050,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 			.addCell( new Label(AON.MSG.receipt()), AON.CSS.aonTableLabel())
 			.addCell(receiptBox);
 		
-		// Complementaria: Numero justificante de la declaración anterior
-		if (getModel().isComplementary() || getModel().isReplacement()) {
+		if (getModel().isReplacedNumberAvailable()) {
 			final AonTextBox previousReceiptBox = new AonTextBox();
 			previousReceiptBox.setVisibleLength(15);
 			previousReceiptBox.setMaxLength(13);
