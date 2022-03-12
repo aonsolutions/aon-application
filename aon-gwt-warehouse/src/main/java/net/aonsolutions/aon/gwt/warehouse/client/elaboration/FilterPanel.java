@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
-import net.aonsolutions.aon.gwt.polymer.client.AonFilterDialog;
+import net.aonsolutions.aon.gwt.vaadin.client.AonFilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.google.gwt.core.client.GWT;

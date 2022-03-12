@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.gwt.polymer.client;
+package net.aonsolutions.aon.gwt.vaadin.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

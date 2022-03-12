@@ -1,10 +1,11 @@
-package net.aonsolutions.aon.gwt.polymer.client;
+package net.aonsolutions.aon.gwt.vaadin.client;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIcon;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -81,11 +82,9 @@ public abstract class AonFilterDialog extends PopupPanel {
 		Boolean filtered = selectedMap.containsKey(o.getId()+"") &&
 					selectedMap.get(o.getId()+"");
 		PaperItem pi = new PaperItem();
-    	IronIcon ironIcon = new IronIcon();
-    	if(filtered){
-    		ironIcon.setIcon("check");
-    	}else ironIcon.setIcon(icon);
-    	pi.add(ironIcon);
+    
+		AonIcon aonIcon = new AonIcon(filtered ? "check" : icon);
+    	pi.add(aonIcon);
     	Label label = new Label(stringShort(o.getName()));
     	label.setTitle(o.getName());
     	pi.add(label);

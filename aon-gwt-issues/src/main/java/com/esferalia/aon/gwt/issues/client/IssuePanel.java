@@ -77,7 +77,7 @@ import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
-import net.aonsolutions.aon.gwt.polymer.client.AonToolbar;
+import net.aonsolutions.aon.gwt.vaadin.client.AonToolbar;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 
