@@ -17,9 +17,7 @@ import com.code.aon.aio.service.drive.exception.GoogleDriveException;
 
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
-/**
- * Servlet implementation class DriveServlet
- */
+
 @WebServlet("/DriveServlet")
 public class DriveServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -39,24 +37,24 @@ public class DriveServlet extends HttpServlet {
 		
 		ServletContext ct = getServletContext();
 		
+		if(drive == null) {
+			response.sendError(500, "Cannot connect to Google Drive");
+			return;
+		}
 		
-		if("video".equals(request.getParameter("action"))) {
+		final String action = request.getParameter("action");
+		
+		if("video".equals(action)) {
 			
 			final String name = request.getParameter("name");
 			final String parent = request.getParameter("parent");
 			
-			if(name == null || parent == null) {
+			if(name == null) {
 				response.sendError(400);
 				return;
 			}
-			
-			if(drive == null) {
-				response.sendError(500, "Cannot connect to Google Drive");
-				return;
-			}
-			
-			
-			final Optional<InputStream> stream = drive.downloadVideoByNameAndParentNotTrashed(Optional.ofNullable(name), Optional.ofNullable(null));			
+						
+			final Optional<InputStream> stream = drive.downloadByNameAndParentNotTrashed(Optional.ofNullable(name), Optional.ofNullable(parent));			
 			
 			if(stream.isEmpty()) {
 				response.sendError(404);
@@ -66,7 +64,7 @@ public class DriveServlet extends HttpServlet {
 			final InputStream input = stream.get();
 			
 			OutputStream output = response.getOutputStream();
-			response.setHeader("Content-Disposition", "inline; filename=\"aonvideo.mp4\"");
+			response.setHeader("Content-Disposition", "inline; filename=\"" + name + "\"");
 			
 
 		    byte[] buffer = new byte[4096];
@@ -83,6 +81,38 @@ public class DriveServlet extends HttpServlet {
 			output.close();
 			return;
 		}
+		
+		if("pdf".equals(request.getParameter("action"))) {
+			
+			final String name = request.getParameter("name");
+			final String parent = request.getParameter("parent");
+			
+			if(name == null) {
+				response.sendError(400);
+				return;
+			}
+			
+			final Optional<InputStream> stream = drive.downloadByNameAndParentNotTrashed(Optional.ofNullable(name), Optional.ofNullable(parent));			
+			
+			if(stream.isEmpty()) {
+				response.sendError(404);
+				return;
+			}
+			
+			response.setContentType("application/pdf");
+			final InputStream input = stream.get();
+			
+			OutputStream output = response.getOutputStream();
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + name + "\".pdf");
+			output.write(input.readAllBytes());
+		   
+			input.close();
+			output.flush();
+			output.close();
+			
+			
+			return;
+		}
 
 		response.sendError(403);
 	}
@@ -91,6 +121,7 @@ public class DriveServlet extends HttpServlet {
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
+	
 	
 	
 

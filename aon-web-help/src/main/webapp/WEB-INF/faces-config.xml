@@ -115,17 +115,25 @@
 	</managed-bean>
 
 	<!--  **** HELP CONTROLLER **** -->
-	<managed-bean>
+	<managed-bean id="help">
 		<managed-bean-name>help</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.aio.controller.HelpController
 		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>
+		<navigation-case>
+			<from-outcome>pdf_viewer</from-outcome>
+			<to-view-id>/viewer.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>video_viewer</from-outcome>
+			<to-view-id>/video.xhtml</to-view-id> 
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_enterprise</from-outcome>
 			<to-view-id>/facelet/menu/enterprise.xhtml</to-view-id> 

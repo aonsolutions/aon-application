@@ -1,15 +1,19 @@
 package com.code.aon.aio.service.drive;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
+
 import com.google.api.services.drive.model.File;
 
-public class GFile {
+public class GFile implements Serializable{
 
 	private String id;
 	private String name;
 	private MimeTypes type;
 	private String downloadUrl;
 	private String previewUrl;
-	
+	private List<String> parents;
 	
 	private GFile() {}
 	
@@ -33,6 +37,24 @@ public class GFile {
 		return previewUrl;
 	}
 	
+	public List<String> getParents() {
+		return parents;
+	}
+	
+	
+	
+	public boolean isPDF() {
+		return this.type == MimeTypes.PDF;
+	}
+	
+	public boolean isVideo() {
+		return this.type == MimeTypes.MP4;
+	}
+	
+	public boolean isFolder() {
+		return this.type == MimeTypes.FOLDER;
+	}
+	
 	
 	public static GFile from(File file) {
 		
@@ -43,6 +65,7 @@ public class GFile {
 			.setType(MimeTypes.valueOfMime(file.getMimeType()))
 			.setDownloadUrl(file.getWebContentLink())
 			.setPreviewUrl(file.getWebViewLink())
+			.setParents(file.getParents());
 			;
 		
 		return builder.build();
@@ -55,6 +78,7 @@ public class GFile {
 		private MimeTypes type;
 		private String downloadUrl;
 		private String previewUrl;
+		private List<String> parents;
 		
 		
 		public GFileBuilder() {			
@@ -85,6 +109,10 @@ public class GFile {
 			return this;
 		}
 		
+		public void setParents(List<String> parents) {
+			this.parents = parents;
+		}
+		
 		
 		public GFile build() {
 			
@@ -95,10 +123,31 @@ public class GFile {
 			file.type = this.type;
 			file.downloadUrl = this.downloadUrl;
 			file.previewUrl = this.previewUrl;
+			file.parents = this.parents;
 			
 			return file;
 		}
 		
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(id);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			GFileBuilder other = (GFileBuilder) obj;
+			return id == other.id;
+		}
+		
+		
+		            
 		
 		
 	}

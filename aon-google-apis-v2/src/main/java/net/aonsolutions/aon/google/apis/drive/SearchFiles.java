@@ -113,7 +113,7 @@ public class SearchFiles {
 			fl = drive.files()
 					.list()
 					.setQ("'"+parent+"' in parents and trashed=false")
-					.setFields("files(parents, id, name, webContentLink, webViewLink)")
+					.setFields("files(parents, id, mimeType, name, webContentLink, webViewLink)")
 					.execute();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -122,7 +122,36 @@ public class SearchFiles {
 	}
 	
 	/**
-	 * Seach files and folders by parent and name that aren't deleted
+	 * Search files and folders by parent that aren't deleted.
+	 * @param drive - drive object
+	 * @param parent - parent ID
+	 * @return a FileList with the files and folders given by the API
+	 */
+	public static FileList searchByParentNameNotTrashed(Drive drive, String parent){
+		
+		final FileList matches = SearchFiles.searchByNameNotThrashed(drive, parent);
+		
+		if(matches.getFiles().size() == 0) {
+			return new FileList();
+		}
+		
+		final File parentObject = matches.getFiles().get(0);
+		
+		FileList fl = new FileList();
+		try {
+			fl = drive.files()
+					.list()
+					.setQ("'"+parentObject.getId()+"' in parents and trashed=false")
+					.setFields("files(parents, id, mimeType, name, webContentLink, webViewLink)")
+					.execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fl;		
+	}
+	
+	/**
+	 * Search files and folders by parent and name that aren't deleted
 	 * @param drive
 	 * @param name
 	 * @param parent
@@ -135,6 +164,28 @@ public class SearchFiles {
 			fl = drive.files()
 					.list()
 					.setQ("'"+parent+"' in parents and trashed=false and name='" + name + "'")
+					.setFields("files(parents, id, name, webContentLink, webViewLink)")
+					.execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fl;		
+	}
+	
+	/**
+	 * Search files and folders by parent and name that aren't deleted
+	 * @param drive
+	 * @param name
+	 * @param parent
+	 * @return
+	 */
+	public static FileList searchByNameNotThrashed(Drive drive, String name) {
+		
+		FileList fl = new FileList();
+		try {
+			fl = drive.files()
+					.list()
+					.setQ("trashed=false and name='" + name + "'")
 					.setFields("files(parents, id, name, webContentLink, webViewLink)")
 					.execute();
 		} catch (IOException e) {
@@ -161,6 +212,7 @@ public class SearchFiles {
 		}
 		
 		final File firstEntry = list.getFiles().get(0);
+		System.out.println("Passing check");
 		if(firstEntry.getId() == null) {
 			return null;
 		}
@@ -194,7 +246,6 @@ public class SearchFiles {
 	
 	public static FileList searchFilesMimetypeAndTitle(Drive drive, String searcher1, String searcher2) throws IOException{
 		FileList fl = drive.files().list().setQ("mimetype = '"+searcher1+"' and name = '"+searcher2+"'").execute();
-		System.out.println(fl);
 		return fl;
 	}
 

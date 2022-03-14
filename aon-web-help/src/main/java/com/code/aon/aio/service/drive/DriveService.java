@@ -64,9 +64,24 @@ public class DriveService {
 		
 		list.getFiles().forEach(file -> {
 			files.add(GFile.from(file));
-			System.out.println(file.getParents());
 		});	
 		return files;		
+	}	
+	
+	/**
+	 * Get the list of files / directories from parent
+	 * @param id - The parent id
+	 * @return A list of files
+	 */
+	public LinkedList<GFile> ListDirectoryByName(Optional<String> name) {
+		
+		LinkedList<GFile> files = new LinkedList<GFile>();
+		FileList list = SearchFiles.searchByParentNameNotTrashed(drive, name.orElse("root"));
+		
+		list.getFiles().forEach(file -> {
+			files.add(GFile.from(file));
+		});	
+		return files;		    
 	}	
 	
 	/**
@@ -75,7 +90,7 @@ public class DriveService {
 	 * @param parent The parent
 	 * @return InputStream containing the data
 	 */
-	public Optional<InputStream> downloadVideoByNameAndParentNotTrashed(Optional<String> name, Optional<String> parent) {
+	public Optional<InputStream> downloadByNameAndParentNotTrashed(Optional<String> name, Optional<String> parent) {
 		InputStream response = SearchFiles.downloadByNameAndParentAndNotTrashed(drive, name.orElse(""), parent.orElse(BASE_ID));		
 		return Optional.ofNullable(response);
 	}
@@ -88,10 +103,7 @@ public class DriveService {
 	 */
 	public Optional<GFile> getFile(Optional<String> parent, Optional<String> name) {
 		
-		final FileList files = SearchFiles.searchByNameAndParentNotThrashed(drive, name.orElse(""), parent.orElse(BASE_ID));
-		System.out.println("FILES SEARCHED : " + files.getFiles().size());
-		System.out.println("RESPONSE : " + files.getFiles());
-		
+		final FileList files = SearchFiles.searchByNameAndParentNotThrashed(drive, name.orElse(""), parent.orElse(BASE_ID));		
 		if(files.size() == 0) {
 			return Optional.empty();
 		}
