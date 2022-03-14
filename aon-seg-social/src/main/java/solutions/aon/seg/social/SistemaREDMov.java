@@ -33,7 +33,6 @@ import com.gargoylesoftware.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
-import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
@@ -377,7 +376,6 @@ class SistemaREDMov {
 			}
 			if (employee.getOcup() != null)
 				form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase());
-		}
 
 		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
