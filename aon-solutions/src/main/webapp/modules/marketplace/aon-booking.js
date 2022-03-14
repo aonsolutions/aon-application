@@ -1,5 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
-import {Apps, ClassicApps, Services, Packs} from  '../../services/app.js';
+import {Apps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
+	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, OFFICE, COMMERCE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
@@ -14,7 +15,6 @@ import { CSS, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.j
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonToast } from '../../components/aon-toast.js';
-import { IFRAME } from '../../environments/aonTag.js';
 export class AonBooking extends AonElement {
 
 	TOOLBAR;
@@ -23,6 +23,7 @@ export class AonBooking extends AonElement {
 	apps;
 	users;
 	definedUsers;
+	dur;
 
 	get id() {
 		return this.getAttribute('id');
@@ -39,11 +40,11 @@ export class AonBooking extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		getDomainUserRoles({reload: true}).then(r => {
-			const dur = new DomainUserRoles(r);
-			this.apps = dur.getDomainApps();
-			this.users = dur.maxDefinedUsers;
-			this.definedUsers = dur.definedUsers;
-			this.build(dur);
+			this.dur = new DomainUserRoles(r);
+			this.apps = this.dur.getDomainApps();
+			this.users = this.dur.maxDefinedUsers;
+			this.definedUsers = this.dur.definedUsers;
+			this.build(this.dur);
 		});
 	}
 
@@ -78,8 +79,14 @@ export class AonBooking extends AonElement {
 		users.onChange(r => this.users = users.value);
 		users.addIconWithRemove(MATERIAL_ICONS.PERSON, undefined, () => users.value = '0');	
 
-		this.buildTitle(content, 'Packs');
-		this.buildApps(content, Packs, dur);
+		if(dur.getDomain().isConsultancy()){
+			this.buildTitle(content, 'Packs');
+			this.buildApps(content, Packs, dur);
+		} else {
+			this.buildTitle(content, 'Gestión');
+			this.buildApps(content, this.getGestionPacks(), dur);
+		}
+
 
 		this.buildTitle(content, MSG.APPLICATIONS);
 		this.buildApps(content, Apps, dur);
@@ -89,6 +96,20 @@ export class AonBooking extends AonElement {
 
 		this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
 		this.buildApps(content, ClassicApps, dur);
+	}
+	
+	getGestionPacks(){
+		if(this.dur.getDomain().isGarage())
+			return {GARAGE, PORTAL, BASIC, STANDAR, PROFESSIONAL};
+		else if(this.dur.getDomain().isAcademy())
+			return {ACADEMY, PORTAL, BASIC, STANDAR, PROFESSIONAL};
+		else if(this.dur.getDomain().isCommerce())
+			return {COMMERCE, PORTAL, BASIC, STANDAR, PROFESSIONAL};
+		else if(this.dur.getDomain().isOffice())
+			return {OFFICE, PORTAL};
+		else
+			return {ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
+
 	}
 
 	buildApps(content, apps, dur) {
@@ -108,7 +129,7 @@ export class AonBooking extends AonElement {
 			span.style.margin = '20px';
 
 			if(app.icon) {
-				let color = contratado || app.app.includes('pack') ? app.color : 'lightgray';
+				let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
 				span.innerHTML = `<aon-icon id="${this.APP + app.app + 'Icon'}" icon="${app.icon}" color="${color}" size="30px"></aon-icon>`;
 			} else {
 				let img = document.createElement('img');
@@ -174,7 +195,8 @@ export class AonBooking extends AonElement {
 			});
 
 			buttons.appendChild(contratar);
-			span.appendChild(buttons);
+			if(!app.domainType)
+				span.appendChild(buttons);
 			li.appendChild(span);
 			ul.appendChild(li);
 		}

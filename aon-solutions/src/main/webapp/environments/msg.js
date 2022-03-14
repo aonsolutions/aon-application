@@ -401,6 +401,7 @@ export const RGPD_URL = 'RGPD Url';
 
 // ----- S
 
+export const SALTRA = 'Saltra';
 export const SAVE = MSG.SAVE;
 export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;

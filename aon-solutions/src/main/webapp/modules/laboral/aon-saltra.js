@@ -13,9 +13,9 @@ import Apps from "../../services/app.js";
 
 import '../../css/aon.css';
 
-export class AonComunica extends AonElement {
+export class AonSaltra extends AonElement {
 
-  AON_COMUNICA;
+  AON_SALTRA;
   dur;
   _filter;
 	MOVEMENTS;
@@ -47,7 +47,7 @@ export class AonComunica extends AonElement {
 
 
   initialize(){
-    this.AON_COMUNICA = 'aonComunica';
+    this.AON_SALTRA = 'aonSaltra';
     this.title = this.title || MSG.PAYROLL;
     this._movements = [];
     this._filter = [];
@@ -64,7 +64,7 @@ export class AonComunica extends AonElement {
   }
 
   paintView(){
-    this.createApplication(this.AON_COMUNICA, this.title, new AonApplication());
+    this.createApplication(this.AON_SALTRA, this.title, new AonApplication());
     this.applicationEl = this.getApplication();
   }
 
@@ -74,10 +74,6 @@ export class AonComunica extends AonElement {
 		}
 
     let options = [];
-
-    let contract = PayrollOptions.AON_CONTRACT;
-    contract.fn = () => this.showView(PAYROLL_VIEWS.AON_CONTRACT_LIST);
-    options.push(contract);
 
     let movements = PayrollOptions.AON_COMUNICA;
     movements.fn = () => this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
@@ -99,7 +95,7 @@ export class AonComunica extends AonElement {
         options.push(aon_cert);
       }
 
-    this.applicationEl.addSidenavOptions(MSG.COMUNICA, options);
+    this.applicationEl.addSidenavOptions(MSG.SALTRA, options);
 
     let movButton = this.getElement('aonComunicaSidenavMovimientosAonIcon');
     if(movButton){
@@ -259,4 +255,4 @@ export class AonComunica extends AonElement {
     });
   }
 }
-window.customElements.define('aon-comunica', AonComunica);
+window.customElements.define('aon-saltra', AonSaltra);

@@ -105,6 +105,8 @@ export const AON_UPLOAD_LABEL = 'aonUploadLabel';
 export const AON_LIST_GROUP = 'aonListGroup';
 export const AON_LIST_GROUP_TOP = 'aonListGroupTop';
 export const AON_LIST_GROUP_ITEM = 'aonListGroupItem';
+export const AON_DESKTOP_MENU_CLASSIC_OPTION = 'aonDesktopMenuClassicOption';
+export const AON_DESKTOP_MENU_CLASSIC_OPTION_AON = 'aonDesktopMenuClassicOptionAon';
 
 // aon-toast.css
 

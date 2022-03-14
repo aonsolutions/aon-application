@@ -396,7 +396,7 @@ export class AonApplication extends AonElement {
     return div;
   }
 
-  addSidenavOptionsList(data, options) {
+   addSidenavOptionsList(data, options) {
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(data && data.id && sidenav){
       let div = this.getElement(sidenav.id + data.id);
@@ -503,11 +503,14 @@ export class AonApplication extends AonElement {
         });
       } else if (option.img) {
         let img = this.createElement(TAG.IMG);
-        img.style.width = "18px";
+        if(option.style) {
+          img.className = option.style;
+          span.style.paddingLeft = '20px'
+        } else img.style.width = '18px';
         img.src = option.img;
         li.appendChild(img);
       } else {
-        span.style.marginLeft = "28px";
+        span.style.marginLeft = '28px';
       }
       li.appendChild(span);
 
