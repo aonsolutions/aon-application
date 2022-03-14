@@ -3944,7 +3944,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(1750.00/2.00, salary.getTotalPayment());
+		Assert.assertEquals(1750.00/2.00, salary.getTotalPayment(), DELTA);
 		
 		
 		startDate = getFirstDayOfMonth(getToday());
