@@ -120,15 +120,27 @@
       <version>1.7.0.0</version>
       <scope>provided</scope>
     </dependency>
-    
+  		<dependency>
+   		<groupId>net.aonsolutions</groupId>
+   		<artifactId>aon.gwt.vaadin</artifactId>
+   		<version>${project.version}</version>
+   		<scope>provided</scope>
+   	</dependency>
     <dependency>
       <groupId>net.aonsolutions.polymer</groupId>
       <artifactId>aon.gwt.polymer</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
+      <groupId>net.aonsolutions.polymer</groupId>
+      <artifactId>aon.gwt.polymer</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <classifier>sources</classifier>
+    </dependency>
+
+	<dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.4</version>

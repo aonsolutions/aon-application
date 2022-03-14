@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -83,15 +84,16 @@ public class ITComunica {
 	
 	public static List<String> communicateITs(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, EmployeeIT employeeIt) {
-		 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
-		 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
-		 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
-
 		 List<String> messages = new ArrayList<>();
 		 
 		 if(employeeIt.isPaternity()) {
 			 communicatePaternity(certificateData, certificatePassword, certificateType, employeeIt, messages);
 		 } else {
+	
+			 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
+			 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
+			 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
+
 			 if(!baja.isEmpty()) 
 				 registerITBaja(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
 			 
@@ -143,7 +145,7 @@ public class ITComunica {
 			SistemaRED.sendPaternity(certificateData, certificatePassword, certificateType, 
 						nss, regime, ccc, dni.get(), applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
 			
-			messages.add("ERROR TEST");
+			messages.add(SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.add(e.getMessage());
@@ -154,22 +156,25 @@ public class ITComunica {
 			final String certificateType, EmployeeIT employeeIt) {
 		
 		 List<String> messages = new ArrayList<>();
-		 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
-		 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
-		 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
-		 
-		 if(!baja.isEmpty()) 
-			 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
-		 
-		 if(!confirmations.isEmpty()) {
-			 confirmations.forEach(itPart-> 
-			 	removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
-			 );
+		 if(employeeIt.isPaternity()) {
+			 removePaternity(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, messages);
+		 } else {
+			 Optional<EmployeeITPart> baja = employeeIt.getItBaja();
+			 Optional<EmployeeITPart> alta = employeeIt.getItAlta();
+			 List<EmployeeITPart> confirmations = employeeIt.getItConfirmations();
+			 
+			 if(!baja.isEmpty()) 
+				 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, baja.get(), messages);
+			 
+			 if(!confirmations.isEmpty()) {
+				 confirmations.forEach(itPart-> 
+				 	removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, itPart, messages)
+				 );
+			 }
+		
+			 if(!alta.isEmpty()) 
+				 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
 		 }
-	
-		 if(!alta.isEmpty()) 
-			 removeIt(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, employeeIt, alta.get(), messages);
-		 
 		 return messages;
 	}
 	
@@ -301,13 +306,18 @@ public class ITComunica {
 	private static void removeIt(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
 			final String certificateType, EmployeeIT employeeIt, EmployeeITPart itPart, List<String> messages) {
 		try {
-			verifyData(new Object[] { 
-					 employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), employeeIt.getStartDate(), 
-					 itPart.getDate(), itPart.getType()
-			});    
+			String regime = employeeIt.getRegime();
+			String ccc = employeeIt.getCcc();
+			String nss = employeeIt.getNss();
+			Date startDate = employeeIt.getStartDate();
+			Date date  = itPart.getDate();
+			ContractLeaveDetailType type = itPart.getType();
+			
+			verifyData(new Object[] { regime, ccc, nss, startDate, date, type });    
 			
 			PartType partType = null;
-			switch (itPart.getType()) {
+			
+			switch (type) {
 				case ALTA:
 					partType = PartType.ALTA;
 				break;
@@ -321,10 +331,29 @@ public class ITComunica {
 		
 			SistemaRED.removeIT(
 					byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, 
-					employeeIt.getRegime(), employeeIt.getCcc(), employeeIt.getNss(), 
-					partType, employeeIt.getStartDate(), itPart.getDate()
+					regime, ccc, nss, partType, startDate, date
 			);
 			
+			messages.add(SUCCESS);
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			messages.add(e.getMessage());
+		}
+	}
+	
+	private static void removePaternity(final ByteArrayInputStream byteArrayInputStream, final String certificatePassword,
+			final String certificateType, EmployeeIT employeeIt, List<String> messages) {
+		try {
+			String regime = employeeIt.getRegime();
+			String ccc = employeeIt.getCcc();
+			String nss = employeeIt.getNss();
+			Date startDate = employeeIt.getStartDate();
+			Optional<Date> endDate  = employeeIt.getEndDate();
+	
+			verifyData(new Object[] { regime, ccc, nss, startDate, endDate.get() });    
+			
+			SistemaRED.removePaternity(byteArrayInputStream.readAllBytes(), certificatePassword, certificateType, nss, regime, ccc, startDate, endDate.get(), Optional.empty());
+		
 			messages.add(SUCCESS);
 		} catch (SegSocialException e) {
 			e.printStackTrace();

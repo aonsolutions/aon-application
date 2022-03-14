@@ -217,6 +217,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 						CheckItAPI.addCredentials(enterpriseId, login.getId(), userID, userPassword, userPIN);
 					JSONObject johnson = CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
 					String msg = johnson.optString("message");
+					msg += johnson.optString("result");
 					String code = johnson.optString("code");
 					return msg + ((code != null && !code.isEmpty()) ? ", código: " + code : "");
 				} catch (Exception e) {

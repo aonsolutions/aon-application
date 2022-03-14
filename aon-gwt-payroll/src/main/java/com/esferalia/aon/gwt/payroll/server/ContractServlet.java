@@ -300,7 +300,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		Integer salaryId = api.getParams().optInt("salaryId");
 	
 		File file = File.createTempFile("nomina", "");
-		JooqPayrollBuilder.generatePayroll(api.getDomain().getName(), new FileOutputStream(file), salaryId);
+		JooqPayrollBuilder.generatePayroll(api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);
 		return file;
 	}
 

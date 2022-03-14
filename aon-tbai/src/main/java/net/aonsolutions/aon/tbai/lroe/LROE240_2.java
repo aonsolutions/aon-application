@@ -198,6 +198,9 @@ public class LROE240_2 extends LROE240 {
 				
 				r.setBaseImponible(Double.toString(tax.getBase()));	
 				r.setTipoImpositivo(Double.toString(tax.getPercentage()));
+				if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
+					tax.setDeductibleQuota(AonMathUtils.round(tax.getBase() * tax.getDeductiblePercent() / 100));
+				}
 				r.setCuotaIVADeducible(Double.toString(tax.getDeductibleQuota()));
 				r.setCuotaIVASoportada(Double.toString(tax.getQuota()));
 				
@@ -223,16 +226,16 @@ public class LROE240_2 extends LROE240 {
 		return otra;
 	}
 	
-	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
-		return alta(tbaiConfiguration, company, invoices);
+		boolean mod = invoice.getInvoiceInfo().getStatus().isAccepted() || invoice.getInvoiceInfo().getStatus().isAcceptedWithErrors();
+		return alta(tbaiConfiguration, company, invoices, mod);
 	}
 	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, List<Invoice> invoices) {
+	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, List<Invoice> invoices, boolean mod) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(mod ? OperacionEnum.M_00 : OperacionEnum.A_00);
 			final LROEPJ240FacturasRecibidasAltaModifPeticion p240 = build(company, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasRecibidasAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	

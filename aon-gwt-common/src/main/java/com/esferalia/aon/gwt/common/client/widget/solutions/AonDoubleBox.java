@@ -13,8 +13,6 @@ import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.event.dom.client.HasErrorHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
@@ -25,7 +23,7 @@ import com.google.gwt.user.client.ui.ValueBox;
 
 public class AonDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 
-	private native static double resolve(String expression) /*-{
+	private static native double resolve(String expression) /*-{
 		d = eval(expression);
 		return d;
 	}-*/;	
@@ -33,17 +31,13 @@ public class AonDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	public static interface ExpressionResolver {
 		void resolve(String expression, AsyncCallback<Double> callback);
 	}
-	private static final ExpressionResolver ARITHMETIC_RESOLVER = new ExpressionResolver() {
-		@Override
-		public void resolve(String expression, AsyncCallback<Double> callback) {
-			try {
-				double ret = AonDoubleBox.resolve(expression);
-				callback.onSuccess(ret);
-			} catch (Throwable t) {
-				callback.onFailure(t);
-			}
+	private static final ExpressionResolver ARITHMETIC_RESOLVER = (expression, callback) -> {
+		try {
+			double ret = AonDoubleBox.resolve(expression);
+			callback.onSuccess(ret);
+		} catch (Exception t) {
+			callback.onFailure(t);
 		}
-		
 	};
 	
 	public static final String EQUAL = AonStringUtils.EQUAL;
@@ -92,18 +86,15 @@ public class AonDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 		setStyleName(AON.CSS.aonInputText());
 		addStyleName(AON.CSS.aonNumberBox());
 
-		addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if ( !AonStringUtils.startsWith(getText(),EQUAL) ) {
-					removeStyleName(AON.CSS.aonInputCalc());
-					try {
-						getValueOrThrow();
-						removeStyleName(AON.CSS.aonInputError());
-					} catch (ParseException e) {
-						addStyleName(AON.CSS.aonInputError());
-						
-					}
+		addKeyUpHandler(event -> {
+			if ( !AonStringUtils.startsWith(getText(),EQUAL) ) {
+				removeStyleName(AON.CSS.aonInputCalc());
+				try {
+					getValueOrThrow();
+					removeStyleName(AON.CSS.aonInputError());
+				} catch (ParseException e) {
+					addStyleName(AON.CSS.aonInputError());
+					
 				}
 			}
 		});
@@ -111,59 +102,38 @@ public class AonDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	}
 
 	public void setResolver(final ExpressionResolver resolver) {
-		addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if ( resolver != null) {
-					if ( AonStringUtils.startsWith(getText(),EQUAL)) {
-						setMaxLength(Integer.MAX_VALUE);
-						addStyleName(AON.CSS.aonInputCalc());	
-						if ( event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-							String exp = AonStringUtils.substringAfter(getText(), AonDoubleBox.EQUAL);
-							resolver.resolve(exp , new AsyncCallback<Double>() {
-								
-								@Override
-								public void onSuccess(Double result) {
-									setMaxLength(MAX_LENGTH);
-									removeStyleName(AON.CSS.aonInputError());
-									removeStyleName(AON.CSS.aonInputCalc());
-									setValue(result, true, true);
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-									setMaxLength(MAX_LENGTH);
-									removeStyleName(AON.CSS.aonInputCalc());
-									addStyleName(AON.CSS.aonInputError());
-									NativeEvent event = Document.get().createErrorEvent();
-									DomEvent.fireNativeEvent(event, AonDoubleBox.this);
-								}
-							});
-						}
-					}
-				} else {
-					addStyleName(AON.CSS.aonInputError());
-				}
-			}
-		});
-/*
- 	
- 		// TODO DIALOGO PARA AÑADIR EXPRESIONES - CODE MIRROR.
- 	
-  		addClickHandler(new ClickHandler() {
- 
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if ( resolver != null) {
-					if ( AonStringUtils.startsWith(getText(),EQUAL)) {
-						Window.alert("DIALOGO DE EXPRESIONES");
-						Code
+		addKeyUpHandler(event -> {
+			if ( resolver != null) {
+				if ( AonStringUtils.startsWith(getText(),EQUAL)) {
+					setMaxLength(Integer.MAX_VALUE);
+					addStyleName(AON.CSS.aonInputCalc());	
+					if ( event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+						String exp = AonStringUtils.substringAfter(getText(), AonDoubleBox.EQUAL);
+						resolver.resolve(exp , new AsyncCallback<Double>() {
+							
+							@Override
+							public void onSuccess(Double result) {
+								setMaxLength(MAX_LENGTH);
+								removeStyleName(AON.CSS.aonInputError());
+								removeStyleName(AON.CSS.aonInputCalc());
+								setValue(result, true, true);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								setMaxLength(MAX_LENGTH);
+								removeStyleName(AON.CSS.aonInputCalc());
+								addStyleName(AON.CSS.aonInputError());
+								NativeEvent event = Document.get().createErrorEvent();
+								DomEvent.fireNativeEvent(event, AonDoubleBox.this);
+							}
+						});
 					}
 				}
+			} else {
+				addStyleName(AON.CSS.aonInputError());
 			}
 		});
-*/
 	}
 	
 	private int getPrecision() {
