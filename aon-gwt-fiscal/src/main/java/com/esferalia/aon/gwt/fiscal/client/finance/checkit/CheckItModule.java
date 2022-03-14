@@ -124,13 +124,13 @@ public class CheckItModule extends MainEntryPoint {
 				@Override
 				public void onSuccess(CheckItConfiguration result) {
 					opt.setConfiguration(result);
-					loadModule( opt, false );					
+					loadModule( opt, false );
 				}
 				
 				@Override
 				public void onFailure(Throwable caught) {
 					opt.setConfiguration(new CheckItConfiguration().setDown(true));
-					loadModule( opt, false );	
+					loadModule( opt, false );
 				}
 			});
 		} else {
@@ -205,16 +205,20 @@ public class CheckItModule extends MainEntryPoint {
 						@Override
 						public void onSuccess(Integer result) {
 							opt.getConfiguration().setEnterpriseId(result);
+							dockLayoutPanel.clear();
+							onModuleLoad();
+							firstTime = true;
 						}
 						
 						@Override
 						public void onFailure(Throwable caught) {
 							opt.getConfiguration().setRegistrationFailed(true);
+							Label errLabel =new Label(caught.getMessage());
+							errLabel.addStyleName(AON.CSS.aonColorRed());
+							sessionLog.add(errLabel);
+							openFootPanel();
 						}	
 				});
-					dockLayoutPanel.clear();
-					onModuleLoad();
-					firstTime = true;
 		} else if (opt.getConfiguration().isRegistrationFailed()){
 			InlineLabel label = new InlineLabel("Se produjo un error al registrar la empresa en el servicio de agregador bancario.");
 			panel.add( label );
@@ -1901,7 +1905,6 @@ public class CheckItModule extends MainEntryPoint {
 			AonDialog dial = dialog;
 			
 			hai.addClickHandler(handler -> {
-				LOGGER.info("compiló");
 				//AÑADIR LA CUNETA
 				Integer enterpriseId = opt.getConfiguration().getEnterpriseId();
 				String user = userID.getValue();
