@@ -3,7 +3,7 @@ import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
@@ -597,7 +597,7 @@ export class AonDesktop extends AonElement {
 				count: rejectedCount,
 				fn: () => {
 					let aonInvoice = new AonInvoicePanel();
-					aonInvoice.status = "refused";
+					aonInvoice.status = CONSTANT.REJECTED;
 					this.rootPanel(aonInvoice);
 				}
 			});

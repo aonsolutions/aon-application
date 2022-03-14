@@ -77,6 +77,12 @@ public enum Mod115Key implements IFiscalModelKey {
 	public Administration getAdministration() {
 		return admon;
 	} 
+	public String getBoxFormatted() {
+		return " [" + getBoxAsString() +"] ";
+	}
+	public String getBoxAsString() {
+		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
+	}
 	public static Mod115Key getKey(String value, Administration admon) {
 		for (Mod115Key key : Mod115Key.values()) {
 			if (admon == key.getAdministration() && AonStringUtils.equals(key.getValue(), value)) {

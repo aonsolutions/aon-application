@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.vaadin.polymer.paper.widget.PaperProgress;
 
 public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 
@@ -121,7 +120,8 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 		
 		int progressRow = row + 1;
 		flexTable.insertRow(progressRow);
-		PaperProgress paperProgress = new PaperProgress();
+		
+		AonProgress paperProgress = new AonProgress();
 		paperProgress.setMax(100.00);
 		paperProgress.setIndeterminate(true);
 		paperProgress.addStyleName(AON.AON_WIDTH_ALL);

@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Arrays;
-
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.core.client.EntryPoint;
@@ -13,21 +11,6 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.user.client.Window;
-import com.vaadin.polymer.Polymer;
-import com.vaadin.polymer.iron.IronIconsElement;
-import com.vaadin.polymer.iron.IronLabelElement;
-import com.vaadin.polymer.iron.IronListElement;
-import com.vaadin.polymer.paper.PaperDialogElement;
-import com.vaadin.polymer.paper.PaperDropdownMenuElement;
-import com.vaadin.polymer.paper.PaperIconButtonElement;
-import com.vaadin.polymer.paper.PaperInputElement;
-import com.vaadin.polymer.paper.PaperItemElement;
-import com.vaadin.polymer.paper.PaperMenuElement;
-import com.vaadin.polymer.paper.PaperProgressElement;
-import com.vaadin.polymer.paper.PaperSliderElement;
-import com.vaadin.polymer.paper.PaperTextareaElement;
-import com.vaadin.polymer.paper.PaperToggleButtonElement;
-import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 
 public class MainEntryPoint implements EntryPoint {
 
@@ -39,38 +22,6 @@ public class MainEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		
-		if (!supportWebComponents()){
-			__onModuleLoad();
-			return;
-		}
-		
-		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC,
-				PaperInputElement.SRC,
-				PaperTextareaElement.SRC,
-				PaperDialogElement.SRC,
-				VaadinComboBoxElement.SRC,
-				PaperIconButtonElement.SRC,
-				IronListElement.SRC,
-				PaperToggleButtonElement.SRC,
-				PaperSliderElement.SRC,
-				IronLabelElement.SRC,
-				PaperDropdownMenuElement.SRC,
-				PaperMenuElement.SRC,
-				PaperItemElement.SRC,
-				PaperProgressElement.SRC
-		)
-		);
-		
-		Polymer.whenReady(o -> {
-			__onModuleLoad();
-			return null;
-		});
-
-	}
-
-	private void __onModuleLoad() {
 		ensureGwtSelector();
 		String entryPoint = getParameter(GWT.getModuleName(),
 				Constants.ENTRY_POINT_PARAM);

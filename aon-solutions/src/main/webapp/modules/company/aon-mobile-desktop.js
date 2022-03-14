@@ -183,7 +183,7 @@ export class AonMobileDesktop extends AonElement {
 			}));
 			ul.appendChild(this.buildNotificationsLi(MSG.REJECTED_INVOICES, 'report', rejectedCount, () => {
 				if(rejectedCount > 0) {
-					this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
+					this.rootPanelHtml('<aon-invoice-panel status="rejected"></aon-invoice-panel>');
 				}
 			}));
 		}

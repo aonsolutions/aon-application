@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -82,7 +82,7 @@ public class Mod123ValidatePrintAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod123 mod123 = MODEL123.getMod123(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod123 mod123 = MODEL123.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (mod123 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}

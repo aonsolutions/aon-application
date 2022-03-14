@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Properties.InvoiceTaxProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceTaxDAO {
 	
@@ -131,15 +132,24 @@ public class InvoiceTaxDAO {
 		}
 		
 		public static InvoiceTax build(Record r) {
-			return new InvoiceTax()
-					.setId(r.getValue(INVOICE_TAX.ID))
-					.setTaxType(TaxType.values()[r.getValue(INVOICE_TAX.TAX_TYPE)])
-					.setPercentage(r.getValue(INVOICE_TAX.PERCENTAGE))
-					.setBase(r.getValue(INVOICE_TAX.BASE))
-					.setSurcharge(r.getValue(INVOICE_TAX.SURCHARGE))
-					.setQuota(r.getValue(INVOICE_TAX.QUOTA))
-					.setSurchargeQuota(r.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-					.setWithholdingType(WithholdingType.safeValueOf(r.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));
+			InvoiceTax tax = new InvoiceTax()
+				.setId(r.getValue(INVOICE_TAX.ID))
+				.setTaxType(TaxType.values()[r.getValue(INVOICE_TAX.TAX_TYPE)])
+				.setPercentage(r.getValue(INVOICE_TAX.PERCENTAGE))
+				.setBase(r.getValue(INVOICE_TAX.BASE))
+				.setSurcharge(r.getValue(INVOICE_TAX.SURCHARGE))
+				.setQuota(r.getValue(INVOICE_TAX.QUOTA))
+				.setSurchargeQuota(r.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
+				.setWithholdingType(WithholdingType.safeValueOf(r.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));
+
+			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+			}
+			if(tax.getSurcharge() > 0 && tax.getSurchargeQuota() == 0.0) {
+				tax.setSurchargeQuota(AonMathUtils.round(tax.getBase() * tax.getSurcharge() / 100));
+			}
+			return tax;
+
 		}
 	}
 }

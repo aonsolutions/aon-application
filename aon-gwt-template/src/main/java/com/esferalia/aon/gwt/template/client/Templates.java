@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.client;
 
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -67,7 +68,7 @@ public class Templates extends Composite implements EntryPoint {
 	@UiField FlowPanel pagesPanel;
 	
 	ListBox list_box = new ListBox();
-	LinkedList<TemplateInfo> templateList;
+	List<TemplateInfo> templateList;
 	TemplatesDialog popup;
 	ProgressBarDialog pbd;
 	ExportInfo eiAux;
@@ -117,9 +118,9 @@ public class Templates extends Composite implements EntryPoint {
 			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 			pagesPanel = new FlowPanel();
 			if (entryPoint.equals(SILENT)){
-				item.getTemplates(getDomain(), getUser(), new AsyncCallback<LinkedList<TemplateInfo>>() {		
+				item.getTemplates(getDomain(), getUser(), new AsyncCallback<List<TemplateInfo>>() {		
 					@Override
-					public void onSuccess(LinkedList<TemplateInfo> result) {
+					public void onSuccess(List<TemplateInfo> result) {
 						templateList = result;
 						exportEcommerce(me);
 						exportEcommercex(me);
@@ -154,9 +155,9 @@ public class Templates extends Composite implements EntryPoint {
 			} else if(entryPoint.equals(DOWNLOAD_AMAZON_DELIVERY)){
 				deliveryx();
 			} else {
-				item.getTemplates(getDomain(), getUser(), new AsyncCallback<LinkedList<TemplateInfo>>() {		
+				item.getTemplates(getDomain(), getUser(), new AsyncCallback<List<TemplateInfo>>() {		
 					@Override
-					public void onSuccess(LinkedList<TemplateInfo> result) {
+					public void onSuccess(List<TemplateInfo> result) {
 						templateList = result;						
 						if(entryPoint.equals(TEMPLATES)){
 							Widget w = new TemplatesPage(getAonData(), templateList);
@@ -927,7 +928,7 @@ public class Templates extends Composite implements EntryPoint {
 
 	}
 
-	private void exportStocks(LinkedList<Warehouse> w,ExportInfo ei, Boolean closeInventory){
+	private void exportStocks(List<Warehouse> w, ExportInfo ei, Boolean closeInventory){
 		eiAux = ei;
 		closeInventoryAux = closeInventory;
 		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
@@ -999,7 +1000,7 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 	
-	private void exportTransferStocks(LinkedList<Warehouse> w){
+	private void exportTransferStocks(List<Warehouse> w){
 		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
 		d.setUrl(GWT.getModuleBaseURL());
 		d.setTemplateList(templateList);
@@ -1347,10 +1348,10 @@ public class Templates extends Composite implements EntryPoint {
 	}
 	
 	private void exportEcommerce(){
-		item.getTypeList(getDomain(), getUser(), new AsyncCallback<LinkedList<String>>() {
+		item.getTypeList(getDomain(), getUser(), new AsyncCallback<List<String>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<String> result) {
+			public void onSuccess(List<String> result) {
 				Dialog d = new Dialog("Exportar Productos Ecommerce","Exportar",true,"Cancelar",true,"exportEcommerce");
 				d.setUrl(GWT.getModuleBaseURL());
 				d.setTypeList(result);
@@ -1384,7 +1385,7 @@ public class Templates extends Composite implements EntryPoint {
 		});
 	}
 	
-	private void importEcommerce(final LinkedList<Seller> sellerList) {
+	private void importEcommerce(final List<Seller> sellerList) {
 		mpimpl.getMarketplaceTagList(getDomain(), getUser(), new AsyncCallback<LinkedList<Tag>>() {
 			
 			@Override
@@ -1546,11 +1547,11 @@ public class Templates extends Composite implements EntryPoint {
 		ei.setDescription(name);
 		eiAux=ei;
 		wAux = warehouse;
-		item.getWarehouses(getDomain(), getUser(), new AsyncCallback<LinkedList<Warehouse>>() {
+		item.getWarehouses(getDomain(), getUser(), new AsyncCallback<List<Warehouse>>() {
 			ExportInfo ei = eiAux; String warehouse =  wAux;
 			@Override
-			public void onSuccess(LinkedList<Warehouse> result) {
-				LinkedList<Warehouse> v = new LinkedList<Warehouse>();
+			public void onSuccess(List<Warehouse> result) {
+				List<Warehouse> v = new LinkedList<>();
 				if(!warehouse.equals("") && !warehouse.equals("null") && warehouse != null){
 					for (Warehouse w : result) {
 						if(w.getId() == Integer.parseInt(warehouse))
@@ -1638,10 +1639,10 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void transferStockx(){
-		item.getWarehouses(getDomain(), getUser(), new AsyncCallback<LinkedList<Warehouse>>() {
+		item.getWarehouses(getDomain(), getUser(), new AsyncCallback<List<Warehouse>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Warehouse> result) {
+			public void onSuccess(List<Warehouse> result) {
 				exportTransferStocks(result);
 			}
 			
@@ -1719,10 +1720,10 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void ecommerce(){
-		item.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
+		item.getSellerList(getDomain(), getUser(), new AsyncCallback<List<Seller>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Seller> result) {
+			public void onSuccess(List<Seller> result) {
 				importEcommerce(result);				
 			}
 			

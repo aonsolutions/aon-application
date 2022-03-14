@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -19,6 +20,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.JSONObject;
@@ -28,6 +33,7 @@ import org.xml.sax.SAXException;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultarespuesta_v1_0_1.LROEPJ240FacturasEmitidasConSGConsultaRespuesta;
 import net.aonsolutions.aon.tbai.TbaiUri;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
@@ -138,7 +144,7 @@ public class LROE implements Serializable {
 		JSONObject responseJSON = new JSONObject();
 		URL url;
 		try {
-			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());	
+			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getData());	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
@@ -204,15 +210,6 @@ public class LROE implements Serializable {
 				if(responseData != null) {
 					Document d = XMLUtils.getDocument(responseData);
 					System.out.println(XMLUtils.documentToString(d));
-					String status = d.getElementsByTagName("EstadoRegistro").item(0).getTextContent();
-					boolean error = "incorrecto".equalsIgnoreCase(status);
-					responseJSON.put("error", error);
-					if(error) {
-						String errorCode = d.getElementsByTagName("CodigoErrorRegistro").item(0).getTextContent();
-						String errorMessage = d.getElementsByTagName("DescripcionErrorRegistroES").item(0).getTextContent();
-
-						responseJSON.put("errorMessage", errorCode + " - " + errorMessage);
-					}
 				}
 			} catch (ParserConfigurationException | SAXException e) {
 				e.printStackTrace();
@@ -290,5 +287,11 @@ public class LROE implements Serializable {
 		responseJSON.put("error", true);
 		responseJSON.put("errorMessage", e.getMessage());
 		return new LROEResponse(responseJSON);
+	}
+	
+	protected Object unmarshal(Class clazz, String response) throws JAXBException {
+		Unmarshaller unmar =  JAXBContext.newInstance(clazz.getPackage().getName()).createUnmarshaller();
+		JAXBElement o = (JAXBElement) unmar.unmarshal(new StringReader(response));
+		return o.getValue();
 	}
 }

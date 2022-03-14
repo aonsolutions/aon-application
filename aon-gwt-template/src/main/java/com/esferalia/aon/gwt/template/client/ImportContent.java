@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.shared.AonData;
@@ -92,9 +93,9 @@ public class ImportContent extends Composite {
 				pbd.show();
 				
 				if(ImportType.INVOICE.equals(type)) {
-					item.executeInvoice(getDomain(), getUser(), data, new AsyncCallback<LinkedList<InvoiceImportClass>>() {
+					item.executeInvoice(getDomain(), getUser(), data, new AsyncCallback<List<InvoiceImportClass>>() {
 						@Override
-						public void onSuccess(LinkedList<InvoiceImportClass> result) {
+						public void onSuccess(List<InvoiceImportClass> result) {
 							pbd.completed();
 							pbd.hide();
 							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
@@ -108,9 +109,9 @@ public class ImportContent extends Composite {
 						public void onFailure(Throwable caught) {}
 					});
 				} else if(ImportType.REGISTRY.equals(type)) {
-					item.executeRegistry(getDomain(), getUser(), data, new AsyncCallback<LinkedList<RegistryImportClass>>() {
+					item.executeRegistry(getDomain(), getUser(), data, new AsyncCallback<List<RegistryImportClass>>() {
 						@Override
-						public void onSuccess(LinkedList<RegistryImportClass> result) {
+						public void onSuccess(List<RegistryImportClass> result) {
 							pbd.completed();
 							pbd.hide();
 							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
@@ -124,9 +125,9 @@ public class ImportContent extends Composite {
 						public void onFailure(Throwable caught) {}
 					});
 				} else if(ImportType.PGC.equals(type)) { 
-					item.executePGC(getDomain(), getUser(), data, new AsyncCallback<LinkedList<AccountImportClass>>() {
+					item.executePGC(getDomain(), getUser(), data, new AsyncCallback<List<AccountImportClass>>() {
 						@Override
-						public void onSuccess(LinkedList<AccountImportClass> result) {
+						public void onSuccess(List<AccountImportClass> result) {
 							pbd.completed();
 							pbd.hide();
 							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
@@ -140,9 +141,9 @@ public class ImportContent extends Composite {
 						public void onFailure(Throwable caught) {}
 					});
 				} else if(ImportType.DIARY.equals(type)) {
-					item.executeDiary(getDomain(), getUser(), data, new AsyncCallback<LinkedList<AccountEntryImportClass>>() {
+					item.executeDiary(getDomain(), getUser(), data, new AsyncCallback<List<AccountEntryImportClass>>() {
 						@Override
-						public void onSuccess(LinkedList<AccountEntryImportClass> result) {
+						public void onSuccess(List<AccountEntryImportClass> result) {
 							pbd.completed();
 							pbd.hide();
 							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
@@ -156,9 +157,9 @@ public class ImportContent extends Composite {
 						public void onFailure(Throwable caught) {}
 					});
 				} else if(ImportType.FEE.equals(type)) {
-					item.executeFee(getDomain(), getUser(), data, new AsyncCallback<LinkedList<FeeInfo>>() {
+					item.executeFee(getDomain(), getUser(), data, new AsyncCallback<List<FeeInfo>>() {
 						@Override
-						public void onSuccess(LinkedList<FeeInfo> result) {
+						public void onSuccess(List<FeeInfo> result) {
 							pbd.completed();
 							pbd.hide();
 							pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
@@ -297,7 +298,7 @@ public class ImportContent extends Composite {
 		}
 	}
 	
-	private void insertInvoices(LinkedList<InvoiceImportClass> invoices, Integer index) {
+	private void insertInvoices(List<InvoiceImportClass> invoices, Integer index) {
 		Integer lines = invoices.size();
 		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
 			@Override
@@ -352,7 +353,7 @@ public class ImportContent extends Composite {
 		item.insertInvoice(getDomain(), getUser(), invoices.get(index), index, callback);
 	}
 	
-	private void insertRegistries(LinkedList<RegistryImportClass> registries, Integer index) {
+	private void insertRegistries(List<RegistryImportClass> registries, Integer index) {
 		Integer lines = registries.size();
 		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
 			@Override
@@ -407,7 +408,7 @@ public class ImportContent extends Composite {
 		item.insertRegistry(getDomain(), getUser(), registries.get(index), index, callback);
 	}
 	
-	private void insertPGC(LinkedList<AccountImportClass> pgc, Integer index) {
+	private void insertPGC(List<AccountImportClass> pgc, Integer index) {
 		Integer lines = pgc.size();
 		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
 			@Override
@@ -462,7 +463,7 @@ public class ImportContent extends Composite {
 		item.insertPGC(getDomain(), getUser(), pgc.get(index), index, callback);
 	}
 	
-	private void insertDiary(LinkedList<AccountEntryImportClass> diary, Integer index) {
+	private void insertDiary(List<AccountEntryImportClass> diary, Integer index) {
 		Integer lines = diary.size();
 		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
 			@Override
@@ -517,7 +518,7 @@ public class ImportContent extends Composite {
 		item.insertDiary(getDomain(), getUser(), diary.get(index), index, callback);
 	}
 	
-	private void insertFee(LinkedList<FeeInfo> fee, Integer index) {
+	private void insertFee(List<FeeInfo> fee, Integer index) {
 		Integer lines = fee.size();
 		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
 			@Override

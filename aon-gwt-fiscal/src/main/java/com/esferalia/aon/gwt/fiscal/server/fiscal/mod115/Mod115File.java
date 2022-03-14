@@ -18,7 +18,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "Mod115 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model115File" })
@@ -38,7 +38,7 @@ public class Mod115File extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			Mod115 mod115 = MODEL115.getMod115(occam,id);
+			Mod115 mod115 = MODEL115.get(occam,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

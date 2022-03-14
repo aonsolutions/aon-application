@@ -29,7 +29,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
@@ -100,7 +99,7 @@ public class CheckItAPI implements IParamNames{
 			JSONObject jsonObj = (JSONObject) json;
 			String result = jsonObj.optString("result");
 			String message= jsonObj.optString("message");
-			if (result.isEmpty() || result.equalsIgnoreCase("Success") || AonStringUtils.containsIgnoreCase(message, "cuenta creada")) {
+			if (result.isEmpty() || result.equalsIgnoreCase("Success") || AonStringUtils.containsIgnoreCase(message, "cuenta creada") || AonStringUtils.containsIgnoreCase(result, "cuenta creada")) {
 				return jsonObj;
 			} else {				
 				throw new CheckItException(json.toString());

@@ -93,6 +93,12 @@ class Model123Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 	private Widget getToolbarPanel(Model123Callback cbk) {
 		AonToolbar toolbar = new AonToolbar( AON.MSG.retentionAccount());
 		
+		if (cbk.getOptions().isBackButtonVisible() && cbk.getOptions().hasExternalCallback()) {
+			final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.backAction(),AON.CSS.aonIconBack());
+			cancelButton.addClickHandler(event ->  cbk.getOptions().getExternalCallback().onExit( null ) );
+			toolbar.add(cancelButton);
+		}
+
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler( event -> cbk.onNew());
 		toolbar.add(newButton);
@@ -117,6 +123,7 @@ class Model123Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		, RST(AON.MSG.result()		, 100,AON.CSS.aonTextRight())
 	    , ACT(AonStringUtils.EMPTY	, 100,AON.CSS.aonTextCenter())
 	    , VST(AON.MSG.financeStatus(),100,AON.CSS.aonTextCenter())
+	    , ACC(AON.MSG.recordedAbbr() ,20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -193,17 +200,27 @@ class Model123Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod123.getStatus()) );
 			row.add( statusCell );
 			
+			InlineLabel acc = new InlineLabel();
+			acc.setTitle( AON.MSG.recorded());
+			acc.setStyleName(AON.CSS.aonIconLabel());
+			acc.addStyleName( mod123.isRecorded()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
+			
+			InlineLabel declarationResult = new InlineLabel();
+			if (mod123.getDeclarationResult() != null) {
+				declarationResult.setText(AON.FMT.format(mod123.getDeclarationResult()));
+			}
 			row.addCell( comp , AON.CSS.aonTextCenter())
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod123.getDocument()))
 				.addCell( new InlineLabel(mod123.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod123.getResult())), AON.CSS.aonTextRight())
-				.addCell( new InlineLabel(mod123.getDeclarationType() == null ? "" : mod123.getDeclarationType().getDescription()))
+				.addCell( declarationResult, AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod123.getDeclarationResultType() == null ? "" : mod123.getDeclarationResultType().getDescription()))
 				.addCell( new InlineLabel(
 						(mod123.getFinance() != null && mod123.getFinance().getFinanceStatus() != null)
 							?mod123.getFinance().getFinanceStatus().getDescription()
 							:""
 						), AON.CSS.aonTextCenter())
+				.addCell( acc , AON.CSS.aonTextCenter())
 				;
 		}
 		

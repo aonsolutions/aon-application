@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -19,6 +20,7 @@ public class InvoiceImportClass implements IsSerializable {
 	String ref;
 	String nif;
 	String name;
+	String registryAccount;
 	String third;
 	String concept;
 	String address;
@@ -92,6 +94,15 @@ public class InvoiceImportClass implements IsSerializable {
 
 	public InvoiceImportClass setName(String name) {
 		this.name = name;
+		return this;
+	}
+	
+	public String getRegistryAccount() {
+		return registryAccount;
+	}
+	
+	public InvoiceImportClass setRegistryAccount(String registryAccount) {
+		this.registryAccount = registryAccount;
 		return this;
 	}
 
@@ -353,7 +364,7 @@ public class InvoiceImportClass implements IsSerializable {
 		return this;
 	}
 	
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return getType() == null && getDate() == null && getRef() == null
 			&& getSerie() == null && getNumber() == null && getName() == null
 			&& getNif() == null && getThird() == null && getConcept() == null
@@ -389,6 +400,25 @@ public class InvoiceImportClass implements IsSerializable {
 			} catch (Exception e) {
 				return null;
 			}
+		}
+		
+		public static InvoiceOpType safeValueOf(InvoiceTransactionType value) {
+			if(value == null) return null;
+			try {
+				if(InvoiceTransactionType.NATIONAL.equals(value))
+					return NAC;
+				else if(InvoiceTransactionType.INTRACOMMUNITY.equals(value))
+					return INT;
+				else if(InvoiceTransactionType.EXTRACOMMUNITY.equals(value))
+					return EXT;
+				else if(InvoiceTransactionType.CAN_CEU_MEL.equals(value))
+					return CCM;
+				else if(InvoiceTransactionType.OTHER_ISP.equals(value))
+					return ISP;
+			} catch (Exception e) {
+				return null;
+			}
+			return null;
 		}
 	}
 	

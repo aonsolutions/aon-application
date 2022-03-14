@@ -318,63 +318,62 @@ class SistemaREDMov {
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
 			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {
-			cambioCatProfImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
-					cat, fecha);
-		} catch (FailingHttpStatusCodeException e) {
-			StatusCodeException.HandleStatusCodeException(e);
-		} catch (MalformedURLException e) {
-			throw new SegSocialException(e);
-		} catch (IOException e) {
-			throw new CertificateNotFoundException();
-		} catch (InterruptedException e) {
-			throw new SegSocialException(e);
-		} catch (Exception e) {
-			throw new SegSocialException(e.getMessage());
-		}
-	}
-
-	private static Employee sendAltaImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws Exception {
-		String situation = employee.getSituacion() != null ? employee.getSituacion() : "01";
-		Integer mov = 0;
-		String ident = Toolkit.getIdentityType(employee.getIpf());
-		String dni = Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
-		String[] fra = formatDate(employee.getFra()); // fecha [dia,mes,año]
-		WebClient webclient = getWebClient(certificateInputStream, certificatePassword, certificateType);
-		webclient.getOptions().setUseInsecureSSL(true);
-
-		Optional<String> colect = employee.getColec();
-		Optional<String> rlce = employee.getRlce();
-
-		HtmlPage htmlPage = firstPageAltaBaja(webclient, mov, employee.getNss(), employee.getCtaCti().get(),
-				employee.getRegime(), dni, ident, employee.getFra());
-
-		HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-
-		if (rlce.isPresent())
-			form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce.get());
-
-		form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
-		form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]);
-		form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]);
-		form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]);
-		form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get());
-		form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
-
-		if (form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
-			form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get());
-		}
-
-		if (employee.getRegime().equals("0163") && !employee.getMdctz().isEmpty()) {
-			form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
-		} else {
-			if (!employee.getFactor().isEmpty()) {
-				Integer coefInt = (int) Math.round(employee.getFactor().get() * 1000);
-				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt));
-			} else if (!employee.getCoef().isEmpty()) {
-				String coef = Integer.toString(employee.getCoef().get().intValue());
-				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef);
+		try {cambioCatProfImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, cat, fecha);} 
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+	}	
+	
+	private static Employee sendAltaImpl(
+			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
+			Employee employee
+	) throws Exception  {
+			String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
+	    	Integer mov = 0;
+			String ident = Toolkit.getIdentityType(employee.getIpf());
+			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
+ 			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,aÃ±o]
+ 			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
+ 			webclient.getOptions().setUseInsecureSSL(true);
+ 			
+ 			Optional<String> colect = employee.getColec();
+	    	Optional<String> rlce = employee.getRlce();
+	    	
+ 			HtmlPage htmlPage = firstPageAltaBaja(
+					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
+					employee.getRegime(),  dni, ident
+	    	);
+	
+			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			
+			if(rlce.isPresent())
+				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce.get());
+			
+			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
+			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
+			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
+			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
+			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
+			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
+	
+			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
+				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get()); 
+			}
+			
+			if (employee.getRegime().equals("0163") && !employee.getMdctz().isEmpty()) {
+				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
+			} else {
+				if(!employee.getFactor().isEmpty()) {
+					Integer coefInt =  (int) Math.round(employee.getFactor().get() * 1000);
+					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt)); 
+				} else if(!employee.getCoef().isEmpty()) {
+					String coef = Integer.toString(employee.getCoef().get().intValue());
+					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
+				}
+				if (employee.getOcup()!=null) 
+					form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
 			}
 			if (employee.getOcup() != null)
 				form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase());
@@ -407,11 +406,14 @@ class SistemaREDMov {
 		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni = Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 
-		String[] fra = formatDate(employee.getFra()); // fecha [dia,mes,año]
+		String[] fra = formatDate(employee.getFra()); // fecha [dia,mes,aÃ±o]
 		WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType);
 		webClient.getOptions().setUseInsecureSSL(true);
-		HtmlPage htmlPage = firstPageAltaBaja(webClient, mov, employee.getNss(), employee.getCtaCti().get(),
-				employee.getRegime(), dni, ident, employee.getFra());
+		HtmlPage htmlPage = firstPageAltaBaja(
+    			webClient,
+				mov, employee.getNss(), employee.getCtaCti().get(),
+				employee.getRegime(),  dni, ident
+    	);
 
 		HtmlForm jacadaForm1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 		jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
@@ -441,7 +443,7 @@ class SistemaREDMov {
 			webClient.getOptions().setUseInsecureSSL(true);
 			Integer mov = SituationType.ALTA.equals(situation) ? 0 : 1;
 			// Date
-			String[] fr = formatDate(fecha); // fecha [dia,mes,año]
+			String[] fr = formatDate(fecha); // fecha [dia,mes,aÃ±o]
 
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR42&E=I&AP=AFIR");
@@ -528,7 +530,7 @@ class SistemaREDMov {
 
 			String ident = Toolkit.getIdentityType(ipf);
 			String dni = Toolkit.fillStringLeft(ipf, "0", 10);
-			String[] fra = formatDate(date); // fecha [dia,mes,año]
+			String[] fra = formatDate(date); // fecha [dia,mes,aÃ±o]
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFIDPRONAF").setValueAttribute(nss.substring(0, 2));
@@ -707,7 +709,7 @@ class SistemaREDMov {
 			if (Toolkit.getIdentityType(ipf).equals("6"))
 				ident = 3; // NIE
 			// Date
-			String[] fr = formatDate(fecha); // fecha [dia,mes,año]
+			String[] fr = formatDate(fecha); // fecha [dia,mes,aÃ±o]
 
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
@@ -773,7 +775,7 @@ class SistemaREDMov {
 			if (Toolkit.getIdentityType(ipf).equals("6"))
 				ident = 3; // NIE
 
-			String[] fr = formatDate(fecha); // fecha [dia,mes,año]
+			String[] fr = formatDate(fecha); // fecha [dia,mes,aÃ±o]
 
 			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_6"))
 					.orElseThrow();
@@ -829,11 +831,10 @@ class SistemaREDMov {
 		} catch (NullPointerException e) {
 		}
 	}
-
-	private static HtmlPage firstPageAltaBaja(WebClient webClient, Integer mov, String nss, String ctaCti,
-			String regimen, String dni, String ident, Date fecha) throws Exception {
-		HtmlPage htmlPage = webClient
-				.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
+	
+	private static HtmlPage firstPageAltaBaja(WebClient webClient,
+			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident) throws Exception {
+		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();

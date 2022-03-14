@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -49,7 +50,8 @@ public class Invoice implements Serializable, HasAudit {
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryName;
-
+	private Account registryAccount;
+	
 	private Scope scope;
 	private InvoiceType type;
 	private InvoiceTransactionType transaction;
@@ -87,6 +89,7 @@ public class Invoice implements Serializable, HasAudit {
 	private InvoiceFiscal fiscal;
 	
 	private String tediCategory;
+	private String fileUrl;
 	
 	// ***************************
 	// ATRIBUTOS CON DUDOSO FUTURO
@@ -554,6 +557,15 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public Account getRegistryAccount() {
+		return registryAccount;
+	}
+	
+	public Invoice setRegistryAccount(Account registryAccount) {
+		this.registryAccount = registryAccount;
+		return this;
+	}
+	
 	// TEDI CATEGORY - ACCOUNT CODE
 	
 	public String getTediCategory() {
@@ -647,6 +659,15 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setSiiStatus(String siiStatus) {
 		this.siiStatus = siiStatus;
+		return this;
+	}
+	
+	public String getFileUrl() {
+		return fileUrl;
+	}
+	
+	public Invoice setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
 		return this;
 	}
 	

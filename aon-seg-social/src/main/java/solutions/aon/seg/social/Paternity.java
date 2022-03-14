@@ -181,7 +181,7 @@ public class Paternity {
 				htmlPage = htmlPage.getElementById("isn" + rows).click();
 				HtmlPage htmlAux = formDatos.getInputByValue("Anular").click();
 				htmlAux = htmlAux.getElementById("SPM.ACC.AC_GE_ANULAR").click();
-
+				checkErrors(htmlPage);
 			} catch (NullPointerException | ElementNotFoundException e) {
 				checkErrors(htmlPage);
 			}
