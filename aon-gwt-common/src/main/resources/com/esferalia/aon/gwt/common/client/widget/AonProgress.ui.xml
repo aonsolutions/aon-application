@@ -1,0 +1,17 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:style>
+
+	</ui:style>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonProgressResources"
+		field="resources"></ui:with>
+
+	<g:HTMLPanel styleName="aon-width-all">       
+		<g:HTMLPanel styleName="{resources.css.progressBar}" ui:field="progressBar">
+          <g:HTMLPanel styleName="{resources.css.progressBarValue}" ui:field="progressBarValue"></g:HTMLPanel>
+        </g:HTMLPanel> 
+	</g:HTMLPanel>
+
+</ui:UiBinder>

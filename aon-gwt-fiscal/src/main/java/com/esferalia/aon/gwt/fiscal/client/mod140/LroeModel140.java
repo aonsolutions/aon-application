@@ -165,6 +165,7 @@ public class LroeModel140 extends DockLayoutPanel {
 				boolean visible = !selFiles.isEmpty();
 				sendButton.setVisible(visible);
 				bajaButton.setVisible(visible);
+//				refreshButton.setVisible(visible);
 			}
 		};
 	
@@ -210,6 +211,7 @@ public class LroeModel140 extends DockLayoutPanel {
 	
 	AonToolbarButton sendButton;
 	AonToolbarButton bajaButton;
+	AonToolbarButton refreshButton;
 	
 	private Widget getToolbar() {
 		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE, getModel().getFullName()));
@@ -235,6 +237,11 @@ public class LroeModel140 extends DockLayoutPanel {
 		bajaButton.setVisible(false);
 		bajaButton.setEnabled(false);
 		toolbarPanel.add(bajaButton);
+		
+		refreshButton = new AonToolbarButton("Actualizar", AON.CSS.aonIconRefresh());
+		refreshButton.addClickHandler(event -> refresh());
+		refreshButton.setVisible(false);
+		toolbarPanel.add(refreshButton);
 		
 		AonToolbarButton draftButton = new AonToolbarButton(AON.MSG.generateFile(), AON.CSS.aonIconDownload());
 		draftButton.addClickHandler(event -> draft());
@@ -479,6 +486,39 @@ public class LroeModel140 extends DockLayoutPanel {
 				options.getConfiguration().getDomain().getName(), 
 				options.getConfiguration().getDomain().getId(),
 				options.getConfiguration().getUser().getLogin());
+	}
+	
+	private void refresh() {
+		AonCertificationPopupParams params = new AonCertificationPopupParams()
+				.setShowDocument(false)
+				.setShowName(false);
+		AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
+				
+				@Override
+				protected void onCancel() {
+
+				}
+				
+				@Override
+				protected void onAccept( AEATParams params) {
+					hide();
+					selectedInvoices.stream().forEach(invoice -> {
+						SII_SERVICE.refresh140(options.getDomainName(), options.getDomain(), options.getUser(), invoice, params, new AsyncCallback<String>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+					
+							}
+
+							@Override
+							public void onSuccess(String result) {
+					
+							}
+						});
+					});
+				}
+		};
+		certPopup.center();
 	}
 	
 	private void send(boolean alta) {

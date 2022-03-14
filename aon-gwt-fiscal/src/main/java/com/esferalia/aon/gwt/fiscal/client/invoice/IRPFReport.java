@@ -15,6 +15,8 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
@@ -46,7 +48,6 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -124,7 +125,7 @@ public class IRPFReport extends MainEntryPoint {
 		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
+		dockLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayoutPanel);
 		
@@ -192,42 +193,12 @@ public class IRPFReport extends MainEntryPoint {
 	}
 
 	private Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("Tabla I.R.P.F."));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		AonToolbar toolbarPanel = new AonToolbar("Tabla I.R.P.F.");
 		
-		final Button clean = new Button();
-		clean.setText(AON.MSG.clean());
-		clean.setTitle(AON.MSG.clean());
-		clean.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		clean.addStyleName(AON.AON_CSS.aonIconDelete());
-		clean.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				initialize();
-			}
-		});
-		buttonContainer.add(clean);
-		
-		toolbarPanel.add(toolbar);
+		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(), AON.CSS.aonIconClear());
+		clean.addClickHandler(event -> initialize());
+		toolbarPanel.add(clean);
+	
 		return toolbarPanel;
 	}
 	

@@ -12,6 +12,10 @@ import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL111Impl;
 
 public class MODEL111 {
 
+	private MODEL111() {
+		
+	}
+
 	private static IMODEL111 getImpl() {
 		return new MODEL111Impl();
 	}

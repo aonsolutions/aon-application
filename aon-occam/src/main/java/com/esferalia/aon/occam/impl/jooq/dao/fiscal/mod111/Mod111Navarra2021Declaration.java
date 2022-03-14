@@ -91,13 +91,15 @@ public class Mod111Navarra2021Declaration extends Mod111Declaration {
 	
 	@Override
 	ComplementaryBeahaviour getComplementaryBehaviour(Mod111 mod) {
-		return ComplementaryBeahaviour.COMPLEMENTARY;
+		return  mod.isComplementary()
+				?ComplementaryBeahaviour.COMPLEMENTARY
+				:ComplementaryBeahaviour.REPLACEMENT;
 	}
 	
 	@Override
 	Mod111 initialize(AONContext ctx, Mod111 mod111) {
-		mod111.setComplementaryDeclarationAvailable(false);
-		mod111.setReplacementDeclarationAvailable(false);
+		mod111.setComplementaryDeclarationAvailable(true);
+		mod111.setReplacementDeclarationAvailable(true);
 		return super.initializeModel(ctx, mod111);
 	}
 }

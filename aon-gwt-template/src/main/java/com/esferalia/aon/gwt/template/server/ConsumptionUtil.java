@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -49,7 +50,7 @@ public class ConsumptionUtil {
 
 	private static final String PDF = "pdf";
 
-    public static File generateConsumption(Domain domain, LinkedList<Warehouse> warehouses, String fileType, Boolean onlyNegative,
+    public static File generateConsumption(Domain domain, List<Warehouse> warehouses, String fileType, Boolean onlyNegative,
     		Boolean detail, Integer size, String login, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) throws ServletException, IOException{
 
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));
@@ -63,12 +64,12 @@ public class ConsumptionUtil {
         archivoXLS.createNewFile();
         archivoPDF.createNewFile();
 
-        Map<Integer, ConsumptionItem> cisMap = new HashMap<Integer, ConsumptionItem>();
+        Map<Integer, ConsumptionItem> cisMap = new HashMap<>();
         HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
         Integer columns = aux.getColumns().size();
 
-        Map<String, LinkedList<ConsumptionItem>> allMap = new HashMap<String, LinkedList<ConsumptionItem>>();
+        Map<String, LinkedList<ConsumptionItem>> allMap = new HashMap<>();
         for(Warehouse w : warehouses){
         	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, w.getId(), login);
         	Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
@@ -375,7 +376,7 @@ public class ConsumptionUtil {
     }
 
 
-    public static File generateConsumption(Domain domain, LinkedList<Warehouse> warehouses, String fileType, Boolean onlyNegative,
+    public static File generateConsumption(Domain domain, List<Warehouse> warehouses, String fileType, Boolean onlyNegative,
     		Boolean detail, Integer size, String login, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) throws ServletException, IOException{
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));
 
@@ -801,7 +802,7 @@ public class ConsumptionUtil {
 		return new TemplateInfo().setColumns(v);
 	}
 
-	private static  void libro(String domain, Integer domainId, String login, LinkedList<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, LinkedList<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged, Boolean dif){
+	private static  void libro(String domain, Integer domainId, String login, List<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, LinkedList<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged, Boolean dif){
 
 		Integer columns = special1.getColumns().size();
 
@@ -956,7 +957,7 @@ public class ConsumptionUtil {
     	}
 	}
 
-	private static  void libro2(String domain, Integer domainId, String login, LinkedList<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, LinkedList<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean dif){
+	private static  void libro2(String domain, Integer domainId, String login, List<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, LinkedList<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean dif){
 
 		Integer columns = special1.getColumns().size();
 

@@ -18,7 +18,7 @@ public class Mod111 extends FiscalModel implements Serializable {
 	public boolean isReplacedNumberAvailable() {
 		return  getAdministration() != null 
 			&& (isComplementaryDeclarationAvailable() || isReplacementDeclarationAvailable()) 
-			&& (isAEAT() || isAraba())
+			&& (isAEAT() || isAraba() || isNavarra())
 			&& (isComplementary() || isReplacement()); 
 	}
 

@@ -1,18 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod111;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_SALARY_IRPF_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_SALARY;
-
-import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public enum Model110GipuzkoaScript implements IModelScript<Mod111Key> {
 	

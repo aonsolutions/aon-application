@@ -236,9 +236,8 @@ export class AonHeader extends AonElement {
 			this.removeAttribute('company');
 			this.removeAttribute('user');
 
-			localStorage.removeItem('aon_domain_id');
-			localStorage.removeItem('aon_domain_name');
-			localStorage.removeItem('aon_domain_login');
+			LS.removeDomain();
+
 			clearDurum();
 			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 			this.defaultLogo();
@@ -362,7 +361,7 @@ export class AonHeader extends AonElement {
 			// aonLogo.style.top = '0px';
 		} else aonLogo.src = '../assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
-			if(localStorage.getItem('aon_domain_id')){
+			if(LS.getDomainId()){
 				this.rootPanelHtml(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');

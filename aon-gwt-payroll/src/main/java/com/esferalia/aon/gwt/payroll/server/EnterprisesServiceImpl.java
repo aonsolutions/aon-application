@@ -3540,8 +3540,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ContractInfo contractInfo = empIt.getContractInfo();
 			EmployeeInfo employeeInfo = empIt.getEmployeeInfo();
-			String regime = empIt.getContractInfo().getCompleteCCC().substring(0, 4);
-			String ccc = empIt.getContractInfo().getCompleteCCC().substring(4, empIt.getContractInfo().getCompleteCCC().length());
+			String regime = contractInfo.getCompleteCCC().substring(0, 4);
+			String ccc = contractInfo.getCompleteCCC().substring(4, contractInfo.getCompleteCCC().length());
 			
 			
 			//PAMETERS REQUIRED
@@ -3629,25 +3629,30 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void removeITParts(String domainName, String userLogin, List<ItNotExist> itNotExists)  throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			 Integer domainId = AonServletUtils.getDomainID(domainName);
-			
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			Domain domain = new Domain().setId(domainId).setName(domainName);
+			Domain domain = new Domain()
+					.setId(AonServletUtils.getDomainID(domainName))
+					.setName(domainName);
+	    	
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain.getName());
+
+	    	Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), parentDomainId);		
 			
 			 for (ItNotExist itNotExist : itNotExists) {
 			 	EmployeeIT employeeIT = itNotExist.getEmployeeIT();
 			 	EmployeeITPart part = itNotExist.getEmployeeITPart();
-			 
+			 	
+			    System.out.println("REMOVE IT>> "+employeeIT);	
+			    
 			    if(employeeIT.getId()!=null) {
 			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
 			    } else { //DELETE TGSS
+
+			    	
 				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
 				 	
-					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+					Certificate certificate = AON.getCertificate(domainName, domain.getId(), userLogin, userId, "TGSS");
 			    	ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
 			    }
-			    System.out.println("REMOVE IT>> "+employeeIT);	
 			 }
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.issues.client;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
-import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,6 +20,8 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronList;
 import com.vaadin.polymer.paper.widget.PaperButton;
+
+import net.aonsolutions.aon.gwt.vaadin.client.AonToolbar;
 
 
 public class IssueList extends Composite {

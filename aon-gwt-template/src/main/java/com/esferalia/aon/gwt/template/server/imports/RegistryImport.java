@@ -146,7 +146,7 @@ public class RegistryImport extends Import {
 		}
 		if(IConstants.DOMICILIO.equalsIgnoreCase(title)
 				|| IConstants.DIRECCION.equalsIgnoreCase(title)
-				|| IConstants.DIRECCIÓN.equalsIgnoreCase(title)) {
+				|| IConstants.DIRECCION2.equalsIgnoreCase(title)) {
 			reg.getRegistry().getMainAddress().setAddress(o.toString());
 			
 			if(AonStringUtils.isBlank(reg.getRegistry().getMainAddress().getZip())) {
@@ -165,7 +165,7 @@ public class RegistryImport extends Import {
 
 		if(IConstants.CP.equalsIgnoreCase(title)
 				|| IConstants.CODIGO_POSTAL.equalsIgnoreCase(title)
-				|| IConstants.CÓDIGO_POSTAL.equalsIgnoreCase(title)) {
+				|| IConstants.CODIGO_POSTAL2.equalsIgnoreCase(title)) {
 			String zip = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				zip = Integer.toString(Utils.parseDouble(zip).intValue());
@@ -174,7 +174,7 @@ public class RegistryImport extends Import {
 			return;
 		}
 
-		if(IConstants.POBLACIÓN.equalsIgnoreCase(title) || IConstants.POBLACION.equalsIgnoreCase(title)
+		if(IConstants.POBLACION2.equalsIgnoreCase(title) || IConstants.POBLACION.equalsIgnoreCase(title)
 				|| IConstants.CIUDAD.equalsIgnoreCase(title)) {
 			reg.getRegistry().getMainAddress().setCity(o.toString());
 			return ;
@@ -210,13 +210,13 @@ public class RegistryImport extends Import {
 			return;
 		}
 
-		if(IConstants.PAÍS.equalsIgnoreCase(title) || IConstants.PAIS.equalsIgnoreCase(title)) {
+		if(IConstants.PAIS2.equalsIgnoreCase(title) || IConstants.PAIS.equalsIgnoreCase(title)) {
 			reg.getRegistry().setNationality(Country.safeValueOf(o.toString()));
 			return;
 		}
 		
 		if(IConstants.MAIL.equalsIgnoreCase(title) || IConstants.EMAIL.equalsIgnoreCase(title)
-				|| IConstants.CORREO_ELECTRONICO.equalsIgnoreCase(title) || IConstants.CORREO_ELECTRÓNICO.equalsIgnoreCase(title)) {
+				|| IConstants.CORREO_ELECTRONICO.equalsIgnoreCase(title) || IConstants.CORREO_ELECTRONICO2.equalsIgnoreCase(title)) {
 			String[] mails = o.toString().split(",");
 			for(int i = 0; i < mails.length; i++) {
 				if(!AonStringUtils.isBlank(mails[i])) {
@@ -233,8 +233,8 @@ public class RegistryImport extends Import {
 			}
 			return;
 		}
-		if(IConstants.TELEFONO.equalsIgnoreCase(title) || IConstants.TELÉFONO.equalsIgnoreCase(title)
-				|| IConstants.MOVIL.equalsIgnoreCase(title) || IConstants.MÓVIL.equalsIgnoreCase(title)) {
+		if(IConstants.TELEFONO.equalsIgnoreCase(title) || IConstants.TELEFONO2.equalsIgnoreCase(title)
+				|| IConstants.MOVIL.equalsIgnoreCase(title) || IConstants.MOVIL2.equalsIgnoreCase(title)) {
 			String telephones = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				telephones = NumberToTextConverter.toText(cell.getNumericCellValue());

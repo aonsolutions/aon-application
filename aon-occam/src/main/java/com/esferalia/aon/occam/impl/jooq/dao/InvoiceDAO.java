@@ -50,6 +50,7 @@ import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Geozone;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
@@ -482,6 +483,10 @@ public class InvoiceDAO {
 		public static RegistryAddress build(Record r) {
 			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
 			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
+			return build(r, parent, child);
+		}
+		
+		public static RegistryAddress build(Record r, Geozone parent, Geozone child) {
 			return new RegistryAddress()
 					.setId(r.getValue(INVOICE_ADDRESS.ID))
 					.setDomain(r.getValue(INVOICE_ADDRESS.DOMAIN))

@@ -93,7 +93,7 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuBar;
+//import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -252,6 +252,8 @@ public abstract class ITWidget extends ResizeComposite {
 	private List<ITEmployee> itEmployeeIts;
 
 	private ProgressPanel progressPanel;
+
+	private ITDialog itDialogEdit;
 	
 	// --------------------------------------------------- Constructor
 
@@ -339,7 +341,7 @@ public abstract class ITWidget extends ResizeComposite {
 					
 					if(!isUserComunica() && itIsNotComunicate(it)){
 						popupPanel = new PopupPanel(true);					
-						new ITContextMenu();					
+//						new ITContextMenu();					
 						popupPanel.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());					
 						popupPanel.show();							
 					}	
@@ -477,32 +479,32 @@ public abstract class ITWidget extends ResizeComposite {
     
     // --------------------------------------------------- ContextMenu
 	
-	class ITContextMenu extends ContextMenu {
-		
-		DeleteContractCommand deleteContract = new DeleteContractCommand();
-		ComunicateITCommand comunicateIT = new ComunicateITCommand();
-		
-		public ITContextMenu() {
-			MenuBar popupMenuBar = new MenuBar(true);
-			
-			MenuItem deleteMenuItem = addItem(
-					"Eliminar Baja",
-					deleteContract,
-					AON.CSS.aonIconDelete(), style.cmdBtn());
-			
-			popupMenuBar.addItem(deleteMenuItem);
-			
-			MenuItem comunicateMenuItem = addItem(
-					"Comunicar IT",
-					comunicateIT,
-					AON.CSS.aonIconSend(), style.cmdBtn());
-			
-			popupMenuBar.addItem(comunicateMenuItem);
-			
-			popupMenuBar.setVisible(true);
-			popupPanel.add(popupMenuBar);
-		}
-	}
+//	class ITContextMenu extends ContextMenu {
+//		
+//		DeleteContractCommand deleteContract = new DeleteContractCommand();
+//		ComunicateITCommand comunicateIT = new ComunicateITCommand();
+//		
+//		public ITContextMenu() {
+//			MenuBar popupMenuBar = new MenuBar(true);
+//			
+//			MenuItem deleteMenuItem = addItem(
+//					"Eliminar Baja",
+//					deleteContract,
+//					AON.CSS.aonIconDelete(), style.cmdBtn());
+//			
+//			popupMenuBar.addItem(deleteMenuItem);
+//			
+//			MenuItem comunicateMenuItem = addItem(
+//					"Comunicar IT",
+//					comunicateIT,
+//					AON.CSS.aonIconSend(), style.cmdBtn());
+//			
+//			popupMenuBar.addItem(comunicateMenuItem);
+//			
+//			popupMenuBar.setVisible(true);
+//			popupPanel.add(popupMenuBar);
+//		}
+//	}
 
 	class DeleteContractCommand implements ScheduledCommand {
 		
@@ -525,31 +527,31 @@ public abstract class ITWidget extends ResizeComposite {
 		
 	}
 	
-	class ComunicateITCommand implements ScheduledCommand {
-		
-		@Override
-		public void execute() {
-			try {
-				popupPanel.hide();	
-				
-				int contractId = data.getContractId(posColumn, posCell);				
-				int leaveId = data.getContractLeaveId(posColumn, posCell);
-				
-				IT it = getIT(leaveId);
-				ITEmployee itEmployee = getITEmployee(contractId);
-				
-				// Paternidad / Maternidad
-				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
-					comunicatePaternity(itEmployee, it);
-				else
-					cominicateIT(itEmployee, it);
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
+//	class ComunicateITCommand implements ScheduledCommand {
+//		
+//		@Override
+//		public void execute() {
+//			try {
+//				popupPanel.hide();	
+//				
+//				int contractId = data.getContractId(posColumn, posCell);				
+//				int leaveId = data.getContractLeaveId(posColumn, posCell);
+//				
+//				IT it = getIT(leaveId);
+//				ITEmployee itEmployee = getITEmployee(contractId);
+//				
+//				// Paternidad / Maternidad
+//				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
+//					comunicatePaternity(itEmployee, it);
+//				else
+//					cominicateIT(itEmployee, it);
+//				
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//
+//	}
 	
 	// --------------------------------------------------- OnModuleLoad
 	
@@ -1465,12 +1467,6 @@ public abstract class ITWidget extends ResizeComposite {
 	private void checkStatusITs() {
 		showProgressPanel();
 		checkStatus(status -> {
-			EnterpriseITStatus.ifSistemaREDEnabled(status, () -> {
-				showFootPanel();
-			}, () -> {
-				closeFootPanel();
-			});
-
 			SistemaREDITResults results = new SistemaREDITResults() {
 				@Override
 				public void run() {
@@ -1478,7 +1474,9 @@ public abstract class ITWidget extends ResizeComposite {
 					checkStatus(status -> {
 						removeAll();
 						status.visit(this);
-					}, throwable -> {});
+					}, throwable -> {
+						LOGGER.info("error run");
+					});
 				}
 				
 				@Override
@@ -1487,7 +1485,7 @@ public abstract class ITWidget extends ResizeComposite {
 						minimizedByUser = true;
 						closeFootPanel();
 					} else {
-						 showFootPanel();
+						showFootPanel();
 					}
 				}
 				
@@ -1505,13 +1503,21 @@ public abstract class ITWidget extends ResizeComposite {
 				@Override
 				protected void credentialsFound() {
 					checkStatus(status -> {
+						LOGGER.info("credentialsFound");
 						removeAll();
 						status.visit(this);
-						EnterpriseITStatus.ifSistemaREDEnabled(status, () -> {
-							showFootPanel();
-						}, () -> {
-							closeFootPanel();
-						});
+						showResultsPanel();
+						EnterpriseITStatus.ifSistemaREDEnabled(
+							status,
+							ITWidget.this::showFootPanel,
+							ITWidget.this::closeFootPanel
+						);
+						
+						EnterpriseITStatus.ifSistemaREDError(
+							status,
+							ITWidget.this::showFootPanel,
+							ITWidget.this::closeFootPanel					
+						);
 					}, throwable -> {
 						closeFootPanel();
 					});
@@ -1530,21 +1536,8 @@ public abstract class ITWidget extends ResizeComposite {
 				}
 				
 				@Override
-				protected void onRemoveITPartToSS(ItNotExist itNotEx) {
-					AonConfirmDialog confirmDialog = new AonConfirmDialog();
-					confirmDialog.confirm(
-							"BORRADO", 
-							String.valueOf("\u00BF") + "Realmente desea anular el parte IT del Sistema RED?",
-							new AonConfirmDialogCallback() {
-								@Override public void onCancel() {}
-								@Override
-								public void onAccept() {
-									List<ItNotExist> itNotExist  = new ArrayList<>();
-									itNotExist.add(itNotEx);
-									removeITPart(itNotExist);
-								}
-							}
-					);
+				protected void onRemoveITPartToSS(ItNotExist ItNotExist) {
+					confirmDeleteITToTGSS(ItNotExist);
 				}
 				
 				@Override
@@ -1557,9 +1550,7 @@ public abstract class ITWidget extends ResizeComposite {
 								@Override public void onCancel() {}
 								@Override
 								public void onAccept() {
-									List<ItNotExist> itNotExist  = new ArrayList<>();
-									itNotExist.add(itNotEx);
-									removeITPart(itNotExist);
+									removeITPart(itNotEx);
 								}
 							}
 					);
@@ -1567,24 +1558,34 @@ public abstract class ITWidget extends ResizeComposite {
 				
 				@Override
 				public void onFinish() {
-					hideProgressPanel();
+					showResultsPanel();
 				}
 			};
+			
 			results.setIsUserComunica(isUserComunica());
 			status.visit(results);
 			resultsPanel.setWidget(results);
+		
+			showResultsPanel();
+			
+			EnterpriseITStatus.ifSistemaREDEnabled(
+				status,
+				ITWidget.this::showFootPanel,
+				ITWidget.this::closeFootPanel
+			);
+				
+			EnterpriseITStatus.ifSistemaREDError(
+				status,
+				ITWidget.this::showFootPanel,
+				ITWidget.this::closeFootPanel					
+			);
 		}, f -> {
 			closeFootPanel();
 		});
 		
 	}
 	
-	private void saveITPartsAon(List<ItNotExist> itNotExist) {
-		
-		setEmployeeData(itNotExist);
-		
-		showProgressPanel();
-		
+	private void saveITPartsAon(List<ItNotExist> itNotExist) {		
 		saveITParts(itNotExist, s->{		
 			showCreateMessage();
 			loadITWidget();
@@ -1593,13 +1594,28 @@ public abstract class ITWidget extends ResizeComposite {
 			dialog.warning();
 		});
 	}
+	
+	private void confirmDeleteITToTGSS(ItNotExist itNotEx) {
+		AonConfirmDialog confirmDialog = new AonConfirmDialog();
+		confirmDialog.confirm(
+				"BORRADO", 
+				String.valueOf("\u00BF") + "Realmente desea anular el parte IT del Sistema RED?",
+				new AonConfirmDialogCallback() {
+					@Override public void onCancel() {}
+					@Override
+					public void onAccept() {
+						removeITPart(itNotEx);
+						if(itDialogEdit!=null) {
+							itDialogEdit.hide();
+						}
+					}
+				}
+		);
+	}
 
-	private void removeITPart(List<ItNotExist> itNotExist) {
-		
-		setEmployeeData(itNotExist);
-		
-		showProgressPanel();
-		
+	private void removeITPart(ItNotExist itNotEx) {
+		List<ItNotExist> itNotExist  = new ArrayList<>();
+		itNotExist.add(itNotEx);
 		removeITParts(itNotExist, s->{		
 			showDeleteMessage();
 			loadITWidget();
@@ -1607,20 +1623,6 @@ public abstract class ITWidget extends ResizeComposite {
 			AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
 			dialog.warning();
 		});
-	}
-	
-	private void setEmployeeData(List<ItNotExist> itNotExist) {
-		for (ItNotExist notExist : itNotExist) {
-			if(itEmployeeIts!=null) {
-				itEmployeeIts.stream().filter(e-> 
-					e.getEmployeeInfo().getSsNumber().equals(notExist.getNaf()) && 
-					e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()).equals(notExist.getCcc())
-				).forEach(e->{
-					notExist.getEmployeeIT().setNss(e.getEmployeeInfo().getSsNumber());
-					notExist.getEmployeeIT().setCcc(e.getContractInfo().getCompleteCCC().substring(4, e.getContractInfo().getCompleteCCC().length()));
-				});
-			}
-		}
 	}
 	
 	private void openITPartDialog(ItNotExist itNotExist){
@@ -1652,10 +1654,6 @@ public abstract class ITWidget extends ResizeComposite {
 		}
 	}
 	
-	private void openITPartTooltip(ItNotExist itNotExist){
-
-	}
-	
 	private void onLeyend() {
 		openLeyend();
 	}
@@ -1664,7 +1662,6 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private ITDialog newITDialog() {
 		ITDialog itDialog = new ITDialog("Creaci\u00F3n") {
-
     		@Override
 			protected void onAccept() {
     			accept(getITEmployee(), true);
@@ -1680,15 +1677,9 @@ public abstract class ITWidget extends ResizeComposite {
 				getITCertificatePDF(getITEmployee(), it);
 			}
 
-			@Override
-			protected void onComunicateIT(IT it) {
-				// On new IT not comunicate
-			}
+			@Override protected void onCommunicateITPart(IT it, ITPart part) {}
 
-			@Override
-			protected void onCommunicateITPart(IT it, ITPart part) {
-			}
-    		
+			@Override protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {}
     	};
     	
     	itDialog.setEmployeesList(getActiveEmployeesList());
@@ -1705,8 +1696,8 @@ public abstract class ITWidget extends ResizeComposite {
 	private ITDialog openITDialog(int contractId, int itId) {
 		IT itInfo = getIT(itId);
     	ITEmployee itEmployee = getITEmployee(contractId);
-
-    	ITDialog itDialog = new ITDialog("Edici\u00F3n") {
+    	itDialogEdit = null;
+    	itDialogEdit = new ITDialog("Edici\u00F3n") {
     		
     		@Override
 			protected void onAccept() {
@@ -1724,20 +1715,9 @@ public abstract class ITWidget extends ResizeComposite {
 			}
 
 			@Override
-			protected void onComunicateIT(IT it) {
-				// Paternity / Maternity
-				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
-					comunicatePaternity(itEmployee, it);
-				else
-					cominicateIT(itEmployee, it);
-			}
-
-			@Override
 			protected void onCommunicateITPart(IT it, ITPart part) {
 				startLoading(true);
 				communicateITPart(itEmployee, it, part, s->{	
-					
-//					getITCertificatePDF(itEmployee, it);
 					
 					normalizeITToSave();
 				
@@ -1753,13 +1733,18 @@ public abstract class ITWidget extends ResizeComposite {
 					startLoading(false);
 				});
 			}
+
+			@Override
+			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
+				confirmDeleteITToTGSS(ItNotExist);
+			}
 			
     	};
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
-    	itDialog.setIsUserComunica(isUserComunica());
-    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
-    	return itDialog;
+    	itDialogEdit.setIsUserComunica(isUserComunica());
+    	itDialogEdit.setITDialogObject(itDialogObject, itInfo, true);
+    	return itDialogEdit;
 	}	
 	
 	private void accept(ITEmployee itEmployee, boolean newIT) {
@@ -1839,51 +1824,48 @@ public abstract class ITWidget extends ResizeComposite {
 		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
-	private void cominicateIT(ITEmployee itEmployee, IT it) {
-		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-		comunicateDialog.confirm(
-				"COMUNIC\u0040", 
-				"\u00BFDesea comunicar el parte IT?",
-				new AonConfirmDialogCallback() {
-					@Override
-					public void onAccept() {
-						comunicateIT(itEmployee, it, 
-							s -> {
-								getITCertificatePDF(itEmployee, it);
-								showComunicateMessage();
-							}, 
-							f -> {}
-						);
-					}
-					@Override public void onCancel() {}
-				}
-		);
-	}
+//	private void cominicateIT(ITEmployee itEmployee, IT it) {
+//		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+//		comunicateDialog.confirm(
+//				"COMUNIC\u0040", 
+//				"\u00BFDesea comunicar el parte IT?",
+//				new AonConfirmDialogCallback() {
+//					@Override
+//					public void onAccept() {
+//						comunicateIT(itEmployee, it, 
+//							s -> {
+//								getITCertificatePDF(itEmployee, it);
+//								showComunicateMessage();
+//							}, 
+//							f -> {}
+//						);
+//					}
+//					@Override public void onCancel() {}
+//				}
+//		);
+//	}
 
-	private void comunicatePaternity(ITEmployee itEmployee, IT it) {
-		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-		comunicateDialog.confirm(
-				"COMUNIC\u0040", 
-				"\u00BFDesea comunicar el parte IT?",
-				new AonConfirmDialogCallback() {
-					@Override
-					public void onAccept() {
-						comunicatePaternityIT(itEmployee, it, 
-							s -> {
-								getITCertificatePDF(itEmployee, it); 
-								showComunicateMessage();
-							},
-							f -> {}
-						);
-					}
-
-					@Override
-					public void onCancel() {
-						// Close Panel
-					}
-				}
-		);
-	}
+//	private void comunicatePaternity(ITEmployee itEmployee, IT it) {
+//		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+//		comunicateDialog.confirm(
+//				"COMUNIC\u0040", 
+//				"\u00BFDesea comunicar el parte IT?",
+//				new AonConfirmDialogCallback() {
+//					@Override
+//					public void onAccept() {
+//						comunicatePaternityIT(itEmployee, it, 
+//							s -> {
+//								getITCertificatePDF(itEmployee, it); 
+//								showComunicateMessage();
+//							},
+//							f -> {}
+//						);
+//					}
+//
+//					@Override public void onCancel() {}
+//				}
+//		);
+//	}
 	
 	private void showComunicateMessage() {
 		Map<String, String> successMap = new HashMap<>();
@@ -1964,6 +1946,7 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private void showResultsPanel() {
+		removeTabs();
 		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information()+" TGSS", AON.CSS.aonIconHistory()));
 		tabLayout.selectTab(resultsPanel);
 	}
@@ -1984,11 +1967,6 @@ public abstract class ITWidget extends ResizeComposite {
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		tabLayout.add(progressPanel, tab);
 		tabLayout.selectTab(progressPanel);
-	}
-	
-	private void hideProgressPanel() {
-		removeTabs();
-		showResultsPanel();
 	}
 	
 	private void removeTabs(){
@@ -2020,7 +1998,9 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void deleteIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
 	protected abstract void deletePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
 
+	@Deprecated
 	protected abstract void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
+	@Deprecated
 	protected abstract void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure);

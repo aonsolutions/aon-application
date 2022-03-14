@@ -40,6 +40,7 @@ public class DefaultPayroll {
 	private Optional<Double>								payrollTotal;
 	private Optional<ContingencyBases>						contingencies;
 	private Optional<PayrollTypes.Type>						payrollType;
+	private Optional<PartTimeParams>						partTimeParams;
 	private IMPRESION										impressionType;
 
 	private DefaultPayroll() {
@@ -129,6 +130,10 @@ public class DefaultPayroll {
 		return payrollType;
 	}
 	
+	public Optional<PartTimeParams> getPartTimeParams() {
+		return partTimeParams;
+	}
+	
 	
 
 	public IMPRESION getImpressionType() {
@@ -158,6 +163,7 @@ public class DefaultPayroll {
 		private Optional<Double>								deductionTotal;
 		private Optional<Double>								payrollTotal;
 		private Optional<PayrollTypes.Type>						payrollType;
+		private Optional<PartTimeParams>						partTimeParams;
 		private IMPRESION										impressionType;
 
 		private Optional<ContingencyBases> contingencies;
@@ -184,6 +190,7 @@ public class DefaultPayroll {
 			payrollTotal	  = Optional.empty();
 			payrollType		  = Optional.empty();
 			contingencies	  = Optional.empty();
+			partTimeParams	  = Optional.empty();
 			impressionType	  = DEFAULT;
 		}
 		
@@ -401,6 +408,11 @@ public class DefaultPayroll {
 			this.payrollType = payrollType;
 			return this;
 		}
+		
+		public DefaultPayrollBuilder setPartTimeParams(Optional<PartTimeParams> partTimeParams) {
+			this.partTimeParams = partTimeParams;
+			return this;
+		}
 
 		// BUILD A DEFAULT PAYROLL
 		public DefaultPayroll build() {
@@ -429,6 +441,7 @@ public class DefaultPayroll {
 			p.payrollTotal		= this.payrollTotal;
 			p.contingencies		= this.contingencies;
 			p.payrollType		= this.payrollType;
+			p.partTimeParams	= this.partTimeParams;
 
 			return p;
 		}

@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.occam.api.model.type.Gender;
@@ -48,40 +49,43 @@ public class ITStatusUtils {
 		
 		Date startDate = getFirstDateOfMonth(AonDateUtils.addMonths(new Date(), -1));
 		Date endDate = new Date();
-
-		AndEmployeeITStatus employeeITStatus = new AndEmployeeITStatus();
-		
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
-		List<CCCInfo> cccs = ITComunica.getCccs(domain);
-		  
-		for ( CCCInfo ccc: cccs ) {
-			try {
-				Thread threadOne = new Thread(() -> {
-					employeeITStatus.and( compareComun(domain, certificate, startDate, endDate, ccc) );
-				});
-				Thread threadTwo = new Thread(() -> {
-					employeeITStatus.and( comparePaternity(domain, user, certificate, startDate, endDate, ccc) );
-				});
-		
-				threadOne.start();
-				threadTwo.start();
-				threadOne.join();
-				threadTwo.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
 		try {
-			EnterpriseITStatus.isUp2Date(employeeITStatus); 
-			employeeITStatus.and(new EnterpriseITStatus.Up2Date());
-		} catch ( OutOfDateException e ) {}
-		
-		employeeITStatus.and(new EnterpriseITStatus.onFinish());
-		
-		EnterpriseITStatus.trace(employeeITStatus);
-		
-		return employeeITStatus;		
+			AndEmployeeITStatus employeeITStatus = new AndEmployeeITStatus();
+			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
+
+			List<CCCInfo> cccs = ITComunica.getCccs(domain);
+			  
+			for ( CCCInfo ccc: cccs ) {
+				try {
+					Thread threadOne = new Thread(() -> {
+						employeeITStatus.and( compareComun(domain, certificate, startDate, endDate, ccc) );
+					});
+					Thread threadTwo = new Thread(() -> {
+						employeeITStatus.and( comparePaternity(domain, user, certificate, startDate, endDate, ccc) );
+					});
+			
+					threadOne.start();
+					threadTwo.start();
+					threadOne.join();
+					threadTwo.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			try {
+				EnterpriseITStatus.isUp2Date(employeeITStatus); 
+				employeeITStatus.and(new EnterpriseITStatus.Up2Date());
+			} catch ( OutOfDateException e ) {}
+			
+			employeeITStatus.and(new EnterpriseITStatus.onFinish());
+			EnterpriseITStatus.trace(employeeITStatus);
+			return employeeITStatus;
+		} catch (CertificateNotFoundException e) {
+			return new EnterpriseITStatus.CredentialsNotFound();
+		} catch (Exception e) {
+			return new EnterpriseITStatus.UnknownError().setMessage(e.getMessage());
+		}
 	}
 	
 	private static AndEmployeeITStatus compareComun(Domain domain, Certificate certificate, Date startDate, Date endDate, CCCInfo ccc) {

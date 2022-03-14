@@ -38,7 +38,7 @@ public class Model123Gipuzkoa extends Model123Base {
 			final AonTextBox input = new AonTextBox();
 			input.setVisibleLength(10);
 			input.setMaxLength(9);
-			input.setEnabled(getModel().isNotFinished() && script.isEnabled()); 
+			input.setEnabled(getModel().isEditable() && script.isEnabled()); 
 			input.setValue(det1.getDescription());
 			input.addValueChangeHandler(event -> {
 				getModel().ensureDetail(key).setDescription(input.getValue());	
