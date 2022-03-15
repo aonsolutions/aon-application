@@ -6,15 +6,12 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<style>
-.title {
-	font-size: 2rem;
-	text-align: center;
-}
-
+<style>
 .div-horizontal-center {
 	display: flex;
 	justify-content: center;
+	position: relative; 
+	width:100%;
 }
 
 .box-column {
@@ -32,7 +29,6 @@
 
 .list .list-item {
 	height: 3rem;
-	width: 100%;
 	border-bottom: 1px solid #f1f1f1;
 	display: flex;
 	justify-content: flex-start;
@@ -123,26 +119,14 @@
 }
 
 </style>	
+	<ui:insert name="menu" >
+		<ui:include src="/facelet/homepage/menu.xhtml" />
+	</ui:insert>
+
 	<aon:div styleCass="div-horizontal-center box-column" id="driveDiv">
 		<span id="start"></span>
-	
-		<aon:div styleClass="breadcrumb" >			
-			<c:forEach items="#{help.breadcrumb}" var="file">
-				<aon:form>
-					<aon:commandLink  
-						immediate="true"
-						reRender="driveDiv" 
-						styleClass="list-item" 
-						>
-						<f:setPropertyActionListener target="#{help.file}" value="#{file}" />
-					<span class="link">#{file.name}</span>
-					</aon:commandLink>
-					<span class="separator material-icons">navigate_next</span>
-				</aon:form>
-			</c:forEach>
-			
-		</aon:div>
-	
+		<ui:include src="/facelet/breadcrumb/breadcrumb.xhtml" /> 
+		
 		<aon:div styleClass="box-column list">
 		<c:forEach items="#{help.content}" var="file">
 		
@@ -159,9 +143,6 @@
 						<aon:outputText value="#{file.name}"/>
 					</aon:commandLink>
 				</aon:if>
-				
-				
-				
 				
 				<!-- PDF -->
 				<aon:if test="${file.isPDF()}">

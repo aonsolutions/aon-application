@@ -1,23 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets">
-
-	<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script> 
-	<!-- Laboral manual -->
-	<!--
-		<aon-viewer type="application/pdf" width="500" file="http://ayudat.aonsolutions.net:8080/aon-aio/DriveServlet?action=video&amp;name=Laboral Manual.pdf">
-		</aon-viewer>
-	-->
-	<script type="module">	
-		import { AonViewer } from "./js/pdf/viewer.js";
-		const viewer = new AonViewer();		
-		viewer.type = "application/pdf";
-		viewer.file = "http://ayudat.aonsolutions.net:8080/aon-aio/DriveServlet?action=video&amp;name=Laboral Manual.pdf";
-		viewer.width = 500;
-		
-		const content = document.getElementById("viewer-parent");
-		content.appendChild(viewer);	
-	</script>
-	<span id="viewer-parent"></span>
-	
-	<span>CARGANDO EL PDF</span>
+<style>
+	iframe {
+		width: 100%;
+		height: calc(100% - 103px - 2rem);
+		border: none;
+	}
+</style>
+	<ui:insert name="menu" >
+		<ui:include src="/facelet/homepage/menu.xhtml" />
+	</ui:insert>
+	<ui:include src="/facelet/breadcrumb/breadcrumb.xhtml" /> 
+	<iframe src= "./html/viewer.html##{help.fileServletUrl}"></iframe>
 </ui:composition>

@@ -3,6 +3,7 @@ package com.code.aon.aio.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.util.Optional;
 
 import javax.servlet.ServletContext;
@@ -45,14 +46,13 @@ public class DriveServlet extends HttpServlet {
 		final String action = request.getParameter("action");
 		
 		if("video".equals(action)) {
-			
-			final String name = request.getParameter("name");
-			final String parent = request.getParameter("parent");
+			String name = request.getParameter("name");
+			String parent = request.getParameter("parent");
 			
 			if(name == null) {
 				response.sendError(400);
 				return;
-			}
+			}			
 						
 			final Optional<InputStream> stream = drive.downloadByNameAndParentNotTrashed(Optional.ofNullable(name), Optional.ofNullable(parent));			
 			
@@ -67,7 +67,7 @@ public class DriveServlet extends HttpServlet {
 			response.setHeader("Content-Disposition", "inline; filename=\"" + name + "\"");
 			
 
-		    byte[] buffer = new byte[4096];
+		    byte[] buffer = new byte[2096];
 
 		    int read = 0;
 
@@ -79,19 +79,19 @@ public class DriveServlet extends HttpServlet {
 			
 			output.flush();
 			output.close();
-			return;
+			return;   
 		}
 		
 		if("pdf".equals(request.getParameter("action"))) {
 			
-			final String name = request.getParameter("name");
-			final String parent = request.getParameter("parent");
+			String name = request.getParameter("name");
+			String parent = request.getParameter("parent");
 			
 			if(name == null) {
 				response.sendError(400);
 				return;
 			}
-			
+
 			final Optional<InputStream> stream = drive.downloadByNameAndParentNotTrashed(Optional.ofNullable(name), Optional.ofNullable(parent));			
 			
 			if(stream.isEmpty()) {

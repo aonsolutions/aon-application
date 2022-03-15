@@ -30,8 +30,10 @@
 			<aon:if test="#{aonRole.admin}">
 				<aon:commandLink id="menu_enterprise"
 					value="#{bundle.aon_module_enterprise}"
-					action="menu_enterprise" immediate="true"
-					styleClass="aon-top-menu-item" />
+					action="drive" immediate="true"
+					styleClass="aon-top-menu-item"
+					
+					 />
 			</aon:if>
 		</aon:if>
 
@@ -64,21 +66,21 @@
 
 			<aon:commandLink id="menu_groupware"
 				value="#{bundle.aon_module_groupware}"
-				action="menu_groupware" immediate="true"
+				action="drive" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</aon:if>
 			
 		<aon:if test="#{aonRole.accountingOperator}">
 			<aon:commandLink id="menu_accounting"
 				value="#{bundle.aon_module_accounting}"
-				action="menu_accounting" immediate="true"
+				action="drive" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</aon:if>
 
 		<aon:if test="#{aonRole.fiscal}">
 			<aon:commandLink id="menu_fiscal"
 				value="#{bundle.aon_module_fiscal}"
-				action="menu_fiscal" immediate="true"
+				action="drive" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</aon:if>
 		
@@ -90,7 +92,7 @@
 		<aon:if test="#{aonRole.payroll}">
 			<aon:commandLink id="menu_payroll"
 				value="#{bundle.aon_module_payroll}"
-				action="menu_payroll" immediate="true"
+				action="drive" immediate="true"
 				styleClass="aon-top-menu-item" />
 			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">				
 				<aon:commandLink id="menu_payroll_portal"
@@ -102,7 +104,7 @@
 		
 		<aon:commandLink id="menu_document" 
 			value="#{bundle.aon_module_document}"
-			action="portal_documental"
+			action="drive"
 			immediate="true"
 			styleClass="aon-top-menu-item" />
 		
@@ -129,7 +131,7 @@
 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 			<aon:commandLink id="menu_configuration"
 				value="#{bundle.aon_module_configuration}"
-				action="menu_configuration" immediate="true"
+				action="drive" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</aon:if>
 		
@@ -147,11 +149,11 @@
 				styleClass="aon-menu-icon aon-icon-helpdesk" />
 		</aon:if>
 	</ui:define>
-	
+	<!--
 	<ui:define name="beforeRightMenuContentEx">
 		<aon:outputText value="#{loggedUser.loggedUserName} &#183; #{loggedUser.companyName}" />
 	</ui:define>	
-	
+	-->
 	<ui:define name="beforeWebMapMenuContent">
 		<aon:menuItem id="favorites" action="actionFavorite"
 			rendered="#{!aonConfiguration.properties.hideMenuFavorite}"

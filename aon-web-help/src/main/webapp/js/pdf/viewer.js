@@ -56,12 +56,17 @@ export class AonViewer extends AonElement{
 		divCanvas.style.width = '100%';
 		this.appendChild(divCanvas);
 
-		if (this.type && this.type.includes('pdf')) {
-			this.printPdf();
-		} else if (this.type && this.type.includes('image')) {
-			this.printImage();
-		} else if (this.type) {
-			this.notSupport(this.type);
+
+		if(this.file){
+			if (this.type && this.type.includes('pdf')) {
+				this.printPdf();
+			} else if (this.type && this.type.includes('image')) {
+				this.printImage();
+			} else if (this.type) {
+				this.notSupport(this.type);
+			}
+		} else {
+			
 		}
 
 		let div = this.createElement(TAG.DIV);
