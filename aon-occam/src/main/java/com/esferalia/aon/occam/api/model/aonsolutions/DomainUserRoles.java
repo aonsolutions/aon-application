@@ -291,10 +291,24 @@ public class DomainUserRoles implements Serializable {
 		return hasNotes() && (isAdmin() || hasRole(AonRole.NOTES));
 	}
 	
+	// BASIC MANAGEMENT
+	
+	public boolean hasBasicManagement() {
+		return hasStandarManagement() || hasApp(AonApp.BASIC_MANAGEMENT);
+	}
+	
+	public boolean hasStandarManagement() {
+		return hasProfessionalManagement() || hasApp(AonApp.STANDAR_MANAGEMENT);
+	}
+	
+	public boolean hasProfessionalManagement() {
+		return hasApp(AonApp.PROFESSIONAL_MANAGEMENT);
+	}
+	
 	// INVOICE - FACTURAS
 	
 	public boolean hasInvoice() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.INVOICE);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasBasicManagement() || hasApp(AonApp.INVOICE);
 	}
 	
 	public Boolean isInvoice() {
