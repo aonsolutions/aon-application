@@ -47,7 +47,8 @@ export const Role = {
   	AON_AIO: 'AON_AIO',							// ACCESO A AON AIO
   	AON_SMB: 'AON_SMB',							// ACCESO A AON SMB
   	DEV: 'DEV',									// USUARIO TIPO DESARROLLADOR.
-	SELFCONTA: 'SELFCONTA'
+	SELFCONTA: 'SELFCONTA',
+	SALTRA: 'SALTRA'
 }
 
 export const OldModule = {
@@ -99,7 +100,8 @@ export const App = {
 	PACK_PAYROLL: 'PACK_PAYROLL',
 	PACK_FISCAL_ACCOUNTING: 'PACK_FISCAL_ACCOUNTING',
 	SELFCONTA: 'SELFCONTA',
-	CUSTOM_VIEW: 'CUSTOM_VIEW'
+	CUSTOM_VIEW: 'CUSTOM_VIEW',
+	SALTRA: 'SALTRA'
 }
 
 export const RegistryType = {

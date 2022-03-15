@@ -151,6 +151,34 @@ export class Domain {
         return this.getDomainType() && 'CONSULTANCY' === this.getDomainType().toUpperCase();
     }
 
+    isEnterprise() {
+        return this.getDomainType() && 'ENTERPRISE' === this.getDomainType().toUpperCase();
+    }
+
+    isGarage() {
+        return this.getDomainType() && 'GARAGE' === this.getDomainType().toUpperCase();
+    }
+
+    isAcademy() {
+        return this.getDomainType() && 'ACADEMY' === this.getDomainType().toUpperCase();
+    }
+
+    isHotel() {
+        return this.getDomainType() && 'HOTEL' === this.getDomainType().toUpperCase();
+    }
+
+    isCommerce() {
+        return this.getDomainType() && 'COMMERCE' === this.getDomainType().toUpperCase();
+    }
+
+    isAdmin() {
+        return this.getDomainType() && 'ADMIN' === this.getDomainType().toUpperCase();
+    }
+
+    isGeneric() {
+        return this.getDomainType() && 'GENERIC' === this.getDomainType().toUpperCase();
+    }
+
     isParent() {
         return this.parentId === undefined && this.isConsultancy();
     }

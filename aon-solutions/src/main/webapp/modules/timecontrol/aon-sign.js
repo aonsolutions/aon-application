@@ -176,20 +176,19 @@ export class AonSign extends AonElement {
       button2.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('pause'));
       content.appendChild(button2);
     }
- 
 	}
 
   async saveTimeCtrl(status){
     let signin = {status, task_holder: this._taskHolder, parent: this.parent}
     this.disabledButton(true);
     try{
-      await getPosition().then(async(position) => {
-        if(position && position.latitude && position.longitude){signin.coordinates = position.latitude + ',' + position.longitude;}
-        await saveTimeControl(signin).then(r => this.buildSignin(r));
-      });
+      const position = await getPosition(); 
+      if(position && position.latitude && position.longitude)
+        signin.coordinates = position.latitude + ',' + position.longitude;
     } catch (error) {
       this.showToast(error);
     }
+    await saveTimeControl(signin).then(r => this.buildSignin(r));
     this.disabledButton(false);
   }
 

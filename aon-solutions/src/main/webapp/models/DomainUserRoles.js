@@ -401,6 +401,10 @@ export class DomainUserRoles {
 		return this.hasApp(App.SELFCONTA) && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
 	}
 
+  isSaltra() {
+		return this.hasApp(App.SALTRA) && (this.isAdmin() || this.hasRole(Role.SALTRA));
+	}
+
   isConfidential() {
     return this.hasRole(Role.CONFIDENTIALITY);
   }

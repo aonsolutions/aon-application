@@ -214,7 +214,7 @@ export const ROOT_PANEL = 'rootPanel';
 export const ROW = 'row';
 
 // ----- S
-
+export const SALTRA = 'saltra';
 export const SAVE = 'save';
 export const SELECT = 'select';
 export const SELECTED = 'selected';
