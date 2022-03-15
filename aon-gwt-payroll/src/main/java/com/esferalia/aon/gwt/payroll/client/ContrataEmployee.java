@@ -716,6 +716,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private Label employeeCounter;
 	
 	private boolean hasCertificateSEPE = false;
+
+	private boolean changes = false;
 	
 	// ------------------------------------------------- Constructor
 	
@@ -1232,7 +1234,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- EmployeeContractButtons (Auxiliar methods)
 	
 	private void onSaveContract() {
-		
+		setChanges(true);
 		Integer itemIdx = tabLayOutPanel.getSelectedIndex();
 
 		switch (itemIdx) {
@@ -1300,12 +1302,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			@Override
 			public void onAccept() {
-				contrataEmployeeObject.delete4EverContract(s -> onListShow(true), f-> {});
+				contrataEmployeeObject.delete4EverContract(s ->{
+					 setChanges(true);
+					 onListEmployees();
+				}, f-> {});
 //				contrataEmployeeObject.deleteContract(s -> {
 //					onListShow(true);
 //				}, f-> {});
 			}
 		});
+	}
+	
+	public void setChanges(boolean changes) {
+		this.changes = changes;
+	}
+	
+	public boolean getChanges() {
+		return changes;
 	}
 	
 	private void movPrevDelete() {
