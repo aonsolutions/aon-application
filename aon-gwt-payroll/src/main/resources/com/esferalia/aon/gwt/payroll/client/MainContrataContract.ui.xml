@@ -63,7 +63,7 @@
 				<aon:AonToolbar ui:field="employeeToolbar"/>
 			</g:north>
 			<g:center>
-				<g:SplitLayoutPanel>
+				<g:SplitLayoutPanel ui:field="splitLayoutPanel" >
 					<g:center>
 						<g:HTMLPanel styleName="{style.flexColumn}">
 							<g:HTMLPanel ui:field="messageContainer" />
@@ -72,9 +72,9 @@
 						</g:HTMLPanel>
 					</g:center>
 					<g:south size="20">
-						<a:MinimizePanel ui:field="footPanel" styleName="{res.css.aonSelector}" >
+						<aon:AonMinimizePanel ui:field="footPanel" styleName="{res.css.aonSelector}" >
 							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-						</a:MinimizePanel>
+						</aon:AonMinimizePanel>
 					</g:south>
 				</g:SplitLayoutPanel>
 			</g:center>

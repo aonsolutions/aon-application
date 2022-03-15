@@ -2,10 +2,12 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Module;
 
 public enum AonApp implements Serializable{
+	
 	INVOICE(getEmptyModules()),
 	DOCUMENTAL(getDocumentalModules()),
 	MESSENGER(getMessengerModules()),
@@ -28,7 +30,11 @@ public enum AonApp implements Serializable{
 	SELFCONTA(getEmptyModules()),
 	CUSTOM_VIEW(getEmptyModules()),
 	AULA(getEmptyModules()),
-	NOTES(getEmptyModules())
+	NOTES(getEmptyModules()),
+	SALTRA(getEmptyModules()),
+	BASIC_MANAGEMENT(getBasicManagementModules()),
+	STANDAR_MANAGEMENT(getStandarManagementModules()),
+	PROFESSIONAL_MANAGEMENT(getProfessionalManagementModules())
 	;
 	
 	LinkedList<Module> modules;
@@ -37,7 +43,7 @@ public enum AonApp implements Serializable{
 		this.modules = modules;
 	}
 	
-	public LinkedList<Module> getModules() {
+	public List<Module> getModules() {
 		return modules;
 	}
 	
@@ -67,46 +73,68 @@ public enum AonApp implements Serializable{
 	private static LinkedList<Module> getEmptyModules() {
 		return new LinkedList<>();
 	}
+	
+	private static LinkedList<Module> getBasicManagementModules() {
+		LinkedList<Module> list = new LinkedList<>();
+		list.add(Module.MANAGEMENT);
+		return list;
+	}
+	
+	private static LinkedList<Module> getStandarManagementModules() {
+		LinkedList<Module> list = getBasicManagementModules();
+//		list.add(Module.TREASURY);
+//		list.add(Module.MARKETING);
+		list.add(Module.CRM);
+		return list;
+	}
+	
+	private static LinkedList<Module> getProfessionalManagementModules() {
+		LinkedList<Module> list = getStandarManagementModules();
+		list.add(Module.WAREHOUSE);
+		list.add(Module.GROUPWARE);
+		return list;
+	}
+	
 	private static LinkedList<Module> getDocumentalModules() {
-		LinkedList<Module> list = new LinkedList<Module>();
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.DOCUMENT);
 		list.add(Module.DOCUMENT_PORTAL);
 		return list;
 	}
 	
 	private static LinkedList<Module> getMessengerModules() {
-		LinkedList<Module> list = new LinkedList<Module>();
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.CALL_CENTER);
 		return list;
 	}
 	
 	private static LinkedList<Module> getAccountingModules() {
-		LinkedList<Module> list = new LinkedList<Module>();
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.ACCOUNTING);
 		return list;
 	}
 	
 	private static LinkedList<Module> getFiscalModules() {
-		LinkedList<Module> list = new LinkedList<Module>();
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.FISCAL);
 		return list;
 	}
 	
 	private static LinkedList<Module> getPayrollModules() {
-		LinkedList<Module> list = new LinkedList<Module>();
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.PAYROLL);
 		list.add(Module.PAYROLL_PORTAL);
 		return list;
 	}
 	
 	private static LinkedList<Module> getManagementModules() {
-		LinkedList<Module> list = new LinkedList<Module>();
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.MANAGEMENT);
 		return list;
 	}
 	
 	private static LinkedList<Module> getPackSuiteModules() {
-		LinkedList<Module> list =new LinkedList<Module>();
+		LinkedList<Module> list =new LinkedList<>();
 		list.add(Module.DOCUMENT);
 		list.add(Module.DOCUMENT_PORTAL);
 		list.add(Module.ACCOUNTING);
@@ -118,7 +146,7 @@ public enum AonApp implements Serializable{
 	}
 	
 	private static LinkedList<Module> getPackPortalModules() {
-		LinkedList<Module> list =new LinkedList<Module>();
+		LinkedList<Module> list =new LinkedList<>();
 		list.add(Module.DOCUMENT);
 		list.add(Module.DOCUMENT_PORTAL);
 		list.add(Module.CALL_CENTER);
@@ -126,7 +154,7 @@ public enum AonApp implements Serializable{
 	}
 	
 	private static LinkedList<Module> getPackFiscalAccountingModules() {
-		LinkedList<Module> list = new LinkedList<Module>();
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.FISCAL);
 		list.add(Module.ACCOUNTING);
 		return list;

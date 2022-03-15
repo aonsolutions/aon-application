@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.ifSistemaREDEnabled;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -9,13 +7,13 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -36,6 +34,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -56,6 +56,7 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -65,16 +66,123 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainContrataContract extends MainEntryPoint {
 
+	// ------------------------------------------ UiBinder
+
+	interface UIBinder extends UiBinder<Widget, MainContrataContract> {}
+
+	private static final UIBinder binder = GWT.create(UIBinder.class);
+	
+	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
+		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
+		SafeHtml tab(String title, String icon);
+	}
+	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
+
+	// ------------------------------------------ UiFields
+
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String suggestBox();
+		String filterPanel();
+		String flexPanel();
+		String inactive();
+		String prevAlta();
+		String closeEnd();
+	}
+	
+	@UiField
+	DeckPanel deckPanel;
+	
+	// Employees List
+	
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
+
+	@UiField (provided = true)
+	AonToolbar employeeToolbar;
+	
+	@UiField
+	HTMLPanel messageContainer;
+	
+	@UiField
+	HTMLPanel filterEmployeePanel;
+
+	@UiField(provided = true)
+	DataGrid<EmployeeContractInfo> employeeDataGrid;
+	
+	@UiField
+	AonMinimizePanel footPanel;
+
+	@UiField
+	TabLayoutPanel footTabPanel;
+	
+	ResultsPanel resultsPanel;
+
+	ProgressPanel progressPanel;
+	
+	// Trash Employees List
+
+	@UiField (provided = true)
+	AonToolbar employeeTrashToolbar;
+
+	@UiField
+	HTMLPanel filterTrashEmployeePanel;
+
+	@UiField(provided = true)
+	DataGrid<EmployeeContractInfo> trashEmployeeDataGrid;
+
+	// Contrata Employee
+	
+	@UiField(provided = true)
+	ContrataEmployee contrataEmployee;
+
+	// PDF Viewer
+
+	@UiField
+	PDFViewer pdfViewer;
+
+	// Enterprise Salary
+
+	@UiField(provided = true)
+	EnterpriseSalary enterpriseSalary;
+
+	
+	@UiField
+	SplitLayoutPanel  splitLayoutPanel;
+	
+	// ------------------------------------------ Variables
+	
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
+	private MainContrataContractObject mainContrataContractObject;
+	private EnterpriseSalaryObject enterpriseSalaryObject;
+	
+	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
+	private List<EmployeeContractInfo> trashEmployeesList = Collections.emptyList();
+	
+	private AonToolbarButton up2DateSS;
+
+	private TextBox employeeSB;
+	private CheckBox inactiveContractsCB;
+	private ListBox workplaceLB;
+
+	private Task syncTask;
+	
 	// ------------------------------------------ ContrataEmployee
 
 	private class ContrataEmployeeImpl extends ContrataEmployee {
 
 		@Override
 		protected void onListShow(boolean reloadEmployees) {
-			if (reloadEmployees)
+			if (getChanges()) {
 				redrawTable();
-			else
+				checkStatus(mainContrataContractObject);
+				setChanges(false);
+			} else {
 				employeeDataGrid.redraw();
+			}
 
 			deckPanel.showWidget(0);
 		}
@@ -189,97 +297,6 @@ public class MainContrataContract extends MainEntryPoint {
 
 	}
 
-	// ------------------------------------------ UiBinder
-
-	interface UIBinder extends UiBinder<Widget, MainContrataContract> {}
-
-	private static final UIBinder binder = GWT.create(UIBinder.class);
-
-	// ------------------------------------------ UiFields
-
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String suggestBox();
-		String filterPanel();
-		String flexPanel();
-		String inactive();
-		String prevAlta();
-		String closeEnd();
-	}
-	
-	@UiField
-	DeckPanel deckPanel;
-	
-	// Employees List
-	
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-
-	@UiField (provided = true)
-	AonToolbar employeeToolbar;
-	
-	@UiField
-	HTMLPanel messageContainer;
-	
-	@UiField
-	HTMLPanel filterEmployeePanel;
-
-	@UiField(provided = true)
-	DataGrid<EmployeeContractInfo> employeeDataGrid;
-	
-	@UiField
-	MinimizePanel footPanel;
-
-	@UiField
-	TabLayoutPanel footTabPanel;
-	
-	ResultsPanel resultsPanel;
-
-	ProgressPanel progressPanel;
-	
-	// Trash Employees List
-
-	@UiField (provided = true)
-	AonToolbar employeeTrashToolbar;
-
-	@UiField
-	HTMLPanel filterTrashEmployeePanel;
-
-	@UiField(provided = true)
-	DataGrid<EmployeeContractInfo> trashEmployeeDataGrid;
-
-	// Contrata Employee
-	
-	@UiField(provided = true)
-	ContrataEmployee contrataEmployee;
-
-	// PDF Viewer
-
-	@UiField
-	PDFViewer pdfViewer;
-
-	// Enterprise Salary
-
-	@UiField(provided = true)
-	EnterpriseSalary enterpriseSalary;
-
-	// ------------------------------------------ Variables
-	
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
-	
-	private MainContrataContractObject mainContrataContractObject;
-	private EnterpriseSalaryObject enterpriseSalaryObject;
-	
-	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
-	private List<EmployeeContractInfo> trashEmployeesList = Collections.emptyList();
-	
-	private AonToolbarButton up2DateSS;
-
-	private TextBox employeeSB;
-	private CheckBox inactiveContractsCB;
-	private ListBox workplaceLB;
 
 	// ------------------------------------------ Constructor
 
@@ -1045,44 +1062,61 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Auxiliar Methods
 
 	private void initFootPanel() {
-		footPanel.addMaximizeHandler(e -> dockLayoutPanel.setWidgetSize(footPanel, 150));
-		footPanel.addMinimizeHandler(e -> dockLayoutPanel.setWidgetSize(footPanel, 20));
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
+		footPanel.addMaximizeHandler(event -> showFootPanel());
+		footPanel.addMinimizeHandler(event -> {
+			closeFootPanel();
+		});
 	}
 
 	private void initResultsPanel() {
 		resultsPanel = new ResultsPanel();
+		footTabPanel.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab("Resultados", AON.CSS.aonIconHistory()));
+		footTabPanel.selectTab(resultsPanel);
 	}
 
 	private void initProgressPanel() {
 		progressPanel = new ProgressPanel();
-	}
-	
-	private void closeFootPanel() {
-		dockLayoutPanel.setWidgetSize(footPanel, 20);
-	}
-
-	private void showFootPanel() {
-		dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
-	}
-
-	private void selectResultsPanel() {
-		InlineLabel tab = new InlineLabel("Resultados");
-		tab.addStyleName(AON.AON_ICON_TIME);
-		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		footTabPanel.add(resultsPanel, tab);
-		footTabPanel.selectTab(resultsPanel);
-	}
-
-	private void selectProgressPanel() {
+		syncTask = new Task();
+		progressPanel.showTask(syncTask);
 		InlineLabel tab = new InlineLabel("Progreso");
 		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		footTabPanel.add(progressPanel, tab);
 		footTabPanel.selectTab(progressPanel);
 	}
+	
+	private void showFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+		splitLayoutPanel.animate(500);
+	}
 
-	private void closeProgressPanel() {
-		footTabPanel.remove(progressPanel);
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
+		splitLayoutPanel.animate(500);
+	}
+
+	private void showResultsPanel() {
+		hideTabs();
+		visibleTabItem(resultsPanel, true);
+		footTabPanel.selectTab(resultsPanel);
+	}
+
+	private void showProgressPanel(String message) {	
+		hideTabs();
+		
+		syncTask.messageChanged(AonStringUtils.isBlank(message) ? "Consultando Trabajadores en el SISTEMA RED" : message);
+		visibleTabItem(progressPanel, true);
+		footTabPanel.selectTab(progressPanel);
+	}
+
+	private void hideTabs(){
+		if(resultsPanel!=null) 
+			visibleTabItem(resultsPanel, false);
+
+		if(progressPanel!=null) 
+			visibleTabItem(progressPanel, false);
 	}
 
 	private void initPDFViewer() {
@@ -1097,23 +1131,15 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 
 	private void checkStatus(MainContrataContractObject mainContrataContractObject) {
+		showProgressPanel(null);
 		mainContrataContractObject.checkStatus(enterpriseStatus -> {
-
-			ifSistemaREDEnabled(enterpriseStatus, () -> {
-				showFootPanel();
-				MainContrataContract.this.setSistemaREDVisible(true);
-			}, () -> {
-				closeFootPanel();
-				MainContrataContract.this.setSistemaREDVisible(false);
-			});
-
 			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
-
-				Task syncTask;
-
+//				Task syncTask;
+				
 				@Override
 				public void up2Date() {
 					// Up2Date
+					closeFootPanel();
 				}
 
 				@Override
@@ -1124,14 +1150,19 @@ public class MainContrataContract extends MainEntryPoint {
 
 				@Override
 				public void run() {
+					showProgressPanel(null);
 					mainContrataContractObject.checkStatus(enterpriseStatus -> {
 						removeAll();
 						enterpriseStatus.visit(this);
-					}, throwable -> {});
+						finish();
+					}, throwable -> {
+						finish();
+					});
 				}
 
 				@Override
 				protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {
+					showProgressPanel("Importando Trabajador/es");
 					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false, s -> {
 						MainContrataContract.this.initEnterpriseSB();
 						MainContrataContract.this.initContractTable();
@@ -1142,31 +1173,31 @@ public class MainContrataContract extends MainEntryPoint {
 
 				@Override
 				protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults) {
-					syncTask.messageChanged("Importados todos los trabajadores.");
-					syncTask.finished();
-					closeProgressPanel();
+//					syncTask.messageChanged("Importados todos los trabajadores.");
+//					syncTask.finished();
+					showProgressPanel("Importados todos los trabajadores.");
 					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false, s -> {
 						MainContrataContract.this.initEnterpriseSB();
 						MainContrataContract.this.initContractTable();
 						MainContrataContract.this.setTableHeights();
-					}, f -> {
-					});
+					}, f -> {});
 					run();
 				}
 
 				@Override
 				protected void newAffiliated(JsArray<JsSistemaREDResults> jsResults, int total) {
-					selectProgressPanel();
-					syncTask.progressChanged((jsResults.length() / (double) total) * 100.00);
-					String lastEmployeeName = jsResults.get(jsResults.length() - 1).getEmployeeName();
-					syncTask.messageChanged("Importado '" + lastEmployeeName + "' (" + jsResults.length() + " de " + total + ").");
+					showProgressPanel("Importando Trabajadores");
+//					syncTask.progressChanged((jsResults.length() / (double) total) * 100.00);
+//					String lastEmployeeName = jsResults.get(jsResults.length() - 1).getEmployeeName();
+//					syncTask.messageChanged();
 				}
 
 				@Override
 				protected void newEmployees(AffiliatedNotFound[] affiliatedNotFound) {
-					syncTask = new Task();
-					syncTask.setDescription("Importando trabajadores desde la Seguridad Social (Sistema R.E.D)");
-					progressPanel.showTask(syncTask);
+//					syncTask = new Task();
+//					syncTask.setDescription("Importando trabajadores desde la Seguridad Social (Sistema R.E.D)");
+//					progressPanel.showTask(syncTask);
+					showProgressPanel("Importando trabajadores desde la Seguridad Social (Sistema R.E.D)");
 					super.newEmployees(affiliatedNotFound);
 				}
 
@@ -1175,27 +1206,44 @@ public class MainContrataContract extends MainEntryPoint {
 					mainContrataContractObject.checkStatus(enterpriseStatus -> {
 						removeAll();
 						enterpriseStatus.visit(this);
-						selectResultsPanel();
+						showResultsPanel();
 						EnterpriseStatus.ifSistemaREDEnabled(enterpriseStatus, () -> {
 							showFootPanel();
 							MainContrataContract.this.setSistemaREDVisible(true);
 						}, () -> {
 							closeFootPanel();
 							MainContrataContract.this.setSistemaREDVisible(false);
-
 						});
 					}, throwable -> {
 						closeFootPanel();
 						MainContrataContract.this.setSistemaREDVisible(false);
-
 					});
+				}
+				
+				protected void init() {
+					showProgressPanel("Importando trabajador/es desde la Seguridad Social (Sistema R.E.D)");
+				}
+				
+				protected void finish() {
+					showResultsPanel();
 				}
 			};
 
 			enterpriseStatus.visit(sistemaREDResults);
 			resultsPanel.setWidget(sistemaREDResults);
-			selectResultsPanel();
+			showResultsPanel();
 
+			EnterpriseStatus.ifSistemaREDEnabled(
+				enterpriseStatus,
+				MainContrataContract.this::showFootPanel,
+				MainContrataContract.this::closeFootPanel
+			);
+			
+			EnterpriseStatus.ifSistemaREDError(
+				enterpriseStatus,
+				MainContrataContract.this::showFootPanel,
+				MainContrataContract.this::closeFootPanel
+			);
 		}, throwable -> {
 			closeFootPanel();
 			MainContrataContract.this.setSistemaREDVisible(false);
@@ -1323,5 +1371,13 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private void hideMessage() {
 		messageContainer.setVisible(false);
+	}
+	
+	public void visibleTabItem ( Widget tabItem, boolean hideFl ) {
+		Widget element = footTabPanel.getTabWidget(tabItem);
+
+		element.setVisible(hideFl);
+
+		
 	}
 }

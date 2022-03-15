@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
@@ -14,13 +15,13 @@ public class DomainUserRoles implements Serializable {
 	Domain domain;
 	User user;
 	
-	LinkedList<AonApp> domainApps;
-	LinkedList<AonApp> parentDomainApps;
-	LinkedList<Module> oldDomainModules;
-	LinkedList<Module> oldParentDomainModules;
+	private List<AonApp> domainApps;
+	private List<AonApp> parentDomainApps;
+	private List<Module> oldDomainModules;
+	private List<Module> oldParentDomainModules;
 	
-	LinkedList<AonRole> domainUserRoles;
-	LinkedList<AonRole> parentDomainUserRoles;
+	private List<AonRole> domainUserRoles;
+	private List<AonRole> parentDomainUserRoles;
 	
 	public DomainUserRoles() {
 		super();
@@ -44,74 +45,74 @@ public class DomainUserRoles implements Serializable {
 		return this;
 	}
 	
-	public LinkedList<AonApp> getDomainApps() {
+	public List<AonApp> getDomainApps() {
 		if(domainApps == null) {
 			this.domainApps = new LinkedList<>();
 		}
 		return domainApps;
 	}
 	
-	public DomainUserRoles setDomainApps(LinkedList<AonApp> domainApps) {
+	public DomainUserRoles setDomainApps(List<AonApp> domainApps) {
 		this.domainApps = domainApps;
 		return this;
 	}
 	
-	public LinkedList<AonApp> getParentDomainApps() {
+	public List<AonApp> getParentDomainApps() {
 		if(parentDomainApps == null) {
 			this.parentDomainApps = new LinkedList<>();
 		}
 		return parentDomainApps;
 	}
 	
-	public DomainUserRoles setParentDomainApps(LinkedList<AonApp> parentDomainApps) {
+	public DomainUserRoles setParentDomainApps(List<AonApp> parentDomainApps) {
 		this.parentDomainApps = parentDomainApps;
 		return this;
 	}
 	
-	public LinkedList<AonRole> getDomainUserRoles() {
+	public List<AonRole> getDomainUserRoles() {
 		if(domainUserRoles == null) {
 			this.domainUserRoles = new LinkedList<>();
 		}
 		return domainUserRoles;
 	}
 	
-	public DomainUserRoles setDomainUserRoles(LinkedList<AonRole> domainUserRoles) {
+	public DomainUserRoles setDomainUserRoles(List<AonRole> domainUserRoles) {
 		this.domainUserRoles = domainUserRoles;
 		return this;
 	}
 	
-	public LinkedList<AonRole> getParentDomainUserRoles() {
+	public List<AonRole> getParentDomainUserRoles() {
 		if(parentDomainUserRoles == null) {
 			this.parentDomainUserRoles = new LinkedList<>();
 		}
 		return parentDomainUserRoles;
 	}
 	
-	public DomainUserRoles setParentDomainUserRoles(LinkedList<AonRole> parentDomainUserRoles) {
+	public DomainUserRoles setParentDomainUserRoles(List<AonRole> parentDomainUserRoles) {
 		this.parentDomainUserRoles = parentDomainUserRoles;
 		return this;
 	}
 	
-	public LinkedList<Module> getOldDomainModules() {
+	public List<Module> getOldDomainModules() {
 		if(oldDomainModules == null) {
 			oldDomainModules = new LinkedList<>();
 		}
 		return oldDomainModules;
 	}
 
-	public DomainUserRoles setOldDomainModules(LinkedList<Module> oldDomainModules) {
+	public DomainUserRoles setOldDomainModules(List<Module> oldDomainModules) {
 		this.oldDomainModules = oldDomainModules;
 		return this;
 	}
 
-	public LinkedList<Module> getOldParentDomainModules() {
+	public List<Module> getOldParentDomainModules() {
 		if(oldParentDomainModules == null) {
 			oldParentDomainModules = new LinkedList<>();
 		}
 		return oldParentDomainModules;
 	}
 
-	public void setOldParentDomainModules(LinkedList<Module> oldParentDomainModules) {
+	public void setOldParentDomainModules(List<Module> oldParentDomainModules) {
 		this.oldParentDomainModules = oldParentDomainModules;
 	}
 
@@ -290,10 +291,24 @@ public class DomainUserRoles implements Serializable {
 		return hasNotes() && (isAdmin() || hasRole(AonRole.NOTES));
 	}
 	
+	// BASIC MANAGEMENT
+	
+	public boolean hasBasicManagement() {
+		return hasStandarManagement() || hasApp(AonApp.BASIC_MANAGEMENT);
+	}
+	
+	public boolean hasStandarManagement() {
+		return hasProfessionalManagement() || hasApp(AonApp.STANDAR_MANAGEMENT);
+	}
+	
+	public boolean hasProfessionalManagement() {
+		return hasApp(AonApp.PROFESSIONAL_MANAGEMENT);
+	}
+	
 	// INVOICE - FACTURAS
 	
 	public boolean hasInvoice() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.INVOICE);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasBasicManagement() || hasApp(AonApp.INVOICE);
 	}
 	
 	public Boolean isInvoice() {
@@ -348,6 +363,10 @@ public class DomainUserRoles implements Serializable {
 	
 	public Boolean isSelfconta() {
 		return hasApp(AonApp.SELFCONTA) && (isAdmin() || hasRole(AonRole.SELFCONTA));
+	}
+	
+	public Boolean isSaltra() {
+		return hasApp(AonApp.SALTRA) && (isAdmin() || hasRole(AonRole.SALTRA));
 	}
 	
 	public Boolean isConfidential() {

@@ -1503,7 +1503,6 @@ public abstract class ITWidget extends ResizeComposite {
 				@Override
 				protected void credentialsFound() {
 					checkStatus(status -> {
-						LOGGER.info("credentialsFound");
 						removeAll();
 						status.visit(this);
 						showResultsPanel();
@@ -1922,26 +1921,18 @@ public abstract class ITWidget extends ResizeComposite {
 		footPanel.add(tabLayout);
 		
 		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(event -> {
-			minimizedByUser = false;
-			openFootPanelIfNeeded();
-		});
 
 		return footPanel; 
 	}
 
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
-		splitLayoutPanel.animate(500);
-	}
-	
-	private void openFootPanelIfNeeded() {
-		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) 
-			showFootPanel();
-	}
 	
 	private void showFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+		splitLayoutPanel.animate(500);
+	}
+	
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
 		splitLayoutPanel.animate(500);
 	}
 	

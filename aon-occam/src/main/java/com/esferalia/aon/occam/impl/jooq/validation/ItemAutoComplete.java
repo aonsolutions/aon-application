@@ -6,13 +6,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
-import com.esferalia.aon.occam.api.model.product.Tax;
-import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ItemAutoComplete {
 	
@@ -46,11 +41,25 @@ public class ItemAutoComplete {
 		}
 	};
 	
+	public static final BiConsumer<AONContext, Item> COMPLETE_PROFIT_PERCENT = (ctx, item) -> {
+		if(item.getProfitPercent() == null) {
+			item.setProfitPercent(0.0);
+		}
+	};
+	
+	public static final BiConsumer<AONContext, Item> COMPLETE_PURCHASE_PRICE = (ctx, item) -> {
+		if(item.getPurchasePrice() == null) {
+			item.setPurchasePrice(0.0);
+		}
+	};
+	
 	public static void autoComplete(AONContext ctx, Item item) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_STATUS)
 		.andThen(COMPLETE_EXPENSES_PERCENT)
 		.andThen(COMPLETE_EXPENSES_FIXED)
+		.andThen(COMPLETE_PROFIT_PERCENT)
+		.andThen(COMPLETE_PURCHASE_PRICE)
 		.accept(ctx, item);
 	}
 
