@@ -23,6 +23,8 @@ import net.aonsolutions.db.up2date.finance.FsModelInvoiceDrop;
 import net.aonsolutions.db.up2date.fiscal.AlcatrazCreation;
 import net.aonsolutions.db.up2date.fiscal.AlterFsModelResult;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod123Result;
+import net.aonsolutions.db.up2date.payroll.AgreementClean;
+import net.aonsolutions.db.up2date.payroll.CertificatesClean;
 import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
 import net.aonsolutions.db.up2date.tgss.SMI2022Update;
 import net.aonsolutions.db.up2date.user.CertificateDomainFix;
@@ -219,15 +221,17 @@ public class Up2Date {
     		//FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
     		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
     		//AddEpigrafe922.ADD_EPIGRAFE_922,
-    		SMI2022Update.SMI2022UPDATE,
-    		PrestITFactorUpdate.PRESTITFACTORUPDATE,
-    		CertificateDomainFix.CERTIFICATEDOMAINFIX,
-    		AlcatrazCreation.ALCATRAZ_CREATION,
-    		FsModelInvoiceDrop.FS_MODEL_INVOICE_DROP,
-    		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
-//    		RefreshMod111Result.REFRESH_MOD111_RESULT,
-    		RefreshMod123Result.REFRESH_MOD123_RESULT,
-//    		RefreshMod115Result.REFRESH_MOD115_RESULT,
+    		//SMI2022Update.SMI2022UPDATE,
+    		//PrestITFactorUpdate.PRESTITFACTORUPDATE,
+    		//CertificateDomainFix.CERTIFICATEDOMAINFIX,
+    		//AlcatrazCreation.ALCATRAZ_CREATION,
+    		//FsModelInvoiceDrop.FS_MODEL_INVOICE_DROP,
+    		//AlterFsModelResult.ALTER_FS_MODEL_RESULT,
+    		//RefreshMod111Result.REFRESH_MOD111_RESULT,
+    		//RefreshMod123Result.REFRESH_MOD123_RESULT,
+    		//RefreshMod115Result.REFRESH_MOD115_RESULT,
+    		CertificatesClean.CERTIFICATESCLEAN,
+    		AgreementClean.AGREEMENTCLEAN
     };
     
 
