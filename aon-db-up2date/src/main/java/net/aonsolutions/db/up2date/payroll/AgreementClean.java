@@ -145,7 +145,7 @@ public class AgreementClean implements Update {
 		dslContext.delete(AGREEMENT).where(AGREEMENT.ID.eq(agreementId))
 				.execute();
 		
-//		System.out.println("Agreement deleted -> Id : " + agreementId + ", Description : " + agreementDescription);
+		System.out.println("Agreement deleted -> Id : " + agreementId + ", Description : " + agreementDescription);
 	}
 	
 }

@@ -19,20 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.FsModelInvoiceDrop;
-import net.aonsolutions.db.up2date.fiscal.AlcatrazCreation;
-import net.aonsolutions.db.up2date.fiscal.AlterFsModelResult;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod123Result;
-import net.aonsolutions.db.up2date.payroll.AgreementClean;
-import net.aonsolutions.db.up2date.payroll.CertificatesClean;
-import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
-import net.aonsolutions.db.up2date.tgss.SMI2022Update;
-import net.aonsolutions.db.up2date.user.CertificateDomainFix;
-
 
 public class Up2Date {
-
-
 
     private static Update [] UPDATES  = {
     		//IRPF2018UPDATE,
@@ -230,14 +218,12 @@ public class Up2Date {
     		//RefreshMod111Result.REFRESH_MOD111_RESULT,
     		//RefreshMod123Result.REFRESH_MOD123_RESULT,
     		//RefreshMod115Result.REFRESH_MOD115_RESULT,
-    		CertificatesClean.CERTIFICATESCLEAN,
-    		AgreementClean.AGREEMENTCLEAN
+//    		CertificatesClean.CERTIFICATESCLEAN,
+//    		AgreementClean.AGREEMENTCLEAN
     };
     
 
 	// ------------------------------------------------------------------------
-
-
 
 
     @SuppressWarnings("static-access")
@@ -313,7 +299,7 @@ public class Up2Date {
 
 			for ( String database : databases ) {
 
-				System.out.print(String.format("Updating database  `%s`" ,database  ));
+				System.out.println(String.format("Updating database  `%s`" ,database  ));
 
 				statement.executeQuery(String.format("USE `%s`", database));
 
