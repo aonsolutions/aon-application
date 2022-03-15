@@ -104,15 +104,14 @@ export class AonBooking extends AonElement {
 	
 	getGestionPacks(){
 		if(this.dur.getDomain().isGarage())
-			return {GARAGE, PORTAL, BASIC, STANDAR, PROFESSIONAL};
+			return {GARAGE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 		else if(this.dur.getDomain().isAcademy())
-			return {ACADEMY, PORTAL, BASIC, STANDAR, PROFESSIONAL};
+			return {ACADEMY, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 		else if(this.dur.getDomain().isCommerce())
-			return {COMMERCE, PORTAL, BASIC, STANDAR, PROFESSIONAL};
+			return {COMMERCE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 		else if(this.dur.getDomain().isOffice())
-			return {OFFICE, PORTAL};
-		else
-			return {ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
+			return {OFFICE};
+		else return {ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 
 	}
 
