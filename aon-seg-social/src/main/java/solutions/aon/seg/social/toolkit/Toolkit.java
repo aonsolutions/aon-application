@@ -1012,6 +1012,18 @@ public class Toolkit {
 			return Toolkit.removeWeirdCharacters(raw);
 	}
 	
+	public static void validateCert(HtmlPage htmlPage) throws SegSocialException {
+		if (htmlPage.getUrl().toString().contains("revokedError"))
+			throw new RevokedCertificateException("Certificado revocado");
+
+		DomNode section = htmlPage.querySelector("#segsocial section");
+		if (section != null && section.getVisibleText().toLowerCase().indexOf("no autorizado") >= 0) {
+			DomNode error = section.querySelector("p");
+			if (error != null && !error.getVisibleText().isEmpty())
+				throw new SegSocialException(error.getVisibleText());
+		}
+	}
+	
 	
 
 	public static String goBackPdf(CloseableHttpClient httpClient, String link, String sessionId)
