@@ -15,11 +15,14 @@ import { CSS, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.j
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonToast } from '../../components/aon-toast.js';
+import { AonDialog } from '../../components/aon-dialog.js';
+import { AonCheckbox } from '../../components/aon-checkbox.js';
 export class AonBooking extends AonElement {
 
 	TOOLBAR;
 	USER_NUMBER;
 	APP;
+	SAVE_DIALOG;
 	apps;
 	users;
 	definedUsers;
@@ -53,6 +56,7 @@ export class AonBooking extends AonElement {
 		this.APP = this.id + 'App';
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.USER_NUMBER = this.id + 'UserNumber';
+		this.SAVE_DIALOG = this.id + 'SaveDialog';
 		this.apps = [];
 	}
 
@@ -62,7 +66,7 @@ export class AonBooking extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = 'CONTRATACIÓN';
 		this.appendChild(toolbar);
-		toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.SAVE, () => this.saveDialog());
 
 		let content = this.createElement(TAG.DIV);
 		content.className = CSS.AON_SUB_CONTENT;
@@ -242,6 +246,26 @@ export class AonBooking extends AonElement {
 		}
 	}
 
+	saveDialog() {
+		let dialog = this.getElement(this.SAVE_DIALOG);
+		if(!dialog){
+			dialog = new AonDialog();
+			dialog.id = this.SAVE_DIALOG;
+			this.appendChild(dialog);
+		}
+		dialog.clear();
+		dialog.setTitle('Contratación');
+		dialog.setContent(this.saveDialogContent());
+		dialog.addAcceptAction(() => this.save());
+		dialog.open();
+	}
+
+	saveDialogContent() {
+		let checkBox = new AonCheckbox();
+		checkBox.description = 'He leido las condiciones de servicio y estoy de acuerdo con las mismas';
+		return checkBox;
+	}
+
 	save() {
 		let tID = this.id + 'Toast';
 		let toast = this.getElement(tID);
@@ -310,6 +334,12 @@ export class AonBooking extends AonElement {
 			return dur.hasPackFiscalAccounting();
 		else if(App.AIO === app)
 			return dur.hasAon();
+		else if(App.BASIC_MANAGEMENT === app)
+			return dur.hasBasicManagement();
+		else if(App.STANDAR_MANAGEMENT === app)
+			return dur.hasStandarManagement();
+		else if(App.PROFESSIONAL_MANAGEMENT === app)
+			return dur.hasProfessionalManagement();
 		else return dur.hasApp(app);
 	}
 

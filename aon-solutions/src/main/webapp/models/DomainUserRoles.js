@@ -176,6 +176,18 @@ export class DomainUserRoles {
     return this.hasPackSuite() || this.hasApp(App.PACK_FISCAL_ACCOUNTING);
   }
 
+  hasBasicManagement() {
+    return this.hasStandarManagement() || this.hasApp(App.BASIC_MANAGEMENT);
+  }
+
+  hasStandarManagement() {
+    return this.hasProfessionalManagement() || this.hasApp(App.STANDAR_MANAGEMENT);
+  }
+
+  hasProfessionalManagement() {
+    return this.hasApp(App.PROFESSIONAL_MANAGEMENT);
+  }
+
   hasParentPackFiscalAccounting() {
     return this.hasParentPackSuite() || this.hasParentApp(App.PACK_FISCAL_ACCOUNTING);
   }
@@ -337,7 +349,7 @@ export class DomainUserRoles {
 
   hasInvoice() {
     return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PORTAL)
-      || this.hasApp(App.INVOICE);
+      || this.hasBasicManagement() || this.hasApp(App.INVOICE);
   }
 
   hasParentInvoice() {

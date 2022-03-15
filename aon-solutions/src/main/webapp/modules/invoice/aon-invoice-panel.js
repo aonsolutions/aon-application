@@ -156,8 +156,8 @@ export class AonInvoicePanel extends AonElement {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 				if(this.selectedOption && (OPTION.INVOICE_ISSUED.id === this.selectedOption.id 
-					|| OPTION.CREATE_INVOICE_RECEIVED.id === this.selectedOption.id 
-					|| OPTION.CREATE_INVOICE_TICKET.id === this.selectedOption.id)){
+					|| OPTION.INVOICE_RECEIVED.id === this.selectedOption.id 
+					|| OPTION.INVOICE_TICKET.id === this.selectedOption.id)){
 						this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
 					}
 			}

@@ -787,7 +787,7 @@ export const AeatFiscalMenu =
     title: 'Estándar',
     subtitle: ' Gestión Básica | Comercial | Tesoreria ',
     color: '#002469',
-    apps: [],
+    apps: [Apps.INVOICE, BASIC_MANAGEMENT],
     price: ' '
   };
 
@@ -797,7 +797,7 @@ export const AeatFiscalMenu =
     title: 'Profesional',
     subtitle: ' Gestión Estándar | Expedientes | Almacén ',
     color: '#002469',
-    apps: [],
+    apps: [Apps.INVOICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT],
     price: ' '
   };
 
