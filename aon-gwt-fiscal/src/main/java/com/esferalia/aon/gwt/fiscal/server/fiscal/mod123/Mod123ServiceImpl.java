@@ -6,8 +6,10 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod123.Mod123Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -25,7 +27,7 @@ public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public Mod123 getMod123(Occam occam,int id) throws AonCoreException {
-		return MODEL123.getMod123(occam, id);	
+		return MODEL123.get(occam, id);	
 	}
 
 	@Override
@@ -79,28 +81,32 @@ public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod123 initialize(Occam occam, Mod123 mod123) {
-		return MODEL123.initializeMod123(occam, mod123);
+		return MODEL123.initialize(occam, mod123);
 	}
 
 	@Override
 	public Mod123 create(Occam occam, Mod123 mod123) {
-		return MODEL123.createMod123(occam, mod123);
+		return MODEL123.create(occam, mod123);
 	}
 
 	@Override
 	public Mod123 reset(Occam occam, Mod123 mod123) {
-		return MODEL123.resetMod123(occam, mod123);
+		return MODEL123.reset(occam, mod123);
 	}
 
 	@Override
 	public void delete(Occam occam, Mod123 mod123) {
-		MODEL123.deleteMod123(occam, mod123);
+		MODEL123.delete(occam, mod123);
 	}
 	@Override
 	public String getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey)
 			throws AonCoreException {
-		return MODEL123.getMod123Info(occam, mod123, script, infoKey);
+		return MODEL123.getInfo(occam, mod123, script, infoKey);
 		
 	}
 
+	@Override
+	public Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException {
+		return AON.getInvoice(occam, invoiceId);
+	}
 }

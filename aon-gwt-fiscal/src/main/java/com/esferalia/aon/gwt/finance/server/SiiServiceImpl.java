@@ -31,7 +31,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TbaiMain;
+import net.aonsolutions.aon.tbai.lroe.LROE140_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROE140_2_1;
+import net.aonsolutions.aon.tbai.lroe.LROE240_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROE240_2;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
@@ -229,6 +231,31 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 
 	@Override
 	public String bajaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+		return null;
+	}
+
+	@Override
+	public String refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		Company company = AON.getCompanyForDomain(domainName, domainId, user);
+		Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
+		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
+		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
+		tbaiConfiguration.setCertificate(cert);
+		LROE140_1_1 lroe = new LROE140_1_1();
+		lroe.consulta(tbaiConfiguration, person, invoice);
+		return null;
+	}
+
+	@Override
+	public String refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		Company company = AON.getCompanyForDomain(domainName, domainId, user);
+		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
+		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
+		tbaiConfiguration.setCertificate(cert);
+		LROE240_1_1 lroe = new LROE240_1_1();
+		lroe.consulta(tbaiConfiguration, company, invoice);	
 		return null;
 	}
 	

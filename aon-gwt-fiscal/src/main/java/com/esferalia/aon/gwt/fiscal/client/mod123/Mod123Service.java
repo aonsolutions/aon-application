@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod123;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -29,4 +30,6 @@ public interface Mod123Service extends RemoteService {
 	Mod123 create(Occam occam, Mod123 mod123) throws AonCoreException;
 	String getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	Mod123 reset(Occam occam, Mod123 model);
+	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
+	
 }

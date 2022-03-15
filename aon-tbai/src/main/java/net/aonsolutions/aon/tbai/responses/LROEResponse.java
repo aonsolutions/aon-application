@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.aon.tbai.utils.XMLUtils;
 
 public class LROEResponse implements Serializable {
 	
@@ -97,6 +100,16 @@ public class LROEResponse implements Serializable {
 	
 	public boolean isOk() {
 		return !isError();
+	}
+	
+	public String getResponseDataStr() {
+		try {
+			Document d = XMLUtils.getDocument(getData());
+			return XMLUtils.documentToString(d);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public boolean isError() {

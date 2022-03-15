@@ -669,7 +669,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		});
 	}
 	
-	private void setSelectedValueLB(ListBox lBox, String str) {
+	private  void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
 	    int indexToFind = 0;
 	    for (int i = 0; i < lBox.getItemCount(); i++) {
@@ -679,6 +679,12 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	        }
 	    }
 	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	
+	public void setSelectedValueLBChange(ListBox lBox, String str) {
+		setSelectedValueLB(lBox, str);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), lBox); 
 	}
 	
 	private void showHideContractOtherData(Integer contractType) {

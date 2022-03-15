@@ -8,10 +8,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 public interface SiiServiceAsync {
 
@@ -29,4 +26,8 @@ public interface SiiServiceAsync {
 			AsyncCallback<String> callback);
 	void bajaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams,
 			AsyncCallback<String> callback);
+	
+	void refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback);
+	void refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback);
+
 }

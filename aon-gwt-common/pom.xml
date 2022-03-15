@@ -75,12 +75,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-  		  	<groupId>com.vaadin.polymer</groupId>
-    		<artifactId>vaadin-gwt-polymer-elements</artifactId>
-    		<version>1.7.0.0</version>
-    	 	<scope>provided</scope>
-		</dependency>
-		<dependency>
  			<groupId>org.json</groupId>
  			<artifactId>json</artifactId>
  			<version>20180813</version>

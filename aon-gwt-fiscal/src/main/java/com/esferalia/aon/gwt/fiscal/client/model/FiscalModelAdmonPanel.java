@@ -280,7 +280,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 							@Override
 							public void onCancel() {
-							
+								sending = false;
 							}
 						});
 					}
@@ -348,17 +348,16 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 							@Override
 							public void onAccept() {
-								params
-								.setDomainName(getCallback().getOptions().getDomainName())
-								.setDomainId(getCallback().getOptions().getDomain())
-								.setUser(getCallback().getOptions().getUser())
-								.setMod(getCallback().getModel().getId());
+								params.setDomainName(getCallback().getOptions().getDomainName())
+									.setDomainId(getCallback().getOptions().getDomain())
+									.setUser(getCallback().getOptions().getUser())
+									.setMod(getCallback().getModel().getId());
 								checkAEAT(params);
 							}
 
 							@Override
 							public void onCancel() {
-							
+								checkingAEAT = false;
 							}
 						});
 					}

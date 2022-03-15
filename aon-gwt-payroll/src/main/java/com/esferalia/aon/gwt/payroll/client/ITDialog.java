@@ -23,9 +23,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
+import com.esferalia.aon.occam.api.model.EmployeeITPart;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
@@ -112,7 +117,6 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiField
 	HTMLPanel employeePanelNaf;
-
 
 	@UiField
 	VerticalPanel itDataTable;
@@ -395,7 +399,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			//---ENTERPRISE DATA
 			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
 			String regime = completeCcc.substring(0, 4);
-			String ccc = completeCcc.substring(4, itDialogObject.getContractInfo().getCompleteCCC().length());
+			String ccc = completeCcc.substring(4, completeCcc.length());
 
 			Label regimeEl = new Label("R\u00e9gimen:");
 			regimeEl.setStyleName(style.subTitle());
@@ -1288,19 +1292,9 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
 		
 		if(this.userComunica) {
-			boolean communicated = itPart.getStatus()!=null && itPart.getStatus() == (byte)3;
-			String title = communicated ? "Parte IT comunicada" : "Comunicar Confirmaci\u00f3n";
-			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
-		
-			AonTableButton communicate = new AonTableButton(title, icon);
-			
-			if(!communicated && isCommunicatePart(itPart)) {
-				communicate.addClickHandler((e) -> {
-					setViewPartComunica(itPart);
-				});
-			}
-	
-//			confirmationPartDataTable.setWidget(row, 5, communicate);
+			buildBtnPart(itPart).ifPresent(btn->
+				confirmationPartDataTable.setWidget(row, 5, btn)
+			);
 		}
 	}
 	
@@ -1573,66 +1567,77 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void printBtnCommunicate(){
 		
-		LOGGER.info("IT_ID:"+ it.getId());
-		for(ITPart itPart : it.getITParts()) {
-			LOGGER.info("IT_PART:"+itPart.getId()+" TYPE:"+itPart.getType().toString());
-		}
-		
+		for(ITPart part : it.getITParts()) 
+			LOGGER.info("PART: "+part.toString());
 		
 		Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
-		Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
 		
-		if(bjOptional.isPresent()) {
-			ITPart bj = bjOptional.get();
-			boolean communicated = bj.getStatus()!=null && bj.getStatus() == (byte)3;
-			String title = communicated ? "Parte IT comunicada" : "Comunicar Baja";
-			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+		bjOptional.ifPresent(part-> 
+			buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) )
+		);
 		
-			AonTableButton btnBaja = new AonTableButton(title, icon); 
-
-			if(!communicated && isCommunicatePart(bj)) {
-				btnBaja.addClickHandler((e) -> {
-					ITPart part = new ITPart()
-					.setId(bj.getId())
-					.setDate(it.getStartDate())
-					.setType((byte) 0)
-					.setCollegeNumber(collegiateNumberITPart.getValue())
-					.setCias(ciasITPart.getValue());
-
-					setViewPartComunica(part);
-				});
-			}
-
-			itBaja.add(btnBaja);
+		if(!isPaternity()) {
+			Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
+			altaOptional.ifPresent(part->
+				buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) )
+			);
 		}
-
-		if(altaOptional.isPresent()) {
-			
-			ITPart alt = altaOptional.get();
-			boolean communicated = alt.getStatus()!=null && alt.getStatus() == (byte)3;
-			String title = communicated ? "Parte IT comunicada" : "Comunicar Alta";
-			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
-		
-			AonTableButton btnAlta = new AonTableButton(title, icon); 
-			if(!communicated && isCommunicatePart(alt)) {
-				btnAlta.addClickHandler((e) -> {
-					ITPart part = new ITPart()
-					.setId(alt.getId())
-					.setDate(it.getEndDate())
-					.setType((byte) 2)
-					.setCollegeNumber(collegiateNumberITPart.getValue())
-					.setCias(ciasITPart.getValue());
 	
-					setViewPartComunica(part);
-				});
-			}
-		
-			itAlta.add(btnAlta);
-		}
 	}
 	
-	private boolean isCommunicatePart(ITPart itPart){
-		return it.getId()!=null && itPart.getId()!=null && itPart.getStatus() != (byte)3;
+	private Optional<AonTableButton> buildBtnPart(ITPart part) {
+		if(it.getId()!=null && part.getId()!=null) {
+			boolean communicated = part.getStatus()!=null && part.getStatus() == (byte)3;
+			String title = communicated ? "Borrar Parte IT comunicada" : "Comunicar parte";
+			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+		
+			AonTableButton btn = new AonTableButton(title, icon); 
+			btn.addClickHandler(e-> {
+				if(communicated) {
+					removeITPartTGSS(part);
+				} else {
+					setViewPartComunica(part);
+				}
+			});
+			return Optional.of(btn);
+		}
+		return Optional.empty();
+	}
+	
+	private void removeITPartTGSS(ITPart part) {
+		LOGGER.info(part.toString());
+		onRemoveITPartTGSS(parseITByStatus(part));
+	}
+	
+	private ItNotExist parseITByStatus(ITPart part) {
+		if(itDialogObject!=null) {
+			//---ENTERPRISE DATA
+			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
+			String regime = completeCcc.substring(0, 4);
+			String ccc = completeCcc.substring(4, completeCcc.length());
+		
+			EmployeeInfo employeeInfo = itDialogObject.getEmployeeinfo();
+
+		 	EmployeeIT employeeIT = new EmployeeIT()
+		 			.setRegime(regime)
+		 			.setCcc(ccc)
+		 			.setNss(employeeInfo.getSsNumber())
+					.setDni(employeeInfo.getDocument())
+					.setStartDate(it.getStartDate())  // fecha de baja
+					.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()));
+			if(it.getEndDate()!=null) 
+				employeeIT.setEndDate(it.getEndDate());
+		
+		 	EmployeeITPart employeeITPart = new EmployeeITPart()
+		 			.setDate(part.getDate())
+		 			.setType(ContractLeaveDetailType.safeValueOf(part.getType()));
+		 	
+		 	ItNotExist ItNotExist = new ItNotExist();
+			ItNotExist.setEmployeeIT(employeeIT);
+		 	ItNotExist.setEmployeeITPart(employeeITPart);
+		 	return ItNotExist;
+	 	}
+		return null;
 	}
 	
 	private void onNewConfirmationPart(ClickEvent e) {
@@ -1648,7 +1653,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		addConfirmationITPart(newITPart);
 		calculateScrollPanelHeight();
 	}
-	
+
 	private Byte getDefaultConfirmOrder() {
 		int newConfirmOrder = 1;
 		
@@ -2103,9 +2108,11 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- Abstract Methods
 	
 	protected abstract void onShowCertitificateIT(IT it);
-	protected abstract void onComunicateIT(IT it);
-	protected abstract void onCommunicateITPart(IT it, ITPart itPart);
 	protected abstract void onDelete(IT it);
+	
+	protected abstract void onCommunicateITPart(IT it, ITPart itPart);
+	protected abstract void onRemoveITPartTGSS(ItNotExist ItNotExist);
+	
 	protected abstract void onAccept();
 	
 }
