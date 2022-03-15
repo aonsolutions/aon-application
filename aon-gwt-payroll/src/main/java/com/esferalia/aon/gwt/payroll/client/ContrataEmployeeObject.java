@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -669,7 +670,9 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (TGSS Get files)
 	
 	public void downloadTAAndIDC(Consumer<Void> success, Consumer<Throwable> failure) {
-		String situation = null ==  employeeContractData.getContractInfo().getEndDate() ? "ALTA" : "BAJA";
+		Date date = new Date();
+		Date contractEndDate = employeeContractData.getContractInfo().getEndDate();
+		String situation = (null == contractEndDate || DateUtils.isBeforeOrEquals(date, contractEndDate)) ? "ALTA" : "BAJA";
 		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
 		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
 		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
@@ -688,7 +691,9 @@ public class ContrataEmployeeObject {
 	}
 
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
-		String situation = null ==  employeeContractData.getContractInfo().getEndDate() ? "ALTA" : "BAJA";
+		Date date = new Date();
+		Date contractEndDate = employeeContractData.getContractInfo().getEndDate();
+		String situation = (null == contractEndDate || DateUtils.isBeforeOrEquals(date, contractEndDate)) ? "ALTA" : "BAJA";
 		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
 		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
 		String nss = employeeContractData.getEmployeeInfo().getSsNumber();

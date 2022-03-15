@@ -34,9 +34,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jooq.Comment;
 import org.jooq.Constraint;
 import org.jooq.ForeignKey;
 import org.jooq.Key;
+import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.Table;
@@ -165,6 +167,96 @@ public class WeakForeignKeyProvider {
             return DSL.constraint(getName()).foreignKey(getFieldsArray()).references(key.getTable(),
                     key.getFieldsArray());
         }
+
+		@Override
+		public boolean enforced() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean nullable() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Name getQualifiedName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Name getUnqualifiedName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getComment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Comment getCommentPart() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Name $name() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<TableField<O, ?>> getKeyFields() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public TableField<O, ?> [] getKeyFieldsArray() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Table<O> parent(R record) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Table<O> parents(R... records) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Table<O> parents(Collection<? extends R> records) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Table<R> children(O record) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Table<R> children(O... records) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Table<R> children(Collection<? extends O> records) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     final class UniqueKeyImpl<R extends Record> extends AbstractKey<R> implements UniqueKey<R> {
@@ -209,6 +301,55 @@ public class WeakForeignKeyProvider {
             else
                 return DSL.constraint(getName()).unique(getFieldsArray());
         }
+
+
+		@Override
+		public boolean enforced() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+
+		@Override
+		public boolean nullable() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+
+		@Override
+		public Name getQualifiedName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+		@Override
+		public Name getUnqualifiedName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+		@Override
+		public String getComment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+		@Override
+		public Comment getCommentPart() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+		@Override
+		public Name $name() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
         
 
