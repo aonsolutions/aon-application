@@ -242,6 +242,23 @@ export const SELFCONTA = {
   price: ' ' // '-'
 };
 
+export const AON_SALTRA = {
+  app: CONSTANT.SALTRA,
+  title: MSG.SALTRA,
+  description: MSG.SALTRA,
+  icon: AON_ICONS.AON_SALTRA,
+  color: '#002469',
+  price: ' ' // '-'
+};
+
+export const SALTRA = {
+  app: 'saltra',
+  title: 'Saltra',
+  description: 'Saltra',
+  logo: '../assets/apps/saltra.png',
+  price: ' '
+};
+
 export const ALMA = {
   app: 'alma',
   title: 'Alma',
@@ -297,7 +314,7 @@ export const CUSTOM_VIEW = {
   price:  ' '
 };
 
-export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, MESSENGER, TOOLS, NOTES};
+export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, MESSENGER, TOOLS, NOTES, AON_SALTRA};
 
 export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, MESSENGER, PAYROLL, COMUNICA, FISCAL, ACCOUNTING];
 
@@ -307,11 +324,11 @@ export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'd
 export const Apps = { ACCOUNTING, FISCAL,PAYROLL, COMUNICA, DOCUMENTAL,
    TIMECONTROL, INVOICE, MESSENGER, NOTES};
 export const AuxApps = {TOOLS};
-export const ClassicApps = {AON_SOLUTIONS, BIDOQ, SELFCONTA};
+export const ClassicApps = {AON_SOLUTIONS, BIDOQ, SELFCONTA, SALTRA};
 export const Services = {OCR, CONVENIOS, BANK, AULA, CUSTOM_VIEW};
 
 export const AllApps = { ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL,
-   TIMECONTROL, INVOICE, MESSENGER, OCR, CONVENIOS, BANK, AON_SOLUTIONS, BIDOQ, SELFCONTA};
+   TIMECONTROL, INVOICE, MESSENGER, OCR, CONVENIOS, BANK, AON_SOLUTIONS, BIDOQ, SELFCONTA, SALTRA};
 
 export const getApp = (name) => {
   for(let key in Apps) {
@@ -726,7 +743,7 @@ export const AeatFiscalMenu =
     },
     PORTAL: {
       app: 'pack_portal',
-      icon: 'aon_portal',
+      icon: AON_ICONS.AON_PORTAL,
       title: 'Pack Portal',
       subtitle: ' Documental | Horario | Facturas | Mensajería',
       color: '#002469',
@@ -735,7 +752,7 @@ export const AeatFiscalMenu =
     },
     PAYROLL: {
       app: 'pack_payroll',
-      icon: 'aon_pack',
+      icon: AON_ICONS.AON_PACK,
       title: 'Pack Cotización',
       subtitle: ' Laboral | Comunic@ | Horario',
       color: '#002469',
@@ -744,13 +761,84 @@ export const AeatFiscalMenu =
     }, 
     FISCAL_ACCOUNTING: {
       app: 'pack_fiscal_accounting',
-      icon: 'aon_pack',
+      icon: AON_ICONS.AON_PACK,
       title: 'Pack Tributación',
       subtitle: ' Fiscal | Contabilidad',
       color: '#002469',
       apps: [Apps.FISCAL, Apps.ACCOUNTING, Apps.NOTES],
       price: ' ' // '120€/mes'
     }
+  };
+
+
+  export const BASIC_MANAGEMENT = {
+    app: 'basic_management',
+    icon: AON_ICONS.AON_MANAGEMENT,
+    title: 'Básico',
+    subtitle: ' Facturas',
+    color: '#002469',
+    apps: [Apps.INVOICE],
+    price: ' '
+  };
+
+  export const STANDAR_MANAGEMENT = {
+    app: 'standar_management',
+    icon: AON_ICONS.AON_MANAGEMENT,
+    title: 'Estándar',
+    subtitle: ' Gestión Básica | Comercial | Tesoreria ',
+    color: '#002469',
+    apps: [Apps.INVOICE, BASIC_MANAGEMENT],
+    price: ' '
+  };
+
+  export const PROFESSIONAL_MANAGEMENT = {
+    app: 'professional_management',
+    icon: AON_ICONS.AON_MANAGEMENT,
+    title: 'Profesional',
+    subtitle: ' Gestión Estándar | Expedientes | Almacén ',
+    color: '#002469',
+    apps: [Apps.INVOICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT],
+    price: ' '
+  };
+
+  export const ENTERPRISE = {
+    app: 'enterprise',
+    icon: AON_ICONS.AON_ENTERPRISE,
+    title: 'Empresa',
+    color: 'black',
+    domainType: true
+  };
+
+  export const OFFICE = {
+    app: 'office',
+    icon: AON_ICONS.AON_OFFICE,
+    title: 'Despacho',
+    color: 'black',
+    domainType: true
+  };
+
+  export const ACADEMY = {
+    app: 'academy',
+    icon: AON_ICONS.AON_OFFICE,
+    title: 'Academia',
+    color: 'black',
+    domainType: true
+  };
+
+  export const GARAGE = {
+    app: 'garage',
+    icon: AON_ICONS.AON_GTA,
+    title: 'Taller',
+    color: 'black',
+    domainType: true
+  };
+
+  export const COMMERCE = {
+    app: 'commerce',
+    icon: AON_ICONS.AON_COMMERCE,
+    title: 'Comercio',
+    color: 'black',
+    domainType: true
   };
 
 export default Apps;

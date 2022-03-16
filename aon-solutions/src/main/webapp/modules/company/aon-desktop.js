@@ -205,6 +205,7 @@ export class AonDesktop extends AonElement {
 			classicOptions.push({
 				name: 'aonSolutions',
 				img: 'assets/aon.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION_AON,
 				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
 			});
 		}
@@ -213,6 +214,7 @@ export class AonDesktop extends AonElement {
 			classicOptions.push({
 				name: 'Bidoq',
 				img: 'assets/apps/bidoq.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
 				fn: () =>{
 					getAccessBidoq().then(r => {
 						const {datos} = r;
@@ -230,7 +232,17 @@ export class AonDesktop extends AonElement {
 			classicOptions.push({
 				name: 'Selfconta',
 				img: 'assets/apps/selfconta.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
 				fn: () =>open('https://mispapeles.es/selfconta/')
+			});
+		}
+
+		if(this.getDur().isSaltra()){
+			classicOptions.push({
+				name: 'Saltra',
+				img: 'assets/apps/saltra.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
+				fn: () =>open('https://app.saltra.es/')
 			});
 		}
 

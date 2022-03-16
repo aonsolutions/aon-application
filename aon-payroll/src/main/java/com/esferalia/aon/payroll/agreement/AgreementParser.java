@@ -731,7 +731,8 @@ public class AgreementParser {
 						irpfExpression = "EXCESO(53.34 * DIAS_PERNOCTA)";
 						quoteExpression = "EXCESO(53.34 * DIAS_PERNOCTA)";
 					} else if(AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "LOCOMOCI") ||
-							AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "IMPORTE_KM")) {
+							AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "IMPORTE_KM") ||
+							AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "KM")) {
 						irpfExpression = "EXCESO(0.19 * KMS)";
 						quoteExpression = "EXCESO(0.19 * KMS)";
 					}

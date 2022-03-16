@@ -31,3 +31,7 @@ export const AON_SETTINGS = 'aon_settings';
 export const AON_PACK = 'aon_pack';
 export const AON_CUSTOM = 'aon_custom';
 export const AON_WEB = 'aon_web';
+export const AON_GTA = 'aon_gta';
+export const AON_COMMERCE = 'aon_commerce';
+export const AON_SALTRA = 'aon_saltra';
+export const AON_ENTERPRISE = 'aon_enterprise';
