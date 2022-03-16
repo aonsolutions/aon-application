@@ -613,6 +613,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconWrench();
 	
+	@Source("icons/aon-icon-red-wrench.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRedWrench();
+
 	@Source("icons/aon-icon-toggle-on.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconToggleOn();

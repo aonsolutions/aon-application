@@ -326,6 +326,10 @@ public class EmployeeIT implements Serializable {
 	}
 	//  ---------------------ADD CONTRACT DATA
 
+	public boolean isPaternity() {
+		return type!=null && (type.equals(ContractLeaveType.MATERNIDAD) ||  type.equals(ContractLeaveType.PATERNIDAD));
+	}
+	
     @Override
     public String toString() {
         return "EmployeeIT{"
@@ -354,10 +358,6 @@ public class EmployeeIT implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(id);
-	}
-	
-	public boolean isPaternity() {
-		return type!=null && (type.equals(ContractLeaveType.MATERNIDAD) ||  type.equals(ContractLeaveType.PATERNIDAD));
 	}
 	
 	@Override

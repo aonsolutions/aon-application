@@ -21,8 +21,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;
@@ -410,6 +412,10 @@ public class AccountingInvoiceDAO {
 				br.setSurchargeQuota( AonMathUtils.round( br.getBase() * br.getSurcharge() / 100 ) );
 			}
 		}
+		invoice.getBreakdown().sort((b1, b2) -> Comparator
+			.comparing(InvoiceBreakdown::getTaxType)
+			.thenComparing(InvoiceBreakdown::getPercentage)		
+			.compare(b1, b2));
 	}
 
 	public static AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType invoiceType, Integer registryId, AccountingInvoice ai, boolean preserveData) {

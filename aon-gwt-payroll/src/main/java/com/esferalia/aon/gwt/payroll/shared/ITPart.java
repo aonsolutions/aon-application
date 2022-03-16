@@ -104,5 +104,18 @@ public class ITPart implements Serializable {
 		this.status = status;
 		return this;
 	}
+	
+	@Override
+    public String toString() {
+        return "ITPart{"
+    		+ "id=" + id +","
+    		+ "domain=" + domain +","
+    		+ "type=" + type +","
+    		+ "itId=" + it +","
+    		+ "collegeNumber=" + collegeNumber +","
+    		+ "cias=" + cias +","
+    		+ "date=" + date +","
+    		+ "status=" + status +"}";
+    }
 		
 }

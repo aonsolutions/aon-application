@@ -1012,6 +1012,18 @@ public class Toolkit {
 			return Toolkit.removeWeirdCharacters(raw);
 	}
 	
+	public static void validateCert(HtmlPage htmlPage) throws SegSocialException {
+		if (htmlPage.getUrl().toString().contains("revokedError"))
+			throw new RevokedCertificateException("Certificado revocado");
+
+		DomNode section = htmlPage.querySelector("#segsocial section");
+		if (section != null && section.getVisibleText().toLowerCase().indexOf("no autorizado") >= 0) {
+			DomNode error = section.querySelector("p");
+			if (error != null && !error.getVisibleText().isEmpty())
+				throw new SegSocialException(error.getVisibleText());
+		}
+	}
+	
 	
 
 	public static String goBackPdf(CloseableHttpClient httpClient, String link, String sessionId)
@@ -1041,7 +1053,8 @@ public class Toolkit {
 		Pattern nif  = Pattern.compile(
 				//  -------- LEGAL_PERSON_NIF PATTERN  
 				// -------- (1) --> X00000000
-					"^[A-JUV]"
+					"0?"
+					+"^[A-JUV]"
 					+"[\\s-_/]?"
 					+"[0-9]{2}"
 					+"[-_/\\.]?"
@@ -1050,7 +1063,8 @@ public class Toolkit {
 					+"[0-9]{3}$"
 					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 		Pattern dni  = Pattern.compile(
-					"[0-9]?"
+					"0?"
+					+"[0-9]?"
 					+"[0-9]"
 					+"[\\s-_/\\.]?"
 					+"[0-9]{3}"
@@ -1062,7 +1076,8 @@ public class Toolkit {
 				//  -------- NIE PATTERN 
 				// -------- (1) --> X0000000X
 		Pattern nie  = Pattern.compile(
-					"[XYZ]"
+					"0?"
+					+"[XYZ]"
 					+"[\\s-_/]?"
 					+"[0-9]{7}"
 					+"[\\s-_/]?"

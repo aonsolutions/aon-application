@@ -73,6 +73,26 @@ public class EnumVisitors {
 		void visitM303();
 	}
 	
+	public static interface IFiscalModelKeyInfoVisitor<T> {
+		T visitNone();
+		T visitInvoice();
+		T visitInAccrualInvoice();
+		T visitOutAccrualInvoice();
+		T visitDiffInvoice();
+		T visitDiffInAccrualInvoice();
+		T visitDiffOutAccrualInvoice();
+		T visitSalary();
+		T visitDiffSalary();
+		T visitCompute();
+		T visitComputeKey();
+		T visitActAccount();
+		T visitTitle();
+		T visitIrpfActivity();
+		T visitCorporate();
+		T visitModelInvoiceIrpfBreakdown();
+		T visitModelSalaryIrpfBreakdown();
+	}
+	
 	public static interface IFiscalStatusVisitor<T> {
 		T visitPending();
 		T visitFinished();
@@ -81,6 +101,8 @@ public class EnumVisitors {
 		T visitSent();
 		T visitMissing();
 		T visitCustomerCheck();
+		T visitCustomerAccepted();
+		T visitCustomerRejected();
 	}
 	
 	public static interface IAdministrationVisitor<T> {

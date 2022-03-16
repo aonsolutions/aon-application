@@ -1,8 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
 import static com.esferalia.aon.jooq.tables.FsMod349Detail.FS_MOD349_DETAIL;
+import static com.esferalia.aon.jooq.tables.Iae.IAE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
 import java.sql.Timestamp;
 import java.text.MessageFormat;
@@ -17,9 +20,11 @@ import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Invoice;
 import com.esferalia.aon.jooq.tables.records.FsMod349Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
@@ -27,11 +32,14 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod349Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349Formatter.Mod349DetailInfo;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.AonError;
@@ -48,6 +56,7 @@ public class Mod349DAO {
 	public static Stream<Mod349> getHeaders(AONContext ctx, int domain) {
 		return getHeaders(ctx, domain, null);
 	}
+	
 	public static Stream<Mod349> getHeaders(AONContext ctx, int domain, Integer scope) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
@@ -148,7 +157,7 @@ public class Mod349DAO {
 		FsMod349Record record = ctx.getDslContext().insertInto(FS_MOD349)
 			.set(FS_MOD349.DOMAIN,mod349.getDomain())
 			.set(FS_MOD349.YEAR,mod349.getYear())
-			.set(FS_MOD349.PERIOD,mod349.getPeriod().getValue())			
+			.set(FS_MOD349.PERIOD,mod349.getPeriod().value())			
 			.set(FS_MOD349.ADMINISTRATION, mod349.getAdministration().value())
 			.set(FS_MOD349.COMMENTS,mod349.getComments())
 			.set(FS_MOD349.STATUS, ZERO_BYTE )
@@ -180,7 +189,7 @@ public class Mod349DAO {
 	private static Mod349 update(AONContext ctx, Mod349 mod349) {
 		ctx.getDslContext().update(FS_MOD349)			
 			.set(FS_MOD349.YEAR,mod349.getYear())
-			.set(FS_MOD349.PERIOD,mod349.getPeriod().getValue())			
+			.set(FS_MOD349.PERIOD,mod349.getPeriod().value())			
 			.set(FS_MOD349.ADMINISTRATION, mod349.getAdministration().value())
 			.set(FS_MOD349.COMMENTS,mod349.getComments())
 			.set(FS_MOD349.STATUS, AonEnumUtils.getByte( mod349.getStatus() ) )
@@ -229,7 +238,7 @@ public class Mod349DAO {
 				.from(FS_MOD349)
 				.where(FS_MOD349.DOMAIN.equal(mod349.getDomain())
 						.and(FS_MOD349.YEAR.equal(mod349.getYear()))
-						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().getValue()))
+						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().value()))
 						.and(FS_MOD349.ADMINISTRATION.equal(mod349.getAdministration().value()))
 						.and(FS_MOD349.REPLACEMENT.equal( ONE_BYTE ))
 						.and(FS_MOD349.REPLACED_NUMBER.equal(mod349.getReplacedNumber())))
@@ -264,7 +273,7 @@ public class Mod349DAO {
 				.from(FS_MOD349)
 				.where(FS_MOD349.DOMAIN.equal(mod349.getDomain())
 						.and(FS_MOD349.YEAR.equal(mod349.getYear()))
-						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().getValue()))
+						.and(FS_MOD349.PERIOD.equal(mod349.getPeriod().value()))
 						.and(FS_MOD349.ADMINISTRATION.equal((byte) mod349.getAdministration().value()))
 						.and(FS_MOD349.REPLACEMENT.equal(ZERO_BYTE))
 						.and(FS_MOD349.COMPLEMENTARY.equal(ZERO_BYTE)))				
@@ -374,11 +383,15 @@ public class Mod349DAO {
 		// Se comprueba unicamente si está cumplimentado el apartado de rectificaciones
 		// para verificar que está indicado ejercicio y periodo rectificado
 		if (detail.getRectifiedYear() != null || detail.getRectifiedPeriod() != null || detail.getRectifiedAmount() != 0) {
-			if ((detail.getRectifiedYear() != null && detail.getRectifiedPeriod() == null) || 
-			    (detail.getRectifiedYear() == null && detail.getRectifiedPeriod() != null) ||
-			    (detail.getRectifiedAmount() != 0 && detail.getRectifiedYear() == null && detail.getRectifiedPeriod() == null)) {
+//			if ((detail.getRectifiedYear() != null && detail.getRectifiedPeriod() == null) || 
+//			    (detail.getRectifiedYear() == null && detail.getRectifiedPeriod() != null) ||
+//			    (detail.getRectifiedAmount() != 0 && detail.getRectifiedYear() == null && detail.getRectifiedPeriod() == null)) {
+//				throw new AonCoreException("Si indica rectificaciones, debe indicar los datos A\u00F1o y Periodo");			
+//			}
+			if (detail.getRectifiedYear() == null || detail.getRectifiedPeriod() == null) {
 				throw new AonCoreException("Si indica rectificaciones, debe indicar los datos A\u00F1o y Periodo");			
 			}
+			
 		}
 		
 		// Además se marca el campo "rectificado", si es una rectificación
@@ -509,9 +522,38 @@ public class Mod349DAO {
 		}
 	}
 	
+	public static Mod349 duplicate(AONContext ctx, Mod349 mod349) {
+		
+		int id = mod349.getId();
+		mod349.setId(null);
+		mod349.setDiffEnabled(false);
+		mod349.setStatus(FiscalStatus.PENDING);
+		mod349.setNumber(null);
+		mod349 = insert(ctx, mod349, false);
+		
+		if (!mod349.isComplementary()) {
+			Mod349 original = getById(ctx, id);
+			for (Mod349Detail detail : original.getDetails()) {
+				detail.setId(null);
+				detail.setMod349(mod349.getId());
+				detail.setDeclared(0.0);
+				detail.setAccumulated(0.0);				
+				mod349.getDetails().add(detail);
+			}
+		}
+		return save(ctx, mod349);		
+	
+	}
+	
+	public static Mod349 reset(AONContext ctx, Mod349 mod349) {
+		deleteDetails(ctx, mod349);		
+		insertDetailsFromInvoice(ctx, mod349);
+		return getById(ctx, mod349.getId()) ;
+	}
+	
 	// --------------- INSERT DETAILS FROM INVOICE ---------------
 	
-	private static void insertDetailsFromInvoice(AONContext ctx , final Mod349 mod349) {
+	private static void insertDetailsFromInvoice(AONContext ctx, final Mod349 mod349) {
 		
 		// Lo que se hacía antes en el modelo viejo (está en Mod349Manager):
 		// - Se leen facturas intracomunitarias (transaccion=1) desde el inicio del ejercicio hasta el final del periodo
@@ -524,23 +566,22 @@ public class Mod349DAO {
 		
 		// Lo que se hace ahora:
 		// - Se coge como referencia la fecha de IVA de la factura, que es lo mismo que se hace en el 303
-		// - Se agrupa siempre por Clave + Pais + NIF
+		// - Se agrupa siempre por Clave + Pais + NIF, teniendo en cuenta facturas rectificadas que tambien van aparte
 		// - Si se ha indicado la creación del modelo por diferencias:
 		// 		- Se lee todo el año, y se le resta lo declarado anteriormente (igual que antes)
 		// 		- El importe declarado anteriormente se obtiene acumulando declarado - rectificado, de los periodos anteriores del ejercicio
 		
-		// Obtenemos el desglose de facturas intracomunitarias del periodo o acumulado anual, usando VATDAO
+		// Obtenemos el desglose de facturas intracomunitarias del periodo o acumulado anual
 		getVatBreakdown(ctx, mod349)
 		
-		// Agrupamos por tipo factura + esServicio + pais + documento + nombre (acumulando la base)
+		// Agrupamos por tipo factura + esServicio + pais + documento + año_rectificado + periodo_rectificado + nombre (acumulando la base)
 		.collect(Collectors.groupingBy(VatContext::getInvoiceType,
 				   Collectors.groupingBy(VatContext::isService,
 				     Collectors.groupingBy(VatContext::getRegistryDocumentCountry,
-				    	// Collectors.groupingBy(VatContext::getRegistryDocument,
-        // Controlar posibles nulos en algunos de estos campos, no se puede agrupar por nulos				    		 
-					   Collectors.groupingBy( p -> AonStringUtils.isBlank(p.getRegistryDocument())?"":p.getRegistryDocument(), 
-					     //Collectors.groupingBy(VatContext::getRegistryName, Collectors.summingDouble(VatContext::getBase) ))))))
-							   Collectors.groupingBy( p -> AonStringUtils.isBlank(p.getRegistryName())?"":p.getRegistryName(), Collectors.summingDouble(VatContext::getBase) ))))))
+					   Collectors.groupingBy( p -> AonStringUtils.isBlank(p.getRegistryDocument())?"":p.getRegistryDocument(),
+  					     Collectors.groupingBy(VatContext::getRectificateYear,
+						   Collectors.groupingBy(VatContext::getRectificatePeriod,
+						     Collectors.groupingBy( p -> AonStringUtils.isBlank(p.getRegistryName())?"":p.getRegistryName(), Collectors.summingDouble(VatContext::getBase) ))))))))
 		
 		// Grabamos los datos en la tabla de lineas del modelo 349
 		.forEach( (invoiceType,b) -> {
@@ -548,38 +589,28 @@ public class Mod349DAO {
 			for (Boolean isService : b.keySet())
 			 for (Country country : b.get(isService).keySet())
 			  for (String document : b.get(isService).get(country).keySet())
-			   for (String name : b.get(isService).get(country).get(document).keySet()) {
+			   for (int year : b.get(isService).get(country).get(document).keySet())
+   			    for (Period period : b.get(isService).get(country).get(document).get(year).keySet())
+			     for (String name : b.get(isService).get(country).get(document).get(year).get(period).keySet()) {
 				   
-				   Mod349Key keyOperation = null;  // Clave Modelo 349 según tipo de la factura (igual que antes en el modelo viejo)
-				   
-				   if (invoiceType == InvoiceType.PURCHASE) {
-					   if (isService)
-						   keyOperation = Mod349Key.I; // Compras (Adquisiciones intracomunitarias de servicios)
-					   else keyOperation = Mod349Key.A; // Compras (Adquisiciones intracomunitarias de bienes) 
-				   }
-				   else if (invoiceType == InvoiceType.SALES) {
-						if (isService)
-							keyOperation = Mod349Key.S; // Ventas (Prestaciones Intracomunitarias de Servicios)
-						else keyOperation = Mod349Key.E; // Ventas (Entregas intracomunitarias de bienes)
-				   }				
-				   else keyOperation = Mod349Key.I;  // Gastos (Adquisiciones intracomunitarias de servicios)
+				   Mod349Key keyOperation = getMod349Key(invoiceType, isService);				   
 				  
 				   // Acumulado
-				   double accumulated = b.get(isService).get(country).get(document).get(name).doubleValue(); 
+				   double accumulated = b.get(isService).get(country).get(document).get(year).get(period).get(name).doubleValue(); 
 				  
-				   // Obtener declarado si el calculo es por diferencias
-				   double declared = 0.0;
-				   if (mod349.isDiffEnabled()) {
+				   // Obtener total declarado en el ejercicio si el calculo es por diferencias y no es rectificación
+				   double declared = 0.0;				   
+				   if (year == 0 && mod349.isDiffEnabled()) {
 					   declared = getDeclaredModels(ctx, mod349, keyOperation, country, document)
 							   .mapToDouble(p -> p.getAmount() - p.getRectifiedAmount())
 							   .sum();
 				   }
-				  
+				   
 				   // Diferencia
 				   double amount = accumulated - declared; 
 				  
 				   // Añadir el registro, si el importe a declarar es distinto de cero
-				   if (amount != 0) {
+				   if (amount != 0 || year != 0) {
 					  Mod349Detail det = new Mod349Detail()
 			     			   .setDomain(mod349.getDomain())
 			     			   .setMod349(mod349.getId())
@@ -590,11 +621,148 @@ public class Mod349DAO {
 			     			   .setAccumulated(accumulated)
 			     			   .setDeclared(declared)
 			     			   .setAmount(amount);
+					  
+					  // Rectificación: Obtener lo declarado anteriormente y añadir los datos a la línea del 349
+					  if (year != 0) {
+						  double declaredAmount = getOldDeclaredAmount(ctx, mod349, year, period, keyOperation, country, document);
+						  det.setRectification(true);
+						  det.setRectifiedYear(year);
+						  det.setRectifiedPeriod(period);
+						  det.setRectifiedAmount(declaredAmount);
+//						  det.setAccumulated(0.0);
+						  det.setAmount(declaredAmount+amount);						  
+					  }
+					   
+					  // Grabar la línea del 349
 					  insertDetail(ctx,det);
 				   }	
 			   }
 		});
 			
+	}
+	
+	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349) {
+		return getVatBreakdown(ctx, mod349, mod349.isDiffEnabled());		
+	}
+
+	// Obtiene el desglose de las facturas intracomunitarias, para el periodo del modelo, según sea por diferencias o no
+	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final boolean isDiffEnabled) {	
+		
+		Date fromDate = isDiffEnabled ? AonDateUtils.getYearFirstDay(mod349.getYear()) : FiscalUtils.getPeriodStart(mod349);
+		Date toDate = FiscalUtils.getPeriodEnd(mod349);
+		
+		// Obtenemos el desglose de las facturas intracomunitarias entre las fechas indicadas
+		return getVatBreakdown(ctx, fromDate, toDate)
+				.peek(vat -> { 
+					
+					vat.setInsidePeriod(mod349==null ? false : FiscalUtils.isInPeriodRange(mod349, vat.getTaxDate()));
+					
+					// NIF Operador Intracomunitario debe estar cumplimentado y de longitud menor de 15
+					if (AonStringUtils.isBlank(vat.getRegistryDocument()) || vat.getRegistryDocument().length() > 15)
+						throw new AonCoreException("El NIF del Operador Intracomunitario debe estar cumplimentado y su longitud no puede ser mayor de 15 caracteres. ["+vat.getRegistryDocument()+" - "+vat.getRegistryName()+" - Factura "+vat.getDocumentNumber()+"]");
+
+					// Valores por defecto para estos campos, para las facturas no rectificativas, para que luego se agrupen todas juntas
+					vat.setRectificateYear(0);
+					vat.setRectificatePeriod(Period.M01);							
+					
+					// Si es una factura rectificativa, hay que obtener el periodo de la factura rectificada
+					// para poder guardarlo posteriormente como rectificacion en el modelo 349
+					int rectificateYear = 0;
+					Period rectificatePeriod = null;
+					if (vat.isInsidePeriod() && vat.getRectificationType() != null && (vat.getRectificationType() == RectificationType.NORMAL_RECTIFIER || vat.getRectificationType() == RectificationType.SPECIAL_RECTIFIER)) {
+						// Buscar posible periodo donde se declaro la factura rectificada (mensual, trimestral), según su fecha de IVA, si es distinto del que se está declarando, si el periodo es el mismo no se crea linea para la rectificacion en el modelo 349
+						rectificateYear = AonDateUtils.getYear(vat.getRectificateInvoiceTaxDate());
+						// Primero probamos con posible periodo mensual
+						rectificatePeriod = Period.getMonthlyPeriod(AonDateUtils.getMonth(vat.getRectificateInvoiceTaxDate()));
+						
+						Double oldDeclaredAmount = getOldDeclaredAmount(ctx, mod349, rectificateYear, rectificatePeriod, getMod349Key(vat.getInvoiceType(), vat.isService()), vat.getRegistryDocumentCountry(), vat.getRegistryDocument());						
+						if (oldDeclaredAmount == null) {
+							// Si no se encuentra periodo mensual, probamos con posible periodo trimestral
+							rectificatePeriod = Period.getQuarterlyPeriod(AonDateUtils.getMonth(vat.getRectificateInvoiceTaxDate()));
+							oldDeclaredAmount = getOldDeclaredAmount(ctx, mod349, rectificateYear, rectificatePeriod, getMod349Key(vat.getInvoiceType(), vat.isService()), vat.getRegistryDocumentCountry(), vat.getRegistryDocument());								
+						}
+						
+						// Se ha encontrado una declaracion en el periodo de la factura rectificada, se guarda para crear posteriormente la linea de rectificacion en el modelo 349
+						if (oldDeclaredAmount != null && (rectificateYear != mod349.getYear() || rectificatePeriod != mod349.getPeriod())) {
+							vat.setRectificateYear(rectificateYear);
+							vat.setRectificatePeriod(rectificatePeriod);							
+						}
+					}
+					
+				});
+		
+	}
+	
+	private static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate) {
+		
+		Invoice rectificationInvoice = INVOICE.as("rectificationInvoice"); // Enlace factura rectificada/rectificativa
+		
+		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
+		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		return ctx.getDslContext().select(
+				 INVOICE.ID
+				,INVOICE.SERIES
+				,INVOICE.NUMBER
+				,INVOICE.REFERENCE_CODE
+				,INVOICE.RDOCUMENT
+				,INVOICE.RDOCUMENT_TYPE
+				,INVOICE.RDOCUMENT_COUNTRY
+				,INVOICE.RNAME
+				,INVOICE.ISSUE_DATE
+				,INVOICE.TAX_DATE
+				,INVOICE.TYPE
+				,INVOICE.RECTIFICATION_TYPE
+				,INVOICE.SERVICE
+				,INVOICE.TRANSACTION
+				,INVOICE.INVESTMENT
+				,INVOICE.WITHHOLDING_FARMER
+				,INVOICE.VAT_ACCRUAL_PAYMENT
+				,INVOICE.TAXABLE_BASE				
+				,ENTERPRISE_ACTIVITY.ID
+				,ENTERPRISE_ACTIVITY.DESCRIPTION
+				,ENTERPRISE_ACTIVITY.VAT_REGIME
+				,ENTERPRISE_ACTIVITY.SURCHARGE				
+				,IAE.EPIGRAPH
+				,rectificationInvoice.TAX_DATE
+				)
+				.from(INVOICE)
+				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
+				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+				.leftOuterJoin(rectificationInvoice).on(rectificationInvoice.ID.equal(INVOICE.RECTIFICATION_INVOICE))
+				.where(INVOICE.DOMAIN.equal(ctx.getDomainId()))
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(INVOICE.TRANSACTION.eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
+				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.fetch()
+				.stream()
+				.map( rec -> {
+					return new VatContext()
+							.setInvoice(rec.getValue(INVOICE.ID))
+							.setActivity(rec.getValue(ENTERPRISE_ACTIVITY.ID))
+							.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+							.setEpigraph(rec.getValue(IAE.EPIGRAPH))
+							.setVatRegime( VATRegime.safeValueOf( rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME) ))
+							.setVatSurchargeRegime( AonEnumUtils.getBoolean(rec.getValue(ENTERPRISE_ACTIVITY.SURCHARGE) ) )		
+							.setDocumentNumber(FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)), rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 
+							.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
+							.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
+							.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
+							.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+							.setRegistryName(rec.getValue(INVOICE.RNAME))	
+							.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
+							.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
+							.setInvoiceType(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)))
+							.setRectificationType(RectificationType.safeValueOf(rec.getValue(INVOICE.RECTIFICATION_TYPE)))
+							.setService(rec.getValue(INVOICE.SERVICE) == 1 || InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.EXPENSES)
+							.setTransaction(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)))
+							.setInvestment(rec.getValue(INVOICE.INVESTMENT) == 1)
+							.setVatAccrualRegime(rec.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1)
+							.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)							
+							.setBase( rec.getValue(INVOICE.TAXABLE_BASE) )
+							.setRectificateInvoiceTaxDate(rec.getValue(rectificationInvoice.TAX_DATE))
+						;
+				})
+				;
 	}
 	
 	private static Stream<Mod349DetailInfo> getDeclaredModels(AONContext ctx, final Mod349 mod349, final Mod349Key key, final Country country, final String document) {
@@ -632,8 +800,9 @@ public class Mod349DAO {
 				.from(FS_MOD349_DETAIL)
 				.join(FS_MOD349).on(FS_MOD349_DETAIL.FS_MOD349.equal(FS_MOD349.ID))
 				.where(FS_MOD349.DOMAIN.equal(mod349.getDomain()))
-				.and(FS_MOD349_DETAIL.RECTIFIED_YEAR.equal(mod349.getYear()))		
-				.and(getDueMonthDetail().lessThan((byte) mod349.getPeriod().getDueMonth()))   // Se compara con el mes hasta del periodo, por que pueden coincidir varias periodicidades en el mismo año (por ejemplo de trimestral a mensual o viceversa)
+				.and(FS_MOD349_DETAIL.RECTIFIED_YEAR.equal(mod349.getYear()))
+				.and(getDueMonth().lessThan((byte) mod349.getPeriod().getDueMonth()))
+				.and(getDueMonthDetail().lessThan((byte) mod349.getPeriod().getDueMonth()))   
 				.and(FS_MOD349_DETAIL.TYPE.equal(key.getValue()))
 				.and(FS_MOD349_DETAIL.COUNTRY.equal(country.getIso2()))
 				.and(FS_MOD349_DETAIL.DOCUMENT.equal(document))
@@ -655,30 +824,111 @@ public class Mod349DAO {
 		return Stream.concat(s1, s2);				
 	}	
 	
-	// Obtiene el desglose de las facturas intracomunitarias, para el periodo del modelo, según sea por diferencias o no
-	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final boolean isDiffEnabled) {
+	private static Double getOldDeclaredAmount(AONContext ctx, Mod349 mod349, int oldYear, Period oldPeriod, Mod349Key key, Country country, String document) {		
 		
-		Date fromDate = isDiffEnabled ? AonDateUtils.getYearFirstDay(mod349.getYear()) : FiscalUtils.getPeriodStart(mod349);
-		Date toDate = FiscalUtils.getPeriodEnd(mod349);
+		// Buscar primero alguna posible linea rectificada de ese periodo
+		Double amount = ctx.getDslContext()
+							.select(FS_MOD349_DETAIL.AMOUNT)
+							.from(FS_MOD349_DETAIL)
+							.join(FS_MOD349).on(FS_MOD349_DETAIL.FS_MOD349.equal(FS_MOD349.ID))
+							.where(FS_MOD349.DOMAIN.equal(mod349.getDomain()))
+							.and(FS_MOD349.YEAR.lessThan(mod349.getYear()).or(FS_MOD349.YEAR.eq(mod349.getYear()).and(getDueMonth().lessThan((byte) mod349.getPeriod().getDueMonth()))))
+							.and(FS_MOD349_DETAIL.RECTIFIED_YEAR.equal(oldYear))
+							.and(FS_MOD349_DETAIL.RECTIFIED_PERIOD.eq((byte) oldPeriod.value())) 
+							.and(FS_MOD349_DETAIL.TYPE.equal(key.getValue()))
+							.and(FS_MOD349_DETAIL.COUNTRY.equal(country.getIso2()))
+							.and(FS_MOD349_DETAIL.DOCUMENT.equal(document))							
+							.orderBy(FS_MOD349.ID.desc())
+							.fetchAny(FS_MOD349_DETAIL.AMOUNT);
 		
-		// Obtenemos el desglose de las facturas intracomunitarias entre las fechas indicadas
-		return VATDAO.getVatBreakdown(ctx,fromDate,toDate)
-				.filter(mod -> mod.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY)
-				.peek(vat -> { 
-					vat.setInsidePeriod(mod349==null ? false : FiscalUtils.isInPeriodRange(mod349, vat.getTaxDate()));
-					
-					// NIF Operador Intracomunitario debe estar cumplimentado y de longitud menor de 15
-					if (AonStringUtils.isBlank(vat.getRegistryDocument()) || vat.getRegistryDocument().length() > 15)
-						throw new AonCoreException("El NIF del Operador Intracomunitario debe estar cumplimentado y su longitud no puede ser mayor de 15 caracteres. ["+vat.getRegistryDocument()+" - "+vat.getRegistryName()+" - Factura "+vat.getDocumentNumber()+"]");					
-				});
+		// Si no se encuentran rectificaciones, se buscan declaraciones
+		if (amount == null) {
+			amount = ctx.getDslContext()
+						.select(FS_MOD349_DETAIL.AMOUNT)
+						.from(FS_MOD349_DETAIL)
+						.join(FS_MOD349).on(FS_MOD349_DETAIL.FS_MOD349.equal(FS_MOD349.ID))
+						.where(FS_MOD349.DOMAIN.equal(mod349.getDomain()))						
+						.and(FS_MOD349.YEAR.equal(oldYear))
+						.and(FS_MOD349.PERIOD.eq((byte) oldPeriod.value())) 
+						.and(FS_MOD349_DETAIL.TYPE.equal(key.getValue()))
+						.and(FS_MOD349_DETAIL.COUNTRY.equal(country.getIso2()))
+						.and(FS_MOD349_DETAIL.DOCUMENT.equal(document))
+						.and(FS_MOD349_DETAIL.RECTIFIED_YEAR.isNull())
+						.fetchAny(FS_MOD349_DETAIL.AMOUNT);
+		}
+		
+		return amount;
+	}
+	
+	private static Mod349Key getMod349Key(InvoiceType invoiceType, boolean isService) {
+		   if (invoiceType == InvoiceType.PURCHASE) {
+			   if (isService)
+				   return Mod349Key.I; // Compras (Adquisiciones intracomunitarias de servicios)
+			   else return Mod349Key.A; // Compras (Adquisiciones intracomunitarias de bienes) 
+		   }
+		   else if (invoiceType == InvoiceType.SALES) {
+				if (isService)
+					return Mod349Key.S; // Ventas (Prestaciones Intracomunitarias de Servicios)
+				else return Mod349Key.E; // Ventas (Entregas intracomunitarias de bienes)
+		   }				
+		   else return Mod349Key.I;  // Gastos (Adquisiciones intracomunitarias de servicios)
+	}
+	
+	
+	// --------------- INVOICES INFO --------------- 
+	
+	public static String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
+		
+		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
+		
+		// Información Desglose de facturas
+		if (infoKey == FiscalModelKeyInfo.INVOICE) {
+			return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod349, detail));			
+		}
+		
+		// Información Desglose del calculo por diferencias
+		if (infoKey == FiscalModelKeyInfo.DIFF_INVOICE) {
+			return MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod349, detail));
+		}
+		
+		return null;
+	}
+	
+	private static String getInvoicesInfo(AONContext ctx, Mod349 mod349, Mod349Detail detail) {
+		
+		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+				+ FiscalModelUtils.getModelName(mod349) 
+				+ " DEL " + mod349.getPeriod().getDescription()
+				+ " DE " + mod349.getYear();
+		
+		return VATFormatter.formatInvoices(title
+				,getSubtitle(detail)
+				,getVatBreakdown(ctx, mod349, detail, false).collect(Collectors.toCollection(LinkedList::new)));
 		
 	}
 	
-	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349) {
-		return getVatBreakdown(ctx, mod349, mod349.isDiffEnabled());		
+	private static String getDiffInvoicesInfo(AONContext ctx, final Mod349 mod349, final Mod349Detail detail) {
+
+		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
+				+ FiscalModelUtils.getModelName(mod349) 
+				+ " DEL " + mod349.getPeriod().getDescription()
+				+ " DE " + mod349.getYear();
+		
+		return Mod349Formatter.formatDiffInvoicesMod349(title
+				,getSubtitle(detail)
+				,mod349.getPeriod()			
+				,getDeclaredModels(ctx, mod349, detail.getType(), detail.getCountry(), detail.getDocument()).collect(Collectors.toCollection(LinkedList::new))			 	
+				,getVatBreakdown(ctx, mod349, detail, true).collect(Collectors.toCollection(LinkedList::new)));
+		
 	}
 	
-	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffEnabled) {
+	private static String getSubtitle(final Mod349Detail detail ) {
+		return "Clave "+detail.getType().getValue()+
+				" - " + detail.getCountry().getIso2() + " " + detail.getDocument() +
+				" - " + detail.getName();
+	}
+	
+	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffEnabled) {
 		
 		// Facturas a localizar según la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
 		final InvoiceType invoiceType1;
@@ -717,91 +967,11 @@ public class Mod349DAO {
 	    	isService = false;
 	    }
 		
+		boolean isRectification = detail.isRectification();
+		
 		return getVatBreakdown(ctx, mod349, isDiffEnabled)  
-			   .filter( p -> (p.getInvoiceType() == invoiceType1 || p.getInvoiceType() == invoiceType2 || p.getInvoiceType() == invoiceType3) && p.isService() == isService && p.getRegistryDocumentCountry() == detail.getCountry() && AonStringUtils.equals(p.getRegistryDocument(),detail.getDocument()));
+			   .filter( p -> (!p.isInsidePeriod() || p.isRectification() == isRectification || (!isRectification && p.getRectificateYear() == 0)) && (p.getInvoiceType() == invoiceType1 || p.getInvoiceType() == invoiceType2 || p.getInvoiceType() == invoiceType3) && p.isService() == isService && p.getRegistryDocumentCountry() == detail.getCountry() && AonStringUtils.equals(p.getRegistryDocument(), detail.getDocument()));
 		
-	}
-	
-	// --------------- INVOICES INFO --------------- 
-	
-	public static String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
-		
-		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
-		
-		// Información Desglose de facturas
-		if (infoKey == FiscalModelKeyInfo.INVOICE) {
-			return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod349, detail));			
-		}
-		
-		// Información Desglose del calculo por diferencias
-		if (infoKey == FiscalModelKeyInfo.DIFF_INVOICE) {
-			return MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod349, detail));
-		}
-		
-		return null;
-	}
-	
-	private static String getSubtitle(final Mod349Detail detail ) {
-		return "Clave "+detail.getType().getValue()+
-				" - " + detail.getCountry().getIso2() + " " + detail.getDocument() +
-				" - " + detail.getName();
-	}
-	
-	private static String getInvoicesInfo(AONContext ctx, Mod349 mod349, Mod349Detail detail) {
-		
-		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod349) 
-				+ " DEL " + mod349.getPeriod().getDescription()
-				+ " DE " + mod349.getYear();
-		
-		return VATFormatter.formatInvoices(title
-				,getSubtitle(detail)
-				,getVatBreakdown(ctx, mod349, detail, false).collect(Collectors.toCollection(LinkedList::new)));
-		
-	}
-	
-	private static String getDiffInvoicesInfo(AONContext ctx, final Mod349 mod349, final Mod349Detail detail) {
-
-		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-				+ FiscalModelUtils.getModelName(mod349) 
-				+ " DEL " + mod349.getPeriod().getDescription()
-				+ " DE " + mod349.getYear();
-		
-		return Mod349Formatter.formatDiffInvoicesMod349(title
-				,getSubtitle(detail)
-				,mod349.getPeriod()			
-				,getDeclaredModels(ctx, mod349, detail.getType(), detail.getCountry(), detail.getDocument()).collect(Collectors.toCollection(LinkedList::new))			 	
-				,getVatBreakdown(ctx, mod349, detail, true).collect(Collectors.toCollection(LinkedList::new)));
-		
-	}
-	
-	public static Mod349 duplicate(AONContext ctx, Mod349 mod349) {
-		
-		int id = mod349.getId();
-		mod349.setId(null);
-		mod349.setDiffEnabled(false);
-		mod349.setStatus(FiscalStatus.PENDING);
-		mod349.setNumber(null);
-		mod349 = insert(ctx, mod349, false);
-		
-		if (!mod349.isComplementary()) {
-			Mod349 original = getById(ctx, id);
-			for (Mod349Detail detail : original.getDetails()) {
-				detail.setId(null);
-				detail.setMod349(mod349.getId());
-				detail.setDeclared(0.0);
-				detail.setAccumulated(0.0);				
-				mod349.getDetails().add(detail);
-			}
-		}
-		return save(ctx, mod349);		
-	
-	}
-	
-	public static Mod349 reset(AONContext ctx, Mod349 mod349) {
-		deleteDetails(ctx, mod349);		
-		insertDetailsFromInvoice(ctx, mod349);
-		return getById(ctx, mod349.getId()) ;
-	}
+	}	
 	
 }

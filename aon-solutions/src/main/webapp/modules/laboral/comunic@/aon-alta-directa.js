@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, addContract, getTipoJornada, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, addContract, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
@@ -127,7 +127,7 @@ export class AonAltaDirecta extends AonElement {
         await Promise.all([
             this.getWorkplace(),
             this.getContractType(),
-            this.getTipoJornada(),
+            this.getJourneyType(),
             this.getQuoteGroup(),
             this.getOccupation(),
             this.getRlce(),
@@ -376,10 +376,10 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) { }
     }
 
-    async getTipoJornada() {
+    async getJourneyType() {
         let tipo_jornada = this.getElement('tipo_jornada');
         try {
-            const resp =  getTipoJornada();
+            const resp = getJourneyType();
             const options = resp.map(r => ({ ...r, name: `${r.name}`, value: r.value }) );
             tipo_jornada.setOptions(options);
             tipo_jornada.value = options[0].value;

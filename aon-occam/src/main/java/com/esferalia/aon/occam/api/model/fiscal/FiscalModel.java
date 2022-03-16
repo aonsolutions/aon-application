@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -51,12 +52,23 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	private String contactCellular;
 	private String contactEmail;
 	private String iban;
+	private Integer accountEntry;
+	private Double declarationResult;
+	private FiscalModelDeclarationType declarationResultType;
+	
+	private boolean generateFromYearStart;
+	private boolean previousInvoicesAvailable;
+	private boolean previousSalariesAvailable;
+	private boolean generateFromYearStartAvailable;
+	private boolean complementaryDeclarationAvailable;
+	private boolean replacementDeclarationAvailable;
 
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
 	
+	private LinkedList<String> messages;
 	private LinkedHashMap<String,FiscalModelDetail> map;
 	
 	@Override
@@ -434,44 +446,6 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return getMap().get(key);
 	}
 	
-	public static void map(FiscalModel from,FiscalModel to) {
-		to.setId(from.getId());
-		to.setAdministration(from.getAdministration());
-		to.setModel(from.getModel());
-		to.setYear(from.getYear());
-		to.setPeriod(from.getPeriod());
-		to.setReplacement(from.isReplacement());
-		to.setDomain(from.getDomain());
-		to.setFinance(from.getFinance());
-		to.setStatus(from.getStatus());
-		to.setConfidential(from.isConfidential());
-		to.setComplementary(from.isComplementary());
-		to.setWithoutActivity(from.isWithoutActivity());
-		to.setNumber(from.getNumber());
-		to.setReplacedNumber(from.getReplacedNumber());
-		to.setComments(from.getComments());
-		to.setDocument(from.getDocument());
-		to.setSurname(from.getSurname());
-		to.setName(from.getName());
-		to.setStreetInitial(from.getStreetInitial());
-		to.setStreetName(from.getStreetName());
-		to.setStreetNumber(from.getStreetNumber());
-		to.setStreetStair(from.getStreetStair());
-		to.setStreetFloor(from.getStreetFloor());
-		to.setStreetDoor(from.getStreetDoor());
-		to.setPhone(from.getPhone());
-		to.setTown(from.getTown());
-		to.setProvince(from.getProvince());
-		to.setZip(from.getZip());
-		to.setAdmonAeat(from.getAdmonAeat());
-		to.setContactPerson(from.getContactPerson());
-		to.setContactPhone(from.getContactPhone());
-		to.setContactCellular(from.getContactCellular());
-		to.setContactEmail(from.getContactEmail());
-		to.setIban(from.getIban());;
-		to.setMap(from.getMap());
-	}
-
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
@@ -506,74 +480,159 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-	public FiscalModelDeclarationType getDeclarationType() {
-		return FiscalModelDeclarationType.safeValueOf( getDescription( getDeclarationTypeKey() ));
-	}
-	public void setDeclarationType(FiscalModelDeclarationType type) {
-		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
-	}
-	public void setDeclarationType(String type) {
-		setDeclarationType( FiscalModelDeclarationType.safeValueOf(type));
-	}
-
-	public IFiscalModelKey getDeclarationTypeKey() {
-		return null;
-	}
-	
-	public double getResult() {
-		// REDEFINE
-		return 0;
-	}
-	public boolean isReplacedNumberAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isReplacementDeclarationAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isComplementaryNumberAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isComplementaryDeclarationAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isToDeduceAvailable() {
-		// REDEFINE
-		return false;
-	}
-	public boolean isNegativeAvailable(){
-		// REDEFINE
-		return false;
-	}
-	
-	public void setDefaultDeclarationType(){
-		if (isAEAT()) {
-			if (AonMathUtils.isGreatherThanZero(getResult() )) {
-				setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
-			} else {
-				setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
-			}
-		}
-	}
-	
-	public boolean isDiffCalculationAvailable() {
-		// REDEFINE
-		return false;
-	}
-	
-	public boolean isDiffCalculationDisabled() {
-		// REDEFINE
-		return false;
-	}
-	
-	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
-		// REDEFINE
-	}
 	public boolean isStrictToDeposit() {
 		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT);
 	}
 	
+	public String getModelFullName() {
+		return AonStringUtils.defaultIfBlank(FiscalModelUtils.getModelName(this),
+				(getModel() != null?getModel().getName():"???") ) 
+			+ " "
+			+ getYear()
+			+ " "
+			+ (getPeriod() != null?getPeriod().getDescription() :"???")
+			+ (isComplementary()?" (C)":"")
+			+ (isReplacement()?" (S)":"")
+			;
+	}
+	
+	public Integer getAccountEntry() {
+		return accountEntry;
+	}
+	public FiscalModel setAccountEntry(Integer accountEntry) {
+		this.accountEntry = accountEntry;
+		return this;
+	}
+	public boolean isRecorded() {
+		return getAccountEntry() != null;
+	}
+	 
+	public Double getDeclarationResult() {
+		return declarationResult;
+	}
+	public FiscalModel setDeclarationResult(Double declarationResult) {
+		this.declarationResult = declarationResult;
+		return this;
+	}
+	
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return declarationResultType;
+	}
+	public FiscalModel setDeclarationResultType(FiscalModelDeclarationType declarationResultType) {
+		this.declarationResultType = declarationResultType;
+		return this;
+	}
+	
+	public void setDefaultDeclarationType(){
+		if (isAEAT()) {
+			if (AonMathUtils.isGreatherThanZero(getDeclarationResult() )) {
+				setDeclarationResultType(FiscalModelDeclarationType.DEPOSIT);
+			} else {
+				setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
+			}
+		}
+	}
+	
+	public boolean isGenerateFromYearStart() {
+		return generateFromYearStart;
+	}
+	public FiscalModel setGenerateFromYearStart(boolean generateFromYearStart) {
+		this.generateFromYearStart = generateFromYearStart;
+		return this;
+	}
+	public boolean isPreviousInvoicesAvailable() {
+		return previousInvoicesAvailable;
+	}
+	public FiscalModel setPreviousInvoicesAvailable(boolean previousInvoicesAvailable) {
+		this.previousInvoicesAvailable = previousInvoicesAvailable;
+		return this;
+	}
+	public boolean isPreviousSalariesAvailable() {
+		return previousSalariesAvailable;
+	}
+	public FiscalModel setPreviousSalariesAvailable(boolean previousSalariesAvailable) {
+		this.previousSalariesAvailable = previousSalariesAvailable;
+		return this;
+	}
+	public boolean isGenerateFromYearStartAvailable() {
+		return generateFromYearStartAvailable;
+	}
+	public FiscalModel setGenerateFromYearStartAvailable(boolean generateFromYearStartAvailable) {
+		this.generateFromYearStartAvailable = generateFromYearStartAvailable;
+		return this;
+	}
+	
+	public boolean isComplementaryDeclarationAvailable() {
+		return this.complementaryDeclarationAvailable;
+	}
+	public FiscalModel setComplementaryDeclarationAvailable(boolean complementaryDeclarationAvailable) {
+		this.complementaryDeclarationAvailable = complementaryDeclarationAvailable;
+		return this;
+	}
+	public boolean isReplacementDeclarationAvailable() {
+		return this.replacementDeclarationAvailable;
+	}
+	public FiscalModel setReplacementDeclarationAvailable(boolean replacementDeclarationAvailable) {
+		this.replacementDeclarationAvailable = replacementDeclarationAvailable;
+		return this;
+	}
+	public LinkedList<String> getMessages() {
+		if (messages == null) {
+			messages = new LinkedList<>();
+		}
+		return messages;
+	}
+	public FiscalModel addMessage( String message ) {
+		getMessages().add(message);
+		return this;
+	}
+	public FiscalModel setMessages(LinkedList<String> messages) {
+		this.messages = messages;
+		return this;
+	}
+
+	// DEPRECATED METHODS
+	@Deprecated
+	public double getResult() {
+		return 0;
+	}
+	@Deprecated
+	public FiscalModelDeclarationType getDeclarationType() {
+		return FiscalModelDeclarationType.safeValueOf( getDescription( getDeclarationTypeKey() ));
+	}
+	@Deprecated
+	public void setDeclarationType(FiscalModelDeclarationType type) {
+		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
+	}
+	@Deprecated
+	public void setDeclarationType(String type) {
+		setDeclarationType( FiscalModelDeclarationType.safeValueOf(type));
+	}
+	@Deprecated
+	public IFiscalModelKey getDeclarationTypeKey() {
+		return null;
+	}
+	
+	public boolean isReplacedNumberAvailable() {
+		return false;
+	}
+	public boolean isComplementaryNumberAvailable() {
+		return false;
+	}
+	public boolean isToDeduceAvailable() {
+		return false;
+	}
+	public boolean isNegativeAvailable(){
+		return false;
+	}
+	public boolean isDiffCalculationAvailable() {
+		return false;
+	}
+	public boolean isDiffCalculationDisabled() {
+		return false;
+	}
+	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
+		// REDEFINE
+	}
 }
+

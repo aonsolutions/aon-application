@@ -5,7 +5,7 @@ import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
@@ -61,20 +61,20 @@ export class AonMessenger extends AonElement {
 	build() {
 		this.applicationEl = this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
 
-		this.isTaskHolder().then(async(exist) => {
+		this.isTaskHolder().then((exist) => {
 			if(exist){
-
 				if(this.cauInfo && this.cauInfo.auth.email)
 					this._filter.email = this.cauInfo.auth.email;
 
 				localStorage.setItem("taskCau", this.cau ? 1 : 0);
 				
-				this.cauInfo = await getCauInfo();
-				
-				this.buildToolbar();
+				getCauInfo().then(cau=>{
+					this.cauInfo = cau;
 
-				this.init();
-				this.loadWorkgroup();
+					this.buildToolbar();
+					this.init();
+					this.loadWorkgroup();
+				})
 			}
 		});		
 	}
@@ -91,9 +91,10 @@ export class AonMessenger extends AonElement {
 	init(){
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
+		} else if(this.cau){
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this._filter);
 		} else if(this.value){
-			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task))
-			.catch(e=>this.showError(e));
+			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task)).catch(e=>this.showError(e));
 		} else {
 			if(this._filter.sender)
 				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);

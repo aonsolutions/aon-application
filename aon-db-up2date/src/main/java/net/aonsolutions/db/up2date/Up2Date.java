@@ -28,8 +28,6 @@ import net.aonsolutions.db.up2date.user.CertificateDomainFix;
 
 public class Up2Date {
 
-
-
     private static Update [] UPDATES  = {
     		//IRPF2018UPDATE,
     		//AGREEMENTUPDATE,
@@ -223,8 +221,6 @@ public class Up2Date {
 	// ------------------------------------------------------------------------
 
 
-
-
     @SuppressWarnings("static-access")
     public static void main(String[] args) {
 
@@ -298,7 +294,7 @@ public class Up2Date {
 
 			for ( String database : databases ) {
 
-				System.out.print(String.format("Updating database  `%s`" ,database  ));
+				System.out.println(String.format("Updating database  `%s`" ,database  ));
 
 				statement.executeQuery(String.format("USE `%s`", database));
 

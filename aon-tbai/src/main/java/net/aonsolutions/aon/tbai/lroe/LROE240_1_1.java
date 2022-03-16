@@ -10,14 +10,25 @@ import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.EstadoRegistroConsultaEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesFacturasEmitidasConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleEmitidaConSGCodificadoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.FacturasEmitidasConSGCodificadoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.CabeceraFacturaConsultaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FechaDesdeHastaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaFacturasEmitidasType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_altapeticion_v1_0_2.LROEPJ240FacturasEmitidasConSGAltaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultapeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGConsultaPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultarespuesta_v1_0_1.LROEPJ240FacturasEmitidasConSGConsultaRespuesta;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -105,5 +116,80 @@ public class LROE240_1_1 extends LROE240 {
 		} catch (Exception e) {
 			return error(e);
 		}
+	}
+	
+	public void consulta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
+		try {
+			LROEInfo info = buildInfo(OperacionEnum.C_00);
+			LROEPJ240FacturasEmitidasConSGConsultaPeticion lroe = buildConsulta(company, invoice, info);
+			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasConSGConsultaPeticion.class );
+			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
+
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			jaxbMarshaller.marshal( lroe, bos );
+			byte[] xml = bos.toByteArray();
+			byte[] data = toGzip(xml);
+			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(company, info), data);
+		
+			LROEPJ240FacturasEmitidasConSGConsultaRespuesta resp = (LROEPJ240FacturasEmitidasConSGConsultaRespuesta) 
+					unmarshal(LROEPJ240FacturasEmitidasConSGConsultaRespuesta.class, response.getResponseDataStr());
+			System.out.println(resp.getResultadoConsulta().getExistenRegistros());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private LROEPJ240FacturasEmitidasConSGConsultaPeticion buildConsulta(Company company, Invoice invoice, LROEInfo info) {
+		LROEPJ240FacturasEmitidasConSGConsultaPeticion lroe = new LROEPJ240FacturasEmitidasConSGConsultaPeticion();
+		lroe.setCabecera(buildCabecera(company, info));
+		
+		FiltroConsultaFacturasEmitidasType filtro = new FiltroConsultaFacturasEmitidasType(); 
+		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
+		filtro.setDestinatario(buildDestinatario(invoice));
+		filtro.setEstado(EstadoRegistroConsultaEnum.CORRECTO);
+		filtro.setNumPaginaConsulta(1);
+		lroe.setFiltroConsultaFacturasEmitidasConSG(filtro);
+		return lroe;
+	}
+	
+	private CabeceraFacturaConsultaType buildCabeceraFactura(Invoice invoice) {
+		CabeceraFacturaConsultaType cabecera = new CabeceraFacturaConsultaType();
+		FechaDesdeHastaType fecha = new FechaDesdeHastaType();
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+		cabecera.setFechaExpedicionFactura(fecha);
+		
+		FechaDesdeHastaType fechaRec = new FechaDesdeHastaType();
+		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		fechaRec.setDesde(AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+	
+		cabecera.setNumFactura(invoice.getReferenceCode());
+		return cabecera;
+	}
+	
+	private DocumentoType buildDestinatario(Invoice invoice) {
+		DocumentoType destinatario = new DocumentoType();
+		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
+			destinatario.setNIF(invoice.getRegistryDocument());
+		} else if(invoice.isIntracommunity()){
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			String document = invoice.getRegistryDocument();
+			if(!document.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
+				document = invoice.getRegistryDocumentCountry().getIso2() + document;
+			}
+			otro.setID(document);
+			otro.setIDType(IDType.NIF_IVA.getName());
+			destinatario.setIDOtro(otro);
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryEnum.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
+			otro.setID(invoice.getRegistryDocument());
+			otro.setIDType(IDType.valueOf(invoice.getRegistryDocumentType()).getName());
+			destinatario.setIDOtro(otro);
+		}
+		return destinatario;
 	}
 }

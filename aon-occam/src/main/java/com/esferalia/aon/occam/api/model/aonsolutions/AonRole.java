@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public enum AonRole  implements Serializable {
+	
 	ADMIN, 
 	ACCOUNTING, 		// ACCESO A CONTABILIDAD -  MODO PORTAL/EMPRESA 
 	ACCOUNTING_MANAGER,	// ACCESO A CONTABILIDAD -  MODO ASESOR
@@ -45,7 +48,8 @@ public enum AonRole  implements Serializable {
 	DEV,					// USUARIO TIPO DESARROLLADOR.
 	SELFCONTA,
 	MESSENGER_PORTAL,	// ACCESO A MENSAJERIA -  MODO MODO PORTAL/EMPRESA
-	NOTES
+	NOTES,
+	SALTRA
 	;
 	
 	public Byte value(){
@@ -71,7 +75,7 @@ public enum AonRole  implements Serializable {
 		return null;
 	}
 	
-	public static LinkedList<AonRole> getEmployeeRoles() {
+	public static List<AonRole> getEmployeeRoles() {
 		LinkedList<AonRole> list = new LinkedList<>();
 		list.add(EMPLOYEE);
 		list.add(TIMECONTROL);
@@ -81,7 +85,7 @@ public enum AonRole  implements Serializable {
 		return list;
 	}
 	
-	public static LinkedList<AonRole> getEnterpriseRoles() {
+	public static List<AonRole> getEnterpriseRoles() {
 		LinkedList<AonRole> list = new LinkedList<>();
 		list.add(ENTERPRISE);
 		list.add(TIMECONTROL);
@@ -102,11 +106,9 @@ public enum AonRole  implements Serializable {
 		return list;
 	}
 	
-	public static LinkedList<AonRole> list() {
-		LinkedList<AonRole> list = new LinkedList<AonRole>();
-		for (AonRole rs : values()) {
-			list.add(rs);
-		}
+	public static List<AonRole> list() {
+		LinkedList<AonRole> list = new LinkedList<>();
+		Collections.addAll(list, values());
 		return list;
 	}
 	

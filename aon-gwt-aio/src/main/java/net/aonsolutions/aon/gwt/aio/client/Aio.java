@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
-import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositEntryPoint;
+import net.aonsolutions.aon.gwt.ccaa.client.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
@@ -25,7 +25,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import net.aonsolutions.aon.gwt.aio.shared.Modules;
 import net.aonsolutions.aon.gwt.commercial.client.Commercial;
 import net.aonsolutions.aon.gwt.communication.client.Communication;
-import net.aonsolutions.aon.gwt.document.client.Documental;
 import net.aonsolutions.aon.gwt.seres.client.Seres;
 import net.aonsolutions.aon.gwt.sii.client.Sii;
 import net.aonsolutions.aon.gwt.udapa.client.Udapa;
@@ -36,7 +35,7 @@ public class Aio implements EntryPoint {
 	final IAioAsync impl = GWT.create(IAio.class);
 
 	private Issues issues;
-	private Documental documental;
+//	private Documental documental;
 	
 
 	public static native Boolean isAonSolutions()
@@ -128,21 +127,21 @@ public class Aio implements EntryPoint {
 				}
 			});
 			break;
-		case Modules.DOCUMENT:
-			GWT.runAsync(Documental.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					documental = new Documental(aonData);
-					documental.onModuleLoad();
-				}
-			});		
-			break;
+//		case Modules.DOCUMENT:
+//			GWT.runAsync(Documental.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert("Error al cargar");
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					documental = new Documental(aonData);
+//					documental.onModuleLoad();
+//				}
+//			});		
+//			break;
 		case Modules.STAT:
 			GWT.runAsync(MainEntryPoint.class, new RunAsyncCallback() {
 

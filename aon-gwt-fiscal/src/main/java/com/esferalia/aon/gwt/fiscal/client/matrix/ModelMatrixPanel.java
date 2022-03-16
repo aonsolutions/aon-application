@@ -344,22 +344,27 @@ public class ModelMatrixPanel extends FlowPanel {
 		AonDisplayTable statusLegendTab = new AonDisplayTable();
 		statusLegendTab.getElement().getStyle().setProperty("border-collapse", "separate");
 		statusLegendTab.getElement().getStyle().setProperty("border-spacing", "2px");
-		statusLegendTab.setStyleName(AON.CSS.aonMarginTop());
-		statusLegendTab.setStyleName(AON.CSS.aonMarginBottom());
-		FiscalStatus[] statuses = new FiscalStatus[] {FiscalStatus.MISSING,FiscalStatus.PENDING,FiscalStatus.CUSTOMER_CHECK,FiscalStatus.FINISHED,FiscalStatus.SENT};
+		statusLegendTab.addStyleName(AON.CSS.aonMarginTop());
+		statusLegendTab.addStyleName(AON.CSS.aonMarginBottom());
+		statusLegendTab.addStyleName(AON.CSS.aonWidth300());
+		statusLegendTab.addStyleName(AON.CSS.aonBlockCenter());
+		statusLegendTab.addStyleName(AON.CSS.aonTextCenter());
+		FiscalStatus[] statuses = new FiscalStatus[] {FiscalStatus.MISSING
+				,FiscalStatus.PENDING
+				,FiscalStatus.CUSTOMER_CHECK
+				,FiscalStatus.CUSTOMER_ACCEPTED
+				,FiscalStatus.CUSTOMER_REJECTED
+				,FiscalStatus.FINISHED
+				,FiscalStatus.SENT};
 		for (FiscalStatus st : statuses) {
 			InlineLabel statusLabel = new InlineLabel(st == FiscalStatus.MISSING? "No realizado" : st.getName());
-			statusLabel.setStyleName(AON.CSS.aonMarginLeft());
+			statusLabel.setStyleName(AON.CSS.aonMargin());
 			statusLabel.getElement().getStyle().setPadding(3, Unit.PX);
-			AonDisplayTableRow legendRow = statusLegendTab.addRow();
-			AonDisplayTableCell cell0 = legendRow.addCell();
-			cell0.setWidth("200px");
-			cell0.add(statusLabel);
-			AonDisplayTableCell cell = legendRow.addCell();
+			AonDisplayTableCell cell = statusLegendTab.addRow().addCell();
 			cell.addStyleName(AON.CSS.aonBorder());
-			cell.setWidth("20px");
+			cell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( st ));
 			cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( st ));
-			cell.add(new InlineLabel());
+			cell.add(statusLabel);
 		}
 		tabContainer.add( statusLegendTab );
 		FlowPanel buttons = new FlowPanel();

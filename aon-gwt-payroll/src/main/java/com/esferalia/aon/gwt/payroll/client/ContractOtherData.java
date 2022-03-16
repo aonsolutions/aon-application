@@ -39,10 +39,16 @@ public class ContractOtherData extends ResizeComposite {
 	// -------------------------------------------------- Indefinite Table
 	
 	@UiField
+	VerticalPanel indefiniteRepresentativeTable;
+	
+	@UiField
 	VerticalPanel indefiniteTable;
 
 	@UiField
-	TextBox enterpriseAgentTB;
+	TextBox enterpriseAgentNameTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnameTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFTB;
@@ -191,10 +197,16 @@ public class ContractOtherData extends ResizeComposite {
 	// -------------------------------------------------- Temporal Table
 	
 	@UiField
+	VerticalPanel temporalRepresentativeTable;
+	
+	@UiField
 	VerticalPanel temporalTable;
 	
 	@UiField
-	TextBox enterpriseAgentTempTB;
+	TextBox enterpriseAgentNameTempTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnameTempTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFTempTB;
@@ -337,10 +349,16 @@ public class ContractOtherData extends ResizeComposite {
 	// -------------------------------------------------- Formation Table
 	
 	@UiField
+	VerticalPanel formationRepresentativeTable;
+	
+	@UiField
 	VerticalPanel formationTable;
 	
 	@UiField
-	TextBox enterpriseAgentFormTB;
+	TextBox enterpriseAgentNameFormTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnameFormTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFFormTB;
@@ -399,10 +417,16 @@ public class ContractOtherData extends ResizeComposite {
 	// -------------------------------------------------- Practice Table
 	
 	@UiField
+	VerticalPanel practiceRepresentativeTable;
+	
+	@UiField
 	VerticalPanel practiceTable;
 	
 	@UiField
-	TextBox enterpriseAgentPracTB;
+	TextBox enterpriseAgentNamePracTB;
+	
+	@UiField
+	TextBox enterpriseAgentSurnamePracTB;
 	
 	@UiField
 	TextBox enterpriseAgentNIFPracTB;
@@ -504,12 +528,24 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Indefinite Table
 	
-	@UiHandler("enterpriseAgentTB")
-	void onEnterpriseAgentTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentTB.getValue();
-		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNameTB")
+	void onEnterpriseAgentNameTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME", getFullName());
 	}
 	
+	@UiHandler("enterpriseAgentSurnameTB")
+	void onEnterpriseAgentSurnameTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME", getFullName());
+	}
+	
+	private String getFullName() {
+		String name = enterpriseAgentNameTB.getValue();
+		String surname = enterpriseAgentSurnameTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
+	}
+
 	@UiHandler("enterpriseAgentNIFTB")
 	void onEnterpriseAgentNIFTBChange(ValueChangeEvent<String> event) {
 		String value = enterpriseAgentNIFTB.getValue();
@@ -551,7 +587,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(distanceB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(distanceB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_EMPLOYEE_CONTRACT_DISTANCE", "true");
 		else
 			setContractOtherData("I_EMPLOYEE_CONTRACT_DISTANCE", "");
@@ -610,7 +646,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(partialTimeB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(partialTimeB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_YES");
 		else
 			setContractOtherData("I_DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_NO");
@@ -651,7 +687,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(complementaryHoursB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(complementaryHoursB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_YES");
 		else
 			setContractOtherData("I_COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_NO");
@@ -722,7 +758,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(fourthLawB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(fourthLawB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012", "OPT5_BONUS_ART4_RDL3_2012_YES");
 		else
 			setContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012", "OPT5_BONUS_ART4_RDL3_2012_NO");
@@ -745,7 +781,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(benefitsPerceptorB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(benefitsPerceptorB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "true");
 		else
 			setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "");
@@ -756,7 +792,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(firstEmployeeB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(firstEmployeeB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_OPT5_FIRST_EMPLOYEE_AND_LT_30", "true");
 		else
 			setContractOtherData("I_OPT5_FIRST_EMPLOYEE_AND_LT_30", "");
@@ -785,7 +821,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(contactHoursB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(contactHoursB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_OPT15_ONSITE_HOURS", "OPT15_ONSITE_HOURS_YES");
 		else
 			setContractOtherData("I_OPT15_ONSITE_HOURS", "OPT15_ONSITE_HOURS_NO");
@@ -808,7 +844,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(overnightAgreementB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(overnightAgreementB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_OPT15_OVERNIGHT", "OPT15_OVERNIGHT_YES");
 		else
 			setContractOtherData("I_OPT15_OVERNIGHT", "OPT15_OVERNIGHT_NO");
@@ -825,7 +861,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(quoteReductionTCB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(quoteReductionTCB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS", "OPT17_FULL_TIME_QUOTE_BONUS_YES");
 		else
 			setContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS", "OPT17_FULL_TIME_QUOTE_BONUS_NO");
@@ -836,7 +872,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(quoteReductionFDB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(quoteReductionFDB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS", "OPT17_DISCONT_TIME_QUOTE_BONUS_YES");
 		else
 			setContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS", "OPT17_DISCONT_TIME_QUOTE_BONUS_NO");
@@ -850,10 +886,22 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Temporal Table
 	
-	@UiHandler("enterpriseAgentTempTB")
-	void onEnterpriseAgentTempTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentTempTB.getValue();
-		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNameTempTB")
+	void onEnterpriseAgentNameTempTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", getFullNameTmp());
+	}
+	
+	@UiHandler("enterpriseAgentSurnameTempTB")
+	void onEnterpriseAgentSurnameTempTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", getFullNameTmp());
+	}
+	
+	private String getFullNameTmp() {
+		String name = enterpriseAgentNameTempTB.getValue();
+		String surname = enterpriseAgentSurnameTempTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
 	}
 	
 	@UiHandler("enterpriseAgentNIFTempTB")
@@ -897,7 +945,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(distanceTempB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(distanceTempB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("T_EMPLOYEE_CONTRACT_DISTANCE", "true");
 		else
 			setContractOtherData("T_EMPLOYEE_CONTRACT_DISTANCE", "");
@@ -956,7 +1004,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(permitedHighDurationTempB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(permitedHighDurationTempB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("T_GREATER_DURATION_AGREEMENT_COL", "true");
 		else
 			setContractOtherData("T_GREATER_DURATION_AGREEMENT_COL", "");
@@ -1057,7 +1105,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(hoursDealTempB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(hoursDealTempB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("T_OPT12_ONSITE_HOURS", "OPT12_ONSITE_HOURS_YES");
 		else
 			setContractOtherData("T_OPT12_ONSITE_HOURS", "OPT12_ONSITE_HOURS_NO");
@@ -1086,7 +1134,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(dealOvernightB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(dealOvernightB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("T_OPT12_OVERNIGHT", "OPT12_OVERNIGHT_YES");
 		else
 			setContractOtherData("T_OPT12_OVERNIGHT", "OPT12_OVERNIGHT_NO");
@@ -1154,10 +1202,22 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Formation Table
 	
-	@UiHandler("enterpriseAgentFormTB")
-	void onEnterpriseAgentFormTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentFormTB.getValue();
-		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNameFormTB")
+	void onEnterpriseAgentNameFormTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", getFullNameForm());
+	}
+	
+	@UiHandler("enterpriseAgentSurnameFormTB")
+	void onEnterpriseAgentSurnameFormTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", getFullNameForm());
+	}
+	
+	private String getFullNameForm() {
+		String name = enterpriseAgentNameFormTB.getValue();
+		String surname = enterpriseAgentSurnameFormTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
 	}
 	
 	@UiHandler("enterpriseAgentNIFFormTB")
@@ -1195,7 +1255,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(ssReductionFormB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(ssReductionFormB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("L_QUOTE_BONUS", "QUOTE_BONUS_YES");
 		else
 			setContractOtherData("L_QUOTE_BONUS", "QUOTE_BONUS_NO");
@@ -1242,7 +1302,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(agreementTrialFormB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(agreementTrialFormB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("L_TRIAL_DURATION_INCREASE", "true");
 		else
 			setContractOtherData("L_TRIAL_DURATION_INCREASE", "");
@@ -1271,7 +1331,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(degreeExistFormB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(degreeExistFormB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("L_ANNEX_I_CHECK", "true");
 		else
 			setContractOtherData("L_ANNEX_I_CHECK", "");
@@ -1282,7 +1342,7 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean oldValue = isActiveToggleButton(degreeExist2FormB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(degreeExist2FormB, value);
-		if(value)
+		if(Boolean.TRUE.equals(value))
 			setContractOtherData("L_ANNEX_II_CHECK", "true");
 		else
 			setContractOtherData("L_ANNEX_II_CHECK", "");
@@ -1290,10 +1350,22 @@ public class ContractOtherData extends ResizeComposite {
 	
 	// ------------------------------------------------------- Practice Table
 	
-	@UiHandler("enterpriseAgentPracTB")
-	void onEnterpriseAgentPracTBChange(ValueChangeEvent<String> event) {
-		String value = enterpriseAgentPracTB.getValue();
-		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", value);
+	@UiHandler("enterpriseAgentNamePracTB")
+	void onEnterpriseAgentNamePracTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", getFullNamePrac());
+	}
+	
+	@UiHandler("enterpriseAgentSurnamePracTB")
+	void onEnterpriseAgentSurnamePracTBChange(ValueChangeEvent<String> event) {
+		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", getFullNamePrac());
+	}
+	
+	private String getFullNamePrac() {
+		String name = enterpriseAgentNamePracTB.getValue();
+		String surname = enterpriseAgentSurnamePracTB.getValue();
+		
+		String fullName = AonStringUtils.isBlank(surname) ? null : surname;
+		return AonStringUtils.isNotBlank(fullName) ? fullName + ", " + name : name;
 	}
 	
 	@UiHandler("enterpriseAgentNIFPracTB")
@@ -1483,7 +1555,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Indefinite Table
 		
-		this.enterpriseAgentTB.setValue("");
+		this.enterpriseAgentNameTB.setValue("");
+		this.enterpriseAgentSurnameTB.setValue("");
 		this.enterpriseAgentNIFTB.setValue("");
 		this.enterpriseAgentPositionTB.setValue("");
 		this.minorAgentTB.setValue("");
@@ -1535,7 +1608,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Temporal Table
 		
-		this.enterpriseAgentTempTB.setValue("");
+		this.enterpriseAgentNameTempTB.setValue("");
+		this.enterpriseAgentSurnameTempTB.setValue("");
 		this.enterpriseAgentNIFTempTB.setValue("");
 		this.enterpriseAgentPositionTempTB.setValue("");
 		this.minorAgentTempTB.setValue("");
@@ -1585,7 +1659,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Formation Table
 		
-		this.enterpriseAgentFormTB.setValue("");
+		this.enterpriseAgentNameFormTB.setValue("");
+		this.enterpriseAgentSurnameFormTB.setValue("");
 		this.enterpriseAgentNIFFormTB.setValue("");
 		this.enterpriseAgentPositionFormTB.setValue("");
 		this.minorAgentFormTB.setValue("");
@@ -1607,7 +1682,8 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Practice Table
 		
-		this.enterpriseAgentPracTB.setValue("");
+		this.enterpriseAgentNamePracTB.setValue("");
+		this.enterpriseAgentSurnamePracTB.setValue("");
 		this.enterpriseAgentNIFPracTB.setValue("");
 		this.enterpriseAgentPositionPracTB.setValue("");
 		this.minorAgentPracTB.setValue("");
@@ -1644,28 +1720,28 @@ public class ContractOtherData extends ResizeComposite {
 		// ------------------------------------------------------- Indefinite Table
 		
 		this.withoutDisabilitySevereLB.addItem("-", "");
-		this.withoutDisabilitySevereLB.addItem("Hombres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_NO_SEVERE_MAN_LT_45");
-		this.withoutDisabilitySevereLB.addItem("Hombres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_NO_SEVERE_MAN_GT_45");
-		this.withoutDisabilitySevereLB.addItem("Mujeres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_NO_SEVERE_WOMAN_LT_45");
-		this.withoutDisabilitySevereLB.addItem("Mujeres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_NO_SEVERE_WOMAN_GT_45");
+		this.withoutDisabilitySevereLB.addItem("Hombres menores de 45 a\u00F1os", "OPT2_DISABILITY_NO_SEVERE_MAN_LT_45");
+		this.withoutDisabilitySevereLB.addItem("Hombres mayores de 45 a\u00F1os", "OPT2_DISABILITY_NO_SEVERE_MAN_GT_45");
+		this.withoutDisabilitySevereLB.addItem("Mujeres menores de 45 a\u00F1os", "OPT2_DISABILITY_NO_SEVERE_WOMAN_LT_45");
+		this.withoutDisabilitySevereLB.addItem("Mujeres mayores de 45 a\u00F1os", "OPT2_DISABILITY_NO_SEVERE_WOMAN_GT_45");
 		
 		this.disabilitySevereLB.addItem("-", "");
-		this.disabilitySevereLB.addItem("Hombres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_SEVERE_MAN_LT_45");
-		this.disabilitySevereLB.addItem("Hombres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_SEVERE_MAN_GT_45");
-		this.disabilitySevereLB.addItem("Mujeres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_SEVERE_WOMAN_LT_45");
-		this.disabilitySevereLB.addItem("Mujeres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_SEVERE_WOMAN_GT_45");
+		this.disabilitySevereLB.addItem("Hombres menores de 45 a\u00F1os", "OPT2_DISABILITY_SEVERE_MAN_LT_45");
+		this.disabilitySevereLB.addItem("Hombres mayores de 45 a\u00F1os", "OPT2_DISABILITY_SEVERE_MAN_GT_45");
+		this.disabilitySevereLB.addItem("Mujeres menores de 45 a\u00F1os", "OPT2_DISABILITY_SEVERE_WOMAN_LT_45");
+		this.disabilitySevereLB.addItem("Mujeres mayores de 45 a\u00F1os", "OPT2_DISABILITY_SEVERE_WOMAN_GT_45");
 		
 		this.unemploymentLB.addItem("-", "");
-		this.unemploymentLB.addItem("J" + String.valueOf("\u00F3") + "venes", "OPT5_UNEMPLOYED_BT_16_30_JUNIOR");
+		this.unemploymentLB.addItem("J\u00F3venes", "OPT5_UNEMPLOYED_BT_16_30_JUNIOR");
 		this.unemploymentLB.addItem("Mujeres en ocupaciones menos representadas", "OPT5_UNEMPLOYED_BT_16_30_FEMALE");
 		
 		this.unemploymentOldLB.addItem("-", "");
-		this.unemploymentOldLB.addItem("Mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT5_UNEMPLOYED_GT_45_MALE");
+		this.unemploymentOldLB.addItem("Mayores de 45 a\u00F1os", "OPT5_UNEMPLOYED_GT_45_MALE");
 		this.unemploymentOldLB.addItem("Mujeres en ocupaciones menos representadas", "OPT5_UNEMPLOYED_GT_45_FEMALE");
 		
 		this.employeeLB.addItem("-", "");
-		this.employeeLB.addItem("Menor de 30 a" + String.valueOf("\u00F1") + "os", "OPT6_LT_30_EMPLOYEE");
-		this.employeeLB.addItem("Menor de 35 a" + String.valueOf("\u00F1") + "os con discapacidad mayor o igual al 33%", "OPT6_LT_35_EMPLOYEE_AND_HANDICAP_GTE_33");
+		this.employeeLB.addItem("Menor de 30 a\u00F1os", "OPT6_LT_30_EMPLOYEE");
+		this.employeeLB.addItem("Menor de 35 a\u00F1os con discapacidad mayor o igual al 33%", "OPT6_LT_35_EMPLOYEE_AND_HANDICAP_GTE_33");
 		
 		this.remunerationFormLB.addItem("-", "");
 		this.remunerationFormLB.addItem("Comp. con periodo equiv. de descanso", "OPT15_SALARY_OPT1");
@@ -1676,92 +1752,108 @@ public class ContractOtherData extends ResizeComposite {
 		
 		this.requirementsTempLB.addItem("-", "");
 		this.requirementsTempLB.addItem("No tener experiencia o que esta sea inferior a 3 meses", "OPT10_REQUIREMENTS_OPT1");
-		this.requirementsTempLB.addItem("Proceder de otro sector de actividad en los t" + String.valueOf("\u00E9") + "rminos que se determine reglamentariamente", "OPT10_REQUIREMENTS_OPT2");
-		this.requirementsTempLB.addItem("Ser desempleado inscrito ininterrumpidamente en la oficina de empleo al menos doce meses durante los los dieciocho meses anteriores a la contrataci" + String.valueOf("\u00F3") + "n", "OPT10_REQUIREMENTS_OPT3");
-		this.requirementsTempLB.addItem("Carecer de t" + String.valueOf("\u00ED") + "tulo oficial de ense" + String.valueOf("\u00F1") + "anza obligatoria, de t" + String.valueOf("\u00ED") + "tulo de formaci" + String.valueOf("\u00F3") + "n profesional o certificado de profesionalidad", "OPT10_REQUIREMENTS_OPT4");
+		this.requirementsTempLB.addItem("Proceder de otro sector de actividad en los t\u00E9rminos que se determine reglamentariamente", "OPT10_REQUIREMENTS_OPT2");
+		this.requirementsTempLB.addItem("Ser desempleado inscrito ininterrumpidamente en la oficina de empleo al menos doce meses durante los los dieciocho meses anteriores a la contrataci\u00F3n", "OPT10_REQUIREMENTS_OPT3");
+		this.requirementsTempLB.addItem("Carecer de t\u00EDtulo oficial de ense\u00F1anza obligatoria, de t\u00EDtulo de formaci\u00F3n profesional o certificado de profesionalidad", "OPT10_REQUIREMENTS_OPT4");
 		
 		this.formationTempLB.addItem("-", "");
-		this.formationTempLB.addItem("Compatibilizar" + String.valueOf("\u00E1") + " el empleo con la formaci" + String.valueOf("\u00F3") + "n", "OPT10_FORMATION_OPT1");
-		this.formationTempLB.addItem("Ha cursado la formaci" + String.valueOf("\u00F3") + "n en los 6 meses previos a la celebraci" + String.valueOf("\u00F3") + "n del contrato", "OPT10_FORMATION_OPT2");
+		this.formationTempLB.addItem("Compatibilizar\u00E1 el empleo con la formaci\u00F3n", "OPT10_FORMATION_OPT1");
+		this.formationTempLB.addItem("Ha cursado la formaci\u00F3n en los 6 meses previos a la celebraci\u00F3n del contrato", "OPT10_FORMATION_OPT2");
 		
 		this.formationWillTempLB.addItem("-", "");
-		this.formationWillTempLB.addItem("Formaci" + String.valueOf("\u00F3") + "n acreditable oficialmente o promovida por los Servicios P" + String.valueOf("\u00FA") + "blicos de Empleo", "OPT10_FORMATION_TYPE_OPT1");
-		this.formationWillTempLB.addItem("Fromaci" + String.valueOf("\u00F3") + "n en idiomas o tecnolog" + String.valueOf("\u00ED") + "as de la informaci" + String.valueOf("\u00F3") + "n y la comunicaci" + String.valueOf("\u00F3") + "n de una duraci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00ED") + "nima de 90 horas", "OPT10_FORMATION_TYPE_OPT2");
+		this.formationWillTempLB.addItem("Formaci\u00F3n acreditable oficialmente o promovida por los Servicios P\u00FAblicos de Empleo", "OPT10_FORMATION_TYPE_OPT1");
+		this.formationWillTempLB.addItem("Fromaci\u00F3n en idiomas o tecnolog\u00EDas de la informaci\u00F3n y la comunicaci\u00F3n de una duraci\u00F3n m\u00EDnima de 90 horas", "OPT10_FORMATION_TYPE_OPT2");
 		
 		this.timeCompensationTempLB.addItem("-", "");
-		this.timeCompensationTempLB.addItem("Per" + String.valueOf("\u00ED") + "odos de descanso", "OPT12_SALARY_OPT1");
-		this.timeCompensationTempLB.addItem("Retribuci" + String.valueOf("\u00F3") + "n con salario", "OPT12_SALARY_OPT2");
+		this.timeCompensationTempLB.addItem("Per\u00EDodos de descanso", "OPT12_SALARY_OPT1");
+		this.timeCompensationTempLB.addItem("Retribuci\u00F3n con salario", "OPT12_SALARY_OPT2");
 		this.timeCompensationTempLB.addItem("Cualquiera de la anteriores", "OPT12_SALARY_OPT3");
 		
 		this.withoutSevereDisTempLB.addItem("-", "");
-		this.withoutSevereDisTempLB.addItem("Hombres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_DISABILITY_MAN_LT_45");
-		this.withoutSevereDisTempLB.addItem("Hombres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_DISABILITY_MAN_GT_45");
-		this.withoutSevereDisTempLB.addItem("Mujeres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_DISABILITY_WOMAN_LT_45");
-		this.withoutSevereDisTempLB.addItem("Mujeres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_DISABILITY_WOMAN_GT_45");
+		this.withoutSevereDisTempLB.addItem("Hombres menores de 45 a\u00F1os", "OPT13_DISABILITY_MAN_LT_45");
+		this.withoutSevereDisTempLB.addItem("Hombres mayores de 45 a\u00F1os", "OPT13_DISABILITY_MAN_GT_45");
+		this.withoutSevereDisTempLB.addItem("Mujeres menores de 45 a\u00F1os", "OPT13_DISABILITY_WOMAN_LT_45");
+		this.withoutSevereDisTempLB.addItem("Mujeres mayores de 45 a\u00F1os", "OPT13_DISABILITY_WOMAN_GT_45");
 		
 		this.severeDisTempLB.addItem("-", "");
-		this.severeDisTempLB.addItem("Hombres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_SEVERE_DISABILITY_MAN_LT_45");
-		this.severeDisTempLB.addItem("Hombres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_SEVERE_DISABILITY_MAN_GT_45");
-		this.severeDisTempLB.addItem("Mujeres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_SEVERE_DISABILITY_WOMAN_LT_45");
-		this.severeDisTempLB.addItem("Mujeres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_SEVERE_DISABILITY_WOMAN_GT_45");
+		this.severeDisTempLB.addItem("Hombres menores de 45 a\u00F1os", "OPT13_SEVERE_DISABILITY_MAN_LT_45");
+		this.severeDisTempLB.addItem("Hombres mayores de 45 a\u00F1os", "OPT13_SEVERE_DISABILITY_MAN_GT_45");
+		this.severeDisTempLB.addItem("Mujeres menores de 45 a\u00F1os", "OPT13_SEVERE_DISABILITY_WOMAN_LT_45");
+		this.severeDisTempLB.addItem("Mujeres mayores de 45 a\u00F1os", "OPT13_SEVERE_DISABILITY_WOMAN_GT_45");
 		
 		// ------------------------------------------------------- Formation Table
 		
 		this.employeeFormLB.addItem("-", "");
-		this.employeeFormLB.addItem("Mayor de 16 y menor de 30 a" + String.valueOf("\u00F1") + "os", "EMPLOYEE_OPT1");
-		this.employeeFormLB.addItem("Trabajador/a con discapacidad (sin l" + String.valueOf("\u00ED") + "mite de edad)", "EMPLOYEE_OPT2");
+		this.employeeFormLB.addItem("Mayor de 16 y menor de 30 a\u00F1os", "EMPLOYEE_OPT1");
+		this.employeeFormLB.addItem("Trabajador/a con discapacidad (sin l\u00EDmite de edad)", "EMPLOYEE_OPT2");
 		this.employeeFormLB.addItem("Participantes en proyecto al amparo de lo previsto en el art. 25 1 d (ley 56/2003)", "EMPLOYEE_OPT3");
-		this.employeeFormLB.addItem("Trabajador/a en situaci" + String.valueOf("\u00F3") + "n de exclusi" + String.valueOf("\u00F3") + "n social (sin l" + String.valueOf("\u00ED") + "mite de edad)", "EMPLOYEE_OPT4");
+		this.employeeFormLB.addItem("Trabajador/a en situaci\u00F3n de exclusi\u00F3n social (sin l\u00EDmite de edad)", "EMPLOYEE_OPT4");
 	
 		// ------------------------------------------------------- Practice Table
 		
 		this.firstContractPracLB.addItem("-", "");
-		this.firstContractPracLB.addItem("Menor de 30 a" + String.valueOf("\u00F1") + "os", "FIRST_CONTRACT_LT_30");
+		this.firstContractPracLB.addItem("Menor de 30 a\u00F1os", "FIRST_CONTRACT_LT_30");
 		this.firstContractPracLB.addItem("Menor de 35 y con grado de disc. igual o mayor a 33%", "FIRST_CONTRACT_LT_35");
-		this.firstContractPracLB.addItem("Menor de 30 y realiza pr" + String.valueOf("\u00E1") + "cticas no laborables", "FIRST_CONTRACT_LT_30_RD1543_2011");
+		this.firstContractPracLB.addItem("Menor de 30 y realiza pr\u00E1cticas no laborables", "FIRST_CONTRACT_LT_30_RD1543_2011");
 		
 		this.unemploymentSubsidyPracLB.addItem("-", "");
 		this.unemploymentSubsidyPracLB.addItem("Recogidos en el art. 215", "OPT3_UNEMPLOYMENT_ART_215");
 		this.unemploymentSubsidyPracLB.addItem("Eventuales incl. en el R.E.A.", "OPT3_UNEMPLOYMENT_AGRARIAN_REGIME");
 		
 		this.motivationPracLB.addItem("-", "");
-		this.motivationPracLB.addItem("Inter" + String.valueOf("\u00E9") + "s social", "OPT5_MOTIVATION_SOCIAL_INTEREST");
+		this.motivationPracLB.addItem("Inter\u00E9s social", "OPT5_MOTIVATION_SOCIAL_INTEREST");
 		this.motivationPracLB.addItem("Fomento empleo agrario", "OPT5_MOTIVATION_AGRARIAN_PROMOTION");
 		
 		this.employerPracLB.addItem("-", "");
-		this.employerPracLB.addItem("Corporaci" + String.valueOf("\u00F3") + "n local", "OPT5_EMPLOYER_LOCAL_CORPORATION");
-		this.employerPracLB.addItem(String.valueOf("\u00D3") + "rganos de la Admin. General del Estado", "OPT5_EMPLOYER_GENERAL_ADMINISTRATION");
-		this.employerPracLB.addItem("Comunidad aut" + String.valueOf("\u00F3") + "noma", "OPT5_EMPLOYER_AUTON_COMMUNITY");
-		this.employerPracLB.addItem("Entidad sin " + String.valueOf("\u00E1") + "nimo de lucro", "OPT5_EMPLOYER_NONPROFIT_ENTITY");
+		this.employerPracLB.addItem("Corporaci\u00F3n local", "OPT5_EMPLOYER_LOCAL_CORPORATION");
+		this.employerPracLB.addItem("\u00D3rganos de la Admin. General del Estado", "OPT5_EMPLOYER_GENERAL_ADMINISTRATION");
+		this.employerPracLB.addItem("Comunidad aut\u00F3noma", "OPT5_EMPLOYER_AUTON_COMMUNITY");
+		this.employerPracLB.addItem("Entidad sin \u00E1nimo de lucro", "OPT5_EMPLOYER_NONPROFIT_ENTITY");
 		this.employerPracLB.addItem("Universidad", "OPT5_EMPLOYER_UNIVERSITY");
 		
 	}
 
 	public void showIndefiniteTable() {
+		indefiniteRepresentativeTable.getElement().getStyle().clearDisplay();
 		indefiniteTable.getElement().getStyle().clearDisplay();
+		temporalRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		temporalTable.getElement().getStyle().setDisplay(Display.NONE);
+		formationRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		formationTable.getElement().getStyle().setDisplay(Display.NONE);
+		practiceRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		practiceTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	public void showTemporalTable() {
+		temporalRepresentativeTable.getElement().getStyle().clearDisplay();
 		temporalTable.getElement().getStyle().clearDisplay();
+		indefiniteRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		indefiniteTable.getElement().getStyle().setDisplay(Display.NONE);
+		formationRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		formationTable.getElement().getStyle().setDisplay(Display.NONE);
+		practiceRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		practiceTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	public void showFormationTable() {
+		formationRepresentativeTable.getElement().getStyle().clearDisplay();
 		formationTable.getElement().getStyle().clearDisplay();
+		indefiniteRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		indefiniteTable.getElement().getStyle().setDisplay(Display.NONE);
+		temporalRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		temporalTable.getElement().getStyle().setDisplay(Display.NONE);
+		practiceRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		practiceTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	public void showPracticeTable() {
+		practiceRepresentativeTable.getElement().getStyle().clearDisplay();
 		practiceTable.getElement().getStyle().clearDisplay();
+		indefiniteRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		indefiniteTable.getElement().getStyle().setDisplay(Display.NONE);
+		temporalRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		temporalTable.getElement().getStyle().setDisplay(Display.NONE);
+		formationRepresentativeTable.getElement().getStyle().setDisplay(Display.NONE);
 		formationTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
@@ -1775,7 +1867,7 @@ public class ContractOtherData extends ResizeComposite {
 	
 	public Boolean getContractOtherDataCB(String name) {
 		String value = this.contractEmployeeInfo.getContractOtherData().get(name);
-		return null == value ? false : true;
+		return null != value;
 	}
 
 	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo) {
@@ -1806,9 +1898,18 @@ public class ContractOtherData extends ResizeComposite {
 			fillContractOtherDataTemp();
 		}
 	}
+	
+	private String getEnterpriseAgentName(String fullName) {
+		return AonStringUtils.isNotBlank(fullName) && AonStringUtils.containsIgnoreCase(fullName, ",") ? fullName.split(",")[1].trim() : null;
+	}
+	
+	private String getEnterpriseAgentSurname(String fullName) {
+		return AonStringUtils.isNotBlank(fullName) && AonStringUtils.containsIgnoreCase(fullName, ",") ? fullName.split(",")[0].trim() : fullName;
+	}
 
 	private void fillContractOtherData() {
-		enterpriseAgentTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNameTB.setValue(getEnterpriseAgentName(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnameTB.setValue(getEnterpriseAgentSurname(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentTB.setValue(getContractOtherData("I_LEGAL_REPRESENTATIVE_NAME"));
@@ -1860,7 +1961,8 @@ public class ContractOtherData extends ResizeComposite {
 	}
 	
 	private void fillContractOtherDataTemp() {
-		enterpriseAgentTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNameTempTB.setValue(getEnterpriseAgentName(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnameTempTB.setValue(getEnterpriseAgentSurname(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentTempTB.setValue(getContractOtherData("T_LEGAL_REPRESENTATIVE_NAME"));
@@ -1910,7 +2012,8 @@ public class ContractOtherData extends ResizeComposite {
 	}
 	
 	private void fillContractOtherDataFormation() {
-		enterpriseAgentFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNameFormTB.setValue(getEnterpriseAgentName(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnameFormTB.setValue(getEnterpriseAgentSurname(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_NAME"));
@@ -1932,7 +2035,8 @@ public class ContractOtherData extends ResizeComposite {
 	}
 	
 	private void fillContractOtherDataPractice() {
-		enterpriseAgentPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNamePracTB.setValue(getEnterpriseAgentName(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME")));
+		enterpriseAgentSurnamePracTB.setValue(getEnterpriseAgentSurname(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME")));
 		enterpriseAgentNIFPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NIF"));
 		enterpriseAgentPositionPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_CHARGE"));
 		minorAgentPracTB.setValue(getContractOtherData("P_LEGAL_REPRESENTATIVE_NAME"));

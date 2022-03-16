@@ -182,7 +182,7 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Convenio</g:Label>
-		    			<g:ListBox ui:field="enterpriseAgreement" styleName='aon-selectOneMenu {style.widthAll}'></g:ListBox>
+		    			<g:SuggestBox ui:field="enterpriseAgreement" styleName='aon-inputText {style.widthAll}' />
 					</g:HTMLPanel>
 		    	</g:HTMLPanel>
 		    </g:VerticalPanel>

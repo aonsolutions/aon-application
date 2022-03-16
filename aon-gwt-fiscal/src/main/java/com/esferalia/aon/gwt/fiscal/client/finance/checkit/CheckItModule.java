@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards.AonCard;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLoadingPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -123,13 +124,13 @@ public class CheckItModule extends MainEntryPoint {
 				@Override
 				public void onSuccess(CheckItConfiguration result) {
 					opt.setConfiguration(result);
-					loadModule( opt, false );					
+					loadModule( opt, false );
 				}
 				
 				@Override
 				public void onFailure(Throwable caught) {
 					opt.setConfiguration(new CheckItConfiguration().setDown(true));
-					loadModule( opt, false );	
+					loadModule( opt, false );
 				}
 			});
 		} else {
@@ -204,16 +205,20 @@ public class CheckItModule extends MainEntryPoint {
 						@Override
 						public void onSuccess(Integer result) {
 							opt.getConfiguration().setEnterpriseId(result);
+							dockLayoutPanel.clear();
+							onModuleLoad();
+							firstTime = true;
 						}
 						
 						@Override
 						public void onFailure(Throwable caught) {
 							opt.getConfiguration().setRegistrationFailed(true);
+							Label errLabel =new Label(caught.getMessage());
+							errLabel.addStyleName(AON.CSS.aonColorRed());
+							sessionLog.add(errLabel);
+							openFootPanel();
 						}	
 				});
-					dockLayoutPanel.clear();
-					onModuleLoad();
-					firstTime = true;
 		} else if (opt.getConfiguration().isRegistrationFailed()){
 			InlineLabel label = new InlineLabel("Se produjo un error al registrar la empresa en el servicio de agregador bancario.");
 			panel.add( label );
@@ -1905,6 +1910,9 @@ public class CheckItModule extends MainEntryPoint {
 				String user = userID.getValue();
 				String pass = userPassword.getValue();
 				String pin = userPIN.getValue();
+				AonLoadingPanel loadingPanel = new AonLoadingPanel("PROCESANDO...");
+				container.add(loadingPanel);
+				loadingPanel.show();
 				CHECKIT_SERVICE.addAccount(enterpriseId, checkItUnlinkedBankAccount, user, pass, pin, new AsyncCallback<String>() {
 
 					@Override
@@ -1917,6 +1925,7 @@ public class CheckItModule extends MainEntryPoint {
 							sessionLog.add(errorLabel);
 							openFootPanel();
 						}
+						loadingPanel.hide();
 					}
 
 					@Override
@@ -1934,6 +1943,7 @@ public class CheckItModule extends MainEntryPoint {
 							CHECKIT_SERVICE.getConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<CheckItConfiguration>() {
 								@Override
 								public void onSuccess(CheckItConfiguration result) {
+									loadingPanel.hide();
 									opt.setConfiguration(result);
 									if (!isMobile()) {							
 										enterpriseData.remove(unlinkedBanks);
@@ -1952,6 +1962,7 @@ public class CheckItModule extends MainEntryPoint {
 								
 								@Override
 								public void onFailure(Throwable caught) {
+									loadingPanel.hide();
 									dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]"));
 									if (!isMobile()) {							
 										dial.hide();
@@ -1965,6 +1976,7 @@ public class CheckItModule extends MainEntryPoint {
 							
 							
 						} else {
+							loadingPanel.hide();
 							String error = "Se ha producido un error desconocido";
 							errLabel.setText(error);
 							Label errorLabel = new Label("Se ha producido un error desconocido al a\u00F1adir la cuenta");

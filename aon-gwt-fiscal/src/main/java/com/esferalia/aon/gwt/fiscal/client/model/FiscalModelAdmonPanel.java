@@ -188,7 +188,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			validating = true;
 			if (getCallback().getModel().isSent()) {
 				getCallback().showError("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");	
-			} else if (!getCallback().getModel().isFinished()) {
+			} else if (!getCallback().getModel().canBeSent()) {
 				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
 				validateAEAT(new AEATParams()
@@ -234,7 +234,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 	}
 
 	private void downloadFile (boolean boeFormat) {
-		if (getCallback().getModel().isFinished() || getCallback().getModel().isSent()) {
+		if (getCallback().getModel().canBeSent() || getCallback().getModel().isSent()) {
 			boeFormatHidden.setValue(Boolean.toString(boeFormat));
 			submitForm(getCallback().getDownloadFileAction());
 		} else {
@@ -247,7 +247,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			sending = true;
 			if (getCallback().getModel().isSent()) {
 				getCallback().showError("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");	
-			} else if (!getCallback().getModel().isFinished()) {
+			} else if (!getCallback().getModel().canBeSent()) {
 				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
 				AonCertificationPopupParams params = new AonCertificationPopupParams()
@@ -280,7 +280,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 							@Override
 							public void onCancel() {
-							
+								sending = false;
 							}
 						});
 					}
@@ -348,17 +348,16 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 							@Override
 							public void onAccept() {
-								params
-								.setDomainName(getCallback().getOptions().getDomainName())
-								.setDomainId(getCallback().getOptions().getDomain())
-								.setUser(getCallback().getOptions().getUser())
-								.setMod(getCallback().getModel().getId());
+								params.setDomainName(getCallback().getOptions().getDomainName())
+									.setDomainId(getCallback().getOptions().getDomain())
+									.setUser(getCallback().getOptions().getUser())
+									.setMod(getCallback().getModel().getId());
 								checkAEAT(params);
 							}
 
 							@Override
 							public void onCancel() {
-							
+								checkingAEAT = false;
 							}
 						});
 					}
@@ -484,14 +483,14 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 	public void manageLinks() {
 		modelInfoLinklink.setVisible(true);
-		downloadLink.setVisible( getCallback().getModel().isFinished() );
-		boeDownloadLink.setVisible( getCallback().isBoeFormatEnabled() && getCallback().getModel().isFinished() );
+		downloadLink.setVisible( getCallback().getModel().canBeSent() );
+		boeDownloadLink.setVisible( getCallback().isBoeFormatEnabled() && getCallback().getModel().canBeSent() );
 		if (getCallback().getModel().isAEAT() &&
 		   ((getCallback().getModel().getYear() > 2021)  
 		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
 		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
-			validateLink.setVisible( getCallback().getModel().isFinished() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
-			sendLink.setVisible( getCallback().getModel().isFinished() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
+			validateLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
+			sendLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
 			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction() ));
 			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() )); 
 		} else {

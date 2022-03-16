@@ -45,4 +45,11 @@ public class Filler {
 		}
 		return false;
 	}
+	
+	protected static byte getByte(Record r, Field<Byte> field) {
+		if(checkField(r, field) && r.getValue(field) != null) {
+			return r.getValue(field);
+		}
+		return 0;
+	}
 }

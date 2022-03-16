@@ -34,6 +34,7 @@ public class Mod111SendAEAT extends HttpServlet {
 			}
 			ModelAdmonUtils.send(resp, aeatParams, model);
 		} catch (Exception e) {
+			e.printStackTrace();
 			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}

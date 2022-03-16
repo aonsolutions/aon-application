@@ -126,9 +126,12 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	// --------------------- FISCAL ------------------------------
 	// -----------------------------------------------------------
+	,FISCAL_SUITABLE_DECLARATION("No hay declaraci\u00F3n disponible para: {0} {1} {2}")
 	,FISCAL_NO_REPLACED_DECLARATION("No existe una declaraci\u00F3n a la que sustituir/complementar.")
 	,FISCAL_DECLARATION_ALREADY_REPLACED("Ya existe una declaraci\u00F3n sustitutiva.")
 	,FISCAL_DECLARATION_ALREADY_EXISTS("Ya existe una declaraci\u00F3n en el periodo.")
+	,FISCAL_WRONG_STATUS_CHANGE("La declaraci\u00F3n no puede cambiar de estado \"{0}\" a estado \"{1}\"")
+
 	// --------------------------------------------- PRODUCT
 	,DUPLICATE_PRODUCT_CODE("Ya existe un Producto con el mismo C\u00F3digo {0}.")
 	,DUPLICATE_PRODUCT_CODE_DOMAIN("Ya existe un Producto con el mismo C\u00F3digo en el Dominio: {0}.")
@@ -172,6 +175,7 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_DUA_LINKED("No es posible borrar la factura porque est\u00E1 vinculada a un documento DUA.")
 	,INVOICE_CANT_DELETE_SII("No es posible borrar la factura porque est\u00E1 enviada al SII. Dar de baja la factura en el SII.")
 	,INVOICE_CANT_DELETE_TBAI("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai.")
+	,INVOICE_CANT_DELETE_MODEL("No es posible el borrado, la factura ha sido declarada en modelos fiscales: {0}")
 
 	// --------------------------------------------- DUA
 	,INVOICE_DUA_NATIONAL_INVOICE_EMPTY("No se ha indicado una factura nacional tipo DUA")

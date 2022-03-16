@@ -180,7 +180,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		
 		AonTableButton buttonDiff = new AonTableButton(FiscalModelKeyInfo.DIFF_INVOICE.getLabel(), AON.CSS.aonIconDiff());
 		buttonDiff.setTabIndex(-2); // NO FOCUS
-		buttonDiff.setVisible(isDiffEnabled);
+		buttonDiff.setVisible(isDiffEnabled && !detail.isRectification());
 		buttonDiff.addClickHandler(event -> 
 			Model349.SERVICE.getInfo(callbackM349.getOptions().getOccam(), mod349, detail, FiscalModelKeyInfo.DIFF_INVOICE, new AsyncCallback<String>() {
 

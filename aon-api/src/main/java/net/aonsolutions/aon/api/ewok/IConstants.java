@@ -38,6 +38,7 @@ public interface IConstants {
 	String FROM = "from";
 	String IBAN = "iban";
 	String ID = "id";
+	String INBOX = "inbox";
 	String INVESTMENT = "investment";
 	String NAME = "name";
 	String NUMBER = "number";

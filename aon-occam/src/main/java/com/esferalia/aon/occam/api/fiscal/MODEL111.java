@@ -12,6 +12,10 @@ import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL111Impl;
 
 public class MODEL111 {
 
+	private MODEL111() {
+		
+	}
+
 	private static IMODEL111 getImpl() {
 		return new MODEL111Impl();
 	}
@@ -73,6 +77,18 @@ public class MODEL111 {
 	public static Mod111 markAsCustomerCheck(Occam occam, Mod111 mod111) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsCustomerCheck(ctx, mod111);
+		}
+	}
+
+	public static Mod111 markAsCustomerAccepted(Occam occam, Mod111 mod111) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerAccepted(ctx, mod111);
+		}
+	}
+
+	public static Mod111 markAsCustomerRejected(Occam occam, Mod111 mod111, String reason) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerRejected(ctx, mod111, reason);
 		}
 	}
 

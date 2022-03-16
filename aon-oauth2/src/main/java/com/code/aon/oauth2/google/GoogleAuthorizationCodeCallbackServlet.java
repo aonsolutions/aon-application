@@ -74,8 +74,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			return;
 		}
 
-		HttpServletRequestWrapper redirectReq = new HttpServletRequestWrapper(
-				req) {
+		HttpServletRequestWrapper redirectReq = new HttpServletRequestWrapper(req) {
 			@Override
 			public StringBuffer getRequestURL() {
 				String serverName = req.getServerName();
@@ -91,6 +90,11 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			@Override
 			public String getServerName() {
 				return "oauth2callback" + req.getServerName().substring(req.getServerName().indexOf('.'));
+			}
+			
+			@Override
+			public String getScheme() {
+				return "https";
 			}
 		};
 

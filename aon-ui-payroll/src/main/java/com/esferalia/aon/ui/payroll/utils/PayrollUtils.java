@@ -1,5 +1,8 @@
 package com.esferalia.aon.ui.payroll.utils;
 
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +17,11 @@ import java.util.Set;
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,8 +30,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.Domain;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -37,11 +43,16 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.watson.util.AonDateUtils;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class PayrollUtils extends com.esferalia.aon.payroll.util.PayrollUtils{
@@ -348,6 +359,193 @@ public class PayrollUtils extends com.esferalia.aon.payroll.util.PayrollUtils{
 		}
 		return null;
 	}
-
+	
+	// //////////////////////////////////
+	// BASE REG METHODS
+	// //////////////////////////////////
+	
+	private static Settings settings = null;
+	
+	protected static Settings getDefaultSettings() {
+		if (settings == null) {
+			settings = new Settings();
+			settings.setRenderSchema(false);
+		}
+		return settings;
+	}
+	
+	public Double getBaseReg(Contract contract, Date date, LeaveType leaveType) {
+		try(Connection conn = DatabaseUtil.getConnection(AonUtil.getDomainName())) {
+			DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+			
+			Date previusMonth = DateUtils.addMonths(date, -1);
+			Date start = AonDateUtils.getFirstDayOfMonth(previusMonth);
+			Date end = AonDateUtils.getLastDayOfMonth(previusMonth);
+			
+			List<Record> salaries = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.eq(contract.getId()))
+					.and(SALARY.START_DATE.ge(parseToSQLDate(start)))
+					.and(SALARY.END_DATE.le(parseToSQLDate(end))).fetch();
+			
+			if(salaries.isEmpty()) {
+				AonUtil.addErrorMessage("No existe n\u00f3mina emitada para el periodo (" + start + " / " + end + ")");
+				
+				// COGER DEL PROPIO PARTE
+				List<Record> records = dslContext.select().from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contract.getId()))
+						.and(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+						.orderBy(CONTRACT_DATA.START_DATE.desc())
+						.fetch();
+					
+				if(!records.isEmpty()) {
+					Record record = records.get(0);
+					Double baseReg = null;
+					try {
+						baseReg=  Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION));
+						return baseReg;
+					} catch (Exception e) {
+						return baseReg;
+					}
+				}
+			} else {
+				Record salary = salaries.get(0);
+				return leaveType.equals(LeaveType.COMMON_DISEASE) ? salary.get(SALARY.CGP_BASE) : salary.get(SALARY.CGC_BASE);
+			}
+			
+		} catch (SQLException e) {
+			String msg = "Mas de una base reguladora. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e1) {
+			String msg = "Fallo conexion. ("+ e1.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} 
+		
+		return null;
+	}
+	
+	public Integer getDiasCotizados(Contract contract, Date date) {
+		try(Connection conn = DatabaseUtil.getConnection(AonUtil.getDomainName())) {
+			DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+			
+			Date previusMonth = DateUtils.addMonths(date, -1);
+			Date start = AonDateUtils.getFirstDayOfMonth(previusMonth);
+			Date end = AonDateUtils.getLastDayOfMonth(previusMonth);
+			
+			List<Record> salaries = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.eq(contract.getId()))
+					.and(SALARY.START_DATE.ge(parseToSQLDate(start)))
+					.and(SALARY.END_DATE.le(parseToSQLDate(end))).fetch();
+			
+			if(salaries.isEmpty()) {
+				AonUtil.addErrorMessage("No existe n\u00f3mina emitada para el periodo (" + start + " / " + end + ")");
+				return 30;
+			} else {
+				Record salary = salaries.get(0);
+				return salary.get(SALARY.TIME_UNITS);
+			}
+		} catch (SQLException e) {
+			String msg = "Mas de una base reguladora. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e1) {
+			String msg = "Fallo conexion. ("+ e1.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public Integer getDiasCotizadosPartial(Contract contract, Date date) {
+		try(Connection conn = DatabaseUtil.getConnection(AonUtil.getDomainName())) {
+			DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+			
+			Date start = DateUtils.addMonths(date, -3);
+			start = AonDateUtils.getFirstDayOfMonth(start);
+			Date end = DateUtils.addMonths(date, -1);
+			end = AonDateUtils.getLastDayOfMonth(end);
+			
+			List<Record> salaries = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.eq(contract.getId()))
+					.and(SALARY.START_DATE.ge(parseToSQLDate(start)))
+					.and(SALARY.END_DATE.le(parseToSQLDate(end)))
+					.limit(3).fetch();
+					
+			if(salaries.isEmpty()) {
+				AonUtil.addErrorMessage("No existe n\u00f3mina emitada para el periodo (" + start + " / " + end + ")");
+				return 30;
+			} else {
+				Integer sumDays = 0;
+				for(Record salary : salaries) sumDays += salary.get(SALARY.TIME_UNITS);
+				return sumDays;
+			}
+		} catch (SQLException e) {
+			String msg = "Mas de una base reguladora. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e1) {
+			String msg = "Fallo conexion. ("+ e1.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public Double getBaseRegPartial(Contract contract, Date date, LeaveType leaveType) {
+		try(Connection conn = DatabaseUtil.getConnection(AonUtil.getDomainName())) {
+			DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+			
+			Date start = DateUtils.addMonths(date, -3);
+			start = AonDateUtils.getFirstDayOfMonth(start);
+			Date end = DateUtils.addMonths(date, -1);
+			end = AonDateUtils.getLastDayOfMonth(end);
+			
+			List<Record> salaries = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.eq(contract.getId()))
+					.and(SALARY.START_DATE.ge(parseToSQLDate(start)))
+					.and(SALARY.END_DATE.le(parseToSQLDate(end)))
+					.limit(3).fetch();
+			
+			if(salaries.isEmpty()) {
+				AonUtil.addErrorMessage("No existe n\u00f3mina emitada para el periodo (" + start + " / " + end + ")");
+				
+				// COGER DEL PROPIO PARTE
+				List<Record> records = dslContext.select().from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contract.getId()))
+						.and(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+						.orderBy(CONTRACT_DATA.START_DATE.desc())
+						.fetch();
+					
+				if(!records.isEmpty()) {
+					Record record = records.get(0);
+					Double baseReg = null;
+					try {
+						baseReg=  Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION));
+						return baseReg;
+					} catch (Exception e) {
+						return baseReg;
+					}
+				}
+			} else {
+				Double sumBase = 0.00;
+				for(Record salary : salaries) sumBase += leaveType.equals(LeaveType.COMMON_DISEASE) ? salary.get(SALARY.CGP_BASE) : salary.get(SALARY.CGC_BASE);
+				return sumBase;
+			}
+			
+		} catch (SQLException e) {
+			String msg = "Mas de una base reguladora. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e1) {
+			String msg = "Fallo conexion. ("+ e1.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} 
+		
+		return null;
+	}
+	
+	private java.sql.Date parseToSQLDate(Date date){
+		return null == date ? null : new java.sql.Date(date.getTime());
+	}
 
 }

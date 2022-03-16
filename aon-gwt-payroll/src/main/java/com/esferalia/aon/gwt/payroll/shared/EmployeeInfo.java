@@ -169,9 +169,7 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public String getNationality() {
-		String nationalityName = nationality != null ? getCountryName(nationality) : "";
-//		Window.alert("nationality : " + nationality + ", nationality name : " + nationalityName);
-		return nationalityName;
+		return AonStringUtils.isNotBlank(nationality) ? getCountryName(nationality) : "";
 	}
 	
 	private String getCountryName(String iso2) {
@@ -187,10 +185,7 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public void setNationality(String nationalityIso2) {
-		if(null == nationalityIso2)
-			this.nationality = "ES";
-		else
-			this.nationality = nationalityIso2;
+		this.nationality = AonStringUtils.isBlank(nationalityIso2) ? "ES" : nationalityIso2;
 	}
 
 	public Byte getDocumentType() {

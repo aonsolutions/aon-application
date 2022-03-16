@@ -25,18 +25,19 @@
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.issues</compileSourcesArtifact>  
-					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.document</compileSourcesArtifact> 
+<!-- 				  <compileSourcesArtifact>net.aonsolutions:aon.gwt.document</compileSourcesArtifact>  -->
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.stat</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.dump</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.warehouse</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.udapa</compileSourcesArtifact>
-					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>  
+					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>
+					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.vaadin</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.templates</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.sii</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.seres</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.communication</compileSourcesArtifact>
   					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.commercial</compileSourcesArtifact>
-					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.fiscal</compileSourcesArtifact>
+					  <compileSourcesArtifact>net.aonsoluitions:aon.gwt.ccaa</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
 				</configuration>
@@ -161,6 +162,20 @@
 		
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.ccaa</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.ccaa</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
+<!--
+ 		<dependency>
+			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.gwt.document</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -170,8 +185,9 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 			<classifier>sources</classifier>
-		</dependency>
-		
+		</dependency> 
+-->
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.fiscal</artifactId>
@@ -325,6 +341,21 @@
 		<dependency>
  			<groupId>net.aonsolutions.polymer</groupId>
  			<artifactId>aon.gwt.polymer</artifactId>
+ 			<version>${project.version}</version> 
+  			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
+		<dependency>
+ 			<groupId>net.aonsolutions</groupId>
+ 			<artifactId>aon.gwt.vaadin</artifactId>
+ 			<version>${project.version}</version> 
+  			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+ 			<groupId>net.aonsolutions</groupId>
+ 			<artifactId>aon.gwt.vaadin</artifactId>
  			<version>${project.version}</version> 
   			<scope>compile</scope>
 			<classifier>sources</classifier>

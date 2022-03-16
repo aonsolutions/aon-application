@@ -2,32 +2,143 @@ package com.esferalia.aon.gwt.fiscal.shared.mod123;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public class Model123ScriptProvider {
 
+	private Model123ScriptProvider() {
+		
+	}
+
+	private enum Model123Script {
+		AEAT_2022_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isAEAT() && mod123.getYear() > 2021;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123AEAT2022Script.values();
+			}
+		}
+		,AEAT_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isAEAT() && mod123.getYear() < 2022;
+			}
+
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123AEATScript.values();
+			}
+		}
+		,ARABA_2022_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isAraba() && mod123.getYear() > 2021;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123Araba2022Script.values();
+			}
+		}
+		,ARABA_2016_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isAraba() && mod123.getYear() > 2015 && mod123.getYear() < 2022;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123Araba2016Script.values();
+			}
+		}
+		,ARABA_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isAraba() && mod123.getYear() < 2016;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123ArabaScript.values();
+			}
+		}
+		,BIZKAIA_2022_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isBizkaia() && mod123.getYear() > 2021;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123Bizkaia2022Script.values();
+			}
+		}
+		,BIZKAIA_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isBizkaia() && mod123.getYear() < 2022;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123BizkaiaScript.values();
+			}
+		}
+		,GIPUZKOA_2022_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isGipuzkoa() && mod123.getYear() > 2021;
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123Gipuzkoa2022Script.values();
+			}
+		}
+		,GIPUZKOA_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isGipuzkoa();
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model123GipuzkoaScript.values();
+			}
+		}
+		,NAFARROA_SCRIPT {
+			@Override
+			boolean accept(Mod123 mod123) {
+				return mod123.isNavarra();
+			}
+	
+			@Override
+			IModelScript<Mod123Key>[] getScript() {
+				return Model716NavarraScript.values();
+			}
+		}
+		;
+		abstract boolean accept(Mod123 mod123);
+		abstract IModelScript<Mod123Key>[] getScript();
+	}
+
 	public static IModelScript<Mod123Key>[] obtainScript(Mod123 mod123) {
 		IModelScript<Mod123Key>[] ms = null;
-		if (mod123.getAdministration() == Administration.COMMON_TERRITORY) {
-			ms = Model123AEATScript.values();
-		} else if (mod123.getAdministration() == Administration.GIPUZKOA) {
-			ms = Model123GipuzkoaScript.values();
-		} else if (mod123.getAdministration() == Administration.BIZKAIA) {
-			ms = Model123BizkaiaScript.values();
-		} else if (mod123.getAdministration() == Administration.NAVARRA) {
-			ms = Model716NavarraScript.values();
-		} else if (mod123.getAdministration() == Administration.ALAVA) {
-			if (mod123.getYear() > 2015) {
-				ms = Model123Araba2016Script.values();
-			} else {
-				ms = Model123ArabaScript.values();
+		for ( Model123Script script : Model123Script.values()) {
+			if (script.accept(mod123)) {
+				ms = script.getScript();
+				break;
 			}
 		}
 		if (ms == null) {
-			throw new IllegalStateException(
-					"No hay declaración disponible para: " + mod123.getAdministration().toString() + " "
-							+ mod123.getYear() + " " + mod123.getPeriod().getDescription());
+			throw new IllegalStateException("No hay declaraci\u00F3n disponible para: "
+					+ mod123.getAdministration().getDescription()
+					+ " - " 
+					+ mod123.getModelFullName());
 		}
 		return ms;
 	}

@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipatio
 import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -556,6 +557,14 @@ public class Mod2002020 implements IFiscalModel {
 	
 	public boolean isCooperativa() {
 		return isChecked(Mod2002020Key.C0017) || isChecked(Mod2002020Key.C0018) || isChecked(Mod2002020Key.C0019);
+	}
+	@Override
+	public Double getDeclarationResult() {
+		return null;
+	}
+	@Override
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return null;
 	}
 	
 }

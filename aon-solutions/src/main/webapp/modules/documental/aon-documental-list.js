@@ -7,6 +7,7 @@ import '../../components/aon-table.js';
 
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonDocumentalList extends AonElement {
 
@@ -114,9 +115,9 @@ export class AonDocumentalList extends AonElement {
 	downloadFiles() {
 		let aonDocumentalTable = this.getElement(this.TABLE);
 		let data = {
-			domain_id: localStorage.getItem('aon_domain_id'),
-			domain_name: localStorage.getItem('aon_domain_name'),
-			domain_login: localStorage.getItem('aon_domain_login'),
+			domainId: LS.getDomainId(),
+			domainName: LS.getDomainName(),
+			domainLogin: LS.getDomainLogin(),
 			ids: aonDocumentalTable.selected.map(r => r.id),
 			type: this.getFilter().type
 		};

@@ -26,9 +26,9 @@ public class MODEL123 {
 		}
 	}
 
-	public static Mod123 getMod123(Occam occam, int id) {
+	public static Mod123 get(Occam occam, int id) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod123(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
@@ -74,31 +74,43 @@ public class MODEL123 {
 		}
 	}
 
+	public static Mod123 markAsCustomerAccepted(Occam occam, Mod123 mod123) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerAccepted(ctx, mod123);
+		}
+	}
+
+	public static Mod123 markAsCustomerRejected(Occam occam, Mod123 mod123,String reason) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerRejected(ctx, mod123, reason);
+		}
+	}
+	
 	public static Mod123 markAsPending(Occam occam, Mod123 mod123) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsPending(ctx, mod123);
 		}
 	}
 
-	public static void deleteMod123(Occam occam, Mod123 mod123) {
+	public static void delete(Occam occam, Mod123 mod123) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod123);
 		}
 	}
 
-	public static Mod123 initializeMod123(Occam occam,Mod123 mod123) {
+	public static Mod123 initialize(Occam occam,Mod123 mod123) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initialize(ctx, mod123);
 		}
 	}
 
-	public static Mod123 createMod123(Occam occam,Mod123 mod123) {
+	public static Mod123 create(Occam occam,Mod123 mod123) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().create(ctx, mod123);
 		}
 	}
 
-	public static String getMod123Info(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
+	public static String getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod123, script, infoKey);
 		}
@@ -110,7 +122,7 @@ public class MODEL123 {
 		}
 	}
 
-	public static Mod123 resetMod123(Occam occam, Mod123 mod123) {
+	public static Mod123 reset(Occam occam, Mod123 mod123) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().reset(ctx, mod123);
 		}

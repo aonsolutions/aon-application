@@ -16,15 +16,18 @@ public interface IMODEL111 {
 	public Mod111 save(AONContext ctx, Mod111 mod111);
 	public Mod111 saveComments(AONContext ctx, Mod111 mod111);
 	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsPending(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsSent(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsCustomerCheck(AONContext ctx, Mod111 mod111);
 	public Mod111 initialize(AONContext ctx, Mod111 mod111);
 	public Mod111 create(AONContext ctx, Mod111 mod111);
 	public Mod111 reset(AONContext ctx, Mod111 mod111);
 	public void delete(AONContext ctx, Mod111 mod111);
 	public String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey);
 	public Mod111 aeatPresentation(AONContext ctx, Mod111 mod111, String aeatResponse);
+	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsPending(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsSent(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsCustomerCheck(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsCustomerAccepted(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsCustomerRejected(AONContext ctx, Mod111 mod111, String reason);
+	
 	
 }

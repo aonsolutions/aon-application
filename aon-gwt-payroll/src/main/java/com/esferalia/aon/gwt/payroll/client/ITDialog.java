@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -22,9 +23,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.occam.api.model.EmployeeIT;
+import com.esferalia.aon.occam.api.model.EmployeeITPart;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
@@ -111,7 +117,6 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiField
 	HTMLPanel employeePanelNaf;
-
 
 	@UiField
 	VerticalPanel itDataTable;
@@ -243,6 +248,8 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	private DoubleBox baseCP;
 	
+	private boolean userComunica = false;
+	
 	// --------------------------------------------------- ProvideITDataGrid
 	
 	private void provideITDataGrid() {
@@ -309,7 +316,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			@Override
 			public void render(Context context, IT it, SafeHtmlBuilder sb) {
 				if(null != it) {
-					sb.appendHtmlConstant("<span title=\"" + parseLowCauseByte(it.getTypeLowPart()) + "\">" + parseShortLowCauseByte(it.getTypeLowPart()) + "</span>");
+					sb.appendHtmlConstant("<span title=\"" + getSelectedTextByValue(causeLowPart, it.getTypeLowPart()) + "\">" + parseShortLowCauseByte(it.getTypeLowPart()) + "</span>");
 				}
 			}
 		};
@@ -332,7 +339,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	    TextColumn<IT> highCauseColumn = new TextColumn<IT>() {
 	      @Override
 	      public String getValue(IT it) {
-	        return parseHighCauseByte(it.getTypeHighPart());
+	    	return getSelectedTextByValue(causeHighPart, it.getTypeHighPart());
 	      }
 	    };
 
@@ -392,7 +399,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			//---ENTERPRISE DATA
 			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
 			String regime = completeCcc.substring(0, 4);
-			String ccc = completeCcc.substring(4, itDialogObject.getContractInfo().getCompleteCCC().length());
+			String ccc = completeCcc.substring(4, completeCcc.length());
 
 			Label regimeEl = new Label("R\u00e9gimen:");
 			regimeEl.setStyleName(style.subTitle());
@@ -437,28 +444,28 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		causeLowPart.clear();
 		causeLowPart.addItem("-", "-1");
-		causeLowPart.addItem("Enfermedad Com" + String.valueOf("\u00FA") + "n", "0");
+		causeLowPart.addItem("Enfermedad Com\u00Fan", "0");
 		causeLowPart.addItem("Accidente de trabajo", "1");
 		causeLowPart.addItem("Maternidad", "2");
 		causeLowPart.addItem("Paternidad", "3");
 		causeLowPart.addItem("Riesgo para el embarazo", "4");
 		causeLowPart.addItem("Riesgo durante la lactancia", "5");
 		causeLowPart.addItem("Accidente no laboral", "6");
-		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia", "7");
-		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)", "8");
+		causeLowPart.addItem("Enfermedad com\u00Fan periodo de carencia", "7");
+		causeLowPart.addItem("Enfermedad com\u00Fan, prestaci\u00F3n profesional (COVID-19)", "8");
 		
 		causeHighPart.clear();
 		causeHighPart.addItem("-", "-1");
-		causeHighPart.addItem("Curaci" + String.valueOf("\u00F3") + "n", "0");
+		causeHighPart.addItem("Curaci\u00F3n", "0");
 		causeHighPart.addItem("Fallecimiento", "1");
-		causeHighPart.addItem("Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica", "2");
+		causeHighPart.addItem("Inspecci\u00F3n m\u00e9dica", "2");
 		causeHighPart.addItem("Propuesta incapacidad", "3");
 		causeHighPart.addItem("Agotamiento de plazo", "4");
-		causeHighPart.addItem("Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual", "5");
+		causeHighPart.addItem("Mejor\u00eda que permite realizar el trabajo habitual", "5");
 		causeHighPart.addItem("Incomparecencia", "6");
-		causeHighPart.addItem("Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses", "7");
-		causeHighPart.addItem("Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional", "8");
-		causeHighPart.addItem("Incomparecencia contratos de formaci" + String.valueOf("\u00F3") + "n", "9");
+		causeHighPart.addItem("Control INSS duraci\u00F3n 12 meses", "7");
+		causeHighPart.addItem("Recuperaci\u00F3n capacidad profesional", "8");
+		causeHighPart.addItem("Incomparecencia contratos de formaci\u00F3n", "9");
 		
 		applicantTypeList.addItem("Madre biologica", "0");
 		applicantTypeList.addItem("Otro progenitor", "1");
@@ -541,6 +548,11 @@ public abstract class ITDialog extends AonCustomDialog {
 				showConfirmationParts();
 			}
 		}
+		
+		//PRINT BTN IT COMUNICA
+		if(this.it!=null && this.userComunica)
+			printBtnCommunicate();
+		
 	}
 	
 	// --------------------------------------------------- PaintIt
@@ -1278,6 +1290,12 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 2, collegeNumberTB);
 		confirmationPartDataTable.setWidget(row, 3, ciasTB);
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
+		
+		if(this.userComunica) {
+			buildBtnPart(itPart).ifPresent(btn->
+				confirmationPartDataTable.setWidget(row, 5, btn)
+			);
+		}
 	}
 	
 	// --------------------------------------------------- ITDIalog.ShowHide_Elements
@@ -1314,37 +1332,14 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- ITDIalog.Auxiliar_Methods
 	
-	public void setIsUserComunica(boolean userComunica) {}
+	public void setIsUserComunica(boolean userComunica) {
+		this.userComunica = userComunica;
+	}
 	
 	private boolean notSelectedId(Integer itId) {
 		return (null == this.it || null == this.it.getId()) ? true : (this.it.getId() == itId || this.it.getId().equals(itId));
 	}
 
-	private String parseLowCauseByte(Byte typeLowPart) {
-		switch (typeLowPart) {
-			case (byte)0:
-				return "Enfermedad Com" + String.valueOf("\u00FA") + "n";
-			case (byte)1:
-				return "Accidente de trabajo";
-			case (byte)2:
-				return "Maternidad";
-			case (byte)3:
-				return "Paternidad";
-			case (byte)4:
-				return "Riesgo para el embarazo";
-			case (byte)5:
-				return "Riesgo durante la lactancia";
-			case (byte)6:
-				return "Accidente no laboral";
-			case (byte)7:
-				return "Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia";
-			case (byte)8:
-				return "Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)";
-			default:
-				return "-";
-		}
-	}
-	
 	private boolean isPaternity() {
 		return it.getTypeLowPart()!=null && (it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3);
 	}
@@ -1373,36 +1368,6 @@ public abstract class ITDialog extends AonCustomDialog {
 				return "-";
 		}
 	}
-	
-	private String parseHighCauseByte(Byte typeHighPart) {
-		if(null == typeHighPart)
-			return "-";
-		
-		switch (typeHighPart) {
-			case (byte)0:
-				return "Curaci" + String.valueOf("\u00F3") + "n";
-			case (byte)1:
-				return "Fallecimiento";
-			case (byte)2:
-				return "Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica";
-			case (byte)3:
-				return "Propuesta incapacidad";
-			case (byte)4:
-				return "Agotamiento de plazo";
-			case (byte)5:
-				return "Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual";
-			case (byte)6:
-				return "Incomparecencia";
-			case (byte)7:
-				return "Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses";
-			case (byte)8:
-				return "Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional";
-			case (byte)9:
-				return "Incomparecencia contratos de formaci" + String.valueOf("\u00F3") + "n";
-			default:
-				return "-";
-		}
-	}
 
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
@@ -1415,6 +1380,18 @@ public abstract class ITDialog extends AonCustomDialog {
 	    }
 	    lBox.setSelectedIndex(indexToFind);
 	}
+	
+	private String getSelectedTextByValue(ListBox lBox, Byte value) {
+		if(value!=null) {
+		    String text = value.toString();
+		    for (int i = 0; i < lBox.getItemCount(); i++) {
+		        if (lBox.getValue(i).equals(text)) 
+		            return lBox.getSelectedItemText();
+		    }
+		}
+	    return "-";
+	}
+	
 	
 	// --------------------------------------------------- Toolbar
 	
@@ -1491,7 +1468,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(null != this.it.getId()) {
 			if(this.it.getIsParent()) {
 				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Reca"+ String.valueOf("\u00ED") + "da", "No se puede eliminar este parte por que tiene reca" + String.valueOf("\u00ED") + "da.");
+				dialog.info("AVISO: Reca\u00edda", "No se puede eliminar este parte por que tiene reca\\u00edda.");
 			} else {
 				AonConfirmDialog confirmDialog = new AonConfirmDialog();
 				confirmDialog.confirm(
@@ -1505,8 +1482,7 @@ public abstract class ITDialog extends AonCustomDialog {
 								hide();
 								ITDialog.this.hide();
 							}
-
-							@Override
+							
 							public void onCancel() {}
 						}
 				);
@@ -1587,6 +1563,83 @@ public abstract class ITDialog extends AonCustomDialog {
 		this.confirmationPartDataTable.clear();
 	}
 	
+	//--------------COMMUNICATE IT PART
+	
+	private void printBtnCommunicate(){
+		
+		for(ITPart part : it.getITParts()) 
+			LOGGER.info("PART: "+part.toString());
+		
+		Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
+		
+		bjOptional.ifPresent(part-> 
+			buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) )
+		);
+		
+		if(!isPaternity()) {
+			Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
+			altaOptional.ifPresent(part->
+				buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) )
+			);
+		}
+	
+	}
+	
+	private Optional<AonTableButton> buildBtnPart(ITPart part) {
+		if(it.getId()!=null && part.getId()!=null) {
+			boolean communicated = part.getStatus()!=null && part.getStatus() == (byte)3;
+			String title = communicated ? "Borrar Parte IT comunicada" : "Comunicar parte";
+			String icon = communicated  ? AON.CSS.aonIconSendCancel() : AON.CSS.aonIconSend();
+		
+			AonTableButton btn = new AonTableButton(title, icon); 
+			btn.addClickHandler(e-> {
+				if(communicated) {
+					removeITPartTGSS(part);
+				} else {
+					setViewPartComunica(part);
+				}
+			});
+			return Optional.of(btn);
+		}
+		return Optional.empty();
+	}
+	
+	private void removeITPartTGSS(ITPart part) {
+		LOGGER.info(part.toString());
+		onRemoveITPartTGSS(parseITByStatus(part));
+	}
+	
+	private ItNotExist parseITByStatus(ITPart part) {
+		if(itDialogObject!=null) {
+			//---ENTERPRISE DATA
+			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
+			String regime = completeCcc.substring(0, 4);
+			String ccc = completeCcc.substring(4, completeCcc.length());
+		
+			EmployeeInfo employeeInfo = itDialogObject.getEmployeeinfo();
+
+		 	EmployeeIT employeeIT = new EmployeeIT()
+		 			.setRegime(regime)
+		 			.setCcc(ccc)
+		 			.setNss(employeeInfo.getSsNumber())
+					.setDni(employeeInfo.getDocument())
+					.setStartDate(it.getStartDate())  // fecha de baja
+					.setType(ContractLeaveType.safeValueOf(it.getTypeLowPart()));
+			if(it.getEndDate()!=null) 
+				employeeIT.setEndDate(it.getEndDate());
+		
+		 	EmployeeITPart employeeITPart = new EmployeeITPart()
+		 			.setDate(part.getDate())
+		 			.setType(ContractLeaveDetailType.safeValueOf(part.getType()));
+		 	
+		 	ItNotExist ItNotExist = new ItNotExist();
+			ItNotExist.setEmployeeIT(employeeIT);
+		 	ItNotExist.setEmployeeITPart(employeeITPart);
+		 	return ItNotExist;
+	 	}
+		return null;
+	}
+	
 	private void onNewConfirmationPart(ClickEvent e) {
 		checkAndCreateIT();
 		
@@ -1600,7 +1653,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		addConfirmationITPart(newITPart);
 		calculateScrollPanelHeight();
 	}
-	
+
 	private Byte getDefaultConfirmOrder() {
 		int newConfirmOrder = 1;
 		
@@ -1790,13 +1843,13 @@ public abstract class ITDialog extends AonCustomDialog {
 		String cause = null;
 		switch(itPart.getType()){
 			case (byte)0:
-				cause = parseLowCauseByte(it.getTypeLowPart());
+				cause = getSelectedTextByValue(causeLowPart, it.getTypeLowPart());
 			break;
 			case (byte)1:
 				cause = "Confirmaci\u00F3n";
 			break;
 			case (byte)2:
-				cause = parseHighCauseByte(it.getTypeHighPart());
+				cause = getSelectedTextByValue(causeHighPart, it.getTypeHighPart());
 			break;
 			default:
 				cause = "";
@@ -2055,9 +2108,11 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- Abstract Methods
 	
 	protected abstract void onShowCertitificateIT(IT it);
-	protected abstract void onComunicateIT(IT it);
-	protected abstract void onCommunicateITPart(IT it, ITPart itPart);
 	protected abstract void onDelete(IT it);
+	
+	protected abstract void onCommunicateITPart(IT it, ITPart itPart);
+	protected abstract void onRemoveITPartTGSS(ItNotExist ItNotExist);
+	
 	protected abstract void onAccept();
 	
 }

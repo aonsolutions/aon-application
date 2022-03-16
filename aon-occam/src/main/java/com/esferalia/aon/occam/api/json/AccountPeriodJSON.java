@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountPeri
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountPeriodToJSON;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public enum AccountPeriodJSON {
@@ -23,20 +24,18 @@ public enum AccountPeriodJSON {
 		(account, json) -> json.put(IJsonNames.NAME, account.getName())
 	),
 	INITIATION_DATE(
-		(params, json) -> params.setInitiationDate(JsonUtils.getDate(json, IJsonNames.INITIATION_DATE)),
-		(params, json) -> JsonUtils.putDate(json, IJsonNames.INITIATION_DATE, params.getInitiationDate())
+		(params, json) -> params.setInitiationDate( AonDateUtils.simpleParse( json.optString(IJsonNames.INITIATION_DATE))),
+		(params, json) -> json.put(IJsonNames.INITIATION_DATE, AonDateUtils.simpleFormat(params.getInitiationDate()))
 	),
 	DEADLINE(
-		(params, json) -> params.setDeadline(JsonUtils.getDate(json, IJsonNames.DEADLINE)),
-		(params, json) -> JsonUtils.putDate(json, IJsonNames.DEADLINE, params.getDeadline())
+		(params, json) -> params.setDeadline( AonDateUtils.simpleParse( json.optString(IJsonNames.DEADLINE))),
+		(params, json) -> json.put(IJsonNames.DEADLINE, AonDateUtils.simpleFormat(params.getDeadline()))
 	),
 	STATUS(
 		(params, json) -> params.setStatus( AccountPeriodStatus.safeValueOf( JsonUtils.getInteger(json,IJsonNames.STATUS) )),
 		(params, json) -> JsonUtils.putEnum(json, IJsonNames.STATUS, params.getStatus())
 	),
 	;
-//	private AccountPeriodStatus status;
-
 	private IAonAccountPeriodFromJSON fromJSON;
 	private IAonAccountPeriodToJSON toJSON;
 

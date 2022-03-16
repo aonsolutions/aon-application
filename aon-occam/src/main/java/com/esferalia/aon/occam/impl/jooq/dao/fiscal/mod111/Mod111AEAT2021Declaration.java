@@ -18,69 +18,77 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 		 CT_C01(Mod111Key.CT_C01
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C01,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,CT_C02(Mod111Key.CT_C02
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.CT_C02,mod,br)
-			,null,null)
+			,null,null,null)
 		,CT_C03(Mod111Key.CT_C03
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C03,mod,br)
-			,null,null)
+			,null,null,null)
 		,CT_C04(Mod111Key.CT_C04
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C04,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,CT_C05(Mod111Key.CT_C05
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.CT_C05,mod,br)
-			,null,null)
+			,null,null,null)
 		,CT_C06(Mod111Key.CT_C06
 			, (mod,br) ->  br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C06,mod,br)
-			,null,null)
+			,null,null,null)
 		,CT_C07(Mod111Key.CT_C07
 			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C07,mod,docs,pdocs,br)
-			,null,null)
+			,null,null,null)
 		,CT_C08(Mod111Key.CT_C08
 			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.CT_C08,mod,br)
-			,null,null)
+			,null,null,null)
 		,CT_C09(Mod111Key.CT_C09
 			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C09,mod,br)
-			,null,null)
-		,CT_C10(Mod111Key.CT_C10,null,null,null,null)
-		,CT_C11(Mod111Key.CT_C11,null,null,null,null)
-		,CT_C12(Mod111Key.CT_C12,null,null,null,null)
-		,CT_C13(Mod111Key.CT_C13,null,null,null,null)
-		,CT_C14(Mod111Key.CT_C14,null,null,null,null)
-		,CT_C15(Mod111Key.CT_C15,null,null,null,null)
-		,CT_C16(Mod111Key.CT_C16,null,null,null,null)
-		,CT_C17(Mod111Key.CT_C17,null,null,null,null)
-		,CT_C18(Mod111Key.CT_C18,null,null,null,null)
-		,CT_C19(Mod111Key.CT_C19,null,null,null,null)
-		,CT_C20(Mod111Key.CT_C20,null,null,null,null)
-		,CT_C21(Mod111Key.CT_C21,null,null,null,null)
-		,CT_C22(Mod111Key.CT_C22,null,null,null,null)
-		,CT_C23(Mod111Key.CT_C23,null,null,null,null)
-		,CT_C24(Mod111Key.CT_C24,null,null,null,null)
-		,CT_C25(Mod111Key.CT_C25,null,null,null,null)
-		,CT_C26(Mod111Key.CT_C26,null,null,null,null)
-		,CT_C27(Mod111Key.CT_C27,null,null,null,null)
+			,null,null,null)
+		,CT_C10(Mod111Key.CT_C10,null,null,null,null,null)
+		,CT_C11(Mod111Key.CT_C11,null,null,null,null,null)
+		,CT_C12(Mod111Key.CT_C12,null,null,null,null,null)
+		,CT_C13(Mod111Key.CT_C13,null,null,null,null,null)
+		,CT_C14(Mod111Key.CT_C14,null,null,null,null,null)
+		,CT_C15(Mod111Key.CT_C15,null,null,null,null,null)
+		,CT_C16(Mod111Key.CT_C16,null,null,null,null,null)
+		,CT_C17(Mod111Key.CT_C17,null,null,null,null,null)
+		,CT_C18(Mod111Key.CT_C18,null,null,null,null,null)
+		,CT_C19(Mod111Key.CT_C19,null,null,null,null,null)
+		,CT_C20(Mod111Key.CT_C20,null,null,null,null,null)
+		,CT_C21(Mod111Key.CT_C21,null,null,null,null,null)
+		,CT_C22(Mod111Key.CT_C22,null,null,null,null,null)
+		,CT_C23(Mod111Key.CT_C23,null,null,null,null,null)
+		,CT_C24(Mod111Key.CT_C24,null,null,null,null,null)
+		,CT_C25(Mod111Key.CT_C25,null,null,null,null,null)
+		,CT_C26(Mod111Key.CT_C26,null,null,null,null,null)
+		,CT_C27(Mod111Key.CT_C27,null,null,null,null,null)
 		,CT_C28(Mod111Key.CT_C28
-			, null,null,null, "CT_C03+CT_C06+CT_C09+CT_C12+CT_C15+CT_C18+CT_C21+CT_C24" )
+			, null,null,null, "CT_C03+CT_C06+CT_C09+CT_C12+CT_C15+CT_C18+CT_C21+CT_C24",null)
 		,CT_C29(Mod111Key.CT_C29
 			, null
 			, null
 			, (ctx,mod) -> mod.putAmount(Mod111Key.CT_C29,mod.isComplementary()
-				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getResult).sum()
+				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
 				:0.0)
-			,null)
+			,null
+			,"{messages : ["
+				+ "\"Declaraciones en el mismo periodo/ejercicio:\","
+				+ "@foreach{fm : periodModels}"
+				+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
+				+ "@end{}"
+				+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(CT_C29)}\""
+			+"]}"
+			)
 		,CT_C30(Mod111Key.CT_C30
-			, null,null,null, "CT_C28-CT_C29" )
-		,CT_TIP (Mod111Key.CT_TIP,null,null,null,null)
+			, null,null,null, "CT_C28-CT_C29",null)
+		,CT_TIP (Mod111Key.CT_TIP,null,null,null,null,null)
 		;
 		
 		private Mod111Key key;
@@ -88,17 +96,20 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 		private IValueIntializer initializer;
 		private IValueUniqueIntializer uniqueInitializer;
 		private String expression;
+		private String template;
 	
 		private Mod111KeyDAO(Mod111Key key
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueUniqueIntializer uniqueInitializer
-				, String expression) {
+				, String expression
+				, String template) {
 			this.key = key;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.uniqueInitializer = uniqueInitializer;
 			this.expression =  expression;
+			this.template =  template;
 		}
 		
 		
@@ -123,6 +134,10 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 			return expression;
 		}
 		
+		@Override
+		public String getTemplate() {
+			return template;
+		}
 	}
 
 	@Override
@@ -133,6 +148,23 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 	@Override
 	IMod111KeyDAO[] getKeys() {
 		return Mod111KeyDAO.values();
+	}
+
+	@Override
+	double getResult(Mod111 mod) {
+		return mod.getAmount(Mod111Key.CT_C30);
+	}
+	
+	@Override
+	ComplementaryBeahaviour getComplementaryBehaviour(Mod111 mod) {
+		return ComplementaryBeahaviour.REPLACEMENT;
+	}
+
+	@Override
+	Mod111 initialize(AONContext ctx, Mod111 mod111) {
+		mod111.setComplementaryDeclarationAvailable(true);
+		mod111.setReplacementDeclarationAvailable(false);
+		return super.initializeModel(ctx, mod111);
 	}
 
 }

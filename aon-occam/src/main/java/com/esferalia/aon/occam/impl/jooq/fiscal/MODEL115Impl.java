@@ -8,14 +8,15 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115InfoDAO;
 
 public class MODEL115Impl implements IMODEL115 {
 
 	@Override
-	public Mod115 getMod115(AONContext ctx, int id) {
-		return Mod115DAO.getMod115(ctx, id);
+	public Mod115 get(AONContext ctx, int id) {
+		return Mod115DAO.get(ctx, id);
 	}
 	@Override
 	public LinkedList<Mod115> getMod115s(AONContext ctx, int domain) {
@@ -26,21 +27,21 @@ public class MODEL115Impl implements IMODEL115 {
 	}
 	@Override
 	public Mod115 calculate(AONContext ctx, Mod115 mod115) {
-		return Mod115DAO.calculateMod115(ctx, mod115);
+		return Mod115DAO.calculate(mod115);
 	}
 	@Override
 	public Mod115 save(AONContext ctx, Mod115 mod115) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod115DAO.saveMod115(ctx, mod115));		
+				configuration -> Mod115DAO.save(ctx, mod115));		
 	}
 	@Override
 	public Mod115 saveComments(AONContext ctx, Mod115 mod115) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod115DAO.saveCommentsMod115(ctx, mod115));		
+				configuration -> Mod115DAO.saveComments(ctx, mod115));		
 	}
 	@Override
 	public Mod115 initializeForFinish(AONContext ctx, Mod115 mod115){
-		return FiscalModelDAO.initializeForFinish(ctx, mod115);
+		return Mod115DAO.initializeForFinish(ctx, mod115);
 	}
 	@Override
 	public Mod115 markAsFinished(AONContext ctx, Mod115 mod115){
@@ -60,6 +61,18 @@ public class MODEL115Impl implements IMODEL115 {
 	}
 
 	@Override
+	public Mod115 markAsCustomerAccepted(AONContext ctx, Mod115 mod115) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.markAsCustomerAccepted(ctx, mod115));		
+	}
+
+	@Override
+	public Mod115 markAsCustomerRejected(AONContext ctx, Mod115 mod115, String reason) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.markAsCustomerRejected(ctx, mod115, reason));		
+	}
+
+	@Override
 	public Mod115 markAsPending(AONContext ctx, Mod115 mod115){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod115DAO.markAsPending(ctx, mod115));		
@@ -73,22 +86,22 @@ public class MODEL115Impl implements IMODEL115 {
 
 	@Override
 	public Mod115 initialize(AONContext ctx, Mod115 mod115) {
-		return Mod115DAO.initializeMod115(ctx,mod115);
+		return Mod115DAO.initialize(ctx,mod115);
 	}
 
 	@Override
 	public Mod115 create(AONContext ctx, Mod115 mod115) {
-		return Mod115DAO.createMod115(ctx,mod115);
+		return Mod115DAO.create(ctx,mod115);
 	}
 	
 	@Override
 	public Mod115 reset(AONContext ctx, Mod115 mod115) {
-		return Mod115DAO.resetMod115(ctx,mod115);
+		return Mod115DAO.reset(ctx,mod115);
 	}
 	
 	@Override
 	public String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
-		return Mod115DAO.getMod115Info(ctx,mod115,script,infoKey);
+		return Mod115InfoDAO.getInfo(ctx,mod115,script,infoKey);
 	}
 	@Override
 	public Mod115 aeatPresentationMod115(AONContext ctx, Mod115 mod115, String aeatResponse) {

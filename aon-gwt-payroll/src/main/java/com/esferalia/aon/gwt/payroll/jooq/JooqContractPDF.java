@@ -264,9 +264,11 @@ public class JooqContractPDF {
 			}
 			
 			String ssNum = contractRecord.get(PERSON.SOCIAL_SECURITY_NUM);
-			contractFillData.put("E_SS1", ssNum.substring(0, 2));
-			contractFillData.put("E_SS2", ssNum.substring(2, 10));
-			contractFillData.put("E_SS3", ssNum.substring(10, 12));
+			if(AonStringUtils.isNotBlank(ssNum) && ssNum.length() == 12) {
+				contractFillData.put("E_SS1", ssNum.substring(0, 2));
+				contractFillData.put("E_SS2", ssNum.substring(2, 10));
+				contractFillData.put("E_SS3", ssNum.substring(10, 12));
+			}
 			
 			String nationality = contractRecord.get(REGISTRY.NATIONALITY);
 			contractFillData.put("E_NATIONALITY", Country.valueOf(nationality).getName());

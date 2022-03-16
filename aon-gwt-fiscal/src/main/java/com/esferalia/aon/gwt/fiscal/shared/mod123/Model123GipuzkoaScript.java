@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod123;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -12,7 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public enum Model123GipuzkoaScript implements IModelScript<Mod123Key> {
 	
-	 R00 ("Rentas o rendimientos dinerarios",new Mod123Key[]{Mod123Key.GP_C01,Mod123Key.GP_C02,Mod123Key.GP_C03},INVOICE,DIFF_INVOICE)
+	 R00 ("Rentas o rendimientos dinerarios",new Mod123Key[]{Mod123Key.GP_C01,Mod123Key.GP_C02,Mod123Key.GP_C03},NONE)
 	,R01 ("Rentas o rendimientos en especie",new Mod123Key[]{Mod123Key.GP_C04,Mod123Key.GP_C05,Mod123Key.GP_C06},NONE)
 	,R02 ("Periodificaci\u00F3n. Ingresos de ejercicios anteriores.",new Mod123Key[]{Mod123Key.GP_C07},NONE)
 	,R03 ("Periodificaci\u00F3n. Regularizaci\u00F3n.",new Mod123Key[]{Mod123Key.GP_C08},NONE)
