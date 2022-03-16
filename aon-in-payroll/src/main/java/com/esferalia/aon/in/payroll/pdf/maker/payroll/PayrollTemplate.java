@@ -55,6 +55,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.IDefaultPayroll;
 
 /**
  * Class to print Payroll PDF file with PDFbox
@@ -71,7 +72,7 @@ public class PayrollTemplate {
 	PDPageContentStream	contents;
 
 	PDDocument			  doc;
-	DefaultPayroll		  p;
+	IDefaultPayroll		  p;
 	Optional<InputStream> logo;
 	Locale				  lang;
 
@@ -89,9 +90,9 @@ public class PayrollTemplate {
 	 * @throws CanNotCreatePdfException
 	 */
 	public static void print(
-			OutputStream os, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language
+			OutputStream os, IDefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language
 	) throws CanNotCreatePdfException {
-		ArrayList<DefaultPayroll> payrolls = new ArrayList<>();
+		ArrayList<IDefaultPayroll> payrolls = new ArrayList<>();
 		payrolls.add(payroll);
 
 		try (PDDocument doc = print(payrolls, logo, language))
@@ -115,7 +116,7 @@ public class PayrollTemplate {
 	 * @throws IOException
 	 */
 	public static void print(
-			OutputStream os, Collection<DefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
+			OutputStream os, Collection<IDefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
 	) throws CanNotCreatePdfException, IOException {
 		try (PDDocument doc = print(payrolls, logo, language))
 		{
@@ -127,7 +128,7 @@ public class PayrollTemplate {
 	}
 
 	private static PDDocument print(
-			Collection<DefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
+			Collection<IDefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
 	) throws CanNotCreatePdfException, IOException {
 
 		PDDocument		doc		 = new PDDocument();
@@ -142,7 +143,7 @@ public class PayrollTemplate {
 		if (logo.isPresent())
 			bLogo = logo.get().readAllBytes();
 
-		for (DefaultPayroll payroll : payrolls) {
+		for (IDefaultPayroll payroll : payrolls) {
 			if (bLogo != null)
 				logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
 
