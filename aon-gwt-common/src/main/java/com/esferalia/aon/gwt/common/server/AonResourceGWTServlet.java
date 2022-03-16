@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
 		urlPatterns = { 
 				"/aon_gwt_aio/*", 
 				"/aon_gwt_payroll/*", 
-				"/aon_gwt_fiscal/*", 
+				"/aon_gwt_fiscal/*",
+				"/aon_gwt_mod200/*",
 				"/aon_gwt_stat/*",
 				"/aon_gwt_dump/*",
 				"/aon_gwt_connect/*",
