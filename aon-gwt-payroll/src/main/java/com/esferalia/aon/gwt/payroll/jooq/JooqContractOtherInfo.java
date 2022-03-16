@@ -99,16 +99,17 @@ public class JooqContractOtherInfo {
 			.execute();
 		
 		for(Entry<String, String> entry : contractOtherInfo.entrySet()) {
-			Result<Record> parentOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
-					.where(CONTRACT_INFO.NAME.eq(entry.getKey()))
-					.and(CONTRACT_INFO.CONTRACT.isNull())
-					.and(CONTRACT_INFO.DOMAIN.eq(domainId).or(CONTRACT_INFO.DOMAIN.eq(parentDomainId)))
-					.orderBy(CONTRACT_INFO.START_DATE.desc())
-					.fetch();
+//			Result<Record> parentOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
+//					.where(CONTRACT_INFO.NAME.eq(entry.getKey()))
+//					.and(CONTRACT_INFO.CONTRACT.isNull())
+//					.and(CONTRACT_INFO.DOMAIN.eq(domainId).or(CONTRACT_INFO.DOMAIN.eq(parentDomainId)))
+//					.orderBy(CONTRACT_INFO.START_DATE.desc())
+//					.fetch();
 			
-			if(	AonStringUtils.isNotBlank(entry.getValue()) && 
-				(parentOtherDataRecords.isEmpty() || (!parentOtherDataRecords.isEmpty() && !AonStringUtils.equalsIgnoreCase(parentOtherDataRecords.get(0).get(CONTRACT_INFO.EXPRESSION), entry.getValue())))) {
-				
+//			if(	AonStringUtils.isNotBlank(entry.getValue()) && 
+//				(parentOtherDataRecords.isEmpty() || (!parentOtherDataRecords.isEmpty() && !AonStringUtils.equalsIgnoreCase(parentOtherDataRecords.get(0).get(CONTRACT_INFO.EXPRESSION), entry.getValue())))) {
+			
+			if(	AonStringUtils.isNotBlank(entry.getValue())) {
 				dslContext.insertInto(CONTRACT_INFO)
 					.set(CONTRACT_INFO.DOMAIN, domainId)
 					.set(CONTRACT_INFO.CONTRACT, contractId)
