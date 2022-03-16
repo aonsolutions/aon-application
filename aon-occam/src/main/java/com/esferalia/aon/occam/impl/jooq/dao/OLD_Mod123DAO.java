@@ -32,7 +32,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class Mod123DAO extends FiscalModelDAO {
+public class OLD_Mod123DAO extends FiscalModelDAO {
 	
 	@FunctionalInterface
 	private static interface IModelInfoProvider {

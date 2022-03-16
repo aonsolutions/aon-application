@@ -22,7 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.finance.FsModelInvoiceDrop;
 import net.aonsolutions.db.up2date.fiscal.AlcatrazCreation;
 import net.aonsolutions.db.up2date.fiscal.AlterFsModelResult;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod115Result;
+import net.aonsolutions.db.up2date.fiscal.RefreshMod123Result;
 import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
 import net.aonsolutions.db.up2date.tgss.SMI2022Update;
 import net.aonsolutions.db.up2date.user.CertificateDomainFix;
@@ -226,7 +226,8 @@ public class Up2Date {
     		FsModelInvoiceDrop.FS_MODEL_INVOICE_DROP,
     		AlterFsModelResult.ALTER_FS_MODEL_RESULT,
 //    		RefreshMod111Result.REFRESH_MOD111_RESULT,
-    		RefreshMod115Result.REFRESH_MOD115_RESULT,
+    		RefreshMod123Result.REFRESH_MOD123_RESULT,
+//    		RefreshMod115Result.REFRESH_MOD115_RESULT,
     };
     
 

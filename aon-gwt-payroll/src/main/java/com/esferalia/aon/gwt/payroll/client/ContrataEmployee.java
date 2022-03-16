@@ -25,6 +25,11 @@ import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedContractType;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -711,6 +716,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private Label employeeCounter;
 	
 	private boolean hasCertificateSEPE = false;
+
+	private boolean changes = false;
 	
 	// ------------------------------------------------- Constructor
 	
@@ -1227,7 +1234,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- EmployeeContractButtons (Auxiliar methods)
 	
 	private void onSaveContract() {
-		
+		setChanges(true);
 		Integer itemIdx = tabLayOutPanel.getSelectedIndex();
 
 		switch (itemIdx) {
@@ -1237,7 +1244,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.setEmployeeContract(s -> {
 					Map<String, String> messageSuccessMap = new HashMap<>();
 					messageSuccessMap.put("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName() + " ha sido actualizado correctamente");
+
 					AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
+					
+					checkStatus(contrataEmployeeObject);
 					
 					if(null == this.contrataEmployeeObject.getContractData().getEndDate()) {
 						tgssContextMenu.getAfiEnd().getElement().getStyle().setDisplay(Display.NONE);
@@ -1292,12 +1302,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			@Override
 			public void onAccept() {
-				contrataEmployeeObject.delete4EverContract(s -> onListShow(true), f-> {});
+				contrataEmployeeObject.delete4EverContract(s ->{
+					 setChanges(true);
+					 onListEmployees();
+				}, f-> {});
 //				contrataEmployeeObject.deleteContract(s -> {
 //					onListShow(true);
 //				}, f-> {});
 			}
 		});
+	}
+	
+	public void setChanges(boolean changes) {
+		this.changes = changes;
+	}
+	
+	public boolean getChanges() {
+		return changes;
 	}
 	
 	private void movPrevDelete() {
@@ -1883,6 +1904,50 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					});
 				}
+				
+				
+				@Override
+				protected void cleanEndDate() {
+					contractEmployeeUI.employee.setEndDate(null);
+				}
+				
+				@Override
+				protected void cleanOcupation() {
+					contractEmployeeUI.employee.setOcupation(null);
+				}
+				
+				@Override
+				protected void updateStartDate(MismatchedStartDate mismatchedStartDate) {
+					contractEmployeeUI.employee.setStartDate(mismatchedStartDate.getSsStartDate());
+				}
+
+				@Override
+				protected void updateOccupation(MismatchedOccupation mismatchedOccupation) {
+					if(contractEmployeeUI.employee.occupation.isEnabled()) 
+						contractEmployeeUI.setSelectedValueLBChange(contractEmployeeUI.employee.occupation, mismatchedOccupation.getSsOccupation());
+					else 
+						optionNotAllowed();
+				}
+
+				@Override
+				protected void updateQuoteGroup(MismatchedQuoteGroup mismatchedQuoteGroup) {
+					if(contractEmployeeUI.employee.quoteGroup.isEnabled()) 
+						contractEmployeeUI.setSelectedValueLBChange(contractEmployeeUI.employee.quoteGroup, mismatchedQuoteGroup.getSsQuoteGroup());
+					else 
+						optionNotAllowed();
+				}
+
+				@Override
+				protected void updateContractType(MismatchedContractType mismatchedContractType) {	
+					if(contractEmployeeUI.employee.contractTypeLB.isEnabled()) 
+						contractEmployeeUI.setSelectedValueLBChange(contractEmployeeUI.employee.contractTypeLB, mismatchedContractType.getSsContractType());
+					else 
+						optionNotAllowed();
+				}
+
+				@Override
+				protected void updatePartialFactor(MismatchedPartialFactor mismatchedPartialFactor) {
+				}
 			};
 
 			employeeStatus.visit(sistemaREDResults);
@@ -1921,6 +1986,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 20);
+	}
+	
+	private void optionNotAllowed() {
+		AonDialog dialog = new AonDialog("Informaci\u00f3n", new HTML("Opci\u00f3n no permitida"));
+		dialog.info();
 	}
 
 	private void hideFootPanel() {

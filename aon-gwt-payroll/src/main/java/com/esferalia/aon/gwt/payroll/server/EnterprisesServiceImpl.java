@@ -3629,11 +3629,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void removeITParts(String domainName, String userLogin, List<ItNotExist> itNotExists)  throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			 Integer domainId = AonServletUtils.getDomainID(domainName);
-			
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			
-			Domain domain = new Domain().setId(domainId).setName(domainName);
+			Domain domain = new Domain()
+					.setId(AonServletUtils.getDomainID(domainName))
+					.setName(domainName);
+	    	
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain.getName());
+
+	    	Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), parentDomainId);		
 			
 			 for (ItNotExist itNotExist : itNotExists) {
 			 	EmployeeIT employeeIT = itNotExist.getEmployeeIT();
@@ -3644,15 +3646,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    if(employeeIT.getId()!=null) {
 			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
 			    } else { //DELETE TGSS
-			    	
-			    	Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);		
+
 			    	
 				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
 				 	
-					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+					Certificate certificate = AON.getCertificate(domainName, domain.getId(), userLogin, userId, "TGSS");
 			    	ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
 			    }
-
 			 }
 		} catch (Exception e) {
 			e.printStackTrace();

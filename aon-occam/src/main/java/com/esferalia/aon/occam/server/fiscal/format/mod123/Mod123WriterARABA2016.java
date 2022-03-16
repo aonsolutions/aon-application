@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod123;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -21,16 +21,17 @@ import org.w3c.dom.Element;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer.IMod123Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer.IMod123Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod123WriterARABA2016 implements IMod123Writer{ 
 
-	private static enum Mod123File {
+	private enum Mod123File {
 		
 		ARABA_2016 ( mod123 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> new Mod123Araba2016().propertyFill(wr, mod)
@@ -178,7 +179,7 @@ public class Mod123WriterARABA2016 implements IMod123Writer{
 			datos.appendChild(e3);
 			Element e4 = doc.createElement(DATO);
 			e4.setAttribute(NOMBRE,RESULTADO);
-			e4.setAttribute(VALOR, formatNumber( mod123.getResult() ));
+			e4.setAttribute(VALOR, formatNumber( mod123.getDeclarationResult() ));
 			datos.appendChild(e4);
 			Element e5 = doc.createElement(DATO);
 			e5.setAttribute(NOMBRE,CCC1);
