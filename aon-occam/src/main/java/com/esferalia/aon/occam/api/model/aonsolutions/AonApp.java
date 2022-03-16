@@ -1,8 +1,11 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.json.JSONArray;
 
 import com.esferalia.aon.occam.api.model.Module;
 
@@ -70,21 +73,37 @@ public enum AonApp implements Serializable{
 		return null;
 	}
 	
+	public static List<AonApp> safeValueOf(JSONArray array){
+		LinkedList<AonApp> apps = new LinkedList<>();
+		for(int i = 0; i < array.length(); i++) {
+			AonApp app = AonApp.safeValueOf(array.optString(i));
+			if(app != null) {
+				apps.add(AonApp.safeValueOf(array.optString(i)));
+			}
+		}
+		return apps;
+	}
+	
+	public static List<AonApp> getValues() {
+		return Arrays.asList(values());
+	}
+	
 	private static LinkedList<Module> getEmptyModules() {
 		return new LinkedList<>();
 	}
 	
 	private static LinkedList<Module> getBasicManagementModules() {
 		LinkedList<Module> list = new LinkedList<>();
-		list.add(Module.MANAGEMENT);
+		list.add(Module.AON_FINANCE);
 		return list;
 	}
 	
 	private static LinkedList<Module> getStandarManagementModules() {
-		LinkedList<Module> list = getBasicManagementModules();
+		LinkedList<Module> list = new LinkedList<>();
 //		list.add(Module.TREASURY);
 //		list.add(Module.MARKETING);
 		list.add(Module.CRM);
+		list.add(Module.MANAGEMENT);
 		return list;
 	}
 	

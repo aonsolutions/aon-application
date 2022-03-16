@@ -91,6 +91,9 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if ( ds.getType() == DomainType.HOTEL ) {
 			enabledModules.add(Module.HOTEL);
 		}
+		if ( ds.getType() == DomainType.COMMERCE ) {
+			enabledModules.add(Module.POS);
+		}
 		if ( addExtraModules) {
 			enabledModules.add(Module.CRM);
 			enabledModules.add(Module.MANAGEMENT);

@@ -267,6 +267,10 @@ public class SecurityDAO {
 		return auth;
 	}
 	
+	public static DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp) {
+		return saveDomainApp(ctx, domainApp, true);
+	}
+
 	public static DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp, boolean old) {
 		if (domainApp == null) throw new AonCoreException("DomainApp can not be null");
 		if (domainApp.getDomain() == null) throw new AonCoreException("DomainApp.domain can not be null"); 
@@ -1210,7 +1214,6 @@ public class SecurityDAO {
 					.from(DOMAIN_APPLICATION)
 					.where(DOMAIN_APPLICATION.DOMAIN.eq(ctx.getDomainId()))
 					.fetch().stream().map(r -> r.getValue(DOMAIN_APPLICATION.ID)).findFirst().orElse(null);
-		
 
 			ctx.getDslContext().insertInto(DOMAIN_APPLICATION_MODULE)
 				.set(DOMAIN_APPLICATION_MODULE.DOMAIN, ctx.getDomainId())
