@@ -239,8 +239,10 @@ public class DefaultPayrollTemplate {
 		drawTextCenter(contents, new PDRectangle(x, y + 4, 530, 100), title, BLACK, HELVETICA_BOLD, 12, 12);
 
 		y -= 60;
-		drawBox(contents, x, y, 275, 65, LIGHT_GRAY);
-		drawBox(contents, x + 282, y, 275, 65, LIGHT_GRAY);
+//		drawBox(contents, x, y, 275, 65, LIGHT_GRAY);
+//		drawBox(contents, x + 282, y, 275, 65, LIGHT_GRAY);
+		PDFToolkit.drawBorderedBox(contents, x, y, 275, 65, LIGHT_GRAY, 2f);
+		PDFToolkit.drawBorderedBox(contents, x + 282, y, 275, 65, LIGHT_GRAY, 2f);
 
 		y += 50;
 		x += 10;
@@ -526,10 +528,9 @@ public class DefaultPayrollTemplate {
 			img.scale(100, 50, ALIGNMENT.CENTER).draw();
 		}
 	}
-	private float calculateDeductions(float py) throws IOException {
+	private float calculateDeductions(float py) {
 		py -= NORMAL_LINE_JUMP;
 		py -= NORMAL_LINE_JUMP;
-		Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions = p.getDeductions();
 		py -= NORMAL_LINE_JUMP + 2;
 		py -= LITTLE_LINE_JUMP;
 		py -= LITTLE_LINE_JUMP;
