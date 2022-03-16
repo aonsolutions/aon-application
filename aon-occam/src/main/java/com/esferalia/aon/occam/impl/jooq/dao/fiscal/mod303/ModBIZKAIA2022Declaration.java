@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class ModBIZKAIA2022Declaration extends Mod303Declaration {
+class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 	
 	protected ModBIZKAIA2022Declaration() {
 				
@@ -293,7 +293,7 @@ class ModBIZKAIA2022Declaration extends Mod303Declaration {
 			(ctx,mod) -> {
 				if (mod.isComplementary()) {
 					add( Mod303Key.BZ_C041, mod, 
-						Mod303DAO.getSamePeriodModels(ctx, mod)
+						PrevMod303DAO.getSamePeriodModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
 							.filter(AonMathUtils::isGreatherThanZero)
 							.sum());						
@@ -315,7 +315,7 @@ class ModBIZKAIA2022Declaration extends Mod303Declaration {
 			(ctx,mod) -> {
 				if (mod.isComplementary()) {
 					add( Mod303Key.BZ_C042, mod, 
-						Mod303DAO.getSamePeriodModels(ctx, mod)
+						PrevMod303DAO.getSamePeriodModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
 							.filter(AonMathUtils::isLessThanZero)
 							.sum());						
@@ -343,18 +343,18 @@ class ModBIZKAIA2022Declaration extends Mod303Declaration {
 		// Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles
 		// sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas
 		// conforme a la regla general de devengo contenida en el artículo 75 NFIVA
-		,BZ_C200	(Mod303Key.BZ_C200,null,null,(ctx,mod) -> add(Mod303Key.BZ_C200,mod,Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
+		,BZ_C200	(Mod303Key.BZ_C200,null,null,(ctx,mod) -> add(Mod303Key.BZ_C200,mod,PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
 		,BZ_C201	(Mod303Key.BZ_C201,null,null,(ctx,mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
+			double quota = PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
 			add( Mod303Key.BZ_C201, mod, quota );
 			}
 		,null,null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea aplicable o afecte el
 		// régimen especial del criterio de caja
-		,BZ_C202	(Mod303Key.BZ_C202,null,null,(ctx,mod) -> add(Mod303Key.BZ_C202,mod,Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
+		,BZ_C202	(Mod303Key.BZ_C202,null,null,(ctx,mod) -> add(Mod303Key.BZ_C202,mod,PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
 		,BZ_C203	(Mod303Key.BZ_C203,null,null,(ctx,mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
+			double quota = PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
 			add(Mod303Key.BZ_C203,mod, quota );
 			add( Mod303Key.BZ_C187, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
 			}

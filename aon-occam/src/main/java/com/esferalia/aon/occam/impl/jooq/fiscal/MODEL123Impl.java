@@ -83,16 +83,19 @@ public class MODEL123Impl implements IMODEL123 {
 
 	@Override
 	public Mod123 initialize(AONContext ctx, Mod123 mod123) {
-		return Mod123DAO.initialize(ctx,mod123);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod123DAO.initialize(ctx,mod123));
 	}
 
 	@Override
 	public Mod123 create(AONContext ctx, Mod123 mod123) {
-		return Mod123DAO.create(ctx,mod123);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod123DAO.create(ctx,mod123));
 	}
 	@Override
 	public Mod123 reset(AONContext ctx, Mod123 mod123) {
-		return Mod123DAO.reset(ctx,mod123);
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod123DAO.reset(ctx,mod123));
 	}
 	@Override
 	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
@@ -100,7 +103,8 @@ public class MODEL123Impl implements IMODEL123 {
 	}
 	@Override
 	public Mod123 aeatPresentation(AONContext ctx, Mod123 mod123, String aeatResponse) {
-		return Mod123DAO.aeatPresentation(ctx, mod123, aeatResponse);
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod123DAO.aeatPresentation(ctx, mod123, aeatResponse));
 	}
 
 }

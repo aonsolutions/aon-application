@@ -365,24 +365,23 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		fieldsMap.put(key, input);
 		input.setEnabled(enabled); 
 		input.setValue(det1.getAmount());
-		if (key.isDiffEnabled() && AonMathUtils.isNotZero(det1.getAdjustAmount())) {
+		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
 			input.addStyleName(AON.CSS.aonChanged());
-			input.setTitle("Valor calculado ..: " + det1.getResultAmount() 
-				+ ". Se ha realizado un ajuste por valor de " + AonMathUtils.round( det1.getAdjustAmount() * -1));
+			input.setTitle(AON.MSG.difCalc(
+					AON.FMT.format(det1.getResultAmount()),
+					AON.FMT.format(AonMathUtils.round( det1.getAdjustAmount() * -1))));
 		}
 		input.addValueChangeHandler(event -> {
 			if (input.getValue() == null) input.setValue(0.0,false);
-			if (key.isDiffEnabled()) {
-				double result = getModel().getResultAmount(key);
-				double adjust = getModel().getAdjustAmount(key);
-				double amount = input.getValue();
-				if (AonMathUtils.isNotZero(result - adjust - amount)) {
-					getModel().ensureDetail(key).setAdjustAmount( result - amount);	
-				}
+			double result = getModel().getResultAmount(key);
+			double adjust = getModel().getAdjustAmount(key);
+			double amount = input.getValue();
+			if (AonMathUtils.isNotZero(result - adjust - amount)) {
+				getModel().ensureDetail(key).setAdjustAmount( result - amount);	
 			}
 			getModel().ensureDetail(key).setAmount(input.getValue());
 
-			if (key.isDiffEnabled() && AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
+			if (AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
 				input.addStyleName(AON.CSS.aonChanged());
 				input.setTitle(AON.MSG.difCalc(AON.FMT.format(getModel().ensureDetail(key).getResultAmount()),
 						AON.FMT.format(AonMathUtils.round( getModel().ensureDetail(key).getAdjustAmount() * -1))));

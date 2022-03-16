@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class ModGIPUZKOA2017Declaration extends Mod303Declaration {
+class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
 	
 	protected ModGIPUZKOA2017Declaration() {
 		
@@ -324,13 +324,13 @@ class ModGIPUZKOA2017Declaration extends Mod303Declaration {
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,GP_C047(Mod303Key.GP_C047,null,null,(ctx,mod) -> add(Mod303Key.GP_C047,mod,Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,GP_C048(Mod303Key.GP_C048,null,null,(ctx,mod) -> add( Mod303Key.GP_C048, mod, Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod) ),null,null)
+		,GP_C047(Mod303Key.GP_C047,null,null,(ctx,mod) -> add(Mod303Key.GP_C047,mod,PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
+		,GP_C048(Mod303Key.GP_C048,null,null,(ctx,mod) -> add( Mod303Key.GP_C048, mod, PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod) ),null,null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,GP_C049(Mod303Key.GP_C049,null,null,(ctx,mod) -> add(Mod303Key.GP_C049,mod,Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,GP_C050(Mod303Key.GP_C050,null,null,(ctx,mod) -> add(Mod303Key.GP_C050,mod, Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod) ),null,null)
+		,GP_C049(Mod303Key.GP_C049,null,null,(ctx,mod) -> add(Mod303Key.GP_C049,mod,PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
+		,GP_C050(Mod303Key.GP_C050,null,null,(ctx,mod) -> add(Mod303Key.GP_C050,mod, PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod) ),null,null)
 		;
 		
 		private Mod303Key key;

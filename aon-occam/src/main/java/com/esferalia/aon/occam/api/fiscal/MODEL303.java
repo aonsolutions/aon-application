@@ -24,7 +24,7 @@ public class MODEL303 {
 
 	public static Mod303 get(Occam occam, int id) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod303(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 

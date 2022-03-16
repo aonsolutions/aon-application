@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303ARABA2017Declaration extends Mod303Declaration {
+class Mod303ARABA2017Declaration extends Mod303ARABA {
 	
 	protected Mod303ARABA2017Declaration() {
 		
@@ -326,7 +326,7 @@ class Mod303ARABA2017Declaration extends Mod303Declaration {
 		,AR_C063	(Mod303Key.AR_C063,null,null,
 				(ctx,mod) -> {
 					if (mod.isComplementary()) {
-						add( Mod303Key.AR_C063, mod, Mod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C080)).sum());						
+						add( Mod303Key.AR_C063, mod, PrevMod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C080)).sum());						
 					}
 				}
 				,null
@@ -372,18 +372,18 @@ class Mod303ARABA2017Declaration extends Mod303Declaration {
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,AR_C180	(Mod303Key.AR_C180,null,null,(ctx,mod) -> add(Mod303Key.AR_C180,mod,Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
+		,AR_C180	(Mod303Key.AR_C180,null,null,(ctx,mod) -> add(Mod303Key.AR_C180,mod,PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
 		,AR_C181	(Mod303Key.AR_C181,null,null,(ctx,mod) -> {
-				double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
+				double quota = PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
 				add( Mod303Key.AR_C181, mod, quota );
 			}
 		,null,null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,AR_C182	(Mod303Key.AR_C182,null,null,(ctx,mod) -> add(Mod303Key.AR_C182,mod,Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
+		,AR_C182	(Mod303Key.AR_C182,null,null,(ctx,mod) -> add(Mod303Key.AR_C182,mod,PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
 		,AR_C183	(Mod303Key.AR_C183,null,null,(ctx,mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
+			double quota = PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
 			add(Mod303Key.AR_C183,mod, quota );
 			add( Mod303Key.AR_C911, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
 			}

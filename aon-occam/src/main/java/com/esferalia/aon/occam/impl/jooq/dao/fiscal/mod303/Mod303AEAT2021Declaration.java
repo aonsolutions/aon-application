@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303AEAT2021Declaration extends Mod303Declaration {
+class Mod303AEAT2021Declaration extends Mod303AEAT {
 
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -1476,11 +1476,11 @@ class Mod303AEAT2021Declaration extends Mod303Declaration {
 		// art. 75 LIVA
 		,
 		CT_C62(Mod303Key.CT_C62, null, null,
-				(ctx, mod) -> add(Mod303Key.CT_C62, mod, Mod303DAO.getVatAccrualPaymentOutputBase(ctx, mod)), null,
+				(ctx, mod) -> add(Mod303Key.CT_C62, mod, PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx, mod)), null,
 				null)
 
 		, CT_C63(Mod303Key.CT_C63, null, null, (ctx, mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx, mod);
+			double quota = PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx, mod);
 			add(Mod303Key.CT_C63, mod, quota);
 		}, null, null)
 
@@ -1489,10 +1489,10 @@ class Mod303AEAT2021Declaration extends Mod303Declaration {
 		// régimen especial del criterio de caja
 		,
 		CT_C74(Mod303Key.CT_C74, null, null,
-				(ctx, mod) -> add(Mod303Key.CT_C74, mod, Mod303DAO.getVatAccrualPaymentInputBase(ctx, mod)), null,
+				(ctx, mod) -> add(Mod303Key.CT_C74, mod, PrevMod303DAO.getVatAccrualPaymentInputBase(ctx, mod)), null,
 				null),
 		CT_C75(Mod303Key.CT_C75, null, null, (ctx, mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx, mod);
+			double quota = PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx, mod);
 			add(Mod303Key.CT_C75, mod, quota);
 			add(Mod303Key.CT_A08, mod, AonMathUtils.isZero(quota) ? (0.0) : (1.0));
 		}, null, null)
@@ -1601,7 +1601,7 @@ class Mod303AEAT2021Declaration extends Mod303Declaration {
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
 		, CT_C70(Mod303Key.CT_C70, null, null, (ctx, mod) -> {
 			if (mod.isComplementary()) {
-				add(Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodModels(ctx, mod)
+				add(Mod303Key.CT_C70, mod, PrevMod303DAO.getSamePeriodModels(ctx, mod)
 						.mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());
 			}
 		  }, 
@@ -1956,9 +1956,9 @@ class Mod303AEAT2021Declaration extends Mod303Declaration {
 	// -----------------------------------------------------------------------
 	@Override
 	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303) {
-		Mod303 previous = (Mod303) Mod303DAO.getMod303s(ctx, mod303.getDomain()).findFirst().orElse(null);
+		Mod303 previous = Mod303DAO.getMod303s(ctx, mod303.getDomain()).findFirst().orElse(null);
 		if (previous != null) {
-			previous = Mod303DAO.getMod303(ctx, previous.getId());
+			previous = Mod303DAO.get(ctx, previous.getId());
 			if (previous.getAmount(Mod303Key.CT_A02) == 0 || previous.getAmount(Mod303Key.CT_A02) == 1) {
 				mod303.putAmount(Mod303Key.CT_A02, previous.getAmount(Mod303Key.CT_A02));
 				for (Mod303KeyDAO key : Mod303KeyDAO.values()) {

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -63,6 +64,9 @@ public class Asserts {
 	
 	public static void assertEqualsDouble(String msg,double expected,double actual) {
 		assertEquals(msg, expected, actual, DELTA);		
+	}
+	public static void assertNotEqualsDouble(String msg,double expected,double actual) {
+		assertNotEquals(msg, expected, actual, DELTA);		
 	}
 	
 	public static void assertEqualsNulls(String msg,Object expected, Object actual) {
@@ -701,6 +705,8 @@ public class Asserts {
 		assertEquals("Period", expected.getPeriod(), actual.getPeriod());
 		assertEquals("Administration", expected.getAdministration(), actual.getAdministration());
 		assertEquals("Status", expected.getStatus(), actual.getStatus());
+		assertEquals("DeclarationResult", expected.getDeclarationResult(), actual.getDeclarationResult());
+		assertEquals("DeclarationType", expected.getDeclarationResultType(), actual.getDeclarationResultType());
 		assertEquals("Confidential", expected.isConfidential(), actual.isConfidential());
 		assertEquals("Complementary", expected.isComplementary(), actual.isComplementary());
 		assertEquals("Replacement", expected.isReplacement(), actual.isReplacement());

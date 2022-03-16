@@ -169,14 +169,35 @@ public class FiscalFaker {
 	public static Mod303 getMod303( FiscalFakerParams params) {
 		Mod303 mod303 = new Mod303();
 		mod303.setDomain(params.getOccam().getDomain());
-		MODEL303.initialize( params.getOccam(), mod303);
 		mod303.setYear(AonDateUtils.getYear(params.getIssueDate()));
 		mod303.setPeriod( params.isMonthly()
 			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
 		mod303.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		MODEL303.initialize( params.getOccam(), mod303);
+		mod303.setComplementary(params.isComplementary());
+		mod303.setReplacement(params.isReplacement());
+		mod303.setGenerateFromYearStart(mod303.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
+		return mod303;
+	}
+
+	public static Mod303 createMod303( FiscalFakerParams params) {
+		Mod303 mod303 = getMod303( params );
 		MODEL303.create(params.getOccam(), mod303);
 		return mod303;
 	}
+
+//	public static Mod303 getMod303( FiscalFakerParams params) {
+//		Mod303 mod303 = new Mod303();
+//		mod303.setDomain(params.getOccam().getDomain());
+//		MODEL303.initialize( params.getOccam(), mod303);
+//		mod303.setYear(AonDateUtils.getYear(params.getIssueDate()));
+//		mod303.setPeriod( params.isMonthly()
+//			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
+//			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
+//		mod303.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+//		MODEL303.create(params.getOccam(), mod303);
+//		return mod303;
+//	}
 	
 }

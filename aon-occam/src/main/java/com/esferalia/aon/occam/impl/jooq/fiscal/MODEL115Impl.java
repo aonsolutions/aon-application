@@ -86,17 +86,20 @@ public class MODEL115Impl implements IMODEL115 {
 
 	@Override
 	public Mod115 initialize(AONContext ctx, Mod115 mod115) {
-		return Mod115DAO.initialize(ctx,mod115);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.initialize(ctx,mod115));
 	}
 
 	@Override
 	public Mod115 create(AONContext ctx, Mod115 mod115) {
-		return Mod115DAO.create(ctx,mod115);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.create(ctx,mod115));
 	}
 	
 	@Override
 	public Mod115 reset(AONContext ctx, Mod115 mod115) {
-		return Mod115DAO.reset(ctx,mod115);
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod115DAO.reset(ctx,mod115));
 	}
 	
 	@Override
@@ -105,7 +108,8 @@ public class MODEL115Impl implements IMODEL115 {
 	}
 	@Override
 	public Mod115 aeatPresentationMod115(AONContext ctx, Mod115 mod115, String aeatResponse) {
-		return Mod115DAO.aeatPresentation(ctx, mod115, aeatResponse);
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod115DAO.aeatPresentation(ctx, mod115, aeatResponse));
 	}
 
 }

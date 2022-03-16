@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303AEAT2018 extends Mod303Declaration {
+class Mod303AEAT2018 extends Mod303AEAT {
 
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -1572,11 +1572,11 @@ class Mod303AEAT2018 extends Mod303Declaration {
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
 		,CT_C62(Mod303Key.CT_C62
-			,null,null, (ctx,mod) -> add( Mod303Key.CT_C62, mod, Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
+			,null,null, (ctx,mod) -> add( Mod303Key.CT_C62, mod, PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
 		
 		,CT_C63(Mod303Key.CT_C63
 			,null,null, (ctx,mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
+			double quota = PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
 			add( Mod303Key.CT_C63, mod, quota );
 //			double a = AonMathUtils.isZero(quota)? mod.getAmount(Mod303Key.CT_A07):(1.0);
 //			add( Mod303Key.CT_A07, mod, a); 
@@ -1585,9 +1585,9 @@ class Mod303AEAT2018 extends Mod303Declaration {
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,CT_C74(Mod303Key.CT_C74,null,null, (ctx,mod) -> add( Mod303Key.CT_C74, mod, Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
+		,CT_C74(Mod303Key.CT_C74,null,null, (ctx,mod) -> add( Mod303Key.CT_C74, mod, PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
 		,CT_C75(Mod303Key.CT_C75,null,null, (ctx,mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
+			double quota = PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
 			add( Mod303Key.CT_C75, mod, quota);
 			add( Mod303Key.CT_A08, mod, AonMathUtils.isZero(quota)?(0.0):(1.0));
 			}
@@ -1668,7 +1668,7 @@ class Mod303AEAT2018 extends Mod303Declaration {
 		,CT_C70(Mod303Key.CT_C70,null,null,
 				(ctx,mod) -> {
 					if (mod.isComplementary()) {
-						add( Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());						
+						add( Mod303Key.CT_C70, mod, PrevMod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());						
 					}
 				}
 				,null
@@ -2035,56 +2035,65 @@ class Mod303AEAT2018 extends Mod303Declaration {
 	//	-----------------------------------------------------------------------
 	@Override
 	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303) {
-		Mod303 previous = (Mod303) Mod303DAO.getMod303s(ctx, mod303.getDomain()).findFirst().orElse(null);
+		Mod303 previous = Mod303DAO.getMod303s(ctx, mod303.getDomain()).findFirst().orElse(null);
 		if (previous != null) {
-			previous = Mod303DAO.getMod303(ctx, previous.getId());
-			if (previous.getAmount(Mod303Key.CT_A02)  == 0 || previous.getAmount(Mod303Key.CT_A02)  == 1) {
+			previous = Mod303DAO.get(ctx, previous.getId());
+			if (previous.getAmount(Mod303Key.CT_A02) == 0 || previous.getAmount(Mod303Key.CT_A02) == 1) {
 				mod303.putAmount(Mod303Key.CT_A02, previous.getAmount(Mod303Key.CT_A02));
 				for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-					if ( key.isCopyable() ) {
+					if (key.isCopyable()) {
 						FiscalModelDetail prev = previous.ensureDetail(key.getKey());
 						FiscalModelDetail det = mod303.ensureDetail(key.getKey());
 						det.setAmount(prev.getAmount());
 						det.setDescription(prev.getDescription());
-						if (key == Mod303KeyDAO.CT_SA11 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA11))) {
-							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA11);
+						if (key == Mod303KeyDAO.CT_SA11
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA11))) {
+							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA11);
 							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA13).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								mod303.ensureDetail(Mod303Key.CT_SA13)
+										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
 								if (!mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_SA15).setAmount(farmerIVA.getPorcentaje());
 								}
 							}
 						}
-						if (key == Mod303KeyDAO.CT_SA21 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA21))) {
-							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA21);
+						if (key == Mod303KeyDAO.CT_SA21
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA21))) {
+							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA21);
 							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA23).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								mod303.ensureDetail(Mod303Key.CT_SA23)
+										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
 								if (!mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_SA25).setAmount(farmerIVA.getPorcentaje());
 								}
 							}
 						}
-						if (key == Mod303KeyDAO.CT_SA31 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA31))) {
-							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA31);
+						if (key == Mod303KeyDAO.CT_SA31
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA31))) {
+							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA31);
 							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA33).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								mod303.ensureDetail(Mod303Key.CT_SA33)
+										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
 								if (!mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_SA35).setAmount(farmerIVA.getPorcentaje());
 								}
 							}
 						}
-						if (key == Mod303KeyDAO.CT_SA41 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_SA41))) {
-							IFarmerIVA farmerIVA = getFarmerIVA( mod303,  Mod303Key.CT_SA41);
+						if (key == Mod303KeyDAO.CT_SA41
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA41))) {
+							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA41);
 							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA43).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+								mod303.ensureDetail(Mod303Key.CT_SA43)
+										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
 								if (!mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_SA45).setAmount(farmerIVA.getPorcentaje());
 								}
 							}
 						}
-						
-						if (key == Mod303KeyDAO.CT_S101 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S101))) {
-							IEpigraph epi = getEpigraph( mod303,  Mod303Key.CT_S101);
+
+						if (key == Mod303KeyDAO.CT_S101
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S101))) {
+							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S101);
 							if (epi != null) {
 								if (mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_S125).setAmount(epi.getPorcMin());
@@ -2093,8 +2102,9 @@ class Mod303AEAT2018 extends Mod303Declaration {
 								}
 							}
 						}
-						if (key == Mod303KeyDAO.CT_S201 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S201))) {
-							IEpigraph epi = getEpigraph( mod303,  Mod303Key.CT_S201);
+						if (key == Mod303KeyDAO.CT_S201
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S201))) {
+							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S201);
 							if (epi != null) {
 								if (mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_S225).setAmount(epi.getPorcMin());
@@ -2103,8 +2113,9 @@ class Mod303AEAT2018 extends Mod303Declaration {
 								}
 							}
 						}
-						if (key == Mod303KeyDAO.CT_S301 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S301))) {
-							IEpigraph epi = getEpigraph( mod303,  Mod303Key.CT_S301);
+						if (key == Mod303KeyDAO.CT_S301
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S301))) {
+							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S301);
 							if (epi != null) {
 								if (mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_S325).setAmount(epi.getPorcMin());
@@ -2113,8 +2124,9 @@ class Mod303AEAT2018 extends Mod303Declaration {
 								}
 							}
 						}
-						if (key == Mod303KeyDAO.CT_S401 && AonStringUtils.isNotBlank( mod303.getDescription(Mod303Key.CT_S401))) {
-							IEpigraph epi = getEpigraph( mod303,  Mod303Key.CT_S401);
+						if (key == Mod303KeyDAO.CT_S401
+								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S401))) {
+							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S401);
 							if (epi != null) {
 								if (mod303.isLastPeriod()) {
 									mod303.ensureDetail(Mod303Key.CT_S425).setAmount(epi.getPorcMin());
