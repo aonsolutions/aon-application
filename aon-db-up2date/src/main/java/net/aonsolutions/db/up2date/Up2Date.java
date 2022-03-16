@@ -20,6 +20,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
+import net.aonsolutions.db.up2date.tgss.SMI2022Update;
+import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateDaily;
 import net.aonsolutions.db.up2date.user.CertificateDomainFix;
 
 
@@ -210,9 +213,10 @@ public class Up2Date {
     		//AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
     		//AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
     		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
-    		//SMI2022Update.SMI2022UPDATE
-    		PrestITFactorUpdate.PRESTITFACTORUPDATE,
-    		CertificateDomainFix.CERTIFICATEDOMAINFIX
+    		//SMI2022Update.SMI2022UPDATE,
+    		//PrestITFactorUpdate.PRESTITFACTORUPDATE,
+    		//CertificateDomainFix.CERTIFICATEDOMAINFIX
+    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY
     };
     
 
