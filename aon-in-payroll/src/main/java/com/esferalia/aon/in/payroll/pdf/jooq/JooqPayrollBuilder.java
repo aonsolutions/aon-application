@@ -1,6 +1,5 @@
-package com.esferalia.aon.gwt.payroll.util;
+package com.esferalia.aon.in.payroll.pdf.jooq;
 
-import static com.esferalia.aon.gwt.payroll.util.Utilities.separateString;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -27,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,10 +36,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.DefaultPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.IDefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams;
@@ -83,7 +84,19 @@ public class JooqPayrollBuilder {
 		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
-			fillPayroll(outputStream, dpt, dpb, aonContext, salaryIds, complementaryLimit);
+			byte[] logo = getLogo(aonContext);
+			Collection<IDefaultPayroll> payrolls = buildPayrolls(outputStream, dpt, dpb, aonContext, salaryIds, complementaryLimit, logo);
+			printAon(outputStream, payrolls, logo);
+		}
+	}
+	public static void generateClassicPayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
+			Optional<Double> complementaryLimit, Integer... salaryIds) {
+		PayrollTemplate dpt = new PayrollTemplate();
+		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
+			byte[] logo = getLogo(aonContext);
+			Collection<IDefaultPayroll> payrolls = buildPayrolls(outputStream, dpt, dpb, aonContext, salaryIds, complementaryLimit, logo);
+			printClassic(outputStream, payrolls, logo);
 		}
 	}
 
@@ -100,6 +113,10 @@ public class JooqPayrollBuilder {
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
 		generatePayroll(enterpriseId, domainName, "", outputStream, complementaryLimit, salaryIds);
 	}
+	public static void generateClassicPayroll(Integer enterpriseId, String domainName, OutputStream outputStream,
+			Optional<Double> complementaryLimit, Integer... salaryIds) {
+		generateClassicPayroll(enterpriseId, domainName, "", outputStream, complementaryLimit, salaryIds);
+	}
 
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the
@@ -112,13 +129,11 @@ public class JooqPayrollBuilder {
 	public static void generatePayroll(String domainName, OutputStream outputStream, Optional<Double> complementaryLimit, Integer... salaryIds) {
 		generatePayroll(null, domainName, "", outputStream, complementaryLimit, salaryIds);
 	}
+	public static void generateClassicPayroll(String domainName, OutputStream outputStream, Optional<Double> complementaryLimit, Integer... salaryIds) {
+		generateClassicPayroll(null, domainName, "", outputStream, complementaryLimit, salaryIds);
+	}
 
-	private static void fillPayroll(OutputStream outputStream, PayrollTemplate payrollTemplate, DefaultPayrollBuilder payrollBuilder,
-			AONContext aonContext, Integer[] salaryIds, Optional<Double> complementaryLimit) {
-		
-		// PICK UP THE SALARIES
-		Stream<Salary> salaries = AON.getSalaries(aonContext, p -> p.getIdProperty().in(salaryIds));
-		
+	private static byte[] getLogo(AONContext aonContext) {
 		// LOGO
 		Optional<InputStream> optLogo = Optional.empty();
 		{
@@ -144,10 +159,17 @@ public class JooqPayrollBuilder {
 			if (attach1 != null && attach1.getData() != null)
 				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
 		}
-		final byte[] logo = getBytes(optLogo);
+		return getBytes(optLogo);
+	}
+	
+	private static Collection<IDefaultPayroll> buildPayrolls(OutputStream outputStream, PayrollTemplate payrollTemplate, DefaultPayrollBuilder payrollBuilder,
+			AONContext aonContext, Integer[] salaryIds, Optional<Double> complementaryLimit, byte[] logo) {
+		
+		// PICK UP THE SALARIES
+		Stream<Salary> salaries = AON.getSalaries(aonContext, p -> p.getIdProperty().in(salaryIds));
 
 		
-		Collection<DefaultPayroll> payrolls = salaries.map(salary -> {
+		return salaries.map(salary -> {
 
 			// PAYROLL RELATED DATA
 			{
@@ -269,6 +291,7 @@ public class JooqPayrollBuilder {
 				payrollBuilder.setNss(salary.getEmployeeSSNumber());
 				payrollBuilder.setProfessionalGroup(salary.getEmployeeCategory());
 				payrollBuilder.setQuotationGroup(salary.getEmployeeQuoteGroup());
+				payrollBuilder.setTotalSSContributions(salary.getTotalSSContributions());
 			}
 			
 			// PAYMENTS
@@ -331,13 +354,13 @@ public class JooqPayrollBuilder {
 				HashMap<Integer, ArrayList<PDFDeduction>> deductionMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
 				salary.getDeductions().stream().sorted(Comparator.comparing(d -> {
 					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription()
-							: Utilities.chooseDescription(d.getDeductionType());
+							: chooseDescription(d.getDeductionType());
 				})).forEach(d -> {
 					DeductionType deductionType = d.getDeductionType();
 					
 					if(deductionType == null) return;
 					
-					List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()));
+					List<ContextData> percList = data.get("PORCENTAJE_" + getDeductionType(deductionType.ordinal()));
 					ContextData cd = percList != null ? percList.get(0) : null;
 					Double percent = null;
 					if (cd != null) {
@@ -347,16 +370,16 @@ public class JooqPayrollBuilder {
 							percent = -1d;
 					}
 
-					int type = Utilities.chooseType(deductionType);
+					int type = chooseType(deductionType);
 					String description = d.getDescription();
 					
 					if (description == null || description.isEmpty()) {
-						description = Utilities.chooseDescription(deductionType);
+						description = chooseDescription(deductionType);
 					}
 
-					PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), description, percent);
+					PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), description, percent, deductionType);
 					if (!deductionMap.containsKey(type))
-						deductionMap.put(type, new ArrayList<PDFDeduction>());
+						deductionMap.put(type, new ArrayList<>());
 
 					if (deductionMap.get(type).stream().anyMatch(ded -> equalsIgnoreCase(ded.getDescription().get(), pdfDeductionEntry.getDescription().get()))) {
 						PDFDeduction ded = deductionMap.get(type)
@@ -368,7 +391,7 @@ public class JooqPayrollBuilder {
 						ded.setAmount(ded.getAmount().get() + pdfDeductionEntry.getAmount().get());
 					} else
 						deductionMap.get(type).add(pdfDeductionEntry);
-					inserted.add(Utilities.getDeductionType(deductionType.ordinal()));
+					inserted.add(getDeductionType(deductionType.ordinal()));
 				});
 
 				if (deductionMap.get(1) == null)
@@ -612,15 +635,21 @@ public class JooqPayrollBuilder {
 
 			return payrollBuilder.build();
 		}).collect(Collectors.toList());
-		
+	}
+	
+	
+	private static void printAon(OutputStream outputStream, Collection<IDefaultPayroll> payrolls, byte[] logo) {
 		// PRINT
 		try {
 			PayrollTemplate.print(outputStream, payrolls, Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null), Optional.ofNullable(new Locale("es")));
 		} catch (CanNotCreatePdfException | IOException ignored) {}
-		
-		
-		
-		
+	}
+	
+	private static void printClassic(OutputStream outputStream, Collection<IDefaultPayroll> payrolls, byte[] logo) {
+		// PRINT
+		try {
+			DefaultPayrollTemplate.print(outputStream, payrolls, Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null), Optional.ofNullable(new Locale("es")));
+		} catch (CanNotCreatePdfException | IOException ignored) {}
 	}
 	
 	private static byte[] getBytes(Optional<InputStream> optLogo) {
@@ -703,6 +732,176 @@ public class JooqPayrollBuilder {
 			return Double.parseDouble(expression);
 		} catch (NumberFormatException e) {
 			return null;
+		}
+	}
+	
+	private static String[] separateString (String str, int length) {
+		if (str == null) return null;
+		if (str.length()<=length) {
+			return new String[] {str};
+		}
+		else {
+			LinkedList<String> strList = new LinkedList<String>();
+			String tempStr = str;
+			while (!tempStr.isEmpty()) {
+				int lng = length;
+				if (tempStr.length()<=lng) {
+					lng = tempStr.length();
+				}
+				String line = tempStr.substring(0, lng);
+				if (tempStr.charAt(lng-1)!=' ' && tempStr.length()>lng && line.contains(" ")) {
+					int ind = line.lastIndexOf(' ');
+					line = tempStr.substring(0, ind);
+				}
+				strList.add(line);
+				if (tempStr.length() <= lng) {
+					tempStr = "";
+				}
+				else
+					tempStr = tempStr.substring(line.length());
+			}
+			return strList.toArray(new String[strList.size()]);
+		}
+	}
+	
+	/**
+	 * Method to get the deduction type int of the DefaultPayroll given the DeductionType of the payroll
+	 * @param dt The original DeductionType
+	 * @return the int of the type for DefaultPayroll
+	 */
+	private static int chooseType (DeductionType dt) {
+		switch (dt.ordinal()) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			return 1;
+		case 6:
+			return 2;
+		case 7:
+			return  3;
+		case 8:
+			return 4;
+		default:
+			return 5;
+		}
+	}
+	
+	/**
+	 * Method to get the deduction type int of the DefaultPayroll given the int
+	 * @param dt The original int
+	 * @return the int of the type for DefaultPayroll
+	 */
+	private static int chooseType (int dt) {
+		switch (dt) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			return 1;
+		case 6:
+			return 2;
+		case 7:
+			return  3;
+		case 8:
+			return 4;
+		default:
+			return 5;
+		}
+	}
+	
+	/**
+	 * Method to get a suitable description for the given DeductionType
+	 * @param dt The DeductionType enum object
+	 * @return a String containing a suitable description
+	 */
+	private static String chooseDescription (DeductionType dt) {
+		switch (dt.ordinal()) {
+		case 0:
+			return "Contingencias comunes";
+		case 1:
+			return "Contingencias profesionales";
+		case 2:
+			return "Desempleo";
+		case 3:
+			return "Formación profesional";
+		case 4:
+			return "Horas extraordinarias (Estruc.)";
+		case 5:
+			return "Horas extraordinarias (No Estruc.)";
+		case 6:
+			return "Retribuciones dinerarias";
+		case 7:
+			return "Anticipo";
+		case 8:
+			return "En especie";
+		case 10:
+			return "Embargo";
+		default:
+			return "Otras deducciones";
+		}
+	}
+	
+	/**
+	 * Method to get a suitable description for the given int
+	 * @param dt 
+	 * @return a String containing a suitable description
+	 */
+	private static String chooseDescription (int dt) {
+		switch (dt) {
+		case 0:
+			return "Contingencias comunes";
+		case 1:
+			return "Contingencias profesionales";
+		case 2:
+			return "Desempleo";
+		case 3:
+			return "Formación profesional";
+		case 4:
+			return "Horas extraordinarias (Estruc.)";
+		case 5:
+			return "Horas extraordinarias (No Estruc.)";
+		case 6:
+			return "Retribuciones dinerarias";
+		case 7:
+			return "Anticipo";
+		case 8:
+			return "En especie";
+		case 10:
+			return "Embargo";
+		default:
+			return "Otras deducciones";
+		}
+	}
+	
+	private static String getDeductionType (Integer type) {
+		switch (type) {
+			case 0:
+				return "CGC";
+			case 2:
+				return "DESMPL";
+			case 3:
+				return "FP";
+			case 4:
+				return "ESTR";
+			case 5:
+				return "NO_ESTR";
+			case 6:
+				return "IRPF";
+			case 7:
+				return "ADELANTO";
+			case 8:
+				return "EN_ESPECIE";
+			case 9:
+				return "OTRO";
+			case 10:
+				return "EMBARGO";
+			default:
+				return null;
 		}
 	}
 }
