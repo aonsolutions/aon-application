@@ -109,6 +109,7 @@ public class DefaultPayrollFuseBox {
 		}
 		List<PDFPayment> payments = new ArrayList<>();
 		Set<Integer> filteredCras = new HashSet<>();
+		filteredCras.add(1);
 		filteredCras.addAll(Arrays.asList(EXTRA_HOUR_CRAS));
 		filteredCras.addAll(Arrays.asList(EXTRA_GRATIFICATIONS_CRAS));
 		filteredCras.addAll(Arrays.asList(IN_KIND_CRAS));
