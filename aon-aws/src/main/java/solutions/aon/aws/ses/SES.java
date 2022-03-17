@@ -84,6 +84,8 @@ public class SES {
         	String cc =  String.join(",", msg.getCc().toArray(String[]::new));
         	message.setRecipients(javax.mail.Message.RecipientType.CC, InternetAddress.parse(cc));
         	
+        	message.setReplyTo(InternetAddress.parse(msg.getReplyTo()));
+        	
         	// Create a multipart/alternative child container.
         	MimeMultipart msgBody = new MimeMultipart("alternative");
         
