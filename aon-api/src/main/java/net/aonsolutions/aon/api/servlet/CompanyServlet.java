@@ -410,7 +410,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveBooking(AonApiData api){
 		Booking booking = new Booking()
-			.setApps(AonApp.safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
+			.setApps(safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
 			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS));
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), booking);
@@ -472,5 +472,17 @@ public class CompanyServlet extends AonApiHttpServlet{
 			.forEach(ea -> array.put(EnterpriseActivityJSON.toJSON(ea))); 
 		return array;		
 	}
+	
+	public static List<AonApp> safeValueOf(JSONArray array){
+		LinkedList<AonApp> apps = new LinkedList<>();
+		for(int i = 0; i < array.length(); i++) {
+			AonApp app = AonApp.safeValueOf(array.optString(i));
+			if(app != null) {
+				apps.add(AonApp.safeValueOf(array.optString(i)));
+			}
+		}
+		return apps;
+	}
+	
 	
 }

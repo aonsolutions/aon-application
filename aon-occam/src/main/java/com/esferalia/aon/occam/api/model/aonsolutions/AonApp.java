@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.json.JSONArray;
+//import org.json.JSONArray;
 
 import com.esferalia.aon.occam.api.model.Module;
 
@@ -73,16 +73,16 @@ public enum AonApp implements Serializable{
 		return null;
 	}
 	
-	public static List<AonApp> safeValueOf(JSONArray array){
-		LinkedList<AonApp> apps = new LinkedList<>();
-		for(int i = 0; i < array.length(); i++) {
-			AonApp app = AonApp.safeValueOf(array.optString(i));
-			if(app != null) {
-				apps.add(AonApp.safeValueOf(array.optString(i)));
-			}
-		}
-		return apps;
-	}
+//	public static List<AonApp> safeValueOf(JSONArray array){
+//		LinkedList<AonApp> apps = new LinkedList<>();
+//		for(int i = 0; i < array.length(); i++) {
+//			AonApp app = AonApp.safeValueOf(array.optString(i));
+//			if(app != null) {
+//				apps.add(AonApp.safeValueOf(array.optString(i)));
+//			}
+//		}
+//		return apps;
+//	}
 	
 	public static List<AonApp> getValues() {
 		return Arrays.asList(values());
