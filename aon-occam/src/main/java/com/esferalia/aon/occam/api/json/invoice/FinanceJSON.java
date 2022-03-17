@@ -14,8 +14,6 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-import es.translogia.tedi.json.TediJSONUtils;
-
 public class FinanceJSON {
 
 	public static LinkedList<Finance> fromJSON(JSONArray json) {
