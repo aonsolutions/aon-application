@@ -19,6 +19,12 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
+import net.aonsolutions.db.up2date.tgss.SMI2022Update;
+import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateDaily;
+import net.aonsolutions.db.up2date.user.CertificateDomainFix;
+
 
 public class Up2Date {
 
@@ -205,21 +211,10 @@ public class Up2Date {
     		//AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
     		//AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
     		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
-    		//InvoiceBatchCreation.INVOICE_BATCH_CREATION,
-    		//FsModelInvoiceCreation.FS_MODEL_INVOICE_CREATION, 		
-    		//InsertInvoiceInfoLroe.INSERT_INVOICE_INFO_LROE,
-    		//AddEpigrafe922.ADD_EPIGRAFE_922,
     		//SMI2022Update.SMI2022UPDATE,
     		//PrestITFactorUpdate.PRESTITFACTORUPDATE,
-    		//CertificateDomainFix.CERTIFICATEDOMAINFIX,
-    		//AlcatrazCreation.ALCATRAZ_CREATION,
-    		//FsModelInvoiceDrop.FS_MODEL_INVOICE_DROP,
-    		//AlterFsModelResult.ALTER_FS_MODEL_RESULT,
-    		//RefreshMod111Result.REFRESH_MOD111_RESULT,
-    		//RefreshMod123Result.REFRESH_MOD123_RESULT,
-    		//RefreshMod115Result.REFRESH_MOD115_RESULT,
-//    		CertificatesClean.CERTIFICATESCLEAN,
-//    		AgreementClean.AGREEMENTCLEAN
+    		//CertificateDomainFix.CERTIFICATEDOMAINFIX
+    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY
     };
     
 
