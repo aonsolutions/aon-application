@@ -47,6 +47,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.booking.BookingUtils;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 
@@ -413,7 +414,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS));
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), booking);
-		
+		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), booking);
 		return new JSONObject();
 	}
 	

@@ -60,22 +60,27 @@
 				</tr>
 				
 				<tr>
-    				<td>
-    					#foreach($invoice in $invoices)
-    						<table class="invoiceTable"> 
-    							<tr>
-    								<td>
-    									<div class="invoiceText">
-											<div><b>Nº Factura: </b>$invoice.getReference()<div>
-											<div><b>Total: </b>$invoice.getTotal() &#8364;<div>
-										</div>
-    								</td>	
-    								<td>
-										<a href="$invoice.getUrl()" target="_blank" alt="AON SOLUTIONS"><img style="margin-top: 10px;" src="https://cdn.icon-icons.com/icons2/1369/PNG/512/-file-download_90117.png" style="cursor: pointer;" width="40px"></a>
-    								<td>
-    							<tr>
-	    					</table>    					
-    					#end
+    				<td style="padding-left:20px">
+						Estimado Cliente:<br><br>
+						La funcionalidad contratada en la Plataforma de aonSolutions ha sido modificada por $booking.getUser().<br>
+						La configuración actual para la dirección $booking.getDomainName() queda como le detallamos a continuación:<br><br>
+						
+						Empresa: $booking.getCompanyName()<br><br>
+						
+						Tipo de Acceso: $booking.getDomainType()<br>
+						Número de Usuarios: $booking.getNumberOfUsers()<br><br>
+						
+						Aplicaciones Contratadas:
+						#foreach($app in $booking.getApps())
+							$app 
+						#end
+						<br><br>
+						Esperamos que la información detallada sea correcta, en caso contrario contacte con su administrador para corregirla en la opción de "Funcionalidad contratada" dentro del apartado de CONFIGURACIÓN.<br><br>
+
+						Sin otro particular reciba un cordial saludo.<br><br>
+
+						Dpto. de Administración | www.aonSolutions.es<br>
+						t.902 121 009 · 945 121 010 | f. 945 121 011
     				</td>
 				</tr>
 				
