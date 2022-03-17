@@ -33,6 +33,10 @@
     </servlet-mapping>
     <servlet-mapping>
             <servlet-name>Resource Servlet</servlet-name>
+            <url-pattern>/aon_gwt_mod200/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+            <servlet-name>Resource Servlet</servlet-name>
             <url-pattern>/aon_gwt_payroll/*</url-pattern>
     </servlet-mapping>
 	

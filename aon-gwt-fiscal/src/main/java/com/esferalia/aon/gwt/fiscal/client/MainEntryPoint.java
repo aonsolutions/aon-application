@@ -27,7 +27,6 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
-import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
@@ -167,7 +166,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String SII_ENTRY_POINT = "Sii";
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD240_ENTRY_POINT = "Model240";
-	private static final String FS_MOD200_ENTRY_POINT = "Model200";
+//	private static final String FS_MOD200_ENTRY_POINT = "Model200";
 	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
 	private static final String FS_CONFIG_POINT = "FiscalConfig";
 	//	
@@ -280,22 +279,24 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
-			GWT.runAsync(Model200.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model200 model200 = new Model200();
-					model200.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MODEL_MATRIX_ENTRY_POINT)) {
+		} 
+//		else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
+//			GWT.runAsync(Model200.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model200 model200 = new Model200();
+//					model200.onModuleLoad();
+//				}
+//				
+//			});
+//		} 
+		else if ( entryPoint.equalsIgnoreCase(FS_MODEL_MATRIX_ENTRY_POINT)) {
 			GWT.runAsync(ModelMatrix.class, new RunAsyncCallback() {
 
 				@Override
