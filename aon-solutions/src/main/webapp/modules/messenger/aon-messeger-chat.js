@@ -123,15 +123,15 @@ export class AonMessengerChat extends AonElement {
    * @param {String} text Optional
    */
   async saveComment(text) {
-    const [comment, messengeEl] = await sendMessage(text, this); 
+    const resp = await sendMessage(text, this); 
     try {
+      const [comment, messengeEl] = resp;
       if(comment){
         const workflow = await saveTaskWorkflow({...this.task.getWorkflowTmp(), comment});
         if(workflow)
           messengeEl.dataset["id"] = workflow.id;
       }
     } catch (error) {
-      console.log(error);
       this.showError(error);
     }
   }
@@ -163,19 +163,18 @@ export class AonMessengerChat extends AonElement {
   }
 
   async getTaskWorkflow() {
-    this.applicationEl.startLoading();
     try {
       let workflows = await getTaskWorkflow({ task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name });
-      this.task.setWorkflow(workflows);
       fillChat(this, workflows);
-      if(workflows.length>0) this.addButtonDelete();
+      if(workflows.length>0) 
+        this.addButtonDelete();
     } catch (error) {}
-    this.applicationEl.stopLoading();
   }
 
   addButtonDelete(){
-    if(this.task.status == TASK_STATUS.DELETED) 
+    if(this.task.status == TASK_STATUS.DELETED) {
       this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask())
+    }
   }
 
   async save() {
@@ -186,6 +185,8 @@ export class AonMessengerChat extends AonElement {
       await this.saveSourceRequest();
     else 
       await this.saveSourceQuery();
+
+    this.getTaskWorkflow();
 
     this.applicationParentEl.updateCount();
     this.applicationEl.stopLoading();    
@@ -200,8 +201,6 @@ export class AonMessengerChat extends AonElement {
           this.task.editTask(data);
           if(this.getData().id){
             this.setData(data);
-            if(this.task.getWorkflow().length) 
-              fillChat(this, this.task.getWorkflow());
           } else {
             this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
           }
@@ -224,8 +223,6 @@ export class AonMessengerChat extends AonElement {
 
       if(this.getData().id){
         this.setData(data);
-        if(this.task.getWorkflow().length) 
-          fillChat(this, this.task.getWorkflow());
       } else {
         this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
       }
@@ -236,12 +233,12 @@ export class AonMessengerChat extends AonElement {
   }
 
   setCauData(){
-    if(this.applicationParentEl.cauInfo){
+    if(this.applicationParentEl.cauInfo)
       this.task.setDescriptionJson({cauInfo:this.applicationParentEl.cauInfo});
-    }
   }
 
   async getAppParams(){
+    console.log(APP_PARAMS_REQUEST.APP_REQUESTS_EMAIL_RATING);
     let params = [];
     let newResp=[];
     if(!this.APP_PARAMS.length){
@@ -259,8 +256,7 @@ export class AonMessengerChat extends AonElement {
   }
 
   async uploadFile({file, task}) {
-    let result = await saveTaskAttach({file, task}).catch(e=>null);
-    return result;
+    return await saveTaskAttach({file, task}).catch(()=>null);
   }
 
   deleteTask(){
@@ -380,10 +376,6 @@ export class AonMessengerChat extends AonElement {
     return this.PROJECTS;
   }
 
-  back(){
-    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
-  }
-
   //---------- TASK FUNCTIONS
    /**
    * CHANGE VALUES WHEN PROJECT CHANGE 
@@ -428,7 +420,9 @@ export class AonMessengerChat extends AonElement {
     }
   }
   
-  
+  back(){
+    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
+  }
 }
 
 window.customElements.define("aon-messenger-chat", AonMessengerChat);
