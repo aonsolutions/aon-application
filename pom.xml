@@ -175,6 +175,7 @@
 		<module>aon-gwt-connect</module>
 		<module>aon-gwt-payroll</module>
 		<module>aon-gwt-fiscal</module>
+		<module>aon-gwt-mod200</module>
 		<module>aon-gwt-ccaa</module>
 		<!-- <module>aon-gwt-document</module> -->
 		<module>aon-gwt-template</module>

@@ -13,6 +13,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrol
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.DefaultPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
@@ -70,6 +71,11 @@ public class PdfMaker {
 	public static void printDefaultPayroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
 			throws CanNotCreatePdfException {
 		PayrollTemplate.print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+	}
+	
+	public static void printDefaultClassicPayroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
+			throws CanNotCreatePdfException {
+		DefaultPayrollTemplate.print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
 
 	/**

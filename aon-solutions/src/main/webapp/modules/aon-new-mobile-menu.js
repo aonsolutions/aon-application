@@ -98,35 +98,40 @@ export class AonNewMobileMenu extends AonElement {
   }
 
   resize() {
-    let n = (window.innerWidth / 5 - 40) / 2;
+
+    const width = window.innerWidth;
+
+    const widthHalf = width / 2;
+
+    const n = (width / 5 - 40) / 2;
     
-    this.getElement('aonMobileMenuHome').style.marginLeft = n;
-    this.getElement('aonMobileMenuHome').style.marginRight = n;
+    this.setMarginById('aonMobileMenuHome', n);
 
-    this.getElement('aonMobileMenuApps').style.marginLeft = n;
-    this.getElement('aonMobileMenuApps').style.marginRight = n;
+    this.setMarginById('aonMobileMenuApps', n);
 
-    this.getElement('aonMobileMenuAdd').style.marginLeft = n;
-    this.getElement('aonMobileMenuAdd').style.marginRight = n;
+    this.setMarginById('aonMobileMenuAdd', n);
 
-    this.getElement('aonMobileMenuNotification').style.marginLeft = n;
-    this.getElement('aonMobileMenuNotification').style.marginRight = n;
+    this.setMarginById('aonMobileMenuNotification', n);
 
-    this.getElement('aonMobileMenuExit').style.marginLeft = n;
-    this.getElement('aonMobileMenuExit').style.marginRight = n;
+    this.setMarginById('aonMobileMenuExit', n);
+
+    let p1 = this.getElement('proba');
+    if(p1) p1.style.left = (widthHalf - 95) + 'px';
+
+    let p2 = this.getElement('proba2');
+    if(p2) p2.style.left = (widthHalf -45) + 'px';
+
+    let p3 = this.getElement('proba3');
+    if(p3) p3.style.left = (widthHalf +5) + 'px';
     
+    let p4 = this.getElement('proba4');
+    if(p4) p4.style.left = (widthHalf +55) + 'px';
+  }
 
-    let n1 = (window.innerWidth / 2) - 95;
-    this.getElement('proba').style.left = n1 + 'px';
-
-    let n2 = (window.innerWidth / 2) - 45;
-    this.getElement('proba2').style.left = n2 + 'px';
-
-    let n3 = (window.innerWidth / 2) + 5;
-    this.getElement('proba3').style.left = n3 + 'px';
-
-    let n4 = (window.innerWidth / 2) +55;
-    this.getElement('proba4').style.left = n4 + 'px';
+  setMarginById(id, value){
+    let elem = this.getElement(id);
+    elem.style.marginLeft = value;
+    elem.style.marginRight = value;
   }
 
   reload() {

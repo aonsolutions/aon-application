@@ -197,6 +197,7 @@ public class EmployeeDAO {
 		.set(CONTRACT.SENIORITY_DATE, toSql(employee.getStartDate()));
 		employee.getEndDate().ifPresent(endDate -> insertContract.set(CONTRACT.END_DATE, toSql(endDate)));
 		employee.getCategory().ifPresent(category -> insertContract.set(CONTRACT.CATEGORY_DESCRIPTION, category));
+		employee.getRegistration().ifPresent(registration -> insertContract.set(CONTRACT.REGISTRATION, registration));
 		
 		ContractRecord contractRecord = insertContract.returning().fetchOne();
 		
