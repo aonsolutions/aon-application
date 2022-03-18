@@ -2,16 +2,15 @@ package com.esferalia.aon.occam.impl.jooq.fiscal;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123InfoDAO;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.IMODEL123;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123InfoDAO;
 
 public class MODEL123Impl implements IMODEL123 {
 
