@@ -1001,6 +1001,8 @@ public class PropertiesDAO {
 		
 		@Override public Property<String> getNameProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getDocumentProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		
+		@Override public Property<Integer> getRegistrationProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.REGISTRATION);}
 	}
 
 	protected static class ContractPropertiesDAO implements ContractProperties{
@@ -1089,6 +1091,8 @@ public class PropertiesDAO {
 		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
 		@Override public Property<String> getNameProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getDocumentProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+
+		@Override public Property<Integer> getRegistrationProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.REGISTRATION);}
 
 	}
 	

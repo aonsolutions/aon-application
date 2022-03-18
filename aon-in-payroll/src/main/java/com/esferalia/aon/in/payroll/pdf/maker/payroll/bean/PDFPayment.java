@@ -13,8 +13,12 @@ public class PDFPayment {
 		this.description = Optional.ofNullable(description);
 	}
 
-	public Optional<Double> getAmount() {return amount;}
-	public Optional<String> getDescription() {return description;}
+	public Optional<Double> getAmount() {
+		return amount;
+	}
+	public Optional<String> getDescription() {
+		return description;
+	}
 
 	@Override
 	public String toString() {

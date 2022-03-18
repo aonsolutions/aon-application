@@ -230,6 +230,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -7153,6 +7154,12 @@ public class AON {
 	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
+		}
+	}
+	
+	public static Booking saveBooking(Domain domain, User user, Booking booking) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSecurity().saveBooking(ctx, booking);
 		}
 	}
 }

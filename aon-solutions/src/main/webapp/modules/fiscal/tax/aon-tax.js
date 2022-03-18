@@ -306,7 +306,7 @@ export class AonTax extends AonElement {
             return {
               ...resp,
               lettersHtml,
-              resultFormat:formatNumber(resp.result, 2, "EUR"),
+              resultFormat: !isNaN(resp.result) ? formatNumber(resp.result, 2, "EUR") : null,
               periodText: TAX_ENUMS.TAX_PERIOD[resp.period],
               statusText: TAX_ENUMS.TAX_STATUS[resp.status],
               modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],

@@ -1,0 +1,104 @@
+<html>
+<head>
+	<style>
+	
+		.diva {
+			background-color: #f1f1f1;
+			padding-top: 20px;
+			padding-bottom: 20px;
+		}
+	
+		
+		.divb {
+			margin: 0px auto;
+			max-width: 600px;
+			background-color: white;
+			border-radius: 5px;
+		}
+		
+		.tableA {
+			width: 100%;
+			padding-top: 10px;
+		}
+		
+		.invoiceTable {
+			border: 1px solid #bbb;
+			border-radius: 5px;
+			width: 565px;
+		    margin: 15px;
+		}
+		
+		
+		.invoiceText {
+			font-size: 14px;
+		    margin: 20px;
+		}
+		
+		.label {
+			font-size: 12px;
+			margin-bottom: 0px;
+			color: rgba(0,0,0,.54);
+		}
+		
+	</style>
+</head>
+<body>
+
+	<div class="diva">
+		<div class="divb">
+			<table class="tableA">
+				<tr>
+					<td><a href="https://aon.solutions/" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;" ><img src="https://aon.solutions/assets/aon-logo.png" style="cursor: pointer;" width="300px"></a></td>
+					<td></td>
+				</tr>
+				
+	
+				<tr>
+    				<td>
+        				<hr>
+    				</td>
+				</tr>
+				
+				<tr>
+    				<td style="padding-left:20px">
+						Estimado Cliente:<br><br>
+						La funcionalidad contratada en la Plataforma de aonSolutions ha sido modificada por $booking.getUser().<br>
+						La configuración actual para la dirección $booking.getDomainName() queda como le detallamos a continuación:<br><br>
+						
+						Empresa: $booking.getCompanyName()<br><br>
+						
+						Tipo de Acceso: $booking.getDomainType()<br>
+						Número de Usuarios: $booking.getNumberOfUsers()<br><br>
+						
+						Aplicaciones Contratadas:
+						#foreach($app in $booking.getApps())
+							$app 
+						#end
+						<br><br>
+						Esperamos que la información detallada sea correcta, en caso contrario contacte con su administrador para corregirla en la opción de "Funcionalidad contratada" dentro del apartado de CONFIGURACIÓN.<br><br>
+
+						Sin otro particular reciba un cordial saludo.<br><br>
+
+						Dpto. de Administración | www.aonSolutions.es<br>
+						t.902 121 009 · 945 121 010 | f. 945 121 011
+    				</td>
+				</tr>
+				
+				<tr>
+    				<td>
+        				<hr>
+    				</td>
+				</tr>
+				
+				<tr class="label">
+					<td>
+						<div style="text-align:center; margin: 0 0 1em 0;" >Copyright 2022 AON SOLUTIONS, S.L.</div>
+						<div style="text-align:center" >Este es un mensaje generado autom&aacute;ticamente. Por favor, no conteste a este correo.</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -5812,7 +5812,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -5836,7 +5836,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

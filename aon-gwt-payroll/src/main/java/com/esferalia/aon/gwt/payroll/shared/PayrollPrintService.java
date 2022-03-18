@@ -1,6 +1,22 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 public interface PayrollPrintService {
+	
+	public static enum PayrollType {
+		AON ("aon"),
+		CLASSIC ("classic");
+		
+		private String name;
+		
+		private PayrollType (String name) {
+			this.name = name;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+	}
 	public static enum Parameter {
 		TYPE ("type"),
 		ENTERPRISE ("enterprise"),
@@ -8,7 +24,8 @@ public interface PayrollPrintService {
 		NAME ("name"),
 		DOMAIN ("domain"),
 		USER ("user"),
-		COMPLEMENTARY_LIMIT("complementary_limit");
+		COMPLEMENTARY_LIMIT("complementary_limit"),
+		PAYROLL_TYPE("payroll_type");
 		
 		private String name;
 		

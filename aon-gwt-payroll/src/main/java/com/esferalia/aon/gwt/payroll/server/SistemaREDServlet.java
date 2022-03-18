@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -335,7 +336,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		solutions.aon.seg.social.object.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 		
-		String nss = ssEmployee.getNss();			
+//		String nss = ssEmployee.getNss();			
 		Date startDate = ssEmployee.getFra();
 		ccc = ssEmployee.getCtaCti().orElse(ccc);								
 
@@ -355,11 +356,14 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		ssEmployee.getBirthDate().ifPresent( birthDate -> aonEmployee.setBirthDate(birthDate));
 		ssEmployee.getSex().ifPresent( sex -> aonEmployee.setSex(sex));
 		
-		//String category = statusJSONObject.getString(Saltra.GRUPO_COTIZACION_TEXT);
-		//aonEmployee.setCategory(AonStringUtils.defaultIfBlank(category, null));
+		Integer registration = ssEmployee.hashCode();
+		System.out.println("REGISTRATION-> "+ registration);
+
+		aonEmployee.setRegistration(registration);
 		
-		Employee employee = PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
-		return employee;
+		Optional<Employee> employee = PAYROLL.getEmployee(domainName, domainId, userLogin, f->f.getDomainProperty().eq(domainId).and(f.getRegistrationProperty().eq(registration)) );
+		
+		return employee.isPresent() ? employee.get() : PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
 	}	
 
 	
