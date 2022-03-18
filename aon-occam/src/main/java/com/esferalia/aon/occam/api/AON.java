@@ -691,6 +691,12 @@ public class AON {
 	// ********************************************
 
 	// --------------------- DOMAIN
+
+	public static Domain getDomain(String schema, Integer domainId) {
+		try (AONContext ctx = AONContext.getAONContext(schema)){
+			return getCommon().getDomain(ctx, domainId);
+		} 
+	}
 	
 	public static Domain getDomain(String domainName, Integer domainId,
 			String user) {
@@ -6416,6 +6422,18 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static void deleteInvoiceDetailCommission(String domainName, Integer domainId, String login, InvoiceDetailCommissionFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommission().deleteInvoiceDetailCommission(ctx, filter);
+		}
+	}
+	
+	public static void deleteInvoiceDetailCommission(String schema, InvoiceDetailCommissionFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(schema)) {
+			getCommission().deleteInvoiceDetailCommission(ctx, filter);
 		}
 	}
 	
