@@ -797,7 +797,21 @@ public class InvoiceTemplate {
 					numOfPages++;
 					y = entriesStart - 10;
 				}
-				y -= 10;
+				String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
+				List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420, regularFont, 8);
+				if (lines.isEmpty()) {
+					y -= 10;
+				}
+				for (String line : lines) {
+					y -= 10;
+					if (y < bottom + 5) {
+						fictionalPageJump(invoice);
+						numOfPages++;
+						y = entriesStart - 10;
+					}
+				}
+				
+//				y -= 10;
 			}	
 			if (y < limit + 5) {
 				fictionalPageJump(invoice);
@@ -812,33 +826,15 @@ public class InvoiceTemplate {
 	// DRAW SIMPLIFIED ENTRIES
 	public void drawSimplifiedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
 		if (invoice.getDetails() != null) {
-			boolean xtraBack = false;
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				x = 50;
 				
 				if (y < bottom + 5) {
 					jumpToNewPage(doc, company, invoice, config, logo);
 					y = entriesStart - 10;
-					xtraBack = false;
 				}
-				String description = detail.getDescription().replace("\t", " ");
-//						.getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8");
-//				croppedString(description, 420, REGULAR_FONT, 8), x + 5, y,
+				String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
 				
-//				if (y < limit && !xtraBack) {
-//					if (config.getTheme().getBoxBodyBackgroundColor() != null)
-//						drawExtraBoxBackground(config);
-//					xtraBack = true;
-//				}
-					
-				drawText(
-					contents,
-					PDFToolkit.croppedStringWholeWord(description, 420, regularFont, 8), x + 5, y,
-					config.getTheme().getTextColor(),
-					regularFont,
-					8,
-					DETAIL_DESCRIPTION
-				);
 				x += 430;
 				
 				String total = detail.getTaxableBase() != 0 ? PdfFormats.toLatinNumber(detail.getTaxableBase()) : "";
@@ -851,7 +847,30 @@ public class InvoiceTemplate {
 										8,
 										4.5f,
 										0);
-				y -= 10;
+				
+				x -= 430;
+				
+				List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420, regularFont, 8);
+				if (lines.isEmpty()) {
+					y -= 10;
+				}
+				for (String line : lines) {
+					drawText(
+							contents,
+							AonStringUtils.trimToEmpty(line),
+							x + 5,
+							y,
+							config.getTheme().getTextColor(),
+							regularFont,
+							8,
+							DETAIL_DESCRIPTION
+						);
+					y -= 10;
+					if (y < bottom + 5) {
+						jumpToNewPage(doc, company, invoice, config, logo);
+						y = entriesStart - 10;
+					}
+				}
 
 			}
 			

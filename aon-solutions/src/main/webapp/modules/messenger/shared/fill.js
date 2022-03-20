@@ -276,6 +276,7 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
  */
 export const fillChat = (aonMessengerChat, workflows=[])=>{
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
+        chat.innerHTML = "";
         if(workflows.length == 0){
             let noMessage = createNoMessage();
             noMessage.appendTo(chat);

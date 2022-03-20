@@ -230,6 +230,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -690,6 +691,12 @@ public class AON {
 	// ********************************************
 
 	// --------------------- DOMAIN
+
+	public static Domain getDomain(String schema, Integer domainId) {
+		try (AONContext ctx = AONContext.getAONContext(schema)){
+			return getCommon().getDomain(ctx, domainId);
+		} 
+	}
 	
 	public static Domain getDomain(String domainName, Integer domainId,
 			String user) {
@@ -6418,6 +6425,18 @@ public class AON {
 		}
 	}
 	
+	public static void deleteInvoiceDetailCommission(String domainName, Integer domainId, String login, InvoiceDetailCommissionFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommission().deleteInvoiceDetailCommission(ctx, filter);
+		}
+	}
+	
+	public static void deleteInvoiceDetailCommission(String schema, InvoiceDetailCommissionFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(schema)) {
+			getCommission().deleteInvoiceDetailCommission(ctx, filter);
+		}
+	}
+	
 	/*
 	 * 		MAIL TEMPLATE
 	 */
@@ -7153,6 +7172,12 @@ public class AON {
 	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
+		}
+	}
+	
+	public static Booking saveBooking(Domain domain, User user, Booking booking) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSecurity().saveBooking(ctx, booking);
 		}
 	}
 }

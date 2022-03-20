@@ -215,45 +215,51 @@ export class AonToolbar extends AonElement {
 
 	addButton2(action, fn) {
 		const id = this.TOOL_SECTION + action.id + 'Button';
-		let span = this.createElement(TAG.SPAN);
 		let aib = new AonIconButton();
 		aib.id = id;
-		aib.title = action.name;
-		aib.addEventListener(EVENT.CLICK, fn);
-		if(action.aonIcon){
-			aib.aonIcon = action.aonIcon;
-		} else 
-			aib.icon = action.icon;
-		
-		span.appendChild(aib);
+		if(!this.getElement(id)){
 
-		let aonMenu = this.getElement('aonMenu');
-		let toolSection = this.getElement(this.TOOL_SECTION);
-		toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-		if(toolSection.children.length > 0) {
-			toolSection.insertBefore(span, toolSection.children[0]);
-		} else toolSection.appendChild(span);
+			let span = this.createElement(TAG.SPAN);
+
+			aib.title = action.name;
+			aib.addEventListener(EVENT.CLICK, fn);
+			if(action.aonIcon){
+				aib.aonIcon = action.aonIcon;
+			} else 
+				aib.icon = action.icon;
+			
+			span.appendChild(aib);
+
+			let aonMenu = this.getElement('aonMenu');
+			let toolSection = this.getElement(this.TOOL_SECTION);
+			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			if(toolSection.children.length > 0) {
+				toolSection.insertBefore(span, toolSection.children[0]);
+			} else toolSection.appendChild(span);
+		}
 		return aib;
 	}
 
 	addButtonAfter(action, fn) {
 		const id = this.TOOL_SECTION + action.id + 'Button';
-		let span = this.createElement(TAG.SPAN);
 		let aib = new AonIconButton();
 		aib.id = id;
-		aib.title = action.name;
-		aib.addEventListener(EVENT.CLICK, fn);
-		if(action.aonIcon){
-			aib.aonIcon = action.aonIcon;
-		} else 
-			aib.icon = action.icon;
-		
-		span.appendChild(aib);
-
-		let aonMenu = this.getElement('aonMenu');
-		let toolSection = this.getElement(this.TOOL_SECTION);
-		toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-		toolSection.appendChild(span);
+		if(!this.getElement(id)){
+			let span = this.createElement(TAG.SPAN);
+			aib.title = action.name;
+			aib.addEventListener(EVENT.CLICK, fn);
+			if(action.aonIcon){
+				aib.aonIcon = action.aonIcon;
+			} else 
+				aib.icon = action.icon;
+			
+			span.appendChild(aib);
+	
+			let aonMenu = this.getElement('aonMenu');
+			let toolSection = this.getElement(this.TOOL_SECTION);
+			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			toolSection.appendChild(span);
+		}
 		return aib;
 	}
 

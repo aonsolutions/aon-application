@@ -646,9 +646,13 @@ public class FinanceModule extends MainEntryPoint {
 			invReference.setText(finance.getInvoice().getReferenceCode());
 		}
 		Label regDoc  = new Label( finance.getRegistryDocument());
-		Label regName = new Label( finance.getRegistryName());
-		regName.setTitle(finance.getRegistryName() );
-		Label payMethod = new Label( finance.getPayMethodName());
+	
+		String rname = AonStringUtils.isBlank(finance.getRegistryName()) 
+				? finance.getRegistryName() : finance.getInvoice().getRegistryName(); 
+		Label regName = new Label(rname);
+		regName.setTitle(rname);
+		
+		Label payMethod = new Label(finance.getPayMethodName());
 		Label amount = new Label(AON.FMT.format(finance.getAmount()));
 		
 		FinanceActionsPanel actionsPanel = new FinanceActionsPanel(finance, new FinanceModuleCallback() {

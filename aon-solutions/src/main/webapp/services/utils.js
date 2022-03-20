@@ -119,6 +119,7 @@ export const addZero = (value, length) => value.toString().length < length ? add
  * @returns 
  */
 export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, locale = "de-DE") => {
+  value = value || 0;
   let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
   if(simbolo) { options.style = 'currency'; options.currency = simbolo;  }
   return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));

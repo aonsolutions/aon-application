@@ -9,7 +9,9 @@ public enum DomainType {
 	HOTEL,
 	ADMIN,
 	OFFICE,
-	GENERIC;   
+	GENERIC,
+	COMMERCE,
+	KIT_DIGITAL;   
 	
 	
 	public byte value() {

@@ -22,7 +22,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_aio/ms/Common"})
+@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_mod200/ms/Common", "/aon_gwt_aio/ms/Common"})
 public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
 
 	private static final long serialVersionUID = -6555645829679341214L;

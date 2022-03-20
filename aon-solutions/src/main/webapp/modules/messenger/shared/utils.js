@@ -655,18 +655,19 @@ const addTaskDescription = (aonMessengerChat) => {
           task.setFiles(target.FILES);
           if(target.value) task.setDescriptionJson({observation:target.value})
         });
-        if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
         checkFilesAddEventDescription(task);//check files description
         
     } else { //-------------------------------------------------MOBILE 
         const div = document.getElementById(MESSENGER_IDS.SECOND_DIV);
-        setStyles(aonTextArea,{ height: "100%",  width: "100%", boxShadow : "none", marginTop : 0 });
         div.appendChild(aonTextArea);
-        if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-
+        aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
+            if(target.value) task.setDescriptionJson({observation:target.value})
+        });
+        
         // /**
         // * CHANGE STYLE AONTEXTAAREA
         // */
+        setStyles(aonTextArea,{ height: "100%",  width: "100%", boxShadow : "none", marginTop : 0 });
         let textAreaDiv = aonTextArea.getTextAreaDiv();
         if(textAreaDiv) textAreaDiv.style.padding = "20px";
         
@@ -678,6 +679,10 @@ const addTaskDescription = (aonMessengerChat) => {
                 borderBottom : "1px solid #e0e0e0"
             });
         }
+    }
+
+    if(task && task.getDescriptionJson().observation) {
+        aonTextArea.value = task.getDescriptionJson().observation;
     }
 
     buildTextareaToolbar(aonTextArea);
