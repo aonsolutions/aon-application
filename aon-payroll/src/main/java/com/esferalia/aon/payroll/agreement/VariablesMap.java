@@ -675,6 +675,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_AD_PERSONAM_NIVEL_2_MENSUAL", "PLUS_AD_PERS_NVL_2");
 		variablesMap.put("PLUS_AD_PERSONAM_NIVEL_4_MENSUAL", "PLUS_AD_PERS_NVL_4");
 		variablesMap.put("PLUS_ALTURA_MENSUAL", "PLUS_ALTURA");
+		variablesMap.put("PLUS_ALTURA_DIARIO", "PLUS_ALTURA");
 		variablesMap.put("PLUS_ANTIGUEDAD_3_AÑOS_ANUAL", "PLUS_ANTIGUEDAD");
 		variablesMap.put("PLUS_ASIDUIDAD_ANUAL", "PLUS_ASIDUIDAD");
 		variablesMap.put("PLUS_ASIDUIDAD_DIARIO", "PLUS_ASIDUIDAD");
