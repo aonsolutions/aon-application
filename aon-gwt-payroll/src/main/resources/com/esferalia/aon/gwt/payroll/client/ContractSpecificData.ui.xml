@@ -107,6 +107,7 @@
    	<g:HTMLPanel> 
    		<g:DeckPanel ui:field="deckPanel">
    			<g:HTMLPanel>
+   				<!-- CNO TABLE -->
 		   		<g:VerticalPanel ui:field="cnoTable" styleName="{style.styleBorder}"> 
 			    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>CNO</g:Label>
 			    	<g:HTMLPanel>
@@ -129,6 +130,8 @@
 						</table>
 					</g:HTMLPanel>
 				</g:VerticalPanel>
+				
+				<!-- SEPE COMUNICATION -->
 				<g:VerticalPanel ui:field="ideTable" styleName="{style.styleBorder}"> 
 			    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Comunicación Sepe</g:Label>
 			    	<g:HTMLPanel>
@@ -161,16 +164,20 @@
 						</table>
 					</g:HTMLPanel>
 				</g:VerticalPanel>
+				
+				<!-- SEPE DATA -->
 				<g:VerticalPanel ui:field="otherDataTable" styleName="{style.styleBorder}"> 
 			    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros datos del contrato</g:Label>
 			    	<g:HTMLPanel>
 						<table ui:field="otherDataTableElement"
 							style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
 							<tbody>
+								<!-- LINEA 0 -->
 							    <tr>
 							        <td></td>
 							        <td></td>
 							    </tr>
+							    <!-- LINEA 1 -->
 							    <tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario formativo</g:Label>
@@ -184,6 +191,7 @@
 									    </g:HorizontalPanel>
 									</td>
 								</tr>
+								<!-- LINEA 2 -->
 							    <tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Nivel formativo</g:Label>
@@ -192,6 +200,7 @@
 									    <g:ListBox ui:field="formativeLevelLB" styleName='{style.maxWidthLB}'></g:ListBox>
 									</td>
 								</tr>
+								<!-- LINEA 3 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Titulación académica</g:Label>
@@ -200,6 +209,7 @@
 									     <g:ListBox ui:field="academicTitulationLB" styleName='{style.maxWidthLB}'></g:ListBox>
 									</td>
 								</tr>
+								<!-- LINEA 4 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Certificado de profesionalidad</g:Label>
@@ -208,6 +218,7 @@
 									    <g:CheckBox ui:field="profesionalityCB"/>
 									</td>
 								</tr>
+								<!-- LINEA 5 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Tipo firma copia básica</g:Label>
@@ -216,6 +227,7 @@
 									    <g:ListBox ui:field="signBasicCopyLB" styleName='{style.maxWidthLB}'></g:ListBox>
 									</td>
 								</tr>
+								<!-- LINEA 6 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px; vertical-align: top;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Texto copia básica</g:Label>
@@ -224,6 +236,7 @@
 									    <g:TextArea ui:field="basicCopyTA" styleName='{style.maxWidthTB}'></g:TextArea>
 									</td>
 								</tr>
+								<!-- LINEA 7 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Uso libre empresa</g:Label>
@@ -232,6 +245,7 @@
 									    <g:TextBox ui:field="useEnterpriseFreeTB" styleName='{style.maxWidthTB}'></g:TextBox>
 									</td>
 								</tr>
+								<!-- LINEA 8 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Horas de convenio</g:Label>
@@ -246,6 +260,7 @@
 									    
 									</td>
 								</tr>
+								<!-- LINEA 9 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?</g:Label>
@@ -254,6 +269,7 @@
 									    <g:CheckBox ui:field="repeatFDCB"/>
 									</td>
 								</tr>
+								<!-- LINEA 10 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Tipo de jornada</g:Label>
@@ -262,6 +278,7 @@
 										<g:ListBox ui:field="journeyTypeLB" styleName='{style.maxWidthLB}'></g:ListBox>
 									</td>
 								</tr>
+								<!-- LINEA 11 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Duración de la jornada</g:Label>
@@ -275,6 +292,7 @@
 										</g:HorizontalPanel>    
 									</td>
 								</tr>
+								<!-- LINEA 12 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Formación teórica recibida</g:Label>
@@ -286,6 +304,7 @@
 									    </g:HorizontalPanel>
 									</td>
 								</tr>
+								<!-- LINEA 13 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Horas formación</g:Label>
@@ -299,6 +318,7 @@
 										</g:HorizontalPanel>    
 									</td>
 								</tr>
+								<!-- LINEA 14 -->
 								<tr>
 									<td style="background-color: #eaeaea; width: 400px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Porcentaje jubilación</g:Label>
