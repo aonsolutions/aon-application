@@ -106,4 +106,9 @@ public class CommissionImpl implements ICommission {
 	public void deleteInvoiceDetailCommission(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(configuration -> CommissionDAO.deleteInvoiceDetailCommission(ctx, id));
 	}
+	
+	@Override
+	public void deleteInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommissionFilter filter) {
+		ctx.getDslContext().transaction(configuration -> CommissionDAO.deleteInvoiceDetailCommission(ctx, filter));
+	}
 }
