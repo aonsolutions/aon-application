@@ -362,10 +362,11 @@ public abstract class CertificateDialog extends AonCustomDialog {
 	}
 	
 	private void createCertificateInfoPanel() {
-		String html = "<b>Emitido para: </b> (" + certificateInfo.getDocument() + ") " + certificateInfo.getName() + " " + certificateInfo.getSurname();
+		String html = "<b>Emitido para: </b>" + (AonStringUtils.isBlank(certificateInfo.getDocument()) ? "" : " (" + certificateInfo.getDocument() + ") ") + certificateInfo.getName() + " " + certificateInfo.getSurname();
 		html += AonStringUtils.isBlank(certificateInfo.getCif()) ? "<br>" : "<br><b>Representando: </b>"; 
 		html += AonStringUtils.isBlank(certificateInfo.getOcupation()) ? "" : certificateInfo.getOcupation();
-		html += AonStringUtils.isBlank(certificateInfo.getEnterprise()) ? "" : "(" + certificateInfo.getCif() +") " + certificateInfo.getEnterprise() + "<br>";
+		html += AonStringUtils.isBlank(certificateInfo.getEnterprise()) ? "" :
+			(AonStringUtils.isBlank(certificateInfo.getCif()) ? certificateInfo.getEnterprise() + "<br>" : "(" + certificateInfo.getCif() +") " + certificateInfo.getEnterprise() + "<br>");
 		html += "<b>Fecha expiraci\u00f3n: </b> " + formatDate.format(certificateInfo.getToDate());
 		certificateInfoPanel.add(new HTMLPanel(html));
 	}
