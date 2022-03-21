@@ -49,7 +49,6 @@ public class DraftPayrollBuilder {
 	 */
 	@SuppressWarnings("static-access")
 	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
-		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		
 			//ENTERPRISE RELATED DATA
@@ -381,8 +380,8 @@ public class DraftPayrollBuilder {
 			dpb.setPayrollTotal(salary.getTotalLiquid());
 			
 			Optional<InputStream> optLogo = Utilities.getSignature(domainName);
-			dpt.print(outputStream, dpb.build(), optLogo, Optional.ofNullable(new Locale("es")));
-
+			PayrollTemplate dpt = new PayrollTemplate(dpb.build(), optLogo, Optional.ofNullable(new Locale("es")));
+			dpt.print(outputStream);
 	}
 	
 	

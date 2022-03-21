@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +55,6 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.IDefaultPayroll;
@@ -71,7 +71,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
  * @author akrck02
  * @version 0.5-AK
  */
-public class DefaultPayrollTemplate {
+public class DefaultPayrollTemplate implements IPayrollTemplate {
 
 	private final static float FONT_SIZE = 8f;
 	private final static float LITTLE_LINE_JUMP = 11.5f;
@@ -91,31 +91,6 @@ public class DefaultPayrollTemplate {
 	ResourceBundle words;
 
 	/**
-	 * Print the PDF file
-	 * 
-	 * @param os
-	 * @param payroll
-	 * @param logo
-	 * @param language
-	 * @throws CanNotCreatePdfException
-	 */
-	public static void print(
-			OutputStream os, IDefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language
-	) throws CanNotCreatePdfException {
-		ArrayList<IDefaultPayroll> payrolls = new ArrayList<>();
-		payrolls.add(payroll);
-
-		try (PDDocument doc = print(payrolls, logo, language))
-		{
-			doc.save(os);
-			os.close();
-		} catch (Exception e)
-		{
-			throw new CanNotCreatePdfException(e);
-		}
-	}
-
-	/**
 	 * Print the PDF file from a collection
 	 * 
 	 * @param os
@@ -125,80 +100,81 @@ public class DefaultPayrollTemplate {
 	 * @throws CanNotCreatePdfException
 	 * @throws IOException
 	 */
-	public static void print(
-			OutputStream os, Collection<IDefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
-	) throws CanNotCreatePdfException, IOException {
-		try (PDDocument doc = print(payrolls, logo, language))
-		{
+	@Override
+	public void print(OutputStream os) throws CanNotCreatePdfException {
+		try {
 			doc.save(os);
+			os.close();
 		} catch (Exception e)
 		{
 			throw new CanNotCreatePdfException(e);
 		}
 	}
+	
+	public DefaultPayrollTemplate(IDefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
+		this(Arrays.asList(payroll), logo, language);
+	}
+	
+	public DefaultPayrollTemplate(Collection<IDefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
+		try {
+			this.doc		 = new PDDocument();
 
-	private static PDDocument print(
-			Collection<IDefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
-	) throws CanNotCreatePdfException, IOException {
+			this.lang  = language.orElse(new Locale("Es"));
+			this.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle.ClassicPayrollBundle",
+					this.lang);
+			this.limit = 800;
 
-		PDDocument		doc		 = new PDDocument();
-		DefaultPayrollTemplate	template = new DefaultPayrollTemplate();
+			byte[] bLogo = null;
+			if (logo.isPresent())
+				bLogo = logo.get().readAllBytes();
 
-		template.lang  = language.orElse(new Locale("Es"));
-		template.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle.ClassicPayrollBundle",
-				template.lang);
-		template.limit = 800;
+			for (IDefaultPayroll payroll : payrolls) {
+				if (bLogo != null)
+					logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
 
-		byte[] bLogo = null;
-		if (logo.isPresent())
-			bLogo = logo.get().readAllBytes();
+				this.p = payroll;
+				if (payroll == null)
+					throw new CanNotCreatePdfException("No payroll found.");
 
-		for (IDefaultPayroll payroll : payrolls) {
-			if (bLogo != null)
-				logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
-
-			template.p = payroll;
-			if (payroll == null)
-				throw new CanNotCreatePdfException("No payroll found.");
-
-			PDPage page = createVerticalPage();
-			doc.addPage(page);
-
-			template.contents = new PDPageContentStream(doc, page);
-
-			template.drawHeader();
-			boolean jump = template.calculate();
-
-			template.doc  = doc;
-			template.logo = logo;
-
-			if (jump) {
-				template.drawPayments();
-				drawBorderedBox(template.contents, 10, 10, 575, 695, LIGHT_GRAY);
-				template.contents.close();
-
-				page = createVerticalPage();
+				PDPage page = createVerticalPage();
 				doc.addPage(page);
-				template.contents = new PDPageContentStream(doc, page);
 
-				template.drawHeader();
-				drawBorderedBox(template.contents, 10, 185, 575, 520, LIGHT_GRAY);
-				template.y -= 15;
+				this.contents = new PDPageContentStream(doc, page);
 
-				template.drawDeductions();
-				template.drawFooter();
-			} else {
-				drawBorderedBox(template.contents, 10, 185, 575, 520, LIGHT_GRAY);
-				template.drawPayments();
-				template.drawDeductions();
-				template.drawFooter();
+				this.drawHeader();
+				boolean jump = this.calculate();
+
+				this.logo = logo;
+
+				if (jump) {
+					this.drawPayments();
+					drawBorderedBox(this.contents, 10, 10, 575, 695, LIGHT_GRAY);
+					this.contents.close();
+
+					page = createVerticalPage();
+					doc.addPage(page);
+					this.contents = new PDPageContentStream(doc, page);
+
+					this.drawHeader();
+					drawBorderedBox(this.contents, 10, 185, 575, 520, LIGHT_GRAY);
+					this.y -= 15;
+
+					this.drawDeductions();
+					this.drawFooter();
+				} else {
+					drawBorderedBox(this.contents, 10, 185, 575, 520, LIGHT_GRAY);
+					this.drawPayments();
+					this.drawDeductions();
+					this.drawFooter();
+				}
+				this.contents.close();
+				if (payroll.getPartTimeParams().isPresent()) {				
+					PartTimeTemplate.append(doc, payroll.getPartTimeParams().get());
+				}
 			}
-			template.contents.close();
-			if (payroll.getPartTimeParams().isPresent()) {				
-				PartTimeTemplate.append(doc, payroll.getPartTimeParams().get());
-			}
+		} catch (IOException | CanNotCreatePdfException e) {
+			throw new CanNotCreatePdfException(e);
 		}
-		return doc;
 	}
 
 	private void drawHeader() throws IOException {
