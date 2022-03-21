@@ -238,7 +238,6 @@ export class AonMessengerChat extends AonElement {
   }
 
   async getAppParams(){
-    console.log(APP_PARAMS_REQUEST.APP_REQUESTS_EMAIL_RATING);
     let params = [];
     let newResp=[];
     if(!this.APP_PARAMS.length){

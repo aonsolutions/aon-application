@@ -267,7 +267,7 @@ public abstract class ITWidget extends ResizeComposite {
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		tgssContextMenu = new TGSSContextMenu();
 		
-		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+		initFootPanel();
 
 		showResultsPanel();
 	}
@@ -1479,16 +1479,16 @@ public abstract class ITWidget extends ResizeComposite {
 					});
 				}
 				
-				@Override
-				protected void collapse(boolean collapse) {
-					if(collapse) {
-						minimizedByUser = true;
-						closeFootPanel();
-					} else {
-						showFootPanel();
-					}
-				}
-				
+//				@Override
+//				protected void collapse(boolean collapse) {
+//					if(collapse) {
+//						minimizedByUser = true;
+//						closeFootPanel();
+//					} else {
+//						showFootPanel();
+//					}
+//				}
+//				
 				@Override
 				public void up2DateEnterprise() {
 					this.setUp2DateEnterprise();
@@ -1904,14 +1904,11 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	//--------------------------------------------NEW------------
 	
-	private AonMinimizePanel getMinimizePanel() {
+	private void initFootPanel() {
 		resultsPanel = new ResultsPanel();
 		footPanel = new AonMinimizePanel();
-		footPanel.addMinimizeHandler(event -> {
-			minimizedByUser = true;
-			closeFootPanel();
-		});
-		footPanel.addMaximizeHandler(event -> showFootPanel());
+		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
+		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
 		footPanel.setStyleName(AON.CSS.aonSelector());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
@@ -1922,7 +1919,10 @@ public abstract class ITWidget extends ResizeComposite {
 		
 		tabLayout.setAnimationDuration(300);
 
-		return footPanel; 
+		splitLayoutPanel.addSouth(footPanel, 30);
+		
+		footPanel.clearButtons();
+		footPanel.addButtonLess();
 	}
 
 	
