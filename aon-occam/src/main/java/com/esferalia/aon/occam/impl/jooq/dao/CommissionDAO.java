@@ -188,11 +188,17 @@ public class CommissionDAO {
 	}
 	
 	public static void deleteInvoiceDetailCommission(AONContext ctx, Integer id) {
+		deleteInvoiceDetailCommission(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static void deleteInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommissionFilter filter) {
 		ctx.getDslContext()
 			.delete(INVOICE_DETAIL_COMMISSION)
-			.where(INVOICE_DETAIL_COMMISSION.ID.eq(id))
+			.where(INVOICE_DETAIL_COMMISSION_PROPERTIES.getConditions(filter))
 			.execute();
 	}
+	
+	
 }
 
 

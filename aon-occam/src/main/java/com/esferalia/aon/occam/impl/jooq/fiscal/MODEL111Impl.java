@@ -86,7 +86,8 @@ public class MODEL111Impl implements IMODEL111 {
 
 	@Override
 	public Mod111 initialize(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.initialize(ctx,mod111);
+		Mod111 mod = ctx.getDslContext().transactionResult( configuration -> Mod111DAO.initialize(ctx,mod111)); 
+		return mod;	
 	}
 
 	@Override

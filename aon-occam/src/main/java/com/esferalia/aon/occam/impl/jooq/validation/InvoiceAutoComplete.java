@@ -455,7 +455,11 @@ public class InvoiceAutoComplete {
 		inv.getFinances().stream().forEach(finance -> {
 			finance.setDomain(inv.getDomain());
 			finance.setInvoice(inv);
-			finance.setRegistry(inv.getRegistryData());		
+			finance.setRegistry(inv.getRegistryData());
+			finance.setRegistryName(inv.getRegistryName());
+			finance.setRegistryDocument(inv.getRegistryDocument());
+			finance.setRegistryDocumentType(inv.getRegistryDocumentType());
+			finance.setRegistryDocumentCountry(inv.getRegistryDocumentCountry());
 			if(finance.getFinanceStatus() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}

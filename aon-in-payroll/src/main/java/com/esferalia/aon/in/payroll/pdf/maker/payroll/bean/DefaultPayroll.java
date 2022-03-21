@@ -14,7 +14,8 @@ import java.util.Optional;
  * @author akrck02
  *
  */
-public class DefaultPayroll {
+public class DefaultPayroll implements IDefaultPayroll {
+	
 	public static enum IMPRESION {
 		DRAFT, DEFAULT
 	}
@@ -35,6 +36,7 @@ public class DefaultPayroll {
 	private Optional<Integer>								totalDays;
 	private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
 	private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
+	private Optional<Double>								totalSSContributions;
 	private Optional<Double>								accrualTotal;
 	private Optional<Double>								deductionTotal;
 	private Optional<Double>								payrollTotal;
@@ -46,96 +48,124 @@ public class DefaultPayroll {
 	private DefaultPayroll() {
 	}
 
+	@Override
 	public Optional<String> getEnterprise() {
 		return enterprise;
 	}
 
+	@Override
 	public Optional<String> getAddress() {
 		return address;
 	}
 
+	@Override
 	public Optional<String> getAddress2() {
 		return address2;
 	}
 
+	@Override
 	public Optional<String> getCif() {
 		return cif;
 	}
 
+	@Override
 	public Optional<String> getCcc() {
 		return ccc;
 	}
 
+	@Override
 	public Optional<String> getEmployee() {
 		return employee;
 	}
 
+	@Override
 	public Optional<String> getNif() {
 		return nif;
 	}
 
+	@Override
 	public Optional<String> getNss() {
 		return nss;
 	}
 
+	@Override
 	public Optional<String> getProfessionalGroup() {
 		return professionalGroup;
 	}
 
+	@Override
 	public Optional<String> getQuotationGroup() {
 		return quotationGroup;
 	}
 
+	@Override
 	public Optional<Date> getAntiquity() {
 		return antiquity;
 	}
 
+	@Override
 	public Optional<Date> getLiquidPeriodStart() {
 		return liquidPeriodStart;
 	}
 
+	@Override
 	public Optional<Date> getLiquidPeriodEnd() {
 		return liquidPeriodEnd;
 	}
 
+	@Override
 	public Optional<Integer> getTotalDays() {
 		return totalDays;
 	}
 
+	@Override
 	public Optional<Map<Integer, ArrayList<PDFPayment>>> getAccruals() {
 		return accruals;
 	}
 
+	@Override
 	public Optional<Map<Integer, ArrayList<PDFDeduction>>> getDeductions() {
 		return deductions;
 	}
 
+	@Override
 	public Optional<Double> getPaymentsTotal() {
 		return accrualTotal;
 	}
 
+	@Override
 	public Optional<Double> getDeductionTotal() {
 		return deductionTotal;
 	}
 
+	@Override
+	public Optional<Double> getTotalSSContributions() {
+		return totalSSContributions;
+	}
+
+	@Override
 	public Optional<Double> getPayrollTotal() {
 		return payrollTotal;
 	}
 
+	@Override
 	public Optional<ContingencyBases> getContingencies() {
 		return contingencies;
 	}
 
+	@Override
 	public Optional<PayrollTypes.Type> getPayrollType() {
 		return payrollType;
 	}
 	
+	@Override
 	public Optional<PartTimeParams> getPartTimeParams() {
 		return partTimeParams;
 	}
 	
 	
 
+	@Override
 	public IMPRESION getImpressionType() {
 		return impressionType;
 	}
@@ -160,6 +190,7 @@ public class DefaultPayroll {
 		private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
 		private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
 		private Optional<Double>								accrualTotal;
+		private Optional<Double>								totalSSContributions;
 		private Optional<Double>								deductionTotal;
 		private Optional<Double>								payrollTotal;
 		private Optional<PayrollTypes.Type>						payrollType;
@@ -185,6 +216,7 @@ public class DefaultPayroll {
 			totalDays		  = Optional.empty();
 			accruals		  = Optional.of(new HashMap<>());
 			deductions		  = Optional.of(new HashMap<>());
+			totalSSContributions = Optional.empty();
 			accrualTotal	  = Optional.empty();
 			deductionTotal	  = Optional.empty();
 			payrollTotal	  = Optional.empty();
@@ -286,6 +318,11 @@ public class DefaultPayroll {
 
 		public DefaultPayrollBuilder setDeductionTotal(Double deductionTotal) {
 			this.deductionTotal = Optional.ofNullable(deductionTotal);
+			return this;
+		}
+		
+		public DefaultPayrollBuilder setTotalSSContributions(Double totalSSContributions) {
+			this.totalSSContributions = Optional.ofNullable(totalSSContributions);
 			return this;
 		}
 
@@ -393,6 +430,11 @@ public class DefaultPayroll {
 			this.deductionTotal = deductionTotal;
 			return this;
 		}
+		
+		public DefaultPayrollBuilder setTotalSSContributions(Optional<Double> totalSSContributions) {
+			this.totalSSContributions = totalSSContributions;
+			return this;
+		}
 
 		public DefaultPayrollBuilder setPayrollTotal(Optional<Double> payrollTotal) {
 			this.payrollTotal = payrollTotal;
@@ -436,6 +478,7 @@ public class DefaultPayroll {
 			p.totalDays			= this.totalDays;
 			p.accruals			= this.accruals;
 			p.deductions		= this.deductions;
+			p.totalSSContributions = this.totalSSContributions;
 			p.accrualTotal		= this.accrualTotal;
 			p.deductionTotal	= this.deductionTotal;
 			p.payrollTotal		= this.payrollTotal;

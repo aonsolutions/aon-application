@@ -1334,6 +1334,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		signBasicCopyLB.addItem("REHUSA FIRMAR", "4");
 		
 		journeyTypeLB.clear();
+		journeyTypeLB.addItem("-","");
 		journeyTypeLB.addItem("JORNADA ANUAL","A");
 		journeyTypeLB.addItem("JORNADA DIARIA","D");
 		journeyTypeLB.addItem("JORNADA MENSUAL","M");

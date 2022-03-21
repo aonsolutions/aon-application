@@ -92,6 +92,8 @@ public class Employee implements Serializable{
 	private Integer employeeId;
 	private Integer workplaceId;
 	
+	private Integer registration;
+	
 	private Map<String, Collection<ExpressionData>> dataMap;
 	
 	private Map<String, Collection<ExpressionData>> infoMap;
@@ -162,6 +164,15 @@ public class Employee implements Serializable{
 	
 	public Employee setEmployeeId(Integer employeeId) {
 		this.employeeId = employeeId;
+		return this;
+	}
+	
+	public Optional<Integer> getRegistration() {
+		return Optional.ofNullable(registration);
+	}
+	
+	public Employee setRegistration(Integer registration) {
+		this.registration = registration;
 		return this;
 	}
 	

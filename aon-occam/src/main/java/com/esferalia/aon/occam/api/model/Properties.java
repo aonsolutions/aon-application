@@ -1119,6 +1119,8 @@ public interface Properties {
 		
 		Property<String> getNameProperty();
 		Property<String> getDocumentProperty();
+		
+		Property<Integer> getRegistrationProperty();
 	}
 
 	public interface ContractProperties{

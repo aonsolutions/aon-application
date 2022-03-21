@@ -35,7 +35,6 @@ public class LoginServlet extends AonApiHttpServlet{
 			String[] strs = username.split("=");
 			login = strs[0];
 			username = strs[1];
-			
 		}
 		Boolean ok = false;
 		Auth auth = new Auth();
