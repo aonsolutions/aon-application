@@ -120,6 +120,10 @@ public class DomainUserRoles implements Serializable {
 		return getDomain().getParentId() != null && getDomain().getParentId().equals(getUser().getDomain());
 	}
 	
+	public boolean hasTaskHolder() {	
+		return getUser().getTaskHolders().stream().filter(th -> th.getDomain().getId().equals(getDomain().getId())).count() > 0;
+	}
+	
 	private Boolean hasOldModule(Module module) {
 		return getOldDomainModules().contains(module) || getOldParentDomainModules().contains(module);
 	}
@@ -271,13 +275,12 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public Boolean isMessenger() {
-		return hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER));
+		return hasTaskHolder() && hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER));
 	}
 	
 	public Boolean isMessengerManager() {
-		return hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
+		return hasTaskHolder() && hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
 	}
-	
 
 	// NOTES - NOTAS
 	

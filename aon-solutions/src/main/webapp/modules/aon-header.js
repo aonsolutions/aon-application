@@ -134,13 +134,10 @@ export class AonHeader extends AonElement {
 						name: MSG.SUPPORT + ' / CAU',
 						icon: MATERIAL_ICONS.SUPPORT_AGENT,
 						fn: () =>{
-							if(this.isBeta()){
-								let aonMessenger = new AonMessenger();
-								aonMessenger.cau = 1;
-								aonMessenger._filter.source = TASK_SOURCE.CAU;
-								this.rootPanel(aonMessenger);
-							}  else 
-								alert('en desarrollo');
+							let aonMessenger = new AonMessenger();
+							aonMessenger.cau = 1;
+							aonMessenger._filter.source = TASK_SOURCE.CAU;
+							this.rootPanel(aonMessenger);
 						}
 					};
 					
@@ -181,12 +178,13 @@ export class AonHeader extends AonElement {
 							let iframe = document.createElement("iframe");
 							iframe.height = "100%";
 							iframe.width = "100%";
-							iframe.src = "http://faqs.aonsolutions.es";
+							iframe.src = "https://faqs.aonsolutions.es";
 							this.rootPanel(iframe);
 						} 
 					};
 
-					options.push(support)
+					if(LS.getDomainId())
+						options.push(support)
 					if(this.isBeta()) options.push(language);
 					options.push(help);
 
