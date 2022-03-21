@@ -179,6 +179,10 @@ export class Domain {
         return this.getDomainType() && 'GENERIC' === this.getDomainType().toUpperCase();
     }
 
+    isKitDigital() {
+        return this.getDomainType() && 'KIT_DIGITAL' === this.getDomainType().toUpperCase();
+    }
+
     isParent() {
         return this.parentId === undefined && this.isConsultancy();
     }

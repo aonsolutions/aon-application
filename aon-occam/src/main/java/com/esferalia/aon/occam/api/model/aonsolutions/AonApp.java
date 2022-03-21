@@ -37,7 +37,10 @@ public enum AonApp implements Serializable{
 	SALTRA(getEmptyModules()),
 	BASIC_MANAGEMENT(getBasicManagementModules()),
 	STANDAR_MANAGEMENT(getStandarManagementModules()),
-	PROFESSIONAL_MANAGEMENT(getProfessionalManagementModules())
+	PROFESSIONAL_MANAGEMENT(getProfessionalManagementModules()),
+	KIT_DIGITAL_FACE(getBasicManagementModules()),
+	KIT_DIGITAL_CRM(getKitDigitalCrmModules()),
+	KIT_DIGITAL_ERP(getKitDigitalErpModules())
 	;
 	
 	LinkedList<Module> modules;
@@ -103,6 +106,18 @@ public enum AonApp implements Serializable{
 //		list.add(Module.TREASURY);
 //		list.add(Module.MARKETING);
 		list.add(Module.CRM);
+		list.add(Module.MANAGEMENT);
+		return list;
+	}
+	
+	private static LinkedList<Module> getKitDigitalCrmModules() {
+		LinkedList<Module> list = new LinkedList<>();
+		list.add(Module.CRM);
+		return list;
+	}
+	
+	private static LinkedList<Module> getKitDigitalErpModules() {
+		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.MANAGEMENT);
 		return list;
 	}

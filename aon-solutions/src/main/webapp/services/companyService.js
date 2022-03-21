@@ -23,12 +23,7 @@ export const getCompanies = () => {
     if (companies) {
       resolve(companies);
     } else {
-      request(
-        "GET",
-        API.COMPANY,
-        getToken(),
-        undefined,
-        (r, error) => {
+      request("GET", API.COMPANY, getToken(), undefined, (r, error) => {
           if (error) {
             reject(error);
           } else {

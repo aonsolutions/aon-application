@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Apps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
-	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, OFFICE, COMMERCE} from  '../../services/app.js';
+	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
@@ -91,15 +91,16 @@ export class AonBooking extends AonElement {
 			this.buildApps(content, this.getGestionPacks(), dur);
 		}
 
-
-		this.buildTitle(content, MSG.APPLICATIONS);
-		this.buildApps(content, Apps, dur);
-
-		this.buildTitle(content, MSG.SERVICES);
-		this.buildApps(content, Services, dur);
-
-		this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
-		this.buildApps(content, ClassicApps, dur);
+		if(!this.dur.getDomain().isKitDigital()) {
+			this.buildTitle(content, MSG.APPLICATIONS);
+			this.buildApps(content, Apps, dur);
+	
+			this.buildTitle(content, MSG.SERVICES);
+			this.buildApps(content, Services, dur);
+	
+			this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
+			this.buildApps(content, ClassicApps, dur);
+		}
 	}
 	
 	getGestionPacks(){
@@ -111,6 +112,8 @@ export class AonBooking extends AonElement {
 			return {COMMERCE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 		else if(this.dur.getDomain().isOffice())
 			return {OFFICE};
+		else if(this.dur.getDomain().isKitDigital()) 
+			return {KIT_DIGITAL_FACE, KIT_DIGITAL_CRM, KIT_DIGITAL_ERP}
 		else return {ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 
 	}
