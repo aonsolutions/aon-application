@@ -116,8 +116,10 @@
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>
-	<link rel="stylesheet" href="./css/aio.css"></link>
-	<link rel="stylesheet" href="./css/portal.css"></link>
+	<a4j:loadStyle src="#{aonResource.resolve['/aon-richCss.css']}"/>
+	<a4j:loadStyle src="#{aonResource.resolveLocal['/css/aio.css']}"/>
+	
+	<ui:include src="/facelet/homepage/header.xhtml" />
 	<ui:insert name="menu">
 		<ui:include src="/facelet/homepage/menu.xhtml" />
 	</ui:insert>
@@ -159,7 +161,6 @@
 								value="play_circle" styleClass="icon material-icons" /> <aon:outputText
 								value="#{file.name}" />
 						</a>
-
 					</aon:if>
 
 				</aon:form>
