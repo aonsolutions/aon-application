@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.DomainJSON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.UserJSON;
 
 public class AonDomainUserRoles extends DomainUserRoles{
 
@@ -49,11 +51,11 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		if(getUser() != null && getUser().getUserRoles() != null) {
 			Arrays.asList(getUser().getUserRoles()).stream().forEach(r -> oldUserRoles.put(r.name()));
 		}
+		json.put(IJsonNames.USER, UserJSON.toJSON(getUser()));
+		json.put(IJsonNames.DOMAIN, DomainJSON.toJSON(getDomain()));
+		json.put(IJsonNames.MAX_DEFINED_USERS, getDomain().getMaxDefinedUsers());
+		json.put(IJsonNames.DEFINED_USERS, getDomain().getDefinedUsers());
 		
-		json.put("domain", DomainJSON.toJSON(getDomain()));
-		json.put("maxDefinedUsers", getDomain().getMaxDefinedUsers());
-		json.put("definedUsers", getDomain().getDefinedUsers());
-
 		json.put("parentUser", isParentUser());
 		json.put("domainApps", domainApps);
 		json.put("oldDomainModules", oldDomainModules);
