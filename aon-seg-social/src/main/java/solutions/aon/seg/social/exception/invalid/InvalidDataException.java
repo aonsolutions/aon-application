@@ -30,7 +30,7 @@ public class InvalidDataException extends SegSocialException{
 		case 4879:		throw new InvalidPrintingMethod(msg);
 		case 3001:		throw new UnfilledMandatory(msg);
 		case 3543:		throw new NoQueryData(msg);
-		case 3823:		throw new invalidCccException(msg);
+		case 3823:		throw new InvalidCccException(msg);
 		case 3037:		throw new NoMoreDataException(msg);
 		case 4113:
 		case 205:		throw new DataDoesNotExist(msg);

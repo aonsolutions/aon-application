@@ -60,7 +60,7 @@ import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.NoMoreDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Liquidation;
 import solutions.aon.seg.social.object.SituacionEmpresa;
@@ -1322,7 +1322,7 @@ class SistemaREDI {
 	
 
 	static void checkLiquidationExceptions(HtmlPage htmlPage) throws LiquidationDoesNotExist, DataDoesNotExist,
-			WrongRegimeException, invalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
+			WrongRegimeException, InvalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
 		HtmlDivision divError=(HtmlDivision) htmlPage.getElementById("ARQContenMensaje");
 		if(divError.getVisibleText().toUpperCase().contains("NO EXISTE LIQUIDACIÓN"))
 			throw new LiquidationDoesNotExist();
@@ -1331,7 +1331,7 @@ class SistemaREDI {
 		else if(divError.getVisibleText().toUpperCase().contains("CUENTA DE COTIZACIÓN NO EXISTE"))
 			throw new WrongRegimeException();
 		else if(divError.getVisibleText().toUpperCase().contains("C.C.C. ERRÓNEO"))
-			throw new invalidCccException();
+			throw new InvalidCccException();
 		else if(divError.getVisibleText().toUpperCase().contains("DEBE TENER CONTENIDO"))
 			throw new UnfilledMandatory();
 		else if(divError.getVisibleText().toUpperCase().contains("EL CCC NO PERTENECE AL COLECTIVO DE CLEGIOS CONCERTADOS"))
