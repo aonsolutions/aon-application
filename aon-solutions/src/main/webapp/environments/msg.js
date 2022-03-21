@@ -264,7 +264,7 @@ export const ISSUE = "Asunto"; //TODO
 // ----- K
 
 // ----- L
-
+export const LABELS = "Etiquetas";
 export const LANGUAGE = MSG.LANGUAGE;
 export const LAST = MSG.LAST;
 export const LAST_LOCATION = MSG.LAST_LOCATION;

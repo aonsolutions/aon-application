@@ -53,21 +53,23 @@ const buildToolbar = (aonMessengerChat) => {
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
     if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
-      toolbar.addButton2({
-      id: 'Labels',
-      name: 'Labels',
-      icon: MATERIAL_ICONS.LABEL
-      }, (ev) =>  dialogTaskTags(ev, aonMessengerChat));
-    }
-
-    if(task.id){
-      if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
+      if(task.id){
         toolbar.addButton2({
           ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
           name: MSG.CLOSE,
           icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
         }, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED));
       }
+
+      toolbar.addButton2({
+        id: 'Labels',
+        name: MSG.LABELS,
+        icon: MATERIAL_ICONS.LABEL
+        }, (ev) =>  dialogTaskTags(ev, aonMessengerChat)
+      );
+    }
+
+    if(task.id){
       if([TASK_STATUS.DELETED, TASK_STATUS.FINISHED].includes(task.status))
         toolbar.addButton2({...ACTIONS.RESTORE, name:MSG.REOPEN}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
 

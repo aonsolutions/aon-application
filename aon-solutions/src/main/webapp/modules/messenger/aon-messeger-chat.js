@@ -173,7 +173,7 @@ export class AonMessengerChat extends AonElement {
 
   addButtonDelete(){
     if(this.task.status == TASK_STATUS.DELETED) {
-      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask())
+      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask(), ACTIONS.PREVIOUS.id);
     }
   }
 

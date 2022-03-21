@@ -134,13 +134,10 @@ export class AonHeader extends AonElement {
 						name: MSG.SUPPORT + ' / CAU',
 						icon: MATERIAL_ICONS.SUPPORT_AGENT,
 						fn: () =>{
-							if(this.isBeta()){
-								let aonMessenger = new AonMessenger();
-								aonMessenger.cau = 1;
-								aonMessenger._filter.source = TASK_SOURCE.CAU;
-								this.rootPanel(aonMessenger);
-							}  else 
-								alert('en desarrollo');
+							let aonMessenger = new AonMessenger();
+							aonMessenger.cau = 1;
+							aonMessenger._filter.source = TASK_SOURCE.CAU;
+							this.rootPanel(aonMessenger);
 						}
 					};
 					
