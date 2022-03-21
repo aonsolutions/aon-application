@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -23,7 +24,9 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -264,6 +267,41 @@ public class TaskUtils {
 		newThread.start();
 	}
 
+	public static void sendHistoricWorkflow(AonApiData api, Task task) {
+		Thread newThread = new Thread(() -> {
+			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+			if(company!=null) {
+				AonToken aonToken = SECURITY.getAonToken(api.getToken());
+				Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+				String logo = TaskUtils.getLogoCompany(company.getDomain().getName());
+				
+				String to = auth.getEmail();
+	
+				String subject = "SOLICITUD Nº "+ task.getNumber();
+				String url = "https://aon.solutions";
+				
+				TaskMail tm = new TaskMail()
+				.setNumber(task.getNumber().toString())
+				.setDate(task.getStartDate())
+				.setTitle(task.getTitle())
+				.setWorkflows(task.getWorkflows())
+				.setUrl(url)
+				.setLogo(logo);
+				
+				String body = TaskMailTemplate.taskWorkflowContent(tm);
+				
+				SESMessage msg = new SESMessage()
+				.setAlias(company.getName())
+				.setSubject(subject)
+				.setBody(body)
+				.setTo(to);
+				
+			    SES.sendEmail(msg);
+			}
+		});
+		newThread.start();
+	}
+	
 	//SEND TASK HOLDER AND WORKGROUP
 	private static void sendNotificationThAndWg(AonApiData api, Task task, TaskWorkflow workflow, String body) {
 		LinkedList<Auth> auths = new LinkedList<>();
@@ -391,6 +429,33 @@ public class TaskUtils {
 				e.printStackTrace();
 			}
 	    }
+	}
+	
+	public static void setCauInfo(AonApiData api, Task task) {
+		try {
+			JSONObject params = api.getData();
+			if(!params.optString("cau").isEmpty() && params.optInt("cau")>0) {
+				task.setDomain(api.getDomain());
+				JSONObject description = new JSONObject(task.getDescription());
+				JSONObject cauInfo = description.optJSONObject("cauInfo");
+				JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
+				JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
+				JSONObject auth = cauInfo.optJSONObject(IJsonNames.AUTH);
+				String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
+				String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
+	
+				String doc = docParent!=null ? docParent : docCustomer;
+				
+				if(!auth.optString(IJsonNames.EMAIL).isEmpty()) 
+					task.setGtaskId(auth.optString(IJsonNames.EMAIL));
+				
+				if(doc!=null) {
+					Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
+					if(registry!=null && registry.getId()!=null)
+						task.setRegistry(registry);
+				}
+			}
+		} catch (Exception e) {e.printStackTrace();}
 	}
 	
 	private static Filter getSearchFilter(TaskProperties f, String search) {
