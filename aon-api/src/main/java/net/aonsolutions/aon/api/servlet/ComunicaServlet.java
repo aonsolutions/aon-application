@@ -587,12 +587,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				String regime = employee.getRegime();
 				String ccc = employee.getCtaCti().get();
 				String nss = employee.getNss();
-				Date dat = employee.getFra();
 
 				LinkedList<File> files = new LinkedList<>();
 				
 				try {
-					byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ccc, regime, situation, nss, dat);
+					byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ccc, regime, situation, nss, date);
 					File file = File.createTempFile("duplicateTA", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
@@ -603,8 +602,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}
 				
 				try {
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, dat);
-					File file = File.createTempFile("duplicateIDC", ".pdf");
+					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
+					File file = File.createTempFile("duplicadoIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
 		            os.close();
@@ -612,7 +611,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}catch (Exception e) {
 					e.printStackTrace();
 				}
-
 				sendEmail(api, subject, body, files);
 			} catch (Exception e) {
 				e.printStackTrace();
