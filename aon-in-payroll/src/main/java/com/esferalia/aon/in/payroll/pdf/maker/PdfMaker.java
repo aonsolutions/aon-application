@@ -14,6 +14,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.Enterprise
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.DefaultPayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
@@ -70,12 +71,14 @@ public class PdfMaker {
 	 */
 	public static void printDefaultPayroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
 			throws CanNotCreatePdfException {
-		PayrollTemplate.print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		PayrollTemplate template = new PayrollTemplate(payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		template.print(out);
 	}
 	
 	public static void printDefaultClassicPayroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
 			throws CanNotCreatePdfException {
-		DefaultPayrollTemplate.print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		IPayrollTemplate template = new DefaultPayrollTemplate(payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		template.print(out);
 	}
 
 	/**
