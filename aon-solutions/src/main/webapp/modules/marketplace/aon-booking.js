@@ -87,7 +87,8 @@ export class AonBooking extends AonElement {
 			this.buildTitle(content, 'Packs');
 			this.buildApps(content, Packs, dur);
 		} else {
-			this.buildTitle(content, 'Gestión');
+			this.buildTitle(content,  this.dur.getDomain().isKitDigital() 
+				? 'Kit Digital' : 'Gestión');
 			this.buildApps(content, this.getGestionPacks(), dur);
 		}
 
