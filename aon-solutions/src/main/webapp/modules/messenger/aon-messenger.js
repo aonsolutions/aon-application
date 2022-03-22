@@ -14,6 +14,23 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
+
+	get id() {
+		return this.getAttribute(CONSTANT.ID);
+	   }
+
+	set id(id) {
+	   this.setAttribute(CONSTANT.ID, id);
+	}
+
+	get type() {
+		return this.getAttribute(CONSTANT.TYPE);
+	}
+
+	set type(type) {
+	   this.setAttribute(CONSTANT.TYPE, type);
+	}
+
     AON_MESSENGER;
 	_workgroups;
 	_tags;
@@ -40,6 +57,10 @@ export class AonMessenger extends AonElement {
 	}
 
 	initialize(){
+		if(this.type && this.type === 'cau') {
+			this.cau = 1;
+			this._filter.source = TASK_SOURCE.CAU;
+		}
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
 		this._tags = [];

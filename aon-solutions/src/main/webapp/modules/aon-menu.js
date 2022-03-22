@@ -298,7 +298,7 @@ export class AonMenu extends AonElement {
 			let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 			if(aonMenuSidenav && aonMenuSidenav.style.width !== '250px' && aonMenuSidenav.style.width !== '0px' && localStorage.getItem('aon_domain_id')){
 				aonMenuSidenav.style.transitionDuration = '0ms';
-				aonMenuSidenav.style.width = '175px';
+				aonMenuSidenav.style.width = '190px';
 				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
 					item.style.display = 'inline-block';
 					item.style.fontSize = '12px';

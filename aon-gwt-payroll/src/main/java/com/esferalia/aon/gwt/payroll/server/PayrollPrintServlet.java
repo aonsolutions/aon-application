@@ -53,7 +53,7 @@ public class PayrollPrintServlet extends HttpServlet {
 		} catch (NumberFormatException e) {
 			cLimit = null;
 		}
-		String payrollType = req.getParameter(PayrollPrintService.Parameter.PAYROLL_TYPE.getName());
+		String payrollType = (String) req.getAttribute(PayrollPrintService.Parameter.PAYROLL_TYPE.getName());
 		resp.setHeader("Content-disposition", "attachment; filename=\""+req.getParameter("name")+"\";");
 		
 		if (AonStringUtils.equalsIgnoreCase(payrollType, PayrollPrintService.PayrollType.CLASSIC.getName())) {

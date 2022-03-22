@@ -178,12 +178,13 @@ export class AonHeader extends AonElement {
 							let iframe = document.createElement("iframe");
 							iframe.height = "100%";
 							iframe.width = "100%";
-							iframe.src = "http://faqs.aonsolutions.es";
+							iframe.src = "https://faqs.aonsolutions.es";
 							this.rootPanel(iframe);
 						} 
 					};
 
-					options.push(support)
+					if(LS.getDomainId())
+						options.push(support)
 					if(this.isBeta()) options.push(language);
 					options.push(help);
 
