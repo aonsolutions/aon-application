@@ -30,7 +30,7 @@ import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongAffNumber;
 import solutions.aon.seg.social.exception.invalid.WrongIdentifierException;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Period;
@@ -163,7 +163,7 @@ public class TestServicioRED extends SegSocialTest {
 					, calendar.getTime()
 					);
 			fail();
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
 			LOG.warning(e.getMessage());
@@ -291,7 +291,7 @@ public class TestServicioRED extends SegSocialTest {
 					, calendar.getTime()
 					);
 			fail();
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
 			LOG.warning(e.getMessage());
@@ -452,7 +452,7 @@ public class TestServicioRED extends SegSocialTest {
 						, calendar.getTime()
 						);
 				fail();
-			} catch (invalidCccException e) {
+			} catch (InvalidCccException e) {
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
 				LOG.warning(e.getMessage());
@@ -624,7 +624,7 @@ public class TestServicioRED extends SegSocialTest {
 						calendar.getTime()
 						);
 				fail();
-			} catch (invalidCccException e) {
+			} catch (InvalidCccException e) {
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
 				LOG.warning(e.getMessage());
@@ -882,7 +882,7 @@ public class TestServicioRED extends SegSocialTest {
 						, calendar.getTime()
 						);
 				fail();
-			} catch (invalidCccException e) {
+			} catch (InvalidCccException e) {
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
 				LOG.warning(e.getMessage());
@@ -1089,7 +1089,7 @@ public class TestServicioRED extends SegSocialTest {
 						"01105577932"
 						);
 				fail();
-			} catch (invalidCccException e) {
+			} catch (InvalidCccException e) {
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
 				LOG.warning(e.getMessage());
@@ -1631,7 +1631,7 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationOrigin.TODAS,
 						"111016467058", "111008520536", "gwt354");
 				fail("Shouldn't end");
-			} catch (invalidCccException e) {
+			} catch (InvalidCccException e) {
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
 				LOG.warning(e.getMessage());
@@ -1678,7 +1678,7 @@ public class TestServicioRED extends SegSocialTest {
 						"01105368062",
 						d);
 				fail("Should have returned a pdf");
-			} catch (invalidCccException e) {
+			} catch (InvalidCccException e) {
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
 				LOG.warning(e.getMessage());
@@ -1814,7 +1814,7 @@ public class TestServicioRED extends SegSocialTest {
 						"01105368062",
 						d);
 				fail("Should have returned a pdf");
-			} catch (invalidCccException e) {
+			} catch (InvalidCccException e) {
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
 				LOG.warning(e.getMessage());

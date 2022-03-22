@@ -20,7 +20,7 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Employee;
 
 public class TestServicioREDMov extends SegSocialTest {
@@ -235,7 +235,7 @@ public class TestServicioREDMov extends SegSocialTest {
 	public void testReportAffiliateInAltaWrongCCC() throws IOException {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 			ServicioREDMov.getReportAffiliateInAlta(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360064");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
 			LOG.warning(e.getMessage());
