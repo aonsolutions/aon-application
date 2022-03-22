@@ -15,6 +15,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -186,8 +187,9 @@ public class DecimalUtil {
 		}
 	}
 	
-	public void transform( Facturae facturae, String fileName ) throws DocumentException, IOException {
+	public void transform( Facturae facturae, String fileName ) throws DocumentException, SAXException, IOException {
 		SAXReader reader = new SAXReader();
+		reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		File file = new File(fileName);
 		Document document = reader.read(file);
 		fixDecimals(facturae, document);
