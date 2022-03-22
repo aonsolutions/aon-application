@@ -59,7 +59,25 @@ public class AgreementClean implements Update {
 
 	private void removeUnusedAgreements(DSLContext dslContext) {
 		
+		deleteTrashAgreements(dslContext);
+		deleteAgreements(dslContext);
+		
+	}
+
+	private void deleteTrashAgreements(DSLContext dslContext) {
+		Result<AgreementRecord> trashAgreements = dslContext.select().from(AGREEMENT)
+				.where(AGREEMENT.ID.lt(0))
+				.fetchInto(AGREEMENT);
+		
+		trashAgreements.stream().forEach(agreement -> {
+			removeContractReference(dslContext, agreement.get(AGREEMENT.ID));
+			deleteAgreement(dslContext, agreement.get(AGREEMENT.ID));
+		});
+	}
+	
+	private void deleteAgreements(DSLContext dslContext) {
 		Result<AgreementRecord> agreements = dslContext.select().from(AGREEMENT)
+				.where(AGREEMENT.ID.gt(0))
 				.fetchInto(AGREEMENT);
 		
 		Integer agreementsDelete = 0;
@@ -69,15 +87,28 @@ public class AgreementClean implements Update {
 				continue;
 			
 			agreementsDelete++;
-			deleteAgreement(dslContext, agreeemnt.getId(), agreeemnt.getDescription());
+			deleteAgreement(dslContext, agreeemnt.getId());
 		}
 		
 		System.out.println("Delete Agreements : " + agreementsDelete + " records");
-		
 	}
 	
-	private static boolean hasContract(DSLContext dslContext,
-			Integer agreementId, Integer domainId) {
+	// Remove contract reference of trash agreements
+	private void removeContractReference(DSLContext dslContext, Integer agreementId) {
+		SelectConditionStep<Record1<Integer>> agreementLevelId = dslContext
+				.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId));
+		
+		// Poner a null todos los contratos que apuntan al convenio borrado
+		dslContext.update(CONTRACT)
+			.set(CONTRACT.AGREEMENT_LEVEL, DSL.val(null, CONTRACT.AGREEMENT_LEVEL))
+			.set(CONTRACT.CATEGORY_DESCRIPTION, DSL.val(null, CONTRACT.CATEGORY_DESCRIPTION))
+			.where(CONTRACT.AGREEMENT_LEVEL.in(agreementLevelId))
+			.execute();
+	}
+
+	// Return if agreement has contracts asociate
+	private static boolean hasContract(DSLContext dslContext, Integer agreementId, Integer domainId) {
 		
 		List<Integer> domainChildIds = dslContext.select(DOMAIN.ID).from(DOMAIN)
 				.where(DOMAIN.PARENT.eq(domainId))
@@ -89,24 +120,18 @@ public class AgreementClean implements Update {
 						.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
 						.fetch(AGREEMENT_LEVEL.ID)
 			)).and(CONTRACT.DOMAIN.eq(domainId).or(CONTRACT.DOMAIN.in(domainChildIds)))
+			.limit(1)
 			.fetch();
 		
 		return agreementContracts.isNotEmpty();
 
 	}
 	
-	private void deleteAgreement(DSLContext dslContext, Integer agreementId, String agreementDescription) {
+	// Delete agreement
+	private void deleteAgreement(DSLContext dslContext, Integer agreementId) {
 		SelectConditionStep<Record1<Integer>> agreementLevelId = dslContext
 				.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
 				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId));
-
-		// Poner a null todos los contratos que apuntan al convenio borrado
-		// Esto no haria falta al saber que no tiene contratos asociados
-//		dslContext.update(CONTRACT)
-//			.set(CONTRACT.AGREEMENT_LEVEL, DSL.val(null, CONTRACT.AGREEMENT_LEVEL))
-//			.set(CONTRACT.CATEGORY_DESCRIPTION, DSL.val(null, CONTRACT.CATEGORY_DESCRIPTION))
-//			.where(CONTRACT.AGREEMENT_LEVEL.in(agreementLevelId))
-//			.execute();
 		
 		dslContext.delete(AGREEMENT_LEVEL_CATEGORY)
 				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
@@ -144,8 +169,6 @@ public class AgreementClean implements Update {
 			
 		dslContext.delete(AGREEMENT).where(AGREEMENT.ID.eq(agreementId))
 				.execute();
-		
-		System.out.println("Agreement deleted -> Id : " + agreementId + ", Description : " + agreementDescription);
 	}
 	
 }
