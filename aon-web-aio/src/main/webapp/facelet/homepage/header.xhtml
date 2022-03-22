@@ -1234,7 +1234,6 @@
 			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="color:#999; padding-left: 10px;">
 
-					
 					<aon:panelGroup style="display:inline;">
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
@@ -1312,12 +1311,11 @@
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">
-								<aon:commandLink style="font-size:1em;"
-									value="#{bundle.aon_help} (By Google Drive)"
+								<aon:htmlCommandLink style="font-size:1em;"
+									value="#{bundle.aon_help}"
 									action="main_help"
 									target="_blank">
-									<!-- <aon:outputText value="#{bundle.aon_help}" />-->
-								</aon:commandLink>
+								</aon:htmlCommandLink>
 							</aon:menuItem>
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"

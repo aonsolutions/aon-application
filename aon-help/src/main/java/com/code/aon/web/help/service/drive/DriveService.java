@@ -112,6 +112,30 @@ public class DriveService {
 		return Optional.ofNullable(GFile.from(firstEntry));
 	}
 	
+	/**
+	 * Get a file by ID from drive
+	 * @param id The file ID
+	 * @return Optional File or empty
+	 */
+	public Optional<GFile> getFileById(Optional<String> id){
+		
+		if(id.isEmpty())
+			return Optional.empty();
+		
+		
+		Optional<GFile> file = Optional.empty();
+		
+		try {
+			final GFile gfile = GFile.from(SearchFiles.searchFile(drive,id.get()));
+			file = Optional.ofNullable(gfile);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file;
+	}
+	
+	
 	public static void main(String[] args) throws IOException {
 		System.out.println(DriveService.class.getResourceAsStream("key.p12").available());
 	}

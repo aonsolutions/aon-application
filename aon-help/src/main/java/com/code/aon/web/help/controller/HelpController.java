@@ -40,6 +40,22 @@ public class HelpController implements Serializable {
 		} 
 	}
 	
+	
+	/**
+	 * reset the breadcrumb
+	 */
+	private void resetBreadcrumb() {
+		final GFile file = new GFile.GFileBuilder()
+				.setId("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN")
+				.setType(MimeTypes.FOLDER)
+				.setName("Inicio")
+				.build();
+		
+		this.breadcrumb = new LinkedHashMap<String,GFile>();
+		this.breadcrumb.put(this.file.getId(), this.file);
+	}
+	
+	
 	/**
 	 * Get the current content 
 	 * @return The Collection of files
@@ -57,7 +73,8 @@ public class HelpController implements Serializable {
 	public void setFile(GFile file) {
 		
 		
-		if(this.breadcrumb.get(file.getId()) != null) {			
+		if(this.breadcrumb.get(file.getId()) != null) {	
+			
 			LinkedHashMap<String,GFile> newBreadcrumb = new LinkedHashMap<String, GFile>();
 			for (String id : breadcrumb.keySet()) {
 				if(id.equals(file.getId())) {
@@ -71,10 +88,19 @@ public class HelpController implements Serializable {
 			this.breadcrumb = newBreadcrumb;	
 		}
 		
+		if(file.getName() == null) {
+			final GFile temp = drive.getFileById(Optional.of(file.getId())).orElse(null);
+			
+			if(temp != null && temp.getName() != null) {
+				file.setName(temp.getName());
+			}	
+		}
+		
 		this.breadcrumb.put(file.getId(),file);
 		this.file = file;
 		this.content = null;
 	}	
+	
 	
 	/**
 	 * Get the current file
@@ -84,7 +110,9 @@ public class HelpController implements Serializable {
 		return this.file;
 	}
 	
-	
+	/*
+	 * Set a folder by id
+	 */
 	public void setFolderById(String id) {
 		this.setFile(
 			new GFile.GFileBuilder()
@@ -94,7 +122,14 @@ public class HelpController implements Serializable {
 		);
 	}
 	
-	
+	/**
+	 * Set folder by id reseting the breadcrumb
+	 * @param file
+	 */
+	public void setRootFolder(String id) {
+		this.resetBreadcrumb();
+		this.setFolderById(id);
+	}
 	
 	/**
 	 * Get the servlet url for the current file
@@ -112,8 +147,6 @@ public class HelpController implements Serializable {
 			url.append("&name=").append(file.getName());
 			url.append("&parent=").append(file.getParents().get(0));
 			
-			
-			System.out.println(url);
 			try {
 				return Base64.getEncoder().encodeToString(url.toString().getBytes("utf-8"));
 			} catch (UnsupportedEncodingException e) {
@@ -127,8 +160,6 @@ public class HelpController implements Serializable {
 			url.append("?action=video");
 			url.append("&name=").append(file.getName());
 			url.append("&parent=").append(file.getParents().get(0));
-			
-			System.out.println("Showing video");
 			
 			try {
 				return Base64.getEncoder().encodeToString(url.toString().getBytes("utf-8"));

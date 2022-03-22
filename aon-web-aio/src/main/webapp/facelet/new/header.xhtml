@@ -1600,11 +1600,11 @@
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">
-								<h:outputLink style="font-size:1em;"
-									value="#{aonConfiguration.helpURL}"
-									target="_blank" >
-									<aon:outputText value="#{bundle.aon_help}" />
-								</h:outputLink>
+								<aon:htmlCommandLink style="font-size:1em;"
+									value="#{bundle.aon_help}"
+									action="main_help"
+									target="_blank">
+								</aon:htmlCommandLink>
 							</aon:menuItem>
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"

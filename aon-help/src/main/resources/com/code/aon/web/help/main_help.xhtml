@@ -119,24 +119,21 @@
 	<a4j:loadStyle src="#{aonResource.resolve['/aon-richCss.css']}"/>
 	<a4j:loadStyle src="#{aonResource.resolveLocal['/css/aio.css']}"/>
 	
-	<ui:include src="/facelet/homepage/header.xhtml" />
+	<ui:include src="./facelet/header_help.xhtml" />	
 	<ui:insert name="menu">
-		<ui:include src="/facelet/homepage/menu.xhtml" />
+		<ui:include src="./facelet/menu_help.xhtml" /> 
 	</ui:insert>
 
-	<aon:div styleCass="div-horizontal-center box-column" id="driveDiv">
+	<aon:div styleCass="div-horizontal-center box-column" id="aonContent">
 		<span id="start"></span>
-		<ui:include src="breadcrumb.xhtml" />
-
+		<ui:include src="./facelet/breadcrumb.xhtml" />
 		<aon:div styleClass="box-column list">
-
 			<c:forEach items="#{help.content}" var="file">
-
 				<aon:form>
 
 					<!-- FOLDER -->
 					<aon:if test="${file.isFolder()}">
-						<aon:commandLink styleClass="list-item" reRender="driveDiv">
+						<aon:commandLink styleClass="list-item" reRender="aonContent">
 							<f:setPropertyActionListener target="#{help.file}"
 								value="#{file}" />
 							<aon:outputText value="folder" styleClass="icon material-icons" />
