@@ -4,7 +4,10 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -88,6 +91,11 @@ public class TaskHolderDAO {
 			.fetch()
 			.stream()
 			.map(new TaskHolderFiller());
+	}
+
+	public static List<TaskHolder> getList(AONContext ctx, TaskHolderFilter filter){
+		return getStream(ctx, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Stream<TaskHolder> getStream(AONContext ctx, TaskHolderFilter filter, int offset, int limit){

@@ -35,21 +35,22 @@
 		<g:north size="26">
 			<g:FlowPanel styleName="{style.button-bar} gwt-MenuBar-horizontal"
 				ui:field="menuBarFlowPanel">
-
+<!-- 
 				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="expandAllButton" >
 					<span class="material-icons-outlined">expand_less</span>
 				</g:Button>
 
 				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="collapseAllButton" >
 					<span class="material-icons-outlined">expand_more</span>
+				</g:Button> -->
+
+				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="clearButton" title="Limpiar">
+					<span class="material-icons-outlined">clear_all</span>
 				</g:Button>
 
-				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="runButton">
+
+				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="runButton" title="Actualizar">
 					<span class="material-icons-outlined">sync</span>
-				</g:Button>
-
-				<g:Button styleName="gwt-MenuItem {style.gwt-MenuItemCustom}" ui:field="clearButton">
-					<span class="material-icons-outlined">clear</span>
 				</g:Button>
 				
 				<g:FormPanel visible="false" ui:field="certificateFormPanel" method="{METHOD_POST}" action="{SISTEMA_RED_URL}/{CERTIFICATE}"  encoding="{ENCODING_MULTIPART}">

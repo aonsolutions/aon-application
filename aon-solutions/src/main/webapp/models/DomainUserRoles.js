@@ -119,6 +119,10 @@ export class DomainUserRoles {
 		return this.parentUser;
 	}
 
+  hasTaskHolder() {	
+		return this.user && this.user.taskHolders && this.user.taskHolders.filter(th => th.domain.id === this.domain.id).length > 0;
+	}
+
   hasOldModule(mod) {
   	return (this.getOldDomainModules() && this.getOldDomainModules().includes(mod)) || (this.getOldParentDomainModules() && this.getOldParentDomainModules().includes(mod));
   }
@@ -332,11 +336,11 @@ export class DomainUserRoles {
   }
 
 	isMessenger() {
-		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER));
+		return this.hasTaskHolder() && this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER));
 	}
 
 	isMessengerManager() {
-		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
+		return this.hasTaskHolder() && this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
 
   // CALL CENTER
