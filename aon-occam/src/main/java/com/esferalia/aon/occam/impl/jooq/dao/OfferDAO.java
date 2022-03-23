@@ -146,6 +146,10 @@ public class OfferDAO {
 		
 	}
 
+	public static OfferDetail getOfferDetail(AONContext ctx, OfferFilter filter) {
+		return getOfferDetails(ctx, filter).findFirst().orElse(new OfferDetail());
+	}
+	
 	public static Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter) {
 		return getFullOffers(ctx, filter)
 			.stream()
