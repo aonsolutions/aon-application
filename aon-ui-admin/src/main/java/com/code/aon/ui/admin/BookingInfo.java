@@ -70,7 +70,7 @@ public class BookingInfo implements Serializable {
 	}
 	
 	private void resetUnusedModules() {
-		List<DomainModuleInfo> modules = new LinkedList<DomainModuleInfo>(this.bookingModules);
+		List<DomainModuleInfo> modules = new LinkedList<>(this.bookingModules);
 		modules.addAll(this.displayModules);
 		for ( DomainModuleInfo dmi : aioInfo.getApplicationModules() ) {
 			if(! modules.contains(dmi) ) {

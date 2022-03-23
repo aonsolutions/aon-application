@@ -33,6 +33,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 
 public class DomainInfo implements Serializable {
 
@@ -47,6 +48,8 @@ public class DomainInfo implements Serializable {
 	private static final String DOMAIN_MANAGEMENT = "domainManagement";
 
 	private static final String MODULES = "modules";
+
+	private static final String APPS = "apps";
 	
 	private static final String DISPLAY_MODULES = "displayModules";
 
@@ -87,6 +90,7 @@ public class DomainInfo implements Serializable {
 	private boolean domainManagement;
 
 	private List<Module> bookinModules;
+	private List<AonApp> bookingApps;
 	
 	private List<Module> displayModules;
 	
@@ -102,6 +106,7 @@ public class DomainInfo implements Serializable {
 		numberOfUsers = 0;
 		maxTotalDocumentSize = DocumentManager.MINIMUM_MAX_TOTAL_DOCUMENT_SIZE;
 		bookinModules = Collections.emptyList();
+		bookingApps = Collections.emptyList();
 		displayModules = Collections.emptyList();
 	}
 	
@@ -145,14 +150,23 @@ public class DomainInfo implements Serializable {
 		}
 		String bookingModulesValue = properties.getProperty(MODULES);
 		if (! StringUtils.isEmpty(bookingModulesValue) ) {
-			this.bookinModules = new LinkedList<Module>();
+			this.bookinModules = new LinkedList<>();
 			for( String value : StringUtils.split(bookingModulesValue) ) {
 				this.bookinModules.add(value.equalsIgnoreCase(COMMERCIAL) ? Module.CRM : Module.valueOf(value));
 			}
 		}
+		
+		String bookingAppsValue = properties.getProperty(APPS);
+		if (! StringUtils.isEmpty(bookingAppsValue) ) {
+			this.bookingApps = new LinkedList<>();
+			for( String value : StringUtils.split(bookingAppsValue) ) {
+				this.bookingApps.add(AonApp.safeValueOf(value));
+			}
+		}
+		
 		String displayModulesValue = properties.getProperty(DISPLAY_MODULES);
 		if (! StringUtils.isEmpty(displayModulesValue) ) {
-			this.displayModules = new LinkedList<Module>();
+			this.displayModules = new LinkedList<>();
 			for( String value : StringUtils.split(displayModulesValue) ) {
 				this.displayModules.add(value.equalsIgnoreCase(COMMERCIAL) ? Module.CRM : Module.valueOf(value));
 			}
@@ -224,6 +238,9 @@ public class DomainInfo implements Serializable {
 		for( Module module : this.displayModules ) {
 			modules.add( module.getName(locale) );
 		}
+		for(AonApp apps: this.bookingApps) {
+			modules.add(apps.getDescription());
+		}
 		return StringUtils.join(modules, ", ");
 	}	
 	
@@ -231,8 +248,12 @@ public class DomainInfo implements Serializable {
 		return bookinModules;
 	}
 
+	public List<AonApp> getBookingApps() {
+		return bookingApps;
+	}
+	
 	private List<Module> getModules(List<DomainModuleInfo> moduleInfos) {
-		List<Module> list = new LinkedList<Module>();
+		List<Module> list = new LinkedList<>();
 		for( DomainModuleInfo dim : moduleInfos ) {
 			if ( dim.isChecked() ) {
 				list.add(dim.getModule());	
@@ -406,6 +427,10 @@ public class DomainInfo implements Serializable {
 		if (! bookinModules.isEmpty() ) {
 			String modulesValue = StringUtils.join(bookinModules, " ");
 			properties.setProperty(MODULES, modulesValue);			
+		}
+		if (! bookingApps.isEmpty() ) {
+			String modulesValue = StringUtils.join(bookingApps, " ");
+			properties.setProperty(APPS, modulesValue);			
 		}
 		if (! displayModules.isEmpty() ) {
 			String modulesValue = StringUtils.join(displayModules, " ");

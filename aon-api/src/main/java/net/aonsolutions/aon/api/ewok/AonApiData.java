@@ -15,18 +15,46 @@ public class AonApiData implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private String method;
 	private String token;
 	private Domain domain;
 	private User user;
 	private JSONObject data;
+	
+	/**
+	 * @deprecated  Replaced by data
+	 */
+	@Deprecated(forRemoval = true )
 	private JSONObject params;
+	
 	private String path;
 	private DomainUserRoles dur;
 	
-	public AonApiData() {
-		
+	public String getMethod() {
+		return method;
 	}
-
+	
+	public AonApiData setMethod(String method) {
+		this.method = method;
+		return this;
+	}
+	
+	public boolean isGet() {
+		return "GET".equalsIgnoreCase(getMethod());
+	}
+	
+	public boolean isPost() {
+		return "POST".equalsIgnoreCase(getMethod());
+	}
+	
+	public boolean isPut() {
+		return "PUT".equalsIgnoreCase(getMethod());
+	}
+	
+	public boolean isDelete() {
+		return "DELETE".equalsIgnoreCase(getMethod());
+	}
+	
 	public String getToken() {
 		return token;
 	}
@@ -63,10 +91,18 @@ public class AonApiData implements Serializable{
 		return this;
 	}
 
+	/**
+	 * @deprecated  Replaced by getData
+	 */
+	@Deprecated(forRemoval = true )
 	public JSONObject getParams() {
 		return params;
 	}
-
+	
+	/**
+	 * @deprecated  Replaced by setData
+	 */
+	@Deprecated(forRemoval = true )
 	public AonApiData setParams(JSONObject params) {
 		this.params = params;
 		return this;

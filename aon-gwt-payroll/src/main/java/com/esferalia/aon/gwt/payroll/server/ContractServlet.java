@@ -79,10 +79,10 @@ public class ContractServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
 				case "/salary/pdf":
-					responseFile(req, resp, getSalaryPdf(api), MimeType.PDF);
+					responseFile(resp, getSalaryPdf(api), MimeType.PDF);
 					break;
 				case "/company/costs/excel":
-					responseFile(req, resp, getCompanyCostsExcel(api), MimeType.MS_EXCEL);
+					responseFile(resp, getCompanyCostsExcel(api), MimeType.MS_EXCEL);
 					break;
 				default:
 					responseJson(req, resp, api);

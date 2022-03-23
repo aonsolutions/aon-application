@@ -29,6 +29,8 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 
@@ -63,8 +65,9 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	protected AonApiData initialize(HttpServletRequest req, HttpServletResponse resp) {
 		AonApiData api = new AonApiData();
+		api.setMethod(req.getMethod());
 		api.setParams(getParamsJSON(req));
-		api.setData(getRequestJSON(req));
+		api.setData(api.isGet() ? getParamsJSON(req) : getRequestJSON(req));
 		
 		api.setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
 				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
@@ -72,11 +75,13 @@ public class AonApiHttpServlet extends HttpServlet{
 		
 		
 		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
-				? (api.getParams().opt("domain_name") != null ? api.getParams().getString("domain_name") :req.getServerName()) 
+				? (api.getData().opt("domain_name") != null 
+					? api.getData().getString("domain_name") 
+					: req.getServerName()) 
 				: req.getHeader(IConstants.DOMAIN_NAME);
 		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
 				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
-				: (api.getParams().opt("domain_id") != null ? api.getParams().getInt("domain_id") : 0);
+				: (api.getData().opt("domain_id") != null ? api.getData().getInt("domain_id") : 0);
 
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		try {
@@ -89,8 +94,8 @@ public class AonApiHttpServlet extends HttpServlet{
 		api.setDomain(domain);
 		
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
-		if(AonStringUtils.isBlank(domainLogin) && api.getParams().opt(IConstants.DOMAIN_LOGIN) != null) {
-			domainLogin = api.getParams().getString(IConstants.DOMAIN_LOGIN);
+		if(AonStringUtils.isBlank(domainLogin) && api.getData().opt(IConstants.DOMAIN_LOGIN) != null) {
+			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
 		}
 		User user = new User().setLogin("");
 		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
@@ -106,8 +111,6 @@ public class AonApiHttpServlet extends HttpServlet{
 		}
 		api.setUser(user);
 		
-
-		
 		api.setPath(req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR);
 		try {
 			DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
@@ -115,6 +118,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		checkAuthorization(req, resp, api);
 		return api;
 	}
 	
@@ -144,22 +148,22 @@ public class AonApiHttpServlet extends HttpServlet{
 		giveBack(req, resp, object, meta);
 	}
 	
-	public void responseFile(HttpServletRequest req, HttpServletResponse resp, Attach attach) throws IOException {
+	public void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
-		responseFile(req, resp, attach.getDescription(), is, attach.getMimeType());
+		responseFile(resp, attach.getDescription(), is, attach.getMimeType());
 	}
 	
-	public void responseFile(HttpServletRequest req, HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
 		FileInputStream is =  new FileInputStream(file);
-		responseFile(req, resp, file.getName(), is, mimetype);
+		responseFile(resp, file.getName(), is, mimetype);
 	}
 	
-	public void responseFile(HttpServletRequest req, HttpServletResponse resp, String filename, byte[] file, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, byte[] file, MimeType mimetype ) throws IOException {
 		ByteArrayInputStream is =  new ByteArrayInputStream(file);
-		responseFile(req, resp, filename, is, mimetype);
+		responseFile(resp, filename, is, mimetype);
 	}
 	
-	public void responseFile(HttpServletRequest req, HttpServletResponse resp, String filename, InputStream is, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, InputStream is, MimeType mimetype ) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
@@ -168,14 +172,14 @@ public class AonApiHttpServlet extends HttpServlet{
 		is.close();
 	}
 	
-	public void responseFile(HttpServletRequest req, HttpServletResponse resp, String filename, MimeType mimetype ) throws IOException {
+	public void responseFile(HttpServletResponse resp, String filename, MimeType mimetype ) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
 		resp.flushBuffer();
 	}
 	
-    protected void addCorsHeader(HttpServletResponse response){
+    protected void addCorsHeader(HttpServletResponse response) {
     	response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
         response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
@@ -229,5 +233,13 @@ public class AonApiHttpServlet extends HttpServlet{
 	      jsonObj.put(entry.getKey(), o);
 	    }
 	    return jsonObj;
+	}
+	
+	private void checkAuthorization(HttpServletRequest req, HttpServletResponse resp, AonApiData api) {		
+		boolean okUser = api.getUser() != null && !api.getUser().isEmpty() && (api.getUser().getDomain().equals(api.getDomain().getId()) 
+				|| api.getUser().getDomain().equals(api.getDomain().getParentId())); 
+		if(AonStringUtils.isBlank(api.getToken()) || api.getUser() == null || !okUser) {
+			error(req, resp, new AonApiException(AonApiError.UNAUTHORIZED.getMessage()));
+		}
 	}
 }

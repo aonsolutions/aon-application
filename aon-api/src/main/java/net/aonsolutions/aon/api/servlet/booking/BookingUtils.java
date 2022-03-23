@@ -46,9 +46,10 @@ public class BookingUtils {
 		
 		SESMessage msg = new SESMessage()
 				.setTo(domain.getOwner())
-				.setBcc("admin@aonsolutions.es")
+				.addBcc("admin@aonsolutions.es")
+				.addBcc("administracion@aonsolutions.es")
 				.setFrom("booking@aon.solutions")
-				.setReplyTo("admin@aonsolutions.es")
+				.setReplyTo("administracion@aonsolutions.es")
 				.setSubject(subject)
 				.setBody(body)
 				.setFile(file);

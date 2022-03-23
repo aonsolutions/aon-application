@@ -31,7 +31,7 @@ public class InvoiceSignerController extends BasicController implements IFinance
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceSignerController.class.getName());
 	
-	private Set<Integer> checks = new HashSet<Integer>();
+	private Set<Integer> checks = new HashSet<>();
 
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
 		List<ITransferObject> list = this.getManagerBean().getList(this.getCriteria());

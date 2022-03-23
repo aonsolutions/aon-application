@@ -84,7 +84,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 			File file = File.createTempFile("informe", "");
 			try(OutputStream os = new FileOutputStream(file)){
 	            os.write(PDF);
-				responseFile(req, resp, file, MimeType.PDF);
+				responseFile(resp, file, MimeType.PDF);
 			}
 		} catch (Exception e) {
 			error(req, resp, e);

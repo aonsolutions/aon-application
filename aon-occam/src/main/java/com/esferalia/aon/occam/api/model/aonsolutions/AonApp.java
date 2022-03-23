@@ -11,46 +11,52 @@ import com.esferalia.aon.occam.api.model.Module;
 
 public enum AonApp implements Serializable{
 	
-	INVOICE(getEmptyModules()),
-	DOCUMENTAL(getDocumentalModules()),
-	MESSENGER(getMessengerModules()),
-	ACCOUNTING(getAccountingModules()),
-	FISCAL(getFiscalModules()),
-	PAYROLL(getPayrollModules()),
-	OCR(getEmptyModules()),
-	AIO(getEmptyModules()),
-	ALMA(getEmptyModules()),
-	COMUNICA(getEmptyModules()),
-	BIDOQ(getEmptyModules()),
-	CONVENIOS(getEmptyModules()),
-	BANK(getEmptyModules()),
-	TIMECONTROL(getEmptyModules()),
-	MANAGEMENT(getManagementModules()),
-	PACK_SUITE(getPackSuiteModules()),
-	PACK_PORTAL(getPackPortalModules()),
-	PACK_PAYROLL(getPayrollModules()),
-	PACK_FISCAL_ACCOUNTING(getPackFiscalAccountingModules()),
-	SELFCONTA(getEmptyModules()),
-	CUSTOM_VIEW(getEmptyModules()),
-	AULA(getEmptyModules()),
-	NOTES(getEmptyModules()),
-	SALTRA(getEmptyModules()),
-	BASIC_MANAGEMENT(getBasicManagementModules()),
-	STANDAR_MANAGEMENT(getStandarManagementModules()),
-	PROFESSIONAL_MANAGEMENT(getProfessionalManagementModules()),
-	KIT_DIGITAL_FACE(getBasicManagementModules()),
-	KIT_DIGITAL_CRM(getKitDigitalCrmModules()),
-	KIT_DIGITAL_ERP(getKitDigitalErpModules())
+	INVOICE(getEmptyModules(), "Facturas"),
+	DOCUMENTAL(getDocumentalModules(), "Documental"),
+	MESSENGER(getMessengerModules(), "Mensajería"),
+	ACCOUNTING(getAccountingModules(), "Contabilidad"),
+	FISCAL(getFiscalModules(), "Fiscal"),
+	PAYROLL(getPayrollModules(), "Laboral"),
+	OCR(getEmptyModules(), "OCR"),
+	AIO(getEmptyModules(), "AIO"),
+	ALMA(getEmptyModules(), "Alma"),
+	COMUNICA(getEmptyModules(), "Comunica"),
+	BIDOQ(getEmptyModules(), "Bidoq"),
+	CONVENIOS(getEmptyModules(), "Convenios"),
+	BANK(getEmptyModules(), "Bancos"),
+	TIMECONTROL(getEmptyModules(), "Control Horario"),
+	MANAGEMENT(getManagementModules(), "Gestión"),
+	PACK_SUITE(getPackSuiteModules(), "Suite Completa"),
+	PACK_PORTAL(getPackPortalModules(), "Pack Portal"),
+	PACK_PAYROLL(getPayrollModules(), "Pack Cotización"),
+	PACK_FISCAL_ACCOUNTING(getPackFiscalAccountingModules(), "Pack Tributación"),
+	SELFCONTA(getEmptyModules(), "Selfconta"),
+	CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),
+	AULA(getEmptyModules(), "Aula"),
+	NOTES(getEmptyModules(), "Notas"),
+	SALTRA(getEmptyModules(), "Saltra"),
+	BASIC_MANAGEMENT(getBasicManagementModules(), "Gestión Básica"),
+	STANDAR_MANAGEMENT(getStandarManagementModules(), "Gestión Estándar"),
+	PROFESSIONAL_MANAGEMENT(getProfessionalManagementModules(), "Gestión Profesional"),
+	KIT_DIGITAL_FACE(getBasicManagementModules(), "Kit Digital FACe"),
+	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),
+	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP")
 	;
 	
 	LinkedList<Module> modules;
+	String description;
 	
-	private AonApp(LinkedList<Module> modules) {
+	private AonApp(LinkedList<Module> modules, String description) {
 		this.modules = modules;
+		this.description = description;
 	}
 	
 	public List<Module> getModules() {
 		return modules;
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 	
 	public Byte value(){

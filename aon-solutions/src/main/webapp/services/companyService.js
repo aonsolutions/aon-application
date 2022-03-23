@@ -1,4 +1,4 @@
-import { request, post, put, get, getToken} from "./request.js";
+import { request, put, get, getToken} from "./request.js";
 import { API } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
@@ -53,7 +53,7 @@ export const getCompany = () => {
   });
 }
 
-export const setDomainApp = (data) => post(API.COMPANY_APP, data);
+export const setDomainApp = (data) => put(API.COMPANY_BOOKING, data);
 
 export const getDomainNotice = (data) => get(API.COMPANY_NOTICE, data);
 

@@ -113,7 +113,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			}
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
 		
-			responseFile(req, resp, "factura", MimeType.PDF);
+			responseFile(resp, "factura", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);
 		}
