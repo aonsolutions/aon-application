@@ -186,13 +186,13 @@ export class AonNotification extends AonElement {
       switch(source){
         case App.DOCUMENTAL:
           aonComponent =  new AonDocumental();
-          aonComponent.value = source_id;
           break;
         case App.MESSENGER:
           aonComponent =  new AonMessenger();
-          aonComponent.value = source_id;
           break;
       }
+
+      aonComponent.value = source_id;
 
       if(aonComponent){
         this.setDomainStorage(domain);
@@ -203,10 +203,10 @@ export class AonNotification extends AonElement {
 
 
   setDomainStorage(domain){
-    // if(domain && domain.id){
-    //   LS.setDomainId(domain.id);
-    //   LS.setDomainName(domain.name);
-    // }
+    if(domain && domain.id){
+      LS.setDomainId(domain.id);
+      LS.setDomainName(domain.name);
+    }
   }
 
   
@@ -258,10 +258,8 @@ export class AonNotification extends AonElement {
       const aonNotification = this.getElement(this.AON_NOTIFICATION);
       if (aonNotification) {
         aonNotification.style.width = "100%";
-        if(this.isBeta()){
-          const aonMessengerList = new AonMessengerList();
-          aonMessengerList.paintTable(aonNotification);
-        }
+        const aonMessengerList = new AonMessengerList();
+        aonMessengerList.paintTable(aonNotification);
       }
     } catch (error) {
       console.log(error);

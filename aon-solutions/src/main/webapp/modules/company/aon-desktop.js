@@ -517,7 +517,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
-				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development(MSG.REQUEST);
+				this.rootPanel(new AonMessenger());
 				break;
 			}
 	}
@@ -628,12 +628,9 @@ export class AonDesktop extends AonElement {
 					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 					count:count.task_holder,
 					fn: () =>{
-						if(this.isBeta()){
-							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.task_holder = task_holder;
-							this.rootPanel(aonMessenger);
-						} else 
-							this.development(MSG.REQUEST);
+						let aonMessenger = new AonMessenger();
+						aonMessenger._filter.task_holder = task_holder;
+						this.rootPanel(aonMessenger);
 					}
 				});
 				if(count.sender) this.SIDENAV_ACTIVITY_SUMMARY.push({
@@ -641,12 +638,9 @@ export class AonDesktop extends AonElement {
 					icon: MATERIAL_ICONS.OUTBOX,
 					count:count.sender,
 					fn: () =>{
-						if(this.isBeta()){
-							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.sender = task_holder;
-							this.rootPanel(aonMessenger);
-						}else 
-							this.development(MSG.REQUEST)
+						let aonMessenger = new AonMessenger();
+						aonMessenger._filter.sender = task_holder;
+						this.rootPanel(aonMessenger);
 					} 
 				});
 			}
