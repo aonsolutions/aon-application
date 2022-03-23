@@ -1098,18 +1098,18 @@
 			<aon:panelGroup>
 
 				<aon:div style="margin-bottom:2px; display:flex; justify-content:center;">
-				<div><span class="material-icons" style="top: -2px; position:relative; margin-right: .7rem; color: #163776">school</span></div>
-					<aon:commandLink id="index" action="index" title="#{bundle.aon_home}" style="display:flex; justify-content:center;" >
-					<aon:graphicImage style="height: 22px; vertical-align: middle;"
-						value="#{customize.headerLogo}" />
-					</aon:commandLink>
+					<aon:div title="#{bundle.aon_home}" style="display:flex; justify-content:center;" >
+						<aon:graphicImage style="height: 22px; vertical-align: middle;"	value="#{customize.headerLogo}" />
+					</aon:div>
+					<!-- 
 					<aon:if test="#{customize.separator != null}">					
 						<aon:outputText value="#{customize.separator}"
 							style="#{customize.fontStyle}"
 							styleClass="aon-nowrap aon-header-domain-title"/>
 					</aon:if>
+					 -->
 					
-					<div style="display:flex; align-items:center; font-weight:bold; font-size:.98rem; margin-left: .35rem;">/AULA</div>
+					<div style="display:flex; align-items:center; font-weight:bold; font-size:.98rem; margin-left: .35rem;">/CAU</div>
 
 				</aon:div>
 			</aon:panelGroup>
@@ -1117,6 +1117,7 @@
 			<aon:panelGroup></aon:panelGroup>
 
 			<aon:panelGroup style="text-align:left; display:flex" >
+			<!--  
 					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
 						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 					</aon:commandLink>
@@ -1213,7 +1214,7 @@
 						
 						</aon:div>
 					</aon:div>
-	
+			-->
 			</aon:panelGroup>
 					
 			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
@@ -1222,8 +1223,7 @@
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
 							styleClass="aon-nowrap aon-header-domain-title aon-margin-right"/>
-						<aon:commandLink id="home" action="index"
-							rendered="#{!aonConfiguration.properties.hideMenuHome}"
+						<aon:commandLink id="home" action="#{help.home()}"
 							title="#{bundle.aon_home}"
 							styleClass="aon-header-home"
 							value="&#160;" 

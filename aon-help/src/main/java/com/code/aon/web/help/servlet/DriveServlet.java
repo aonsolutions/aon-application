@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.web.help.service.drive.DriveService;
 import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
+import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
@@ -23,12 +24,12 @@ import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 public class DriveServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private DriveService drive;
+	private Drive drive;
 	
 	public DriveServlet() {
 		super();
 		try {
-			this.drive = new DriveService();
+			this.drive = DriveService.connect();
 		} catch (GoogleDriveException e) {
 			e.printStackTrace();
 		}
@@ -54,7 +55,7 @@ public class DriveServlet extends HttpServlet {
 				return;
 			}			
 						
-			final Optional<InputStream> stream = drive.downloadByNameAndParentNotTrashed(Optional.ofNullable(name), Optional.ofNullable(parent));			
+			final Optional<InputStream> stream = DriveService.downloadByNameAndParentNotTrashed(drive, name, parent);			
 			
 			if(stream.isEmpty()) {
 				response.sendError(404);
@@ -64,9 +65,10 @@ public class DriveServlet extends HttpServlet {
 			final InputStream input = stream.get();
 			
 			OutputStream output = response.getOutputStream();
-			response.setHeader("Content-Disposition", "inline; filename=\"" + name + "\"");
-			
-/*
+			response.setContentType("video/ogg");
+			response.setHeader("Content-Disposition", "inline; filename=\"" + name + "\".ogg");
+
+
 		    byte[] buffer = new byte[2096];
 
 		    int read = 0;
@@ -74,9 +76,7 @@ public class DriveServlet extends HttpServlet {
 		    while ((read = input.read(buffer)) != -1) {
 		      output.write(buffer, 0, read);
 		    }
-*/
-		    output.write(input.readAllBytes());
-		    
+
 		    input.close();
 			
 			output.flush();
@@ -94,7 +94,7 @@ public class DriveServlet extends HttpServlet {
 				return;
 			}
 
-			final Optional<InputStream> stream = drive.downloadByNameAndParentNotTrashed(Optional.ofNullable(name), Optional.ofNullable(parent));			
+			final Optional<InputStream> stream = DriveService.downloadByNameAndParentNotTrashed(drive, name, parent);			
 			
 			if(stream.isEmpty()) {
 				response.sendError(404);

@@ -12,19 +12,20 @@ import com.code.aon.web.help.service.drive.DriveService;
 import com.code.aon.web.help.service.drive.GFile;
 import com.code.aon.web.help.service.drive.MimeTypes;
 import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
+import com.google.api.services.drive.Drive;
 
 
 public class HelpController implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private GFile file;
-	private DriveService drive;
+	private Drive drive;
 	private Collection<GFile> content;
 	private LinkedHashMap<String,GFile> breadcrumb;
 	
 	public HelpController() {
 		try {
-			this.drive = new DriveService();
+			this.drive = DriveService.connect();
 			this.file = new GFile.GFileBuilder()
 					.setId("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN")
 					.setType(MimeTypes.FOLDER)
@@ -52,7 +53,7 @@ public class HelpController implements Serializable {
 				.build();
 		
 		this.breadcrumb = new LinkedHashMap<String,GFile>();
-		this.breadcrumb.put(this.file.getId(), this.file);
+		this.breadcrumb.put(file.getId(), file);
 	}
 	
 	
@@ -62,7 +63,7 @@ public class HelpController implements Serializable {
 	 */
 	public Collection<GFile> getContent() {
 		if (content == null)
-			content = drive.ListDirectory(Optional.of(file.getId()));
+			content = DriveService.ListDirectory(drive,file.getId());
 		return content;
 	}
 	
@@ -83,16 +84,14 @@ public class HelpController implements Serializable {
 				
 				newBreadcrumb.put(id, breadcrumb.get(id));			
 			}
-			
-			
 			this.breadcrumb = newBreadcrumb;	
 		}
 		
 		if(file.getName() == null) {
-			final GFile temp = drive.getFileById(Optional.of(file.getId())).orElse(null);
+			final Optional<GFile> temp = DriveService.getFileById(drive, file.getId());
 			
-			if(temp != null && temp.getName() != null) {
-				file.setName(temp.getName());
+			if(temp.isPresent() && temp.get().getName() != null) {
+				file.setName(temp.get().getName());
 			}	
 		}
 		
@@ -183,7 +182,43 @@ public class HelpController implements Serializable {
 	
 	
 	public void setFileByName(String name) {
-		this.file = drive.getFile(Optional.empty(), Optional.of(name)).orElseThrow();
+		this.file = DriveService.getFile(drive,null, name).orElseThrow();
+	}
+	
+	
+	public void home() {
+		this.setFile(new GFile.GFileBuilder()
+					.setId("1nlCD6BVTPk98UIy96pxd5MevesBCmiIN")
+					.setType(MimeTypes.FOLDER)
+					.setName("Inicio")
+					.build());
+		this.resetBreadcrumb();
+	}
+	
+
+	public boolean isAonModule(GFile file) {
+		return (isPayroll(file) || isAccounting(file) || isConfig(file) || isManagement(file));
+		
+	}
+
+	public boolean isHome() {
+		return "1nlCD6BVTPk98UIy96pxd5MevesBCmiIN".equals(this.file.getId());
+	}
+	
+	public boolean isPayroll(GFile file) {
+		return "1p_vxSdxJATMaAm36DxIu8Yrb3DjFdO9l".equals(file.getId());
+	}
+	
+	public boolean isConfig(GFile file) {
+		return "1hdAHjI7LPKkUY3qrfK_OoYUHNST0Vu-c".equals(file.getId());
+	}
+
+	public boolean isManagement(GFile file) {
+		return "1PDfcIi3dVtc-NKSlPEGQU7h4PgNkqyUw".equals(file.getId());
+	}
+	
+	public boolean isAccounting(GFile file) {
+		return "1WwyfJ8em7pGt0ordWiMWtoEgAvaanF1X".equals(file.getId());
 	}
 
 }

@@ -67,7 +67,7 @@ export class AonViewer extends AonElement {
 		this.pages = [];
 		this.setCurrent(0);
 
-		this.showCursor();
+		//this.showCursor();
 		this.setScrollEvents();
 		this.setKeyboardControls();
 
@@ -582,7 +582,13 @@ export class AonViewer extends AonElement {
 	 * Reset the zoom to the default
 	 */
 	zoomReset() {
-		this._scale = (window.innerWidth / 1785) * .85;
+
+		if(window.innerWidth < 1200){
+			this._scale = (window.innerWidth / 1785) * .85;
+		} else {
+			this._scale = (window.innerWidth / 1785) * .65;
+		}
+
 		this.updatePdf();
 		this.jump();
 	}

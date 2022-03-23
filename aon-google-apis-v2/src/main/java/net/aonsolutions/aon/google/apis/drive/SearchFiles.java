@@ -116,7 +116,7 @@ public class SearchFiles {
 					.setFields("files(parents, id, mimeType, name, webContentLink, webViewLink)")
 					.execute();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return fl;		
 	}
@@ -167,7 +167,7 @@ public class SearchFiles {
 					.setFields("files(parents, id, name, webContentLink, webViewLink)")
 					.execute();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return fl;		
 	}
@@ -259,7 +259,11 @@ public class SearchFiles {
 		return fl;
 	}
 
-	public static File searchFile(Drive drive, String id) throws IOException{
-		return drive.files().get(id).execute();
+	public static File searchFile(Drive drive, String id){
+		try {
+			return drive.files().get(id).execute();
+		} catch (IOException e) {}
+		
+		return null;
 	}
 }

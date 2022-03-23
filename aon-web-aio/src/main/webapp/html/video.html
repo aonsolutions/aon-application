@@ -2,103 +2,125 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Video</title>
   </head>
   <style>
-	
-	html {
-		position: absolute;
-		width: 100%;
-	}
+    html {
+      position: absolute;
+      width: 100%;
+    }
 
-	body {
-		height: 100%;
-		margin:0;
-		padding:0;
-	}
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
-	.div-horizontal-center {
-	  display: flex;
-	  justify-content: center;
-	  align-items: center;
-	}
+    .div-horizontal-center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-	.box-column {
-	  display: flex;
-	  flex-direction: column;
-	  justify-content: center;
-	  width: 100%;
-	}
+    .box-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+    }
 
-	video {
-	  user-select: none;
-	  -moz-user-select: none;
-	  -webkit-user-select: none;
-	  -ms-user-select: none;
-	  border-radius: 0.35rem;
-	  box-shadow: 0px 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
-	  width: 80%;
-	  max-width: 60rem;
-	  margin: 4rem 0;
-	  
-	}
+    video {
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      border-radius: 0.35rem;
+      box-shadow: 0px 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+      width: 80%;
+      max-width: 60rem;
+      margin: 4rem 0;
+    }
 
-	* {
-	  scroll-behavior: smooth;
-	}
+    * {
+      scroll-behavior: smooth;
+    }
   </style>
   <body>
     <div class="div-horizontal-center box-column">
-        <video
-          width="100%"
-          controls
-          id="video-player"
-          oncontextmenu="return false;"
-        >
-          <source
-            src=""
-            type="video/mp4"
-          />
-          
+      <video
+        width="100%"
+        controls
+        controlsList="nodownload"
+        id="video-player"
+        oncontextmenu="return false;"
+      >
+        <source src="" type="video/mp4" />
+
         <p id="loadStatus">Cargando video...</p>
-        </video>
+      </video>
     </div>
 
     <script>
-	function b64DecodeUnicode(str) {
-		// Going backwards: from bytestream, to percent-encoding, to original string.
-		return decodeURIComponent(atob(str).split('').map(function(c) {
-			return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-		}).join(''));
-	}
+      function b64DecodeUnicode(str) {
+        // Going backwards: from bytestream, to percent-encoding, to original string.
+        return decodeURIComponent(
+          atob(str)
+            .split('')
+            .map(function (c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            })
+            .join(''),
+        )
+      }
 
-
-      window.onload = showVideo
+      window.onload = () => showVideo()
       window.onhashchange = showVideo
 
-      function showVideo() {
+      async function showVideo() {
+        // Get the video from the url
         const source = document.querySelector('#video-player > source')
         const player = document.querySelector('#video-player')
-        let video = window.location.hash.substr(1);
-		
-		video = b64DecodeUnicode(video);
-		console.log(video);
+        let video = window.location.hash.substr(1)
+        video = b64DecodeUnicode(video)
 
         if (!player || !source) return
 
-		const getPossibleName = (url) => {
-			let name = url.substring(url.lastIndexOf('name=') + 5, url.indexOf('.mp4'));
-			return name;
-		}
+        // Get the name of the video
+        const getPossibleName = (url) => {
+          let name = url.substring(
+            url.lastIndexOf('name=') + 5,
+            url.indexOf('.mp4'),
+          )
+          return name
+        }
 
-		const title = getPossibleName(video);
-		document.title = title;
-		window.title = title;
+        const title = getPossibleName(video)
+        document.title = title
+        window.title = title
 
         source.src = video
+
+        /* Strean the video
+        const media = new MediaSource()
+        const urlObject = URL.createObjectURL(media)
+       
+
+        const buffer = media.addSourceBuffer(`video/mp4; codecs="avc1.64001e"`)
+        
+        // the same for the video SourceBuffer
+        fetch(video)
+          .then(function (response) {
+            // The data has to be a JavaScript ArrayBuffer
+            console.log(response)
+            return response.arrayBuffer()
+          })
+          .then(function (videoData) {
+            buffer.appendBuffer(videoData)
+          })
+*/
         player.load()
         player.play()
       }

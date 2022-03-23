@@ -1,6 +1,7 @@
 package com.code.aon.web.help.service.drive;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,6 +65,9 @@ public class GFile implements Serializable{
 		
 		final GFileBuilder builder = new GFileBuilder();
 		
+		if(file == null)
+			return null;
+		
 		builder.setId(file.getId())
 			.setName(file.getName())
 			.setType(MimeTypes.valueOfMime(file.getMimeType()))
@@ -114,9 +118,13 @@ public class GFile implements Serializable{
 		}
 		
 		public void setParents(List<String> parents) {
-			this.parents = parents;
+			
+			if(parents == null) {
+				this.parents = new LinkedList<>();
+			} else {
+				this.parents = parents;
+			}
 		}
-		
 		
 		public GFile build() {
 			

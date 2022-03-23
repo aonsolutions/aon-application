@@ -1,5 +1,6 @@
 package com.code.aon.web.help.service.drive;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -21,10 +22,9 @@ import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
 public class DriveService {
 
-	private Drive drive;
-	public static String BASE_ID = "1nlCD6BVTPk98UIy96pxd5MevesBCmiIN";
+	public static String BASE_ID = "1nlCD6BVTPk98UIy96pxd5MevesBCmiIN";	
 	
-	public DriveService() throws GoogleDriveException{
+	public static Drive connect() throws GoogleDriveException {
 		
 		final InputStream key = DriveService.class.getResourceAsStream("key.p12");
 		final String account = "aula@aonsolutions.info";
@@ -47,9 +47,9 @@ public class DriveService {
 		sa.setGoogleAccount(account);
 		sa.setEmailAddress(id); 
 		
-		this.drive = DriveUtils.getInstace().serviceInitialize(sa);		
+		return DriveUtils.getInstace().serviceInitialize(sa);		
 		
-	}	
+	}
 	
 
 	/**
@@ -57,14 +57,17 @@ public class DriveService {
 	 * @param id - The parent id
 	 * @return A list of files
 	 */
-	public LinkedList<GFile> ListDirectory(Optional<String> id) {
+	public static LinkedList<GFile> ListDirectory(Drive connection, String id) {
 		
-		LinkedList<GFile> files = new LinkedList<GFile>();
-		FileList list = SearchFiles.searchByParentNotTrashed(drive, id.orElse("root"));
+ 		LinkedList<GFile> files = new LinkedList<GFile>();
+		FileList list = SearchFiles.searchByParentNotTrashed(connection, id != null? id : "root");
 		
-		list.getFiles().forEach(file -> {
-			files.add(GFile.from(file));
-		});	
+		if(list.getFiles() == null) {
+			return files;
+		}
+		
+		list.getFiles().forEach(file -> files.add(GFile.from(file)));	
+		
 		return files;		
 	}	
 	
@@ -73,14 +76,17 @@ public class DriveService {
 	 * @param id - The parent id
 	 * @return A list of files
 	 */
-	public LinkedList<GFile> ListDirectoryByName(Optional<String> name) {
+	public static  LinkedList<GFile> ListDirectoryByName(Drive connection, String name) {
 		
 		LinkedList<GFile> files = new LinkedList<GFile>();
-		FileList list = SearchFiles.searchByParentNameNotTrashed(drive, name.orElse("root"));
+		FileList list = SearchFiles.searchByParentNameNotTrashed(connection, name != null ? name : "root");
 		
-		list.getFiles().forEach(file -> {
-			files.add(GFile.from(file));
-		});	
+		if(list.getFiles() == null) {
+			return files;
+		}
+		
+		list.getFiles().forEach(file -> files.add(GFile.from(file)));	
+		
 		return files;		    
 	}	
 	
@@ -90,8 +96,13 @@ public class DriveService {
 	 * @param parent The parent
 	 * @return InputStream containing the data
 	 */
-	public Optional<InputStream> downloadByNameAndParentNotTrashed(Optional<String> name, Optional<String> parent) {
-		InputStream response = SearchFiles.downloadByNameAndParentAndNotTrashed(drive, name.orElse(""), parent.orElse(BASE_ID));		
+	public static Optional<InputStream> downloadByNameAndParentNotTrashed(Drive connection, String name, String parent) {
+		
+		if(name == null) {
+			return Optional.empty();
+		}
+		
+		InputStream response = SearchFiles.downloadByNameAndParentAndNotTrashed(connection, name, parent != null ? parent : DriveService.BASE_ID);		
 		return Optional.ofNullable(response);
 	}
 	
@@ -101,9 +112,14 @@ public class DriveService {
 	 * @param name - The name of the file
 	 * @return optional File or empty 
 	 */
-	public Optional<GFile> getFile(Optional<String> parent, Optional<String> name) {
+	public static Optional<GFile> getFile(Drive connection, String parent, String name) {
 		
-		final FileList files = SearchFiles.searchByNameAndParentNotThrashed(drive, name.orElse(""), parent.orElse(BASE_ID));		
+		if(name == null) {
+			return Optional.empty();
+		}
+		
+		
+		final FileList files = SearchFiles.searchByNameAndParentNotThrashed(connection, name, parent != null? parent: BASE_ID);		
 		if(files.size() == 0) {
 			return Optional.empty();
 		}
@@ -117,21 +133,16 @@ public class DriveService {
 	 * @param id The file ID
 	 * @return Optional File or empty
 	 */
-	public Optional<GFile> getFileById(Optional<String> id){
+	public static Optional<GFile> getFileById(Drive connection, String id){
 		
-		if(id.isEmpty())
+		if(id == null)
 			return Optional.empty();
 		
-		
 		Optional<GFile> file = Optional.empty();
+		final GFile gfile = GFile.from(SearchFiles.searchFile(connection, id));
+		file = Optional.ofNullable(gfile);
+
 		
-		try {
-			final GFile gfile = GFile.from(SearchFiles.searchFile(drive,id.get()));
-			file = Optional.ofNullable(gfile);
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 		return file;
 	}
 	
