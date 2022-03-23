@@ -245,8 +245,29 @@ public class CertificateDAO {
 		            	// Nothing to do here
 		            }
 		            
-		            String surname = subjectDN.split("SURNAME=")[1].split(",")[0];
-		            String name = subjectDN.split("GIVENNAME=")[1].split(",")[0];
+		            String surname = "";
+	            	String name = "";
+		            try {
+			            surname = subjectDN.split("SURNAME=")[1].split(",")[0];
+			            name = subjectDN.split("GIVENNAME=")[1].split(",")[0];
+		            } catch (Exception e) {
+		            	// Nothing to do here
+					}
+		            
+		            if(AonStringUtils.isBlank(name))
+		            	try {
+		            		name = subjectDN.split("O=")[1].split(",")[0];
+		            	}catch (Exception e) {
+		            		// Nothing to do here
+						}
+		            
+		            if(AonStringUtils.isBlank(enterprise))
+		            	try {
+		            		enterprise = subjectDN.split("O=")[1].split(",")[0];
+		            	}catch (Exception e) {
+		            		// Nothing to do here
+						}
+		            
 		            String document = "";
 		           
 		            try {

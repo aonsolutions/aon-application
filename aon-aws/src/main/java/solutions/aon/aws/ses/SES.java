@@ -82,7 +82,11 @@ public class SES {
         	message.setRecipients(javax.mail.Message.RecipientType.BCC, InternetAddress.parse(bcc));
 
         	String cc =  String.join(",", msg.getCc().toArray(String[]::new));
-        	message.setRecipients(javax.mail.Message.RecipientType.BCC, InternetAddress.parse(cc));
+        	message.setRecipients(javax.mail.Message.RecipientType.CC, InternetAddress.parse(cc));
+        	
+        	if(msg.isReplyTo()) {
+            	message.setReplyTo(InternetAddress.parse(msg.getReplyTo()));
+        	}
         	
         	// Create a multipart/alternative child container.
         	MimeMultipart msgBody = new MimeMultipart("alternative");

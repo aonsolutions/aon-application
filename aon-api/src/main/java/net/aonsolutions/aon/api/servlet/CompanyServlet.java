@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
-import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
@@ -34,8 +33,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
-import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
@@ -48,6 +47,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.booking.BookingUtils;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 
@@ -107,10 +107,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API COMPANY SERVLET - POST METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
-			
 			switch (api.getPath()) {
 			case "/app":
-				response(req, resp, setDomainApp(api));
+				response(req, resp, saveBooking(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());			}
@@ -231,58 +230,16 @@ public class CompanyServlet extends AonApiHttpServlet{
 		return user;
 	}
 	
-	private void saveAddress(AonApiData api, Domain domain, User user, Company company) {
-		if(api.getData().opt(IJsonNames.ADDRESS) != null) {
-			JSONObject address = api.getData().optJSONObject(IJsonNames.ADDRESS);
-			RegistryAddress ra = RegistryAddressJSON.fromJSON(address);
-			ra.setDomain(domain.getId());
-			ra.setRegistry(company.getId());
-			ra.setMain(true);
-			AON.save(domain, user, ra);
-		}
-	}
-	
-	private String saveMedias(AonApiData api, Domain domain, User user, Company company) {
-		if(api.getData().opt(IJsonNames.MEDIA) != null) {
-			JSONObject media = api.getData().optJSONObject(IJsonNames.MEDIA);
-			saveMedia(domain, user, company, media, IJsonNames.PHONE, MediaType.FIXED_PHONE);
-			saveMedia(domain, user, company, media, IJsonNames.FAX, MediaType.FAX);
-			RegistryMedia emailMedia = saveMedia(domain, user, company, media, IJsonNames.EMAIL, MediaType.EMAIL);
-			saveMedia(domain, user, company, media, IJsonNames.WEB, MediaType.WEB);
-			
-			return AonStringUtils.isBlank(emailMedia.getValue()) ? null : emailMedia.getValue();
-		}
-		return null;
-	}
-	
-	private RegistryMedia saveMedia(Domain domain, User user, Company company, JSONObject media, String name, MediaType type) {
-		RegistryMedia rmedia = new RegistryMedia();
-		if(media.opt(name) != null) {
-			rmedia = RegistryMediaJSON.fromJSON(media.optJSONObject(name));
-			if(rmedia.getId() == null) {
-				rmedia.setDomain(domain.getId())
-				.setRegistry(company.getId())
-				.setMedia(type)
-				.setAdministrative(true)
-				.setCommercial(true)
-				.setTechnical(true);
-			}
-			if(rmedia.getRegistry() == null) rmedia.setRegistry(company.getId());
-			return AON.save(domain.getName(), domain.getId(), user.getLogin(), rmedia);
-		}
-		return rmedia;
-	}
-	
 	private void createUserScopes(AonApiData api, Domain domain, User user) {
 		AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.or(f.getDomainProperty().eq(domain.getParentId())))
-		.forEach(s ->{
+		.forEach(s ->
 			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
 					.setDomain(domain.getId())
 					.setScope(s.getId())
-					.setUserId(user.getId()));
-		});
+					.setUserId(user.getId()))
+		);
 	}
 	
 	private void createUserRoles(AonApiData api, Domain domain, User user, boolean bidoq) {
@@ -307,14 +264,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 	}
 	
 	private void createUserRole(AonApiData api, Domain domain, User user, AonRole role) {
-		UserAppRole uar = new UserAppRole()
+		AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), new UserAppRole()
 				.setDomain(domain.getId())
 				.setRole(role)
-				.setUser(user.getId());
-		AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), uar);
+				.setUser(user.getId()));
 	}
 	
-		
 	private JSONArray getCompanies(AonApiData api) {
 		JSONArray jsArray = new JSONArray();
 		if(api.getParams().opt("parent") != null && api.getParams().optBoolean("parent")) {
@@ -453,38 +408,13 @@ public class CompanyServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
-	private JSONObject setDomainApp(AonApiData api){
-		JSONArray array = api.getData().optJSONArray("apps");
-		Integer users = JsonUtils.getInteger(api.getData(), "users");
-		if(users != null) {
-			AON_SOLUTIONS.saveDomainMaxDefinedUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), users);
-		}
-		LinkedList<AonApp> apps = new LinkedList<>();
-		for(int i = 0; i < array.length(); i++) {
-			AonApp app = AonApp.safeValueOf(array.optString(i));
-			if(app != null) {
-				apps.add(AonApp.safeValueOf(array.optString(i)));
-			}
-		}
-		LinkedList<DomainApp> activeDomainApps = new LinkedList<>();
+	private JSONObject saveBooking(AonApiData api){
+		Booking booking = new Booking()
+			.setApps(safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
+			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS));
 		
-		for (AonApp aonApp : AonApp.values()) {
-			DomainApp domainApp = AON_SOLUTIONS.getDomainApp(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-			f.getDomainProperty().eq(api.getDomain().getId()).and(f.getAppProperty().eq(aonApp.value()))).findFirst().orElse(new DomainApp());
-			if(apps.contains(aonApp)) {
-				 activeDomainApps.add(domainApp
-						 .setDomain(api.getDomain().getId())
-						 .setApp(aonApp)
-						 .setActive(true));
-			} else if(!domainApp.isEmpty()) {
-				AON_SOLUTIONS.saveDomainApp(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), domainApp.setActive(false), true);
-			}
-		}
-
-		for (DomainApp domainApp : activeDomainApps) {
-			AON_SOLUTIONS.saveDomainApp(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), domainApp, true);
-		}
-
+		AON.saveBooking(api.getDomain(), api.getUser(), booking);
+		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), booking);
 		return new JSONObject();
 	}
 	
@@ -542,5 +472,17 @@ public class CompanyServlet extends AonApiHttpServlet{
 			.forEach(ea -> array.put(EnterpriseActivityJSON.toJSON(ea))); 
 		return array;		
 	}
+	
+	public static List<AonApp> safeValueOf(JSONArray array){
+		LinkedList<AonApp> apps = new LinkedList<>();
+		for(int i = 0; i < array.length(); i++) {
+			AonApp app = AonApp.safeValueOf(array.optString(i));
+			if(app != null) {
+				apps.add(AonApp.safeValueOf(array.optString(i)));
+			}
+		}
+		return apps;
+	}
+	
 	
 }

@@ -36,6 +36,7 @@ public interface IJsonNames {
 	String AP1 = "ap1";
 	String AP2 = "ap2";
 	String APA = "apa";
+	String APPS = "apps";
 	String ATTACH = "attach";
 	String ATTACH_MODULE = "attachModule";
 	String ATTACH_TYPE = "attachType";
@@ -446,6 +447,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[U] 
 	String URL = "url";
 	String USER = "user";
+	String USERS = "users";
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	String VALUE = "value";

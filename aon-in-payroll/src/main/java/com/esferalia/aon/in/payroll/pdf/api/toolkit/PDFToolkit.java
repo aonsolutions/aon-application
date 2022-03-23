@@ -436,6 +436,17 @@ public class PDFToolkit {
 		contents.setLineWidth(size);
 		contents.stroke();
 	}
+	
+	public static void drawDashedLine(PDPageContentStream contents, float x, float y, float width, float thickness, Color color, float[] pattern, float phase) throws IOException {
+		contents.saveGraphicsState();
+		contents.setLineDashPattern(pattern, phase);
+		contents.setStrokingColor(color);
+		contents.setLineWidth(thickness);
+		contents.moveTo(x, y);
+		contents.lineTo(x + width, y);
+		contents.stroke();
+		contents.restoreGraphicsState();
+	}
 
 	/**
 	 * <p>

@@ -187,8 +187,9 @@ export class AonMobileDesktop extends AonElement {
 				}
 			}));
 		}
-		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() 
-			? this.rootPanel(new AonMessenger()) : this.development('Solicitud')));
+		ul.appendChild(
+			this.buildNotificationsLi('Solicitudes', 'assignment', 0, () =>  this.rootPanel(new AonMessenger()) )
+		);
 	}
 
 	async buildTimeControl() {

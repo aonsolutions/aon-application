@@ -45,7 +45,18 @@ public enum DomainType implements IResourceable {
 	/**
      * GENERIC 
      */
-	GENERIC;   
+	GENERIC,
+	
+	/**
+     * COMMERCE 
+     */
+	COMMERCE,
+	
+	/**
+     * KIT DIGITAL 
+     */
+	KIT_DIGITAL
+	;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_domain_type_";

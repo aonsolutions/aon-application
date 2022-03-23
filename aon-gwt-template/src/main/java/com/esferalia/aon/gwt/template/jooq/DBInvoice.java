@@ -136,7 +136,16 @@ public class DBInvoice {
 	
 	public static String getInvoicesUrl(Domain domain, String login, Invoice invoice) {
 		String url = "";
-		if(invoice.isSales()) {
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getAttachModuleProperty().eq(invoice.getId()), AttachType.INVOICE, false);
+		if(attach != null && !attach.isEmpty()) {
+			JSONObject data = new JSONObject();
+			data.put("domain_name", domain.getName());
+			data.put("domain_id", domain.getId());
+			data.put("id", attach.getId());
+			data.put("attach_type", AttachType.INVOICE.getName());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			url = "https://" + domain.getName() + "/ms/api/file/" +  result;
+		} else if(invoice.isSales()) {
 			JSONObject json = new JSONObject();
 			json.put(IJsonNames.ID, invoice.getId());
 			json.put(IJsonNames.SOURCE, "invoice");
@@ -145,17 +154,6 @@ public class DBInvoice {
 			json.put("login", login);
 			String result = Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 			url = "https://" + domain.getName() + "/ms/api/download_invoice_pdf?json=" + result;	
-		} else {
-			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getAttachModuleProperty().eq(invoice.getId()), AttachType.INVOICE, false);
-			if(attach != null && !attach.isEmpty()) {
-				JSONObject data = new JSONObject();
-				data.put("domain_name", domain.getName());
-				data.put("domain_id", domain.getId());
-				data.put("id", attach.getId());
-				data.put("attach_type", AttachType.INVOICE.getName());
-				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-				url = "https://" + domain.getName() + "/ms/api/file/" +  result;
-			}
 		}
 		return url;
 	}

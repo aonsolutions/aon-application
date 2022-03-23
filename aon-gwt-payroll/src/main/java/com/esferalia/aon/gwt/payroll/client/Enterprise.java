@@ -28,6 +28,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -196,11 +197,12 @@ public abstract class Enterprise extends ResizeComposite {
 			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
 		
 		//PAYSHEET MODEL
-		this.enterprisePaysheetModel.addItem("Estandar", "salary");
-		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)", "salary_dualColumn");
+		this.enterprisePaysheetModel.addItem("Est\u00E1ndar", "salary");
+		this.enterprisePaysheetModel.addItem("Est\u00E1ndar (2 columnas)", "salary_dualColumn");
 		this.enterprisePaysheetModel.addItem("Factura Simple", "salary_invoiceSimple");
 		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
-		this.enterprisePaysheetModel.addItem("aon Solutions (MacLeod)", "salary_connorMacleod");
+		this.enterprisePaysheetModel.addItem("Detallada (new)", "salary_connorMacleod");
+		this.enterprisePaysheetModel.addItem("Est\u00E1ndar (new)", "salary_connorMacleod_classic");
 		
 		//COST MODEL
 		this.enterpriseCostModel.addItem("Por defecto", "salaryExpense");

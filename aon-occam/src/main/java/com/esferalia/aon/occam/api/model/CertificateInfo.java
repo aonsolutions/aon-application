@@ -122,9 +122,9 @@ public class CertificateInfo implements Serializable {
 		if(AonStringUtils.isNotBlank(type)) result += "<br>Tipo : " + type;
 		
 		if(AonStringUtils.isBlank(enterprise)) result += "Nombre : " + surname + ", " + name;
-		else result += "<br>Nombre : " + surname + ", " + name;
+		else if(AonStringUtils.isNotBlank(surname)) result += "<br>Nombre : " + surname + ", " + name;
 		
-		result += "<br>Documento : " + document;
+		if(AonStringUtils.isNotBlank(document)) result += "<br>Documento : " + document;
 		
 		return result;
 	}

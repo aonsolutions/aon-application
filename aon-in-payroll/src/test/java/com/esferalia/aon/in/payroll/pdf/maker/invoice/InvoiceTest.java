@@ -557,17 +557,23 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=119; i++) {
+		for (int i=1; i<=44; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
 		detailX.setDescription(xdesc);
-		detailX.setPrice(0);
-		detailX.setDiscountExpression("30");
-		detailX.setQuantity(0);
-		detailX.setTaxableBase(0);
+//		detailX.setPrice(10);
+//		detailX.setDiscountExpression("30");
+//		detailX.setQuantity(30);
+//		detailX.setTaxableBase(0);
+//		
+		detailX.setPrice(1239675601.12);
+		detailX.setDiscountExpression("97.19");
+		detailX.setQuantity(781212783);
+		detailX.setTaxableBase(712382113);
+		
 		details.add(detailX);
-//		details.add(detailOne);
+		details.add(detailOne);
 //		details.add(detailTwo);
 //		details.add(detailThree);
 //		details.add(detailThreeAndAHalf);
@@ -598,7 +604,7 @@ public class InvoiceTest {
 			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-			config.setDetailed(true);
+			config.setDetailed(false);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
