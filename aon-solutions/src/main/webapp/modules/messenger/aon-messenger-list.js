@@ -92,7 +92,10 @@ export class AonMessengerList extends AonElement {
 
     setTasks([]);
 
-    this.loadMore();
+    const application = this.getApplication();
+    if(application) application.startLoader();
+    await this.loadMore(true);
+    if(application) application.stopLoader();    
   }
   
 
