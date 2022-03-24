@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -2118,4 +2120,8 @@ class Mod303AEAT2021Declaration extends Mod303AEAT {
 		return Mod303Key.CT_C44;
 	}
 
+	@Override
+	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
+		return new HashSet<>();
+	}
 }

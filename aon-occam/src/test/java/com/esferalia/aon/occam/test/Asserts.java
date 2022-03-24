@@ -31,10 +31,12 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -694,6 +696,101 @@ public class Asserts {
 		assertEquals("Sex",expected.getSex(), actual.getSex());
 		assertEquals("BirthDate",expected.getBirthDate(), actual.getBirthDate());
 	}
+
+	public static void assertEqualsIrpfBreakdown (IrpfBreakdown expected, IrpfBreakdown actual) {
+		assertEqualsNulls( "IrpfBreakdown", expected, actual);
+		if (expected != null ) {
+			assertEquals("activity", expected.getActivity(), actual.getActivity());
+			assertEquals("activityDescription", expected.getActivityDescription(), actual.getActivityDescription());
+			assertEquals("epigraph", expected.getEpigraph(), actual.getEpigraph());
+			assertEquals("registryDocument", expected.getRegistryDocument(), actual.getRegistryDocument());
+			assertEquals("registryDocumentType", expected.getRegistryDocumentType(), actual.getRegistryDocumentType());
+			assertEquals("registryDocumentCountry", expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry());
+			assertEquals("name", expected.getName(), actual.getName());
+			assertEquals("issueDate", expected.getIssueDate(), actual.getIssueDate());
+			assertEquals("fromSalary", expected.isFromSalary(), actual.isFromSalary());
+			assertEquals("insidePeriod", expected.isInsidePeriod(), actual.isInsidePeriod()); 
+			assertEquals("salary", expected.getSalary(), actual.getSalary());
+			assertEquals("invoiceType", expected.getInvoiceType(), actual.getInvoiceType());
+			assertEquals("invoice", expected.getInvoice(), actual.getInvoice());
+			assertEquals("series", expected.getSeries(), actual.getSeries());
+			assertEquals("number", expected.getNumber(), actual.getNumber());
+			assertEquals("referenceCode", expected.getReferenceCode(), actual.getReferenceCode()); 
+			assertEquals("taxDate", expected.getTaxDate(), actual.getTaxDate());
+			assertEquals("withholdingType", expected.getWithholdingType(), actual.getWithholdingType()); 
+			assertEquals("regime", expected.getIRPFRegime(), actual.getIRPFRegime());
+			assertEquals("inKind", expected.isInKind(), actual.isInKind());
+			assertEquals("base", expected.getBase(), actual.getBase());
+			assertEqualsDouble("percent", expected.getPercent(), actual.getPercent());
+			assertEqualsDouble("quota", expected.getQuota(), actual.getQuota());
+			assertEqualsDouble("deductiblePercent", expected.getDeductiblePercent(), actual.getDeductiblePercent());
+			assertEqualsDouble("deductibleQuota", expected.getDeductibleQuota(), actual.getDeductibleQuota());
+			assertEquals("groupByNif", expected.getGroupByNif(), actual.getGroupByNif());
+			assertEquals("zip", expected.getZip(), actual.getZip());
+			assertEquals("city", expected.getCity(), actual.getCity());
+		}
+	}
+	
+	public static void assertEqualsVatContext (VatContext expected, VatContext actual) {
+		assertEqualsNulls( "VatContext", expected, actual);
+		if (expected != null ) {
+			assertEquals("invoice", expected.getInvoice(), actual.getInvoice());
+			assertEquals("activity", expected.getActivity(), actual.getActivity());
+			assertEquals("activityDescription", expected.getActivityDescription(), actual.getActivityDescription());
+			assertEquals("vatRegime", expected.getVatRegime(), actual.getVatRegime());
+			assertEquals("vatSurchargeRegime", expected.isVatSurchargeRegime(), actual.isVatSurchargeRegime());
+			assertEquals("epigraph", expected.getEpigraph(), actual.getEpigraph());
+			assertEquals("documentNumber", expected.getDocumentNumber(), actual.getDocumentNumber());
+			assertEquals("referenceCode", expected.getReferenceCode(), actual.getReferenceCode());
+			assertEquals("registryDocument", expected.getRegistryDocument(), actual.getRegistryDocument());
+			assertEquals("registryDocumentType", expected.getRegistryDocumentType(), actual.getRegistryDocumentType());
+			assertEquals("registryDocumentCountry", expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry());
+			assertEquals("registry", expected.getRegistry(), actual.getRegistry());
+			assertEquals("registryName", expected.getRegistryName(), actual.getRegistryName());
+			assertEquals("issueDate", expected.getIssueDate(), actual.getIssueDate());
+			assertEquals("taxDate", expected.getTaxDate(), actual.getTaxDate());
+			assertEquals("creationDate", expected.getCreationDate(), actual.getCreationDate());
+			assertEquals("regContableDate", expected.getRegContableDate(), actual.getRegContableDate());
+			assertEquals("detailDescription", expected.getDetailDescription(), actual.getDetailDescription());
+			assertEquals("insidePeriod", expected.isInsidePeriod(), actual.isInsidePeriod());
+			assertEquals("invoiceType", expected.getInvoiceType(), actual.getInvoiceType());
+			assertEquals("rectificationType", expected.getRectificationType(), actual.getRectificationType());
+			assertEquals("rectificationInvoice", expected.getRectificationInvoice(), actual.getRectificationInvoice());
+			assertEquals("service", expected.isService(), actual.isService());
+			assertEquals("transaction", expected.getTransaction(), actual.getTransaction());
+			assertEquals("investment", expected.isInvestment(), actual.isInvestment());
+			assertEquals("vatAccrualRegime", expected.isVatAccrualRegime(), actual.isVatAccrualRegime());
+			assertEquals("vatDeductionType", expected.getVatDeductionType(), actual.getVatDeductionType());
+			assertEquals("farmerRegime", expected.isFarmerRegime(), actual.isFarmerRegime());
+			assertEquals("prepayment", expected.isPrepayment(), actual.isPrepayment());
+			assertEquals("vatImportation", expected.isVatImportation(), actual.isVatImportation());
+			assertEquals("duaLinked", expected.hasDuaLinked(), actual.hasDuaLinked());
+			assertEqualsDouble("base", expected.getBase(), actual.getBase());
+			assertEqualsDouble("percentage", expected.getPercentage(), actual.getPercentage());
+			assertEqualsDouble("quota", expected.getQuota(), actual.getQuota());
+			assertEquals("investAsset", expected.getInvestAsset(), actual.getInvestAsset());
+			assertEqualsDouble("deductiblePercent", expected.getDeductiblePercent(), actual.getDeductiblePercent());
+			assertEqualsDouble("deductibleQuota", expected.getDeductibleQuota(), actual.getDeductibleQuota());
+			assertEquals("surcharge", expected.isSurcharge(), actual.isSurcharge());
+			assertEqualsDouble("surchargePercent", expected.getSurchargePercent(), actual.getSurchargePercent());
+			assertEqualsDouble("surchargeQuota", expected.getSurchargeQuota(), actual.getSurchargeQuota());
+			assertEquals("prorrated", expected.isProrrated(), actual.isProrrated());
+			assertEqualsDouble("prorratePercent", expected.getProrratePercent(), actual.getProrratePercent());
+			assertEqualsDouble("prorrateQuota", expected.getProrrateQuota(), actual.getProrrateQuota());
+			assertEquals("siiStatus", expected.getSiiStatus(), actual.getSiiStatus());
+			assertEquals("amortizationDescription", expected.getAmortizationDescription(), actual.getAmortizationDescription());
+			assertEquals("amortizationPercentage", expected.getAmortizationPercentage(), actual.getAmortizationPercentage());
+			assertEquals("amortizationInitialDate", expected.getAmortizationInitialDate(), actual.getAmortizationInitialDate());
+			assertEquals("financePending", expected.isFinancePending(), actual.isFinancePending()); 
+			assertEqualsDouble("amount347", expected.getAmount347(), actual.getAmount347());
+			assertEquals("hasRetention", expected.hasRetention(), actual.hasRetention());
+			assertEquals("rectificateInvoiceTaxDate", expected.getRectificateInvoiceTaxDate(), actual.getRectificateInvoiceTaxDate());
+			assertEquals("rectificateYear", expected.getRectificateYear(), actual.getRectificateYear());
+			assertEquals("rectificatePeriod", expected.getRectificatePeriod(), actual.getRectificatePeriod());
+		}
+	}
+	
+	
 
 	public static <T extends FiscalModel> void assertFiscalModel(T expected, T actual) {
 		assertEquals("Id", expected.getId(), actual.getId());

@@ -24,18 +24,21 @@ public class Mod303InsertQuarterlyTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		IntStream.range(0 , AonRandom.getInt(0, 50))
+		IntStream.range(0 , AonRandom.getInt(0, 500))
 			.mapToObj( i -> InvoiceFaker.getRandom(new InvoiceFakerParams(ctx,getConfiguration())))
 			.map(inv -> AON.insertInvoice(getOccam(),inv))
 			.forEach(inv -> System.out.println( "\t\t Invoice inserted "  +inv.getId()));
 		Date today = new Date();
-		for (Period period : Period.values()) {
-			if (period.isQuarterPeriod()) {
-				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod303InsertQuarterly(AonRandom.getRangeDate(start,end));
-			}
-		}
+		Period period = Period.T1;
+		Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+		Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+		mod303InsertQuarterly(AonRandom.getRangeDate(start,end));
+
+//		for (Period period : Period.values()) {
+//			if (period.isQuarterPeriod()) {
+//				mod303InsertQuarterly(AonRandom.getRangeDate(start,end));
+//			}
+//		}
 	}
 	
 	public void mod303InsertQuarterly(Date date) {
@@ -57,7 +60,8 @@ public class Mod303InsertQuarterlyTest extends AbstractOccamTest {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setIssueDate(date)
 			.setMonthly(false)
-			.setAdministration(admon);
+			.setAdministration(admon)
+			.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
 		Mod303 mod303 = FiscalFaker.createMod303(params);
 		MODEL303.save(getOccam(), mod303);
 		Mod303 actual = MODEL303.get(getOccam(), mod303.getId());  

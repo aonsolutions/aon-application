@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -11,11 +12,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -32,6 +35,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 class Model303AEATActivity2020 extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
 
@@ -109,6 +113,7 @@ class Model303AEATActivity2020 extends DockLayoutPanel implements HasValueChange
 
 
 	public static interface IMod303ActivityCallback {
+		Mod303 getMod303();
 		Mod303Activity getActivity();
 		void onAccept(Mod303Activity act);
 		void onCancel();
@@ -251,6 +256,18 @@ class Model303AEATActivity2020 extends DockLayoutPanel implements HasValueChange
 				callback.getActivity().setPor(selected.getVatPorc());
 				callback.getActivity().setMaxImport(selected.getLimExceso());
 				callback.getActivity().setPcm(selected.getPorcMin());
+				if (callback.getActivity().getDia() == 0) {
+					@SuppressWarnings("deprecation")
+					Date start = new Date( callback.getMod303().getYear(),
+							callback.getMod303().getPeriod().getStartMonth(),
+							1);
+					@SuppressWarnings("deprecation")
+					Date end = new Date( callback.getMod303().getYear(),
+							callback.getMod303().getPeriod().getDueMonth(),
+							1); 
+					CalendarUtil.addMonthsToDate(end,1);
+					callback.getActivity().setDia(  CalendarUtil.getDaysBetween(start, end) );
+				}
 				for (Module mod : selected.getVATModules()) {
 					callback.getActivity().getModules().add(new Mod303ActivityModule()
 						.setDescription(mod.getKey().getDescription())

@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -8,15 +7,20 @@ import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303MVELContext;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
-import com.esferalia.aon.watson.util.AonChronometer;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -24,7 +28,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod303DAO extends FiscalModelDAO {
 	
 	public static Stream<Mod303> getMod303s(AONContext ctx,int domain, FiscalModelFilter filter) {
-		return FiscalModelDAO.getFiscalModels(ctx,domain,FiscalModelType.M303,filter, Mod303::new);
+		return FiscalModelDAO.getFullFiscalModels(ctx,domain,FiscalModelType.M303,filter, Mod303::new);
 	}
 	public static Stream<Mod303> getMod303s(AONContext ctx,int domain) {
 		return getMod303s(ctx, domain, null);
@@ -52,7 +56,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod303 save(AONContext ctx, Mod303 mod303) {
-		calculate(ctx, mod303);
+		calculate(mod303);
 		return FiscalModelDAO.save(ctx, mod303);
 	}
 	
@@ -68,7 +72,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		return mvelCtx; 
 	}
-	public static Mod303 calculate(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
+	public static Mod303 calculate(Mod303 mod303, Mod303Declaration dec) {
 		Mod303MVELContext mvelCtx = getMvelContext( dec, mod303 );
 		for (IMod303KeyDAO key : dec.getKeys()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) ) {
@@ -83,9 +87,9 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303; 
 	}
 	
-	public static Mod303 calculate(AONContext ctx, Mod303 mod303) {
+	public static Mod303 calculate(Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		return calculate(ctx, mod303, dec);
+		return calculate(mod303, dec);
 	}
 	
 	public static Mod303 initialize(AONContext ctx,Mod303 mod303) {
@@ -100,6 +104,13 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303;
 	}
 	
+	public static Mod303 reset(AONContext ctx,Mod303 mod303) {
+		mod303.setMap(null);
+		initializeIdentificationData(ctx, mod303);
+		create(ctx,mod303);
+		return mod303;
+	}
+
 	public static Mod303 create(AONContext ctx,Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		if (dec.hasSimplifiedRegime()) {
@@ -111,12 +122,13 @@ public class Mod303DAO extends FiscalModelDAO {
 			key.firstInitialize(ctx, mod303);
 		}
 		Set<Integer> invoices = dec.createFromInvoices(ctx,mod303);
-		for (FiscalModelDetail detail : mod303.getMap().values()) {
-			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
-			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
-		}
+		invoices.addAll( dec.createVatAccrualKeysFromInvoices(ctx,mod303) );
+//		for (FiscalModelDetail detail : mod303.getMap().values()) {
+//			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
+//			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
+//		}
 		dec.prorrateRegularization(ctx,mod303);
-		calculate(ctx, mod303);
+		calculate(mod303);
 		dec.specificInitialization(mod303);
 		mod303 = save(ctx, mod303);
 		AlcatrazDAO.deleteFiscalModel(ctx, mod303);
@@ -124,27 +136,20 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303;
 	}
 
-/*	
-	public static Mod303 reset(AONContext ctx,Mod303 mod303) {
-		mod303.setMap(null);
-		initializeIdentificationData(ctx, mod303);
-		create(ctx,mod303);
+	public static Mod303 calculateProrrate(Mod303 mod303) {
+		if (mod303.hasProrate() || mod303.hasPreviousProrate()) {
+			double c70 = mod303.ensureDetail(Mod303Key.CM_070).getAmount();
+			double c71 = mod303.ensureDetail(Mod303Key.CM_071).getAmount();
+			if (AonMathUtils.isNotZero(c71)) {
+				double prorrate = (c70 * 100 / c71);
+				prorrate = AonMathUtils.ceil(prorrate,0);
+				if (AonMathUtils.isGreatherThan(prorrate,100.0)) prorrate = 100.0;
+				mod303.ensureDetail(mod303.getProrateKey()).setAmount( prorrate );
+			}
+		}
 		return mod303;
 	}
-	
-	public static Mod303 initializeForFinish(AONContext ctx,Mod303 mod303) {
-		calculate(mod303);
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		dec.initializeDeclarationType(mod303);
-		return FiscalModelDAO.initializeForFinish(ctx, mod303);
-	}
-	
-	public static Mod303 markAsFinished(AONContext ctx,Mod303 mod303) {
-		FiscalModelValidation.statusChange(mod303, FiscalStatus.FINISHED);
-		mod303 = FiscalModelDAO.finish(ctx, mod303);
-		return save(ctx, mod303);
-	}
-	
+
 	public static Mod303 markAsPending(AONContext ctx,Mod303 mod303) {
 		FiscalModelValidation.statusChange(mod303, FiscalStatus.PENDING);
 		mod303.setStatus(FiscalStatus.PENDING);
@@ -158,6 +163,33 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		return mod303;
 	}
+	
+ 	public static Mod303 initializeForFinish(AONContext ctx,Mod303 mod303) {
+		calculate(mod303);
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		dec.initializeDeclarationType(mod303);
+		return FiscalModelDAO.initializeForFinish(ctx, mod303);
+	}
+	
+	public static Mod303 markAsFinished(AONContext ctx,Mod303 mod303) {
+		FiscalModelValidation.statusChange(mod303, FiscalStatus.FINISHED);
+		mod303 = FiscalModelDAO.finish(ctx, mod303);
+		return save(ctx, mod303);
+	}
+
+	public static Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod303, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			Mod303 changed = get(ctx, mod303.getId());
+			if (changed != null) {
+				changed.setNumber(response.getJustificante());
+				return markAsSent(ctx, changed);
+			}
+		}
+		return mod303;
+	}
+	
 
 	public static Mod303 markAsSent(AONContext ctx,Mod303 mod303) {
 		FiscalModelValidation.statusChange(mod303, FiscalStatus.SENT);
@@ -196,19 +228,5 @@ public class Mod303DAO extends FiscalModelDAO {
 		mod303 = save(ctx, mod303);
 		return mod303;
 	}
-	
-	public static Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse) {
-		if (AonStringUtils.isNotBlank(aeatResponse)) {
-			DataResponseDAO.insertAEATResponse(ctx, mod303, aeatResponse);
-			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
-			Mod303 changed = get(ctx, mod303.getId());
-			if (changed != null) {
-				changed.setNumber(response.getJustificante());
-				return markAsSent(ctx, changed);
-			}
-		}
-		return mod303;
-	}
-*/
 }
 

@@ -1,5 +1,11 @@
 package com.esferalia.aon.occam.api.json;
 
+/**
+ * @author ecastellano
+ * Use  com.esferalia.aon.occam.api.model.IJsonNames 
+ * in order to use in client and server side.
+ */
+@Deprecated
 public interface IJsonNames {
 
 	// ---------------------------------------------------------------------------------------------	[A] 
@@ -335,6 +341,9 @@ public interface IJsonNames {
  	String PROJECTS = "projects";
 	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
+	String PRORRATED = "prorrated";
+	String PRORRATE_PERCENT = "prorratePercent";
+	String PRORRATE_QUOTA = "prorrateQuota";
 	String PROVINCE = "province";
 	String PURCHASE_ACCOUNT = "purchaseAccount";
 	String PURCHASE_PRICE = "purchasePrice";

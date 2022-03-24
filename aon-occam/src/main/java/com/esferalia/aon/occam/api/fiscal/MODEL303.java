@@ -100,12 +100,6 @@ public class MODEL303 {
 		}
 	}
 
-	public static Mod303 declarationChanged(Occam occam,Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().declarationChanged(ctx, mod303);
-		}
-	}
-
 	public static String getInfo(Occam occam, Mod303 mod303
 			,IModelScript<Mod303Key> script,FiscalModelKeyInfo infoKey) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {

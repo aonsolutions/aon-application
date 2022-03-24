@@ -13,10 +13,14 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @RunWith(Suite.class)
 @SuiteClasses({
 	Mod303ExpressionsTest.class,
+	Mod303ScriptTest.class,
 	Mod303DeleteTest.class,
 	Mod303InsertQuarterlyTest.class,
-	Mod303InsertQuarterlyComplementaryTest.class,
-	Mod303InsertQuarterlyReplacementTest.class,
+//	Mod303InsertQuarterlyComplementaryTest.class,
+//	Mod303InsertQuarterlyReplacementTest.class,
+
+	// VatContext JSON 
+	VatContextJSONTest.class,
 })
 public class Mod303TestSuite {
 

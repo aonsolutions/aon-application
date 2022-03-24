@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.watson.server.AonObjectUtils;
@@ -5819,6 +5820,10 @@ public class AonStringUtils {
 	}
 	public static String defaultIfBlank(String str) {
 		return isBlank(str) ? EMPTY : str;
+	}
+	
+	public static <T> T mapIfNotBlank(String str, Function<String,T> function) {
+		return isBlank(str) ? null : function.apply(str);
 	}
 
 	/**

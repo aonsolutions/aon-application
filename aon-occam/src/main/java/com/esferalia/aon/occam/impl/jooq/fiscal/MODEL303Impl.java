@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.PrevMod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303InfoDAO;
 
 public class MODEL303Impl implements IMODEL303 {
 
@@ -27,11 +27,11 @@ public class MODEL303Impl implements IMODEL303 {
 	}
 	@Override
 	public Mod303 calculate(AONContext ctx, Mod303 mod303) {
-		return Mod303DAO.calculate(ctx, mod303);
+		return Mod303DAO.calculate(mod303);
 	}
 	@Override
 	public Mod303 calculateProrrate(AONContext ctx, Mod303 mod303) {
-		return PrevMod303DAO.calculateProrrate(mod303);
+		return Mod303DAO.calculateProrrate(mod303);
 	}
 	@Override
 	public Mod303 save(AONContext ctx, Mod303 mod303) {
@@ -45,27 +45,37 @@ public class MODEL303Impl implements IMODEL303 {
 	}
 	@Override
 	public Mod303 initializeForFinish(AONContext ctx, Mod303 mod303){
-		return FiscalModelDAO.initializeForFinish(ctx, mod303);
+		return Mod303DAO.initializeForFinish(ctx, mod303);
 	}
 	@Override
 	public Mod303 markAsFinished(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
-				configuration -> PrevMod303DAO.markAsFinished(ctx, mod303));		
+				configuration -> Mod303DAO.markAsFinished(ctx, mod303));		
 	}
 	@Override
 	public Mod303 markAsPending(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
-				configuration -> PrevMod303DAO.markAsPending(ctx, mod303));		
+				configuration -> Mod303DAO.markAsPending(ctx, mod303));		
 	}
 	@Override
 	public Mod303 markAsSent(AONContext ctx, Mod303 mod303){
 		return ctx.getDslContext().transactionResult(
-				configuration -> PrevMod303DAO.markAsSent(ctx, mod303));		
+				configuration -> Mod303DAO.markAsSent(ctx, mod303));		
 	}
 	@Override
 	public Mod303 markAsCustomerCheck(AONContext ctx, Mod303 mod303) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> PrevMod303DAO.markAsCustomerCheckMod303(ctx, mod303));		
+				configuration -> Mod303DAO.markAsCustomerCheck(ctx, mod303));		
+	}
+	@Override
+	public Mod303 markAsCustomerAccepted(AONContext ctx, Mod303 mod303) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod303DAO.markAsCustomerAccepted(ctx, mod303));		
+	}
+	@Override
+	public Mod303 markAsCustomerRejected(AONContext ctx, Mod303 mod303, String reason) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod303DAO.markAsCustomerRejected(ctx, mod303, reason));		
 	}
 
 	@Override
@@ -88,22 +98,18 @@ public class MODEL303Impl implements IMODEL303 {
 	@Override
 	public Mod303 reset(AONContext ctx, Mod303 mod303) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> PrevMod303DAO.reset(ctx,mod303));
-	}
-	@Override
-	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303) {
-		return PrevMod303DAO.declarationChanged(ctx,mod303);
+				configuration -> Mod303DAO.reset(ctx,mod303));
 	}
 
 	@Override
 	public String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
-		return PrevMod303DAO.getInfo(ctx,mod303,script,infoKey);
+		return Mod303InfoDAO.getInfo(ctx,mod303,script,infoKey);
 	}
 	
 	@Override
 	public Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> PrevMod303DAO.aeatPresentation(ctx, mod303, aeatResponse));
+			configuration -> Mod303DAO.aeatPresentation(ctx, mod303, aeatResponse));
 	}
 
 }

@@ -2579,6 +2579,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Servicio")
 	String service();
 
+	@DefaultMessage("R\u00E9gimen de importaci\u00F3n")
+	String vatImportationRegime();
+
 	@DefaultMessage("Tipo de factura")
 	String invoiceType();
 
@@ -3544,6 +3547,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Inversi\u00F3n")
 	String investment();
+
+	@DefaultMessage("R\u00E9gimen agrario")
+	String farmerRegime();
 
 	@DefaultMessage("Bien afecto")
 	String actInvestAsset();

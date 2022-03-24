@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -53,10 +54,13 @@ public abstract class Mod303Declaration {
 	}
 
 	protected static void add(Mod303Key key,Mod303 mod,double amount) {
-		mod.ensureDetail(key).addAccumulatedAmount(amount);	
+		FiscalModelDetail detail = mod.ensureDetail(key);
+		detail.addAccumulatedAmount(amount);
+		detail.addResultAmount( amount );	
+		detail.addAmount( amount );
 	}
 	
-	private static boolean mustApplyProrrate(Mod303 mod,VatContext vat) {
+	public static boolean mustApplyProrrate(Mod303 mod,VatContext vat) {
 		return (mod.hasProrate()) && 
 			(!mod.isSpecialProrate() || (mod.isSpecialProrate() && vat.getActivity() == null));
 	}
@@ -150,27 +154,6 @@ public abstract class Mod303Declaration {
 		return false;
 	}
 
-	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
-	public abstract IMod303KeyDAO valueOf(String string);
-	public abstract IMod303KeyDAO[] getKeys();
-	protected abstract Mod303Key[] getProrateKeys();
-	public abstract boolean hasSimplifiedRegime();
-
-	
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
-	// ****************************************************************************
 	enum ComplementaryBeahaviour {
 		COMPLEMENTARY,
 		REPLACEMENT;
@@ -243,7 +226,6 @@ public abstract class Mod303Declaration {
 	protected Set<Integer> createFromInvoices(AONContext ctx, Mod303 mod303) {
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<VatContext> stream = null;
-		System.out.println( getComplementaryBehaviour(mod303) ); 
 		if (getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.REPLACEMENT) {
 			stream =  VATDAO.getVatBreakdown(ctx,mod303);
 		} else {
@@ -274,12 +256,16 @@ public abstract class Mod303Declaration {
 							);
 		}
 	}
-
+	
+	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
+	public abstract IMod303KeyDAO valueOf(String string);
+	public abstract IMod303KeyDAO[] getKeys();
+	protected abstract Mod303Key[] getProrateKeys();
+	public abstract boolean hasSimplifiedRegime();
 	abstract Mod303 initialize(AONContext ctx, Mod303 mod303);
 	abstract double getResult(final Mod303 mod303);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod303 mod303);
 	abstract void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303);
-
-	
+	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303);
 	
 }

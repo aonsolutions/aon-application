@@ -2,11 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
 
 import java.util.Map;
 
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 
 

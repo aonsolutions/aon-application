@@ -57,7 +57,11 @@ public class Mod111InfoDAO {
 					@Override public String visitTitle() {return visitNone(); }
 					@Override public String visitIrpfActivity() {return visitNone(); }
 					@Override public String visitCorporate() {return visitNone(); }
-					
+					@Override public String visitModelInvoiceVatBreakdown() {return visitNone(); }
+					@Override public String visitProrratedModelInvoiceVatBreakdown() {return visitNone(); }
+					@Override public String visitModelOutVatAccrualInvoice() {return visitNone(); }
+					@Override public String visitModelInVatAccrualInvoice() {return visitNone(); }
+
 					@Override 
 					public String visitNone()    {
 						return MessageFormat.format(INFO_MSG, NONE_INFO); 

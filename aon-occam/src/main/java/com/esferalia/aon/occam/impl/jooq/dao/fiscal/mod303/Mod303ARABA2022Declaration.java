@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
@@ -594,5 +597,9 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}
 	
+	@Override
+	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
+		return new HashSet<>();
+	}
 }
 

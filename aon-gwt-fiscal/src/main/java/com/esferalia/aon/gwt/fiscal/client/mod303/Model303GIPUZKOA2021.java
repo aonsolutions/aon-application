@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
@@ -10,7 +9,6 @@ import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017GipuzkoaResultScri
 import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032021GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -35,17 +33,6 @@ class Model303GIPUZKOA2021 extends Model303Base {
 		paintResultTab(tabPanel);
 		paintAdditionalDataTab(tabPanel);
 		paintAdministrationTab(tabPanel);
-		
-		if (getModel().getId() == null && getModel().getYear() == 2021 && !getModel().isDiffCalculationDisabled()) {
-			double c51 = getModel().getAmount(Mod303Key.GP_C051);
-			double c52 = getModel().getAmount(Mod303Key.GP_C052);
-			if (AonMathUtils.isNotZero(c51) || AonMathUtils.isNotZero(c52)) {
-				AonMessageDialog.show("AVISO",
-						"Solapa \"Datos adicionales\". La casilla 32 se ha desdoblado en las casillas 51 y 52. No se puede realizar el c\u00E1lculo por diferencia en dichas casillas y tienen valor. Por favor revise los valores suministrados por la aplicaci\u00F3n."
-						);
-			}
-		}
-
 	}
 
 //	private void paintIdentificationTab(TabLayoutPanel tabPanel) {

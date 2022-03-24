@@ -75,10 +75,10 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod303 mod303) {
+			cleanInfoPanel();
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
 				getOptions().getExternalCallback().onExit(mod303);
 			} else {
-				cleanInfoPanel();
 				declarationContainer.setWidget(model303Table);
 				model303Table.refresh( new Model303Callback() );
 				tabLayout.selectTab(INFORMATION_TAB);
@@ -107,10 +107,14 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
+			showInfoPanelWidget(new HTMLPanel(htmlText));	
+		}
+		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
+			breakdownPanel.setWidget(widget);
 			breakdownPanel.scrollToTop();
 		}
 		
@@ -331,11 +335,21 @@ public class Model303 extends MainEntryPoint {
 	}
 
 	enum Mod303Declarations {
+		AEAT_2022 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() > 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303AEAT2022(mod303,cbk);
+			}
+		},
 		AEAT_2021_LAST_SEMESTER {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAEAT() && ((mod303.getYear() > 2021)
-					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())));
+				return (mod303.isAEAT() && mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
 			}
 
 			@Override

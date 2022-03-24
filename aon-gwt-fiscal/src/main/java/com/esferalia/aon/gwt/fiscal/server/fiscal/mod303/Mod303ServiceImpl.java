@@ -6,8 +6,10 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Mod303Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -83,10 +85,6 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return MODEL303.reset(occam, mod303);
 	}
 	@Override
-	public Mod303 declarationChanged(Occam occam, Mod303 mod303) throws AonCoreException {
-		return MODEL303.declarationChanged(occam, mod303);
-	}
-	@Override
 	public void delete(Occam occam, Mod303 mod303) {
 		MODEL303.delete(occam, mod303);
 	}
@@ -103,6 +101,11 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Mod303 markAsCustomerCheck(Occam occam, Mod303 mod303) {
 		return MODEL303.markAsCustomerCheck(occam, mod303);
+	}
+
+	@Override
+	public Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException {
+		return AON.getInvoice(occam, invoiceId);
 	}
 	
 }

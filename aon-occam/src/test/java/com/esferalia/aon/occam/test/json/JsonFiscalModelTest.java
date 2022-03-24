@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.json.AccountJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 
 

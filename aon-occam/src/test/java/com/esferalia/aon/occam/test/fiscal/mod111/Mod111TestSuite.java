@@ -25,6 +25,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod111InsertQuarterlyTest.class,
 	Mod111InsertQuarterlyComplementaryTest.class,
 	Mod111InsertQuarterlyReplacementTest.class,
+	// IRPF JSON 
+	IrpfBreakdownJSONTest.class,
+	
 	// Flujo de estados
 	Mod111ReopenTest.class,					// Pendiente
 	Mod111FinishTest.class,					// Finalizado

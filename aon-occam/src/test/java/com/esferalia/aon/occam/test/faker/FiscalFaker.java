@@ -31,6 +31,7 @@ public class FiscalFaker {
 		private boolean complementary;
 		private boolean replacement;
 		private boolean generateFromYearStart;
+		private double prorratePercent;
 		
 		public FiscalFakerParams(AONContext ctx, Occam occam) {
 			this.ctx = ctx;
@@ -86,6 +87,13 @@ public class FiscalFaker {
 		}
 		public FiscalFakerParams setGenerateFromYearStart(boolean generateFromYearStart) {
 			this.generateFromYearStart = generateFromYearStart;
+			return this;
+		}
+		public double getProrratePercent() {
+			return prorratePercent;
+		}
+		public FiscalFakerParams setProrratePercent(double prorratePercent) {
+			this.prorratePercent = prorratePercent;
 			return this;
 		}
 	}
@@ -174,6 +182,7 @@ public class FiscalFaker {
 			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
 		mod303.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		mod303.setProratePercent( params.getProrratePercent() );
 		MODEL303.initialize( params.getOccam(), mod303);
 		mod303.setComplementary(params.isComplementary());
 		mod303.setReplacement(params.isReplacement());

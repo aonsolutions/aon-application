@@ -91,6 +91,10 @@ public class EnumVisitors {
 		T visitCorporate();
 		T visitModelInvoiceIrpfBreakdown();
 		T visitModelSalaryIrpfBreakdown();
+		T visitModelInvoiceVatBreakdown();
+		T visitProrratedModelInvoiceVatBreakdown();
+		T visitModelOutVatAccrualInvoice();
+		T visitModelInVatAccrualInvoice();
 	}
 	
 	public static interface IFiscalStatusVisitor<T> {

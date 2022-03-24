@@ -101,6 +101,10 @@ public class Mod303 extends FiscalModel implements Serializable {
 		if (AonMathUtils.isZero(proratePercent)) proratePercent = 100.0;  
 		return proratePercent;
 	}
+	public Mod303 setProratePercent(double prorratePercent) {
+		ensureDetail(getProrateKey()).setAmount( prorratePercent );
+		return this;
+	}
 	
 	public double getPreviousProratePercent() {
 		Mod303Key key = getPreviousProrateKey();
@@ -131,7 +135,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 	@Override
 	@Deprecated
 	public void setDefaultDeclarationType(){
-		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
 	}
 
 	@Override

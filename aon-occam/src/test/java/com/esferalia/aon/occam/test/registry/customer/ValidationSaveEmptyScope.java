@@ -7,8 +7,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonFaker;
