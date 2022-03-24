@@ -5,13 +5,13 @@ import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
-
+import { AonSwitch } from '../../components/aon-switch.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon-button.js';
 import '../../components/aon-icon.js';
 
-import { CSS, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { CSS, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../environments/environments.js'; 
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonToast } from '../../components/aon-toast.js';
@@ -161,6 +161,7 @@ export class AonBooking extends AonElement {
 			let buttons = document.createElement('span');
 			buttons.style.position = 'absolute';
 			buttons.style.right = '10px';
+			buttons.style.top = '20px';
 
 			let price = document.createElement('span');
 			price.id = this.APP + app.app + 'Price';
@@ -169,39 +170,29 @@ export class AonBooking extends AonElement {
 			price.innerHTML = app.price;
 			buttons.appendChild(price);
 
-			let moreInfo = document.createElement(TAG.A);
-			moreInfo.style.margin = '10px';
-			moreInfo.style.color = 'gray';
-			moreInfo.style.cursor = 'pointer';
-			moreInfo.innerHTML = 'Más Info';
-			moreInfo.addEventListener('click', () => {
-				window.open(app.moreInfo || 'https://www.aonsolutions.es/');
-			});
-			buttons.appendChild(moreInfo);
+			let parentContract = document.createElement('span');
+			parentContract.id = this.APP + app.app + '';
+			parentContract.style.color = '#002469';
+			parentContract.style.opacity = '0.5';
+			parentContract.innerHTML = 'Contratado en el entorno';
+			
+			let contract = new AonSwitch();
+			contract.id = this.APP + app.app + 'Contract';
+			contract.checked = contratado;
 
-			let contratar = document.createElement('button');
-			contratar.id = this.APP + app.app + 'ContractButton';
-			contratar.className = 'aonButton';
-			contratar.style.width = '110px';
-			contratar.style.padding = '0.3rem 0.8rem';
-			contratar.style.borderRadius = '25px';
-			contratar.innerHTML = contratado ? MSG.DEACTIVATE : MSG.ACTIVATE;
-			contratar.style.backgroundColor = '#002469';
-			contratar.style.opacity = contratado ? '0.3' : '1';
 			if(this.isDisabled(dur, app.app.toUpperCase()) || this.hasParentApp(dur, app.app.toUpperCase()) || app.disabled){
-				contratar.disabled = true;
-				contratar.style.opacity = '0.3';
-				contratar.style.backgroundColor = 'gray';
+				contract.disabled = true;
 			}
 
-			contratar.addEventListener('click', (e) => {
+			contract.addEventListener(EVENT.CHANGE, (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				contratado = !contratado;
-				this.activate(app, contratado, false);
+				this.activate(app, contract.checked, false);
 			});
 
-			buttons.appendChild(contratar);
+			if(this.hasParentApp(dur, app.app.toUpperCase())) {
+				buttons.appendChild(parentContract);
+			} else buttons.appendChild(contract);
 			if(!app.domainType)
 				span.appendChild(buttons);
 			li.appendChild(span);
@@ -213,9 +204,8 @@ export class AonBooking extends AonElement {
 		let contractIcon = this.getElement(this.APP + app.app + 'Icon');
 		if(contractIcon)
 			contractIcon.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
-		let contractButton = this.getElement(this.APP + app.app + 'ContractButton');
-		contractButton.innerHTML = contract ? MSG.DEACTIVATE : MSG.ACTIVATE;
-		contractButton.style.opacity = contract ? '0.3' : '1';
+		let contractSwitch = this.getElement(this.APP + app.app + 'Contract');
+		if(contractSwitch) contractSwitch.checked = contract;
 
 		if(contract && !disabled) {
 			if(!this.apps.includes(app.app.toUpperCase()))
@@ -226,14 +216,11 @@ export class AonBooking extends AonElement {
 					this.apps.splice(i, 1);
 			});
 		}
-
-		if((contract && disabled) || app.disabled) {
-			contractButton.disabled = true;
-			contractButton.style.opacity = '0.3';
-			contractButton.style.backgroundColor = 'gray';
-		} else {
-			contractButton.disabled = false;
-			contractButton.style.backgroundColor = '#002469';
+		if(contractSwitch) {
+			console.log(contract);
+			console.log(disabled);
+			console.log(app.disabled);
+			contractSwitch.disabled = (contract && disabled) || app.disabled;
 		}
 
 		if(app.app === 'pack_suite') {
