@@ -1,0 +1,151 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	<style>
+#sidemenu {
+	padding: 0rem 1rem;
+}
+
+.menu-panel {
+	border-bottom: 1px solid #f1f1f1;
+}
+
+.menu-panel .menu-panel-options .menu-panel-option, .menu-panel .menu-panel-title
+	{
+	display: flex;
+	align-items: center;
+}
+
+.menu-panel .menu-panel-title {
+	font-size: 1rem;
+	padding: .5rem 0rem;
+	user-select: none;
+	cursor: pointer;
+}
+
+.menu-panel .menu-panel-title .material-icons {
+	font-size: 1.8rem;
+}
+
+.menu-panel .menu-panel-options :not(a).menu-panel-option {
+	user-select:none;
+}
+
+.menu-panel .menu-panel-options .menu-panel-option {
+	padding: .75rem 2rem;
+	font-size: .9rem;
+	transition: background .5s;
+	border-radius: .15rem;
+	cursor: pointer;
+}
+
+.menu-panel .menu-panel-options .menu-panel-option:hover {
+	background: rgba(0,0,0,.035);
+}
+
+.menu-panel .menu-panel-options .menu-panel-option .material-icons {
+	margin-right: .5rem;
+}
+</style>
+
+	<script>
+		function togglePanel( id ) {
+			
+			console.log("toggle pressed");
+			
+			const panel = document.querySelector(".menu-panel#" + id + "");
+			const icon = document.querySelector(".menu-panel#" + id + " .menu-panel-title .material-icons");
+			const content = document.querySelector(".menu-panel#" + id + " .menu-panel-options");
+
+			
+			if(panel.dataset.opened === "true"){
+				icon.style.transform = "rotate(0deg)";
+				content.style.display = "block";
+				panel.dataset.opened = false;
+				console.log("closing")
+			} else {
+				icon.style.transform = "rotate(180deg)";
+				content.style.display = "none";
+				panel.dataset.opened = true;
+				console.log("opening")
+			}
+			
+		}	
+		
+		
+	</script>
+	<aon:div id="sidemenu">
+
+		<!-- SUPPORT / CAU -->
+		<aon:div styleClass="menu-panel" id="support"  >
+			<aon:div styleClass="menu-panel-title" onclick="togglePanel('support')">
+				<aon:outputText value="expand_more" styleClass="material-icons" />
+				<aon:outputText value="Soporte / CAU" />
+			</aon:div>
+
+			<aon:div styleClass="menu-panel-options">
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="support_agent" styleClass="material-icons" />
+					<aon:outputText value="Incidencias" />
+				</aon:div>
+
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="message" styleClass="material-icons" />
+					<aon:outputText value="Solicitudes" />
+				</aon:div>
+
+				<aon:div styleClass="menu-panel-option" style="color:forestgreen">
+					<aon:outputText value="toggle_on" styleClass="material-icons" />
+					<aon:outputText value="Acceso remoto" />
+				</aon:div>
+			</aon:div>
+		</aon:div>
+
+		<!-- CONTACT -->
+		<aon:div styleClass="menu-panel" id="contact">
+			<aon:div styleClass="menu-panel-title" onclick="togglePanel('contact')">
+				<aon:outputText value="expand_more" styleClass="material-icons" />
+				<aon:outputText value="CONTACTO" />
+			</aon:div>
+
+			<aon:div styleClass="menu-panel-options" >
+				<a class="menu-panel-option" href="tel:945121010">
+					<aon:outputText value="phone" styleClass="material-icons" />
+					<aon:outputText value="945 121 010" />
+				</a>
+
+				<a class="menu-panel-option" href="mailto:soporte@aonsolutions.es" target="_blank">
+					<aon:outputText value="email" styleClass="material-icons" />
+					<aon:outputText value="soporte@aonsolutions.es" />
+				</a>
+			</aon:div>
+		</aon:div>
+
+		<!-- INFO -->
+		<aon:div styleClass="menu-panel" id="info">
+			<aon:div styleClass="menu-panel-title" onclick="togglePanel('info')">
+				<aon:outputText value="expand_more" styleClass="material-icons" />
+				<aon:outputText value="INFORMACIÓN" />
+			</aon:div>
+
+			<aon:div styleClass="menu-panel-options">
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="link" styleClass="material-icons" />
+					<aon:outputText value="Links de interes" />
+				</aon:div>
+
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="rss_feed" styleClass="material-icons" />
+					<aon:outputText value="Actualizaciones" />
+				</aon:div>
+				
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="info" styleClass="material-icons" />
+					<aon:outputText value="Acerca de ..." />
+				</aon:div>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	
+
+</ui:composition>
