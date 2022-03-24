@@ -15,7 +15,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
 import com.esferalia.aon.occam.api.json.ProjectTypeJSON;
@@ -24,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 
@@ -31,7 +31,6 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
-import net.aonsolutions.aon.api.servlet.task.AppParamsRequest;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiProjectServlet", urlPatterns = {"/ms/api/project/*"})

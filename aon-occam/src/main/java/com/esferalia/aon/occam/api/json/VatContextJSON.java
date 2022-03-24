@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;

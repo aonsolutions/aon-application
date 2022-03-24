@@ -2,8 +2,8 @@ package net.aonsolutions.aon.tbai;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class TbaiBlockchain {
 

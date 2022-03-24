@@ -11,10 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.InvestAssetJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.InvestAssetProperties;
 import com.esferalia.aon.watson.util.AonStringUtils;

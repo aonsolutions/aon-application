@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera240Type;

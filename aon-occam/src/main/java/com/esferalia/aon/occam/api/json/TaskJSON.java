@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.json;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class CompanyJSON {
 	

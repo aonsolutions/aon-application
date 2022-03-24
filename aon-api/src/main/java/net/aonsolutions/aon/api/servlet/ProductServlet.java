@@ -11,12 +11,12 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Item;

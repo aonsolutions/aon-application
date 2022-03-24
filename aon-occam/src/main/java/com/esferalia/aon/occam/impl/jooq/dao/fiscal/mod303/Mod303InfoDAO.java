@@ -15,8 +15,8 @@ import org.mvel2.MVEL;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.VatContextJSON;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
