@@ -11,11 +11,12 @@ import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
+import { AonApplication } from '../../components/aon-application.js';
+
 import './aon-documental-list.js';
 import './aon-document.js';
 import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
-import '../../components/aon-application.js';
 import '../../css/aon-mobile.css';
 import '../../css/aon.css';
 
@@ -36,10 +37,7 @@ export class AonDocumental extends AonElement {
 
     connectedCallback () {
       this.initialize();
-      this.innerHTML = `
-        <aon-application id="${this.DOCUMENTAL}" title="${MSG.DOCUMENTARY}" drag_and_drop='true'></aon-application>
-        <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
-      `;
+  
       getDomainUserRoles({}).then(r => {
         this.dur = new DomainUserRoles(r);
         this.build();
@@ -56,6 +54,24 @@ export class AonDocumental extends AonElement {
         per_page:30,
         domain: localStorage.getItem('aon_domain_id')
       };
+
+    //   this.innerHTML = `
+    //   <aon-application id="${this.DOCUMENTAL}" title="${}" drag_and_drop='true'></aon-application>
+    //   <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
+    // `;
+
+    
+      let aonApplication = new AonApplication();
+      aonApplication.setAttribute("drag_and_drop", true);
+      this.createApplication(this.DOCUMENTAL, MSG.DOCUMENTARY, aonApplication);
+
+      let input = document.createElement("input");
+      input.id = this.INPUTFILE;
+      input.style.display = "none";
+      input.type = "file";
+      input.name = "file";
+      input.multiple = true;
+      this.appendChild(input);
     }
 
     getDur() {
@@ -445,7 +461,7 @@ export class AonDocumental extends AonElement {
       });
       d.open();
     }
-
+    
     uploadOption(one){
       let table = document.createElement('table');
       table.style.width = '100%';
@@ -513,10 +529,18 @@ export class AonDocumental extends AonElement {
       let tdType = document.createElement('td');
       tdType.setAttribute('colspan', '1');
       let selType = new AonSelect();
-      selType.id = "aonDocumentalUploadType";AonInput
+      selType.id = "aonDocumentalUploadType";
+      selType.title = MSG.TYPE;
+      tdType.appendChild(selType);
+
+      let typeOptions = EMPLOYEE_TYPE_OPTION;
+      if(this.getDur().isDocumentalManager()) {
+        typeOptions = ASESOR_TYPE_OPTION;
+      } else if(this.getDur().isDocumentalPortal()){
+        typeOptions = ENTERPRISE_TYPE_OPTION;
+      }
       selType.setOptions(typeOptions);
 
-      tdType.appendChild(selType);
       tr5.appendChild(tdType);
       return table;
     }

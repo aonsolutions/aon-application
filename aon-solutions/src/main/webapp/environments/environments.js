@@ -2,6 +2,7 @@
 export const API_URL = 'ms/api';
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
+export const URL_PDF_VIEWER = "https://mozilla.github.io/pdf.js/build/pdf.js";
 
 //----PROD
 export const SIG_URL = "https://aonsolutions.org/ms/api";
