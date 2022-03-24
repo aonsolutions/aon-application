@@ -428,6 +428,7 @@ public interface IJsonNames {
 	String TASK_HOLDER = "task_holder";
 	String TAXES = "taxes";
 	String TAX = "tax";
+	String TAG = "tag";
 	String TAX_DATE = "taxDate";
 	String TECHNICAL = "technical";
 	String TEST = "test";
