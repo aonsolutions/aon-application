@@ -770,6 +770,35 @@ export const AeatFiscalMenu =
     }
   };
 
+  export const KIT_DIGITAL_FACE = {
+    app: 'kit_digital_face',
+    icon: AON_ICONS.AON_KIT_DIGITAL,
+    title: 'FACe',
+    subtitle: ' Factura Electrónica',
+    color: '#002469',
+    apps: [],
+    price: ' '
+  };
+
+  export const KIT_DIGITAL_CRM = {
+    app: 'kit_digital_crm',
+    icon: AON_ICONS.AON_KIT_DIGITAL,
+    title: 'CRM',
+    subtitle: ' Gestión de Clientes',
+    color: '#002469',
+    apps: [],
+    price: ' '
+  };
+
+  export const KIT_DIGITAL_ERP = {
+    app: 'kit_digital_erp',
+    icon: AON_ICONS.AON_KIT_DIGITAL,
+    title: 'ERP',
+    subtitle: ' Gestión de Procesos',
+    color: '#002469',
+    apps: [],
+    price: ' '
+  };
 
   export const BASIC_MANAGEMENT = {
     app: 'basic_management',

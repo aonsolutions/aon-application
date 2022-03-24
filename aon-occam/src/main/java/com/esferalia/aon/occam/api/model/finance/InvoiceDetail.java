@@ -5,9 +5,14 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.management.OfferDetail;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 public class InvoiceDetail implements Serializable {
 
 	private static final long serialVersionUID = 7597157186868662372L;
@@ -29,8 +34,6 @@ public class InvoiceDetail implements Serializable {
 	private double quantity;
 	private double price;
 	private String discountExpression;
-	private InvoiceSource source;
-	private Integer sourceId;
 	private double taxableBase;
 	private double taxes;
 	private double surcharge;
@@ -53,6 +56,17 @@ public class InvoiceDetail implements Serializable {
 	private String accountDescription;
 	
 	private LinkedList<InvoiceTax> invoiceTaxes;
+	
+	// SOURCE INFO
+	
+	private InvoiceSource source;
+	private Integer sourceId;
+	
+	private PurchaseDetail purchaseDetail;
+	private SalesDetail salesDetail;
+	private DeliveryDetail deliveryDetail;
+	private IncomeDetail incomeDetail;
+	private OfferDetail offerDetail;
 	
 	public Integer getId() {
 		return id;
@@ -250,7 +264,7 @@ public class InvoiceDetail implements Serializable {
 	}
 	public InvoiceDetail addInvoiceTax(InvoiceTax invoiceTax) {
 		if (getInvoiceTaxes() == null) {
-			setInvoiceTaxes(new LinkedList<InvoiceTax>());
+			setInvoiceTaxes(new LinkedList<>());
 		}
 		getInvoiceTaxes().add(invoiceTax);
 		return this;
@@ -285,4 +299,43 @@ public class InvoiceDetail implements Serializable {
 		return (getId() != null && getId() < 0);
 	}
 	
+	public PurchaseDetail getPurchaseDetail() {
+		return purchaseDetail;
+	}
+	
+	public void setPurchaseDetail(PurchaseDetail purchaseDetail) {
+		this.purchaseDetail = purchaseDetail;
+	}
+	
+	public SalesDetail getSalesDetail() {
+		return salesDetail;
+	}
+	
+	public void setSalesDetail(SalesDetail salesDetail) {
+		this.salesDetail = salesDetail;
+	}
+	
+	public DeliveryDetail getDeliveryDetail() {
+		return deliveryDetail;
+	}
+	
+	public void setDeliveryDetail(DeliveryDetail deliveryDetail) {
+		this.deliveryDetail = deliveryDetail;
+	}
+	
+	public IncomeDetail getIncomeDetail() {
+		return incomeDetail;
+	}
+	
+	public void setIncomeDetail(IncomeDetail incomeDetail) {
+		this.incomeDetail = incomeDetail;
+	}
+	
+	public OfferDetail getOfferDetail() {
+		return offerDetail;
+	}
+	
+	public void setOfferDetail(OfferDetail offerDetail) {
+		this.offerDetail = offerDetail;
+	}
 }

@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod202 extends FiscalModel implements Serializable {
 
@@ -88,11 +90,24 @@ public class Mod202 extends FiscalModel implements Serializable {
 		putDescription(Mod202Key.P00, iban);
 	}
 	
-
 	@Override
-	public void setDeclarationType(String type) {
-		// Nothing
+	public void setDefaultDeclarationType(){
+		if (isAEAT()) {
+			if (AonMathUtils.isGreatherThanZero(getResult() )) {
+				setDeclarationResultType(FiscalModelDeclarationType.DEPOSIT);
+				setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
+			} else {
+				setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
+				setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
+			}
+		}
 	}
+
+	
+//	@Override
+//	public void setDeclarationType(String type) {
+//		// Nothing
+//	}
 	
 	public boolean isForal() {
 		return (isForalNavarra() || isForalEuskadi());		

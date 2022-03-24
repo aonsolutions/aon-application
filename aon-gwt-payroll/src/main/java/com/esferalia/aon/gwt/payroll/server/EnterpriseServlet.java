@@ -33,7 +33,7 @@ public class EnterpriseServlet extends AonApiHttpServlet {
 			String domainName = req.getParameter("domain");
 			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
 			
-			responseFile(req, resp, "Contratos", new FileInputStream(getEnterpriseContractsExcel(api, domain.getId())), MimeType.MS_EXCEL);
+			responseFile(resp, "Contratos", new FileInputStream(getEnterpriseContractsExcel(api, domain.getId())), MimeType.MS_EXCEL);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}

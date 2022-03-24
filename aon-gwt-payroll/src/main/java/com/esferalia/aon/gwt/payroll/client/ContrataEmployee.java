@@ -50,6 +50,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -274,6 +275,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem peculiarities = null;
 		
 //		private MenuItem movPrevDelete = null;
+		MenuItemSeparator separator;
 		private MenuItem altaConsolidadaDelete = null;
 		
 		public NewTGSSContextMenu() {
@@ -290,30 +292,32 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			peculiarities.ensureDebugId("peculiarities");
 			
+			addSeparator();
+			
 			ta = addItem("Duplicados de Documentos TA", new TACommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			ta.ensureDebugId("ta");
 			
 			taEnd = addItem("Duplicados de Documentos TA (Baja)", new TAEndCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			taEnd.ensureDebugId("taEnd");
 			
 			idc = addItem("IDC-Trab Cuenta Ajena", new IDCCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
 			
 			idcPlNss = addItem("IDC/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
-			addSeparator();
+			separator = addSeparator();
 			
 //			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
 //					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 //			movPrevDelete.ensureDebugId("movPrevDelete");
 			
 			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			altaConsolidadaDelete.ensureDebugId("altaConsolidadaDelete");
 			
 		}
@@ -349,6 +353,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 //		public MenuItem getMovPrevDelete() {
 //			return movPrevDelete;
 //		}
+		
+		public MenuItemSeparator getAltaConsolidadaDeleteSeparator() {
+			return separator;
+		}
 		
 		public MenuItem getAltaConsolidadaDelete() {
 			return altaConsolidadaDelete;
@@ -490,11 +498,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		public NewSEPEContextMenu() {
 			
 			cto = addItem("Copia Contrato", new CTOCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			cto.ensureDebugId("cto");
 			
 			cbc = addItem("Copia B\u00E1sica", new CBCCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			cbc.ensureDebugId("cbc");
 			
 			addSeparator();
@@ -504,7 +512,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			cetifica2.ensureDebugId("cetifica2");
 			
 			cetifica2PDF = addItem("Cetifica2 PDF", new Certifica2PDFCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			cetifica2PDF.ensureDebugId("cetifica2PDF");
 			
 			addSeparator();
@@ -524,27 +532,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			addSeparator();
 			
 			sendBasicCopy = addItem("Notificar Copia B\u00E1sica", new SendBasicCopyCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sendBasicCopy.ensureDebugId("sendBasicCopy");
 			
 			sendContract = addItem("Notificar Contrato", new SendContractCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sendContract.ensureDebugId("sendContract");
 			
 			sendContractTransform = addItem("Notificar Transformaci\u00f3n Contrato", new SendContractTransformCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sendContractTransform.ensureDebugId("sendContractTransform");
 			
 			sepeIDE = addItem("Ver IDE Contrato", new SepeIDEContractCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconInfo(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			sepeIDE.ensureDebugId("sepeIDE");
 			
 			removeContract = addItem("Eliminar Contrato", new RemoveContractCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			removeContract.ensureDebugId("removeContract");
 			
 			removeContractTransform = addItem("Eliminar Transformaci\u00f3n Contrato", new RemoveContractTransformCommand(), 
-					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			removeContractTransform.ensureDebugId("removeContractTransform");
 			
 		}
@@ -677,7 +685,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	TabLayoutPanel footTabPanel;
 	
 	ResultsPanel resultsPanel;
-	
 	
 	// ------------------------------------------------- Class variables
 	
@@ -839,13 +846,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
 				if(messageMap.isEmpty())
 					contrataEmployeeObject.setEmployeeContract(s -> {
-						if(null == this.contrataEmployeeObject.getContractData().getEndDate()) {
-							tgssContextMenu.getAfiEnd().getElement().getStyle().setDisplay(Display.NONE);
-							tgssContextMenu.getTaEnd().getElement().getStyle().setDisplay(Display.NONE);
-						} else {
-							tgssContextMenu.getAfiEnd().getElement().getStyle().clearDisplay();
-							tgssContextMenu.getTaEnd().getElement().getStyle().clearDisplay();
-						}
+						checkTGSSStatus();
 					}, f -> {});
 				break;
 			case 1:
@@ -1249,13 +1250,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					
 					checkStatus(contrataEmployeeObject);
 					
-					if(null == this.contrataEmployeeObject.getContractData().getEndDate()) {
-						tgssContextMenu.getAfiEnd().getElement().getStyle().setDisplay(Display.NONE);
-						tgssContextMenu.getTaEnd().getElement().getStyle().setDisplay(Display.NONE);
-					} else {
-						tgssContextMenu.getAfiEnd().getElement().getStyle().clearDisplay();
-						tgssContextMenu.getTaEnd().getElement().getStyle().clearDisplay();
-					}
+					checkTGSSStatus();
 				}, f -> {});
 			else
 				AonMessagePanel.showError(messageContainer, messageMap);
@@ -1533,6 +1528,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				hideMessage();
 				showPdf();
 				idcDateListBox.setVisible(true);
+				idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcDateListBox.setSelected(date, true);
 				pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC", f.getMessage()));
@@ -1549,6 +1545,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				hideMessage();
 				showPdf();
 				idcMonthListBox.setVisible(true);
+				idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcMonthListBox.setSelected(month, true);
 				pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC PL NSS", f.getMessage()));
@@ -1884,11 +1881,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						showFootPanel();
 						ifSistemaREDEnabled(employeeStatus, () -> {
 							ContrataEmployee.this.setTaVisible(true);
-							ContrataEmployee.this.setTaEndVisible(true);
+//							ContrataEmployee.this.setTaEndVisible(true);
 							ContrataEmployee.this.setIdcVisible(true);
 						}, () -> {
 							ContrataEmployee.this.setTaVisible(false);
-							ContrataEmployee.this.setTaEndVisible(false);
+//							ContrataEmployee.this.setTaEndVisible(false);
 							ContrataEmployee.this.setIdcVisible(false);
 
 						});
@@ -1899,7 +1896,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}, throwable -> {
 						closeFootPanel();
 						ContrataEmployee.this.setTaVisible(false);
-						ContrataEmployee.this.setTaEndVisible(false);
+//						ContrataEmployee.this.setTaEndVisible(false);
 						ContrataEmployee.this.setIdcVisible(false);
 
 					});
@@ -1956,7 +1953,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 			ifSistemaREDEnabled(employeeStatus, () -> {
 				ContrataEmployee.this.setTaVisible(true);
-				ContrataEmployee.this.setTaEndVisible(true);
+//				ContrataEmployee.this.setTaEndVisible(true);
 				ContrataEmployee.this.setIdcVisible(true);
 			}, () -> {
 				ContrataEmployee.this.setTaVisible(false);
@@ -2098,10 +2095,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- TGSS status
 	
 	private void checkTGSSStatus() {
-		boolean isTGSSActive = contrataEmployeeObject.getContractData().isTGSSActive();
 		Date startDate = contrataEmployeeObject.getContractData().getStartDate();
+		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 		
-		setVisible(tgssContextMenu.getAltaConsolidadaDelete().getElement(), isTGSSActive && DateUtils.isAfterOrEquals(new Date(), startDate));
+		setVisible(tgssContextMenu.getAfiEnd().getElement(), null != endDate);
+		setVisible(tgssContextMenu.getTaEnd().getElement(), null != endDate);
+		setVisible(tgssContextMenu.getAltaConsolidadaDelete().getElement(), DateUtils.isAfterOrEquals(new Date(), startDate));
+		setVisible(tgssContextMenu.getAltaConsolidadaDeleteSeparator().getElement(), DateUtils.isAfterOrEquals(new Date(), startDate));
 	}
 	
 	// ------------------------------------------------- Messages panel

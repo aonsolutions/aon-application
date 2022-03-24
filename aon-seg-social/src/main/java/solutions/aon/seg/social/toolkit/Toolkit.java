@@ -63,7 +63,7 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
@@ -645,7 +645,7 @@ public class Toolkit {
 	}
 	
 	static void checkLiquidationExceptions(String errText) throws LiquidationDoesNotExist, DataDoesNotExist,
-	WrongRegimeException, invalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
+	WrongRegimeException, InvalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
 		if (errText != null) {
 			if(errText.toUpperCase().contains("NO EXISTE LIQUIDACI"))
 				throw new LiquidationDoesNotExist();
@@ -654,7 +654,7 @@ public class Toolkit {
 			else if(errText.toUpperCase().contains("CUENTA DE COTIZACI") && errText.toUpperCase().contains("N NO EXISTE"))
 				throw new WrongRegimeException();
 			else if(errText.toUpperCase().contains("C.C.C. ERR"))
-				throw new invalidCccException();
+				throw new InvalidCccException();
 			else if(errText.toUpperCase().contains("DEBE TENER CONTENIDO"))
 				throw new UnfilledMandatory();
 			else if(errText.toUpperCase().contains("EL CCC NO PERTENECE AL COLECTIVO DE CLEGIOS CONCERTADOS"))
