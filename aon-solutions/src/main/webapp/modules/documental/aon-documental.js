@@ -8,15 +8,14 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {AonSelect} from '../../components/aon-select.js';
 import { MSG, MATERIAL_ICONS, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
+import { AonInput } from '../../components/aon-input.js';
+import { getReader } from '../../services/utils.js';
+import Apps from '../../services/app.js';
 import './aon-documental-list.js';
 import './aon-document.js';
 import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
 import '../../components/aon-application.js';
-import '../../components/aon-input.js';
-import { getReader } from '../../services/utils.js';
-import Apps from '../../services/app.js';
-
 import '../../css/aon-mobile.css';
 import '../../css/aon.css';
 
@@ -218,9 +217,11 @@ export class AonDocumental extends AonElement {
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.ADD_CATEGORY);
-      d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.CATEGORY}"> </aon-input>`);
+      let input = new AonInput();
+      input.id ="aonDocumentalAddCategory";
+      input.description = MSG.CATEGORY;
+      d.setContent(input);
       d.addAcceptAction(() => {
-        let input = this.getElement('aonDocumentalAddCategory');
         if(!input.value.isEmpty()){
           createCategory({name: input.value}).then(() => {
             this.loadCategories();
@@ -235,9 +236,12 @@ export class AonDocumental extends AonElement {
       d.clear();
   		if(!this.isMobile()) d.width = '400px';
   		d.setTitle(MSG.EDIT_CATEGORY);
-  		d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.CATEGORY}"> </aon-input>`);
+      let input = new AonInput();
+      input.id = "aonDocumentalAddCategory";
+      input.description = MSG.CATEGORY;
+      if(category.name) input.value = category.name;
+  		d.setContent(input);
   		d.addAcceptAction(() => {
-        let input = this.getElement('aonDocumentalAddCategory');
         if(!input.value.isEmpty()){
           category.name = input.value;
           editCategory(category).then(() => {
@@ -313,9 +317,11 @@ export class AonDocumental extends AonElement {
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.ADD_TAG);
-      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.TAG}"> </aon-input>`);
+      let input = new AonInput();
+      input.id = "aonDocumentalAddTag";
+      input.description = MSG.TAG;
+      d.setContent(input);
       d.addAcceptAction(() => {
-        let input = this.getElement('aonDocumentalAddTag');
         if(!input.value.isEmpty()){
           createTag({name: input.value}).then(() => {
             this.loadTags();
@@ -329,10 +335,13 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
+      let input = new AonInput();
+      input.id = "aonDocumentalAddTag";
+      input.description = MSG.TAG;
+      if(tag.name) input.value = tag.name;
+      d.setContent(input);
       d.setTitle(MSG.EDIT_TAG);
-      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.TAG}"> </aon-input>`);
       d.addAcceptAction(() => {
-        let input = this.getElement('aonDocumentalAddTag');
         if(!input.value.isEmpty()){
           tag.name = input.value;
           editTag(tag).then(() => {
@@ -384,9 +393,7 @@ export class AonDocumental extends AonElement {
   	}
 
     aonDocumentById(id) {
-      getDocument(id)
-        .then(doc => this.aonDocument(doc))
-        .catch(error =>this.showToast(error));
+      getDocument(id).then(doc => this.aonDocument(doc)).catch(error =>this.showToast(error));
     }
 
     aonDocument(doc) {
@@ -506,15 +513,7 @@ export class AonDocumental extends AonElement {
       let tdType = document.createElement('td');
       tdType.setAttribute('colspan', '1');
       let selType = new AonSelect();
-      selType.id = "aonDocumentalUploadType";
-      selType.title = MSG.TYPE;
-
-      let typeOptions = EMPLOYEE_TYPE_OPTION;
-      if(this.getDur().isDocumentalManager()) {
-        typeOptions = ASESOR_TYPE_OPTION;
-      } else if(this.getDur().isDocumentalPortal()){
-        typeOptions = ENTERPRISE_TYPE_OPTION;
-      }
+      selType.id = "aonDocumentalUploadType";AonInput
       selType.setOptions(typeOptions);
 
       tdType.appendChild(selType);
@@ -548,16 +547,16 @@ export class AonDocumental extends AonElement {
     // }
 
     async attach(reader, d){
-        const data = {
-          ...reader,
-          contentName: reader.name,
-          contentSize: reader.size,
-          category: d.category,
-          tag: d.tag,
-          scope: d.scope,
-          type: d.type
-        };
-        await uploadFileDocumental(data).then(() =>  this.aonDocumentalList()).catch(e=>null);
+      const data = {
+        ...reader,
+        contentName: reader.name,
+        contentSize: reader.size,
+        category: d.category,
+        tag: d.tag,
+        scope: d.scope,
+        type: d.type
+      };
+      await uploadFileDocumental(data).then(() =>  this.aonDocumentalList()).catch(e=>null);
     }
 }
 window.customElements.define('aon-documental', AonDocumental);
