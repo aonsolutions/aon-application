@@ -118,7 +118,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		checkAuthorization(req, resp, api);
+		checkAuthorization(api);
 		return api;
 	}
 	
@@ -235,11 +235,11 @@ public class AonApiHttpServlet extends HttpServlet{
 	    return jsonObj;
 	}
 	
-	private void checkAuthorization(HttpServletRequest req, HttpServletResponse resp, AonApiData api) {		
+	private void checkAuthorization(AonApiData api) {		
 		boolean okUser = api.getUser() != null && !api.getUser().isEmpty() && (api.getUser().getDomain().equals(api.getDomain().getId()) 
 				|| api.getUser().getDomain().equals(api.getDomain().getParentId())); 
 		if(AonStringUtils.isBlank(api.getToken()) || api.getUser() == null || !okUser) {
-			error(req, resp, new AonApiException(AonApiError.UNAUTHORIZED.getMessage()));
+			throw new AonApiException(AonApiError.UNAUTHORIZED.getMessage());
 		}
 	}
 }
