@@ -436,6 +436,17 @@ public class Model303 extends MainEntryPoint {
 				return new Model303BIZKAIA2017(mod303,cbk);
 			}
 		},
+		GIPUZKOA_2022 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && mod303.getYear() > 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303GIPUZKOA2022(mod303,cbk);
+			}
+		},
 		GIPUZKOA_2017 {
 			@Override
 			public boolean accept(Mod303 mod303) {
@@ -451,8 +462,7 @@ public class Model303 extends MainEntryPoint {
 		GIPUZKOA_2021_LAST_SEMESTER {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isGipuzkoa() && ((mod303.getYear() > 2021)
-					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())));
+				return (mod303.isGipuzkoa() && mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
 			}
 
 			@Override

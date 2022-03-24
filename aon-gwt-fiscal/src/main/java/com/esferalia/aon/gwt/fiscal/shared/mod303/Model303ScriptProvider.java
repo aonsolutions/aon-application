@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.shared.mod303;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017PrintAEATScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017PrintGIPUZKOAScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021PrintAEATScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021_2PrintAEATScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;

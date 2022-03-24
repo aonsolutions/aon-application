@@ -5,9 +5,9 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017GIPUZKOARScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017GipuzkoaResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021GIPUZKOAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GipuzkoaResultScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-class Model303GIPUZKOA2021 extends Model303Base {
+class Model303GIPUZKOA2022 extends Model303Base {
 	
-	protected Model303GIPUZKOA2021(Mod303 mod303,Model303Callback callback) {
+	protected Model303GIPUZKOA2022(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -83,7 +83,7 @@ class Model303GIPUZKOA2021 extends Model303Base {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3032017GIPUZKOARScript1.values(),8);
+		paintDeclaration(table,Model3032022GIPUZKOARScript1.values(),8);
 		container.add(table);
 		generalRegimeScrollPanel.setWidget(container);
 		tabPanel.add(generalRegimeScrollPanel, AON.MSG.generalRegime());
@@ -104,7 +104,7 @@ class Model303GIPUZKOA2021 extends Model303Base {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
-		paintDeclaration(table,Model3032017GipuzkoaResultScript.values(),3);
+		paintDeclaration(table,Model3032022GipuzkoaResultScript.values(),3);
 	}
 
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
@@ -128,7 +128,7 @@ class Model303GIPUZKOA2021 extends Model303Base {
 		
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
-		paintDeclaration(table,Model3032021GIPUZKOAAdditionalDataScript.values(),3);
+		paintDeclaration(table,Model3032022GIPUZKOAAdditionalDataScript.values(),3);
 	}
 	
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
@@ -142,7 +142,7 @@ class Model303GIPUZKOA2021 extends Model303Base {
 
 					@Override
 					public Mod303 getModel() {
-						return Model303GIPUZKOA2021.this.getModel();
+						return Model303GIPUZKOA2022.this.getModel();
 					}
 
 					@Override

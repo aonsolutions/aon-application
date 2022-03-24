@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod303;
+package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
