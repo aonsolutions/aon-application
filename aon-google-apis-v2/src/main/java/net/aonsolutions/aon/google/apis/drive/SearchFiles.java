@@ -204,9 +204,6 @@ public class SearchFiles {
 	public static InputStream downloadByNameAndParentAndNotTrashed(Drive drive, String name, String parent) {
 		
 		final FileList list = searchByNameAndParentNotThrashed(drive, name, parent);
-		System.out.println("NAME REQUESTED: " + name);
-		System.out.println("PARENT REQUESTED: " + parent);
-		System.out.println("FILES MATCHING: " + list);
 		if(list.getFiles().size() == 0) {
 			return null;
 		}
@@ -266,4 +263,28 @@ public class SearchFiles {
 		
 		return null;
 	}
+	
+	
+	
+	/**
+	 * -----------------------------------------------------------------
+	 *  SMART SEARCH
+	 * -----------------------------------------------------------------
+	 */
+	
+	public static FileList searchVideoMatchingName(Drive drive, String searcher) {
+		FileList fl = new FileList();
+		try {
+			System.out.println("[SearchFiles] Searching video containing '" + searcher + "' in name");
+			fl = drive.files().list().setQ("name contains '" + searcher + "' and mimeType contains 'mp4' ").execute();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("[SearchFiles] Found 0 videos.");
+		}
+		
+		return fl;
+	}
+	
+	
 }

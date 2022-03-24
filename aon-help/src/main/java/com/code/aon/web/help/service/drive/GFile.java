@@ -68,6 +68,9 @@ public class GFile implements Serializable{
 		if(file == null)
 			return null;
 		
+		
+
+		
 		builder.setId(file.getId())
 			.setName(file.getName())
 			.setType(MimeTypes.valueOfMime(file.getMimeType()))

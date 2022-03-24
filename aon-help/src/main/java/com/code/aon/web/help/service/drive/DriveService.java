@@ -120,7 +120,7 @@ public class DriveService {
 		
 		
 		final FileList files = SearchFiles.searchByNameAndParentNotThrashed(connection, name, parent != null? parent: BASE_ID);		
-		if(files.size() == 0) {
+		if(files == null || files.size() == 0) {
 			return Optional.empty();
 		}
 		
@@ -144,6 +144,27 @@ public class DriveService {
 
 		
 		return file;
+	}
+	
+	
+	public static LinkedList<GFile> searchVideoMatching(Drive connection, String name) {
+		
+		LinkedList<GFile> results = new LinkedList<GFile>();
+		
+		if(name == null) 
+			return results;
+		
+		FileList fl = SearchFiles.searchVideoMatchingName(connection, name);
+		if(fl.getFiles() == null || fl.getFiles().size() == 0) {
+			return results;
+		}
+		
+		fl.getFiles().forEach(file -> {
+			results.add(GFile.from(file));
+		});
+		
+		
+		return results;
 	}
 	
 	
