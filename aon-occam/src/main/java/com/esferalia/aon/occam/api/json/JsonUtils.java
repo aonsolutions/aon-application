@@ -34,6 +34,10 @@ public class JsonUtils {
 		return json != null ? json.optString(key,null) : null;
 	}
 	
+	public static String getString(JSONObject json, String key, String defaultValue ) {
+		return json != null ? json.optString(key, defaultValue) : defaultValue;
+	}
+	
 	public static String optString(JSONObject json, String key ) {
 		return json != null ? json.optString(key, "") : "";
 	}

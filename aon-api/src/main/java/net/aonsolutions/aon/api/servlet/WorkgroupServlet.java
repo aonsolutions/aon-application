@@ -31,7 +31,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API LOCATION SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, getWorkgroups(api));
@@ -48,7 +48,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API LOCATION SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, saveWorkgroup(api));
@@ -65,7 +65,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API LOCATION SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, deleteWorkgroup(api));
@@ -80,7 +80,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 
 	private Object getWorkgroups(AonApiData api) {
 		Domain domain = api.getDomain();
-		Integer taskHolder = api.getParams().optInt(IJsonNames.TASK_HOLDER);
+		Integer taskHolder = api.getData().optInt(IJsonNames.TASK_HOLDER);
 		
 		Stream<Workgroup> workgroupStream = taskHolder > 0 
 				? 
@@ -107,7 +107,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	
 	private Filter workgroupFilter(AonApiData api, WorkgroupProperties f) {
 		Domain domain = api.getDomain();
-		String status  = api.getParams().optString("status");
+		String status  = api.getData().optString("status");
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		if(!status.isEmpty()) 
 			filter = filter.and( f.getStatusProperty().eq( WorkgroupStatus.safeValueOf(status).value() ) );

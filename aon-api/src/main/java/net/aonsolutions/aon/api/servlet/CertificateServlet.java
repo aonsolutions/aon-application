@@ -31,7 +31,7 @@ public class CertificateServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			LOGGER.info("[GET] /ms/api/cert/ - Cetificate Servlet");
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			response(req, resp, getCertificates(api));
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -67,8 +67,8 @@ public class CertificateServlet extends AonApiHttpServlet {
 		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
 		
 		
-		if(api.getParams().opt(IJsonNames.TYPE) != null) {
-			String type = JsonUtils.getString(api.getParams(), IJsonNames.TYPE);
+		if(api.getData().opt(IJsonNames.TYPE) != null) {
+			String type = JsonUtils.getString(api.getData(), IJsonNames.TYPE);
 			CertificateType certificateType = CertificateType.safeValueOf(type);
 			if(certificateType != null)
 				filter = filter.and(f.getTypeProperty().eq(certificateType.name()).or(f.getTypeProperty().isNull()));

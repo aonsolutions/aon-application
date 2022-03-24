@@ -58,7 +58,7 @@ public class TaskUtils {
 	private static final String URL_BASE = "https://aon.solutions";
 	  
 	public static Filter taskFilter(AonApiData api, TaskProperties f, Domain domain, Customer customer) {
-		JSONObject params = api.getParams();
+		JSONObject params = api.getData();
 		String email  = params.optString(IJsonNames.EMAIL);
 		String search = params.optString(IJsonNames.SEARCH);
 		String status = params.optString(IJsonNames.STATUS);
@@ -140,7 +140,7 @@ public class TaskUtils {
 	}
 	
 	public static Filter taskFilterStatusCount(TaskProperties f, AonApiData api, Domain domain, Customer customer) {
-		JSONObject params = api.getParams();
+		JSONObject params = api.getData();
 
 		String source = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
@@ -171,7 +171,7 @@ public class TaskUtils {
 	
 	public static Filter taskFilterCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
 		
-		Integer taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getParams(), IJsonNames.TASK_HOLDER);
+		Integer taskHolder = api.getData().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getData(), IJsonNames.TASK_HOLDER);
 
 		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
 		
@@ -179,7 +179,7 @@ public class TaskUtils {
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 		
 		if( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) 
-			filter = filter.and( f.getGtaskIdProperty().eq(api.getParams().optString(IJsonNames.EMAIL)) );
+			filter = filter.and( f.getGtaskIdProperty().eq(api.getData().optString(IJsonNames.EMAIL)) );
 			
 		return filter;
 	}

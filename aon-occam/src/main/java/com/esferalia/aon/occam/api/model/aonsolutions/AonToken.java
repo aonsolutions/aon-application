@@ -28,7 +28,8 @@ public class AonToken implements Serializable{
 	private String schemaFirstDomain;
 	private String uuid;
 	private byte[] auth;
-
+	private boolean expired;
+	
 	public String getSchema() {
 		return schema;
 	}
@@ -65,6 +66,15 @@ public class AonToken implements Serializable{
 		return this;
 	}
 
+	public boolean isExpired() {
+		return expired;
+	}
+	
+	public AonToken setExpired(boolean expired) {
+		this.expired = expired;
+		return this;
+	}
+	
 	public JSONObject toJson() {
 		return new JSONObject()
 				.put(SCHEMA, getSchema())
@@ -80,7 +90,8 @@ public class AonToken implements Serializable{
 		return new AonToken()
 				.setSchema(JsonUtils.getString(json, SCHEMA))
 				.setUuid(json.getString(UUID))
-				.setSchemaFirstDomain(json.getString(SCHEMA_FIRST_DOMAIN));
+				.setSchemaFirstDomain(json.getString(SCHEMA_FIRST_DOMAIN))
+				.setExpired(json.getBoolean("expired"));
 	}
 	
 	public static String build(Auth auth, Date expireDate) {
