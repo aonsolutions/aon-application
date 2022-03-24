@@ -19,6 +19,7 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -207,7 +208,7 @@ public class DocumentalServlet extends HttpServlet{
 
 	private JSONObject updateAttachJSON(Domain domain, String login, Integer id, JSONObject json) {
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY, true);
-		attach.setDescription(json.getString("name"));
+		attach.setDescription(json.getString(IJsonNames.NAME));
 		try {
 			attach.setConfidential(json.optBoolean("confidential"));
 		}catch (Exception e) {
@@ -342,7 +343,7 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONObject createCategory(Domain domain, String login, JSONObject json) {
-		Category category = new Category().setName(json.getString("name"))
+		Category category = new Category().setName(json.getString(IJsonNames.NAME))
 				.setType(CategoryType.REGISTRY_ATTACHMENT.value())
 				.setDomain(domain.getId());
 		
@@ -352,7 +353,7 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONObject editCategory(Domain domain, String login, Integer catId, JSONObject json) {
 		Category cat = AON.getCategory(domain.getName(), domain.getId(), login, catId);
-		cat.setName(json.getString("name"));
+		cat.setName(json.getString(IJsonNames.NAME));
 		AON.updateCategory(domain.getName(), domain.getId(), login, cat);
 		return ToJSON.categoryToJSON(cat);
 	}
@@ -379,7 +380,7 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONObject createTag(Domain domain, String login, JSONObject json) {
-		Tag tag = new Tag().setName(json.getString("name"))
+		Tag tag = new Tag().setName(json.getString(IJsonNames.NAME))
 				.setType(TagType.RATTACH.value())
 				.setDomain(domain.getId());
 		
@@ -389,7 +390,7 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONObject editTag(Domain domain, String login, Integer tagId, JSONObject json) {
 		Tag tag = AON.getTag(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(tagId));
-		tag.setName(json.getString("name"));
+		tag.setName(json.getString(IJsonNames.NAME));
 		AON.updateTag(domain.getName(), domain.getId(), login, tag);
 		return ToJSON.tagToJSON(tag);
 	}

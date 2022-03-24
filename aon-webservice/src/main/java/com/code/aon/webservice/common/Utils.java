@@ -118,7 +118,7 @@ public class Utils {
 	}
 	
 	public static JSONObject getRequestJSON(HttpServletRequest req){
-		String line = MSG.EMPTY;
+		String line = "";
 		StringBuilder bld = new StringBuilder();
 		try {
 			while((line = req.getReader().readLine()) != null){
@@ -127,8 +127,8 @@ public class Utils {
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-		String s = checkString(bld.toString());
-		if(s == null || MSG.EMPTY.equals(s)){
+		String s = bld.toString();
+		if(s == null || s.isBlank()){
 			s = "{}";
 		}
 		return new JSONObject(s);

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,8 +9,12 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class TagJSON {
+
+	private TagJSON() {
+	   throw new IllegalStateException("Utility class");
+	}
 	
-	public static LinkedList<Tag> fromJSON(JSONArray json) {
+	public static List<Tag> fromJSON(JSONArray json) {
 		LinkedList<Tag> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
