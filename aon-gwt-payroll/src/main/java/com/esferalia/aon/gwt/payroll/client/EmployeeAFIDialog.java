@@ -16,7 +16,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
 import com.esferalia.aon.gwt.payroll.shared.SettleReason;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Occupation;
@@ -24,10 +23,12 @@ import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -52,8 +53,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	// ------------------------------------------------- UIBinder
 
-	interface EmployeeAFIDialogUIBinder extends UiBinder<Widget, EmployeeAFIDialog> {
-	}
+	interface EmployeeAFIDialogUIBinder extends UiBinder<Widget, EmployeeAFIDialog> {}
 
 	private static final EmployeeAFIDialogUIBinder binder = GWT.create(EmployeeAFIDialogUIBinder.class);
 
@@ -78,25 +78,15 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		String datePickerPanel();
 
 		String moreButton();
+		
+		String sendBtn();
 	}
+	
+	@UiField
+	ListBox afiTypeLB;
 
 	@UiField
 	DeckPanel deckPanel;
-
-	@UiField
-	Label startContractLabel;
-
-	@UiField
-	Button startContractTB;
-
-	@UiField
-	Label endContractLabel;
-
-	@UiField
-	Button endContractTB;
-
-	@UiField
-	Label settleReasonL;
 
 	@UiField
 	ListBox settleReasonLB;
@@ -118,15 +108,12 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	@UiField
 	DoubleBox partialityCoef;
+	
+	@UiField
+	HTMLPanel afiFilePanel;
 
 	@UiField
 	Button generationAFITB;
-
-	@UiField
-	HTMLPanel notifyPanel;
-
-	@UiField
-	Button notifyMovTB;
 
 	@UiField
 	HTMLPanel buttonsPanel;
@@ -146,10 +133,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private Integer domainId;
 	private Integer workplaceId;
 
-	private Date currentStartDateM60;
-	private Date currentEndDateM60;
-	private Date currentEndDateP3;
-
 	private String tc2Original;
 	private String quoteGroupOriginal;
 	private String ocupationOriginal;
@@ -159,38 +142,39 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private AFIChanges afiChangesMap;
 
 	private Button acceptBtnDialog;
-
-	private boolean isAlta = false;
-	private boolean isBaja = false;
 	
 	private Date selectedDate;
+	
+	private boolean isComunication = false;
 
 	// ------------------------------------------------- Constructor
 
-	protected EmployeeAFIDialog(Date startDate, Date endDate, String tc2, String quoteGroup, String ocupation,
-			Double partialityCoef, Integer contractId, Integer domainId, Integer workplaceId, boolean afiEnd) {
+	protected EmployeeAFIDialog(Date contractStartDate, String tc2, String quoteGroup, String ocupation, Double partialityCoef, 
+			Integer contractId, Integer domainId, Integer workplaceId, boolean isComunication) {
 
-		setCaption("Datos AFI");
+		setCaption(isComunication ? "Notificaci\u00f3n TGSS (AFI)" : "Datos AFI");
 
 		setWidget(binder.createAndBindUi(this));
+		
+		this.isComunication = isComunication;
+		this.contractStartDate = contractStartDate;
 
 		getButtonsPanel();
 		initToggleButtons();
+		
+		afiFilePanel.setVisible(!isComunication);
 
 		this.contractType = new ContractType();
 		this.settleReason = new SettleReason();
 
-		tc2Original = tc2;
-		quoteGroupOriginal = quoteGroup;
-		ocupationOriginal = ocupation;
-		partialityCoefOriginal = partialityCoef;
+		this.tc2Original = tc2;
+		this.quoteGroupOriginal = quoteGroup;
+		this.ocupationOriginal = ocupation;
+		this.partialityCoefOriginal = partialityCoef;
 
 		this.contractId = contractId;
 		this.domainId = domainId;
 		this.workplaceId = workplaceId;
-
-		checkStartEndContractAFI(startDate, endDate);
-		isBaja = afiEnd;
 
 		impl.getEmployeeAFIChanges(contractId, new AsyncCallback<AFIChanges>() {
 
@@ -201,39 +185,12 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 			@Override
 			public void onSuccess(AFIChanges afiChanges) {
-				impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+				afiChangesMap = afiChanges;
+				dateList = new ArrayList<>();
+				dateList.addAll(afiChangesMap.getAFIChanges().keySet());
 
-					@Override
-					public void onSuccess(DomainUserRoles userRoles) {
-						afiChangesMap = afiChanges;
-						dateList = new ArrayList<>();
-						dateList.addAll(afiChangesMap.getAFIChanges().keySet());
-
-						initView();
-
-						acceptBtnDialog.setEnabled(true);
-						generationAFITB.setEnabled(true);
-
-						if (isBaja)
-							showBaja();
-						else if (isAlta)
-							showAlta();
-						else
-							showMovs();
-
-						showDialog();
-
-						if (Boolean.FALSE.equals(userRoles.isComunica()))
-							notifyPanel.getElement().getStyle().setDisplay(Display.NONE);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						// Nothing to do here
-					}
-
-				});
-
+				initView();
+				showDialog();
 			}
 		});
 
@@ -245,51 +202,6 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	private void initToggleButtons() {
 		getEnableDisableButton(generationAFITB, false);
-		getEnableDisableButton(notifyMovTB, false);
-		getEnableDisableButton(startContractTB, false);
-		getEnableDisableButton(endContractTB, false);
-	}
-
-	private void checkStartEndContractAFI(Date startDate, Date endDate) {
-		contractStartDate = new Date();
-		contractStartDate = DateUtils.copyDateOnly(startDate);
-		DateUtils.resetTime(contractStartDate);
-
-		Date currentDate = new Date();
-		DateUtils.resetTime(currentDate);
-		Date currentDateP3 = DateUtils.copyDateOnly(currentDate);
-		DateUtils.addDays2Date(currentDateP3, 3);
-
-		if (null != startDate) {
-			currentStartDateM60 = DateUtils.copyDateOnly(startDate);
-			currentStartDateM60 = DateUtils.addDays2Date(currentStartDateM60, -60);
-		}
-
-		if (null != endDate) {
-			currentEndDateM60 = DateUtils.copyDateOnly(endDate);
-			currentEndDateM60 = DateUtils.addDays2Date(currentEndDateM60, -60);
-			currentEndDateP3 = DateUtils.copyDateOnly(endDate);
-			currentEndDateP3 = DateUtils.addDays2Date(currentEndDateP3, 3);
-		}
-
-		isAlta = null == startDate || ((currentDate.before(startDate) || currentDate.equals(startDate))
-				&& (currentDate.after(currentStartDateM60) || currentDate.equals(currentStartDateM60)));
-		isBaja = null != endDate && ((currentDate.before(currentEndDateP3) || currentDate.equals(currentEndDateP3))
-				&& (currentDate.after(currentEndDateM60) || currentDate.equals(currentEndDateM60)));
-
-		if (!isBaja)
-			hideSettleReason();
-
-	}
-
-	private void hideSettleReason() {
-		settleReasonL.getElement().getStyle().setDisplay(Display.NONE);
-		settleReasonLB.getElement().getStyle().setDisplay(Display.NONE);
-	}
-
-	private void showSettleReason() {
-		settleReasonL.getElement().getStyle().clearDisplay();
-		settleReasonLB.getElement().getStyle().clearDisplay();
 	}
 
 	private void initView() {
@@ -300,6 +212,20 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	// ------------------------------------------------- Initialize View
 
 	private void initListBox() {
+		// AFI Type
+		this.afiTypeLB.clear();
+		this.afiTypeLB.addItem("ALTA", "ALTA");
+		this.afiTypeLB.addItem("MOVIMIENTOS CONTRATO", "MOV");
+		this.afiTypeLB.addItem("BAJA", "BAJA");
+		this.afiTypeLB.addChangeHandler(e -> {
+			String afiTypeValue = afiTypeLB.getSelectedValue();
+			if(AonStringUtils.equals(afiTypeValue, "ALTA")) showAlta();
+			else if(AonStringUtils.equals(afiTypeValue, "BAJA")) showBaja();
+			else if(AonStringUtils.equals(afiTypeValue, "MOV")) showMovs();
+		});
+		this.afiTypeLB.setSelectedIndex(1); // Movs by default
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), afiTypeLB);
+		
 		// Settle Reason
 		this.settleReasonLB.clear();
 		for (Entry<Integer, String> settleReasonEntry : this.settleReason.getSettleReasonEntries())
@@ -310,7 +236,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.tc2.clear();
 		this.tc2.addItem("-", "-1");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			this.tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(),
+			this.tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeShortDescription(),
 					AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));
 
 		// Quote Group
@@ -321,6 +247,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		Occupation.getOccupation().entrySet()
 				.forEach(entry -> this.ocupation.addItem(entry.getKey(), entry.getValue()));
 	}
+	
+	// ------------------------------------------------- Tabs AFI Movs
 
 	private void initTabs() {
 		tabsPanel.clear();
@@ -363,6 +291,23 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				initPeculiaritiesTable(dateAux);
 			}
 		}
+	}
+	
+	private void selectTab(String dateStr) {
+		putAllToggleButtonsUp();
+		
+		int selectedButton = getSelectedButtonIdx(dateStr);
+
+		// Add styles to clicked button
+		HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(selectedButton);
+		hPanel.addStyleName(style.tabSelected());
+		if (!contractStartDate.equals(selectedDate))
+			setWidgetVisible(hPanel.getWidget(1), true);
+		hPanel.getWidget(1).addStyleName(style.tabIconSelected());
+
+		// Get selected date
+		ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+		toggleButton.setDown(true);
 	}
 
 	private void clickButton(ToggleButton button) {
@@ -512,7 +457,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.partialityCoef.setValue(null);
 	}
 
-	// ------------------------------------------------- Peculariaties Table
+	// ------------------------------------------------- Table AFI Movs
 
 	private void initPeculiaritiesTable(Date date) {
 		unblockListbox();
@@ -605,51 +550,11 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	// ------------------------------------------------- UiHandlers
 
-	@UiHandler("startContractTB")
-	void onStartDateClick(ClickEvent event) {
-		Boolean oldValue = isActiveToggleButton(startContractTB);
-		Boolean value = !oldValue;
-		getEnableDisableButton(startContractTB, value);
-
-		if (hasChange())
-			generationAFITB.setEnabled(true);
-		else {
-			generationAFITB.setEnabled(false);
-			getEnableDisableButton(generationAFITB, false);
-		}
-	}
-
-	@UiHandler("endContractTB")
-	void onEndDateClick(ClickEvent event) {
-		Boolean oldValue = isActiveToggleButton(endContractTB);
-		Boolean value = !oldValue;
-		getEnableDisableButton(endContractTB, value);
-
-		if (Boolean.TRUE.equals(value))
-			showSettleReason();
-		else
-			hideSettleReason();
-
-		if (hasChange())
-			generationAFITB.setEnabled(true);
-		else {
-			generationAFITB.setEnabled(false);
-			getEnableDisableButton(generationAFITB, false);
-		}
-	}
-
 	@UiHandler("generationAFITB")
 	void onGenerationAFITBClick(ClickEvent event) {
 		Boolean oldValue = isActiveToggleButton(generationAFITB);
 		Boolean value = !oldValue;
 		getEnableDisableButton(generationAFITB, value);
-	}
-
-	@UiHandler("notifyMovTB")
-	void onNotifyMovTBClick(ClickEvent event) {
-		Boolean oldValue = isActiveToggleButton(notifyMovTB);
-		Boolean value = !oldValue;
-		getEnableDisableButton(notifyMovTB, value);
 	}
 
 	@UiHandler("tc2")
@@ -687,35 +592,18 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				null != value ? value.toString() : null);
 	}
 
-	// ------------------------------------------------- UiHandlers Methods
-
-	private void selectTab(String dateStr) {
-		putAllToggleButtonsUp();
-		
-		int selectedButton = getSelectedButtonIdx(dateStr);
-
-		// Add styles to clicked button
-		HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(selectedButton);
-		hPanel.addStyleName(style.tabSelected());
-		if (!contractStartDate.equals(selectedDate))
-			setWidgetVisible(hPanel.getWidget(1), true);
-		hPanel.getWidget(1).addStyleName(style.tabIconSelected());
-
-		// Get selected date
-		ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-		toggleButton.setDown(true);
-	}
-
 	// ------------------------------------------------- Check what to update
 
 	public boolean isStartContract() {
-		return isActiveToggleButton(startContractTB);
+		String afiTypeValue = this.afiTypeLB.getSelectedValue();
+		return AonStringUtils.equals(afiTypeValue, "ALTA");
 	}
 
 	public boolean isEndContract() {
-		return isActiveToggleButton(endContractTB);
+		String afiTypeValue = this.afiTypeLB.getSelectedValue();
+		return AonStringUtils.equals(afiTypeValue, "BAJA");
 	}
-
+	
 	public boolean isChangeContract() {
 //		Window.alert("onChangeContract : " + afiChangesMap.hasChange("TC2", tc2Original));
 		return afiChangesMap.hasChange("TC2", tc2Original);
@@ -733,32 +621,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	public boolean isPartialityCoefContract() {
 //		Window.alert("onPartialityCoefContract : " + afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString()));
-		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD",
-				partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString());
-	}
-
-	public boolean hasChange() {
-		boolean hasChange = false;
-		
-		if (isStartContract())
-			hasChange = true;
-
-		if (isEndContract())
-			hasChange = true;
-
-		if (!tc2.getSelectedValue().equals(tc2Original))
-			hasChange = true;
-
-		if (!quoteGroup.getSelectedValue().equals(quoteGroupOriginal))
-			hasChange = true;
-
-		if (!ocupation.getSelectedValue().equals(ocupationOriginal))
-			hasChange = true;
-
-		if (!partialityCoef.getValue().equals(partialityCoefOriginal))
-			hasChange = true;
-
-		return hasChange;
+		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString());
 	}
 
 	// ------------------------------------------------- ToggleButton
@@ -788,15 +651,17 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	private void showAlta() {
+		deckPanel.setVisible(false);
+	}
+	
+	private void showBaja() {
+		deckPanel.setVisible(true);
 		deckPanel.showWidget(0);
 	}
 
-	private void showBaja() {
-		deckPanel.showWidget(1);
-	}
-
 	private void showMovs() {
-		deckPanel.showWidget(2);
+		deckPanel.setVisible(true);
+		deckPanel.showWidget(1);
 	}
 
 	private void setWidgetVisible(Widget widget, boolean visible) {
@@ -827,44 +692,45 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		buttonsPanel.add(closeBtnDialog);
 
 		acceptBtnDialog = new Button();
-		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText(AON.MSG.accept());
+		acceptBtnDialog.setStyleName(this.isComunication ? AON.CSS.aonIconSend() : AON.CSS.aonOkButtonSmall());
+		if(this.isComunication) acceptBtnDialog.addStyleName(style.sendBtn());
+		acceptBtnDialog.setText(this.isComunication ? "Guardar y comunicar" : AON.MSG.accept());
 		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
 
 		buttonsPanel.add(acceptBtnDialog);
 	}
 
 	private void onAcceptDialog() {
-		onAccept();
-		hide();
-		
-		if (isActiveToggleButton(notifyMovTB)) {
-			if (isStartContract())
-				onStartContract();
-			if (isEndContract())
-				onEndContract(settleReasonLB.getSelectedValue());
-			if (isChangeContract())
-				onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeDate());
-			if (isQuoteContract())
-				onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"), afiChangesMap.getChangeDate());
-			if (isOcupationContract())
-				onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"), afiChangesMap.getChangeDate());
-			if (isPartialityCoefContract())
-				onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"),
-						afiChangesMap.getChangeDate());
-		}
-
-		// Solo recargar la informacion del empleado si la fecha de modificacion es
-		// anterior o igual al dia actual
-		if (DateUtils.isBeforeOrEquals(afiChangesMap.getChangeDate(), new Date()))
-			onAcceptCB();
+		onAccept(s -> {
+			hide();
+			
+			if (isComunication) {
+				if (isStartContract())
+					onStartContract();
+				if (isEndContract())
+					onEndContract(settleReasonLB.getSelectedValue());
+				if (isChangeContract())
+					onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeDate());
+				if (isQuoteContract())
+					onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"), afiChangesMap.getChangeDate());
+				if (isOcupationContract())
+					onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"), afiChangesMap.getChangeDate());
+				if (isPartialityCoefContract())
+					onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
+			}
+			
+			// Solo recargar la informacion del empleado si la fecha de modificacion es
+			// anterior o igual al dia actual
+			if (DateUtils.isBeforeOrEquals(afiChangesMap.getChangeDate(), new Date()))
+				onAcceptCB();
+		});
 	}
 
-	private void onAccept() {
+	private void onAccept(Consumer<Void> success) {
 		saveAFIChanges(
 			s -> {
-				if (isGenerationAFI()) {
-	
+				if (!isComunication && isGenerationAFI()) {
+					
 					String fileDownloadURL = GWT.getModuleBaseURL() + "employee_afi/" + "?domainId=" + domainId
 							+ "&contractId=" + contractId + "&workplaceId=" + workplaceId + "&isStartContract="
 							+ (isStartContract() ? 1 : 0) + "&isEndContract=" + (isEndContract() ? 1 : 0)
@@ -874,6 +740,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	
 					Window.open(fileDownloadURL, "_blank", null);
 				}
+				
+				success.accept(null);
 			}, 
 			f -> {});
 	}
