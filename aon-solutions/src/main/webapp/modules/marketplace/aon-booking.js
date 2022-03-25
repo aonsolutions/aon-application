@@ -184,7 +184,10 @@ export class AonBooking extends AonElement {
 			contract.checked = contratado;
 			buttons.appendChild(contract);
 
-			if(this.isDisabled(dur, app.app.toUpperCase()) ||  app.disabled){
+			if(this.hasParentApp(dur, app.app.toUpperCase())) {
+				contract.style.display = 'none';
+				parentContract.style.display = 'block';
+			} else if(this.isDisabled(dur, app.app.toUpperCase()) ||  app.disabled){
 				contract.style.display = 'none';
 				let pack = this.getPack(dur, app.app.toUpperCase());
 				if(pack) {
@@ -204,11 +207,7 @@ export class AonBooking extends AonElement {
 				this.activate(app, contract.isChecked(), false);
 			});
 
-			if(this.hasParentApp(dur, app.app.toUpperCase())) {
-				contract.style.display = 'none';
-				parentContract.style.display = 'block';
 
-			}
 
 			if(!app.domainType)
 				span.appendChild(buttons);
