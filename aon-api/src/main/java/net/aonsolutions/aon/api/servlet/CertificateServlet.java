@@ -31,7 +31,7 @@ public class CertificateServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			LOGGER.info("[GET] /ms/api/cert/ - Cetificate Servlet");
-			AonApiData api = initialize(req);
+			AonApiData api = initialize(req, false);
 			response(req, resp, getCertificates(api));
 		} catch (Exception e) {
 			error(req, resp, e);

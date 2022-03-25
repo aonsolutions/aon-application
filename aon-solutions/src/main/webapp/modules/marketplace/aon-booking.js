@@ -159,6 +159,7 @@ export class AonBooking extends AonElement {
 			}
 
 			let buttons = document.createElement('span');
+			buttons.id = this.APP + app.app + 'Buttons';
 			buttons.style.position = 'absolute';
 			buttons.style.right = '10px';
 			buttons.style.top = '20px';
@@ -171,28 +172,44 @@ export class AonBooking extends AonElement {
 			buttons.appendChild(price);
 
 			let parentContract = document.createElement('span');
-			parentContract.id = this.APP + app.app + '';
+			parentContract.id = this.APP + app.app + 'ParentContract';
 			parentContract.style.color = '#002469';
 			parentContract.style.opacity = '0.5';
 			parentContract.innerHTML = 'Contratado en el entorno';
-			
+			parentContract.style.display = 'none';
+			buttons.appendChild(parentContract);
+
 			let contract = new AonSwitch();
 			contract.id = this.APP + app.app + 'Contract';
 			contract.checked = contratado;
+			buttons.appendChild(contract);
 
-			if(this.isDisabled(dur, app.app.toUpperCase()) || this.hasParentApp(dur, app.app.toUpperCase()) || app.disabled){
-				contract.disabled = true;
+			if(this.isDisabled(dur, app.app.toUpperCase()) ||  app.disabled){
+				contract.style.display = 'none';
+				let pack = this.getPack(dur, app.app.toUpperCase());
+				if(pack) {
+					let message = document.createElement('span');
+					message.id = this.APP + app.app + 'Text';
+					message.style.color = '#002469';
+					message.style.opacity = '0.5';
+					buttons.appendChild(message);
+					message.innerHTML = 'Incluido en ' + pack.title;
+					message.style.display = 'block';
+				}
 			}
 
 			contract.addEventListener(EVENT.CHANGE, (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				this.activate(app, contract.checked, false);
+				this.activate(app, contract.isChecked(), false);
 			});
 
 			if(this.hasParentApp(dur, app.app.toUpperCase())) {
-				buttons.appendChild(parentContract);
-			} else buttons.appendChild(contract);
+				contract.style.display = 'none';
+				parentContract.style.display = 'block';
+
+			}
+
 			if(!app.domainType)
 				span.appendChild(buttons);
 			li.appendChild(span);
@@ -200,7 +217,7 @@ export class AonBooking extends AonElement {
 		}
 	}
 
-	activate(app, contract, disabled){
+	activate(app, contract, disabled, text){
 		let contractIcon = this.getElement(this.APP + app.app + 'Icon');
 		if(contractIcon)
 			contractIcon.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
@@ -217,21 +234,48 @@ export class AonBooking extends AonElement {
 			});
 		}
 		if(contractSwitch) {
-			console.log(contract);
-			console.log(disabled);
-			console.log(app.disabled);
-			contractSwitch.disabled = (contract && disabled) || app.disabled;
+			console.log(app.app + contract);
+			console.log(app.app + disabled);
+			console.log(app.app + app.disabled);
+			console.log(app.app + (contract && disabled));
+			
+			if((contract && disabled)){
+				contractSwitch.style.display = 'none';
+				if(text) {
+					let message = this.getElement(this.APP + app.app + 'Text');
+					if(!message) {
+						message = document.createElement('span');
+						message.id = this.APP + app.app + 'Text';
+						message.style.color = '#002469';
+						message.style.opacity = '0.5';
+						this.getElement(this.APP + app.app + 'Buttons').appendChild(message);
+					}
+					message.innerHTML = text;
+					message.style.display = 'block';
+				}
+			} else {
+				contractSwitch.style.display = 'block';
+				let message = this.getElement(this.APP + app.app + 'Text');
+				if(message) {
+					message.style.display = 'none';
+				}
+			}
+
+			if(app.disabled) {
+				contractSwitch.style.display = 'none';
+			}
+
 		}
 
 		if(app.app === 'pack_suite') {
-			this.activate(Packs.PORTAL, contract, true);
-			this.activate(Packs.PAYROLL, contract, true);
-			this.activate(Packs.FISCAL_ACCOUNTING, contract, true);
+			this.activate(Packs.PORTAL, contract, contract, 'Incluido en ' + app.title);
+			this.activate(Packs.PAYROLL, contract, contract, 'Incluido en ' + app.title);
+			this.activate(Packs.FISCAL_ACCOUNTING, contract, contract, 'Incluido en ' + app.title);
 		}
 
 		if(app.apps && !disabled) {
 			for (let i = 0; i < app.apps.length ; i++) {
-				this.activate(app.apps[i], contract, true);
+				this.activate(app.apps[i], contract, contract, 'Incluido en ' + app.title);
 			}
 		}
 	}
@@ -392,6 +436,25 @@ export class AonBooking extends AonElement {
 			return dur.getDomain().isParent();
 		}
 		else return false;
+	}
+
+	getPack(dur, app){
+		if(dur.hasPackSuite() && (App.DOCUMENTAL === app || App.TIMECONTROL === app
+				|| App.INVOICE === app || App.MESSENGER === app || App.ACCOUNTING === app 
+				|| App.FISCAL === app) || App.PAYROLL === app || App.COMUNICA === app
+				|| App.PACK_PORTAL === app || App.PACK_FISCAL_ACCOUNTING === app
+				|| App.PACK_PAYROLL === app) {
+			return Packs.SUITE;
+		} else if(dur.hasPackFiscalAccounting() && (App.ACCOUNTING === app || App.FISCAL === app)){
+			return Packs.FISCAL_ACCOUNTING;
+		} else if(  dur.hasPackPortal() && (App.DOCUMENTAL === app || App.TIMECONTROL === app
+				|| App.INVOICE === app || App.MESSENGER === app)) {
+			return Packs.PORTAL;
+		} else if(  dur.hasPackPayroll() && (App.PAYROLL === app || App.COMUNICA === app
+				|| App.TIMECONTROL === app)) {
+			return Packs.PORTAL;
+		}
+		return undefined;
 	}
 }
 if(!window.customElements.get('aon-booking')){

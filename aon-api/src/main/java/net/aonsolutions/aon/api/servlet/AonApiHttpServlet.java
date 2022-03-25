@@ -242,10 +242,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	private void checkAuthorization(AonApiData api) {
-		boolean okUser = api.getUser() != null && !api.getUser().isEmpty();
-// TODO			&& (api.getUser().getDomain().equals(api.getDomain().getId()) 
-//				|| api.getUser().getDomain().equals(api.getDomain().getParentId())); 
-		if(AonStringUtils.isBlank(api.getToken()) || api.getUser() == null || !okUser) {
+		if(AonStringUtils.isBlank(api.getToken())) {
 			throw new AonApiException(AonApiError.UNAUTHORIZED.getMessage());
 		}
 	
