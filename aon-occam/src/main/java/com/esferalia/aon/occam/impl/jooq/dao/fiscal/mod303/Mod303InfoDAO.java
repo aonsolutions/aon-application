@@ -235,9 +235,6 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 	}
 	
 	private static String getComputeKey(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
-		if (keyDAO == null) {
-			System.out.println("NULL");
-		}
 		Mod303MVELContext mvelCtx = new Mod303MVELContext(mod303); 
 		mvelCtx.put("mod", mod303);
 		mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod303, Mod303::new).collect(Collectors.toCollection(LinkedList::new)));
@@ -253,7 +250,6 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 				}
 			}
 		}
-		System.out.println( buf.toString() );
 		return buf.toString();
 	}
 
