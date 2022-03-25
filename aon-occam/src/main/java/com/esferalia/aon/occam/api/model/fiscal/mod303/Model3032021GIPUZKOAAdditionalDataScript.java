@@ -61,7 +61,7 @@ public enum Model3032021GIPUZKOAAdditionalDataScript implements IModelScript<Mod
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -71,7 +71,7 @@ public enum Model3032021GIPUZKOAAdditionalDataScript implements IModelScript<Mod
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 	
 	@Override
 	public KeyTypes[] getKeyTypes() {

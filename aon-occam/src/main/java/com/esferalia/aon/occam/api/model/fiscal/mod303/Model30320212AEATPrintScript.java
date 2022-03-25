@@ -13,6 +13,7 @@ import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C08;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C09;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C10;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C11;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C110;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C12;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C13;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C14;
@@ -50,13 +51,15 @@ import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C45;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C46;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C59;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C60;
-import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C61;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C120;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C122;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C123;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C124;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C62;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C63;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C64;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C65;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C66;
-import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C67;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C68;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C69;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C70;
@@ -65,13 +68,15 @@ import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C74;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C75;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C76;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C77;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C78;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C87;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum Model3032017PrintAEATScript implements IModelScript<Mod303Key> {
+public enum Model30320212AEATPrintScript implements IModelScript<Mod303Key> {
 	
 	 DVG01 ("R\u00E9gimen general. IVA devengado"	,null,TITLE)
 	,DVG02 (null									,new Mod303Key[]{CT_C01	,CT_C02	,CT_C03})
@@ -109,19 +114,26 @@ public enum Model3032017PrintAEATScript implements IModelScript<Mod303Key> {
 	,RES003(getDescription(CT_C65)					,new Mod303Key[]{null	,null	,CT_C65})
 	,RES004(getDescription(CT_C66)					,new Mod303Key[]{null	,null	,CT_C66})
 	,RES005(getDescription(CT_C77)					,new Mod303Key[]{null	,null	,CT_C77})
-	,RES006(getDescription(CT_C67)					,new Mod303Key[]{null	,null	,CT_C67})
-	,RES007(getDescription(CT_C68)					,new Mod303Key[]{null	,null	,CT_C68})
-	,RES008(getDescription(CT_C69)					,new Mod303Key[]{null	,null	,CT_C69})
-	,RES009(getDescription(CT_C70)					,new Mod303Key[]{null	,null	,CT_C70})
-	,RES010(getDescription(CT_C71)					,new Mod303Key[]{null	,null	,CT_C71})
+	,RES006(getDescription(CT_C110)					,new Mod303Key[]{null	,null	,CT_C110})
+	,RES007(getDescription(CT_C78)					,new Mod303Key[]{null	,null	,CT_C78})
+	,RES008(getDescription(CT_C87)					,new Mod303Key[]{null	,null	,CT_C87})
+	,RES009(getDescription(CT_C68)					,new Mod303Key[]{null	,null	,CT_C68})
+	,RES010(getDescription(CT_C69)					,new Mod303Key[]{null	,null	,CT_C69})
+	,RES011(getDescription(CT_C70)					,new Mod303Key[]{null	,null	,CT_C70})
+	,RES012(getDescription(CT_C71)					,new Mod303Key[]{null	,null	,CT_C71})
 	
 	,EMPTY3(null									,null)
 	,ADC00 ("Informaci\u00F3n adicional"			,null,TITLE)
 	,ADC01 (getDescription(CT_C59)					,new Mod303Key[]{CT_C59	,null	,null})
 	,ADC02 (getDescription(CT_C60)					,new Mod303Key[]{CT_C60	,null	,null})
-	,ADC03 (getDescription(CT_C61)					,new Mod303Key[]{CT_C61	,null	,null})
-	,ADC10 ("Exclusivamente para aquellos sujetos pasivos acogidos al r\u00E9gimen especial" 
-			+ "del criterio de caja y para aqu\u00E9llos que sean destinatarios de operaciones" 
+	
+	,ADC03 (getDescription(CT_C120)					,new Mod303Key[]{CT_C120,null	,null})
+	,ADC04 (getDescription(CT_C122)					,new Mod303Key[]{CT_C122,null	,null})
+	,ADC05 (getDescription(CT_C123)					,new Mod303Key[]{CT_C123,null	,null})
+	,ADC06 (getDescription(CT_C124)					,new Mod303Key[]{CT_C124,null	,null})
+	
+	,ADC10 ("Exclusivamente para aquellos sujetos pasivos acogidos al r\u00E9gimen especial " 
+			+ "del criterio de caja y para aqu\u00E9llos que sean destinatarios de operaciones " 
 			+ "afectadas por el mismo:"				,null)
 	,ADC11 (getDescription(CT_C62)					,new Mod303Key[]{CT_C62	,null	,CT_C63})	
 	,ADC12 (getDescription(CT_C74)					,new Mod303Key[]{CT_C74	,null	,CT_C75})
@@ -132,7 +144,7 @@ public enum Model3032017PrintAEATScript implements IModelScript<Mod303Key> {
 	private Mod303Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model3032017PrintAEATScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model30320212AEATPrintScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;
@@ -161,7 +173,7 @@ public enum Model3032017PrintAEATScript implements IModelScript<Mod303Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -171,5 +183,5 @@ public enum Model3032017PrintAEATScript implements IModelScript<Mod303Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return (this == R01);
-	};
+	}
 }

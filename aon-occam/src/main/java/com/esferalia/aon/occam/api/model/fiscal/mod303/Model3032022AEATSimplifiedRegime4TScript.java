@@ -58,7 +58,7 @@ public enum Model3032022AEATSimplifiedRegime4TScript implements IModelScript<Mod
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -68,7 +68,7 @@ public enum Model3032022AEATSimplifiedRegime4TScript implements IModelScript<Mod
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 	
 	@Override
 	public int getFieldSize(Mod303Key key) {

@@ -1,12 +1,7 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod303;
+package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_IN_ACCRUAL_INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_OUT_ACCRUAL_INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.IN_ACCRUAL_INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.OUT_ACCRUAL_INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -20,15 +15,15 @@ public enum Model3032017BIZKAIASpecificOperationsScript implements IModelScript<
 			"destinatarios/as de operaciones afectadas por el mismo",null,TITLE)
 	,ADC01 ("Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el r\u00E9gimen "+ 
 			"especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida "+
-			"en el art\u00EDculo 75 NFIVA"		,new Mod303Key[]{Mod303Key.BZ_C200,Mod303Key.BZ_C201},OUT_ACCRUAL_INVOICE,DIFF_OUT_ACCRUAL_INVOICE)	
+			"en el art\u00EDculo 75 NFIVA"		,new Mod303Key[]{Mod303Key.BZ_C200,Mod303Key.BZ_C201},NONE)	
 	,ADC02 ("Importes de las adquisiciones de bienes y servicios a las que sea aplicable o afecte el r\u00E9gimen "+
-			"especial del criterio de caja"		,new Mod303Key[]{Mod303Key.BZ_C202,Mod303Key.BZ_C203},IN_ACCRUAL_INVOICE,DIFF_IN_ACCRUAL_INVOICE)
+			"especial del criterio de caja"		,new Mod303Key[]{Mod303Key.BZ_C202,Mod303Key.BZ_C203},NONE)
 	,OPE00 ("Operaciones espec\u00EDficas",null,TITLE)
-	,OPE01 (Mod303Key.BZ_C104.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C104},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},INVOICE,DIFF_INVOICE)
-	,OPE02 (Mod303Key.BZ_C105.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C105},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},INVOICE,DIFF_INVOICE)
-	,OPE03 (Mod303Key.BZ_C106.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C106},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},INVOICE,DIFF_INVOICE)
-	,OPE04 (Mod303Key.BZ_C107.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C107},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},INVOICE,DIFF_INVOICE)
-	,OPE05 (Mod303Key.BZ_C108.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C108},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},INVOICE,DIFF_INVOICE)
+	,OPE01 (Mod303Key.BZ_C104.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C104},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},NONE)
+	,OPE02 (Mod303Key.BZ_C105.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C105},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},NONE)
+	,OPE03 (Mod303Key.BZ_C106.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C106},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},NONE)
+	,OPE04 (Mod303Key.BZ_C107.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C107},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},NONE)
+	,OPE05 (Mod303Key.BZ_C108.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C108},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},NONE)
 	;
 	
 	private String label;
@@ -66,7 +61,7 @@ public enum Model3032017BIZKAIASpecificOperationsScript implements IModelScript<
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -76,7 +71,7 @@ public enum Model3032017BIZKAIASpecificOperationsScript implements IModelScript<
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 	
 	@Override
 	public KeyTypes[] getKeyTypes() {

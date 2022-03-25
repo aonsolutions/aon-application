@@ -9,20 +9,26 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
-public enum Model3032022GipuzkoaResultScript implements IModelScript<Mod303Key> {
+public enum Model3032022ARABAResultScript implements IModelScript<Mod303Key> {
 	 R000 ("Resultado",null,TITLE)
-	,R001 (Mod303Key.GP_C026.getDescription(),new Mod303Key[]{Mod303Key.GP_C026},COMPUTE)
-	,R002 (Mod303Key.GP_C027.getDescription(),new Mod303Key[]{Mod303Key.GP_C027},NONE)
-	,R003 (Mod303Key.GP_C028.getDescription(),new Mod303Key[]{Mod303Key.GP_C028},COMPUTE)
-	,R004 (Mod303Key.GP_C029.getDescription(),new Mod303Key[]{Mod303Key.GP_C029},COMPUTE_KEY)
-	,R005 (Mod303Key.GP_C035.getDescription(),new Mod303Key[]{Mod303Key.GP_C035},COMPUTE)
+	,R001 (Mod303Key.AR_C040.getDescription(),new Mod303Key[]{Mod303Key.AR_C040},NONE)
+	,R002 (Mod303Key.AR_C041.getDescription(),new Mod303Key[]{Mod303Key.AR_C041},NONE)
+	,R003 (Mod303Key.AR_C042.getDescription(),new Mod303Key[]{Mod303Key.AR_C042},NONE)
+	,R004 (Mod303Key.AR_C043.getDescription(),new Mod303Key[]{Mod303Key.AR_C043},NONE)
+	,R005 (Mod303Key.AR_C044.getDescription(),new Mod303Key[]{Mod303Key.AR_C044},COMPUTE)
+	,R006 (Mod303Key.AR_C045.getDescription(),new Mod303Key[]{Mod303Key.AR_C045},COMPUTE_KEY)
+	,R007 (Mod303Key.AR_C060.getDescription(),new Mod303Key[]{Mod303Key.AR_C060},COMPUTE)
+	,R008 (Mod303Key.AR_C061.getDescription(),new Mod303Key[]{Mod303Key.AR_C061},NONE)
+	,R009 (Mod303Key.AR_C062.getDescription(),new Mod303Key[]{Mod303Key.AR_C062},NONE)
+	,R010 (Mod303Key.AR_C063.getDescription(),new Mod303Key[]{Mod303Key.AR_C063},COMPUTE_KEY)
+	,R011 (Mod303Key.AR_C080.getDescription(),new Mod303Key[]{Mod303Key.AR_C080},COMPUTE)
 	;
 	
 	private String label;
 	private Mod303Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model3032022GipuzkoaResultScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model3032022ARABAResultScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;
@@ -47,7 +53,7 @@ public enum Model3032022GipuzkoaResultScript implements IModelScript<Mod303Key> 
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -57,6 +63,6 @@ public enum Model3032022GipuzkoaResultScript implements IModelScript<Mod303Key> 
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 
 }

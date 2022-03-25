@@ -63,7 +63,7 @@ public enum Model3032017AEATResultScript implements IModelScript<Mod303Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -73,6 +73,6 @@ public enum Model3032017AEATResultScript implements IModelScript<Mod303Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 
 }

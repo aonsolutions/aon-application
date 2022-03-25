@@ -20,7 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRe
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegime4TScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegimeScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021AEATResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021_2AEATAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model30320212AEATAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -255,7 +255,7 @@ class Model303AEAT20212 extends Model303AEAT {
 		table.getColumnFormatter().setWidth(5, "50px");
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
-		paintDeclaration(table,Model3032021_2AEATAdditionalDataScript.values(),3);
+		paintDeclaration(table,Model30320212AEATAdditionalDataScript.values(),3);
 	}
 		
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {

@@ -5,10 +5,10 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIAAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIAScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIAScript2;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017BIZKAIASpecificOperationsScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022BIZKAIAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022BIZKAIAScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022BIZKAIAScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022BIZKAIASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -17,10 +17,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-class Model303BIZKAIA2017 extends Model303Base {
+class Model303BIZKAIA2022 extends Model303Base {
 	
 	
-	protected Model303BIZKAIA2017(Mod303 mod303,Model303Callback callback) {
+	protected Model303BIZKAIA2022(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -66,7 +66,7 @@ class Model303BIZKAIA2017 extends Model303Base {
 		table.getColumnFormatter().setWidth(9, "50px");
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
-		paintDeclaration(table,Model3032017BIZKAIAAdditionalDataScript.values(),10);
+		paintDeclaration(table,Model3032022BIZKAIAAdditionalDataScript.values(),10);
 	}
 
 	private void paintSpecificOperationsTab(TabLayoutPanel tabPanel) {
@@ -89,7 +89,7 @@ class Model303BIZKAIA2017 extends Model303Base {
 		table.getColumnFormatter().setWidth(5, "50px");
 		specificOpDataScrollPanel.setWidget(table);
 		tabPanel.add(specificOpDataScrollPanel, AON.MSG.specificOperations());
-		paintDeclaration(table,Model3032017BIZKAIASpecificOperationsScript.values(),4);
+		paintDeclaration(table,Model3032022BIZKAIASpecificOperationsScript.values(),4);
 	}
 
 	private void paintLiquidationTab(TabLayoutPanel tabPanel) {
@@ -115,7 +115,7 @@ class Model303BIZKAIA2017 extends Model303Base {
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3032017BIZKAIAScript1.values(),8);
+		paintDeclaration(table,Model3032022BIZKAIAScript1.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();
@@ -129,7 +129,7 @@ class Model303BIZKAIA2017 extends Model303Base {
 		table.getColumnFormatter().setWidth(2, WIDTH_140PX);
 		
 		table.getColumnFormatter().setWidth(3, "50px");
-		paintDeclaration(table,Model3032017BIZKAIAScript2.values(),4);
+		paintDeclaration(table,Model3032022BIZKAIAScript2.values(),4);
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
@@ -177,7 +177,7 @@ class Model303BIZKAIA2017 extends Model303Base {
 
 					@Override
 					public Mod303 getModel() {
-						return Model303BIZKAIA2017.this.getModel();
+						return Model303BIZKAIA2022.this.getModel();
 					}
 
 					@Override

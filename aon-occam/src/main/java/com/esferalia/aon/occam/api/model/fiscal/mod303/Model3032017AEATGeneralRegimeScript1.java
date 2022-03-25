@@ -59,7 +59,7 @@ public enum Model3032017AEATGeneralRegimeScript1 implements IModelScript<Mod303K
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -69,7 +69,7 @@ public enum Model3032017AEATGeneralRegimeScript1 implements IModelScript<Mod303K
 	@Override
 	public boolean paintHeaderBefore() {
 		return (this == DVG01);
-	};
+	}
 	
 	@Override
 	public int getFieldSize(Mod303Key key) {

@@ -86,7 +86,7 @@ public enum Model3032022GIPUZKOARScript1 implements IModelScript<Mod303Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -96,7 +96,7 @@ public enum Model3032022GIPUZKOARScript1 implements IModelScript<Mod303Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return (this == DVG01);
-	};
+	}
 	
 	@Override
 	public int getFieldSize(Mod303Key key) {

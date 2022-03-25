@@ -31,8 +31,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod303InfoDAO extends FiscalModelDAO {
 	private static final DecimalFormat DEC2 = new DecimalFormat("#,##0.00");		
-	private static final String INFO_MSG = "<pre class='aon_margin_bottom'>{0}<pre>";
-	private static final String NONE_INFO = "No hay datos";
 	
 	private Mod303InfoDAO() {
 	}
@@ -63,7 +61,7 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 					
 					@Override 
 					public String visitNone()    {
-						return MessageFormat.format(INFO_MSG, NONE_INFO); 
+						return AonStringUtils.EMPTY; 
 					} 
 					
 					@Override 
@@ -237,6 +235,9 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 	}
 	
 	private static String getComputeKey(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
+		if (keyDAO == null) {
+			System.out.println("NULL");
+		}
 		Mod303MVELContext mvelCtx = new Mod303MVELContext(mod303); 
 		mvelCtx.put("mod", mod303);
 		mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod303, Mod303::new).collect(Collectors.toCollection(LinkedList::new)));
@@ -252,6 +253,7 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 				}
 			}
 		}
+		System.out.println( buf.toString() );
 		return buf.toString();
 	}
 

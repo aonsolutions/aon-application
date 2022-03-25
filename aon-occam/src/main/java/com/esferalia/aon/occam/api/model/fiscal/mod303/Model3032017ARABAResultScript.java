@@ -1,7 +1,6 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod303;
+package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -16,11 +15,11 @@ public enum Model3032017ARABAResultScript implements IModelScript<Mod303Key> {
 	,R003 (Mod303Key.AR_C042.getDescription(),new Mod303Key[]{Mod303Key.AR_C042},NONE)
 	,R004 (Mod303Key.AR_C043.getDescription(),new Mod303Key[]{Mod303Key.AR_C043},NONE)
 	,R005 (Mod303Key.AR_C044.getDescription(),new Mod303Key[]{Mod303Key.AR_C044},COMPUTE)
-	,R006 (Mod303Key.AR_C045.getDescription(),new Mod303Key[]{Mod303Key.AR_C045},COMPUTE_KEY)
+	,R006 (Mod303Key.AR_C045.getDescription(),new Mod303Key[]{Mod303Key.AR_C045},NONE)
 	,R007 (Mod303Key.AR_C060.getDescription(),new Mod303Key[]{Mod303Key.AR_C060},COMPUTE)
 	,R008 (Mod303Key.AR_C061.getDescription(),new Mod303Key[]{Mod303Key.AR_C061},NONE)
 	,R009 (Mod303Key.AR_C062.getDescription(),new Mod303Key[]{Mod303Key.AR_C062},NONE)
-	,R010 (Mod303Key.AR_C063.getDescription(),new Mod303Key[]{Mod303Key.AR_C063},COMPUTE_KEY)
+	,R010 (Mod303Key.AR_C063.getDescription(),new Mod303Key[]{Mod303Key.AR_C063},NONE)
 	,R011 (Mod303Key.AR_C080.getDescription(),new Mod303Key[]{Mod303Key.AR_C080},COMPUTE)
 	;
 	
@@ -53,7 +52,7 @@ public enum Model3032017ARABAResultScript implements IModelScript<Mod303Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -63,6 +62,6 @@ public enum Model3032017ARABAResultScript implements IModelScript<Mod303Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 
 }

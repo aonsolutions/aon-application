@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.KeyTypes;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
-public enum Model3032021_2AEATAdditionalDataScript implements IModelScript<Mod303Key> {
+public enum Model30320212AEATAdditionalDataScript implements IModelScript<Mod303Key> {
 	
 	 R03 ("Informaci\u00F3n adicional"
 		 ,null,TITLE)
@@ -40,11 +40,11 @@ public enum Model3032021_2AEATAdditionalDataScript implements IModelScript<Mod30
 	private FiscalModelKeyInfo[] infoKeys;
 	private KeyTypes[] keyTypes;
 	
-	private Model3032021_2AEATAdditionalDataScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model30320212AEATAdditionalDataScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this(label,keys,null,infoKeys);	
 	}
 	
-	private Model3032021_2AEATAdditionalDataScript(String label, Mod303Key[] keys, KeyTypes[] keyTypes,FiscalModelKeyInfo ... infoKeys) {
+	private Model30320212AEATAdditionalDataScript(String label, Mod303Key[] keys, KeyTypes[] keyTypes,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;
@@ -70,7 +70,7 @@ public enum Model3032021_2AEATAdditionalDataScript implements IModelScript<Mod30
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {

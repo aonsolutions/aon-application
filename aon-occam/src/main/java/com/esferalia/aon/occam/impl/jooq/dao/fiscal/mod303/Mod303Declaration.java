@@ -30,20 +30,21 @@ public abstract class Mod303Declaration {
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaración");	
 		}
-		if (Mod303AEAT20212Declaration.accept(mod)) 		return new Mod303AEAT20212Declaration();
+		if (Mod303AEAT2022Declaration.accept(mod)) 		return new Mod303AEAT2022Declaration();
+		if (Mod303AEAT20212Declaration.accept(mod)) 	return new Mod303AEAT20212Declaration();
 		if (Mod303AEAT2021Declaration.accept(mod)) 		return new Mod303AEAT2021Declaration();
 		if (Mod303AEAT2020Declaration.accept(mod)) 		return new Mod303AEAT2020Declaration();
-		if (Mod303AEAT2018.accept(mod)) 		return new Mod303AEAT2018();
+		if (Mod303AEAT2018Declaration.accept(mod)) 		return new Mod303AEAT2018Declaration();
 		if (Mod303AEAT2017Declaration.accept(mod)) 		return new Mod303AEAT2017Declaration();
-		if (ModBIZKAIA2022Declaration.accept(mod)) 	return new ModBIZKAIA2022Declaration();
-		if (ModBIZKAIA2018Declaration.accept(mod)) 	return new ModBIZKAIA2018Declaration();
-		if (ModBIZKAIA2017Declaration.accept(mod)) 	return new ModBIZKAIA2017Declaration();
+		if (Mod303BIZKAIA2022Declaration.accept(mod)) 	return new Mod303BIZKAIA2022Declaration();
+		if (Mod303BIZKAIA2018Declaration.accept(mod)) 	return new Mod303BIZKAIA2018Declaration();
+		if (Mod303BIZKAIA2017Declaration.accept(mod)) 	return new Mod303BIZKAIA2017Declaration();
 		if (Mod303ARABA2022Declaration.accept(mod)) 	return new Mod303ARABA2022Declaration();
 		if (Mod303ARABA2019Declaration.accept(mod)) 	return new Mod303ARABA2019Declaration();
 		if (Mod303ARABA2017Declaration.accept(mod)) 	return new Mod303ARABA2017Declaration();
-		if (ModGIPUZKOA2022Declaration.accept(mod)) 	return new ModGIPUZKOA2022Declaration();
-		if (ModGIPUZKOA20212Declaration.accept(mod)) 	return new ModGIPUZKOA20212Declaration();
-		if (ModGIPUZKOA2017Declaration.accept(mod)) 	return new ModGIPUZKOA2017Declaration();
+		if (Mod303GIPUZKOA2022Declaration.accept(mod)) 	return new Mod303GIPUZKOA2022Declaration();
+		if (Mod303GIPUZKOA20212Declaration.accept(mod)) 	return new Mod303GIPUZKOA20212Declaration();
+		if (Mod303GIPUZKOA2017Declaration.accept(mod)) 	return new Mod303GIPUZKOA2017Declaration();
 		
 		throw new AonCoreException(MessageFormat.format(
 			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",

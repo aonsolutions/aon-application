@@ -59,7 +59,7 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 		,Mod303Key.CT_C42
 	};
 
-	private static enum Mod303KeyDAO implements IMod303KeyDAO {
+	private enum Mod303KeyDAO implements IMod303KeyDAO {
 		 CM_002(Mod303Key.CM_002,null,null,(ctx,mod) -> add(Mod303Key.CM_002,mod,(
 				 AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE))?1:0),null,null)
 		,CM_003(Mod303Key.CM_003)
@@ -265,11 +265,11 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 		
 		// Rectificación de deducciones
 		,CT_C40(Mod303Key.CT_C40
-			,(mod,vat) -> rectificaciónDeduccionesFilter(vat,mod)
+			,(mod,vat) -> rectificationDeduccionesFilter(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C40,mod,vat.getBase())
 			,null,null,null)
 		,CT_C41(Mod303Key.CT_C41
-			,(mod,vat) -> rectificaciónDeduccionesFilter(vat,mod)
+			,(mod,vat) -> rectificationDeduccionesFilter(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C41,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
@@ -1592,91 +1592,35 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,CT_C62(Mod303Key.CT_C62
-			,null,null, (ctx,mod) -> add( Mod303Key.CT_C62, mod, PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		
-		,CT_C63(Mod303Key.CT_C63
-			,null,null, (ctx,mod) -> {
-			double quota = PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
-			add( Mod303Key.CT_C63, mod, quota );
-//			double a = AonMathUtils.isZero(quota)? mod.getAmount(Mod303Key.CT_A07):(1.0);
-//			add( Mod303Key.CT_A07, mod, a); 
-			}
-		,null,null)
+		,CT_C62(Mod303Key.CT_C62, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
+		,CT_C63(Mod303Key.CT_C63, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,CT_C74(Mod303Key.CT_C74,null,null, (ctx,mod) -> add( Mod303Key.CT_C74, mod, PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,CT_C75(Mod303Key.CT_C75,null,null, (ctx,mod) -> {
-			double quota = PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
-			add( Mod303Key.CT_C75, mod, quota);
-			add( Mod303Key.CT_A08, mod, AonMathUtils.isZero(quota)?(0.0):(1.0));
-			}
-		,null,null)
+		,CT_C74(Mod303Key.CT_C74, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
+		,CT_C75(Mod303Key.CT_C75, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 
 		// Regularización cuotas art. 80.Cinco.5a LIVA
 		,CT_C76(Mod303Key.CT_C76)
 		
 		// Suma de resultados
-		,CT_C64(Mod303Key.CT_C64,null,null,null,"CT_C46+CT_S58+CT_C76",null) // TODO Sumar el resultado del regimen simplificado, si procede.
+		,CT_C64(Mod303Key.CT_C64,null,null,null,"CT_C46+CT_S58+CT_C76",null)
 		
 		// % Atribuible a la Administración del Estado
 		,CT_C65(Mod303Key.CT_C65,null,null, (ctx,mod) -> add(Mod303Key.CT_C65,mod,100.0),null,null)
 		
 		// Cuota atribuible a la Administración del Estado
-		,CT_C66(Mod303Key.CT_C66,null,null,null,"round(CT_C64*CT_C65/100)"
-			,"<li><b>Resultado:</b> @{CT_C65} % de @{CT_C64} igual <b>@{CT_C66}</b></li>")
+		,CT_C66(Mod303Key.CT_C66,null,null,null,"round(CT_C64*CT_C65/100)",null)
 				
 		// IVA a la importación liquidado por la Aduana pendiente de ingreso
 		,CT_C77(Mod303Key.CT_C77)
 		
 		// Cuotas a compensar de periodos anteriores
-		,CT_C67(Mod303Key.CT_C67,null,null,
-			(ctx,mod) -> {
-				if (mod.isFirstPeriod()) {
-					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
-					add( Mod303Key.CT_C67, mod, 
-							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
-							.filter(m303 -> m303.getYear() ==  (mod.getYear() - 1) )
-							.filter(m303 -> m303.isLastPeriod() ) 
-							.filter(fm ->  fm.isToCompensate())
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
-							.findFirst()
-							.orElse(0.0));						
-				} else {
-					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
-					add( Mod303Key.CT_C67, mod, 
-							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
-							.filter(m303 -> m303.getYear() == mod.getYear() )
-							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
-							.filter(fm ->  fm.isToCompensate())
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
-							.findFirst()
-							.orElse(0.0));						
-				}
-			}
-			,null
-			,
-			 "@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
-			+"@if{ mod.isFirstPeriod() }"
-				+"<li>Declaraciones del \u00FAltimo periodo del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
-				+"@foreach{fm : models}"
-					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.isLastPeriod() && fm.getAdministration() == mod.getAdministration() }"
-						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
-					+"@end{}"
-				+"@end{}"
-				+"</ul></li>"
-			+"@else{}"
-				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
-				+"@foreach{fm : lastPeriodModels}" 
-					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
-					+"@end{}"
-				+"@end{}"
-				+"</ul></li>"
-			+"@end{}"
-			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{CT_C67}</b></li>"
-		)
+		,CT_C67(Mod303Key.CT_C67,null,null,null,null,null)
 		
 		// Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administración del Estado 
 		// y a las Diputaciones Forales. Resultado de la regularización anual.
@@ -1686,21 +1630,7 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 		,CT_C69(Mod303Key.CT_C69,null,null,null,"CT_C66+CT_C77-CT_C67+CT_C68",null) 
 		
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
-		,CT_C70(Mod303Key.CT_C70,null,null,
-				(ctx,mod) -> {
-					if (mod.isComplementary()) {
-						add( Mod303Key.CT_C70, mod, PrevMod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());						
-					}
-				}
-				,null
-				,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
-				+"@code{c71Key='"+ Mod303Key.CT_C71.getValue() +"';}"
-				+"@foreach{fm : periodModels}" 
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getAmount(c71Key)}</li>"
-				+"@end{}"
-				+"</ul></li>"
-				+"<li>Resultado: <b>@{CT_C70}</b></li>"
-		)
+		,CT_C70(Mod303Key.CT_C70,null,null,null,null,null)
 		,CT_C71(Mod303Key.CT_C71,null,null,null,"CT_C69-CT_C70",null)
 		
 		
@@ -2002,7 +1932,7 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 	private static boolean adqIntracomunitariasInversionFilter(VatContext vat, Mod303 mod) {
 		return vat.isInvestment() && !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
 	}
-	private static boolean rectificaciónDeduccionesFilter(VatContext vat, Mod303 mod) {
+	private static boolean rectificationDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}
@@ -2014,7 +1944,7 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 		if (idx < 0 || idx > 3) throw new IllegalArgumentException("0, 1, 3, ó 3");
 		
 		if (mod.getActivityFarmerList() == null) {
-			mod.setActivityFarmerList( new LinkedList<Mod303ActivityFarmer>());
+			mod.setActivityFarmerList( new LinkedList<>());
 		}
 		for (int i = 0; i <= idx; i++) {
 			if ( idx == mod.getActivityFarmerList().size() ) {
@@ -2027,7 +1957,7 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 		if (idx < 0 || idx > 3) throw new IllegalArgumentException("0, 1, 3, ó 3");
 		
 		if (mod.getActivityList() == null) {
-			mod.setActivityList( new LinkedList<Mod303Activity>());
+			mod.setActivityList( new LinkedList<>());
 		}
 		for (int i = 0; i <= idx; i++) {
 			if ( idx == mod.getActivityList().size() ) {
@@ -2041,7 +1971,7 @@ class Mod303AEAT2020Declaration extends Mod303AEAT {
 		if (idx < 0 || idx > 6) throw new IllegalArgumentException("0, 1, 2, 3, 4, 5, ó 6");
 		Mod303Activity a = ensureActivity(mod, act);
 		if (a.getModules() == null) {
-			a.setModules( new LinkedList<Mod303ActivityModule>());
+			a.setModules( new LinkedList<>());
 		}
 		for (int i = 0; i <= idx; i++) {
 			if ( idx == a.getModules().size() ) {

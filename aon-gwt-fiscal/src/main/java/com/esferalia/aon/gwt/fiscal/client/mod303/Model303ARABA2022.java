@@ -6,10 +6,10 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017ARABAAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017ARABARScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017ARABAResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032019ARABAScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAScript2;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-class Model303ARABA2019 extends Model303Base {
+class Model303ARABA2022 extends Model303Base {
 	
-	protected Model303ARABA2019(Mod303 mod303,Model303Callback callback) {
+	protected Model303ARABA2022(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -95,11 +95,6 @@ class Model303ARABA2019 extends Model303Base {
 		paintListBox(c909, key, table);
 	}
 
-//	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-//		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-//		tabPanel.add(identificationData, AON.MSG.identification());
-//	}
-	
 	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
@@ -119,7 +114,7 @@ class Model303ARABA2019 extends Model303Base {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3032017ARABARScript1.values(),8);
+		paintDeclaration(table,Model3032022ARABARScript1.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();
@@ -136,7 +131,7 @@ class Model303ARABA2019 extends Model303Base {
 		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(4, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(5, "50px");
-		paintDeclaration(table,Model3032019ARABAScript2.values(),6);
+		paintDeclaration(table,Model3032022ARABAScript2.values(),6);
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
@@ -158,7 +153,7 @@ class Model303ARABA2019 extends Model303Base {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
-		paintDeclaration(table,Model3032017ARABAResultScript.values(),3);
+		paintDeclaration(table,Model3032022ARABAResultScript.values(),3);
 	}
 
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
@@ -182,7 +177,7 @@ class Model303ARABA2019 extends Model303Base {
 		
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
-		paintDeclaration(table,Model3032017ARABAAdditionalDataScript.values(),3);
+		paintDeclaration(table,Model3032022ARABAAdditionalDataScript.values(),3);
 	}
 	
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
@@ -196,7 +191,7 @@ class Model303ARABA2019 extends Model303Base {
 
 					@Override
 					public Mod303 getModel() {
-						return Model303ARABA2019.this.getModel();
+						return Model303ARABA2022.this.getModel();
 					}
 
 					@Override

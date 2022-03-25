@@ -1,11 +1,7 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod303;
+package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017PrintAEATScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017PrintGIPUZKOAScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021PrintAEATScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021_2PrintAEATScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
 public class Model303ScriptProvider {
@@ -20,7 +16,7 @@ public class Model303ScriptProvider {
 	
 			@Override
 			IModelScript<Mod303Key>[] getScript() {
-				return Model3032021_2PrintAEATScript.values();
+				return Model30320212AEATPrintScript.values();
 			}
 		}
 		,AEAT_2021_SCRIPT {
@@ -31,7 +27,7 @@ public class Model303ScriptProvider {
 	
 			@Override
 			IModelScript<Mod303Key>[] getScript() {
-				return Model3032021PrintAEATScript.values();
+				return Model3032021AEATPrintScript.values();
 			}
 		}
 		,AEAT {
@@ -42,7 +38,7 @@ public class Model303ScriptProvider {
 	
 			@Override
 			IModelScript<Mod303Key>[] getScript() {
-				return Model3032017PrintAEATScript.values();
+				return Model3032017AEATPrintScript.values();
 			}
 		}
 		,ARABA {
@@ -53,7 +49,7 @@ public class Model303ScriptProvider {
 	
 			@Override
 			IModelScript<Mod303Key>[] getScript() {
-				return Model3032017PrintARABAScript.values();
+				return Model3032017ARABAPrintScript.values();
 			}
 		}
 		,GIPUZKOA {
@@ -64,7 +60,7 @@ public class Model303ScriptProvider {
 	
 			@Override
 			IModelScript<Mod303Key>[] getScript() {
-				return Model3032017PrintGIPUZKOAScript.values();
+				return Model3032017GIPUZKOAPrintScript.values();
 			}
 		}
 		,BIZKAIA {
@@ -75,7 +71,7 @@ public class Model303ScriptProvider {
 	
 			@Override
 			IModelScript<Mod303Key>[] getScript() {
-				return Model3032017PrintBIZKAIAScript.values();
+				return Model3032017BIZKAIAPrintScript.values();
 			}
 		}
 		;

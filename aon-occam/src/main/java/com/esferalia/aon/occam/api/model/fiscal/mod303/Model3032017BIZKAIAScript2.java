@@ -1,9 +1,6 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod303;
+package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -18,10 +15,10 @@ public enum Model3032017BIZKAIAScript2 implements IModelScript<Mod303Key> {
 	// -------------------- IVA DEDUCIBLE ----------------------
 	// ---------------------------------------------------------
 	 DED01 ("IVA DEDUCIBLE" ,null,null,TITLE)
-	,DED02 ("IVA deducible en operaciones interiores"			,new Mod303Key[]{Mod303Key.BZ_C024},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE,DIFF_INVOICE)
-	,DED03 ("IVA deducible en importaciones"					,new Mod303Key[]{Mod303Key.BZ_C025},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE,DIFF_INVOICE)
-	,DED04 ("IVA deducible en Adquisiciones intracomunitarias"	,new Mod303Key[]{Mod303Key.BZ_C026},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE,DIFF_INVOICE)
-	,DED05 ("Compensaciones R\u00E9gimen Especial A.G. y P."	,new Mod303Key[]{Mod303Key.BZ_C027},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE,DIFF_INVOICE)
+	,DED02 ("IVA deducible en operaciones interiores"			,new Mod303Key[]{Mod303Key.BZ_C024},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},NONE)
+	,DED03 ("IVA deducible en importaciones"					,new Mod303Key[]{Mod303Key.BZ_C025},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},NONE)
+	,DED04 ("IVA deducible en Adquisiciones intracomunitarias"	,new Mod303Key[]{Mod303Key.BZ_C026},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},NONE)
+	,DED05 ("Compensaciones R\u00E9gimen Especial A.G. y P."	,new Mod303Key[]{Mod303Key.BZ_C027},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},NONE)
 	,DED06 ("Regularizaci\u00F3n de bienes de inversion"		,new Mod303Key[]{Mod303Key.BZ_C028},null,NONE)
 	,DED07 ("Total a deducir"									,new Mod303Key[]{Mod303Key.BZ_C030},null,COMPUTE)
 		
@@ -33,16 +30,16 @@ public enum Model3032017BIZKAIAScript2 implements IModelScript<Mod303Key> {
 	,LQ002("Regularizaci\u00F3n cuotas art. 80.cinco.5\u00AA LIVA"	,new Mod303Key[]{Mod303Key.BZ_C045},null,NONE)
 	,LQ003("Porcentaje de tributaci\u00F3n en Bizkaia"				,new Mod303Key[]{Mod303Key.BZ_C032},null,NONE)
 	,LQ004("Cuota atribuible a Bizkaia"								,new Mod303Key[]{Mod303Key.BZ_C033},null,COMPUTE)
-	,LQ005("Cuota a compensar de periodos anteriores"				,new Mod303Key[]{Mod303Key.BZ_C034},null,COMPUTE_KEY)
+	,LQ005("Cuota a compensar de periodos anteriores"				,new Mod303Key[]{Mod303Key.BZ_C034},null,NONE)
 	,LQ006("Resultado de la regularizaci\u00F3n anual"				,new Mod303Key[]{Mod303Key.BZ_C035},null,NONE)
 	,LQ007("Resultado"												,new Mod303Key[]{Mod303Key.BZ_C036},null,COMPUTE)
 //	,LQ008("A compensar"											,new Mod303Key[]{Mod303Key.BZ_C038},COMPUTE)
 //	,LQ009("A devolver"												,new Mod303Key[]{Mod303Key.BZ_C039},COMPUTE)
 //	,LQ010("A ingresar"												,new Mod303Key[]{Mod303Key.BZ_C040},COMPUTE)
 	,LQ011("Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente"
-																	,new Mod303Key[]{Mod303Key.BZ_C041},null,COMPUTE_KEY)
+																	,new Mod303Key[]{Mod303Key.BZ_C041},null,NONE)
 	,LQ012("Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente"
-																	,new Mod303Key[]{Mod303Key.BZ_C042},null,COMPUTE_KEY)
+																	,new Mod303Key[]{Mod303Key.BZ_C042},null,NONE)
 	,LQ013("Total deuda tributaria"									,new Mod303Key[]{Mod303Key.BZ_C043},null,COMPUTE)
 	;
 	
@@ -77,7 +74,7 @@ public enum Model3032017BIZKAIAScript2 implements IModelScript<Mod303Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -87,7 +84,7 @@ public enum Model3032017BIZKAIAScript2 implements IModelScript<Mod303Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 	@Override
 	public KeyTypes[] getKeyTypes() {
 		return this.keyTypes;

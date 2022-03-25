@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
@@ -18,9 +17,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
+class Mod303BIZKAIA2018Declaration extends Mod303BIZKAIA {
 	
-	protected ModBIZKAIA2022Declaration() {
+	protected Mod303BIZKAIA2018Declaration() {
 				
 	}
 	
@@ -33,7 +32,7 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 	public static final double SURCHARGE_PERCENT4 = 1.75;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isBizkaia() && mod.getYear() >= 2022;
+		return  mod.isBizkaia() && mod.getYear() >= 2018 && mod.getYear() < 2022;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -53,7 +52,7 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 		,Mod303Key.BZ_C094
 	};
 	
-	private enum Mod303KeyDAO implements IMod303KeyDAO {
+	private static enum Mod303KeyDAO implements IMod303KeyDAO {
 		 BZ_C185_1	(Mod303Key.BZ_C185_1)
 		,BZ_C185_2	(Mod303Key.BZ_C185_2)
 		,BZ_C186	(Mod303Key.BZ_C186,null,null,(ctx,mod) -> add(Mod303Key.BZ_C186,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
@@ -193,7 +192,7 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 		
 		// IVA deducible en importaciones
 		,BZ_C025	(Mod303Key.BZ_C025
-			,(mod,vat) -> importacionesFilter(vat,mod)
+			,(mod,vat) -> importacionesFilter(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C025,mod,vat)
 			,null,null,null)
 		
@@ -292,51 +291,9 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 		,BZ_C040	(Mod303Key.BZ_C040,null,null,null,"isToDeposit()?BZ_C036:0.0",null)
 		
 		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente
-		,BZ_C041	(Mod303Key.BZ_C041,null,null,
-			(ctx,mod) -> {
-				if (mod.isComplementary()) {
-					add( Mod303Key.BZ_C041, mod, 
-						PrevMod303DAO.getSamePeriodModels(ctx, mod)
-							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
-							.filter(AonMathUtils::isGreatherThanZero)
-							.sum());						
-				}
-			} 
-			,null
-			,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c36Key='"+ Mod303Key.BZ_C036.getValue() +"';}"
-			+"@foreach{fm : periodModels}"
-				+"@if{ fm.getAmount(c36Key) > 0 }"
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [036] --> @{fm.getAmount(c36Key)}</li>"
-				+"@end{}"
-			+"@end{}"
-			+"</ul></li>"
-			+"<li>Resultado: <b>@{BZ_C041}</b></li>"
-			)
+		,BZ_C041	(Mod303Key.BZ_C041,null,null,null,null,null)
 		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente
-		,BZ_C042	(Mod303Key.BZ_C042,null,null,
-			(ctx,mod) -> {
-				if (mod.isComplementary()) {
-					add( Mod303Key.BZ_C042, mod, 
-						PrevMod303DAO.getSamePeriodModels(ctx, mod)
-							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C036))
-							.filter(AonMathUtils::isLessThanZero)
-							.sum());						
-				}
-			} 
-			,null
-			,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c36Key='"+ Mod303Key.BZ_C036.getValue() +"';}"
-			+"@code{cm04Key='"+ Mod303Key.CM_004.getValue() +"';}"
-			+"@code{compensateValue='"+ FiscalModelDeclarationType.COMPENSATE.getValue() +"';}"
-			+"@foreach{fm : periodModels}"
-				+"@if{ fm.getAmount(c36Key) < 0 && fm.getDescription(cm04Key) != compensateValue}"
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [036] --> @{fm.getAmount(c36Key)}</li>"
-				+"@end{}"
-			+"@end{}"
-			+"</ul></li>"
-			+"<li>Resultado: <b>@{BZ_C042}</b></li>"
-			)
+		,BZ_C042	(Mod303Key.BZ_C042,null,null,null,null,null)
 		// Total deuda tributaria
 		,BZ_C043	(Mod303Key.BZ_C043,null,null,null,"BZ_C036-BZ_C041+BZ_C042",null)
 		
@@ -346,23 +303,17 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 		// Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles
 		// sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas
 		// conforme a la regla general de devengo contenida en el artículo 75 NFIVA
-		,BZ_C200	(Mod303Key.BZ_C200,null,null,(ctx,mod) -> add(Mod303Key.BZ_C200,mod,PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,BZ_C201	(Mod303Key.BZ_C201,null,null,(ctx,mod) -> {
-			double quota = PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
-			add( Mod303Key.BZ_C201, mod, quota );
-			}
-		,null,null)
+		,BZ_C200	(Mod303Key.BZ_C200,(mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
+		,BZ_C201	(Mod303Key.BZ_C201,(mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea aplicable o afecte el
 		// régimen especial del criterio de caja
-		,BZ_C202	(Mod303Key.BZ_C202,null,null,(ctx,mod) -> add(Mod303Key.BZ_C202,mod,PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,BZ_C203	(Mod303Key.BZ_C203,null,null,(ctx,mod) -> {
-			double quota = PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
-			add(Mod303Key.BZ_C203,mod, quota );
-			add( Mod303Key.BZ_C187, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
-			}
-		,null,null)
-
+		,BZ_C202	(Mod303Key.BZ_C202, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
+		,BZ_C203	(Mod303Key.BZ_C203, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 
 		// ---------------------------------------------------------------
 		// ----------------------------------------- INFORMACION ADICIONAL
@@ -649,7 +600,8 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 				firstInitializer.initialize(ctx, mod);
 			}
 		}
-		public static Mod303KeyDAO safeValueOf(String key) {
+		
+		public static Mod303KeyDAO safeValueOf(Mod303 mod, String key) {
 			if (AonStringUtils.isBlank(key)) return null; 
 			for (Mod303KeyDAO keyDAO : Mod303KeyDAO.values()) {	
 				if (keyDAO.getKey().getValue().equals(key) ) {
@@ -665,7 +617,7 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 	}
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
-		return Mod303KeyDAO.safeValueOf(key);
+		return Mod303KeyDAO.safeValueOf(mod, key);
 	}
 	
 	@Override
@@ -746,31 +698,16 @@ class ModBIZKAIA2022Declaration extends Mod303BIZKAIA {
 			&& !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
-	
-	
-	private static boolean importacionesFilter(VatContext vat, Mod303 mod) {
-		boolean basicFilter = vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
-				&& !vat.isVatSurchargeRegime() 
-				&& !vat.isService();
-		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
-			if (vat.getTaxDate().before( IVA_2021_CHANGE_DATE )) {
-				basicFilter = true;
-			} else {
-				basicFilter = vat.hasDuaLinked() || vat.isVatImportation();
-			}
-			return basicFilter; 
-		}
-		return false;
+	private static boolean importacionesFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+			&& !vat.isService() 
+			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
-//	private static boolean importacionesFilter(VatContext vat) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-//			&& !vat.isService() 
-//			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
-//	}
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
+
 	@Override
 	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
 		return new HashSet<>();

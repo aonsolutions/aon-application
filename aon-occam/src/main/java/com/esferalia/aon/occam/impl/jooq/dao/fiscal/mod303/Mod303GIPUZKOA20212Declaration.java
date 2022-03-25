@@ -9,17 +9,15 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
+class Mod303GIPUZKOA20212Declaration extends Mod303GIPUZKOA {
 	
-	protected ModGIPUZKOA2017Declaration() {
+	protected Mod303GIPUZKOA20212Declaration() {
 		
 	}
 	
@@ -31,10 +29,8 @@ class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
 	public static final double SURCHARGE_PERCENT3 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isGipuzkoa() && 
-				(mod.getYear() < 2021 || (mod.getYear() == 2021 && !mod.getPeriod().isLastSemester()));
+		return mod.isGipuzkoa() && mod.getYear() == 2021 && mod.getPeriod().isLastSemester();
 	}
-	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018
 		 ,Mod303Key.GP_C020
@@ -43,9 +39,9 @@ class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
 		 ,Mod303Key.GP_C023
 	};
 	
-	private static enum Mod303KeyDAO implements IMod303KeyDAO {
+	private enum Mod303KeyDAO implements IMod303KeyDAO {
 		 GP_I000	(Mod303Key.GP_I000
-			 ,null,null,(ctx,mod) -> addDeponentDocument(ctx,mod),null,null)
+			 ,null,null,Mod303GIPUZKOA20212Declaration::addDeponentDocument,null,null)
 		,GP_A001	(Mod303Key.GP_A001)
 		,GP_A002	(Mod303Key.GP_A002)
 		,CM_003		(Mod303Key.CM_003)
@@ -198,11 +194,11 @@ class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
 			,null,null,null)
 		// Rectificación de deducciones
 		,GP_C045(Mod303Key.GP_C045
-			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
+			,(mod,vat) -> rectificationDeduccionesFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C045,mod,vat.getBase())
 			,null,null,null)
 		,GP_C046(Mod303Key.GP_C046
-			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
+			,(mod,vat) -> rectificationDeduccionesFilter(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C046,mod,vat)
 			,null,null,null)
 		
@@ -232,73 +228,7 @@ class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
 		,GP_C028(Mod303Key.GP_C028,null,null,null,"GP_C026*GP_C027/100",null)
 
 		// Cuotas a compensar de períodos anteriores en el Territorio Histórico de Álava	
-		,GP_C029(Mod303Key.GP_C029,null,null,
-			(ctx,mod) -> {
-				if (mod.isFirstPeriod()) {
-					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
-					add( Mod303Key.GP_C029, mod, 
-							Mod390HFDAO.getMod390HFs( ctx,ctx.getDomainId() )
-							.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
-							.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
-							.filter(fm ->  fm.isToCompensate())
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.GP_C042)))
-							.findFirst()
-							.orElse(0.0));						
-				} else {
-					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
-					add( Mod303Key.GP_C029, mod, 
-							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
-							.filter(m303 -> m303.getYear() == mod.getYear() )
-							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
-							.filter(fm ->  fm.isToCompensate())
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
-							.findFirst()
-							.orElse(0.0));						
-				}
-			}
-			,null
-			,
-			 "@if{ mod.isFirstPeriod() }"
-				+"@code{c042Key='"+ Mod390Key.GP_C042.getValue() +"';}"
-				+"<li>Declaraciones del modelo 390 del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
-				+"@foreach{fm : hf390models}"
-					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.getAdministration() == mod.getAdministration() }"
-						+"<li>Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [042] --> @{fm.getAmount(c042Key)}</li>"
-					+"@end{}"
-				+"@end{}"
-				+"</ul></li>"
-			+"@else{}"
-				+"@code{c035Key='"+ Mod303Key.GP_C035.getValue() +"';}"
-				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
-				+"@foreach{fm : lastPeriodModels}" 
-					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-						+"<li>Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c035Key)}</li>"
-					+"@end{}"
-				+"@end{}"
-				+"</ul></li>"
-			+"@end{}"
-			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{GP_C029}</b></li>"
-//				(ctx,mod) -> {
-//					add( Mod303Key.GP_C029, mod, 
-//						Mod303DAO.getLastPeriodModels(ctx, mod)
-//						.filter(fm -> AonObjectUtils.equals( fm.getDescription(Mod303Key.CM_004),FiscalModelDeclarationType.COMPENSATE.getValue()))
-//						.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
-//						.findFirst()
-//						.orElse(0.0));						
-//				}
-//				,null
-//				,"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
-//				+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
-//				+"@code{cm04Key='"+ Mod303Key.CM_004.getValue() +"';}"
-//				+"@code{compensateValue='"+ FiscalModelDeclarationType.COMPENSATE.getValue() +"';}"
-//				+"@foreach{fm : lastPeriodModels}"
-//					+"@if{ fm.getDescription(cm04Key) == compensateValue}"
-//						+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
-//					+"@end{}"
-//				+"@end{}"
-//				+"</ul></li>"
-//				+"<li>Resultado: <b>@{GP_C029}</b></li>"
-			)
+		,GP_C029(Mod303Key.GP_C029,null,null,null,null,null)
 
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
 		,GP_C035(Mod303Key.GP_C035,null,null,null,"GP_C028-GP_C029",null)
@@ -320,20 +250,27 @@ class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
 			,null,null,null)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
-		,GP_C032(Mod303Key.GP_C032
+		,GP_C051(Mod303Key.GP_C051)
+		,GP_C052(Mod303Key.GP_C052
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C032,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.GP_C052,mod,vat.getBase())
 			,null,null,null)
+		,GP_C053(Mod303Key.GP_C053)
+		,GP_C054(Mod303Key.GP_C054)
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,GP_C047(Mod303Key.GP_C047,null,null,(ctx,mod) -> add(Mod303Key.GP_C047,mod,PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,GP_C048(Mod303Key.GP_C048,null,null,(ctx,mod) -> add( Mod303Key.GP_C048, mod, PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod) ),null,null)
+		,GP_C047(Mod303Key.GP_C047, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
+		,GP_C048(Mod303Key.GP_C048, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,GP_C049(Mod303Key.GP_C049,null,null,(ctx,mod) -> add(Mod303Key.GP_C049,mod,PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,GP_C050(Mod303Key.GP_C050,null,null,(ctx,mod) -> add(Mod303Key.GP_C050,mod, PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod) ),null,null)
+		,GP_C049(Mod303Key.GP_C049, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
+		,GP_C050(Mod303Key.GP_C050, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 		;
 		
 		private Mod303Key key;
@@ -494,7 +431,7 @@ class ModGIPUZKOA2017Declaration extends Mod303GIPUZKOA {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
-	private static boolean rectificaciónDeduccionesFilter(VatContext vat) {
+	private static boolean rectificationDeduccionesFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}

@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017GIPUZKOARScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017GipuzkoaResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017GIPUZKOAResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.dom.client.Style.Unit;
@@ -104,7 +104,7 @@ class Model303GIPUZKOA2021 extends Model303Base {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
-		paintDeclaration(table,Model3032017GipuzkoaResultScript.values(),3);
+		paintDeclaration(table,Model3032017GIPUZKOAResultScript.values(),3);
 	}
 
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {

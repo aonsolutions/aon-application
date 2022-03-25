@@ -51,10 +51,7 @@ import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C45;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C46;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C59;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C60;
-import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C120;
-import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C122;
-import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C123;
-import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C124;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C61;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C62;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C63;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.CT_C64;
@@ -76,7 +73,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum Model3032021_2PrintAEATScript implements IModelScript<Mod303Key> {
+public enum Model3032021AEATPrintScript implements IModelScript<Mod303Key> {
 	
 	 DVG01 ("R\u00E9gimen general. IVA devengado"	,null,TITLE)
 	,DVG02 (null									,new Mod303Key[]{CT_C01	,CT_C02	,CT_C03})
@@ -126,12 +123,7 @@ public enum Model3032021_2PrintAEATScript implements IModelScript<Mod303Key> {
 	,ADC00 ("Informaci\u00F3n adicional"			,null,TITLE)
 	,ADC01 (getDescription(CT_C59)					,new Mod303Key[]{CT_C59	,null	,null})
 	,ADC02 (getDescription(CT_C60)					,new Mod303Key[]{CT_C60	,null	,null})
-	
-	,ADC03 (getDescription(CT_C120)					,new Mod303Key[]{CT_C120,null	,null})
-	,ADC04 (getDescription(CT_C122)					,new Mod303Key[]{CT_C122,null	,null})
-	,ADC05 (getDescription(CT_C123)					,new Mod303Key[]{CT_C123,null	,null})
-	,ADC06 (getDescription(CT_C124)					,new Mod303Key[]{CT_C124,null	,null})
-	
+	,ADC03 (getDescription(CT_C61)					,new Mod303Key[]{CT_C61	,null	,null})
 	,ADC10 ("Exclusivamente para aquellos sujetos pasivos acogidos al r\u00E9gimen especial " 
 			+ "del criterio de caja y para aqu\u00E9llos que sean destinatarios de operaciones " 
 			+ "afectadas por el mismo:"				,null)
@@ -144,7 +136,7 @@ public enum Model3032021_2PrintAEATScript implements IModelScript<Mod303Key> {
 	private Mod303Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model3032021_2PrintAEATScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model3032021AEATPrintScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;
@@ -173,7 +165,7 @@ public enum Model3032021_2PrintAEATScript implements IModelScript<Mod303Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -183,5 +175,5 @@ public enum Model3032021_2PrintAEATScript implements IModelScript<Mod303Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return (this == R01);
-	};
+	}
 }

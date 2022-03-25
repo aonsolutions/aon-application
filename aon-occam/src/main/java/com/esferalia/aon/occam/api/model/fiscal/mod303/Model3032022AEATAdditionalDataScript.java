@@ -72,7 +72,7 @@ public enum Model3032022AEATAdditionalDataScript implements IModelScript<Mod303K
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {

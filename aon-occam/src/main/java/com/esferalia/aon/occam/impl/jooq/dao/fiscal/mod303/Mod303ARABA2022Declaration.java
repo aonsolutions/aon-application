@@ -31,7 +31,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAraba() && mod.getYear() >= 2022;
+		return  mod.isAraba() && mod.getYear() > 2021;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032
@@ -245,7 +245,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 		
 		// Rectificacion de deducciones
 		,AR_C046	(Mod303Key.AR_C046
-			,(mod,vat) -> rectificDeduccionesFilter(vat,mod)
+			,(mod,vat) -> rectificationDeduccionesFilter(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C046,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -300,27 +300,26 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 				}
 			}
 			,null
-			,
-			 "@if{ mod.isFirstPeriod() }"
+			,"{messages : ["
+			+"@if{ mod.isFirstPeriod() }"
 				+"@code{c140Key='"+ Mod390Key.AR_C140.getValue() +"';}"
-				+"<li>Declaraciones del modelo 390 del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
+				+ "\"Declaraciones del modelo 390 del ejercicio anterior:\"," 
 				+"@foreach{fm : hf390models}"
 					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.getAdministration() == mod.getAdministration() }"
-						+"<li>Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [140] --> @{fm.getAmount(c140Key)}</li>"
+						+ "\"Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [140] --> @{fm.getAmount(c140Key)}\","
 					+"@end{}"
 				+"@end{}"
-				+"</ul></li>"
 			+"@else{}"
 				+"@code{c082Key='"+ Mod303Key.AR_C082.getValue() +"';}"
-				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+				+ "\"Declaraciones del periodo anterior:\"," 
 				+"@foreach{fm : lastPeriodModels}" 
 					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-						+"<li>Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [082] --> @{fm.getAmount(c082Key)}</li>"
+						+ "\"Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [082] --> @{fm.getAmount(c082Key)}\","
 					+"@end{}"
 				+"@end{}"
-				+"</ul></li>"
 			+"@end{}"
-			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{AR_C045}</b></li>"
+			+ "\"Resultado (Cuotas a compensar de periodos anteriores): @{AR_C045}\","
+			+"]}"
 		)
 
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
@@ -343,13 +342,13 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 					}
 				}
 				,null
-				,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
-				+"@code{c80Key='"+ Mod303Key.AR_C080.getValue() +"';}"
-				+"@foreach{fm : periodModels}" 
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [080] --> @{fm.getAmount(c80Key)}</li>"
-				+"@end{}"
-				+"</ul></li>"
-				+"<li>Resultado: <b>@{AR_C080}</b></li>"
+				,"{messages : ["
+					+ "\"Declaraciones en el mismo periodo/ejercicio:\"," 
+					+"@foreach{fm : periodModels}" 
+						+ "\"Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [080] --> @{fm.getDeclarationResult()}\","
+					+"@end{}"
+					+ "\"Resultado: @{AR_C080}\","
+				+"]}"
 		)
 		
 		// TOTAL DEUDA TRIBUTARIA	
@@ -385,22 +384,16 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,AR_C180	(Mod303Key.AR_C180,null,null,(ctx,mod) -> add(Mod303Key.AR_C180,mod,PrevMod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,AR_C181	(Mod303Key.AR_C181,null,null,(ctx,mod) -> {
-				double quota = PrevMod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
-				add( Mod303Key.AR_C181, mod, quota );
-			}
-		,null,null)
-		
+		,AR_C180	(Mod303Key.AR_C180, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+			, null, null, null, null)
+		,AR_C181	(Mod303Key.AR_C181, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+			, null, null, null, null)		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,AR_C182	(Mod303Key.AR_C182,null,null,(ctx,mod) -> add(Mod303Key.AR_C182,mod,PrevMod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,AR_C183	(Mod303Key.AR_C183,null,null,(ctx,mod) -> {
-			double quota = PrevMod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
-			add(Mod303Key.AR_C183,mod, quota );
-			add( Mod303Key.AR_C911, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
-			}
-		,null,null)
+		,AR_C182	(Mod303Key.AR_C182, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+			, null, null, null, null)
+		,AR_C183	(Mod303Key.AR_C183, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 		;
 		
 		private Mod303Key key;
@@ -568,12 +561,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 		return commonImportacionesInversionFilter(vat, mod) 
 				&& !vat.isInvestment();
 	}
-//	private static boolean importacionesCorrientesFilter(VatContext vat) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-//			&& !vat.isInvestment()  && !vat.isRectification() 
-//			&& !vat.isService()
-//			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
-//	}
+
 	private static boolean importacionesInversionFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isInvestment() && !vat.isRectification() 
@@ -592,7 +580,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
 	
-	private static boolean rectificDeduccionesFilter(VatContext vat, Mod303 mod) {
+	private static boolean rectificationDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}

@@ -23,7 +23,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303AEAT20212Declaration extends Mod303AEAT {
+class Mod303AEAT2022Declaration extends Mod303AEAT {
 	
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -35,7 +35,7 @@ class Mod303AEAT20212Declaration extends Mod303AEAT {
 		void populate(Mod303 mod);
 	}
 
-	protected Mod303AEAT20212Declaration() {
+	protected Mod303AEAT2022Declaration() {
 
 	}
 	
@@ -47,7 +47,7 @@ class Mod303AEAT20212Declaration extends Mod303AEAT {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 
 	public static boolean accept(Mod303 mod) {
-		return mod.isAEAT() && mod.getYear() == 2021 && mod.getPeriod().isLastSemester(); 
+		return mod.isAEAT() && mod.getYear() > 2021; 
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[] { Mod303Key.CT_C29, Mod303Key.CT_C31,
@@ -254,15 +254,6 @@ class Mod303AEAT20212Declaration extends Mod303AEAT {
 						+  " - @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}"
 						+  " = @{com.esferalia.aon.watson.util.AonMathUtils.round(com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100) - com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100))}\","
 					+"]}"
-//				,"Total IVA deducible sin prorratear antes del periodo que se liquida: @{CM_072}"
-//				  +"<li>IVA deducible con prorrata (@{CM_007}%) de los periodos anteriores: "
-//				  + "@{CM_072} * @{CM_007} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}  </li>"
-//				  +"<li>IVA deducible con prorrata definitiva (@{CM_003}%) de los periodos anteriores: "
-//				  + "@{CM_072} * @{CM_003} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}  </li>"
-//				  +"<li>Resultado: "
-//				  + "  @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}"
-//				  + " - @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}"
-//				  + " = @{com.esferalia.aon.watson.util.AonMathUtils.round(com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100) - com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100))}</li>"
 		)
 
 		// Total a deducir

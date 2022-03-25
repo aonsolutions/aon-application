@@ -72,7 +72,7 @@ public enum Model3032022AEATGeneralRegimeScript2 implements IModelScript<Mod303K
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -82,7 +82,7 @@ public enum Model3032022AEATGeneralRegimeScript2 implements IModelScript<Mod303K
 	@Override
 	public boolean paintHeaderBefore() {
 		return false;
-	};
+	}
 	
 	@Override
 	public KeyTypes[] getKeyTypes() {

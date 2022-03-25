@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod303;
+package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum Model3032017PrintBIZKAIAScript implements IModelScript<Mod303Key> {
+public enum Model3032017BIZKAIAPrintScript implements IModelScript<Mod303Key> {
 	
 	
 	 DVG01 ("IVA DEVENGADO"				,null,TITLE)
@@ -90,7 +90,7 @@ public enum Model3032017PrintBIZKAIAScript implements IModelScript<Mod303Key> {
 	private Mod303Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model3032017PrintBIZKAIAScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model3032017BIZKAIAPrintScript(String label, Mod303Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;
@@ -119,7 +119,7 @@ public enum Model3032017PrintBIZKAIAScript implements IModelScript<Mod303Key> {
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
-	};
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
@@ -129,5 +129,5 @@ public enum Model3032017PrintBIZKAIAScript implements IModelScript<Mod303Key> {
 	@Override
 	public boolean paintHeaderBefore() {
 		return (this == AD000);
-	};
+	}
 }
