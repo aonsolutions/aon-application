@@ -10,22 +10,21 @@ import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.MinorEntity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class Mod2002020 implements IFiscalModel {
+//public class Mod2002020 implements IFiscalModel {
+public class Mod2002020 extends Mod200 {
 	
 	private static final long serialVersionUID = -5669862778411873677L;
 
@@ -43,15 +42,17 @@ public class Mod2002020 implements IFiscalModel {
 	
 	private boolean initializedFromLastYear;
 	
-	private Integer id;
-	private int domain;
-	private int year;
-	private Administration administration = Administration.COMMON_TERRITORY;
-	private FiscalStatus status;
+//	private Integer id;
+//	private int domain;
+//	private int year;
+//	private Administration administration = Administration.COMMON_TERRITORY;
+//	private FiscalStatus status;
+//	private boolean complementary;
+//	private String receipt;	
+//	private String complementaryReceipt;
+//	private String comments;
+//	private String resultType;
 	
-	private String receipt;
-	private boolean complementary;
-	private String complementaryReceipt;
 	private String cnae;
 	
 	private int periodType;
@@ -59,8 +60,8 @@ public class Mod2002020 implements IFiscalModel {
 	private Date periodEnd;
 	
 	private int enterprise;
-	private String enterpriseDocument;
-	private String enterpriseName;
+//	private String enterpriseDocument;
+//	private String enterpriseName;
 	private String enterprisePhone1;
 	private String enterprisePhone2;
 	
@@ -92,14 +93,11 @@ public class Mod2002020 implements IFiscalModel {
 	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();  // NIF de las entidades del grupo 
 	private LinkedList<String> establishments = new LinkedList<String>();	// NIF de los establecimientos permanentes, en caso de entidad titular
 	
-	private String resultType;
 	private String devType;
 	private String payType;
 	private Double amount;
 	private String iban;
 	private String bic;
-
-	private String comments;
 
 	private String nrsAnexoIII;
 	private String justCanarias;
@@ -121,59 +119,59 @@ public class Mod2002020 implements IFiscalModel {
 		this.initializedFromLastYear = initializedFromLastYear;
 	}
 	
-	@Override
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	@Override
-	public int getYear() {
-		return year;
-	}
-	public void setYear(int year) {
-		this.year = year;
-	}
-	@Override
-	public int getDomain() {
-		return domain;
-	}
-	public void setDomain(int domain) {
-		this.domain = domain;
-	}
+//	@Override
+//	public Integer getId() {
+//		return id;
+//	}	
+//	public void setId(Integer id) {
+//		this.id = id;
+//	}
+//	@Override
+//	public int getYear() {
+//		return year;
+//	}
+//	public void setYear(int year) {
+//		this.year = year;
+//	}
+//	@Override
+//	public int getDomain() {
+//		return domain;
+//	}
+//	public void setDomain(int domain) {
+//		this.domain = domain;
+//	}
 	public int getEnterprise() {
 		return enterprise;
 	}
 	public void setEnterprise(int enterprise) {
 		this.enterprise = enterprise;
 	}
-	@Override
-	public Administration getAdministration() {
-		return administration;
-	}
-	public void setAdministration(Administration administration) {
-		this.administration = administration;
-	}
-	public String getReceipt() {
-		return receipt;
-	}
-	public void setReceipt(String receipt) {
-		this.receipt = receipt;
-	}
-	@Override
-	public boolean isComplementary() {
-		return complementary;
-	}
-	public void setComplementary(boolean complementary) {
-		this.complementary = complementary;
-	}
-	public String getComplementaryReceipt() {
-		return complementaryReceipt;
-	}
-	public void setComplementaryReceipt(String complementaryReceipt) {
-		this.complementaryReceipt = complementaryReceipt;
-	}
+//	@Override
+//	public Administration getAdministration() {
+//		return administration;
+//	}
+//	public void setAdministration(Administration administration) {
+//		this.administration = administration;
+//	}
+//	public String getReceipt() {
+//		return receipt;
+//	}
+//	public void setReceipt(String receipt) {
+//		this.receipt = receipt;
+//	}
+//	@Override
+//	public boolean isComplementary() {
+//		return complementary;
+//	}
+//	public void setComplementary(boolean complementary) {
+//		this.complementary = complementary;
+//	}
+//	public String getComplementaryReceipt() {
+//		return complementaryReceipt;
+//	}
+//	public void setComplementaryReceipt(String complementaryReceipt) {
+//		this.complementaryReceipt = complementaryReceipt;
+//	}
 	public String getCnae() {
 		return cnae;
 	}
@@ -198,18 +196,18 @@ public class Mod2002020 implements IFiscalModel {
 	public void setPeriodEnd(Date periodEnd) {
 		this.periodEnd = periodEnd;
 	}
-	public String getEnterpriseDocument() {
-		return enterpriseDocument;
-	}
-	public void setEnterpriseDocument(String enterpriseDocument) {
-		this.enterpriseDocument = enterpriseDocument;
-	}
-	public String getEnterpriseName() {
-		return enterpriseName;
-	}
-	public void setEnterpriseName(String enterpriseName) {
-		this.enterpriseName = enterpriseName;
-	}
+//	public String getEnterpriseDocument() {
+//		return enterpriseDocument;
+//	}
+//	public void setEnterpriseDocument(String enterpriseDocument) {
+//		this.enterpriseDocument = enterpriseDocument;
+//	}
+//	public String getEnterpriseName() {
+//		return enterpriseName;
+//	}
+//	public void setEnterpriseName(String enterpriseName) {
+//		this.enterpriseName = enterpriseName;
+//	}
 	public String getEnterprisePhone1() {
 		return enterprisePhone1;
 	}
@@ -331,12 +329,12 @@ public class Mod2002020 implements IFiscalModel {
 	public void setEstablishments(LinkedList<String> establishments) {
 		this.establishments = establishments;
 	}
-	public String getResultType() {
-		return resultType;
-	}
-	public void setResultType(String resultType) {
-		this.resultType = resultType;
-	}
+//	public String getResultType() {
+//		return resultType;
+//	}
+//	public void setResultType(String resultType) {
+//		this.resultType = resultType;
+//	}
 	public String getDevType() {
 		return devType;
 	}
@@ -367,12 +365,12 @@ public class Mod2002020 implements IFiscalModel {
 	public void setBic(String bic) {
 		this.bic = bic;
 	}
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+//	public String getComments() {
+//		return comments;
+//	}
+//	public void setComments(String comments) {
+//		this.comments = comments;
+//	}
 	public LinkedList<ValidationMessage2020> getMessages() {
 		return messages;
 	}
@@ -388,26 +386,26 @@ public class Mod2002020 implements IFiscalModel {
 	public Period getPeriod() {
 		return Period.YEAR;
 	}
-	@Override
-	public FiscalStatus getStatus() {
-		// TODO Soporte!!
-		return this.status;
-	}
-	public void setStatus(FiscalStatus status) {
-		this.status = status;
-	}
+//	@Override
+//	public FiscalStatus getStatus() {
+//		// TODO Soporte!!
+//		return this.status;
+//	}
+//	public void setStatus(FiscalStatus status) {
+//		this.status = status;
+//	}
 	@Override
 	public boolean isReplacement() {
 		return false;
 	}
-	@Override
-	public String getDocument() {
-		return enterpriseDocument;
-	}
-	@Override
-	public String getName() {
-		return enterpriseName;
-	}
+//	@Override
+//	public String getDocument() {
+//		return enterpriseDocument;
+//	}
+//	@Override
+//	public String getName() {
+//		return enterpriseName;
+//	}
 	@Override
 	public String getFullName() {
 		return getName();
@@ -566,5 +564,6 @@ public class Mod2002020 implements IFiscalModel {
 	public FiscalModelDeclarationType getDeclarationResultType() {
 		return null;
 	}
+	
 	
 }

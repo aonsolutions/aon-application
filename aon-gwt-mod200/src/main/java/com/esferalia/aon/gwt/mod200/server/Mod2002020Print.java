@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -26,7 +27,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.esferalia.aon.occam.api.FISCAL;
+
+import com.esferalia.aon.occam.api.fiscal.MODEL2002020;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.server.fiscal.format.Mod2002020Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -43,7 +46,10 @@ public class Mod2002020Print extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
-			Mod2002020 mod200 = FISCAL.getMod2002020ById(domainName,domainId,user,id);
+			Occam occam = new Occam().setDomainName(domainName)
+					.setDomain(domainId)
+					.setUser(user);
+			Mod2002020 mod200 = MODEL2002020.getMod2002020ById(occam,id);
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
 			try {
@@ -54,7 +60,7 @@ public class Mod2002020Print extends HttpServlet {
 			PrintWriter writer = new PrintWriter(wr);
 			Mod2002020Writer.fillWriter(mod200, writer);
 
-			String s = mod200.getEnterpriseName();
+			String s = mod200.getName();
 			StringBuilder sb = new StringBuilder();
 			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
 				sb.append("_");

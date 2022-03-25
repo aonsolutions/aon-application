@@ -239,12 +239,15 @@ public class Mod200 implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
-
-	// ------------------------------------------------------------- TODO
+	public boolean isNew() {
+		return id==null;
+	}	
+	
 	@Override
 	public IFiscalModelKey getDeclarationTypeKey() {
-		return null;
+		return null; // TODO
 	}
+	
 	@Override
 	public Period getPeriod() {
 		return Period.YEAR;
@@ -252,10 +255,11 @@ public class Mod200 implements IFiscalModel, HasAudit {
 
 	@Override
 	public Double getDeclarationResult() {
-		return null;
+		return getResult();
 	}
+	
 	@Override
 	public FiscalModelDeclarationType getDeclarationResultType() {
-		return null;
+		return FiscalModelDeclarationType.safeValueOf(getResultType());		
 	}
 }

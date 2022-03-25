@@ -86,8 +86,8 @@ public class Mod2002020Import2019 {
 			,(mod200old,mod200new) -> mod200new.setPeriodEnd( addOneYear(mod200old.getPeriodEnd()))       // Periodo Impositivo - Fin
 			,(mod200old,mod200new) -> mod200new.setPeriodType( mod200old.getPeriodType())                 // Identificación - Tipo de ejercicio
 			,(mod200old,mod200new) -> mod200new.setCnae( mod200old.getCnae() )  						  // Identificación - C.N.A.E.  Actividad principal (convertido a CNAE 2009)
-			,(mod200old,mod200new) -> mod200new.setEnterpriseDocument( mod200old.getEnterpriseDocument()) // Identificación - NIF 
-			,(mod200old,mod200new) -> mod200new.setEnterpriseName(mod200old.getEnterpriseName())          // Identificación - Apellidos y nombre o Razón Social
+			,(mod200old,mod200new) -> mod200new.setDocument( mod200old.getEnterpriseDocument()) // Identificación - NIF 
+			,(mod200old,mod200new) -> mod200new.setName(mod200old.getEnterpriseName())          // Identificación - Apellidos y nombre o Razón Social
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())      // Identificación - Teléfono 1
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone2(mod200old.getEnterprisePhone2())      // Identificación - Teléfono 2
 			,(mod200old,mod200new) -> mod200new.setYear( 2020 )                                           // Ejercicio
@@ -163,9 +163,20 @@ public class Mod2002020Import2019 {
 			
 			// ESTADOS DE CUENTAS 
 			
-			,(mod200old,mod200new) -> mod200new.setBalanceType( mod200old.getBalanceType().ordinal() )  // Balance: 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
-			,(mod200old,mod200new) -> mod200new.setEcpnType( mod200old.getEcpnType().ordinal() )        // ECPN: 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
-			,(mod200old,mod200new) -> mod200new.setPygType(mod200old.getPygType().ordinal() )           // Pérdidas y ganancias 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
+			,(mod200old,mod200new) -> mod200new.setBalanceType( mod200old.getBalanceType().ordinal() )  // Balance
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0050, mod200old.getDoubleValue(Mod2002019Key.C0050))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0051, mod200old.getDoubleValue(Mod2002019Key.C0051))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0052, mod200old.getDoubleValue(Mod2002019Key.C0052))
+
+			,(mod200old,mod200new) -> mod200new.setEcpnType( mod200old.getEcpnType().ordinal() )        // ECPN
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0075, mod200old.getDoubleValue(Mod2002019Key.C0075))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0076, mod200old.getDoubleValue(Mod2002019Key.C0076))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0077, mod200old.getDoubleValue(Mod2002019Key.C0077))
+
+			,(mod200old,mod200new) -> mod200new.setPygType(mod200old.getPygType().ordinal() )           // Pérdidas y ganancias 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0053, mod200old.getDoubleValue(Mod2002019Key.C0053))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0054, mod200old.getDoubleValue(Mod2002019Key.C0054))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002020Key.C0055, mod200old.getDoubleValue(Mod2002019Key.C0055))
 			
 			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002020Key.C0061, mod200old.getDoubleValue(Mod2002019Key.C0061))  // Estados de cuentas de Instituciones de inversión colectiva [061]
 			
@@ -801,8 +812,8 @@ public class Mod2002020Import2019 {
 		System.out.println("PeriodEnd.............: " + formatDate(mod200.getPeriodEnd()));
 		System.out.println("PeriodType............: " + mod200.getPeriodType());
 		System.out.println("Cnae .................: " + mod200.getCnae());
-		System.out.println("Document..............: " + mod200.getEnterpriseDocument());
-		System.out.println("Name..................: " + mod200.getEnterpriseName());
+		System.out.println("Document..............: " + mod200.getDocument());
+		System.out.println("Name..................: " + mod200.getName());
 		System.out.println("Phone1................: " + mod200.getEnterprisePhone1());
 		System.out.println("Phone2................: " + mod200.getEnterprisePhone2());
 		System.out.println("Year..................: " + mod200.getYear());
@@ -811,7 +822,7 @@ public class Mod2002020Import2019 {
 		System.out.println("FiscalGroup...........: " + mod200.getFiscalGroup());
 		System.out.println("DominantDocument......: " + mod200.getDominantDocument());
 		System.out.println("Complementary.........: " + mod200.isComplementary());
-		System.out.println("ComplementaryReceipt..: " + mod200.getComplementaryReceipt());
+		System.out.println("ComplementaryReceipt..: " + mod200.getReplacedNumber());
 		System.out.println("Secretary_Name........: " + mod200.getSecretary().getName());
 		System.out.println("Secretary_Document....: " + mod200.getSecretary().getDocument());
 		System.out.println("Secretary_Irnr........: " + formatDate(mod200.getSecretary().getIrnr()));

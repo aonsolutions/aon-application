@@ -20,7 +20,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrato
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
-public class Mod200DAO extends FiscalModelDAO {
+//public class Mod200DAO extends FiscalModelDAO {
+public class Mod200DAO {
 	
 	public static Stream<Mod200> getHeaders(AONContext ctx, int domain) {
 		return getHeaders(ctx, domain, null);

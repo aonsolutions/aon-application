@@ -212,17 +212,17 @@ public class Mod2002020DAO  {
 				mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2020));
 				mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2020));
 			}
-			if ( AonStringUtils.length(mod200.getEnterpriseDocument()) > 9)
+			if ( AonStringUtils.length(mod200.getDocument()) > 9)
 				throw new AonCoreException("El documento del presentador no puede superar 9 caracteres.");
-			if ( AonStringUtils.length(mod200.getEnterpriseName()) > 45)
+			if ( AonStringUtils.length(mod200.getName()) > 45)
 				throw new AonCoreException("La raz\u00F3n social del presentador no puede superar 45 caracteres.");
 			if ( AonStringUtils.length(mod200.getEnterprisePhone1()) > 9)
 				throw new AonCoreException("El teléfono 1 del presentador no puede superar 9 caracteres.");
 			if ( AonStringUtils.length(mod200.getEnterprisePhone2()) > 9)
 				throw new AonCoreException("El teléfono 2 del presentador no puede superar 9 caracteres.");
-			if ( AonStringUtils.length(mod200.getReceipt()) > 13)
+			if ( AonStringUtils.length(mod200.getNumber()) > 13)
 				throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n no puede superar 13 caracteres.");
-			if ( AonStringUtils.length(mod200.getComplementaryReceipt()) > 13)
+			if ( AonStringUtils.length(mod200.getReplacedNumber()) > 13)
 				throw new AonCoreException("El n\u00FAmero de declaraci\u00F3n complementaria no puede superar 13 caracteres.");
 			if ( AonStringUtils.length(mod200.getFiscalGroup()) > 9)
 				throw new AonCoreException("El N\u00FAmero del grupo fiscal no puede superar 9 caracteres."); 			
@@ -254,13 +254,13 @@ public class Mod2002020DAO  {
 			 .set(FS_MODEL200.YEAR, mod200.getYear())
 			 .set(FS_MODEL200.ADMINISTRATION, mod200.getAdministration().getValue() )
 			 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte( mod200.getStatus() ) )
-			 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
-			 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
+			 .set(FS_MODEL200.DOCUMENT, mod200.getDocument())
+			 .set(FS_MODEL200.NAME, mod200.getName())
 			 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
 			 .set(FS_MODEL200.PHONE2, mod200.getEnterprisePhone2())
 			 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
-			 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
-			 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
+			 .set(FS_MODEL200.RECEIPT,mod200.getNumber())
+			 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getReplacedNumber())
 			 .set(FS_MODEL200.CNAE,mod200.getCnae())
 			 .set(FS_MODEL200.PERIOD_TYPE,(byte) mod200.getPeriodType())
 			 .set(FS_MODEL200.PERIOD_START, mod200.getPeriodStart()==null?
@@ -524,13 +524,13 @@ public class Mod2002020DAO  {
 		 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
 		 .set(FS_MODEL200.YEAR, mod200.getYear())
 		 .set(FS_MODEL200.ADMINISTRATION, mod200.getAdministration().getValue())
-		 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
-		 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
+		 .set(FS_MODEL200.DOCUMENT, mod200.getDocument())
+		 .set(FS_MODEL200.NAME, mod200.getName())
 		 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
 		 .set(FS_MODEL200.PHONE2, mod200.getEnterprisePhone2())
 		 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
-		 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
-		 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
+		 .set(FS_MODEL200.RECEIPT,mod200.getNumber())
+		 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getReplacedNumber())
 		 .set(FS_MODEL200.CNAE,mod200.getCnae())
 		 .set(FS_MODEL200.PERIOD_TYPE,(byte) mod200.getPeriodType())
 		 .set(FS_MODEL200.PERIOD_START, mod200.getPeriodStart()==null?
@@ -661,17 +661,17 @@ public class Mod2002020DAO  {
 		mod200.setDomain(record.getDomain());
 		mod200.setAdministration(AonEnumUtils.enumValue(Administration.class, record.getAdministration()));
 		mod200.setEnterprise(record.getEnterprise());
-		mod200.setEnterpriseDocument(record.getDocument());
-		mod200.setEnterpriseName(record.getName());
+		mod200.setDocument(record.getDocument());
+		mod200.setName(record.getName());
 		mod200.setEnterprisePhone1(record.getPhone1());
 		mod200.setEnterprisePhone2(record.getPhone2());
 		mod200.setComplementary(record.getComplementary()==1);
-		mod200.setComplementaryReceipt(record.getComplementaryReceipt());
+		mod200.setReplacedNumber(record.getComplementaryReceipt());
 		mod200.setCnae(record.getCnae());
 		mod200.setPeriodEnd(record.getPeriodEnd());
 		mod200.setPeriodStart(record.getPeriodStart());
 		mod200.setPeriodType(record.getPeriodType());
-		mod200.setReceipt(record.getReceipt());
+		mod200.setNumber(record.getReceipt());
 		mod200.setComments(record.getComments());
 		mod200.setFiscalGroup(record.getFiscalGroup());
 		mod200.setDominantDocument(record.getDominantDocument());
@@ -813,8 +813,8 @@ public class Mod2002020DAO  {
 			
 			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
 			mod200.setEnterprise(conf.getCompany().getId());
-			mod200.setEnterpriseDocument(conf.getCompany().getDocument());
-			mod200.setEnterpriseName(conf.getCompany().getName());
+			mod200.setDocument(conf.getCompany().getDocument());
+			mod200.setName(conf.getCompany().getName());
 			mod200.setEnterprisePhone1(conf.fiscal().getContactPhone());
 			mod200.setEnterprisePhone2(conf.fiscal().getContactCellular());
 			Administration adm = conf.fiscal().getAdministration(Administration.COMMON_TERRITORY);
@@ -936,7 +936,7 @@ public class Mod2002020DAO  {
 	}
 
 	public static Mod2002020 calculate(Mod2002020 mod200) {
-		return calculate(mod200,true);
+		return calculate(mod200,true);		
 	}
 	
 	private static Mod2002020 calculate(Mod2002020 mod200, boolean addToDraft) {

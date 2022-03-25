@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.mod200.server;
 
 import java.io.IOException;
 import java.io.StringWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import com.esferalia.aon.occam.api.FISCAL;
+
+import com.esferalia.aon.occam.api.fiscal.MODEL2002020;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.MOD2002020;
@@ -29,7 +32,10 @@ public class Mod2002020AccountingFile extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
-			Mod2002020 mod200 = FISCAL.getMod2002020ById(domainName,domainId,user,id);
+			Occam occam = new Occam().setDomainName(domainName)
+									.setDomain(domainId)
+									.setUser(user);
+			Mod2002020 mod200 = MODEL2002020.getMod2002020ById(occam,id);
 
 			MOD2002020 mod = Mod2002020toMOD2002020.getMOD2002020(mod200);
 			StringWriter writer = new StringWriter();

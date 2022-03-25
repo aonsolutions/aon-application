@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
@@ -36,8 +37,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public abstract class PageAbs extends ResizeComposite {
+//public abstract class PageAbs extends SimpleLayoutPanel {
 
 	interface DeleteButtonTemplate extends SafeHtmlTemplates {
 		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
@@ -96,10 +99,10 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 
 	private HashMap<IMod200Key, DoubleBox> inputs = new HashMap<IMod200Key, DoubleBox>();
-	private HashMap<IMod200Key, BoxLabel> labels = new HashMap<IMod200Key, BoxLabel>();
+	private HashMap<IMod200Key, AonBoxLabel> labels = new HashMap<IMod200Key, AonBoxLabel>();
 
-	@UiField
-	Panel basePanel;
+//	@UiField
+//	Panel basePanel;
 
 	protected Model200PageCallback callback;
 	
@@ -117,7 +120,7 @@ public abstract class PageAbs extends ResizeComposite {
 						input.addStyleName(AON.AON_CSS.aonChanged());
 					}
 				}
-				for ( BoxLabel label  : labels.values() ) {
+				for ( AonBoxLabel label  : labels.values() ) {
 					label.removeErrorState();
 				}
 			}
@@ -127,7 +130,7 @@ public abstract class PageAbs extends ResizeComposite {
 	public Map<IMod200Key, DoubleBox> getInputs() {
 		return inputs;
 	}
-	public Map<IMod200Key, BoxLabel> getLabels() {
+	public Map<IMod200Key, AonBoxLabel> getLabels() {
 		return labels;
 	}
 	
@@ -183,7 +186,7 @@ public abstract class PageAbs extends ResizeComposite {
 			// Nothing;
 		}
 		if (show) {
-			BoxLabel code = new BoxLabel(codeId, Model2002020.BOX_LENGTH);
+			AonBoxLabel code = new AonBoxLabel(codeId, Model2002020.BOX_LENGTH);
 			getLabels().put(k, code);
 			panel.add(code);
 		}
@@ -201,6 +204,7 @@ public abstract class PageAbs extends ResizeComposite {
 					Double d = text.getValueOrThrow();
 					text.addStyleName(AON.AON_CSS.aonChanged());
 					callback.getMod200Object().doubleValueChanged(k, d );
+					callback.markAsDirty();
 					
 					// Caso especial, la casilla 103 de Deducciones de Doble Imposición, es la 
 					// misma en 4 apartados, pero aqui se graba con 4 claves distintas, así que 
@@ -409,4 +413,28 @@ public abstract class PageAbs extends ResizeComposite {
 	protected boolean isAvailable() {
 		return true;
 	}
+	
+	protected Label getTitle(String text) {
+		Label title = new Label(text);
+		title.setStyleName(AON.CSS.aonMarginTop());
+		title.addStyleName(AON.CSS.aonBold());
+		title.addStyleName(AON.CSS.aonTextUppercase());
+		title.addStyleName(AON.CSS.aonFontMedium());
+		title.addStyleName(AON.CSS.aonWidthAlmostAll());
+		title.addStyleName(AON.CSS.aonBlockCenter());
+		title.addStyleName(AON.CSS.aonBorderBottom());
+		return title;
+	}
+	
+	protected Label getSubtitle(String text) {
+		Label subtitle = new Label(text);
+		subtitle.setStyleName(AON.CSS.aonMarginTop());
+		subtitle.addStyleName(AON.CSS.aonBold());
+		subtitle.addStyleName(AON.CSS.aonTextUppercase());
+		subtitle.addStyleName(AON.CSS.aonWidthAlmostAll());
+		subtitle.addStyleName(AON.CSS.aonBlockCenter());
+		subtitle.addStyleName(AON.CSS.aonBorderBottom());
+		return subtitle;
+	}
+	
 }

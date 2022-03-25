@@ -6,6 +6,7 @@ import java.text.ParseException;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
@@ -202,7 +203,7 @@ public class Page07 extends PageAbs {
 						panel.setStyleName(AON.AON_CSS.aonNowrap());
 						final Mod2002020Key key = Page7Row.values()[row].getKeys()[col - 1];
 						if (key != null) {
-							BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
+							AonBoxLabel code = new AonBoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 							panel.add(code);
 							getLabels().put(key, code);
 							

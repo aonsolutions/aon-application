@@ -51,8 +51,8 @@ public interface IFiscal {
 	public FiscalModel getModel(AONContext ctx, int id);
 
 	//		  					MOD200 
-	public Mod200 getMod200(AONContext ctx, int domainId, Integer id);
-	public LinkedList<Mod200> getMod200s(AONContext ctx, int domainId);
+//	public Mod200 getMod200(AONContext ctx, int domainId, Integer id);
+//	public LinkedList<Mod200> getMod200s(AONContext ctx, int domainId);
 	// 				   		  MOD200 - 2013
 	public Mod2002013 createMod2002013(AONContext ctx, int year);
 	public Mod2002013 initializeNewMod2002013(AONContext ctx, Mod2002013 mod200);
@@ -144,17 +144,17 @@ public interface IFiscal {
 	public Mod2002019 importMod2002018(AONContext ctx, Mod2002019 mod200);
 	
 	// 				   		  MOD200 - 2020
-	public Mod2002020 createMod2002020(AONContext ctx, int year);
-	public Mod2002020 initializeNewMod2002020(AONContext ctx, Mod2002020 mod200);
-	public Mod2002020 initializeMod2002020(AONContext ctx, Mod2002020 mod200);
-	public Mod2002020 getMod2002020ByYear(AONContext ctx, int year);
-	public Mod2002020 getMod2002020ById(AONContext ctx, int id);
-	public Mod2002020 calculateMod2002020(Mod2002020 mod200);
-	public Mod2002020 validateMod2002020(Mod2002020 mod200);
-	public Mod2002020 saveMod2002020(AONContext ctx, Mod2002020 mod200);
-	public void deleteMod2002020(AONContext ctx, int id);
-	public String dumpAEATMod2002020(Mod2002020 mod200);
-	public Mod2002020 importMod2002019(AONContext ctx, Mod2002020 mod200);
+//	public Mod2002020 createMod2002020(AONContext ctx, int year);
+//	public Mod2002020 initializeNewMod2002020(AONContext ctx, Mod2002020 mod200);
+//	public Mod2002020 initializeMod2002020(AONContext ctx, Mod2002020 mod200);
+//	public Mod2002020 getMod2002020ByYear(AONContext ctx, int year);
+//	public Mod2002020 getMod2002020ById(AONContext ctx, int id);
+//	public Mod2002020 calculateMod2002020(Mod2002020 mod200);
+//	public Mod2002020 validateMod2002020(Mod2002020 mod200);
+//	public Mod2002020 saveMod2002020(AONContext ctx, Mod2002020 mod200);
+//	public void deleteMod2002020(AONContext ctx, int id);
+//	public String dumpAEATMod2002020(Mod2002020 mod200);
+//	public Mod2002020 importMod2002019(AONContext ctx, Mod2002020 mod200);
 	
 	// 						SII
 	Stream<VatContext> getSiiVatContext(AONContext ctx, AccountingReportParams params, String sii);

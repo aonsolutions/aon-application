@@ -484,8 +484,8 @@ public class Mod2002020Writer {
 							line.append(AonFiscalFileUtils.text(mod200.getDevType(), 1)); // Tipo de declaración
 						}
 					}
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getEnterpriseDocument(), 9))
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getEnterpriseName(), 80))
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDocument(), 9))
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getName(), 80))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getYear(), 4, 0)) // Ejercicio
 				,(line, mod200, label) -> line.append("0A") // Periodo (Constante 0A)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.dateZero(mod200.getPeriodStart()))
@@ -576,7 +576,7 @@ public class Mod2002020Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002020Key.C0041, 9, 2)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002020Key.C0042, 9, 2)
 				,(line, mod200, label) -> line.append(mod200.isComplementary() ? "1" : "0")
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(AonNumberUtils.todouble(mod200.getComplementaryReceipt()), 13, 0))
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(AonNumberUtils.todouble(mod200.getReplacedNumber()), 13, 0))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getSecretary().getName(), 21))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getSecretary().getDocument(), 9))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.dateZero(mod200.getSecretary().getIrnr()))
@@ -1786,8 +1786,8 @@ public class Mod2002020Writer {
 				,(line, mod200, label) -> line.append("0A") // Período Impositivo "0A"
 				,(line, mod200, label) -> line.append(mod200.getPeriodStart() == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodStart())) // Período Impositivo Inicio (ddmmaa)
 				,(line, mod200, label) -> line.append(mod200.getPeriodEnd() == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodEnd())) // Período Impositivo Fin (ddmmaa)
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getEnterpriseDocument(), 9)) // Identificación -  NIF				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getEnterpriseName(), 80)) // Identificación - Apellidos y nombre o Razón Social
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDocument(), 9)) // Identificación -  NIF				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getName(), 80)) // Identificación - Apellidos y nombre o Razón Social
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002020Key.LQ552) // Liquidación - Base imponible [552]
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002020Key.LQ562) // Liquidación - Cuota íntegra [562]
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002020Key.BN621) // Liquidación - Líquido a ingresar o a devolver Estado [621]
