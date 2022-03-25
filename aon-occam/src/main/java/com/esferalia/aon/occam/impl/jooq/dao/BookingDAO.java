@@ -7,11 +7,8 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.jooq.tools.json.JSONArray;
-import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.attachment.Attach;

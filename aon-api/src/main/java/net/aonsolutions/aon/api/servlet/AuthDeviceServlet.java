@@ -22,7 +22,8 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 public class AuthDeviceServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(AuthDeviceServlet.class.getName());
-
+	private static final String TOKEN_FCM = "tokenFCM";
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		try {
@@ -35,7 +36,7 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/save":
 					LOGGER.info("AON AUTHDEVICE SAVE  SERVLET - GET METHOD");
@@ -56,22 +57,23 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	
 	private JSONObject save(AonApiData api) {
 		JSONObject json = new JSONObject();
-		if(!api.getData().optString("tokenFCM").isEmpty()) {
+		if(!api.getData().optString(TOKEN_FCM).isEmpty()) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			Domain domain = new Domain().setName(aonToken.getSchemaFirstDomain()).setId(0);
 			AuthDevice authDevice = new AuthDevice()
 					.setId(api.getData().optInt("id"))
 					.setAuth(aonToken.getAuth())
 					.setDeviceType(DeviceType.safeValueOf(api.getData().optString("device_type")))
-					.setDeviceToken(api.getData().optString("tokenFCM"));
+					.setDeviceToken(api.getData().optString(TOKEN_FCM));
 			json = SECURITY.saveAuthDevice(domain, api.getUser().getLogin(), authDevice).toJSON();
 		}
 		return json;
 	}
 	
 	private JSONObject delete(AonApiData api) {
-		if(!api.getData().isNull("tokenFCM"))
-			SECURITY.deleteAuthDevice(api.getDomain(), api.getUser().getLogin(), f-> f.getDeviceTokenProperty().eq(api.getData().optString("tokenFCM")));
+		if(!api.getData().isNull(TOKEN_FCM))
+			SECURITY.deleteAuthDevice(api.getDomain(), api.getUser().getLogin(), 
+					f -> f.getDeviceTokenProperty().eq(api.getData().optString(TOKEN_FCM)));
 		return new JSONObject();
 	}
 }

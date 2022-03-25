@@ -35,8 +35,10 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Session.SESSION;
 import static com.esferalia.aon.occam.api.model.attachment.DataAttachSource.SISTEMA_RED;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -418,6 +420,7 @@ public class SecurityDAO {
 	
 	public static User delete(AONContext ctx, User user) {
 		ctx.checkWrite();
+		deleteSession(ctx, user);
 		deleteUserTaskHolder(ctx, user);
 		deleteUserAppRoles(ctx, user);
 		deleteUserScopes(ctx, user);
@@ -428,6 +431,10 @@ public class SecurityDAO {
 		deleteActionFavorite(ctx, user);
 		deleteUser(ctx, user);
 		return user;
+	}
+	
+	public static void deleteSession(AONContext ctx, User user) {
+		ctx.getDslContext().delete(SESSION).where(SESSION.USER_ID.eq(user.getId()));
 	}
 	
 	private static void deleteMailAccount(AONContext ctx, User user) {

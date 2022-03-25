@@ -45,7 +45,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[GET /ms/api/project] AON API PROJECT SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case ROOT:
 					response(req, resp, getProjects(api));
@@ -69,7 +69,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[POST /ms/api/project] AON API PROJECT SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case ROOT:
 					response(req, resp, saveProject(api));
@@ -91,7 +91,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[DELETE /ms/api/project] AON API PROJECT SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case ROOT:
 					response(req, resp, deleteProject(api));
@@ -154,8 +154,8 @@ public class ProjectServlet extends AonApiHttpServlet{
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId())
 				.and(f.getProjectTypeProperty().isNotNull());
 		
-		if(api.getParams().opt(IJsonNames.REGISTRY) != null) {
-			Integer registry = JsonUtils.getInteger(api.getParams(), IJsonNames.REGISTRY);
+		if(api.getData().opt(IJsonNames.REGISTRY) != null) {
+			Integer registry = JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY);
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		}
 

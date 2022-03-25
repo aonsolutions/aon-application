@@ -28,7 +28,7 @@ public class EnterpriseServlet extends AonApiHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			
 			String domainName = req.getParameter("domain");
 			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));

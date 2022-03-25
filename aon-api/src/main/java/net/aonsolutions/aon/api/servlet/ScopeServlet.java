@@ -25,7 +25,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API SCOPE SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -45,7 +45,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API SCOPE SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				//response(req, resp, getResponseObject());
@@ -63,7 +63,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API SCOPE SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				//response(req, resp, getResponseObject());

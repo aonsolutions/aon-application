@@ -53,14 +53,14 @@ import net.aonsolutions.aon.api.utils.TaskUtils;
 public class TaskServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(TaskServlet.class.getName());
-	
+	private static final String LINES = "-------------";	
 //	private static final String SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON TASK SERVLET GET");
 		try {		
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, getTasks(api));
@@ -102,7 +102,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)  {
 		LOGGER.info("AON TASK SERVLET POST");
 		try {		
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, saveTask(api));
@@ -138,7 +138,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API TASK SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, deleteTask(api));
@@ -155,24 +155,25 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getTasks(AonApiData api) {
-		Integer page = api.getParams().optInt(IJsonNames.PAGE);
-		Integer perPage = api.getParams().optInt(IJsonNames.PER_PAGE);
-		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> TaskUtils.taskFilter(api, f, api.getDomain(), new Customer()), page, perPage));
+		Integer page = api.getData().optInt(IJsonNames.PAGE);
+		Integer perPage = api.getData().optInt(IJsonNames.PER_PAGE);
+		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(),
+				f -> TaskUtils.taskFilter(api, f, api.getDomain(), new Customer()), page, perPage));
 		if(page==1)
 			getTasksOffice(api, jsonArr);
 		return jsonArr;
 	}
 
 	private JSONObject getTask(AonApiData api) {
-		Integer taskId = api.getParams().optInt(IJsonNames.ID);
+		Integer taskId = api.getData().optInt(IJsonNames.ID);
 		Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId) );
 		if(task.getId()==null) throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
 		return TaskJSON.toJSON(task);
 	}
 	
 	private JSONArray getWorkflows(AonApiData api) {
-		Integer task = api.getParams().optInt(IJsonNames.TASK);
-		Domain domain = new Domain().setId(api.getParams().optInt(IJsonNames.DOMAIN_ID)).setName(api.getParams().optString(IJsonNames.DOMAIN_NAME));
+		Integer task = api.getData().optInt(IJsonNames.TASK);
+		Domain domain = new Domain().setId(api.getData().optInt(IJsonNames.DOMAIN_ID)).setName(api.getData().optString(IJsonNames.DOMAIN_NAME));
 		return TaskWorkflowJSON.toJSON(
 				AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
 				f->f.getTaskProperty().eq(task)) 
@@ -180,7 +181,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getTaskTags(AonApiData api) {
-		String type = api.getParams().optString(IJsonNames.TYPE);
+		String type = api.getData().optString(IJsonNames.TYPE);
 		Domain domain = api.getDomain();
 		return TagJSON.toJSON( 
 			AON.getTagList(
@@ -193,7 +194,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 
 	private JSONArray getTaskAttach(AonApiData api) {
-		return TaskAttachJSON.toJSON( AON_SOLUTIONS.getTaskAttachList(api.getDomain(), api.getUser(), f-> f.getTaskProperty().eq(api.getParams().optInt(IJsonNames.TASK))));
+		return TaskAttachJSON.toJSON( AON_SOLUTIONS.getTaskAttachList(api.getDomain(), api.getUser(), 
+				f -> f.getTaskProperty().eq(api.getData().optInt(IJsonNames.TASK))));
 	}
 	
 	private JSONObject saveTask(AonApiData api) {
@@ -278,7 +280,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getTaskCount(AonApiData api) {
-		Integer taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getParams(), IJsonNames.TASK_HOLDER);
+		Integer taskHolder = api.getData().optString(IJsonNames.TASK_HOLDER).isEmpty() 
+				? 0 : JsonUtils.getInteger(api.getData(), IJsonNames.TASK_HOLDER);
 		
 		HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
 				f-> TaskUtils.taskFilterCount(api, api.getDomain(), f, new Customer()), 
@@ -384,19 +387,19 @@ public class TaskServlet extends AonApiHttpServlet{
 			 ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), param.getName());
 			 if(exists.getId()!=null) {
 				 if(param.getValue()!=null) {
-					 exists.setValue(param.getValue());
-					 System.out.println("--------UPDATE APP PARAMS "+ param.getName()+"-------------");
+					 exists.setValue(param.getValue()); 
+					 LOGGER.info("--------UPDATE APP PARAMS "+ param.getName() + LINES);
 					 AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), exists, 
 								f->f.getDomainProperty().eq(exists.getDomain()).and(f.getNameProperty().eq(exists.getName()))
 					);
 				 } else {
-					 System.out.println("--------DELETE APP PARAMS "+ param.getName()+"-------------");
+					 LOGGER.info("--------DELETE APP PARAMS "+ param.getName() + LINES);
 					 AON.deleteApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(),
 							 f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(param.getName()))
 					);
 				 }
 			 } else if(param.getValue()!=null) {
-				 System.out.println("--------SAVE APP PARAMS "+ param.getName()+"-------------");
+				 LOGGER.info("--------SAVE APP PARAMS "+ param.getName() + LINES);
 				 AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), param);
 			 }
 		}
