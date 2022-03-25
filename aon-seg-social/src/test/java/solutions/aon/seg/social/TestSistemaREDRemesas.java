@@ -21,7 +21,7 @@ import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
 import solutions.aon.seg.social.exception.invalid.PendingProcessesException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.exception.invalid.outOfTimeException;
 
 @Ignore
@@ -76,7 +76,7 @@ public class TestSistemaREDRemesas {
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
 			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
@@ -139,7 +139,7 @@ public class TestSistemaREDRemesas {
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
 			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, true);
 			fail("Shouldn't succeed");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");

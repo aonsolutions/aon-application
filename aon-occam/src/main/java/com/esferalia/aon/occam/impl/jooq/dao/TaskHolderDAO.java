@@ -16,6 +16,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
@@ -59,7 +60,8 @@ public class TaskHolderDAO {
 		public static TaskHolder build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) registry = REGISTRY;
 			return new TaskHolder()
-					.copy(RegistryFiller.build(r, registry))
+					.copy(RegistryFiller.build(r, registry)
+						.setDomain(new Domain().setId(r.getValue(TASK_HOLDER.DOMAIN))))
 					.setActive(getBoolean(r, TASK_HOLDER.ACTIVE))
 					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
 					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))

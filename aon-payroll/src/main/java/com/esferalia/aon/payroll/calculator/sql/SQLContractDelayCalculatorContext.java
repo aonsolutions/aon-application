@@ -519,12 +519,14 @@ public class SQLContractDelayCalculatorContext extends
 			payment.setExpression(
 					String.format(
 					Locale.ROOT,
-					"%s/%f*%s", 
+					"/*var:%s*/"
+					+ "%s/%f*%s", 
+					ContextVariable.DELAY_AMOUNT.getName(), 
 					ContextVariable.DELAY_AMOUNT.getName(), 
 					totalWorkedDays, 
 					ContextVariable.WORKED_DAYS.getName()
 					));
-			
+
 			payments.add(payment);
 		}
 
@@ -564,6 +566,11 @@ public class SQLContractDelayCalculatorContext extends
 			public PaymentType getPaymentType(IContractPayment payment) {
 				return SQLContractDelayCalculatorContext.this.getPaymentType(PaymentType.CRA_0008);
 			}
+			
+			@Override
+			public String getExpressionFor(IContractPayment payment, String expression) {
+				return String.format("/*var:%s*/%s",ContextVariable.DELAY_AMOUNT.getName(), expression);
+			}
 		};
 		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
 			@Override
@@ -573,6 +580,11 @@ public class SQLContractDelayCalculatorContext extends
 			@Override
 			public PaymentType getPaymentType(IContractPayment payment) {
 				return PaymentType.CRA_0000;
+			}
+
+			@Override
+			public String getExpressionFor(IContractPayment payment, String expression) {
+				return expression;
 			}
 		};
 
@@ -853,6 +865,7 @@ public class SQLContractDelayCalculatorContext extends
 		int getOrdinal(IContractPayment payment);
 		String getDescriptionFor(IContractPayment payment);
 		PaymentType getPaymentType(IContractPayment payment);
+		String getExpressionFor(IContractPayment payment, String expression);
 	}
 
 	private static class DelayPaymentBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
@@ -1263,14 +1276,13 @@ public class SQLContractDelayCalculatorContext extends
 			// separator.
 			// Be care that MVEL like any other expression language don't
 			// understand ','.
-			paymentConcept.setExpression(String.format(Locale.US, "%.2f",
-					amount));
+			paymentConcept.setExpression(paymentDecorator.getExpressionFor(payment, String.format(Locale.US, "%.2f", 
+					amount)));
 			paymentConcept.setIrpfExpression(String.format(Locale.US, "%.2f",
 					irpf));
 			paymentConcept.setQuoteExpression(String.format(Locale.US, "%.2f",
 					quote));
-			paymentConcept.setDescription(paymentDecorator
-					.getDescriptionFor(payment));
+			paymentConcept.setDescription(paymentDecorator.getDescriptionFor(payment));
 
 			payment.setPaymentConcept(paymentConcept);
 

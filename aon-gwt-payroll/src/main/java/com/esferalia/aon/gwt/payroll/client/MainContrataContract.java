@@ -250,6 +250,7 @@ public class MainContrataContract extends MainEntryPoint {
 					Integer selectedEmployeeIdx = getSelectedEmployeeIdx(newContractId);
 					
 					contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+					contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 					ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 					contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
 					contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
@@ -269,6 +270,7 @@ public class MainContrataContract extends MainEntryPoint {
 			if (null != employee) {
 				Integer contractId = employee.getContractInfo().getContractId();
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+				contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 				ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
 				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
@@ -355,6 +357,7 @@ public class MainContrataContract extends MainEntryPoint {
 			Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
 
 			contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+			contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 			ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 			contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
 			contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
@@ -1284,6 +1287,7 @@ public class MainContrataContract extends MainEntryPoint {
 			@Override
 			protected void onAccept(Integer contractId) {
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+				contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 
 				Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
 

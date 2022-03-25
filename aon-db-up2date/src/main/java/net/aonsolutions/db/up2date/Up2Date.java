@@ -19,11 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.PrestITFactorUpdate;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw322021Art151Update;
-import net.aonsolutions.db.up2date.tgss.SMI2022Update;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateDaily;
-import net.aonsolutions.db.up2date.user.CertificateDomainFix;
+import net.aonsolutions.db.up2date.payroll.AgreementClean;
+import net.aonsolutions.db.up2date.payroll.CertificatesClean;
 
 
 public class Up2Date {
@@ -188,33 +185,35 @@ public class Up2Date {
     		//CertificatesUpdate.CERTIFICATESUPDATE,
     		//DataRequestUpdate.DATA_REQUEST_UPDATE,
     		//Bases2021UpdateIII.BASES2021UPDATEIII,
-    		//HomeBases2019Close.HOMEBASES2019CLOSE,
-    		//HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
-    		//SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
-    		//TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
-    		//AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
-    		//TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
-    		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE,
-    		//DataRequestUpdate.DATA_REQUEST_UPDATE,
-    		//WorkplaceUpdate.WORKPLACE_UPDATE,
-    		//IrpfM190Update.IRPFM190UPDATE,
-    		//ContractCleanUpdate.CONTRACTCLEANUPDATE,
-    		//TimeControlUpdate.TIMECONTROL_UPDATE,
-    		//Holidays2022Insert.HOLIDAYS2022INSERT,
-    		//Bases2022Update.BASES2022UPDATE,
-    		//AgriculturalBases2022Update.AGRICULTURALBASES2022UPDATE,
-    		//AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
-    		//IPREM2022Update.IPREM2022UPDATE
-    		//IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT
-    		//IrpfQuotasInsert.IRPFQUOTASINSERT,
-    		//IrpfQuotasCheck.IRPFQUOTASCHECK,
-    		//AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
-    		//AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
-    		//RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
-    		//SMI2022Update.SMI2022UPDATE,
-    		//PrestITFactorUpdate.PRESTITFACTORUPDATE,
-    		//CertificateDomainFix.CERTIFICATEDOMAINFIX
-    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY
+//    		HomeBases2019Close.HOMEBASES2019CLOSE,
+//    		HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
+//    		SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
+//    		TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
+//    		AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
+//    		TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
+//    		FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE,
+//    		DataRequestUpdate.DATA_REQUEST_UPDATE,
+//    		WorkplaceUpdate.WORKPLACE_UPDATE,
+//    		IrpfM190Update.IRPFM190UPDATE,
+//    		ContractCleanUpdate.CONTRACTCLEANUPDATE,
+//    		TimeControlUpdate.TIMECONTROL_UPDATE,
+//    		Holidays2022Insert.HOLIDAYS2022INSERT,
+//    		Bases2022Update.BASES2022UPDATE,
+//    		AgriculturalBases2022Update.AGRICULTURALBASES2022UPDATE,
+//    		AgriculturalPercentages2022Update.AGRICULTURALPERCENTAGES2022UPDATE,
+//    		IPREM2022Update.IPREM2022UPDATE,
+//    		IrpfEuskadi2022Insert.IRPFEUSKADI2022INSERT,
+//    		IrpfQuotasInsert.IRPFQUOTASINSERT,
+//    		IrpfQuotasCheck.IRPFQUOTASCHECK,
+//    		AlterAgreement4Owner.ALTER_AGREEMENT_OWNER,
+//    		AgreementOwnerUpdate.AGREEMENTOWNERUPDATE,
+//    		RealDecreeLaw322021Art151Update.REALDECREELAW322021ART151UPDATE,
+//    		SMI2022Update.SMI2022UPDATE,
+//    		PrestITFactorUpdate.PRESTITFACTORUPDATE,
+//    		CertificateDomainFix.CERTIFICATEDOMAINFIX,
+//    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY,
+//    		AgreementClean.AGREEMENTCLEAN,
+    		CertificatesClean.CERTIFICATESCLEAN
     };
     
 

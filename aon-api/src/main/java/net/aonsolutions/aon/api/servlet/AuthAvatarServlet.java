@@ -44,7 +44,7 @@ public class AuthAvatarServlet extends AonApiHttpServlet {
 
 			AuthAttach aa = AON_SOLUTIONS.getAuthAttach(auth, f -> f.getAuthProperty().eq(auth.getAuth()).and(f.getTypeProperty().eq(AuthAttachType.AVATAR.value())));
 			AonIOUtils.copy(new ByteArrayInputStream(aa.getData()), resp.getOutputStream());
-			responseFile(req, resp, "avatar", aa.getMimetype());
+			responseFile(resp, "avatar", aa.getMimetype());
 		} catch (IOException e) {
 			error(req, resp, e);
 		}

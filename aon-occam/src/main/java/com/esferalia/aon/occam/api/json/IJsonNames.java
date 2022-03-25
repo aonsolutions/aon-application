@@ -272,6 +272,7 @@ public interface IJsonNames {
 	String NULL = "null";
 	String NUMBER = "number";
 	String NUMBER_OF_PYMNTS = "numberOfPymnts";
+	String NUMBER_OF_USERS = "numberOfUsers";
 	// ---------------------------------------------------------------------------------------------	[O] 
 	String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	String OFFER_STATUS_BLOCKED = "offerStatusBlocked";

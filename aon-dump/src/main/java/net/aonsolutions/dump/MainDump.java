@@ -242,7 +242,6 @@ public class MainDump {
 				.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION).from(DOMAIN).fetch();
 		
 		domainsResult.forEach(d -> err.println(d.getValue(DOMAIN.NAME)));
-		
 	}
 	
 	// List parent tables to be omited if unify

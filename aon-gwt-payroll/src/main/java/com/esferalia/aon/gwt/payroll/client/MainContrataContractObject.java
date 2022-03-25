@@ -269,5 +269,9 @@ public class MainContrataContractObject {
 		return this.domainUserRoles;
 	}
 
+	public boolean isComunica() {
+		return this.domainUserRoles.isComunica();
+	}
+
 }
 		
