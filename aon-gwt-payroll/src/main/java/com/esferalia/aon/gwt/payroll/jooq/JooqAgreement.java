@@ -32,7 +32,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,7 +73,6 @@ import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.itextpdf.text.log.SysoLogger;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
@@ -735,6 +733,18 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		
 		return agreementContracts.isNotEmpty();
 
+	}
+	
+	public static void deleteAgreements(Connection conn, Integer domainId, List<Integer> agreementIds) throws IllegalArgumentException {
+		agreementIds.forEach(agreementId -> {
+			Agreement agreement = new Agreement();
+			agreement.setId(agreementId);
+			try {
+				deleteAgreement(conn, domainId, agreement);
+			} catch (Exception e) {
+				throw new IllegalArgumentException("El convenio con id = " + agreementId + " no se ha podido eliminar");
+			}
+		});
 	}
 
 	public static void deleteAgreement(Connection conn, Integer domain,
