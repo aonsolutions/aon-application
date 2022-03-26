@@ -514,7 +514,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-fiscal.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-fiscal.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 	
@@ -523,7 +523,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-payroll.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-payroll.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 
@@ -532,7 +532,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-account.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-accounting.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 
@@ -541,7 +541,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-document.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-documental.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 
@@ -550,7 +550,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-tools.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-tools.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 
@@ -559,7 +559,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-notes.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-notes.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 	
@@ -568,7 +568,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-invoice.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-invoice.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 	
@@ -577,7 +577,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-time.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-timecontrol.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 	
@@ -586,7 +586,7 @@
 		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
-		background: url(#{aonResource.resolve['/images/aon-messenger.svg']}) scroll right center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-messenger.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 
@@ -1294,37 +1294,37 @@
 	.aon-option-favorite .menu_contrata,
 	.aon-option-favorite .menu_payroll_portal{
 		padding-left:32px;
-		background: url(#{aonResource.resolve['/images/aon-payroll.svg']}) scroll left center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-payroll.svg']}) scroll left center no-repeat;
 		background-size:28px;
 	}
 	
 	.aon-option-favorite .menu_document  {
 		padding-left:32px;
-		background: url(#{aonResource.resolve['/images/aon-document.svg']}) scroll left center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-documental.svg']}) scroll left center no-repeat;
 		background-size:28px;
 	}
 
 	.aon-option-favorite .menu_fiscal {
 		padding-left:32px;
-		background: url(#{aonResource.resolve['/images/aon-fiscal.svg']}) scroll left center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-fiscal.svg']}) scroll left center no-repeat;
 		background-size:28px;
 	}
 
 	.aon-option-favorite .menu_management {
 		padding-left:32px;
-		background: url(#{aonResource.resolve['/images/aon-invoice.svg']}) scroll left center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-invoice.svg']}) scroll left center no-repeat;
 		background-size:28px;
 	}
 	
 	.aon-option-favorite .menu_accounting {
 		padding-left:32px;
-		background: url(#{aonResource.resolve['/images/aon-account.svg']}) scroll left center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-accounting.svg']}) scroll left center no-repeat;
 		background-size:28px;
 	}
 
 	.aon-option-favorite .menu_configuration{
 		padding-left:32px;
-		background: url(#{aonResource.resolve['/images/aon-tools.svg']}) scroll left center no-repeat;
+		background: url(#{aonResource.resolve['/images/apps/aon-tools.svg']}) scroll left center no-repeat;
 		background-size:28px;
 	}
 
@@ -1559,6 +1559,10 @@
 									style="#{customize.fontStyle}" >
 								</h:outputLink>
 							</f:facet>
+	                		<aon:menuItem id="cauMessenger"
+								value="Soporte / CAU"
+								action="portal_cau_messenger" 
+								iconClass="aon-icon-helpdesk" />
 			                <aon:if test="#{aonConfiguration.bean.alarm.showList}">
 		                		<aon:menuItem id="alarm"
 									value="#{bundle.aon_alarm}"
@@ -1577,10 +1581,10 @@
 								rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 								value="#{bundle.admin_advanced_mode}" />
 							</aon:if>
-							<aon:menuItem id="config_userProfile" action="home_user"
+<!--						<aon:menuItem id="config_userProfile" action="home_user"
 								iconClass="aon-icon-menu-user"
 								actionListener="#{domainUser.onInitUserProfile}"
-								value="#{bundle.admin_user_profile}" />
+								value="#{bundle.admin_user_profile}" /> -->
 							<aon:menuItem id="changePassword" action="home_password"
 								iconClass="aon-icon-changePassword"
 								actionListener="#{changePassword.onInit}"
@@ -1591,12 +1595,36 @@
 		                		<aon:menuItem id="spanishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[0].displayName}"
 									iconClass="#{aonConfiguration.locales[0].iconClass}" 
+									onclick="localStorage.setItem('aon_language','es')"
 									actionListener="#{aonConfiguration.locales[0].onChangeLanguage}" />
 		                		<aon:menuItem id="englishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[1].displayName}"
 									iconClass="#{aonConfiguration.locales[1].iconClass}" 
+									onclick="localStorage.setItem('aon_language','en')"
 									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
-			                </aon:menuGroup>	
+								<aon:if test="#{dur.alpha}">
+	 	 		                	<aon:menuItem id="deutschLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[2].displayName}"
+										iconClass="#{aonConfiguration.locales[2].iconClass}" 
+										onclick="localStorage.setItem('aon_language','de')"
+										actionListener="#{aonConfiguration.locales[2].onChangeLanguage}" />
+	 		                		<aon:menuItem id="basqueLanguage" reRender="aonHeader,aonContent"
+										value="#{aonConfiguration.locales[3].displayName}"
+										iconClass="#{aonConfiguration.locales[3].iconClass}" 
+										onclick="localStorage.setItem('aon_language','eu')"
+										actionListener="#{aonConfiguration.locales[3].onChangeLanguage}" /> 
+ 	 		                		<aon:menuItem id="catalanLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[4].displayName}"
+										iconClass="#{aonConfiguration.locales[4].iconClass}" 
+										onclick="localStorage.setItem('aon_language','ca')"
+										actionListener="#{aonConfiguration.locales[4].onChangeLanguage}" /> 
+ 	 		                		<aon:menuItem id="galicianLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[5].displayName}"
+										iconClass="#{aonConfiguration.locales[5].iconClass}" 
+										onclick="localStorage.setItem('aon_language','gl')"
+										actionListener="#{aonConfiguration.locales[5].onChangeLanguage}" /> 
+								</aon:if>
+							</aon:menuGroup>	
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">

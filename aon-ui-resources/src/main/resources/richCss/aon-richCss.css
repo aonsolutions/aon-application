@@ -3132,6 +3132,18 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-flag-en{
 	background:transparent url(images/aon-header/aon-icon-flag-en.png) no-repeat scroll center left;
 }
+.aon-icon-flag-eu{
+	background:transparent url(images/aon-header/aon-icon-flag-eu.png) no-repeat scroll center left;
+}
+.aon-icon-flag-ca{
+	background:transparent url(images/aon-header/aon-icon-flag-ca.png) no-repeat scroll center left;
+}
+.aon-icon-flag-gl{
+	background:transparent url(images/aon-header/aon-icon-flag-gl.png) no-repeat scroll center left;
+}
+.aon-icon-flag-de{
+	background:transparent url(images/aon-header/aon-icon-flag-de.png) no-repeat scroll center left;
+}
 
 .aon-fiscal-header{
 	padding:8px 8px 8px 10px;

@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.DefaultPayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
@@ -81,21 +82,17 @@ public class JooqPayrollBuilder {
 	 */
 	public static void generatePayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
-		PayrollTemplate dpt = new PayrollTemplate();
-		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			byte[] logo = getLogo(aonContext);
-			Collection<IDefaultPayroll> payrolls = buildPayrolls(outputStream, dpt, dpb, aonContext, salaryIds, complementaryLimit, logo);
+			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
 			printAon(outputStream, payrolls, logo);
 		}
 	}
 	public static void generateClassicPayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
-		PayrollTemplate dpt = new PayrollTemplate();
-		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			byte[] logo = getLogo(aonContext);
-			Collection<IDefaultPayroll> payrolls = buildPayrolls(outputStream, dpt, dpb, aonContext, salaryIds, complementaryLimit, logo);
+			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
 			printClassic(outputStream, payrolls, logo);
 		}
 	}
@@ -162,15 +159,15 @@ public class JooqPayrollBuilder {
 		return getBytes(optLogo);
 	}
 	
-	private static Collection<IDefaultPayroll> buildPayrolls(OutputStream outputStream, PayrollTemplate payrollTemplate, DefaultPayrollBuilder payrollBuilder,
-			AONContext aonContext, Integer[] salaryIds, Optional<Double> complementaryLimit, byte[] logo) {
+	private static Collection<IDefaultPayroll> buildPayrolls(AONContext aonContext, Integer[] salaryIds,
+			Optional<Double> complementaryLimit, byte[] logo) {
 		
 		// PICK UP THE SALARIES
 		Stream<Salary> salaries = AON.getSalaries(aonContext, p -> p.getIdProperty().in(salaryIds));
 
 		
 		return salaries.map(salary -> {
-
+			DefaultPayrollBuilder payrollBuilder = new DefaultPayrollBuilder();
 			// PAYROLL RELATED DATA
 			{
 				payrollBuilder.setLiquidPeriodStart(salary.getStartDate());
@@ -641,15 +638,17 @@ public class JooqPayrollBuilder {
 	private static void printAon(OutputStream outputStream, Collection<IDefaultPayroll> payrolls, byte[] logo) {
 		// PRINT
 		try {
-			PayrollTemplate.print(outputStream, payrolls, Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null), Optional.ofNullable(new Locale("es")));
-		} catch (CanNotCreatePdfException | IOException ignored) {}
+			PayrollTemplate template = new PayrollTemplate(payrolls, Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null), Optional.ofNullable(new Locale("es")));
+			template.print(outputStream);
+		} catch (CanNotCreatePdfException ignored) {}
 	}
 	
 	private static void printClassic(OutputStream outputStream, Collection<IDefaultPayroll> payrolls, byte[] logo) {
 		// PRINT
 		try {
-			DefaultPayrollTemplate.print(outputStream, payrolls, Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null), Optional.ofNullable(new Locale("es")));
-		} catch (CanNotCreatePdfException | IOException ignored) {}
+			IPayrollTemplate template = new DefaultPayrollTemplate(payrolls, Optional.ofNullable(logo != null ? new ByteArrayInputStream(logo) : null), Optional.ofNullable(new Locale("es")));
+			template.print(outputStream);
+		} catch (CanNotCreatePdfException ignored) {}
 	}
 	
 	private static byte[] getBytes(Optional<InputStream> optLogo) {

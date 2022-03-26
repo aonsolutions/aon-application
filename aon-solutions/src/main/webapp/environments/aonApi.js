@@ -1,6 +1,7 @@
 export const COMPANY = `ms/api/company`;
 export const COMPANY_ONE = `${COMPANY}/one`;
 export const COMPANY_APP = `${COMPANY}/app`;
+export const COMPANY_BOOKING = `${COMPANY}/booking`;
 export const COMPANY_NOTICE = `${COMPANY}/notice`;
 export const COMPANY_MEDIA = `${COMPANY}/media`;
 export const COMPANY_ADDRESS = `${COMPANY}/address`;

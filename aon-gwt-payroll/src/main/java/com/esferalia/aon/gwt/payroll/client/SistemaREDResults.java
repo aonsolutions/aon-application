@@ -260,15 +260,15 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		removeAll();
 	}
 
-	@UiHandler("expandAllButton")
-	void onClickExpandAllButton(ClickEvent event ){
-		expandAll();
-	}
-	
-	@UiHandler("collapseAllButton")
-	void onClickCollapseAllButton(ClickEvent event ){
-		collapseAll();
-	}
+//	@UiHandler("expandAllButton")
+//	void onClickExpandAllButton(ClickEvent event ){
+//		expandAll();
+//	}
+////	
+//	@UiHandler("collapseAllButton")
+//	void onClickCollapseAllButton(ClickEvent event ){
+//		collapseAll();
+//	}
 	
 	@UiHandler("certificateFileUpload")
 	void onFileUploadChange(ChangeEvent event) {

@@ -178,6 +178,15 @@ public class DeliveryDAO {
 	}
 	
 	// -------------------- DELIVERY DETAIL
+
+	public static DeliveryDetail getDeliveryDetail(AONContext ctx, DeliveryDetailFilter filter){
+		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
+				.join(ITEM).on(DELIVERY_DETAIL.ITEM.eq(ITEM.ID))
+				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new PDeliveryDetailFiller())
+			.findFirst().orElse(new DeliveryDetail());
+	}
 	
 	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryDetailFilter filter){
 		return ctx.getDslContext().select().from(DELIVERY_DETAIL)

@@ -21,8 +21,7 @@ public class ExampleServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON EXAMPLE SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
-		
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getResponseObject());
@@ -39,7 +38,7 @@ public class ExampleServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getResponseObject());

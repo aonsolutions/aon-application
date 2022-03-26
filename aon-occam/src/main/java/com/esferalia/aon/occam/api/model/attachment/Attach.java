@@ -31,7 +31,7 @@ public class Attach implements Serializable {
 	private Byte type;
 	private String driveId;
 	private Integer scope;
-	private Boolean confidential;
+	private boolean confidential;
 
 	//---------- Registry
 	private Integer category;
@@ -158,11 +158,11 @@ public class Attach implements Serializable {
 		return this;
 	}
 
-	public Boolean isConfidential() {
+	public boolean isConfidential() {
 		return confidential;
 	}
 	
-	public Boolean getConfidential() {
+	public boolean getConfidential() {
 		return confidential;
 	}
 

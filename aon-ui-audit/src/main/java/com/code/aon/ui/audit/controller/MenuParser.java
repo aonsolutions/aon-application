@@ -19,6 +19,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.audit.ActionSource;
@@ -114,11 +115,12 @@ public class MenuParser {
 	}
 	
 	public static Document getDocument( URL url ) {
-	    SAXReader reader = new SAXReader();
         Document document = null;
 		try {
+		    SAXReader reader = new SAXReader();
+			reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			document = reader.read(url);
-		} catch (DocumentException e) {
+		} catch (SAXException | DocumentException e) {
 			LOGGER.error( "Error parsing " + url, e );
 		}
 		return document;

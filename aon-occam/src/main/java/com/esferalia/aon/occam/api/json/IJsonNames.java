@@ -272,6 +272,7 @@ public interface IJsonNames {
 	String NULL = "null";
 	String NUMBER = "number";
 	String NUMBER_OF_PYMNTS = "numberOfPymnts";
+	String NUMBER_OF_USERS = "numberOfUsers";
 	// ---------------------------------------------------------------------------------------------	[O] 
 	String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
@@ -428,6 +429,7 @@ public interface IJsonNames {
 	String TASK_HOLDER = "task_holder";
 	String TAXES = "taxes";
 	String TAX = "tax";
+	String TAG = "tag";
 	String TAX_DATE = "taxDate";
 	String TECHNICAL = "technical";
 	String TEST = "test";

@@ -212,8 +212,8 @@ public class Up2Date {
 //    		PrestITFactorUpdate.PRESTITFACTORUPDATE,
 //    		CertificateDomainFix.CERTIFICATEDOMAINFIX,
 //    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY,
-    		CertificatesClean.CERTIFICATESCLEAN,
-    		AgreementClean.AGREEMENTCLEAN
+//    		AgreementClean.AGREEMENTCLEAN,
+    		CertificatesClean.CERTIFICATESCLEAN
     };
     
 

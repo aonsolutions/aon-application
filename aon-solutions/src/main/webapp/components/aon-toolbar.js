@@ -240,7 +240,7 @@ export class AonToolbar extends AonElement {
 		return aib;
 	}
 
-	addButtonAfter(action, fn) {
+	addButtonAfter(action, fn , after) {
 		const id = this.TOOL_SECTION + action.id + 'Button';
 		let aib = new AonIconButton();
 		aib.id = id;
@@ -258,7 +258,11 @@ export class AonToolbar extends AonElement {
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
 			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-			toolSection.appendChild(span);
+			if(after && this.getElement(this.TOOL_SECTION + after + 'Button')) {
+				let btn = this.getElement(this.TOOL_SECTION + after + 'Button');
+				toolSection.insertBefore(span, btn.parentNode);
+			} else 
+				toolSection.appendChild(span);
 		}
 		return aib;
 	}

@@ -27,7 +27,7 @@ import solutions.aon.seg.social.exception.invalid.InvalidDateException;
 import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Liquidation;
 import solutions.aon.seg.social.object.Period;
@@ -195,7 +195,7 @@ public class TestCalculationQuery {
 			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
@@ -579,7 +579,7 @@ public class TestCalculationQuery {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
 			System.out.println(SistemaREDI.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534311", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
@@ -681,7 +681,7 @@ public class TestCalculationQuery {
 //					System.out.println(map.get(it.next()));
 //				}
 //			}
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			
 		}  catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
@@ -836,7 +836,7 @@ public class TestCalculationQuery {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
 			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11177534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
 		} catch (StatusCodeException e) {

@@ -38,8 +38,10 @@ public class UserDAO {
 	}
 	
 	public static User get(AONContext ctx, UserFilter filter) {
-		return select(ctx, filter).limit(1).fetch()
+		User user = select(ctx, filter).limit(1).fetch()
 			.stream().map(new UserFiller()).findFirst().orElse(new User());
+		user.setTaskHolders(TaskHolderDAO.getList(ctx, f -> f.getUserIdProperty().eq(user.getId())));
+		return user;
 	}
 	
 	public static Stream<User> getStream(AONContext ctx, UserFilter filter) {

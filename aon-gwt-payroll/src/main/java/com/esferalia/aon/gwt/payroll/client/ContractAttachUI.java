@@ -251,8 +251,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addChangeHandler(e -> typeHidden.setValue(typeLB.getSelectedValue()));
 		
 		// Confidential CheckBox
-		String securityTitle = attach.getConfidential() != null && Boolean.TRUE.equals(attach.getConfidential()) ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
-		String securityIcon = attach.getConfidential() != null && Boolean.TRUE.equals(attach.getConfidential()) ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
+		String securityTitle = attach.isConfidential() ? "Privado: S\u00f3lo visible para usuarios de la empresa" : "P\u00fablico: Visible para todos los usuarios";
+		String securityIcon = attach.isConfidential() ? AON.CSS.aonIconLock() : AON.CSS.aonIconUnLock();
 		AonTableButton confidentialB = new AonTableButton(securityTitle, securityIcon);
 		confidentialB.addClickHandler(e -> {
 			Boolean oldValue = isActiveToggleButton(confidentialB);

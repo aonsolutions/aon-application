@@ -92,7 +92,10 @@ export class AonMessengerList extends AonElement {
 
     setTasks([]);
 
-    this.loadMore();
+    const application = this.getApplication();
+    if(application) application.startLoader();
+    await this.loadMore(true);
+    if(application) application.stopLoader();    
   }
   
 
@@ -109,14 +112,12 @@ export class AonMessengerList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    if(this.isBeta()){
-      if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
-      } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>{
-          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY});
-        });
-      }
+    if(this.isMobile()){
+      this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
+    } else {
+      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>{
+        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY});
+      });
     }
     this.buildToolbarSearch();
   }

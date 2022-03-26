@@ -22,10 +22,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
@@ -1319,7 +1321,7 @@ public class SalaryDraft extends ResizeComposite
 
 			String value = editor.getValue();
 
-			StringVariable var = newVariable();
+			Variable var = newVariable();
 			var.setExpression(StringUtils.isEmpty(value) ? "REMOVE_VARIABLE()" : value);
 
 			salaryDraftObject.addDraftVariable(var);
@@ -1362,7 +1364,7 @@ public class SalaryDraft extends ResizeComposite
 			return new NextVariableFocusCallback();
 		}
 
-		protected StringVariable newVariable() {
+		protected Variable newVariable() {
 			// @formatter:off
 			return new StringVariable.Builder().setImplicit(true).setScope(Scope.SALARY).setName(variable.getName())
 					.setEndDate(variable.getEndDate()).setStartDate(variable.getStartDate()).create();
@@ -1585,8 +1587,14 @@ public class SalaryDraft extends ResizeComposite
 	class PaymentChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable>
 			extends ItemChangeHandler<T, Payment> implements PaymentDialog.Callback {
 
+		Button expandButton;
+		
 		public PaymentChangeHandler(Payment payment) {
 			super(payment);
+		}
+
+		void expand() {
+			expandButton.click();
 		}
 
 		// --------------------------------------------------------------------
@@ -1702,6 +1710,12 @@ public class SalaryDraft extends ResizeComposite
 			salaryDraftObject.recover(payment, SalaryDraft.this);
 		}
 		
+		@Override
+		public void setExpandButton(Button expandButton) {
+			this.expandButton = expandButton;
+			super.setExpandButton(expandButton);
+		}
+		
 		// --------------------------------------------------------------------
 		private Payment getConcept() {
 			if (item.getName() == null)
@@ -1767,6 +1781,103 @@ public class SalaryDraft extends ResizeComposite
 
 			return new ExpressionFocusCallback();
 		}
+	}
+	
+	class VariablePaymentChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> extends PaymentChangeHandler<T>{
+		
+		VariableChangeHandler<T> variableChangeHandler;
+		
+		public VariablePaymentChangeHandler(Payment payment, String name) {
+			super(payment);
+			variableChangeHandler = new VariableChangeHandler<T>(getVariable(name)) {
+				@Override
+				protected Variable newVariable() {
+					return new StringTimeLineVariable.Builder()
+							.setImplicit(true)
+							.setScope(Scope.SALARY)
+							.setName(variable.getName())
+							.setEndDate(variable.getEndDate())
+							.setStartDate(variable.getStartDate())
+							.create()
+							;
+				}
+				
+				@Override
+				protected CalculateCallback getNextVariableFocusCallback() {
+					return VariablePaymentChangeHandler.this.getNextVariableFocusCallback();
+				}
+			};
+		}
+		
+		@Override
+		public void setExpressionWidget(T editor) {
+			enable(editor, true);
+			setEditable(editor, true);
+			variableChangeHandler.setEditor(editor);
+		}
+		
+		
+
+		
+		protected StringVariable newVariable(String name) {
+			return new StringVariable.Builder()
+					.setName(name)
+					.setImplicit(true)
+					.setScope(Scope.SALARY)
+					.setEndDate(item.getEndDate())
+					.setStartDate(item.getStartDate())
+					.create();
+		}
+
+		protected Variable getVariable(String name) {
+			Variable variable = 
+			salaryDraftObject.getContext().stream()
+			.filter( v -> !(v instanceof UndefinedVariable))
+			.filter(v -> AonStringUtils.equals(v.getName(), name))
+			.filter(v -> Objects.equals(v.getStartDate(), item.getStartDate()))
+			.filter(v -> Objects.equals(v.getEndDate(), item.getEndDate()))
+			//.filter(this::intersects)
+			.findFirst().orElse(newVariable(name))
+			;
+			
+			variable.setValue(item.getAmount());
+			
+			return variable;
+		}
+		
+		protected boolean intersects(Variable v) {
+			Date maxStart = AonDateUtils.max(v.getStartDate(), item.getStartDate());
+			Date minEnd = AonDateUtils.min(v.getEndDate(), item.getEndDate());
+			return AonDateUtils.compare(maxStart, minEnd) <= 0;
+		}
+		
+		protected CalculateCallback getNextVariableFocusCallback() {
+			class ExpandPaymentFocusCallback implements CalculateCallback {
+				
+				@Override
+				public Calculate getCalculate() {
+					return SalaryDraft.this.getCalculate();
+				}
+				
+				@Override
+				public void onCalculateFailure(Throwable throwable) {
+					onCalculateSucces(null);
+				}
+
+				@Override
+				public void onCalculateSucces(SalaryDraftObject object) {
+					info("onCalculateSucces (" + item.getDescription() +", " + item.getId() +")");
+					PaymentChangeHandler<?> handler = getPaymentChangeHandlerFor(item.getId());
+					info("onCalculateSucces (" + handler + ")");
+					if ( handler != null ) {
+						handler.expand();
+					}
+				}
+			}
+			return new ExpandPaymentFocusCallback();
+		}
+
+		
 	}
 
 	class DeductionChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable>
@@ -2644,9 +2755,19 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label employeeWorkedDaysTitle;
 	@UiField
+	Label employeePartialFactorLabel;
+	@UiField
+	Label employeePartialFactorTitle;
+	@UiField
 	Button employeeWorkedDaysButton;
 	@UiField
 	Button employeeWorkedHoursButton;
+	@UiField
+	Button employeePartialFactorButton;
+	@UiField
+	Panel employeeHoursFactorDaysPanel;
+	
+	Widget employeePartialFactorWidget;
 
 	@UiField
 	Label periodLabel;
@@ -2813,6 +2934,7 @@ public class SalaryDraft extends ResizeComposite
 		initSalaryDb();
 		initSalarySs();
 		export2JS(this);
+		employeePartialFactorWidget = new Label();
 	}
 	
 	public void setToolbarTitle(String title) {
@@ -2916,7 +3038,8 @@ public class SalaryDraft extends ResizeComposite
 	
 	@UiHandler(
 		{"employeeWorkedDaysButton", 
-		"employeeWorkedHoursButton"})
+		"employeeWorkedHoursButton",
+		"employeePartialFactorButton"})
 	void onWorkedDaysClick(ClickEvent event) {
 		EmployeeTree.showEmployeeCalendar();
 	}
@@ -3354,14 +3477,30 @@ public class SalaryDraft extends ResizeComposite
 		employeeWorkedHoursLabel.setText(formatValue(workHours));
 		employeeWorkedHoursLabel.setVisible(isSalary() && workHours > 0);
 		employeeWorkedHoursTitle.setVisible(employeeWorkedHoursLabel.isVisible());
-		
-		boolean isPartial = getValuesOf("COEFICIENTE_PARCIALIDAD").map(  AonNumberUtils::todouble).anyMatch( d -> d < 1.00 );
-		
 		employeeWorkedHoursButton.setVisible(employeeWorkedHoursLabel.isVisible() );
+		
+		Variable partialFactorsVars [] = getVariablesOf("COEFICIENTE_PARCIALIDAD").toArray(Variable[]::new);
+
+		double partialFactor = 
+		Arrays.stream(partialFactorsVars)
+		.flatMapToDouble( v -> DoubleStream.generate(()-> AonNumberUtils.todouble(v.getValue())).limit( DateUtils.getDaysBetween(v.getStartDate(), v.getEndDate())+1l) )
+		.average().orElse(1.00);
+		
+		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
+
+		employeePartialFactorWidget.removeFromParent();
+		employeePartialFactorWidget = (partialFactor != 1.00  && partialFactorsVars.length == 1) ? getVariableWidget(partialFactorsVars[0], partialFactorsVars[0].getScope(), true ): new Label();
+		employeePartialFactorWidget.setVisible(isSalary() && workHours == 0 && partialFactor != 1.00 && partialFactorsVars.length == 1); 
+		employeeHoursFactorDaysPanel.add(employeePartialFactorWidget);
+		
+		employeePartialFactorLabel.setText(formatValue(partialFactor));
+		employeePartialFactorLabel.setVisible(isSalary() && workHours == 0 && partialFactor != 1.00 && partialFactorsVars.length > 1 );
+		employeePartialFactorTitle.setVisible(employeePartialFactorLabel.isVisible() );
+		employeePartialFactorButton.setVisible(employeePartialFactorLabel.isVisible() );
 
 		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
-		employeeWorkedDaysLabel.setVisible(isSalary() && workHours == 0 &&  workDays > 0 );
+		employeeWorkedDaysLabel.setVisible(isSalary() && workHours == 0 && partialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
 		employeeWorkedDaysButton.setVisible(employeeWorkedDaysLabel.isVisible());
 		
@@ -3401,11 +3540,11 @@ public class SalaryDraft extends ResizeComposite
 		Scope nextScope = null;
 		boolean show = false; //scope.compareTo(Scope.CONTRACT) >= 0;
 
-		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
 
 		List<Variable> context = getContext(salaryDraftObject);
 		List<Variable> variables = context.stream()
 				.filter(v->!skipVariable(v))
+				.filter( v-> !alreadyDisplayed(v) )
 				//.filter(v->!isPaymentVariable(v))
 				.collect(Collectors.toList());
 		//List<Variable> constants = getConstants(context);
@@ -3414,7 +3553,8 @@ public class SalaryDraft extends ResizeComposite
 		List<Variable> visibleContext  = new ArrayList<Variable>();
 		//visibleContext.addAll(constants);
 		visibleContext.addAll(variables);
-		if ( isPartial ) {
+		/* employeePartialFactorWidget */
+		if ( partialFactor != 1.00  && !employeePartialFactorWidget.isVisible()) {
 			List<Variable> partialVariables = getVariablesOf("COEFICIENTE_PARCIALIDAD").collect(Collectors.toList()); 
 			visibleContext.removeAll(partialVariables);
 			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
@@ -3989,7 +4129,7 @@ public class SalaryDraft extends ResizeComposite
 			
 			if (payment.getAmount() != null && event == null) {
 
-				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(payment);
+				PaymentChangeHandler<TextBox> handler = newPaymentChangeHandler(payment);
 				dumpPayment(payment, row, getIconRowStyle(payment), handler);
 
 				handlers.add(handler);
@@ -3997,7 +4137,7 @@ public class SalaryDraft extends ResizeComposite
 				handler.setVisible(disabledPaymentsCheck.getValue() || isEnabled(payment));
 
 			} else if (payment.getId() != null ) {
-				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(payment);
+				PaymentChangeHandler<TextBox> handler = newPaymentChangeHandler(payment);
 				String styles[] = eventStyles.get(event == null ? Event.Type.WARNING : event.getType());
 				dumpPayment(payment, row, getIconRowStyle(payment), handler);
 				handlers.add(handler);
@@ -4364,12 +4504,12 @@ public class SalaryDraft extends ResizeComposite
 		
 	}
 
-	private void dumpChildPayment(Payment payment, int row, String iconStyleName) {
+	private void dumpChildPayment(Payment childPayment, int row, String iconStyleName) {
 
 		Widget labelWidget = null;
 
-		Double amount = payment.getAmount();
-		Double quote = payment.getQuote();
+		Double amount = childPayment.getAmount();
+		Double quote = childPayment.getQuote();
 
 		if (amount != null && !amount.equals(quote)) {
 			labelWidget = newPercentLabel(format(quote));
@@ -4380,20 +4520,34 @@ public class SalaryDraft extends ResizeComposite
 		}
 		
 		//payment.setType(Payment.Type.CRA_0000);
-		consoleLog(payment.getDescription() + " / " + payment.getType());
+		consoleLog(childPayment.getDescription() + " / " + childPayment.getType());
 		
 		Button expandButton = new Button();
 		expandButton.setEnabled(false);
 		expandButton.setTabIndex(Short.MAX_VALUE);
 		expandButton.setStyleName(iconStyleName);
 		expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		
+		PaymentChangeHandler<TextBox> paymentChangeHandler = newPaymentChangeHandler(childPayment);
 
-		dumpItem(payment, row, AON.AON_ICON_BLANK, new PaymentChangeHandler<TextBox>(payment), false, labelWidget, expandButton, false);
+		dumpItem(childPayment, row, childPayment.getDescription(), AON.AON_ICON_BLANK, paymentChangeHandler, false, labelWidget, expandButton, false, false);
 
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
 	}
 	
+	private PaymentChangeHandler<TextBox> newPaymentChangeHandler(Payment payment){
+		if ( payment instanceof CompositePayment ) {
+			return new PaymentChangeHandler<TextBox>(payment);
+		}
+		
+		String variableName = getImplicitVariableName(payment);
+		if ( variableName == null ) {
+			return new PaymentChangeHandler<TextBox>(payment);
+		}
+		
+		return new VariablePaymentChangeHandler<TextBox>(payment, variableName);
+	}
 	
 	public native void consoleLog(String msg) /*-{
 		console.log(msg);
@@ -4417,9 +4571,14 @@ public class SalaryDraft extends ResizeComposite
 			boolean isDeduction, Widget labelWidget, Button expandButton, boolean isEditable) {
 		dumpItem(item, row, item.getDescription(), iconStyleName, handler, isDeduction, labelWidget, expandButton, isEditable);
 	}
-
+	
 	private <I extends Item> void dumpItem(I item, int row, String description, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction, Widget labelWidget, Button expandButton, boolean isEditable) {
+		dumpItem(item, row, description, iconStyleName, handler, isDeduction, labelWidget, expandButton, isEditable, true);
+	}
+
+	private <I extends Item> void dumpItem(I item, int row, String description, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
+			boolean isDeduction, Widget labelWidget, Button expandButton, boolean isEditable, boolean isRemovable) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
@@ -4533,6 +4692,9 @@ public class SalaryDraft extends ResizeComposite
 		if ( isExtra() 
 			/*|| isSettle() */ ) {
 			// 
+		}
+		else if ( !isRemovable ) {
+			
 		}
 		else if ( isExtra() 
 				&& itemScope.compareTo(Scope.SALARY) < 0 ) {
@@ -5988,9 +6150,9 @@ public class SalaryDraft extends ResizeComposite
 		return null;
 	}
 
-	private PaymentChangeHandler<?> getPaymentChangeHandlerFor(int id) {
+	private PaymentChangeHandler<?> getPaymentChangeHandlerFor(Integer id) {
 		for (PaymentChangeHandler<?> handler : paymentChangeHandlers) {
-			if (handler.item.getId() == id) {
+			if (Objects.equals(handler.item.getId(),id)) {
 				return handler;
 			}
 		}
@@ -6277,9 +6439,9 @@ public class SalaryDraft extends ResizeComposite
 	private void setReadOnly(boolean readOnly) {
 		if ( readOnly ) {
 			fxButton.setEnabled(!readOnly);
-			undoButton.setEnabled(!readOnly);
-			redoButton.setEnabled(!readOnly);
-			undoAllButton.setEnabled(!readOnly);
+			//undoButton.setEnabled(!readOnly);
+			//redoButton.setEnabled(!readOnly);
+			//undoAllButton.setEnabled(!readOnly);
 		}
 
 		contextTable.setStyleName("aon-ReadOnly", readOnly);
@@ -6435,6 +6597,15 @@ public class SalaryDraft extends ResizeComposite
 		.collect(Collectors.toList());
 	}
 	
+	private boolean alreadyDisplayed(String name) {
+		VariableChangeHandler<?> handler = getVariableChangeHandlerFor(name);
+		return handler != null && ( handler.editor instanceof IsWidget );	
+	}
+
+	private boolean alreadyDisplayed(Variable variable) {
+		return getVariableChangeHandlerFor(variable.getName()) != null;	
+	}
+	
 	// ------------------------------------------------------- Static 'Library'
 	static boolean skipVariable(String name) {
 		for (String skip : SKIP_VARIABLES)
@@ -6452,7 +6623,7 @@ public class SalaryDraft extends ResizeComposite
 		// IRPF quotas & bases
 		if ( AonStringUtils.startsWith(name, "CRA_00"))
 			return true;
-
+		
 		for (String skip : SKIP_VARIABLES) {
 			if (skip.equals(name))
 				return true;
@@ -6871,7 +7042,7 @@ public class SalaryDraft extends ResizeComposite
 
 	// @formatter:on
 
-	private static void enable(TextBox textBox, boolean enabled) {
+	private static <T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled>  void enable(T textBox, boolean enabled) {
 
 		if (textBox.isEnabled() == enabled)
 			return;
@@ -6889,16 +7060,20 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
-	private static <W extends HasEnabled & HasVisibility> void enable(W widget, boolean enabled) {
+	private static void enable(Button button, boolean enabled) {
 
-		if (widget.isEnabled() == enabled)
+		if (button.isEnabled() == enabled)
 			return;
 
 		//widget.setEnabled(enabled);
-		widget.setVisible(enabled);
+		button.setVisible(enabled);
 	}
 
-	private static final DateTimeFormat START_DATE_FORMAT = DateTimeFormat.getFormat("dd '-'");
+	private static <T extends UIObject >  void setEditable(T textBox, boolean editable) {
+		textBox.setStyleName("aon-Editable", editable);
+	}
+
+		private static final DateTimeFormat START_DATE_FORMAT = DateTimeFormat.getFormat("dd '-'");
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat.getFormat("dd 'de' MMMM");
 
 	private static String formatChildDescription(Item<?> child, SalaryDraftObject salaryDraftObject) {
@@ -7287,5 +7462,8 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	
-
+	private static String getImplicitVariableName(Item<?> i ) {
+		MatchResult result = RegExp.compile("var:([A-Z_]+)").exec(i.getExpression());
+		return result != null ? result.getGroup(1): null;
+	}
 }
