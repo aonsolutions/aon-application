@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -88,6 +90,8 @@ public interface EnterprisesService extends RemoteService {
 	void deleteDeductionConcept(String domain, Deduction deduction);
 	
 	void deleteAgreement(String domain, Agreement agreement);
+	
+	void deleteAgreements(String currentDomainName, List<Integer> agreementIds) throws IllegalArgumentException;
 	
 	void moveAgreement2Parent(String domain, Agreement agreement);
 	
@@ -343,5 +347,8 @@ public interface EnterprisesService extends RemoteService {
 
 	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
+	// --------------------------- Agreements Clean
 	
+	List<AgreementsClean> getAgreementsClean(String currentDomainName, AgreementCleanType cleanType) throws IllegalArgumentException;
+
 }
