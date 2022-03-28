@@ -4,10 +4,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.Comparator;
+import java.util.Iterator;
 
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.web.help.service.drive.GFile.GFileBuilder;
 import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -68,6 +73,42 @@ public class DriveService {
 		
 		list.getFiles().forEach(file -> files.add(GFile.from(file)));	
 		
+		//TO DO clean this 
+		LinkedList<GFile> orderedFiles = new LinkedList<GFile>();
+		files.forEach(f -> {
+			if(f.isPDF())
+				orderedFiles.add(f);
+		});
+		
+		files.forEach(f -> {
+			if(f.isVideo())
+				orderedFiles.add(f);
+		});
+		
+		files.forEach(f -> {
+			if(f.isFolder())
+				orderedFiles.add(f);
+		});
+		
+		return orderedFiles;		
+	}	
+	
+	
+	/**
+	 * Get the list of files / directories from parent
+	 * @param id - The parent id
+	 * @return A list of files
+	 */
+	public static LinkedList<GFile> ListFaqs(Drive connection, String id) {
+		
+ 		LinkedList<GFile> files = new LinkedList<GFile>();
+		FileList list = SearchFiles.searchByNameAndParentNotThrashed(connection, "FAQs", id != null? id : "root");
+		
+		if(list.getFiles() == null) {
+			return files;
+		}
+		
+		list.getFiles().forEach(file -> files.add(GFile.from(file)));	
 		return files;		
 	}	
 	
@@ -151,8 +192,10 @@ public class DriveService {
 		
 		LinkedList<GFile> results = new LinkedList<GFile>();
 		
-		if(name == null) 
-			return results;
+		if(name == null) {
+			return new LinkedList<GFile>();
+		}
+
 		
 		FileList fl = SearchFiles.searchVideoMatchingName(connection, name);
 		if(fl.getFiles() == null || fl.getFiles().size() == 0) {
@@ -165,11 +208,20 @@ public class DriveService {
 		
 		
 		return results;
+	}	
+	
+	/**
+	 * Create the tree structure
+	 */
+	public static void createTree(Drive drive) {
+			
+		FileList list = SearchFiles.getFolders(drive);		
+		// list.getFiles().forEach(f -> System.out.println(f.getParents()));
+				
+				
 	}
 	
 	
-	public static void main(String[] args) throws IOException {
-		System.out.println(DriveService.class.getResourceAsStream("key.p12").available());
-	}
+
 	
 }

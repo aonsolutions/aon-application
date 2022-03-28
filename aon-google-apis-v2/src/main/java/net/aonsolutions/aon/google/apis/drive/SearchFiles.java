@@ -159,6 +159,9 @@ public class SearchFiles {
 	 */
 	public static FileList searchByNameAndParentNotThrashed(Drive drive, String name, String parent) {
 		
+		
+		System.out.println("NAME OF FAQ REQUESTED : " + name);
+		
 		FileList fl = new FileList();
 		try {
 			fl = drive.files()
@@ -264,13 +267,26 @@ public class SearchFiles {
 		return null;
 	}
 	
-	
-	
 	/**
 	 * -----------------------------------------------------------------
 	 *  SMART SEARCH
 	 * -----------------------------------------------------------------
 	 */
+	public static FileList getFolders(Drive drive) {
+			
+		FileList fl = new FileList();
+		try {
+			 fl = drive.files()
+					 .list()
+					 .setQ("mimeType='application/vnd.google-apps.folder' and trashed=false")
+					 .setFields("files(parents, id, name)")
+					 .execute();						
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+		
+		return fl;
+	}
 	
 	public static FileList searchVideoMatchingName(Drive drive, String searcher) {
 		FileList fl = new FileList();

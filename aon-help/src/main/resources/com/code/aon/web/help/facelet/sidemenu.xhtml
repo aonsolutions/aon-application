@@ -28,7 +28,7 @@
 }
 
 .menu-panel .menu-panel-options :not(a).menu-panel-option {
-	user-select:none;
+	user-select: none;
 }
 
 .menu-panel .menu-panel-options .menu-panel-option {
@@ -40,7 +40,7 @@
 }
 
 .menu-panel .menu-panel-options .menu-panel-option:hover {
-	background: rgba(0,0,0,.035);
+	background: rgba(0, 0, 0, .035);
 }
 
 .menu-panel .menu-panel-options .menu-panel-option .material-icons {
@@ -49,16 +49,17 @@
 </style>
 
 	<script>
-		function togglePanel( id ) {
-			
-			console.log("toggle pressed");
-			
-			const panel = document.querySelector(".menu-panel#" + id + "");
-			const icon = document.querySelector(".menu-panel#" + id + " .menu-panel-title .material-icons");
-			const content = document.querySelector(".menu-panel#" + id + " .menu-panel-options");
+		function togglePanel(id) {
 
-			
-			if(panel.dataset.opened === "true"){
+			console.log("toggle pressed");
+
+			const panel = document.querySelector(".menu-panel#" + id + "");
+			const icon = document.querySelector(".menu-panel#" + id
+					+ " .menu-panel-title .material-icons");
+			const content = document.querySelector(".menu-panel#" + id
+					+ " .menu-panel-options");
+
+			if (panel.dataset.opened === "true") {
 				icon.style.transform = "rotate(0deg)";
 				content.style.display = "block";
 				panel.dataset.opened = false;
@@ -69,66 +70,24 @@
 				panel.dataset.opened = true;
 				console.log("opening")
 			}
-			
-		}	
-		
-		
+
+		}
 	</script>
 	<aon:div id="sidemenu">
 
-		<!-- SUPPORT / CAU -->
-		<aon:div styleClass="menu-panel" id="support"  >
-			<aon:div styleClass="menu-panel-title" onclick="togglePanel('support')">
-				<aon:outputText value="expand_more" styleClass="material-icons" />
-				<aon:outputText value="Soporte / CAU" />
-			</aon:div>
-
-			<aon:div styleClass="menu-panel-options">
-				<aon:div styleClass="menu-panel-option">
-					<aon:outputText value="support_agent" styleClass="material-icons" />
-					<aon:outputText value="Incidencias" />
-				</aon:div>
-
-				<aon:div styleClass="menu-panel-option">
-					<aon:outputText value="message" styleClass="material-icons" />
-					<aon:outputText value="Solicitudes" />
-				</aon:div>
-
-				<aon:div styleClass="menu-panel-option" style="color:forestgreen">
-					<aon:outputText value="toggle_on" styleClass="material-icons" />
-					<aon:outputText value="Acceso remoto" />
-				</aon:div>
-			</aon:div>
-		</aon:div>
-
-		<!-- CONTACT -->
-		<aon:div styleClass="menu-panel" id="contact">
-			<aon:div styleClass="menu-panel-title" onclick="togglePanel('contact')">
-				<aon:outputText value="expand_more" styleClass="material-icons" />
-				<aon:outputText value="CONTACTO" />
-			</aon:div>
-
-			<aon:div styleClass="menu-panel-options" >
-				<a class="menu-panel-option" href="tel:945121010">
-					<aon:outputText value="phone" styleClass="material-icons" />
-					<aon:outputText value="945 121 010" />
-				</a>
-
-				<a class="menu-panel-option" href="mailto:soporte@aonsolutions.es" target="_blank">
-					<aon:outputText value="email" styleClass="material-icons" />
-					<aon:outputText value="soporte@aonsolutions.es" />
-				</a>
-			</aon:div>
-		</aon:div>
-
-		<!-- INFO -->
+		<!-- HELP / CONTENT -->
 		<aon:div styleClass="menu-panel" id="info">
 			<aon:div styleClass="menu-panel-title" onclick="togglePanel('info')">
 				<aon:outputText value="expand_more" styleClass="material-icons" />
-				<aon:outputText value="INFORMACIÓN" />
+				<aon:outputText value="Ayuda/Contenidos" />
 			</aon:div>
 
 			<aon:div styleClass="menu-panel-options">
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="school" styleClass="material-icons" />
+					<aon:outputText value="Índice contenidos" />
+				</aon:div>
+			
 				<aon:div styleClass="menu-panel-option">
 					<aon:outputText value="link" styleClass="material-icons" />
 					<aon:outputText value="Links de interes" />
@@ -138,7 +97,53 @@
 					<aon:outputText value="rss_feed" styleClass="material-icons" />
 					<aon:outputText value="Actualizaciones" />
 				</aon:div>
-				
+
+			</aon:div>
+		</aon:div>
+		
+	
+		<!-- SUPPORT / CAU -->
+		<aon:div styleClass="menu-panel" id="support">
+			<aon:div styleClass="menu-panel-title"
+				onclick="togglePanel('support')">
+				<aon:outputText value="expand_more" styleClass="material-icons" />
+				<aon:outputText value="Soporte / CAU" />
+			</aon:div>
+	
+			<aon:div styleClass="menu-panel-options">
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="support_agent" styleClass="material-icons" />
+					<aon:outputText value="Incidencias" />
+				</aon:div>
+	
+				<aon:div styleClass="menu-panel-option">
+					<aon:outputText value="toggle_off" style="font-size: 2rem;margin-left: -.25rem;" styleClass="material-icons" />
+					<aon:outputText value="Acceso remoto" />
+				</aon:div>
+			</aon:div>
+		</aon:div>
+	
+	
+		<!-- INFORMATION -->
+		<aon:div styleClass="menu-panel" id="contact">
+			<aon:div styleClass="menu-panel-title"
+				onclick="togglePanel('contact')">
+				<aon:outputText value="expand_more" styleClass="material-icons" />
+				<aon:outputText value="INFORMACIÓN" />
+			</aon:div>
+	
+			<aon:div styleClass="menu-panel-options">
+				<a class="menu-panel-option" href="tel:945121010"> <aon:outputText
+						value="phone" styleClass="material-icons" /> <aon:outputText
+						value="Atención telefónica" />
+				</a>
+	
+				<a class="menu-panel-option" href="mailto:soporte@aonsolutions.es"
+					target="_blank"> <aon:outputText value="email"
+						styleClass="material-icons" /> <aon:outputText
+						value="Contacto vía email" />
+				</a>
+	
 				<aon:div styleClass="menu-panel-option">
 					<aon:outputText value="info" styleClass="material-icons" />
 					<aon:outputText value="Acerca de ..." />
@@ -146,6 +151,6 @@
 			</aon:div>
 		</aon:div>
 	</aon:div>
-	
+
 
 </ui:composition>

@@ -1,6 +1,5 @@
 package com.code.aon.web.help.controller;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
@@ -21,6 +20,7 @@ public class HelpController implements Serializable {
 	private GFile file;
 	private Drive drive;
 	private Collection<GFile> content;
+	private Collection<GFile> faqs;
 	private LinkedHashMap<String,GFile> breadcrumb;
 	
 	public HelpController() {
@@ -65,6 +65,17 @@ public class HelpController implements Serializable {
 		if (content == null)
 			content = DriveService.ListDirectory(drive,file.getId());
 		return content;
+	}
+	
+	
+	/**
+	 * Get the current content 
+	 * @return The Collection of files
+	 */
+	public Collection<GFile> getCurrentFaqs() {
+		if (faqs == null)
+			faqs = DriveService.ListFaqs(drive,file.getId());
+		return faqs;
 	}
 	
 	/**

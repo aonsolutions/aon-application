@@ -42,7 +42,7 @@
 			transition: background-color .25s;
 			border-radius: .25rem;
 			font-weight: normal;
-			color: #909090;
+			color: #606060;
 			font-size: 1.05rem;
 			cursor: pointer;
 		
@@ -76,7 +76,7 @@
 			border-radius: 100%;
 			padding: .2rem;
 			cursor: pointer;
-			color: #ccc;
+			color: ##606060;
 			transition: color .15s, transform .15s;
 			font-size: 1.60rem;
 		}
@@ -86,7 +86,7 @@
 		}
 		
 		
-		.list .list-item:hover .icon {
+		.list .list-item .icon.file {
 			color: #163776;
 			/*transform: scale(1.1);*/
 		}
@@ -180,7 +180,7 @@
 							<aon:commandLink styleClass="list-item" reRender="aonContent">
 								<f:setPropertyActionListener target="#{help.file}"
 									value="#{file}" />
-								<aon:outputText rendered="${!help.isHome()}"  value="folder" styleClass="icon material-icons" />
+								<aon:outputText rendered="${!help.isHome()}"  value="drive_file_move" styleClass="icon material-icons" />
 								
 								<!-- AON ICONS -->
 								<aon:outputText rendered="${help.isHome() and !help.isAonModule(file)}" value="" styleClass="icon aon-module aon-button" />
@@ -188,8 +188,6 @@
 								<aon:outputText rendered="${help.isConfig(file)}" value="" styleClass="icon aon-module aon-button-tools" />
 								<aon:outputText rendered="${help.isManagement(file)}" value="" styleClass="icon aon-module aon-button" />
 								<aon:outputText rendered="${help.isAccounting(file)}" value="" styleClass="icon aon-module aon-button-account" />
-								
-								
 								
 								<aon:outputText value="#{file.name}" />
 	
@@ -200,7 +198,7 @@
 						<aon:if test="${file.isPDF()}">
 							<a href="./html/viewer.html##{help.getFileServletUrl(file)}"
 								class="list-item" target="_blank"> <aon:outputText
-									value="picture_as_pdf" styleClass="icon material-icons" /> <aon:outputText
+									value="description" styleClass="icon file material-icons" /> <aon:outputText
 									value="#{file.name}" />
 							</a>
 						</aon:if>
@@ -209,7 +207,7 @@
 						<aon:if test="${file.isVideo()}">
 							<a href="./html/video.html##{help.getFileServletUrl(file)}"
 								class="list-item" target="_blank"> <aon:outputText
-									value="play_circle" styleClass="icon material-icons" /> <aon:outputText
+									value="video_file" styleClass="icon file material-icons" /> <aon:outputText
 									value="#{file.name}" />
 							</a>
 						</aon:if>
@@ -221,7 +219,7 @@
 			</aon:div>
 		
 		</aon:div>
-
+		<ui:include src="./facelet/faqs.xhtml" />	
 	</aon:div>
 
 </ui:composition>

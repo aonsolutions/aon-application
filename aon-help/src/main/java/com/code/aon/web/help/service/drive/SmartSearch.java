@@ -12,12 +12,17 @@ public class SmartSearch {
 		
 		try {
 			Drive connection = DriveService.connect();
+			
+			DriveService.createTree(connection);
+			
+			/*
 			LinkedList<GFile> results = DriveService.searchVideoMatching(connection, name);
 			
 			results.forEach(f -> {
 				System.out.println(f.getName());
 				System.out.println(f.getParents() + "\n"); 
 			});
+			*/
 		
 		
 		} catch (GoogleDriveException e) {
