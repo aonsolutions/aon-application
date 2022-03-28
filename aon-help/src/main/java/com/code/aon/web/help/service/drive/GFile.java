@@ -60,6 +60,27 @@ public class GFile implements Serializable{
 		return this.type == MimeTypes.FOLDER;
 	}
 	
+	public boolean isFaqFolder() {
+		return "FAQs".equals(name);
+	}
+	
+	
+	public String getExtensionlessName(){
+		
+		String temp = name;
+			
+		if(this.isPDF()) {
+			temp = this.name.substring(0,name.indexOf(".pdf"));
+		}
+		
+		if(this.isVideo()) {
+			temp = this.name.substring(0,name.indexOf(".mp4"));
+		}
+		
+		
+		return temp;
+	}
+	
 	
 	public static GFile from(File file) {
 		
@@ -67,10 +88,7 @@ public class GFile implements Serializable{
 		
 		if(file == null)
 			return null;
-		
-		
 
-		
 		builder.setId(file.getId())
 			.setName(file.getName())
 			.setType(MimeTypes.valueOfMime(file.getMimeType()))
@@ -160,11 +178,7 @@ public class GFile implements Serializable{
 			GFileBuilder other = (GFileBuilder) obj;
 			return id == other.id;
 		}
-		
-		
-		            
-		
-		
+
 	}
 	
 }

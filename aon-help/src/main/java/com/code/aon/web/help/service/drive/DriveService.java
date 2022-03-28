@@ -104,11 +104,14 @@ public class DriveService {
  		LinkedList<GFile> files = new LinkedList<GFile>();
 		FileList list = SearchFiles.searchByNameAndParentNotThrashed(connection, "FAQs", id != null? id : "root");
 		
-		if(list.getFiles() == null) {
+		if(list.getFiles() == null ||  list.getFiles().size() == 0) {
 			return files;
 		}
 		
-		list.getFiles().forEach(file -> files.add(GFile.from(file)));	
+		String folder = list.getFiles().get(0).getId();
+		FileList contents = SearchFiles.searchByParentNotTrashed(connection, folder);
+		contents.getFiles().forEach(file -> files.add(GFile.from(file)));	
+		
 		return files;		
 	}	
 	

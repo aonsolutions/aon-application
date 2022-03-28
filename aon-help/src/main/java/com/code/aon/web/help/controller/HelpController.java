@@ -109,6 +109,7 @@ public class HelpController implements Serializable {
 		this.breadcrumb.put(file.getId(),file);
 		this.file = file;
 		this.content = null;
+		this.faqs = null;
 	}	
 	
 	

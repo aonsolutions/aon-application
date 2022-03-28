@@ -176,7 +176,7 @@
 					<aon:form>
 	
 						<!-- FOLDER -->
-						<aon:if test="${file.isFolder()}">
+						<aon:if test="${file.isFolder() and !file.isFaqFolder()}">
 							<aon:commandLink styleClass="list-item" reRender="aonContent">
 								<f:setPropertyActionListener target="#{help.file}"
 									value="#{file}" />

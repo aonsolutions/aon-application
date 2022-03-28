@@ -26,6 +26,20 @@
 #faqs #title-row h1 {
 	font-weight: normal;
 }
+
+#faqs .faq {
+	padding: .5rem 1rem;
+	border-radius: .25rem;
+	cursor: pointer;
+	margin: 0.1rem;
+	transition: background .25s;
+	display: block;
+}
+
+#faqs .faq:hover {
+	background: #f1f1f1;
+}
+
 </style>
 
 	<script>
@@ -65,7 +79,9 @@
 			</aon:if>
 		
 			<c:forEach items="#{help.getCurrentFaqs()}" var="file">
-				<p>#{file.name}</p>
+				<a class="faq" href="./html/viewer.html##{help.getFileServletUrl(file)}" target="_blank"> 
+					#{file.extensionlessName}	
+				</a>
 			</c:forEach>
 		</aon:div>
 
