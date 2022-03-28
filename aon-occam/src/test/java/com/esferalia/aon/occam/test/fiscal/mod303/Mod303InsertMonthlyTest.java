@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import org.junit.Test;
@@ -15,29 +14,29 @@ import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
-public class Mod303InsertQuarterlyTest extends AbstractOccamTest {
+public class Mod303InsertMonthlyTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		int year = LocalDate.now().getYear();
+		Date today = new Date();
 		for (Period period : Period.values()) {
-			Date start =  FiscalUtils.getPeriodStart(year,period);
-			Date end =  FiscalUtils.getPeriodEnd(year,period);
-			if (period.isQuarterPeriod()) {
-				mod303InsertQuarterly(AonRandom.getRangeDate(start,end));
+			Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+			Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+			if (period.isMonthPeriod()) {
+				mod303InsertMonthly(AonRandom.getRangeDate(start,end));
 			}
 		}
 	}
 	
-	public void mod303InsertQuarterly(Date date) {
-		System.out.println( "\t ---------------------");
+	public void mod303InsertMonthly(Date date) {
+		
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(date)
-				.setMonthly(false)
+				.setMonthly(true)
 				.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
-
-		
+		System.out.println( "\t --------------------- [Prorrate: " + params.getProrratePercent() + "]");
 		Mod303 aeat = insertModel( params.setAdministration(Administration.COMMON_TERRITORY) );
 		Mod303 araba = insertModel( params.setAdministration(Administration.ALAVA));
 		Mod303 bizkaia = insertModel( params.setAdministration(Administration.BIZKAIA));

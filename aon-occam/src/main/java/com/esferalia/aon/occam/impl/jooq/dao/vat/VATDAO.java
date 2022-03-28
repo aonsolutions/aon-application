@@ -241,10 +241,10 @@ public class VATDAO  {
 		return getNoAccrualSelect(ctx)
 			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
 			.where(INVOICE.DOMAIN.equal(mod.getDomain()))
-			.and(INVOICE.ISSUE_DATE.ge(getYearFirstDay(mod)))
-			.and(INVOICE.ISSUE_DATE.lt(getStartDate(mod)))
-			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
-			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+			.and(INVOICE.TAX_DATE.ge(getYearFirstDay(mod)))
+			.and(INVOICE.TAX_DATE.lt(getStartDate(mod)))
+			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
+			.orderBy(INVOICE.TAX_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
 			.map(new VatContextFiller())
@@ -364,7 +364,6 @@ public class VATDAO  {
 		return getNoAccrualSelect(ctx)	// Faturas con criterio de caja.
 				.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-					.and(ALCATRAZ.FS_MODEL.eq(mod.getId()))
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.

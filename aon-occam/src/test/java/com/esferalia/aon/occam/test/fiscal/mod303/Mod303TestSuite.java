@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.test.fiscal.mod111.Mod111DeleteTest;
 import com.esferalia.aon.occam.test.fiscal.mod115.Mod115DeleteTest;
 import com.esferalia.aon.occam.test.fiscal.mod123.Mod123DeleteTest;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
+ 
 @RunWith(Suite.class)
 @SuiteClasses({
 //	Mod111DeleteTest.class,
@@ -21,19 +21,38 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 //	Mod123DeleteTest.class,
 //	Mod303DeleteTest.class,
 //	DeleteAllInvoicesTest.class,
+	
 	Mod303ExpressionsTest.class,
 	Mod303ScriptTest.class,
 	Mod303DeleteTest.class,
-	Mod303InsertQuarterlyTest.class,
-//	Mod303InsertQuarterlyComplementaryTest.class,
-//	Mod303InsertQuarterlyReplacementTest.class,
-//  VatContext JSON 
 	VatContextJSONTest.class,
+	
+//	Mod303InsertInvoicesTest.class,
+	Mod303InsertQuarterlyTest.class,
+	
+//	Mod303InsertInvoicesTest.class,
+	Mod303InsertQuarterlyComplementaryTest.class,
+	
+//	Mod303InsertInvoicesTest.class,
+	Mod303InsertQuarterlyReplacementTest.class,
+	
+//	Mod303InsertInvoicesTest.class,
+	Mod303InsertMonthlyTest.class,
+	
+//	Mod303InsertInvoicesTest.class,
+	Mod303InsertMonthlyComplementaryTest.class,
+	
+//	Mod303InsertInvoicesTest.class,
+	Mod303InsertMonthlyReplacementTest.class,
+	
+	Mod303CheckInsertedTest.class,
+	
 })
+
 public class Mod303TestSuite {
 
 	private static NumberFormat FMT = DecimalFormat.getInstance();
-	
+
 	public static void printModel( Mod303 mod ) {
 		System.out.println( "\t" 
 			+ AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)

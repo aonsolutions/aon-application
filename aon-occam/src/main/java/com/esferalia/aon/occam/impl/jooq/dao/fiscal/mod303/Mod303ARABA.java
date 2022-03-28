@@ -40,10 +40,10 @@ abstract class Mod303ARABA extends Mod303Declaration {
 	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<VatContext> stream = null;
-		if (getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.REPLACEMENT) {
-			stream =  VATDAO.getAccrualInvoices(ctx,mod303);
-		} else {
+		if (mustApplyComplementarySearch(mod303)) {
 			stream = VATDAO.getNotInModelAccrualInvoices(ctx,mod303);
+		} else {
+			stream =  VATDAO.getAccrualInvoices(ctx,mod303);
 		}
 		stream.forEach( vc -> {
 			if (vc.isSales()) {

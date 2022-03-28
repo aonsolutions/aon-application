@@ -37,11 +37,11 @@ abstract class Mod303GIPUZKOA extends Mod303Declaration {
 	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<VatContext> stream = null;
-//		if (getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.REPLACEMENT) {
+		if (mustApplyComplementarySearch(mod303)) {
+			stream = VATDAO.getNotInModelAccrualInvoices(ctx,mod303);
+		} else {
 			stream =  VATDAO.getAccrualInvoices(ctx,mod303);
-//		} else {
-//			stream = VATDAO.getNotInModelAccrualInvoices(ctx,mod303);
-//		}
+		}
 		stream.forEach( vc -> {
 			if (vc.isSales()) {
 				add(Mod303Key.GP_C047, mod303, vc.getBase());

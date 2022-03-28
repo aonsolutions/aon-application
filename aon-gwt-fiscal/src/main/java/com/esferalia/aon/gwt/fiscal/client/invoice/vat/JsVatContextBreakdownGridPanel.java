@@ -70,16 +70,30 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 	}
 	
 	private void paintHeader() {
+		Label serviceLabel = new Label("S");
+		serviceLabel.setTitle(AON.MSG.service());
+		Label investmentLabel = new Label("I");
+		investmentLabel.setTitle(AON.MSG.investment());
+		Label farmerLabel = new Label("A");
+		farmerLabel.setTitle(AON.MSG.farmerRegime());
+		Label rectifiedLabel = new Label("R");
+		rectifiedLabel.setTitle(AON.MSG.rectified());
+		Label accrualLabel = new Label("C");
+		accrualLabel.setTitle(AON.MSG.vatAccrualPayment());
+		Label importationLabel = new Label("M");
+		importationLabel.setTitle(AON.MSG.vatImportationRegime());
+		Label duaLabel = new Label("D");
+		duaLabel.setTitle(AON.MSG.DUALinked());
 		grid.addHeaderRow()
 			.addCell(new Label("Tipo"),AON.CSS.aonWidth40())
 			.addCell(new Label("Tran."),AON.CSS.aonWidth40())
-			.addCell(new Label("S"),AON.CSS.aonWidth20())
-			.addCell(new Label("I"),AON.CSS.aonWidth20())
-			.addCell(new Label("A"),AON.CSS.aonWidth20())
-			.addCell(new Label("R"),AON.CSS.aonWidth20())
-			.addCell(new Label("C"),AON.CSS.aonWidth20())
-			.addCell(new Label("M"),AON.CSS.aonWidth20())
-			.addCell(new Label("D"),AON.CSS.aonWidth20())
+			.addCell(serviceLabel,AON.CSS.aonWidth20())
+			.addCell(investmentLabel,AON.CSS.aonWidth20())
+			.addCell(farmerLabel,AON.CSS.aonWidth20())
+			.addCell(rectifiedLabel,AON.CSS.aonWidth20())
+			.addCell(accrualLabel,AON.CSS.aonWidth20())
+			.addCell(importationLabel,AON.CSS.aonWidth20())
+			.addCell(duaLabel,AON.CSS.aonWidth20())
 			.addCell(new Label("Epigr."),AON.CSS.aonWidth80())
 			.addCell(new Label("N\u00BA.Doc"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
 			.addCell(new Label("Doc.Tit."),AON.CSS.aonWidthAuto())

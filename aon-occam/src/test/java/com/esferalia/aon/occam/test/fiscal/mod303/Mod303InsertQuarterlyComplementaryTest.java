@@ -1,11 +1,9 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
 import java.util.Date;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -15,19 +13,13 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
-import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
-import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod303InsertQuarterlyComplementaryTest extends AbstractOccamTest {
 
 	@Test
 	public void mod303InsertQuarterlyComplementaryTest() {
-		IntStream.range(0 , AonRandom.getInt(0, 10))
-			.mapToObj( i -> InvoiceFaker.getRandom(new InvoiceFakerParams(ctx,getConfiguration())))
-			.map(inv -> AON.insertInvoice(getOccam(),inv))
-			.forEach(inv -> System.out.println( "\t\t Invoice inserted "  +inv.getId()));
 		Date today = new Date();
 		for (Period period : Period.values()) {
 			if (period.isQuarterPeriod()) {

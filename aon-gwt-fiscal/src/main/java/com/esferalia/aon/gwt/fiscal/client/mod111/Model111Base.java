@@ -1070,7 +1070,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	}
 	
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
+		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() );
 		identificationData.addValueChangeHandler(event -> {
 			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 			markAsDirty();			

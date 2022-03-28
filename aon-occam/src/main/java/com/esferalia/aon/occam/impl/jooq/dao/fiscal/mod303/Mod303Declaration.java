@@ -224,13 +224,17 @@ public abstract class Mod303Declaration {
 					, Collectors.counting()));
 	}
 	
+	protected boolean mustApplyComplementarySearch( Mod303 mod303 ) {
+		return ( mod303.isComplementary() && getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.COMPLEMENTARY); 
+	}
+	
 	protected Set<Integer> createFromInvoices(AONContext ctx, Mod303 mod303) {
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<VatContext> stream = null;
-		if (getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.REPLACEMENT) {
-			stream =  VATDAO.getVatBreakdown(ctx,mod303);
-		} else {
+		if (mustApplyComplementarySearch(mod303)) {
 			stream = VATDAO.getNotInModelVatBreakdown(ctx,mod303);
+		} else {
+			stream =  VATDAO.getVatBreakdown(ctx,mod303);
 		}
 		stream
 			.flatMap(vt -> Arrays.stream( getKeys() ).map( key -> new KeyedVatContext(key, vt)))

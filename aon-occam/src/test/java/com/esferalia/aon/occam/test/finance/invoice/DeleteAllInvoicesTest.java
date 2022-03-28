@@ -12,8 +12,14 @@ public class DeleteAllInvoicesTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
+		System.out.print(" ");
 		AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
+			.map(inv ->  {
+				System.out.print(".");
+				return inv;
+			})
 			.forEach(inv ->  AON.deleteInvoice(getOccam(), inv.getId()));
+		System.out.println();
 		Assert.assertEquals("Existen facturas después del borrado"
 				, AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
 					.count()

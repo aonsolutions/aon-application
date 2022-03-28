@@ -91,7 +91,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private boolean dirty;
 	
 	protected FiscalModelAdmonPanel<Mod303, Model303ModuleOptions> admonPanel;
-	protected AonFiscalModelIdentificationPanel<Mod303> identificationData;
+	private AonFiscalModelIdentificationPanel<Mod303> identificationData;
 	
 	protected final AonToolbar toolbarPanel = new AonToolbar(); 
 	protected final AonToolbarButton newButton = new AonToolbarButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());

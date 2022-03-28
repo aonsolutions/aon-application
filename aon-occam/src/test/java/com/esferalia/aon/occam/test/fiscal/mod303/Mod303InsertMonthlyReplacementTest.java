@@ -19,21 +19,21 @@ import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-public class Mod303InsertQuarterlyReplacementTest extends AbstractOccamTest {
+public class Mod303InsertMonthlyReplacementTest extends AbstractOccamTest {
 	
 	@Test
 	public void mod303InsertQuarterlyReplacementTest() {
 		Date today = new Date();
 		for (Period period : Period.values()) {
-			if (period.isQuarterPeriod()) {
+			if (period.isMonthPeriod()) {
 				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
 				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod303InsertQuarterlyReplacement(AonRandom.getRangeDate(start,end));
+				mod303InsertMonthlyReplacement(AonRandom.getRangeDate(start,end));
 			}
 		}
 	}
 	
-	public void mod303InsertQuarterlyReplacement(Date date) {
+	public void mod303InsertMonthlyReplacement(Date date) {
 		System.out.println( "\t ---------------------");
 		
 		Mod303 aeat  = insertModel( Administration.COMMON_TERRITORY,date);
@@ -54,7 +54,7 @@ public class Mod303InsertQuarterlyReplacementTest extends AbstractOccamTest {
 	private Mod303 insertModel( Administration admon, Date date) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setIssueDate(date)
-			.setMonthly(false)
+			.setMonthly(true)
 			.setAdministration(admon)
 			.setReplacement(admon == Administration.ALAVA)
 			.setComplementary(admon == Administration.COMMON_TERRITORY)

@@ -106,7 +106,7 @@ public class Model111 extends MainEntryPoint {
 				cleanInfoPanel();
 				hideError();
 				declarationContainer.setWidget(model111Table);
-				model111Table.refresh( new Model111Callback() );
+				model111Table.refresh( new Model111Callback());
 				tabLayout.selectTab(INFORMATION_TAB);
 				closeFootPanel();
 			}
@@ -187,7 +187,7 @@ public class Model111 extends MainEntryPoint {
 		
 		
 		
-		model111Table = new Model111Table( new Model111Callback() );
+		model111Table = new Model111Table( new Model111Callback());
 		model111Table.addSelectionHandler( this::onSelectionChange );
 		declarationContainer.setWidget(model111Table);
 		
@@ -197,7 +197,7 @@ public class Model111 extends MainEntryPoint {
 		} else if (getOptions().getNewModel() != null ) {
 			newModel(getOptions().getNewModel()); 
 		} else {
-			model111Table.refresh( new Model111Callback() );
+			model111Table.refresh( new Model111Callback());
 		}
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler(event -> openFootPanelIfNeeded());

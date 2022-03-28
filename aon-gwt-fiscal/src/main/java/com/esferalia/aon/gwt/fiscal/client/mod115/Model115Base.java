@@ -19,12 +19,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfoGridPanel;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfoGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdown;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfo;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfo;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdownInvoiceGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfoGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115.Model115Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup.IFinishDeclarationPopupCallback;
@@ -65,8 +65,8 @@ import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class Model115Base extends DockLayoutPanel {
 	protected FiscalModelAdmonPanel<Mod115, Model115ModuleOptions> admonPanel;
-	private AonFiscalModelIdentificationPanel<Mod115> identificationData; 
-
+	private AonFiscalModelIdentificationPanel<Mod115> identificationData;
+	
 	private static final String WIDTH_140PX = "140px";
 	private static final String BLANK = "_blank";
 	private static final int MAX_LABEL_LENGTH = 100;
