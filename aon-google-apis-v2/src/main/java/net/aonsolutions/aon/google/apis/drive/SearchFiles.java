@@ -4,7 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -288,20 +291,54 @@ public class SearchFiles {
 		
 		return fl;
 	}
+
 	
-	public static FileList searchVideoMatchingName(Drive drive, String searcher) {
+	public static LinkedList<File> search(Drive drive, String searcher, String id, LinkedList<File> list) {
+		
+		
+			// Matching?
+			FileList matching = searchMatchingNameFrom(drive, searcher, id); 
+
+			if(matching.getFiles() != null && matching.getFiles().size()  > 0) {
+				matching.getFiles().forEach(m -> list.add(m));
+			}
+				
+			// List folders 
+			// For each folder, search();
+			FileList dir = searchByParentNotTrashed(drive, id);
+	
+			if(dir.getFiles() != null && dir.getFiles().size()  > 0) {
+				dir.getFiles().forEach(m -> search(drive, searcher, m.getId(), list));
+			}
+			
+		return list;
+	}	
+	
+	
+	/**
+	 * Search files matching name from parent (recursive)
+	 * @param drive The drive connection
+	 * @param parent The folder to search in
+	 * @param searcher The text to search for
+	 * @param directory The directory to search in
+	 * @return 
+	 */
+	public static FileList searchMatchingNameFrom(Drive drive, String searcher, String parent) {
 		FileList fl = new FileList();
 		try {
-			System.out.println("[SearchFiles] Searching video containing '" + searcher + "' in name");
-			fl = drive.files().list().setQ("name contains '" + searcher + "' and mimeType contains 'mp4' ").execute();
-			
+			System.out.println("[SearchFiles] Searching containing '" + searcher + "' in name. Parent: " + parent );
+			fl = drive.files().list().setQ("'" + parent + "' in parents and name contains '" + searcher + "'").execute();			
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("[SearchFiles] Found 0 videos.");
+			//e.printStackTrace();
+			System.out.println("[SearchFiles] Found 0 files.");
 		}
 		
 		return fl;
 	}
+	
+	
+	
+	
 	
 	
 }

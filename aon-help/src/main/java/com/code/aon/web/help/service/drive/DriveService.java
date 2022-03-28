@@ -1,23 +1,13 @@
 package com.code.aon.web.help.service.drive;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Optional;
-import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.Comparator;
-import java.util.Iterator;
 
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.web.help.service.drive.GFile.GFileBuilder;
 import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.Changes.List;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
@@ -28,6 +18,7 @@ import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 public class DriveService {
 
 	public static String BASE_ID = "1nlCD6BVTPk98UIy96pxd5MevesBCmiIN";	
+	public static String EDGE_ID = "1HYkbKveuq7mr27-2OmvVlQy2tA6mac2i";
 	
 	public static Drive connect() throws GoogleDriveException {
 		
@@ -191,7 +182,7 @@ public class DriveService {
 	}
 	
 	
-	public static LinkedList<GFile> searchVideoMatching(Drive connection, String name) {
+	public static LinkedList<GFile> searchMatching(Drive connection, String name) {
 		
 		LinkedList<GFile> results = new LinkedList<GFile>();
 		
@@ -200,7 +191,7 @@ public class DriveService {
 		}
 
 		
-		FileList fl = SearchFiles.searchVideoMatchingName(connection, name);
+		FileList fl = SearchFiles.searchMatchingNameFrom(connection, name, BASE_ID);
 		if(fl.getFiles() == null || fl.getFiles().size() == 0) {
 			return results;
 		}
@@ -212,19 +203,36 @@ public class DriveService {
 		
 		return results;
 	}	
-	
-	/**
-	 * Create the tree structure
-	 */
-	public static void createTree(Drive drive) {
-			
-		FileList list = SearchFiles.getFolders(drive);		
-		// list.getFiles().forEach(f -> System.out.println(f.getParents()));
-				
-				
-	}
-	
-	
 
+	
+	// ---------------------------------------
+ 	//  MAIN
+	// ---------------------------------------
+	public static void main(String[] args) {
+		/*
+	
+			LinkedList<GFile> file;
+			try {
+				file = ListDirectory(DriveService.connect(), BASE_ID);
+				file.forEach(f -> {
+					System.out.println(f.getName());
+				});
+				
+			} catch (GoogleDriveException e) {
+				e.printStackTrace();
+			}
+
+			
+	
+			LinkedList<File> file = SearchFiles.search(DriveService.connect(), "liberal", EDGE_ID, new LinkedList<File>());			
+						
+			System.out.println("-----------------------------------------------");
+			System.out.println(" SEARCH RESULTS :                              ");
+			System.out.println("-----------------------------------------------");
+			file.forEach(f -> {
+				System.out.println(f.getName());
+			});*/
+
+	}
 	
 }

@@ -13,7 +13,7 @@ public class SmartSearch {
 		try {
 			Drive connection = DriveService.connect();
 			
-			DriveService.createTree(connection);
+			//DriveService.createTree(connection);
 			
 			/*
 			LinkedList<GFile> results = DriveService.searchVideoMatching(connection, name);
