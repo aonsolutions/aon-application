@@ -160,7 +160,8 @@ public class SearchFiles {
 	public static FileList searchByNameAndParentNotThrashed(Drive drive, String name, String parent) {
 		
 		
-		System.out.println("NAME OF FAQ REQUESTED : " + name);
+		System.out.println("NAME :-" + name + "-");
+		System.out.println("PARENT :-" + parent + "-");
 		
 		FileList fl = new FileList();
 		try {
