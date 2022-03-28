@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -182,25 +183,25 @@ public class DocumentalServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getSecurityLevelProperty().eq((byte) 0));
     	}
     	
-    	if(api.getParams().opt("description") != null) {
-    		filter = filter.and(f.getDescriptionProperty().like("%"+ api.getParams().optString("description") + "%"));
+    	if(api.getParams().opt(IJsonNames.DESCRIPTION) != null) {
+    		filter = filter.and(f.getDescriptionProperty().like("%"+ api.getParams().optString(IJsonNames.DESCRIPTION) + "%"));
 		}
     	
-    	if(api.getParams().opt("category") != null) {
+    	if(api.getParams().opt(IJsonNames.CATEGORY) != null) {
     		// TODO FILTRO CATEGORÍA MÚLTIPLE
-    		filter = filter.and(f.getCategoryProperty().eq(api.getParams().optInt("category")));
+    		filter = filter.and(f.getCategoryProperty().eq(api.getParams().optInt(IJsonNames.CATEGORY)));
     	}
     	
-    	if(api.getParams().opt("tag") != null) {
+    	if(api.getParams().opt(IJsonNames.TAG) != null) {
     		// TODO FILTRO ETIQUETAS MÚLTIPLE
-    		filter = filter.and(f.getTagProperty().eq(api.getParams().optInt("tag")));
+    		filter = filter.and(f.getTagProperty().eq(api.getParams().optInt(IJsonNames.TAG)));
     	}
 
 		if(api.getParams().opt("per_page") != null){
 			filter.perPage(api.getParams().optInt("per_page"));
 		}
-		if(api.getParams().opt("page") != null){
-			filter.page(api.getParams().optInt("page"));
+		if(api.getParams().opt(IJsonNames.PAGE) != null){
+			filter.page(api.getParams().optInt(IJsonNames.PAGE));
 		}
 		
 		return filter;
@@ -218,7 +219,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 	    String url =  "ms/download_attachment/"  + attach.getDomain().getName() + "/" + attach.getCreationUser() + "/" +  result;
 	    f.put("url", url);
-	    f.put("type", attach.getMimeType().getName());
+	    f.put(IJsonNames.TYPE, attach.getMimeType().getName());
 			
 	    String type = "enterprise";
 	    if(RegistryAttachmentType.DOCUMENTAL_ASESOR.value() == attach.getType()){
@@ -227,45 +228,45 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	    	type = "employee";
 	    }
 		return new JSONObject()
-			.put("id", attach.getId())
-			.put("domain", attach.getDomain().getId())
-			.put("category", attach.getFullCategory() != null ? categoryToJSON(attach.getFullCategory()):new JSONObject())
-			.put("scope", attach.getFullCategory() != null ? scopeToJSON(attach.getFullScope()): new JSONObject())
-			.put("date", AonDateUtils.simpleFormat(attach.getDate()))
-			.put("confidential", attach.getConfidential())
-			.put("size", AonFileUtils.byteCountToDisplaySize( attach.getDparentId() != null ? Long.parseLong( attach.getDparentId()): 0))
-			.put("title", attach.getDescription())
-			.put("tags", tagArray)
-			.put("type", type)
-			.put("file", f);
+			.put(IJsonNames.ID, attach.getId())
+			.put(IJsonNames.DOMAIN, attach.getDomain().getId())
+			.put(IJsonNames.CATEGORY, attach.getFullCategory() != null ? categoryToJSON(attach.getFullCategory()):new JSONObject())
+			.put(IJsonNames.SCOPE, attach.getFullCategory() != null ? scopeToJSON(attach.getFullScope()): new JSONObject())
+			.put(IJsonNames.DATE, AonDateUtils.simpleFormat(attach.getDate()))
+			.put(IJsonNames.CONFIDENTIAL, attach.getConfidential())
+			.put(IJsonNames.SIZE, AonFileUtils.byteCountToDisplaySize( attach.getDparentId() != null ? Long.parseLong( attach.getDparentId()): 0))
+			.put(IJsonNames.TITLE, attach.getDescription())
+			.put(IJsonNames.TAGS, tagArray)
+			.put(IJsonNames.TYPE, type)
+			.put(IJsonNames.FILE, f);
 	}
 	
 	public static JSONObject tagToJSON(Tag tag){	
 		return new JSONObject()
-			.put("id",tag.getId())
-			.put("domain", tag.getDomain())
-			.put("name", tag.getName())
-			.put("type", tag.getType())
-			.put("color", tag.getColor());
+			.put(IJsonNames.ID,tag.getId())
+			.put(IJsonNames.DOMAIN, tag.getDomain())
+			.put(IJsonNames.NAME, tag.getName())
+			.put(IJsonNames.TYPE, tag.getType())
+			.put(IJsonNames.COLOR, tag.getColor());
 	}
 	
 	public static JSONObject categoryToJSON(Category category){	
 		return new JSONObject()
-			.put("id",category.getId())
-			.put("domain", category.getDomain())
-			.put("name", category.getName())
-			.put("type", category.getType())
-			.put("scope", category.getScope())
-			.put("url", category.getUrl())
-			.put("description", category.getDescription())
+			.put(IJsonNames.ID,category.getId())
+			.put(IJsonNames.DOMAIN, category.getDomain())
+			.put(IJsonNames.NAME, category.getName())
+			.put(IJsonNames.TYPE, category.getType())
+			.put(IJsonNames.SCOPE, category.getScope())
+			.put(IJsonNames.URL, category.getUrl())
+			.put(IJsonNames.DESCRIPTION, category.getDescription())
 			.put("rattach", category.getRattach());
 	}
 	
 	public static JSONObject scopeToJSON(Scope scope){	
 		return new JSONObject()
-			.put("id",scope.getId())
-			.put("domain", scope.getDomain())
-			.put("name", scope.getDescription());
+			.put(IJsonNames.ID,scope.getId())
+			.put(IJsonNames.DOMAIN, scope.getDomain())
+			.put(IJsonNames.NAME, scope.getDescription());
 	}
 	
 }

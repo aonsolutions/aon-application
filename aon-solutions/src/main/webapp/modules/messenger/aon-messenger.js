@@ -14,10 +14,9 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
-
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
-	   }
+	}
 
 	set id(id) {
 	   this.setAttribute(CONSTANT.ID, id);
@@ -80,7 +79,8 @@ export class AonMessenger extends AonElement {
 	}
 
 	build() {
-		this.applicationEl = this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
+		let title = this.cau ? MSG.SUPPORT + ' / CAU' : MSG.REQUESTS;
+		this.applicationEl = this.createApplication(this.AON_MESSENGER, title, new AonApplication());
 
 		this.isTaskHolder().then((exist) => {
 			if(exist){
@@ -184,7 +184,7 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.applicationEl.addSidenavOptions("SOLICITUDES PENDIENTES", messengerOpts);
+		this.applicationEl.addSidenavOptions("PENDIENTES", messengerOpts);
 	}
 
 	statusNavBar(){

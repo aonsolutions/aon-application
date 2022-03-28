@@ -99,6 +99,7 @@ public interface IJsonNames {
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
 	String COUNT = "count";
+	String COLOR = "color";
 	String COUNTRY = "country";
 	String CREATION_DATE = "creation_date";
 	String CREATION_USER = "creation_user";
@@ -430,6 +431,7 @@ public interface IJsonNames {
 	String TAXES = "taxes";
 	String TAX = "tax";
 	String TAG = "tag";
+	String TAGS = "tags";
 	String TAX_DATE = "taxDate";
 	String TECHNICAL = "technical";
 	String TEST = "test";
