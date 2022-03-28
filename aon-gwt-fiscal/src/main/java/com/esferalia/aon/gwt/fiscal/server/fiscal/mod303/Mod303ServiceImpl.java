@@ -63,12 +63,12 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod303 markAsFinished(Occam occam, Mod303 mod303) {
-		return MODEL303.finish(occam, mod303);
+		return MODEL303.markAsFinished(occam, mod303);
 	}
 
 	@Override
 	public Mod303 markAsPending(Occam occam, Mod303 mod303) {
-		return MODEL303.reopen(occam, mod303);
+		return MODEL303.markAsPending(occam, mod303);
 	}
 
 	@Override

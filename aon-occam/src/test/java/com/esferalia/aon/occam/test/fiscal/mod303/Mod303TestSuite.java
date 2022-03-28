@@ -8,10 +8,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.test.finance.invoice.DeleteAllInvoicesTest;
-import com.esferalia.aon.occam.test.fiscal.mod111.Mod111DeleteTest;
-import com.esferalia.aon.occam.test.fiscal.mod115.Mod115DeleteTest;
-import com.esferalia.aon.occam.test.fiscal.mod123.Mod123DeleteTest;
 import com.esferalia.aon.watson.util.AonStringUtils;
  
 @RunWith(Suite.class)
@@ -47,6 +43,25 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	
 	Mod303CheckInsertedTest.class,
 	
+	// Flujo de estados
+	Mod303ReopenTest.class,					// Pendiente
+	Mod303FinishTest.class,					// Finalizado
+	Mod303SentTest.class,					// Presentado
+	// Flujo de estados
+	Mod303ReopenTest.class,					// Pendiente
+	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
+	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
+	Mod303SentTest.class,					// Presentado
+	// Flujo de estados 
+	Mod303ReopenTest.class,					// Pendiente
+	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
+	Mod303MarkAsCustomerRejectedTest.class, // Rechazado por cliente
+	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
+	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
+	Mod303SentTest.class,					// Presentado
+	
+	
+	
 })
 
 public class Mod303TestSuite {
@@ -57,8 +72,9 @@ public class Mod303TestSuite {
 		System.out.println( "\t" 
 			+ AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)
 			+ " Modelo "
-			+ AonStringUtils.rightPad(mod.getModelFullName(), 20)
-			+ AonStringUtils.leftPad(FMT.format(mod.getDeclarationResult()),15)
+			+ AonStringUtils.rightPad(mod.getModelFullName(), 30)
+			+ AonStringUtils.leftPad(FMT.format(mod.getDeclarationResult()),25)
+			+ AonStringUtils.leftPad(mod.getStatus().getName(),35)
 			);
 	}
 	
