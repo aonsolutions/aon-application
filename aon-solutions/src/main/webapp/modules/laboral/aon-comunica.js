@@ -164,10 +164,12 @@ export class AonComunica extends AonElement {
 		this.applicationEl.stopLoading();
 	}
 
-  async getIdc({ regime, ctaCti, nss, fra, frb }) {
+  async getIdc({ regime, ctaCti, nss, fea, feb, fra, frb }) {
 		this.applicationEl.startLoading();
 		try {
-      const fecha = frb || fra;
+      let fecha = feb || fea;
+      if(!fecha) 
+        fecha = frb || fra;
 			await getIDC({ regime, ctaCti, nss, fra:fecha }); // open pdf
 		} catch (error) {
       this.showToast(error);

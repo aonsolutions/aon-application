@@ -133,15 +133,15 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		removeAll();
 	}
 
-	@UiHandler("expandAllButton")
-	void onClickExpandAllButton(ClickEvent event ){
-		collapse(false);
-	}
+	// @UiHandler("expandAllButton")
+	// void onClickExpandAllButton(ClickEvent event ){
+	// 	collapse(false);
+	// }
 	
-	@UiHandler("collapseAllButton")
-	void onClickCollapseAllButton(ClickEvent event ){
-		collapse(true);
-	}
+	// @UiHandler("collapseAllButton")
+	// void onClickCollapseAllButton(ClickEvent event ){
+	// 	collapse(true);
+	// }
 	
 	// --------------------------------------------------------- RequiresResize
 	
@@ -313,7 +313,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	
 	protected void onRemoveITPartToSS(ItNotExist itNotExist) {}
 	
-	protected void collapse(boolean collapse) {}
+	// protected void collapse(boolean collapse) {}
 	
 	// ------------------------------------------------------------------------
 	

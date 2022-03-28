@@ -27,6 +27,8 @@ public enum SalaryTemplate implements IResourceable {
 
 	,AON_SOLUTIONS_MACLEOD("salary_connorMacleod")
 	
+	,AON_SOLUTIONS_DEFAULT("salary_connorMacleod_classic")
+	
 	;      
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_salary_template_";

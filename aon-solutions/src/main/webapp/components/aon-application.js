@@ -440,7 +440,7 @@ export class AonApplication extends AonElement {
     let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     ul = ul || this.getElement(sidenavId + data.id + "List");
     if (!option.hidden && ul) {
-      let id = sidenavId + option.id;
+      let id = sidenavId + (option.id || Math.random().toString(36).substring(7));
       let li = this.createElement(TAG.LI);
       li.id = id;
       li.title = option.name;
@@ -548,7 +548,10 @@ export class AonApplication extends AonElement {
           b.style.width = "30px";
           let ic = this.getElement(aib.ICON);
           ic.style.fontSize = "1.3rem";
-          aib.addEventListener(EVENT.CLICK, item.action);
+          aib.addEventListener(EVENT.CLICK, (ev)=>{
+            ev.stopPropagation();
+            item.action(ev)
+          });
         });
       }
       if(!option.options || option.clickable){

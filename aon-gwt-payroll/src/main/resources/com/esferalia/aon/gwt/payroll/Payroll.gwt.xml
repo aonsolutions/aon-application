@@ -27,6 +27,8 @@
 	<stylesheet src="codemirror/addon/search/matchesonscrollbar.css"/>
 
 
+	<stylesheet src="aonReadOnly.css"/>
+
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>
 	<inherits name='com.esferalia.aon.gwt.visualization.Visualization'/>

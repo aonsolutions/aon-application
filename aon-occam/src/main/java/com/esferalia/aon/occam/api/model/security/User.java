@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 
 
@@ -26,6 +27,7 @@ public class User implements Serializable {
 	private List<Workgroup> workgroups;
 	
 	private Auth auth;
+	private List<TaskHolder> taskHolders;
 	
 	public Integer getId() {
 		return id;
@@ -134,6 +136,17 @@ public class User implements Serializable {
 		return this;
 	}
 
+	public List<TaskHolder> getTaskHolders() {
+		if(taskHolders == null) 
+			taskHolders = new LinkedList<>();
+		return taskHolders;
+	}
+	
+	public User setTaskHolders(List<TaskHolder> taskHolders) {
+		this.taskHolders = taskHolders;
+		return this;
+	}
+	
 	public boolean hasAuth() {
 		return getAuth() != null;  
 	}
@@ -218,5 +231,10 @@ public class User implements Serializable {
 	
 	public boolean isPortal() {
 		return getEnterprise() != null;
+	}
+	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null
+				&& getLogin() == null;
 	}
 }

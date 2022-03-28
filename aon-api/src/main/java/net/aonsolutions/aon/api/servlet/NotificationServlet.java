@@ -36,7 +36,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API NOTIFICATION SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getNotification(api));
@@ -56,7 +56,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API NOTIFICATION SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/mark-read-notification":
 				response(req, resp, markReadNotification(api));
@@ -77,7 +77,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 	
 
 
-	private JSONObject sendNotification(AonApiData api) throws Exception {
+	private JSONObject sendNotification(AonApiData api) {
 		Domain domain = api.getDomain();
 		String login = api.getUser().getLogin();
 		AonToken authToken = SECURITY.getAonToken(api.getToken());
@@ -99,7 +99,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 			if(auth.getAuth()!=null) {
 				auths.add(auth);
 			} else {
-				throw new Exception("El usuario no existe.");
+				throw new AonApiException("El usuario no existe.");
 			}
 		} 
 		
@@ -120,8 +120,8 @@ public class NotificationServlet extends AonApiHttpServlet{
 	private JSONArray getNotification(AonApiData api) {
 		JSONArray array = new JSONArray();
 		AonToken at = SECURITY.getAonToken(api.getToken());
-		Integer page = api.getParams().optInt("page");
-		Integer perPage = api.getParams().optInt("perPage");
+		Integer page = api.getData().optInt("page");
+		Integer perPage = api.getData().optInt("perPage");
 		AON_SOLUTIONS.getNotificationStream(f -> 
 			f.getStatusProperty().eq(NotificationStatus.UNREAD.value())
 			.and(f.getAuthProperty().eq(at.getAuth())), page, perPage)

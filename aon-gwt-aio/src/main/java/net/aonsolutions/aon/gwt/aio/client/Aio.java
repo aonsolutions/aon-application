@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
-import net.aonsolutions.aon.gwt.ccaa.client.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
@@ -23,6 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import net.aonsolutions.aon.gwt.aio.shared.Modules;
+import net.aonsolutions.aon.gwt.ccaa.client.DepositEntryPoint;
 import net.aonsolutions.aon.gwt.commercial.client.Commercial;
 import net.aonsolutions.aon.gwt.communication.client.Communication;
 import net.aonsolutions.aon.gwt.seres.client.Seres;

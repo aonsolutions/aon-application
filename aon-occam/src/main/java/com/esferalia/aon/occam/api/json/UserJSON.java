@@ -38,6 +38,7 @@ public class UserJSON {
 		JSONObject json = !user.getAuth().isEmpty() 
 				? AuthJSON.toJSON(user.getAuth())
 				: new JSONObject();
+		
 		return json
 			.put(IJsonNames.ID, user.getId())
 			.put(IJsonNames.NAME, AonStringUtils.isBlank(user.getAuth().getName())
@@ -45,6 +46,7 @@ public class UserJSON {
 					: user.getAuth().getName())
 			.put(IJsonNames.PORTAL, user.isPortal())
 			.put(IJsonNames.SHARED, user.isShared())
-			.put(IJsonNames.LOGIN, user.getLogin());
+			.put(IJsonNames.LOGIN, user.getLogin())
+			.put("taskHolders", TaskHolderJSON.toJSON(user.getTaskHolders()));
 	}
 }

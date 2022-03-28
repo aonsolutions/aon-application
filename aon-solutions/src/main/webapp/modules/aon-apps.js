@@ -133,7 +133,7 @@ export class AonApps extends AonElement {
 				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
-				this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud');
+				this.rootPanelHtml('<aon-messenger></aon-messenger>');
 				break;
 		}
 	}

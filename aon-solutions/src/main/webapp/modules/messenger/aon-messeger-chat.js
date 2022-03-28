@@ -79,13 +79,13 @@ export class AonMessengerChat extends AonElement {
 
     let data = {...this.data, domainCompany:this.getDur().domain};
 
+    data.auth = this.getAuth();
+      
     const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
     if(myTaskHolder && myTaskHolder.id) 
       data.myTaskHolder = myTaskHolder;
       
-    if(this.applicationParentEl.cauInfo.auth && this.applicationParentEl.cauInfo.auth.email)  
-      data.auth = this.applicationParentEl.cauInfo.auth;
-      
+
     this.setData(data); 
     this.task = new Task(this.getData());
     this.task.onPropertyChanged = (propName, val) => {
@@ -156,7 +156,7 @@ export class AonMessengerChat extends AonElement {
           type = WORKFLOW_TYPES.CLOSE;
         break;
       }
-      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment});
+      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment, auth:this.getAuth()});
       await this.save();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     // });
@@ -173,7 +173,7 @@ export class AonMessengerChat extends AonElement {
 
   addButtonDelete(){
     if(this.task.status == TASK_STATUS.DELETED) {
-      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask())
+      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask(), ACTIONS.PREVIOUS.id);
     }
   }
 
@@ -237,8 +237,13 @@ export class AonMessengerChat extends AonElement {
       this.task.setDescriptionJson({cauInfo:this.applicationParentEl.cauInfo});
   }
 
+  getAuth(){
+    if(this.applicationParentEl.cauInfo.auth && this.applicationParentEl.cauInfo.auth.email)
+      return this.applicationParentEl.cauInfo.auth;
+    return {};
+  }
+
   async getAppParams(){
-    console.log(APP_PARAMS_REQUEST.APP_REQUESTS_EMAIL_RATING);
     let params = [];
     let newResp=[];
     if(!this.APP_PARAMS.length){

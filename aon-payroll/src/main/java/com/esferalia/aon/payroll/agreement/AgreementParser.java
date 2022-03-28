@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -525,6 +526,14 @@ public class AgreementParser {
 		parsedAgreement.setAgreementConcepts(agreement.getAgreementConcepts());
 		
 		List<AgreementLevel> analizedAgreementLevels = new ArrayList<>();
+		
+		// Sort levels
+		Collections.sort(agreement.getAgreementLevels(), new Comparator<AgreementLevel>() {
+			@Override
+			public int compare(AgreementLevel al1, AgreementLevel al2) {
+				return al1.getDescription().compareTo(al2.getDescription());
+			}
+		});
 		
 		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
 		

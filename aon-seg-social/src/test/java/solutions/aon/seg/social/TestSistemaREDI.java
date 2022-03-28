@@ -31,7 +31,7 @@ import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongIdentifierException;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.SituacionEmpresa;
 
@@ -281,7 +281,7 @@ public class TestSistemaREDI extends SegSocialTest{
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			byte[] pdf = SistemaREDI.getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111",
 					"01105760562", d);
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			assertTrue(true);
 		} catch (StatusCodeException | OutOfServiceException e) {
 			assertTrue(true);
@@ -450,7 +450,7 @@ public class TestSistemaREDI extends SegSocialTest{
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			byte[] pdf = SistemaREDI.getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12",
 					"011005185924", "0111", "01105760562", d);
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
@@ -579,7 +579,7 @@ public class TestSistemaREDI extends SegSocialTest{
 			Collection<byte[]> pdfs = SistemaREDI.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12",
 					"011005185924", "0111", "01105368062", d);
 			fail("Should have returned a pdf");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			assertTrue(true);
 		} catch (ParseException e) {
 			fail("Wrong date given");
@@ -819,7 +819,7 @@ public class TestSistemaREDI extends SegSocialTest{
 			Collection<byte[]> pdfs = SistemaREDI.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12",
 					"011005185924", "0111", "01105368062", d);
 			fail("Should have returned a pdf");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			assertTrue(true);
 		} catch (ParseException e) {
 			fail("Wrong date given");
@@ -1211,7 +1211,7 @@ public class TestSistemaREDI extends SegSocialTest{
 			Collection<Idc> pdfs = SistemaREDI.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924",
 					"0111", "01105368062");
 			fail("Should have returned a pdf");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
@@ -1382,7 +1382,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			Collection<Date> dates = SistemaREDI.getDischargeDates(certificateInputStream, "jg@FNMT", "pkcs12",
 					"011005185924", "0111", "01105760562");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
@@ -1518,7 +1518,7 @@ public class TestSistemaREDI extends SegSocialTest{
 			byte[] pdf = SistemaREDI.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12",
 					"011017250195", "0111", "01100477910", opDate);
 			fail("Shouldn't run");
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 
 		} catch (StatusCodeException | OutOfServiceException e) {
 			assertTrue(true);

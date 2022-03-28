@@ -1,0 +1,82 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
+	xmlns:cv='urn:import:com.google.gwt.user.cellview.client'>
+    
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.MyStyle">
+	
+		.form {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+			width: 780px;
+			height: 430px;
+			margin: 1rem 0;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			padding: 0 1rem;
+			gap: .5rem;
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.widthAll{
+			width: 100%;
+		}
+		
+		.margin{
+			margin: 0 0 0 1rem;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+		}
+		
+		.contractsPanel{
+			padding: 1rem;
+		}
+		
+		.deckPanel{
+			padding: 0 1rem;
+		}
+		
+		.content{
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+	
+		<g:HTMLPanel ui:field="messagePanel" />
+		
+		<g:HTMLPanel styleName="{style.content}">
+			<g:DeckPanel ui:field="deckPanel" styleName="{style.deckPanel}">
+				<cv:DataGrid ui:field="agreementsDG" />
+				<g:HTMLPanel>
+					<c:AonToolbarSmall ui:field="contractToolbar" />
+					<g:ScrollPanel ui:field="contractScrollPanel" >
+						<g:HTMLPanel ui:field="contractsPanel" styleName="{style.contractsPanel}"/>
+					</g:ScrollPanel>
+				</g:HTMLPanel>
+			</g:DeckPanel>
+			
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+		</g:HTMLPanel>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

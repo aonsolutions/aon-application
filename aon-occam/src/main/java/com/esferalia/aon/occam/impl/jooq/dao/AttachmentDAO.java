@@ -342,7 +342,7 @@ public class AttachmentDAO {
 				attach.getData(), attach.getDescription(), attach.getDomain().getId(), 
 				attach.getDparentId(), attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
 				attach.getAttachModule(), attach.getScope(),
-				attach.getConfidential()?(byte)1:(byte)0, (byte) attach.getType(),
+				attach.isConfidential()?(byte)1:(byte)0, (byte) attach.getType(),
 				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
 				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
 		.returning(RATTACH.ID).fetchOne().getId();

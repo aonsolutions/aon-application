@@ -61,8 +61,10 @@ public class SECURITY {
 	}
 	
 	public static JSONObject decodeJWT(String token) {
-		DecodedJWT jwt = JWT.decode(token);
-		return new JSONObject(jwt.getSubject());
+		DecodedJWT jwt = JWT.decode(token);	
+		return new JSONObject(jwt.getSubject())
+				.put("expired", jwt.getExpiresAt() != null
+					&& jwt.getExpiresAt().before(new Date()));
 	}
 	
 	public static AuthDevice saveAuthDevice(Domain domain, String login, AuthDevice ad) {
@@ -104,8 +106,8 @@ public class SECURITY {
 				.withSubject("{'schema':'', 'schema_first_domain':'', 'uuid':''}")
 				.sign(algorithm);		
 		System.out.println(token);
-		JSONObject object = decodeJWT(
-				"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7J3NjaGVtYSc6JycsICdzY2hlbWFfZmlyc3RfZG9tYWluJzonJywgJ3V1aWQnOicnfSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjA3MjQ3NjU3fQ.aYp2l--oUoLTFUrAmS7mgOLtHl4c62JRxMbF6a4pUQU"
+		JSONObject object = decodeJWT("asdfjlasdvjawyiwd3iahsdjiaskfopwesuh"
+			//"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7J3NjaGVtYSc6JycsICdzY2hlbWFfZmlyc3RfZG9tYWluJzonJywgJ3V1aWQnOicnfSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjA3MjQ3NjU3fQ.aYp2l--oUoLTFUrAmS7mgOLtHl4c62JRxMbF6a4pUQU"
 			  //"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7J3NjaGVtYSc6JycsICdzY2hlbWFfZmlyc3RfZG9tYWluJzonJywgJ3V1aWQnOicnfSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjA3MjQ3NjU3fQ.aYp2l--oUoLTFUrAmS7mgOLtHl4c62JRxMbF6a4pUQU";
 		);
 		System.out.println(object);

@@ -250,6 +250,7 @@ public class MainContrataContract extends MainEntryPoint {
 					Integer selectedEmployeeIdx = getSelectedEmployeeIdx(newContractId);
 					
 					contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+					contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 					ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 					contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
 					contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
@@ -269,6 +270,7 @@ public class MainContrataContract extends MainEntryPoint {
 			if (null != employee) {
 				Integer contractId = employee.getContractInfo().getContractId();
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+				contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 				ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
 				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
@@ -355,6 +357,7 @@ public class MainContrataContract extends MainEntryPoint {
 			Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
 
 			contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+			contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 			ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 			contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
 			contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
@@ -1064,10 +1067,10 @@ public class MainContrataContract extends MainEntryPoint {
 	private void initFootPanel() {
 		footPanel.setStyleName(AON.CSS.aonSelector());
 		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
-		footPanel.addMaximizeHandler(event -> showFootPanel());
-		footPanel.addMinimizeHandler(event -> {
-			closeFootPanel();
-		});
+		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
+		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
+		footPanel.clearButtons();
+		footPanel.addButtonLess();
 	}
 
 	private void initResultsPanel() {
@@ -1090,6 +1093,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private void showFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 		splitLayoutPanel.animate(500);
+	
 	}
 
 	private void closeFootPanel() {
@@ -1283,6 +1287,7 @@ public class MainContrataContract extends MainEntryPoint {
 			@Override
 			protected void onAccept(Integer contractId) {
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+				contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 
 				Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
 
