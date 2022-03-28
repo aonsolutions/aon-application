@@ -39,7 +39,7 @@ phases:
       - |
         printf '[
         {"name":"%s","imageUri":"%s/aon-application:%s"}
-        ]' $TAG $REPOSITORY_URI  $TAG > testimgdef.json
+        ]' ${TAG^^} $REPOSITORY_URI  $TAG > testimgdef.json
       - cat testimgdef.json
       #- |
       # printf '[
