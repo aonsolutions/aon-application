@@ -192,7 +192,11 @@ export class AonNumber extends AonElement {
             let keyChar = String.fromCharCode(ev.which || ev.keyCode);
             let reg = new RegExp(/[^0-9]/g);
             if (this.format) reg = new RegExp(/[^0-9\.,]/g);
-            if (reg.test(keyChar)) ev.preventDefault();
+            if('-' === keyChar) {
+                if(input.value.includes('-')){
+                    ev.preventDefault();
+                }
+            } else if (reg.test(keyChar)) ev.preventDefault();
             this.dispatchEvent(new Event(EVENT.KEYPRESS));
         });
 
@@ -217,6 +221,10 @@ export class AonNumber extends AonElement {
             if (value) {
                 let newValue = this.onBlur(value);
                 this.value = this.onFocus(newValue);
+            }
+            if(input.value.includes('-') && '-' !== input.value.charAt(0)) {
+                input.value = input.value.replace('-', '');
+                this.value = input.value.replace('-', '');
             }
         });
 

@@ -41,27 +41,32 @@ public class BookingDAO {
 		if(booking.getNumberOfUsers() != null) {
 			SecurityDAO.saveDomainMaxDefinedUser(ctx, booking.getNumberOfUsers());
 		}
-		
 		saveBookingHistory(ctx, booking);
 		
-		AonApp.getValues().stream().forEach(app -> {
-			DomainApp domainApp = SecurityDAO.getDomainAppStream(ctx, f -> 
-				f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getAppProperty().eq(app.value())))
-				.findFirst().orElse(new DomainApp());
-	
-			if(booking.getApps().contains(app)) {
-				domainApp.setDomain(ctx.getDomainId())
-					.setApp(app)
-					.setActive(true);
-			} else if(!domainApp.isEmpty()) {
-				domainApp.setActive(false);
-			}
-			
-			if(!domainApp.isEmpty())
-				SecurityDAO.saveDomainApp(ctx, domainApp);
-		});
+		AonApp.getValues().stream().filter(f -> !booking.getApps().contains(f))
+			.forEach(app -> saveBookingApp(ctx, app, false));
+		
+		booking.getApps().forEach(app -> saveBookingApp(ctx, app, true));
+		
 		return booking;
+	}
+	
+	private static void saveBookingApp(AONContext ctx, AonApp app, boolean active) {
+		DomainApp domainApp = SecurityDAO.getDomainAppStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getAppProperty().eq(app.value())))
+			.findFirst().orElse(new DomainApp());
+		
+		if(active) {
+			domainApp.setDomain(ctx.getDomainId())
+				.setApp(app)
+				.setActive(true);
+		} else if(!domainApp.isEmpty()) {
+			domainApp.setActive(false);
+		}
+		
+		if(!domainApp.isEmpty())
+			SecurityDAO.saveDomainApp(ctx, domainApp);
 	}
 
 	private static void saveBookingHistory(AONContext ctx, Booking booking) {
