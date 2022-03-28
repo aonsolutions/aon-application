@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -45,52 +46,39 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		initialize(req, resp);
+		initialize(req);
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		initialize(req, resp);
+		initialize(req);
 	}
 	
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
-		initialize(req, resp);
+		initialize(req);
 	}
 	
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
-		initialize(req, resp);
+		initialize(req);
+	}
+
+	protected AonApiData initialize(HttpServletRequest req) {
+		return initialize(req, true);
 	}
 	
-	protected AonApiData initialize(HttpServletRequest req, HttpServletResponse resp) {
+	protected AonApiData initialize(HttpServletRequest req, boolean check) {
 		AonApiData api = new AonApiData();
 		api.setMethod(req.getMethod());
-		api.setParams(getParamsJSON(req));
 		api.setData(api.isGet() ? getParamsJSON(req) : getRequestJSON(req));
 		
 		api.setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
 				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
 		
+		Domain domain = getDomain(req, api);
 		
-		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
-				? (api.getData().opt("domain_name") != null 
-					? api.getData().getString("domain_name") 
-					: req.getServerName()) 
-				: req.getHeader(IConstants.DOMAIN_NAME);
-		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
-				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
-				: (api.getData().opt("domain_id") != null ? api.getData().getInt("domain_id") : 0);
-
-		Domain domain = new Domain().setName(domainName).setId(domainId);
-		try {
-			domain = AonStringUtils.isBlank(domainName)
-				? new Domain().setName(domainName).setId(domainId)
-				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		api.setDomain(domain);
 		
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
@@ -100,10 +88,10 @@ public class AonApiHttpServlet extends HttpServlet{
 		User user = new User().setLogin("");
 		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
-			user = AON.getUser(domainName, domainId, "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
 					.and(f.getDomainProperty().eq(api.getDomain().getId())));
 			if(user == null || user.getId() == null) {
-				user = AON.getUser(domainName, domainId, "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
 						.and(f.getDomainProperty().eq(api.getDomain().getParentId())));
 			}
 		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
@@ -118,8 +106,26 @@ public class AonApiHttpServlet extends HttpServlet{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		checkAuthorization(api);
+		if(check) checkAuthorization(api);
 		return api;
+	}
+	
+	private Domain getDomain(HttpServletRequest req, AonApiData api) {
+		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
+				? JsonUtils.getString(api.getData(), IConstants.DOMAIN_NAME, req.getServerName()) 
+				: req.getHeader(IConstants.DOMAIN_NAME);
+		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
+				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
+				: JsonUtils.getInt(api.getData(), IConstants.DOMAIN_ID);
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		try {
+			domain = AonStringUtils.isBlank(domainName)
+				? new Domain().setName(domainName).setId(domainId)
+				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return domain;
 	}
 	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
@@ -235,12 +241,15 @@ public class AonApiHttpServlet extends HttpServlet{
 	    return jsonObj;
 	}
 	
-	private void checkAuthorization(AonApiData api) {		
-		boolean okUser = api.getUser() != null && !api.getUser().isEmpty();
-// TODO			&& (api.getUser().getDomain().equals(api.getDomain().getId()) 
-//				|| api.getUser().getDomain().equals(api.getDomain().getParentId())); 
-		if(AonStringUtils.isBlank(api.getToken()) || api.getUser() == null || !okUser) {
+	private void checkAuthorization(AonApiData api) {
+		if(AonStringUtils.isBlank(api.getToken())) {
 			throw new AonApiException(AonApiError.UNAUTHORIZED.getMessage());
+		}
+	
+		AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		
+		if(aonToken.isExpired()) {
+			throw new AonApiException(AonApiError.EXPIRED_TOKEN.getMessage());
 		}
 	}
 }

@@ -58,14 +58,13 @@ import net.aonsolutions.aon.api.utils.TaskUtils;
 public class TaskServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(TaskServlet.class.getName());
-	
 //	private static final String SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON TASK SERVLET GET");
 		try {		
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, getTasks(api));
@@ -107,7 +106,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)  {
 		LOGGER.info("AON TASK SERVLET POST");
 		try {		
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, saveTask(api));
@@ -143,7 +142,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API TASK SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, deleteTask(api));
@@ -286,6 +285,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getTaskCount(AonApiData api) {
+		
 		Integer taskHolder = api.getData().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getData(), IJsonNames.TASK_HOLDER);
 		
 		HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
@@ -390,19 +390,23 @@ public class TaskServlet extends AonApiHttpServlet{
 			 ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), param.getName());
 			 if(exists.getId()!=null) {
 				 if(param.getValue()!=null) {
+					 
 					 exists.setValue(param.getValue());
 					 System.out.println("--------UPDATE APP PARAMS "+param.getName()+"-------------");
+
 					 AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), exists, 
 								f->f.getDomainProperty().eq(exists.getDomain()).and(f.getNameProperty().eq(exists.getName()))
 					);
 				 } else {
 					 System.out.println("--------DELETE APP PARAMS "+param.getName()+"-------------");
+
 					 AON.deleteApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(),
 							 f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(param.getName()))
 					 );
 				 }
 			 } else if(param.getValue()!=null) {
 				 System.out.println("--------SAVE APP PARAMS "+param.getName()+"-------------");
+
 				 AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), param);
 			 }
 		}

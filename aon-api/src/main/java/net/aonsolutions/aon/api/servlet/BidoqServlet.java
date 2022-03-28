@@ -54,7 +54,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			if(BIDOQ_SESSION_ID.equals(api.getToken()) || BIDOQ_SESSION_ID.equals(api.getData().optString(IJsonNames.SESSION_ID))) {
 				switch (api.getPath()) {
 				case "/":
@@ -68,7 +68,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 				}
 			} else {
 				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
-				throw new Exception("El token es incorrecto.");
+				throw new AonApiException("El token es incorrecto.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,17 +76,17 @@ public class BidoqServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONObject bidoq(AonApiData api) throws Exception {
+	private JSONObject bidoq(AonApiData api) {
 		String user = api.getData().optString("user");
 		String company = api.getData().optString("company");
 		String action = api.getData().optString("action");
 
 		if(AonStringUtils.isEmpty(user)) {
-			throw new Exception("El campo user está vacío");
+			throw new AonApiException("El campo user está vacío");
 		}
 		
 		if(AonStringUtils.isEmpty(company)) {
-			throw new Exception("El campo company está vacío");
+			throw new AonApiException("El campo company está vacío");
 		}
 		
 		Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
@@ -110,7 +110,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 			}
 		}
 		if(cp.getId() == null) {
-			throw new Exception("La empresa no existe");
+			throw new AonApiException("La empresa no existe");
 		}
 		
 		if(auth.getUuid() == null) {

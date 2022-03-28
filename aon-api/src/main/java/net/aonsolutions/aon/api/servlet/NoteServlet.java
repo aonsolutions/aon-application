@@ -27,7 +27,7 @@ public class NoteServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API NOTE SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getNotes(api));
@@ -50,7 +50,7 @@ public class NoteServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API NOTE SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, saveNote(api));
@@ -67,7 +67,7 @@ public class NoteServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API NOTE SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, deleteNote(api));
@@ -105,7 +105,7 @@ public class NoteServlet extends AonApiHttpServlet{
 	private JSONObject getNote(AonApiData api) {
 		return NoteJSON.toJSON( 
 				AON_SOLUTIONS.getNote(api.getDomain(), "", f->f.getOwnerProperty().eq(api.getUser().getId())
-						.and(f.getIdProperty().eq(api.getParams().optInt("id")))
+						.and(f.getIdProperty().eq(api.getData().optInt("id")))
 				)
 		);
 	}

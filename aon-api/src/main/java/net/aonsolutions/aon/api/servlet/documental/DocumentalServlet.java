@@ -42,7 +42,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api Documental Servlet - GET METHOD");	
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -63,7 +63,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api Documental Servlet - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			
 			switch (api.getPath()) {
 			case "/":
@@ -81,7 +81,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api Documental Servlet - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -96,9 +96,9 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject getFile(AonApiData api) throws Exception {
-		if(api.getParams().opt(IConstants.ID) != null) {
+		if(api.getData().opt(IConstants.ID) != null) {
 			Attach attach = AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-					f -> f.getIdProperty().eq(api.getParams().optInt(IConstants.ID)),AttachType.REGISTRY, false)
+					f -> f.getIdProperty().eq(api.getData().optInt(IConstants.ID)),AttachType.REGISTRY, false)
 			.findFirst().orElse(new Attach());
 			return attachToJSON(attach);
 		} else {
@@ -144,9 +144,9 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			scopes = null;
 		}
+		
 		Integer domainId = api.getDomain().getId();
-		if(api.getParams().opt("parent") != null && api.getParams().optBoolean("parent") 
-				&& api.getDomain().getParentId() != null) {
+		if(api.getData().opt("parent") != null && api.getData().optBoolean("parent") && api.getDomain().getParentId() != null) {
 			domainId = api.getDomain().getParentId();
 		}
     	
@@ -156,16 +156,16 @@ public class DocumentalServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getScopeProperty().in(scopes).or(f.getScopeProperty().isNull()));
     	} else filter = filter.and(f.getScopeProperty().isNull());
 
-    	if(api.getParams().opt("type") != null) {
-        	if("system".equalsIgnoreCase(api.getParams().optString("type"))) {
+    	if(api.getData().opt("type") != null) {
+        	if("system".equalsIgnoreCase(api.getData().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.SYSTEM_MESSAGE.value()));
-        	} else if("enterprise".equalsIgnoreCase(api.getParams().optString("type"))) {
+        	} else if("enterprise".equalsIgnoreCase(api.getData().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()));
-        	} else if("employee".equalsIgnoreCase(api.getParams().optString("type"))) {
+        	} else if("employee".equalsIgnoreCase(api.getData().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value()));
-        	} else if("asesor".equalsIgnoreCase(api.getParams().optString("type"))) {
+        	} else if("asesor".equalsIgnoreCase(api.getData().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()));
-        	} else if("all".equalsIgnoreCase(api.getParams().optString("type"))) {
+        	} else if("all".equalsIgnoreCase(api.getData().optString("type"))) {
         		if(dur.isDocumentalManager()) {
             		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
             			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()))
@@ -183,25 +183,26 @@ public class DocumentalServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getSecurityLevelProperty().eq((byte) 0));
     	}
     	
-    	if(api.getParams().opt(IJsonNames.DESCRIPTION) != null) {
-    		filter = filter.and(f.getDescriptionProperty().like("%"+ api.getParams().optString(IJsonNames.DESCRIPTION) + "%"));
+    	if(api.getData().opt(IJsonNames.DESCRIPTION) != null) {
+    		filter = filter.and(f.getDescriptionProperty().like("%"+ api.getData().optString(IJsonNames.DESCRIPTION) + "%"));
 		}
     	
-    	if(api.getParams().opt(IJsonNames.CATEGORY) != null) {
+    	if(api.getData().opt(IJsonNames.CATEGORY) != null) {
     		// TODO FILTRO CATEGORÍA MÚLTIPLE
-    		filter = filter.and(f.getCategoryProperty().eq(api.getParams().optInt(IJsonNames.CATEGORY)));
+    		filter = filter.and(f.getCategoryProperty().eq(api.getData().optInt(IJsonNames.CATEGORY)));
     	}
     	
-    	if(api.getParams().opt(IJsonNames.TAG) != null) {
+    	if(api.getData().opt(IJsonNames.TAG) != null) {
     		// TODO FILTRO ETIQUETAS MÚLTIPLE
-    		filter = filter.and(f.getTagProperty().eq(api.getParams().optInt(IJsonNames.TAG)));
+    		filter = filter.and(f.getTagProperty().eq(api.getData().optInt(IJsonNames.TAG)));
     	}
-
-		if(api.getParams().opt("per_page") != null){
-			filter.perPage(api.getParams().optInt("per_page"));
+    	
+		if(api.getData().opt(IJsonNames.PAGE) != null){
+			filter.page(api.getData().optInt(IJsonNames.PAGE));
 		}
-		if(api.getParams().opt(IJsonNames.PAGE) != null){
-			filter.page(api.getParams().optInt(IJsonNames.PAGE));
+
+		if(api.getData().opt("per_page") != null){
+			filter.perPage(api.getData().optInt("per_page"));
 		}
 		
 		return filter;
