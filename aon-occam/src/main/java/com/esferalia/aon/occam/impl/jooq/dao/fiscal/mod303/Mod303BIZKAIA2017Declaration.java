@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -701,10 +698,5 @@ class Mod303BIZKAIA2017Declaration extends Mod303BIZKAIA {
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
-	}
-
-	@Override
-	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
-		return new HashSet<>();
 	}
 }

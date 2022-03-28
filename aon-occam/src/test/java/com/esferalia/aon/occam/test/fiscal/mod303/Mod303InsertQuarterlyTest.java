@@ -29,16 +29,13 @@ public class Mod303InsertQuarterlyTest extends AbstractOccamTest {
 			.map(inv -> AON.insertInvoice(getOccam(),inv))
 			.forEach(inv -> System.out.println( "\t\t Invoice inserted "  +inv.getId()));
 		Date today = new Date();
-		Period period = Period.T1;
-		Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-		Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-		mod303InsertQuarterly(AonRandom.getRangeDate(start,end));
-
-//		for (Period period : Period.values()) {
-//			if (period.isQuarterPeriod()) {
-//				mod303InsertQuarterly(AonRandom.getRangeDate(start,end));
-//			}
-//		}
+		for (Period period : Period.values()) {
+			Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+			Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+			if (period.isQuarterPeriod()) {
+				mod303InsertQuarterly(AonRandom.getRangeDate(start,end));
+			}
+		}
 	}
 	
 	public void mod303InsertQuarterly(Date date) {

@@ -8,18 +8,26 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.test.finance.invoice.DeleteAllInvoicesTest;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111DeleteTest;
+import com.esferalia.aon.occam.test.fiscal.mod115.Mod115DeleteTest;
+import com.esferalia.aon.occam.test.fiscal.mod123.Mod123DeleteTest;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+//	Mod111DeleteTest.class,
+//	Mod115DeleteTest.class,
+//	Mod123DeleteTest.class,
+//	Mod303DeleteTest.class,
+//	DeleteAllInvoicesTest.class,
 	Mod303ExpressionsTest.class,
 	Mod303ScriptTest.class,
 	Mod303DeleteTest.class,
 	Mod303InsertQuarterlyTest.class,
 //	Mod303InsertQuarterlyComplementaryTest.class,
 //	Mod303InsertQuarterlyReplacementTest.class,
-
-	// VatContext JSON 
+//  VatContext JSON 
 	VatContextJSONTest.class,
 })
 public class Mod303TestSuite {
