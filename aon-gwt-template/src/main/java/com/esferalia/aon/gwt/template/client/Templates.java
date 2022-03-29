@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Templates extends Composite implements EntryPoint {
-
+	
 	private static final String SILENT = "silent";
 	private static final String IMPORT = "import";
 	private static final String MARKETPLACE = "marketplace";
@@ -193,7 +193,7 @@ public class Templates extends Composite implements EntryPoint {
 	LinkedList<String> verror = new LinkedList<>();
 	LinkedList<String> werror = new LinkedList<>();
 	
-	private void importation(ImportType type){		
+	private void importation(ImportType type){
 		Dialog d = new Dialog("Importar " + type.getName(),"Importar",true,"Cancelar",true,"importOnly");
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(aonData, d) {

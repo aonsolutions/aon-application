@@ -303,6 +303,7 @@ public enum ContextVariable implements IResourceable {
 	NON_STRUCTURAL_OVERTIME_ENTERPRISE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE), 
 	
 	DELAY_AMOUNT("ATRASO", VariableType.DOUBLE, false ),
+	DELAY_QUOTE("COTIZACION_ATRASO", VariableType.DOUBLE, false ),
 	
 	JANUARY("ENERO", VariableType.INTEGER),
 	FEBRUARY("FEBRERO", VariableType.INTEGER),
@@ -323,6 +324,7 @@ public enum ContextVariable implements IResourceable {
 	CRA_0012("CRA_0012", VariableType.INTEGER),
 	CRA_0010("CRA_0010", VariableType.INTEGER),
 	CRA_0008("CRA_0008", VariableType.INTEGER),
+
 	;
 
 	public static final String ALL = "_P";
