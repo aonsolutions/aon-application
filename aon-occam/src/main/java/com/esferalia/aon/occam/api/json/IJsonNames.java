@@ -409,6 +409,8 @@ public interface IJsonNames {
 	String SIZE = "size";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
+	String SCHEMA = "schema";
+	String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	String START_DATE = "start_date";
 	String STATEMENT = "statement";
 	String STATEMENTS = "statements";

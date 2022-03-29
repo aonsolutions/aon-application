@@ -63,6 +63,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -4704,7 +4705,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		});
 		Salary delay = delayCalculator.calculate(delayCtx);
 		
-		org.junit.Assert.assertEquals(16, delay.getSalaryPayments().size());
+		org.junit.Assert.assertEquals(17, delay.getSalaryPayments().size());
 
 		List<SalaryData> cgcBases =
 		delay.getSalaryDatas().stream()
@@ -4713,7 +4714,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
 		.collect(Collectors.toList());
 		
-		org.junit.Assert.assertEquals(0, cgcBases.size());
+		org.junit.Assert.assertEquals(1, cgcBases.size());
 		
 		
 		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
@@ -4846,6 +4847,392 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
 		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		Assert.assertEquals(expected, delay.getIrpfBase(), DELTA);
+	}
+
+	@Test
+	public void testDelaysOverrideQuoteITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+
+		Date startDate = firstDayOfMonth;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		Date overrideStartDate = add(firstDayOfMonth, MONTH, 1);
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "ATRASO", "0.00");
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "COTIZACION_ATRASO", "6.66");
+		Date overrideITStartDate = add(overrideStartDate, DAY_OF_MONTH, 10);  
+		Date overrideITEndDate = add(overrideStartDate, DAY_OF_MONTH, 20);  
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, overrideITStartDate, overrideITEndDate, null);
+		
+		
+		overrideStartDate = add(firstDayOfMonth, MONTH, 3);
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "ATRASO", "0.00");
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "COTIZACION_ATRASO", "3.33");
+		overrideStartDate = add(firstDayOfMonth, MONTH, 6);
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "ATRASO", "0.00");
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "COTIZACION_ATRASO", "12.22");
+		
+		
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");	
+		
+		addData(aonContext, contract, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				ContextVariable.DELAY_CAUSE, 
+				ContextVariable.CRA_0012.getName());
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder() {
+			
+			@Override
+			public void addData(String name, ITimedVariable<?> data) {
+				// TODO Auto-generated method stub
+				super.addData(name, data);
+			}
+			
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.printf( "%s: %d -. [%s]: %s, %f, %f, %s\r\n", payment.getType().name(), ((IContractPayment) payment ).getId(), payment.getName(), description, amount, quote , startDate.toLocaleString() );
+				
+			}
+		});
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		org.junit.Assert.assertEquals(18, delay.getSalaryPayments().size());
+
+		List<SalaryData> cgcBases =
+		delay.getSalaryDatas().stream()
+		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
+		.collect(Collectors.toList());
+		
+		org.junit.Assert.assertEquals(2, cgcBases.size());
+		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
+		
+		
+		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
+		org.junit.Assert.assertEquals(1, distinct);
+		
+		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
+		
+		Assert.assertEquals(10.00 * 7 , delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
+		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		Assert.assertEquals(10.00 * 7 , delay.getIrpfBase(), DELTA);
+		
+		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
+	}
+
+	@Test
+	public void testDelaysOverrideQuoteITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		setData(aonContext, contract, ContextVariable.MONTH_DAYS.getName(), "30.00");
+		
+		addPrestIts(aonContext, contract);
+
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+
+		Date startDate = firstDayOfMonth;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		Date overrideStartDate = add(firstDayOfMonth, MONTH, 1);
+		Date overrideITStartDate = add(overrideStartDate, DAY_OF_MONTH, 10);  
+		addData(aonContext, contract, overrideStartDate, add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), "COTIZACION_ATRASO", "3.33");
+
+		Date overrideITEndDate = add(overrideITStartDate, DAY_OF_MONTH, 9);  
+		addData(aonContext, contract, overrideITStartDate, overrideITEndDate, "ATRASO", "0.00");
+		addData(aonContext, contract, overrideITStartDate, overrideITEndDate, "COTIZACION_ATRASO", "0.00");
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, overrideITStartDate, overrideITEndDate, null);
+		
+		addData(aonContext, contract, add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), getLastDayOfMonth(overrideITEndDate), "COTIZACION_ATRASO", "3.33");
+		
+		
+		
+		overrideStartDate = add(firstDayOfMonth, MONTH, 3);
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "COTIZACION_ATRASO", "3.33");
+		overrideStartDate = add(firstDayOfMonth, MONTH, 6);
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "COTIZACION_ATRASO", "12.22");
+		
+		
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");	
+		
+		addData(aonContext, contract, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				ContextVariable.DELAY_CAUSE, 
+				ContextVariable.CRA_0012.getName());
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder() {
+			
+			@Override
+			public void addData(String name, ITimedVariable<?> data) {
+				// TODO Auto-generated method stub
+				super.addData(name, data);
+			}
+			
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.printf( "%s: %d -. [%s]: %s, %f, %f, %s\r\n", payment.getType().name(), ((IContractPayment) payment ).getId(), payment.getName(), description, amount, quote , startDate.toLocaleString() );
+				
+			}
+		});
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		org.junit.Assert.assertEquals(23, delay.getSalaryPayments().size());
+
+		List<SalaryData> cgcBases =
+		delay.getSalaryDatas().stream()
+		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
+		.filter(d -> AonNumberUtils.todouble(d.getExpression()) > 0.00 )
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
+		.collect(Collectors.toList());
+		
+		org.junit.Assert.assertEquals(2, cgcBases.size());
+		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(1).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(1).getEndDate());
+		
+		
+		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
+		org.junit.Assert.assertEquals(1, distinct);
+		
+		double expected = 10.00 * 7 + 6.66 + 3.33 + 12.22 ;
+		
+		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
+		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		
+		
+		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  20 ) , delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  20 ) , delay.getIrpfBase(), DELTA);
+		
+		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
+	}
+
+	@Test
+	public void testDelaysOverrideQuoteITIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		setData(aonContext, contract, ContextVariable.MONTH_DAYS.getName(), "30.00");
+		
+		addPrestIts(aonContext, contract);
+
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+
+		Date startDate = firstDayOfMonth;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		Date overrideStartDate = add(firstDayOfMonth, MONTH, 1);
+		Date overrideITStartDate = add(overrideStartDate, DAY_OF_MONTH, 10);  
+		addData(aonContext, contract, overrideStartDate, add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), "COTIZACION_ATRASO", "3.33");
+
+		Date overrideITEndDate = add(overrideITStartDate, DAY_OF_MONTH, 9);  
+		addData(aonContext, contract, overrideITStartDate, add(overrideITStartDate, DAY_OF_MONTH,2), "ATRASO", "1.00");
+		addData(aonContext, contract, overrideITStartDate, add(overrideITStartDate, DAY_OF_MONTH,2), "COTIZACION_ATRASO", "3.00");
+		addData(aonContext, contract, add(overrideITStartDate, DAY_OF_MONTH,3), overrideITEndDate, "ATRASO", "2.00");
+		addData(aonContext, contract, add(overrideITStartDate, DAY_OF_MONTH,3), overrideITEndDate, "COTIZACION_ATRASO", "6.00");
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, overrideITStartDate, overrideITEndDate, null);
+		
+		addData(aonContext, contract, add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), getLastDayOfMonth(overrideITEndDate), "COTIZACION_ATRASO", "3.33");
+		
+		
+		
+		overrideStartDate = add(firstDayOfMonth, MONTH, 3);
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "COTIZACION_ATRASO", "3.33");
+		overrideStartDate = add(firstDayOfMonth, MONTH, 6);
+		addData(aonContext, contract, overrideStartDate, getLastDayOfMonth(overrideStartDate), "COTIZACION_ATRASO", "12.22");
+		
+		
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");	
+		
+		addData(aonContext, contract, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				ContextVariable.DELAY_CAUSE, 
+				ContextVariable.CRA_0012.getName());
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder() {
+			
+			@Override
+			public void addData(String name, ITimedVariable<?> data) {
+				// TODO Auto-generated method stub
+				super.addData(name, data);
+			}
+			
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.printf( "%s: %d -. [%s]: %s, %f, %f, %s\r\n", payment.getType().name(), ((IContractPayment) payment ).getId(), payment.getName(), description, amount, quote , startDate.toLocaleString() );
+				
+			}
+		});
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		org.junit.Assert.assertEquals(24, delay.getSalaryPayments().size());
+
+		List<SalaryData> cgcBases =
+		delay.getSalaryDatas().stream()
+		.filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(d -> get(d.getStartDate(),MONTH) == get(overrideITStartDate,MONTH))
+		.filter(d -> AonNumberUtils.todouble(d.getExpression()) > 0.00 )
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()))
+		.collect(Collectors.toList());
+		
+		org.junit.Assert.assertEquals(4, cgcBases.size());
+		org.junit.Assert.assertEquals(getFirstDayOfMonth(overrideITStartDate), cgcBases.get(0).getStartDate());
+		org.junit.Assert.assertEquals(add(overrideITStartDate, Calendar.DAY_OF_MONTH,-1), cgcBases.get(0).getEndDate());
+		
+		org.junit.Assert.assertEquals(add(overrideITEndDate, Calendar.DAY_OF_MONTH,1), cgcBases.get(3).getStartDate());
+		org.junit.Assert.assertEquals(getLastDayOfMonth(overrideITStartDate), cgcBases.get(3).getEndDate());
+		
+		
+		long distinct = delay.getSalaryPayments().stream().map(p -> p.getId()).distinct().count();
+		org.junit.Assert.assertEquals(1, distinct);
+		
+		double expected = 10.00 * 7.00 + 9.00 + 6.66 + 3.33 + 12.22 ;
+		
+		Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
+		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
+		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
+		
+		
+		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  20.00 ) , delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  20.00 ) , delay.getIrpfBase(), DELTA);
+		
+		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
+
+		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
 	}
 
 	// ------------------------------------------
