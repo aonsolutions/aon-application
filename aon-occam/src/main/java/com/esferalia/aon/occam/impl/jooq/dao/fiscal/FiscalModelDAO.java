@@ -513,6 +513,18 @@ public class FiscalModelDAO {
 		fm.setContactPhone(conf.fiscal().getContactPhone() );
 		fm.setContactCellular( conf.fiscal().getContactCellular() );
 		fm.setContactEmail( conf.fiscal().getContactMail() );
+		
+		fm.setName( AonStringUtils.substring(fm.getName(), 0, FS_MODEL.NAME.getDataType().length()));
+		fm.setSurname( AonStringUtils.substring(fm.getSurname(), 0, FS_MODEL.SURNAME.getDataType().length()));
+		fm.setStreetName( AonStringUtils.substring(fm.getStreetName(), 0, FS_MODEL.STREET_NAME.getDataType().length()));
+		fm.setTown( AonStringUtils.substring(fm.getTown(), 0, FS_MODEL.TOWN.getDataType().length())); 
+		fm.setZip( AonStringUtils.substring(fm.getZip(), 0, FS_MODEL.ZIP.getDataType().length()));
+		fm.setPhone( AonStringUtils.substring(fm.getPhone(), 0, FS_MODEL.PHONE.getDataType().length()));
+		fm.setContactPerson( AonStringUtils.substring(fm.getContactPerson(), 0, FS_MODEL.CONTACT_PERSON.getDataType().length()));
+		fm.setContactPhone( AonStringUtils.substring(fm.getContactPhone(), 0, FS_MODEL.CONTACT_PHONE.getDataType().length()));
+		fm.setContactCellular( AonStringUtils.substring(fm.getContactCellular(), 0, FS_MODEL.CONTACT_CELLULAR.getDataType().length()));
+		fm.setContactEmail( AonStringUtils.substring(fm.getContactEmail(), 0, FS_MODEL.CONTACT_EMAIL.getDataType().length())); 
+		
 		return fm;
 	}
 
