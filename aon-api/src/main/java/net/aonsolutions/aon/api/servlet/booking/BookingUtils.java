@@ -39,7 +39,7 @@ public class BookingUtils {
 	}
 	
 	public void sendMail(Domain domain, User user, Booking oldBooking, Booking newBooking) {
-		String subject = "Contratación Aon Solutions";
+		String subject = "Modificación de Contratación en " + domain.getName();
 		String body = content(domain, user, newBooking);
 
 		SESMessage msg = new SESMessage()

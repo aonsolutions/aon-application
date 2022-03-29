@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,9 +64,14 @@ public class AonApiHttpServlet extends HttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		initialize(req);
 	}
-
+	
 	protected AonApiData initialize(HttpServletRequest req) {
 		return initialize(req, true);
+	}
+	
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		response(req, resp);
 	}
 	
 	protected AonApiData initialize(HttpServletRequest req, boolean check) {
@@ -86,7 +92,7 @@ public class AonApiHttpServlet extends HttpServlet{
 			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
 		}
 		User user = new User().setLogin("");
-		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
+		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
 					.and(f.getDomainProperty().eq(api.getDomain().getId())));
@@ -246,8 +252,7 @@ public class AonApiHttpServlet extends HttpServlet{
 			throw new AonApiException(AonApiError.UNAUTHORIZED.getMessage());
 		}
 		
-		if(!"SIGd95770f269e711eb94390242ac130002".equals(api.getToken())
-				&& !"AONd95770f269e711eb94390242ac130002".equals(api.getToken())) {
+		if(!api.isPredefinedToken()) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 		
 			if(aonToken.isExpired()) {
