@@ -490,20 +490,10 @@ public class SQLContractDelayCalculatorContext extends
 		Collection<Period> periods = getPeriods(ContextVariable.DELAY_AMOUNT);
 
 		for (Period period : periods) {
+
+			double totalWorkedDays = getTotalDays(period, ContextVariable.WORKED_DAYS);
 			
-			
-			double totalWorkedDays ;
-			try {
-				totalWorkedDays = 
-				getExpressionContext().eval(ContextVariable.WORKED_DAYS.getName(), period.getStart(), period.getEnd(), Double.class)
-				.stream().collect(Collectors.summingDouble( ITimedResult::getValue ))
-				;
-			} catch ( ExpressionException e ) {
-				totalWorkedDays = 
-				getPeriods(ContextVariable.WORKED_DAYS).stream()
-				.map( p -> p.intersect(period)).filter( Objects::nonNull)
-				.collect(Collectors.summingLong( p -> p.getDays() ));
-			}
+			double totalITDays = getTotalDays(period, ContextVariable.LEAVE_DAYS);
 			
 			ContractPayment payment = new DelayPaymentBuilder.DelayContractPayment();
 			payment.setId(null);
@@ -514,7 +504,6 @@ public class SQLContractDelayCalculatorContext extends
 			// TODO: Generic Delays ? 
 			payment.setType(getPaymentType(PaymentType.CRA_0008));
 			payment.setIrpfExpression(ContextVariable.ALL);
-			payment.setQuoteExpression(ContextVariable.ALL);
 			payment.setDescription(getDescriptionForSalaryDelay(payment, payments.size()));
 			payment.setExpression(
 					String.format(
@@ -522,9 +511,23 @@ public class SQLContractDelayCalculatorContext extends
 					"/*var:%s*/"
 					+ "%s/%f*%s", 
 					ContextVariable.DELAY_AMOUNT.getName(), 
+					
 					ContextVariable.DELAY_AMOUNT.getName(), 
-					totalWorkedDays, 
-					ContextVariable.WORKED_DAYS.getName()
+					totalWorkedDays > 0 ? totalWorkedDays : totalITDays, 
+					totalWorkedDays > 0 ? ContextVariable.WORKED_DAYS.getName() : ContextVariable.LEAVE_DAYS.getName() 
+					));
+			payment.setQuoteExpression(
+					String.format(
+					Locale.ROOT,
+					"/*var:%s*/"
+					+ "isdef %s ? %s/%f*%s : %s", 
+					ContextVariable.DELAY_QUOTE.getName(), 
+					ContextVariable.DELAY_QUOTE.getName(), 
+					
+					ContextVariable.DELAY_QUOTE.getName(), 
+					totalWorkedDays > 0 ? totalWorkedDays : totalITDays, 
+					totalWorkedDays > 0 ? ContextVariable.WORKED_DAYS.getName() : ContextVariable.LEAVE_DAYS.getName() ,
+					ContextVariable.ALL
 					));
 
 			payments.add(payment);
@@ -538,6 +541,23 @@ public class SQLContractDelayCalculatorContext extends
 		
 		return payments;
 
+	}
+
+
+	private double getTotalDays(Period period, ContextVariable contextVariable) {
+		double totalWorkedDays;
+		try {
+			totalWorkedDays = 
+			getExpressionContext().eval(contextVariable.getName(), period.getStart(), period.getEnd(), Double.class)
+			.stream().collect(Collectors.summingDouble( ITimedResult::getValue ))
+			;
+		} catch ( ExpressionException e ) {
+			totalWorkedDays = 
+			getPeriods(contextVariable).stream()
+			.map( p -> p.intersect(period)).filter( Objects::nonNull)
+			.collect(Collectors.summingLong( Period::getDays ));
+		}
+		return totalWorkedDays;
 	}
 
 	private Collection<IContractPayment> getDifferencePayments()
@@ -571,6 +591,13 @@ public class SQLContractDelayCalculatorContext extends
 			public String getExpressionFor(IContractPayment payment, String expression) {
 				return String.format("/*var:%s*/%s",ContextVariable.DELAY_AMOUNT.getName(), expression);
 			}
+
+			@Override
+			public String getQuoteExpressionFor(IContractPayment payment, String quoteExpression) {
+				return String.format("/*var:%1$s*/isdef %1$s ? %1$s : %2$s",
+						ContextVariable.DELAY_QUOTE.getName(), 
+						quoteExpression);
+			}
 		};
 		ExtraDelayPaymentDecorator extraPaymentDecorator = new ExtraDelayPaymentDecorator() {
 			@Override
@@ -585,6 +612,11 @@ public class SQLContractDelayCalculatorContext extends
 			@Override
 			public String getExpressionFor(IContractPayment payment, String expression) {
 				return expression;
+			}
+
+			@Override
+			public String getQuoteExpressionFor(IContractPayment payment, String quoteExpression) {
+				return quoteExpression;
 			}
 		};
 
@@ -866,6 +898,7 @@ public class SQLContractDelayCalculatorContext extends
 		String getDescriptionFor(IContractPayment payment);
 		PaymentType getPaymentType(IContractPayment payment);
 		String getExpressionFor(IContractPayment payment, String expression);
+		String getQuoteExpressionFor(IContractPayment payment, String quoteExpression);
 	}
 
 	private static class DelayPaymentBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
@@ -1280,8 +1313,8 @@ public class SQLContractDelayCalculatorContext extends
 					amount)));
 			paymentConcept.setIrpfExpression(String.format(Locale.US, "%.2f",
 					irpf));
-			paymentConcept.setQuoteExpression(String.format(Locale.US, "%.2f",
-					quote));
+			paymentConcept.setQuoteExpression(paymentDecorator.getQuoteExpressionFor(payment, String.format(Locale.US, "%.2f", 
+					quote)));
 			paymentConcept.setDescription(paymentDecorator.getDescriptionFor(payment));
 
 			payment.setPaymentConcept(paymentConcept);

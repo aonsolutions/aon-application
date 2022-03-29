@@ -25,6 +25,7 @@ public class WorkgroupJSON {
 	}
 	
 	public static Workgroup fromJSON(JSONObject json) {
+		if(json.isEmpty()) return new Workgroup();
 		return new Workgroup()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))

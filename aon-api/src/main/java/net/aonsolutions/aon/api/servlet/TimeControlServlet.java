@@ -53,7 +53,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API TIMECONTROL SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getTimeControl(api));
@@ -88,7 +88,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API TIMECONTROL SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 
 			switch (api.getPath()) {
 			case "/":
@@ -122,7 +122,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API TIME-CONTROL SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, delete(api));

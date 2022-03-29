@@ -37,7 +37,7 @@ public class FileServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api File Servlet - GET METHOD");	
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req, false);
 			responseFile(resp, getFile(api, getJson(api, api.getData())));
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -48,7 +48,7 @@ public class FileServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api File Servlet - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			responseFile(resp, getFile(api, getJson(api, api.getData())));
 		} catch (Exception e) {
 			error(req, resp, e);

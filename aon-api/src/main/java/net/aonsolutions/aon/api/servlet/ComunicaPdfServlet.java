@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -41,7 +42,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
 		LOGGER.info("AON COMUNCIAPDF - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			byte[] PDF = null;
 
 			switch (api.getPath()) {
@@ -100,10 +101,10 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 
 	private byte[] getTA(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "TGSS");
-		JSONObject params = api.getParams();
+		JSONObject params = api.getData();
 		SituationType situationType = SituationType.ALTA;
-		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regime = params.optString("regime");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+		String regime = params.optString(IJsonNames.REGIME);
 		String ccc = params.getString("ctaCti");
 		String nss = params.getString("nss");
 		Date date = AonDateUtils.parse(params.getString("fra"), FORMAT_DATE);
@@ -118,27 +119,27 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	
 	private byte[] getIDC(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "TGSS");
-		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regime = api.getParams().getString("regime");
-		String ccc = api.getParams().getString("ctaCti");
-		String nss = api.getParams().getString("nss");
-		Date date = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+		String regime = api.getData().getString(IJsonNames.REGIME);
+		String ccc = api.getData().getString("ctaCti");
+		String nss = api.getData().getString("nss");
+		Date date = AonDateUtils.parse(api.getData().getString("fra"), FORMAT_DATE);
 		return ServicioRED.getIDCPOST(certificateInputStream, certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
 	}
 	
 	private byte[] getCertCorriente(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "TGSS");
-		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regime = api.getParams().getString("regime");
-		String ccc = api.getParams().getString("ccc");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+		String regime = api.getData().getString(IJsonNames.REGIME);
+		String ccc = api.getData().getString("ccc");
 	    return SistemaRED.getUp2DateSS(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);	
 	}
 	
 	private byte[] getContratoPdf(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEPE");
-		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String ipf = api.getParams().getString("ipf");
-		Date date = AonDateUtils.parse(api.getParams().getString("startDate"), FORMAT_DATE); 
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+		String ipf = api.getData().getString("ipf");
+		Date date = AonDateUtils.parse(api.getData().getString("startDate"), FORMAT_DATE); 
 		
 		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, date, date);
 
@@ -146,36 +147,36 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	
 	private byte[] getCopyBasicPdf(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEPE");
-		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String ipf = api.getParams().getString("ipf");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+		String ipf = api.getData().getString("ipf");
+		Date fecha = AonDateUtils.parse(api.getData().getString("fecha"), FORMAT_DATE); 
 		
 		return Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);	
 	}
 	
 	private byte[] getReportAffiliateInAlta(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "TGSS");
-		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regime = api.getParams().getString("regime");
-		String ccc = api.getParams().getString("ccc");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+		String regime = api.getData().getString(IJsonNames.REGIME);
+		String ccc = api.getData().getString("ccc");
 	
 	    return SistemaRED.getReportAffiliateInAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);	
 	}
 	
 	private byte[] getReportAffiliateInMovPrev(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "TGSS");
-		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regime = api.getParams().getString("regime");
-		String ccc = api.getParams().getString("ccc");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+		String regime = api.getData().getString(IJsonNames.REGIME);
+		String ccc = api.getData().getString("ccc");
 	    return SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);	
 	}
 	
 	private byte[] getIdcCcc(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regime = api.getParams().getString("regime");
-		String ccc = api.getParams().getString("ccc");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
+		String regime = api.getData().getString(IJsonNames.REGIME);
+		String ccc = api.getData().getString("ccc");
+		Date fecha = AonDateUtils.parse(api.getData().getString("fecha"), FORMAT_DATE); 
 		
 	    return SistemaRED.getIDCCCC(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc, fecha);	
 	}

@@ -29,11 +29,11 @@ public class CreditorServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[GET] /ms/api/creditor/* - AON API CREDITOR SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getCreditors(api, api.getParams()));
+				response(req, resp, getCreditors(api, api.getData()));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -47,7 +47,7 @@ public class CreditorServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[POST] /ms/api/creditor/* - AON API CREDITOR SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getCreditors(api, api.getData()));
@@ -65,7 +65,7 @@ public class CreditorServlet extends AonApiHttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[PUT] /ms/api/creditor/* - AON API CREDITOR SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, saveCreditor(api));

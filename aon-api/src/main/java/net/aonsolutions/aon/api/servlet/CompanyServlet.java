@@ -77,7 +77,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private void get(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			
 			switch (api.getPath()) {
 			case "/":
@@ -120,7 +120,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private void put(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, saveCompany(api));

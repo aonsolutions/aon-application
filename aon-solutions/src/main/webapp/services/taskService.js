@@ -6,7 +6,7 @@ import { isSigGet, isSigPost, isSigRemove } from "./sigService.js";
 export const getTasks = (data) =>  isSigGet("task", data);
 export const getTaskOne = (data) => isSigGet("task/one",data);
 export const saveTask = (data) =>  isSigPost("task",data); 
-export const getTaskAppParams = (data) => post(`${API_URL}/task/get-app-params`, data);
+export const getTaskAppParams = (data) => isSigPost(`task/get-app-params`, data);
 export const saveTaskAppParams = (data) => post(`${API_URL}/task/app-params`, data);
 export const deleteTask = (data) => isSigRemove("task",data); 
 export const getTaskStatusCount = (data) => isSigGet("task/status/count",data);

@@ -7042,7 +7042,7 @@ public class SalaryDraft extends ResizeComposite
 
 	// @formatter:on
 
-	private static <T extends UIObject & HasEnabled>  void enable(T textBox, boolean enabled) {
+	private static <T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled>  void enable(T textBox, boolean enabled) {
 
 		if (textBox.isEnabled() == enabled)
 			return;
@@ -7060,13 +7060,13 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
-	private static <W extends HasEnabled & HasVisibility> void enable(W widget, boolean enabled) {
+	private static void enable(Button button, boolean enabled) {
 
-		if (widget.isEnabled() == enabled)
+		if (button.isEnabled() == enabled)
 			return;
 
 		//widget.setEnabled(enabled);
-		widget.setVisible(enabled);
+		button.setVisible(enabled);
 	}
 
 	private static <T extends UIObject >  void setEditable(T textBox, boolean editable) {

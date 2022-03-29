@@ -11,7 +11,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -224,8 +226,6 @@ public class MultipleDownloadServlet extends HttpServlet{
 	}
 	
 	private LinkedList<File> getDocumentalFiles(Domain domain, User user, JSONObject json) {
-		String type = json.opt("type")!= null ? json.optString("type") : "";
-		RegistryAttachmentType t = type.equalsIgnoreCase("system") ? RegistryAttachmentType.SYSTEM_MESSAGE : RegistryAttachmentType.CORPORATE_IDENTITY;
    		LinkedList<Integer> ids = toList(json.optJSONArray("ids"));
 		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
 		LinkedList<File> list = new LinkedList<>();
@@ -233,32 +233,36 @@ public class MultipleDownloadServlet extends HttpServlet{
 		DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
 		Drive drive = AonDrive.getInstace().serviceInitialize(g);
 		
-		AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getTypeProperty().eq(t.value()).and(f.getIdProperty().in(idsArray)), AttachType.REGISTRY, true)
-		.forEach(r -> {
-			if(r.getData() == null && r.getDriveId() != null) {
+		List<Attach> attachs = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), 
+				f -> f.getIdProperty().in(idsArray), 
+		AttachType.REGISTRY, true)
+			.collect(Collectors.toList());
+
+		for(Attach attach: attachs) {
+			if(attach.getData() == null && attach.getDriveId() != null) {
 				String[] keys = {"fileId", "aontype", "domain"};
-				String[] values = {r.getId() + "", "registry", r.getDomain().getName()};
+				String[] values = {attach.getId() + "", "registry", attach.getDomain().getName()};
 				FileList fl = SearchFiles.searchFilesAppProperties(drive, keys, values);
-				if(fl.getFiles().size() > 0) {
-					if(!fl.getFiles().get(0).getId().equals(r.getDriveId())) {
-						r.setDriveId(fl.getFiles().get(0).getId());
-						AON.updateAttach(domain.getName(), domain.getId(), "", r);
+				if(!fl.getFiles().isEmpty()) {
+					if(!fl.getFiles().get(0).getId().equals(attach.getDriveId())) {
+							attach.setDriveId(fl.getFiles().get(0).getId());
+							AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 					}
-					if("0".equals(r.getDparentId())) {
-						r.setDparentId(fl.getFiles().get(0).getSize().toString());
-						AON.updateAttach(domain.getName(), domain.getId(), "", r);
+					if("0".equals(attach.getDparentId())) {
+							attach.setDparentId(fl.getFiles().get(0).getSize().toString());
+							AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 					}
 				}
-				r.setData(AonDrive.getInstace().downloadFileByteArray(drive, r.getDriveId()));
+				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			} 
 			try {
-				File file = File.createTempFile(r.getDescription(), "." + r.getMimeType().getExtension());
-				AonFileUtils.writeByteArrayToFile(file, r.getData());
+				File file = File.createTempFile(attach.getDescription(), "." + attach.getMimeType().getExtension());
+				AonFileUtils.writeByteArrayToFile(file, attach.getData());
 				list.add(file);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		});
+		} 
 		
 		return list;
 	}

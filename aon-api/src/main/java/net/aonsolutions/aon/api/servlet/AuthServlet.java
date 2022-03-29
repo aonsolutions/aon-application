@@ -36,7 +36,7 @@ public class AuthServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON AUTH SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			AonToken aonToken = null;
 			Auth auth;
 			if(api.getData().opt(IJsonNames.EMAIL) != null) {
@@ -86,7 +86,7 @@ public class AuthServlet extends AonApiHttpServlet{
 	
 	private void put(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/password":
 				response(req, resp, changePassword(api));

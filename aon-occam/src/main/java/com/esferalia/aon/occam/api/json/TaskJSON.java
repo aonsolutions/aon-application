@@ -48,6 +48,7 @@ public class TaskJSON {
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
 			.setGtaskId(JsonUtils.getString(json, "gtask_id"))
+			.setIsCau(!json.optString("cau").isEmpty() && json.optInt("cau") > 0) 
 			;
 	}
 	

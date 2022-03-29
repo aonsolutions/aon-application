@@ -37,6 +37,10 @@ public class TrashAgreements extends ResizeComposite implements
 		
 		void onBackButtonClick();
 		
+		void onDeletedAgreementsButtonClick();
+		
+		void onUnusedAgreementsButtonClick();
+		
 		void onAgreementSelected(Agreement agreement);
 
 		void onAgreementSupr(Agreement agreement);

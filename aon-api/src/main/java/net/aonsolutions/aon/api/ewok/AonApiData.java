@@ -21,12 +21,6 @@ public class AonApiData implements Serializable{
 	private User user;
 	private JSONObject data;
 	
-	/**
-	 * @deprecated  Replaced by data
-	 */
-	@Deprecated(forRemoval = true )
-	private JSONObject params;
-	
 	private String path;
 	private DomainUserRoles dur;
 	
@@ -90,24 +84,7 @@ public class AonApiData implements Serializable{
 		this.data = data;
 		return this;
 	}
-
-	/**
-	 * @deprecated  Replaced by getData
-	 */
-	@Deprecated(forRemoval = true )
-	public JSONObject getParams() {
-		return params;
-	}
 	
-	/**
-	 * @deprecated  Replaced by setData
-	 */
-	@Deprecated(forRemoval = true )
-	public AonApiData setParams(JSONObject params) {
-		this.params = params;
-		return this;
-	}
-
 	public String getPath() {
 		return path;
 	}

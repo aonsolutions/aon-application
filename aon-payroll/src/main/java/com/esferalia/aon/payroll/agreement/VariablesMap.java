@@ -202,7 +202,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("AYUDA_DE_COMIDA_MENSUAL", "AYUDA_COMIDA");
 		variablesMap.put("AYUDA_DISCAPACITADOS_ANUAL", "AYUDA_DISC_ANUAL");
 		variablesMap.put("AYUDA_DISCAPACITADOS_MENSUAL", "AYUDA_DISC_MENSUAL");
-		variablesMap.put("AYUDA_DISCAPACITADO_A_CARGO_ANUAL", "AYUDA_DISC_C_ANUAL");
+		variablesMap.put("AYUDA_DISCAPACITADO_A_CARGO_ANUAL", "AYUDA_DISC_CARGO");
+		variablesMap.put("AYUDA_DISCAPACITADO_A_CARGO_MENSUAL", "AYUDA_DISC_CARGO");
 		variablesMap.put("AYUDA_ESCOLAR_ANUAL", "AYUDA_ESCOLAR");
 		variablesMap.put("AYUDA_ESCOLAR_BACHILLERATO_ANUAL", "AYUDA_ESCOLAR_BACH");
 		variablesMap.put("AYUDA_ESCOLAR_BACHILLERATO_MENSUAL", "AYUDA_ESCOLAR_BACH");
@@ -770,7 +771,9 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_ELEVADOR_MENSUAL", "PLUS_ELEVADOR");
 		variablesMap.put("PLUS_ELEVADOR_DIARIO", "PLUS_ELEVADOR");
 		variablesMap.put("PLUS_EMBARQUE_MENSUAL", "PLUS_EMBARQUE");
+		variablesMap.put("PLUS_EMBARQUE_DIARIO", "PLUS_EMBARQUE");
 		variablesMap.put("PLUS_EMPLEO_ESTABLE_ANUAL", "P_EMPLEO_ESTABLE");
+		variablesMap.put("PLUS_EMPLEO_ESTABLE_DIARIO", "P_EMPLEO_ESTABLE");
 		variablesMap.put("PLUS_ESCAPARATES_ANUAL", "PLUS_ESCAPARATES");
 		variablesMap.put("PLUS_ESCAPARATES_MENSUAL", "PLUS_ESCAPARATES");
 		variablesMap.put("PLUS_ESCAPARATES_HORAS", "PLUS_ESCAPARATES");
@@ -831,6 +834,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_INVERNAL_DIARIO", "PLUS_INVERNAL");
 		variablesMap.put("PLUS_INVERNAL_MENSUAL", "PLUS_INVERNAL");
 		variablesMap.put("PLUS_JEFE_DE_EQUIPO_MENSUAL", "PLUS_JEFE_EQUIPO");
+		variablesMap.put("PLUS_JEFE_DE_EQUIPO_DIARIO", "PLUS_JEFE_EQUIPO");
 		variablesMap.put("PLUS_MANUTENCION_ANUAL", "MANUTENCION_A");
 		variablesMap.put("PLUS_MANUTENCION_DIARIO", "MANUTENCION_D");
 		variablesMap.put("PLUS_MANUTENCION_MENSUAL", "MANUTENCION_M");

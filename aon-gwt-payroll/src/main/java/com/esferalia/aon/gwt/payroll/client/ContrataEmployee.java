@@ -106,11 +106,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected MonthListBox getIDCMonthListBox() {
 			return idcMonthListBox;
 		}
-
-		@Override
-		protected MenuItem getAFIEnd() {
-			return tgssContextMenu.getAfiEnd();
-		}
 		
 		@Override
 		protected MenuItem getTaEnd() {
@@ -198,14 +193,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
-	class AFIEndCommand implements ScheduledCommand {
-
-		@Override
-		public void execute() {
-			onAFIEndChanges();
-		}
-	}
-	
 	class IDCCommand implements ScheduledCommand {
 
 		@Override
@@ -264,12 +251,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class ComunicateAFICommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onComunicateAFI();
+		}
+	}
+	
 	class NewTGSSContextMenu extends ContextMenu {
 		
 		private MenuItem ta;
 		private MenuItem taEnd;
 		private MenuItem afi;
-		private MenuItem afiEnd;
 		private MenuItem idc;
 		private MenuItem idcPlNss;		
 		private MenuItem peculiarities = null;
@@ -277,16 +271,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 //		private MenuItem movPrevDelete = null;
 		MenuItemSeparator separator;
 		private MenuItem altaConsolidadaDelete = null;
+		private MenuItem comunicateAFI = null;
 		
 		public NewTGSSContextMenu() {
 			
 			afi = addItem("Cambios AFI", new AFICommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			afi.ensureDebugId("afi");
-			
-			afiEnd = addItem("Cambios AFI (Baja)", new AFIEndCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			afiEnd.ensureDebugId("afiEnd");
 			
 			peculiarities = addItem("Peculiaridades de cotizaci\u00F3n", new PeculiaritiesCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
@@ -310,7 +301,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
-			separator = addSeparator();
+			addSeparator();
 			
 //			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
 //					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
@@ -319,6 +310,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), 
 					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			altaConsolidadaDelete.ensureDebugId("altaConsolidadaDelete");
+			
+			comunicateAFI = addItem("Notificaci\u00f3n AFI (TGSS)", new ComunicateAFICommand(), 
+					AON.CSS.aonIconSend(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			comunicateAFI.ensureDebugId("comunicateAFI");
 			
 		}
 
@@ -334,10 +329,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			return afi;
 		}
 		
-		public MenuItem getAfiEnd() {
-			return afiEnd;
-		}
-
 		public MenuItem getIdc() {
 			return idc;
 		}
@@ -354,12 +345,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 //			return movPrevDelete;
 //		}
 		
-		public MenuItemSeparator getAltaConsolidadaDeleteSeparator() {
-			return separator;
-		}
-		
 		public MenuItem getAltaConsolidadaDelete() {
 			return altaConsolidadaDelete;
+		}
+		
+		public MenuItem getComunicateAFI() {
+			return comunicateAFI;
 		}
 		
 	}
@@ -725,6 +716,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private boolean hasCertificateSEPE = false;
 
 	private boolean changes = false;
+	
+	private boolean isComunica = false;
 	
 	// ------------------------------------------------- Constructor
 	
@@ -1365,7 +1358,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void onAFIChanges() {
 		new EmployeeAFIDialog(
 				contractEmployeeUI.getStartDate(),
-				contractEmployeeUI.getEndDate(),
 				contractEmployeeUI.getContractType(),
 				contractEmployeeUI.getQuoteGroup(),
 				contractEmployeeUI.getOccupation(),
@@ -1395,54 +1387,39 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 					@Override
 					protected void onPartialityCoefContract(String partialityCoef, Date date) {
-						contrataEmployeeObject.cambioCoef(partialityCoef, date, 
-								s -> showSuccess("AVISO: Parcialidad", "El coeficiente de parcialidad ha sido notificado a la Seguridad Social."), 
-								f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						// Nothing to do here
 					}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
-						contrataEmployeeObject.cambioOcupacion(ocupation, date,
-							s -> showSuccess("AVISO: Ocupaci\u00F3n", "El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social."), 
-							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						// Nothing to do here
 					}
 
 					@Override
 					protected void onQuoteContract(String quoteGroup, Date date) {
-						contrataEmployeeObject.cambioGrupCtz(quoteGroup, date, 
-							s -> showSuccess("AVISO: Grupo cotizaci\u00F3n", "El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social."), 
-							f -> showError("Error comunicaci\u00F3n", f.getMessage()));								
+						// Nothing to do here							
 					}
 
 					@Override
 					protected void onChangeContract(String contract, Date date) {
-						contrataEmployeeObject.cambioContrato(contract, date,
-							s -> showSuccess("AVISO: Tipo contrato", "El cambio de tipo de contrato ha sido notificado a la Seguridad Social."), 
-							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						// Nothing to do here
 					}
 
 					@Override
 					protected void onEndContract(String settleReason) {
-						contrataEmployeeObject.sendEmployeeBaja(settleReason,
-							s -> showSuccess("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social."), 
-							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						// Nothing to do here
 					}
 
 					@Override
 					protected void onStartContract() {
-						contrataEmployeeObject.sendEmployeeAlta(
-							s -> {
-								showSuccess("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
-								downloadTAAndIDC();
-							}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+						// Nothing to do here
 					}
 				};
 	}
 	
-	private void onAFIEndChanges() {
+	private void onComunicateAFI() {
 		new EmployeeAFIDialog(
 				contractEmployeeUI.getStartDate(),
-				contractEmployeeUI.getEndDate(),
 				contractEmployeeUI.getContractType(),
 				contractEmployeeUI.getQuoteGroup(),
 				contractEmployeeUI.getOccupation(),
@@ -1457,30 +1434,43 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					protected void onAcceptCB() {
 						// Nothing to do here
 					}
-			
+					
 					@Override
 					protected void onPartialityCoefContract(String partialityCoef, Date date) {
 						// Nothing to do here
+						contrataEmployeeObject.cambioCoef(partialityCoef, date, 
+								s -> showSuccess("AVISO: Parcialidad", "El coeficiente de parcialidad ha sido notificado a la Seguridad Social."), 
+								f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
 						// Nothing to do here
+						contrataEmployeeObject.cambioOcupacion(ocupation, date,
+							s -> showSuccess("AVISO: Ocupaci\u00F3n", "El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
 					protected void onQuoteContract(String quoteGroup, Date date) {
 						// Nothing to do here
+						contrataEmployeeObject.cambioGrupCtz(quoteGroup, date, 
+							s -> showSuccess("AVISO: Grupo cotizaci\u00F3n", "El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));								
 					}
 
 					@Override
 					protected void onChangeContract(String contract, Date date) {
 						// Nothing to do here
+						contrataEmployeeObject.cambioContrato(contract, date,
+							s -> showSuccess("AVISO: Tipo contrato", "El cambio de tipo de contrato ha sido notificado a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
 					protected void onEndContract(String settleReason) {
-						contrataEmployeeObject.sendEmployeeBaja(settleReason, 
+						// Nothing to do here
+						contrataEmployeeObject.sendEmployeeBaja(settleReason,
 							s -> showSuccess("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social."), 
 							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
@@ -1488,6 +1478,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					@Override
 					protected void onStartContract() {
 						// Nothing to do here
+						contrataEmployeeObject.sendEmployeeAlta(
+							s -> {
+								showSuccess("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
+								downloadTAAndIDC();
+							}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 				};
 	}
@@ -2098,10 +2093,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Date startDate = contrataEmployeeObject.getContractData().getStartDate();
 		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 		
-		setVisible(tgssContextMenu.getAfiEnd().getElement(), null != endDate);
 		setVisible(tgssContextMenu.getTaEnd().getElement(), null != endDate);
 		setVisible(tgssContextMenu.getAltaConsolidadaDelete().getElement(), DateUtils.isAfterOrEquals(new Date(), startDate));
-		setVisible(tgssContextMenu.getAltaConsolidadaDeleteSeparator().getElement(), DateUtils.isAfterOrEquals(new Date(), startDate));
+		setVisible(tgssContextMenu.getComunicateAFI().getElement(), isComunica);
+	}
+	
+	public void setIsComunica(boolean isComunica) {
+		this.isComunica = isComunica;
 	}
 	
 	// ------------------------------------------------- Messages panel

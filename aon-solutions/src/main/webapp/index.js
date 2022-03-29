@@ -82,16 +82,14 @@ const loadScripts = () => {
     if(isMobile()){
         Promise.all([
             loadScript("https://www.google.com/jsapi"),
-            loadScript("https://www.gstatic.com/charts/loader.js"),  
-            loadScript("https://mozilla.github.io/pdf.js/build/pdf.js")
-        ]).then(() => {});
+            loadScript("https://www.gstatic.com/charts/loader.js")
+        ]);
     } else {
         Promise.all([
             loadScript("https://www.google.com/jsapi"),
             loadScript("https://www.gstatic.com/charts/loader.js"),
-            loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js"),        
-            loadScript("https://mozilla.github.io/pdf.js/build/pdf.js")
-        ]).then(() => {});
+            loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js")
+        ]);
     }
 }
 

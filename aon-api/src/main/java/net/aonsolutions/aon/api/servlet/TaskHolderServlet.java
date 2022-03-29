@@ -34,7 +34,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API TASKHOLDER SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getTaskHolder(api));
@@ -60,7 +60,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API TASKHOLDER SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, setTaskHolder(api));
@@ -117,8 +117,8 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
 		Domain domain     = api.getDomain();
-		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
-		Integer active    = api.getParams().optInt(IJsonNames.ACTIVE);
+		Integer workgroup = api.getData().optInt(IJsonNames.WORKGROUP);
+		Integer active    = api.getData().optInt(IJsonNames.ACTIVE);
 		return TaskHolderJSON.toJSON(AON.getTaskHolderWorkgroupStream(domain, api.getUser(), 
 				f->f.getUserIdProperty().isNotNull()
 				.and(f.getActiveProperty().eq(active.byteValue()))
