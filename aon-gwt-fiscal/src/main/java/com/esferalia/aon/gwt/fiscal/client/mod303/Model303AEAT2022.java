@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
@@ -29,8 +30,10 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -47,6 +50,23 @@ class Model303AEAT2022 extends Model303AEAT {
 	private ScrollPanel lastPeriodPanel;
 	private TabLayoutPanel tabPanel;
 	
+	private CheckBox withoutActivityCheck;
+	private ListBox a12;
+	private CheckBox cm2;
+	private CheckBox a03;
+	private CheckBox a07;
+	private CheckBox a08;
+	private CheckBox a09;
+	private CheckBox a10;
+	private CheckBox a04;
+	private AonDateBox  a05;
+	private ListBox a02;
+	private ListBox a06;
+	private ListBox a13; 
+	private ListBox a14;
+	private ListBox a11;
+	private AonTextBox previousReceiptBox;
+
 	private static final int GENERAL_REGIME_TAB = 2;
 	private static final int SIMPLIFIED_REGIME_TAB = 3;
 	private static final int RESULT_TAB = 4;
@@ -103,18 +123,18 @@ class Model303AEAT2022 extends Model303AEAT {
 	}
 	
 	private void beforeSelectTab(BeforeSelectionEvent<Integer> event) {
-		double a02 = getModel().getAmount(Mod303Key.CT_A02);
-		if (event.getItem() == GENERAL_REGIME_TAB && a02 == 0) {
+		double aa02 = getModel().getAmount(Mod303Key.CT_A02);
+		if (event.getItem() == GENERAL_REGIME_TAB && aa02 == 0) {
 			event.cancel();
 			AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
 		}
-		if (event.getItem() == SIMPLIFIED_REGIME_TAB && a02 == 2) {
+		if (event.getItem() == SIMPLIFIED_REGIME_TAB && aa02 == 2) {
 			event.cancel();
 			AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
 		}
 		if (getModel().isLastPeriod()) {
-			double a11 = getModel().getAmount(Mod303Key.CT_A11);
-			if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && a11 == 0) {
+			double aa11 = getModel().getAmount(Mod303Key.CT_A11);
+			if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && aa11 == 0) {
 				event.cancel();
 				AonMessageDialog.warning("Para rellenar estos datos, debe rellenar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
 			}
@@ -259,30 +279,30 @@ class Model303AEAT2022 extends Model303AEAT {
 		FlowPanel container = new FlowPanel();
 		
 		FlexTable table = createTable();
-		paintWithoutActivityCheck(table);	// Sin actividad
+		withoutActivityCheck = paintWithoutActivityCheck(table);	// Sin actividad
 		
 		// Tributacion exclusivamente foral
-		final ListBox a12 = new ListBox();
+		a12 = new ListBox();
 		a12.setWidth(WIDTH_150PX);
 		a12.addItem("(0) Para el mes de enero (01)", "0");
 		a12.addItem(SI_1, "1");
 		a12.addItem(NO_2, "2");
 		paintListBox(a12, Mod303Key.CT_A12, table);
 		
-		paintCheck(Mod303Key.CM_002,table);	// Inscrito en el Registro de devolución mensual (Art. 30 RIVA)
+		cm2 = paintCheck(Mod303Key.CM_002,table);	// Inscrito en el Registro de devolución mensual (Art. 30 RIVA)
 		paintA02(Mod303Key.CT_A02,table);	// Tributa exclusivamente en régimen simplificado
-		paintCheck(Mod303Key.CT_A03,table);	// Autoliquidación conjunta
-		paintCheck(Mod303Key.CT_A07,table);	// Acogido al régimen especial del criterio de Caja (art. 163 undecies LIVA)
-		paintCheck(Mod303Key.CT_A08,table);	// Destinatario de operaciones acogidas al régimen especial del criterio de caja
+		a03 = paintCheck(Mod303Key.CT_A03,table);	// Autoliquidación conjunta
+		a07 = paintCheck(Mod303Key.CT_A07,table);	// Acogido al régimen especial del criterio de Caja (art. 163 undecies LIVA)
+		a08 = paintCheck(Mod303Key.CT_A08,table);	// Destinatario de operaciones acogidas al régimen especial del criterio de caja
 		
-		paintCheck(Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
-		paintCheck(Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
+		a09 = paintCheck(Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
+		a10 = paintCheck(Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
 		
-		paintCheck(Mod303Key.CT_A04,table);	// Declarado en concurso de acreedores en el presente período de liquidación
-		paintDate (Mod303Key.CT_A05,table);	// Fecha en que se dictó el auto de declaración de concurso
+		a04 = paintCheck(Mod303Key.CT_A04,table);	// Declarado en concurso de acreedores en el presente período de liquidación
+		a05 = paintDate (Mod303Key.CT_A05,table);	// Fecha en que se dictó el auto de declaración de concurso
 
 		// Auto de declaración de concurso dictado en el período
-		final ListBox a06 = new ListBox();
+		a06 = new ListBox();
 		a06.setWidth("200px");
 		a06.addItem("NO", "0");
 		a06.addItem("(1) SI Preconcursal", "1");
@@ -290,7 +310,7 @@ class Model303AEAT2022 extends Model303AEAT {
 		paintListBox(a06, Mod303Key.CT_A06, table);
 		
 		// Acogido voluntariamente al SII
-		final ListBox a13 = new ListBox();
+		a13 = new ListBox();
 		a13.setWidth(WIDTH_150PX);
 		a13.addItem("(0) Para el mes de enero (01)", "0");
 		a13.addItem(SI_1, "1");
@@ -298,7 +318,7 @@ class Model303AEAT2022 extends Model303AEAT {
 		paintListBox(a13, Mod303Key.CT_A13, table);
 		
 		// Exonerado de la declaracion resumen anual del IVA (modelo 390)
-		final ListBox a14 = new ListBox();
+		a14 = new ListBox();
 		a14.setWidth(WIDTH_150PX);
 		a14.addItem("(0) Para todos los periodos distintos del \u00FAltimo (12 y 4T)", "0");   
 		a14.addItem(SI_1, "1");
@@ -306,7 +326,7 @@ class Model303AEAT2022 extends Model303AEAT {
 		paintListBox(a14, Mod303Key.CT_A14, table);
 		
 		// Volumen anual de operaciones distinto de cero
-		final ListBox a11 = new ListBox();
+		a11 = new ListBox();
 		a11.setWidth("200px");
 		a11.addItem("(0) NO exonerado (\u00FAltimo periodo), o la declaraci\u00F3n no es del \u00FAltimo periodo", "0");
 		a11.addItem("(1) Exonerados, cuando se tiene volumen de operaciones  (art. 121 LIVA)", "1");
@@ -371,6 +391,7 @@ class Model303AEAT2022 extends Model303AEAT {
 		receiptBox = new AonTextBox();
 		receiptBox.setVisibleLength(15);
 		receiptBox.setMaxLength(13);
+		receiptBox.setEnabled(getModel().isEditable());
 		receiptBox.setValue( getModel().getNumber() );
 		receiptBox.addValueChangeHandler( event -> {
 			getModel().setNumber(receiptBox.getValue());
@@ -385,9 +406,10 @@ class Model303AEAT2022 extends Model303AEAT {
 			
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
-			final AonTextBox previousReceiptBox = new AonTextBox();
+			previousReceiptBox = new AonTextBox();
 			previousReceiptBox.setVisibleLength(15);
 			previousReceiptBox.setMaxLength(13);
+			previousReceiptBox.setEnabled(getModel().isEditable());
 			previousReceiptBox.setValue( getModel().getReplacedNumber() );
 			previousReceiptBox.addValueChangeHandler( event -> {
 				getModel().setReplacedNumber(previousReceiptBox.getValue());
@@ -403,7 +425,7 @@ class Model303AEAT2022 extends Model303AEAT {
 	}
 	
 	private void paintA02(Mod303Key key, FlexTable table) {
-		final ListBox a02 = new ListBox();
+		a02 = new ListBox();
 		a02.addItem("S\u00F3lo Reg. Simplificado");
 		a02.addItem("Reg. General y Reg. Simpl.");
 		a02.addItem("S\u00F3lo Reg. General");
@@ -849,6 +871,35 @@ class Model303AEAT2022 extends Model303AEAT {
 		
 		tab.setWidget(row, 4, new Label() );
 
+	}
+	
+	@Override
+	protected void decorateDeclarationTab() {
+		super.decorateDeclarationTab();
+		enable( withoutActivityCheck );
+		enable(a12);
+		enable(cm2);
+		enable(a03);
+		enable(a07);
+		enable(a08);
+		enable(a09);
+		enable(a10);
+		enable(a04);
+		enable(a05);
+		enable(a02);
+		enable(a06);
+		enable(a13);
+		enable(a14);
+		enable(a11);
+		enable(previousReceiptBox);
+		enable(receiptBox);
+		if (receiptBox != null) {
+			receiptBox.setValue( getModel().getNumber() );
+		}
+	}
+	
+	private void enable( HasEnabled widget ) {
+		if (widget != null) widget.setEnabled(getModel().isEditable()); 
 	}
 	
 }

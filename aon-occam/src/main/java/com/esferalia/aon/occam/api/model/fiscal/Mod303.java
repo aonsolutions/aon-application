@@ -117,6 +117,12 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return getPreviousProratePercent() != 0 && getPreviousProratePercent() != 100;
 	}
 
+	@Override
+	public boolean isStrictToDeposit() {
+		return (canBeSent() || isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
+	}
+
 	// ******************************************
 	// ******************************************
 	// ******************************************

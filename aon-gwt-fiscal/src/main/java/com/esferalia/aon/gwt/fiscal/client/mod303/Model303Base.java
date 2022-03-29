@@ -267,6 +267,18 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		decorateAdministrationTab();
 	}
 	
+	protected void populate(Mod303 mod303) {
+		identificationData.populate(mod303);
+		for (Entry<Mod303Key, AonDoubleBox> entry : fieldsMap.entrySet()) {
+			double d1 = mod303.getAmount(entry.getKey());
+			double d2 = entry.getValue().getValue();
+			entry.getValue().setEnabled(mod303.isEditable());
+			if (!AonNumberUtils.equals(d1, d2)) {
+				entry.getValue().setValue(d1,false,true);
+			}
+		}
+	}
+	
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 		resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
@@ -387,7 +399,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox(fieldSize);
 		fieldsMap.put(key, input);
-		input.setEnabled(enabled); 
+		input.setEnabled(getModel().isEditable() && enabled);
 		input.setValue(det1.getAmount());
 		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
 			input.addStyleName(AON.CSS.aonChanged());
@@ -422,16 +434,18 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return ++col;
 	}
 	
-	protected void paintWithoutActivityCheck(FlexTable table) {
+	protected CheckBox paintWithoutActivityCheck(FlexTable table) {
 		int row = table.getRowCount();
 		paintLabel(table, row, AON.MSG.withoutActivity());
 		final CheckBox check = new CheckBox();
 		check.setValue(getModel().isWithoutActivity());
+		check.setEnabled(getModel().isEditable());
 		check.addClickHandler( event -> {
 			getModel().setWithoutActivity(check.getValue());
 				markAsDirty();
 		});
 		table.setWidget(row, 1, check);
+		return check;
 	}
 
 	protected CheckBox paintCheck(Mod303Key key, FlexTable table) {
@@ -439,6 +453,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		paintLabel(table, row, key.getDescription());
 		final CheckBox check = new CheckBox();
 		check.setValue(getModel().ensureDetail(key).getAmount() == 1);
+		check.setEnabled(getModel().isEditable());
 		check.addClickHandler( event -> {
 			getModel().ensureDetail(key).setAmount((check.getValue() != null && check.getValue())?1.0:0.0);
 				markAsDirty();
@@ -447,7 +462,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return check;
 	}
 	
-	protected void paintDate(Mod303Key key, FlexTable table) {
+	protected AonDateBox paintDate(Mod303Key key, FlexTable table) {
 		int row = table.getRowCount();
 		paintLabel(table, row, key.getDescription());
 		
@@ -457,11 +472,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		if (AonStringUtils.isNotEmpty( getModel().ensureDetail(key).getDescription() ) ) {
 			dateBox.setValue( dateBox.parse(getModel().ensureDetail(key).getDescription() , false) );
 		}
+		dateBox.setEnabled(getModel().isEditable());
 		dateBox.addValueChangeHandler( event -> {
 			getModel().ensureDetail(key).setDescription(dateBox.format());
 			markAsDirty();
 		});
 		table.setWidget(row, 1, dateBox);
+		return dateBox;
 	}
 
 	protected void paintTextBox(FlexTable table, final Mod303Key key, int fieldSize, boolean enabled) {
@@ -474,6 +491,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		textBox.setVisibleLength(fieldSize+1);
 		textBox.setMaxLength(fieldSize);
 		textBox.setEnabled(enabled);
+		textBox.setEnabled(enabled && getModel().isEditable());
 		if (AonStringUtils.isNotEmpty( getModel().ensureDetail(key).getDescription() ) ) {
 			textBox.setValue( getModel().ensureDetail(key).getDescription() , false );
 		}
@@ -491,6 +509,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		listBox.setSelectedIndex( (int) getModel().ensureDetail(key).getAmount() );
+		listBox.setEnabled(getModel().isEditable());
 		listBox.addChangeHandler( event -> {
 			getModel().ensureDetail(key).setAmount(listBox.getSelectedIndex());
 			markAsDirty();
@@ -644,6 +663,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				
 				private AonTableButton addButton() {
 					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
+					button.setTabIndex(-2);
 					buttonContainer.add(button);
 					return button;
 				}
@@ -704,17 +724,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.setWidget(row, col, buttonContainer);
 	}
 	
-	protected void populate(Mod303 mod303) {
-		identificationData.populate(mod303);
-		for (Entry<Mod303Key, AonDoubleBox> entry : fieldsMap.entrySet()) {
-			double d1 = mod303.getAmount(entry.getKey());
-			double d2 = entry.getValue().getValue();
-			if (!AonNumberUtils.equals(d1, d2)) {
-				entry.getValue().setValue(d1,false,true);
-			}
-		}
-	}
-	
 	public void calculateAndRefresh(AsyncCallback<Mod303> cbk) {
 		Model303.service.calculate(getCallback().getOptions().getOccam(), getModel(),
 				new AsyncCallback<Mod303>() {
@@ -726,7 +735,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 					@Override
 					public void onSuccess(Mod303 result) {
-						populate(result);
+						selectAndPopulate(result);
 						if (cbk != null) cbk.onSuccess(result);
 					}
 			
@@ -1187,10 +1196,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		tabPanel.add(identificationData, AON.MSG.identification());
 	}
 
-	protected void decorateDeclarationTab() {
-		// Redefine if needed
-	}
-
 	protected void decorateAdministrationTab() {
 		if (admonPanel != null) {
 			admonPanel.manageLinks();
@@ -1220,4 +1225,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 		});
 	}
+	
+	void decorateDeclarationTab() {
+		
+	}
+	
 }

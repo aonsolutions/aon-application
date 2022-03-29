@@ -75,6 +75,7 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod303 mod303) {
+			aonLayout.hideErrorPanel();
 			cleanInfoPanel();
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
 				getOptions().getExternalCallback().onExit(mod303);

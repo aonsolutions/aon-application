@@ -116,11 +116,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		if (dec.hasSimplifiedRegime()) {
 			dec.initializeSimplifiedRegime(ctx, mod303);
 		}
-		for (IMod303KeyDAO key : dec.getKeys()) {
-			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
-			detail.setExpression(key.getExpression());
-			key.firstInitialize(ctx, mod303);
-		}
+		firstInitialization(ctx, mod303, dec);
 		Set<Integer> invoices = dec.createFromInvoices(ctx,mod303);
 		invoices.addAll( dec.createVatAccrualKeysFromInvoices(ctx,mod303) );
 //		for (FiscalModelDetail detail : mod303.getMap().values()) {
@@ -134,6 +130,14 @@ public class Mod303DAO extends FiscalModelDAO {
 		AlcatrazDAO.deleteFiscalModel(ctx, mod303);
 		AlcatrazDAO.saveModelInvoices(ctx, mod303, invoices);
 		return mod303;
+	}
+
+	private static void firstInitialization(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
+		for (IMod303KeyDAO key : dec.getKeys()) {
+			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
+			detail.setExpression(key.getExpression());
+			key.firstInitialize(ctx, mod303);
+		}
 	}
 
 	public static Mod303 calculateProrrate(Mod303 mod303) {

@@ -85,7 +85,9 @@ public abstract class Mod303Declaration {
 	}
 
 	protected static void set(Mod303Key key,Mod303 mod,double amount) {
-		mod.ensureDetail(key).setAccumulatedAmount(amount);	
+		mod.ensureDetail(key).setAccumulatedAmount(amount);
+		mod.ensureDetail(key).setResultAmount( amount );	
+		mod.ensureDetail(key).setAmount( amount );
 	}
 
 	public IMod303KeyDAO getKey(Mod303Key key) {
@@ -266,11 +268,13 @@ public abstract class Mod303Declaration {
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
 	protected abstract Mod303Key[] getProrateKeys();
+	
 	public abstract boolean hasSimplifiedRegime();
+	abstract void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303);
+	
 	abstract Mod303 initialize(AONContext ctx, Mod303 mod303);
 	abstract double getResult(final Mod303 mod303);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod303 mod303);
-	abstract void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303);
 	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303);
 	
 }

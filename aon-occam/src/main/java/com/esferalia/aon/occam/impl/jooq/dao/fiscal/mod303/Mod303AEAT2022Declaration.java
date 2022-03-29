@@ -65,21 +65,21 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 				(ctx, mod) -> add(Mod303Key.CM_002, mod,
 						(AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),
 								AonStringUtils.ONE)) ? 1 : 0),
-				null, null),
-		CT_A02(Mod303Key.CT_A02), CT_A03(Mod303Key.CT_A03),
-		CT_A07(Mod303Key.CT_A07, null, null,
+				null, null)
+		,CT_A02(Mod303Key.CT_A02), CT_A03(Mod303Key.CT_A03)
+		,CT_A07(Mod303Key.CT_A07, null, null,
 				(ctx, mod) -> add(Mod303Key.CT_A07, mod,
 						ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment() ? 1 : 0),
-				null, null),
-		CT_A08(Mod303Key.CT_A08) // Compras Criterio de caja. Se incializa en la casilla 075.
-		, CT_A09(Mod303Key.CT_A09)
-		, CT_A10(Mod303Key.CT_A10)
-		, CT_A04(Mod303Key.CT_A04)
-		, CT_A05(Mod303Key.CT_A05),
-		CT_A06(Mod303Key.CT_A06),
-		CT_A13(Mod303Key.CT_A13, null, null, (ctx, mod) -> set(Mod303Key.CT_A13, mod, 2), null, null, null, null, true),
-		CT_A14(Mod303Key.CT_A14, null, null, (ctx, mod) -> set(Mod303Key.CT_A14, mod, 0), null, null, null, null, true),
-		CT_A11(Mod303Key.CT_A11)
+				null, null)
+		,CT_A08(Mod303Key.CT_A08) // Compras Criterio de caja. Se incializa en la casilla 075.
+		,CT_A09(Mod303Key.CT_A09)
+		,CT_A10(Mod303Key.CT_A10)
+		,CT_A04(Mod303Key.CT_A04)
+		,CT_A05(Mod303Key.CT_A05)
+		,CT_A06(Mod303Key.CT_A06)
+		,CT_A13(Mod303Key.CT_A13, null, null, (ctx, mod) -> set(Mod303Key.CT_A13, mod, 2), null, null, null, null, true)
+		,CT_A14(Mod303Key.CT_A14, null, null, (ctx, mod) -> set(Mod303Key.CT_A14, mod, 0), null, null, null, null, true)
+		,CT_A11(Mod303Key.CT_A11)
 
 		// ---------------------------------------------------------
 		// ----------------------------------------- REGIMEN GENERAL

@@ -376,6 +376,7 @@ class Model303AEAT20212 extends Model303AEAT {
 		receiptBox.setVisibleLength(15);
 		receiptBox.setMaxLength(13);
 		receiptBox.setValue( getModel().getNumber() );
+		receiptBox.setEnabled(getModel().isEditable());
 		receiptBox.addValueChangeHandler( event -> {
 			getModel().setNumber(receiptBox.getValue());
 			markAsDirty();
@@ -392,6 +393,7 @@ class Model303AEAT20212 extends Model303AEAT {
 			final AonTextBox previousReceiptBox = new AonTextBox();
 			previousReceiptBox.setVisibleLength(15);
 			previousReceiptBox.setMaxLength(13);
+			previousReceiptBox.setEnabled(getModel().isEditable());
 			previousReceiptBox.setValue( getModel().getReplacedNumber() );
 			previousReceiptBox.addValueChangeHandler( event -> {
 				getModel().setReplacedNumber(previousReceiptBox.getValue());
