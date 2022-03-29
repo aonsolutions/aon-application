@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -20,6 +22,8 @@ import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -181,6 +185,50 @@ public class AccountDAO {
 		ctx.log().debug("INSERT ACCOUNT id: {0} code: {1}",account.getId(),account.getCode());
 		return get(ctx, id);
 	}
+	
+	/**
+	 * 
+	 * @param ctx AONContext
+	 * @param account Cuenta contable
+	 * @param minLevel Nivel mínimo de cuenta contable que DEBE existir en base de datos
+	 * @param skipValidation Saltarse las validaciones
+	 * @return La lista de las cuentas insertadas en base de datos
+	 */
+	public static List<Account> generateLowerLevels(AONContext ctx, Account account, int minLevel) {
+		int level = (byte) ((account.getCode().length() > 4) ? 5 : account.getCode().length());
+		int lowestLevel = findLowestLevel(ctx, account);
+		if (minLevel > lowestLevel) {
+			throw new AonCoreException(AonError.ACCOUNT_LOW_LEVEL_TOO_LOW.format(minLevel));
+		}
+		int lowerLevel = lowestLevel + 1;
+		List<Account> insertedLoweLevelAccounts = new LinkedList<>();
+		while (lowerLevel < level) {
+			Account lowerAccount = account.clone();
+			String lowerCode = AonStringUtils.substring(account.getCode(),0, lowerLevel);
+			lowerAccount.setCode(lowerCode)
+				.setDescription("AUTOGENERADA: " + String.valueOf(lowerCode))
+				.setAlias("autogenerada");
+			insertedLoweLevelAccounts.add(insert(ctx, lowerAccount));
+			lowerLevel++;
+		}
+		return insertedLoweLevelAccounts;
+	}
+	
+	public static int findLowestLevel(AONContext ctx, Account account) {
+		int level = (byte) ((account.getCode().length() > 4) ? 5 : account.getCode().length());
+		int parentLevel = level - 1;
+		Account a = null;
+		while (parentLevel > 1) {
+			String parentCode = AonStringUtils.substring(account.getCode(),0, parentLevel);
+			a = AccountDAO.get(ctx, ACCOUNT.CODE.equal(parentCode));
+			if (a != null) {
+				return parentLevel;
+			}
+			parentLevel--;
+		}
+		return parentLevel;
+	}
+	
 	
 	public static Account update(AONContext ctx, Account account) {
 		ctx.checkWrite();
