@@ -7184,6 +7184,12 @@ public class AON {
 			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
 		}
 	}
+
+	public static Booking getBooking(Domain domain, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSecurity().getBooking(ctx, domain);
+		}
+	}
 	
 	public static Booking saveBooking(Domain domain, User user, Booking booking) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {

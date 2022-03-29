@@ -124,7 +124,8 @@ public interface ISecurity {
 	
 	@Deprecated
 	public void saveUserFinancePortal(AONContext ctx, Integer userId);
-	
+
+	public Booking getBooking(AONContext ctx, Domain domain);
 	public Booking saveBooking(AONContext ctx, Booking booking);
 
 }
