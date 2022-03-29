@@ -104,6 +104,10 @@ public class AonApiData implements Serializable{
 		return this;
 	}
 	
+	public boolean isPredefinedToken() {
+		return "SIGd95770f269e711eb94390242ac130002".equals(getToken())
+				|| "AONd95770f269e711eb94390242ac130002".equals(getToken());
+	}
 	
 	
 }

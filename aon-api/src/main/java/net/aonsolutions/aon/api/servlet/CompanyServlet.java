@@ -406,17 +406,16 @@ public class CompanyServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject saveBooking(AonApiData api){
-		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-			f.getDomainProperty().eq(api.getDomain().getId()));
-		
-		Booking booking = new Booking()
+		Booking oldBooking = AON.getBooking(api.getDomain(), api.getUser());
+		Booking newBooking = new Booking()
 			.setDomain(api.getDomain())
-			.setCompany(company)
+			.setCompany(oldBooking.getCompany())
 			.setApps(safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
-			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS));
+			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS))
+			.setPayer("");
 		
-		AON.saveBooking(api.getDomain(), api.getUser(), booking);
-		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), booking);
+		AON.saveBooking(api.getDomain(), api.getUser(), newBooking);
+		BookingUtils.getInstance().sendMail(api.getDomain(), api.getUser(), oldBooking, newBooking);
 		return new JSONObject();
 	}
 	
