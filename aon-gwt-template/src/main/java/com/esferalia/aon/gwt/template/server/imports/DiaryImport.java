@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -30,6 +32,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -367,12 +370,28 @@ public class DiaryImport {
 				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(),
 				user.getLogin(), ae.getEntry().getDetails().get(i).getAccountCode());
 				if(acc == null) {
-					acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-						.setCode(ae.getEntry().getDetails().get(i).getAccountCode())
-						.setDescription(ae.getEntry().getDetails().get(i).getAccountDescription())
-						.setAlias("")
-						.setDomain(domain.getId())
-						.setActive(true));
+					Occam occam = new Occam()
+									.setDomain(domain.getId())
+									.setDomainName(domain.getName())
+									.setUser(user.getLogin());
+					
+					Account account = new Account()
+							.setCode(ae.getEntry().getDetails().get(i).getAccountCode())
+							.setDescription(ae.getEntry().getDetails().get(i).getAccountDescription())
+							.setAlias("")
+							.setDomain(domain.getId())
+							.setActive(true);
+					
+					List<Account> lowLevels = ACCOUNTING.generateLowerLevels(occam, account, 3);
+					if (!lowLevels.isEmpty()) {
+						LinkedList<String> warnList = new LinkedList<>();
+						warnList.add("Se autogeneraron las siguientes cuentas:");
+						lowLevels.forEach(ll -> warnList.add(ll.getCode()));
+						error.setTextWarning(warnList);
+						error.setError(true);
+					}
+					
+					acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
 				}
 				ae.getEntry().getDetails().get(i).setAccount(acc.getId());
 				if(i > 0) {

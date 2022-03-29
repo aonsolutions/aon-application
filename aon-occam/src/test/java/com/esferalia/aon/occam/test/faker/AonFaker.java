@@ -382,6 +382,22 @@ public class AonFaker {
 			.setStatus(status);
 	}
 
+
+	public static Account getAccount(AONContext ctx, String code) {
+		byte level = (byte) (code.length() > 4 ? 5 : code.length());
+		return  new Account()
+				.setActive(true)
+				.setAlias(AonStringUtils.substring(faker.artist().name(), 0, 32))
+				.setCode(code)
+				.setCostCenter(AonStringUtils.substring(faker.address().cityName(), 0, 32))
+				.setDescription(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+				.setDomain(ctx.getDomainId())
+				.setLevel(level)
+				.setEntryEnabled(level == 5)
+				;
+	}
+
+	
 	public static AccountingReportParams getAccountingReportParams(AONContext ctx) {
 		return new AccountingReportParams()
 			.setDomainName(faker.internet().domainName())
