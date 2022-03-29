@@ -15,6 +15,8 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities.Peculiarity;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.TRL;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -247,6 +249,7 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 				}
 				
 				initView();
+				showDialog();
 			}
 		});
 		
@@ -668,66 +671,91 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 				this.peculiarities.setSelectedIndex(peculiritiesList.get(0).getType());
 			
 			for(Peculiarity peculiarity : peculiritiesList) {
-				switch (peculiarity.getName()) {
-				case "PORCENTAJE_CGC":
+				if(isCgc(peculiarity.getName())) {
 					cgcCheck.setValue(peculiarity.isChecked());
 					cgcDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					cgcValue.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) cgcValue.setEnabled(true); else cgcValue.setEnabled(false);
-					break;
-				case "PORCENTAJE_DESMPL":
+				} else if(isDesmpl(peculiarity.getName())) {
 					desmplCheck.setValue(peculiarity.isChecked());
 					desmplDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					desmplValue.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) desmplValue.setEnabled(true); else desmplValue.setEnabled(false);
-					break;
-				case "PORCENTAJE_FP":
+				} else if(isFp(peculiarity.getName())) {
 					fpCheck.setValue(peculiarity.isChecked());
 					fpDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					fpValue.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) fpValue.setEnabled(true); else fpValue.setEnabled(false);
-					break;
-				case "PORCENTAJE_CGC_E":
+				} else if(isCgcE(peculiarity.getName())) {
 					cgc_eCheck.setValue(peculiarity.isChecked());
 					cgc_eDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					cgc_eValue.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) cgc_eValue.setEnabled(true); else cgc_eValue.setEnabled(false);
-					break;
-				case "PORCENTAJE_IT":
+				} else if(isIt(peculiarity.getName())) {
 					it_Check.setValue(peculiarity.isChecked());
 					it_Date.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					it_Value.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) it_Value.setEnabled(true); else it_Value.setEnabled(false);
-					break;
-				case "PORCENTAJE_IMS":
+				} else if(isIms(peculiarity.getName())) {
 					ims_Check.setValue(peculiarity.isChecked());
 					ims_Date.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					ims_Value.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) ims_Value.setEnabled(true); else ims_Value.setEnabled(false);
-					break;
-				case "PORCENTAJE_FOGASA":
+				} else if(isFogasa(peculiarity.getName())) {
 					fogasa_Check.setValue(peculiarity.isChecked());
 					fogasa_Date.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					fogasa_Value.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) fogasa_Value.setEnabled(true); else fogasa_Value.setEnabled(false);
 					break;
-				case "PORCENTAJE_FP_E":
+				} else if(isFpE(peculiarity.getName())) {
 					fp_eCheck.setValue(peculiarity.isChecked());
 					fp_eDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					fp_eValue.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) fp_eValue.setEnabled(true); else fp_eValue.setEnabled(false);
-					break;
-				case "PORCENTAJE_DESMPL_E":
+				} else if(isDesmplE(peculiarity.getName())) {
 					desmpl_eCheck.setValue(peculiarity.isChecked());
 					desmpl_eDate.setText(StringUtils.leftPad(date.getDate()+"", 2, '0')+"/"+StringUtils.leftPad((date.getMonth()+1)+"", 2, '0')+"/"+(date.getYear()+1900));
 					desmpl_eValue.setValue(peculiarity.getValue());
 					if(peculiarity.isChecked()) desmpl_eValue.setEnabled(true); else desmpl_eValue.setEnabled(false);
-					break;
-				default:
-					break;
 				}
 			}
 		}
+	}
+
+	private boolean isCgc(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_CGC") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_CGC");
+	}
+	
+	private boolean isDesmpl(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_DESMPL") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_DESMPL");
+	}
+	
+	private boolean isFp(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_FP") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_FP");
+	}
+	
+	private boolean isCgcE(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_CGC_E") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_CGC_E");
+	}
+	
+	private boolean isIt(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_IT") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_IT");
+	}
+	
+	private boolean isIms(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_IMS") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_IMS");
+	}
+	
+	private boolean isFogasa(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_FOGASA") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_FOGASA");
+	}
+	
+	private boolean isFpE(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_FP_E") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_FP_E");
+	}
+	
+	private boolean isDesmplE(String value) {
+		return AonStringUtils.equalsIgnoreCase(value, "PORCENTAJE_DESMPL_E") || AonStringUtils.equalsIgnoreCase(value, "TARIFA_DESMPL_E");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -998,5 +1026,13 @@ public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 	private void onAcceptDialog(ClickEvent event) {
 		hide();
 		onAccept();
+	}
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 }
