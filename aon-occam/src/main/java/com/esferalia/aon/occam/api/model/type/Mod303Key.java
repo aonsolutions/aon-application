@@ -438,7 +438,6 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C80("303-CTA80",false,"80","Operaciones en r\u00E9gimen general")
 	,CT_C81("303-CTA81",false,"81","Operaciones en r\u00E9gimen especial del criterio de caja conforme art. 75 LIVA")
 	
-	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se desglos\u00F3 en dos [93] y [94]
 	,CT_C82("303-CTA82",false,"82","Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n")
 	
 	,CT_C93("303-CTA93",false,"93","Entregas intracomunitarias exentas")
@@ -711,11 +710,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	
 	,BZ_C102("303-BZ102",false,"102","Prorrata especial")
 	
-	,BZ_C104("303-BZ104",true ,"104","Exportaciones y operaciones asimiladas")
-	,BZ_C105("303-BZ105",true ,"105","Entregas intracomunitarias")
-	,BZ_C106("303-BZ106",true ,"106","Otras operaciones no sujetas o exentas con derecho a deducci\u00F3n")
-	,BZ_C107("303-BZ107",true ,"107","Operaciones por inversi\u00F3n del sujeto pasivo no incluidas en liquidaci\u00F3n")
-	,BZ_C108("303-BZ108",true ,"108","Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicaci\u00F3n del impuesto")
+	,BZ_C104("303-BZ104",true ,"104","Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n")
+	,BZ_C105("303-BZ105",true ,"105","Entregas intracomunitarias de bienes y servicios")
+	,BZ_C106("303-BZ106",true ,"106","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 108)")
+	,BZ_C107("303-BZ107",true ,"107","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
+	,BZ_C108("303-BZ108",true ,"108","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica.")
+	,BZ_C109("303-BZ109",true ,"109","Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica.")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  BIZKAIA ----

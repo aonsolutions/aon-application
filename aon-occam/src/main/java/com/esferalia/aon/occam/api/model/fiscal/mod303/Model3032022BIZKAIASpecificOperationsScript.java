@@ -26,6 +26,7 @@ public enum Model3032022BIZKAIASpecificOperationsScript implements IModelScript<
 	,OPE03 (Mod303Key.BZ_C106.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C106},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
 	,OPE04 (Mod303Key.BZ_C107.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C107},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
 	,OPE05 (Mod303Key.BZ_C108.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C108},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
+	,OPE06 (Mod303Key.BZ_C109.getDescription()	,new Mod303Key[]{null,Mod303Key.BZ_C109},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
 	;
 	
 	private String label;

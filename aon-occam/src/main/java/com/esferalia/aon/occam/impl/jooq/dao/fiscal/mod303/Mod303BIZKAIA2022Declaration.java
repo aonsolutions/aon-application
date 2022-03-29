@@ -575,6 +575,7 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && vat.isService()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C108,mod,vat.getBase())
 			,null,null,null)
+		,BZ_C109 (Mod303Key.BZ_C109)
 		;
 		
 		private Mod303Key key;

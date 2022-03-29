@@ -74,10 +74,21 @@ public class Model303ScriptProvider {
 				return Model3032017GIPUZKOAPrintScript.values();
 			}
 		}
+		,BIZKAIA_2022 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isBizkaia() && mod303.getYear() > 2021;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032022BIZKAIAPrintScript.values();
+			}
+		}
 		,BIZKAIA {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isBizkaia();
+				return mod303.isBizkaia() && mod303.getYear() < 2022;
 			}
 	
 			@Override

@@ -182,6 +182,7 @@ public class Mod303WriterBIZKAIA2017 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append("P00IM0106"),(wr, mod) -> wr.append(AonFiscalFileUtils.signedStandard(mod.getAmount(Mod303Key.BZ_C106),16,2)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			   ,(wr, mod) -> wr.append("P00IM0107"),(wr, mod) -> wr.append(AonFiscalFileUtils.signedStandard(mod.getAmount(Mod303Key.BZ_C107),16,2)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			   ,(wr, mod) -> wr.append("P00IM0108"),(wr, mod) -> wr.append(AonFiscalFileUtils.signedStandard(mod.getAmount(Mod303Key.BZ_C108),16,2)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
+			   ,(wr, mod) -> wr.append("P00IM0109"),(wr, mod) -> wr.append(AonFiscalFileUtils.signedStandard(mod.getAmount(Mod303Key.BZ_C109),16,2)),(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			   ,(wr, mod) -> wr.append( mod.getDescription(Mod303Key.BZ_C185_1) == null && mod.getDescription(Mod303Key.BZ_C185_2) == null ? "" : "P00TX0185" + AonFiscalFileUtils.text("S",40) + AonStringUtils.CR_LF )
 			   ,(wr, mod) -> wr.append( mod.getAmount(Mod303Key.BZ_C186) == 1 ? "P00MR0186" + "X" + AonStringUtils.CR_LF : "")
 			   ,(wr, mod) -> wr.append( mod.getAmount(Mod303Key.BZ_C187) == 1 ? "P00MR0187" + "X" + AonStringUtils.CR_LF : "")
