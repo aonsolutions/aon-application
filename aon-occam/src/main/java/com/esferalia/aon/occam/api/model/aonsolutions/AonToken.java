@@ -9,8 +9,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class AonToken implements Serializable{
@@ -19,16 +21,13 @@ public class AonToken implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private static final String SCHEMA = "schema";
-	private static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
-	private static final String UUID = "uuid";
 
 	private String schema;
 	private String schemaFirstDomain;
 	private String uuid;
 	private byte[] auth;
-
+	private boolean expired;
+	
 	public String getSchema() {
 		return schema;
 	}
@@ -65,11 +64,20 @@ public class AonToken implements Serializable{
 		return this;
 	}
 
+	public boolean isExpired() {
+		return expired;
+	}
+	
+	public AonToken setExpired(boolean expired) {
+		this.expired = expired;
+		return this;
+	}
+	
 	public JSONObject toJson() {
 		return new JSONObject()
-				.put(SCHEMA, getSchema())
-				.put(SCHEMA_FIRST_DOMAIN, getSchemaFirstDomain())
-				.put(UUID, getUuid());
+				.put(IJsonNames.SCHEMA, getSchema())
+				.put(IJsonNames.SCHEMA_FIRST_DOMAIN, getSchemaFirstDomain())
+				.put(IJsonNames.UUID, getUuid());
 	}
 
 	public static AonToken parse(String json) {
@@ -78,9 +86,10 @@ public class AonToken implements Serializable{
 
 	public static AonToken parse(JSONObject json) {
 		return new AonToken()
-				.setSchema(JsonUtils.getString(json, SCHEMA))
-				.setUuid(json.getString(UUID))
-				.setSchemaFirstDomain(json.getString(SCHEMA_FIRST_DOMAIN));
+				.setSchema(JsonUtils.getString(json, IJsonNames.SCHEMA))
+				.setUuid(JsonUtils.getString(json, IJsonNames.UUID))
+				.setSchemaFirstDomain(JsonUtils.getString(json, IJsonNames.SCHEMA_FIRST_DOMAIN))
+				.setExpired(JsonUtils.getboolean(json, "expired"));
 	}
 	
 	public static String build(Auth auth, Date expireDate) {
@@ -90,9 +99,9 @@ public class AonToken implements Serializable{
 	public static String build(Auth auth, Date expireDate, String domain) {
 		JSONObject tokenObject = new JSONObject();
 		tokenObject
-			.put("schema", auth.getSchema())
-			.put("schema_first_domain", domain)
-			.put("uuid", auth.getUuid());
+			.put(IJsonNames.SCHEMA, auth.getSchema())
+			.put(IJsonNames.SCHEMA_FIRST_DOMAIN, domain)
+			.put(IJsonNames.UUID, auth.getUuid());
 		String token = "";
 		try {
     		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
@@ -109,4 +118,29 @@ public class AonToken implements Serializable{
     	}	
 		return token;
 	}
+	
+	public static String build(User user, Date expireDate, String domain) {
+		JSONObject tokenObject = new JSONObject();
+		tokenObject
+			.put(IJsonNames.SCHEMA_FIRST_DOMAIN, domain)
+			.put(IJsonNames.USER, user.getId())
+			.put(IJsonNames.LOGIN, user.getLogin())
+			.put(IJsonNames.DOMAIN, user.getDomain());
+		String token = "";
+		try {
+    		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+    		expireDate = expireDate != null ? expireDate : AonDateUtils.addYears(new Date(), 1);
+    		token = JWT.create()
+    				.withIssuer("auth0")
+    				.withSubject(tokenObject.toString())
+    				.withIssuedAt(new Date())
+    				.withExpiresAt(expireDate)
+    				.sign(algorithm);
+    	} catch (JWTCreationException exception){
+    		exception.printStackTrace();
+    		throw exception;
+    	}	
+		return token;
+	}
+	
 }

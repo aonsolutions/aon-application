@@ -1581,10 +1581,10 @@
 								rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 								value="#{bundle.admin_advanced_mode}" />
 							</aon:if>
-							<aon:menuItem id="config_userProfile" action="home_user"
+<!--						<aon:menuItem id="config_userProfile" action="home_user"
 								iconClass="aon-icon-menu-user"
 								actionListener="#{domainUser.onInitUserProfile}"
-								value="#{bundle.admin_user_profile}" />
+								value="#{bundle.admin_user_profile}" /> -->
 							<aon:menuItem id="changePassword" action="home_password"
 								iconClass="aon-icon-changePassword"
 								actionListener="#{changePassword.onInit}"
@@ -1595,12 +1595,36 @@
 		                		<aon:menuItem id="spanishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[0].displayName}"
 									iconClass="#{aonConfiguration.locales[0].iconClass}" 
+									onclick="localStorage.setItem('aon_language','es')"
 									actionListener="#{aonConfiguration.locales[0].onChangeLanguage}" />
 		                		<aon:menuItem id="englishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[1].displayName}"
 									iconClass="#{aonConfiguration.locales[1].iconClass}" 
+									onclick="localStorage.setItem('aon_language','en')"
 									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
-			                </aon:menuGroup>	
+								<aon:if test="#{dur.alpha}">
+	 	 		                	<aon:menuItem id="deutschLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[2].displayName}"
+										iconClass="#{aonConfiguration.locales[2].iconClass}" 
+										onclick="localStorage.setItem('aon_language','de')"
+										actionListener="#{aonConfiguration.locales[2].onChangeLanguage}" />
+	 		                		<aon:menuItem id="basqueLanguage" reRender="aonHeader,aonContent"
+										value="#{aonConfiguration.locales[3].displayName}"
+										iconClass="#{aonConfiguration.locales[3].iconClass}" 
+										onclick="localStorage.setItem('aon_language','eu')"
+										actionListener="#{aonConfiguration.locales[3].onChangeLanguage}" /> 
+ 	 		                		<aon:menuItem id="catalanLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[4].displayName}"
+										iconClass="#{aonConfiguration.locales[4].iconClass}" 
+										onclick="localStorage.setItem('aon_language','ca')"
+										actionListener="#{aonConfiguration.locales[4].onChangeLanguage}" /> 
+ 	 		                		<aon:menuItem id="galicianLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[5].displayName}"
+										iconClass="#{aonConfiguration.locales[5].iconClass}" 
+										onclick="localStorage.setItem('aon_language','gl')"
+										actionListener="#{aonConfiguration.locales[5].onChangeLanguage}" /> 
+								</aon:if>
+							</aon:menuGroup>	
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">

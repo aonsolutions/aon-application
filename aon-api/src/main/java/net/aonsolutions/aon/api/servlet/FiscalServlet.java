@@ -54,7 +54,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API FISCAL SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			if ( AonStringUtils.endsWith(api.getPath(), "/models") ) {
 				response(req, resp, getFiscalModels(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {
@@ -72,7 +72,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API FISCAL SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			if ( AonStringUtils.endsWith(api.getPath(), "/markAsFinished") ) {
 				response(req, resp, markAsFinished(api));
 			} else {
@@ -87,7 +87,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-			JSONObject jsonParams = api.getParams();
+			JSONObject jsonParams = api.getData();
 			FiscalMatrixParams params = FiscalMatrixParamsJSON.fromJSON(jsonParams); 
 			return FiscalMenuDAO.getDomainsModels(ctx, api.getDomain().getId(), params); 
 		} finally {
@@ -114,7 +114,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		} 
 	}
 	
-	private JSONObject markAsFinished(AonApiData api) throws Exception {
+	private JSONObject markAsFinished(AonApiData api) {
 		try ( final AONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
 			JSONObject params = api.getData();
 			FiscalModelDeclarationType declarationType = FiscalModelDeclarationType.valueOf(JsonUtils.getString(params, IJsonNames.TYPE));
@@ -218,7 +218,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				});
 				return new JSONObject().put("status", "OK"); 
 			} else 
-				throw new Exception("Tipo requerido");
+				throw new AonApiException("Tipo requerido");
 		}
 	}
 }

@@ -914,7 +914,6 @@ public abstract class EmployeeDraft extends Composite {
 	private void onAFIChanges() {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				employee.startDate.getValue(),
-				employee.endDate.getValue(),
 				employee.contractTypeLB.getSelectedValue(),
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),

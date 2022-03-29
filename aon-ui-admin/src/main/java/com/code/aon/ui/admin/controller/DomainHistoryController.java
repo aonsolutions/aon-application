@@ -122,7 +122,7 @@ public class DomainHistoryController extends DataScrollerState {
 	}
 	
 	private void initializeModel() throws ManagerBeanException {
-		List<DomainInfo> list = new LinkedList<DomainInfo>();
+		List<DomainInfo> list = new LinkedList<>();
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), getCompany().getId());

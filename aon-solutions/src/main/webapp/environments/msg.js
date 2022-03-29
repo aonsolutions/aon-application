@@ -161,6 +161,8 @@ export const DETAILED = MSG.DETAILED;
 export const DEUTSCH = MSG.DEUTSCH;
 export const DOCUMENT = MSG.DOCUMENT;
 export const DOCUMENTS = MSG.DOCUMENTS;
+export const DOMAIN = "Dominio"; //TODO
+export const DOMAIN_PARENT = "Dominio Padre"; //TODO
 export const DOCUMENTARY = MSG.DOCUMENTARY;
 export const DOWNLOAD = MSG.DOWNLOAD;
 export const DOWNLOAD_FILE = MSG.DOWNLOAD_FILE;
@@ -264,7 +266,7 @@ export const ISSUE = "Asunto"; //TODO
 // ----- K
 
 // ----- L
-
+export const LABELS = "Etiquetas";
 export const LANGUAGE = MSG.LANGUAGE;
 export const LAST = MSG.LAST;
 export const LAST_LOCATION = MSG.LAST_LOCATION;

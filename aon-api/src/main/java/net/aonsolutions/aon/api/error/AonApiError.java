@@ -2,6 +2,8 @@ package net.aonsolutions.aon.api.error;
 
 public enum AonApiError {
 
+	UNAUTHORIZED("No está autorizado."),
+	EXPIRED_TOKEN("La sesión ha expirado."),
 	ROUTE_ERROR("La ruta introducida es incorrecta."),
 	EMPTY_DATA("No existen datos para la consulta");
 	

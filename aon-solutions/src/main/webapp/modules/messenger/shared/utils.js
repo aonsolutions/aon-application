@@ -841,20 +841,36 @@ const setTaskTags = () => {
 
 const addCauForm = (aonMessengerChat, divStatic)=> {
     const task = aonMessengerChat.task;
-    if( task.id && task.source === TASK_SOURCE.CAU && !aonMessengerChat.getApplicationParent().cau && task.getDescriptionJson().cauInfo){
-        try {
-            const cauInfo =  task.getDescriptionJson().cauInfo;
-            const company = cauInfo.company;
-            const parent = cauInfo.parent;
-
-            if(company && company.domain)
-                createDivGrid(divStatic, createLabelAnchor("Dominio", company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
-
-            if(parent && parent.domain)
-                createDivGrid(divStatic, createLabelAnchor("Dominio padre", parent.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
-        } catch (error) {}
-    }
+    if( task.source === TASK_SOURCE.CAU ){
+        if(task.id && !aonMessengerChat.isCau() && task.getDescriptionJson().cauInfo){
+            try {
+                const cauInfo =  task.getDescriptionJson().cauInfo;
+                const company = cauInfo.company;
+                const parent = cauInfo.parent;
+                const auth = cauInfo.auth;
+                if(company && company.domain)
+                    createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
     
+                if(parent && parent.domain)
+                    createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN_PARENT, parent.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+
+                if(auth && auth.email)
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+            } catch (error) {}
+        } else if(aonMessengerChat.getCauInfo() && aonMessengerChat.isCau()) {
+            try {
+                const cauInfo = aonMessengerChat.getCauInfo();
+                const auth = cauInfo.auth;
+                const company = cauInfo.company;
+                if(company && company.name)
+                    createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                    
+                if(auth && auth.email)
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+            } catch (error) {}
+        }
+    } 
+
     task.setSource(TASK_SOURCE.CAU);
 
     const selectTypeIncident = createSelectCau('typeCau', MESSENGER_IDS.TYPE_REQUEST_CAU, MSG.TYPE_INCIDENT);
@@ -866,7 +882,7 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
     fillSelectAppCau(aonMessengerChat);
 }
 
-const createLabelAnchor = (text, domainNam) => {
+const createLabelAnchor = (text, domainNam, clickable = true) => {
     const label = setStyles(document.createElement(TAG.LABEL),{
         color:CSS.variable(COLORS.GRAYSON),
         paddingLeft:"4px",
@@ -875,11 +891,14 @@ const createLabelAnchor = (text, domainNam) => {
 
     const anchor = setStyles(document.createElement("a"),{
         color:CSS.variable(COLORS.AON_BLUE),
-        // userSelect:"text",
-        // cursor: "text"
+        cursor: "text"
     });
-    anchor.href = "https://"+domainNam;
-    anchor.target = "_blank";
+    if(clickable){
+        anchor.href = "https://"+domainNam;
+        anchor.target = "_blank";
+        anchor.style.cursor = "pointer";
+    }
+ 
     anchor.textContent = domainNam;
     label.appendChild(anchor);
 

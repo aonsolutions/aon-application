@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
-import { APP_PARAMS_REQUEST, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, getTaskAppParams} from "../../services/taskService.js";
+import {  MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
@@ -22,7 +22,6 @@ export class AonMessengerChat extends AonElement {
   TOOLBAR;
   PROJECTS;
   WORKGROUPS;
-  APP_PARAMS;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -70,7 +69,6 @@ export class AonMessengerChat extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this.PROJECTS = [];
     this.WORKGROUPS = [];
-    this.APP_PARAMS = [];
     this.deleteToolbar();
     this.setTask();
   }
@@ -79,13 +77,13 @@ export class AonMessengerChat extends AonElement {
 
     let data = {...this.data, domainCompany:this.getDur().domain};
 
+    data.auth = this.getAuth();
+      
     const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
     if(myTaskHolder && myTaskHolder.id) 
       data.myTaskHolder = myTaskHolder;
       
-    if(this.applicationParentEl.cauInfo.auth && this.applicationParentEl.cauInfo.auth.email)  
-      data.auth = this.applicationParentEl.cauInfo.auth;
-      
+
     this.setData(data); 
     this.task = new Task(this.getData());
     this.task.onPropertyChanged = (propName, val) => {
@@ -99,7 +97,6 @@ export class AonMessengerChat extends AonElement {
     //FILL CHATS WORKFLOW
     if (this.task.id) 
       this.getTaskWorkflow();
-    this.getAppParams();
   }
 
   paintView() {
@@ -156,7 +153,7 @@ export class AonMessengerChat extends AonElement {
           type = WORKFLOW_TYPES.CLOSE;
         break;
       }
-      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment});
+      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment, auth:this.getAuth()});
       await this.save();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     // });
@@ -173,7 +170,7 @@ export class AonMessengerChat extends AonElement {
 
   addButtonDelete(){
     if(this.task.status == TASK_STATUS.DELETED) {
-      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask())
+      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask(), ACTIONS.PREVIOUS.id);
     }
   }
 
@@ -233,25 +230,18 @@ export class AonMessengerChat extends AonElement {
   }
 
   setCauData(){
-    if(this.applicationParentEl.cauInfo)
-      this.task.setDescriptionJson({cauInfo:this.applicationParentEl.cauInfo});
+    if(this.getCauInfo())
+      this.task.setDescriptionJson({cauInfo:this.getCauInfo()});
   }
 
-  async getAppParams(){
-    let params = [];
-    let newResp=[];
-    if(!this.APP_PARAMS.length){
-      for (let name in APP_PARAMS_REQUEST) 
-        params.push(name);
+  getCauInfo(){
+    return this.applicationParentEl.cauInfo;
+  }
 
-      let resp = await getTaskAppParams({params});
-      resp.map(param => {
-        newResp[param.name] = param.value;
-      });
-      this.APP_PARAMS = newResp;
-    }
-
-    return this.APP_PARAMS;
+  getAuth(){
+    if(this.getCauInfo().auth && this.getCauInfo().auth.email)
+      return this.getCauInfo().auth;
+    return {};
   }
 
   async uploadFile({file, task}) {
@@ -324,13 +314,8 @@ export class AonMessengerChat extends AonElement {
         if(!this.task.getGTaskId()){
           this.task.setGTaskId(this.task.auth.email);
         }
-      }  else { //
-        if(!this.task.workgroup.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP]){
-          this.task.setWorkgroup({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP]});
-        }
-        if(!this.task.task_holder.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]) {
-          this.task.setTaskHolder({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]});
-        }
+      }  else { 
+     
       }
     }
   }

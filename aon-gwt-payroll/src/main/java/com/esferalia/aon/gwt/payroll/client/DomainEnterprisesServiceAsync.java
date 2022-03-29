@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -105,6 +107,10 @@ public class DomainEnterprisesServiceAsync {
 
 	public void deleteAgreement(Agreement agreement, AsyncCallback<Void> callback) {
 		enterprisesServiceAsync.deleteAgreement(getCurrentDomainName(), agreement, callback);
+	}
+	
+	public void deleteAgreements(List<Integer> agreementIds, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		enterprisesServiceAsync.deleteAgreements(getCurrentDomainName(), agreementIds, callback);
 	}
 
 	public void updateAgreementId(Agreement agreement, AsyncCallback<Void> callback) {
@@ -603,6 +609,12 @@ public class DomainEnterprisesServiceAsync {
 
 	public void removeITParts(List<ItNotExist>itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
 		enterprisesServiceAsync.removeITParts(getCurrentDomainName(), getCurrentUser(), itNotExist, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Agreements Clean
+	
+	public void getAgreementsClean(AgreementCleanType cleanType, AsyncCallback<List<AgreementsClean>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getAgreementsClean(getCurrentDomainName(), cleanType, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

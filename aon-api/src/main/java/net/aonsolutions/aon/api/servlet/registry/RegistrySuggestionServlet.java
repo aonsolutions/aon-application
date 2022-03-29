@@ -32,7 +32,7 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API REGISTRY SUGGESTION SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -48,7 +48,7 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 
 	private JSONArray getRegistries(AonApiData api) {
 		JSONArray array = new JSONArray();
-		String types = api.getParams().optString("types");
+		String types = api.getData().optString("types");
 		String[] types2 = types.split(",");
 		LinkedList<RegistryType> list = new LinkedList<>();
 		if (types != null) {
@@ -70,8 +70,8 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	private Filter rfilter(AonApiData api, RegistryProperties f) {
     	Filter filter =  f.getDomainProperty().eq(api.getDomain().getId());
  
-    	String name = api.getParams().optString("name");
-		String document = api.getParams().optString("document");
+    	String name = api.getData().optString("name");
+		String document = api.getData().optString("document");
 		
 		if(!AonStringUtils.isBlank(document)) {
 			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
@@ -84,8 +84,8 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	private Filter globalRfilter(AonApiData api, RegistryProperties f) {
     	Filter filter =  f.getDomainProperty().eq(0);
  
-    	String name = api.getParams().optString("name");
-		String document = api.getParams().optString("document");
+    	String name = api.getData().optString("name");
+		String document = api.getData().optString("document");
 		
 		if(!AonStringUtils.isBlank(document)) {
 			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));

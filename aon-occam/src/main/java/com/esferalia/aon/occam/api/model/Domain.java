@@ -16,10 +16,13 @@ public class Domain implements Serializable {
 	private DomainType domainType;
 	private boolean enableHeredity;
 	private boolean domainManagement;
+	private boolean disableDomainManagement;
 	private boolean active;
 	private Integer scope;
 	private Integer maxDefinedUsers;
 	private Integer definedUsers;
+	private Integer maxDocumentSize;
+	private Integer maxTotalDocumentSize;
 	
 	public Integer getId() {
 		return id;
@@ -102,6 +105,15 @@ public class Domain implements Serializable {
 		this.domainManagement = domainManagement;
 		return this;
 	}
+	
+	public boolean isDisableDomainManagement() {
+		return disableDomainManagement;
+	}
+	
+	public Domain setDisableDomainManagement(boolean disableDomainManagement) {
+		this.disableDomainManagement = disableDomainManagement;
+		return this;
+	}
 
 	public Integer getScope() {
 		return scope;
@@ -136,6 +148,24 @@ public class Domain implements Serializable {
 	
 	public Domain setDefinedUsers(Integer definedUsers) {
 		this.definedUsers = definedUsers;
+		return this;
+	}
+	
+	public Integer getMaxDocumentSize() {
+		return maxDocumentSize;
+	}
+	
+	public Domain setMaxDocumentSize(Integer maxDocumentSize) {
+		this.maxDocumentSize = maxDocumentSize;
+		return this;
+	}
+	
+	public Integer getMaxTotalDocumentSize() {
+		return maxTotalDocumentSize;
+	}
+	
+	public Domain setMaxTotalDocumentSize(Integer maxTotalDocumentSize) {
+		this.maxTotalDocumentSize = maxTotalDocumentSize;
 		return this;
 	}
 }

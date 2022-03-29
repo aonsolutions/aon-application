@@ -26,7 +26,7 @@ public class SiiServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API SII SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/configuration":
 					response(req, resp, getSiiConfiguration(api));

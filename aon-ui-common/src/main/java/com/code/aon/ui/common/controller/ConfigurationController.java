@@ -37,13 +37,18 @@ public class ConfigurationController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static final Locale SPANISH = new Locale("es");
+	private static final Locale SPANISH = new Locale("es", "ES");
+	private static final Locale DEUTSCH= new Locale("de", "DE");
+	private static final Locale BASQUE = new Locale("eu", "ES");
+	private static final Locale GALICIAN = new Locale("gl", "ES");
+	private static final Locale CATALAN = new Locale("ca", "ES");
 	
 	private static final DateFormat FORMATTER = new SimpleDateFormat("EEEE, dd MMMM yyyy");
 	
 	private static final LocaleElement[] LOCALES = new LocaleElement[] {
-			new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH) 
-		};
+		new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH), new LocaleElement(DEUTSCH),
+		new LocaleElement(BASQUE), new LocaleElement(CATALAN), new LocaleElement(GALICIAN)
+	};
 	
     public static final int DEFAULT_PAGE_LIMIT = 20;	
 

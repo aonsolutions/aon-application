@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Toolbar;
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
@@ -310,11 +311,35 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
 		mainTrashAgreement = new MainTrashAgreement() {
+			
 			@Override
 			public void onBackButtonClick() {
 				getAgreements();
 				showAgreements();
 			}
+			
+			@Override
+			public void onDeletedAgreementsButtonClick() {
+				new AgreementsCleanDialog(AgreementCleanType.DELETED) {
+					
+					@Override
+					public void onAccept() {
+						mainTrashAgreement.getAgreements().getAgreements(s -> {});
+					}
+				};
+			}
+			
+			@Override
+			public void onUnusedAgreementsButtonClick() {
+				new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
+									
+					@Override
+					public void onAccept() {
+						mainTrashAgreement.getAgreements().getAgreements(s -> {});
+					}
+				};
+			}
+			
 		};
 		
 		// Create the UI defined in Employee.ui.xml.

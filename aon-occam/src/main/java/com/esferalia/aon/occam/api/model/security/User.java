@@ -232,4 +232,9 @@ public class User implements Serializable {
 	public boolean isPortal() {
 		return getEnterprise() != null;
 	}
+	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null
+				&& getLogin() == null;
+	}
 }

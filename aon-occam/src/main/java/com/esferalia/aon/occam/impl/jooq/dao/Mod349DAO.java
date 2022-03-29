@@ -669,7 +669,7 @@ public class Mod349DAO {
 					// para poder guardarlo posteriormente como rectificacion en el modelo 349
 					int rectificateYear = 0;
 					Period rectificatePeriod = null;
-					if (vat.isInsidePeriod() && vat.getRectificationType() != null && (vat.getRectificationType() == RectificationType.NORMAL_RECTIFIER || vat.getRectificationType() == RectificationType.SPECIAL_RECTIFIER)) {
+					if (vat.isInsidePeriod() && vat.getRectificationType() != null && (vat.getRectificationType() == RectificationType.NORMAL_RECTIFIER || vat.getRectificationType() == RectificationType.SPECIAL_RECTIFIER) && vat.getRectificateInvoiceTaxDate() != null) {
 						// Buscar posible periodo donde se declaro la factura rectificada (mensual, trimestral), según su fecha de IVA, si es distinto del que se está declarando, si el periodo es el mismo no se crea linea para la rectificacion en el modelo 349
 						rectificateYear = AonDateUtils.getYear(vat.getRectificateInvoiceTaxDate());
 						// Primero probamos con posible periodo mensual

@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -130,6 +132,14 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteAgreement(domain, agreement,  
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void deleteAgreements(String domain, List<Integer> agreementIds, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.deleteAgreements(domain, agreementIds,  
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
@@ -943,5 +953,13 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void removeITParts(String currentDomainName, String currentUser, List<ItNotExist> list, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.removeITParts(currentDomainName, currentUser, list, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Agreement Clean
+
+	@Override
+	public void getAgreementsClean(String domainName, AgreementCleanType cleanType, AsyncCallback<List<AgreementsClean>> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAgreementsClean(domainName, cleanType, asyncCallback);
 	}
 }

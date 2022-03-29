@@ -45,7 +45,7 @@ export const createMainView = (aonMessengerChat) =>{
   aonMessengerChat.appendChild(div);
   const mainView = newComponent({
     type: TAG.DIV,
-    classes: [CSS.FLEX_JUSTIFY_BETWEEN, CSS.NO_COPY],
+    classes: [CSS.FLEX_JUSTIFY_BETWEEN], // CSS.NO_COPY
     styles: {
       transition: ".5s",
       display: "flex",
@@ -66,7 +66,7 @@ export const createMainView = (aonMessengerChat) =>{
 
 export const createMobileMainView = () => newComponent({
   type: TAG.DIV,
-  classes: [CSS.FLEX_COLUMN, CSS.NO_COPY],
+  classes: [CSS.FLEX_COLUMN], //  CSS.NO_COPY
   styles: {
     transition: ".5s",
     opacity: 1,

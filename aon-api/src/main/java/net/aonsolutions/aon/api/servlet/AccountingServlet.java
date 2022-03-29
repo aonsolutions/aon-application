@@ -1,5 +1,4 @@
 package net.aonsolutions.aon.api.servlet;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -51,8 +50,8 @@ public class AccountingServlet extends AonApiHttpServlet{
 		}
 	}
 		
-	private void manage(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		AonApiData api = initialize(req, resp);
+	private void manage(HttpServletRequest req, HttpServletResponse resp) {
+		AonApiData api = initialize(req);
 		
 		switch (api.getPath()) {
 		case "/trial":
@@ -69,21 +68,21 @@ public class AccountingServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private JSONObject getTrialBalance(AonApiData api) throws ParseException {
+	private JSONObject getTrialBalance(AonApiData api) {
 		JSONObject jsonParams = api.getData();
 		AccountingReportParams params = AccountingReportParamsJSON.fromJSON( jsonParams );
 		AccountTrialBalanceReport report = ACCOUNTING.getAccountTrialBalance(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), params);
 		return AccountTrialBalanceReportJSON.toJSON(report);
 	}
 	
-	private JSONObject getOperatingBalance(AonApiData api) throws ParseException {
+	private JSONObject getOperatingBalance(AonApiData api) {
 		JSONObject jsonParams = api.getData();
 		AccountingReportParams params = AccountingReportParamsJSON.fromJSON( jsonParams );
 		AccountOperatingReport report = ACCOUNTING.getAccountOperatingReport(api.getDomain().getName(), api.getUser().getLogin(), api.getDomain().getId(), params);
 		return AccountOperatingReportJSON.toJSON(report);
 	}
 	
-	private JSONArray getPeriods(AonApiData api) throws ParseException {
+	private JSONArray getPeriods(AonApiData api) {
 		JSONObject jsonParams = api.getData();
 		AccountingReportParams params = AccountingReportParamsJSON.fromJSON( jsonParams );
 		Collection<AccountPeriod> periods = ACCOUNTING.getDomainPeriods(params.getDomainName(), params.getDomain(), params.getUser());
