@@ -68,6 +68,7 @@ public enum AonError implements Serializable{
 	,ACCOUNT_DUPLICATED_CODE("No se puede crear/modificar la cuenta ({0}) porque ya existe una con el mismo c\u00F3digo ({1})")
 	,ACCOUNT_NO_NUMERIC("La cuenta contable s\u00F3lo puede estar compuesta por caracteres num\u00E9ricos.")
 	,ACCOUNT_LOW_LEVEL_NOT_PRESENT("Imposible crear/modificar cuenta. No existe cuenta correspondiente de nivel inferior. ({0})")
+	,ACCOUNT_LOW_LEVEL_TOO_LOW("Imposible crear/modificar cuenta. No existe cuenta correspondiente del nivel m\u00EDnimo admitido ({0})")
 	,ACCOUNT_PARENT_ACCOUNT("No se puede borrar una cuenta perteneciente al entorno padre.")
 	,ACCOUNT_HIGH_LEVEL_PRESENT("No se puede borrar una cuenta con desglose de cuentas.")
 	

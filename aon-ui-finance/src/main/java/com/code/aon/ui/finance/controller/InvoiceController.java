@@ -125,6 +125,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.LroeData;
@@ -1371,8 +1372,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException {
-		double invoiceTotal = getToInvoiceTotalPrice();
-		double financeTotal = getToInvoiceFinanceTotal();
+		double invoiceTotal = AonMathUtils.round(getToInvoiceTotalPrice());
+		double financeTotal = AonMathUtils.round(getToInvoiceFinanceTotal());
 		if (financeTotal != 0 && invoiceTotal != financeTotal) {
 			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
