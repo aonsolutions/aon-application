@@ -33,7 +33,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -95,18 +94,7 @@ class Model303AEAT2022 extends Model303AEAT {
 			paintLastPeriodInformationTab(tabPanel);
 		}
 		paintAdministrationTab(tabPanel);
-
-		if (getModel().getId() == null && getModel().getYear() == 2021 ) {
-			double c120 = getModel().getAmount(Mod303Key.CT_C120);
-			double c122 = getModel().getAmount(Mod303Key.CT_C122);
-			if (AonMathUtils.isNotZero(c120) || AonMathUtils.isNotZero(c122)) {
-				AonMessageDialog.show("AVISO",
-						"Solapa \"Datos adicionales\". La casilla 61 se ha desdoblado en las casillas 120 y 122. No se puede realizar el c\u00E1lculo por diferencia en dichas casillas y tienen valor. Por favor revise los valores suministrados por la aplicaci\u00F3n."
-						);
-			}
-		}
 		tabPanel.addBeforeSelectionHandler(this::beforeSelectTab);
-		
 		Scheduler.get().scheduleDeferred(this::selectDefaultTab);
 	}
 	
@@ -896,10 +884,6 @@ class Model303AEAT2022 extends Model303AEAT {
 		if (receiptBox != null) {
 			receiptBox.setValue( getModel().getNumber() );
 		}
-	}
-	
-	private void enable( HasEnabled widget ) {
-		if (widget != null) widget.setEnabled(getModel().isEditable()); 
 	}
 	
 }

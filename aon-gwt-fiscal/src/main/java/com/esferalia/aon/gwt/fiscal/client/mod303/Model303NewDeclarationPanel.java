@@ -372,7 +372,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
 		Button acceptButton = new Button();
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
-		acceptButton.setText( AON.MSG.accept());
+		acceptButton.setText( AON.MSG.accept() + " & " + AON.MSG.saveAction());
 		
 		acceptButton.addClickHandler(event -> callback.onAccept(model));
 		buttonsPanel.add(acceptButton);

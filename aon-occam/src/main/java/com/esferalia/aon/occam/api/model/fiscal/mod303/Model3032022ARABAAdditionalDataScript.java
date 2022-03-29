@@ -15,11 +15,14 @@ public enum Model3032022ARABAAdditionalDataScript implements IModelScript<Mod303
 	 ADC00 ("Informaci\u00F3n adicional",null,TITLE)
 	,ADC01 (Mod303Key.AR_C050.getDescription() ,new Mod303Key[]{null,Mod303Key.AR_C050},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
 	,ADC02 (Mod303Key.AR_C051.getDescription() ,new Mod303Key[]{null,Mod303Key.AR_C051},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
-	,ADC03 (Mod303Key.AR_C052.getDescription() ,new Mod303Key[]{null,Mod303Key.AR_C052},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
-	,ADC04 ("Exclusivamente para aquellos sujetos pasivos acogidos al R\u00E9gimen especial del criterio de caja y para aquellos que sean destinatarios de operaciones afectadas por el mismo:",null,TITLE)
-	,ADC05 ("Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo"
+	,ADC03 (Mod303Key.AR_C054.getDescription() ,new Mod303Key[]{null,Mod303Key.AR_C054},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
+	,ADC04 (Mod303Key.AR_C055.getDescription() ,new Mod303Key[]{null,Mod303Key.AR_C055},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
+	,ADC05 (Mod303Key.AR_C056.getDescription() ,new Mod303Key[]{null,Mod303Key.AR_C056},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
+	,ADC06 (Mod303Key.AR_C058.getDescription() ,new Mod303Key[]{null,Mod303Key.AR_C058},new KeyTypes[]{KeyTypes.NONE,KeyTypes.BASE},MODEL_INVOICE_VAT_BREAKDOWN)
+	,ADC07 ("Exclusivamente para aquellos sujetos pasivos acogidos al R\u00E9gimen especial del criterio de caja y para aquellos que sean destinatarios de operaciones afectadas por el mismo:",null,TITLE)
+	,ADC08 ("Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo"
 			,new Mod303Key[]{Mod303Key.AR_C180,Mod303Key.AR_C181},MODEL_OUT_VAT_ACCRUAL_INVOICE)	
-	,ADC06 ("Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja"
+	,ADC09 ("Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja"
 			,new Mod303Key[]{Mod303Key.AR_C182,Mod303Key.AR_C183},MODEL_IN_VAT_ACCRUAL_INVOICE)
 	;
 	

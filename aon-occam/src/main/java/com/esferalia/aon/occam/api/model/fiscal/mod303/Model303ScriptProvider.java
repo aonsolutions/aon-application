@@ -41,10 +41,21 @@ public class Model303ScriptProvider {
 				return Model3032017AEATPrintScript.values();
 			}
 		}
+		,ARABA_2022 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isAraba() && mod303.getYear() > 2021;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032022ARABAPrintScript.values();
+			}
+		}
 		,ARABA {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isAraba();
+				return mod303.isAraba() && mod303.getYear() < 2022;
 			}
 	
 			@Override

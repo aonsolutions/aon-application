@@ -438,7 +438,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C80("303-CTA80",false,"80","Operaciones en r\u00E9gimen general")
 	,CT_C81("303-CTA81",false,"81","Operaciones en r\u00E9gimen especial del criterio de caja conforme art. 75 LIVA")
 	
-	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se desglosó en dos [93] y [94]
+	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se desglos\u00F3 en dos [93] y [94]
 	,CT_C82("303-CTA82",false,"82","Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n")
 	
 	,CT_C93("303-CTA93",false,"93","Entregas intracomunitarias exentas")
@@ -454,7 +454,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C79("303-CTA79",false,"79","Entregas de bienes inmuebles y operaciones financieras no habituales") 
 	,CT_C99("303-CTA99",false,"99","Entregas de bienes de inversi\u00F3n")
 
-	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se cambió por la [79]
+	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se cambi\u00F3 por la [79]
 	//,CT_C87("303-CTA87",false,"87","Entregas de bienes inmuebles y de inversi\u00F3n y operaciones financieras no habituales")
 	
 	,CT_C88("303-CTA88",false,"88","Total volumen de operaciones")
@@ -494,6 +494,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  ARABA ------
 	// 	----------------------------------------------------------------------------------
+	,AR_C930("303-AR930",false,"930","Presentaci\u00F3n fuera de plazo por requerimiento")
 	,AR_C907("303-AR907",false,"907","\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?")
 	,AR_C910("303-AR910",false,"910","\u00BFHa optado por el r\u00E9gimen especial del criterio de Caja?")
 	,AR_C911("303-AR911",false,"911","\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
@@ -574,6 +575,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C050("303-AR050",true ,"50","Total entregas de bienes y prestaciones de servicios intracomunitarias")
 	,AR_C051("303-AR051",true ,"51","Total exportaciones y operaciones asimiladas")
 	,AR_C052("303-AR052",true ,"52","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
+	
+	,AR_C054("303-AR054",true ,"54","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 56)")
+	,AR_C055("303-AR055",true ,"55","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
+	,AR_C056("303-AR056",true ,"56","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS")
+	,AR_C058("303-AR058",true ,"58","Operaciones sujetas y acogidas a la OSS")
 	
 	,AR_C180("303-AR180",true ,"180","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Base Imponible")
 	,AR_C181("303-AR181",true ,"181","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")

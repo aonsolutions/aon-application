@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -37,6 +38,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	
 	private enum Mod303KeyDAO implements IMod303KeyDAO {
 		 AR_C907	(Mod303Key.AR_C907)
+	    ,AR_C930	(Mod303Key.AR_C930)
 		,CM_002(Mod303Key.CM_002,null,null,(ctx,mod) -> add(Mod303Key.CM_002,mod,(
 				 AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE))?1:0),null,null)
 		,CM_003		(Mod303Key.CM_003)
@@ -369,9 +371,24 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 		
 		// Total exportaciones y operaciones asimiladas
 		,AR_C051	(Mod303Key.AR_C051
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
+			,(mod,vat) -> ventasExtraComunitariasCanCeuBienes(vat, mod)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C051,mod,vat.getBase())
 			,null,null,null)
+		// Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 56)
+		,AR_C054(Mod303Key.AR_C054
+			,(mod,vat) -> ventasExtraComunitariasCanCeuServicios(vat,mod)
+			,(ctx,mod,vat) -> add(Mod303Key.AR_C054,mod,vat.getBase())
+			,null,null,null)
+		// Operaciones sujetas con inversi\u00F3n del sujeto pasivo
+		,AR_C055(Mod303Key.AR_C055
+			,(mod,vat) -> ventasISP (vat, mod)
+			,(ctx,mod,vat) -> add(Mod303Key.AR_C055,mod,vat.getBase())
+			,null,null,null)
+		
+		// Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS
+		,AR_C056(Mod303Key.AR_C056)
+		// Operaciones sujetas y acogidas a la OSS
+		,AR_C058(Mod303Key.AR_C058)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
 		,AR_C052	(Mod303Key.AR_C052
@@ -580,6 +597,21 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	private static boolean rectificationDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
+	}
+	
+	public static boolean  ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
+		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales());
+	}
+	public static boolean  ventasExtraComunitariasCanCeuServicios(VatContext vat, Mod303 mod) {
+		boolean add = !vat.isVatSurchargeRegime() 
+			&& ((vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())));
+		if ( add && mod.getYear() == 2021) {
+			add = FiscalUtils.isInPeriodRange(mod, vat.getTaxDate());
+		} 
+		return add;
+	}
+	public static boolean  ventasISP(VatContext vat, Mod303 mod) {
+		return !vat.isVatSurchargeRegime() && vat.isOtherISPSales();
 	}
 	
 }

@@ -57,6 +57,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -1226,6 +1227,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		});
 	}
 	
+	protected void enable( HasEnabled widget ) {
+		if (widget != null) widget.setEnabled(getModel().isEditable()); 
+	}
+
 	void decorateDeclarationTab() {
 		
 	}

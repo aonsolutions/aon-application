@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
@@ -12,6 +13,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAResultSc
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAScript2;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -20,6 +22,16 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 class Model303ARABA2022 extends Model303Base {
+	private AonTextBox receiptBox;
+	private AonTextBox previousReceiptBox;
+	private CheckBox withoutActivityCheck;
+	private CheckBox cm02;
+	private CheckBox arC910;
+	private CheckBox arC911;
+	private CheckBox arC930;
+	private CheckBox arC907;
+	private AonDateBox arC908;
+	private ListBox arC909;
 	
 	protected Model303ARABA2022(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
@@ -34,9 +46,9 @@ class Model303ARABA2022 extends Model303Base {
 		paintDeclarationTab(tabPanel);
 		paintGeneralRegimenTab(tabPanel);
 		paintResultTab(tabPanel);
+		showPaymentInfo(getModel());
 		paintAdditionalDataTab(tabPanel);
 		paintAdministrationTab(tabPanel);
-		
 	}
 
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
@@ -52,34 +64,50 @@ class Model303ARABA2022 extends Model303Base {
 		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 
-		paintWithoutActivityCheck(table);	// Sin actividad
+		withoutActivityCheck = paintWithoutActivityCheck(table);	// Sin actividad
+		arC930 = paintCheck(Mod303Key.AR_C930 ,table);	// Presentación fuera de plazo por requerimiento
+		arC907 = paintCheck(Mod303Key.AR_C907 ,table);	// ¿Ha sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?
+		arC908 = paintDate( Mod303Key.AR_C908,table);	// Fecha en que se dictó el auto de declaración de concurso
+		arC909 = paintC909(Mod303Key.AR_C909,table);	// Si se ha dictado auto de declaración de concurso en este periodo, indique el tipo de autoliquidación
+		cm02 = paintCheck(Mod303Key.CM_002,table);		// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
+		arC910 = paintCheck(Mod303Key.AR_C910,table);	// ¿Ha optado por el régimen especial del criterio de Caja?
+		arC911 = paintCheck(Mod303Key.AR_C911,table);	// ¿Es destinatario de operaciones a las que se aplique el régimen especial del criterio de caja?
+		
+		int row = table.getRowCount();
+		paintLabel(table, row, AON.MSG.receipt());
+		
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 
-		paintCheck(Mod303Key.CM_002,table);		// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
-		
-		paintCheck(Mod303Key.AR_C910,table);	// ¿Ha optado por el régimen especial del criterio de Caja?
-		paintCheck(Mod303Key.AR_C911,table);	// ¿Es destinatario de operaciones a las que se aplique el régimen especial del criterio de caja?
-		
-		paintCheck(Mod303Key.AR_C907 ,table);	// ¿Ha sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?
-		paintDate( Mod303Key.AR_C908,table);	// Fecha en que se dictó el auto de declaración de concurso
-		paintC909(Mod303Key.AR_C909,table);	// Si se ha dictado auto de declaración de concurso en este periodo, indique el tipo de autoliquidación
-		
+		receiptBox = new AonTextBox();
+		receiptBox.setVisibleLength(15);
+		receiptBox.setMaxLength(13);
+		receiptBox.setEnabled(getModel().isEditable());
+		receiptBox.setValue( getModel().getNumber() );
+		receiptBox.addValueChangeHandler( event -> {
+			getModel().setNumber(receiptBox.getValue());
+			markAsDirty();
+		});
+		table.setWidget(row, 1, receiptBox);
+
 		// Número de identificación declaracion anterior (necesario si la anterior se presento telematicamente)
 		// Debe introducirse Ejercicio+Numero (EEEENNNNNN)
-		if (getModel().isReplacement()) {
-			int row = table.getRowCount();
+		if (getModel().isReplacement() || getModel().isComplementary()) {
+			row = table.getRowCount();
 			paintLabel(table, row, AON.MSG.previousReceipt() + " Formato EEEENNNNNN (Ejercicio + N\u00FAmero)");
 			
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
-			final AonTextBox receiptBox = new AonTextBox();
-			receiptBox.setVisibleLength(15);
-			receiptBox.setMaxLength(12);
-			receiptBox.setValue( getModel().getReplacedNumber() );
-			receiptBox.addValueChangeHandler( event -> {
-				getModel().setReplacedNumber(receiptBox.getValue());
+			previousReceiptBox = new AonTextBox();
+			previousReceiptBox.setVisibleLength(15);
+			previousReceiptBox.setEnabled(getModel().isEditable());
+			previousReceiptBox.setMaxLength(12);
+			previousReceiptBox.setValue( getModel().getReplacedNumber() );
+			previousReceiptBox.addValueChangeHandler( event -> {
+				getModel().setReplacedNumber(previousReceiptBox.getValue());
 				markAsDirty();
 			});
-			table.setWidget(row, 1, receiptBox);
+			table.setWidget(row, 1, previousReceiptBox);
 		}		
 		
 		container.add(addGroupPanel("", table));
@@ -87,12 +115,13 @@ class Model303ARABA2022 extends Model303Base {
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 
-	private void paintC909(Mod303Key key, FlexTable table) {
-		final ListBox c909 = new ListBox();
-		c909.addItem("--");
-		c909.addItem("Preconsursal");
-		c909.addItem("Postconsursal");
-		paintListBox(c909, key, table);
+	private ListBox paintC909(Mod303Key key, FlexTable table) {
+		arC909 = new ListBox();
+		arC909.addItem("--");
+		arC909.addItem("Preconsursal");
+		arC909.addItem("Postconsursal");
+		paintListBox(arC909, key, table);
+		return arC909;
 	}
 
 	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
@@ -238,5 +267,20 @@ class Model303ARABA2022 extends Model303Base {
 			admonPanel = new FiscalModelAdmonPanel<>(cbk);
 			tabPanel.add( admonPanel, AON.MSG.administrationName(getModel().getAdministration()));		
 	}
+	
+	@Override
+	protected void decorateDeclarationTab() {
+		enable(withoutActivityCheck);
+		enable(cm02);
+		enable(arC910);
+		enable(arC911);
+		enable(arC930);
+		enable(arC907);
+		enable(arC908);
+		enable(arC909);
+		enable(receiptBox);
+		enable(previousReceiptBox);
+	}
+	
 	
 }

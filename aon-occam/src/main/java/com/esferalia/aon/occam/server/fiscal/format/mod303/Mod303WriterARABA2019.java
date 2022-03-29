@@ -13,9 +13,9 @@ import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer.IPropert
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod303WriterARABA2019 implements IMod303Writer{
+public class Mod303WriterARABA2019 implements IMod303Writer {
 
-	private static enum Mod303File {
+	private enum Mod303File {
 		// ARABA - Registro Cabecera
 		 ARABA_2016_RC ( mod -> true ,new IPropertyFiller[] {
 				
@@ -79,13 +79,12 @@ public class Mod303WriterARABA2019 implements IMod303Writer{
 			,(wr, mod) -> wr.append("090" + AonFiscalFileUtils.signedSpace((mod.isWithoutActivity()?1.0:0.0),18)) // [90] Sin actividad
 			,(wr, mod) -> wr.append("091" + AonFiscalFileUtils.signedSpace((mod.isReplacement()?1.0:0.0),18))     // [91] Sustitutiva
 			
-			// En el numero anterior hay que poner año + numero anterior, se supone que en el programa 
-			// ya se introducira el año primero y despues el numero, todo junto			
 			,(wr, mod) -> wr.append(mod.isReplacement() ? 
 					 "902"+AonStringUtils.SPACE+AonFiscalFileUtils.unsigned(mod.getReplacedNumber(),15,2) 
 					:"000"+AonStringUtils.SPACE+AonFiscalFileUtils.zeros(17)) // [902] Sustitutiva Numero declaracion anterior (año y numero) - solo si se ha presentado por internet
 			
 			,(wr, mod) -> wr.append("907" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C907),18))  // [907] Ha sido declarado en concurso de acreedores en el presente período de liquidación
+			,(wr, mod) -> wr.append("930" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C930),18))  // [9307]
 			,(wr, mod) -> wr.append("092" + AonFiscalFileUtils.signedSpace((mod.isEnrolledInDevolutionRegistry()?1.0:0.0),18)) // [92] Está inscrito en el Registro de devolución mensual
 			,(wr, mod) -> wr.append("910" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C910),18))  // [910] Ha optado por el Régimen especial del criterio de caja 
 			,(wr, mod) -> wr.append("911" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C911),18))  // [911] Es destinatario de operaciones a las que se aplique el Régimen especial del criterio de caja
@@ -145,7 +144,7 @@ public class Mod303WriterARABA2019 implements IMod303Writer{
 			// Diferencia
 			,(wr, mod) -> wr.append("039" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C039),18))
 			
-			// Volumen de Operaciones, va con 5 decimales. Se pone todo el numero (incluido los decimales) en la parte entera
+			// Volumen de Operaciones, va con 5 decimales. Se pone el numero completo (incluido los decimales) en la parte entera
 			,(wr, mod) -> wr.append("040" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C040),16,5)+"00" )
 			,(wr, mod) -> wr.append("041" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C041),16,5)+"00" )
 			,(wr, mod) -> wr.append("042" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C042),16,5)+"00" )
@@ -173,7 +172,7 @@ public class Mod303WriterARABA2019 implements IMod303Writer{
 			
 			// Datos bancarios (CCC), Solo si es devolucion o es domiciliacion y está cumplimentada la cuenta bancaria			
 			,(wr, mod) -> {
-				if ((mod.getDeclarationType() == FiscalModelDeclarationType.BANK || mod.getDeclarationType() == FiscalModelDeclarationType.PAYBACK) &&
+				if ((mod.getDeclarationResultType() == FiscalModelDeclarationType.BANK || mod.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK) &&
 					(mod.getFinanceCCC() != null) && (mod.getFinanceCCC().length() == 20))
 					{
 						wr.append("301" + AonStringUtils.SPACE + AonFiscalFileUtils.unsigned(mod.getFinanceCCC().substring( 0, 4),17,2));
@@ -188,9 +187,9 @@ public class Mod303WriterARABA2019 implements IMod303Writer{
 				}
 			}
 			
-			// Resto de casillas hasta completar las 200 (total 121, ya que hasta ahora van 79)			
+			// Resto de casillas hasta completar las 200 (total 120, ya que hasta ahora van 80)			
 			,(wr, mod) -> {
-				for (int i=1;i<=121;i++)
+				for (int i=1;i<=120;i++)
 					wr.append("000" + AonFiscalFileUtils.signedSpace(0.0,18));
 			}
 			

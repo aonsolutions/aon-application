@@ -121,7 +121,10 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void cleanInfoPanel() {
-			Model303.this.cleanInfoPanel(); 
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+			}
 		}
 		
 		@Override
@@ -255,13 +258,6 @@ public class Model303 extends MainEntryPoint {
 						aonLayout.showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 					}
 				});
-	}
-
-	private void cleanInfoPanel() {
-		Widget w = breakdownPanel.getWidget();
-		if (w != null) {
-			breakdownPanel.remove( breakdownPanel.getWidget() ); 
-		}
 	}
 
 	private void showNewDeclarationPanel(Mod303 m303) {
