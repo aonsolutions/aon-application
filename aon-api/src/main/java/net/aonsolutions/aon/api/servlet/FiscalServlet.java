@@ -54,7 +54,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API FISCAL SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req);
+			AonApiData api = initialize(req, false);
 			if ( AonStringUtils.endsWith(api.getPath(), "/models") ) {
 				response(req, resp, getFiscalModels(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {

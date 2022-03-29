@@ -338,7 +338,8 @@ public class ContractServlet extends AonApiHttpServlet {
 				.setLogin(api.getUser().getLogin())
 				.setOs(new FileOutputStream(file))
 				.setEnterpriseId(company.getId())
-				.setWorkplaceId(workplaceId);
+				.setWorkplaceId(workplaceId)
+				.setExcelType(excelType);
 		if(!api.getData().optString("endDate").isEmpty()) {
 			Date endDate = Toolkit.parseDate(api.getData().optString("endDate"), "yyyy-MM-dd");
 			
