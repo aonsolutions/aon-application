@@ -447,9 +447,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) {
+	public void getEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getEmployeeSSPECs(domain, user, contractId, new AsyncCallbackWrapper<List<SSPECData>>(callback));
+	}
+	
+	@Override
+	public void syncEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.syncEmployeeSSPECs(domain, user, contractId, new AsyncCallbackWrapper<List<SSPECData>>(callback));
 	}
 
 	@Override
@@ -962,4 +968,5 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getAgreementsClean(domainName, cleanType, asyncCallback);
 	}
+
 }
