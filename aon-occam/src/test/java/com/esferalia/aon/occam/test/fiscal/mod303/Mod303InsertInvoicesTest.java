@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.test.fiscal.mod303;
 import java.time.LocalDate;
 import java.util.stream.IntStream;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
@@ -22,6 +23,11 @@ public class Mod303InsertInvoicesTest extends AbstractOccamTest {
 			.map( params -> InvoiceFaker.getRandom(params))
 			.map(inv -> AON.insertInvoice(getOccam(),inv))
 			.forEach(inv -> System.out.println( "\t\t Invoice inserted "  +inv.getId()));
+
+		Assert.assertTrue( AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
+				.findFirst()
+				.isPresent()
+			);
 	}
 
 }

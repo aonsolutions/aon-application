@@ -23,22 +23,22 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod303DeleteTest.class,
 	VatContextJSONTest.class,
 	
-//	Mod303InsertInvoicesTest.class,
+	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyTest.class,
 	
-//	Mod303InsertInvoicesTest.class,
+	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyComplementaryTest.class,
 	
-//	Mod303InsertInvoicesTest.class,
+	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyReplacementTest.class,
 	
-//	Mod303InsertInvoicesTest.class,
+	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyTest.class,
 	
-//	Mod303InsertInvoicesTest.class,
+	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyComplementaryTest.class,
 	
-//	Mod303InsertInvoicesTest.class,
+	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyReplacementTest.class,
 	
 	Mod303CheckInsertedTest.class,

@@ -33,6 +33,10 @@ import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C029;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C030;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C031;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C032;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C051;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C052;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C053;
+import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C054;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C035;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C039;
 import static com.esferalia.aon.occam.api.model.type.Mod303Key.GP_C040;
@@ -97,9 +101,16 @@ public enum Model3032017GIPUZKOAPrintScript implements IModelScript<Mod303Key> {
 	,ADC01 (GP_C030.getDescription() 	,new Mod303Key[]{GP_C030	,null		,null})
 	,ADC02 (GP_C031.getDescription() 	,new Mod303Key[]{GP_C031	,null		,null})
 	,ADC03 (GP_C032.getDescription() 	,new Mod303Key[]{GP_C032	,null		,null})
-	,ADC04 ("Exclusivamente para sujetos pasivos en R\u00E9gimen especial del criterio de caja y para",null)
-	,ADC05 (getDescription(GP_C047)		,new Mod303Key[]{GP_C047	,null		,GP_C048})	
-	,ADC06 (getDescription(GP_C049)		,new Mod303Key[]{GP_C049	,null		,GP_C050})
+	
+	,ADC04 (GP_C051.getDescription() 	,new Mod303Key[]{GP_C051	,null		,null})
+	,ADC05 (GP_C052.getDescription() 	,new Mod303Key[]{GP_C052	,null		,null})
+	,ADC06 (GP_C053.getDescription() 	,new Mod303Key[]{GP_C053	,null		,null})
+	,ADC07 (GP_C054.getDescription() 	,new Mod303Key[]{GP_C054	,null		,null})
+	
+	
+	,ADC08 ("Exclusivamente para sujetos pasivos en R\u00E9gimen especial del criterio de caja y para",null)
+	,ADC09 (getDescription(GP_C047)		,new Mod303Key[]{GP_C047	,null		,GP_C048})	
+	,ADC10 (getDescription(GP_C049)		,new Mod303Key[]{GP_C049	,null		,GP_C050})
 	
 	;
 	
