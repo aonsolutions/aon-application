@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -150,8 +149,9 @@ public class MultipleDownloadServlet extends HttpServlet{
 		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
 		LinkedList<File> list = new LinkedList<>();
 		
-		InvoiceStatus st = getInvoiceStatus(json.optString("status"));
-    	if(InvoiceStatus.SCORED.equals(st) || InvoiceStatus.PENDING.equals(st)) {
+		String status = JsonUtils.getString(json, IJsonNames.STATUS);
+		
+		if(!AonStringUtils.isBlank(status) && !isRawdoc(status)) {
     		ids.stream().forEach(id ->{
     			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),  f -> f.getAttachModuleProperty().in(idsArray)
         				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE);
@@ -192,7 +192,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 					e.printStackTrace();
 				}
     		});
-    	} else { 
+    	} else if(!AonStringUtils.isBlank(status) && isRawdoc(status)) { 
     		AON.getRawdocFullStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().in(idsArray)).forEach(r -> {
     			JSONObject data = new JSONObject(r.getJson());
     			String name = data.opt("reference") != null && !AonStringUtils.isBlank(data.optString("reference"))
@@ -266,19 +266,12 @@ public class MultipleDownloadServlet extends HttpServlet{
 		
 		return list;
 	}
-	
-	private static InvoiceStatus getInvoiceStatus(String status) {
-		InvoiceStatus st = InvoiceStatus.safeValueOf(status);
-		if(st == null) {
-			if("inbox".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status)
-					|| "verified".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.PENDING;
-			} else if("accepted".equalsIgnoreCase(status) || "scored".equalsIgnoreCase(status) || "accounting".equalsIgnoreCase(status)) {
-				st = InvoiceStatus.SCORED;
-			} 
-		}
-		return st;
+	private static boolean isRawdoc(String status) {
+		return "inbox".equalsIgnoreCase(status)
+			|| "draft".equalsIgnoreCase(status) 
+			||	"rejected".equalsIgnoreCase(status);
 	}
+
 	
 	public static LinkedList<Integer> toList(JSONArray array) {
 	    if(array==null || array.isEmpty())
