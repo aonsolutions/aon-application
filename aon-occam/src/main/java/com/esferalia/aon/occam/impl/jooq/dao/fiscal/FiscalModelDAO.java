@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
@@ -10,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -34,6 +36,8 @@ import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -50,11 +54,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 
 public class FiscalModelDAO {
@@ -618,5 +624,22 @@ public class FiscalModelDAO {
 				.stream()
 				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new));
 	}
+	
+	public static HashMap<Integer,LinkedList<FiscalModel>> getInvoicesModels(AONContext ctx,InvoiceFilter filter) {
+		ctx.checkRead();
+		return InvoiceDAO.getInvoiceStream(ctx, filter)
+			.flatMap(inv -> getSelect(ctx)
+				.leftOuterJoin(ALCATRAZ).on(ALCATRAZ.FS_MODEL.eq(FS_MODEL.ID))
+				.where(ALCATRAZ.INVOICE.eq(inv.getId()))
+				.fetch()
+				.stream()
+				.map(rec -> new Pair<Invoice,FiscalModel>(inv, new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new) )))
+			.collect(Collectors.groupingBy(
+				pair -> pair.getLeft().getId()
+				, HashMap<Integer, LinkedList<FiscalModel>>::new
+				, Collectors.mapping(Pair::getRight, Collectors.toCollection(LinkedList<FiscalModel>::new))))
+		;
+	}  
+	
 	
 }

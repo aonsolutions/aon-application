@@ -1,12 +1,16 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -988,6 +992,12 @@ public class FISCAL {
 			} finally {
 				if (ctx != null)
 					ctx.close();
+			}
+		}
+
+		public static HashMap<Integer, LinkedList<FiscalModel>> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
+			try (AONContext ctx = AONContext.getAONContext(occam)) {
+				return getFiscal().getInvoicesModels(ctx, params);
 			}
 		}
 		

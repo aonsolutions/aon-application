@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
@@ -10,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -544,5 +546,13 @@ public class FiscalImpl implements IFiscal {
 					,domain
 					,params);
 		}
-		
+
+		@Override
+		public HashMap<Integer, LinkedList<FiscalModel>> getInvoicesModels(AONContext ctx, InvoiceModelReportParams params) {
+			return com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO.getInvoicesModels(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getStartIssueDateProperty().ge(params.getFromDate())) 
+				 .and(p.getEndIssueDateProperty().le(params.getToDate()))
+				);
+		}
 }

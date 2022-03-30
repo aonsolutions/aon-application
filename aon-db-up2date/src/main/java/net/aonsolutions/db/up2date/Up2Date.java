@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.Mod3032022AlcatrazBind;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod303Result;
 import net.aonsolutions.db.up2date.payroll.AgreementClean;
 import net.aonsolutions.db.up2date.payroll.CertificatesClean;
@@ -215,7 +216,9 @@ public class Up2Date {
 //    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY,
 //    		AgreementClean.AGREEMENTCLEAN,
 //			CertificatesClean.CERTIFICATESCLEAN
-    		RefreshMod303Result.REFRESH_MOD303_RESULT
+    		
+    		RefreshMod303Result.REFRESH_MOD303_RESULT,
+    		Mod3032022AlcatrazBind.MOD303_2022_ALCATRAZ_BIND
     };
     
 
