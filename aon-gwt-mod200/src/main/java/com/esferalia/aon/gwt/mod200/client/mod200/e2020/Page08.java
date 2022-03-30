@@ -9,19 +9,15 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020CorrectionKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Page08 extends PageAbs {
 	
-	interface Page8Binder extends
-			UiBinder<Widget, Page08> {
-	}
+//	interface Page8Binder extends
+//			UiBinder<Widget, Page08> {
+//	}
 	
 	private static final String[] HEADERS = new String[]{"Detalle de las Correcciones"
 			,"Aumentos"
@@ -62,152 +58,224 @@ public class Page08 extends PageAbs {
 		}
 	}
 	
-	private static final Page8Binder page8Binder = GWT
-			.create(Page8Binder.class);
+//	private static final Page8Binder page8Binder = GWT
+//			.create(Page8Binder.class);
+//	
+//	@UiField(provided = true)
+//	FlexTable table;
+//	@UiField(provided = true)
+//	FlexTable table1;
 	
-	@UiField(provided = true)
-	FlexTable table;
-	@UiField(provided = true)
-	FlexTable table1;
-	
-	ListBox opeVol;
+	private ListBox opeVol;
 
 	public Page08( Model200PageCallback callback ) {
 		super(callback);
-		table = new FlexTable();
-		table1 = new FlexTable();
-		Widget ui = page8Binder.createAndBindUi(this);
-		initWidget(ui);
+//		table = new FlexTable();
+//		table1 = new FlexTable();
+//		Widget ui = page8Binder.createAndBindUi(this);
+//		initWidget(ui);
+		addBasePanel();
 		initializeTable();
 	}
 
 	@Override
 	protected void initializeTable() {
-		table.setWidth("100%");
-		table.setCellSpacing(0);
 		
-		table1.setWidth("100%");
-		table1.setCellSpacing(0);
+		basePanel.clear();
+		
+		basePanel.add(getTitle(AON.MSG.liquidacionI()));
+		
+//		FlexTable table = new FlexTable();
+//		table.setWidth("100%");
+//		table.setCellSpacing(0);
+		
+//		FlexTable table1 = new FlexTable();
+//		table1.setWidth("100%");
+//		table1.setCellSpacing(0);
 
 		int row = 0;
 		
-		Label desc = new Label(AON.MSG.liquidation1Label1());
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(row, 0, desc);
-		table.getFlexCellFormatter().setColSpan(row, 0, 3);
-		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-		++row;
+//		Label desc = new Label(AON.MSG.liquidation1Label1());
+//		desc.setStyleName(AON.AON_CSS.aonBold());
+//		table.setWidget(row, 0, desc);
+//		table.getFlexCellFormatter().setColSpan(row, 0, 3);
+//		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
+//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+//		++row;
+//		++row;
+		basePanel.add(getSubtitle(AON.MSG.liquidation1Label1()));
+		
+//		FlexTable tab1 = new FlexTable();
+//		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab1.addStyleName(AON.CSS.aonMargin());
+//		tab1.setCellSpacing(1);
+//		basePanel.add(tab1);
+		FlexTable tab1 = addTable();
+		tab1.getFlexCellFormatter().setColSpan(row, 0, 3);
+		
+		paintKeyDescription(tab1, Mod2002020Key.LQ500, row, 0);
+		paintEmptyCell(tab1, row, 1);
+		paintEmptyCell(tab1, row, 2);
+		paintKeyField(tab1, Mod2002020Key.LQ500, row, 3);
 		++row;
 		
-		paintKeyDescription(table, Mod2002020Key.LQ500, row, 0);
-		paintEmptyCell(table, row, 1);
-		paintKeyField(table, Mod2002020Key.LQ500, row, 2);
+		paintEmptyCell(tab1, row, 0);
+		paintTitle(tab1, HEADERS[1], row, 1);
+		paintTitle(tab1, HEADERS[2], row, 2);
+		paintEmptyCell(tab1, row, 3);
 		++row;
 
-		paintKeyDescription(table, Mod2002020Key.LQ301, row, 0);
-		paintKeyField(table, Mod2002020Key.LQ301, row, 1);
-		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
-		paintKeyField(table, Mod2002020Key.LQ302, row, 2);
-		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
+		paintKeyDescription(tab1, Mod2002020Key.LQ301, row, 0);
+		paintKeyField(tab1, Mod2002020Key.LQ301, row, 1);
+//		tab1.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
+		paintKeyField(tab1, Mod2002020Key.LQ302, row, 2);
+//		tab1.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
+		paintEmptyCell(tab1, row, 3);
 		++row;
 
-		paintKeyDescription(table, Mod2002020Key.LQ501, row, 0);
-		paintEmptyCell(table, row, 1);
-		paintKeyField(table, Mod2002020Key.LQ501, row, 2);
+		tab1.getFlexCellFormatter().setColSpan(row, 0, 3);
+		paintKeyDescription(tab1, Mod2002020Key.LQ501, row, 0);
+		paintEmptyCell(tab1, row, 1);
+		paintEmptyCell(tab1, row, 2);
+		paintKeyField(tab1, Mod2002020Key.LQ501, row, 3);
 		++row;
 		
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002020Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002020Key.C0010) ) {
-			paintKeyDescription(table, Mod2002020Key.LQ1230, row, 0);
-			paintKeyField(table, Mod2002020Key.LQ1230, row, 1);
-			table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
-			paintKeyField(table, Mod2002020Key.LQ1231, row, 2);
-			table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
+			paintEmptyCell(tab1, row, 0);
+			paintTitle(tab1, HEADERS[1], row, 1);
+			paintTitle(tab1, HEADERS[2], row, 2);
+			paintEmptyCell(tab1, row, 3);
+			++row;
+			paintKeyDescription(tab1, Mod2002020Key.LQ1230, row, 0);
+			paintKeyField(tab1, Mod2002020Key.LQ1230, row, 1);
+//			tab1.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
+			paintKeyField(tab1, Mod2002020Key.LQ1231, row, 2);
+//			tab1.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
+			paintEmptyCell(tab1, row, 3);
 			++row;
 		}
 		
 		// Volumen de operaciones
-		desc = new Label("Cifra de negocios");
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
-		table.setWidget(row, 0, desc);
-		++row;
+//		desc = new Label("Cifra de negocios");
+//		desc.setStyleName(AON.AON_CSS.aonBold());
+//		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
+//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
+//		table.setWidget(row, 0, desc);
+//		++row;
+		basePanel.add(getSubtitle("Cifra de negocios"));
 		
-		desc = new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo");
-		table.setWidget(row, 0, desc);
-		++row;
+//		desc = new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo");
+//		table.setWidget(row, 0, desc);
+//		++row;
+		
+		FlexTable tableVol = addTable();
+		
+		//basePanel.add(new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo"));
+		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo"));
 		
 		opeVol = new ListBox();
 		opeVol.addItem("0 - No consta");
 		opeVol.addItem("1 - Inferior a 20 millones de euros");
 		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
 		opeVol.addItem("3 - Al menos 60 millones de euros");
-		table.setWidget(row, 0, opeVol);
-		++row;
+		opeVol.addChangeHandler( event -> {
+			callback.markAsDirty();
+		});
+		
+		basePanel.add(opeVol);
+		tableVol.setWidget(1, 0, opeVol);
+//		++row;
 	
 		// Detalle de Correcciones 
-		desc = new Label(AON.MSG.liquidation1Label2());
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(row, 0, desc);
-		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
-		table.getFlexCellFormatter().setColSpan(row, 0, 0);
-		table.setWidget(row, 1, new Label(AON.MSG.increase()));		
-		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonTextUnderline());
-		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
-		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPaddingTop());
-		table.setWidget(row, 2, new Label(AON.MSG.decrease()));		
-		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonTextUnderline());
-		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
-		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
-		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonPaddingTop());
-		++row;
+//		desc = new Label(AON.MSG.liquidation1Label2());
+//		desc.setStyleName(AON.AON_CSS.aonBold());
+//		table.setWidget(row, 0, desc);
+//		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
+//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
+//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
+//		table.getFlexCellFormatter().setColSpan(row, 0, 0);
+		basePanel.add(getSubtitle(AON.MSG.liquidation1Label2()));
+		
+//		FlexTable tab2 = new FlexTable();
+//		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab2.addStyleName(AON.CSS.aonMargin());
+//		tab2.setCellSpacing(1);
+//		basePanel.add(tab2);
+		FlexTable tab2 = addTable();
+		
+//		table.setWidget(row, 1, new Label(AON.MSG.increase()));		
+//		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonTextUnderline());
+//		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
+//		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+//		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPaddingTop());
+//		table.setWidget(row, 2, new Label(AON.MSG.decrease()));		
+//		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonTextUnderline());
+//		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
+//		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+//		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonPaddingTop());
+//		++row;
+		
+		row = 0;
+		paintEmptyCell(tab2, row, 0);
+		paintTitle(tab2, HEADERS[1], row, 1);
+		paintTitle(tab2, HEADERS[2], row, 2);
+		row++;
 		
 		for (Mod2002020CorrectionKey ck : Mod2002020CorrectionKey.values()) {
-			paintDescription(table, ck.getDescription(), row,0,isTitle(ck.isIncreaseEnabled()?ck.getIncrease():ck.getDecrease()));
+			paintDescription(tab2, ck.getDescription(), row, 0, isTitle(ck.isIncreaseEnabled()?ck.getIncrease():ck.getDecrease()));
 			if (ck.isIncreaseEnabled()) {
-				paintKeyField(table, ck.getIncrease(), row, 1);		
+				paintKeyField(tab2, ck.getIncrease(), row, 1);		
 			} else {
-				paintEmptyCell(table, row, 1);		
+				paintEmptyCell(tab2, row, 1);		
 			}
 			if (ck.isDecreaseEnabled()) {
-				paintKeyField(table, ck.getDecrease(), row, 2);		
+				paintKeyField(tab2, ck.getDecrease(), row, 2);		
 			} else {
-				paintEmptyCell(table, row, 2);		
+				paintEmptyCell(tab2, row, 2);		
 			}
 			++row; 
 			
 			// Detalle de determinadas casillas de correcciones al resultado contable
 			if (ck.getDetail() != null) 
-				row = paintKeyBreakdownLink(table,row,null,ck.getDetail(),HEADERS);
+				row = paintKeyBreakdownLink(tab2, row, null, ck.getDetail(), HEADERS);
 		}
 		
-		paintKeyDescription(table, Mod2002020Key.I0417, row, 0);
-		paintKeyField(table, Mod2002020Key.I0417, row, 1);
-		paintKeyField(table, Mod2002020Key.D0418, row, 2);
-		++row;
-
+		paintKeyDescription(tab2, Mod2002020Key.I0417, row, 0);
+		paintKeyField(tab2, Mod2002020Key.I0417, row, 1);
+		paintKeyField(tab2, Mod2002020Key.D0418, row, 2);
+//		++row;
+		
 		// Detalle de Correcciones (Totales)
+		basePanel.add(getSubtitle(AON.MSG.liquidation1Label2()));
+		
+//		FlexTable tab3 = new FlexTable();
+//		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab3.addStyleName(AON.CSS.aonMargin());
+//		tab3.setCellSpacing(0);
+//		basePanel.add(tab3);
+		FlexTable tab3 = addTable();
+		
 		row = 0;
 		for (CorrectionKey ck : CorrectionKey.values()) {
-			if (row==0 || row==7) {
-				paintTitle(table1, HEADERS2[1], row, 1, false);
-				paintTitle(table1, HEADERS2[2], row, 2, false);
+			if (row==0 || row==7) {			 
+//				paintTitle(table1, HEADERS2[1], row, 1, false);
+//				paintTitle(table1, HEADERS2[2], row, 2, false);
+				paintTitle(tab3, HEADERS2[1], row, 1);
+				paintTitle(tab3, HEADERS2[2], row, 2);
 				++row;
 			} else if (row==2) {
-				paintTitle(table1, HEADERS[1], row, 1, false);
-				paintTitle(table1, HEADERS[2], row, 2, false);
+//				paintTitle(table1, HEADERS[1], row, 1, false);
+//				paintTitle(table1, HEADERS[2], row, 2, false);
+				paintTitle(tab3, HEADERS[1], row, 1);
+				paintTitle(tab3, HEADERS[2], row, 2);
 				++row;
 			}
-			paintDescription(table1, ck.getDescription(), row, 0, ck.isTitle());
+			paintDescription(tab3, ck.getDescription(), row, 0, ck.isTitle());
 			int col = 1; 
 			for (Mod2002020Key key : ck.getKeys() ) {
 				if (key != null) {
-					paintKeyField(table1,key,row,col);	
+					paintKeyField(tab3,key,row,col);	
 				}
 				++col;
 			}
@@ -231,6 +299,15 @@ public class Page08 extends PageAbs {
 			index = dv.getValue().intValue();
 		}
 		opeVol.setSelectedIndex(index);
+	}
+	
+	private FlexTable addTable() {
+		FlexTable tab = new FlexTable();
+		tab.setCellSpacing(0);
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonMargin());
+		basePanel.add(tab);
+		return tab;
 	}
 	
 }

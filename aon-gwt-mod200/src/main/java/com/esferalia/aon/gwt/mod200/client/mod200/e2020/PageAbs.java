@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+//import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
+//import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+//import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
@@ -28,19 +30,18 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.SafeHtmlRenderer;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public abstract class PageAbs extends ResizeComposite {
-//public abstract class PageAbs extends SimpleLayoutPanel {
 
 	interface DeleteButtonTemplate extends SafeHtmlTemplates {
 		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
@@ -98,12 +99,12 @@ public abstract class PageAbs extends ResizeComposite {
 		
 	}
 
-	private HashMap<IMod200Key, DoubleBox> inputs = new HashMap<IMod200Key, DoubleBox>();
+	private HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
 	private HashMap<IMod200Key, AonBoxLabel> labels = new HashMap<IMod200Key, AonBoxLabel>();
 
 //	@UiField
 //	Panel basePanel;
-
+	protected FlowPanel basePanel;
 	protected Model200PageCallback callback;
 	
 	public PageAbs( Model200PageCallback callback) {
@@ -115,7 +116,7 @@ public abstract class PageAbs extends ResizeComposite {
 				for ( IMod200Key key : inputs.keySet() ) {
 					DoubleVariable2020 var = mod200.getDraftMap().get(key);
 					if (var != null && !var.isChangedByUser()) {
-						DoubleBox input = inputs.get(key);
+						AonDoubleBox input = inputs.get(key);
 						input.setValue(var.getValue(),false,true); ;
 						input.addStyleName(AON.AON_CSS.aonChanged());
 					}
@@ -127,7 +128,7 @@ public abstract class PageAbs extends ResizeComposite {
 		});
 	}
 	
-	public Map<IMod200Key, DoubleBox> getInputs() {
+	public Map<IMod200Key, AonDoubleBox> getInputs() {
 		return inputs;
 	}
 	public Map<IMod200Key, AonBoxLabel> getLabels() {
@@ -141,7 +142,7 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintEmptyCell(FlexTable tab, int row,int col) {
-		tab.setWidget(row, col, new FlowPanel());
+		tab.setWidget(row, col, new FlowPanel());		
 	}
 	
 	protected void paintKeyDescription(FlexTable tab, Mod2002020Key key, int row,int col) {
@@ -163,17 +164,24 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
 	}
 
-	protected void paintTitle(FlexTable tab, String description, int row,int col, boolean title) {
+//	protected void paintTitle(FlexTable tab, String description, int row, int col, boolean title) {
+	protected void paintTitle(FlexTable tab, String description, int row, int col) {
 		Label desc = new Label( description);
 		desc.setStyleName(AON.AON_CSS.aonBold());
+		desc.addStyleName(AON.AON_CSS.aonTextCenter());
+		desc.addStyleName(AON.AON_CSS.aonBorderBottom());		
 		tab.setWidget(row, col, desc);
-		tab.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextUnderline());
-		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
-		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+//		tab.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextUnderline());
+//		tab.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
+//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonMargin());
 	}
+	
 	protected void paintKeyField(FlexTable tab,final Mod2002020Key key,int row, int col) {
-		paintKeyField(tab, key, row, col, DoubleBox.VISIBLE_LENGTH);
+		paintKeyField(tab, key, row, col, AonDoubleBox.VISIBLE_LENGTH);
 	}
+	
 	protected void paintKeyField(FlexTable tab,final IMod200Key k,int row, int col, int fieldLength) {
 		boolean disabled = isDisabled(k);
 		
@@ -191,7 +199,7 @@ public abstract class PageAbs extends ResizeComposite {
 			panel.add(code);
 		}
 
-		final DoubleBox text = new DoubleBox(fieldLength);
+		final AonDoubleBox text = new AonDoubleBox(fieldLength);
 		text.setResolver(resolver);
 		text.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -210,19 +218,19 @@ public abstract class PageAbs extends ResizeComposite {
 					// misma en 4 apartados, pero aqui se graba con 4 claves distintas, así que 
 					// si se modifica cualquiera de ellas, se hace que todas tengan el mismo valor
 					if (k==Mod2002020Key.BN103A) {						
-						DoubleBox db = getInputs().get(Mod2002020Key.BN103B);
+						AonDoubleBox db = getInputs().get(Mod2002020Key.BN103B);
 						db.setValue(d,true);
 					}
 					else if (k==Mod2002020Key.BN103B) {						
-						DoubleBox db = getInputs().get(Mod2002020Key.BN103C);
+						AonDoubleBox db = getInputs().get(Mod2002020Key.BN103C);
 						db.setValue(d,true);						
 					}
 					else if (k==Mod2002020Key.BN103C) {						
-						DoubleBox db = getInputs().get(Mod2002020Key.BN103D);
+						AonDoubleBox db = getInputs().get(Mod2002020Key.BN103D);
 						db.setValue(d,true);
 					}
 					else if (k==Mod2002020Key.BN103D) {						
-						DoubleBox db = getInputs().get(Mod2002020Key.BN103A);
+						AonDoubleBox db = getInputs().get(Mod2002020Key.BN103A);
 						db.setValue(d,true);
 					}
 					
@@ -402,7 +410,7 @@ public abstract class PageAbs extends ResizeComposite {
 	protected void dump() {
 		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
 			if (inputs.containsKey(key)) {
-				DoubleBox input = inputs.get(key);
+				AonDoubleBox input = inputs.get(key);
 				DoubleVariable2020 var = callback.getMod200Object().getMod200().getDraftMap().get(key);
 				input.setValue(var.getValue()); ;
 				input.addStyleName(AON.AON_CSS.aonChanged());
@@ -436,5 +444,55 @@ public abstract class PageAbs extends ResizeComposite {
 		subtitle.addStyleName(AON.CSS.aonBorderBottom());
 		return subtitle;
 	}
+	
+	protected void addBasePanel() {
+		ScrollPanel scroll = new ScrollPanel();
+		basePanel = new FlowPanel();
+		scroll.add(basePanel);
+		initWidget(scroll);		
+	}
+	
+	private FlexTable addTable() {
+		FlexTable table = new FlexTable();
+		table.setCellSpacing(0);
+		table.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table.addStyleName(AON.CSS.aonMargin());
+//		table.addStyleName(AON.CSS.aonBlockCenter());
+		
+		ColumnFormatter cf = table.getColumnFormatter();
+		cf.setWidth(1, "200px");
+		
+		return table;
+	}
+	
+	protected void addTable(String label, Mod2002020Key[] keys) {
+
+		if (AonStringUtils.isNotBlank(label)) {
+			basePanel.add(getTitle(label));			
+		}
+		
+		FlexTable table = addTable();
+		basePanel.add(table);
+
+		int row = 0;
+		for (Mod2002020Key key : keys) {
+			if (callback.getMod200Object().isVisible(key) ) {
+				row = paintKey(table, key, row);
+			}
+		}
+		
+	}
+
+	// FALTA - USAR PAINTTITLE ?? 
+//	protected Label getColumnHeader(String text) {
+//		Label label = new Label(text);
+////		subsubtitle.setStyleName(AON.CSS.aonMarginTop());
+//		label.addStyleName(AON.CSS.aonBold());
+//		label.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		label.addStyleName(AON.CSS.aonBlockCenter());
+//		label.addStyleName(AON.CSS.aonBorderBottom());
+//		return label;
+//	}
+	
 	
 }

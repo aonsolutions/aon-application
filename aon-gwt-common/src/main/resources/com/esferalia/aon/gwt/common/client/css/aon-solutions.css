@@ -485,6 +485,7 @@
 .aon_width_200 { width: 200px; }
 .aon_width_300 { width: 300px; }
 .aon_width_400 { width: 400px; }
+.aon_width_600 { width: 600px; }
 
 .aon_fixed_font {
 	font-family: Fixed, monospace;

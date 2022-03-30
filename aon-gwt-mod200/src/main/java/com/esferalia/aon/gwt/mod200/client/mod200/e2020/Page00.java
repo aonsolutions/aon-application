@@ -38,7 +38,6 @@ import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class Page00 extends PageAbs {
 	
@@ -237,6 +236,8 @@ public class Page00 extends PageAbs {
 		
 //		Widget ui = page1Binder.createAndBindUi(this);
 //		initWidget(ui);
+		
+		addBasePanel();
 		
 		initializeTable();
 		
@@ -538,11 +539,11 @@ public class Page00 extends PageAbs {
 	
 	private void paint() {
 		
-		ScrollPanel scroll = new ScrollPanel();
-		FlowPanel basePanel = new FlowPanel();
-		scroll.add(basePanel);
-//		setWidget(scroll);
-		initWidget(scroll);
+//		ScrollPanel scroll = new ScrollPanel();
+//		FlowPanel basePanel = new FlowPanel();
+//		scroll.add(basePanel);
+////		setWidget(scroll);
+//		initWidget(scroll);
 		
 		// IDENTIFICACION 
 		

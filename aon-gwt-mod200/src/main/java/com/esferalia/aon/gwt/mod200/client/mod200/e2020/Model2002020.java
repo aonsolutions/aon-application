@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.mod200.client.AonFiscalModelHeader;
-import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
@@ -26,7 +25,6 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -607,7 +605,7 @@ public class Model2002020 extends DockLayoutPanel {
 		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(mod200);
 		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
 		addNorth(getToolbar(mod200), AonToolbar.HEIGTH);
-		addNorth(getDeclarationToolbarPanel(mod200), AonToolbar.HEIGTH);
+//		addNorth(getDeclarationToolbarPanel(mod200), AonToolbar.HEIGTH);
 		addWest(getLinksPanel(), 300);
 		add(pageContainer);		
 		
@@ -931,6 +929,18 @@ public class Model2002020 extends DockLayoutPanel {
 		
 		// FALTA - BOTON COMENTARIOS
 		// FALTA - BOTON AUDITORIA
+		
+		// Marca "Cambios sin guardar"
+		FlowPanel marksPanels = new FlowPanel();
+		marksPanels.setStyleName(AON.CSS.aonFlexBlock());
+		
+		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
+		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
+		dirtyLabel.setTitle("Cambios sin guardar");
+		styleDirtyLabel();
+		marksPanels.add(dirtyLabel);
+
+		toolbarPanel.getMessagePanel().add(marksPanels);		
 
 		toolbarPanel.add(diskForm);		
 		return toolbarPanel;
@@ -977,114 +987,114 @@ public class Model2002020 extends DockLayoutPanel {
 		return scrollPanel;
 	}
 	
-	private AonToolbar getDeclarationToolbarPanel(Mod2002020 mod200) {
-		AonToolbar decToolbar = new AonToolbar();
-		
-		// FALTA - LO DEL ESTADO AUN NO ESTÁ EN EL MODELO 200, ASI QUE POR AHORA NO SE PONEN LOS BOTONES QUE CAMBIAN EL ESTADO
-		
-//		AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
-//		markAsFinishedButton.setText(markAsFinishedButton.getTitle());
-//		markAsFinishedButton.setVisible(!getModel().isNew() &&
-//				(getModel().getStatus() == FiscalStatus.PENDING 
-//				|| getModel().getStatus() == FiscalStatus.MISSING));
-//		markAsFinishedButton.addClickHandler(event -> {
-//			markAsFinishedButton.setEnabled(false);
-//			MOD2002020_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.FINISHED, new AsyncCallback<Mod2002020>() {
-//				@Override
-//				public void onSuccess(Mod2002020 result) {
-//					getCallback().reload(result.getId());
-//				}
+//	private AonToolbar getDeclarationToolbarPanel(Mod2002020 mod200) {
+//		AonToolbar decToolbar = new AonToolbar();
+//		
+//		// FALTA - LO DEL ESTADO AUN NO ESTÁ EN EL MODELO 200, ASI QUE POR AHORA NO SE PONEN LOS BOTONES QUE CAMBIAN EL ESTADO
+//		
+////		AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
+////		markAsFinishedButton.setText(markAsFinishedButton.getTitle());
+////		markAsFinishedButton.setVisible(!getModel().isNew() &&
+////				(getModel().getStatus() == FiscalStatus.PENDING 
+////				|| getModel().getStatus() == FiscalStatus.MISSING));
+////		markAsFinishedButton.addClickHandler(event -> {
+////			markAsFinishedButton.setEnabled(false);
+////			MOD2002020_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.FINISHED, new AsyncCallback<Mod2002020>() {
+////				@Override
+////				public void onSuccess(Mod2002020 result) {
+////					getCallback().reload(result.getId());
+////				}
+////
+////				@Override
+////				public void onFailure(Throwable caught) {
+////					markAsFinishedButton.setEnabled(true);
+////					getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+////				}
+////			});
+////		});
+////		decToolbar.add(markAsFinishedButton);
 //
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					markAsFinishedButton.setEnabled(true);
-//					getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//				}
-//			});
-//		});
-//		decToolbar.add(markAsFinishedButton);
-
-//		AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
-//		markAsSentButton.setText(markAsSentButton.getTitle());
-//		markAsSentButton.setVisible(!getModel().isNew() && (getModel().isFinished()));		
-//		markAsSentButton.addClickHandler(event -> {
-//			markAsSentButton.setEnabled(false);
-//			MOD2002020_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.SENT, new AsyncCallback<Mod2002020>() {
-//				@Override
-//				public void onSuccess(Mod2002020 result) {
-//					getCallback().reload(result.getId());
-//				}
+////		AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
+////		markAsSentButton.setText(markAsSentButton.getTitle());
+////		markAsSentButton.setVisible(!getModel().isNew() && (getModel().isFinished()));		
+////		markAsSentButton.addClickHandler(event -> {
+////			markAsSentButton.setEnabled(false);
+////			MOD2002020_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.SENT, new AsyncCallback<Mod2002020>() {
+////				@Override
+////				public void onSuccess(Mod2002020 result) {
+////					getCallback().reload(result.getId());
+////				}
+////
+////				@Override
+////				public void onFailure(Throwable caught) {
+////					markAsSentButton.setEnabled(true);
+////					getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+////				}
+////			});
+////		});
+////		decToolbar.add(markAsSentButton);
+//		
+////		AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
+////		markAsPendingButton.setText(markAsPendingButton.getTitle());
+////		markAsPendingButton.setVisible(!getModel().isNew() 
+////				&& (getModel().isFinished() 
+////				|| getModel().getStatus() == FiscalStatus.BATCHED 
+////				|| getModel().isSent()));
+////		markAsPendingButton.addClickHandler(event -> {
+////			markAsPendingButton.setEnabled(false);
+////			MOD2002020_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.PENDING, new AsyncCallback<Mod2002020>() {
+////				@Override
+////				public void onSuccess(Mod2002020 result) {
+////					getCallback().reload(result.getId());
+////				}
+////
+////				@Override
+////				public void onFailure(Throwable caught) {
+////					markAsPendingButton.setEnabled(true);
+////					getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+////				}
+////			});
+////		});
+////		decToolbar.add(markAsPendingButton);
 //
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					markAsSentButton.setEnabled(true);
-//					getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//				}
-//			});
-//		});
-//		decToolbar.add(markAsSentButton);
-		
-//		AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
-//		markAsPendingButton.setText(markAsPendingButton.getTitle());
-//		markAsPendingButton.setVisible(!getModel().isNew() 
-//				&& (getModel().isFinished() 
-//				|| getModel().getStatus() == FiscalStatus.BATCHED 
-//				|| getModel().isSent()));
-//		markAsPendingButton.addClickHandler(event -> {
-//			markAsPendingButton.setEnabled(false);
-//			MOD2002020_SERVICE.changeStatus(getCallback().getOptions().getOccam(),getModel(), FiscalStatus.PENDING, new AsyncCallback<Mod2002020>() {
-//				@Override
-//				public void onSuccess(Mod2002020 result) {
-//					getCallback().reload(result.getId());
-//				}
+//		FlowPanel marksPanels = new FlowPanel();
+//		marksPanels.setStyleName(AON.CSS.aonFlexBlock());
 //
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					markAsPendingButton.setEnabled(true);
-//					getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//				}
-//			});
-//		});
-//		decToolbar.add(markAsPendingButton);
-
-		FlowPanel marksPanels = new FlowPanel();
-		marksPanels.setStyleName(AON.CSS.aonFlexBlock());
-
-		// LO DE COMPLEMENTARIA SE PUEDE VER EN LA PAGINA DE IDENTIFICACION ASI QUE TAMPOCO SE PONE
-		// ADEMAS SE PERMITE PONER O QUITAR LO DE LA COMPLEMENTARIA A DECISION DEL USUARIO
-//		InlineLabel replacedLabel = new InlineLabel();		
-//		if (getModel().isComplementary()) {
-//			replacedLabel.setText(AON.MSG.complementary());
-//			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
-//			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
-//			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
-//		}
-//		marksPanels.add(replacedLabel);
-
-		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
-		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
-		dirtyLabel.setTitle("Cambios sin guardar");
-		styleDirtyLabel();
-		marksPanels.add(dirtyLabel);
-
-		decToolbar.getMessagePanel().add(marksPanels);
-		
-		// FALTA - LO DEL ESTADO NO SE USABA HASTA AHORA EN EL MODELO 200, O SEA QUE IGUAL AHORA NO SE DEBERIA PONER
-		// NADA AUN SI ESTA EN NULO... 
-		Label statusLabel = new Label();
-		statusLabel.setText(mod200.getStatus() == null?"PENDIENTE":mod200.getStatus().getName());
-		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( mod200.getStatus() ));
-		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( mod200.getStatus() ));
-		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
-		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
-		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
-		statusLabel.addStyleName(AON.CSS.aonTextCenter());
-		statusLabel.addStyleName(AON.CSS.aonBorder());
-		statusLabel.addStyleName(AON.CSS.aonNowrap());
-		
-		decToolbar.setTitle(statusLabel);
-		return decToolbar;
-	}
+//		// LO DE COMPLEMENTARIA SE PUEDE VER EN LA PAGINA DE IDENTIFICACION ASI QUE TAMPOCO SE PONE
+//		// ADEMAS SE PERMITE PONER O QUITAR LO DE LA COMPLEMENTARIA A DECISION DEL USUARIO
+////		InlineLabel replacedLabel = new InlineLabel();		
+////		if (getModel().isComplementary()) {
+////			replacedLabel.setText(AON.MSG.complementary());
+////			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
+////			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
+////			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+////		}
+////		marksPanels.add(replacedLabel);
+//
+//		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
+//		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
+//		dirtyLabel.setTitle("Cambios sin guardar");
+//		styleDirtyLabel();
+//		marksPanels.add(dirtyLabel);
+//
+//		decToolbar.getMessagePanel().add(marksPanels);
+//		
+//		// FALTA - LO DEL ESTADO NO SE USABA HASTA AHORA EN EL MODELO 200, O SEA QUE IGUAL AHORA NO SE DEBERIA PONER
+//		// NADA AUN SI ESTA EN NULO... 
+//		Label statusLabel = new Label();
+//		statusLabel.setText(mod200.getStatus() == null?"PENDIENTE":mod200.getStatus().getName());
+//		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( mod200.getStatus() ));
+//		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( mod200.getStatus() ));
+//		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
+//		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
+//		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
+//		statusLabel.addStyleName(AON.CSS.aonTextCenter());
+//		statusLabel.addStyleName(AON.CSS.aonBorder());
+//		statusLabel.addStyleName(AON.CSS.aonNowrap());
+//		
+//		decToolbar.setTitle(statusLabel);
+//		return decToolbar;
+//	}
 	
 	protected void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());

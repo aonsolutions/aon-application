@@ -713,8 +713,7 @@ public class Mod2002020Compute {
 	static {
 		
 		// Carácter 0027, base imponible negativa o cero
-//		COMPUTE_EXPRESSION_MAP.put(Mod2002020Key.C0027,"computeC0027()");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002020Key.C0027,"round(LQ552)>=0.0?0.0:1.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002020Key.C0027,"computeC0027()");
 		
 	}
 

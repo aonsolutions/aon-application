@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -114,7 +115,7 @@ public class Page20 extends PageAbs {
 		FlowPanel panel = new FlowPanel();
 		BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 		panel.add(code);
-		DoubleBox text = new DoubleBox();
+		AonDoubleBox text = new AonDoubleBox();
 		text.setValue(callback.getMod200Object().getDoubleValue(key));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
@@ -134,7 +135,7 @@ public class Page20 extends PageAbs {
 		panel = new FlowPanel();
 		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 		panel.add(code);
-		text = new DoubleBox();
+		text = new AonDoubleBox();
 		text.setValue(callback.getMod200Object().getDoubleValue(key));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
@@ -154,7 +155,7 @@ public class Page20 extends PageAbs {
 		panel = new FlowPanel();
 		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 		panel.add(code);
-		text = new DoubleBox();
+		text = new AonDoubleBox();
 		text.setValue(callback.getMod200Object().getDoubleValue(key));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());

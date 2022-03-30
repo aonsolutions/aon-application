@@ -22,9 +22,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class Page01 extends PageAbs {
 
@@ -73,7 +71,7 @@ public class Page01 extends PageAbs {
 //	@UiField
 //	Button newAdministrator;
 	
-	private FlowPanel basePanel;	
+//	private FlowPanel basePanel;	
 
 	public Page01( Model200PageCallback callback ) {
 		super(callback);
@@ -106,10 +104,12 @@ public class Page01 extends PageAbs {
 //		Widget ui = page1Binder.createAndBindUi(this);
 //		initWidget(ui);
 		
-		ScrollPanel scroll = new ScrollPanel();
-		basePanel = new FlowPanel();
-		scroll.add(basePanel);
-		initWidget(scroll);
+//		ScrollPanel scroll = new ScrollPanel();
+//		basePanel = new FlowPanel();
+//		scroll.add(basePanel);
+//		initWidget(scroll);
+		
+		addBasePanel();
 		
 		initializeTable();
 		paint();
