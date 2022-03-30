@@ -89,7 +89,7 @@ public class JooqContractPDF {
 				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
 				Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
 				
-				Map<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, domainId, contractId));
+				Map<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
 				
 				FormativeLevel formativeLevel = new FormativeLevel();
 				contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
