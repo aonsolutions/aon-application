@@ -115,6 +115,12 @@ public class EmployeeParse {
 			@Override public void visitSituation(String situaction) {}
 			@Override public void visitReducingcoefic(String reducingCoefic) {}
 			@Override public void visitProfesCat(String profesCat) {}
+
+			@Override
+			public void visitCollective(String collective) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
 		return employee;
@@ -140,7 +146,6 @@ public class EmployeeParse {
 		employee.getRlce(start).ifPresent(builder::setRlce);
 		employee.getFactor(start).ifPresent(builder::setFactor);
 
-		//setMdctz(md_ctz) //FALTA MODALIDAD
 		return builder.build();
 	}
 	
