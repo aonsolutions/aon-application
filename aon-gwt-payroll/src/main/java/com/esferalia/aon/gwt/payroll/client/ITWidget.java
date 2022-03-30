@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
@@ -24,7 +25,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -242,7 +242,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 	private boolean minimizedByUser;
 
-	private AonMinimizePanel footPanel;
+	private MinimizePanel footPanel;
 
 	private FlowPanel sessionLog;
 	private ResultsPanel resultsPanel;
@@ -1478,17 +1478,7 @@ public abstract class ITWidget extends ResizeComposite {
 						LOGGER.info("error run");
 					});
 				}
-				
-//				@Override
-//				protected void collapse(boolean collapse) {
-//					if(collapse) {
-//						minimizedByUser = true;
-//						closeFootPanel();
-//					} else {
-//						showFootPanel();
-//					}
-//				}
-//				
+
 				@Override
 				public void up2DateEnterprise() {
 					this.setUp2DateEnterprise();
@@ -1906,11 +1896,11 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private void initFootPanel() {
 		resultsPanel = new ResultsPanel();
-		footPanel = new AonMinimizePanel();
-		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
-		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
+
+		footPanel = new MinimizePanel();
 		footPanel.setStyleName(AON.CSS.aonSelector());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
+	
 		tabLayout.setWidth("100%");
 	
 		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
@@ -1920,9 +1910,8 @@ public abstract class ITWidget extends ResizeComposite {
 		tabLayout.setAnimationDuration(300);
 
 		splitLayoutPanel.addSouth(footPanel, 30);
-		
-		footPanel.clearButtons();
-		footPanel.addButtonLess();
+//		footPanel.clearButtons();
+//		footPanel.addButtonLess();
 	}
 
 	
@@ -2003,5 +1992,12 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
+
+	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, MinimizePanel footPanel) {
+		this.splitLayoutPanel.remove(this.footPanel);
+		this.footPanel = footPanel;
+		this.tabLayout = tabLayout;
+		this.splitLayoutPanel = splitLayoutPanel;
+	}
 
 }

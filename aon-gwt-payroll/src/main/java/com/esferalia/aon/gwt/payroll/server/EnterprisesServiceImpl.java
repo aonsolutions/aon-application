@@ -3663,7 +3663,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
 			    } else { //DELETE TGSS
 
-			    	
 				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
 				 	
 					Certificate certificate = AON.getCertificate(domainName, domain.getId(), userLogin, userId, "TGSS");

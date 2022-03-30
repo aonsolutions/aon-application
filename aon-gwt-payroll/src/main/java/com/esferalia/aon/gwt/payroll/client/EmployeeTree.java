@@ -3225,8 +3225,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 	
 	private EnterpriseIT getEnterpriseIT() {
-		if (enterpriseIT == null)
+		if (enterpriseIT == null) {
 			enterpriseIT = new EnterpriseIT();
+			enterpriseIT.setFooter(splitLayoutPanel, footTabPanel, footPanel);
+		}
 		return enterpriseIT;
 	}
 
