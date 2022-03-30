@@ -1032,8 +1032,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		draft("EXTRAS PRORRATEAR, CONSTANTES");
 		double salarioBase = getValue("db-amount-label-1");
-		double quotePaga1 = getText("quote-label-2");
-		double quotePaga2 = getText("quote-label-3");
+		double quotePaga1 = getText("quote-label-2-0");
+		double quotePaga2 = getText("quote-label-3-0");
 		Assert.assertEquals(quotePaga1, salarioBase/12.00, 0.005);
 		Assert.assertEquals(quotePaga2, salarioBase/12.00, 0.005);
 
