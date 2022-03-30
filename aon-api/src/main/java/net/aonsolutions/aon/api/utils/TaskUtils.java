@@ -70,10 +70,8 @@ public class TaskUtils {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
 		else if(!status.isEmpty())
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
-	
 		if(!search.isEmpty()) 
 			filter = filter.and(getSearchFilter(f, search));
-		
 		if(customer!=null && customer.getId()!=null) { //CUSTOMER
 			Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
@@ -376,7 +374,7 @@ public class TaskUtils {
 				
 				String email = workflow.getEmail();
 				
-				Auth auth = AuthJSON.fromJSON(api.getData().optJSONObject("auth"));
+				Auth auth = AuthJSON.fromJSON(api.getData().optJSONObject(IJsonNames.AUTH));
 				
 				String to = auth.getEmail()!=null ? auth.getEmail() : email;
 				
@@ -427,8 +425,8 @@ public class TaskUtils {
 			    String     dataId =  file.optString(IJsonNames.ID);
 			    Matcher    matcher = regexFile(task, dataId);
 			    if(matcher!=null) {
-					String base64 = file.optString("content");
-					String contentType = file.optString("contentType");
+					String base64 = file.optString(IJsonNames.CONTENT);
+					String contentType = file.optString(IJsonNames.CONTENT_TYPE);
 					byte[] fileData = Base64.getDecoder().decode(base64);
 					TaskAttach taskAttach = new TaskAttach()
 					.setDomain(api.getDomain().getId())
@@ -442,7 +440,7 @@ public class TaskUtils {
 					jsonFile.put("domain_name", domain.getName());
 					jsonFile.put("domain_id", domain.getId());
 					jsonFile.put("attach_type", "task");
-					jsonFile.put("id", taskAttach.getId());
+					jsonFile.put(IJsonNames.ID, taskAttach.getId());
 
 					String base64FileStr = new String(Base64.getEncoder().encode(jsonFile.toString().getBytes()));
 

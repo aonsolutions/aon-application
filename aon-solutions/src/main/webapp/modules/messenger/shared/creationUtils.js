@@ -536,7 +536,6 @@ export const createChatMessage = (properties, chat) => {
     });
     date.appendTo(name.element);
     
-
     checkFilesAddEventClick(message); //ADD EVENT CLICK
 
     downChat();
