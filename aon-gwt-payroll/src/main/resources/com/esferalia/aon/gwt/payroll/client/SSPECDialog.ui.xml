@@ -7,7 +7,7 @@
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style
-		type="com.esferalia.aon.gwt.payroll.client.SSPECDraft.MyStyle">
+		type="com.esferalia.aon.gwt.payroll.client.SSPECDialog.MyStyle">
 		
 		.noselect {
 			-webkit-touch-callout: none; /* iOS Safari */
@@ -213,21 +213,25 @@
 			padding: 10px;
 			text-align: right;
 		}
+
+		.progress {
+			height: 70px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
 		
-		.center{
+		.buttonsPanel{
 			display: flex;
-			justify-content: center;
-			width: 100%;
+			justify-content: flex-end;
+			margin: 10px;
 		}
 
 	</ui:style>
 	
 	
 	<g:HTMLPanel>
-		<g:HTMLPanel ui:field="toolbarPanel" />
-		<g:HTMLPanel ui:field="messagePanel" />
 		<g:ScrollPanel>
-	        <g:HTMLPanel styleName="{style.center}"> 
+	        <g:HTMLPanel> 
             		<g:HTMLPanel ui:field='listPECsPanel'>
             		    <g:VerticalPanel styleName="{style.styleBorder}">
              		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Peculiaridades de Cotizaci&oacute;n</g:Label>
@@ -256,6 +260,12 @@
             		</g:HTMLPanel>
 	        </g:HTMLPanel> 
 	    </g:ScrollPanel>
+	   
+	    <div>
+	    	<a:ProgressPanel ui:field="progressPanel" styleName="{style.progress}" ></a:ProgressPanel>
+	    </div>
+		
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 		
 	</g:HTMLPanel>
 </ui:UiBinder> 

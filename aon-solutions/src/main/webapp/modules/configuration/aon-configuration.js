@@ -23,6 +23,8 @@ import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
+import * as GWT from '../../gwt/gwt.js';
+import { waitEl } from "../../services/utils.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -93,10 +95,22 @@ export class AonConfiguration extends AonElement {
         name: MSG.MY_DATA,
         icon: "person",
         fn: () => this.buildPersonal(),
-      },
+      }
     ];
+
+    if( localStorage.getItem("aon_domain_id") && this.dur && !this.dur.isEmployee()){
+      userOptions.push({
+        name: "Certificados Digitales",
+        aonIcon: {
+          icon: 'cert',
+          color: 'black'
+        },
+        fn: () => this.buildCertificate(),
+      })
+    }
+ 
     aonConfiguration.addSidenavOptions(
-      MSG.MY_USER.toUpperCase(),
+      MSG.USER.toUpperCase(),
       userOptions
     );
 
@@ -191,6 +205,27 @@ export class AonConfiguration extends AonElement {
   
       aonConfiguration.setContent(aonUser);	
     });
+  }
+
+  buildCertificate(){
+
+    let application = this.getApplication();
+    
+    this.clearElementById(application.CONTENT);
+
+    application.startLoader();
+
+    GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, application.CONTENT);
+
+    waitEl(`#${application.CONTENT} .aon_toolbar`).finally(()=> {
+      this.fixSpacing();
+      application.stopLoader();
+    });
+  }
+
+  fixSpacing() {
+    if (!document.querySelector("aon-module")) 
+      waitEl(`#${this.getApplication().getContent().id} div:first-child`).then(el => el.style.position = "").catch(err => console.log(err));        
   }
 
   buildGeneral() {
