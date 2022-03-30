@@ -1914,20 +1914,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Peculiarities getEmployeePeculiarities(String domain, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqEmployeePeculiarities.getPeculiarities(domain, contractId, connection);
+	public Peculiarities getEmployeePeculiarities(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeePeculiarities.getPeculiarities(contractId, connection);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -1948,26 +1939,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-
+	
 	@Override
-	public List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
-			
-			syncWithIdcs(currentDomainName, currentUser, contractId, connection);
-			
-			return getPECs(currentDomainName, domainId, currentUser, contractId);
+	public List<SSPECData> syncEmployeeSSPECs(String domainName, String user, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			syncWithIdcs(domainName, user, contractId, connection);
+			return getPECs(domainName, domainId, user, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+		}
+	}
+
+	@Override
+	public List<SSPECData> getEmployeeSSPECs(String domainName, String user, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return getPECs(domainName, domainId, user, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
