@@ -14,7 +14,7 @@
 .aon-ReadOnly .gwt-SuggestBox:not(.aon-Editable)
 {
   		pointer-events: none;
-	border-color:transparent;
+		border-color:transparent;
   		color: inherit !important;
   		background-color: transparent;
 }

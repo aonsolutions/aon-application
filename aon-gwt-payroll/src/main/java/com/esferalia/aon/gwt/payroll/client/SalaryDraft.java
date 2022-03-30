@@ -58,6 +58,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringTimeLineVariable;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -2924,7 +2925,7 @@ public class SalaryDraft extends ResizeComposite
 		
 		dockLayoutPanel.addStyleName(style.container());
 		
-		listeners = new LinkedList<Listener>();
+		listeners = new LinkedList<>();
 
 		zoom = Constants.DEFAULT_ZOOM;
 		initEvents();
@@ -2935,6 +2936,7 @@ public class SalaryDraft extends ResizeComposite
 		initSalarySs();
 		export2JS(this);
 		employeePartialFactorWidget = new Label();
+		cgcBaseLabel.setText(IJsonNames.PRODUCT);
 	}
 	
 	public void setToolbarTitle(String title) {
@@ -4453,29 +4455,21 @@ public class SalaryDraft extends ResizeComposite
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
 			ItemChangeHandler<TextBox, Payment> handler, boolean isEditable) {
 
-		Widget labelWidget = null;
+		Widget quoteTextBox = null;
 
-		Double amount = payment.getAmount();
-		Double quote = payment.getQuote();
-
-		if (amount != null && !amount.equals(quote)) {
-			labelWidget = newPercentLabel(format(quote));
-			labelWidget.ensureDebugId("quote-label-" + row );
-			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
-			labelWidget.getElement().getStyle().setPaddingRight(16, Unit.PX);
-			labelWidget.getElement().getStyle().setProperty("backgroundPosition", "center right");
-		}
+		quoteTextBox = newQuoteTextBox(payment);
+		quoteTextBox.ensureDebugId("quote-label-" + row );
 		
 		if ( isNeto(payment)) {
 			totalsPayment = payment;
-			labelWidget = newPercentLabel("NETO");
-			((Label)labelWidget).addClickHandler((e) -> totalLiquidLabel.setFocus(true));
+			quoteTextBox = newTextBox("NETO");
+			((HasClickHandlers)quoteTextBox).addClickHandler((e) -> totalLiquidLabel.setFocus(true));
 		}
 
 		if ( isBruto(payment)) {
 			totalsPayment = payment;
-			labelWidget = newPercentLabel("BRUTO");
-			((Label)labelWidget).addClickHandler((e) -> totalPaymentLabel.setFocus(true));
+			quoteTextBox = newTextBox("BRUTO");
+			((HasClickHandlers)quoteTextBox).addClickHandler((e) -> totalPaymentLabel.setFocus(true));
 		}
 
 		Button expandButton = null;
@@ -4489,7 +4483,7 @@ public class SalaryDraft extends ResizeComposite
 		
 
 		if (payment instanceof CompositePayment) {
-			dumpItem(payment, row, iconStyleName, handler, false, labelWidget, expandButton, isEditable);
+			dumpItem(payment, row, iconStyleName, handler, false, quoteTextBox, expandButton, isEditable);
 			for (Payment child : ((CompositePayment) payment).getChilds()) {
 				child.setDescription(formatChildDescription(child, salaryDraftObject));
 				dumpChildPayment(child, ++row, iconStyleName );
@@ -4497,7 +4491,7 @@ public class SalaryDraft extends ResizeComposite
 			}
 		} else {
 			String description = payment.getDescription();			
-			dumpItem(payment, row, description, iconStyleName, handler, false, labelWidget, expandButton, isEditable);
+			dumpItem(payment, row, description, iconStyleName, handler, false, quoteTextBox, expandButton, isEditable);
 		}
 		
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
@@ -4506,18 +4500,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private void dumpChildPayment(Payment childPayment, int row, String iconStyleName) {
 
-		Widget labelWidget = null;
+		Widget quoteTextBox = null;
 
-		Double amount = childPayment.getAmount();
-		Double quote = childPayment.getQuote();
-
-		if (amount != null && !amount.equals(quote)) {
-			labelWidget = newPercentLabel(format(quote));
-			labelWidget.ensureDebugId("quote-label-" + row );
-			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
-			labelWidget.getElement().getStyle().setPaddingRight(16, Unit.PX);
-			labelWidget.getElement().getStyle().setProperty("backgroundPosition", "center right");
-		}
+		quoteTextBox = newQuoteTextBox(childPayment);
+		quoteTextBox.ensureDebugId("quote-label-" + row );
 		
 		//payment.setType(Payment.Type.CRA_0000);
 		consoleLog(childPayment.getDescription() + " / " + childPayment.getType());
@@ -4530,7 +4516,7 @@ public class SalaryDraft extends ResizeComposite
 		
 		PaymentChangeHandler<TextBox> paymentChangeHandler = newPaymentChangeHandler(childPayment);
 
-		dumpItem(childPayment, row, childPayment.getDescription(), AON.AON_ICON_BLANK, paymentChangeHandler, false, labelWidget, expandButton, false, false);
+		dumpItem(childPayment, row, childPayment.getDescription(), AON.AON_ICON_BLANK, paymentChangeHandler, false, quoteTextBox, expandButton, false, false);
 
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
@@ -4541,7 +4527,7 @@ public class SalaryDraft extends ResizeComposite
 			return new PaymentChangeHandler<TextBox>(payment);
 		}
 		
-		String variableName = getImplicitVariableName(payment);
+		String variableName = getImplicitVariableName(payment.getExpression());
 		if ( variableName == null ) {
 			return new PaymentChangeHandler<TextBox>(payment);
 		}
@@ -6606,6 +6592,101 @@ public class SalaryDraft extends ResizeComposite
 		return getVariableChangeHandlerFor(variable.getName()) != null;	
 	}
 	
+	private Widget newQuoteTextBox(Payment payment) {
+		
+		Double quote = payment.getQuote();
+		Double amount = payment.getAmount();
+
+		TextBox quoteTextBox = newTextBox(format(quote));
+		
+		Panel quotePanel = new HorizontalPanel();
+		quotePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
+		quotePanel.add(quoteTextBox);
+
+		Button ssButton = new Button();
+		ssButton.setStyleName(AON.AON_ICON_BONUS_SMALL);
+		ssButton.setStyleName(AON.AON_NO_MARGIN, true);
+		ssButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		ssButton.setEnabled(false);
+		quotePanel.add(ssButton);
+		
+		quotePanel.setVisible(amount != null && !amount.equals(quote));
+
+		String quoteExpression = payment.getQuoteExpression();
+		if ( AonStringUtils.isBlank(quoteExpression))
+			return quotePanel;
+		String variableName = getImplicitVariableName(quoteExpression);
+		if ( variableName == null  ) 
+			return quotePanel;
+
+		quotePanel.setVisible(!(payment instanceof CompositePayment));
+
+		enable(quoteTextBox, true );
+		setEditable(quoteTextBox, true );
+
+		Variable variable = 
+		salaryDraftObject.getContext().stream()
+		.filter( v -> !(v instanceof UndefinedVariable))
+		.filter(v -> AonStringUtils.equals(v.getName(), variableName))
+		.filter(v -> Objects.equals(v.getStartDate(), payment.getStartDate()))
+		.filter(v -> Objects.equals(v.getEndDate(), payment.getEndDate()))
+		.findFirst().orElse(
+		new StringTimeLineVariable.Builder()
+		.setImplicit(true)
+		.setScope(Scope.SALARY)
+		.setName(variableName)
+		.setEndDate(payment.getEndDate())
+		.setStartDate(payment.getStartDate())
+		.create());
+		
+		variable.setValue(payment.getQuote());
+		
+		VariableChangeHandler<TextBox> handler = 
+		new VariableChangeHandler<TextBox>(variable) {
+			@Override
+			protected Variable newVariable() {
+				return new StringTimeLineVariable.Builder()
+						.setImplicit(true)
+						.setScope(Scope.SALARY)
+						.setName(variable.getName())
+						.setEndDate(variable.getEndDate())
+						.setStartDate(variable.getStartDate())
+						.create()
+						;
+			}
+			
+			@Override
+			protected CalculateCallback getNextVariableFocusCallback() {
+				class ExpandPaymentFocusCallback implements CalculateCallback {
+					
+					@Override
+					public Calculate getCalculate() {
+						return SalaryDraft.this.getCalculate();
+					}
+					
+					@Override
+					public void onCalculateFailure(Throwable throwable) {
+						onCalculateSucces(null);
+					}
+
+					@Override
+					public void onCalculateSucces(SalaryDraftObject object) {
+						PaymentChangeHandler<?> handler = getPaymentChangeHandlerFor(payment.getId());
+						if ( handler != null ) {
+							handler.expand();
+						}
+					}
+				}
+				return new ExpandPaymentFocusCallback();
+			}
+		};
+		handler.setEditor(quoteTextBox);
+		
+		variableChangeHandlers.add(handler);
+		
+		return quotePanel;
+	}
+
 	// ------------------------------------------------------- Static 'Library'
 	static boolean skipVariable(String name) {
 		for (String skip : SKIP_VARIABLES)
@@ -6963,6 +7044,19 @@ public class SalaryDraft extends ResizeComposite
 		percentageLabel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
 		return percentageLabel;
 	}
+
+	private static TextBox newTextBox(String str) {
+		ExpressionBox quoteExpressionBox = new ExpressionBox();
+		quoteExpressionBox.setText(str);
+		quoteExpressionBox.setReadOnly(true);
+		// padding-left : 5px, to align vertically with IRPF Widget.
+		quoteExpressionBox.setVisibleLength(AonStringUtils.length(str));
+		quoteExpressionBox.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		return quoteExpressionBox;
+	}
+	
+	
+	
 
 	private static Widget newPercentLabel(Item<?> item, Double percent, Variable percentVar) {
 		if (NumberUtils.isNotValid(percent))
@@ -7462,8 +7556,8 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	
-	private static String getImplicitVariableName(Item<?> i ) {
-		MatchResult result = RegExp.compile("var:([A-Z_]+)").exec(i.getExpression());
+	private static String getImplicitVariableName(String expression ) {
+		MatchResult result = RegExp.compile("var:([A-Z_]+)").exec(expression);
 		return result != null ? result.getGroup(1): null;
 	}
 }
