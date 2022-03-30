@@ -27,7 +27,7 @@ public class Employee {
 	private String contract;
 	private String coef; // EXAMPLE "530"
 	private Double factor; //COEF EXAMPLE 0.53
-	private String colec;
+	private String colec; // CONVENIO COLECTIVO
 	private String epig;
 	private String ocup;
 	private String vinFam;
@@ -36,6 +36,7 @@ public class Employee {
 	private Integer ident;
 	private String mdCtz;
 	private String rlce;
+	private String collective; // COLECTIVO DEL TRABAJADOR
 
 	private Employee() {}
 	
@@ -69,7 +70,7 @@ public class Employee {
 		if(vinFam != null)			visitor.visitVinFam(vinFam);
 		if(profesCat != null)		visitor.visitProfesCat(profesCat);
 		if(reducingCoefic != null)	visitor.visitReducingcoefic(reducingCoefic);
-	
+		if(collective != null)	visitor.visitCollective(collective);
 	}
 	
 	public String getIpf() {return ipf;}
@@ -83,6 +84,7 @@ public class Employee {
 	public Optional<String>  getCtaCti() {return Optional.ofNullable(ctaCti);}
 	public Optional<String> getContract(){return Optional.ofNullable(contract);}	
 	public Optional<Date> getBirthDate() {return Optional.ofNullable(birthDate);}
+	
 	public Optional<Double> getCoef() {
 		try {
 			return Optional.of(Double.parseDouble(coef));
@@ -98,7 +100,7 @@ public class Employee {
 	public String getOcup() {return ocup;}
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	public Optional<String> getRlce() {return Optional.ofNullable(rlce);}
-
+	public Optional<String> getCollective() {return Optional.ofNullable(collective);}
 	@Override
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -162,6 +164,8 @@ public class Employee {
 			public void visitProfesCat(String profesCat) {stringBuffer.append(String.format(" profesCat : \"%s\" ", profesCat));}
 			@Override
 			public void visitReducingcoefic(String reducingCoefic) {stringBuffer.append(String.format(" reducingCoefic : \"%s\" ", reducingCoefic));}
+			@Override
+			public void visitCollective(String collective) {stringBuffer.append(String.format(" collective : \"%s\" ", collective));}
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -200,6 +204,7 @@ public class Employee {
 		private Integer ident;
 		private String mdCtz;
 		private String rlce;
+		private String collective;
 
 		public EmployeeBuilder(){}		
 		
@@ -389,6 +394,11 @@ public class Employee {
 			return this;
 		}
 		
+		public EmployeeBuilder setCollective(String collective) {
+			this.collective = collective;
+			return this;
+		}
+		
 		public Employee build(){
 			Employee employee = new Employee();
 			
@@ -423,6 +433,7 @@ public class Employee {
 			employee.ident = this.ident;
 			employee.mdCtz = this.mdCtz;
 			employee.rlce = this.rlce;
+			employee.collective = this.collective;
 			return employee;
 		}
 
@@ -458,6 +469,7 @@ public class Employee {
 		void visitVinFam(String vimFam);
 		void visitProfesCat(String profesCat);
 		void visitReducingcoefic(String reducingCoefic);	
+		void visitCollective(String collective);	
 	}
 	
 	public static abstract class AbstractVisitor implements Visitor {
@@ -517,6 +529,8 @@ public class Employee {
 		public void visitProfesCat(String profesCat) {}
 		@Override
 		public void visitReducingcoefic(String reducingCoefic) {}
+		@Override
+		public void visitCollective(String collective) {}
 	}
 
 	@Override

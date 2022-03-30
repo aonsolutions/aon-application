@@ -43,6 +43,11 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDMov {
+	
+	 private SistemaREDMov() {
+	    throw new IllegalStateException("Utility class");
+	 }
+	 
 	// HANDLE THE EXCEPTIONS OF ALTA METHOD
 	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {
@@ -329,67 +334,78 @@ class SistemaREDMov {
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws Exception  {
-			String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
-	    	Integer mov = 0;
-			String ident = Toolkit.getIdentityType(employee.getIpf());
-			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
- 			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
- 			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
- 			webclient.getOptions().setUseInsecureSSL(true);
- 			
- 			Optional<String> colect = employee.getColec();
-	    	Optional<String> rlce = employee.getRlce();
-	    	
- 			HtmlPage htmlPage = firstPageAltaBaja(
-					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
-					employee.getRegime(),  dni, ident
-	    	);
-	
-			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			
-			if(rlce.isPresent())
-				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce.get());
-			
-			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
-			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
-			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
-			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
-			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
-			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
-	
-			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
-				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get()); 
+		String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
+    	Integer mov = 0;
+		String ident = Toolkit.getIdentityType(employee.getIpf());
+		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
+		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
+		WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
+		webclient.getOptions().setUseInsecureSSL(true);
+		
+		Optional<String> colect = employee.getColec();
+		Optional<String> mdCtz = employee.getMdctz();
+		Optional<Double> factor = employee.getFactor(); //COEFICIENTE
+    	
+		HtmlPage htmlPage = firstPageAltaBaja(
+				webclient, mov, employee.getNss(), employee.getCtaCti(),
+				employee.getRegime(),  dni, ident
+    	);
+
+		HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+		
+		employee.getRlce().ifPresent(rlce->
+			form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce)
+		);
+		
+		form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
+		form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
+		form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
+		form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
+		//GRUPO DE COTIZACION
+		employee.getGc().ifPresent(gc->
+			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(gc)
+		);
+		//CONTRATO
+		employee.getContract().ifPresent(contract->
+			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract)
+		);
+		
+		//COLLECTIVE
+		employee.getCollective().ifPresent(collective->
+			form.getInputByName("txt_SDFCOLTRA_ayuda").setValueAttribute(collective)
+		);
+		//CONVENIO
+		if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
+			form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get()); 
+		}
+		//OCUPACION
+		if (employee.getOcup() != null)
+			form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase());
+		
+		if (employee.getRegime().equals("0163") && !mdCtz.isEmpty()) {
+			form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(mdCtz.get());
+		} else {
+			//COEFICIENTE
+			if(!factor.isEmpty()) {
+				Integer coefInt =  (int) Math.round(factor.get() * 1000);
+				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt)); 
+			} else if(!employee.getCoef().isEmpty()) {
+				String coef = Integer.toString(employee.getCoef().get().intValue());
+				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
 			}
-			
-			if (employee.getRegime().equals("0163") && !employee.getMdctz().isEmpty()) {
-				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
-			} else {
-				if(!employee.getFactor().isEmpty()) {
-					Integer coefInt =  (int) Math.round(employee.getFactor().get() * 1000);
-					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt)); 
-				} else if(!employee.getCoef().isEmpty()) {
-					String coef = Integer.toString(employee.getCoef().get().intValue());
-					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
-				}
-				if (employee.getOcup()!=null) 
-					form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
-			}
-			if (employee.getOcup() != null)
-				form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase());
+		}
 
 		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 		DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
-		if (msg1 != null && msg1.getTextContent().trim()
-				.indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >= 0) {
+		if (msg1 != null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >= 0) {
 			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		}
 
 		DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-		if (msg2 != null
-				&& msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
+		if (msg2 != null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
 			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		}
@@ -404,12 +420,12 @@ class SistemaREDMov {
 		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni = Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 
-		String[] fra = formatDate(employee.getFra()); // fecha [dia,mes,año]
+		String[] fra = formatDate(employee.getFra()); // fecha [dia,mes,anio]
 		WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType);
 		webClient.getOptions().setUseInsecureSSL(true);
 		HtmlPage htmlPage = firstPageAltaBaja(
     			webClient,
-				mov, employee.getNss(), employee.getCtaCti().get(),
+				mov, employee.getNss(), employee.getCtaCti(),
 				employee.getRegime(),  dni, ident
     	);
 
@@ -419,8 +435,9 @@ class SistemaREDMov {
 		jacadaForm1.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]);
 		jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]);
 
-		if (!employee.getFrb().isEmpty()) {
-			String[] fvac = formatDate(employee.getFrb().get()); // fecha de vacaciones
+		Optional<Date> frv = employee.getFrb();
+		if (!frv.isEmpty()) {
+			String[] fvac = formatDate(frv.get()); // fecha de vacaciones
 			jacadaForm1.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]);
 			jacadaForm1.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
 			jacadaForm1.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]);
@@ -618,8 +635,7 @@ class SistemaREDMov {
 			if (Toolkit.getIdentityType(ipf).equals("6"))
 				ident = 3; // NIE
 
-			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
-					.orElseThrow();
+			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
 
 			((HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident)).click();
 
@@ -831,10 +847,10 @@ class SistemaREDMov {
 	}
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
-			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident) throws Exception {
+			Integer mov, String nss, Optional<String> ctaCti, String regimen, String dni, String ident) throws Exception {
 		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
-
+		
 		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 		// form fist
 		HtmlOption option = (HtmlOption) form.querySelectorAll("select[name=cbo_ListaAltasBajas]>option").get(mov);
@@ -844,8 +860,8 @@ class SistemaREDMov {
 		form.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
 		form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident);
 		form.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
-		form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0, 2));
-		form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
+		form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.get().substring(0, 2));
+		form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.get().substring(2));
 		HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
 		htmlPage = continueIn.click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -903,8 +919,7 @@ class SistemaREDMov {
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			} else {
 				try {
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+					return page.getWebResponse().getContentAsStream().readAllBytes();
 				} catch (Exception e) {
 					throw new InvalidDataException();
 				}
@@ -938,8 +953,7 @@ class SistemaREDMov {
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			} else {
 				try {
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+					return page.getWebResponse().getContentAsStream().readAllBytes();
 				} catch (Exception e) {
 					throw new InvalidDataException();
 				}
