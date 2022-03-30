@@ -206,7 +206,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		financesContainer.addStyleName(AON.CSS.aonBorderBottom());
 		financesContainer.addStyleName(AON.CSS.aonPadding());
 		if (invoice.getFinances() != null && !invoice.getFinances().isEmpty()) {
-			AonDisplayTable tab = new AonDisplayTable();
+			AonDisplayGrid tab = new AonDisplayGrid();
 			tab.addStyleName(AON.CSS.aonBlockRight());
 			tab.addHeaderRow()
 				.addCell(new Label( AON.MSG.dueDate()), AON.CSS.aonWidth150())

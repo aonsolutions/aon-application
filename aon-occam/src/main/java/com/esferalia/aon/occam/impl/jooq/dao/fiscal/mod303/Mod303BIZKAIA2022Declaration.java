@@ -315,6 +315,7 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 						Mod303DAO.getSamePeriodModels(ctx, mod)
 							.filter(Mod303::isToPayback)
 							.mapToDouble(Mod303::getDeclarationResult)
+							.map(x -> AonMathUtils.round( x * (-1) ) )
 							.sum());						
 				}
 			} 

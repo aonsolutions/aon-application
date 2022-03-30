@@ -32,6 +32,7 @@ class Model303BIZKAIA2022 extends Model303Base {
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
 		paintLiquidationTab(tabPanel);
+		showPaymentInfo(getModel());
 		paintAdditionalDataTab(tabPanel);
 		paintSpecificOperationsTab(tabPanel);
 		paintAdministrationTab(tabPanel);
