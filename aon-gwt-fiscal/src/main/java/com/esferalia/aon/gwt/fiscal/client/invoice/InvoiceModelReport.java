@@ -101,7 +101,6 @@ public class InvoiceModelReport extends MainEntryPoint {
 		content.setStyleName(AON.CSS.aonSelector());
 		aonLayoutPanel.add(content);
 		initialize();
-		Window.alert("InvoiceMODEL");
 		options.getParentWidget().add(aonLayoutPanel);
 	}
 	

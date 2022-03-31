@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice;
 
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonModuleCallback;
@@ -9,6 +9,8 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111ModuleOptions;
@@ -42,8 +44,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
@@ -60,7 +62,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -76,7 +77,9 @@ class InvoiceModelReportPanel extends ScrollPanel{
 	
 	public InvoiceModelReportPanel(InvoiceModelReportModuleOptions options, InvoiceModelReportParams params) {
 		setStyleName(AON.CSS.aonScrollArea());
+		grid.addStyleName(AON.CSS.aonMarginTop());
 		grid.addStyleName(AON.CSS.aonBlockCenter());
+
 		rootPanel.add(grid);
 		setWidget(rootPanel);
 		
@@ -84,31 +87,44 @@ class InvoiceModelReportPanel extends ScrollPanel{
 		final InlineLabel label =  new InlineLabel("Un momento, por favor ...");
 		toast.show("Cargando ...", label);
 		
-		InvoiceModelReport.FISCAL_MODEL_SERVICE.getInvoicesModels(options.getOccam(), params, new AsyncCallback<HashMap<Integer,LinkedList<FiscalModel>>>() {
+		InvoiceModelReport.FISCAL_MODEL_SERVICE.getInvoicesModels(options.getOccam(), params, new AsyncCallback<LinkedList<InvoiceFiscalModels>>() {
 			
 			@Override
-			public void onSuccess(HashMap<Integer, LinkedList<FiscalModel>> result) {
+			public void onSuccess(LinkedList<InvoiceFiscalModels> result) {
 				toast.hide();
-				result.entrySet()
+				paintHeader();
+				result
 					.stream()
-					.forEach(entry -> {
-						AonDisplayGridRow row = grid.addRow();
-						AonDisplayGridRow cell =  row.addCell(new Label( AonNumberUtils.toString(entry.getKey())));
-						cell.addClickHandler( event -> showInvoice(options, entry.getKey()));
-						entry.getValue().stream()
+					.forEach(ifm -> {
+						AonDisplayGridRow row = addRow(ifm.getInvoice());
+						FlowPanel modelsPanel = new FlowPanel();
+						row.addCell( modelsPanel );
+						if (ifm.getModels() != null) {
+							ifm.getModels().stream()
 							.forEach(model -> {
-								AonDisplayGridRow modelCell = row.addCell(new Label( model.getModel().getName() ));
-								modelCell.addClickHandler( event ->
+								Label modelLabel = new Label( model.getModelFullName());
+								modelLabel.addStyleName(AON.CSS.aonClickableLabel());
+								modelLabel.addStyleName(AON.CSS.aonMarginLeft());
+								modelLabel.addStyleName(AON.CSS.aonMarginTop());
+								modelLabel.addStyleName(AON.CSS.aonBorder());
+								modelLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
+								modelLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( model.getStatus() ));
+								modelLabel.addStyleName(AON.CSS.aonPaddingLeft());
+								modelLabel.addStyleName(AON.CSS.aonPaddingRight());
+								modelLabel.addStyleName(AON.CSS.aonNowrap());
+								modelLabel.addClickHandler( event ->
 								model.getModel().visit(new InvoiceModelReportModelVisitor(options
 										, model
 										, new AonModuleCallback<IFiscalModel>() {
-											private static final long serialVersionUID = 3967210007796642782L;
-											@Override public void onChange(IFiscalModel changed) { /* Nothing */ }
-											@Override public void onRemove(IFiscalModel removed) {/* Nothing */ }
-											@Override public void onExit(IFiscalModel edited) {/* Nothing */ }	
-											@Override public void onFailure(Throwable caught) {/* Nothing */ }
-										})));
+									private static final long serialVersionUID = 3967210007796642782L;
+									@Override public void onChange(IFiscalModel changed) { /* Nothing */ }
+									@Override public void onRemove(IFiscalModel removed) {/* Nothing */ }
+									@Override public void onExit(IFiscalModel edited) {/* Nothing */ }	
+									@Override public void onFailure(Throwable caught) {/* Nothing */ }
+								})));
+								modelsPanel.add(modelLabel);
 							});
+						}
 					});
 				// 
 				
@@ -120,7 +136,56 @@ class InvoiceModelReportPanel extends ScrollPanel{
 				
 			}
 			
+			private void paintHeader() {
+				grid.addHeaderRow()
+					.addCell(new Label(""),AON.CSS.aonWidth20())
+					.addCell(new Label("Tipo"),AON.CSS.aonWidth40())
+					.addCell(new Label("Tran."),AON.CSS.aonWidth40())
+					.addCell(new Label("N\u00BA.Doc"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
+					.addCell(new Label("Doc.Tit."),AON.CSS.aonWidthAuto())
+					.addCell(new Label("Nombre/raz\u00F3n social"),AON.CSS.aonWidth300(),AON.CSS.aonNowrap())
+					.addCell(new Label("N\u00BA Referencia"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
+					.addCell(new Label("Fec. Fac."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
+					.addCell(new Label("Fec. Imp."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
+					.addCell(new Label("Modelos"),AON.CSS.aonWidthAuto())
+				;
+			}
 			
+			
+			public AonDisplayGridRow addRow(Invoice inv) {
+				AonDisplayGridRow row = grid.addRow();
+				String issueDate = ensure(inv.getIssueDate(), () -> AON.DATE_FORMAT.format(inv.getIssueDate()), AonStringUtils.EMPTY);
+				Label issueDateLabel = new Label(issueDate);
+				String taxDate = ensure(inv.getTaxDate(), () -> AON.DATE_FORMAT.format(inv.getTaxDate()), AonStringUtils.EMPTY);
+				Label taxDateLabel = new Label(taxDate);
+				if (!AonStringUtils.equals(issueDate, taxDate)) {
+					taxDateLabel.addStyleName(AON.CSS.aonBackgroundHighlightedOrange());
+				}
+				AonTableButton viewInvoice = new AonTableButton(AON.MSG.documentViewer(),AON.CSS.aonIconPrev());
+				viewInvoice.addClickHandler( event -> showInvoice(options, inv.getId()));
+				
+				return row
+					.addCell(viewInvoice)
+					.addCell(new Label(ensure(inv.getType(),inv.getType()::getAbbrDescription)))
+					.addCell(new Label(ensure(inv.getTransaction(),inv.getTransaction()::getTediName)))
+					.addCell(new Label(ensure(inv.getDocumentNumber(), inv::getDocumentNumber, AonStringUtils.EMPTY)))
+					.addCell(new Label(ensure(inv.getRegistryDocument(), inv::getRegistryDocument, AonStringUtils.EMPTY)))
+					.addCell(new Label(ensure(inv.getRegistryName(), () -> AonStringUtils.abbreviate(inv.getRegistryName(),25), AonStringUtils.EMPTY)))
+					.addCell(new Label(ensure(inv.getReferenceCode(), inv::getReferenceCode, AonStringUtils.EMPTY)))
+					.addCell(issueDateLabel)
+					.addCell(taxDateLabel)
+				;
+			}
+
+			private String ensure(Object nullable, Supplier<String>  supplier) {
+				return ensure(nullable, supplier, "---");
+			}
+			private <T> T ensure(Object nullable, Supplier<T>  supplier, T defaultValue) {
+				return (nullable == null) 
+					? defaultValue
+					: supplier.get();
+			}
+
 		});
 		
 		

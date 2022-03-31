@@ -115,10 +115,19 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 			.addCell( new Label( numberValue ))
 			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
 			.addCell( new Label( invoice.getDocumentNumber()))
+			.addCell( new Label(AON.MSG.taxDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
+			.addCell( new Label(AON.DATE_FORMAT.format(invoice.getTaxDate())),AON.CSS.aonWidth150())
+			.addCell( new Label() , AON.CSS.aonWidthAuto())
+		;
+		tab.addRow()
+			.addCell( new Label())
+			.addCell( new Label())
+			.addCell( new Label())
+			.addCell( new Label())
 			.addCell( new Label(AON.MSG.invoiceTotal()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
 			.addCell( new Label(AON.FMT.format( invoice.getTotal())),AON.CSS.aonBold(),AON.CSS.aonFontLarger())
 			.addCell( new Label() , AON.CSS.aonWidthAuto())
-		;
+	;
 		headerContainer.add(tab);
 		container.add(headerContainer);
 	}

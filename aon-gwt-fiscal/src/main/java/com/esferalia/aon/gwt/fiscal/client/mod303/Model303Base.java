@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -89,6 +90,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private Mod303 md303;
 	private Model303Callback callback;
 	private EnumMap<Mod303Key,AonDoubleBox> fieldsMap;
+	private HashSet<Mod303Key> disabledFields;
 	private boolean dirty;
 	
 	protected FiscalModelAdmonPanel<Mod303, Model303ModuleOptions> admonPanel;
@@ -136,7 +138,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH);
 		
 		fieldsMap = new EnumMap<>(Mod303Key.class);
-		
+		disabledFields = new HashSet<>();
 		
 		setStyleName(AON.CSS.aonSelector());
 	}
@@ -273,7 +275,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		for (Entry<Mod303Key, AonDoubleBox> entry : fieldsMap.entrySet()) {
 			double d1 = mod303.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
-			entry.getValue().setEnabled(mod303.isEditable());
+			entry.getValue().setEnabled(mod303.isEditable() && !disabledFields.contains(entry.getKey()));
 			if (!AonNumberUtils.equals(d1, d2)) {
 				entry.getValue().setValue(d1,false,true);
 			}
@@ -306,6 +308,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected EnumMap<Mod303Key, AonDoubleBox> getFieldsMap() {
 		return fieldsMap;
 	}
+	protected EnumMap<Mod303Key, AonDoubleBox> addField(Mod303Key key, AonDoubleBox box, boolean enabled) {
+		if (!enabled) {
+			disabledFields.add(key);
+		}
+		fieldsMap.put(key,box);
+		return fieldsMap;
+	}
+	
 	protected void paintAdditionalData(FlexTable table) {
 		
 	}
@@ -399,7 +409,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected int paintField(FlexTable table, int row, int col, final Mod303Key key, int fieldSize, boolean enabled) {
 		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox(fieldSize);
-		fieldsMap.put(key, input);
+		addField(key, input,enabled);
 		input.setEnabled(getModel().isEditable() && enabled);
 		input.setValue(det1.getAmount());
 		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {

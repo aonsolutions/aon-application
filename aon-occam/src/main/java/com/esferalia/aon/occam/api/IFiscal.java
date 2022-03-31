@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
@@ -9,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
@@ -155,6 +155,6 @@ public interface IFiscal {
 	// 						SII
 	Stream<VatContext> getSiiVatContext(AONContext ctx, AccountingReportParams params, String sii);
 	
-	public HashMap<Integer, LinkedList<FiscalModel>> getInvoicesModels(AONContext ctx, InvoiceModelReportParams params);
+	public LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx, InvoiceModelReportParams params);
 	
 }

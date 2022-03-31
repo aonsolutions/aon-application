@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -625,20 +627,20 @@ public class FiscalModelDAO {
 				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new));
 	}
 	
-	public static HashMap<Integer,LinkedList<FiscalModel>> getInvoicesModels(AONContext ctx,InvoiceFilter filter) {
+	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx,InvoiceFilter filter) {
 		ctx.checkRead();
 		return InvoiceDAO.getInvoiceStream(ctx, filter)
-			.flatMap(inv -> getSelect(ctx)
-				.leftOuterJoin(ALCATRAZ).on(ALCATRAZ.FS_MODEL.eq(FS_MODEL.ID))
-				.where(ALCATRAZ.INVOICE.eq(inv.getId()))
-				.fetch()
-				.stream()
-				.map(rec -> new Pair<Invoice,FiscalModel>(inv, new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new) )))
-			.collect(Collectors.groupingBy(
-				pair -> pair.getLeft().getId()
-				, HashMap<Integer, LinkedList<FiscalModel>>::new
-				, Collectors.mapping(Pair::getRight, Collectors.toCollection(LinkedList<FiscalModel>::new))))
-		;
+			.map(inv -> new InvoiceFiscalModels().setInvoice(inv))
+			.map(ifm -> ifm.setModels( 
+				getSelect(ctx)
+					.leftOuterJoin(ALCATRAZ).on(ALCATRAZ.FS_MODEL.eq(FS_MODEL.ID))
+					.where(ALCATRAZ.INVOICE.eq(ifm.getInvoice().getId()))
+					.fetch()
+					.stream()
+					.map(rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new))
+					.collect(Collectors.toCollection(LinkedList::new))
+			))
+			.collect(Collectors.toCollection(LinkedList::new));			
 	}  
 	
 	

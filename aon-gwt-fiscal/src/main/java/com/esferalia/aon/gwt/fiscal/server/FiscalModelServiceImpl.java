@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
@@ -12,8 +11,8 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 
 @WebServlet(name = "Fiscal Models Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/FiscalModels" })
@@ -28,7 +27,7 @@ public class FiscalModelServiceImpl extends AonStatelessRemoteServiceServlet imp
 	}
 
 	@Override
-	public HashMap<Integer, LinkedList<FiscalModel>> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
+	public LinkedList<InvoiceFiscalModels> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
 		return FISCAL.getInvoicesModels(occam,params);
 	}
 	

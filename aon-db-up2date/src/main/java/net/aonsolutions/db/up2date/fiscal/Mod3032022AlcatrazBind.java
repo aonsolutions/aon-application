@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -91,10 +92,12 @@ public class Mod3032022AlcatrazBind implements Update {
 							+ " " + modelPeriod.getDescription()
 							+ " " + formatter.format(modelCreationDate)
 						);
+						java.sql.Date modelEnd = new java.sql.Date(modelPeriod.getEndDate( modelYear ).getTime());
 						BatchBindStep alcatrazBatch = dslContext.select(INVOICE.ID)
 							.from(INVOICE)
 							.where(INVOICE.DOMAIN.eq(modelDomain))
-							.and(INVOICE.TAX_DATE.ge( yearStart))
+							.and(INVOICE.TYPE.ne( (byte) 3)) // Gastos no deducibles. 
+							.and(INVOICE.TAX_DATE.between( yearStart, modelEnd))
 							.and(INVOICE.CREATION_DATE.le( modelCreationDate ))
 							.stream()
 							.map(recId -> recId.getValue(INVOICE.ID))
@@ -146,10 +149,6 @@ public class Mod3032022AlcatrazBind implements Update {
 		private String getDescription() {
 			return description;
 		}
-		private byte value() {
-			return (byte) ordinal();
-		}
-		
 		private static Administration safeValueOf( Byte i ) {
 			if (i == null) return null;
 			return safeValueOf( i.intValue() ); 
@@ -183,35 +182,44 @@ public class Mod3032022AlcatrazBind implements Update {
 		T4(9,11,"4T","4\u00BA Trim."),	//15
 		YEAR(0,11,"An","Anual"); //16
 		
-	 	private int startMonth;
 		private int dueMonth;
-		private String name;
 		private String description;
 		
 		private Period(int startMonth,int dueMonth,String name,String description) {
-			this.startMonth= startMonth;
 			this.dueMonth= dueMonth;
-			this.name = name;
 			this.description= description;
 		}
 
-		private String getName() {
-	    	return name;
-	    }
+		Date getEndDate(Integer modelYear) {
+			return Date.from(
+				LocalDate.of(modelYear, (getDueMonth() + 1), 1)
+					.with( lastDayOfMonth() )
+					.atStartOfDay()
+					.atZone(ZoneId.systemDefault())
+					.toInstant()
+			);
+		}
+
+//		Date getStartDate(Integer modelYear) {
+//			return Date.from(
+//				LocalDate.of(modelYear, (getStartMonth() + 1), 1)
+//					.with( firstDayOfMonth() )
+//					.atStartOfDay()
+//					.atZone(ZoneId.systemDefault())
+//					.toInstant()
+//			);
+//		}
+		
 	    private String getDescription() {
 	    	return description;
 		}
 	    
-	    private int getStartMonth() {
-			return startMonth;
-		}
+//	    private int getStartMonth() {
+//			return startMonth;
+//		}
 		
 		private int getDueMonth() {
 			return dueMonth;
-		}
-
-		private byte value() {
-			return (byte) ordinal();
 		}
 
 		private static Period safeValueOf( Byte i ) {
