@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import com.google.api.services.drive.model.File;
 
-public class GFile implements Serializable{
+public class GFile implements Serializable {
 
 	private String id;
 	private String name;
