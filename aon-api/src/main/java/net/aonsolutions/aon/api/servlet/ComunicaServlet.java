@@ -347,8 +347,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ocup = data.has("ocup")  && !data.isNull("ocup") ? data.optString("ocup") : null;
 		String coef = data.has("coef") && !data.isNull("coef") ? data.optString("coef") : null;
 		String convenio =  data.has("convenio")  && !data.isNull("convenio") ? data.optString("convenio") : "60888888888888";
-		String rlce = data.has("rlce")  && !data.isNull("rlce") ? data.optString("rlce") : null; //para regime agrario
+		String rlce = data.has("rlce")  && !data.isNull("rlce") ? data.optString("rlce") : null; 
+		String collective = data.has("collective")  && !data.isNull("collective") ? data.optString("collective") : null;
 		String md_ctz = data.has("md_ctz")  && !data.isNull("md_ctz") ? data.optString("md_ctz") : null; //para regime agrario
+
 //        Ctz mensual = 1
 //        Jornadas reales = 2
 		EmployeeBuilder builder = new EmployeeBuilder()
@@ -362,8 +364,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setColec(convenio)
 		.setGc(gc)
 		.setContract(contract)
-		.setMdctz(md_ctz)
-		.setRlce(rlce);
+		.setCollective(collective)
+		.setRlce(rlce)
+		.setMdctz(md_ctz);
 		
 		if(coef!=null) {
 			Integer fact = Integer.parseInt(coef);
