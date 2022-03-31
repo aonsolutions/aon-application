@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -50,6 +52,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -461,6 +464,8 @@ public abstract class Employee extends ResizeComposite {
 				onContractEmployeesColectiveChange(null);
 			}
 			
+			checkContracts401And501(contractTypeInt);
+			
 			updateModality(contractTypeInt);
 			
 			onContractTypeChange(contractTypeStr);
@@ -484,6 +489,10 @@ public abstract class Employee extends ResizeComposite {
 		
 		if(null != startDate)
 			this.seniorityDate.setValue(startDateStr, true);
+		
+		String contractTypeStr = String.valueOf(this.contractTypeLB.getSelectedValue());
+		Integer contractTypeInt = Integer.parseInt(contractTypeStr);
+		checkContracts401And501(contractTypeInt);
 		
 	}
 
@@ -570,7 +579,8 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiHandler("employeesColective")
 	void onContractEmployeesColectiveChangeValue(ChangeEvent event) {
-		onContractEmployeesColectiveChange(this.employeesColective.getSelectedValue());
+		String value = this.employeesColective.getSelectedValue();
+		onContractEmployeesColectiveChange(AonStringUtils.isBlank(value) ? null : value);
 	}
 	
 	@UiHandler("journeyType")
@@ -774,6 +784,11 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onEmployeePayMethodChange(Integer payMethodId);
 	public abstract void onEmployeeBICChange(String bic);
 	public abstract void onEmployeeAccountChange(String account, String bankAlias, String bankSwift);
+	
+	//SHOW ERROR
+	
+	public abstract void fireError(String title, String message);
+		
 
 	// ------------------------------------------------- Methods preview
 	
@@ -861,7 +876,8 @@ public abstract class Employee extends ResizeComposite {
 		RLCE.getRLCE().entrySet().forEach(entry -> rlce.addItem(entry.getKey() + " - " + entry.getValue(), entry.getKey()));
 		
 		// EMPLOYEES COLECTIVE 
-		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00deN", "967");
+		this.employeesColective.addItem("-", "");
+		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00d3N", "967");
 		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00d3N PREVISIBLES", "968");
 		
 		// TIPO DE JORNADA
@@ -986,8 +1002,8 @@ public abstract class Employee extends ResizeComposite {
 	public void initContractType() {
 		// TIPO DE CONTRATO
 		contractTypeLB.addItem("-", "-1");
-		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));		
+		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet()) 
+			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));
 	}
 
 	public void initAgreements(List<Agreement> activeAgreements) {
@@ -1373,6 +1389,17 @@ public abstract class Employee extends ResizeComposite {
 	    int d1 = Integer.parseInt(formatter.format(birthDate));                            
 	    int d2 = Integer.parseInt(formatter.format(actualDay));                          
 	    return (d2 - d1) / 10000;                   
+	}
+	
+	private void checkContracts401And501(Integer contractType) {
+		if(AonNumberUtils.equals(contractType, 401) || AonNumberUtils.equals(contractType, 501)) {
+			Date marchEnd = new Date();
+			marchEnd.setMonth(2);
+			marchEnd = DateUtils.getLastDayOfMonth(marchEnd);
+			
+			if(null != startDate.getValue() && DateUtils.isAfterOrEquals(startDate.getValue(), marchEnd))
+				fireError("Error Contrato 401/501", "A partir del 31/03/2022 (incluido) no se pueden crear contratos 401/501, estos han sido reemplazados por 402/502 eligiendo uno de sus Colectivos Trabajadores");
+		} 
 	}
 	
 	// ------------------------------------------------- Save methods
