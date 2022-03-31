@@ -37,35 +37,15 @@ public class JooqContractClauses {
 	
 	// ---------------------------------------------------- DataBase
 	
-	public static List<ContractClause> getContractClauses(Connection conn, Integer domainId, Integer contractId) {
-		return getContractClausesDB(DSL.using(conn, getDefaultSettings()), domainId, contractId);
+	public static List<ContractClause> getContractClauses(Connection conn, Integer contractId) {
+		return getContractClausesDB(DSL.using(conn, getDefaultSettings()), contractId);
 	}
 	
-	private static List<ContractClause> getContractClausesDB(DSLContext dslContext, Integer domainId, Integer contractId) {
+	private static List<ContractClause> getContractClausesDB(DSLContext dslContext, Integer contractId) {
 		List<ContractClause> contractClauses = new ArrayList<>();
 		
-		// Domain Clauses (Global)
-		Result<Record> clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
-			.where(CONTRACT_CLAUSE.DOMAIN.eq(domainId))
-			.and(CONTRACT_CLAUSE.CONTRACT.isNull())
-			.fetch();
-		
-		for(Record clauseRecord : clauseRecords) {
-			
-			ContractClause contractClause =  new ContractClause();
-			contractClause.setId(clauseRecord.get(CONTRACT_CLAUSE.ID));
-			contractClause.setDomain(clauseRecord.get(CONTRACT_CLAUSE.DOMAIN));
-			contractClause.setContract(clauseRecord.get(CONTRACT_CLAUSE.CONTRACT));
-			contractClause.setLineNumber(clauseRecord.get(CONTRACT_CLAUSE.LINE));
-			contractClause.setName(clauseRecord.get(CONTRACT_CLAUSE.NAME));
-			contractClause.setDescription(clauseRecord.get(CONTRACT_CLAUSE.DESCRIPTION));
-			contractClause.setGeneral(clauseRecord.get(CONTRACT_CLAUSE.GENERAL));
-			
-			contractClauses.add(contractClause);
-		}
-		
 		// Contract Clauses
-		clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
+		Result<Record> clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
 			.where(CONTRACT_CLAUSE.CONTRACT.eq(contractId))
 			.fetch();
 		

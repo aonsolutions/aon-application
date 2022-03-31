@@ -460,6 +460,16 @@ public class JooqEmployee {
 				.set(CONTRACT_DATA.END_DATE, contractEndDate)
 				.execute();
 		
+		if(AonStringUtils.isNotBlank(contractData.getEmployeesColective()))
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "COLECTIVO_TRABAJADORES")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getEmployeesColective()))
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		
 		dslContext.insertInto(CONTRACT_INFO)
 			.set(CONTRACT_INFO.DOMAIN, domain)
 			.set(CONTRACT_INFO.CONTRACT, contractId)
@@ -914,6 +924,8 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "RLCE")) {
 				contractData.setRlceId(r.get(CONTRACT_DATA.ID));
 				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COLECTIVO_TRABAJADORES")) {
+				contractData.setEmployeesColective(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "ORIGINAL_START_DATE")) {
 				contractData.setHasTransformation(true);
 				try {
@@ -1648,6 +1660,24 @@ public class JooqEmployee {
 					.execute();
 				}
 			}
+			
+			// Employees Colective
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("COLECTIVO_TRABAJADORES"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+				.execute();
+			
+			if(AonStringUtils.isNotBlank(contractData.getEmployeesColective())) {
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "COLECTIVO_TRABAJADORES")
+					.set(CONTRACT_DATA.CONTRACT, contractData.getContractId())
+					.set(CONTRACT_DATA.EXPRESSION, "\"" + contractData.getEmployeesColective() + "\"")
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.execute();
+			}
+			
 			
 			if(null == contractData.getContractmodelId()){
 				if(null != contractData.getContractModel()){

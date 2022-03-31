@@ -2311,8 +2311,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<ContractClause> getContractClauses(String domainName, Integer contractId) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContractClauses.getContractClauses(connection, domainId, contractId);
+			return JooqContractClauses.getContractClauses(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

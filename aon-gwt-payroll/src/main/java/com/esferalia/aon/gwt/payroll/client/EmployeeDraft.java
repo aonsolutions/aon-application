@@ -191,6 +191,11 @@ public abstract class EmployeeDraft extends Composite {
 		public void onContractRLCEChange(String rlce) {
 			employeeDraftObject.setContractRlce(rlce);
 		}
+		
+		@Override
+		public void onContractEmployeesColectiveChange(String employeesColective) {
+			employeeDraftObject.setContractEmployeesColective(employeesColective);
+		}
 
 		@Override
 		public void onContractJourneyTypeChange(Boolean journeyType) {
@@ -749,6 +754,14 @@ public abstract class EmployeeDraft extends Composite {
 					}
 				} else
 					employee.showElementsFullTimeContract();
+				
+				if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+					employee.showEmployeesColective();
+					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective()+"");
+				} else {
+					employee.hideEmployeesColective();
+					contractData.setEmployeesColective(null);
+				}
 			} catch (NumberFormatException e) {
 				// Not use here
 			}

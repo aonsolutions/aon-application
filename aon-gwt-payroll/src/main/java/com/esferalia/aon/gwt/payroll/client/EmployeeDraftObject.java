@@ -537,6 +537,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setRlce(rlce);		
 	}
 	
+	public void setContractEmployeesColective(String employeesColective) {
+		add(contractData::setEmployeesColective, 
+				contractData.getEmployeesColective(), 
+				employeesColective );
+		
+		contractData.setEmployeesColective(employeesColective);		
+	}
+	
 	public void setContractJourneyType(Boolean journeyType) {
 		Byte journey = Boolean.TRUE.equals(journeyType) ? (byte) 1 : (byte) 0;
 		add(contractData::setJourneyType, 

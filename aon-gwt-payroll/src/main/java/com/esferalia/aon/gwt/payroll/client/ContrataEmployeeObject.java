@@ -919,6 +919,10 @@ public class ContrataEmployeeObject {
 		contractData.setRlce(rlce);
 	}
 	
+	public void setContractEmployeesColective(String employeesColective) {
+		contractData.setEmployeesColective(employeesColective);
+	}
+	
 	public void setPartialityCoef(Double partialityCoef) {
 		contractData.setPartialityCoef(partialityCoef);
 	}
