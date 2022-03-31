@@ -156,17 +156,18 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildInvoiceConfiguration(),
         });
       }
-
-      appOptions.push({
-        id: MESSENGER.title,
-        name: MESSENGER.title,
-        aonIcon: {
-          icon: MESSENGER.icon,
-          color: MESSENGER.color
-        },
-        fn: () => this.buildMessengerConfiguration(),
-      });
-
+      
+      if(!this.dur.isEmployee()){
+        appOptions.push({
+          id: MESSENGER.title,
+          name: MESSENGER.title,
+          aonIcon: {
+            icon: MESSENGER.icon,
+            color: MESSENGER.color
+          },
+          fn: () => this.buildMessengerConfiguration(),
+        });
+      }
 
 
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);

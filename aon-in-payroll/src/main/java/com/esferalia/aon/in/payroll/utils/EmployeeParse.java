@@ -101,6 +101,11 @@ public class EmployeeParse {
 					employee.setFactor(factor);
 				}	
 			}
+			
+			@Override
+			public void visitCollective(String collective) {
+				employee.setCollective(collective);
+			}
 
 			@Override public void visitGcDesc(String gcDesc) {}
 			@Override public void visitEpig(String epig) {}
@@ -115,12 +120,6 @@ public class EmployeeParse {
 			@Override public void visitSituation(String situaction) {}
 			@Override public void visitReducingcoefic(String reducingCoefic) {}
 			@Override public void visitProfesCat(String profesCat) {}
-
-			@Override
-			public void visitCollective(String collective) {
-				// TODO Auto-generated method stub
-				
-			}
 		});
 		
 		return employee;
@@ -138,18 +137,19 @@ public class EmployeeParse {
 		employee.getName().ifPresent(builder::setName);	
 		employee.getEndDate().ifPresent(builder::setFrb);
 		
-		LocalDate start = convertToLocalDate(employee.getStartDate().getTime());
+		LocalDate start = convertToLocalDate(employee.getStartDate());
 		
 		employee.getOccupation(start).ifPresent(builder::setOcup);
 		employee.getQuoteGroup(start).ifPresent(builder::setGc);
 		employee.getContractType(start).ifPresent(builder::setContract);
 		employee.getRlce(start).ifPresent(builder::setRlce);
 		employee.getFactor(start).ifPresent(builder::setFactor);
+		employee.getCollective(start).ifPresent(builder::setCollective);
 
 		return builder.build();
 	}
 	
-	private static LocalDate convertToLocalDate(long time) {
-		return new Timestamp(time).toLocalDateTime().toLocalDate();
+	private static LocalDate convertToLocalDate(Date date) {
+		return new Timestamp(date.getTime()).toLocalDateTime().toLocalDate();
 	}	
 }
