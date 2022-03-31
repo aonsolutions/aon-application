@@ -58,7 +58,6 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringTimeLineVariable;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -66,6 +65,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -1841,7 +1841,7 @@ public class SalaryDraft extends ResizeComposite
 			.findFirst().orElse(newVariable(name))
 			;
 			
-			variable.setValue(item.getAmount());
+			variable.setValue(Math.round(item.getAmount()*1000.00)/1000.00);
 			
 			return variable;
 		}
@@ -4457,8 +4457,8 @@ public class SalaryDraft extends ResizeComposite
 
 		Widget quoteTextBox = null;
 
-		quoteTextBox = newQuoteTextBox(payment);
-		quoteTextBox.ensureDebugId("quote-label-" + row );
+		quoteTextBox = newQuoteTextBox(payment, row);
+		
 		
 		if ( isNeto(payment)) {
 			totalsPayment = payment;
@@ -4502,8 +4502,7 @@ public class SalaryDraft extends ResizeComposite
 
 		Widget quoteTextBox = null;
 
-		quoteTextBox = newQuoteTextBox(childPayment);
-		quoteTextBox.ensureDebugId("quote-label-" + row );
+		quoteTextBox = newQuoteTextBox(childPayment, row);
 		
 		//payment.setType(Payment.Type.CRA_0000);
 		consoleLog(childPayment.getDescription() + " / " + childPayment.getType());
@@ -6592,12 +6591,13 @@ public class SalaryDraft extends ResizeComposite
 		return getVariableChangeHandlerFor(variable.getName()) != null;	
 	}
 	
-	private Widget newQuoteTextBox(Payment payment) {
+	private Widget newQuoteTextBox(Payment payment, int row) {
 		
 		Double quote = payment.getQuote();
 		Double amount = payment.getAmount();
 
 		TextBox quoteTextBox = newTextBox(format(quote));
+		quoteTextBox.ensureDebugId("quote-label-" + row );
 		
 		Panel quotePanel = new HorizontalPanel();
 		quotePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
@@ -7557,7 +7557,7 @@ public class SalaryDraft extends ResizeComposite
 	
 	
 	private static String getImplicitVariableName(String expression ) {
-		MatchResult result = RegExp.compile("var:([A-Z_]+)").exec(expression);
+		MatchResult result = RegExp.compile("var:([A-Z_0-9]+)").exec(expression);
 		return result != null ? result.getGroup(1): null;
 	}
 }
