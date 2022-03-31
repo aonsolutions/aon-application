@@ -269,7 +269,7 @@ public class Invoice2tbai {
 		DetallesFacturaType detalles = new DetallesFacturaType();
 		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
 			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
-			detalle.setCantidad(Double.toString(detail.getQuantity()));
+			detalle.setCantidad(Double.toString(AonMathUtils.round(detail.getQuantity())));
 			String description = detail.getDescription();
 			if(description.length() > 249) {
 				description.substring(0, 249);
@@ -346,7 +346,7 @@ public class Invoice2tbai {
 		ExentaType exenta = new ExentaType();
 		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
 			DetalleExentaType detalleExenta = new DetalleExentaType();
-			detalleExenta.setBaseImponible(Double.toString(r.getBase()));
+			detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
 			detalleExenta.setCausaExencion(CausaExencionType.E_6);
 			if(invoice.isIntracommunity())
 				detalleExenta.setCausaExencion(CausaExencionType.E_5);
