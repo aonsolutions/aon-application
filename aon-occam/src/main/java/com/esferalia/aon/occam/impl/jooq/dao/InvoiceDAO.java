@@ -286,7 +286,7 @@ public class InvoiceDAO {
 		ctx.checkRead();
 		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
-			.select(
+			.selectDistinct(
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,orderedType
