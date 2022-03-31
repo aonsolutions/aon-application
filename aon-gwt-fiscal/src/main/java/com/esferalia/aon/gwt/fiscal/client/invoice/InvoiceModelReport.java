@@ -28,6 +28,7 @@ import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -62,6 +63,7 @@ public class InvoiceModelReport extends MainEntryPoint {
 	private AonDateBox toDate;
 	private ListBox activity;
 	int indexMainActivity = 0;
+	private CheckBox unboundCheck;
 
 	@Override
 	public void onModuleLoad() {
@@ -105,7 +107,7 @@ public class InvoiceModelReport extends MainEntryPoint {
 	}
 	
 	private Widget getToolbarPanel() {
-		AonToolbar toolbarPanel  = new AonToolbar("Panel de Compras y Gastos / Ventas e Ingresos");
+		AonToolbar toolbarPanel  = new AonToolbar("Facturas y Modelos Fiscales");
 		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(),AON.CSS.aonIconClear());
 		clean.addClickHandler(event -> initialize());
 		toolbarPanel.add(clean);
@@ -139,6 +141,10 @@ public class InvoiceModelReport extends MainEntryPoint {
 		fromDate.addValueChangeHandler(event -> onSearch());
 		toDate = new AonDateBox();
 		toDate.addValueChangeHandler(event -> onSearch());
+		
+		unboundCheck = new CheckBox("Mostrar solo facturas no vinculadas");
+		unboundCheck.addStyleName(AON.CSS.aonMarginLeft());
+		unboundCheck.addClickHandler(event -> onSearch());
 	
 		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
 			activity = new ListBox();
@@ -201,6 +207,8 @@ public class InvoiceModelReport extends MainEntryPoint {
 		firstRowPanel.add(to);
 		firstRowPanel.add(toDate);
 
+		firstRowPanel.add(unboundCheck);
+
 		// ---------------------------------------------------------------- SECOND ROW
 		FlowPanel thirdRowPanel = new FlowPanel();
 		thirdRowPanel.addStyleName(AON.CSS.aonMarginTop());
@@ -251,6 +259,7 @@ public class InvoiceModelReport extends MainEntryPoint {
 			.setDomain(options.getDomain())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
+			.setUnbound(unboundCheck.getValue())
 			;
 		if (options.getConfiguration() != null && options.getConfiguration().hasActivities() ) {
 			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));

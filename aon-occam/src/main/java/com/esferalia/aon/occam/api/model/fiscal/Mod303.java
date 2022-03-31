@@ -13,6 +13,8 @@ public class Mod303 extends FiscalModel implements Serializable {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
 	
+	private boolean diffCalculationMandatory;
+	
 	private LinkedList<Mod303ActivityFarmer> activityFarmerList;
 	private LinkedList<Mod303Activity> activityList;
 	
@@ -144,22 +146,22 @@ public class Mod303 extends FiscalModel implements Serializable {
 		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
 	}
 
-	@Override
-	@Deprecated
-	public boolean isDiffCalculationAvailable() {
-		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+	public boolean isDiffCalculationMandatory() {
+		return diffCalculationMandatory;
+	}
+	public Mod303 setDiffCalculationMandatory(boolean diffCalculationMandatory) {
+		this.diffCalculationMandatory = diffCalculationMandatory;
+		return this;
 	}
 	
 	@Override
-	@Deprecated
 	public boolean isDiffCalculationDisabled() {
-		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+		return getAmount(Mod303Key.CM_001) == 1;
 	}
 
 	@Override
-	@Deprecated
 	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
-		throw new UnsupportedOperationException("Unsupported method! (Now diff is implicit)");
+		ensureDetail(Mod303Key.CM_001).setAmount(diffCalculationDisabled?1:0);
 	}
 	
 //	@Override

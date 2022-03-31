@@ -1,22 +1,28 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -206,15 +212,40 @@ public abstract class Mod303Declaration {
 	
 	private void initializePreviousData(AONContext ctx, Mod303 mod303) {
 		mod303.getMessages().clear();		
-		mod303.setGenerateFromYearStartAvailable(!mod303.isFirstPeriod());
-		if (mod303.isGenerateFromYearStartAvailable()) {
-			Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod303);
-			boolean existsInvoices = invoices != null && !invoices.isEmpty();
-			if (existsInvoices) {
-				mod303.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
-						+ "de inicio de la declaraci\u00F3n.");
+		mod303.setDiffCalculationMandatory(false);
+		if (!mod303.isFirstPeriod() && mod303.getYear() == 2022) {
+			List<Integer> ids = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
+				.map(FiscalModel::getId)
+				.collect(Collectors.toCollection(LinkedList::new));
+			if (ids != null && !ids.isEmpty()) {
+				boolean something = ctx.getDslContext()
+					.select(ALCATRAZ.ID)
+					.from(ALCATRAZ)
+					.where(ALCATRAZ.FS_MODEL.in(ids))
+					.fetch()
+					.stream()
+					.findFirst()
+					.isPresent();
+				if (!something) {
+					mod303.setDiffCalculationMandatory(true);
+					mod303.addMessage("Existen modelos anteriores creados sin el vínculo a facturas."
+							+ " Este modelo se realizará por diferencia. "
+							+ " Se tendrán en cuenta todas las facturas desde el inicio del ejercicio, y se restará lo declarado en cada una de las casillas."
+							+ " Las facturas se vincularán a este modelo."
+							+ " Las facturas vinculadas no se podrán modificar ni borrar.");
+				}
 			}
-			mod303.setGenerateFromYearStartAvailable(existsInvoices);
+		} else {
+			mod303.setGenerateFromYearStartAvailable(!mod303.isFirstPeriod());
+			if (mod303.isGenerateFromYearStartAvailable()) {
+				Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod303);
+				boolean existsInvoices = invoices != null && !invoices.isEmpty();
+				if (existsInvoices) {
+					mod303.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
+							+ "de inicio de la declaraci\u00F3n.");
+				}
+				mod303.setGenerateFromYearStartAvailable(existsInvoices);
+			}
 		}
 	}
 	
@@ -234,7 +265,10 @@ public abstract class Mod303Declaration {
 	protected Set<Integer> createFromInvoices(AONContext ctx, Mod303 mod303) {
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<VatContext> stream = null;
-		if (mustApplyReplacementSearch(mod303)) {
+		if (mod303.isDiffCalculationMandatory() ) {
+			mod303.setGenerateFromYearStart(true);
+			stream =  VATDAO.getVatBreakdown(ctx,mod303);
+		} else if (mustApplyReplacementSearch(mod303)) {
 			stream =  VATDAO.getVatBreakdown(ctx,mod303);
 		} else {
 			stream = VATDAO.getNotInModelVatBreakdown(ctx,mod303);
@@ -265,6 +299,29 @@ public abstract class Mod303Declaration {
 		}
 	}
 	
+	protected void resolveDiffCalculation(AONContext ctx, Mod303 mod303) {
+		if (mod303.isDiffCalculationMandatory()) {
+			FiscalModelDAO.getEffectivePreviousModels(ctx, mod303, Mod303::new)
+				.flatMap(mod -> mod.getMap().values().stream())
+				.filter( source -> Mod303Key.getKey(source.getType()) != null && Mod303Key.getKey(source.getType()).isDiffEnabled())
+				.forEach(source -> {
+					Mod303Key key = Mod303Key.getKey(source.getType());
+					IMod303KeyDAO keyDAO = getKey(key);
+					if (keyDAO != null) {
+						FiscalModelDetail target = mod303.ensureDetail(key);
+						target.setDeclaredAmount(AonMathUtils.round(target.getDeclaredAmount() + source.getAmount()));
+					}
+				});
+			for (FiscalModelDetail detail : mod303.getMap().values()) {
+				IMod303KeyDAO key = safeValueOf(mod303, detail.getType());
+				if (key != null) {
+					detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));
+					detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
+				}
+			}
+		}
+	}
+
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();

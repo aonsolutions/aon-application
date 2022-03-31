@@ -37,6 +37,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	private Label defaultVatRegimeLabel = new Label();
 	private ListBox defaultVatRegime = new ListBox();
 	private final CheckBox generateFromYearStart = new CheckBox();
+	private final CheckBox diffCalculationMandatory = new CheckBox();
 	private AonDoubleBox previousProrate = new AonDoubleBox(7);
 	private AonDoubleBox prorate = new AonDoubleBox(7);
 	private CheckBox specialProrate = new CheckBox("Especial");
@@ -92,7 +93,8 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		paintComplementary(model,callback,tab);
 		paintReplacement(model,callback,tab);
 		paintWithoutActivity(model,callback,tab);
-		paintGenerateFromYearStart(model,tab);		
+		paintGenerateFromYearStart(model,tab);
+		paintDiffCalculationMandatory(model,tab);
 		paintProrrate(model,callback,tab);
 		
 		rootPanel.add(calculateProratePanel);		
@@ -364,6 +366,18 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 				.addCell(generateFromYearStart,AON.CSS.aonWidth400());
 		}
 	}
+	
+	private void paintDiffCalculationMandatory(Mod303 model, AonDisplayTable tab) {
+		if (model.isDiffCalculationMandatory() ) {
+			diffCalculationMandatory.setText( "CALCULO POR DIFERENCIA OBLIGATORIO" );
+			diffCalculationMandatory.setValue(true);
+			diffCalculationMandatory.setEnabled(false);
+			tab.addRow()
+				.addCell(new Label(),AON.CSS.aonTableLabel())
+				.addCell(diffCalculationMandatory,AON.CSS.aonWidth400());
+		}
+	}
+	
 
 	private FlowPanel getButtonsPanel(Mod303 model, final Model303Callback callback) {
 		FlowPanel buttonsPanel = new FlowPanel();

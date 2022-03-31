@@ -14,6 +14,7 @@ public interface InvoiceProperties extends Serializable {
 	Property<Byte> getStatusProperty();
 	Property<Integer> getNumberProperty();	
 	Property<String> getReferenceCodeProperty();
+	Property<Integer> getActivityProperty();
 	Property<Integer> getRegistryProperty();
 	Property<String> getRegistryDocumentProperty();
 	Property<String> getRegistryNameProperty();

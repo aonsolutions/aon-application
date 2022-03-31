@@ -550,11 +550,5 @@ public class FiscalImpl implements IFiscal {
 
 		@Override
 		public LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx, InvoiceModelReportParams params) {
-			return com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO.getInvoicesModels(ctx, p ->
-				p.getDomainProperty().eq(ctx.getDomainId())
-				 .and(p.getTypeProperty().ne(InvoiceType.UNDEDUCTIBLE.value()))
-				 .and(p.getStartIssueDateProperty().ge(params.getFromDate())) 
-				 .and(p.getEndIssueDateProperty().le(params.getToDate()))
-				);
-		}
+			return com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO.getInvoicesModels(ctx, params);		}
 }

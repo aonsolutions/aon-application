@@ -123,7 +123,9 @@ public class Mod303DAO extends FiscalModelDAO {
 //			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
 //			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 //		}
+		dec.resolveDiffCalculation(ctx, mod303);
 		dec.prorrateRegularization(ctx,mod303);
+		
 		calculate(mod303);
 		dec.specificInitialization(mod303);
 		mod303 = save(ctx, mod303);

@@ -786,15 +786,21 @@ public enum Mod303Key implements IFiscalModelKey  {
 	
 	;
 	private String value;
+	private boolean diffEnabled;
 	private String box;
 	private String description;
 	
 	private Mod303Key(String value,boolean diffEnabled,String box,String description) {
 		this.value = value;
+		this.diffEnabled = diffEnabled;
 		this.box = box;
 		this.description = description;
 	}
-    
+	
+	public boolean isDiffEnabled() {
+		return this.diffEnabled;
+	}
+
 	public String getValue() {
 		return value;
 	}
@@ -827,4 +833,5 @@ public enum Mod303Key implements IFiscalModelKey  {
 		}
 		return null;
 	}
+
 }

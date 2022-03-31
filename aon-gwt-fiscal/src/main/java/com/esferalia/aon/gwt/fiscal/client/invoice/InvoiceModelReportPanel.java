@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -98,15 +99,17 @@ class InvoiceModelReportPanel extends ScrollPanel{
 					.forEach(ifm -> {
 						AonDisplayGridRow row = addRow(ifm.getInvoice());
 						FlowPanel modelsPanel = new FlowPanel();
+						modelsPanel.setStyleName(AON.CSS.aonNowrap());
 						row.addCell( modelsPanel );
 						if (ifm.getModels() != null) {
 							ifm.getModels().stream()
 							.forEach(model -> {
-								Label modelLabel = new Label( model.getModelFullName());
+								InlineLabel modelLabel = new InlineLabel( model.getModelFullName());
 								modelLabel.addStyleName(AON.CSS.aonClickableLabel());
 								modelLabel.addStyleName(AON.CSS.aonMarginLeft());
-								modelLabel.addStyleName(AON.CSS.aonMarginTop());
 								modelLabel.addStyleName(AON.CSS.aonBorder());
+								modelLabel.getElement().getStyle().setMarginTop(1.0, Unit.PX);
+								modelLabel.getElement().getStyle().setMarginBottom(1.0, Unit.PX);
 								modelLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
 								modelLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( model.getStatus() ));
 								modelLabel.addStyleName(AON.CSS.aonPaddingLeft());
@@ -161,7 +164,7 @@ class InvoiceModelReportPanel extends ScrollPanel{
 				if (!AonStringUtils.equals(issueDate, taxDate)) {
 					taxDateLabel.addStyleName(AON.CSS.aonBackgroundHighlightedOrange());
 				}
-				AonTableButton viewInvoice = new AonTableButton(AON.MSG.documentViewer(),AON.CSS.aonIconPrev());
+				AonTableButton viewInvoice = new AonTableButton(AON.MSG.documentViewer(),AON.CSS.aonIconSearch());
 				viewInvoice.addClickHandler( event -> showInvoice(options, inv.getId()));
 				
 				return row
