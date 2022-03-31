@@ -23,8 +23,6 @@ import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
-import * as GWT from '../../gwt/gwt.js';
-import { waitEl } from "../../services/utils.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -97,60 +95,52 @@ export class AonConfiguration extends AonElement {
         fn: () => this.buildPersonal(),
       }
     ];
-
-    if( localStorage.getItem("aon_domain_id") && this.dur && !this.dur.isEmployee()){
-      userOptions.push({
-        name: "Certificados Digitales",
-        aonIcon: {
-          icon: 'cert',
-          color: 'black'
-        },
-        fn: () => this.buildCertificate(),
-      })
-    }
  
     aonConfiguration.addSidenavOptions(
       MSG.USER.toUpperCase(),
       userOptions
     );
 
-    if (
-      localStorage.getItem("aon_domain_id") && this.dur.isAdmin()
-    ) {
+    if ( localStorage.getItem("aon_domain_id") ) {
 
       let companyOptions = [];
-      companyOptions.push({
-        name: MSG.GENERAL_INFORMATION,
-        icon: MATERIAL_ICONS.BUSINESS,
-        fn: () => this.buildGeneral(),
-      });
-      companyOptions.push({
-        name: MSG.USER_MANAGEMENT,
-        icon: MATERIAL_ICONS.PEOPLE,
-        fn: () => this.buildUser(),
-      });
-      if (!this.company.domain.parentId) {
+
+      if(!this.dur.isEmployee()){
         companyOptions.push({
-          name: MSG.COMPANY_MANAGEMENT,
+          name: MSG.GENERAL_INFORMATION,
           icon: MATERIAL_ICONS.BUSINESS,
-          fn: () => this.buildCompanyList(),
+          fn: () => this.buildGeneral(),
         });
       }
 
-      companyOptions.push({
-        name: MSG.GROUP_MANAGEMENT,
-        icon: MATERIAL_ICONS.GROUPS,
-        fn: () => this.buildGroups(),
-      });
-
-      if (!this.isMobile()) {
+      if(this.dur.isAdmin()){
         companyOptions.push({
-          name: MSG.HIRING,
-          icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
-          fn: () => this.buildStore(),
+          name: MSG.USER_MANAGEMENT,
+          icon: MATERIAL_ICONS.PEOPLE,
+          fn: () => this.buildUser(),
         });
-      }
+        if (!this.company.domain.parentId) {
+          companyOptions.push({
+            name: MSG.COMPANY_MANAGEMENT,
+            icon: MATERIAL_ICONS.BUSINESS,
+            fn: () => this.buildCompanyList(),
+          });
+        }
 
+        companyOptions.push({
+          name: MSG.GROUP_MANAGEMENT,
+          icon: MATERIAL_ICONS.GROUPS,
+          fn: () => this.buildGroups(),
+        });
+
+        if (!this.isMobile()) {
+          companyOptions.push({
+            name: MSG.HIRING,
+            icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
+            fn: () => this.buildStore(),
+          });
+        }
+      }
       aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
     }
 
@@ -166,17 +156,18 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildInvoiceConfiguration(),
         });
       }
-
-      appOptions.push({
-        id: MESSENGER.title,
-        name: MESSENGER.title,
-        aonIcon: {
-          icon: MESSENGER.icon,
-          color: MESSENGER.color
-        },
-        fn: () => this.buildMessengerConfiguration(),
-      });
-
+      
+      if(!this.dur.isEmployee()){
+        appOptions.push({
+          id: MESSENGER.title,
+          name: MESSENGER.title,
+          aonIcon: {
+            icon: MESSENGER.icon,
+            color: MESSENGER.color
+          },
+          fn: () => this.buildMessengerConfiguration(),
+        });
+      }
 
 
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
@@ -205,27 +196,6 @@ export class AonConfiguration extends AonElement {
   
       aonConfiguration.setContent(aonUser);	
     });
-  }
-
-  buildCertificate(){
-
-    let application = this.getApplication();
-    
-    this.clearElementById(application.CONTENT);
-
-    application.startLoader();
-
-    GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, application.CONTENT);
-
-    waitEl(`#${application.CONTENT} .aon_toolbar`).finally(()=> {
-      this.fixSpacing();
-      application.stopLoader();
-    });
-  }
-
-  fixSpacing() {
-    if (!document.querySelector("aon-module")) 
-      waitEl(`#${this.getApplication().getContent().id} div:first-child`).then(el => el.style.position = "").catch(err => console.log(err));        
   }
 
   buildGeneral() {

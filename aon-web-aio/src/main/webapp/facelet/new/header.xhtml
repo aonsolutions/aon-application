@@ -730,6 +730,21 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-email.svg']}) ;
 	}
 	
+	.aon-icon-circle-green {
+		background-size: 24px;
+		background: transparent url(css/images/aon-icon/aon-icon-circle-green.svg) no-repeat scroll center center;		
+	}
+	
+	.aon-icon-circle-gray {
+		background-size: 24px;
+		background: transparent url(css/images/aon-icon/aon-icon-circle-gray.svg) no-repeat scroll center center;
+	}
+	
+	.aon-icon-circle-red {
+		background-size: 24px;
+		background: transparent url(css/images/aon-icon/aon-icon-circle-red.svg) no-repeat scroll center center;
+	}
+	
 	.aon-icon-webmail2{
 		background-size: cover;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-email.svg']}) ;
@@ -1551,7 +1566,7 @@
 								action="start" />
 						</aon:if>
 
-						<aon:dropDownMenu>
+						<aon:dropDownMenu id="aonHelpMenu">
 			                <f:facet name="label"> 
 			 					<h:outputLink 
 									title="#{bundle.aon_help}"
@@ -1559,6 +1574,18 @@
 									style="#{customize.fontStyle}" >
 								</h:outputLink>
 							</f:facet>
+	                		<aon:menuItem id="enableSupport"
+								value="Activar Soporte"
+								rendered="#{!desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}"
+								actionListener="#{desktop.onEnableSupport}"
+								reRender="aonHelpMenu"
+								iconClass="aon-icon-circle-green" />
+	                		<aon:menuItem id="disableSupport"
+								value="Desactivar Soporte"
+								rendered="#{desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}"
+								actionListener="#{desktop.onDisableSupport}"
+								reRender="aonHelpMenu"
+								iconClass="aon-icon-circle-red" />
 	                		<aon:menuItem id="cauMessenger"
 								value="Soporte / CAU"
 								action="portal_cau_messenger" 

@@ -3,30 +3,42 @@ import { AonSelect } from "../../components/aon-select.js";
 import { MSG } from "../../environments/environments.js";
 import { getCategories, getScopes, getTags, uploadFileDocumental } from "../../services/documentalService.js";
 import { getReader } from "../../services/utils.js";
+import { AonDocumental } from "./aon-documental.js";
+// import { AonDocumental } from "./aon-documental.js";
 import { ASESOR_TYPE_OPTION,
     ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
 
 export const uploadDocuments = (el, files, dur) => {
     let d = new AonDialog();
-    document.getElementById('rootPanel').appendChild(d);
+    let rootPanel = document.getElementById("rootPanel");
+    rootPanel.appendChild(d);
     d.clear();
     // if(isMobile()) d.width = '400px';
     d.setTitle(MSG.UPLOAD_FILE);
     d.setContent(uploadOption(dur));
-    d.addAcceptAction(() => {
-        let data = {
-            category: document.getElementById("aonDocumentalUploadCategory").value,
-            scope: document.getElementById("aonDocumentalUploadScope").value,
-            tag: document.getElementById("aonDocumentalUploadTag").value,
-            type: document.getElementById("aonDocumentalUploadType").value
-        }
-
-      for(const file of files) {
-        getReader(file).then(reader => {
-            attach(reader, data).catch(e=>null);
-        });
+    d.addAcceptAction(async() => {
+      let arr = [];
+      let data = {
+          category: document.getElementById("aonDocumentalUploadCategory").value,
+          scope: document.getElementById("aonDocumentalUploadScope").value,
+          tag: document.getElementById("aonDocumentalUploadTag").value,
+          type: document.getElementById("aonDocumentalUploadType").value
+      }
+      for await (let file of files) {
+          let reader = await getReader(file).catch(()=>null);
+          if(reader){
+              let doc = await attach(reader, data);
+              if(doc)
+                arr.push(doc);
+          }
       }
       el.value = null;
+      if(arr.length>0){
+        let aonComponent =  new AonDocumental();
+        aonComponent.value = arr[0].id;
+        rootPanel.innerHTML ="";
+        rootPanel.appendChild(aonComponent);
+      }
     });
     d.open();
 }
@@ -124,7 +136,7 @@ export const uploadOption = (dur) => {
     return table;
   }
 
-  export const attach = (reader, d) => {
+const attach = async (reader, d) => {
     const data = {
       ...reader,
       contentName: reader.name,
@@ -134,5 +146,5 @@ export const uploadOption = (dur) => {
       scope: d.scope,
       type: d.type
     };
-    uploadFileDocumental(data).then(() =>  {}).catch(e=>null);
+    return await uploadFileDocumental(data).catch(e=>null);
 }
