@@ -175,7 +175,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 222.00);
 		assertValue("cgcBaseLabel", 222.00);
-		assertText("common_contingency", 222.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 231.00);
+		assertValue("cgcBaseLabel", 231.00);
+		assertText("common_contingency", 231.00*4.70/100.00);
 
 		draft("TRAMO, 2");
 		calculate(Calendar.AUGUST, 2021);
@@ -185,7 +188,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 365.00);
 		assertValue("cgcBaseLabel", 365.00);
-		assertText("common_contingency", 365.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 379.00);
+		assertValue("cgcBaseLabel", 379.00);
+		assertText("common_contingency", 379.00*4.70/100.00);
 
 		draft("TRAMO, 3");
 		calculate(Calendar.AUGUST, 2021);
@@ -194,7 +200,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 509.00);
 		assertValue("cgcBaseLabel", 509.00);
-		assertText("common_contingency", 509.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 528.00);
+		assertValue("cgcBaseLabel", 528.00);
+		assertText("common_contingency", 528.00*4.70/100.00);
 
 		draft("TRAMO, 3 (DOS PERCEPCIONES)");
 		calculate(Calendar.AUGUST, 2021);
@@ -204,7 +213,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 509.00);
 		assertValue("cgcBaseLabel", 509.00);
-		assertText("common_contingency", 509.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 528.00);
+		assertValue("cgcBaseLabel", 528.00);
+		assertText("common_contingency", 528.00*4.70/100.00);
 
 		draft("TRAMO, 4");
 		calculate(Calendar.AUGUST, 2021);
@@ -213,7 +225,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 653.00);
 		assertValue("cgcBaseLabel", 653.00);
-		assertText("common_contingency", 653.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 677.00);
+		assertValue("cgcBaseLabel", 677.00);
+		assertText("common_contingency", 677.00*4.70/100.00);
 
 		draft("TRAMO, 5");
 		calculate(Calendar.AUGUST, 2021);
@@ -222,7 +237,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 798.00);
 		assertValue("cgcBaseLabel", 798.00);
-		assertText("common_contingency", 798.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 827.00);
+		assertValue("cgcBaseLabel", 827.00);
+		assertText("common_contingency", 827.00*4.70/100.00);
 
 		draft("TRAMO, 6");
 		calculate(Calendar.AUGUST, 2021);
@@ -231,7 +249,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 941.00);
 		assertValue("cgcBaseLabel", 941.00);
-		assertText("common_contingency", 941.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 976.00);
+		assertValue("cgcBaseLabel", 976.00);
+		assertText("common_contingency", 976.00*4.70/100.00);
 
 		draft("TRAMO, 7");
 		calculate(Calendar.AUGUST, 2021);
@@ -240,7 +261,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 1125.90);
 		assertValue("cgcBaseLabel", 1125.90);
-		assertText("common_contingency", 1125.90*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 1166.70);
+		assertValue("cgcBaseLabel", 1166.70);
+		assertText("common_contingency", 1166.70*4.70/100.00);
 
 		draft("TRAMO, 8");
 		calculate(Calendar.AUGUST, 2021);
@@ -249,7 +273,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 1177.00);
 		assertValue("cgcBaseLabel", 1177.00);
-		assertText("common_contingency", 1177.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 1220.00);
+		assertValue("cgcBaseLabel", 1220.00);
+		assertText("common_contingency", 1220.00*4.70/100.00);
 
 		draft("TRAMO, 9");
 		calculate(Calendar.AUGUST, 2021);
@@ -258,7 +285,10 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 1322.00);
 		assertValue("cgcBaseLabel", 1322.00);
-		assertText("common_contingency", 1322.00*4.70/100.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 1370.00);
+		assertValue("cgcBaseLabel", 1370.00);
+		assertText("common_contingency", 1370.00*4.70/100.00);
 		
 		draft("TRAMO, _10");
 		calculate(Calendar.JANUARY, 2019);
@@ -267,9 +297,13 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertValue("cgpBaseLabel", 1555.00);
 		assertValue("cgcBaseLabel", 1555.00);
+		calculate(Calendar.JANUARY, 2022);
+		assertValue("cgpBaseLabel", 1555.00);
+		assertValue("cgcBaseLabel", 1555.00);
 		assertText("common_contingency", 1555.00*4.70/100.00);
 
 	}
+
 
 	// -------------------------------------------------------------------------
 

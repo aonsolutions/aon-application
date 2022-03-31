@@ -21,6 +21,8 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.AgreementClean;
 import net.aonsolutions.db.up2date.payroll.CertificatesClean;
+import net.aonsolutions.db.up2date.tgss.Bases2022UpdateII;
+import net.aonsolutions.db.up2date.tgss.HomeBases2022Update;
 
 
 public class Up2Date {
@@ -213,7 +215,9 @@ public class Up2Date {
 //    		CertificateDomainFix.CERTIFICATEDOMAINFIX,
 //    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY,
 //    		AgreementClean.AGREEMENTCLEAN,
-    		CertificatesClean.CERTIFICATESCLEAN
+//    		CertificatesClean.CERTIFICATESCLEAN
+    		Bases2022UpdateII.BASES2022UPDATEIII,
+    		HomeBases2022Update.HOMEBASES2022UPDATE
     };
     
 
