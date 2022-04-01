@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
-//import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-//import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-//import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox.ExpressionResolver;
@@ -21,18 +18,12 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -42,14 +33,14 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public abstract class PageAbs extends ResizeComposite {
 
-	interface DeleteButtonTemplate extends SafeHtmlTemplates {
-		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
-		SafeHtml render(String option);
-	}
-	interface SelectButtonTemplate extends SafeHtmlTemplates {
-		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-row-selector\" style=\"border: medium none !important;\">")
-		SafeHtml render(String option);
-	}
+//	interface DeleteButtonTemplate extends SafeHtmlTemplates {
+//		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
+//		SafeHtml render(String option);
+//	}
+//	interface SelectButtonTemplate extends SafeHtmlTemplates {
+//		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-row-selector\" style=\"border: medium none !important;\">")
+//		SafeHtml render(String option);
+//	}
 	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -58,45 +49,45 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	};
 	
-	static class SelectButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
+//	static class SelectButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
+//
+//		private static SelectButtonTemplate template;
+//
+//		protected SelectButtonSafeHtmlTemplates() {
+//			template = GWT.create(SelectButtonTemplate.class);
+//		}
+//		
+//		@Override
+//		public SafeHtml render(String object) {
+//			return template.render(object);
+//		}
+//
+//		@Override
+//		public void render(String object, SafeHtmlBuilder builder) {
+//			builder.append( template.render(object) );
+//		}
+//		
+//	}
 
-		private static SelectButtonTemplate template;
-
-		protected SelectButtonSafeHtmlTemplates() {
-			template = GWT.create(SelectButtonTemplate.class);
-		}
-		
-		@Override
-		public SafeHtml render(String object) {
-			return template.render(object);
-		}
-
-		@Override
-		public void render(String object, SafeHtmlBuilder builder) {
-			builder.append( template.render(object) );
-		}
-		
-	}
-
-	static class DeleteButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
-
-		private static DeleteButtonTemplate template;
-
-		protected DeleteButtonSafeHtmlTemplates() {
-			template = GWT.create(DeleteButtonTemplate.class);
-		}
-		
-		@Override
-		public SafeHtml render(String object) {
-			return template.render(object);
-		}
-
-		@Override
-		public void render(String object, SafeHtmlBuilder builder) {
-			builder.append( template.render(object) );
-		}
-		
-	}
+//	static class DeleteButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
+//
+//		private static DeleteButtonTemplate template;
+//
+//		protected DeleteButtonSafeHtmlTemplates() {
+//			template = GWT.create(DeleteButtonTemplate.class);
+//		}
+//		
+//		@Override
+//		public SafeHtml render(String object) {
+//			return template.render(object);
+//		}
+//
+//		@Override
+//		public void render(String object, SafeHtmlBuilder builder) {
+//			builder.append( template.render(object) );
+//		}
+//		
+//	}
 
 	private HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
 	private HashMap<IMod200Key, AonBoxLabel> labels = new HashMap<IMod200Key, AonBoxLabel>();
@@ -106,9 +97,11 @@ public abstract class PageAbs extends ResizeComposite {
 	protected FlowPanel basePanel;
 	protected Model200PageCallback callback;
 	
-	public PageAbs( Model200PageCallback callback) {
+	public PageAbs(Model200PageCallback callback) {
 		this.callback = callback;
-		callback.getMod200Object().register( new IMod200ChangeListener() {
+		
+		// FALTA - CREO QUE ESTO ES LO QUE PERMITE PINTAR EL ASTERISCO EN AQUELLAS CASILLAS DE IMPORTES QUE SE HAN MODIFICADO ??
+		callback.getMod200Object().register(new IMod200ChangeListener() {
 			
 			@Override
 			public void mod200Changed(Mod2002020 mod200) {
@@ -148,9 +141,11 @@ public abstract class PageAbs extends ResizeComposite {
 		String description = key.getDescription();
 		paintDescription(tab, description, row,col,isTitle(key));	
 	}
+	
 	protected void paintDescription(FlexTable tab, String description, int row,int col, boolean title) {
 		paintDescription(tab, description, row,col, title, 120);	
 	}
+	
 	protected void paintDescription(FlexTable tab, String description, int row,int col, boolean title, int size) {
 		Label desc = new Label( AonStringUtils.abbreviate(description, size) );
 		if (AonStringUtils.length(description) > 117) {
@@ -163,18 +158,12 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
 	}
 
-//	protected void paintTitle(FlexTable tab, String description, int row, int col, boolean title) {
 	protected void paintTitle(FlexTable tab, String description, int row, int col) {
 		Label desc = new Label( description);
 		desc.setStyleName(AON.AON_CSS.aonBold());
 		desc.addStyleName(AON.AON_CSS.aonTextCenter());
 		desc.addStyleName(AON.AON_CSS.aonBorderBottom());		
 		tab.setWidget(row, col, desc);
-//		tab.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextUnderline());
-//		tab.getFlexCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
-//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
-//		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonMargin());
 	}
 	
 	protected void paintKeyField(FlexTable tab,final Mod2002020Key key,int row, int col) {
@@ -340,15 +329,11 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, String... headers) {
 		paintKeysProvider(keysProvider, tab, 0, headers);
-	}	
+	}
+	
 	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, int row, String... headers) {
 		if (headers != null) {
 			for (int i = 0; i < headers.length; i++) {
-//				tab.setWidget(row, i, new Label( headers[i] ));
-//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonBold());
-//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonBorderBottom());
-//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonTextCenter());
-//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonFontSmall());
 				addHeaderCell(tab, row, i, headers[i]);				
 			}
 			row++;
@@ -367,30 +352,30 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	}
 	
-	protected void addCheckBox(Mod2002020Key key, FlexTable tab, int row) {
-		
-		final CheckBox cb = new CheckBox();
-		cb.setText(key.getDescription());
-		
-		DoubleVariable2020 dv = callback.getMod200Object().getMod200().getKeysMap().get(key);			
-		if (dv != null) {				 
-		   cb.setValue(dv.getValue()==1.0);
-		}
-
-		cb.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				DoubleVariable2020 bv = new DoubleVariable2020(key);
-				bv.setValue( cb.getValue()?1.0:0.0 );
-				callback.getMod200Object().getMod200().addVariable(bv);					
-			}
-			
-		});
-		
-		tab.setWidget(row, 0, cb);
-		tab.getFlexCellFormatter().setColSpan(row, 0, 3);		
-		
-	}	
+//	protected void addCheckBox(Mod2002020Key key, FlexTable tab, int row) {
+//		
+//		final CheckBox cb = new CheckBox();
+//		cb.setText(key.getDescription());
+//		
+//		DoubleVariable2020 dv = callback.getMod200Object().getMod200().getKeysMap().get(key);			
+//		if (dv != null) {				 
+//		   cb.setValue(dv.getValue()==1.0);
+//		}
+//
+//		cb.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				DoubleVariable2020 bv = new DoubleVariable2020(key);
+//				bv.setValue( cb.getValue()?1.0:0.0 );
+//				callback.getMod200Object().getMod200().addVariable(bv);					
+//			}
+//			
+//		});
+//		
+//		tab.setWidget(row, 0, cb);
+//		tab.getFlexCellFormatter().setColSpan(row, 0, 3);		
+//		
+//	}	
 
 	protected FlexTable getFlexTable(Panel container, int row, String[] headers) {
 		FlexTable tableDetail = new FlexTable();
@@ -467,19 +452,6 @@ public abstract class PageAbs extends ResizeComposite {
 		initWidget(scroll);		
 	}
 	
-//	private FlexTable addTable() {
-//		FlexTable table = new FlexTable();
-//		table.setCellSpacing(0);
-//		table.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		table.addStyleName(AON.CSS.aonMargin());
-////		table.addStyleName(AON.CSS.aonBlockCenter());
-//		
-//		ColumnFormatter cf = table.getColumnFormatter();
-//		cf.setWidth(1, "200px");
-//		
-//		return table;
-//	}
-	
 	// Añadir FlexTable a basePanel
 	protected FlexTable addTable() {
 		return addTable("");
@@ -529,10 +501,6 @@ public abstract class PageAbs extends ResizeComposite {
 	// Añadir FlexTable a basePanel, con unas filas de datos (descripcion, 1 casilla de importe)
 	protected void addTable(String title, Mod2002020Key[] keys) {
 
-//		if (AonStringUtils.isNotBlank(label)) {
-//			basePanel.add(getTitle(label));			
-//		}
-		
 		FlexTable table = addTable(title);
 
 		int row = 0;
@@ -545,14 +513,13 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void addHeaderCell(FlexTable table, int row, int col, String msg) {
+
 		table.setWidget(row, col, new Label( msg ));
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
+		
 	}
-	
-	
-	
 	
 }

@@ -180,6 +180,7 @@ public class Mod2002020Object implements Serializable {
 			calculate();
 		}
 	}
+	
 	public void mathExpression(String expression,AsyncCallback<Double> callback) {
 		try {
 			double ret = Model200.resolve(expression);
@@ -204,21 +205,21 @@ public class Mod2002020Object implements Serializable {
 		});
 	}
 
-	public void validate(final AsyncCallback<Mod2002020> callback) {
-		Model200.getMod2002020Service().validateMod2002020(mod200, new AsyncCallback<Mod2002020>() {
-			
-			@Override
-			public void onSuccess(Mod2002020 result) {
-				mod200 = result;
-				callback.onSuccess(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				callback.onFailure(caught);
-			}
-		});
-	}
+//	public void validate(final AsyncCallback<Mod2002020> callback) {
+//		Model200.getMod2002020Service().validateMod2002020(mod200, new AsyncCallback<Mod2002020>() {
+//			
+//			@Override
+//			public void onSuccess(Mod2002020 result) {
+//				mod200 = result;
+//				callback.onSuccess(result);
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				callback.onFailure(caught);
+//			}
+//		});
+//	}
 	
 	public void dumpAEAT(final AsyncCallback<String> callback) {
 		Model200.getMod2002020Service().dumpAEATMod2002020(mod200, new AsyncCallback<String>() {

@@ -18,7 +18,7 @@ public interface Mod2002020ServiceAsync {
 	void dumpAEATMod2002020(Mod2002020 mod200, AsyncCallback<String> callback);
 	void getMod2002020ById(Occam occam, int id,AsyncCallback<Mod2002020> callback);
 	void saveMod2002020(Occam occam, Mod2002020 mod200,AsyncCallback<Mod2002020> callback);
-	void validateMod2002020(Mod2002020 mod200, AsyncCallback<Mod2002020> callback);
+//	void validateMod2002020(Mod2002020 mod200, AsyncCallback<Mod2002020> callback);
 	void importMod2002019(Occam occam, Mod2002020 mod200,AsyncCallback<Mod2002020> callback);
 	void fillMod2002020AccountingData(Occam occam, Mod2002020 mod200, String data, AsyncCallback<Mod2002020> callback);
 	void getCompanyBanks(Occam occam, AsyncCallback<LinkedList<CompanyBank>> asyncCallback);

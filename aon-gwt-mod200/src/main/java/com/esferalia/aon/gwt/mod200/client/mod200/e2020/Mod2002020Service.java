@@ -20,7 +20,7 @@ public interface Mod2002020Service extends RemoteService {
 	Mod2002020 getMod2002020ById(Occam occam, int id) throws AonCoreException;
 	Mod2002020 calculateMod2002020(Mod2002020 mod200) throws AonCoreException;
 	Mod2002020 saveMod2002020(Occam occam, Mod2002020 mod200) throws AonCoreException;
-	Mod2002020 validateMod2002020(Mod2002020 mod200) throws AonCoreException;
+//	Mod2002020 validateMod2002020(Mod2002020 mod200) throws AonCoreException;
 	void deleteMod2002020(Occam occam, int id) throws AonCoreException;
 	String dumpAEATMod2002020(Mod2002020 mod200) throws AonCoreException;
 	Mod2002020 importMod2002019(Occam occam, Mod2002020 mod200) throws AonCoreException;

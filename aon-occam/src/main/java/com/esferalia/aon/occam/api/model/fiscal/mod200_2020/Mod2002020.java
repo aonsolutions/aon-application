@@ -110,7 +110,7 @@ public class Mod2002020 extends Mod200 {
 	private HashMap<IMod200Key,DoubleVariable2020> draftMap = new HashMap<IMod200Key,DoubleVariable2020>();
 	private HashMap<IMod200Key,Boolean> visibleMap = new HashMap<IMod200Key,Boolean>();
 
-	private LinkedList<ValidationMessage2020> messages;
+//	private LinkedList<ValidationMessage2020> messages;
 
 	public boolean isInitializedFromLastYear() {
 		return initializedFromLastYear;
@@ -371,12 +371,12 @@ public class Mod2002020 extends Mod200 {
 //	public void setComments(String comments) {
 //		this.comments = comments;
 //	}
-	public LinkedList<ValidationMessage2020> getMessages() {
-		return messages;
-	}
-	public void setMessages(LinkedList<ValidationMessage2020> messages) {
-		this.messages = messages;
-	}
+//	public LinkedList<ValidationMessage2020> getMessages() {
+//		return messages;
+//	}
+//	public void setMessages(LinkedList<ValidationMessage2020> messages) {
+//		this.messages = messages;
+//	}
 	
 	@Override
 	public FiscalModelType getModel() {

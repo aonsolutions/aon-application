@@ -30,8 +30,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-
-//public class Model2002020 extends ResizeComposite  {
 public class Model2002020 extends DockLayoutPanel {
 	
 	public static final int BOX_LENGTH = 5;
@@ -119,7 +117,8 @@ public class Model2002020 extends DockLayoutPanel {
 	protected final InlineLabel dirtyLabel = new InlineLabel();
 	private boolean dirty;
 	
-	public Model2002020(Model200ModuleOptions options, Model200Callback mod200Callback) {
+//	public Model2002020(Model200ModuleOptions options, Model200Callback mod200Callback) {
+	public Model2002020(Model200Callback mod200Callback, Mod2002020 mod200) {
 		super(Unit.PX);
 		
 		popup = new PopupPanel(false, true);
@@ -131,7 +130,10 @@ public class Model2002020 extends DockLayoutPanel {
 //		Window.alert("Model2002020 PASO 1");
 		
 		this.mod200Callback = mod200Callback;
-		this.options = options;
+//		this.options = options;
+		this.options = mod200Callback.getOptions();
+		
+		AON.ensureInjected();
 
 //		Window.alert("Model2002020 PASO 2");
 		
@@ -204,6 +206,26 @@ public class Model2002020 extends DockLayoutPanel {
 //		formContainer.add(diskForm);	
 		
 //		Window.alert("Model2002020 PASO 5");
+		
+		mod200Object = new Mod2002020Object(options, mod200);
+		
+		popup.center();
+//		select(mod200Object.getMod200());
+		
+		clear();
+		
+		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(mod200);
+		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
+		addNorth(getToolbar(), AonToolbar.HEIGTH);
+//		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH);
+		addWest(getLinksPanel(), 300);
+		add(pageContainer);		
+		
+		dump((mod200Object.getMod200().getId() == null));
+		popup.hide();
+		if (mod200Object.getMod200().getId() == null) 
+			markAsDirty();
+		
 	}
 	
 //	private void fillInfo() {
@@ -273,30 +295,29 @@ public class Model2002020 extends DockLayoutPanel {
 		
 	}
 
-	public void startModel(final Mod2002020Object modObject ) {
-		mod200Object = modObject;
-//		fillInfo();
-//		final PopupPanel popup = new PopupPanel(false, true);
-//		Label label = new Label(AON.MSG.processing());
-//		label.addStyleName(AON.AON_CSS.aonTimer());
-//		popup.add(label);
-//		popup.setGlassEnabled(true);
-//		popup.setAnimationEnabled(true);
+//	public void startModel(final Mod2002020Object modObject ) {
+//		mod200Object = modObject;
+////		fillInfo();
+////		final PopupPanel popup = new PopupPanel(false, true);
+////		Label label = new Label(AON.MSG.processing());
+////		label.addStyleName(AON.AON_CSS.aonTimer());
+////		popup.add(label);
+////		popup.setGlassEnabled(true);
+////		popup.setAnimationEnabled(true);
+////		popup.center();
+////		paintHeaderTable(mod200Object.getMod200());
+//		
+////		final PopupPanel popup = new PopupPanel(false, true);
+////		popup.add( new AonSplash());
+////		popup.setGlassEnabled(true);
+////		popup.setAnimationEnabled(true);
 //		popup.center();
-//		paintHeaderTable(mod200Object.getMod200());
-		
-//		final PopupPanel popup = new PopupPanel(false, true);
-//		popup.add( new AonSplash());
-//		popup.setGlassEnabled(true);
-//		popup.setAnimationEnabled(true);
-		popup.center();
-		select(mod200Object.getMod200());
-		dump((mod200Object.getMod200().getId() == null) );
-		popup.hide();
-		if (mod200Object.getMod200().getId() == null) 
-			markAsDirty();
-	}
-
+//		select(mod200Object.getMod200());
+//		dump((mod200Object.getMod200().getId() == null) );
+//		popup.hide();
+//		if (mod200Object.getMod200().getId() == null) 
+//			markAsDirty();
+//	}
 
 	private void dump( boolean charactersEnabled) {
 		ensurePage(P00,new Model200PageCallback(){
@@ -475,18 +496,17 @@ public class Model2002020 extends DockLayoutPanel {
 				parent.getWidget(i).removeStyleName(AON.CSS.aonBackgroundLigthGray());
 			}
 			
-			PageAbs pageAbs = ensurePage(page, 
-					new Model200PageCallback(){
-						@Override 
-						public Mod2002020Object getMod200Object() {
-							return mod200Object;
-						}
-
-						@Override
-						public void markAsDirty() {
-							Model2002020.this.markAsDirty();						
-						}
-					});
+			PageAbs pageAbs = ensurePage(page, new Model200PageCallback(){
+													@Override 
+													public Mod2002020Object getMod200Object() {
+														return mod200Object;
+													}
+							
+													@Override
+													public void markAsDirty() {
+														Model2002020.this.markAsDirty();						
+													}
+												});
 			if (pageAbs.isAvailable()) {
 				pageAbs.dump();
 				pageContainer.setWidget(pageAbs);
@@ -598,21 +618,21 @@ public class Model2002020 extends DockLayoutPanel {
 		return getPage(i);
 	}
 	
-	public void select(Mod2002020 mod200) {
-		
-		clear();
-		
-		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(mod200);
-		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
-		addNorth(getToolbar(mod200), AonToolbar.HEIGTH);
-//		addNorth(getDeclarationToolbarPanel(mod200), AonToolbar.HEIGTH);
-		addWest(getLinksPanel(), 300);
-		add(pageContainer);		
-		
-	}
+//	public void select(Mod2002020 mod200) {
+//		
+//		clear();
+//		
+//		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(mod200);
+//		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
+//		addNorth(getToolbar(mod200), AonToolbar.HEIGTH);
+////		addNorth(getDeclarationToolbarPanel(mod200), AonToolbar.HEIGTH);
+//		addWest(getLinksPanel(), 300);
+//		add(pageContainer);		
+//		
+//	}
 	
-	private Widget getToolbar(Mod2002020 mod200) {
-		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(mod200.getDocument(),AonStringUtils.SPACE, mod200.getFullName()));
+	private Widget getToolbar() {
+		AonToolbar toolbarPanel = new AonToolbar(AonStringUtils.join(mod200Object.getMod200().getDocument(),AonStringUtils.SPACE, mod200Object.getMod200().getFullName()));
 		
 		AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(), AON.CSS.aonIconBack() );
 		if (mod200Callback.getOptions().isBackButtonVisible() && mod200Callback.getOptions().hasExternalCallback()) {
@@ -621,9 +641,9 @@ public class Model2002020 extends DockLayoutPanel {
 		}
 		cancelButton.addClickHandler(event -> {
 			if (mod200Callback.getOptions().isBackButtonVisible() && mod200Callback.getOptions().hasExternalCallback()) {
-				mod200Callback.getOptions().getExternalCallback().onExit(mod200);
+				mod200Callback.getOptions().getExternalCallback().onExit(mod200Object.getMod200());
 			} else {
-				mod200Callback.onCancel(mod200);
+				mod200Callback.onCancel(mod200Object.getMod200());
 			}
 		});
 		toolbarPanel.add(cancelButton);
@@ -667,7 +687,7 @@ public class Model2002020 extends DockLayoutPanel {
 				public void onSuccess(Mod2002020 result) {
 					super.onSuccess(result);
 					saveButton.setEnabled(true);
-					setDirty(false);					
+					setDirty(false);
 //					refreshButtonsVisibility();
 				}
 				@Override
@@ -730,7 +750,8 @@ public class Model2002020 extends DockLayoutPanel {
 							@Override
 							public void onSuccess(Void result) {
 								popup.hide();
-								mod200Callback.removed();
+								//mod200Callback.removed();
+								mod200Callback.onRemove(mod200Object.getMod200());
 							}
 							
 							@Override
@@ -971,12 +992,12 @@ public class Model2002020 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg() 				 ));
 		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresosAbbrv() ));
 		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()	 ));
-		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI()		 ));
-		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII()		 ));
-		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII()	 ));
-		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() 	 ));
-		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() 	 	 ));
-		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()	 ));
+		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI() + ": Resultado PyG, Cifra de negocios, Correcciones"));
+		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII() + ": Base imponible, Cuota \u00EDntegra"));
+		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII() + ": Bonificaciones, Deducciones por doble imposici\u00F3n"));
+		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones"));
+		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() + ": Cuota del ejercicio, Pagos fraccionados, L\u00EDquido a ingresar o devolver"));
+		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()));
 		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n de resultados / Documentaci\u00F3n previa"));
 		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitationAbbrv()));
 		linkContainer.add(new WestFocusPanel(17,AON.MSG.page17()		 	 ));
@@ -996,7 +1017,7 @@ public class Model2002020 extends DockLayoutPanel {
 		return scrollPanel;
 	}
 	
-//	private AonToolbar getDeclarationToolbarPanel(Mod2002020 mod200) {
+//	private AonToolbar getDeclarationToolbarPanel() {
 //		AonToolbar decToolbar = new AonToolbar();
 //		
 //		// FALTA - LO DEL ESTADO AUN NO ESTÁ EN EL MODELO 200, ASI QUE POR AHORA NO SE PONEN LOS BOTONES QUE CAMBIAN EL ESTADO

@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018Object;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Model2002018;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019Object;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Model2002019;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Service;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020ServiceAsync;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020ServiceAsyncDecorator;
@@ -53,6 +52,9 @@ public class Model200 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
+// POR AHORA NO SE MUESTRA NADA EN EL PANEL DE INFORMACION DE LA PARTE INFERIOR, POR LO TANTO NO SE UTILIZA
+// ANTES EN LA PARTE INFERIOR DEL MODELO 200 SE MOSTRABAN LOS ERRORES, PERO AHORA LOS ERRORES APARECEN EN EL 
+// PANEL SUPERIOR POR LO TANTO EL PANEL INFERIOR POR AHORA NO CONTIENE NADA
 //	private static final int INFORMATION_TAB = 0;
 	
 	public static final Mod200ServiceAsync MOD200_SERVICE;
@@ -90,14 +92,6 @@ public class Model200 extends MainEntryPoint {
 //	Model200Table table;
 //	DeckLayoutPanel deckPanel;
 //	SimpleLayoutPanel container;
-	
-//	public static Mod200ServiceAsync getMod200Service() {
-//		if (mod200Service == null) {
-//			Mod200ServiceAsync mod200ServiceRaw = GWT.create(Mod200Service.class);
-//			mod200Service = new Mod200ServiceAsyncDecorator(mod200ServiceRaw);
-//		}
-//		return mod200Service;
-//	}
 	
 	public static Mod2002020ServiceAsync getMod2002020Service() {
 		if (mod2002020Service == null) {
@@ -164,13 +158,6 @@ public class Model200 extends MainEntryPoint {
 	}
 
 	public class Model200Callback implements IFiscalModelCallback<Mod200, Model200ModuleOptions> {
-//		public void canceled() {
-//			container.clear();
-//			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);	
-//		}
-//		public void removed() {
-//			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-//		}
 		
 		// LO PONGO POR AHORA PARA COMPILAR LOS Model200*
 		public void canceled() {
@@ -273,28 +260,6 @@ public class Model200 extends MainEntryPoint {
 	private void showErrorMessage(String msg) {
 		aonLayout.showErrorPanel(msg);
 	}
-	
-//	@Override
-//	public void onModuleLoad() {
-//		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
-//			
-//			@Override
-//			public void onSuccess(AonConfiguration config) {
-//				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-//				Model200ModuleOptions options = new Model200ModuleOptions();
-//				options.setParentWidget(root);
-//				options.setDomainName(getCurrentDomainName());
-//				options.setDomain(getCurrentDomain());
-//				options.setUser(getCurrentUser());
-//				options.setConfiguration(config);
-//				onModuleLoad( options );
-//			}
-//			
-//			@Override public void onFailure(Throwable caught) {
-//				Window.alert( "Error al cargar el module" );
-//			}
-//		});
-//	}
 	
 	@Override
 	public void onModuleLoad() {
@@ -474,7 +439,6 @@ public class Model200 extends MainEntryPoint {
 				if (selected == null) {
 					showErrorMessage(AON.MSG.unableToFindDeclaration());
 				} else {
-					//select(selected, null, null, 0);
 					changeView(options, selected);
 				}
 			}
@@ -486,24 +450,6 @@ public class Model200 extends MainEntryPoint {
 		});
 	}
 
-//	private void onSelect(Model200ModuleOptions options, Integer id ) {
-//		LOGGER.info("OnSelect Model200 with a ID: " + options.getFiscalModelId());
-//		getMod200Service().getMod200(options.getOccam(), id , new AsyncCallback<Mod200>() {
-//			@Override
-//			public void onSuccess(Mod200 selected) {
-//				if (selected == null) {
-//					Window.alert( "Error al cargar el module" );
-//				} else {
-//					changeView(options, selected);
-//				}
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				Window.alert( "Error al cargar el module" );
-//			}
-//		});
-//	}
 	
 //	private Widget getToolbarPanel(Model200ModuleOptions options) {
 //		FlowPanel toolbarPanel = new FlowPanel();
@@ -713,7 +659,6 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2020) {
-//			changeView2020(options, mod);
 			getMod2002020Service().getMod2002020ById(options.getOccam(), mod.getId()
 					, new AsyncCallback<Mod2002020>() {
 
@@ -803,16 +748,17 @@ public class Model200 extends MainEntryPoint {
 		declarationContainer.setWidget(model2002019);
 	}
 	
-	private void changeView2020(Model200ModuleOptions options,Mod2002020 mod200) {
+	private void changeView2020(Model200ModuleOptions options, Mod2002020 mod200) {
 //	private void changeView2020(Model200ModuleOptions options, Mod200 mod200) {
-		Mod2002020Object mod200Obj = new Mod2002020Object(options, mod200);
-		Model2002020 model2002020 = new Model2002020(options, new Model200Callback());
-		model2002020.startModel( mod200Obj );
+//		Mod2002020Object mod200Obj = new Mod2002020Object(options, mod200);
+		//Model2002020 model2002020 = new Model2002020(options, new Model200Callback());
+//		Model2002020 model2002020 = new Model2002020(new Model200Callback());
+//		model2002020.startModel( mod200Obj );
 //		container.setWidget(model2002020);
 //		int i = deckPanel.getWidgetIndex(container);
 //		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002020);
-//		declarationContainer.setWidget(new Model2002020New(new Model200Callback(), mod200));
+//		declarationContainer.setWidget(model2002020);
+		declarationContainer.setWidget(new Model2002020(new Model200Callback(), mod200));
 	}
 	
 	protected void newModel(Model200ModuleOptions options, int year) {
@@ -841,8 +787,6 @@ public class Model200 extends MainEntryPoint {
 			case 2020:
 				new2020(options);	
 				break;
-//			default:
-//				break;
 		}
 		
 	}
@@ -964,11 +908,9 @@ public class Model200 extends MainEntryPoint {
 		});
 	}
 	
-	// NECESARIO PARA COMPILAR LO QUE ESTA AHORA 
 	public native static double resolve(String expression) /*-{
 		d = eval(expression);
 		return d;
 	}-*/;	
-	// -----------------------------------------
 	
 }

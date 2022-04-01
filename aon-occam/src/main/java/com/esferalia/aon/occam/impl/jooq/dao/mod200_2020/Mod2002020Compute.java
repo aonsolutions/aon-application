@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod200_2020;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key.LQ552;
-
 import java.util.Arrays;
 import java.util.EnumMap;
 

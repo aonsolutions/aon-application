@@ -165,7 +165,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 				}
 			}
 		}
-		return new Double(0);		
+		return 0.0; // new Double(0);		
 	}
 	
 	public Object evaluateExpression(Mod2002020Key key,String expression) {
@@ -226,7 +226,7 @@ public class Mod2002020MVELContext implements Map<String, Object> { // extends A
 	@Override
 	protected void finalize() throws Throwable {
 		context = null;
-		super.finalize();
+//		super.finalize();
 	}
 
 	

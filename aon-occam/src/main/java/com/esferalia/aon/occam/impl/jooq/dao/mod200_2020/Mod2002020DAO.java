@@ -45,7 +45,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Character;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020KeyDC;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.ValidationMessage2020;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -252,7 +251,7 @@ public class Mod2002020DAO  {
 			 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
 			 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
 			 .set(FS_MODEL200.YEAR, mod200.getYear())
-			 .set(FS_MODEL200.ADMINISTRATION, mod200.getAdministration().getValue() )
+			 .set(FS_MODEL200.ADMINISTRATION, mod200.getAdministration().value() )
 			 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte( mod200.getStatus() ) )
 			 .set(FS_MODEL200.DOCUMENT, mod200.getDocument())
 			 .set(FS_MODEL200.NAME, mod200.getName())
@@ -523,7 +522,7 @@ public class Mod2002020DAO  {
 		 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
 		 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
 		 .set(FS_MODEL200.YEAR, mod200.getYear())
-		 .set(FS_MODEL200.ADMINISTRATION, mod200.getAdministration().getValue())
+		 .set(FS_MODEL200.ADMINISTRATION, mod200.getAdministration().value())
 		 .set(FS_MODEL200.DOCUMENT, mod200.getDocument())
 		 .set(FS_MODEL200.NAME, mod200.getName())
 		 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
@@ -1061,21 +1060,21 @@ public class Mod2002020DAO  {
 	}
 
 	// YA NO SE USA ESTA VALIDACION, SE USA LA DE LA AGENCIA TRIBUTARIA
-	public static Mod2002020 validate(Mod2002020 mod200) {
-		mod200.setMessages(new LinkedList<ValidationMessage2020>());
-		Mod2002020MVELContext ctx = new Mod2002020MVELContext( mod200, ACCEPTER );
-		for (DoubleVariable2020 dv : mod200.getKeysMap().values()) {
-			ctx.put(dv.getKey().toString(), dv.getValue());
-		}
-		DoubleVariable2020 d = null;
-		for (IMod200Key key : mod200.getDraftMap().keySet() ) {
-			d = mod200.getDraftMap().get(key);
-			ctx.put(key.toString(), d.getValue());
-		}
-		addCharacters(ctx,mod200);
-//		Mod2002020Validation.validate(mod200);
-		return mod200;
-	}
+//	public static Mod2002020 validate(Mod2002020 mod200) {
+//		mod200.setMessages(new LinkedList<ValidationMessage2020>());
+//		Mod2002020MVELContext ctx = new Mod2002020MVELContext( mod200, ACCEPTER );
+//		for (DoubleVariable2020 dv : mod200.getKeysMap().values()) {
+//			ctx.put(dv.getKey().toString(), dv.getValue());
+//		}
+//		DoubleVariable2020 d = null;
+//		for (IMod200Key key : mod200.getDraftMap().keySet() ) {
+//			d = mod200.getDraftMap().get(key);
+//			ctx.put(key.toString(), d.getValue());
+//		}
+//		addCharacters(ctx,mod200);
+////		Mod2002020Validation.validate(mod200);
+//		return mod200;
+//	}
 	
 	public static String dumpAEAT(Mod2002020 mod200)  {
 		try {

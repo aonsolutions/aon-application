@@ -83,7 +83,7 @@ public class Page08 extends PageAbs {
 		
 		basePanel.clear();
 		
-		basePanel.add(getTitle(AON.MSG.liquidacionI()));
+		//basePanel.add(getTitle(AON.MSG.liquidacionI()));
 		
 //		FlexTable table = new FlexTable();
 //		table.setWidth("100%");
@@ -103,7 +103,7 @@ public class Page08 extends PageAbs {
 //		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
 //		++row;
 //		++row;
-		basePanel.add(getSubtitle(AON.MSG.liquidation1Label1()));
+		basePanel.add(getTitle(AON.MSG.liquidation1Label1()));
 		
 //		FlexTable tab1 = new FlexTable();
 //		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -163,7 +163,7 @@ public class Page08 extends PageAbs {
 //		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
 //		table.setWidget(row, 0, desc);
 //		++row;
-		basePanel.add(getSubtitle("Cifra de negocios"));
+		basePanel.add(getTitle("Cifra de negocios"));
 		
 //		desc = new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo");
 //		table.setWidget(row, 0, desc);
@@ -195,7 +195,8 @@ public class Page08 extends PageAbs {
 //		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
 //		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
 //		table.getFlexCellFormatter().setColSpan(row, 0, 0);
-		basePanel.add(getSubtitle(AON.MSG.liquidation1Label2()));
+		
+		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
 		
 //		FlexTable tab2 = new FlexTable();
 //		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -247,7 +248,7 @@ public class Page08 extends PageAbs {
 //		++row;
 		
 		// Detalle de Correcciones (Totales)
-		basePanel.add(getSubtitle(AON.MSG.liquidation1Label2()));
+		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
 		
 //		FlexTable tab3 = new FlexTable();
 //		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.mod200.server;
+package com.esferalia.aon.gwt.mod200.server.e2020;
 
 import java.io.IOException;
 import java.io.StringWriter;

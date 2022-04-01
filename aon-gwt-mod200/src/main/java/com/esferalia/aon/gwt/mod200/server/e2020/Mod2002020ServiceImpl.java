@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.mod200.server;
+package com.esferalia.aon.gwt.mod200.server.e2020;
 
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
@@ -37,12 +37,6 @@ public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	
 	@Override
 	public Mod2002020 initializeMod2002020(Occam occam, Mod2002020 mod200) {
-//		Esto no hace falta, porque cuando llega aqui ya están copiados los datos del ejercicio anterior, se copia en el createNewMod200 del DAO
-//		Mod2002019 mod2002019 = FISCAL.getMod2002019ByYear(domainName, domain, user, 2019);
-//		if(mod2002019 != null) {
-//			Mod2002020Import2019.import2019(mod200, mod2002019);
-//			mod200.setInitializedFromLastYear(true);
-//		}
 		return MODEL2002020.initializeMod2002020(occam,mod200);
 	}
 
@@ -69,10 +63,10 @@ public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet impl
 		return MODEL2002020.saveMod2002020(occam,mod200);
 	}
 
-	@Override
-	public Mod2002020 validateMod2002020(Mod2002020 mod200) throws AonCoreException {
-		return MODEL2002020.validateMod2002020(mod200);
-	}
+//	@Override
+//	public Mod2002020 validateMod2002020(Mod2002020 mod200) throws AonCoreException {
+//		return MODEL2002020.validateMod2002020(mod200);
+//	}
 
 	@Override
 	public void deleteMod2002020(Occam occam, int id)

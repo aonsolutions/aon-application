@@ -119,6 +119,10 @@ public class Page12 extends PageAbs {
 					if (paintDescription) {
 						paintKeyDescription(table, keys[i], row, 0);
 						paintDescription = false;
+						// Casilla 621, la descripcion va en negrita
+						if (keys[i] == Mod2002020Key.BN621) {
+							table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+						}
 					}
 					paintKeyField(table,keys[i], row, i+1);
 				}

@@ -12,7 +12,6 @@ public class MODEL200Impl implements IMODEL200 {
 
 	@Override
 	public LinkedList<Mod200> getMod200s(AONContext ctx, int domain) {
-//		return Mod200DAO.getByDomain(ctx, domain);
 		LinkedList<Mod200> list = new LinkedList<Mod200>();
 		Mod200DAO.getMod200s(ctx, domain)
 			.forEach(list::add);
@@ -21,12 +20,10 @@ public class MODEL200Impl implements IMODEL200 {
 
 	@Override
 	public Mod200 getMod200(AONContext ctx, Integer id) {
-//		return Mod200DAO.getById(ctx, id);
 		return Mod200DAO.getMod200s(ctx, ctx.getDomainId())
 				.filter(mod-> AonNumberUtils.equals(mod.getId(), id))
 				.findFirst()
 				.orElse(null);
 	}
-
 	
 }

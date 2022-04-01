@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL2002020Impl;
 
 public class MODEL2002020 {
+	
 	private MODEL2002020() {
 
 	}
@@ -48,9 +49,9 @@ public class MODEL2002020 {
 		return getImpl().calculateMod2002020(mod200);
 	}
 
-	public static Mod2002020 validateMod2002020(Mod2002020 mod200) {
-		return getImpl().validateMod2002020(mod200);
-	}
+//	public static Mod2002020 validateMod2002020(Mod2002020 mod200) {
+//		return getImpl().validateMod2002020(mod200);
+//	}
 
 	public static Mod2002020 saveMod2002020(Occam occam, Mod2002020 mod200) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {

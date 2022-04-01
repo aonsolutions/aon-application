@@ -67,7 +67,8 @@ public class Page09 extends PageAbs {
 		
 		basePanel.clear();
 		
-		basePanel.add(getTitle(AON.MSG.liquidacionII()));
+//		basePanel.add(getTitle(AON.MSG.liquidacionII()));
+		basePanel.add(getTitle("BASE IMPONIBLE. CUOTA INTEGRA"));
 		
 		FlexTable table = addTable();
 
