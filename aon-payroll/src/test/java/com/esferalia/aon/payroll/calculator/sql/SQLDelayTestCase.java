@@ -4972,7 +4972,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testDelaysOverrideQuoteITII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -5104,7 +5103,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testDelaysOverrideQuoteITIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
