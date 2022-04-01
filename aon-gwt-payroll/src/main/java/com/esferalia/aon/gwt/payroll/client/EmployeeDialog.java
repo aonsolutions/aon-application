@@ -1,10 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
@@ -331,6 +334,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			employeeDialogObject.setEmployeeBankAlias(bankAlias);
 			employeeDialogObject.setEmployeeBIC(bankSwift);
 		}
+
+		@Override
+		public void fireError(String title, String message) {
+			showError(title, message);
+		}
 		
 		private void initializeExistingEmployee(Integer contractId, boolean contractActive) {
 			employeeDialogObject.initializeEmployee(contractId,
@@ -348,6 +356,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	// ------------------------------------------------- UiFields
+	
+	@UiField
+	HTMLPanel messageContainer;
 	
 	@UiField (provided = true)
 	Employee employee;
@@ -378,7 +389,13 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	}
 	
 	// ------------------------------------------------- Abstract Methods
-	
+
+	public void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messageContainer, errorMap);
+	}
+
 	protected abstract void onAccept(Integer contractId);
 	
 	// ------------------------------------------------- setEmployeeDialogObject

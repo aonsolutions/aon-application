@@ -5721,7 +5721,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqCertifica2.createCertifica2DB(connection, domainId, contractId, null);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -5733,7 +5733,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if(AonStringUtils.isNotBlank(certifica2Info.getProfesionalCategory()))
 				JooqCertifica2.insertCNOToDB(connection, domainId, contractId, certifica2Info.getProfesionalCategory(), certifica2Info.getStartDate(), certifica2Info.getEndDate());
 			JooqCertifica2.createCertifica2DB(connection, domainId, contractId, certifica2Info.getSuspensionCode());
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -5754,7 +5754,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			JooqContractAttach.setContractIDC(connection, domainId, contractId, Base64.getDecoder().decode(base64Pdf_IDC));
 			
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6580,7 +6580,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} catch ( SQLException | SepeException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6608,7 +6608,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					endDate, CopyBasic.FirmType.values()[signType], workplaceAddress, restContract);
 
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
@@ -6637,7 +6637,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			JooqContrataContract.removeSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeId);
 
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
@@ -6667,10 +6667,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if(null != certifica2PDF && certifica2PDF.length > 0)
 				saveCertifica2Attach(domainName, domainId, userLogin, contractId, certifica2PDF);
 
-		} catch (SQLException | SepeException | CertificateNotFoundException e) {
+		} catch (Exception e) {
 			if(e instanceof CertificateNotFoundException)
 				throw new IllegalArgumentException("No existe certificado SEPE para realizar esta comunicacion");
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
@@ -6718,7 +6718,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} catch (SQLException | SepeException | CertificateNotFoundException | IOException e) {
 			if(e instanceof CertificateNotFoundException)
 				throw new IllegalArgumentException("No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
@@ -6746,7 +6746,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Sepe.sendTransformation(certificateIS, certificate.getPassword(), certificate.getType(), cto, copyBasic);
 
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6764,7 +6764,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Sepe.removeTransformation(certificateIS, certificate.getPassword(), certificate.getType(), ide);
 			
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
