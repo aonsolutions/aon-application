@@ -6983,6 +6983,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		if(AonStringUtils.isNotBlank(rlce))
 			builder.setRlce(rlce);
 		
+		String employeesColective = employeeContractInfo.getContractInfo().getEmployeesColective();
+		if(AonStringUtils.isNotBlank(employeesColective)) builder.setCollective(employeesColective);
+		
 		return builder.build();
 	}
 	

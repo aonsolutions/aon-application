@@ -816,7 +816,7 @@ public class AgreementParser {
 						}
 					}
 					
-					// BenefitsPLUS_FIESTAS_PATRONALES_ANUAL agreement extra
+					// Benefits PLUS_FIESTAS_PATRONALES_ANUAL agreement extra
 					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "BENEFICIOS")) {
 						dslContext.insertInto(AGREEMENT_EXTRA)
 							.set(AGREEMENT_EXTRA.DOMAIN, domainId)
@@ -825,6 +825,23 @@ public class AgreementParser {
 							.set(AGREEMENT_EXTRA.START_DATE, "01/01 -1")
 							.set(AGREEMENT_EXTRA.END_DATE, "31/12 -1")
 							.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/3")
+							.execute();
+						
+						dslContext.update(AGREEMENT_PAYMENT)
+							.set(AGREEMENT_PAYMENT.MONTH, (byte)2)
+							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+							.execute();
+					}
+					
+					// Benefits PLUS_PAGA_OCTUBRE_ANUAL agreement extra
+					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "OCTUBRE")) {
+						dslContext.insertInto(AGREEMENT_EXTRA)
+							.set(AGREEMENT_EXTRA.DOMAIN, domainId)
+							.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+							.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+							.set(AGREEMENT_EXTRA.START_DATE, "01/10 -1")
+							.set(AGREEMENT_EXTRA.END_DATE, "30/09")
+							.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/10")
 							.execute();
 						
 						dslContext.update(AGREEMENT_PAYMENT)

@@ -322,5 +322,4 @@ public class Task  implements Serializable{
 		this.isCau = isCau;
 		return this;
 	}
-	
 }

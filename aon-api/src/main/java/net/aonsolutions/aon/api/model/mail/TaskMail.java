@@ -1,13 +1,12 @@
 package net.aonsolutions.aon.api.model.mail;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import java.util.Date;
 
 public class TaskMail {
 	String number;

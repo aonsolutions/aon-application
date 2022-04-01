@@ -607,27 +607,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> callback) {
+	public void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> callback) throws IllegalArgumentException  {
 		AON.start();
 		enterprisesServiceAsync.getContractClauses(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractClause>>(callback));
 	}
 	
 	@Override
-	public void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses, AsyncCallback<List<ContractClause>> callback) {
+	public void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses, AsyncCallback<Void> callback) throws IllegalArgumentException  {
 		AON.start();
-		enterprisesServiceAsync.setContractClauses(currentDomainName, contractId, contractClauses, new AsyncCallbackWrapper<List<ContractClause>>(callback));
-	}
-
-	@Override
-	public void createContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> callback) {
-		AON.start();
-		enterprisesServiceAsync.createContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<List<ContractClause>>(callback));
-	}
-
-	@Override
-	public void deleteContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> callback) {
-		AON.start();
-		enterprisesServiceAsync.deleteContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<List<ContractClause>>(callback));
+		enterprisesServiceAsync.setContractClauses(currentDomainName, contractId, contractClauses, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override

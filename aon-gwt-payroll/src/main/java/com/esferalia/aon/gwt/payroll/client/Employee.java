@@ -183,6 +183,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	ListBox rlce;
+	
+	@UiField
+	ListBox employeesColective;
 
 	@UiField
 	ListBox journeyType;
@@ -450,6 +453,14 @@ public abstract class Employee extends ResizeComposite {
 			else
 				showElementsFullTimeContract();
 			
+			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+				showEmployeesColective();
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employeesColective);
+			} else {
+				hideEmployeesColective();
+				onContractEmployeesColectiveChange(null);
+			}
+			
 			updateModality(contractTypeInt);
 			
 			onContractTypeChange(contractTypeStr);
@@ -555,6 +566,11 @@ public abstract class Employee extends ResizeComposite {
 	@UiHandler("rlce")
 	void onContractRLCEChangeValue(ChangeEvent event) {
 		onContractRLCEChange(this.rlce.getSelectedValue());
+	}
+	
+	@UiHandler("employeesColective")
+	void onContractEmployeesColectiveChangeValue(ChangeEvent event) {
+		onContractEmployeesColectiveChange(this.employeesColective.getSelectedValue());
 	}
 	
 	@UiHandler("journeyType")
@@ -735,6 +751,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractQuoteGroupChange(String quoteGroup);
 	public abstract void onContractOccupationChange(String occupation);
 	public abstract void onContractRLCEChange(String rlce);
+	public abstract void onContractEmployeesColectiveChange(String employeesColective);
 	public abstract void onContractJourneyTypeChange(Boolean journeyType);
 	public abstract void onContractPartialityChange(Double partialityCoef);
 	public abstract void onContractJourneyDurationClick();
@@ -791,6 +808,7 @@ public abstract class Employee extends ResizeComposite {
 		this.quoteGroup.clear();
 		this.occupation.clear();
 		this.rlce.clear();
+		this.employeesColective.clear();
 		this.journeyType.clear();
 		this.partialityCoef.setValue(null);
 		this.journeyDuration.clear();
@@ -842,6 +860,10 @@ public abstract class Employee extends ResizeComposite {
 		// RLCE
 		RLCE.getRLCE().entrySet().forEach(entry -> rlce.addItem(entry.getKey() + " - " + entry.getValue(), entry.getKey()));
 		
+		// EMPLOYEES COLECTIVE 
+		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00deN", "967");
+		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00d3N PREVISIBLES", "968");
+		
 		// TIPO DE JORNADA
 		this.journeyType.addItem("Tiempo Completo", "true");
 		this.journeyType.addItem("Tiempo Parcial", "false");
@@ -884,8 +906,8 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Fill default fields
@@ -1038,9 +1060,9 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();
 
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void hideElementsFreelancerTable() {
@@ -1055,19 +1077,19 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Show/hide methods partial/full time
 	
 	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showElementsFullTimeJourneyTypeContract() {
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showPartialTimeContract() {
@@ -1084,8 +1106,8 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	private void showElementsPartialTimeContract() {
+		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();	
 		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();	
-		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
 	}
 	
 	// ------------------------------------------------- Show/hide mdCtz methods
@@ -1099,6 +1121,16 @@ public abstract class Employee extends ResizeComposite {
 		this.mdCTZLB.setSelectedIndex(0);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.mdCTZLB);
 		
+	}
+	
+	// ------------------------------------------------- Show/hide EmployeeColective methods
+	
+	public void showEmployeesColective() {
+		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
+	}
+	
+	public void hideEmployeesColective() {
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree

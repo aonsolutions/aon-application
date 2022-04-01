@@ -196,6 +196,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		public void onContractRLCEChange(String rlce) {
 			employeeDialogObject.setContractRlce(rlce);
 		}
+		
+		@Override
+		public void onContractEmployeesColectiveChange(String employeesColective) {
+			employeeDialogObject.setContractEmployeesColective(employeesColective);
+		}
 
 		@Override
 		public void onContractJourneyTypeChange(Boolean journeyType) {
@@ -540,6 +545,14 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			} else {
 				employee.createJourneyDurationInfo(employeeDialogObject.getContractData().getContractJourneyDuration().getJourneyText());
 			}
+		}
+		
+		if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+			employee.showEmployeesColective();
+			setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective()+"");
+		} else {
+			employee.hideEmployeesColective();
+			contractData.setEmployeesColective(null);
 		}
 		
 		employee.updateModality(contractTypeInt);

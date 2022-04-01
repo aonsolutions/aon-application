@@ -315,7 +315,7 @@ export class AonMessengerChat extends AonElement {
           this.task.setGTaskId(this.task.auth.email);
         }
       }  else { 
-     
+        //TODO
       }
     }
   }

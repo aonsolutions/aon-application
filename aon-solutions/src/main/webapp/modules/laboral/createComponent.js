@@ -184,6 +184,18 @@ export const createContractData = (parent, isManager) => {
         }, divC.element);
     } 
 
+    divC = createDiv({classes:[CSS.AON_COL_XS_12]})
+    divC.appendTo(parent);
+    createSelect({
+        attributes:{
+            name:"collective",
+            id:"collective",
+            title:"Colectivo Trajabador (opcional)",
+            default:CONSTANT.TRUE,
+            autocomplete: CONSTANT.OFF
+        }
+    }, divC.element);
+
     dateContract.value = AonDateUtils.formatDateOrigin(new Date());
 
 }

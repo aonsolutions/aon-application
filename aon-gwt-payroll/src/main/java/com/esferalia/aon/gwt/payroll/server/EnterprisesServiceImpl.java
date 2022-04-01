@@ -2309,41 +2309,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<ContractClause> getContractClauses(String domainName, Integer contractId) {
+	public List<ContractClause> getContractClauses(String domainName, Integer contractId) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContractClauses.getContractClauses(connection, contractId);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
 	@Override
-	public List<ContractClause> setContractClauses(String domainName, Integer contractId, List<ContractClause> contractClauses) {
+	public void setContractClauses(String domainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqContractClauses.setContractClauses(connection, contractClauses);
+			JooqContractClauses.setContractClauses(connection, contractClauses);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
-	@Override
-	public List<ContractClause> createContractClause(String domainName, ContractClause contractClause) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqContractClauses.createContractClause(connection, contractClause);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public List<ContractClause> deleteContractClause(String domainName, ContractClause contractClause) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqContractClauses.deleteContractClause(connection, contractClause);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
 	@Override
 	public Map<String, String> getContractOtherInfo(String domainName, Integer contractId, String contractType) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {

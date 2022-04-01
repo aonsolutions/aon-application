@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -295,9 +296,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	}
 	
 	private Collection<IContractPayment> getOverridePayments()  {
-		int issueDay = AonDateUtils.get(getIssueDate(), Calendar.DAY_OF_MONTH ); 
-		int issueMonth = AonDateUtils.get(getIssueDate(), Calendar.MONTH ) +1; 
-		String overrideVarName = String.format("%s_%d_%d", DEFAULT_EXTRA_NAME, issueDay, issueMonth);
+		String overrideVarName = getOverrideVarName();
 		
 		Filter<IContractPayment> extraPaymentFilter = getExtraPaymentFilter();
 		
@@ -309,6 +308,14 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		}
 		
 		return Collections.emptyList();
+	}
+
+	protected String getOverrideVarName() {
+		int issueDay = AonDateUtils.get(getIssueDate(), Calendar.DAY_OF_MONTH ); 
+		int issueMonth = AonDateUtils.get(getIssueDate(), Calendar.MONTH ) +1; 
+		
+		String overrideVarName = String.format("%s_%d_%d", DEFAULT_EXTRA_NAME, issueDay, issueMonth);
+		return overrideVarName;
 	}
 	
 	
@@ -350,7 +357,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				
 				@Override
 				public String getExpression() {
-					return varName;
+					return String.format(Locale.ROOT,"/*var:%s*/%s",varName, varName);
 				}
 				
 				@Override
@@ -406,7 +413,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			
 			@Override
 			public String getExpression() {
-				return Double.toString(salaryPayment.getQuote());
+				return String.format(Locale.ROOT,"/*var:%s*/%f", getOverrideVarName(), salaryPayment.getQuote());
 			}
 			
 			@Override
@@ -811,7 +818,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	//
 	// -------------------------------------------
 
-	private static final class ContractPayments extends AbstractCollection<IContractPayment> {
+	private final class ContractPayments extends AbstractCollection<IContractPayment> {
 		private Collection<IContractPayment> contractPayments ;
 		private final Filter<IContractPayment> extraPaymentFilter;
 
@@ -839,6 +846,11 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 							if ( extraPaymentFilter.accept(this) ) 
 								return DEFAULT_EXTRA_NAME ;
 							return name;
+						}
+						
+						@Override
+						public String getExpression() {
+							return String.format("/*var:%s*/%s", getOverrideVarName(), super.getExpression());
 						}
 					};
 				}

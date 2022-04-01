@@ -220,7 +220,7 @@ const checkFilesAndSend = async (textArea)=>{
     if(btnSend)btnSend.style.pointerEvents = "none";
     try {
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-        const textAreaDiv = textArea.getTextAreaDiv();
+        const textAreaDiv = textArea.getTextArea();
         const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
         const {id:taskId} = aonMessengerChat.task;
         const files = textArea.FILES;
@@ -257,16 +257,17 @@ const checkFilesAndSend = async (textArea)=>{
  * @param {*} json 
  */
 export const checkFilesAddEventClick = (parent)=>{
-    const elements = parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`);
-    for (const element of elements) {
-        const url = element.src || element.href;
-        if(url) {
-            element.addEventListener(EVENT.CLICK, (ev)=>{
-                ev.preventDefault();
-                openFileUrl(url);
-            });
-        } 
-    }
+    new Promise(r => setTimeout(r, 1)).then(()=>{
+        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`).forEach(element=>{
+            const url = element.src || element.href;
+            if(url){
+                element.addEventListener(EVENT.CLICK, (ev)=> {
+                    ev.preventDefault();
+                    openFileUrl(url);
+                })
+            }
+        });
+    });
 }
 
 /**
@@ -278,8 +279,9 @@ export const checkFilesAddEventDescription = (task)=>{
     if(task && descriptionEl){
         const observation = task.getDescriptionJson().observation;
         if(observation) {
-            descriptionEl.value = observation;
-            checkFilesAddEventClick(descriptionEl.getTextAreaDiv());
+            const element = document.getElementById(descriptionEl.TEXTAREA);
+            descriptionEl.setValueHtml(observation);
+            checkFilesAddEventClick(element);
         }
     }
 }
@@ -668,7 +670,7 @@ const addTaskDescription = (aonMessengerChat) => {
         // * CHANGE STYLE AONTEXTAAREA
         // */
         setStyles(aonTextArea,{ height: "100%",  width: "100%", boxShadow : "none", marginTop : 0 });
-        let textAreaDiv = aonTextArea.getTextAreaDiv();
+        let textAreaDiv = aonTextArea.getTextArea();
         if(textAreaDiv) textAreaDiv.style.padding = "20px";
         
         const aonTextAreaToolbar = aonTextArea.getToolbar();
