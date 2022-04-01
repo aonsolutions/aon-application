@@ -228,11 +228,12 @@ public abstract class Mod303Declaration {
 					.isPresent();
 				if (!something) {
 					mod303.setDiffCalculationMandatory(true);
-					mod303.addMessage("Existen modelos anteriores creados sin el vínculo a facturas."
-							+ " Este modelo se realizará por diferencia. "
-							+ " Se tendrán en cuenta todas las facturas desde el inicio del ejercicio, y se restará lo declarado en cada una de las casillas."
-							+ " Las facturas se vincularán a este modelo."
-							+ " Las facturas vinculadas no se podrán modificar ni borrar.");
+					
+					mod303.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
+							+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
+							+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
+							+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
+					);
 				}
 			}
 		} else {
