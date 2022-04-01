@@ -94,7 +94,7 @@
     <!-- INTERNAL LIBRARIES -->
      <dependency>
       <groupId>com.code.aon</groupId>
-      <artifactId>aon-help</artifactId>
+      <artifactId>aon.ui.help</artifactId>
       <version>${project.version}</version> 
       <scope>compile</scope>
     </dependency>
