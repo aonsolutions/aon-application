@@ -5060,7 +5060,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
 					Map<String, ITimedVariable<?>> context) {
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
-				System.out.printf( "%s: %d -. [%s]: %s, %f, %f, %s\r\n", payment.getType().name(), ((IContractPayment) payment ).getId(), payment.getName(), description, amount, quote , startDate.toLocaleString() );
+				if ( amount > 0.00 || quote > 0.00 )
+					System.out.printf( "%s: %d -. [%s]: %s, %f, %f, %s\r\n", payment.getType().name(), ((IContractPayment) payment ).getId(), payment.getName(), description, amount, quote , startDate.toLocaleString() );
 				
 			}
 		});
@@ -5093,9 +5094,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
 		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		
+		int workDays = get( getLastDayOfMonth(overrideITStartDate), DAY_OF_MONTH) - 10;
 		
-		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  20 ) , delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  20 ) , delay.getIrpfBase(), DELTA);
+		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  workDays ) , delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 * 9 + ( 10.00 / 30 *  workDays ) , delay.getIrpfBase(), DELTA);
 		
 		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
 
@@ -5227,8 +5229,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		
 		
-		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  20.00 ) , delay.getTotalPayment(), DELTA);
-		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  20.00 ) , delay.getIrpfBase(), DELTA);
+		int workDays = get( getLastDayOfMonth(overrideITStartDate), DAY_OF_MONTH) - 10;
+
+		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  workDays ) , delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 * 9.00 + 3.00 + ( 10.00 / 30.00 *  workDays ) , delay.getIrpfBase(), DELTA);
 		
 		org.junit.Assert.assertEquals(PaymentType.CRA_0012.name(), delay.getSalaryData(ContextVariable.DELAY_CAUSE.getName()));
 
