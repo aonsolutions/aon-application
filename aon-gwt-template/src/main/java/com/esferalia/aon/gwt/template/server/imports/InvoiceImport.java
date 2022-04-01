@@ -1216,13 +1216,11 @@ public class InvoiceImport {
 					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
 				
 				supplier = new Supplier()
+						.copy(reg)
 						.setTransaction(transaction)
 						.setStatus(RegistryStatus.ACTIVE)
 						.setScope(getScopeId(domain, user))
 						.setAccount(acc.getId());
-				supplier.setDomain(domain);
-				supplier.setId(reg.getId());
-				supplier.setName(reg.getName());
 				if(!AonStringUtils.isBlank(iic.getRegistryAccount())) {
 					Account account = getAccount(domain, user, iic.getRegistryAccount(), reg.getName());
 					supplier.setAccount(account.getId());
