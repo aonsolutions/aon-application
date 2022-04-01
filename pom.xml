@@ -148,7 +148,7 @@
 		<module>aon-ui-warehouse</module>
 		<module>aon-ui-tas</module>
 		<module>aon-ui-sepe</module>
-		<module>aon-help</module>
+		<module>aon-ui-help</module>
 
 		<!-- OTHER -->
 		<module>aon-jasperreports</module>

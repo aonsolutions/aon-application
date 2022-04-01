@@ -215,8 +215,8 @@ public class PdfIndexer {
 		System.out.println(" PDF INDEX GENERATION ");
 		System.out.println("-----------------------------------------------------------");
 		
-		InputStream pdfOneStream = PdfIndexer.class.getResourceAsStream("payroll_v3.pdf");
-		InputStream pdfTwoStream = PdfIndexer.class.getResourceAsStream("payroll_new.pdf");
+		InputStream pdfOneStream = PdfIndexer.class.getResourceAsStream("payroll.pdf");
+		//InputStream pdfTwoStream = PdfIndexer.class.getResourceAsStream("payroll_new.pdf");
 		
 		PDDocument document = new PDDocument();		
 		PDDocumentOutline outline = new PDDocumentOutline();
@@ -226,10 +226,11 @@ public class PdfIndexer {
 		document.addPage( blankPage );	
 	
 		index(pdfOneStream, "payroll_v3.pdf", document);
-		index(pdfTwoStream, "payroll_new.pdf", document);
+		//index(pdfTwoStream, "payroll_new.pdf", document);
 		
 		try {
-			document.save("src/main/resources/com/code/aon/web/help/pdf/index.pdf");
+			//document.save("src/main/resources/com/code/aon/web/help/pdf/index.pdf");
+			document.save("target/classes/com/code/aon/web/help/pdf/index.pdf");
 			document.close();
 			System.out.println("[DONE] Index generated.");
 		} catch (IOException e) {
