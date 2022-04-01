@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -105,6 +107,10 @@ public class DomainEnterprisesServiceAsync {
 
 	public void deleteAgreement(Agreement agreement, AsyncCallback<Void> callback) {
 		enterprisesServiceAsync.deleteAgreement(getCurrentDomainName(), agreement, callback);
+	}
+	
+	public void deleteAgreements(List<Integer> agreementIds, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		enterprisesServiceAsync.deleteAgreements(getCurrentDomainName(), agreementIds, callback);
 	}
 
 	public void updateAgreementId(Agreement agreement, AsyncCallback<Void> callback) {
@@ -268,8 +274,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setEmployeePeculiarities(getCurrentDomainName(), contractId, peculiarities, asyncCallback);
 	}
 	
-	public void getEmployeeSSPECs(Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback) {
+	public void getEmployeeSSPECs(Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getEmployeeSSPECs(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
+	}
+	
+	public void syncEmployeeSSPECs(Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback)throws IllegalArgumentException {
+		enterprisesServiceAsync.syncEmployeeSSPECs(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 
 	public void getBonusConcepts(AsyncCallback<List<SSBonusData>> asyncCallback) {
@@ -368,20 +378,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.deleteContractAttach(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
 	}
 	
-	public void getContractClauses(Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) {
+	public void getContractClauses(Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException  {
 		enterprisesServiceAsync.getContractClauses(getCurrentDomainName(), contractId, asyncCallback);
 	}
 	
-	public void setContractClauses(Integer contractId, List<ContractClause> contractClauses, AsyncCallback<List<ContractClause>> asyncCallback) {
+	public void setContractClauses(Integer contractId, List<ContractClause> contractClauses, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException  {
 		enterprisesServiceAsync.setContractClauses(getCurrentDomainName(), contractId, contractClauses, asyncCallback);
-	}
-	
-	public void createContractClause(ContractClause contractClause, AsyncCallback<List<ContractClause>> asyncCallback) {
-		enterprisesServiceAsync.createContractClause(getCurrentDomainName(), contractClause, asyncCallback);
-	}
-
-	public void deleteContractClause(ContractClause contractClause, AsyncCallback<List<ContractClause>> asyncCallback) {
-		enterprisesServiceAsync.deleteContractClause(getCurrentDomainName(), contractClause, asyncCallback);
 	}
 	
 	public void getContractOtherInfo(Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback) {
@@ -603,6 +605,12 @@ public class DomainEnterprisesServiceAsync {
 
 	public void removeITParts(List<ItNotExist>itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException{
 		enterprisesServiceAsync.removeITParts(getCurrentDomainName(), getCurrentUser(), itNotExist, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Agreements Clean
+	
+	public void getAgreementsClean(AgreementCleanType cleanType, AsyncCallback<List<AgreementsClean>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getAgreementsClean(getCurrentDomainName(), cleanType, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

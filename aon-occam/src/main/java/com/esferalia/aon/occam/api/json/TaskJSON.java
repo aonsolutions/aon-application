@@ -41,12 +41,13 @@ public class TaskJSON {
 			.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
 			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
-			.setSourceId(JsonUtils.getInteger(json, "source_id"))
-			.setStatus( TaskStatus.safeValueOf(JsonUtils.optString(json, "status"))) 
+			.setSourceId(JsonUtils.getInteger(json, IJsonNames.SOURCE_ID))
+			.setStatus( TaskStatus.safeValueOf(JsonUtils.optString(json, IJsonNames.STATUS))) 
 			.setRegistry(RegistryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.REGISTRY)))
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
 			.setGtaskId(JsonUtils.getString(json, "gtask_id"))
+			.setIsCau(!json.optString("cau").isEmpty() && json.optInt("cau") > 0) 
 			;
 	}
 	

@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -155,12 +156,13 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
-		String situation = null ==  employeeContractData.getContractInfo().getEndDate() ? "ALTA" : "BAJA";
+		Date date = new Date();
+		Date contractEndDate = employeeContractData.getContractInfo().getEndDate();
+		String situation = (null == contractEndDate || DateUtils.isBeforeOrEquals(date, contractEndDate)) ? "ALTA" : "BAJA";
 		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
 		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
 		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
 		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
-		
 		
 		employeesService.getEmployeeTa(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
 			@Override
@@ -172,6 +174,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				failure.accept(caught);
 			}
 		});
+	}
+	
+	public void downloadTaEnd(Consumer<String> success, Consumer<Throwable> failure) {
+		downloadTa(success, failure);
 	}
 
 	public void downloadIdc(Date date, Consumer<String> success, Consumer<Throwable> failure) {
@@ -529,6 +535,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				rlce );
 		
 		contractData.setRlce(rlce);		
+	}
+	
+	public void setContractEmployeesColective(String employeesColective) {
+		add(contractData::setEmployeesColective, 
+				contractData.getEmployeesColective(), 
+				employeesColective );
+		
+		contractData.setEmployeesColective(employeesColective);		
 	}
 	
 	public void setContractJourneyType(Boolean journeyType) {

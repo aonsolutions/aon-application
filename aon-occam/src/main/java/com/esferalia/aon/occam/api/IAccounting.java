@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Account;
@@ -98,6 +99,7 @@ public interface IAccounting {
 	
 	public LinkedList<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to);
 	public String getSalaryFormatted(AONContext ctx, Date from, Date to);
+	public List<Account> generateLowerLevels(AONContext ctx, Account account, int minLevel);
 	
 	// 			BALANCE
 	public LinkedHashMap<String, AccountBalance> getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;

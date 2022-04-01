@@ -33,7 +33,7 @@ public class RememberPasswordServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		JSONObject json = Utils.getRequestJSON(req);
 		String email = json.getString("email");
-		AonApiData api = initialize(req, resp);
+		AonApiData api = initialize(req);
 		if(Utils.isEmail(email)) {
 			Auth auth = new Auth();
 	    	List<String> schemas = AONContext.getSchemas();

@@ -147,9 +147,9 @@ public class FillerDAO {
 					//.setSubDomainSuffix(r.getValue(DOMAIN.SUBDOMAINSUFFIX));
 					.setEnableHeredity(getBoolean(r, DOMAIN.ENABLEHEREDITY))
 					.setDomainManagement(getBoolean(r, DOMAIN.DOMAINMANAGEMENT))
-					//.setDisableDomainManagement(r.getValue(DOMAIN.DISABLEDOMAINMANAGEMENT))
-					//.setMaxDocumentSize(r.getValue(DOMAIN.MAXDOCUMENTSIZE))
-					//.setMaxTotalDocumentSize(r.getValue(DOMAIN.MAXTOTALDOCUMENTSIZE))
+					.setDisableDomainManagement(getBoolean(r, DOMAIN.DISABLEDOMAINMANAGEMENT))
+					.setMaxDocumentSize(getValue(r, DOMAIN.MAXDOCUMENTSIZE))
+					.setMaxTotalDocumentSize(getValue(r, DOMAIN.MAXTOTALDOCUMENTSIZE))
 					.setMaxDefinedUsers(r.getValue(DOMAIN.MAXDEFINEDUSERS))
 					.setActive(getBoolean(r, DOMAIN.ACTIVE))
 					.setOwner(r.getValue(DOMAIN.OWNER))

@@ -494,11 +494,16 @@ public class AgreementDraftObject {
 	
 	public void showAllVariables() {
 		shownVariables.clear();
+		
+		Set<String> variablesDefaultNotShown = getVariablesNotToShowDefault();
+		
 		for (String var : agreementDraft.getVariables())
-			shownVariables.add(var);
+			if(!variablesDefaultNotShown.contains(var))
+				shownVariables.add(var);
 		
 		for (String var : getImplicitVariables())
-			shownVariables.add(var);
+			if(!variablesDefaultNotShown.contains(var))
+				shownVariables.add(var);
 	}
 	
 	public void showValueVariables() {

@@ -1,5 +1,5 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG, URL_PDF_VIEWER } from '../environments/environments.js';
 import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
 
@@ -229,68 +229,71 @@ export class AonViewer extends AonElement {
 		const div = this.getElement(this.AON_CANVAS_DIV);
 		const width = this.getAttribute('width');
 
-		const pdfjsLib = window['pdfjs-dist/build/pdf'];
-		pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
-		// Asynchronous download of PDF
-		//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
-		// this.file = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
-
-		const loadingTask = pdfjsLib.getDocument({
-			url: this.file,
-			httpHeaders: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE, HEAD',
-				'Access-Control-Allow-Headers': 'X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept',
-				'Access-Control-Max-Age': '1728000'
-			},
-			withCredentials: true
-		});
-
-		loadingTask.promise.then( (pdf) =>  {
-			this.PDF = pdf;
-			console.log('PDF loaded');
-			// Fetch the first page
-			// let pageNumber = 1;
-			for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-				let c = this.getElement('canvas' + pageNumber);
-				if(c) c.parentElement.removeChild(c);
-				const canvas = this.createElement(TAG.CANVAS);
-				canvas.id = 'canvas' + pageNumber;
-				canvas.style.border = '1px solid #ebebeb';
-				div.appendChild(canvas);
-
-				pdf.getPage(pageNumber).then((page) =>  {
-					console.log('Page loaded');
-
-					let scale = scalation || 1;
-					let viewport = page.getViewport({ scale });
-					if (width) {
-						scale = width / viewport.width;
-						viewport = page.getViewport({ scale });
-					}
-
-					// Prepare canvas using PDF page dimensions
-					//var canvas = document.getElementById('the-canvas');
-					// const canvasPage = this.getElement('canvas' + pageNumber) || this.createElement(TAG.CANVAS);
-					// canvasPage.id = 'canvas' + pageNumber;
-
-					const context = canvas.getContext('2d');
-					canvas.height = viewport.height;
-					canvas.width = viewport.width;
-
-					// Render PDF page into canvas context
-					const renderContext = {
-						canvasContext: context,
-						viewport: viewport
-					};
-					const renderTask = page.render(renderContext);
-					renderTask.promise.then( ()=> {
-						console.log('Page rendered');
+		this.waitLib().then(pdfjsLib=>{
+			pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+			// Asynchronous download of PDF
+			//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
+			// this.file = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
+	
+			const loadingTask = pdfjsLib.getDocument({
+				url: this.file,
+				httpHeaders: {
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE, HEAD',
+					'Access-Control-Allow-Headers': 'X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept',
+					'Access-Control-Max-Age': '1728000'
+				},
+				withCredentials: true
+			});
+	
+			loadingTask.promise.then( (pdf) =>  {
+				this.PDF = pdf;
+				console.log('PDF loaded');
+				// Fetch the first page
+				// let pageNumber = 1;
+				for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+					let c = this.getElement('canvas' + pageNumber);
+					if(c) c.parentElement.removeChild(c);
+					const canvas = this.createElement(TAG.CANVAS);
+					canvas.id = 'canvas' + pageNumber;
+					canvas.style.border = '1px solid #ebebeb';
+					div.appendChild(canvas);
+	
+					pdf.getPage(pageNumber).then((page) =>  {
+						console.log('Page loaded');
+	
+						let scale = scalation || 1;
+						let viewport = page.getViewport({ scale });
+						if (width) {
+							scale = width / viewport.width;
+							viewport = page.getViewport({ scale });
+						}
+	
+						// Prepare canvas using PDF page dimensions
+						//var canvas = document.getElementById('the-canvas');
+						// const canvasPage = this.getElement('canvas' + pageNumber) || this.createElement(TAG.CANVAS);
+						// canvasPage.id = 'canvas' + pageNumber;
+	
+						const context = canvas.getContext('2d');
+						canvas.height = viewport.height;
+						canvas.width = viewport.width;
+	
+						// Render PDF page into canvas context
+						const renderContext = {
+							canvasContext: context,
+							viewport: viewport
+						};
+						const renderTask = page.render(renderContext);
+						renderTask.promise.then( ()=> {
+							console.log('Page rendered');
+						});
 					});
-				});
-			}
-		},  (reason)=> {			// PDF loading error
-			console.log(reason);
+				}
+			},  (reason)=> {			// PDF loading error
+				console.log(reason);
+			});
+		}).catch(err=>{
+			console.log(err);
 		});
 	}
 
@@ -350,6 +353,31 @@ export class AonViewer extends AonElement {
 		//   const height = parseFloat(element.style.height.replace("px", ""));
 		//   element.style.width  = width*scale;
 		//   element.style.height = height*scale;
+		});
+	}
+
+	waitLib(){
+		return new Promise((resolve,reject)=>{
+			const timeout = 100;// 10 seg
+			let i = 0;
+			let pdfjsLib = undefined;
+			let element = undefined;
+			let interval = setInterval(()=> {
+				i++;
+				element = this.querySelector(`script[src='${URL_PDF_VIEWER}']` );
+				pdfjsLib = window['pdfjs-dist/build/pdf'];
+				if (element && pdfjsLib) {
+					clearInterval(interval);
+					resolve(pdfjsLib);
+				} else if (!element) { // CREATE ELEMENT
+					let script = document.createElement("script");
+					script.src = URL_PDF_VIEWER;
+					this.appendChild(script);
+				}  else if(i >= timeout){
+					clearInterval(interval);
+					reject("Element empty");
+				}
+			}, 100); // check every 100ms
 		});
 	}
 }

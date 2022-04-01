@@ -58,7 +58,7 @@ public class TaskUtils {
 	private static final String URL_BASE = "https://aon.solutions";
 	  
 	public static Filter taskFilter(AonApiData api, TaskProperties f, Domain domain, Customer customer) {
-		JSONObject params = api.getParams();
+		JSONObject params = api.getData();
 		String email  = params.optString(IJsonNames.EMAIL);
 		String search = params.optString(IJsonNames.SEARCH);
 		String status = params.optString(IJsonNames.STATUS);
@@ -70,10 +70,8 @@ public class TaskUtils {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
 		else if(!status.isEmpty())
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
-	
 		if(!search.isEmpty()) 
 			filter = filter.and(getSearchFilter(f, search));
-		
 		if(customer!=null && customer.getId()!=null) { //CUSTOMER
 			Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
@@ -95,8 +93,8 @@ public class TaskUtils {
 				 Integer[] arr = new Integer[str.length];
 				 for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
 				 filter = filter.and(taskNotCustomerFilter(params, f, domain, customer).or(f.getWorkgroupProperty().in(arr)));
-			 } 
-			 else filter = filter.and(taskNotCustomerFilter(params, f, domain, customer));
+			 } else 
+				 filter = filter.and(taskNotCustomerFilter(params, f, domain, customer));
 		}
 	
 		return filter;
@@ -140,7 +138,7 @@ public class TaskUtils {
 	}
 	
 	public static Filter taskFilterStatusCount(TaskProperties f, AonApiData api, Domain domain, Customer customer) {
-		JSONObject params = api.getParams();
+		JSONObject params = api.getData();
 
 		String source = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
@@ -153,9 +151,9 @@ public class TaskUtils {
 			String[]  str = workgroupStr.split(",");
 			Integer[] arr = new Integer[str.length];
 			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
-			filter.and(f.getTaskHolderProperty().eq(taskHolder)).or(f.getSenderProperty().eq(taskHolder).or(f.getWorkgroupProperty().in(arr)));
+			filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getSenderProperty().eq(taskHolder).or(f.getWorkgroupProperty().in(arr))));
 		} else if(taskHolder != null && taskHolder!=0 && customer.getId()==null)
-			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder)).or(f.getSenderProperty().eq(taskHolder));
+			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getSenderProperty().eq(taskHolder)));
 
 		if(!source.isEmpty())
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
@@ -163,7 +161,7 @@ public class TaskUtils {
 		if(customer.getId() != null)
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 
-		if(!params.optString("cau").isEmpty() && params.optInt("cau")>0 && !email.isEmpty())
+		if(!email.isEmpty() && (!params.optString("cau").isEmpty() && params.optInt("cau")>0) ) 
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
 
 		return filter;
@@ -171,7 +169,7 @@ public class TaskUtils {
 	
 	public static Filter taskFilterCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
 		
-		Integer taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getParams(), IJsonNames.TASK_HOLDER);
+		Integer taskHolder = api.getData().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getData(), IJsonNames.TASK_HOLDER);
 
 		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
 		
@@ -179,7 +177,7 @@ public class TaskUtils {
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 		
 		if( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) 
-			filter = filter.and( f.getGtaskIdProperty().eq(api.getParams().optString(IJsonNames.EMAIL)) );
+			filter = filter.and( f.getGtaskIdProperty().eq(api.getData().optString(IJsonNames.EMAIL)) );
 			
 		return filter;
 	}
@@ -215,14 +213,14 @@ public class TaskUtils {
 	    return matcher;
 	}
 	
-	public static void sendWorkflowCommunication(AonApiData api, TaskWorkflow workflow) {
+	public static void changeWorkflow(AonApiData api, TaskWorkflow workflow) {
 		Thread newThread = new Thread(() -> {
 			try {
 				Domain domain = api.getDomain();
 				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
+				task.setIsCau(!api.getData().optString("cau").isEmpty() && api.getData().optInt("cau") > 0);
+				
 				if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.CLOSE.getName())) {
-					
-//					sendEmail(api, task, workflow, false);
 					
 					if( Boolean.TRUE.equals(isNotification(api, task, AppParamsRequest.APP_REQUESTS_INT_CLOSED)) ) {
 						String body = workflow.getComment()!=null &&  Boolean.FALSE.equals(workflow.getComment().isEmpty()) 
@@ -235,7 +233,7 @@ public class TaskUtils {
 						if(exists.getId()!=null && exists.getValue().equals("true")) {
 							Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
 							if(!auth.getEmail().isEmpty()) 
-								sendEmail(api, task, workflow, true);
+								sendEmailChangeWorkflow(api, task, workflow, true);
 						}
 					}
 					
@@ -253,7 +251,10 @@ public class TaskUtils {
 						workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.OPEN.getName()) &&
 						Boolean.TRUE.equals(isNotification(api, task, AppParamsRequest.APP_REQUESTS_INT_OPENED))
 				) {
-					sendEmail(api, task, workflow, false);
+					if(task.getIsCau()) {
+						sendEmailChangeWorkflow(api, task, workflow, false);
+					}
+					
 					String body = "Solicitud Abierta";
 					Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
 					if(auth!=null && !auth.getName().isEmpty()) 
@@ -285,7 +286,7 @@ public class TaskUtils {
 				String to = auth.getEmail();
 	
 				String subject = "SOLICITUD Nº "+ task.getNumber();
-				String url = "https://aon.solutions";
+				String url = URL_BASE;
 				
 				TaskMail tm = new TaskMail()
 				.setNumber(task.getNumber().toString())
@@ -364,7 +365,7 @@ public class TaskUtils {
 		}
 	}
 	
-	private static void sendEmail(AonApiData api, Task task, TaskWorkflow workflow, Boolean showRating){
+	private static void sendEmailChangeWorkflow(AonApiData api, Task task, TaskWorkflow workflow, Boolean showRating){
 		try {
 			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 			if(company!=null) {
@@ -373,7 +374,7 @@ public class TaskUtils {
 				
 				String email = workflow.getEmail();
 				
-				Auth auth = AuthJSON.fromJSON(api.getData().optJSONObject("auth"));
+				Auth auth = AuthJSON.fromJSON(api.getData().optJSONObject(IJsonNames.AUTH));
 				
 				String to = auth.getEmail()!=null ? auth.getEmail() : email;
 				
@@ -403,9 +404,11 @@ public class TaskUtils {
 				.setAlias(company.getName())
 				.setSubject(title)
 				.setBody(body)
-				.setCc(EMAIL_SUPPORT)
 				.setTo(to);
 				
+				if(task.getIsCau())
+					msg.setCc(EMAIL_SUPPORT);
+
 			    SES.sendEmail(msg);
 			}
 		} catch (Exception e) {
@@ -422,8 +425,8 @@ public class TaskUtils {
 			    String     dataId =  file.optString(IJsonNames.ID);
 			    Matcher    matcher = regexFile(task, dataId);
 			    if(matcher!=null) {
-					String base64 = file.optString("content");
-					String contentType = file.optString("contentType");
+					String base64 = file.optString(IJsonNames.CONTENT);
+					String contentType = file.optString(IJsonNames.CONTENT_TYPE);
 					byte[] fileData = Base64.getDecoder().decode(base64);
 					TaskAttach taskAttach = new TaskAttach()
 					.setDomain(api.getDomain().getId())
@@ -437,7 +440,7 @@ public class TaskUtils {
 					jsonFile.put("domain_name", domain.getName());
 					jsonFile.put("domain_id", domain.getId());
 					jsonFile.put("attach_type", "task");
-					jsonFile.put("id", taskAttach.getId());
+					jsonFile.put(IJsonNames.ID, taskAttach.getId());
 
 					String base64FileStr = new String(Base64.getEncoder().encode(jsonFile.toString().getBytes()));
 
@@ -453,27 +456,24 @@ public class TaskUtils {
 	
 	public static void setCauInfo(AonApiData api, Task task) {
 		try {
-			JSONObject params = api.getData();
-			if(!params.optString("cau").isEmpty() && params.optInt("cau")>0) {
-				task.setDomain(api.getDomain());
-				JSONObject description = new JSONObject(task.getDescription());
-				JSONObject cauInfo = description.optJSONObject("cauInfo");
-				JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
-				JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
-				JSONObject auth = cauInfo.optJSONObject(IJsonNames.AUTH);
-				String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
-				String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
-	
-				String doc = docParent!=null ? docParent : docCustomer;
-				
-				if(!auth.optString(IJsonNames.EMAIL).isEmpty()) 
-					task.setGtaskId(auth.optString(IJsonNames.EMAIL));
-				
-				if(doc!=null) {
-					Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
-					if(registry!=null && registry.getId()!=null)
-						task.setRegistry(registry);
-				}
+			task.setDomain(api.getDomain());
+			JSONObject description = new JSONObject(task.getDescription());
+			JSONObject cauInfo = description.optJSONObject("cauInfo");
+			JSONObject company = cauInfo.optJSONObject(IJsonNames.COMPANY);
+			JSONObject parent = cauInfo.optJSONObject(IJsonNames.PARENT);
+			JSONObject auth = cauInfo.optJSONObject(IJsonNames.AUTH);
+			String docParent  = parent!=null && !parent.optString(IJsonNames.DOCUMENT).isEmpty() ?  parent.optString(IJsonNames.DOCUMENT) : null;
+			String docCustomer = company !=null && !company.optString(IJsonNames.DOCUMENT).isEmpty() ? company.optString(IJsonNames.DOCUMENT) : null;
+
+			String doc = docParent!=null ? docParent : docCustomer;
+			
+			if(!auth.optString(IJsonNames.EMAIL).isEmpty()) 
+				task.setGtaskId(auth.optString(IJsonNames.EMAIL));
+			
+			if(doc!=null) {
+				Registry registry = AON.getRegistry(api.getDomain(),  api.getUser(), f->f.getDocumentProperty().eq(doc.trim()));
+				if(registry!=null && registry.getId()!=null)
+					task.setRegistry(registry);
 			}
 		} catch (Exception e) {e.printStackTrace();}
 	}

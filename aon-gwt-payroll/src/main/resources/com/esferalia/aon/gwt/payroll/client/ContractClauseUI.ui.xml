@@ -7,12 +7,6 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractClauseUI.MyStyle">
 
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
-		}
-		
 		.headerLabelStyle{
 			font-weight: bold;
 		}
@@ -24,65 +18,28 @@
 		.maxWidthLB{
 			width: 100%;
 		}
-
-		.firstColumnTextStyle{
-			padding:5px !important;
-		}
 		
 		.styleBorder{
 			border-style: solid; 
-			width: 975px; 
+			width: 930px; 
 			border-width: 1px; 
 			margin: 20px 10px;
 		}
 		
 		.gridStyle{
 			margin-left: 10px;
-			width: 950px;
-		}
-		
-		.footerStyle{
-			background-color: #eaeaea;
-			padding-top: 5px;
-		}
-		
-		.footerElement{
-			margin-left: 10px;
-			border: none;
+			width: 905px;
 		}
 		
 		.scrollStyle {
 			margin-left: 10px;
+			width: 905px;
 			margin-bottom: 10px;
-		}
-		
-		.columnWidth{
-			width: 80px;
-		}
-		
-		.columnWidth2{
-			width: 150px;
-		}
-		
-		.columnWidth3{
-			width: 200px;
-		}
-		
-		.columnWidth4{
-			width: 515px;
-		}
-		
-		.columnWidth5{
-			width: 515px;
 		}
 		
 		.clauseTD{
 			vertical-align: top;
 			text-align: center;
-		}
-		
-		.clauseTD2{
-			vertical-align: top;
 		}
 		
 		.footerToolbar{
@@ -97,13 +54,6 @@
 		    align-items: center;
 		}
 		
-		.styleBorder{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-			margin: 10px;
-		}
-		
 		.tittle{
 			top: -1.2em;
 			font-size: 12px;
@@ -115,26 +65,71 @@
 			text-align: center;
 		}
 		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.loadingPanel{
+			display: flex;
+			justify-content: center;
+			gap: .5rem;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+			justify-content: flex-end;
+		}
+		
+		.loading{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
+		
+		.minHeight {
+			min-height: 390px;
+		}
+		
 	</ui:style>
 
-   	<g:HTMLPanel> 
-        <g:VerticalPanel ui:field="clausesTable" styleName="{style.styleBorder}"> 
+	<g:HTMLPanel styleName="{style.flexColumn}">
+   		<g:VerticalPanel ui:field="clausesTable" styleName="{style.styleBorder}"> 
 	    	<g:Label styleName='{style.tittle}'>Cláusulas</g:Label>
-	    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+	    	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 	    		<g:VerticalPanel>
 	    			<g:Grid ui:field="clausesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
 	    			<g:HTMLPanel>
 	    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
 	    			</g:HTMLPanel>
-		    		<g:ScrollPanel ui:field="clausesScrollPanel" styleName="{style.scrollStyle}">
-		    			<g:Grid ui:field="clausesDataTable"></g:Grid>
-		    		</g:ScrollPanel>
-		    		<g:HTMLPanel styleName="{style.footerToolbar}">
-		    			<g:HTMLPanel styleName="{style.footerOptionsToolbar}" ui:field="footerOptionsToolbar"></g:HTMLPanel>
-		    		</g:HTMLPanel>
+	    			<g:DeckPanel ui:field="deckPanel">
+		    			<g:ScrollPanel ui:field="clausesScrollPanel" styleName="{style.scrollStyle}">
+			    			<g:Grid ui:field="clausesDataTable"></g:Grid>
+			    		</g:ScrollPanel>
+			    		<g:HTMLPanel ui:field="loadingClausesPanel" styleName="{style.loadingPanel} {style.minHeight}" />
+			    		<g:HTMLPanel styleName="{style.loadingPanel} {style.minHeight}">
+			    			<g:Label>NO HAY CLAUSULAS DISPONIBLES</g:Label>
+			    		</g:HTMLPanel>
+	    			</g:DeckPanel>
+		    		
 	    		</g:VerticalPanel>
 	    	</g:HTMLPanel>
 		</g:VerticalPanel>
 	</g:HTMLPanel> 
+	
 </ui:UiBinder> 
 

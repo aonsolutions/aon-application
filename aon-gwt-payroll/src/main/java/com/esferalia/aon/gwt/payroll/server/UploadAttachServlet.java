@@ -208,14 +208,14 @@ public class UploadAttachServlet extends AonApiHttpServlet {
 		
 		try {
 			Attach attach = AON.getAttach(domainName, domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.CONTRACT);
-			responseFile(req, resp, attach);
+			responseFile(resp, attach);
 		} catch (IOException e) {
 			throw new AonApiException(e.getMessage());
 		}
 	}
 	
 	@Override
-	public void responseFile(HttpServletRequest req, HttpServletResponse resp, Attach attach) throws IOException {
+	public void responseFile(HttpServletResponse resp, Attach attach) throws IOException {
 		resp.setContentType(attach.getMimeType().getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, "attachment; filename=\"" + attach.getDescription() + "." + attach.getMimeType().getExtension() +"\";");
 		ServletOutputStream output = resp.getOutputStream();

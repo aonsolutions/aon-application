@@ -200,8 +200,8 @@ export class AonInvoiceList extends AonElement {
 			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
 			toolbar.addSeparator();
-			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
-			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
+			// aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
+			// aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
 		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
 			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
@@ -256,7 +256,6 @@ export class AonInvoiceList extends AonElement {
 
 	downloadInvoices() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-
 		let data = {
 			domainId: localStorage.getItem('aon_domain_id'),
 			domainName: localStorage.getItem('aon_domain_name'),
@@ -394,15 +393,15 @@ export class AonInvoiceList extends AonElement {
 	  		actions = [restore, deleteForever];
 	  	}  else if(inv.isInbox() && number === 1){
 			if(this.getDur().isInvoiceManager()){
-	    		actions = [send, download, addComment, deleteInvoice, reject, record, rectify, duplicate];
+	    		actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
 	  		} else {
-	    	  actions = [send, download, addComment, deleteInvoice, rectify, duplicate];
+	    	  actions = [download, addComment, deleteInvoice, rectify, duplicate];
 	    	}
 		} else if(inv.isInbox() && number > 1){
 			if(this.getDur().isInvoiceManager()){
-	    		actions = [send, download, deleteInvoice, reject, record];
+	    		actions = [download, deleteInvoice, reject, record];
 	  		} else {
-	    	  actions = [send, download, deleteInvoice];
+	    	  actions = [download, deleteInvoice];
 	    	}
 		} else {
 			actions = [send, download];

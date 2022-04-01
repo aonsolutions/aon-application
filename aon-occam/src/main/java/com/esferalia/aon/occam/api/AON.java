@@ -1096,6 +1096,9 @@ public class AON {
 		}
 
 	}
+	public static Company getCompany(Domain domain, User user, CompanyFilter filter){
+		return getCompany(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
 	
 	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){
 		return getCompanyStream(domainName, domainId, login, filter)
@@ -4889,6 +4892,10 @@ public class AON {
 		}
 	}
 	
+	public static Stream<RegistryMedia> getRegistryMediaStream(Domain domain, User user, RegistryMediaFilter filter) {
+		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
 	public static Stream<RegistryMedia> getStream(Domain domain, User user, RegistryMediaFilter filter) {
 		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
@@ -4923,6 +4930,10 @@ public class AON {
 			RegistryMediaFilter filter) {
 		return getRMediaStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static RegistryMedia getRegistryMedia(Domain domain, User user, RegistryMediaFilter filter) {
+		return get(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
 	public static RegistryMedia get(Domain domain, User user, RegistryMediaFilter filter) {
@@ -6626,14 +6637,13 @@ public class AON {
 		}
 	}
 
+	public static List<RegistryBank> getRegistryBanks(Domain domain, User user, Integer registry) {
+		return getRegistryBanks(domain.getName(), domain.getId(), user.getLogin(), registry);
+	}
+	
 	public static LinkedList<RegistryBank> getRegistryBanks(String domainName, int domainId, String user, Integer registry) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, user)){
 			return getFinance().getRegistryBanks(ctx, registry);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
@@ -7172,6 +7182,12 @@ public class AON {
 	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
+		}
+	}
+
+	public static Booking getBooking(Domain domain, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSecurity().getBooking(ctx, domain);
 		}
 	}
 	

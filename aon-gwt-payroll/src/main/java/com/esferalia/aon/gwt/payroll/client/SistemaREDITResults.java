@@ -217,7 +217,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
 		Anchor remove = new Anchor("aqu\u00ed");
-		if(this.isUserComunica && !isPaternity(status.getType()) ) {
+		if(this.isUserComunica) {
 			remove.addClickHandler(e -> onRemoveITPartToSS(status));
 			remove.getElement().getStyle().setColor("red");
 		} else {

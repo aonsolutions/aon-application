@@ -462,7 +462,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_2)
+				.setCommunicationType(InvoiceCommunicationType.LROE_2_1)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());

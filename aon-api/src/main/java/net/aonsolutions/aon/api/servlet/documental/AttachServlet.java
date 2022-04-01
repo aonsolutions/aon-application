@@ -29,14 +29,14 @@ public class AttachServlet extends AonApiHttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[GET] /ms/api/attach/ - Attach Servlet");
-		AonApiData api = initialize(req, resp);
+		AonApiData api = initialize(req);
 		response(req, resp, getFile(api));
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[POST] /ms/api/attach/ - Attach Servlet");
-		AonApiData api = initialize(req, resp);
+		AonApiData api = initialize(req);
 		uploadFile(api);
 		response(req, resp);
 	}
@@ -44,14 +44,14 @@ public class AttachServlet extends AonApiHttpServlet{
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[DELETE] /ms/api/attach/ - Attach Servlet");
-		AonApiData api = initialize(req, resp);
+		AonApiData api = initialize(req);
 		deleteFile(api);
 		response(req, resp);
 	}
 	
 	private JSONObject getFile(AonApiData api) {
-		AttachType attachType = AttachType.safeValueOf(JsonUtils.getString(api.getParams(), IJsonNames.ATTACH_TYPE));	
-		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> attachFilter(api.getDomain().getId(), api.getParams(), f), attachType);
+		AttachType attachType = AttachType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.ATTACH_TYPE));	
+		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> attachFilter(api.getDomain().getId(), api.getData(), f), attachType);
 		return AttachJSON.toJSON(attach);
 	}
 	
@@ -71,7 +71,7 @@ public class AttachServlet extends AonApiHttpServlet{
 	}
 	
 	private void deleteFile(AonApiData api) {
-		AttachType attachType = AttachType.safeValueOf(JsonUtils.getString(api.getParams(), IJsonNames.ATTACH_TYPE));	
+		AttachType attachType = AttachType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.ATTACH_TYPE));	
 		AON.deleteAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> attachFilter(api.getDomain().getId(), api.getData(), f), attachType);	
 	}
 	

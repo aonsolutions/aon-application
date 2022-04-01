@@ -13,6 +13,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContractClauses {
 
@@ -43,6 +44,7 @@ public class JooqContractClauses {
 	private static List<ContractClause> getContractClausesDB(DSLContext dslContext, Integer contractId) {
 		List<ContractClause> contractClauses = new ArrayList<>();
 		
+		// Contract Clauses
 		Result<Record> clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
 			.where(CONTRACT_CLAUSE.CONTRACT.eq(contractId))
 			.fetch();
@@ -63,52 +65,38 @@ public class JooqContractClauses {
 		
 		return contractClauses;
 	}
-
-	public static List<ContractClause> createContractClause(Connection conn, ContractClause contractClause) {
-		return createContractClauseDB(DSL.using(conn, getDefaultSettings()), contractClause);
+	
+	public static void setContractClauses(Connection conn, List<ContractClause> contractClauses) {
+		setContractClausesDB(DSL.using(conn, getDefaultSettings()), contractClauses);
 	}
 	
-	private static List<ContractClause> createContractClauseDB(DSLContext dslContext, ContractClause contractClause) {
-		 dslContext.insertInto(CONTRACT_CLAUSE)
-			.set(CONTRACT_CLAUSE.DOMAIN, contractClause.getDomain())
-			.set(CONTRACT_CLAUSE.CONTRACT, contractClause.getContract())
-			.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
-			.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
-			.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
-			.execute();
-		 
-		return getContractClausesDB(dslContext, contractClause.getContract());
-	}
-
-	public static List<ContractClause> deleteContractClause(Connection conn, ContractClause contractClause) {
-		return deleteContractClauseDB(DSL.using(conn, getDefaultSettings()), contractClause);
-	}
-	
-	private static List<ContractClause> deleteContractClauseDB(DSLContext dslContext, ContractClause contractClause) {
-		dslContext.delete(CONTRACT_CLAUSE).where(CONTRACT_CLAUSE.ID.eq(contractClause.getId())).execute();	
-		return getContractClausesDB(dslContext, contractClause.getContract());
-	}
-	
-	public static List<ContractClause> setContractClauses(Connection conn, List<ContractClause> contractClauses) {
-		return setContractClausesDB(DSL.using(conn, getDefaultSettings()), contractClauses);
-	}
-	
-	private static List<ContractClause> setContractClausesDB(DSLContext dslContext, List<ContractClause> contractClauses) {
+	private static void setContractClausesDB(DSLContext dslContext, List<ContractClause> contractClauses) {
 		
 		for(ContractClause contractClause : contractClauses) {
-			if(null == contractClause.getContract())
+			if(null == contractClause.getContract() || (contractClause.getId() == null && AonStringUtils.isBlank(contractClause.getName())))
 				continue;
 			
-			dslContext.update(CONTRACT_CLAUSE)
-				.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
-				.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
-				.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
-				.where(CONTRACT_CLAUSE.ID.eq(contractClause.getId()))
-				.execute();
+			if(contractClause.getId() == null && AonStringUtils.isNotBlank(contractClause.getName()))
+				dslContext.insertInto(CONTRACT_CLAUSE)
+					.set(CONTRACT_CLAUSE.DOMAIN, contractClause.getDomain())
+					.set(CONTRACT_CLAUSE.CONTRACT, contractClause.getContract())
+					.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
+					.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
+					.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
+					.execute();
+			else if(contractClause.getId() < 0)
+				dslContext.delete(CONTRACT_CLAUSE)
+					.where(CONTRACT_CLAUSE.ID.eq(contractClause.getId() * -1))
+					.execute();
+			else
+				dslContext.update(CONTRACT_CLAUSE)
+					.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
+					.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
+					.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
+					.where(CONTRACT_CLAUSE.ID.eq(contractClause.getId()))
+					.execute();
 			
 		}
-
-		return contractClauses;
 	}
 	
 }

@@ -34,7 +34,7 @@ public class RegistryBankJSON {
 				.setSuffix(JsonUtils.getString(json, IJsonNames.SUFIX))
 				.setAlias(JsonUtils.getString(json, IJsonNames.ALIAS))
 				.setActive(JsonUtils.getBoolean(json, IJsonNames.ACTIVE))
-				.setAccountId(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
+				.setAccount(AccountJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACCOUNT)))
 				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY))
 				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
 	}
@@ -48,7 +48,7 @@ public class RegistryBankJSON {
 		rbanks.forEach(rbank -> array.put(toJSON(rbank)));
 		return array;
 	}
-	
+
 	public static JSONObject toJSON(RegistryBank rbank) {
 		return new JSONObject()
 				.put(IJsonNames.ID, rbank.getId())
@@ -59,7 +59,7 @@ public class RegistryBankJSON {
 				.put(IJsonNames.SUFIX, rbank.getSuffix())
 				.put(IJsonNames.ALIAS, rbank.getAlias())
 				.put(IJsonNames.ACTIVE, rbank.isActive())
-				.put(IJsonNames.ACCOUNT, rbank.getAccountId())
+				.put(IJsonNames.ACCOUNT, AccountJSON.toJSON(rbank.getAccount()))
 				.put(IJsonNames.DIRTY, rbank.isDirty())
 				.put(IJsonNames.REMOVED, rbank.isRemoved());
 	}

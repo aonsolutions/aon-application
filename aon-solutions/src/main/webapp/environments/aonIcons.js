@@ -35,3 +35,4 @@ export const AON_GTA = 'aon_gta';
 export const AON_COMMERCE = 'aon_commerce';
 export const AON_SALTRA = 'aon_saltra';
 export const AON_ENTERPRISE = 'aon_enterprise';
+export const AON_KIT_DIGITAL = 'aon_kitdigital';

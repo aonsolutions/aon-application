@@ -1,13 +1,39 @@
 package com.esferalia.aon.occam.api.model.security;
 
+import java.io.Serializable;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 
-public class Booking {
+public class Booking implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	private Domain domain;
+	private Company company;
+	private List<AonApp> apps;
+	private Integer numberOfUsers;
+	private String payer;
+
+	public Domain getDomain() {
+		return domain;
+	}
 	
-	List<AonApp> apps;
-	Integer numberOfUsers;
+	public Booking setDomain(Domain domain) {
+		this.domain = domain;
+		return this;
+	}
+	
+	public Company getCompany() {
+		return company;
+	}
+	
+	public Booking setCompany(Company company) {
+		this.company = company;
+		return this;
+	}
 	
 	public List<AonApp> getApps() {
 		return apps;
@@ -24,6 +50,15 @@ public class Booking {
 	
 	public Booking setNumberOfUsers(Integer numberOfUsers) {
 		this.numberOfUsers = numberOfUsers;
+		return this;
+	}
+	
+	public String getPayer() {
+		return payer;
+	}
+	
+	public Booking setPayer(String payer) {
+		this.payer = payer;
 		return this;
 	}
 }

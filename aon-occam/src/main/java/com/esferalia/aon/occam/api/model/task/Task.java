@@ -47,6 +47,7 @@ public class Task  implements Serializable{
 	
 	private String gtaskId; 
 	private String gtasklistId;
+	private Boolean isCau;
 	
 	// AUDIT
 	
@@ -313,4 +314,12 @@ public class Task  implements Serializable{
 		return this;
 	}
 	
+	public boolean getIsCau() {
+		return isCau!=null && isCau;
+	}
+
+	public Task setIsCau(Boolean isCau) {
+		this.isCau = isCau;
+		return this;
+	}
 }

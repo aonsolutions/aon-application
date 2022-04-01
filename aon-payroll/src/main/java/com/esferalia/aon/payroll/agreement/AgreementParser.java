@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -526,6 +527,14 @@ public class AgreementParser {
 		
 		List<AgreementLevel> analizedAgreementLevels = new ArrayList<>();
 		
+		// Sort levels
+		Collections.sort(agreement.getAgreementLevels(), new Comparator<AgreementLevel>() {
+			@Override
+			public int compare(AgreementLevel al1, AgreementLevel al2) {
+				return al1.getDescription().compareTo(al2.getDescription());
+			}
+		});
+		
 		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
 		
 			List<AgreementLevel> duplicateAgreementLevels = getDuplicateAgreementLevels(agreement, agreementLevel, analizedAgreementLevels);
@@ -807,7 +816,7 @@ public class AgreementParser {
 						}
 					}
 					
-					// BenefitsPLUS_FIESTAS_PATRONALES_ANUAL agreement extra
+					// Benefits PLUS_FIESTAS_PATRONALES_ANUAL agreement extra
 					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "BENEFICIOS")) {
 						dslContext.insertInto(AGREEMENT_EXTRA)
 							.set(AGREEMENT_EXTRA.DOMAIN, domainId)
@@ -816,6 +825,23 @@ public class AgreementParser {
 							.set(AGREEMENT_EXTRA.START_DATE, "01/01 -1")
 							.set(AGREEMENT_EXTRA.END_DATE, "31/12 -1")
 							.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/3")
+							.execute();
+						
+						dslContext.update(AGREEMENT_PAYMENT)
+							.set(AGREEMENT_PAYMENT.MONTH, (byte)2)
+							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+							.execute();
+					}
+					
+					// Benefits PLUS_PAGA_OCTUBRE_ANUAL agreement extra
+					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "OCTUBRE")) {
+						dslContext.insertInto(AGREEMENT_EXTRA)
+							.set(AGREEMENT_EXTRA.DOMAIN, domainId)
+							.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+							.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+							.set(AGREEMENT_EXTRA.START_DATE, "01/11 -1")
+							.set(AGREEMENT_EXTRA.END_DATE, "31/10")
+							.set(AGREEMENT_EXTRA.ISSUE_DATE, "15/10")
 							.execute();
 						
 						dslContext.update(AGREEMENT_PAYMENT)

@@ -15,6 +15,10 @@
 
 		.form {
 			padding: 15px 20px;
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			max-width: 500px;
 		}
 		
 		.tabSelected{
@@ -241,28 +245,52 @@
 			width: 25px !important;
 		}
 		
+		.input {
+			display: flex;
+			flex-direction: column;
+			gap: .2rem;
+		}
+		
+		.title {
+			font-weight: bold;
+			font-size: .9rem;
+		}
+		
+		.sendBtn{
+			background-attachment: scroll;
+			background-clip: border-box;
+			background-color: inherit;
+			background-position: 1px -2px;
+			background-repeat: no-repeat;
+			background-size: auto auto;
+			border: 1px solid #aaa;
+			cursor: pointer;
+			height: 24px;
+			overflow: visible;
+			padding-left: 25px;
+			text-align: left;
+			text-transform: uppercase;
+			width: auto;
+		}
+
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 	
+		<g:HTMLPanel styleName="{style.input}">
+			<g:Label text="Tipo de movimiento" styleName="{style.title}" />
+			<g:ListBox ui:field="afiTypeLB" />
+		</g:HTMLPanel>
+	
 		<g:DeckPanel ui:field="deckPanel">
 		
-			<g:HTMLPanel styleName="{style.flexToggle}">
-				<g:Button ui:field="startContractTB" />
-				<g:Label styleName="{style.bold}" ui:field="startContractLabel">Alta Contrato</g:Label>
-			</g:HTMLPanel>
-			
-			<g:HTMLPanel styleName="{style.flexColumn}">
-				<g:HTMLPanel styleName="{style.flexToggle}">
-					<g:Button ui:field="endContractTB" />
-					<g:Label styleName="{style.bold}" ui:field="endContractLabel">Baja Contrato</g:Label>
-				</g:HTMLPanel>
-				<g:Label ui:field="settleReasonL" styleName="{style.bold}">Código de baja</g:Label>
+			<g:HTMLPanel styleName="{style.input}">
+				<g:Label text="Código de baja" styleName="{style.title}" />
 				<g:ListBox ui:field="settleReasonLB" styleName="{style.width100}" />
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.flexColumn}">
-				<g:HTMLPanel ui:field="tabsPanel" styleName="{style.tabsPanel}"></g:HTMLPanel>
+				<g:HTMLPanel ui:field="tabsPanel" styleName="{style.tabsPanel}" />
 				<g:Label styleName="{style.bold}">Tipo contrato</g:Label>
 				<g:ListBox ui:field="tc2" styleName="{style.width100}" />
 				<g:Label styleName="{style.bold}">Grupo cotización</g:Label>
@@ -275,13 +303,9 @@
 		
 		</g:DeckPanel>
 	    
-	   	<g:HTMLPanel styleName="{style.flexToggle}  {style.mt10}">
-	   		<g:Button ui:field="generationAFITB"></g:Button>
+	   	<g:HTMLPanel ui:field="afiFilePanel" styleName="{style.flexToggle}  {style.mt10}">
+	   		<g:Button ui:field="generationAFITB" />
     		<g:Label styleName="{style.bold}">Generar fichero AFI</g:Label>	
-    	</g:HTMLPanel>
-    	<g:HTMLPanel ui:field="notifyPanel" styleName="{style.flexToggle}  {style.mt10}">
-    		<g:Button ui:field="notifyMovTB"></g:Button>
-    		<g:Label styleName="{style.bold}">Notificar movimiento (TGSS)</g:Label>
     	</g:HTMLPanel>
 		
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>

@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
-import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
@@ -24,7 +23,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -238,67 +236,6 @@ public class ContrataEmployeeObject {
 			@Override
 			public void onSuccess(Map<String, String> contractOtherData) {
 				success.accept(contractOtherData);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-			
-		});
-	}
-	
-	// ------------------------------------------------- Database Methods (Clauses)
-	
-	public void getContractClauses(Consumer<List<ContractClause>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		
-		enterprisesService.getContractClauses(contractId, new AsyncCallback<List<ContractClause>>() {
-			
-			@Override
-			public void onSuccess(List<ContractClause> contractClauses) {
-				employeeContractData.setContractClauses(contractClauses);
-				success.accept(contractClauses);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-			
-		});
-	}
-	
-	public void setContractClauses(Consumer<List<ContractClause>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		List<ContractClause> contractClauses = employeeContractData.getContractClauses();
-		
-		enterprisesService.setContractClauses(contractId, contractClauses, new AsyncCallback<List<ContractClause>>() {
-			
-			@Override
-			public void onSuccess(List<ContractClause> contractClauses) {
-				success.accept(contractClauses);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-			
-		});
-	}
-	
-	// ------------------------------------------------- Database Methods (Attachments)
-	
-	public void getContractAttachments(Consumer<List<Attach>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		
-		enterprisesService.getContractAttachments(contractId, new AsyncCallback<List<Attach>>() {
-			
-			@Override
-			public void onSuccess(List<Attach> contractAttachments) {
-				employeeContractData.setContractAttachments(contractAttachments);
-				success.accept(contractAttachments);
 			}
 
 			@Override
@@ -980,6 +917,10 @@ public class ContrataEmployeeObject {
 	
 	public void setContractRlce(String rlce) {
 		contractData.setRlce(rlce);
+	}
+	
+	public void setContractEmployeesColective(String employeesColective) {
+		contractData.setEmployeesColective(employeesColective);
 	}
 	
 	public void setPartialityCoef(Double partialityCoef) {

@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -89,6 +91,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	void deleteAgreement(String domain, Agreement agreement);
 	
+	void deleteAgreements(String currentDomainName, List<Integer> agreementIds) throws IllegalArgumentException;
+	
 	void moveAgreement2Parent(String domain, Agreement agreement);
 	
 	Agreement copyAgreement(String domain, Agreement agreement);
@@ -162,7 +166,9 @@ public interface EnterprisesService extends RemoteService {
 
 	String setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities);
 	
-	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId);
+	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+	
+	List<SSPECData> syncEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
@@ -210,15 +216,10 @@ public interface EnterprisesService extends RemoteService {
 
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId) throws IllegalArgumentException;
 
-	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId);
+	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId) throws IllegalArgumentException ;
 
-	List<ContractClause> setContractClauses(String currentDomainName, Integer contractId,
-			List<ContractClause> contractClauses);
+	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException ;
 	
-	List<ContractClause> createContractClause(String currentDomainName, ContractClause contractClause);
-
-	List<ContractClause> deleteContractClause(String currentDomainName, ContractClause contractClause);
-
 	Map<String, String> getContractOtherInfo(String currentDomainName, Integer contractId, String contractType);
 	
 	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
@@ -343,5 +344,8 @@ public interface EnterprisesService extends RemoteService {
 
 	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
+	// --------------------------- Agreements Clean
 	
+	List<AgreementsClean> getAgreementsClean(String currentDomainName, AgreementCleanType cleanType) throws IllegalArgumentException;
+
 }

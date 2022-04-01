@@ -68,7 +68,7 @@ public class Peculiarities implements Serializable {
 		}
 
 		public Integer getType() {
-			return type;
+			return type == null ? 0 : type;
 		}
 
 		public void setType(Integer type) {
