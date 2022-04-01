@@ -1,14 +1,11 @@
 // TRIBUTACION CONJUNTA
 package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Page13 extends PageAbs {
 	
@@ -30,48 +27,63 @@ public class Page13 extends PageAbs {
 		,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)"
 	};
 	
-	interface PageBinder extends
-			UiBinder<Widget, Page13> {
-	}
+//	interface PageBinder extends
+//			UiBinder<Widget, Page13> {
+//	}
 
-	private static final PageBinder pageBinder = GWT
-			.create(PageBinder.class);
+//	private static final PageBinder pageBinder = GWT
+//			.create(PageBinder.class);
 
-	@UiField(provided = true)
-	FlexTable table;
-	@UiField(provided = true)
-	FlexTable table1;
-	@UiField(provided = true)
-	FlexTable table2;
+//	@UiField(provided = true)
+//	FlexTable table;
+//	@UiField(provided = true)
+//	FlexTable table1;
+//	@UiField(provided = true)
+//	FlexTable table2;
 	
 	public Page13( Model200PageCallback callback ) {
 		super(callback);
-		table  = new FlexTable();
-		table1 = new FlexTable();
-		table2 = new FlexTable();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
+//		table  = new FlexTable();
+//		table1 = new FlexTable();
+//		table2 = new FlexTable();
+//		Widget ui = pageBinder.createAndBindUi(this);
+//		initWidget(ui);
+		addBasePanel();
 		initializeTable();
 	}
 	
 	@Override
 	protected void initializeTable() {
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");
 		
-		int row = 0;
-		for (final Mod2002020Key key : Mod2002020Constants.COMBINED_TAXATION_1) {
-			if (callback.getMod200Object().isVisible(key)) {
-				row = paintKey(table,key,row);
-			}
-		}
+		basePanel.clear();
 		
-		paintTable(table1, Mod2002020Constants.COMBINED_TAXATION_2);
+//		table.setWidth("100%");
+//		table.setCellSpacing(0);
+//		table.getColumnFormatter().setWidth(1, "200px");
+		
+//		int row = 0;
+//		for (final Mod2002020Key key : Mod2002020Constants.COMBINED_TAXATION_1) {
+//			if (callback.getMod200Object().isVisible(key)) {
+//				row = paintKey(table,key,row);
+//			}
+//		}
+		
+		addTable(AON.MSG.combinedTaxation1(), Mod2002020Constants.COMBINED_TAXATION_1);
+		
+//		paintTable(table1, Mod2002020Constants.COMBINED_TAXATION_2);
+		
+		addTable(AON.MSG.combinedTaxation2(), Mod2002020Constants.COMBINED_TAXATION_2);
+		
+		basePanel.add(getTitle(AON.MSG.combinedTaxation3()));
+		
+		FlexTable table2 = new FlexTable();
+		basePanel.add(table2);
 
-		getFlexTable(table2,0, new String[]{"","ARABA","GIPUZKOA","BIZKAIA","NAVARRA","TOTAL"});
+		getFlexTable(table2, 0, new String[]{"","ARABA","GIPUZKOA","BIZKAIA","NAVARRA","TOTAL"});
+		table2.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table2.addStyleName(AON.CSS.aonBlockCenter());
 		table2.getColumnFormatter().setWidth(0, "auto");
-		row = 1;
+		int row = 1;
 		for (Mod2002020Key[] keys : Mod2002020Constants.COMBINED_TAXATION_3) {
 			boolean paintDescription = true;	
 			for (int i = 0; i< keys.length; i++) {
@@ -87,19 +99,19 @@ public class Page13 extends PageAbs {
 		}
 	}
 	
-	private void paintTable(FlexTable table, Mod2002020Key[] keys) {
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");	
-		int row = 0;
-		for (Mod2002020Key key : keys) {
-			if (key != null && callback.getMod200Object().isVisible(key)) {
-				paintKeyDescription(table, key, row, 0);
-				paintKeyField(table,key,row, 1);
-			}
-			row++;
-		}
-	}
+//	private void paintTable(FlexTable table, Mod2002020Key[] keys) {
+//		table.setWidth("100%");
+//		table.setCellSpacing(0);
+//		table.getColumnFormatter().setWidth(1, "200px");	
+//		int row = 0;
+//		for (Mod2002020Key key : keys) {
+//			if (key != null && callback.getMod200Object().isVisible(key)) {
+//				paintKeyDescription(table, key, row, 0);
+//				paintKeyField(table,key,row, 1);
+//			}
+//			row++;
+//		}
+//	}
 	
 	@Override
 	protected void populate() {}

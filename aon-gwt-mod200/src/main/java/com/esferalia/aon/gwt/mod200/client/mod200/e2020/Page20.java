@@ -4,11 +4,9 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
-import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -17,81 +15,133 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Page20 extends PageAbs {
 
-	interface PageBinder extends
-			UiBinder<Widget, Page20> {
-	}
+//	interface PageBinder extends
+//			UiBinder<Widget, Page20> {
+//	}
 	
-	private static final PageBinder pageBinder = GWT
-			.create(PageBinder.class);
+//	private static final PageBinder pageBinder = GWT
+//			.create(PageBinder.class);
 	
-	@UiField
-	FlexTable table;
-	@UiField
-	FlexTable table2;
-	@UiField
-	InlineLabel abonoLabel;
-	
-	@UiField
-	Panel devPanel;
-	@UiField
-	Panel payPanel;
-	@UiField
-	Panel zeroPanel;
-	
-	@UiField
+//	@UiField
+//	FlexTable table;
+//	@UiField
+//	FlexTable table2;
+//	@UiField
+//	InlineLabel abonoLabel;
+//	
+//	@UiField
+	FlowPanel devPanel;
+//	@UiField
+	FlowPanel payPanel;
+//	@UiField
+	FlowPanel zeroPanel;
+//	
+//	@UiField
 	RadioButton devTypeR;
-	@UiField
+//	@UiField
 	RadioButton devTypeD;
-	@UiField
+//	@UiField
 	RadioButton devTypeV;
-	@UiField
+//	@UiField
 	RadioButton payTypeH;
-	@UiField
+//	@UiField
 	RadioButton payTypeU;
-	@UiField
+//	@UiField
 	RadioButton payTypeI;
-	@UiField
+//	@UiField
 	RadioButton payTypeG;
-	@UiField
+//	@UiField
 	CheckBox zeroQuota;
-	@UiField
-	DoubleBox amountD;
-	@UiField
-	DoubleBox amountP;
-	@UiField(provided=true)
-	IbanTextBox ibanD;
-	@UiField(provided=true)
-	IbanTextBox ibanP;
+//	@UiField
+	AonDoubleBox amountD;
+//	@UiField
+	AonDoubleBox amountP;
+//	@UiField(provided=true)
+	AonIbanTextBox ibanD;
+//	@UiField(provided=true)
+	AonIbanTextBox ibanP;
 	
 	public Page20( Model200PageCallback callback ) {
 		super(callback);
-		ibanD = new IbanTextBox(getSuggestOracle(),true);
-		ibanP = new IbanTextBox(getSuggestOracle(),true);
-		table = new FlexTable();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		initializeTable();		
+//		 = new AonIbanTextBox(getSuggestOracle(),true);
+//		
+//		.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+//			
+//			@Override
+//			public void onSelection(SelectionEvent<Suggestion> event) {
+//				Suggestion suggestion = event.getSelectedItem();
+//				if (suggestion instanceof IbanSuggestion) {
+//					IbanSuggestion is = (IbanSuggestion) suggestion;
+//					.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+//				} else {
+//					.setValue(suggestion.getReplacementString());	
+//				}
+//			}
+//		});
+
+//		@UiHandler("")
+//		void on(SelectionEvent<Suggestion> event) {
+//			Suggestion suggestion = event.getSelectedItem();
+//			if (suggestion instanceof IbanSuggestion) {
+//				IbanSuggestion is = (IbanSuggestion) suggestion;
+//				.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+//			} else {
+//				.setValue(suggestion.getReplacementString());	
+//			}
+//			
+//		}
+		
+//		ibanP = new AonIbanTextBox(getSuggestOracle(),true);
+//		
+//		ibanP.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+//			
+//			@Override
+//			public void onSelection(SelectionEvent<Suggestion> event) {
+//				Suggestion suggestion = event.getSelectedItem();
+//				if (suggestion instanceof IbanSuggestion) {
+//					IbanSuggestion is = (IbanSuggestion) suggestion;
+//					ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+//				} else {
+//					ibanP.setValue(suggestion.getReplacementString());	
+//				}
+//			}
+//		});
+
+//		@UiHandler("ibanP")
+//		void onIbanP(SelectionEvent<Suggestion> event) {
+//			Suggestion suggestion = event.getSelectedItem();
+//			if (suggestion instanceof IbanSuggestion) {
+//				IbanSuggestion is = (IbanSuggestion) suggestion;
+//				ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+//			} else {
+//				ibanP.setValue(suggestion.getReplacementString());	
+//			}
+//		}
+		
+		
+//		table = new FlexTable();
+//		Widget ui = pageBinder.createAndBindUi(this);
+//		initWidget(ui);
+	    addBasePanel();
+		initializeTable();
+		
 		callback.getMod200Object().register( new IMod200ChangeListener() {
 			
 			@Override
@@ -103,78 +153,297 @@ public class Page20 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");
 		
-		Mod2002020Key key = Mod2002020Key.LQ552;
-		Label desc = new Label(key.getDescription() );
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(0, 0, desc);
-		table.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalBorderBottom());
-		FlowPanel panel = new FlowPanel();
-		BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
-		panel.add(code);
-		AonDoubleBox text = new AonDoubleBox();
-		text.setValue(callback.getMod200Object().getDoubleValue(key));
-		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		text.setEnabled(false);
-		panel.add(text);
-		getInputs().put(key, text);
-		panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-		table.setWidget(0, 1, panel);
-		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextRight());
-		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonNowrap());
+		basePanel.clear();
 		
-		key = Mod2002020Key.LQ562;
-		desc = new Label(key.getDescription() );
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(1, 0, desc);
-		table.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalBorderBottom());
-		panel = new FlowPanel();
-		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
-		panel.add(code);
-		text = new AonDoubleBox();
-		text.setValue(callback.getMod200Object().getDoubleValue(key));
-		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		text.setEnabled(false);
-		panel.add(text);
-		getInputs().put(key, text);
-		panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-		table.setWidget(1, 1, panel);
-		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonTextRight());
-		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonNowrap());
+		// Liquidación
 		
-		key = Mod2002020Key.BN621;
-		desc = new Label(key.getDescription() );
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(2, 0, desc);
-		table.getFlexCellFormatter().setStyleName(2, 0, AON.AON_CSS.aonFiscalBorderBottom());
-		panel = new FlowPanel();
-		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
-		panel.add(code);
-		text = new AonDoubleBox();
-		text.setValue(callback.getMod200Object().getDoubleValue(key));
-		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		text.setEnabled(false);
-		panel.add(text);
-		getInputs().put(key, text);
-		table.setWidget(2, 1, panel);
-		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonTextRight());
-		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonNowrap());
+//		table.setWidth("100%");
+//		table.setCellSpacing(0);
+//		table.getColumnFormatter().setWidth(1, "200px");
 		
-		table2.setWidth("100%");
-		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(1, "200px");
-		abonoLabel.setText("Abono / Compensaci\u00F3n");
+		FlexTable table = addTable(AON.MSG.liquidacion());
 		
-		paintDescription(table2,"Abono por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)",0,0,false);
-		paintKeyField(table2, Mod2002020Key.LM150, 0, 1);
-		paintDescription(table2,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)",1,0,false);
-		paintKeyField(table2, Mod2002020Key.LM506, 1, 1);
+		int row = 0;
+		
+//		Mod2002020Key key = Mod2002020Key.LQ552;
+//		Label desc = new Label(key.getDescription() );
+//		desc.setStyleName(AON.AON_CSS.aonBold());
+//		table.setWidget(0, 0, desc);
+//		table.getFlexCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFiscalBorderBottom());
+//		FlowPanel panel = new FlowPanel();
+//		BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
+//		panel.add(code);
+//		AonDoubleBox text = new AonDoubleBox();
+//		text.setValue(callback.getMod200Object().getDoubleValue(key));
+//		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+//		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+//		text.setEnabled(false);
+//		panel.add(text);
+//		getInputs().put(key, text);
+//		panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
+//		table.setWidget(0, 1, panel);
+//		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextRight());
+//		table.getFlexCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonNowrap());
+		
+		paintKey(table, Mod2002020Key.LQ552, row++);
+		
+//		key = Mod2002020Key.LQ562;
+//		desc = new Label(key.getDescription() );
+//		desc.setStyleName(AON.AON_CSS.aonBold());
+//		table.setWidget(1, 0, desc);
+//		table.getFlexCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonFiscalBorderBottom());
+//		panel = new FlowPanel();
+//		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
+//		panel.add(code);
+//		text = new AonDoubleBox();
+//		text.setValue(callback.getMod200Object().getDoubleValue(key));
+//		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+//		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+//		text.setEnabled(false);
+//		panel.add(text);
+//		getInputs().put(key, text);
+//		panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
+//		table.setWidget(1, 1, panel);
+//		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonTextRight());
+//		table.getFlexCellFormatter().addStyleName(1, 1, AON.AON_CSS.aonNowrap());
+		
+		paintKey(table, Mod2002020Key.LQ562, row++);
+		
+//		key = Mod2002020Key.BN621;
+//		desc = new Label(key.getDescription() );
+//		desc.setStyleName(AON.AON_CSS.aonBold());
+//		table.setWidget(2, 0, desc);
+//		table.getFlexCellFormatter().setStyleName(2, 0, AON.AON_CSS.aonFiscalBorderBottom());
+//		panel = new FlowPanel();
+//		code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
+//		panel.add(code);
+//		text = new AonDoubleBox();
+//		text.setValue(callback.getMod200Object().getDoubleValue(key));
+//		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+//		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+//		text.setEnabled(false);
+//		panel.add(text);
+//		getInputs().put(key, text);
+//		table.setWidget(2, 1, panel);
+//		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonTextRight());
+//		table.getFlexCellFormatter().addStyleName(2, 1, AON.AON_CSS.aonNowrap());
+		
+		paintKey(table, Mod2002020Key.BN621, row);
+		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		
+		// Panel Devolución
+		
+		devPanel = new FlowPanel();		
+		devPanel.add(getTitle(AON.MSG.payBack()));
+		
+		FlowPanel devPanel1 = new FlowPanel();		
+		devPanel1.addStyleName(AON.CSS.aonMarginLeft());
+		devPanel1.addStyleName(AON.CSS.aonMarginTop());
+		
+		devTypeR = new RadioButton("devTypeButton");		
+		devTypeR.setText(AON.MSG.payBackRefuse());
+		devTypeR.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.markAsDirty();				
+			}
+		});
+
+		devTypeD = new RadioButton("devTypeButton");
+		devTypeD.addStyleName(AON.CSS.aonMarginLeft());
+		devTypeD.setText(AON.MSG.payBackTransfer());
+		devTypeD.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.markAsDirty();				
+			}
+		});
+
+		devTypeV = new RadioButton("devTypeButton");
+		devTypeV.addStyleName(AON.CSS.aonMarginLeft());
+		devTypeV.setText(AON.MSG.payBackCCT());
+		devTypeV.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.markAsDirty();				
+			}
+		});
+		
+		devPanel1.add(devTypeR);
+		devPanel1.add(devTypeD);
+		devPanel1.add(devTypeV);
+		devPanel.add(devPanel1);
+		
+		FlowPanel devPanel2 = new FlowPanel();
+		devPanel2.addStyleName(AON.CSS.aonMarginLeft());
+		devPanel2.addStyleName(AON.CSS.aonMarginTop());
+		devPanel2.add(new InlineLabel(AON.MSG.amount()));		
+		amountD = new AonDoubleBox();
+		amountD.setEnabled(false);
+		amountD.addStyleName(AON.CSS.aonMarginLeft());
+		devPanel2.add(amountD);		
+		devPanel.add(devPanel2);
+
+		FlowPanel devPanel3 = new FlowPanel();
+		devPanel3.addStyleName(AON.CSS.aonMarginLeft());
+		devPanel3.addStyleName(AON.CSS.aonMarginTop());
+		devPanel3.add(new InlineLabel(AON.MSG.iban()));
+		
+		ibanD = new AonIbanTextBox(getSuggestOracle(),true);
+		ibanD.addStyleName(AON.CSS.aonMarginLeft());
+		ibanD.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				Suggestion suggestion = event.getSelectedItem();
+				if (suggestion instanceof IbanSuggestion) {
+					IbanSuggestion is = (IbanSuggestion) suggestion;
+					ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+				} else {
+					ibanD.setValue(suggestion.getReplacementString());	
+				}
+				callback.markAsDirty();
+			}
+		});
+		devPanel3.add(ibanD);
+		devPanel.add(devPanel3);
+		
+		basePanel.add(devPanel);
+
+		//	Panel Ingreso
+		payPanel = new FlowPanel(); 
+		payPanel.add(getTitle(AON.MSG.deposit()));
+		
+		FlowPanel payPanel1 = new FlowPanel();		
+		payPanel1.addStyleName(AON.CSS.aonMarginLeft());
+		payPanel1.addStyleName(AON.CSS.aonMarginTop());		
+		
+		payTypeI = new RadioButton("devTypeButton");
+		payTypeI.setText(AON.MSG.payInAccount());
+		payTypeI.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.markAsDirty();				
+			}
+		});
+		
+		payTypeH = new RadioButton("devTypeButton");
+		payTypeH.addStyleName(AON.CSS.aonMarginLeft());
+		payTypeH.setText(AON.MSG.cash());
+		payTypeH.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.markAsDirty();				
+			}
+		});
+		
+		payTypeU = new RadioButton("devTypeButton");
+		payTypeU.addStyleName(AON.CSS.aonMarginLeft());
+		payTypeU.setText(AON.MSG.directDebit());
+		payTypeU.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.markAsDirty();				
+			}
+		});
+		
+		payTypeG = new RadioButton("devTypeButton");
+		payTypeG.addStyleName(AON.CSS.aonMarginLeft());
+		payTypeG.setText(AON.MSG.payCCT());
+		payTypeG.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.markAsDirty();				
+			}
+		});
+		
+		payPanel1.add(payTypeI);
+		payPanel1.add(payTypeH);
+		payPanel1.add(payTypeU);
+		payPanel1.add(payTypeG);
+		payPanel.add(payPanel1);
+		
+		FlowPanel payPanel2 = new FlowPanel();
+		payPanel2.addStyleName(AON.CSS.aonMarginLeft());
+		payPanel2.addStyleName(AON.CSS.aonMarginTop());
+		payPanel2.add(new InlineLabel(AON.MSG.amount()));		
+		amountP = new AonDoubleBox();  
+		amountP.setEnabled(false);
+		amountP.addStyleName(AON.CSS.aonMarginLeft());
+		payPanel2.add(amountP);
+		payPanel.add(payPanel2);
+		
+		FlowPanel payPanel3 = new FlowPanel();
+		payPanel3.addStyleName(AON.CSS.aonMarginLeft());
+		payPanel3.addStyleName(AON.CSS.aonMarginTop());
+		payPanel3.add(new InlineLabel(AON.MSG.iban()));
+		
+		ibanP = new AonIbanTextBox(getSuggestOracle(),true);
+		ibanP.addStyleName(AON.CSS.aonMarginLeft());
+		ibanP.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				Suggestion suggestion = event.getSelectedItem();
+				if (suggestion instanceof IbanSuggestion) {
+					IbanSuggestion is = (IbanSuggestion) suggestion;
+					ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+				} else {
+					ibanP.setValue(suggestion.getReplacementString());	
+				}
+				callback.markAsDirty();
+			}
+		});		
+		
+		payPanel3.add(ibanP);
+		payPanel.add(payPanel3);
+		
+		basePanel.add(payPanel);
+		
+		// Abono / Compensación
+		
+//		table2.setWidth("100%");
+//		table2.setCellSpacing(0);
+//		table2.getColumnFormatter().setWidth(1, "200px");
+//		abonoLabel.setText("Abono / Compensaci\u00F3n");
+//		
+//		paintDescription(table2,"Abono por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)",0,0,false);
+//		paintKeyField(table2, Mod2002020Key.LM150, 0, 1);
+//		paintDescription(table2,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)",1,0,false);
+//		paintKeyField(table2, Mod2002020Key.LM506, 1, 1);
+		
+		FlexTable table2 = addTable("Abono / Compensaci\u00F3n");
+		paintKey(table2, Mod2002020Key.LM150, 0);
+		paintKey(table2, Mod2002020Key.LM506, 1);
+		
+		// Cuota Cero
+		
+		zeroPanel = new FlowPanel();
+		
+		zeroPanel.add(getTitle(AON.MSG.zeroQuota()));
+		
+		zeroQuota = new CheckBox(AON.MSG.zeroQuota());
+		zeroQuota.setStyleName(AON.CSS.aonMarginLeft());
+		zeroQuota.addStyleName(AON.CSS.aonMarginTop());
+		
+		zeroPanel.add(zeroQuota);
+		
+//		<g:HTMLPanel ui:field="zeroPanel" styleName="{aonResources.css.aonGroup}">
+//		<div class="{aonResources.css.aonGroupTitle}">
+//			<g:InlineLabel text="{msg.zeroQuota}" />
+//		</div>
+//		<div class="{aonResources.css.aonGroupBody}">
+//			<g:CheckBox ui:field="zeroQuota" text="{msg.zeroQuota}"/>
+//		</div>
+//		</g:HTMLPanel>
+		
+		basePanel.add(zeroPanel);
 		
 	}
 
@@ -287,7 +556,7 @@ public class Page20 extends PageAbs {
 							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 							if (result != null) {
 								for (final CompanyBank cb : result) {
-									suggestions.add(new IbanTextBox.IbanSuggestion(cb));
+									suggestions.add(new AonIbanTextBox.IbanSuggestion(cb));
 								}
 							}
 							Response resp = new Response(suggestions);
@@ -301,26 +570,26 @@ public class Page20 extends PageAbs {
 		return new EnterpriseSuggestOracle();
 	}
 	
-	@UiHandler("ibanD")
-	void onIbanD(SelectionEvent<Suggestion> event) {
-		Suggestion suggestion = event.getSelectedItem();
-		if (suggestion instanceof IbanSuggestion) {
-			IbanSuggestion is = (IbanSuggestion) suggestion;
-			ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
-		} else {
-			ibanD.setValue(suggestion.getReplacementString());	
-		}
-		
-	}
-	@UiHandler("ibanP")
-	void onIbanP(SelectionEvent<Suggestion> event) {
-		Suggestion suggestion = event.getSelectedItem();
-		if (suggestion instanceof IbanSuggestion) {
-			IbanSuggestion is = (IbanSuggestion) suggestion;
-			ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
-		} else {
-			ibanP.setValue(suggestion.getReplacementString());	
-		}
-	}
+//	@UiHandler("")
+//	void on(SelectionEvent<Suggestion> event) {
+//		Suggestion suggestion = event.getSelectedItem();
+//		if (suggestion instanceof IbanSuggestion) {
+//			IbanSuggestion is = (IbanSuggestion) suggestion;
+//			.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+//		} else {
+//			.setValue(suggestion.getReplacementString());	
+//		}
+//		
+//	}
+//	@UiHandler("ibanP")
+//	void onIbanP(SelectionEvent<Suggestion> event) {
+//		Suggestion suggestion = event.getSelectedItem();
+//		if (suggestion instanceof IbanSuggestion) {
+//			IbanSuggestion is = (IbanSuggestion) suggestion;
+//			ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+//		} else {
+//			ibanP.setValue(suggestion.getReplacementString());	
+//		}
+//	}
 
 }

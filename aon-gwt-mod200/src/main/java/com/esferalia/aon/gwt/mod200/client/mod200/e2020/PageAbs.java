@@ -35,7 +35,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -296,8 +295,9 @@ public abstract class PageAbs extends ResizeComposite {
 				// casillas, si ambas casillas son la misma
 				if (k != null && k != breakdownKey) {
 					if (paintDesc) {
-						Label desc = new Label(key.getDescription() );			
+						Label desc = new Label(key.getDescription());			
 						tableDetail.setWidget(r, 0, desc);
+						desc.setStyleName(AON.AON_CSS.aonMarginLeft());
 						tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 						paintDesc = false;
 					}
@@ -338,7 +338,22 @@ public abstract class PageAbs extends ResizeComposite {
 		return ++row;
 	}
 	
-	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, int row) {
+	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, String... headers) {
+		paintKeysProvider(keysProvider, tab, 0, headers);
+	}	
+	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, int row, String... headers) {
+		if (headers != null) {
+			for (int i = 0; i < headers.length; i++) {
+//				tab.setWidget(row, i, new Label( headers[i] ));
+//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonBold());
+//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonBorderBottom());
+//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonTextCenter());
+//				tab.getFlexCellFormatter().addStyleName(row, i, AON.AON_CSS.aonFontSmall());
+				addHeaderCell(tab, row, i, headers[i]);				
+			}
+			row++;
+		}
+				
 		for (IMod200KeysProvider kp : keysProvider) {
 			paintDescription(tab, kp.getDescription(), row, 0, false);
 			int col = 1;
@@ -452,27 +467,73 @@ public abstract class PageAbs extends ResizeComposite {
 		initWidget(scroll);		
 	}
 	
-	private FlexTable addTable() {
-		FlexTable table = new FlexTable();
-		table.setCellSpacing(0);
-		table.addStyleName(AON.CSS.aonWidthAlmostAll());
-		table.addStyleName(AON.CSS.aonMargin());
-//		table.addStyleName(AON.CSS.aonBlockCenter());
-		
-		ColumnFormatter cf = table.getColumnFormatter();
-		cf.setWidth(1, "200px");
-		
-		return table;
-	}
+//	private FlexTable addTable() {
+//		FlexTable table = new FlexTable();
+//		table.setCellSpacing(0);
+//		table.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		table.addStyleName(AON.CSS.aonMargin());
+////		table.addStyleName(AON.CSS.aonBlockCenter());
+//		
+//		ColumnFormatter cf = table.getColumnFormatter();
+//		cf.setWidth(1, "200px");
+//		
+//		return table;
+//	}
 	
-	protected void addTable(String label, Mod2002020Key[] keys) {
+	// Añadir FlexTable a basePanel
+	protected FlexTable addTable() {
+		return addTable("");
+	}
+	protected FlexTable addTable(String title) {
+		return addTable(title, 1);
+	}
+	protected FlexTable addTable(int numAmountCols) {
+		return addTable("", numAmountCols);
+	}
+	protected FlexTable addTable(String title, int numAmountCols) {
+		return addTable(title, numAmountCols, "200px", false);			
+	}
+	protected FlexTable addTable(String title, int numAmountCols, String columnWidth) {
+		return addTable(title, numAmountCols, columnWidth, false);			
+	}
+	protected FlexTable addTable(String title, int numAmountCols, String columnWidth, boolean horizontalScroll) {
 
-		if (AonStringUtils.isNotBlank(label)) {
-			basePanel.add(getTitle(label));			
+		if (AonStringUtils.isNotBlank(title)) {
+			basePanel.add(getTitle(title));			
 		}
 		
-		FlexTable table = addTable();
-		basePanel.add(table);
+		FlexTable tab = new FlexTable();
+		tab.setCellSpacing(0);
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonMargin());
+		
+		if (horizontalScroll) {
+			FlowPanel tableContainer = new FlowPanel();
+			tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
+			tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
+			tableContainer.add(tab);			
+			basePanel.add(tableContainer);
+		} else {
+			basePanel.add(tab);			
+		}
+		
+		// Ancho de las columnas de importes
+		for (int i = 0; i < numAmountCols; i++  ) {
+			tab.getColumnFormatter().setWidth((i+1), columnWidth);	
+		}
+		
+		return tab;
+		
+	}
+	
+	// Añadir FlexTable a basePanel, con unas filas de datos (descripcion, 1 casilla de importe)
+	protected void addTable(String title, Mod2002020Key[] keys) {
+
+//		if (AonStringUtils.isNotBlank(label)) {
+//			basePanel.add(getTitle(label));			
+//		}
+		
+		FlexTable table = addTable(title);
 
 		int row = 0;
 		for (Mod2002020Key key : keys) {
@@ -482,17 +543,16 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		
 	}
-
-	// FALTA - USAR PAINTTITLE ?? 
-//	protected Label getColumnHeader(String text) {
-//		Label label = new Label(text);
-////		subsubtitle.setStyleName(AON.CSS.aonMarginTop());
-//		label.addStyleName(AON.CSS.aonBold());
-//		label.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		label.addStyleName(AON.CSS.aonBlockCenter());
-//		label.addStyleName(AON.CSS.aonBorderBottom());
-//		return label;
-//	}
+	
+	protected void addHeaderCell(FlexTable table, int row, int col, String msg) {
+		table.setWidget(row, col, new Label( msg ));
+		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
+	}
+	
+	
 	
 	
 }

@@ -301,13 +301,13 @@ public class Page08 extends PageAbs {
 		opeVol.setSelectedIndex(index);
 	}
 	
-	private FlexTable addTable() {
-		FlexTable tab = new FlexTable();
-		tab.setCellSpacing(0);
-		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab.addStyleName(AON.CSS.aonMargin());
-		basePanel.add(tab);
-		return tab;
-	}
+//	private FlexTable addTable() {
+//		FlexTable tab = new FlexTable();
+//		tab.setCellSpacing(0);
+//		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab.addStyleName(AON.CSS.aonMargin());
+//		basePanel.add(tab);
+//		return tab;
+//	}
 	
 }

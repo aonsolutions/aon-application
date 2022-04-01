@@ -13,20 +13,16 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN588Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN590Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Page11 extends PageAbs {
 
-	interface PageBinder extends
-			UiBinder<Widget, Page11> {
-	}
+//	interface PageBinder extends
+//			UiBinder<Widget, Page11> {
+//	}
 
-	private static final PageBinder pageBinder = GWT
-			.create(PageBinder.class);
+//	private static final PageBinder pageBinder = GWT
+//			.create(PageBinder.class);
 	
 	private static final String[] HEADERS_1 = new String[]{null,
 		AON.MSG.pendingDeduction(),
@@ -46,22 +42,30 @@ public class Page11 extends PageAbs {
 			AON.MSG.liquiMsg31(),
 			AON.MSG.pendingAmount()};
 
-	@UiField(provided = true)
-	FlexTable table;
+//	@UiField(provided = true)
+//	FlexTable table;
 
 	public Page11( Model200PageCallback callback ) {
 		super(callback);
-		table = new FlexTable();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");
+//		table = new FlexTable();
+//		Widget ui = pageBinder.createAndBindUi(this);
+//		initWidget(ui);
+//		table.setWidth("100%");
+//		table.setCellSpacing(0);
+//		table.getColumnFormatter().setWidth(1, "200px");
+		addBasePanel();
 		initializeTable();
 	}
 	
 	@Override
 	protected void initializeTable() {
+		
+		basePanel.clear();
+		
+		basePanel.add(getTitle(AON.MSG.otherDeductions()));
+		
+		FlexTable table = addTable();
+		
 		int row = 0;
 		for (final Mod2002020Key key : Mod2002020Constants.LIQUIDATION_IV_KEYS) {
 			row = paintKey(table,key,row);

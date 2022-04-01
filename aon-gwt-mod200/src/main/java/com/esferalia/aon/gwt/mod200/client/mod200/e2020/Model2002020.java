@@ -829,17 +829,18 @@ public class Model2002020 extends DockLayoutPanel {
 				protected void onUpload(String data) {
 					mod200Object.fillMod2002020AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002020>() {
 						@Override public void onSuccess(Mod2002020 result) {	
-							importAccountingButton.setEnabled(true);
+//							importAccountingButton.setEnabled(true);
 							markAsDirty();
 						}
 						@Override public void onFailure(Throwable caught) {
-							importAccountingButton.setEnabled(true);
+//							importAccountingButton.setEnabled(true);
 							mod200Callback.showError(caught.getMessage());
 						}
 					});				
 				}
 			};
 			upload.upload();
+			importAccountingButton.setEnabled(true);
 		});
 		toolbarPanel.add(importAccountingButton);
 		
@@ -947,12 +948,20 @@ public class Model2002020 extends DockLayoutPanel {
 	}
 	
 	private Widget getLinksPanel() {
+		
+//		ScrollPanel scrollPanel = new ScrollPanel(); 
+//		scrollPanel.setStyleName(AON.CSS.aonBorderRight());
+//		
+//		FlowPanel pageLinks = new FlowPanel();
+//		pageLinks.setStyleName(AON.CSS.aonPaddingLeft());
+		
 		ScrollPanel scrollPanel = new ScrollPanel(); 
 		scrollPanel.setStyleName(AON.CSS.aonBorderRight());
 		
 		FlowPanel linkContainer = new FlowPanel();
-		linkContainer.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		linkContainer.setStyleName(AON.AON_CSS.aonPaddingRight());
+//		linkContainer.setStyleName(AON.AON_CSS.aonPaddingLeft());
+//		linkContainer.setStyleName(AON.AON_CSS.aonPaddingRight());
+		linkContainer.setStyleName(AON.CSS.aonPaddingLeft());
 		 
 		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Caracteres de la declaraci\u00F3n"	 ));
 		linkContainer.add(new WestFocusPanel( 2,AON.MSG.administratorPage()	 ));

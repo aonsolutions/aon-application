@@ -12,20 +12,16 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN572Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN573Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Page10 extends PageAbs {
 
-	interface PageBinder extends
-			UiBinder<Widget, Page10> {
-	}
+//	interface PageBinder extends
+//			UiBinder<Widget, Page10> {
+//	}
 
-	private static final PageBinder pageBinder = GWT
-			.create(PageBinder.class);
+//	private static final PageBinder pageBinder = GWT
+//			.create(PageBinder.class);
 	
 	private static final String[] HEADERS_1 = new String[]{null,
 		AON.MSG.pendingDeduction(),
@@ -39,22 +35,30 @@ public class Page10 extends PageAbs {
 		AON.MSG.appliedDeduction(),
 		AON.MSG.futureDeduction()};
 	
-	@UiField(provided = true)
-	FlexTable table;
+//	@UiField(provided = true)
+//	FlexTable table;
 
 	public Page10( Model200PageCallback callback ) {
 		super(callback);
-		table = new FlexTable();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");
+//		table = new FlexTable();
+//		Widget ui = pageBinder.createAndBindUi(this);
+//		initWidget(ui);
+//		table.setWidth("100%");
+//		table.setCellSpacing(0);
+//		table.getColumnFormatter().setWidth(1, "200px");
+		addBasePanel();
 		initializeTable();
 	}
 	
 	@Override
 	protected void initializeTable() {
+		
+		basePanel.clear();
+		
+		basePanel.add(getTitle(AON.MSG.bonus()));
+		
+		FlexTable table = addTable();
+		
 		int row = 0;
 		boolean margin = false;
 		for (final Mod2002020Key key : Mod2002020Constants.LIQUIDATION_III_KEYS) {
@@ -112,4 +116,5 @@ public class Page10 extends PageAbs {
 	
 	@Override
 	protected void populate() {}
+	
 }
