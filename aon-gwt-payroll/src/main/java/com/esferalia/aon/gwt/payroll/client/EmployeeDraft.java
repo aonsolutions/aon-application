@@ -296,6 +296,11 @@ public abstract class EmployeeDraft extends Composite {
 			employeeDraftObject.setEmployeeBankAlias(bankAlias);
 			employeeDraftObject.setEmployeeBIC(bankSwift);
 		}
+
+		@Override
+		public void fireError(String title, String message) {
+			showError(title, message);
+		}
 	}
 	
 	// ------------------------------------------------- UiBinder
@@ -457,7 +462,7 @@ public abstract class EmployeeDraft extends Composite {
 	ScrollPanel scrolledPanel;
 	
 	@UiField
-	HTMLPanel messageContainer;
+	static HTMLPanel messageContainer;
 	
 	@UiField (provided = true)
 	Employee employee;
@@ -1165,7 +1170,7 @@ public abstract class EmployeeDraft extends Composite {
 		AonMessagePanel.showSuccess(messageContainer, successMap);
 	}
 	
-	private void showError(String title, String message) {
+	public static void showError(String title, String message) {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(messageContainer, errorMap);

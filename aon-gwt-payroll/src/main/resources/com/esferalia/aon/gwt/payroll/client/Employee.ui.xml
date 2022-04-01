@@ -408,7 +408,7 @@
 						<!-- LINEA 15 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Colectivo Trabajadores</g:Label>
+								<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Colectivo Trabajadores</g:Label>
 							</td>
 							<td colspan="6">
 								<g:ListBox ui:field="employeesColective" debugId="employeesColective" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>

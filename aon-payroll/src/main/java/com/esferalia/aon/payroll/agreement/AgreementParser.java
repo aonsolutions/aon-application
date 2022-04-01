@@ -839,9 +839,9 @@ public class AgreementParser {
 							.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 							.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 							.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-							.set(AGREEMENT_EXTRA.START_DATE, "01/10 -1")
-							.set(AGREEMENT_EXTRA.END_DATE, "30/09")
-							.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/10")
+							.set(AGREEMENT_EXTRA.START_DATE, "01/11 -1")
+							.set(AGREEMENT_EXTRA.END_DATE, "31/10")
+							.set(AGREEMENT_EXTRA.ISSUE_DATE, "15/10")
 							.execute();
 						
 						dslContext.update(AGREEMENT_PAYMENT)

@@ -111,6 +111,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected MenuItem getTaEnd() {
 			return tgssContextMenu.getTaEnd();
 		}
+
+		@Override
+		protected void showErrorMessage(String title, String message) {
+			showError(title, message);
+		}
 		
 	}
 	
