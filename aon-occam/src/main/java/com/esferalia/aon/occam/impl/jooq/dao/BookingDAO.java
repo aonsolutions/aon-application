@@ -4,11 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -35,6 +39,25 @@ public class BookingDAO {
 	
 	private BookingDAO() {
 	
+	}
+	
+	public static Booking get(AONContext ctx, Domain domain) {
+		Company company = CompanyDAO.getCompanyStream(ctx, f -> 
+			f.getDomainProperty().eq(domain.getId()))
+			.findFirst().orElse(new Company());
+		
+		Booking booking = new Booking()
+				.setDomain(domain)
+				.setCompany(company)
+				.setNumberOfUsers(domain.getMaxDefinedUsers())
+				.setPayer("");
+		
+		booking.setApps(SecurityDAO.getDomainAppStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1))
+		).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new)));
+
+		return booking;
+		
 	}
 	
 	public static Booking save(AONContext ctx, Booking booking) {

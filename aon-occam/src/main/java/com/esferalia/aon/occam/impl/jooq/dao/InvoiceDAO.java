@@ -286,7 +286,7 @@ public class InvoiceDAO {
 		ctx.checkRead();
 		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
-			.select(
+			.selectDistinct(
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,orderedType
@@ -477,7 +477,6 @@ public class InvoiceDAO {
 				invoice.setRectificationInvoiceSeries(rectify.getSeries());
 				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
 				invoice.setRectificationInvoiceNumber(rectify.getNumber());
-				invoice.setRectificationType(rectify.getRectificationType());
 			}
 		}
 		return invoice;

@@ -43,7 +43,7 @@ export const getCompany = () => {
   const domain = LS.getDomainId();
   return new Promise((resolve, reject) => {
     if(!domain) resolve({});
-    else if (company && company.domain && domain === company.domain.id)
+    else if (company && company.domain && domain == company.domain.id)
       resolve(company);
     else 
       get(API.COMPANY_ONE, {}).then(r => {

@@ -111,6 +111,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected MenuItem getTaEnd() {
 			return tgssContextMenu.getTaEnd();
 		}
+
+		@Override
+		protected void showErrorMessage(String title, String message) {
+			showError(title, message);
+		}
 		
 	}
 	
@@ -133,6 +138,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showLoading(message);
 		}}
 	
+	// ------------------------------------------------- ContractClausesUIImpl
+	
+	public class ContractClauseUIImpl extends ContractClauseUI {
+		
+		@Override
+		protected void showError(Map<String, String> errorMap) {
+			AonMessagePanel.showError(messageContainer, errorMap);
+		}
+
+		@Override
+		protected void showSuccess(Map<String, String> successMap) {
+			AonMessagePanel.showSuccess(messageContainer, successMap);
+		}
+	}
+		
 	// ------------------------------------------------- ContractAttachUIImpl
 	
 	public class ContractAttachUIImpl extends ContractAttachUI {
@@ -697,7 +717,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private NewTGSSContextMenu tgssContextMenu;
 	private NewSEPEContextMenu sepeContextMenu;
 	
-	// EmployeeSalary
+	// EmployeeClause
+	private HTMLPanel employeeClauseButtons;
+	
+	// EmployeeAttach
 	private HTMLPanel employeeAttachButtons;
 	
 	// EmployeeSalary
@@ -727,7 +750,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractEmployeeUI = new ContractEmployeeUIImpl();
 		contractSpecificData = new ContractSpecificDataImpl();
 		contractOtherData = new ContractOtherData();
-		contractClauseUI = new ContractClauseUI();
+		contractClauseUI = new ContractClauseUIImpl();
 		contractAttachUI = new ContractAttachUIImpl();
 		
 		employeeSalary = new EmployeeSalary();
@@ -852,9 +875,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 				contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
 				break;
-			case 3:
-				contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
-				break;
 			default:
 				break;
 			}
@@ -930,13 +950,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 3:
 				showLoadingPanel();
-				contrataEmployeeObject.getContractClauses(s -> {
-					showContractButtons();
-					contractClauseUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-					hideLoadingPanel();
-					hideTgssOption();
-					hideSepeOption();
-				}, f -> {});
+				showContractClauseButtons();
+				contractClauseUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				hideLoadingPanel();
+				hideTgssOption();
+				hideSepeOption();
 				break;
 			case 4:
 				showLoadingPanel();
@@ -1068,6 +1086,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
 	}
 	
 	private void showContractButtons() {
@@ -1076,6 +1095,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeSalaryButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
 	}
 	
 	private void showCalendarButtons() {
@@ -1084,6 +1104,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeContractIrpfButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
 	}
 	
 	private void showContractIrpfButtons() {
@@ -1092,10 +1113,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
 	}
 	
 	private void showContractAttachButtons() {
 		employeeAttachButtons.setVisible(true);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
+		employeeClauseButtons.setVisible(false);
+	}
+	
+	private void showContractClauseButtons() {
+		employeeClauseButtons.setVisible(true);
+		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
@@ -1122,6 +1154,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employeeContractButtons = initEmployeeContractButtons();
 		toolbar.add(employeeContractButtons);
+		
+		// EmployeeClause
+		
+		employeeClauseButtons = initEmployeeClauseButtons();
+		toolbar.add(employeeClauseButtons);
 		
 		// EmployeeAttach
 		
@@ -1270,9 +1307,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		case 2:
 			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 			contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
-			break;
-		case 3:
-			contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
 			break;
 		default:
 			break;
@@ -1755,6 +1789,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// ------------------------------------------------- EmployeeAttachButtons
 	
+	private HTMLPanel initEmployeeClauseButtons() {
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.addStyleName(style.flex());
+		
+		AonToolbarButton saveClauses = new AonToolbarButton(AON.MSG.saveAction() + " Clausulas",  AON.CSS.aonIconSave());
+		saveClauses.addClickHandler(e -> contractClauseUI.saveClauses());
+		hPanel.add(saveClauses);
+		
+		AonToolbarButton newClause = new AonToolbarButton(AON.MSG.newAction() + " Clausula",  AON.CSS.aonIconAdd());
+		newClause.addClickHandler(e -> contractClauseUI.newClause());
+		hPanel.add(newClause);
+		
+		return hPanel;
+	}
+	
+	// ------------------------------------------------- EmployeeAttachButtons
+	
 	private HTMLPanel initEmployeeAttachButtons() {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
@@ -2150,4 +2201,5 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void hideMessage() {
 		AonMessagePanel.hideMessage(messageContainer);
 	}
+
 }

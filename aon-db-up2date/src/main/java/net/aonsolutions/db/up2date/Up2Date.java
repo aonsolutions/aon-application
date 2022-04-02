@@ -20,6 +20,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.fiscal.RefreshMod303Result;
+import net.aonsolutions.db.up2date.payroll.AgreementClean;
+import net.aonsolutions.db.up2date.payroll.CertificatesClean;
+import net.aonsolutions.db.up2date.tgss.Artist2022Update;
+import net.aonsolutions.db.up2date.tgss.Bases2022UpdateII;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2022Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2022Update;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2022Update;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2022Update;
 
 
 public class Up2Date {
@@ -213,8 +221,14 @@ public class Up2Date {
 //    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY,
 //    		AgreementClean.AGREEMENTCLEAN,
 //			CertificatesClean.CERTIFICATESCLEAN
-    		
-    		RefreshMod303Result.REFRESH_MOD303_RESULT,
+//    		CertificatesClean.CERTIFICATESCLEAN
+    		Bases2022UpdateII.BASES2022UPDATEIII,
+    		HomeBases2022Update.HOMEBASES2022UPDATE,
+    		TrainningBases2022Update.TRAINNINGBASES2022UPDATE,
+    		TrainingPercentages2022Update.TRAINNINGPERCENTAGES2022UPDATE,
+    		FellowsPercentages2022Update.FELLOWSPERCENTAGES2022UPDATE,
+    		Artist2022Update.ARTIST2022UPDATE,
+    		RefreshMod303Result.REFRESH_MOD303_RESULT
     };
     
 

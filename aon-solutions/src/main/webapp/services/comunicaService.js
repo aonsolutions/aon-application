@@ -61,3 +61,8 @@ export const getJourneyType = () =>[
   { id: 1, name: "Semanal", value: "semanal"},
   { id: 2, name: "Diaria", value: "diaria"}
 ];
+
+export const getWorkersCollective = () => Promise.resolve([
+  { name: "Producción", value: "967"},
+  { name: "Previsibles", value: "968"}
+]);

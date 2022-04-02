@@ -70,7 +70,7 @@
 						Tipo de Acceso: $booking.getDomainType()<br>
 						Número de Usuarios: $booking.getNumberOfUsers()<br><br>
 						
-						Aplicaciones Contratadas:
+						Aplicaciones y Servicios Contratados:
 						#foreach($app in $booking.getApps())
 							$app 
 						#end

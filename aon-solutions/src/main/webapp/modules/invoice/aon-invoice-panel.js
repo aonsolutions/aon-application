@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta, downloadInvoiceExcel } from '../../services/service.js';
+import { insertInvoice, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta, downloadInvoiceExcel, getInvoice } from '../../services/service.js';
 
 import { Invoice } from './Invoice.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -120,9 +120,9 @@ export class AonInvoicePanel extends AonElement {
 		let aonInvoice = this.getElement(this.INVOICE);
 
 		let input = this.getElement(this.INPUT_FILE);
-		input.addEventListener('change', () => this.preview(input.files));
+		input.addEventListener(EVENT.CHANGE, () => this.preview(input.files));
 
-		this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => this.preview(target.files));
+		this.getElement(this.INPUT_CAMERA).addEventListener(EVENT.CHANGE,  ({target}) => this.preview(target.files));
 
 		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(e.detail));
 
@@ -133,7 +133,12 @@ export class AonInvoicePanel extends AonElement {
 		
 		this.appendChild(input);
 		this.buildSidenavOptions();
-		this.selectOption(this.option);
+		if(this.invoice && this.invoice.type){
+			this.aonInvoice(this.invoice.type, this.invoice);
+		} else if(this.value){
+			this.aonInvoiceById(this.value);
+		} else 
+			this.selectOption(this.option);
 	}
 
 	buildToolbarOptions(){
@@ -540,15 +545,20 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvoice(type, invoice) {
-		let aonInvoice = this.getApplication();
-		if(this.isMobile()) {
+		let aonInvoice = this.getApplication(); 
+		if(this.isMobile() && aonInvoice.TOOLBAR) {
 			let toolbar = this.getElement(aonInvoice.TOOLBAR);
 			toolbar.removeButtons();
 		}
-		let ni = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
-		ni.setType(type);
-		ni.setInvoice(invoice);
-		aonInvoice.setContent(ni);
+		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
+		component.setType(type);
+		component.setInvoice(invoice);
+
+		aonInvoice.setContent(component);
+	}
+
+	aonInvoiceById(id) {
+		getInvoice(id).then(invoice => this.aonInvoice(invoice.type, invoice)).catch(error =>this.showToast(error));
 	}
 
 	selectOption(option) {

@@ -613,6 +613,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	@Deprecated
 	public void setDeclarationType(FiscalModelDeclarationType type) {
 		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
+		setDeclarationResultType(getDeclarationType());
 	}
 	@Deprecated
 	public void setDeclarationType(String type) {

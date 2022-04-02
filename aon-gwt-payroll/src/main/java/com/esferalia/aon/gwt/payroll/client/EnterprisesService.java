@@ -166,7 +166,9 @@ public interface EnterprisesService extends RemoteService {
 
 	String setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities);
 	
-	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId);
+	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+	
+	List<SSPECData> syncEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
@@ -214,15 +216,10 @@ public interface EnterprisesService extends RemoteService {
 
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId) throws IllegalArgumentException;
 
-	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId);
+	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId) throws IllegalArgumentException ;
 
-	List<ContractClause> setContractClauses(String currentDomainName, Integer contractId,
-			List<ContractClause> contractClauses);
+	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException ;
 	
-	List<ContractClause> createContractClause(String currentDomainName, ContractClause contractClause);
-
-	List<ContractClause> deleteContractClause(String currentDomainName, ContractClause contractClause);
-
 	Map<String, String> getContractOtherInfo(String currentDomainName, Integer contractId, String contractType);
 	
 	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,

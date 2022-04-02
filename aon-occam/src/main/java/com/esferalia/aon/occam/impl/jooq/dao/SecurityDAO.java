@@ -1298,7 +1298,7 @@ public class SecurityDAO {
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())
 				.setPassword(password)
-				.setCertificate(certificateRecord.get(RATTACH.DATA));
+				.setData(certificateRecord.get(RATTACH.DATA));
 	}
 	
 	private static Certificate getEnterpriseCertificateNew(DSLContext dslContext, Integer enterpriseId, Integer userRegistryDomain, String certificateType) {
@@ -1326,7 +1326,7 @@ public class SecurityDAO {
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())
 				.setPassword(password)
-				.setCertificate(certificateRecord.get(RATTACH.DATA));
+				.setData(certificateRecord.get(RATTACH.DATA));
 	}
 	
 	private static Certificate getEnterpriseParentCertificateNew(DSLContext dslContext, Integer enterpriseParentId, Integer userRegistryDomain, String certificateType) {
@@ -1345,7 +1345,7 @@ public class SecurityDAO {
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())
 				.setPassword(password)
-				.setCertificate(certificateRecord.get(RATTACH.DATA));
+				.setData(certificateRecord.get(RATTACH.DATA));
 	}
 	
 	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter) {
@@ -1373,7 +1373,7 @@ public class SecurityDAO {
 		.map(r -> new Certificate()
 		.setType(MimeType.PKCS12.name())
 		.setPassword(r.get(RADDINFO.VALUE))
-		.setCertificate(r.get(RATTACH.DATA))
+		.setData(r.get(RATTACH.DATA))
 		)
 		;
 	}
@@ -1396,7 +1396,7 @@ public class SecurityDAO {
 		.fetchOptional()
 		.map(r -> new Certificate()
 		.setType(MimeType.PKCS12.name())
-		.setCertificate(r.get(DATA_ATTACH.DATA))
+		.setData(r.get(DATA_ATTACH.DATA))
 		.setPassword(r.get(DATA_ATTACH.DESCRIPTION))
 		)
 		;
@@ -1421,7 +1421,7 @@ public class SecurityDAO {
 		.fetchOptional()
 		.map(r -> new Certificate()
 		.setType(MimeType.PKCS12.name())
-		.setCertificate(r.get(DATA_ATTACH.DATA))
+		.setData(r.get(DATA_ATTACH.DATA))
 		.setPassword(r.get(DATA_ATTACH.DESCRIPTION))
 		)
 		;
@@ -1486,7 +1486,7 @@ public class SecurityDAO {
 		.set(RATTACH.TYPE, DIGITAL_CERTIFICATE.value())
 		.set(RATTACH.MIMETYPE, MimeType.PKCS12.value())
 		.set(RATTACH.ATTACH_DATE, DSL.currentDate())
-		.set(RATTACH.DATA, certificate.getCertificate())
+		.set(RATTACH.DATA, certificate.getData())
 		.set(RATTACH.CREATION_USER, user.getLogin())
 		.set(RATTACH.CREATION_DATE, DSL.currentTimestamp())
 		.set(RATTACH.MODIFICATION_DATE, DSL.currentTimestamp())
@@ -1517,7 +1517,7 @@ public class SecurityDAO {
 				certificate = new Certificate()
 						.setType(MimeType.PKCS12.name())
 						.setPassword(r.get(RADDINFO.VALUE))
-						.setCertificate(r.get(RATTACH.DATA));
+						.setData(r.get(RATTACH.DATA));
 		}
 		
 		return null == certificate ? Optional.empty() : Optional.of(certificate);
