@@ -37,6 +37,7 @@ public class Mod303InsertQuarterlyReplacementTest extends AbstractOccamTest {
 		System.out.println( "\t ---------------------");
 		
 		Mod303 aeat  = insertModel( Administration.COMMON_TERRITORY,date);
+		insertModel( Administration.BIZKAIA,date);
 		insertModel( Administration.ALAVA,date);
 		
 		Map<Administration, Double> results = Mod303DAO.getMod303s(ctx, getOccam().getDomain())
@@ -44,10 +45,15 @@ public class Mod303InsertQuarterlyReplacementTest extends AbstractOccamTest {
 			.filter(mod -> mod.getPeriod() == aeat.getPeriod())
 			.collect(Collectors.groupingBy(Mod303::getAdministration , Collectors.summingDouble(Mod303::getDeclarationResult)));
 			;
-		
-		Asserts.assertEqualsDouble("Sumatorios no coinciden."
-				, results.get(Administration.COMMON_TERRITORY)
-				, results.get(Administration.ALAVA));
+			
+		if (!aeat.isLastPeriod()) {
+			Asserts.assertEqualsDouble("Sumatorios no coinciden."
+					, results.get(Administration.COMMON_TERRITORY)
+					, results.get(Administration.ALAVA));
+			Asserts.assertEqualsDouble("Sumatorios no coinciden."
+					, results.get(Administration.COMMON_TERRITORY)
+					, results.get(Administration.BIZKAIA));
+		}
 			
 	}
 
@@ -57,7 +63,7 @@ public class Mod303InsertQuarterlyReplacementTest extends AbstractOccamTest {
 			.setMonthly(false)
 			.setAdministration(admon)
 			.setReplacement(admon == Administration.ALAVA)
-			.setComplementary(admon == Administration.COMMON_TERRITORY)
+			.setComplementary(admon == Administration.COMMON_TERRITORY || admon == Administration.BIZKAIA)
 			.setGenerateFromYearStart(true)
 			;
 		Mod303 mod303 = FiscalFaker.createMod303(params);

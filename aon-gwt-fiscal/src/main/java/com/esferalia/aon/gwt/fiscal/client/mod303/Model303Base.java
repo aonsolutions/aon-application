@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -571,14 +572,53 @@ public abstract class Model303Base extends DockLayoutPanel  {
 						public void onSuccess(String result) {
 							popup.hide();
 							FlowPanel gridContainer = new FlowPanel();
-							Mod303Key key = Arrays.stream(script.getKeys())
-								.filter( Objects::nonNull )
-								.findFirst()
-								.orElse(null);
 							JsVatComputeKeyInfo info = JsonUtils.safeEval(result);
 							JsVatComputeKeyInfoGridPanel grid = new JsVatComputeKeyInfoGridPanel();
 							grid.setTitle(AON.MSG.calcDetail());
-							grid.setSubTitle( (key==null?"":key.getBoxFormatted()) + " - " + script.getLabel());
+							grid.setSubTitle(AonStringUtils.join(
+								Arrays.stream(script.getKeys())
+									.filter( Objects::nonNull )
+									.map( Mod303Key::getBoxFormatted )
+									.reduce("", String::concat)
+								, " " 
+								, script.getLabel()));
+							grid.addContent(info);
+							gridContainer.add(grid);
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
+						}
+					});
+				}
+				
+				private void showDiffInfo(AonTableButton button) {
+					button.setEnabled(false);
+					final PopupPanel popup = new PopupPanel(false, true);
+					popup.add(new AonSplash());
+					popup.setGlassEnabled(true);
+					popup.setAnimationEnabled(true);
+					popup.center();
+					Model303.service.getInfo(callback.getOptions().getOccam(),getModel(),script, FiscalModelKeyInfo.DIFF_INVOICE, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							popup.hide();
+							FlowPanel gridContainer = new FlowPanel();
+							JsVatComputeKeyInfo info = JsonUtils.safeEval(result);
+							JsVatComputeKeyInfoGridPanel grid = new JsVatComputeKeyInfoGridPanel();
+							grid.setTitle(AON.MSG.calcDetail());
+							grid.setSubTitle(AonStringUtils.join(
+								Arrays.stream(script.getKeys())
+									.filter( Objects::nonNull )
+									.map( Mod303Key::getBoxFormatted )
+									.reduce("", String::concat)
+								, " " 
+								, script.getLabel()));
 							grid.addContent(info);
 							gridContainer.add(grid);
 							callback.showInfoPanelWidget(gridContainer);
@@ -672,6 +712,21 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					});
 				}
 				
+				private Optional<AonTableButton>  addDiffButton() {
+					if (getModel().isDiffCalculationEnabled()) {
+						boolean diffKey = Arrays.stream(script.getKeys())
+								.filter(Objects::nonNull)
+								.anyMatch(Mod303Key::isDiffEnabled);
+						if ( diffKey ) {
+							final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconDiff());
+							button.setTabIndex(-2);
+							buttonContainer.add(button);
+							return Optional.of(button);
+						}
+					}
+					return Optional.empty();
+				}
+				
 				private AonTableButton addButton() {
 					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
 					button.setTabIndex(-2);
@@ -683,6 +738,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				public Void visitModelInvoiceVatBreakdown() {
 					final AonTableButton button = addButton();
 					button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button, false));
+					addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) ); 
 					return null;
 				}
 				
@@ -690,6 +746,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				public Void visitProrratedModelInvoiceVatBreakdown() {
 					final AonTableButton button = addButton();
 					button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button,true));
+					addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) );
 					return null;
 				}
 				@Override 
@@ -1104,6 +1161,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	protected void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
+		diffLabel.setVisible(!getModel().isDiffCalculationDisabled());
+		
 		boolean adjusted = false;
 		for (FiscalModelDetail det : getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {

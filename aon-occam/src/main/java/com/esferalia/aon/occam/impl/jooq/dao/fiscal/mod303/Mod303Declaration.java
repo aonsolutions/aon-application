@@ -213,6 +213,7 @@ public abstract class Mod303Declaration {
 	private void initializePreviousData(AONContext ctx, Mod303 mod303) {
 		mod303.getMessages().clear();		
 		mod303.setDiffCalculationMandatory(false);
+		mod303.setDiffCalculationDisabled(true);
 		if (!mod303.isFirstPeriod() && mod303.getYear() == 2022) {
 			List<Integer> ids = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
 				.map(FiscalModel::getId)
@@ -228,7 +229,7 @@ public abstract class Mod303Declaration {
 					.isPresent();
 				if (!something) {
 					mod303.setDiffCalculationMandatory(true);
-					
+					mod303.setDiffCalculationDisabled(false);			
 					mod303.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
 							+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
 							+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "

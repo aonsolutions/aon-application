@@ -56,7 +56,7 @@ public class RefreshMod303Result implements Update {
 						} else if (admon == Administration.COMMON_TERRITORY) {
 							resultKey = "303-CTA71";
 						} else if (admon == Administration.BIZKAIA) {
-							resultKey = "303-BZ036";
+							resultKey = "303-BZ043";
 						} else if (admon == Administration.GIPUZKOA) {
 							resultKey = "303-GP035";
 						}

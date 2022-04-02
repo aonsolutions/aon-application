@@ -20,28 +20,38 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	
 	Mod303ExpressionsTest.class,
 	Mod303ScriptTest.class,
-	Mod303DeleteTest.class,
+
 	VatContextJSONTest.class,
+	
+	Mod303DeleteTest.class,
+	
+	Mod303InsertInvoicesTest.class,
+	Mod303InsertMonthlyTest.class,
+	Mod303FinishTest.class,
+	
+	Mod303InsertInvoicesTest.class,
+	Mod303InsertMonthlyComplementaryTest.class,
+	Mod303FinishTest.class,
+	
+	Mod303InsertInvoicesTest.class,
+	Mod303InsertMonthlyReplacementTest.class,
+
+	Mod303DeleteTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyTest.class,
+	Mod303FinishTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyComplementaryTest.class,
+	Mod303FinishTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyReplacementTest.class,
 	
-	Mod303InsertInvoicesTest.class,
-	Mod303InsertMonthlyTest.class,
 	
-	Mod303InsertInvoicesTest.class,
-	Mod303InsertMonthlyComplementaryTest.class,
 	
-	Mod303InsertInvoicesTest.class,
-	Mod303InsertMonthlyReplacementTest.class,
-	
-	Mod303CheckInsertedTest.class,
+//	Mod303CheckInsertedTest.class,
 	
 	// Flujo de estados
 	Mod303ReopenTest.class,					// Pendiente
@@ -59,8 +69,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
 	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
 	Mod303SentTest.class,					// Presentado
-	
-	
 	
 })
 

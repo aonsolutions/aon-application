@@ -47,7 +47,6 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 					@Override public String visitInvoice() {return visitNone(); }
 					@Override public String visitInAccrualInvoice() {return visitNone(); }
 					@Override public String visitOutAccrualInvoice() {return visitNone(); }
-					@Override public String visitDiffInvoice() {return visitNone(); }
 					@Override public String visitDiffInAccrualInvoice() {return visitNone(); }
 					@Override public String visitDiffOutAccrualInvoice() {return visitNone(); }
 					@Override public String visitSalary() {return visitNone(); }
@@ -72,6 +71,11 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 					@Override 
 					public String visitComputeKey() {
 						return new JSONObject( getComputeKey(ctx, mod303, script, keyDAO) ).toString();
+					}
+					
+					@Override 
+					public String visitDiffInvoice() {
+						return getDiffInvoicesInfo(ctx, mod303, script, keyDAO).toString();
 					}
 					
 					@Override 
@@ -253,5 +257,28 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 		return buf.toString();
 	}
 
+	private static JSONObject getDiffInvoicesInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
+		JSONObject json = new JSONObject();
+		JSONArray messages = new JSONArray();
+		for (Mod303Key key : script.getKeys() ) {
+			if (key != null) {
+				messages.put("\u2022 Resultado de la casilla " + key.getBoxFormatted());
+				messages.put(" - (A) Total acumulado " + DEC2.format(mod303.getAccumulatedAmount(key)));
+				double keyTotal = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
+					.map( fm ->  putMessage(fm,messages," - >>>>> Resultado del modelo " + fm.getModelFullName() + " " + DEC2.format(fm.getAmount(key))))
+					.mapToDouble(fm -> fm.getAmount(key))
+					.sum();
+				messages.put("- (B) Total declarado " + DEC2.format(keyTotal));
+				messages.put("\u2022 Total a declarar (A-B) ->	" + DEC2.format(AonMathUtils.round(mod303.getAccumulatedAmount(key) - keyTotal)));
+				messages.put(" ------------------------------ ");
+			}
+		}
+		return json.put( IJsonNames.MESSAGES, messages) ;
+	}
+
+	private static Mod303 putMessage(Mod303 mod303,JSONArray messages, String message) {
+		messages.put(message);
+		return mod303;
+	}
 }
 

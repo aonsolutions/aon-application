@@ -34,11 +34,11 @@ public class Mod303InsertMonthlyComplementaryTest extends AbstractOccamTest {
 		System.out.println( "\t ---------------------");
 		
 		Mod303 araba = insertModel( Administration.ALAVA,date);
-		Mod303 bizkaia = insertModel( Administration.BIZKAIA,date);
+//		Mod303 bizkaia = insertModel( Administration.BIZKAIA,date);
 		Mod303 gipuzkoa = insertModel( Administration.GIPUZKOA,date);
 //		Mod303 navarra = insertModel( Administration.NAVARRA,date);
 		
-		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), bizkaia.getDeclarationResult());
+//		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), bizkaia.getDeclarationResult());
 		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), gipuzkoa.getDeclarationResult());
 //		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), navarra.getDeclarationResult());
 	}

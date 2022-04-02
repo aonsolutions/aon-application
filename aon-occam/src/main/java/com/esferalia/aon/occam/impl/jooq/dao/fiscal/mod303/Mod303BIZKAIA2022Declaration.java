@@ -313,7 +313,7 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 				if (mod.isComplementary()) {
 					add( Mod303Key.BZ_C042, mod, 
 						Mod303DAO.getSamePeriodModels(ctx, mod)
-							.filter(Mod303::isToPayback)
+							.filter(m -> m.isToPayback() || m.isToCompensate())
 							.mapToDouble(Mod303::getDeclarationResult)
 							.map(x -> AonMathUtils.round( x * (-1) ) )
 							.sum());						

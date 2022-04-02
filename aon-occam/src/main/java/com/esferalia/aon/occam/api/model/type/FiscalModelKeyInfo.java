@@ -45,6 +45,16 @@ public enum FiscalModelKeyInfo implements Serializable {
 			return visitor.visitModelInVatAccrualInvoice();
 		}
 	}
+	,DIFF_INVOICE{
+		@Override
+		public String getLabel() {
+			return "Detalle del c\u00E1lculo por diferencia. Facturas - declarado";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitDiffInvoice();
+		}
+	}
 	, PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN {
 		@Override
 		public String getLabel() {
@@ -164,16 +174,6 @@ public enum FiscalModelKeyInfo implements Serializable {
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
 			return visitor.visitOutAccrualInvoice();
-		}
-	}
-	,@Deprecated DIFF_INVOICE{
-		@Override
-		public String getLabel() {
-			return "Detalle del c\u00E1lculo por diferencia. Facturas - declarado";
-		}
-		@Override
-		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitDiffInvoice();
 		}
 	}
 	,@Deprecated DIFF_IN_ACCRUAL_INVOICE{

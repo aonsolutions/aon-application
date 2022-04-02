@@ -393,6 +393,12 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		detail.setDescription(description);
 	}
 	
+	public double getAccumulatedAmount(IFiscalModelKey key) {
+		return getAccumulatedAmount(key.getValue());
+	}
+	public double getAccumulatedAmount(String key) {
+		return ensureDetail(key).getAccumulatedAmount();
+	}
 	public double getDeclaredAmount(IFiscalModelKey key) {
 		return getDeclaredAmount(key.getValue());
 	}

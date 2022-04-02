@@ -22,12 +22,12 @@ abstract class Mod303BIZKAIA extends Mod303Declaration {
 
 	@Override
 	ComplementaryBeahaviour getComplementaryBehaviour(Mod303 mod) {
-		return ComplementaryBeahaviour.COMPLEMENTARY;
+		return ComplementaryBeahaviour.REPLACEMENT;
 	}
 	
 	@Override
 	double getResult(Mod303 mod) {
-		return mod.getAmount(Mod303Key.BZ_C036);
+		return mod.getAmount(Mod303Key.BZ_C043);
 	}
 	
 	@Override

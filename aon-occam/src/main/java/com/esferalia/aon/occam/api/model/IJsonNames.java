@@ -257,6 +257,7 @@ public final class IJsonNames {
 	public static final String MAX_DEFINED_USERS = "maxDefinedUsers";
 	public static final String MEDIA = "media";
 	public static final String MESSAGE = "message";
+	public static final String MESSAGES = "messages";
 	public static final String MADE_MODELS_VISIBLE = "madeModelsVisible";
 	public static final String MODE = "mode";
 	public static final String MODEL = "model";
