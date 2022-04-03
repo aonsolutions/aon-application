@@ -242,8 +242,8 @@ public class AonApiHttpServlet extends HttpServlet{
 		
 		for(int i=0; i<params.length; i++) {
 			try {
-				String key = params[i].split("=")[0];
-				String value = params[i].split("=")[1];
+				String key = params[i].split("=")[0].trim();
+				String value = params[i].split("=")[1].trim();
 				json.put(key, value);
 			} catch (Exception e) {}
 		}
