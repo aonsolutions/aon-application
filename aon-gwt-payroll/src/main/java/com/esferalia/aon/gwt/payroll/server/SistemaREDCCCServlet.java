@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.SistemaRED;
 
@@ -42,19 +43,20 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response){
 		// Request Type		
-		super.doGet(request, response);
-		String type = request.getParameter("type");
+		// super.doGet(request, response);
+		AonApiData api = initialize(request, false); // Provisional: false para que no compruebe el token
+		String type = api.getData().get("type").toString();
 		Integer typeIdx = Integer.parseInt(type);
 		RequestType requestType = RequestType.values()[typeIdx];
 		
 		// Enterprise CCC
-		String regime = request.getParameter("regime");
-		String ccc = request.getParameter("ccc");
+		String regime = api.getData().get("regime").toString();
+		String ccc = api.getData().get("ccc").toString();
 		Connection connection = null;
 		try {
 			// Domian and User
-			String userLogin = request.getParameter("userLogin");
-			String domainName = request.getParameter("domainName");
+			String userLogin = api.getData().get("domain_login").toString();
+			String domainName = api.getData().get("domain_name").toString();
 			
 			connection = AonServletUtils.getConnection(domainName);
 			
@@ -62,7 +64,7 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			// Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			byte[] dataURI = null;
