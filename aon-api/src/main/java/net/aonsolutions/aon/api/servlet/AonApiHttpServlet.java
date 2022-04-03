@@ -229,12 +229,28 @@ public class AonApiHttpServlet extends HttpServlet{
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		String s = bld.toString();
+		
 		if(s == null || s.isBlank()){
-			s = "{}";
-		}
-		return new JSONObject(s);
+			return new JSONObject();
+		} else
+			return parseParams(s);
 	}
 	
+	private JSONObject parseParams(String paramsStr) {
+		String[] params = paramsStr.split("&");
+		JSONObject json = new JSONObject();
+		
+		for(int i=0; i<params.length; i++) {
+			try {
+				String key = params[i].split("=")[0];
+				String value = params[i].split("=")[1];
+				json.put(key, value);
+			} catch (Exception e) {}
+		}
+			
+		return json;
+	}
+
 	public static JSONObject getParamsJSON(ServletRequest req) {
 	    JSONObject jsonObj = new JSONObject();
 	    @SuppressWarnings("unchecked")
