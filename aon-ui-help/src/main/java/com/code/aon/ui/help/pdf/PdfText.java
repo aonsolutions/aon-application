@@ -1,6 +1,6 @@
-package com.code.aon.web.help.pdf;
+package com.code.aon.ui.help.pdf;
 
-import com.code.aon.web.help.pdf.items.TextType;
+import com.code.aon.ui.help.pdf.items.TextType;
 
 public class PdfText {
 

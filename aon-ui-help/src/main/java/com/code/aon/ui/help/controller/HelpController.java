@@ -1,4 +1,4 @@
-package com.code.aon.web.help.controller;
+package com.code.aon.ui.help.controller;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;

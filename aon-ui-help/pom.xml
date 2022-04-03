@@ -40,11 +40,11 @@
       <version>3.1.0</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>net.aonsolutions</groupId>
-      <artifactId>aon.google.apis.v2</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
+   <dependency>
+      <groupId>javax.faces</groupId>
+      <artifactId>jsf-api</artifactId>
+      <version>1.2_14</version>
+      <scope>provided</scope>
     </dependency>
     <!--
       <dependency>
@@ -87,5 +87,19 @@
       <type>jar</type>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.google.apis.v2</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.code.aon</groupId>
+      <artifactId>aon.ui.common</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 </project>

@@ -1457,6 +1457,31 @@
 							</aon:div>
 						
 							<aon:div styleClass="search-results-popup-title" >
+								<aon:outputText value=" #{helpSwitcher.model.rowCount} resultados en Ayuda"
+								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+							</aon:div>
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+								<ui:param name="rows" value="10" />
+							
+								<ui:param name="skipSelectButton" value="#{true}" />
+								<ui:param name="showDataScroller" value="#{false}" />
+							
+								<ui:param name="controller" value="#{helpSwitcher}" />
+								<ui:param name="skipFocusFirst" value="true" />
+							
+								<ui:define name="columns">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<h:outputLink target="#{to.getTitle()}" value="#{to.getURI()}">
+										<aon:outputText 
+											value="#{to.getDisplay(search.filter)}"
+											title="#{to.getTitle()}"
+											escape="false" />
+									</h:outputLink> 					
+								</aon:column>
+								</ui:define>
+							</ui:decorate>
+
+							<aon:div styleClass="search-results-popup-title" >
 								<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
 							</aon:div>

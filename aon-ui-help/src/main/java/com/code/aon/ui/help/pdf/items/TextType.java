@@ -1,4 +1,4 @@
-package com.code.aon.web.help.pdf.items;
+package com.code.aon.ui.help.pdf.items;
 
 public enum TextType {
 

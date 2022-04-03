@@ -1,22 +1,22 @@
-package com.code.aon.web.help.pdf;
+package com.code.aon.ui.help.pdf;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.interactive.action.PDAction;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
-import com.code.aon.web.help.pdf.items.TextType;
+import com.code.aon.ui.help.pdf.items.TextType;
 
 public class PdfIndexer {
 
@@ -98,7 +98,8 @@ public class PdfIndexer {
 				// Add an action
 				
 				PDActionURI action = new PDActionURI();
-				action.setURI("http://akrck02.github.io#/file=" + name + "&page=" + l.getPage() + "&type=" + l.getType());
+				action.setURI("help/"+ name + ".pdf" + "#page=" + l.getPage() );
+				System.out.println( action.getURI() );
 				item.setAction(action);
 				
 				if(l.getType() == TextType.TITLE_1) {
@@ -152,6 +153,20 @@ public class PdfIndexer {
 	}
 	
 	
+//	public static List<PDOutlineItem> search( String name) throws IOException {
+//		try  ( InputStream is = PdfIndexer.class.getResourceAsStream("index.pdf");
+//			   PDDocument document = Loader.loadPDF(is) ) {
+//			return search(document, name );
+//		}
+//	}
+//
+//	public static List<PDOutlineItem> search() throws IOException {
+//		try  ( InputStream is = PdfIndexer.class.getResourceAsStream("index.pdf");
+//			   PDDocument document = Loader.loadPDF(is) ) {
+//			return search(document, "" );
+//		}
+//	}
+
 	/**
 	 * Search all entries for given name
 	 * @param document The index 
@@ -225,14 +240,23 @@ public class PdfIndexer {
 		PDPage blankPage = new PDPage();
 		document.addPage( blankPage );	
 	
-		index(pdfOneStream, "payroll_v3.pdf", document);
+		index(pdfOneStream, "LABORAL Manual de USUARIO", document );
 		//index(pdfTwoStream, "payroll_new.pdf", document);
 		
 		try {
 			//document.save("src/main/resources/com/code/aon/web/help/pdf/index.pdf");
-			document.save("target/classes/com/code/aon/web/help/pdf/index.pdf");
+			//new File("target/generated-sources/com/code/aon/web/help/pdf").mkdirs();
+			document.save("target/classes/com/code/aon/ui/help/pdf/index.pdf");
+			document.save("src/main/resources/com/code/aon/ui/help/pdf/index.pdf");
 			document.close();
 			System.out.println("[DONE] Index generated.");
+			
+			try  ( InputStream is = PdfIndexer.class.getResourceAsStream("index.pdf");
+					PDDocument pddoc = Loader.loadPDF(is) ) {
+				search(document, "" ).forEach( i -> System.out.println( i.getTitle()));
+		}
+
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

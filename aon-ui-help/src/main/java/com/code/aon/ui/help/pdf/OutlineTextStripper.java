@@ -1,4 +1,4 @@
-package com.code.aon.web.help.pdf;
+package com.code.aon.ui.help.pdf;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
-import com.code.aon.web.help.pdf.items.TextType;
+import com.code.aon.ui.help.pdf.items.TextType;
 
 public class OutlineTextStripper extends PDFTextStripper {
 
@@ -42,6 +42,7 @@ public class OutlineTextStripper extends PDFTextStripper {
 			line.setX(pos.getX());
 			line.setY(pos.getPageHeight() - pos.getY());
 			lines.add(line);
+			
 
 		} else {
 			lines.get(lines.size() - 1).appendText(" " + text);
