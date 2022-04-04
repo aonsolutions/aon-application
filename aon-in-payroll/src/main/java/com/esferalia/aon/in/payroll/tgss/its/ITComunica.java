@@ -75,9 +75,9 @@ public class ITComunica {
 	public static void saveITs(Domain domain, List<EmployeeIT> employeeITs) throws IllegalArgumentException {
 		
 		employeeITs.stream().filter(e->e.getContract()==null)
-		.forEach(employeeIT->{
-			employeeIT.setDomain(domain.getId());
-		});
+		.forEach(employeeIT->
+			employeeIT.setDomain(domain.getId())
+		);
 
 		AON.setEmployeeIT(domain, new User(), employeeITs.toArray(EmployeeIT[]::new));
 	}
