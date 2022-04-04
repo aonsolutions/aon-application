@@ -529,7 +529,7 @@ public class InvoiceTemplate {
 	}
 	private static void sortSales(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
 		iterateDetails(invoice, InvoiceSource.SALES, map,
-			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? AonStringUtils.trimToEmpty(detail.getSalesDetail().getSales().getPurchaseReference()) : "",
+			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? AonStringUtils.trimToEmpty(detail.getSalesDetail().getSales().getReferenceCode()) : "",
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getIssueDate() : null
 		);
 	}
