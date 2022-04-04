@@ -216,6 +216,7 @@ public abstract class Mod303Declaration {
 		mod303.getMessages().clear();		
 		mod303.setDiffCalculationMandatory(false);
 		mod303.setDiffCalculationDisabled(true);
+		boolean resolved = false;
 		if (!mod303.isFirstPeriod() && mod303.getYear() == 2022) {
 			List<Integer> ids = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
 				.map(FiscalModel::getId)
@@ -237,14 +238,11 @@ public abstract class Mod303Declaration {
 							+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
 							+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
 					);
-				} else {
-					mod303.addMessage("Se encontraron " + ids.size() + " facturas no declaradas anteriores a la fecha "
-							+ "de inicio de la declaraci\u00F3n.");
-					mod303.setGenerateFromYearStartAvailable(true);
-					mod303.setGenerateFromYearStart(true);
-				}
+					resolved = true;
+				} 
 			}
-		} else {
+		}
+		if (!resolved) {
 			mod303.setGenerateFromYearStartAvailable(!mod303.isFirstPeriod());
 			if (mod303.isGenerateFromYearStartAvailable()) {
 				Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod303);
