@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod303Declaration {
 	
@@ -113,34 +114,35 @@ public abstract class Mod303Declaration {
 	}
 
 	public void prorrateRegularization(AONContext ctx, Mod303 mod303){
-//		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
-//			double lastPercent = mod303.getProratePercent();
-//			double prevPercent = mod303.getPreviousProratePercent();
-//			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
-//				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
-//				if (mod303.isDiffCalculationDisabled()) {
-//					final Mod303 dupl = new Mod303();
-//					dupl.setDomain(mod303.getDomain());
-//					dupl.setDomainName(mod303.getDomainName());
-//					dupl.setYear(mod303.getYear());
-//					dupl.setModel(mod303.getModel());
-//					dupl.setPeriod(mod303.getPeriod());
-//					dupl.setAdministration(mod303.getAdministration());
-//					dupl.setDiffCalculationDisabled(false);
-//					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod303.getProratePercent() );
-//					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod303.getPreviousProratePercent() );
-//					PrevMod303DAO.create(ctx, dupl);
-//					double amount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
-//					mod303.ensureDetail(Mod303Key.CM_072).setAmount( amount );
-//				}
-//			
-//			
-//				double amount = mod303.ensureDetail(Mod303Key.CM_072).getAmount();
-//				double declared = AonMathUtils.round(amount * prevPercent / 100);
-//				double mustDeclared = AonMathUtils.round(amount * lastPercent / 100);
-//				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared));
-//			}
-//		}
+		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
+			double lastPercent = mod303.getProratePercent();
+			double prevPercent = mod303.getPreviousProratePercent();
+			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
+				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
+				if (mod303.isDiffCalculationDisabled()) {
+					final Mod303 dupl = new Mod303();
+					dupl.setDomain(mod303.getDomain());
+					dupl.setDomainName(mod303.getDomainName());
+					dupl.setYear(mod303.getYear());
+					dupl.setModel(mod303.getModel());
+					dupl.setPeriod(mod303.getPeriod());
+					dupl.setAdministration(mod303.getAdministration());
+					dupl.setDiffCalculationDisabled(false);
+					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod303.getProratePercent() );
+					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod303.getPreviousProratePercent() );
+					Mod303Declaration draftDec = Mod303Declaration.getInstance(dupl); 
+					draftDec.createOnTheFly(ctx, dupl);
+					double amount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
+					mod303.ensureDetail(Mod303Key.CM_072).setAmount( amount );
+				}
+			
+			
+				double amount = mod303.ensureDetail(Mod303Key.CM_072).getAmount();
+				double declared = AonMathUtils.round(amount * prevPercent / 100);
+				double mustDeclared = AonMathUtils.round(amount * lastPercent / 100);
+				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared));
+			}
+		}
 	}
 
 	public void fillSimplifiedRegime(Mod303 mod303){
@@ -327,6 +329,25 @@ public abstract class Mod303Declaration {
 					detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 				}
 			}
+		}
+	}
+
+	protected Set<Integer> createOnTheFly(AONContext ctx, Mod303 mod303) {
+		if (hasSimplifiedRegime()) {
+			initializeSimplifiedRegime(ctx, mod303);
+		}
+		firstInitialization(ctx, mod303);
+		Set<Integer> invoices = createFromInvoices(ctx,mod303);
+		invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod303) );
+		resolveDiffCalculation(ctx, mod303);
+		return invoices;
+	}
+	
+	private void firstInitialization(AONContext ctx, Mod303 mod303) {
+		for (IMod303KeyDAO key : getKeys()) {
+			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
+			detail.setExpression(key.getExpression());
+			key.firstInitialize(ctx, mod303);
 		}
 	}
 

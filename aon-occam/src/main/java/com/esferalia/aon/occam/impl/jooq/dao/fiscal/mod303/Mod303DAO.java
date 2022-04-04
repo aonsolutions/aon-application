@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -12,17 +13,22 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303MVELContext;
+import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 
 public class Mod303DAO extends FiscalModelDAO {
@@ -98,10 +104,40 @@ public class Mod303DAO extends FiscalModelDAO {
 			mod303.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod303);
+		initializeProrrate(ctx, mod303);
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		dec.initialize( ctx, mod303 );
 		dec.ensureDetails(mod303);
 		return mod303;
+	}
+	
+	private static void initializeProrrate(AONContext ctx, Mod303 mod303) {
+		if (mod303.getProrateKey() != null) {
+			Pair<Double,String> prorrateInfo =  getMod303s( ctx , mod303.getDomain())
+				.filter(mod -> mod.getAdministration() == mod303.getAdministration() )
+				.map(mod ->  new Pair<Double,String>(mod.getProratePercent(), mod.getSpecialProrateValue() ))
+				.findFirst()
+				.orElse(new Pair<>(0.0, "G"));
+			if (AonMathUtils.equals(prorrateInfo.getLeft() ,100.0)) {
+				prorrateInfo.setLeft( 0.0);
+			}
+			mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorrateInfo.getLeft());
+			mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
+			if (mod303.getPeriod().isLastPeriod()) {
+				mod303.ensureDetail(mod303.getPreviousProrateKey()).setAmount(prorrateInfo.getLeft());
+				Date fromDate = AonDateUtils.getYearFirstDay(mod303.getYear());
+				Date toDate = AonDateUtils.getYearLastDay(mod303.getYear());
+				VATDAO.getVatBreakdown(ctx,fromDate,toDate,mod303)
+					.filter( VatContext::isSales )
+					.forEach( vat -> {
+						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
+							mod303.ensureDetail(Mod303Key.CM_070).addAmount( vat.getBase());
+						}
+						mod303.ensureDetail(Mod303Key.CM_071).addAmount( vat.getBase());		
+					});
+				calculateProrrate(mod303);
+			}
+		}
 	}
 	
 	public static Mod303 reset(AONContext ctx,Mod303 mod303) {
@@ -113,33 +149,14 @@ public class Mod303DAO extends FiscalModelDAO {
 
 	public static Mod303 create(AONContext ctx,Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		if (dec.hasSimplifiedRegime()) {
-			dec.initializeSimplifiedRegime(ctx, mod303);
-		}
-		firstInitialization(ctx, mod303, dec);
-		Set<Integer> invoices = dec.createFromInvoices(ctx,mod303);
-		invoices.addAll( dec.createVatAccrualKeysFromInvoices(ctx,mod303) );
-//		for (FiscalModelDetail detail : mod303.getMap().values()) {
-//			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
-//			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
-//		}
-		dec.resolveDiffCalculation(ctx, mod303);
+		Set<Integer> invoices = dec.createOnTheFly(ctx,mod303);
 		dec.prorrateRegularization(ctx,mod303);
-		
 		calculate(mod303);
 		dec.specificInitialization(mod303);
 		mod303 = save(ctx, mod303);
 		AlcatrazDAO.deleteFiscalModel(ctx, mod303);
 		AlcatrazDAO.saveModelInvoices(ctx, mod303, invoices);
 		return mod303;
-	}
-
-	private static void firstInitialization(AONContext ctx, Mod303 mod303, Mod303Declaration dec) {
-		for (IMod303KeyDAO key : dec.getKeys()) {
-			FiscalModelDetail detail = mod303.ensureDetail(key.getKey());
-			detail.setExpression(key.getExpression());
-			key.firstInitialize(ctx, mod303);
-		}
 	}
 
 	public static Mod303 calculateProrrate(Mod303 mod303) {
