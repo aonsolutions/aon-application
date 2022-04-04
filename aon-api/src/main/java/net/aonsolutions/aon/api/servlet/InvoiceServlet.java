@@ -469,10 +469,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONObject invoiceList2JSON(Invoice invoice) {
+		String referenceAux = "";
+		if(!AonStringUtils.isBlank(invoice.getSeries())) {
+			referenceAux = referenceAux + invoice.getSeries() + "/";
+		}
+		referenceAux = referenceAux + "PROFORMA";
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.ID, invoice.getId());
 		json.put(IJsonNames.DATE, invoice.getIssueDate());
-		json.put(IJsonNames.REFERENCE, invoice.getReferenceCode());
+		json.put(IJsonNames.REFERENCE, invoice.getNumber() > 0 
+				? invoice.getReferenceCode() : referenceAux);
 		json.put(IJsonNames.NAME, invoice.getRegistryName());
 		json.put(IJsonNames.TOTAL, invoice.getTotal());
 		json.put(IJsonNames.STATUS, InvoiceStatus.safeValueOf(invoice.getStatus()));
