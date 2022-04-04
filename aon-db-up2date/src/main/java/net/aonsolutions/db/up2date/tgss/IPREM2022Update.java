@@ -15,7 +15,6 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
-import com.sun.org.apache.xalan.internal.xsltc.DOM;
 
 import net.aonsolutions.db.up2date.Update;
 

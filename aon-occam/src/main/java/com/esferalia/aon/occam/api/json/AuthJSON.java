@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.security.Auth;
 
 public class AuthJSON {

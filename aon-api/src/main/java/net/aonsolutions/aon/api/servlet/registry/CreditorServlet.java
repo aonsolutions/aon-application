@@ -9,12 +9,9 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CreditorJSON;
-import com.esferalia.aon.occam.api.json.CustomerJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
-import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 
 import net.aonsolutions.aon.api.error.AonApiError;

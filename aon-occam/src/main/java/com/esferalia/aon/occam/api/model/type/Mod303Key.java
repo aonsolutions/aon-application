@@ -104,35 +104,35 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_SA17("303-CTAS17",false,null,"Cuota soportada")
 	,CT_SA18("303-CTAS18",false,"B1","Cuota anual derivada del regimen simplificado [B]")
 	
-	,CT_SA21("303-CTAS21",false,null,"C\u00F3digo")
-	,CT_SA2D("303-CTAS2D",false,null,"Descripci\u00F3n")
-	,CT_SA22("303-CTAS22",false,null,"Volumen de ingresos")
-	,CT_SA23("303-CTAS23",false,null,"\u00CDndice de cuota")
-	,CT_SA24("303-CTAS24",false,null,"Cuota devengada")
-	,CT_SA25("303-CTAS25",false,null,"Porcentaje trimestral")
-	,CT_SA26("303-CTAS26",false,"A2","Ingreso a cuenta [A]")
-	,CT_SA27("303-CTAS27",false,null,"Cuota soportada")
-	,CT_SA28("303-CTAS28",false,"B2","Cuota anual derivada del regimen simplificado [B]")
+	,CT_SA21("303-CTAS21",false,null,CT_SA11.getDescription())
+	,CT_SA2D("303-CTAS2D",false,null,CT_SA1D.getDescription())
+	,CT_SA22("303-CTAS22",false,null,CT_SA12.getDescription())
+	,CT_SA23("303-CTAS23",false,null,CT_SA13.getDescription())
+	,CT_SA24("303-CTAS24",false,null,CT_SA14.getDescription())
+	,CT_SA25("303-CTAS25",false,null,CT_SA15.getDescription())
+	,CT_SA26("303-CTAS26",false,"A2",CT_SA16.getDescription())
+	,CT_SA27("303-CTAS27",false,null,CT_SA17.getDescription())
+	,CT_SA28("303-CTAS28",false,"B2",CT_SA18.getDescription())
 	
-	,CT_SA31("303-CTSA31",false,null,"C\u00F3digo")
-	,CT_SA3D("303-CTSA3D",false,null,"Descripci\u00F3n")
-	,CT_SA32("303-CTSA32",false,null,"Volumen de ingresos")
-	,CT_SA33("303-CTSA33",false,null,"\u00CDndice de cuota")
-	,CT_SA34("303-CTSA34",false,null,"Cuota devengada")
-	,CT_SA35("303-CTSA35",false,null,"Porcentaje trimestral")
-	,CT_SA36("303-CTSA36",false,"A3","Ingreso a cuenta [A]")
-	,CT_SA37("303-CTSA37",false,null,"Cuota soportada")
-	,CT_SA38("303-CTSA38",false,"B3","Cuota anual derivada del regimen simplificado [B]")
+	,CT_SA31("303-CTSA31",false,null,CT_SA11.getDescription())
+	,CT_SA3D("303-CTSA3D",false,null,CT_SA1D.getDescription())
+	,CT_SA32("303-CTSA32",false,null,CT_SA12.getDescription())
+	,CT_SA33("303-CTSA33",false,null,CT_SA13.getDescription())
+	,CT_SA34("303-CTSA34",false,null,CT_SA14.getDescription())
+	,CT_SA35("303-CTSA35",false,null,CT_SA15.getDescription())
+	,CT_SA36("303-CTSA36",false,"A3",CT_SA16.getDescription())
+	,CT_SA37("303-CTSA37",false,null,CT_SA17.getDescription())
+	,CT_SA38("303-CTSA38",false,"B3",CT_SA18.getDescription())
 	
-	,CT_SA41("303-CTSA41",false,null,"C\u00F3digo")
-	,CT_SA4D("303-CTSA4D",false,null,"Descripci\u00F3n")
-	,CT_SA42("303-CTSA42",false,null,"Volumen de ingresos")
-	,CT_SA43("303-CTSA43",false,null,"\u00CDndice de cuota")
-	,CT_SA44("303-CTSA44",false,null,"Cuota devengada")
-	,CT_SA45("303-CTSA45",false,null,"Porcentaje trimestral")
-	,CT_SA46("303-CTSA46",false,"A4","Ingreso a cuenta [A]")
-	,CT_SA47("303-CTSA47",false,null,"Cuota soportada")
-	,CT_SA48("303-CTSA48",false,"B4","Cuota anual derivada del regimen simplificado [B]")
+	,CT_SA41("303-CTSA41",false,null,CT_SA11.getDescription())
+	,CT_SA4D("303-CTSA4D",false,null,CT_SA1D.getDescription())
+	,CT_SA42("303-CTSA42",false,null,CT_SA12.getDescription())
+	,CT_SA43("303-CTSA43",false,null,CT_SA13.getDescription())
+	,CT_SA44("303-CTSA44",false,null,CT_SA14.getDescription())
+	,CT_SA45("303-CTSA45",false,null,CT_SA15.getDescription())
+	,CT_SA46("303-CTSA46",false,"A4",CT_SA16.getDescription())
+	,CT_SA47("303-CTSA47",false,null,CT_SA17.getDescription())
+	,CT_SA48("303-CTSA48",false,"B4",CT_SA18.getDescription())
 
 	,CT_S101("303-CTS101",false,null,"Epigrafe IAE")
 	,CT_S10D("303-CTS10D",false,null,"Epigrafe IAE - Descripci\u00F3n")
@@ -193,49 +193,49 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_S127("303-CTS127",false,"L1","Cuota m\u00EDnima")
 	,CT_S128("303-CTS128",false,"M1","Cuota anual derivada r\u00E9gimen simplificado")
 
-	,CT_S201("303-CTS201",false,null,"Epigrafe IAE")
-	,CT_S20D("303-CTS20D",false,null,"Epigrafe IAE - Descripci\u00F3n")
-	,CT_S202("303-CTS202",false,null,"Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722")
-	,CT_S2X1("303-CTS2X1",false,null,"Actividad de Temporada. N\u00BA D\u00EDas en los que se ejerci\u00F3 la actividad en el a\u00F1o anterior")
-	,CT_S2X2("303-CTS2X2",false,null,"N\u00FAmero de d\u00EDas de ejercicio de la actividad en el trimestre")
-	,CT_S2X3("303-CTS2X3",false,null,"N\u00FAmero de empleados al inicio del ejercicio ( o al inicio de la actividad)")
-	,CT_S2X4("303-CTS2X4",false,null,"Si realiza la actividad en LORCA")
-	,CT_S2X5("303-CTS2X5",false,null,"Reducci\u00F3n extraordinaria de la cuota anual devengada por operaciones corrientes (Reducci\u00F3n extraordinaria por covid-19, art. 9 RD-Ley 35/2020)")
-	,CT_S21D("303-CTS21D",false,null,"Descripci\u00F3n")
-	,CT_S21I("303-CTS21I",false,null,"Importe unidades")
-	,CT_S21U("303-CTS21U",false,null,"N\u00BA unidades")
-	,CT_S21F("303-CTS21F",false,null,"Factor")
-	,CT_S21R("303-CTS21R",false,null,"Resultado")
-	,CT_S22D("303-CTS22D",false,null,"Descripci\u00F3n")
-	,CT_S22I("303-CTS22I",false,null,"Importe unidades")
-	,CT_S22U("303-CTS22U",false,null,"N\u00BA unidades")
-	,CT_S22F("303-CTS22F",false,null,"Factor")
-	,CT_S22R("303-CTS22R",false,null,"Resultado")
-	,CT_S23D("303-CTS23D",false,null,"Descripci\u00F3n")
-	,CT_S23I("303-CTS23I",false,null,"Importe unidades")
-	,CT_S23U("303-CTS23U",false,null,"N\u00BA unidades")
-	,CT_S23F("303-CTS23F",false,null,"Factor")
-	,CT_S23R("303-CTS23R",false,null,"Resultado")
-	,CT_S24D("303-CTS24D",false,null,"Descripci\u00F3n")
-	,CT_S24I("303-CTS24I",false,null,"Importe unidades")
-	,CT_S24U("303-CTS24U",false,null,"N\u00BA unidades")
-	,CT_S24F("303-CTS24F",false,null,"Factor")
-	,CT_S24R("303-CTS24R",false,null,"Resultado")
-	,CT_S25D("303-CTS25D",false,null,"Descripci\u00F3n")
-	,CT_S25I("303-CTS25I",false,null,"Importe unidades")
-	,CT_S25U("303-CTS25U",false,null,"N\u00BA unidades")
-	,CT_S25F("303-CTS25F",false,null,"Factor")
-	,CT_S25R("303-CTS25R",false,null,"Resultado")
-	,CT_S26D("303-CTS26D",false,null,"Descripci\u00F3n")
-	,CT_S26I("303-CTS26I",false,null,"Importe unidades")
-	,CT_S26U("303-CTS26U",false,null,"N\u00BA unidades")
-	,CT_S26F("303-CTS26F",false,null,"Factor")
-	,CT_S26R("303-CTS26R",false,null,"Resultado")
-	,CT_S27D("303-CTS27D",false,null,"Descripci\u00F3n")
-	,CT_S27I("303-CTS27I",false,null,"Importe unidades")
-	,CT_S27U("303-CTS27U",false,null,"N\u00BA unidades")
-	,CT_S27F("303-CTS27F",false,null,"Factor")
-	,CT_S27R("303-CTS27R",false,null,"Resultado")
+	,CT_S201("303-CTS201",false,null,CT_S101.getDescription())
+	,CT_S20D("303-CTS20D",false,null,CT_S10D.getDescription())
+	,CT_S202("303-CTS202",false,null,CT_S102.getDescription())
+	,CT_S2X1("303-CTS2X1",false,null,CT_S1X1.getDescription())
+	,CT_S2X2("303-CTS2X2",false,null,CT_S1X2.getDescription())
+	,CT_S2X3("303-CTS2X3",false,null,CT_S1X3.getDescription())
+	,CT_S2X4("303-CTS2X4",false,null,CT_S1X4.getDescription())
+	,CT_S2X5("303-CTS2X5",false,null,CT_S1X5.getDescription())
+	,CT_S21D("303-CTS21D",false,null,CT_S11D.getDescription())
+	,CT_S21I("303-CTS21I",false,null,CT_S11I.getDescription())
+	,CT_S21U("303-CTS21U",false,null,CT_S11U.getDescription())
+	,CT_S21F("303-CTS21F",false,null,CT_S11F.getDescription())
+	,CT_S21R("303-CTS21R",false,null,CT_S11R.getDescription())
+	,CT_S22D("303-CTS22D",false,null,CT_S12D.getDescription())
+	,CT_S22I("303-CTS22I",false,null,CT_S12I.getDescription())
+	,CT_S22U("303-CTS22U",false,null,CT_S12U.getDescription())
+	,CT_S22F("303-CTS22F",false,null,CT_S12F.getDescription())
+	,CT_S22R("303-CTS22R",false,null,CT_S12R.getDescription())
+	,CT_S23D("303-CTS23D",false,null,CT_S13D.getDescription())
+	,CT_S23I("303-CTS23I",false,null,CT_S13I.getDescription())
+	,CT_S23U("303-CTS23U",false,null,CT_S13U.getDescription())
+	,CT_S23F("303-CTS23F",false,null,CT_S13F.getDescription())
+	,CT_S23R("303-CTS23R",false,null,CT_S13R.getDescription())
+	,CT_S24D("303-CTS24D",false,null,CT_S14D.getDescription())
+	,CT_S24I("303-CTS24I",false,null,CT_S14I.getDescription())
+	,CT_S24U("303-CTS24U",false,null,CT_S14U.getDescription())
+	,CT_S24F("303-CTS24F",false,null,CT_S14F.getDescription())
+	,CT_S24R("303-CTS24R",false,null,CT_S14R.getDescription())
+	,CT_S25D("303-CTS25D",false,null,CT_S15D.getDescription())
+	,CT_S25I("303-CTS25I",false,null,CT_S15I.getDescription())
+	,CT_S25U("303-CTS25U",false,null,CT_S15U.getDescription())
+	,CT_S25F("303-CTS25F",false,null,CT_S15F.getDescription())
+	,CT_S25R("303-CTS25R",false,null,CT_S15R.getDescription())
+	,CT_S26D("303-CTS26D",false,null,CT_S16D.getDescription())
+	,CT_S26I("303-CTS26I",false,null,CT_S16I.getDescription())
+	,CT_S26U("303-CTS26U",false,null,CT_S16U.getDescription())
+	,CT_S26F("303-CTS26F",false,null,CT_S16F.getDescription())
+	,CT_S26R("303-CTS26R",false,null,CT_S16R.getDescription())
+	,CT_S27D("303-CTS27D",false,null,CT_S17D.getDescription())
+	,CT_S27I("303-CTS27I",false,null,CT_S17I.getDescription())
+	,CT_S27U("303-CTS27U",false,null,CT_S17U.getDescription())
+	,CT_S27F("303-CTS27F",false,null,CT_S17F.getDescription())
+	,CT_S27R("303-CTS27R",false,null,CT_S17R.getDescription())
 	
 	,CT_S217("303-CTS217",false,"C2","Cuota devengada operaciones corrientes")
 	,CT_S218("303-CTS218",false,"D2","Reducciones")
@@ -438,7 +438,6 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C80("303-CTA80",false,"80","Operaciones en r\u00E9gimen general")
 	,CT_C81("303-CTA81",false,"81","Operaciones en r\u00E9gimen especial del criterio de caja conforme art. 75 LIVA")
 	
-	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se desglosó en dos [93] y [94]
 	,CT_C82("303-CTA82",false,"82","Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n")
 	
 	,CT_C93("303-CTA93",false,"93","Entregas intracomunitarias exentas")
@@ -454,7 +453,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C79("303-CTA79",false,"79","Entregas de bienes inmuebles y operaciones financieras no habituales") 
 	,CT_C99("303-CTA99",false,"99","Entregas de bienes de inversi\u00F3n")
 
-	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se cambió por la [79]
+	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se cambi\u00F3 por la [79]
 	//,CT_C87("303-CTA87",false,"87","Entregas de bienes inmuebles y de inversi\u00F3n y operaciones financieras no habituales")
 	
 	,CT_C88("303-CTA88",false,"88","Total volumen de operaciones")
@@ -494,6 +493,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  ARABA ------
 	// 	----------------------------------------------------------------------------------
+	,AR_C930("303-AR930",false,"930","Presentaci\u00F3n fuera de plazo por requerimiento")
 	,AR_C907("303-AR907",false,"907","\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?")
 	,AR_C910("303-AR910",false,"910","\u00BFHa optado por el r\u00E9gimen especial del criterio de Caja?")
 	,AR_C911("303-AR911",false,"911","\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
@@ -574,6 +574,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C050("303-AR050",true ,"50","Total entregas de bienes y prestaciones de servicios intracomunitarias")
 	,AR_C051("303-AR051",true ,"51","Total exportaciones y operaciones asimiladas")
 	,AR_C052("303-AR052",true ,"52","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
+	
+	,AR_C054("303-AR054",true ,"54","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 56)")
+	,AR_C055("303-AR055",true ,"55","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
+	,AR_C056("303-AR056",true ,"56","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS")
+	,AR_C058("303-AR058",true ,"58","Operaciones sujetas y acogidas a la OSS")
 	
 	,AR_C180("303-AR180",true ,"180","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Base Imponible")
 	,AR_C181("303-AR181",true ,"181","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")
@@ -705,11 +710,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	
 	,BZ_C102("303-BZ102",false,"102","Prorrata especial")
 	
-	,BZ_C104("303-BZ104",true ,"104","Exportaciones y operaciones asimiladas")
-	,BZ_C105("303-BZ105",true ,"105","Entregas intracomunitarias")
-	,BZ_C106("303-BZ106",true ,"106","Otras operaciones no sujetas o exentas con derecho a deducci\u00F3n")
-	,BZ_C107("303-BZ107",true ,"107","Operaciones por inversi\u00F3n del sujeto pasivo no incluidas en liquidaci\u00F3n")
-	,BZ_C108("303-BZ108",true ,"108","Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicaci\u00F3n del impuesto")
+	,BZ_C104("303-BZ104",true ,"104","Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n")
+	,BZ_C105("303-BZ105",true ,"105","Entregas intracomunitarias de bienes y servicios")
+	,BZ_C106("303-BZ106",true ,"106","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 108)")
+	,BZ_C107("303-BZ107",true ,"107","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
+	,BZ_C108("303-BZ108",true ,"108","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica.")
+	,BZ_C109("303-BZ109",true ,"109","Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica.")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  BIZKAIA ----
@@ -780,17 +786,21 @@ public enum Mod303Key implements IFiscalModelKey  {
 	
 	;
 	private String value;
+	private boolean diffEnabled;
 	private String box;
 	private String description;
-	private boolean diffEnabled;
 	
 	private Mod303Key(String value,boolean diffEnabled,String box,String description) {
 		this.value = value;
-		this.diffEnabled  = diffEnabled;
+		this.diffEnabled = diffEnabled;
 		this.box = box;
 		this.description = description;
 	}
-    
+	
+	public boolean isDiffEnabled() {
+		return this.diffEnabled;
+	}
+
 	public String getValue() {
 		return value;
 	}
@@ -809,10 +819,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	public String getDescription() {
 		return description;
 	}
-	public boolean isDiffEnabled() {
-		return diffEnabled;
+	public String getBoxFormatted() {
+		return " [" + getBoxAsString() +"] ";
 	}
-	
+	public String getBoxAsString() {
+		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
+	}
 	public static Mod303Key getKey(String value) {
 		for (Mod303Key key : Mod303Key.values()) {
 			if (AonStringUtils.equals(key.getValue(), value)) {
@@ -820,19 +832,6 @@ public enum Mod303Key implements IFiscalModelKey  {
 			}
 		}
 		return null;
-	}
-
-	public static void main(String[] args) {
-		for (Mod303Key key : Mod303Key.values() ) {
-			int count = 0;
-			for (Mod303Key key2 : Mod303Key.values() ) {
-				count += AonStringUtils.equals(key.getValue(),key2.getValue())?1:0;
-			}
-			if (count != 1) {
-				System.out.println( "," +key + "\t" + count);
-			}
-		}
-		System.out.println( "END");
 	}
 
 }

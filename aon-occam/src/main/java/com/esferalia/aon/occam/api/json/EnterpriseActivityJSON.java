@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonEnterpriseActivityFromJSON;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonEnterpriseActivityToJSON;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Iae;
 
 public enum EnterpriseActivityJSON {

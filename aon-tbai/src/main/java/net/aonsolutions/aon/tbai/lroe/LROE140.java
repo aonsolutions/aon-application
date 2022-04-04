@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.watson.server.AonDateUtils;
 

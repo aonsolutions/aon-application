@@ -1752,6 +1752,12 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	
+	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceStream(ctx, filter);
+		}
+	}
+	
 	public static Stream<Invoice> getInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		AONContext ctx = null;
 		try {
@@ -1793,6 +1799,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static void deleteInvoice(Occam occam, Integer invoiceId) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().deleteInvoice(ctx, invoiceId);
 		}
 	}
 	

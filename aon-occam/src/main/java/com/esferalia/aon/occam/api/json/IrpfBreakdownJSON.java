@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -36,8 +37,8 @@ public class IrpfBreakdownJSON {
 	public static IrpfBreakdown fromJSON(JSONObject json) {
 		return new IrpfBreakdown()
 			.setActivity(JsonUtils.optInteger(json, IJsonNames.ACTIVITY))
-			.setActivityDescription(JsonUtils.optString(json, IJsonNames.ACTIVITY_DESCRIPTION))
-			.setEpigraph(JsonUtils.optString(json, IJsonNames.EPIGRAPH))
+			.setActivityDescription(JsonUtils.getString(json, IJsonNames.ACTIVITY_DESCRIPTION))
+			.setEpigraph( JsonUtils.getString(json, IJsonNames.EPIGRAPH))
 			.setRegistryDocument(JsonUtils.optString(json, IJsonNames.REGISTRY_DOCUMENT))
 			.setRegistryDocumentType(DocumentType.safeValueOf(JsonUtils.optInteger(json, IJsonNames.REGISTRY_DOCUMENT_TYPE)))
 			.setRegistryDocumentCountry(Country.safeValueOf(JsonUtils.optString(json, IJsonNames.REGISTRY_DOCUMENT_COUNTRY)))
@@ -60,8 +61,8 @@ public class IrpfBreakdownJSON {
 			.setDeductiblePercent( json.optDouble(IJsonNames.DEDUCTIBLE_PERCENT))
 			.setDeductibleQuota( json.optDouble(IJsonNames.DEDUCTIBLE_QUOTA))
 			.setGroupByNif(JsonUtils.getInteger(json, IJsonNames.GROUP_BY_NIF))
-			.setZip(JsonUtils.optString(json, IJsonNames.ZIP))
-			.setCity(JsonUtils.optString(json, IJsonNames.CITY))
+			.setZip(JsonUtils.getString(json, IJsonNames.ZIP))
+			.setCity(JsonUtils.getString(json, IJsonNames.CITY))
 			;
 	}
 	
@@ -77,21 +78,21 @@ public class IrpfBreakdownJSON {
 	
 	public static JSONObject toJSON(IrpfBreakdown irpf) {
 		return new JSONObject()
-				.put(IJsonNames.ACTIVITY, irpf.getActivity())
-				.put(IJsonNames.ACTIVITY_DESCRIPTION, irpf.getActivityDescription())
-				.put(IJsonNames.EPIGRAPH, irpf.getEpigraph() )
-				.put(IJsonNames.REGISTRY_DOCUMENT, irpf.getRegistryDocument() )
+				.putOpt(IJsonNames.ACTIVITY, irpf.getActivity())
+				.putOpt(IJsonNames.ACTIVITY_DESCRIPTION, irpf.getActivityDescription())
+				.putOpt(IJsonNames.EPIGRAPH, irpf.getEpigraph())
+				.putOpt(IJsonNames.REGISTRY_DOCUMENT, irpf.getRegistryDocument() )
 				.put(IJsonNames.REGISTRY_DOCUMENT_TYPE, irpf.getRegistryDocumentType()==null?null:irpf.getRegistryDocumentType().ordinal() )
 				.put(IJsonNames.REGISTRY_DOCUMENT_COUNTRY, irpf.getRegistryDocumentCountry()==null?null:irpf.getRegistryDocumentCountry().getIso2() )
-				.put(IJsonNames.REGISTRY_NAME, irpf.getName() )
+				.putOpt(IJsonNames.REGISTRY_NAME, irpf.getName() )
 				.put(IJsonNames.ISSUE_DATE, AonNumberUtils.toString(irpf.getIssueDate().getTime()))
 				.put(IJsonNames.FROM_SALARY, irpf.isFromSalary() )
 				.put(IJsonNames.INSIDE_PERIOD, irpf.isInsidePeriod() )
 				.put(IJsonNames.INVOICE_TYPE, irpf.getInvoiceType()==null?null:irpf.getInvoiceType().ordinal() )
 				.put(IJsonNames.INVOICE, irpf.getInvoice())				
-				.put(IJsonNames.SERIES, irpf.getSeries())				
+				.putOpt(IJsonNames.SERIES, irpf.getSeries())				
 				.put(IJsonNames.NUMBER, irpf.getNumber())				
-				.put(IJsonNames.REFERENCE_CODE, irpf.getReferenceCode() )
+				.putOpt(IJsonNames.REFERENCE_CODE, irpf.getReferenceCode() )
 				.put(IJsonNames.TAX_DATE, AonNumberUtils.toString(irpf.getTaxDate().getTime()))
 				.put(IJsonNames.WITHHOLDING_TYPE, irpf.getWithholdingType()==null?null:irpf.getWithholdingType().ordinal() )
 				.put(IJsonNames.IRPF_REGIME, irpf.getIRPFRegime()==null?null:irpf.getIRPFRegime().ordinal() )
@@ -102,8 +103,8 @@ public class IrpfBreakdownJSON {
 				.put(IJsonNames.DEDUCTIBLE_PERCENT, irpf.getDeductiblePercent() )
 				.put(IJsonNames.DEDUCTIBLE_QUOTA, irpf.getDeductibleQuota() )
 				.put(IJsonNames.GROUP_BY_NIF, irpf.getGroupByNif() )
-				.put(IJsonNames.ZIP, irpf.getZip() )
-				.put(IJsonNames.CITY, irpf.getCity() )
+				.putOpt(IJsonNames.ZIP, irpf.getZip() )
+				.putOpt(IJsonNames.CITY, irpf.getCity() )
 			;
 	}
 

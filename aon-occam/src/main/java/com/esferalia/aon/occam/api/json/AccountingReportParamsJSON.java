@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountingR
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountingReportParamsToJSON;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;

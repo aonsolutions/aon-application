@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperating
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatementType;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class AccountOperatingReportJSON {
 

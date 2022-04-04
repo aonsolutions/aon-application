@@ -1,17 +1,31 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod303Declaration {
 	
@@ -22,20 +36,21 @@ public abstract class Mod303Declaration {
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaración");	
 		}
-		if (Mod303AEAT20212Declaration.accept(mod)) 		return new Mod303AEAT20212Declaration();
+		if (Mod303AEAT2022Declaration.accept(mod)) 		return new Mod303AEAT2022Declaration();
+		if (Mod303AEAT20212Declaration.accept(mod)) 	return new Mod303AEAT20212Declaration();
 		if (Mod303AEAT2021Declaration.accept(mod)) 		return new Mod303AEAT2021Declaration();
 		if (Mod303AEAT2020Declaration.accept(mod)) 		return new Mod303AEAT2020Declaration();
-		if (Mod303AEAT2018.accept(mod)) 		return new Mod303AEAT2018();
+		if (Mod303AEAT2018Declaration.accept(mod)) 		return new Mod303AEAT2018Declaration();
 		if (Mod303AEAT2017Declaration.accept(mod)) 		return new Mod303AEAT2017Declaration();
-		if (ModBIZKAIA2022Declaration.accept(mod)) 	return new ModBIZKAIA2022Declaration();
-		if (ModBIZKAIA2018Declaration.accept(mod)) 	return new ModBIZKAIA2018Declaration();
-		if (ModBIZKAIA2017Declaration.accept(mod)) 	return new ModBIZKAIA2017Declaration();
+		if (Mod303BIZKAIA2022Declaration.accept(mod)) 	return new Mod303BIZKAIA2022Declaration();
+		if (Mod303BIZKAIA2018Declaration.accept(mod)) 	return new Mod303BIZKAIA2018Declaration();
+		if (Mod303BIZKAIA2017Declaration.accept(mod)) 	return new Mod303BIZKAIA2017Declaration();
 		if (Mod303ARABA2022Declaration.accept(mod)) 	return new Mod303ARABA2022Declaration();
 		if (Mod303ARABA2019Declaration.accept(mod)) 	return new Mod303ARABA2019Declaration();
 		if (Mod303ARABA2017Declaration.accept(mod)) 	return new Mod303ARABA2017Declaration();
-		if (ModGIPUZKOA2022Declaration.accept(mod)) 	return new ModGIPUZKOA2022Declaration();
-		if (ModGIPUZKOA20212Declaration.accept(mod)) 	return new ModGIPUZKOA20212Declaration();
-		if (ModGIPUZKOA2017Declaration.accept(mod)) 	return new ModGIPUZKOA2017Declaration();
+		if (Mod303GIPUZKOA2022Declaration.accept(mod)) 	return new Mod303GIPUZKOA2022Declaration();
+		if (Mod303GIPUZKOA20212Declaration.accept(mod)) 	return new Mod303GIPUZKOA20212Declaration();
+		if (Mod303GIPUZKOA2017Declaration.accept(mod)) 	return new Mod303GIPUZKOA2017Declaration();
 		
 		throw new AonCoreException(MessageFormat.format(
 			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
@@ -46,14 +61,13 @@ public abstract class Mod303Declaration {
 	}
 
 	protected static void add(Mod303Key key,Mod303 mod,double amount) {
-		if (key.isDiffEnabled()) {
-			mod.ensureDetail(key).addAccumulatedAmount(amount);	
-		} else {
-			mod.ensureDetail(key).addAmount(amount);
-		}
+		FiscalModelDetail detail = mod.ensureDetail(key);
+		detail.addAccumulatedAmount(amount);
+		detail.addResultAmount( amount );	
+		detail.addAmount( amount );
 	}
 	
-	private static boolean mustApplyProrrate(Mod303 mod,VatContext vat) {
+	public static boolean mustApplyProrrate(Mod303 mod,VatContext vat) {
 		return (mod.hasProrate()) && 
 			(!mod.isSpecialProrate() || (mod.isSpecialProrate() && vat.getActivity() == null));
 	}
@@ -77,11 +91,9 @@ public abstract class Mod303Declaration {
 	}
 
 	protected static void set(Mod303Key key,Mod303 mod,double amount) {
-		if (key.isDiffEnabled()) {
-			mod.ensureDetail(key).setAccumulatedAmount(amount);	
-		} else {
-			mod.ensureDetail(key).setAmount(amount);
-		}
+		mod.ensureDetail(key).setAccumulatedAmount(amount);
+		mod.ensureDetail(key).setResultAmount( amount );	
+		mod.ensureDetail(key).setAmount( amount );
 	}
 
 	public IMod303KeyDAO getKey(Mod303Key key) {
@@ -101,38 +113,36 @@ public abstract class Mod303Declaration {
 	}
 
 	public void prorrateRegularization(AONContext ctx, Mod303 mod303){
-		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
-			double lastPercent = mod303.getProratePercent();
-			double prevPercent = mod303.getPreviousProratePercent();
-			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
-				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
-				if (mod303.isDiffCalculationDisabled()) {
-					final Mod303 dupl = new Mod303();
-					dupl.setDomain(mod303.getDomain());
-					dupl.setDomainName(mod303.getDomainName());
-					dupl.setYear(mod303.getYear());
-					dupl.setModel(mod303.getModel());
-					dupl.setPeriod(mod303.getPeriod());
-					dupl.setAdministration(mod303.getAdministration());
-					dupl.setDiffCalculationDisabled(false);
-					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod303.getProratePercent() );
-					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod303.getPreviousProratePercent() );
-					Mod303DAO.create(ctx, dupl);
-					double amount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
-					mod303.ensureDetail(Mod303Key.CM_072).setAmount( amount );
-				}
-			
-			
-				double amount = mod303.ensureDetail(Mod303Key.CM_072).getAmount();
-				double declared = AonMathUtils.round(amount * prevPercent / 100);
-				double mustDeclared = AonMathUtils.round(amount * lastPercent / 100);
-				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared));
-			}
-		}
+//		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
+//			double lastPercent = mod303.getProratePercent();
+//			double prevPercent = mod303.getPreviousProratePercent();
+//			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
+//				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
+//				if (mod303.isDiffCalculationDisabled()) {
+//					final Mod303 dupl = new Mod303();
+//					dupl.setDomain(mod303.getDomain());
+//					dupl.setDomainName(mod303.getDomainName());
+//					dupl.setYear(mod303.getYear());
+//					dupl.setModel(mod303.getModel());
+//					dupl.setPeriod(mod303.getPeriod());
+//					dupl.setAdministration(mod303.getAdministration());
+//					dupl.setDiffCalculationDisabled(false);
+//					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod303.getProratePercent() );
+//					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod303.getPreviousProratePercent() );
+//					PrevMod303DAO.create(ctx, dupl);
+//					double amount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
+//					mod303.ensureDetail(Mod303Key.CM_072).setAmount( amount );
+//				}
+//			
+//			
+//				double amount = mod303.ensureDetail(Mod303Key.CM_072).getAmount();
+//				double declared = AonMathUtils.round(amount * prevPercent / 100);
+//				double mustDeclared = AonMathUtils.round(amount * lastPercent / 100);
+//				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared));
+//			}
+//		}
 	}
 
-	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303){
-	}
 	public void fillSimplifiedRegime(Mod303 mod303){
 		
 	}
@@ -153,11 +163,184 @@ public abstract class Mod303Declaration {
 		return false;
 	}
 
+	enum ComplementaryBeahaviour {
+		COMPLEMENTARY,
+		REPLACEMENT;
+	}
+
+	private static class KeyedVatContext  {
+		private IMod303KeyDAO key;
+		private VatContext vt;
+		private KeyedVatContext(IMod303KeyDAO key,VatContext vt) {
+			this.key = key;
+			this.vt = vt;
+		}
+		public IMod303KeyDAO getKey() {
+			return key;
+		}
+		public VatContext getVatContext() {
+			return vt;
+		}
+	}
+	
+	void ensureDetails(Mod303 mod303) {
+		Arrays.stream( getKeys() )
+			.forEach(key -> mod303.ensureDetail(key.getKey()).setExpression(key.getExpression()));
+	}
+
+	Mod303 initializeModel(AONContext ctx, Mod303 mod303) {
+		initializeComplementaryAndReplacement(ctx,mod303);
+		initializePreviousData(ctx,mod303);
+		return mod303;
+	}
+	
+	private void initializeComplementaryAndReplacement(AONContext ctx, Mod303 mod303) {
+		mod303.setReplacedNumber(null);
+		if ( mod303.isComplementaryDeclarationAvailable() || mod303.isReplacementDeclarationAvailable()) {
+			Mod303 previous = Mod303DAO.getSamePeriodFiscalModels(ctx, mod303).findFirst().orElse(null);
+			if (previous != null) {
+				mod303.setComplementary( mod303.isComplementaryDeclarationAvailable() );
+				mod303.setReplacement( mod303.isReplacementDeclarationAvailable() 
+					&& !mod303.isComplementary() );
+				mod303.setReplacedNumber(previous.getNumber());
+			} else {
+				mod303.setComplementary( false );
+				mod303.setReplacement( false );
+			}
+		}
+	}
+	
+	private void initializePreviousData(AONContext ctx, Mod303 mod303) {
+		mod303.getMessages().clear();		
+		mod303.setDiffCalculationMandatory(false);
+		mod303.setDiffCalculationDisabled(true);
+		if (!mod303.isFirstPeriod() && mod303.getYear() == 2022) {
+			List<Integer> ids = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
+				.map(FiscalModel::getId)
+				.collect(Collectors.toCollection(LinkedList::new));
+			if (ids != null && !ids.isEmpty()) {
+				boolean something = ctx.getDslContext()
+					.select(ALCATRAZ.ID)
+					.from(ALCATRAZ)
+					.where(ALCATRAZ.FS_MODEL.in(ids))
+					.fetch()
+					.stream()
+					.findFirst()
+					.isPresent();
+				if (!something) {
+					mod303.setDiffCalculationMandatory(true);
+					mod303.setDiffCalculationDisabled(false);			
+					mod303.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
+							+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
+							+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
+							+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
+					);
+				} else {
+					mod303.addMessage("Se encontraron " + ids.size() + " facturas no declaradas anteriores a la fecha "
+							+ "de inicio de la declaraci\u00F3n.");
+					mod303.setGenerateFromYearStartAvailable(true);
+					mod303.setGenerateFromYearStart(true);
+				}
+			}
+		} else {
+			mod303.setGenerateFromYearStartAvailable(!mod303.isFirstPeriod());
+			if (mod303.isGenerateFromYearStartAvailable()) {
+				Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod303);
+				boolean existsInvoices = invoices != null && !invoices.isEmpty();
+				if (existsInvoices) {
+					mod303.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
+							+ "de inicio de la declaraci\u00F3n.");
+				}
+				mod303.setGenerateFromYearStartAvailable(existsInvoices);
+				mod303.setGenerateFromYearStart(existsInvoices);
+			}
+		}
+	}
+	
+	private Map<Integer, Long>  checkPreviousInvoices(final AONContext ctx, final Mod303 mod303) {
+		return VATDAO.getPreviousNotInModelVatBreakdown(ctx, mod303)
+			.flatMap(vt -> Arrays.stream( getKeys() ).map( key -> new KeyedVatContext(key, vt)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod303,kbr.getVatContext()))
+			.collect(Collectors.groupingBy(kbr -> kbr.getVatContext().getInvoice() 
+					, Collectors.counting()));
+	}
+	
+	protected boolean mustApplyReplacementSearch( Mod303 mod303 ) {
+		return (mod303.isReplacement()
+			|| (mod303.isComplementary() && getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.REPLACEMENT)); 
+	}
+	
+	protected Set<Integer> createFromInvoices(AONContext ctx, Mod303 mod303) {
+		final Set<Integer> invoices = new HashSet<>();
+		Stream<VatContext> stream = null;
+		if (mod303.isDiffCalculationMandatory() ) {
+			mod303.setGenerateFromYearStart(true);
+			stream =  VATDAO.getVatBreakdown(ctx,mod303);
+		} else if (mustApplyReplacementSearch(mod303)) {
+			stream =  VATDAO.getVatBreakdown(ctx,mod303);
+		} else {
+			stream = VATDAO.getNotInModelVatBreakdown(ctx,mod303);
+		}
+		stream
+			.flatMap(vt -> Arrays.stream( getKeys() ).map( key -> new KeyedVatContext(key, vt)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod303,kbr.getVatContext()))
+			.map( kbr -> addInvoice(invoices, kbr))
+			.forEach( kbr -> kbr.getKey().initialize(ctx, mod303, kbr.getVatContext()) );
+		return invoices;
+	}
+	
+	private KeyedVatContext addInvoice( Set<Integer> invoices, KeyedVatContext vt) {
+		invoices.add(vt.getVatContext().getInvoice());
+		return vt;	
+	}
+	protected void initializeDeclarationType(Mod303 mod303) {
+		if (AonMathUtils.isZero(mod303.getDeclarationResult() )) {
+			mod303.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
+		} else if (AonMathUtils.isGreatherThanZero(mod303.getDeclarationResult())) {
+			mod303.setDeclarationResultType(FiscalModelDeclarationType.DEPOSIT);
+		} else {
+			mod303.setDeclarationResultType(
+				(mod303.isEnrolledInDevolutionRegistry() || mod303.isLastPeriod()) 
+					?FiscalModelDeclarationType.PAYBACK
+					:FiscalModelDeclarationType.COMPENSATE
+							);
+		}
+	}
+	
+	protected void resolveDiffCalculation(AONContext ctx, Mod303 mod303) {
+		if (mod303.isDiffCalculationMandatory()) {
+			FiscalModelDAO.getEffectivePreviousModels(ctx, mod303, Mod303::new)
+				.flatMap(mod -> mod.getMap().values().stream())
+				.filter( source -> Mod303Key.getKey(source.getType()) != null && Mod303Key.getKey(source.getType()).isDiffEnabled())
+				.forEach(source -> {
+					Mod303Key key = Mod303Key.getKey(source.getType());
+					IMod303KeyDAO keyDAO = getKey(key);
+					if (keyDAO != null) {
+						FiscalModelDetail target = mod303.ensureDetail(key);
+						target.setDeclaredAmount(AonMathUtils.round(target.getDeclaredAmount() + source.getAmount()));
+					}
+				});
+			for (FiscalModelDetail detail : mod303.getMap().values()) {
+				IMod303KeyDAO key = safeValueOf(mod303, detail.getType());
+				if (key != null) {
+					detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));
+					detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
+				}
+			}
+		}
+	}
+
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
 	protected abstract Mod303Key[] getProrateKeys();
+	
 	public abstract boolean hasSimplifiedRegime();
-
-
+	abstract void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303);
+	
+	abstract Mod303 initialize(AONContext ctx, Mod303 mod303);
+	abstract double getResult(final Mod303 mod303);
+	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod303 mod303);
+	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303);
+	
 }

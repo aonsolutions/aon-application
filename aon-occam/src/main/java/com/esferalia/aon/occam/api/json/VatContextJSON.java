@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class VatContextJSON {
 	
@@ -33,10 +35,10 @@ public class VatContextJSON {
 		return new VatContext()
 			.setInvoice(JsonUtils.getInteger(json, IJsonNames.INVOICE))
 			.setActivity(JsonUtils.optInteger(json, IJsonNames.ACTIVITY))
-			.setActivityDescription(JsonUtils.optString(json, IJsonNames.ACTIVITY_DESCRIPTION))
+			.setActivityDescription(JsonUtils.getString(json, IJsonNames.ACTIVITY_DESCRIPTION))
 			.setVatRegime(VATRegime.safeValueOf(JsonUtils.optInteger(json,IJsonNames.VAT_REGIME)))
 			.setVatSurchargeRegime( json.optBoolean(IJsonNames.VAT_SURCHARGE_REGIME) )
-			.setEpigraph(JsonUtils.optString(json, IJsonNames.EPIGRAPH))
+			.setEpigraph(JsonUtils.getString(json, IJsonNames.EPIGRAPH))
 			.setDocumentNumber(JsonUtils.optString(json, IJsonNames.DOCUMENT_NUMBER))
 			.setReferenceCode(JsonUtils.optString(json, IJsonNames.REFERENCE_CODE))
 			.setRegistryDocument(JsonUtils.optString(json, IJsonNames.REGISTRY_DOCUMENT))
@@ -48,7 +50,7 @@ public class VatContextJSON {
 			.setTaxDate(JsonUtils.getDate(json, IJsonNames.TAX_DATE))
 			.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
 			.setRegContableDate(JsonUtils.getDate(json, IJsonNames.REG_CONTABLE_DATE))
-			.setDetailDescription(JsonUtils.optString(json, IJsonNames.DETAIL_DESCRIPTION))
+			.setDetailDescription(JsonUtils.getString(json, IJsonNames.DETAIL_DESCRIPTION))
 			.setInsidePeriod( json.optBoolean(IJsonNames.INSIDE_PERIOD))
 			.setInvoiceType(InvoiceType.safeValueOf(JsonUtils.optInteger(json, IJsonNames.INVOICE_TYPE)))
 			.setRectificationType(RectificationType.safeValueOf(JsonUtils.optInteger(json, IJsonNames.RECTIFICATION_TYPE)))
@@ -70,10 +72,13 @@ public class VatContextJSON {
 			.setDeductibleQuota( json.optDouble(IJsonNames.DEDUCTIBLE_QUOTA))
 			.setSurcharge( json.optBoolean(IJsonNames.SURCHARGE))
 			.setSurchargePercent( json.optDouble(IJsonNames.SURCHARGE_PERCENT))
-			.setSurchargeQuota( json.optDouble(IJsonNames.SURCHARGE_QUOTA))
-			.setSiiStatus(JsonUtils.optString(json, IJsonNames.SII_STATUS))
-			.setAmortizationDescription(JsonUtils.optString(json, IJsonNames.AMORTIZATION_DESCRIPTION))
-			.setAmortizationPercentage( json.optDouble(IJsonNames.AMORTIZATION_PERCENT))
+			.setSurchargeQuota( json.optDouble(IJsonNames.SURCHARGEQUOTA))
+			.setProrrated( json.optBoolean(IJsonNames.PRORRATED))
+			.setProrratePercent( json.optDouble(IJsonNames.PRORRATE_PERCENT))
+			.setProrrateQuota( json.optDouble(IJsonNames.PRORRATE_QUOTA))
+			.setSiiStatus(JsonUtils.getString(json, IJsonNames.SII_STATUS))
+			.setAmortizationDescription(JsonUtils.getString(json, IJsonNames.AMORTIZATION_DESCRIPTION))
+			.setAmortizationPercentage( JsonUtils.getDouble(json,IJsonNames.AMORTIZATION_PERCENT))
 			.setAmortizationInitialDate(JsonUtils.getDate(json, IJsonNames.AMORTIZATION_INITIAL_DATE))
 			.setFinancePending( json.optBoolean(IJsonNames.FINANCE_PENDING))
 			.setAmount347( json.optDouble(IJsonNames.AMOUNT_347))
@@ -95,10 +100,10 @@ public class VatContextJSON {
 		return new JSONObject()
 			.put(IJsonNames.INVOICE, vat.getInvoice())				
 			.put(IJsonNames.ACTIVITY, vat.getActivity())
-			.put(IJsonNames.ACTIVITY_DESCRIPTION, vat.getActivityDescription())
+			.putOpt(IJsonNames.ACTIVITY_DESCRIPTION, vat.getActivityDescription())
 			.put(IJsonNames.VAT_REGIME, vat.getVatRegime()==null?null:vat.getVatRegime().ordinal() )
 			.put(IJsonNames.VAT_SURCHARGE_REGIME, vat.isVatSurchargeRegime() )
-			.put(IJsonNames.EPIGRAPH, vat.getEpigraph() )
+			.putOpt(IJsonNames.EPIGRAPH, vat.getEpigraph() )
 			.put(IJsonNames.DOCUMENT_NUMBER, vat.getDocumentNumber() )
 			.put(IJsonNames.REFERENCE_CODE, vat.getReferenceCode() )
 			.put(IJsonNames.REGISTRY_DOCUMENT, vat.getRegistryDocument() )
@@ -106,11 +111,11 @@ public class VatContextJSON {
 			.put(IJsonNames.REGISTRY_DOCUMENT_COUNTRY, vat.getRegistryDocumentCountry()==null?null:vat.getRegistryDocumentCountry().getIso2() )
 			.put(IJsonNames.REGISTRY_ID, vat.getRegistry() )
 			.put(IJsonNames.REGISTRY_NAME, vat.getRegistryName() )
-			.put(IJsonNames.ISSUE_DATE, vat.getIssueDate()==null ? null : vat.getIssueDate().getTime())
-			.put(IJsonNames.TAX_DATE, vat.getTaxDate()==null ? null : vat.getTaxDate().getTime())
-			.put(IJsonNames.CREATION_DATE, vat.getCreationDate()==null ? null : vat.getCreationDate().getTime())
-			.put(IJsonNames.REG_CONTABLE_DATE, vat.getRegContableDate()==null ? null : vat.getRegContableDate().getTime())
-			.put(IJsonNames.DETAIL_DESCRIPTION, vat.getDetailDescription() )
+			.put(IJsonNames.ISSUE_DATE, vat.getIssueDate() == null? null : AonNumberUtils.toString(vat.getIssueDate().getTime()) )
+			.put(IJsonNames.TAX_DATE, vat.getTaxDate() == null? null : AonNumberUtils.toString(vat.getTaxDate().getTime()) )
+			.put(IJsonNames.CREATION_DATE, vat.getCreationDate() == null? null : AonNumberUtils.toString(vat.getCreationDate().getTime()) )
+			.put(IJsonNames.REG_CONTABLE_DATE, vat.getRegContableDate() == null? null : AonNumberUtils.toString(vat.getRegContableDate().getTime()) )
+			.putOpt(IJsonNames.DETAIL_DESCRIPTION, vat.getDetailDescription() )
 			.put(IJsonNames.INSIDE_PERIOD, vat.isInsidePeriod() )
 			.put(IJsonNames.INVOICE_TYPE, vat.getInvoiceType()==null?null:vat.getInvoiceType().ordinal() )
 			.put(IJsonNames.RECTIFICATION_TYPE, vat.getRectificationType()==null?null:vat.getRectificationType().ordinal() )
@@ -132,11 +137,14 @@ public class VatContextJSON {
 			.put(IJsonNames.DEDUCTIBLE_QUOTA, vat.getDeductibleQuota() )
 			.put(IJsonNames.SURCHARGE, vat.isSurcharge() )
 			.put(IJsonNames.SURCHARGE_PERCENT, vat.getSurchargePercent() )
-			.put(IJsonNames.SURCHARGE_QUOTA, vat.getSurchargeQuota() )
-			.put(IJsonNames.SII_STATUS, vat.getSiiStatus() )
-			.put(IJsonNames.AMORTIZATION_DESCRIPTION, vat.getAmortizationDescription() )
-			.put(IJsonNames.AMORTIZATION_PERCENT, vat.getAmortizationPercentage() )
-			.put(IJsonNames.AMORTIZATION_INITIAL_DATE, vat.getAmortizationInitialDate()==null ? null : vat.getAmortizationInitialDate().getTime())
+			.put(IJsonNames.SURCHARGEQUOTA, vat.getSurchargeQuota() )
+			.put(IJsonNames.PRORRATED, vat.isProrrated() )
+			.put(IJsonNames.PRORRATE_PERCENT, vat.getProrratePercent() )
+			.put(IJsonNames.PRORRATE_QUOTA, vat.getProrrateQuota() )
+			.putOpt(IJsonNames.SII_STATUS, vat.getSiiStatus() )
+			.putOpt(IJsonNames.AMORTIZATION_DESCRIPTION, vat.getAmortizationDescription() )
+			.putOpt(IJsonNames.AMORTIZATION_PERCENT, vat.getAmortizationPercentage() )
+			.put(IJsonNames.AMORTIZATION_INITIAL_DATE, vat.getAmortizationInitialDate() == null ? null : AonNumberUtils.toString(vat.getAmortizationInitialDate().getTime()))
 			.put(IJsonNames.FINANCE_PENDING, vat.isFinancePending() )
 			.put(IJsonNames.AMOUNT_347, vat.getAmount347() )
 			.put(IJsonNames.RETENTION, vat.hasRetention() )

@@ -45,7 +45,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class RegistryStatEngineController implements Serializable {
 	

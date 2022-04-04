@@ -24,7 +24,6 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;

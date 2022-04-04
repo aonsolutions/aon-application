@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountTrialBalanceFromJSON;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountTrialBalanceToJSON;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public enum AccountTrialBalanceJSON {
 

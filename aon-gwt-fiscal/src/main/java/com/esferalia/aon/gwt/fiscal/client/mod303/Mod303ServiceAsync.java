@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -16,7 +17,6 @@ public interface Mod303ServiceAsync {
 	void initialize(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void create(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback);
 	void reset(Occam occam, Mod303 model, AsyncCallback<Mod303> asyncCallback);
-	void declarationChanged(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback);
 
 	void delete(Occam occam, Mod303 mod303,AsyncCallback<Void> callback);
 	void save(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
@@ -29,5 +29,6 @@ public interface Mod303ServiceAsync {
 	void markAsPending(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void markAsSent(Occam occam, Mod303 mod303, AsyncCallback<Mod303> asyncCallback);
 	void markAsCustomerCheck(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
+	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> asyncCallback);
 
 }
