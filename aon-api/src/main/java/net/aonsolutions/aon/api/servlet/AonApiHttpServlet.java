@@ -90,6 +90,8 @@ public class AonApiHttpServlet extends HttpServlet{
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
 		if(AonStringUtils.isBlank(domainLogin) && api.getData().opt(IConstants.DOMAIN_LOGIN) != null) {
 			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
+		} else if(AonStringUtils.isBlank(domainLogin) && api.getData().opt("userLogin") != null) {
+			domainLogin = api.getData().getString("userLogin");
 		}
 		User user = new User().setLogin("");
 		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
@@ -117,8 +119,9 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	private Domain getDomain(HttpServletRequest req, AonApiData api) {
+		String domainAux = api.getData().has("domainName") ?  api.getData().getString("domainName") : req.getServerName();
 		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
-				? JsonUtils.getString(api.getData(), IConstants.DOMAIN_NAME, req.getServerName()) 
+				? JsonUtils.getString(api.getData(), IConstants.DOMAIN_NAME, domainAux) 
 				: req.getHeader(IConstants.DOMAIN_NAME);
 		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
 				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
