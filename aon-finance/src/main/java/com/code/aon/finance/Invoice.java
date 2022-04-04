@@ -46,6 +46,7 @@ import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryDocument;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.InvoiceDB;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @Entity
 @Table(name="invoice", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number", "type"}))
@@ -224,6 +225,18 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 	
 	@Transient
+	public String getReference() {
+		if(getNumber() <= 0) {
+			String reference = "";
+			if(!AonStringUtils.isBlank(getSeries())) {
+				reference = reference + getSeries() + "/";
+			}
+			reference += "PROFORMA";
+			return reference;
+		} else return getReferenceCode();
+	}
+	
+	@Transient
 	public String getDocumentNumber() {
 		return FinanceUtil.getDocumentNumber(getType(), getSeries(), getNumber());
 	}
@@ -246,6 +259,11 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return registryDocument.isValidable();
 	}
 
+	@Transient
+	public boolean isProforma() {
+		return getNumber() <= 0;
+	}
+	
 	@Transient
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
