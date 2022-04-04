@@ -359,7 +359,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 
 	private void paintGenerateFromYearStart(Mod303 model, AonDisplayTable tab) {
 		if (model.isGenerateFromYearStartAvailable() ) {
-			generateFromYearStart.setText(AON.MSG.generateFromYearStart( model.getYear() ));
+			generateFromYearStart.setText(AON.MSG.generateFromYearStartInv( model.getYear() ));
 			generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
 			tab.addRow()
 				.addCell(new Label(),AON.CSS.aonTableLabel())
