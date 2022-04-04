@@ -235,6 +235,11 @@ public abstract class Mod303Declaration {
 							+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
 							+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
 					);
+				} else {
+					mod303.addMessage("Se encontraron " + ids.size() + " facturas no declaradas anteriores a la fecha "
+							+ "de inicio de la declaraci\u00F3n.");
+					mod303.setGenerateFromYearStartAvailable(true);
+					mod303.setGenerateFromYearStart(true);
 				}
 			}
 		} else {
@@ -247,6 +252,7 @@ public abstract class Mod303Declaration {
 							+ "de inicio de la declaraci\u00F3n.");
 				}
 				mod303.setGenerateFromYearStartAvailable(existsInvoices);
+				mod303.setGenerateFromYearStart(existsInvoices);
 			}
 		}
 	}
