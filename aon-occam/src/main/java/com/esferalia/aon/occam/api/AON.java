@@ -636,6 +636,10 @@ public class AON {
 			return getSecurity().getCertificates(ctx, filter);
 		}
 	}
+
+	public static Certificate getCertificate(Domain domain, User user, String certificateType) {
+		return getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), certificateType); 
+	}	
 	
 	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId, String certificateType) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
