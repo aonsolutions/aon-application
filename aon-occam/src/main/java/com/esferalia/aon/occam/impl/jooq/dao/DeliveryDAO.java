@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -32,24 +33,18 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PDeliveryDetailFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RDeliveryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonEnumUtils;
 
 
 public class DeliveryDAO {
@@ -59,6 +54,10 @@ public class DeliveryDAO {
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 
+	private DeliveryDAO() {
+	
+	}
+	
 	// -------------------- DELIVERY
 	
 	public static Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter){
@@ -66,7 +65,7 @@ public class DeliveryDAO {
 				.select()
 				.from(DELIVERY)
 				.join(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
-			,filter).fetch().stream().map(new RDeliveryFiller());
+			,filter).fetch().stream().map(new DeliveryFiller());
 	}
 	
 	public static Delivery insertDelivery(AONContext ctx, Delivery delivery) {
@@ -130,7 +129,7 @@ public class DeliveryDAO {
 			.set(DELIVERY.PROJECT, delivery.getProject().getId())
 			.set(DELIVERY.SERIES, delivery.getSeries())
 			.set(DELIVERY.NUMBER, delivery.getNumber())
-			.set(DELIVERY.CUSTOMER, delivery.getCustomer())
+			.set(DELIVERY.CUSTOMER, delivery.getCustomer().getId())
 			.set(DELIVERY.ADDRESS, delivery.getAddress())
 			.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
 			.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
@@ -172,7 +171,9 @@ public class DeliveryDAO {
 	}
 	
 	public static void deleteDelivery(AONContext ctx, DeliveryFilter filter) {
-		Integer[] ids = getDeliveryStream(ctx, filter).map(r -> r.getId()).toArray(Integer[]::new);
+		Integer[] ids = getDeliveryStream(ctx, filter)
+				.map(Delivery::getId)
+				.toArray(Integer[]::new);
 		deleteDeliveryDetail(ctx, f -> f.getDelivery().in(ids));
 		ctx.getDslContext().delete(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter));
 	}
@@ -184,7 +185,7 @@ public class DeliveryDAO {
 				.join(ITEM).on(DELIVERY_DETAIL.ITEM.eq(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new PDeliveryDetailFiller())
+			.fetch().stream().map(new DeliveryDetailFiller())
 			.findFirst().orElse(new DeliveryDetail());
 	}
 	
@@ -192,8 +193,9 @@ public class DeliveryDAO {
 		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
 				.join(ITEM).on(DELIVERY_DETAIL.ITEM.eq(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.join(DELIVERY).on(DELIVERY.ID.eq(DELIVERY_DETAIL.DELIVERY))
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new PDeliveryDetailFiller());
+			.fetch().stream().map(new DeliveryDetailFiller());
 	}
 	
 	public static DeliveryDetail insertDeliveryDetail(AONContext ctx, DeliveryDetail detail) {
@@ -224,7 +226,7 @@ public class DeliveryDAO {
 			ProductFilter productFilter, ItemFilter itemFilter) {
 		ctx.checkRead();
 		
-		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		Collection<Condition> whereConditions = new ArrayList<>();
 		whereConditions.addAll(Arrays.asList(DELIVERY_PROPERTIES.getConditions(deliveryFilter)));
 		whereConditions.addAll(Arrays.asList(DELIVERY_DETAIL_PROPERTIES.getConditions(detailFilter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(productFilter)));
@@ -240,7 +242,7 @@ public class DeliveryDAO {
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
 			.where(whereConditions)
 			.orderBy(DELIVERY.ISSUE_TIME,DELIVERY.SERIES,DELIVERY.NUMBER,DELIVERY_DETAIL.LINE)
-			.fetch().stream().map(new FullDeliveryDetailSupplierItemFiller());
+			.fetch().stream().map(new DeliveryDetailFiller());
 	}
 	
 	public static DeliveryDetail updateDeliveryDetail(AONContext ctx, DeliveryDetail deliveryDetail, DeliveryDetailFilter filter) {
@@ -335,115 +337,97 @@ public class DeliveryDAO {
 	public static Stream<DeliveryDetail> getDeliveryDetails(AONContext ctx, DeliveryFilter filter) {
 		return getFullDeliveries(ctx, filter)
 			.stream()
-			.map(new FullDeliveryDetailFiller2());
+			.map(new DeliveryDetailFiller());
 	}
 	
-	private static class FullDeliveryDetailFiller2  implements Function<Record,DeliveryDetail> {
+	public static class DeliveryFiller extends Filler implements Function<Record, Delivery> {
 
 		@Override
-		public DeliveryDetail apply(Record record) {
-			Customer customer = new Customer();
-			customer.setDocument(record.getValue(REGISTRY.DOCUMENT));
-			customer.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
-									record.getValue(REGISTRY.DOCUMENT_TYPE)));
-			customer.setDocumentCountry(Country.safeValueOf(record
-									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
-			customer.setName(record.getValue(REGISTRY.NAME));
-			customer.setId(record.getValue(REGISTRY.ID));
-			return new DeliveryDetail()
-				.setDelivery(new Delivery()
-					.setId(record.getValue(DELIVERY.ID))
-					.setAddress(record.getValue(DELIVERY.ADDRESS))
-					
-					.setAddressStreetType( StreetType.safeValueOf(record.getValue(RADDRESS.STREET_TYPE)))
-					.setAddressName(record.getValue(RADDRESS.ADDRESS))
-					.setAddressNumber(record.getValue(RADDRESS.NUMBER))
-					.setAddressTown(record.getValue(RADDRESS.CITY))
-					.setAddressZIP(record.getValue(RADDRESS.ZIP))
-					.setAddressGeozoneCode(record.getValue(GEOZONE.CODE))
-					.setAddressGeozone(record.getValue(GEOZONE.NAME))
-					
-					.setDomain(record.getValue(DELIVERY.DOMAIN))
-					.setStatus(AonEnumUtils.enumValue(DeliveryStatus.class,
-									record.getValue(DELIVERY.STATUS)))
-					.setSeries(record.getValue(DELIVERY.SERIES))
-					.setNumber(record.getValue(DELIVERY.NUMBER))
-					.setIssueTime(record.getValue(DELIVERY.ISSUE_TIME))
-					.setCustomer2(customer)
-					.setScopeName(record.getValue(SCOPE.DESCRIPTION))	
-					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
+		public Delivery apply(Record r) {
+			return build(r);
+		}
+		
+		public static Delivery build(Record r) {
+			return new Delivery()
+					.setId(getValue(r, DELIVERY.ID))
+					.setDomain(getValue(r, DELIVERY.DOMAIN))
 					.setProject(new Project()
-							.setName(record.getValue(PROJECT.NAME)))
-					)
-				
-				.setLine(record.getValue(DELIVERY_DETAIL.LINE))
-				.setDescription(record.getValue( DELIVERY_DETAIL.DESCRIPTION ))
-				.setQuantity(record.getValue(DELIVERY_DETAIL.QUANTITY))
-				.setPrice(record.getValue(DELIVERY_DETAIL.PRICE))
-				.setDiscountExpression(record.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
-				.setItem((record.getValue(DELIVERY_DETAIL.ITEM) == null)
-					? null
-					: new OldItem()
-						.setId(record.getValue(DELIVERY_DETAIL.ITEM))
-						.setCategory( record.getValue( PCATEGORY.NAME ) )
-						.setProductId( record.getValue( PRODUCT.ID ) )
-						.setName( record.getValue( PRODUCT.NAME ) )
-						.setCode(record.getValue( PRODUCT.CODE ) )
-						.setDetail(record.getValue( ITEM.DETAIL ))
-						.setDetail2(record.getValue( ITEM.DETAIL2 ))
-						.setDetail3(record.getValue( ITEM.DETAIL3 ))
-						.setDescription(record.getValue( ITEM.DESCRIPTION )))
-				.setSalesDetail(record.getValue(DELIVERY_DETAIL.SALES_DETAIL))
-				.setPurchaseReference(record.getValue(SALES.PURCHASE_REFERENCE))
-				;
+							.setId(getValue(r, DELIVERY.PROJECT)))
+					.setSeries(getValue(r, DELIVERY.SERIES))
+					.setNumber(getValue(r, DELIVERY.NUMBER))
+					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, REGISTRY.ID)
+						? CustomerFiller.build(r)
+						: new Customer().setId(getValue(r, DELIVERY.CUSTOMER)))
+					.setAddress(getValue(r, DELIVERY.ADDRESS))
+					.setIssueTime(getValue(r, DELIVERY.ISSUE_TIME))
+					.setPayMethod(getValue(r, DELIVERY.PAY_METHOD))
+					.setSecurityLevel(getValue(r, DELIVERY.SECURITY_LEVEL))
+					.setStatus(DeliveryStatus.safeValueOf(getValue(r, DELIVERY.STATUS)))
+					.setComments(getValue(r, DELIVERY.COMMENTS))
+					.setRemarks(getValue(r, DELIVERY.REMARKS))
+					.setWorkplace(getValue(r, DELIVERY.WORKPLACE))
+					.setScope(getValue(r, DELIVERY.SCOPE))
+					.setNumberOfPymnts(getValue(r, DELIVERY.NUMBER_OF_PYMNTS))
+					.setDaysToFirstPymnt(getValue(r, DELIVERY.DAYS_TO_FIRST_PYMNT))
+					.setDaysBetweenPymnt(getValue(r, DELIVERY.DAYS_BETWEEN_PYMNTS))
+					.setPymntDays(getValue(r, DELIVERY.PYMNT_DAYS))
+					.setBankAccount(getValue(r, DELIVERY.BANK_ACCOUNT))
+					.setBankAlias(getValue(r, DELIVERY.BANK_ALIAS))
+					.setBic(getValue(r, DELIVERY.BIC))
+					.setCarrier(getValue(r, DELIVERY.CARRIER))
+					.setCarrierPacking(getValue(r, DELIVERY.CARRIER_PACKING))
+					.setNumberPlate(getValue(r, DELIVERY.NUMBER_PLATE))
+					.setDriver(getValue(r, DELIVERY.DRIVER))
+					.setDriverDocument(getValue(r, DELIVERY.DRIVER_DOCUMENT))
+					.setTotalPackages(getValue(r, DELIVERY.TOTAL_PACKAGES))
+					.setTotalWeight(getValue(r, DELIVERY.TOTAL_WEIGHT))
+					.setShippingAlternativeAddress(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_ADDRESS))
+					.setShippingAlternativeAddress2(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_ADDRESS2))
+					.setShippingAlternativeZip(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_ZIP))
+					.setShippingAlternativeCity(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_CITY))
+					.setShippingAlternativePhone(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_PHONE))
+					.setShippingAlternativeRecipient(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_RECIPIENT))
+					.setShippingContact(getValue(r, DELIVERY.SHIPPING_CONTACT))
+					.setShippingPeriod(getValue(r, DELIVERY.SHIPPING_PERIOD))
+					.setTrackingNumber(getValue(r, DELIVERY.TRACKING_NUMBER))
+					.setShippingStatus(getValue(r, DELIVERY.SHIPPING_STATUS))
+					.setStatusModificationDate(getValue(r, DELIVERY.STATUS_MODIFICATION_DATE))
+					.setCreationDate(getValue(r, DELIVERY.CREATION_DATE))
+					.setCreationUser(getValue(r, DELIVERY.CREATION_USER))
+					.setModificationDate(getValue(r, DELIVERY.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, DELIVERY.MODIFICATION_USER));
 		}
 	}
-	
-	private static class FullDeliveryDetailSupplierItemFiller implements Function<Record,DeliveryDetail> {
+
+	public static class DeliveryDetailFiller extends Filler implements Function<Record, DeliveryDetail> {
 
 		@Override
-		public DeliveryDetail apply(Record record) {
-			Customer customer = new Customer();
-			customer.setDocument(record.getValue(REGISTRY.DOCUMENT));
-			customer.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,
-									record.getValue(REGISTRY.DOCUMENT_TYPE)));
-			customer.setDocumentCountry(Country.safeValueOf(record
-									.getValue(REGISTRY.DOCUMENT_COUNTRY)));
-			customer.setName(record.getValue(REGISTRY.NAME));
-			customer.setId(record.getValue(REGISTRY.ID));
-			
-			OldItem item = (record.getValue(DELIVERY_DETAIL.ITEM) == null)
-					? null
-					: new OldItem()
-						.setId(record.getValue(DELIVERY_DETAIL.ITEM))
-						.setCategory( record.getValue( PCATEGORY.NAME ) )
-						.setProductId( record.getValue( PRODUCT.ID ) )
-						.setName( record.getValue( PRODUCT.NAME ) )
-						.setCode(record.getValue( PRODUCT.CODE ) )
-						.setDetail(record.getValue( ITEM.DETAIL ))
-						.setDetail2(record.getValue( ITEM.DETAIL2 ))
-						.setDetail3(record.getValue( ITEM.DETAIL3 ))
-						.setDescription(record.getValue( ITEM.DESCRIPTION ));
-			
+		public DeliveryDetail apply(Record r) {
+			return build(r);
+		}
+		
+		public static DeliveryDetail build(Record r) {
 			return new DeliveryDetail()
-				.setDelivery(new Delivery()
-					.setId(record.getValue(DELIVERY.ID))
-					.setAddress(record.getValue(DELIVERY.ADDRESS))
-					.setDomain(record.getValue(DELIVERY.DOMAIN))
-					.setSeries(record.getValue(DELIVERY.SERIES))
-					.setNumber(record.getValue(DELIVERY.NUMBER))
-					.setStatus(AonEnumUtils.enumValue(DeliveryStatus.class,
-							record.getValue(DELIVERY.STATUS)))
-					.setIssueTime(record.getValue(DELIVERY.ISSUE_TIME))
-					.setCustomer2(customer)
-					)
-				.setLine(record.getValue(DELIVERY_DETAIL.LINE))
-				.setDescription(record.getValue( DELIVERY_DETAIL.DESCRIPTION ))
-				.setQuantity(record.getValue(DELIVERY_DETAIL.QUANTITY))
-				.setPrice(record.getValue(DELIVERY_DETAIL.PRICE))
-				.setDiscountExpression(record.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
-				.setItem(item)
-				;
+				.setId(getValue(r, DELIVERY_DETAIL.ID))
+				.setDomain(getValue(r, DELIVERY_DETAIL.DOMAIN))
+				.setDelivery(checkField(r, DELIVERY.ID)
+					? DeliveryFiller.build(r)
+					: new Delivery().setId(getValue(r, DELIVERY_DETAIL.DELIVERY)))
+				.setLine(getValue(r, DELIVERY_DETAIL.LINE))
+				.setItem(checkField(r, ITEM.ID)
+					? ItemFiller.build(r)
+					: new Item().setId(getValue(r, DELIVERY_DETAIL.ITEM)))
+				.setDescription(getValue(r, DELIVERY_DETAIL.DESCRIPTION))
+				.setWarehouse(getValue(r, DELIVERY_DETAIL.WAREHOUSE))
+				.setQuantity(getValue(r, DELIVERY_DETAIL.QUANTITY))
+				.setPrice(getValue(r, DELIVERY_DETAIL.PRICE))
+				.setDiscountExpression(getValue(r, DELIVERY_DETAIL.DISCOUNT_EXPR))
+				.setSalesDetail(getValue(r, DELIVERY_DETAIL.SALES_DETAIL))
+				.setPurchaseReference(getValue(r, SALES.PURCHASE_REFERENCE))
+				.setCreationDate(getValue(r, DELIVERY_DETAIL.CREATION_DATE))
+				.setCreationUser(getValue(r, DELIVERY_DETAIL.CREATION_USER))
+				.setModificationDate(getValue(r, DELIVERY_DETAIL.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, DELIVERY_DETAIL.MODIFICATION_USER));
 		}
 	}
 	

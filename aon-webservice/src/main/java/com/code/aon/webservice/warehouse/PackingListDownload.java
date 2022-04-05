@@ -158,7 +158,7 @@ public class PackingListDownload extends HttpServlet{
 					Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
 					
 					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
-						f2.getRegistryProperty().eq(delivery.getCustomer())
+						f2.getRegistryProperty().eq(delivery.getCustomer().getId())
 						.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
 					detailJSON.put("code", code);
 					

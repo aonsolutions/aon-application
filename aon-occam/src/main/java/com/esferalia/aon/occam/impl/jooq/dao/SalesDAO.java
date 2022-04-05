@@ -42,7 +42,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SalesDAO {

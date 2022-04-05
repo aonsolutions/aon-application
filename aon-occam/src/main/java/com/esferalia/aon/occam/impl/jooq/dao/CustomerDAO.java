@@ -76,32 +76,36 @@ public class CustomerDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}	
 	}
 
-	protected static class CustomerFiller  implements Function<Record, Customer> {
+	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
 
 		@Override
 		public Customer apply(Record r) {
+			return build(r);
+		}
+		
+		public static Customer build(Record r) {
 			return buildCustomer(r, REGISTRY);
 		}
 		
 		public static Customer buildCustomer(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			return new Customer()
 					.copy(RegistryFiller.build(r, registry))
-					.setAccount(r.getValue(CUSTOMER.ACCOUNT))
-					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
-					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
-					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED) == 1)
-					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED) == 1)
-					.setEInvoice(r.getValue(CUSTOMER.E_INVOICE) == 1)
+					.setAccount(getValue(r, CUSTOMER.ACCOUNT))
+					.setCreationDate(getValue(r, CUSTOMER.CREATION_DATE))
+					.setCreationUser(getValue(r, CUSTOMER.CREATION_USER))
+					.setDeliveryGrouped(getBoolean(r, CUSTOMER.DELIVERY_GROUPED))
+					.setDeliveryValuated(getBoolean(r, CUSTOMER.DELIVERY_VALUATED))
+					.setEInvoice(getBoolean(r, CUSTOMER.E_INVOICE))
 					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
-					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
-					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
-					.setScope(r.getValue(CUSTOMER.SCOPE))
-					.setSurcharge(r.getValue(CUSTOMER.SURCHARGE)==1)
-					.setTariff(r.getValue(CUSTOMER.TARIFF))
-					.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CUSTOMER.TRANSACTION)))
-					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING)==1)
-					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
+					.setModificationDate(getValue(r, CUSTOMER.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, CUSTOMER.MODIFICATION_USER))
+					.setProjectGrouped(getBoolean(r, CUSTOMER.PROJECT_GROUPED))
+					.setScope(getValue(r, CUSTOMER.SCOPE))
+					.setSurcharge(getBoolean(r, CUSTOMER.SURCHARGE))
+					.setTariff(getValue(r, CUSTOMER.TARIFF))
+					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
+					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
+					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)));
 		}
 	}
 	
