@@ -163,7 +163,6 @@ public enum FiscalModelJSON {
 				@Override public void visitM390()  { visitOld();}
 				@Override public void visitM349()  { visitOld();}
 				@Override public void visitM347()  { visitOld();}
-				@Override public void visitM303()  { visitOld();}
 				@Override public void visitM202()  { visitOld();}
 				@Override public void visitM200()  { visitOld();}
 				@Override public void visitM193()  { visitOld();}
@@ -172,6 +171,8 @@ public enum FiscalModelJSON {
 				@Override public void visitM180()  { visitOld();}
 				@Override public void visitM131()  { visitOld();}
 				@Override public void visitM130()  { visitOld();}
+				
+				@Override public void visitM303()  { visitNew();}
 				@Override public void visitM123()  { visitNew();}
 				@Override public void visitM115()  { visitNew();}
 				@Override public void visitM111()  { visitNew();}
@@ -199,7 +200,6 @@ public enum FiscalModelJSON {
 				@Override public void visitM390()  { visitOld();}
 				@Override public void visitM349()  { visitOld();}
 				@Override public void visitM347()  { visitOld();}
-				@Override public void visitM303()  { visitOld();}
 				@Override public void visitM202()  { visitOld();}
 				@Override public void visitM200()  { visitOld();}
 				@Override public void visitM193()  { visitOld();}
@@ -208,6 +208,7 @@ public enum FiscalModelJSON {
 				@Override public void visitM180()  { visitOld();}
 				@Override public void visitM131()  { visitOld();}
 				@Override public void visitM130()  { visitOld();}
+				@Override public void visitM303()  { visitNew();}
 				@Override public void visitM123()  { visitNew();}
 				@Override public void visitM115()  { visitNew();}
 				@Override public void visitM111()  { visitNew();}

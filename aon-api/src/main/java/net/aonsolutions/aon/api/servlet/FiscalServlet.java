@@ -36,7 +36,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.PrevMod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -198,13 +197,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 
 					@Override
 					public void visitM303() {
-						Mod303 model = PrevMod303DAO.getMod303(ctx, id);
-						model.setDeclarationType(declarationType);
+						Mod303 model = Mod303DAO.get(ctx, id);
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						PrevMod303DAO.markAsFinishedFromAPI(ctx, model);
+						Mod303DAO.markAsFinished(ctx, model);
 					}
 					
 					@Override public void visitM347() {}

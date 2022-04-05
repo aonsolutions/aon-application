@@ -912,26 +912,26 @@ public class Mod3902021DAO {
 			.filter(m303 -> m303.getAdministration() == mod390.getAdministration())
 			.forEach(m303 -> {
 				Period period = m303.getPeriod();
-				if (m303.getDeclarationType() == FiscalModelDeclarationType.BANK
-				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
-				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT) {
-					mod390.setBox95( AonMathUtils.round(mod390.getBox95() + m303.getResult()));
+				if (m303.getDeclarationResultType() == FiscalModelDeclarationType.BANK
+				 || m303.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
+				 || m303.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT) {
+					mod390.setBox95( AonMathUtils.round(mod390.getBox95() + m303.getDeclarationResult()));
 				} 
 				if ( m303.isEnrolledInDevolutionRegistry()) {
 					mod390.setTaxRefund(true);
 				}
-				if (m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK
-				 || m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT) {
+				if (m303.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
+				 || m303.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT) {
 					if (m303.isEnrolledInDevolutionRegistry()) {
-						mod390.setBox96( AonMathUtils.round(mod390.getBox96() + (m303.getResult() * (-1))));
+						mod390.setBox96( AonMathUtils.round(mod390.getBox96() + (m303.getDeclarationResult() * (-1))));
 					}
 					if (period == Period.M12 || period == Period.T4) {
-						mod390.setBox98( m303.getResult() * (-1));	
+						mod390.setBox98( m303.getDeclarationResult() * (-1));	
 					} 
 				}
-				if (m303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE
+				if (m303.getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE
 				 && (period == Period.M12 || period == Period.T4)) {
-					mod390.setBox97(  AonMathUtils.round( m303.getResult() * (-1) ));
+					mod390.setBox97(  AonMathUtils.round( m303.getDeclarationResult() * (-1) ));
 				}
 				if (m303.isFirstPeriod()) {
 					mod390.setBox85(  m303.getAmount( Mod303Key.CT_C110) );

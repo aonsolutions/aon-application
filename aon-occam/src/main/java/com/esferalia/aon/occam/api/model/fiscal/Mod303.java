@@ -168,4 +168,15 @@ public class Mod303 extends FiscalModel implements Serializable {
 		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
 	}
 	
+	@Override
+	@Deprecated
+	public FiscalModelDeclarationType getDeclarationType() {
+		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
+	}
+	@Override
+	@Deprecated
+	public void setDeclarationType(FiscalModelDeclarationType type) {
+		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
+	}
+	
 }
