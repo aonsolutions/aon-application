@@ -47,7 +47,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
-import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
@@ -90,7 +89,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.CreditorPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CreditorFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PersonFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RNoteFiller;
@@ -754,17 +752,6 @@ public class RegistryOldDAO {
 	}
 
 	// ------------------- CUSTOMER
-	
-	/**
-	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.getStream(AONContext ctx, CustomerFilter filter)
-	 */
-	@Deprecated(forRemoval = true )
-	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter){
-		return ctx.getDslContext().select().from(CUSTOMER)
-				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-				.where(CUSTOMER_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new CustomerFiller());
-	}
 	
 	/**
 	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.insert(AONContext ctx, Customer customer)

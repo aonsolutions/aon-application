@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +29,6 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod3902021Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.ibm.icu.text.MessageFormat;
 
 @WebServlet(name = "Mod390 2021 Validate Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod3902021ValidatePrintAEAT" })
 public class Mod9902021ValidatePrintAEAT extends HttpServlet {

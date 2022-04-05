@@ -208,7 +208,7 @@ public class PackingListMailServlet extends HttpServlet{
 					RegistryMedia rmedia = new RegistryMedia();
 					if(to == null){
 						rmedia = AON.getRMedia(domain.getName(), domain.getId(), login, 
-							f -> f.getRegistryProperty().eq(delivery.getCustomer())
+							f -> f.getRegistryProperty().eq(delivery.getCustomer().getId())
 							.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 					}
 					sendEmail(domain, login, mailAccount, (to != null) ? to : rmedia.getValue(), mailAccount.getEmail(), "Notificación Packing List", msg, scheme, carrierPacking, "Cliente");

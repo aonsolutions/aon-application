@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -393,6 +394,38 @@ public class OldItem implements Serializable {
 			sb.append(']');
 		}
 		return sb.toString();
+	}
+	
+	public Item toNewItem() {
+		return new Item() 
+			.setId(getId())
+			.setBarcode(getBarcode())
+			.setCreationDate(getCreationDate())
+			.setCreationUser(getCreationUser())
+			.setDescription(getDescription())
+			.setDetail(getDetail())
+			.setDetail2(getDetail2())
+			.setDetail3(getDetail3())
+			.setDomain(new Domain().setId(getDomain()))
+			.setExpensesFixed(getExpensesFixed())
+			.setExpensesPercent(getExpensesPercent())
+			.setInternet(isInternet())
+			.setModificationDate(getModificationDate())
+			.setModificationUser(getModificationUser())
+			.setPackFormatTag(getPackFormatTag())
+			.setPackMeasurement(getPackMeasurement())
+			.setPackMeasurementTag(getPackMeasurementTag())
+			.setPackUnits(getPackUnits().intValue())
+			.setPackUnitsTag(getPackUnitsTag())
+			.setPrice(getPrice())
+			.setProduct(getProduct().toNewProduct())
+			.setProfitPercent(getProfitPercent())
+			.setPurchasePrice(getPurchasePrice())
+			.setSerialDate(getSerialDate())
+			.setSerialNumber(getSerialNumber())
+			.setStatus(ProductStatus.safeValueOf(getStatus()))
+			.setStockUnitTag(getStockUnitTag())
+			;
 	}
 	
 }
