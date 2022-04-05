@@ -9,16 +9,10 @@ import java.util.Date;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProjectHolderDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;

@@ -19,13 +19,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsComputeInfoGridPanel;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsComputeKeyInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfoGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfo;
 import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfo;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsInvoiceIrpfBreakdownGridPanel;
-import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsSalaryIrpfBreakdownGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdownInvoiceGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdownSalaryGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.Model111Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup.IFinishDeclarationPopupCallback;
@@ -871,7 +871,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 							FlowPanel gridContainer = new FlowPanel();
 							Mod111Key key = script.getKeys()[0];
 							JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
-							JsComputeKeyInfoGridPanel grid = new JsComputeKeyInfoGridPanel();
+							JsIRPFComputeKeyInfoGridPanel grid = new JsIRPFComputeKeyInfoGridPanel();
 							grid.setTitle(AON.MSG.calcDetail());
 							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
 							grid.addContent(info);
@@ -893,7 +893,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	
 						@Override
 						public void onSuccess(String result) {
-							JsInvoiceIrpfBreakdownGridPanel grid = new JsInvoiceIrpfBreakdownGridPanel();
+							JsIRPFBreakdownInvoiceGridPanel grid = new JsIRPFBreakdownInvoiceGridPanel();
 							grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
 							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
 							grid.setSubTitle(script.getLabel());
@@ -920,7 +920,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	
 						@Override
 						public void onSuccess(String result) {
-							JsSalaryIrpfBreakdownGridPanel grid = new JsSalaryIrpfBreakdownGridPanel();
+							JsIRPFBreakdownSalaryGridPanel grid = new JsIRPFBreakdownSalaryGridPanel();
 							grid.setTitle("N\u00D3MINAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO "
 									+ getModel().getModelFullName());
 							grid.setSubTitle(script.getLabel());
@@ -953,7 +953,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 							
 							for (int i = 0; i < array.length(); i++) {
 								Mod111Key key = script.getKeys()[i];
-								JsComputeInfoGridPanel grid = new JsComputeInfoGridPanel() {
+								JsIRPFComputeInfoGridPanel grid = new JsIRPFComputeInfoGridPanel() {
 
 									@Override
 									protected String resolveKey(String keyString) {
@@ -986,7 +986,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 					return null;
 				}
 
-				@Override public Void visitModelInvoiceIrpfBreakdown() {
+				@Override 
+				public Void visitModelInvoiceIrpfBreakdown() {
 					return visitInvoice();
 				}
 				
@@ -1013,6 +1014,10 @@ public abstract class Model111Base extends DockLayoutPanel {
 					return null; 
 				}
 				
+				@Override public Void visitModelInVatAccrualInvoice() {return null;}
+				@Override public Void visitModelOutVatAccrualInvoice() {return null;}
+				@Override public Void visitProrratedModelInvoiceVatBreakdown() {return null;}
+				@Override public Void visitModelInvoiceVatBreakdown() {return null;}
 				@Override public Void visitDiffInvoice() {return null;}
 				@Override public Void visitDiffSalary() { return null;}
 				@Override public Void visitNone() { return null; }
@@ -1065,7 +1070,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	}
 	
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
+		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() );
 		identificationData.addValueChangeHandler(event -> {
 			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 			markAsDirty();			

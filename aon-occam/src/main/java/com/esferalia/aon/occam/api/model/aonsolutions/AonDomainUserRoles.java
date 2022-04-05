@@ -6,8 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.DomainJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.UserJSON;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class AonDomainUserRoles extends DomainUserRoles{
 

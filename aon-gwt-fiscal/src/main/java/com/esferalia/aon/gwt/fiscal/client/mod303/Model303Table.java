@@ -116,6 +116,7 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		, RST(AON.MSG.result()		, 100,AON.CSS.aonTextRight())
 	    , ACT(AonStringUtils.EMPTY	, 100,AON.CSS.aonTextCenter())
 	    , VST(AON.MSG.financeStatus(),100,AON.CSS.aonTextCenter())
+	    , ACC(AON.MSG.recordedAbbr() ,20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -192,17 +193,28 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod303.getStatus()) );
 			row.add( statusCell );
 			
+			
+			InlineLabel acc = new InlineLabel();
+			acc.setTitle( AON.MSG.recorded());
+			acc.setStyleName(AON.CSS.aonIconLabel());
+			acc.addStyleName( mod303.isRecorded()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
+			
+			InlineLabel declarationResult = new InlineLabel();
+			if (mod303.getDeclarationResult() != null) {
+				declarationResult.setText(AON.FMT.format(mod303.getDeclarationResult()));
+			}
 			row.addCell( comp , AON.CSS.aonTextCenter())
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod303.getDocument()))
 				.addCell( new InlineLabel(mod303.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod303.getResult())), AON.CSS.aonTextRight())
-				.addCell( new InlineLabel(mod303.getDeclarationType() == null ? "" : mod303.getDeclarationType().getDescription()))
+				.addCell( declarationResult, AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod303.getDeclarationResultType() == null ? "" : mod303.getDeclarationResultType().getDescription()))
 				.addCell( new InlineLabel(
 						(mod303.getFinance() != null && mod303.getFinance().getFinanceStatus() != null)
 							?mod303.getFinance().getFinanceStatus().getDescription()
 							:""
 						), AON.CSS.aonTextCenter())
+				.addCell( acc , AON.CSS.aonTextCenter())
 				;
 		}
 		

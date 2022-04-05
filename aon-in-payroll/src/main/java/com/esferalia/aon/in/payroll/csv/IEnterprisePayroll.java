@@ -6,6 +6,8 @@ import com.esferalia.aon.occam.api.model.type.SalaryType;
 
 public interface IEnterprisePayroll {
 	
+	public Integer getEmployeeId();
+	
 	public Date getStartDate();
 	public Date getEndDate();
 	

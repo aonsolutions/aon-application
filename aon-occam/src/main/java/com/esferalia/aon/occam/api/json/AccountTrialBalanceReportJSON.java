@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountTria
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountTrialBalanceReportToJSON;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 

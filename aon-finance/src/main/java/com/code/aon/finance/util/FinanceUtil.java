@@ -42,7 +42,9 @@ public class FinanceUtil {
 		if (!StringUtils.isEmpty(series)) {
 			documentNumber += series + "/";
 		}
-		documentNumber += StringUtils.leftPad(Integer.toString(number), SeriesNumberUtil.getNumberMinimumLength(), "0");
+		if(number > 0) {
+			documentNumber += StringUtils.leftPad(Integer.toString(number), SeriesNumberUtil.getNumberMinimumLength(), "0");
+		} else documentNumber += "PROFORMA";
 		return documentNumber;
 	}
 

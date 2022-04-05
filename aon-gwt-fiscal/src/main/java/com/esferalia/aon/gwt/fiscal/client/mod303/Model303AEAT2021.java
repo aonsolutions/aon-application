@@ -10,16 +10,16 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2020.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
-import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEAT390nfoScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATAdditionalDataScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATGeneralRegimeScript1;
-import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATGeneralRegimeScript2;
-import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATSimplifiedRegime4TScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATSimplifiedRegimeScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032021AEATResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEAT390nfoScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATGeneralRegimeScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegime4TScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEATSimplifiedRegimeScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032021AEATResultScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model303AEAT2021 extends Model303AEAT {
+class Model303AEAT2021 extends Model303AEAT {
 	
 	private final Model303AEATActivityFarmerTable farmerTable;
 	private final Model303AEATActivityTable activityTable;
@@ -395,6 +395,11 @@ public class Model303AEAT2021 extends Model303AEAT {
 			final AonCustomDialog dialog = new AonCustomDialog();
 			IMod303ActivityCallback activityCallback = new IMod303ActivityCallback() {
 				
+				@Override
+				public Mod303 getMod303() {
+					return getModel();
+				}
+
 				@Override
 				public void onCancel() {
 					dialog.hide();

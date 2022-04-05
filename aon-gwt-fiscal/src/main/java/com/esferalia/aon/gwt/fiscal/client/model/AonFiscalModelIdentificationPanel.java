@@ -38,9 +38,8 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 	private AonTextBox town;
 	private ProvinceListBox province;
 	private AonTextBox zip;
-	
-	public AonFiscalModelIdentificationPanel(T model) {
 
+	public AonFiscalModelIdentificationPanel(T model) {
 		setStyleName(AON.CSS.aonScrollArea());
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonMarginTop());

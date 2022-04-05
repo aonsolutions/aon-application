@@ -21,8 +21,8 @@ public class Mod303ExcelAction extends ModelVAExcelAction<Mod303,Mod303Key> {
 
 	@Override
 	protected String getDeclarationType() {
-		return (model.getDeclarationType()!=null
-				?model.getDeclarationType().getDescription()
+		return (model.getDeclarationResultType()!=null
+				?model.getDeclarationResultType().getDescription()
 				:AonStringUtils.EMPTY);
 	}
 

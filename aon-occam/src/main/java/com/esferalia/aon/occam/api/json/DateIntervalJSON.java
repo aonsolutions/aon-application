@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonDateIntervalFromJSON;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonDateIntervalToJSON;
 import com.esferalia.aon.occam.api.model.DateInterval;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public enum DateIntervalJSON {
 	NAME(

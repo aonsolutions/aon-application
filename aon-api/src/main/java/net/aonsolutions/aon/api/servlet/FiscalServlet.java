@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.PrevMod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -197,13 +198,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 
 					@Override
 					public void visitM303() {
-						Mod303 model = Mod303DAO.getMod303(ctx, id);
+						Mod303 model = PrevMod303DAO.getMod303(ctx, id);
 						model.setDeclarationType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						Mod303DAO.markAsFinishedFromAPI(ctx, model);
+						PrevMod303DAO.markAsFinishedFromAPI(ctx, model);
 					}
 					
 					@Override public void visitM347() {}

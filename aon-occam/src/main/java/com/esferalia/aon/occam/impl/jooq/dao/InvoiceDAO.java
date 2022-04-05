@@ -435,24 +435,24 @@ public class InvoiceDAO {
 				InvoiceDetail detail = invoice.getDetails().get(i);
 				
 				if(InvoiceSource.PURCHASE.equals(detail.getSource())) {
-					PurchaseDetail d = PurchaseDAO.getPurchaseDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId())));
+					PurchaseDetail d = PurchaseDAO.getPurchaseDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+						.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new PurchaseDetail());
 					invoice.getDetails().get(i).setPurchaseDetail(d);
 				} else if(InvoiceSource.SALES.equals(detail.getSource())) {
-					SalesDetail d = SalesDAO.getSalesDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId())));
+					SalesDetail d = SalesDAO.getSalesDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new SalesDetail());
 					invoice.getDetails().get(i).setSalesDetail(d);
 				} else if(InvoiceSource.DELIVERY.equals(detail.getSource())) {
-					DeliveryDetail d = DeliveryDAO.getDeliveryDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId())));
+					DeliveryDetail d = DeliveryDAO.getDeliveryDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new DeliveryDetail());
 					invoice.getDetails().get(i).setDeliveryDetail(d);
 				} else if(InvoiceSource.INCOME.equals(detail.getSource())) {
-					IncomeDetail d = IncomeDAO.getIncomeDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId())));	
+					IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
 					invoice.getDetails().get(i).setIncomeDetail(d);
 				} else if(InvoiceSource.OFFER.equals(detail.getSource())) {
 					OfferDetail d = OfferDAO.getOfferDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
-							.and(f.getIdProperty().eq(detail.getSourceId())));		
+							.and(f.getIdProperty().eq(detail.getSourceId())));
 					invoice.getDetails().get(i).setOfferDetail(d);
 				}
 				

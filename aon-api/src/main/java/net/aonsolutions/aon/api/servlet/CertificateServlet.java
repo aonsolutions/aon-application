@@ -10,10 +10,10 @@ import org.json.JSONArray;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.CertificateJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 
