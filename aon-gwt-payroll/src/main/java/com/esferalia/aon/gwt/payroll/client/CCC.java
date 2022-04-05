@@ -613,14 +613,14 @@ public abstract class CCC extends ResizeComposite {
 		
 		FormPanel formPanel = new FormPanel("_blank");
 		formPanel.setAction(fileDownloadURL);
-		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanel.setMethod(FormPanel.METHOD_GET);
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden("ccc", this.ccc));
 		flowPanel.add(new Hidden("regime", this.regime));
 		flowPanel.add(new Hidden("type", Integer.toString(type)));
-		flowPanel.add(new Hidden("userLogin", Wnd.getCurrentUser()));
-		flowPanel.add(new Hidden("domainName", Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden("login", Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
 		
 		formPanel.add(flowPanel);
 		

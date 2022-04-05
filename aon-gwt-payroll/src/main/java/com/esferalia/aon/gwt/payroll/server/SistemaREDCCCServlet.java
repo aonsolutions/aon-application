@@ -45,18 +45,18 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		// Request Type		
 		// super.doGet(request, response);
 		AonApiData api = initialize(request, false); // Provisional: false para que no compruebe el token
-		String type = api.getData().get("type").toString();
+		String type = api.getData().getString("type");
 		Integer typeIdx = Integer.parseInt(type);
 		RequestType requestType = RequestType.values()[typeIdx];
 		
 		// Enterprise CCC
-		String regime = api.getData().get("regime").toString();
-		String ccc = api.getData().get("ccc").toString();
+		String regime = api.getData().getString("regime");
+		String ccc = api.getData().getString("ccc");
 		Connection connection = null;
 		try {
 			// Domian and User
-			String userLogin = api.getData().get("domain_login").toString();
-			String domainName = api.getData().get("domain_name").toString();
+			String userLogin = api.getData().getString("login");
+			String domainName = api.getData().getString("domain");
 			
 			connection = AonServletUtils.getConnection(domainName);
 			
