@@ -25,6 +25,7 @@ import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getExtraHoursPayment;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getIndemns;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherDeduction;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getOtherDeductions;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getPrestSS;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getSalaries;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayrollFuseBox.getSingleDeductionByType;
@@ -480,6 +481,10 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		PDFDeduction otherDeduction = getOtherDeduction(allDeductions, "5. Otras deducciones");
 		y -= LITTLE_LINE_JUMP;
 		drawDeductionNoPercent(otherDeduction.getDescription().orElse(""), otherDeduction.getAmount().orElse(0d), -10f);
+		
+		List<PDFDeduction> otherDeductions = getOtherDeductions(allDeductions);
+		listDeductions(otherDeductions, false);
+		
 		y -= NORMAL_LINE_JUMP;
 		drawText(contents, deductionTotalTitle, x + 10 + 200, y, BLACK, HELVETICA, FONT_SIZE);
 		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), deductionTotal, BLACK, HELVETICA, FONT_SIZE, 7, 0);
@@ -497,13 +502,25 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		}
 		y -= NORMAL_LINE_JUMP;
 		drawText(contents, "RECIBÍ", x + 10 + 380, y, BLACK, HELVETICA, FONT_SIZE - 1);
-		if (logo.isPresent())
-		{
+		if (logo.isPresent()) {
 			byte[]	 bytes = logo.get().readAllBytes();
 			PdfImage img   = new PdfImage(x + 120, y - 50, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);
 			img.scale(100, 50, ALIGNMENT.CENTER).draw();
 		}
 	}
+	private void listDeductions(List<PDFDeduction> deductions, boolean percent) throws IOException {
+		for (PDFDeduction deduction : deductions) {
+			y -= LITTLE_LINE_JUMP;
+			drawOtherDeduction(deduction.getDescription().orElse(""), deduction.getAmount().orElse(0d), 0f);
+		}
+	}
+	private static float calculateOtherDeductions(float py, List<PDFDeduction> deductions) {
+		for (int i=0; i < deductions.size(); i++) {
+			py -= LITTLE_LINE_JUMP;
+		}
+		return py;
+	}
+
 	private float calculateDeductions(float py) {
 		py -= NORMAL_LINE_JUMP;
 		py -= NORMAL_LINE_JUMP;
@@ -512,12 +529,13 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		py -= LITTLE_LINE_JUMP;
 		py -= LITTLE_LINE_JUMP;
 		py -= LITTLE_LINE_JUMP;
-		py -= LITTLE_LINE_JUMP;		
 		py -= LITTLE_LINE_JUMP;
 		py -= LITTLE_LINE_JUMP;
 		py -= LITTLE_LINE_JUMP;
 		py -= LITTLE_LINE_JUMP;
 		py -= LITTLE_LINE_JUMP;
+		py -= LITTLE_LINE_JUMP;
+		py = calculateOtherDeductions(py, getOtherDeductions(p.getDeductions()));
 		py -= NORMAL_LINE_JUMP;
 		py -= 1;
 		py -= NORMAL_LINE_JUMP;
@@ -533,7 +551,25 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		drawBox(contents, x + 10 + 280 , y - .4f, 40, .8f, BLACK);
 		drawBox(contents, x + 360, y - .4f, 100, .8f, BLACK);
 	}
-
+	
+	private void drawOtherDeductionLine(float indent) throws IOException {
+		PDFToolkit.drawDashedLine(contents, x + 10 + indent, y, 280 - indent, .2f, BLACK, new float[] {.3f, 1f}, 0);
+		drawBox(contents, x + 10 + 280 , y - .4f, 70, .8f, BLACK);
+	}
+	
+	private void drawOtherDeduction(String deductionName, double ccAmount, float indent) throws IOException {
+		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, HELVETICA,
+				FONT_SIZE, LEFT);
+		text.drawCroppableLine();
+		if (ccAmount!= 0) {
+			String entryAmount = toLatinNumber(ccAmount);
+			PdfText amountText = new PdfText(x + 10 + 280, y, 70, FONT_SIZE, contents, entryAmount, BLACK, HELVETICA,
+					FONT_SIZE, RIGHT);
+			amountText.draw();
+		}
+		drawOtherDeductionLine(indent);
+	}
+	
 	private void drawDeduction(String deductionName, double ccPercent, double ccAmount, float indent) throws IOException {
 		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, HELVETICA,
 				FONT_SIZE, LEFT);
