@@ -285,7 +285,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
-		resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		// TODO Habiliatr funcion reset
+		//resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		resetButton.setVisible(false);
+		// -----------------------
 		auditButton.setVisible(!getModel().isNew());
 		newButton.setVisible(!getModel().isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
