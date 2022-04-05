@@ -64,6 +64,10 @@ public class VatContext implements Serializable {
 	private double surchargePercent;
 	private double surchargeQuota;
 
+	private boolean prorrated;
+	private boolean specialProrrate;
+	private double prorratePercent;
+	private double prorrateQuota;
 	
 	private String siiStatus;
 	
@@ -369,6 +373,34 @@ public class VatContext implements Serializable {
 		this.surchargeQuota = surchargeQuota;
 		return this;
 	}
+	public boolean isProrrated() {
+		return prorrated;
+	}
+	public VatContext setProrrated(boolean prorrated) {
+		this.prorrated = prorrated;
+		return this;
+	}
+	public boolean isSpecialProrrate() {
+		return specialProrrate;
+	}
+	public VatContext setSpecialProrrate(boolean specialProrrate) {
+		this.specialProrrate = specialProrrate;
+		return this;
+	}
+	public double getProrratePercent() {
+		return prorratePercent;
+	}
+	public VatContext setProrratePercent(double prorratePercent) {
+		this.prorratePercent = prorratePercent;
+		return this;
+	}
+	public double getProrrateQuota() {
+		return prorrateQuota;
+	}
+	public VatContext setProrrateQuota(double prorrateQuota) {
+		this.prorrateQuota = prorrateQuota;
+		return this;
+	}
 	public Integer getRectificationInvoice() {
 		return rectificationInvoice;
 	}
@@ -381,6 +413,9 @@ public class VatContext implements Serializable {
 	}
 	public boolean isSales() {
 		return (invoiceType == InvoiceType.SALES);
+	}
+	public boolean isNotSales() {
+		return !isSales();
 	}
 	public boolean isPurchase() {
 		return (invoiceType == InvoiceType.PURCHASE);

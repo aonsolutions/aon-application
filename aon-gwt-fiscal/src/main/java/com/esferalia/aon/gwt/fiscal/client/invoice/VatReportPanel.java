@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContext;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.type.Country;

@@ -5,27 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 
 public enum FiscalModelKeyInfo implements Serializable {
-	 MODEL_INVOICE_IRPF_BREAKDOWN {
-		@Override
-		public String getLabel() {
-			return "Ver desglose de retenciones en facturas";
-		}
-		@Override
-		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitModelInvoiceIrpfBreakdown();
-		}
-	}
-	,MODEL_SALARY_IRPF_BREAKDOWN {
-		@Override
-		public String getLabel() {
-			return "Ver desglose de retenciones en facturas";
-		}
-		@Override
-		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitModelSalaryIrpfBreakdown();
-		}
-	}
-	,NONE {
+	 NONE {
 		@Override
 		public String getLabel() {
 			return "Sin informaci\u00F3n";
@@ -35,38 +15,37 @@ public enum FiscalModelKeyInfo implements Serializable {
 			return visitor.visitNone();
 		}
 	}
-	
-	,@Deprecated INVOICE {
+	, MODEL_INVOICE_VAT_BREAKDOWN {
 		@Override
 		public String getLabel() {
-			return "Ver desglose en facturas";
+			return "Ver desglose del IVA en facturas";
 		}
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitInvoice();
+			return visitor.visitModelInvoiceVatBreakdown();
 		}
 	}
-	, IN_ACCRUAL_INVOICE{
+	, MODEL_OUT_VAT_ACCRUAL_INVOICE {
 		@Override
 		public String getLabel() {
-			return "Ver desglose en facturas";
+			return "Ver desglose del IVA en facturas (Criterio de caja)";
 		}
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitInAccrualInvoice();
+			return visitor.visitModelOutVatAccrualInvoice();
 		}
 	}
-	, OUT_ACCRUAL_INVOICE{
+	, MODEL_IN_VAT_ACCRUAL_INVOICE {
 		@Override
 		public String getLabel() {
-			return "Ver desglose en facturas";
+			return "Ver desglose del IVA en facturas (Criterio de caja)";
 		}
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitOutAccrualInvoice();
+			return visitor.visitModelInVatAccrualInvoice();
 		}
 	}
-	,@Deprecated DIFF_INVOICE{
+	,DIFF_INVOICE{
 		@Override
 		public String getLabel() {
 			return "Detalle del c\u00E1lculo por diferencia. Facturas - declarado";
@@ -76,54 +55,34 @@ public enum FiscalModelKeyInfo implements Serializable {
 			return visitor.visitDiffInvoice();
 		}
 	}
-	,@Deprecated DIFF_IN_ACCRUAL_INVOICE{
+	, PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN {
 		@Override
 		public String getLabel() {
-			return "Detalle del c\u00E1lculo por diferencia. Facturas - declarado";
+			return "Ver desglose del IVA en facturas";
 		}
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitDiffInAccrualInvoice();
+			return visitor.visitProrratedModelInvoiceVatBreakdown();
 		}
 	}
-	,@Deprecated DIFF_OUT_ACCRUAL_INVOICE{
+	, MODEL_INVOICE_IRPF_BREAKDOWN {
 		@Override
 		public String getLabel() {
-			return "Detalle del c\u00E1lculo por diferencia. Facturas - declarado";
+			return "Ver desglose de retenciones en facturas";
 		}
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitDiffOutAccrualInvoice();
+			return visitor.visitModelInvoiceIrpfBreakdown();
 		}
 	}
-	,@Deprecated SALARY{
+	, MODEL_SALARY_IRPF_BREAKDOWN {
 		@Override
 		public String getLabel() {
-			return "Ver desglose de retenciones monetarias en n\u00F3minas";
+			return "Ver desglose de retenciones en facturas";
 		}
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitSalary();
-		}
-	}
-	,@Deprecated SALARY_IN_KIND{
-		@Override
-		public String getLabel() {
-			return "Ver desglose de retenciones en especie en n\u00F3minas";
-		}
-		@Override
-		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitSalary();
-		}
-	}
-	,@Deprecated DIFF_SALARY{
-		@Override
-		public String getLabel() {
-			return "Detalle del c\u00E1lculo por diferencia. N\u00F3minas - declarado";
-		}
-		@Override
-		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
-			return visitor.visitDiffSalary();
+			return visitor.visitModelSalaryIrpfBreakdown();
 		}
 	}
 	, COMPUTE{
@@ -184,6 +143,87 @@ public enum FiscalModelKeyInfo implements Serializable {
 		@Override
 		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
 			return visitor.visitCorporate();
+		}
+	}
+	
+	,@Deprecated INVOICE {
+		@Override
+		public String getLabel() {
+			return "Ver desglose en facturas";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitInvoice();
+		}
+	}
+	,@Deprecated IN_ACCRUAL_INVOICE{
+		@Override
+		public String getLabel() {
+			return "Ver desglose en facturas";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitInAccrualInvoice();
+		}
+	}
+	,@Deprecated OUT_ACCRUAL_INVOICE{
+		@Override
+		public String getLabel() {
+			return "Ver desglose en facturas";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitOutAccrualInvoice();
+		}
+	}
+	,@Deprecated DIFF_IN_ACCRUAL_INVOICE{
+		@Override
+		public String getLabel() {
+			return "Detalle del c\u00E1lculo por diferencia. Facturas - declarado";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitDiffInAccrualInvoice();
+		}
+	}
+	,@Deprecated DIFF_OUT_ACCRUAL_INVOICE{
+		@Override
+		public String getLabel() {
+			return "Detalle del c\u00E1lculo por diferencia. Facturas - declarado";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitDiffOutAccrualInvoice();
+		}
+	}
+	,@Deprecated SALARY{
+		@Override
+		public String getLabel() {
+			return "Ver desglose de retenciones monetarias en n\u00F3minas";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitSalary();
+		}
+	}
+	,@Deprecated SALARY_IN_KIND{
+		@Override
+		public String getLabel() {
+			return "Ver desglose de retenciones en especie en n\u00F3minas";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitSalary();
+		}
+	}
+	,@Deprecated DIFF_SALARY{
+		@Override
+		public String getLabel() {
+			return "Detalle del c\u00E1lculo por diferencia. N\u00F3minas - declarado";
+		}
+		@Override
+		public <T> T visit(IFiscalModelKeyInfoVisitor<T> visitor) {
+			return visitor.visitDiffSalary();
 		}
 	}
 	;

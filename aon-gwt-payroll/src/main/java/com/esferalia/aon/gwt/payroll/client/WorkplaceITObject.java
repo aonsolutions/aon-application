@@ -101,48 +101,7 @@ public class WorkplaceITObject {
 	}
 	
 	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-		deleteIT(it, s -> {
-			if(isUserComunica() && it.isComunicate())
-				impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-						itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-							
-							@Override
-							public void onSuccess(EmployeeSegSocial result) {
-								String naf = result.getNss();
-								String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-								String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-								
-								impl.removeIT(
-										regime, 
-										ccc, 
-										naf, 
-										"ALTA", 
-										it.getStartDate(), 
-										it.getStartDate(), 
-										new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										success.accept(result);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										failure.accept(caught);
-									}
-								});
-								
-							}
-	
-							@Override
-							public void onFailure(Throwable caught) {
-							
-							}
-						});
-			else
-				success.accept(null);
-		}, f -> {});
-		
+		deleteIT(it, success::accept, failure::accept);		
 	}
 	
 	// --------------------------------------------------- DataBase Comunic@ Methods

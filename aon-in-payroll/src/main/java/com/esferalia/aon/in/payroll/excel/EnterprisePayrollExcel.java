@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -51,6 +52,7 @@ import org.jooq.SelectConditionStep;
 
 import com.code.aon.person.Person;
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -356,13 +358,13 @@ public class EnterprisePayrollExcel {
 	}
 	
 	public static void enterprisePayrollGeneratorByEmployee (EnterprisePayrollExcelParams params, Date startDate, Date endDate, SalaryType[] salaryFilter, Person ...persons) {
-		List<String> filteredNafs = new LinkedList<>();
+		List<Integer> filteredPersons = new LinkedList<>();
 		List<SalaryType> typesList = Arrays.asList(salaryFilter != null ? salaryFilter : new SalaryType[0]);
 		
 		if (persons != null) {
 			for (Person person : persons) {
-				if (person != null && person.getSocialSecurityNumber() != null)
-					filteredNafs.add(person.getSocialSecurityNumber());
+				if (person != null && person.getId() != null)
+					filteredPersons.add(person.getId());
 			}
 		}
 		
@@ -382,15 +384,15 @@ public class EnterprisePayrollExcel {
 			List<IEnterprisePayroll> payrolls = new LinkedList<>();
 			
 			List<IEnterprisePayroll> rawPayrollList = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).map(IEnterprisePayroll.class::cast).collect(Collectors.toList());
-			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
+			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
 			manageContractDatas(rawPayrollList, contractDataByWorkplace);
 			
 			
 			rawPayrollList.stream().map(EnterprisePayroll.class::cast)
-				.filter(p -> filteredNafs.isEmpty() || filteredNafs.contains(p.getEmployeeNaf()))
-				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeNaf() != null)
+				.filter(p -> filteredPersons.isEmpty() || filteredPersons.contains(p.getEmployeeId()))
+				.filter(p -> (p.getSalaryType() == null || typesList.contains(p.getSalaryType())) && p.getEmployeeId() != null)
 				.forEach(p -> {
-					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> pa.getWorkplace().equals(p.workplace) && pa.getEmployeeNaf().equals(p.getEmployeeNaf())).findFirst();
+					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> pa.getWorkplace().equals(p.workplace) && pa.getEmployeeId().equals(p.getEmployeeId())).findFirst();
 					EnterprisePayroll enterprisePayroll = null;
 					if (optPayroll.isPresent()) {
 						enterprisePayroll = (EnterprisePayroll) optPayroll.get();
@@ -447,7 +449,7 @@ public class EnterprisePayrollExcel {
 			List<IEnterprisePayroll> payrolls = new LinkedList<>();
 			
 			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).collect(Collectors.toList());
-			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
+			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, params.getEnterpriseId(), params.getWorkplaceId());
 			manageContractDatas(rawPayrolls, contractDataByWorkplace);
 			
 			rawPayrolls.stream().map(EnterprisePayroll.class::cast)
@@ -525,7 +527,7 @@ public class EnterprisePayrollExcel {
 			Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData = new LinkedHashMap<>();
 			
 			List<IEnterprisePayroll> rawPayrolls = getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId).collect(Collectors.toList());
-			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
+			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
 			
 			manageContractDatas(rawPayrolls, contractDataByWorkplace);
 			organizeCompletePayrolls(rawPayrolls, completeWorkplaceData, filteredNafs, typesList);
@@ -601,14 +603,14 @@ public class EnterprisePayrollExcel {
 		return false;
 	}
 	
-	private static void manageContractDatas(List<IEnterprisePayroll> payrolls, Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace) {
+	private static void manageContractDatas(List<IEnterprisePayroll> payrolls, Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace) {
 		if (payrolls != null && contractDataByWorkplace != null) {
 			payrolls.forEach(payroll -> {
 				if (payroll.getSalaryType() != null && payroll.getSalaryType().equals(SalaryType.SALARY) && payroll.getWorkplace() != null &&
-					payroll.getEmployeeNaf() != null && contractDataByWorkplace.containsKey(payroll.getWorkplace())) {
-						Map<String, Map<String, List<ContractData>>> contractData = contractDataByWorkplace.get(payroll.getWorkplace());
-						if (contractData.containsKey(payroll.getEmployeeNaf())) {
-							Map<String, List<ContractData>> data = contractData.get(payroll.getEmployeeNaf());
+					payroll.getEmployeeId() != null && contractDataByWorkplace.containsKey(payroll.getWorkplace())) {
+						Map<Integer, Map<String, List<ContractData>>> contractData = contractDataByWorkplace.get(payroll.getWorkplace());
+						if (contractData.containsKey(payroll.getEmployeeId())) {
+							Map<String, List<ContractData>> data = contractData.get(payroll.getEmployeeId());
 							manageFundae(payroll, data);
 						}
 				}
@@ -654,7 +656,7 @@ public class EnterprisePayrollExcel {
 					.filter(p -> p.getSalaryType() == null || p.getSalaryType().ordinal()< SalaryType.L00.ordinal())
 					.collect(Collectors.toList());
 			
-			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
+			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, startDate, endDate, eId, wId);
 			
 			manageContractDatas(payrolls, contractDataByWorkplace);
 			
@@ -706,7 +708,7 @@ public class EnterprisePayrollExcel {
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			
-			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, sDate, eDate, eId, wId);
+			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, sDate, eDate, eId, wId);
 			
 			manageContractDatas(payrolls, contractDataByWorkplace);
 			
@@ -755,7 +757,7 @@ public class EnterprisePayrollExcel {
 			
 			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			
-			Map<String, Map<String, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, sDate, eDate, eId, wId);
+			Map<String, Map<Integer, Map<String, List<ContractData>>>> contractDataByWorkplace = getContractDataByWorkplace(aonContext, sDate, eDate, eId, wId);
 			
 			manageContractDatas(payrolls, contractDataByWorkplace);
 			
@@ -2061,17 +2063,19 @@ public class EnterprisePayrollExcel {
 		cell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
 	}
 
-	public static Map<String/*WORKPLACE*/, Map<String/*SSNUM*/, Map<String/*DATA TYPE*/, List<ContractData>>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
+	public static Map<String/*WORKPLACE*/, Map<Integer/*PERSON REGISTRY*/, Map<String/*DATA TYPE*/, List<ContractData>>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
 		if (startDate == null || endDate == null)
 			return null;
+		
 		
 		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 		
 		SelectConditionStep<Record> query = aonContext.getDslContext()
-		.select(WORKPLACE.DESCRIPTION, PERSON.SOCIAL_SECURITY_NUM, CONTRACT_DATA.asterisk())
+		.select(WORKPLACE.DESCRIPTION, PERSON.SOCIAL_SECURITY_NUM, PERSON.REGISTRY, CONTRACT_DATA.asterisk())
 		.from(CONTRACT)
 		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 		.innerJoin(ENTERPRISE).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE.REGISTRY))
 		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
@@ -2088,7 +2092,7 @@ public class EnterprisePayrollExcel {
 			query = query.and(WORKPLACE.ID.eq(workplaceId));
 		}
 		
-		LinkedHashMap<String, Map<String, Map<String, List<ContractData>>>> contractDataMap = new LinkedHashMap<>();
+		LinkedHashMap<String, Map<Integer, Map<String, List<ContractData>>>> contractDataMap = new LinkedHashMap<>();
 		
 		query.fetchStream()
 		.filter(Objects::nonNull)
@@ -2096,6 +2100,7 @@ public class EnterprisePayrollExcel {
 			//----KEYS----
 			String name = res.get(CONTRACT_DATA.NAME);
 			String ssNum = res.get(PERSON.SOCIAL_SECURITY_NUM);
+			Integer personRegistry = res.get(PERSON.REGISTRY);
 			String workplace = res.get(WORKPLACE.DESCRIPTION);
 			//------------
 			
@@ -2111,19 +2116,22 @@ public class EnterprisePayrollExcel {
 			
 			
 			if (name != null && ssNum != null) {
-				addToContractDataMap(contractDataMap, name, ssNum, workplace, cd);
+				addToContractDataMap(contractDataMap, name, ssNum, personRegistry, workplace, cd);
 			}
 		});
 		
 		return contractDataMap;
 	}
 
-	private static void addToContractDataMap(LinkedHashMap<String, Map<String, Map<String, List<ContractData>>>> contractDataMap,
-			String name, String ssNum, String workplace, ContractData cd) {
+	private static void addToContractDataMap(LinkedHashMap<String, Map<Integer, Map<String, List<ContractData>>>> contractDataMap,
+			String name, String ssNum, Integer personRegistry, String workplace, ContractData cd) {
+		Integer key = personRegistry;
 		if (contractDataMap.containsKey(workplace)) {
-			Map<String, Map<String, List<ContractData>>> contractData = contractDataMap.get(workplace);
-			if (contractData.containsKey(ssNum)) {
-				Map<String, List<ContractData>> employeeData = contractData.get(ssNum);
+			
+			
+			Map<Integer, Map<String, List<ContractData>>> contractData = contractDataMap.get(workplace);
+			if (contractData.containsKey(key)) {
+				Map<String, List<ContractData>> employeeData = contractData.get(key);
 				if (employeeData.containsKey(name)) {
 					employeeData.get(name).add(cd);
 				} else {
@@ -2136,15 +2144,15 @@ public class EnterprisePayrollExcel {
 				LinkedList<ContractData> cdList = new LinkedList<>();
 				cdList.add(cd);						
 				employeeData.put(name, cdList);
-				contractData.put(ssNum, employeeData);
+				contractData.put(key, employeeData);
 			}
 		} else {
-			LinkedHashMap<String, Map<String, List<ContractData>>> contractData = new LinkedHashMap<>();
+			LinkedHashMap<Integer, Map<String, List<ContractData>>> contractData = new LinkedHashMap<>();
 			LinkedHashMap<String, List<ContractData>> employeeData= new LinkedHashMap<>();
 			LinkedList<ContractData> cdList = new LinkedList<>();
 			cdList.add(cd);
 			employeeData.put(name, cdList);
-			contractData.put(ssNum, employeeData);
+			contractData.put(key, employeeData);
 			contractDataMap.put(workplace, contractData);
 		}
 	}
@@ -2164,19 +2172,24 @@ public class EnterprisePayrollExcel {
 		
 		Collection<Integer> ids = new LinkedList<>();
 		Collection<Integer> contractIds = new LinkedList<>();
+		Map<Integer, Integer> salaryPerson = new LinkedHashMap<>();
 		aonContext.getDslContext()
-			.select(SALARY.ID, WORKPLACE.DESCRIPTION)
+			.select(SALARY.ID, SALARY.CONTRACT, WORKPLACE.DESCRIPTION, PERSON.REGISTRY)
 			.from(SALARY)
 			.innerJoin(CONTRACT).onKey()
+			.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 			.innerJoin(WORKPLACE).onKey()
 			.innerJoin(ENTERPRISE).onKey()
 			.where(condition)
-			.fetchStreamInto(SALARY).forEach(sr -> {
-				if (sr != null && sr.getId() != null && sr.getId() > 0) {
-					ids.add(sr.getId());
+			.fetchStream().forEach(sr -> {
+				if (sr != null && sr.get(SALARY.ID) != null && sr.get(SALARY.ID) > 0) {
+					ids.add(sr.get(SALARY.ID));
 				}
-				if (sr != null && sr.getContract() != null && sr.getContract() > 0) {
-					contractIds.add(sr.getContract());			
+				if (sr != null && sr.get(SALARY.CONTRACT) != null && sr.get(SALARY.CONTRACT) > 0) {
+					contractIds.add(sr.get(SALARY.CONTRACT));			
+				}
+				if (sr != null && sr.get(PERSON.REGISTRY) != null && sr.get(PERSON.REGISTRY) > 0) {
+					salaryPerson.put(sr.get(SALARY.ID), sr.get(PERSON.REGISTRY));
 				}
 			});
 
@@ -2186,6 +2199,11 @@ public class EnterprisePayrollExcel {
 		return salaries.filter(s -> s.getSalaryType() != null).map(s -> {
 			
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
+			
+			if (s.getId() != null && s.getId() > 0) {
+				enterprisePayroll.employeeId = salaryPerson.get(s.getId());				
+			}
+			
 			
 			enterprisePayroll.startDate = s.getStartDate();
 			enterprisePayroll.endDate = s.getEndDate();
@@ -3597,6 +3615,8 @@ public class EnterprisePayrollExcel {
 	
 	public static class EnterprisePayroll implements IEnterprisePayroll, Cloneable {
 		
+		protected Integer employeeId;
+		
 		protected Date startDate;
 		protected Date endDate;
 		
@@ -3847,8 +3867,14 @@ public class EnterprisePayrollExcel {
 		}
 		
 		@Override
+		public Integer getEmployeeId() {
+			return employeeId;
+		}
+		
+		@Override
 		protected EnterprisePayroll clone() throws CloneNotSupportedException {
 			EnterprisePayroll cloned = new EnterprisePayroll();
+			cloned.employeeId= this.employeeId;
 			cloned.startDate = this.startDate;
 			cloned.endDate = this.endDate;
 			

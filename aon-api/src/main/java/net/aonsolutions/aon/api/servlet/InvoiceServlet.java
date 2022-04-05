@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
@@ -34,6 +33,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -469,10 +469,16 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONObject invoiceList2JSON(Invoice invoice) {
+		String referenceAux = "";
+		if(!AonStringUtils.isBlank(invoice.getSeries())) {
+			referenceAux = referenceAux + invoice.getSeries() + "/";
+		}
+		referenceAux = referenceAux + "PROFORMA";
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.ID, invoice.getId());
 		json.put(IJsonNames.DATE, invoice.getIssueDate());
-		json.put(IJsonNames.REFERENCE, invoice.getReferenceCode());
+		json.put(IJsonNames.REFERENCE, invoice.getNumber() > 0 
+				? invoice.getReferenceCode() : referenceAux);
 		json.put(IJsonNames.NAME, invoice.getRegistryName());
 		json.put(IJsonNames.TOTAL, invoice.getTotal());
 		json.put(IJsonNames.STATUS, InvoiceStatus.safeValueOf(invoice.getStatus()));

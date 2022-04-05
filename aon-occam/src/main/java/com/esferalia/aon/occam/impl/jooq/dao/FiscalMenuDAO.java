@@ -1,4 +1,4 @@
-	package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
@@ -54,13 +54,13 @@ public class FiscalMenuDAO {
 		}
 		if (params.isMadeModelsVisible()) {
 			IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
-				@Override public void visitM115() {}	// Resolved in visitM111()
-				@Override public void visitM123() {}	// Resolved in visitM111()
-				@Override public void visitM130() {}	// Resolved in visitM111()
-				@Override public void visitM131() {}	// Resolved in visitM111()
-				@Override public void visitM390HF() {}	// Resolved in visitM111()
-				@Override public void visitM202() {}	// Resolved in visitM111()
-				@Override public void visitM303() {}	// Resolved in visitM111()
+				@Override public void visitM115() {	/* Resolved in visitM111() */ }
+				@Override public void visitM123() {	/* Resolved in visitM111() */ }
+				@Override public void visitM130() {	/* Resolved in visitM111() */ }
+				@Override public void visitM131() {	/* Resolved in visitM111() */ }
+				@Override public void visitM390HF() {	/* Resolved in visitM111() */ }
+				@Override public void visitM202() {	/* Resolved in visitM111() */ }
+				@Override public void visitM303() {	/* Resolved in visitM111() */ }
 				
 				@Override 
 				public void visitM111() {
@@ -74,28 +74,7 @@ public class FiscalMenuDAO {
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put );
 				}
-/*
-				@Override 
-				public void visitM115() {
-					com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
-						.map(record -> {
-							FiscalModel fm = com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO.map(record);
-							if (fm.getModel() == FiscalModelType.M390) {
-								fm.setModel(FiscalModelType.M390_HF);
-							}
-							fm.setDomainName(record.get(DOMAIN.DESCRIPTION));
-							return fm;
-						})
-						.filter(fm -> fm.getModel() != FiscalModelType.M390_HF 
-							|| (fm.getModel() == FiscalModelType.M390_HF
-								&& ( params.getModel() == null 
-								  || params.getModel() == FiscalModelType.M390_HF))
-								)
-						.map( FiscalMenuItemJSON::toJSON )
-						.forEach( allModels::put )
-										;
-				}
-*/
+
 				@Override 
 				public void visitM347() {
 					if (params.accept( FiscalModelType.M347 )) {

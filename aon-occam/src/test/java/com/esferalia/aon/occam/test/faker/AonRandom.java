@@ -123,6 +123,13 @@ public class AonRandom {
     public static int getInt( int from, int to) {
     	return number(from, to);
     }
+    
+    public static double getPercent() {
+    	return getDouble(0, 100 , 0);
+    }
+    public static double getPercent( int proecision) {
+    	return getDouble(0, 100 , proecision);
+    }
     public static double getDouble( int from, int to) {
     	return getDouble(from, to , 2);
     }

@@ -17,8 +17,8 @@ import org.mvel2.MVEL;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.IrpfBreakdownJSON;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -37,7 +37,6 @@ public class Mod115InfoDAO {
 	private static final String NONE_INFO = "No hay datos";
 	
 	private Mod115InfoDAO() {
-		
 	}
 	
 	public static String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
@@ -57,6 +56,11 @@ public class Mod115InfoDAO {
 					@Override public String visitTitle() {return visitNone(); }
 					@Override public String visitIrpfActivity() {return visitNone(); }
 					@Override public String visitCorporate() {return visitNone(); }
+					@Override public String visitModelSalaryIrpfBreakdown() {return visitNone(); }
+					@Override public String visitModelInvoiceVatBreakdown() {return visitNone(); }
+					@Override public String visitProrratedModelInvoiceVatBreakdown() {return visitNone(); }
+					@Override public String visitModelOutVatAccrualInvoice() {return visitNone(); }
+					@Override public String visitModelInVatAccrualInvoice() {return visitNone(); }
 					
 					@Override 
 					public String visitNone()    {
@@ -82,14 +86,6 @@ public class Mod115InfoDAO {
 								,new JSONArray()).toString();
 					}
 					
-					@Override 
-					public String visitModelSalaryIrpfBreakdown() {
-						return Objects.requireNonNullElse(
-							getModelSalariesInfo(ctx, mod115,keyDAO)
-								.map( IrpfBreakdownJSON::toJSON)
-								.collect(JSONArray::new,JSONArray::put,JSONArray::put)
-								,new JSONArray()).toString();
-					}
 				})
 			)
 			.findFirst()
@@ -101,11 +97,6 @@ public class Mod115InfoDAO {
 			.filter( br ->  keyDAO.acceptValue(mod115, br));
 	}
 	
-	private static Stream<IrpfBreakdown> getModelSalariesInfo(AONContext ctx, final Mod115 mod115, IMod115KeyDAO keyDAO) {
-		return IRPFDAO.getModelSalaryIrpfBreakdown(ctx, mod115)
-			.filter( br ->  keyDAO.acceptValue(mod115, br));
-	}
-
 	private static class Mod115MVELContext extends LinkedHashMap<String, Object> {
 
 		private static final long serialVersionUID = -8110340552664306400L;

@@ -167,17 +167,47 @@ public class SistemaRED {
 			if (i < 0 || i >= ContractType.values().length) return null;
 			return ContractType.values()[i];
 		}
+		public static ContractType safeValueOf( String i ) {
+			for (ContractType rs : ContractType.values()) {
+				if(i.equalsIgnoreCase(rs.name())) return rs;
+			}
+			return null;
+		}
 	}
 
 
 	// PART TYPE
 	public enum PartType {
-		ALTA, CONFIRMACION, BAJA
+		ALTA, CONFIRMACION, BAJA;
+		public static PartType safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		public static PartType safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= ContractType.values().length) return null;
+			return PartType.values()[i];
+		}
+		public static PartType safeValueOf( String i ) {
+			for (PartType rs : PartType.values()) {
+				if(i.equalsIgnoreCase(rs.name())) return rs;
+			}
+			return null;
+		}
 	}
 
 
 	public enum SituationEmployee {
-		ACTIVO, PERCEPTOR_DE_DESEMPLEO
+		ACTIVO, PERCEPTOR_DE_DESEMPLEO;
+		public static SituationEmployee safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		public static SituationEmployee safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= ContractType.values().length) return null;
+			return SituationEmployee.values()[i];
+		}
 	}
 
 

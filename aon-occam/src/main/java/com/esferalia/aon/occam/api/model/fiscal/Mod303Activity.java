@@ -44,7 +44,7 @@ public class Mod303Activity implements Serializable {
 	private LinkedList<Mod303ActivityModule> modules;
 	
 	public Mod303Activity() {
-		modules = new LinkedList<Mod303ActivityModule>();
+		modules = new LinkedList<>();
 		modules.add(new Mod303ActivityModule());
 		modules.add(new Mod303ActivityModule());
 		modules.add(new Mod303ActivityModule());
@@ -110,8 +110,8 @@ public class Mod303Activity implements Serializable {
 		return emp;
 	}
 
-	public Mod303Activity setEmp(int Emp) {
-		this.emp = Emp;
+	public Mod303Activity setEmp(int emp) {
+		this.emp = emp;
 		return this;
 	}
 
@@ -297,7 +297,7 @@ public class Mod303Activity implements Serializable {
 		this.setCmn(0);
 		this.setCad(0);
 		this.setMaxImport(Double.MAX_VALUE);
-		this.setModules(new LinkedList<Mod303ActivityModule>());
+		this.setModules(new LinkedList<>());
 	}
 
 	public static Mod303Activity clone(Mod303Activity toClone) {
@@ -326,7 +326,7 @@ public class Mod303Activity implements Serializable {
 				.setMaxImport(toClone.getMaxImport())
 				;
 		if (toClone.getModules() != null) {
-			act.setModules( new LinkedList<Mod303ActivityModule>());
+			act.setModules( new LinkedList<>());
 			for (Mod303ActivityModule mod : toClone.getModules()) {
 				act.getModules().add( Mod303ActivityModule.clone(mod) );
 			}

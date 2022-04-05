@@ -20,8 +20,9 @@ public class AonNumberUtils {
 			return false;
 		if (n2 == null)
 			return false;
-		return n1.equals(n2);
+		return Double.compare(n1.doubleValue(), n2.doubleValue()) == 0;
 	}
+	
 	public static boolean notEquals(Number n1, Number n2) {
 		return !equals(n1, n2);
 	}

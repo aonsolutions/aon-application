@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.test.registry.media;
 
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
