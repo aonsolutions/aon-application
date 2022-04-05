@@ -81,8 +81,8 @@ public class Mod303WriterGIPUZKOA2017 implements IMod303Writer{
             ,(wr, mod) -> wr.append(AonFiscalFileUtils.signed(mod.getAmount(Mod303Key.GP_C050),14))     // [50] Cuota Adquisiciones criterio de caja Signo+N13
             ,(wr, mod) -> wr.append(AonFiscalFileUtils.signed(mod.getAmount(Mod303Key.GP_C035),12))     // [35] Resultado Signo+N11 
             ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.GP_C035)>=0?mod.getAmount(Mod303Key.GP_C035):0.0,11))  // [36] A ingresar N11 
-            ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.GP_C035)<0 && mod.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE?mod.getAmount(Mod303Key.GP_C035)*(-1):0.0,11))  // [37] A compensar N11 
-            ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.GP_C035)<0 && mod.getDeclarationType() == FiscalModelDeclarationType.PAYBACK?mod.getAmount(Mod303Key.GP_C035)*(-1):0.0,11))     // [38] A devolver N11
+            ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.GP_C035)<0 && mod.getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE?mod.getAmount(Mod303Key.GP_C035)*(-1):0.0,11))  // [37] A compensar N11 
+            ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.GP_C035)<0 && mod.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK?mod.getAmount(Mod303Key.GP_C035)*(-1):0.0,11))     // [38] A devolver N11
 			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})				
 		;
