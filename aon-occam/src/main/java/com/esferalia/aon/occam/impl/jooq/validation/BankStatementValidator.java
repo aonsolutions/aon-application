@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;

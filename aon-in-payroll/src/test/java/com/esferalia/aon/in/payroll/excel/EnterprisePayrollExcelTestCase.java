@@ -12,7 +12,6 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
-import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Number;
@@ -22,6 +21,7 @@ import com.github.javafaker.Pokemon;
 public class EnterprisePayrollExcelTestCase {
 
 	public static class EnterprisePayroll implements IEnterprisePayroll {
+		private Integer employeeId;
 		private String employee;
 		private String workplace;
 		private SalaryType salaryType;
@@ -267,6 +267,11 @@ public class EnterprisePayrollExcelTestCase {
 			return null;
 		}
 
+		@Override
+		public Integer getEmployeeId() {
+			return employeeId;
+		}
+
 	}
 	
 	@Test
@@ -296,6 +301,7 @@ public class EnterprisePayrollExcelTestCase {
 					enterprisePayroll.salaryType = null;
 				}
 				enterprisePayroll.employee = employee;
+				enterprisePayroll.employeeId = (int) number.randomNumber();
 				enterprisePayroll.raw = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.employeeSS = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.irpf = number.randomDouble(2, 0, 2000);

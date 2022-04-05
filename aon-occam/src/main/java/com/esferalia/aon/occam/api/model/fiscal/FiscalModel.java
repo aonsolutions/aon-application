@@ -109,6 +109,8 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.year = year;
 		return this;
 	}
+	
+	@Override
 	public Finance getFinance() {
 		return finance;
 	}
@@ -362,7 +364,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	
 	public LinkedHashMap<String, FiscalModelDetail> getMap() {
 		if (map == null) {
-			map = new LinkedHashMap<String, FiscalModelDetail>();
+			map = new LinkedHashMap<>();
 		}
 		return map;
 	}
@@ -391,6 +393,12 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		detail.setDescription(description);
 	}
 	
+	public double getAccumulatedAmount(IFiscalModelKey key) {
+		return getAccumulatedAmount(key.getValue());
+	}
+	public double getAccumulatedAmount(String key) {
+		return ensureDetail(key).getAccumulatedAmount();
+	}
 	public double getDeclaredAmount(IFiscalModelKey key) {
 		return getDeclaredAmount(key.getValue());
 	}
@@ -480,8 +488,10 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
+	@Override
 	public boolean isStrictToDeposit() {
-		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT);
+		return (canBeSent() || isSent()) 
+			&& (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT);
 	}
 	
 	public String getModelFullName() {

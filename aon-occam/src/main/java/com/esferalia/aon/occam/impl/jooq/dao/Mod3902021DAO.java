@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.PrevMod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.Mod390toAEATIVA2021;
@@ -614,11 +615,11 @@ public class Mod3902021DAO {
 		mod303.setAdministration(Administration.COMMON_TERRITORY);
 		mod303.setModel( FiscalModelType.M303 );
 		mod303.setPeriod(Period.YEAR);
-		FiscalModel fm  = Mod303DAO.getPreviousModels(ctx,mod303, true)
+		FiscalModel fm  = PrevMod303DAO.getPreviousModels(ctx,mod303, true)
 			.findFirst()
 			.orElse(null);
 		if (fm != null) {
-			mod303 = Mod303DAO.getMod303(ctx, fm.getId());
+			mod303 = PrevMod303DAO.getMod303(ctx, fm.getId());
 			if (mod303 != null) {
 				double reg = mod303.getAmount(Mod303Key.CT_C44);
 				Mod390Detail detail = map.get(Mod3902021DetailKey.C0522);
@@ -911,26 +912,26 @@ public class Mod3902021DAO {
 			.filter(m303 -> m303.getAdministration() == mod390.getAdministration())
 			.forEach(m303 -> {
 				Period period = m303.getPeriod();
-				if (m303.getDeclarationType() == FiscalModelDeclarationType.BANK
-				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
-				 || m303.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT) {
-					mod390.setBox95( AonMathUtils.round(mod390.getBox95() + m303.getResult()));
+				if (m303.getDeclarationResultType() == FiscalModelDeclarationType.BANK
+				 || m303.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
+				 || m303.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT) {
+					mod390.setBox95( AonMathUtils.round(mod390.getBox95() + m303.getDeclarationResult()));
 				} 
 				if ( m303.isEnrolledInDevolutionRegistry()) {
 					mod390.setTaxRefund(true);
 				}
-				if (m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK
-				 || m303.getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT) {
+				if (m303.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
+				 || m303.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT) {
 					if (m303.isEnrolledInDevolutionRegistry()) {
-						mod390.setBox96( AonMathUtils.round(mod390.getBox96() + (m303.getResult() * (-1))));
+						mod390.setBox96( AonMathUtils.round(mod390.getBox96() + (m303.getDeclarationResult() * (-1))));
 					}
 					if (period == Period.M12 || period == Period.T4) {
-						mod390.setBox98( m303.getResult() * (-1));	
+						mod390.setBox98( m303.getDeclarationResult() * (-1));	
 					} 
 				}
-				if (m303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE
+				if (m303.getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE
 				 && (period == Period.M12 || period == Period.T4)) {
-					mod390.setBox97(  AonMathUtils.round( m303.getResult() * (-1) ));
+					mod390.setBox97(  AonMathUtils.round( m303.getDeclarationResult() * (-1) ));
 				}
 				if (m303.isFirstPeriod()) {
 					mod390.setBox85(  m303.getAmount( Mod303Key.CT_C110) );

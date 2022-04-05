@@ -3107,33 +3107,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType,
-			java.util.Date dateBj, java.util.Date dateProcess) {
-		
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			
-			SistemaRED.removeIT(
-					certificate.getCertificate(), 
-					certificate.getPassword(),
-					certificate.getType(), 
-					regime, 
-					ccc, 
-					naf, 
-					SistemaRED.PartType.values()[Integer.parseInt(partType)], 
-					dateBj, 
-					dateProcess);
-			
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
 	public String getContratoSepe(String domainName, String userLogin, String ipf, java.util.Date startDate, java.util.Date endDate) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);

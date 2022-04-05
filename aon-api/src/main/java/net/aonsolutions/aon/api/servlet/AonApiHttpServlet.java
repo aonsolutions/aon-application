@@ -1,14 +1,19 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -90,6 +95,8 @@ public class AonApiHttpServlet extends HttpServlet{
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
 		if(AonStringUtils.isBlank(domainLogin) && api.getData().opt(IConstants.DOMAIN_LOGIN) != null) {
 			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
+		} else if(AonStringUtils.isBlank(domainLogin) && api.getData().opt("userLogin") != null) {
+			domainLogin = api.getData().getString("userLogin");
 		}
 		User user = new User().setLogin("");
 		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
@@ -117,8 +124,9 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	private Domain getDomain(HttpServletRequest req, AonApiData api) {
+		String domainAux = api.getData().has("domainName") ?  api.getData().getString("domainName") : req.getServerName();
 		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
-				? JsonUtils.getString(api.getData(), IConstants.DOMAIN_NAME, req.getServerName()) 
+				? JsonUtils.getString(api.getData(), IConstants.DOMAIN_NAME, domainAux) 
 				: req.getHeader(IConstants.DOMAIN_NAME);
 		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
 				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) 
@@ -218,6 +226,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		}
 	}
 	
+
 	public JSONObject getRequestJSON(HttpServletRequest req){
 		String line = "";
 		StringBuilder bld = new StringBuilder();
@@ -229,12 +238,26 @@ public class AonApiHttpServlet extends HttpServlet{
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 		String s = bld.toString();
+		
 		if(s == null || s.isBlank()){
-			s = "{}";
-		}
-		return new JSONObject(s);
+			return new JSONObject();
+		} else
+			return new JSONObject(s); //return parseParams(s);
 	}
-	
+
+//	private JSONObject parseParams(String paramsStr) {
+//		String[] params = paramsStr.split("&");
+//		JSONObject json = new JSONObject();
+//		for(int i=0; i<params.length; i++) {
+//			try {
+//				String key = params[i].split("=")[0].trim();
+//				String value = params[i].split("=")[1].trim();
+//				json.put(key, value);
+//			} catch (Exception e) {}
+//		}
+//		return json;
+//	}
+
 	public static JSONObject getParamsJSON(ServletRequest req) {
 	    JSONObject jsonObj = new JSONObject();
 	    @SuppressWarnings("unchecked")

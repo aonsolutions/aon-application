@@ -581,6 +581,9 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isNational() {
 		return getTransaction() == InvoiceTransactionType.NATIONAL;
 	}
+	public boolean isNotNational() {
+		return isIntracommunity() || isExtracommunity() || isCanCeuMel();
+	}
 	public boolean isIntracommunity() {
 		return getTransaction() == InvoiceTransactionType.INTRACOMMUNITY;
 	}

@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -46,7 +47,6 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
@@ -494,10 +494,6 @@ public class DomainEnterprisesServiceAsync {
 			String accidentType, String causeType, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.registerITAlta(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee, 
 				licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType, asyncCallback);
-	}
-	
-	public void removeIT(String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.removeIT(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, partType, dateBj, dateProcess, asyncCallback);
 	}
 	
 	public void getContratoSepe(String ipf, Date startDate, Date endDate, AsyncCallback<String> asyncCallback) {

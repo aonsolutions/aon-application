@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountOperatingStatementFromJSON;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountOperatingStatementToJSON;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public enum AccountOperatingStatementJSON {
 	
