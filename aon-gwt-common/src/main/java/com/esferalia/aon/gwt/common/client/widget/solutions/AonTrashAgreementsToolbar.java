@@ -23,10 +23,6 @@ public class AonTrashAgreementsToolbar extends Composite {
 		void onShowTrashMenuButtonClick(ClickEvent event);
 		
 		void onBackButtonClick(ClickEvent event);
-		
-		void onDeletedAgreementsButtonClick(ClickEvent event);
-		
-		void onUnusedAgreementsButtonClick(ClickEvent event);
 	}
 	
 	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
@@ -86,24 +82,6 @@ public class AonTrashAgreementsToolbar extends Composite {
 		Label title = new Label("Papelera Convenios");
 		title.addStyleName(style.title());
 		headerSection.add(title);
-		
-		AonButton deletedAgreementsButton = new AonToolbarButton("Vaciar papelera convenios", AON.CSS.aonIconDeleteForever() );
-		deletedAgreementsButton.addClickHandler(e -> {
-			for(Listener listener : listeners)
-				listener.onDeletedAgreementsButtonClick(e);
-		});
-		toolsSection.add(deletedAgreementsButton);
-		
-		deletedAgreementsButton.ensureDebugId("deletedAgreementsButton");
-		
-		AonButton unusedAgreementsButton = new AonToolbarButton("Eliminar convenios en desuso", AON.CSS.aonIconClean() );
-		unusedAgreementsButton.addClickHandler(e -> {
-			for(Listener listener : listeners)
-				listener.onUnusedAgreementsButtonClick(e);
-		});
-		toolsSection.add(unusedAgreementsButton);
-		
-		unusedAgreementsButton.ensureDebugId("unusedAgreementsButton");
 		
 		AonButton backButton = new AonToolbarButton(AON.MSG.backAction() + " a Convenios", AON.CSS.aonIconBack() );
 		backButton.addClickHandler(e -> {

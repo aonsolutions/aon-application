@@ -650,6 +650,7 @@ class SistemaREDITParts {
 		
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setUseInsecureSSL(true);
 
 			if (Toolkit.isFuture(to))
 				throw new InvalidDateException();

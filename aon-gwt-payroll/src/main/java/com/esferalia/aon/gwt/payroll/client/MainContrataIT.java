@@ -31,6 +31,11 @@ public class MainContrataIT extends MainEntryPoint {
 				f -> {}
 			);
 		}
+		
+		@Override
+		protected List<IT> getITsList() {
+			return mainContrataITObject.getITsList();
+		}
 
 		@Override
 		public boolean isUserComunica() {

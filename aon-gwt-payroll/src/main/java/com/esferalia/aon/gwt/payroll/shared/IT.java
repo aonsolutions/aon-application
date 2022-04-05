@@ -39,6 +39,8 @@ public class IT implements Serializable {
 	private String directPayDate;
 	
 	private String fullName;
+	private Date contractStartDate;
+	private Date contractEndDate;
 	
 	private List<ITPart> itParts;
 	
@@ -179,6 +181,22 @@ public class IT implements Serializable {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public Date getContractStartDate() {
+		return contractStartDate;
+	}
+
+	public void setContractStartDate(Date contractStartDate) {
+		this.contractStartDate = contractStartDate;
+	}
+	
+	public Date getContractEndDate() {
+		return contractEndDate;
+	}
+
+	public void setContractEndDate(Date contractEndDate) {
+		this.contractEndDate = contractEndDate;
 	}
 
 	public Byte getMaternityType() {

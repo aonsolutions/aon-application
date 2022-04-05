@@ -34,6 +34,11 @@ public class EnterpriseIT extends Composite {
 					success::accept, 
 					f -> {});
 		}
+		
+		@Override
+		protected List<IT> getITsList() {
+			return enterpriseITObject.getITsList();
+		}
 
 		@Override
 		public boolean isUserComunica() {
