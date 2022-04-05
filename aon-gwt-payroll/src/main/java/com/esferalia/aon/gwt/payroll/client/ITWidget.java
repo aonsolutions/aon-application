@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
@@ -25,6 +24,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -191,7 +191,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
-	
+
 	// --------------------------------------------------- Variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -242,7 +242,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 	private boolean minimizedByUser;
 
-	private MinimizePanel footPanel;
+	private AonMinimizePanel footPanel;
 
 	private FlowPanel sessionLog;
 	private ResultsPanel resultsPanel;
@@ -270,6 +270,7 @@ public abstract class ITWidget extends ResizeComposite {
 		initFootPanel();
 
 		showResultsPanel();
+		
 	}
 
 	// --------------------------------------------------- TimeLineChart.MouseEventsHandlers
@@ -1897,7 +1898,9 @@ public abstract class ITWidget extends ResizeComposite {
 	private void initFootPanel() {
 		resultsPanel = new ResultsPanel();
 
-		footPanel = new MinimizePanel();
+		footPanel = new AonMinimizePanel();
+		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
+		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
 		footPanel.setStyleName(AON.CSS.aonSelector());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 	
@@ -1910,8 +1913,8 @@ public abstract class ITWidget extends ResizeComposite {
 		tabLayout.setAnimationDuration(300);
 
 		splitLayoutPanel.addSouth(footPanel, 30);
-//		footPanel.clearButtons();
-//		footPanel.addButtonLess();
+		footPanel.clearButtons();
+		footPanel.addButtonLess();
 	}
 
 	
@@ -1927,7 +1930,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private void showResultsPanel() {
 		removeTabs();
-		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.information()+" TGSS", AON.CSS.aonIconHistory()));
+		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab("Resultados ITs", AON.CSS.aonIconTgss()));
 		tabLayout.selectTab(resultsPanel);
 	}
 	
@@ -1993,11 +1996,15 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
 
-	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, MinimizePanel footPanel) {
+	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, AonMinimizePanel footPanel) {
 		this.splitLayoutPanel.remove(this.footPanel);
 		this.footPanel = footPanel;
 		this.tabLayout = tabLayout;
 		this.splitLayoutPanel = splitLayoutPanel;
+	}
+	
+	public void removeFootPanel() {
+		this.splitLayoutPanel.remove(this.footPanel);
 	}
 
 }

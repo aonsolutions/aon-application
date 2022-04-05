@@ -24,12 +24,11 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
@@ -101,7 +100,6 @@ import com.google.gwt.resources.client.CommonResources;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -2399,8 +2397,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onCostsSelected() {
 			employees.getEnterpriseCost(enterprise, o -> getCost().setCostDocuments(o));
-			
-			
 		}
 
 		void onStatsSelected() {
@@ -2438,7 +2434,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	SplitLayoutPanel splitLayoutPanel;
 
 	@UiField
-	MinimizePanel footPanel;
+	AonMinimizePanel footPanel;
+	
 	@UiField
 	TabLayoutPanel footTabPanel;
 
@@ -2600,6 +2597,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		initOpenCloseEmployees();
+			
+		initFootPanel();
+	}
+
+	private void initFootPanel() {
+		logEvent("initFootPanel");
+		footPanel.clearButtons();
+		footPanel.addButtonLess();
+		this.footPanel.addMaximizeHandlerNew(e-> showFootPanel());
+		this.footPanel.addMinimizeHandlerNew(e-> closeFootPanel());
 	}
 	
 	private void initOpenCloseEmployees() {
@@ -3120,28 +3127,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	// ------------------------------------------------------- UiHandler methods
 
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-
-	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
-
-	}
+//	@UiHandler("footPanel")
+//	void onFootMinimize(MinimizeEvent event) {
+//		closeFootPanel();
+//	}
+//
+//	@UiHandler("footPanel")
+//	void onFootMaximize(MaximizeEvent event) {
+//		showFootPanel();
+//	}
 
 	// --------------------------------------------------------- Private methods
 
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
 	private void showFootPanel() {
-		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+	}
+	
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
 	}
 
 	private void showResultsPanel() {
@@ -3241,7 +3244,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		if (enterpriseIT == null) {
 			enterpriseIT = new EnterpriseIT();
 			enterpriseIT.setFooter(splitLayoutPanel, footTabPanel, footPanel);
-		}
+		} 
 		return enterpriseIT;
 	}
 

@@ -21,20 +21,19 @@
 
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+	
 		<g:west size='275'>
-			
 			<payroll:Employees ui:field='employees' extended="true" formers="false"/>
-
-
 		</g:west>
+		
 		<g:center>
 			<aon:DetailPanel ui:field='employeeDetail' />
 		</g:center>
 
 		<g:south size="0">
-			<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
+			<aon:solutions.AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
 				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-			</aon:MinimizePanel>
+			</aon:solutions.AonMinimizePanel>
 		</g:south>
 
 	</g:SplitLayoutPanel>
