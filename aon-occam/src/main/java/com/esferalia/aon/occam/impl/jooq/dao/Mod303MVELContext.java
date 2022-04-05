@@ -19,7 +19,9 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	public Mod303MVELContext(Mod303 mod303) {
 		this.mod303 = mod303;
 	}
-
+	public Mod303 getMod303() {
+		return mod303;
+	}
 	public boolean isLastPeriod() {
 		return this.mod303.getPeriod() == Period.T4 || this.mod303.getPeriod() == Period.M12;
 	}

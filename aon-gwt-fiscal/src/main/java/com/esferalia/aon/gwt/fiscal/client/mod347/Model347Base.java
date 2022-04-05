@@ -2,10 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod347;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -33,7 +33,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model347Base extends DockLayoutPanel {
@@ -546,7 +545,7 @@ abstract class Model347Base extends DockLayoutPanel {
 		// Documento
 		table.setWidget(row, 0, new InlineLabel(AON.MSG.document()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		DocumentTextBox document = new DocumentTextBox();
+		AonDocumentTextBox document = new AonDocumentTextBox();
 		document.setValue(getModel().getDocument());
 		// Modificar el NIF influye en las lineas, ya que los nif que empiezan
 		// por "H", solo cumplimentan el importe total y no los trimestres, si se
@@ -567,7 +566,7 @@ abstract class Model347Base extends DockLayoutPanel {
 		row++;
 		table.setWidget(row, 0, new InlineLabel(AON.MSG.enterpriseName()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		TextBox name = new TextBox();
+		AonTextBox name = new AonTextBox();
 		name.setStyleName(AON.CSS.aonInputText());
 		name.setVisibleLength(45);
 		name.setMaxLength(45);
@@ -586,7 +585,7 @@ abstract class Model347Base extends DockLayoutPanel {
 			row++;
 			table.setWidget(row, 0, new InlineLabel(AON.MSG.contactPhone()));
 			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-			TextBox contactPhone = new TextBox();
+			AonTextBox contactPhone = new AonTextBox();
 			contactPhone.setStyleName(AON.CSS.aonInputText());
 			contactPhone.setMaxLength(9);
 			contactPhone.setVisibleLength(10);
@@ -601,7 +600,7 @@ abstract class Model347Base extends DockLayoutPanel {
 			row++;
 			table.setWidget(row, 0, new InlineLabel(AON.MSG.contactPerson()));
 			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-			TextBox contactPerson = new TextBox();
+			AonTextBox contactPerson = new AonTextBox();
 			contactPerson.setStyleName(AON.CSS.aonInputText());
 			contactPerson.setMaxLength(40);
 			contactPerson.setVisibleLength(30);
@@ -616,7 +615,7 @@ abstract class Model347Base extends DockLayoutPanel {
 			row++;
 			table.setWidget(row, 0, new InlineLabel(AON.MSG.contactMail()));
 			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-			TextBox contactMail = new TextBox();
+			AonTextBox contactMail = new AonTextBox();
 			contactMail.setStyleName(AON.CSS.aonInputText());
 			contactMail.setMaxLength(50);
 			contactMail.setVisibleLength(50);
@@ -632,9 +631,23 @@ abstract class Model347Base extends DockLayoutPanel {
 		if (getModel().getAdministration() != Administration.BIZKAIA
 				&& getModel().getAdministration() != Administration.GIPUZKOA) {
 			row++;
+			table.setWidget(row, 0, new InlineLabel(AON.MSG.receipt()));
+			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+			AonTextBox decNumber = new AonTextBox();
+			decNumber.setStyleName(AON.CSS.aonInputText());
+			decNumber.setMaxLength(13);
+			decNumber.setVisibleLength(13);
+			decNumber.setValue(getModel().getNumber());
+			decNumber.addValueChangeHandler(event -> {
+				getModel().setNumber(decNumber.getValue());
+				markAsDirty();
+			});
+			table.setWidget(row, 1, decNumber);
+
+			row++;
 			table.setWidget(row, 0, new InlineLabel(AON.MSG.previousDeclaration()));
 			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-			TextBox replaced = new TextBox();
+			AonTextBox replaced = new AonTextBox();
 			replaced.setStyleName(AON.CSS.aonInputText());
 			replaced.setMaxLength(13);
 			replaced.setVisibleLength(13);
@@ -654,7 +667,7 @@ abstract class Model347Base extends DockLayoutPanel {
 			row++;
 			table.setWidget(row, 0, new InlineLabel("NIF Representante Legal"));
 			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-			DocumentTextBox representativeDocument = new DocumentTextBox();
+			AonDocumentTextBox representativeDocument = new AonDocumentTextBox();
 			representativeDocument.setValue(getModel().getRepresentativeDocument());
 			representativeDocument.setMaxLength(9);
 			representativeDocument.addValueChangeHandler(event -> {

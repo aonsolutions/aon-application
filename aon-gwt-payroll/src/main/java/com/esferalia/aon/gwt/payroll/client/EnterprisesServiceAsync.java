@@ -185,8 +185,6 @@ public interface EnterprisesServiceAsync {
 			String situation_employee, String licenseNumber, String cias, Date fbaja,
 			Date falta, Date fATEP, String accidentType, String causeType,
 			AsyncCallback<Void> asyncCallback);
-	void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess,
-			AsyncCallback<Void> asyncCallback);
 	void getEmployeeInfo(String currentDomainName, Integer contractId,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 	void getContratoSepe(String currentDomainName, String currentUser, String ipf, Date startDate, Date endDate,

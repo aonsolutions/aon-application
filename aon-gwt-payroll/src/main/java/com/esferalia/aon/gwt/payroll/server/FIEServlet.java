@@ -280,8 +280,6 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		public void setCancel(boolean cancel) {
 			this.cancel = cancel;
 		}
-		
-		
 	}
 	
 	private static class Fie2AON implements FieListener {
@@ -363,7 +361,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			// N=no se acredita carencia;
 			// P=consulta la Dirección Provincial del INSS
 			switch (deficiencyIndicator) {
-			case "S":
+			case "N":
 				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
 				break;
 			default:
@@ -587,8 +585,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 					r.setDomain(contractRecord.getDomain());
 					return r;
 				});
-				;
-				
+	
 				// Create Contract Leave Detail
 				
 				ctx.insertInto(CONTRACT_LEAVE_DETAIL)
@@ -616,10 +613,7 @@ public class FIEServlet extends HttpServlet implements FIEService {
 	
 	public static ContractRecord getContract(DSLContext ctx, Integer domainId, IT it) {
 		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
-		java.sql.Date itEndDate = it.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
-		
-		return ctx
-				.select()
+		return ctx.select()
 				.from(REGISTRY)
 				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
@@ -632,34 +626,5 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				.orderBy(CONTRACT.ID.desc())
 				.fetchOptionalInto(CONTRACT)
 				.orElseThrow(() -> new EmployeeNotFoundexception() );
-		
-//		return ctx
-//		.select()
-//		.from(REGISTRY)
-//		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-//		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-//		.innerJoin(ENTERPRISE_CCC).onKey()
-//		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
-//		.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-//		.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-//		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-//		.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
-//		.fetchOptionalInto(CONTRACT)
-//		.orElseGet(() -> 			
-//				ctx
-//				.select()
-//				.from(REGISTRY)
-//				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-//				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-//				.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
-//				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
-//				.where(DOMAIN.PARENT.eq(domainId))
-//				.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-//				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-//				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-//				.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
-//				.fetchOptionalInto(CONTRACT)
-//				.orElseThrow(() -> new EmployeeNotFoundexception() ) 
-//		);
 	}
 }

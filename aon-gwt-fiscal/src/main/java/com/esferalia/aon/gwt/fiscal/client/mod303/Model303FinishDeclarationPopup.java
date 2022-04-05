@@ -63,25 +63,25 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonFontLarger());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonPaddingRight());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-		tab.setWidget(row, 1, new Label( AON.FMT.format(mod303.getResult())));
+		tab.setWidget(row, 1, new Label( AON.FMT.format(mod303.getDeclarationResult())));
 		row++;
 
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.declarationType()));
 		
 		// SIN ACTIVIDAD!!!
-		if (mod303.getDeclarationType() == FiscalModelDeclarationType.NEGATIVE
-		 || (mod303.getDeclarationType() == FiscalModelDeclarationType.COMPENSATE && mod303.getPeriod() != Period.T4 && mod303.getPeriod() != Period.M12)) {
+		if (mod303.getDeclarationResultType() == FiscalModelDeclarationType.NEGATIVE
+		 || (mod303.getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE && mod303.getPeriod() != Period.T4 && mod303.getPeriod() != Period.M12)) {
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonTextCenter());
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-			tab.setWidget(row, 1, new Label( mod303.getDeclarationType().getDescription() ));	
+			tab.setWidget(row, 1, new Label( mod303.getDeclarationResultType().getDescription() ));	
 			row++;
 		} else {
 			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getDomainName(),callback.getOptions().getDomain(),callback.getOptions().getUser());
 			final AonIbanTextBox iban = new AonIbanTextBox( new BanksSuggestOracle(callback) );
 			final ListBox listBox = new ListBox();
 			listBox.setSelectedIndex(0);
-			if (AonMathUtils.isLessThanZero(mod303.getResult()) ) {
+			if (AonMathUtils.isLessThanZero(mod303.getDeclarationResult()) ) {
 				listBox.addItem(FiscalModelDeclarationType.PAYBACK.getDescription(), FiscalModelDeclarationType.PAYBACK.getValue());
 				if (mod303.isAEAT()) {
 					listBox.addItem(FiscalModelDeclarationType.PAYBACK_CCT.getDescription(), FiscalModelDeclarationType.PAYBACK_CCT.getValue());
@@ -96,7 +96,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 			}
 			listBox.addChangeHandler( event -> {
 				FiscalModelDeclarationType type = FiscalModelDeclarationType.safeValueOf(listBox.getSelectedValue());
-				mod303.setDeclarationType( type );
+				mod303.setDeclarationResultType( type );
 				iban.setEnabled( type.isBankRequired() );
 				creditorBox.setEnabled(type.mustCreateFinance());
 			});

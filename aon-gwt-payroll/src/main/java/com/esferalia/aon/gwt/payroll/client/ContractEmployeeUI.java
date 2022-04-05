@@ -322,6 +322,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			contrataEmployeeObject.setEmployeeBankAlias(bankAlias);
 			contrataEmployeeObject.setEmployeeBIC(bankSwift);
 		}
+
+		@Override
+		public void fireError(String title, String message) {
+			showError2(title, message);
+		}
 	}
 
 	// ------------------------------------------------- UiFields
@@ -344,9 +349,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		initWidget(uiBinder.createAndBindUi(this));
 		setDefaultEmployeeView();
 	}
-	
+
 	// ------------------------------------------------- Init preView
-	
+
 	private void setDefaultEmployeeView() {
 		employee.hideClearEmployee();
 	}
@@ -701,6 +706,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		return employee.checkSaveAndGetErrors();
 	}
 
+	public void showError2(String title, String message) {
+		showErrorMessage(title, message);
+	}
+	
 	// ------------------------------------------------- Getters
 	
 	public Date getStartDate() {
@@ -737,5 +746,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract MenuItem getTaEnd();
 	protected abstract MinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
+	protected abstract void showErrorMessage(String title, String message);
 	
 }

@@ -10,75 +10,16 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 
 public class Page03 extends PageAbs {
 
-//	private FlexTable table;
-//	private FlowPanel basePanel;
-	
 	public Page03( Model200PageCallback callback ) {
 		super(callback);
-		
-//		ScrollPanel container = new ScrollPanel();
-//		container.setStyleName(AON.AON_CSS.aonScrollArea());
-//		FlowPanel baseContainerPanel = new FlowPanel();
-//		baseContainerPanel.setStyleName(AON.AON_CSS.aonFiscalContainer());
-//		
-//		FlowPanel groupPanel= new FlowPanel();
-//		groupPanel.setStyleName(AON.AON_CSS.aonGroup());
-//			
-//				FlowPanel groupHeaderPanel = new FlowPanel();
-//				groupHeaderPanel.setStyleName(AON.AON_CSS.aonGroupTitle());
-//				groupHeaderPanel.add (new InlineLabel(AON.MSG.balanceActivo())); 
-//				groupPanel.add(groupHeaderPanel);
-//				
-//				FlowPanel groupBodyPanel = new FlowPanel();
-//				groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
-//				table = new FlexTable();
-//				groupBodyPanel.add(table);
-//				groupPanel.add(groupBodyPanel);
-//		
-//		baseContainerPanel.add(groupPanel);	
-//		container.add(baseContainerPanel);
-//		initWidget(container);
-		
-//		ScrollPanel scroll = new ScrollPanel();
-//		basePanel = new FlowPanel();
-//		scroll.add(basePanel);
-//		initWidget(scroll);
-		
 		addBasePanel();
-		
 		initializeTable();
-		
 	}
 	
 	@Override
-	protected void initializeTable() {
-		
+	protected void initializeTable() {		
 		basePanel.clear();		
-//		basePanel.add(getTitle(AON.MSG.balanceActivo()));
-
-//		FlexTable table = new FlexTable();
-////		table.setWidth("100%");
-//		table.setCellSpacing(0);
-//		table.addStyleName(AON.CSS.aonWidthAlmostAll());
-////		table.addStyleName(AON.CSS.aonMargin());
-//		table.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(table);
-//		
-//		ColumnFormatter cf = table.getColumnFormatter();
-//		cf.setWidth(1, "200px");
-		
-//		FlexTable table = getTable();
-//		basePanel.add(table);
-//
-//		int row = 0;
-//		for (Mod2002020Key key : Mod2002020Constants.BALANCE_ACTIVE_KEYS) {
-//			if (callback.getMod200Object().isVisible(key) ) {
-//				row = paintKey(table, key, row);
-//			}
-//		}
-		
-		addTable(AON.MSG.balanceActivo(), Mod2002020Constants.BALANCE_ACTIVE_KEYS);
-		
+		addTable(AON.MSG.balanceActivo(), Mod2002020Constants.BALANCE_ACTIVE_KEYS);		
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -95,7 +96,6 @@ public class InvoiceFaker {
 		}
 		invoice.setSurcharge(false);
 		invoice.setWithholding( params.getWithholding() != null );
-		invoice.setService(false);
 	}
 	
 	private static enum InvoiceFakerTypes {
@@ -124,11 +124,47 @@ public class InvoiceFaker {
 				return InvoiceFaker.fill(params, invoice);
 			}
 		},
-		// Compra Nacional
+		// Venta Nacional Criterio de caja
+		SALES_NATIONAL_ACCRUAL_PAYMENT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setVatAccrualPayment(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Nacional 
 		PURCHASE_NATIONAL {
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Nacional Criterio de caja
+		PURCHASE_NATIONAL_ACCRUAL_PAYMENT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setVatAccrualPayment(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Intracomunitaria
+		PURCHASE_INTRACOMMUNITY {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+				invoice.setVatImportation(false);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra ISP
+		PURCHASE_ISP {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.OTHER_ISP);
+				invoice.setVatImportation(false);
 				return InvoiceFaker.fill(params, invoice);
 			}
 		},
@@ -176,6 +212,15 @@ public class InvoiceFaker {
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
 				InvoiceFaker.fill(params, invoice);
 				return invoice;
+			}
+		},
+		// Gasto Nacional Criterio de caja
+		EXPENSES_NATIONAL_ACCRUAL_PAYMENT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setVatAccrualPayment(true);
+				return InvoiceFaker.fill(params, invoice);
 			}
 		},
 		// Gasto nacional con retención. Se debe suministrar en 
@@ -299,10 +344,47 @@ public class InvoiceFaker {
 	}
 	
 	public static Invoice fill( InvoiceFakerParams params , Invoice invoice) {
+		checkInvoice( invoice );
 		invoice.setDetails( getInvoiceDetails(params, invoice ));
 		calculate(invoice);
 		invoice.setFinances(FinanceDAO.getFinancesForInvoice(params.getCtx(), invoice));
 		return invoice;
+	}
+
+	private static void checkInvoice(Invoice invoice) {
+		invoice.getTransaction().visit( new IInvoiceTransactionTypeVisitor() {
+			
+			@Override
+			public void visitOtherISP() {
+				invoice.setVatImportation(false);
+				invoice.setWithholdingFarmer(false);
+			}
+			
+			@Override
+			public void visitNational() {
+				invoice.setVatImportation(false);
+			}
+			
+			@Override
+			public void visitIntracommunity() {
+				invoice.setVatImportation(false);
+				invoice.setWithholdingFarmer(false);
+				invoice.setVatAccrualPayment(false);
+			}
+			
+			@Override
+			public void visitExtracommunity() {
+				invoice.setWithholdingFarmer(false);
+				invoice.setVatAccrualPayment(false);
+			}
+			
+			@Override
+			public void visitCanCeuMel() {
+				invoice.setWithholdingFarmer(false);
+				invoice.setVatAccrualPayment(false);
+			}
+		});
+		
 	}
 
 	private static LinkedList<InvoiceDetail> getInvoiceDetails(InvoiceFakerParams params, Invoice invoice) {
@@ -350,7 +432,10 @@ public class InvoiceFaker {
 			.setBase(detail.getTaxableBase())
 			.setPercentage( witholding.getPercentage())
 			.setSurcharge(0.0)
-			.setDeductiblePercent(getDeductiblePercent( AonRandom.number(0, 80)))
+			.setDeductiblePercent( 
+				(invoice.isNotNational() || invoice.isSales())
+					? 0.0 
+					: getDeductiblePercent( AonRandom.number(0, 80)))
 			.setWithholdingType(witholding.getWithholdingType());
 			;
 		;

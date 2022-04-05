@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
@@ -44,6 +45,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -55,6 +57,8 @@ import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEnterpriseSalaryBuilder {
 	
@@ -107,15 +111,15 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		
 		if (persons != null && persons.length > 0) {
-			Set<String> ssNumbers = new LinkedHashSet<>();
+			Set<Integer> personIds = new LinkedHashSet<>();
 			for (Person person : persons) {
-				if (person != null && person.getSocialSecurityNumber() != null && !person.getSocialSecurityNumber().isEmpty()) {
-					ssNumbers.add(person.getSocialSecurityNumber());
+				if (person != null && person.getId() != null && person.getId() > 0) {
+					personIds.add(person.getId());
 				}
 			}
 			
-			if (!ssNumbers.isEmpty()) {
-				condition = condition.and(SALARY.SOCIAL_SECURITY_NUMBER.in(ssNumbers));
+			if (!personIds.isEmpty()) {
+				condition = condition.and(PERSON.REGISTRY.in(personIds));
 			}
 			
 		}
@@ -417,17 +421,29 @@ public class JooqEnterpriseSalaryBuilder {
 	}
 	
 	
-	public static Map<Integer/*WORKPLACE*/, Map<String/*SSNUM*/, Map<String/*DATA TYPE*/, List<ContractData>>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
+	public static Map<Integer/*WORKPLACE*/, Map<String/*EMPLOYEEID*/, Map<String/*DATA TYPE*/, List<ContractData>>>> getContractDataByWorkplace(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
 		if (startDate == null || endDate == null)
 			return null;
 		
 		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 		
+		if ((enterpriseId == null || enterpriseId <= 0) && workplaceId != null && workplaceId > 0) {
+			try {				
+				enterpriseId = aonContext.getDslContext()
+						.select(WORKPLACE.ENTERPRISE)
+						.from(WORKPLACE)
+						.where(WORKPLACE.ID.eq(workplaceId))
+						.fetchOneInto(WORKPLACE)
+						.getEnterprise();
+			} catch (Exception e) {}
+		}
+		
 		SelectConditionStep<Record> query = aonContext.getDslContext()
-		.select(WORKPLACE.ID, PERSON.SOCIAL_SECURITY_NUM, CONTRACT_DATA.asterisk())
+		.select(WORKPLACE.ID, PERSON.SOCIAL_SECURITY_NUM, PERSON.REGISTRY, REGISTRY.DOCUMENT, CONTRACT_DATA.asterisk())
 		.from(CONTRACT)
 		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(REGISTRY).on(REGISTRY.ID.eq(PERSON.REGISTRY))
 		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 		.innerJoin(ENTERPRISE).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE.REGISTRY))
 		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
@@ -452,6 +468,8 @@ public class JooqEnterpriseSalaryBuilder {
 			//----KEYS----
 			String name = res.get(CONTRACT_DATA.NAME);
 			String ssNum = res.get(PERSON.SOCIAL_SECURITY_NUM);
+			String document = res.get(REGISTRY.DOCUMENT);
+			String employeeId = AonNumberUtils.toString(res.get(PERSON.REGISTRY));
 			Integer workplace = res.get(WORKPLACE.ID);
 			//------------
 			
@@ -467,7 +485,7 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			
 			if (name != null && ssNum != null) {
-				addToContractDataMap(contractDataMap, name, ssNum, workplace, cd);
+				addToContractDataMap(contractDataMap, name, ssNum, document, employeeId, workplace, cd);
 			}
 		});
 		
@@ -475,11 +493,14 @@ public class JooqEnterpriseSalaryBuilder {
 	}
 	
 	private static void addToContractDataMap(LinkedHashMap<Integer, Map<String, Map<String, List<ContractData>>>> contractDataMap,
-			String name, String ssNum, Integer workplace, ContractData cd) {
+			String name, String ssNum, String document, String personId, Integer workplace, ContractData cd) {
+		
+		String key = /*!AonStringUtils.isEmpty(ssNum) ? ssNum : document*/personId;
+		
 		if (contractDataMap.containsKey(workplace)) {
 			Map<String, Map<String, List<ContractData>>> contractData = contractDataMap.get(workplace);
-			if (contractData.containsKey(ssNum)) {
-				Map<String, List<ContractData>> employeeData = contractData.get(ssNum);
+			if (contractData.containsKey(key)) {
+				Map<String, List<ContractData>> employeeData = contractData.get(key);
 				if (employeeData.containsKey(name)) {
 					employeeData.get(name).add(cd);
 				} else {
@@ -492,7 +513,7 @@ public class JooqEnterpriseSalaryBuilder {
 				LinkedList<ContractData> cdList = new LinkedList<>();
 				cdList.add(cd);						
 				employeeData.put(name, cdList);
-				contractData.put(ssNum, employeeData);
+				contractData.put(key, employeeData);
 			}
 		} else {
 			LinkedHashMap<String, Map<String, List<ContractData>>> contractData = new LinkedHashMap<>();
@@ -500,7 +521,7 @@ public class JooqEnterpriseSalaryBuilder {
 			LinkedList<ContractData> cdList = new LinkedList<>();
 			cdList.add(cd);
 			employeeData.put(name, cdList);
-			contractData.put(ssNum, employeeData);
+			contractData.put(key, employeeData);
 			contractDataMap.put(workplace, contractData);
 		}
 	}
@@ -649,12 +670,13 @@ public class JooqEnterpriseSalaryBuilder {
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<>());
 			
 			String key  = String.format("%s-%s-%3$td", 
-			r.get(SALARY.SOCIAL_SECURITY_NUMBER), 
+			/*!AonStringUtils.isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(SALARY.SOCIAL_SECURITY_NUMBER) : r.get(SALARY.EMPLOYEE_DOCUMENT)*/r.get(PERSON.REGISTRY), 
 			getSalaryTypeKey(salaryType),
 			r.get(SALARY.END_DATE)
 			);
 			
-			map.get(r.get(WORKPLACE.DESCRIPTION)).put(key, entry);
+			Map<String, EnterprisePayrollEntry> eMap = map.get(r.get(WORKPLACE.DESCRIPTION));
+			eMap.put(key, entry);
 			
 		});
 			
@@ -669,6 +691,7 @@ public class JooqEnterpriseSalaryBuilder {
 		ctx.select()
 		.from(SALARY)
 		.innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 		.innerJoin(ENTERPRISE).onKey()
 		.innerJoin(SALARY_BONUS).on(SALARY.ID.eq(SALARY_BONUS.SALARY))
@@ -680,6 +703,7 @@ public class JooqEnterpriseSalaryBuilder {
 		ctx.select()
 		.from(SALARY)
 		.innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+		.innerJoin(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 		.innerJoin(ENTERPRISE).onKey()
 		.innerJoin(SALARY_DEDUCTION).on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY))
@@ -772,7 +796,7 @@ public class JooqEnterpriseSalaryBuilder {
 			if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<>());
 			
-			String key  = r.get(SALARY.SOCIAL_SECURITY_NUMBER);
+			String key  = AonNumberUtils.toString(r.get(PERSON.REGISTRY));
 			
 			if (map.get(r.get(WORKPLACE.DESCRIPTION)).containsKey(key)) {
 				
@@ -950,8 +974,8 @@ public class JooqEnterpriseSalaryBuilder {
 
 	private static void manageContractDatas(EnterprisePayrollEntry entry,
 			Map<Integer, Map<String, Map<String, List<ContractData>>>> contractDatas, Record r) {
-		if (r.get(SALARY.TYPE) != null && r.get(SALARY.TYPE).equals((byte)SalaryType.SALARY.ordinal()) && contractDatas.containsKey(r.get(WORKPLACE.ID)) && contractDatas.get(r.get(WORKPLACE.ID)).containsKey(r.get(PERSON.SOCIAL_SECURITY_NUM))) {
-			Map<String, List<ContractData>> fundaeData = contractDatas.get(r.get(WORKPLACE.ID)).get(r.get(PERSON.SOCIAL_SECURITY_NUM));
+		if (r.get(SALARY.TYPE) != null && r.get(SALARY.TYPE).equals((byte)SalaryType.SALARY.ordinal()) && contractDatas.containsKey(r.get(WORKPLACE.ID)) && contractDatas.get(r.get(WORKPLACE.ID)).containsKey(AonNumberUtils.toString(r.get(PERSON.REGISTRY)))) {
+			Map<String, List<ContractData>> fundaeData = contractDatas.get(r.get(WORKPLACE.ID)).get(AonNumberUtils.toString(r.get(PERSON.REGISTRY)));
 			if (fundaeData.containsKey(FUNDAE)) {
 				List<ContractData> fundaeList = fundaeData.get(FUNDAE) != null ? fundaeData.get(FUNDAE) : Collections.emptyList();
 				Date salaryStart = r.get(SALARY.START_DATE); //NOT NULL FIELD

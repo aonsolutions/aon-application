@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -114,10 +115,19 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 			.addCell( new Label( numberValue ))
 			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
 			.addCell( new Label( invoice.getDocumentNumber()))
+			.addCell( new Label(AON.MSG.taxDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())
+			.addCell( new Label(AON.DATE_FORMAT.format(invoice.getTaxDate())),AON.CSS.aonWidth150())
+			.addCell( new Label() , AON.CSS.aonWidthAuto())
+		;
+		tab.addRow()
+			.addCell( new Label())
+			.addCell( new Label())
+			.addCell( new Label())
+			.addCell( new Label())
 			.addCell( new Label(AON.MSG.invoiceTotal()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
 			.addCell( new Label(AON.FMT.format( invoice.getTotal())),AON.CSS.aonBold(),AON.CSS.aonFontLarger())
 			.addCell( new Label() , AON.CSS.aonWidthAuto())
-		;
+	;
 		headerContainer.add(tab);
 		container.add(headerContainer);
 	}
@@ -129,7 +139,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		detailsContainer.setStyleName(AON.CSS.aonBorderBottom());
 		detailsContainer.addStyleName(AON.CSS.aonMarginTop());
 		detailsContainer.addStyleName(AON.CSS.aonPadding());
-		AonDisplayTable tab = new AonDisplayTable();
+		AonDisplayGrid tab = new AonDisplayGrid();
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		tab.addHeaderRow()
@@ -169,7 +179,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		breakdownContainer.addStyleName(AON.CSS.aonBorderBottom());
 		breakdownContainer.addStyleName(AON.CSS.aonPadding());
 		if (!invoice.getBreakdown().isEmpty()) {
-			AonDisplayTable tab = new AonDisplayTable();
+			AonDisplayGrid tab = new AonDisplayGrid();
 			tab.addStyleName(AON.CSS.aonBlockRight());
 			tab.addHeaderRow()
 				.addCell(new Label( ), AON.CSS.aonWidth100())
@@ -205,7 +215,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		financesContainer.addStyleName(AON.CSS.aonBorderBottom());
 		financesContainer.addStyleName(AON.CSS.aonPadding());
 		if (invoice.getFinances() != null && !invoice.getFinances().isEmpty()) {
-			AonDisplayTable tab = new AonDisplayTable();
+			AonDisplayGrid tab = new AonDisplayGrid();
 			tab.addStyleName(AON.CSS.aonBlockRight());
 			tab.addHeaderRow()
 				.addCell(new Label( AON.MSG.dueDate()), AON.CSS.aonWidth150())

@@ -62,4 +62,8 @@ public class AonDateUtils {
 		}
 		return b == null ? -1 : a.compareTo(b);
 	}
+
+	public static Date fromLong(String asLong) {
+		return new Date( Long.valueOf(asLong) );
+	}
 }

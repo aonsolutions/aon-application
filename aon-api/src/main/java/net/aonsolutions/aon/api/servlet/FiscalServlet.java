@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
@@ -197,13 +197,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 
 					@Override
 					public void visitM303() {
-						Mod303 model = Mod303DAO.getMod303(ctx, id);
-						model.setDeclarationType(declarationType);
+						Mod303 model = Mod303DAO.get(ctx, id);
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						Mod303DAO.markAsFinishedFromAPI(ctx, model);
+						Mod303DAO.markAsFinished(ctx, model);
 					}
 					
 					@Override public void visitM347() {}

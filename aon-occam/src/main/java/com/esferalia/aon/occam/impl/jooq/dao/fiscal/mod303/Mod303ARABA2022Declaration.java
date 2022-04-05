@@ -11,10 +11,11 @@ import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303ARABA2022Declaration extends Mod303Declaration {
+class Mod303ARABA2022Declaration extends Mod303ARABA {
 	
 	protected Mod303ARABA2022Declaration() {
 		
@@ -28,7 +29,7 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAraba() && mod.getYear() >= 2022;
+		return  mod.isAraba() && mod.getYear() > 2021;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032
@@ -37,6 +38,7 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 	
 	private enum Mod303KeyDAO implements IMod303KeyDAO {
 		 AR_C907	(Mod303Key.AR_C907)
+	    ,AR_C930	(Mod303Key.AR_C930)
 		,CM_002(Mod303Key.CM_002,null,null,(ctx,mod) -> add(Mod303Key.CM_002,mod,(
 				 AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE))?1:0),null,null)
 		,CM_003		(Mod303Key.CM_003)
@@ -242,7 +244,7 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 		
 		// Rectificacion de deducciones
 		,AR_C046	(Mod303Key.AR_C046
-			,(mod,vat) -> rectificDeduccionesFilter(vat,mod)
+			,(mod,vat) -> rectificationDeduccionesFilter(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C046,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -297,27 +299,26 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 				}
 			}
 			,null
-			,
-			 "@if{ mod.isFirstPeriod() }"
+			,"{messages : ["
+			+"@if{ mod.isFirstPeriod() }"
 				+"@code{c140Key='"+ Mod390Key.AR_C140.getValue() +"';}"
-				+"<li>Declaraciones del modelo 390 del ejercicio anterior:<ul style=\"padding-left: 20px;\">" 
+				+ "\"Declaraciones del modelo 390 del ejercicio anterior:\"," 
 				+"@foreach{fm : hf390models}"
 					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.getAdministration() == mod.getAdministration() }"
-						+"<li>Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [140] --> @{fm.getAmount(c140Key)}</li>"
+						+ "\"Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [140] --> @{fm.getAmount(c140Key)}\","
 					+"@end{}"
 				+"@end{}"
-				+"</ul></li>"
 			+"@else{}"
 				+"@code{c082Key='"+ Mod303Key.AR_C082.getValue() +"';}"
-				+"<li>Declaraciones del periodo anterior:<ul style=\"padding-left: 20px;\">" 
+				+ "\"Declaraciones del periodo anterior:\"," 
 				+"@foreach{fm : lastPeriodModels}" 
 					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-						+"<li>Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [082] --> @{fm.getAmount(c082Key)}</li>"
+						+ "\"Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [082] --> @{fm.getAmount(c082Key)}\","
 					+"@end{}"
 				+"@end{}"
-				+"</ul></li>"
 			+"@end{}"
-			+"<li>Resultado (Cuotas a compensar de periodos anteriores): <b>@{AR_C045}</b></li>"
+			+ "\"Resultado (Cuotas a compensar de periodos anteriores): @{AR_C045}\","
+			+"]}"
 		)
 
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
@@ -332,18 +333,21 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 		// A deducir (exclusivamente en el caso de autoliquidación sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y período)
 		,AR_C063	(Mod303Key.AR_C063,null,null,
 				(ctx,mod) -> {
-					if (mod.isComplementary()) {
-						add( Mod303Key.AR_C063, mod, Mod303DAO.getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C080)).sum());						
+					if (mod.isReplacement()) {
+						add( Mod303Key.AR_C063, mod, 
+							Mod303DAO.getSamePeriodModels(ctx, mod)
+								.mapToDouble(Mod303::getDeclarationResult)
+								.sum());						
 					}
 				}
 				,null
-				,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
-				+"@code{c80Key='"+ Mod303Key.AR_C080.getValue() +"';}"
-				+"@foreach{fm : periodModels}" 
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [080] --> @{fm.getAmount(c80Key)}</li>"
-				+"@end{}"
-				+"</ul></li>"
-				+"<li>Resultado: <b>@{AR_C080}</b></li>"
+				,"{messages : ["
+					+ "\"Declaraciones en el mismo periodo/ejercicio:\"," 
+					+"@foreach{fm : periodModels}" 
+						+ "\"Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [080] --> @{fm.getDeclarationResult()}\","
+					+"@end{}"
+					+ "\"Resultado: @{AR_C080}\","
+				+"]}"
 		)
 		
 		// TOTAL DEUDA TRIBUTARIA	
@@ -367,9 +371,24 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 		
 		// Total exportaciones y operaciones asimiladas
 		,AR_C051	(Mod303Key.AR_C051
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
+			,(mod,vat) -> ventasExtraComunitariasCanCeuBienes(vat, mod)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C051,mod,vat.getBase())
 			,null,null,null)
+		// Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 56)
+		,AR_C054(Mod303Key.AR_C054
+			,(mod,vat) -> ventasExtraComunitariasCanCeuServicios(vat,mod)
+			,(ctx,mod,vat) -> add(Mod303Key.AR_C054,mod,vat.getBase())
+			,null,null,null)
+		// Operaciones sujetas con inversi\u00F3n del sujeto pasivo
+		,AR_C055(Mod303Key.AR_C055
+			,(mod,vat) -> ventasISP (vat, mod)
+			,(ctx,mod,vat) -> add(Mod303Key.AR_C055,mod,vat.getBase())
+			,null,null,null)
+		
+		// Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS
+		,AR_C056(Mod303Key.AR_C056)
+		// Operaciones sujetas y acogidas a la OSS
+		,AR_C058(Mod303Key.AR_C058)
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
 		,AR_C052	(Mod303Key.AR_C052
@@ -379,22 +398,16 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,AR_C180	(Mod303Key.AR_C180,null,null,(ctx,mod) -> add(Mod303Key.AR_C180,mod,Mod303DAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,AR_C181	(Mod303Key.AR_C181,null,null,(ctx,mod) -> {
-				double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx,mod);
-				add( Mod303Key.AR_C181, mod, quota );
-			}
-		,null,null)
-		
+		,AR_C180	(Mod303Key.AR_C180, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+			, null, null, null, null)
+		,AR_C181	(Mod303Key.AR_C181, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
+			, null, null, null, null)		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,AR_C182	(Mod303Key.AR_C182,null,null,(ctx,mod) -> add(Mod303Key.AR_C182,mod,Mod303DAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,AR_C183	(Mod303Key.AR_C183,null,null,(ctx,mod) -> {
-			double quota = Mod303DAO.getVatAccrualPaymentInputQuota(ctx,mod);
-			add(Mod303Key.AR_C183,mod, quota );
-			add( Mod303Key.AR_C911, mod, AonMathUtils.isZero(quota)?(0.0):(1.0)); 
-			}
-		,null,null)
+		,AR_C182	(Mod303Key.AR_C182, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+			, null, null, null, null)
+		,AR_C183	(Mod303Key.AR_C183, (mod, vat) -> vat.isNotSales() && vat.isVatAccrualRegime()
+				, null, null, null, null)
 		;
 		
 		private Mod303Key key;
@@ -562,12 +575,7 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 		return commonImportacionesInversionFilter(vat, mod) 
 				&& !vat.isInvestment();
 	}
-//	private static boolean importacionesCorrientesFilter(VatContext vat) {
-//		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-//			&& !vat.isInvestment()  && !vat.isRectification() 
-//			&& !vat.isService()
-//			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
-//	}
+
 	private static boolean importacionesInversionFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isInvestment() && !vat.isRectification() 
@@ -586,9 +594,24 @@ class Mod303ARABA2022Declaration extends Mod303Declaration {
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
 	
-	private static boolean rectificDeduccionesFilter(VatContext vat, Mod303 mod) {
+	private static boolean rectificationDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
+	}
+	
+	public static boolean  ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
+		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales());
+	}
+	public static boolean  ventasExtraComunitariasCanCeuServicios(VatContext vat, Mod303 mod) {
+		boolean add = !vat.isVatSurchargeRegime() 
+			&& ((vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())));
+		if ( add && mod.getYear() == 2021) {
+			add = FiscalUtils.isInPeriodRange(mod, vat.getTaxDate());
+		} 
+		return add;
+	}
+	public static boolean  ventasISP(VatContext vat, Mod303 mod) {
+		return !vat.isVatSurchargeRegime() && vat.isOtherISPSales();
 	}
 	
 }

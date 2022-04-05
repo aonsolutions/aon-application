@@ -15,10 +15,6 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class Page08 extends PageAbs {
 	
-//	interface Page8Binder extends
-//			UiBinder<Widget, Page08> {
-//	}
-	
 	private static final String[] HEADERS = new String[]{"Detalle de las Correcciones"
 			,"Aumentos"
 		 	,"Disminuciones"		 	
@@ -58,22 +54,10 @@ public class Page08 extends PageAbs {
 		}
 	}
 	
-//	private static final Page8Binder page8Binder = GWT
-//			.create(Page8Binder.class);
-//	
-//	@UiField(provided = true)
-//	FlexTable table;
-//	@UiField(provided = true)
-//	FlexTable table1;
-	
 	private ListBox opeVol;
 
 	public Page08( Model200PageCallback callback ) {
 		super(callback);
-//		table = new FlexTable();
-//		table1 = new FlexTable();
-//		Widget ui = page8Binder.createAndBindUi(this);
-//		initWidget(ui);
 		addBasePanel();
 		initializeTable();
 	}
@@ -83,33 +67,10 @@ public class Page08 extends PageAbs {
 		
 		basePanel.clear();
 		
-		//basePanel.add(getTitle(AON.MSG.liquidacionI()));
-		
-//		FlexTable table = new FlexTable();
-//		table.setWidth("100%");
-//		table.setCellSpacing(0);
-		
-//		FlexTable table1 = new FlexTable();
-//		table1.setWidth("100%");
-//		table1.setCellSpacing(0);
-
 		int row = 0;
 		
-//		Label desc = new Label(AON.MSG.liquidation1Label1());
-//		desc.setStyleName(AON.AON_CSS.aonBold());
-//		table.setWidget(row, 0, desc);
-//		table.getFlexCellFormatter().setColSpan(row, 0, 3);
-//		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
-//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-//		++row;
-//		++row;
 		basePanel.add(getTitle(AON.MSG.liquidation1Label1()));
 		
-//		FlexTable tab1 = new FlexTable();
-//		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab1.addStyleName(AON.CSS.aonMargin());
-//		tab1.setCellSpacing(1);
-//		basePanel.add(tab1);
 		FlexTable tab1 = addTable();
 		tab1.getFlexCellFormatter().setColSpan(row, 0, 3);
 		
@@ -127,9 +88,7 @@ public class Page08 extends PageAbs {
 
 		paintKeyDescription(tab1, Mod2002020Key.LQ301, row, 0);
 		paintKeyField(tab1, Mod2002020Key.LQ301, row, 1);
-//		tab1.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
 		paintKeyField(tab1, Mod2002020Key.LQ302, row, 2);
-//		tab1.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
 		paintEmptyCell(tab1, row, 3);
 		++row;
 
@@ -148,30 +107,16 @@ public class Page08 extends PageAbs {
 			++row;
 			paintKeyDescription(tab1, Mod2002020Key.LQ1230, row, 0);
 			paintKeyField(tab1, Mod2002020Key.LQ1230, row, 1);
-//			tab1.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
 			paintKeyField(tab1, Mod2002020Key.LQ1231, row, 2);
-//			tab1.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
 			paintEmptyCell(tab1, row, 3);
 			++row;
 		}
 		
 		// Volumen de operaciones
-//		desc = new Label("Cifra de negocios");
-//		desc.setStyleName(AON.AON_CSS.aonBold());
-//		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
-//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
-//		table.setWidget(row, 0, desc);
-//		++row;
 		basePanel.add(getTitle("Cifra de negocios"));
 		
-//		desc = new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo");
-//		table.setWidget(row, 0, desc);
-//		++row;
-		
 		FlexTable tableVol = addTable();
-		
-		//basePanel.add(new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo"));
+
 		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo"));
 		
 		opeVol = new ListBox();
@@ -185,37 +130,10 @@ public class Page08 extends PageAbs {
 		
 		basePanel.add(opeVol);
 		tableVol.setWidget(1, 0, opeVol);
-//		++row;
-	
-		// Detalle de Correcciones 
-//		desc = new Label(AON.MSG.liquidation1Label2());
-//		desc.setStyleName(AON.AON_CSS.aonBold());
-//		table.setWidget(row, 0, desc);
-//		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextUnderline());
-//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeft());
-//		table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
-//		table.getFlexCellFormatter().setColSpan(row, 0, 0);
 		
 		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
 		
-//		FlexTable tab2 = new FlexTable();
-//		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab2.addStyleName(AON.CSS.aonMargin());
-//		tab2.setCellSpacing(1);
-//		basePanel.add(tab2);
 		FlexTable tab2 = addTable();
-		
-//		table.setWidget(row, 1, new Label(AON.MSG.increase()));		
-//		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonTextUnderline());
-//		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextCenter());
-//		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
-//		table.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPaddingTop());
-//		table.setWidget(row, 2, new Label(AON.MSG.decrease()));		
-//		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonTextUnderline());
-//		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextCenter());
-//		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
-//		table.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonPaddingTop());
-//		++row;
 		
 		row = 0;
 		paintEmptyCell(tab2, row, 0);
@@ -245,29 +163,19 @@ public class Page08 extends PageAbs {
 		paintKeyDescription(tab2, Mod2002020Key.I0417, row, 0);
 		paintKeyField(tab2, Mod2002020Key.I0417, row, 1);
 		paintKeyField(tab2, Mod2002020Key.D0418, row, 2);
-//		++row;
 		
 		// Detalle de Correcciones (Totales)
 		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
 		
-//		FlexTable tab3 = new FlexTable();
-//		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab3.addStyleName(AON.CSS.aonMargin());
-//		tab3.setCellSpacing(0);
-//		basePanel.add(tab3);
 		FlexTable tab3 = addTable();
 		
 		row = 0;
 		for (CorrectionKey ck : CorrectionKey.values()) {
 			if (row==0 || row==7) {			 
-//				paintTitle(table1, HEADERS2[1], row, 1, false);
-//				paintTitle(table1, HEADERS2[2], row, 2, false);
 				paintTitle(tab3, HEADERS2[1], row, 1);
 				paintTitle(tab3, HEADERS2[2], row, 2);
 				++row;
 			} else if (row==2) {
-//				paintTitle(table1, HEADERS[1], row, 1, false);
-//				paintTitle(table1, HEADERS[2], row, 2, false);
 				paintTitle(tab3, HEADERS[1], row, 1);
 				paintTitle(tab3, HEADERS[2], row, 2);
 				++row;
@@ -301,14 +209,5 @@ public class Page08 extends PageAbs {
 		}
 		opeVol.setSelectedIndex(index);
 	}
-	
-//	private FlexTable addTable() {
-//		FlexTable tab = new FlexTable();
-//		tab.setCellSpacing(0);
-//		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab.addStyleName(AON.CSS.aonMargin());
-//		basePanel.add(tab);
-//		return tab;
-//	}
 	
 }

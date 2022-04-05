@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;

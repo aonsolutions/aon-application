@@ -100,7 +100,7 @@ public class JsonUtils {
 		Date d = null;
 		if(json != null) { 
 			String date = json.optString(key, null);
-			if(date!=null) {
+			if(AonStringUtils.isNotBlank(date)) {
 				d = AonDateUtils.parse(date.replace("\"", ""));
 				if(d == null) d = getDateTime(json, key);
 			}

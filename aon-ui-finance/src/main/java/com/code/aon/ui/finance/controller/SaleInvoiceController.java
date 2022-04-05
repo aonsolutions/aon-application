@@ -75,10 +75,10 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -561,7 +561,8 @@ public class SaleInvoiceController extends InvoiceController {
 				Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
 				invoice.setNumber(number);
 				invoice.setReferenceCode(null);
-				invoice.setIssueDate(new Date());
+				if(!isBizkaia()) 
+					invoice.setIssueDate(new Date());
 				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
 			}
 
@@ -598,12 +599,13 @@ public class SaleInvoiceController extends InvoiceController {
 					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
 					invoice.setNumber(number);
 					invoice.setReferenceCode(null);
-					invoice.setIssueDate(new Date());
-					invoice.setTaxDate(new Date());
-
 					inv.setNumber(number);
-					inv.setIssueDate(new Date());
-					inv.setTaxDate(new Date());
+					if(!isBizkaia()) {
+						invoice.setIssueDate(new Date());
+						invoice.setTaxDate(new Date());
+						inv.setIssueDate(new Date());
+						inv.setTaxDate(new Date());
+					}				
 				}
 			
 				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);

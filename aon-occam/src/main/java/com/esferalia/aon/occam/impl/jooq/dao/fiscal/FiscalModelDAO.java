@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
@@ -28,28 +29,34 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -513,6 +520,18 @@ public class FiscalModelDAO {
 		fm.setContactPhone(conf.fiscal().getContactPhone() );
 		fm.setContactCellular( conf.fiscal().getContactCellular() );
 		fm.setContactEmail( conf.fiscal().getContactMail() );
+		
+		fm.setName( AonStringUtils.substring(fm.getName(), 0, FS_MODEL.NAME.getDataType().length()));
+		fm.setSurname( AonStringUtils.substring(fm.getSurname(), 0, FS_MODEL.SURNAME.getDataType().length()));
+		fm.setStreetName( AonStringUtils.substring(fm.getStreetName(), 0, FS_MODEL.STREET_NAME.getDataType().length()));
+		fm.setTown( AonStringUtils.substring(fm.getTown(), 0, FS_MODEL.TOWN.getDataType().length())); 
+		fm.setZip( AonStringUtils.substring(fm.getZip(), 0, FS_MODEL.ZIP.getDataType().length()));
+		fm.setPhone( AonStringUtils.substring(fm.getPhone(), 0, FS_MODEL.PHONE.getDataType().length()));
+		fm.setContactPerson( AonStringUtils.substring(fm.getContactPerson(), 0, FS_MODEL.CONTACT_PERSON.getDataType().length()));
+		fm.setContactPhone( AonStringUtils.substring(fm.getContactPhone(), 0, FS_MODEL.CONTACT_PHONE.getDataType().length()));
+		fm.setContactCellular( AonStringUtils.substring(fm.getContactCellular(), 0, FS_MODEL.CONTACT_CELLULAR.getDataType().length()));
+		fm.setContactEmail( AonStringUtils.substring(fm.getContactEmail(), 0, FS_MODEL.CONTACT_EMAIL.getDataType().length())); 
+		
 		return fm;
 	}
 
@@ -606,5 +625,51 @@ public class FiscalModelDAO {
 				.stream()
 				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new));
 	}
+/*
+p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getTypeProperty().ne(InvoiceType.UNDEDUCTIBLE.value()))
+				 .and(p.getStartIssueDateProperty().ge(params.getFromDate())) 
+				 .and(p.getEndIssueDateProperty().le(params.getToDate()))
+				);
+ 
+ */
+	
+	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx,InvoiceModelReportParams params) {
+		ctx.checkRead();
+		return InvoiceDAO.getInvoiceStream(ctx, p-> getFilter(p,params))
+			.map(inv -> new InvoiceFiscalModels().setInvoice(inv))
+			.map(ifm -> ifm.setModels( 
+				getSelect(ctx)
+					.leftOuterJoin(ALCATRAZ).on(ALCATRAZ.FS_MODEL.eq(FS_MODEL.ID))
+					.where(ALCATRAZ.INVOICE.eq(ifm.getInvoice().getId()))
+					.fetch()
+					.stream()
+					.map(rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new))
+					.collect(Collectors.toCollection(LinkedList::new))
+			))
+			.filter(ifm -> !params.isUnbound()
+					||  (params.isUnbound() && (ifm.getModels() == null || ifm.getModels().isEmpty())))
+			.collect(Collectors.toCollection(LinkedList::new));			
+	}
+
+	private static Filter getFilter(InvoiceProperties p, InvoiceModelReportParams params) {
+		if (params.getDomain() == null) {
+			throw new IllegalArgumentException("No se ha indicado el dominio");
+		}
+		Filter f = p.getDomainProperty().eq(params.getDomain())
+		 .and(p.getTypeProperty().ne(InvoiceType.UNDEDUCTIBLE.value()));
+		if ( params.getFromDate() != null) {
+			f = f.and(p.getStartIssueDateProperty().ge(params.getFromDate())); 	
+		}
+		if ( params.getToDate() != null) {
+			f = f.and(p.getEndIssueDateProperty().le(params.getToDate()));	
+		}
+		if ( params.getActivity() != null) {
+			f = f.and(p.getActivityProperty().eq(params.getActivity()));
+		}
+		return f;
+	}  
+	
 	
 }

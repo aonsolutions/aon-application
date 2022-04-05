@@ -23,13 +23,6 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page09 extends PageAbs {
 	
-//	interface PageBinder extends
-//			UiBinder<Widget, Page09> {
-//	}
-
-//	private static final PageBinder pageBinder = GWT
-//			.create(PageBinder.class);
-
 	private static final String[] HEADERS_2 = new String[]{"",
 		 AON.MSG.previousPending()
 		,AON.MSG.current()
@@ -45,29 +38,17 @@ public class Page09 extends PageAbs {
 	 	,"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
 	};
 	
-//	@UiField(provided = true)
-//	FlexTable table;
-
 	public Page09( Model200PageCallback callback ) {
 		super(callback);
-//		table = new FlexTable();
-//		Widget ui = pageBinder.createAndBindUi(this);
-//		initWidget(ui);
 		addBasePanel();
 		initializeTable();
 	}
 	
 	@Override
 	protected void initializeTable() {
-//		table.setWidth("100%");
-//		table.setCellSpacing(0);
-		
-//		ColumnFormatter cf = table.getColumnFormatter();
-//		cf.setWidth(1, "200px");
 		
 		basePanel.clear();
 		
-//		basePanel.add(getTitle(AON.MSG.liquidacionII()));
 		basePanel.add(getTitle("BASE IMPONIBLE. CUOTA INTEGRA"));
 		
 		FlexTable table = addTable();

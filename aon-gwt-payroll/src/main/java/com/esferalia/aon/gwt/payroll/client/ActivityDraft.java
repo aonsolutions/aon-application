@@ -277,8 +277,9 @@ public class ActivityDraft extends Composite{
 		flowPanel.add(new Hidden("ccc", completeCCC.getValue()));
 		flowPanel.add(new Hidden("regime", completeCCC.getKey()));
 		flowPanel.add(new Hidden("type", Integer.toString(type)));
-		flowPanel.add(new Hidden("userLogin", Wnd.getCurrentUser()));
-		flowPanel.add(new Hidden("domainName", Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden("session_id", Wnd.getToken()));
+		flowPanel.add(new Hidden("domain_login", Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden("domain_name", Wnd.getCurrentDomainNameURL()));
 		
 		formPanel.add(flowPanel);
 		

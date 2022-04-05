@@ -17,13 +17,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 public class Page11 extends PageAbs {
 
-//	interface PageBinder extends
-//			UiBinder<Widget, Page11> {
-//	}
-
-//	private static final PageBinder pageBinder = GWT
-//			.create(PageBinder.class);
-	
 	private static final String[] HEADERS_1 = new String[]{null,
 		AON.MSG.pendingDeduction(),
 		AON.MSG.appliedDeduction(),
@@ -42,17 +35,8 @@ public class Page11 extends PageAbs {
 			AON.MSG.liquiMsg31(),
 			AON.MSG.pendingAmount()};
 
-//	@UiField(provided = true)
-//	FlexTable table;
-
 	public Page11( Model200PageCallback callback ) {
 		super(callback);
-//		table = new FlexTable();
-//		Widget ui = pageBinder.createAndBindUi(this);
-//		initWidget(ui);
-//		table.setWidth("100%");
-//		table.setCellSpacing(0);
-//		table.getColumnFormatter().setWidth(1, "200px");
 		addBasePanel();
 		initializeTable();
 	}

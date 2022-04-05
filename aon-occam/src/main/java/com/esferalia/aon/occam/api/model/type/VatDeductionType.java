@@ -4,21 +4,26 @@ import java.io.Serializable;
 
 public enum VatDeductionType implements Serializable {
 
-	 WITH_RIGHT("Con Drcho. Deduc.")
-	,WITHOUT_RIGHT("Sin Drcho. Deduc.")
-	,NON_TAXABLE("No sujeto")
+	 WITH_RIGHT		("Con Drcho. Deduc.","CON Dcho.")
+	,WITHOUT_RIGHT	("Sin Drcho. Deduc.","SIN Dcho.")
+	,NON_TAXABLE	("No sujeto"		,"No Suj.")
 	; 
 	
 	private String name;
+	private String abbr;
 
-	private VatDeductionType(String name) {
+	private VatDeductionType(String name, String abbr) {
 		this.name = name;
+		this.abbr = abbr;
 	}
 
 	public String getName() {
 		return name;
 	}
-
+	public String getAbbr() {
+		return abbr;
+	}
+	
 	public byte value() {
 		return (byte) ordinal();
 	}

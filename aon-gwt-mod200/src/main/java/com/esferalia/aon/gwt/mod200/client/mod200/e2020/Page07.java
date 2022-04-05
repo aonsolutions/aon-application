@@ -18,8 +18,6 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page07 extends PageAbs {
 
-//	private FlexTable table;
-	
 	private static enum Page7Column {
 		 COL00(""                 ,true ,true ,true )
 		,COL01(AON.MSG.ecpnMsg1() ,true ,true ,true )
@@ -124,39 +122,8 @@ public class Page07 extends PageAbs {
 
 	public Page07( Model200PageCallback callback ) {
 		super(callback);
-//		ScrollPanel container = new ScrollPanel();
-//		container.setStyleName(AON.AON_CSS.aonScrollArea());
-//		FlowPanel baseContainerPanel = new FlowPanel();
-//		baseContainerPanel.setStyleName(AON.AON_CSS.aonFiscalContainer());
-//		
-//		FlowPanel groupPanel= new FlowPanel();
-//		groupPanel.setStyleName(AON.AON_CSS.aonGroup());
-//			
-//				FlowPanel groupHeaderPanel = new FlowPanel();
-//				groupHeaderPanel.setStyleName(AON.AON_CSS.aonGroupTitle());
-//				groupHeaderPanel.add (new InlineLabel(AON.MSG.patrimonioCambios())); 
-//				groupPanel.add(groupHeaderPanel);
-//				
-//				FlowPanel groupBodyPanel = new FlowPanel();
-//				groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
-//				
-//				FlowPanel tableContainer = new FlowPanel();
-//				tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
-//				tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
-//				table = new FlexTable();
-//				table.setStyleName(AON.AON_CSS.aonMarginBottom());
-//				tableContainer.add(table);
-//				groupBodyPanel.add(tableContainer);
-//				groupPanel.add(groupBodyPanel);
-//		
-//		baseContainerPanel.add(groupPanel);	
-//		container.add(baseContainerPanel);
-//		initWidget(container);
-		
 		addBasePanel();
-		
 		initializeTable();		
-		
 	}
 
 	@Override

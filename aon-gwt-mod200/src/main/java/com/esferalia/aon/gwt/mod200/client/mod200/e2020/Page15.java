@@ -11,24 +11,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 public class Page15 extends PageAbs {
 
-//	interface PageBinder extends UiBinder<Widget, Page15> {}
-
-//	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
-
-//	@UiField(provided = true)
-//	FlexTable table;
-//	@UiField(provided = true)
-//	FlexTable table1;
-//	@UiField(provided = true)
-//	FlexTable table2;
-	
 	public Page15( Model200PageCallback callback ) {
 		super(callback);
-//		table  = new FlexTable();
-//		table1 = new FlexTable();
-//		table2 = new FlexTable();
-//		Widget ui = pageBinder.createAndBindUi(this);
-//		initWidget(ui);
 		addBasePanel();
 		initializeTable();
 	}
@@ -41,13 +25,6 @@ public class Page15 extends PageAbs {
 		// -----------------------------------------------------
 		//  Limitación en la deducibilidad de gastos financieros.
 		// -----------------------------------------------------
-		
-//		basePanel.add(getTitle(AON.MSG.deducibleLimitation()));
-		
-//		table.setWidth("100%");
-//		table.setCellSpacing(0);
-//		table.getColumnFormatter().setWidth(1, "170px");
-//		table.getColumnFormatter().setWidth(2, "170px");
 		
 		FlexTable table = addTable(AON.MSG.deducibleLimitation(), 2);
 		
@@ -83,17 +60,6 @@ public class Page15 extends PageAbs {
 		// Gastos financieros pendientes de deducir
 		// -----------------------------------------------------
 		
-//		basePanel.add(getTitle(AON.MSG.deducibleLimitationPending()));
-		
-//		table1.setWidth("100%");
-//		table1.setCellSpacing(0);
-//		table1.getColumnFormatter().setWidth(0, "auto");
-//		table1.getColumnFormatter().setWidth(1, "180px");
-//		table1.getColumnFormatter().setWidth(2, "180px");
-//		table1.getColumnFormatter().setWidth(3, "180px");
-//		table1.getColumnFormatter().setWidth(4, "180px");
-//		table1.getColumnFormatter().setWidth(5, "180px");
-		
 		FlexTable table1 = addTable(AON.MSG.deducibleLimitationPending(), 5, "180px");
 		
 		row = 0;
@@ -102,13 +68,6 @@ public class Page15 extends PageAbs {
 		addHeaderCell(table1,row, 3,AON.MSG.liquiMsg4());
 		table1.getFlexCellFormatter().setColSpan(row, 3, 2);
 		++row;
-//		addHeaderCell(table1,row, 0,AON.MSG.fiscalYear());
-//		addHeaderCell(table1,row, 1,AON.MSG.liquiMsg21());
-//		addHeaderCell(table1,row, 2,AON.MSG.remainder());
-//		addHeaderCell(table1,row, 3,AON.MSG.liquiMsg3());
-//		addHeaderCell(table1,row, 4,AON.MSG.liquiMsg21());
-//		addHeaderCell(table1,row, 5,AON.MSG.remainder());
-//		++row;
 		paintKeysProvider(Mod2002020LM1212Key.values(), table1, row, new String[] {
 				AON.MSG.fiscalYear(),
 				AON.MSG.liquiMsg21(),
@@ -122,20 +81,6 @@ public class Page15 extends PageAbs {
 		// Pendiente de adición por límite beneficio operativo no aplicado
 		// ---------------------------------------------------------------
 		
-//		basePanel.add(getTitle(AON.MSG.pendingAddinngs()));
-		
-//		table2.setWidth("100%");
-//		table2.setCellSpacing(0);
-//		table2.getColumnFormatter().setWidth(1, "200px");
-//		table2.getColumnFormatter().setWidth(2, "200px");
-//		table2.getColumnFormatter().setWidth(3, "200px");
-		
-//		row = 0;
-//		addHeaderCell(table2,row, 0,AON.MSG.liquiMsg1());
-//		addHeaderCell(table2,row, 1,AON.MSG.liquiMsg2());
-//		addHeaderCell(table2,row, 2,AON.MSG.liquiMsg3());
-//		addHeaderCell(table2,row, 3,AON.MSG.liquiMsg4());
-//		++row;
 		paintKeysProvider(Mod2002020LM538Key.values(), addTable(AON.MSG.pendingAddinngs(), 3), new String[] {
 				AON.MSG.liquiMsg1(),
 				AON.MSG.liquiMsg2(),
@@ -145,14 +90,6 @@ public class Page15 extends PageAbs {
 		
 	}
 	
-//	private void addHeaderCell(FlexTable table, int row, int col, String msg) {
-//		table.setWidget(row, col, new Label( msg ));
-//		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
-//		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
-//		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
-//		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-//	}
-
 	@Override
 	protected void populate() {}
 	

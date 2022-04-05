@@ -17,8 +17,8 @@ import org.mvel2.MVEL;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.IrpfBreakdownJSON;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -57,7 +57,11 @@ public class Mod111InfoDAO {
 					@Override public String visitTitle() {return visitNone(); }
 					@Override public String visitIrpfActivity() {return visitNone(); }
 					@Override public String visitCorporate() {return visitNone(); }
-					
+					@Override public String visitModelInvoiceVatBreakdown() {return visitNone(); }
+					@Override public String visitProrratedModelInvoiceVatBreakdown() {return visitNone(); }
+					@Override public String visitModelOutVatAccrualInvoice() {return visitNone(); }
+					@Override public String visitModelInVatAccrualInvoice() {return visitNone(); }
+
 					@Override 
 					public String visitNone()    {
 						return MessageFormat.format(INFO_MSG, NONE_INFO); 

@@ -127,68 +127,6 @@ public class Page00 extends PageAbs {
 	};
 	
 	private Map<Mod2002020Key, CheckBox> inputs = new HashMap<Mod2002020Key, CheckBox>();
-
-	
-//	interface Page1Binder extends
-//			UiBinder<Widget, Page00> {
-//	}
-//
-//	private static final Page1Binder page1Binder = GWT
-//			.create(Page1Binder.class);
-
-//	@UiField
-//	Panel basePanel;
-//	
-//	@UiField
-//	FlowPanel periodPanel;
-//	@UiField
-//	DateBoxEx periodStart;
-//	@UiField
-//	DateBoxEx periodEnd;
-//	@UiField(provided=true)
-//	ListBox periodType;
-//	@UiField
-//	TextBox  cnae;
-//	@UiField
-//	InlineLabel cnaeLabel;	
-//	@UiField
-//	Button showCnae;
-//
-//	Cnae2009Panel cnaePanel;
-//	
-//	@UiField
-//	DocumentTextBox nif;
-//	@UiField
-//	TextBox  companyName;
-//	@UiField
-//	TextBox  phone1;
-//	@UiField
-//	TextBox  phone2;
-//	@UiField
-//	CheckBox complementary;
-//	@UiField
-//	TextBox  complementaryReceipt;
-//	
-//	@UiField(provided = true)
-//	FlexTable charactersTable1;
-//	@UiField(provided = true)
-//	FlexTable charactersTable2;
-//	@UiField(provided = true)
-//	FlexTable charactersTable3;
-//	
-//	@UiField
-//	ListBox balanceSheetType;
-//	@UiField
-//	ListBox ecpnType;
-//	@UiField
-//	ListBox profitAndLossType;
-//	
-//	CheckBox c061; // Esta casilla no se utiliza en el Modelo 200 de AON
-//	
-//	@UiField
-//	DoubleBox c041;
-//	@UiField
-//	DoubleBox c042;
 	
 	private AonDocumentTextBox nif = new AonDocumentTextBox();
 	private AonTextBox companyName = new AonTextBox();
@@ -211,34 +149,7 @@ public class Page00 extends PageAbs {
 	
 	public Page00( Model200PageCallback callback ) {
 		super(callback);
-		
-//		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
-//			@Override
-//			public void onSelect(CNAE2009 selected) {
-//				cnae.setText(selected.getCode());
-//				cnaeLabel.setText(selected.getDescription());
-//			}
-//			@Override
-//			public void onClose() {
-//				// Nothing
-//			}
-//		});
-//		periodType = new ListBox();
-//		periodType.addItem(AON.MSG.periodType1());
-//		periodType.addItem(AON.MSG.periodType2());
-//		periodType.addItem(AON.MSG.periodType3());
-//		
-//		charactersTable1 = new FlexTable();
-//		charactersTable2 = new FlexTable();
-//		charactersTable3 = new FlexTable();
-//		
-//		c061 = new CheckBox();
-		
-//		Widget ui = page1Binder.createAndBindUi(this);
-//		initWidget(ui);
-		
 		addBasePanel();
-		
 		initializeTable();
 		
 		callback.getMod200Object().register( new IMod200ChangeListener() {
@@ -388,47 +299,8 @@ public class Page00 extends PageAbs {
 		inputs.put(Mod2002020Key.C0061, c061);
 		
 		paint();
-		
-//		int row = 0;
-//		row = initializeBlock(charactersTable1,row, DECLARATION_CHARACTERS_BLOCK1);
-//		row = initializeBlock(charactersTable2,row, DECLARATION_CHARACTERS_BLOCK2);
-//		row = initializeBlock(charactersTable3,row, DECLARATION_CHARACTERS_BLOCK3);
 	}
 
-//	private int initializeBlock(FlexTable table,int row, Mod2002020Key[] declarationCharatersBlock) {
-//		initializeTable(table);
-//		
-//		Administration adm = (callback.getMod200Object()==null)
-//				?Administration.COMMON_TERRITORY
-//				:callback.getMod200Object().getAdministration();
-//		for (final Mod2002020Key key : declarationCharatersBlock ) {
-//			if (key != Mod2002020Key.C0012R) {
-//			   BoxLabel l = new BoxLabel( key.getCode( adm ) , Model2002020.BOX_LENGTH );
-//			   table.setWidget(row, 0, l);
-//			}
-//			
-//			final CheckBox check = new CheckBox(key.getDescription() 
-//					+ (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
-//			check.addClickHandler(new ClickHandler() {
-//				@Override
-//				public void onClick(ClickEvent event) {
-//					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
-//						MessageDialog.show("ERROR",AON.MSG.unsupportedCharacter(key.getDescription()));
-//						check.setValue(false);
-//					} else {
-//						changeAvailability(key);
-//					}
-//				}
-//				
-//			});
-//			inputs.put(key, check);
-//			check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
-//			table.setWidget(row, 1, check);
-//			row++;
-//		}
-//		return row++;
-//	}
-	
 	private void changeAvailability(Mod2002020Key key) {
 		boolean enabled = inputs.get(key).getValue();
 		if (CHARACTER_INCOMPATIBILITY_MAP.get(key) != null) {
@@ -452,14 +324,6 @@ public class Page00 extends PageAbs {
 		}
 	}
 
-//	private void initializeTable(FlexTable table) {
-//		table.setWidth("100%");
-//		table.setCellSpacing(0);
-//		ColumnFormatter cf = table.getColumnFormatter();
-//		cf.setStyleName(0, AON.AON_CSS.aonWidth40());
-//		cf.setStyleName(1, AON.AON_CSS.aonWidthAuto());
-//	}
-	
 	protected void enableCharacters( boolean enabled) {
 		periodType.setEnabled(enabled);
 		balanceSheetType.setEnabled(enabled);
@@ -476,74 +340,7 @@ public class Page00 extends PageAbs {
 		}
 	}
 	
-//	private void paint() {
-//		
-//		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
-//			@Override
-//			public void onSelect(CNAE2009 selected) {
-//				cnae.setText(selected.getCode());
-//				cnaeLabel.setText(selected.getDescription());
-//			}
-//			@Override
-//			public void onClose() {
-//				// Nothing
-//			}
-//		});
-//		periodType = new ListBox();
-//		periodType.addItem(AON.MSG.periodType1());
-//		periodType.addItem(AON.MSG.periodType2());
-//		periodType.addItem(AON.MSG.periodType3());
-//		
-//		charactersTable1 = new FlexTable();
-//		charactersTable2 = new FlexTable();
-//		charactersTable3 = new FlexTable();
-//		
-//		c061 = new CheckBox();
-//		
-//		initializeTable();
-//		
-//		@UiHandler("complementary")
-//		void onChangeComplementary(ClickEvent event) {
-//			callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
-//			complementaryReceipt.setEnabled(complementary.getValue());
-//			callback.markAsDirty();
-//		}
-//
-//		@UiHandler("showCnae")
-//		void onSelectCnae(ClickEvent event) {
-//			cnaePanel.onShow();
-//		}
-//		
-//		@UiHandler("periodType")
-//		void onChangePeriodType( ChangeEvent event) {
-//			periodPanel.setVisible((periodType.getSelectedIndex() != 0));
-//		}
-//		
-//		@UiHandler("cnae")
-//		void onChangeCNAE( ChangeEvent event) {
-//			if (AonStringUtils.isEmpty(cnae.getText())) {
-//				cnaeLabel.setText(AonStringUtils.EMPTY);
-//			} else {
-//				CNAE2009 c = CNAE2009.valueOfCode(cnae.getText()); 
-//				if (c == null) {
-//					MessageDialog.show("CNAE no encontrado");
-//					cnaeLabel.setText(AonStringUtils.EMPTY);
-//				} else {
-//					cnaeLabel.setText(c.getDescription());
-//				}
-//			}
-//			
-//		}
-//		
-//	}
-	
 	private void paint() {
-		
-//		ScrollPanel scroll = new ScrollPanel();
-//		FlowPanel basePanel = new FlowPanel();
-//		scroll.add(basePanel);
-////		setWidget(scroll);
-//		initWidget(scroll);
 		
 		// IDENTIFICACION 
 		
@@ -557,14 +354,12 @@ public class Page00 extends PageAbs {
 		nif.setVisibleLength(9);
 		nif.setMaxLength(9);
 		nif.addValueChangeHandler(event -> {
-//			getModel().setDocument(nif.getValue());
 			callback.markAsDirty();
 		});		
 		
 		companyName.setVisibleLength(45);
 		companyName.setMaxLength(45);
 		companyName.addValueChangeHandler(event -> {
-//			getModel().setName(companyName.getValue());
 			callback.markAsDirty();
 		});
 		
@@ -578,18 +373,15 @@ public class Page00 extends PageAbs {
 		phones.add(phone2);
 		
 		phone1.addValueChangeHandler(event -> {
-//			getModel().setEnterprisePhone1(phone1.getValue());
 			callback.markAsDirty();
 		});
 		phone2.addValueChangeHandler(event -> {
-//			getModel().setEnterprisePhone2(phone2.getValue());
 			callback.markAsDirty();
 		});
 		
 		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();		
 		cnae2009Panel.addSelectionHandler(event -> {
 			CNAE2009 selected = event.getSelectedItem();
-//			getModel().setCnae(selected.getCode());
 			cnae.setValue(selected.getCode());
 			cnaeLabel.setText(selected.getDescription());
 			callback.markAsDirty();
@@ -615,24 +407,18 @@ public class Page00 extends PageAbs {
 		periodType.addItem(AON.MSG.periodType2());
 		periodType.addItem(AON.MSG.periodType3());
 		periodType.addChangeHandler( event -> {
-//			getModel().setPeriodType(periodType.getSelectedIndex() + 1);
 			periodPanel.setVisible(periodType.getSelectedIndex() != 0);
 			callback.markAsDirty();
-//			calculateAndRefresh();
 		});
 		
 		periodStart.addStyleName(AON.CSS.aonMarginLeft());
 		periodStart.addValueChangeHandler( event -> {
-//			getModel().setPeriodStart(periodStart.getValue());
 			callback.markAsDirty();
-//			calculateAndRefresh();
 		});
 		
 		periodEnd.addStyleName(AON.CSS.aonMarginLeft());
 		periodEnd.addValueChangeHandler( event -> {
-//			getModel().setPeriodEnd(periodEnd.getValue());
 			callback.markAsDirty();
-//			calculateAndRefresh();
 		});
 		
 		InlineLabel fromLabel = new InlineLabel(AON.MSG.periodLabel());
@@ -652,7 +438,6 @@ public class Page00 extends PageAbs {
 		complementaryReceipt.setMaxLength(13);
 		
 		complementary.addClickHandler(event -> {
-//			getModel().setComplementary(complementary.getValue());
 			complementaryReceipt.setEnabled(complementary.getValue());
 			if (!complementary.getValue()) {
 				complementaryReceipt.setValue("", true);
@@ -660,7 +445,6 @@ public class Page00 extends PageAbs {
 			callback.markAsDirty();
 		});
 		complementaryReceipt.addValueChangeHandler(event -> {
-//			getModel().setReplacedNumber(complementaryReceipt.getValue());
 			callback.markAsDirty();
 		});
 
@@ -692,22 +476,7 @@ public class Page00 extends PageAbs {
 		balanceSheetType.addItem("Modalidad Abreviada");
 		balanceSheetType.addItem("Modalidad PYMES");		
 		balanceSheetType.addChangeHandler( event -> {
-//			getModel().setBalanceType( balanceSheetType.getSelectedIndex());
-//			
-//			DoubleVariable2020 bv = new DoubleVariable2020( Mod2002020Key.C0050 );
-//			bv.setValue((getModel().getBalanceType() == BalanceType.NORMAL));
-//			getModel().addVariable(bv);
-//			
-//			bv = new DoubleVariable2020( Mod2002020Key.C0051 );
-//			bv.setValue((getModel().getBalanceType() == BalanceType.ABREVIADO));
-//			getModel().addVariable(bv);
-//			
-//			bv = new DoubleVariable2020( Mod2002020Key.C0052 );
-//			bv.setValue((getModel().getBalanceType() == BalanceType.PYMES));
-//			getModel().addVariable(bv);
-			
 			callback.markAsDirty();
-//			calculateAndRefresh();
 		});		
 		
 		ecpnType.addItem("Modalidad Normal");
@@ -715,44 +484,14 @@ public class Page00 extends PageAbs {
 		ecpnType.addItem("Modalidad PYMES (voluntario)");
 		ecpnType.addItem("No consta");
 		ecpnType.addChangeHandler( event -> {
-//			getModel().setEcpnType(ecpnType.getSelectedIndex());	
-//			
-//			DoubleVariable2020 bv = new DoubleVariable2020( Mod2002020Key.C0075 );
-//			bv.setValue((getModel().getEcpnType() == EcpnType.NORMAL));
-//			getModel().addVariable(bv);
-//			
-//			bv = new DoubleVariable2020( Mod2002020Key.C0076 );
-//			bv.setValue((getModel().getEcpnType() == EcpnType.ABREVIADO));
-//			getModel().addVariable(bv);
-//			
-//			bv = new DoubleVariable2020( Mod2002020Key.C0077 );
-//			bv.setValue((getModel().getEcpnType() == EcpnType.PYMES));
-//			getModel().addVariable(bv);
-
 			callback.markAsDirty();
-//			calculateAndRefresh();
 		});
 		
 		profitAndLossType.addItem("Modalidad Normal");
 		profitAndLossType.addItem("Modalidad Abreviada");
 		profitAndLossType.addItem("Modalidad PYMES");
 		profitAndLossType.addChangeHandler( event -> {
-//			getModel().setPygType(profitAndLossType.getSelectedIndex());
-//			
-//			DoubleVariable2020 bv = new DoubleVariable2020( Mod2002020Key.C0053 );
-//			bv.setValue((getModel().getPygType() == BalanceType.NORMAL));
-//			getModel().addVariable(bv);
-//			
-//			bv = new DoubleVariable2020( Mod2002020Key.C0054 );
-//			bv.setValue((getModel().getPygType() == BalanceType.ABREVIADO));
-//			getModel().addVariable(bv);
-//			
-//			bv = new DoubleVariable2020( Mod2002020Key.C0055 );
-//			bv.setValue((getModel().getPygType() == BalanceType.PYMES));
-//			getModel().addVariable(bv);
-
 			callback.markAsDirty();
-//			calculateAndRefresh();
 		});		
 				
 		tab2.addLabelWidgetRow(AON.MSG.balanceSheet(), balanceSheetType)
@@ -768,23 +507,15 @@ public class Page00 extends PageAbs {
 		tab3.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tab3);
 		
-//		c041.setMod200key(Mod2002020Key.C0041);
 		c041.setMaxLength(8);
 		c041.setVisibleLength(8);		
 		c041.addValueChangeHandler(event -> {
-//			DoubleVariable2020 bv = new DoubleVariable2020(Mod2002020Key.C0041);
-//			bv.setValue(c041.getValue());
-//			getModel().addVariable(bv);			
 			callback.markAsDirty();
 		});
 		
-//		c042.setMod200key(Mod2002020Key.C0042);
 		c042.setMaxLength(8);
 		c042.setVisibleLength(8);		
 		c042.addValueChangeHandler(event -> {
-//			DoubleVariable2020 bv = new DoubleVariable2020(Mod2002020Key.C0042);
-//			bv.setValue(c042.getValue());
-//			getModel().addVariable(bv);			
 			callback.markAsDirty();
 		});
 		
@@ -847,7 +578,6 @@ public class Page00 extends PageAbs {
 					} else {
 						changeAvailability(key);
 						callback.markAsDirty();
-//						calculateAndRefresh();
 					}
 				}				
 			});

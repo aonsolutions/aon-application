@@ -4,9 +4,12 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
@@ -986,6 +989,12 @@ public class FISCAL {
 			} finally {
 				if (ctx != null)
 					ctx.close();
+			}
+		}
+
+		public static LinkedList<InvoiceFiscalModels> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
+			try (AONContext ctx = AONContext.getAONContext(occam)) {
+				return getFiscal().getInvoicesModels(ctx, params);
 			}
 		}
 		

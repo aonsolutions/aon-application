@@ -26,57 +26,24 @@ public class ParticipationPanel extends AonCustomDialog {
 			this.onCancel();
 		}
 	}
-
-//	interface ParticipationPanelBinder extends UiBinder<Widget, ParticipationPanel> {
-//	}
-//	private static final ParticipationPanelBinder participationPanelBinder = GWT
-//			.create(ParticipationPanelBinder.class);
-
-//	@UiField
-//	Button acceptButton;
-//	@UiField
-//	Button cancelButton;
-//	
-//	@UiField
+	
 	private AonDocumentTextBox document = new AonDocumentTextBox();
-//	@UiField
 	private AonTextBox name = new AonTextBox();
-//	@UiField
 	private ProvinceCountryListBox province = new ProvinceCountryListBox();
-//	
-//	@UiField
 	private AonDoubleBox percent = new AonDoubleBox();
-//
-//	@UiField
 	private AonDoubleBox nominalValue = new AonDoubleBox();
-//	
-//	@UiField
 	private AonDoubleBox bookValue = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox incomes = new AonDoubleBox();
-//	
-//	@UiField
 	private AonDoubleBox aValue = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox bValue = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox cValue = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox dValue = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox eValue = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox fValue = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox gValue = new AonDoubleBox();
-//	
-//	@UiField
 	private AonDoubleBox capital = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox reserve = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox otherAmounts = new AonDoubleBox();
-//	@UiField
 	private AonDoubleBox result = new AonDoubleBox();
 
 	private ParticipationPanelCallback callback;
@@ -89,8 +56,6 @@ public class ParticipationPanel extends AonCustomDialog {
 		setGlassEnabled(true);
 		setModal(true);
 		setCaption(AON.MSG.participationsOut());
-//		Widget ui = participationPanelBinder.createAndBindUi(this);
-//		setWidget(ui);
 		paint();
 	}
 
@@ -124,15 +89,6 @@ public class ParticipationPanel extends AonCustomDialog {
 		this.result.setValue(companyParticipation.getResult());
 	}
 
-//	@UiHandler("acceptButton")
-//	void onAcceptButtonClick(ClickEvent event) {
-//		onAccept();
-//	}
-//	@UiHandler("cancelButton")
-//	void onCancelButtonClick(ClickEvent event) {
-//		onCancel();
-//	}
-	
 	@Override
 	public void onClose() {
 		onCancel();	
@@ -282,15 +238,6 @@ public class ParticipationPanel extends AonCustomDialog {
 		rootPanel.add(buttonsPanel);
 		
 		add(rootPanel);
-		
-//		@UiHandler("acceptButton")
-//		void onAcceptButtonClick(ClickEvent event) {
-//			onAccept();
-//		}
-//		@UiHandler("cancelButton")
-//		void onCancelButtonClick(ClickEvent event) {
-//			onCancel();
-//		}
 		
 	}
 	

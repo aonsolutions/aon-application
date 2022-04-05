@@ -1645,6 +1645,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		moreToggleButtonsPanel.add(variablesVisivility);
 		
 		// Initialize toggleButtonsPanel
+		if(agreementDraftObject instanceof CategoryDraftObject)
+			tabPos = (datesList.length - 1) * 2;
 		inicializeToggleButtons(datesList, readOnly, tabPos);
 		
 	}
@@ -2128,8 +2130,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 //		Window.alert("Draft StartDate : " + agreementDraftObject.getStartDate() + " Draft EndDate : " + agreementDraftObject.getEndDate());
 		
-//		Window.alert("CalculateSuccess start");
-
 		categoryButton = initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
 		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
 		
@@ -2151,10 +2151,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		clearPaymentsTable();
 		paymentEditors.clear();
+		
 		paymentEditors.addAll(dumpPayments());
 		if(object.isMine())
 			paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount()));
-
+		
 		clearExtrasTable();
 		SortedSet<Payment> extraPayments = getAvailableExtraPayments();
 		extraEditors.clear();
@@ -2326,9 +2327,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 
 	public void setReadOnly(boolean readOnly) {
-		
 		for ( IFocusableEditor editor: salaryTableEditors)
-			editor.setReadOnly(readOnly);
+			if(null != editor ) editor.setReadOnly(readOnly);
 		
 		for ( PaymentEditor editor: paymentEditors)
 			editor.setReadOnly(readOnly);
@@ -2578,10 +2578,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		// now level rows
 		int row = 1;
 		for (Level level : levels) {
-
+			
 			LevelEditor levelEditor = new LevelEditor(level);
 			Widget levelWidget = createWidget4Level(level, levelEditor);
-
+			
+			if(agreementDraftObject instanceof CategoryDraftObject && 
+				((CategoryDraftObject) agreementDraftObject).getCategoryDraft().getLevelId() != level.getId())
+					continue;
+			
 //			hide(levelWidget, level.getId() == 0);
 
 			salaryTable.setWidget(row, 0, levelWidget);
@@ -2604,6 +2608,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		row = 1;
 
 		for (Level level : levels) {
+			if(agreementDraftObject instanceof CategoryDraftObject && 
+					((CategoryDraftObject) agreementDraftObject).getCategoryDraft().getLevelId() != level.getId())
+						continue;
+			
 			col = 1;
 			for (String var : variables) {
 				Variable variable = agreementDraftObject.getVariable(level, var);
@@ -2718,6 +2726,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 			LevelEditor levelEditor = new LevelEditor(level);
 			Widget levelWidget = createWidget4Level(level, levelEditor);
+			
+			if(agreementDraftObject instanceof CategoryDraftObject && 
+					((CategoryDraftObject) agreementDraftObject).getCategoryDraft().getLevelId() != level.getId())
+						continue;
 
 //			hide(levelWidget, level.getId() == 0);
 
@@ -2741,6 +2753,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		row = 1;
 
 		for (Level level : levels) {
+			
+			if(agreementDraftObject instanceof CategoryDraftObject && 
+					((CategoryDraftObject) agreementDraftObject).getCategoryDraft().getLevelId() != level.getId())
+						continue;
 
 			col = 1;
 			
