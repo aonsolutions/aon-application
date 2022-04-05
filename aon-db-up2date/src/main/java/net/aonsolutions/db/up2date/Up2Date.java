@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.AgreementClean;
 import net.aonsolutions.db.up2date.payroll.CertificatesClean;
+import net.aonsolutions.db.up2date.tgss.Artist2022Fix;
 import net.aonsolutions.db.up2date.tgss.Artist2022Update;
 import net.aonsolutions.db.up2date.tgss.Bases2022UpdateII;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2022Update;
@@ -220,12 +221,13 @@ public class Up2Date {
 //    		SalaryHoursUpdateDaily.SALARYHOURSUPDATEDAILY,
 //    		AgreementClean.AGREEMENTCLEAN,
 //    		CertificatesClean.CERTIFICATESCLEAN
-    		Bases2022UpdateII.BASES2022UPDATEIII,
-    		HomeBases2022Update.HOMEBASES2022UPDATE,
-    		TrainningBases2022Update.TRAINNINGBASES2022UPDATE,
-    		TrainingPercentages2022Update.TRAINNINGPERCENTAGES2022UPDATE,
-    		FellowsPercentages2022Update.FELLOWSPERCENTAGES2022UPDATE,
-    		Artist2022Update.ARTIST2022UPDATE
+//    		Bases2022UpdateII.BASES2022UPDATEIII,
+//    		HomeBases2022Update.HOMEBASES2022UPDATE,
+//    		TrainningBases2022Update.TRAINNINGBASES2022UPDATE,
+//    		TrainingPercentages2022Update.TRAINNINGPERCENTAGES2022UPDATE,
+//    		FellowsPercentages2022Update.FELLOWSPERCENTAGES2022UPDATE,
+//    		Artist2022Update.ARTIST2022UPDATE
+    		Artist2022Fix.ARTIST2022FIX
     };
     
 
