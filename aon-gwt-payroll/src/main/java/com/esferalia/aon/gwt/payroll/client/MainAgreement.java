@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsToolbar
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.ContextMenu;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
@@ -81,6 +82,55 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					draftObject.getDescription()));
 		}
 
+	}
+	
+	// ------------------------------------------- SettingsContextMenu
+	
+	class EmptyTrashCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			new AgreementsCleanDialog(AgreementCleanType.DELETED) {
+				
+				@Override
+				public void onAccept() {
+					mainTrashAgreement.getAgreements().getAgreements(s -> {});
+				}
+			};
+		}
+	}
+	
+	class UnusedCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
+				
+				@Override
+				public void onAccept() {
+					mainTrashAgreement.getAgreements().getAgreements(s -> {});
+				}
+			};
+		}
+	}
+	
+	class SettingsContextMenu extends ContextMenu {
+		
+		private MenuItem emptyTrash;
+		private MenuItem unused;
+		
+		public SettingsContextMenu() {
+			
+			emptyTrash = addItem("Ver papelera convenios", new EmptyTrashCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			emptyTrash.ensureDebugId("emptyTrash");
+			
+			unused = addItem("Ver convenios en desuso", new UnusedCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			unused.ensureDebugId("peculiarities");
+			
+		}
+		
 	}
 
 	// ------------------------------------------- UiBinder
@@ -299,6 +349,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	private DomainUserRoles userRoles;
 	
+	private SettingsContextMenu settingsContextMenu;
+	
 	// ------------------------------------------- ModuleLoad
 	
 	@Override
@@ -316,28 +368,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			public void onBackButtonClick() {
 				getAgreements();
 				showAgreements();
-			}
-			
-			@Override
-			public void onDeletedAgreementsButtonClick() {
-				new AgreementsCleanDialog(AgreementCleanType.DELETED) {
-					
-					@Override
-					public void onAccept() {
-						mainTrashAgreement.getAgreements().getAgreements(s -> {});
-					}
-				};
-			}
-			
-			@Override
-			public void onUnusedAgreementsButtonClick() {
-				new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
-									
-					@Override
-					public void onAccept() {
-						mainTrashAgreement.getAgreements().getAgreements(s -> {});
-					}
-				};
 			}
 			
 		};
@@ -363,6 +393,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		agreements.addStyleName(style.borderR());
 		
+		this.settingsContextMenu = new SettingsContextMenu();
 		this.editionsListener = new LinkedList<>();
 		this.agreement = null;
 		this.parentDomain = null;
@@ -751,4 +782,14 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		for(EditionListener listener : editionsListener)
 			listener.onViewAgreements(agreement, allAgreements);
 	}
+
+	@Override
+	public void onSettingsButtonClick(ClickEvent event) {
+		NativeEvent nativeEvent = event.getNativeEvent();
+		int offset = 225;
+		settingsContextMenu.setPopupPosition(nativeEvent.getClientX() - offset, nativeEvent.getClientY());
+		settingsContextMenu.show();
+		
+	}
+	
 }
