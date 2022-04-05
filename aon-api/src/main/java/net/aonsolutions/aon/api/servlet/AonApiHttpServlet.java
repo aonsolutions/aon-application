@@ -1,19 +1,14 @@
 package net.aonsolutions.aon.api.servlet;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -228,9 +223,9 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 
 	public JSONObject getRequestJSON(HttpServletRequest req){
-		String line = "";
 		StringBuilder bld = new StringBuilder();
 		try {
+			String line = "";
 			while((line = req.getReader().readLine()) != null){
 				bld.append(" " + line);
 			}
@@ -242,21 +237,9 @@ public class AonApiHttpServlet extends HttpServlet{
 		if(s == null || s.isBlank()){
 			return new JSONObject();
 		} else
-			return new JSONObject(s); //return parseParams(s);
+			return new JSONObject(s); 
 	}
 
-//	private JSONObject parseParams(String paramsStr) {
-//		String[] params = paramsStr.split("&");
-//		JSONObject json = new JSONObject();
-//		for(int i=0; i<params.length; i++) {
-//			try {
-//				String key = params[i].split("=")[0].trim();
-//				String value = params[i].split("=")[1].trim();
-//				json.put(key, value);
-//			} catch (Exception e) {}
-//		}
-//		return json;
-//	}
 
 	public static JSONObject getParamsJSON(ServletRequest req) {
 	    JSONObject jsonObj = new JSONObject();

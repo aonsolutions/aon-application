@@ -105,7 +105,7 @@ export class AonConfiguration extends AonElement {
 
       let companyOptions = [];
 
-      if(!this.dur.isEmployee()){
+      if(!this.dur.isEmployee() && !this.isMobile()){
         companyOptions.push({
           name: MSG.GENERAL_INFORMATION,
           icon: MATERIAL_ICONS.BUSINESS,
