@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.form.PDTransparencyGroup;
 import org.apache.pdfbox.text.TextPosition;
@@ -102,7 +103,7 @@ public class PDFTextStripper extends org.apache.pdfbox.text.PDFTextStripper
         }
         else
         {
-            try (PDDocument document = PDDocument.load(new File(args[0])))
+            try (PDDocument document = Loader.loadPDF(new File(args[0])))
             {
         		for (int p = 1; p <= document.getNumberOfPages(); p++) {
         		PDFTextStripper stripper = new PDFTextStripper();
