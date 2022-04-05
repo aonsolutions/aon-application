@@ -394,7 +394,7 @@ public class MainCertificates extends MainEntryPoint{
 		this.mainDigitalCertificatesObject.getEnterpriseId(
 				s -> {
 					mainDigitalCertificatesObject.getDomainUserRoles(domainUserRole -> {
-						if(null == domainUserRole.isAdmin() || !domainUserRole.isAdmin())
+						if(!domainUserRole.isAdmin())
 							hideEnterpriseTab();
 					}, fa -> {});
 					loadDigitalCertificates();
