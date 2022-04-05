@@ -32,7 +32,7 @@ public class OutlineTextStripper extends PDFTextStripper {
 		// If it is a new line
 		if (textPositions.get(0).getEndY() != lastY) {
 			
-			int page = getCurrentPageNo() - 2;
+			int page = getCurrentPageNo() - 1;
 			if (page < 0) {
 				page = 0;
 			}
@@ -40,7 +40,7 @@ public class OutlineTextStripper extends PDFTextStripper {
 			PdfText line = new PdfText(text, page);
 			line.setType(TextType.getValue((float)pos.getFontSize()));
 			line.setX(pos.getX());
-			line.setY(pos.getPageHeight() - pos.getY());
+			line.setY(pos.getEndY() + pos.getHeight() + pos.getFontSize() );
 			lines.add(line);
 			
 

@@ -4,14 +4,21 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDestinationNameTreeNode;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
@@ -40,7 +47,7 @@ public class PdfIndexer {
 	 * @param stream The PDF to add 
 	 * @param index 
 	 */
-	public static void index(InputStream stream, String name, PDDocument index) {
+	public static PDDocument index(InputStream stream, String name, PDDocument index) {
 
 		try {
 			System.out.println("[Loading][PDF] " + (stream.available()/1024)  + "KB");
@@ -61,12 +68,7 @@ public class PdfIndexer {
 	
 			
 			// Prepare items for hierarchy
-			
-			PDOutlineItem grandParent = null;
-			TextType grandParentType = null; 
-			
 			PDOutlineItem parent = null;
-			TextType parentType = null;
 
 			
 			// For each text create outline items
@@ -74,6 +76,9 @@ public class PdfIndexer {
 			ArrayList<PdfText> lines = (ArrayList<PdfText>) stripper.getLines();
 			
 			System.out.println("LINES FOUND: " + lines.size());
+			
+			 
+			Map<String, PDPageDestination> namesMap = new HashMap<>(); 
 			
 			for(PdfText l: lines) {
 				
@@ -96,9 +101,17 @@ public class PdfIndexer {
 				item.setTextColor(Color.blue);
 				
 				// Add an action
+				PDPageXYZDestination pageXYZDestination = new PDPageXYZDestination();
+				pageXYZDestination.setLeft((int)l.getX());
+				pageXYZDestination.setTop((int)l.getY());
+				pageXYZDestination.setPageNumber(l.getPage());
+				//String md5 = DigestUtils.md5Hex(l.getText());
+				String id = String.format("aon%d", namesMap.size());
+				namesMap.put(id, pageXYZDestination );
 				
 				PDActionURI action = new PDActionURI();
-				action.setURI("help/"+ name + ".pdf" + "#page=" + l.getPage() );
+				//action.setURI("help/"+ name + ".pdf" + "#page=" + l.getPage() );
+				action.setURI("help/"+ name + ".pdf" + "#" + id );
 				System.out.println( action.getURI() );
 				item.setAction(action);
 				
@@ -110,45 +123,23 @@ public class PdfIndexer {
 				}
 				
 				
-				/**
-				// If is root
-				if(parent == null && grandParent == null)
-				{
-					outline.addLast(item);
-					parent = item;
-					parentType = l.getType();
-				} 
-								
-				// if not root
-				else {
-					
-					//if parent type > item type attach item to parent
-					if(parentType.greaterThan(l.getType())) {
-						parent.addLast(item);
-					}
-					//else attach item to grandpa
-					else {
-						//if no grandpa attach to root
-						if(grandParent == null) {
-							outline.addLast(item);
-						} 
-						
-						// else attach to grandpa
-						else {
-							grandParent.addLast(item);
-							parent = item;
-							parentType = l.getType();
-						}
-						
-						
-					}
-				}
-				
-				**/
 			}
+			
+			PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
+			if ( names == null ) {
+				names = new PDDocumentNameDictionary(document.getDocumentCatalog());
+			}
+			PDDestinationNameTreeNode dests = names.getDests();
+			if ( dests == null ) {
+				dests = new PDDestinationNameTreeNode();
+				names.setDests(dests);
+			}
+			dests.setNames(namesMap);
+			return document;
 			//document.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}		
 	}
 	
@@ -233,35 +224,39 @@ public class PdfIndexer {
 		InputStream pdfOneStream = PdfIndexer.class.getResourceAsStream("payroll.pdf");
 		//InputStream pdfTwoStream = PdfIndexer.class.getResourceAsStream("payroll_new.pdf");
 		
-		PDDocument document = new PDDocument();		
+		PDDocument index = new PDDocument();		
 		PDDocumentOutline outline = new PDDocumentOutline();
-		document.getDocumentCatalog().setDocumentOutline(outline);	
+		index.getDocumentCatalog().setDocumentOutline(outline);	
 		
 		PDPage blankPage = new PDPage();
-		document.addPage( blankPage );	
+		index.addPage( blankPage );	
 	
-		index(pdfOneStream, "LABORAL Manual de USUARIO", document );
+		PDDocument payrollNamed = index(pdfOneStream, "LABORAL Manual de USUARIO", index );
+		
+		
 		//index(pdfTwoStream, "payroll_new.pdf", document);
 		
 		try {
+			
+			payrollNamed.save("target/classes/com/code/aon/ui/help/pdf/payroll_names.pdf");
+			payrollNamed.save("src/main/resources/com/code/aon/ui/help/pdf/payroll_names.pdf");
+			
 			//document.save("src/main/resources/com/code/aon/web/help/pdf/index.pdf");
 			//new File("target/generated-sources/com/code/aon/web/help/pdf").mkdirs();
-			document.save("target/classes/com/code/aon/ui/help/pdf/index.pdf");
-			document.save("src/main/resources/com/code/aon/ui/help/pdf/index.pdf");
-			document.close();
+			index.save("target/classes/com/code/aon/ui/help/pdf/index.pdf");
+			index.save("src/main/resources/com/code/aon/ui/help/pdf/index.pdf");
+			index.close();
 			System.out.println("[DONE] Index generated.");
 			
 			try  ( InputStream is = PdfIndexer.class.getResourceAsStream("index.pdf");
 					PDDocument pddoc = Loader.loadPDF(is) ) {
-				search(document, "" ).forEach( i -> System.out.println( i.getTitle()));
+				search(index, "" ).forEach( i -> System.out.println( i.getTitle()));
 		}
-
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				document.close();
+				index.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

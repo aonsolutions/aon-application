@@ -40,7 +40,7 @@ public class HelpServlet extends HttpServlet {
         ServletOutputStream output = response.getOutputStream();
         
         
-        try ( InputStream input = PdfIndexer.class.getResourceAsStream("payroll.pdf") ) {
+        try ( InputStream input = PdfIndexer.class.getResourceAsStream("payroll_names.pdf") ) {
 	        
 	        int length;
 	        byte[] bytes = new byte[1024];
