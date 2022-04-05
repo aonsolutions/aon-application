@@ -272,7 +272,7 @@ public class InvoiceTest {
 		detailOne.setTaxableBase(712382113);
 		detailOne.setSource(InvoiceSource.DELIVERY);
 		
-		DeliveryDetail deliveryDetail = new DeliveryDetail().setId(288).setDelivery(new Delivery().setId(123).setIssueTime(new Date()));
+		DeliveryDetail deliveryDetail = new DeliveryDetail().setId(288).setDelivery(new Delivery().setId(123).setIssueTime(new Date()).setSeries("3434"));
 		detailOne.setDeliveryDetail(deliveryDetail);
 				
 		
@@ -285,7 +285,7 @@ public class InvoiceTest {
 		detailTwo.setTaxableBase(712382113);
 		detailTwo.setSource(InvoiceSource.SALES);
 		
-		SalesDetail deliveryDetailTwo = new SalesDetail().setId(288).setSales(new Sales().setId(123).setIssueDate(new Date()));
+		SalesDetail deliveryDetailTwo = new SalesDetail().setId(288).setSales(new Sales().setId(123).setIssueDate(new Date()).setPurchaseReference("123456/12345"));
 		detailTwo.setSalesDetail(deliveryDetailTwo);
 		
 		InvoiceDetail detailThree = new InvoiceDetail();
