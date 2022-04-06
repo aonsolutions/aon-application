@@ -471,7 +471,7 @@ public class ToJSON {
 			.put(MSG.SERIES, delivery.getSeries())
 			.put(MSG.NUMBER, delivery.getNumber())
 			.put(MSG.REGISTRY, new JSONObject()
-				.put(MSG.ID, delivery.getCustomer())
+				.put(MSG.ID, delivery.getCustomer().getId())
 				.put(MSG.NAME, delivery.getCustomerName())) 
 			.put(MSG.ISSUE_DATE, delivery.getIssueTime() != null ? AonDateUtils.dateTimeFormat(delivery.getIssueTime()) : "")
 			.put("order_type", "delivery")
