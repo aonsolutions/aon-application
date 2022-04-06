@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod111;
+package com.esferalia.aon.occam.api.model.fiscal.mod111;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
-public enum Model111ArabaScript implements IModelScript<Mod111Key> {
+enum Model111ArabaScript implements IModelScript<Mod111Key> {
 	
 	 R00 ("Rendimientos procedentes del trabajo o servicios que se presten en el Territorio Hist\u00F3rico de \u00C1lava"
 			,new Mod111Key[]{Mod111Key.AR_C50,Mod111Key.AR_C60,Mod111Key.AR_C70},NONE)

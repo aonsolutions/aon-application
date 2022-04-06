@@ -14,6 +14,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @SuiteClasses({
 	// MVEL expresions syntax check en las declaraciones
 	Mod111ExpressionsTest.class,
+	Mod111ScriptTest.class,
+	
 	// Modelos mensuale
 	Mod111DeleteTest.class,
 	Mod111InsertMonthlyTest.class,
