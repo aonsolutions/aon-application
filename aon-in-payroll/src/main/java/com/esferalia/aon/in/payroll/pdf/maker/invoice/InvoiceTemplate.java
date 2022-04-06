@@ -488,6 +488,11 @@ public class InvoiceTemplate {
 	}
 	
 	@FunctionalInterface
+	private interface IdCallback {
+		Integer get(InvoiceDetail detail);
+	}
+	
+	@FunctionalInterface
 	private interface ReferenceCallback {
 		String get(InvoiceDetail detail);
 	}
@@ -497,13 +502,13 @@ public class InvoiceTemplate {
 		Date get(InvoiceDetail detail);
 	}
 	
-	private static void iterateDetails(Invoice invoice, InvoiceSource source,  Map<SourceCategory, List<InvoiceDetail>> map, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback) {
+	private static void iterateDetails(Invoice invoice, InvoiceSource source,  Map<SourceCategory, List<InvoiceDetail>> map, IdCallback idCallback, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback) {
 		if (source == null)
 			return;
 		invoice.getDetails().stream()
 		.filter(detail -> detail != null && source.equals(detail.getSource()))
 		.forEach(detail -> {
-			SourceCategory key = new SourceCategory(source, referenceCallback.get(detail), issueDateCallback.get(detail));
+			SourceCategory key = new SourceCategory(source, idCallback.get(detail), referenceCallback.get(detail), issueDateCallback.get(detail));
 			List<InvoiceDetail> detailList = map.getOrDefault(key, new LinkedList<>());
 			detailList.add(detail);
 			map.put(key, detailList);
@@ -523,24 +528,28 @@ public class InvoiceTemplate {
 	
 	private static void sortDeliveries(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
 		iterateDetails(invoice, InvoiceSource.DELIVERY, map,
+			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getId() : null,
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? AonStringUtils.trimToEmpty(detail.getDeliveryDetail().getDelivery().getReferenceCode()) : "",
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getIssueTime() : null
 		);
 	}
 	private static void sortSales(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
 		iterateDetails(invoice, InvoiceSource.SALES, map,
+			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getId() : null,
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? AonStringUtils.trimToEmpty(detail.getSalesDetail().getSales().getReferenceCode()) : "",
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getIssueDate() : null
 		);
 	}
 	private static void sortIncome(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
 		iterateDetails(invoice, InvoiceSource.INCOME, map,
+			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getId() : null,
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? AonStringUtils.trimToEmpty(detail.getIncomeDetail().getIncome().getReferenceCode()) : "",
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getIssueDate() : null
 		);
 	}
 	private static void sortOffer(Invoice invoice, Map<SourceCategory, List<InvoiceDetail>> map) {
 		iterateDetails(invoice, InvoiceSource.OFFER, map,
+			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getId() : null,
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? AonStringUtils.trimToEmpty(detail.getOfferDetail().getOffer().getReferenceCode()) : "",
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getIssueDate() : null	
 		);
@@ -1532,8 +1541,9 @@ public class InvoiceTemplate {
 		private Date date;
 		private InvoiceSource source;
 		
-		public SourceCategory(InvoiceSource source, String reference, Date date) {
+		public SourceCategory(InvoiceSource source, Integer id, String reference, Date date) {
 			super();
+			this.id = id;
 			this.source = source;
 			this.reference = reference;
 			this.date = date;
