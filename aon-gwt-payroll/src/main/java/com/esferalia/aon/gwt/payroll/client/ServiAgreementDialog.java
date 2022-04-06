@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -118,7 +119,8 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					// Nothing to do here
+					AonDialog errorDialog = new AonDialog("Error obtenci\u00f3n XML", new HTMLPanel(caught.getMessage()));
+					errorDialog.warning();
 				}
 
 				@Override
