@@ -74,15 +74,15 @@ export class AonMessengerChat extends AonElement {
   }
 
   setTask(){
-
-    let data = {...this.data, domainCompany:this.getDur().domain};
-
-    data.auth = this.getAuth();
+    let data = {
+      ...this.data, 
+      domainCompany:this.getDur().domain,
+      auth:this.getAuth()
+    };
       
     const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
     if(myTaskHolder && myTaskHolder.id) 
       data.myTaskHolder = myTaskHolder;
-      
 
     this.setData(data); 
     this.task = new Task(this.getData());

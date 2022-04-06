@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
@@ -209,7 +209,7 @@ public class EnterpriseIT extends Composite {
 	}
 	
 	// ------ setFooter
-	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tab, MinimizePanel footPanel) {		
+	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
 		itWidget.setFooter(splitLayoutPanel, tab, footPanel);
 	}
 }

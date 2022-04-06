@@ -978,7 +978,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 
 	private void paintCalendar(int row) {
-		// Mostrar días del mes
+		// Mostrar dï¿½as del mes
 		Integer contDays = 1;
 		Date date = fullDateFormat.parse(1 + "/" + (month + 1) + "/" + (year + 1900));
 		int firstDayOfMonth = calculateNumberDayOfWeek(date);
@@ -1534,13 +1534,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	        @Override
 			protected void onCommunicateITPart(IT it, ITPart part) {
-				AonDialog dialog = new AonDialog("Info", new HTML("Implementada en el apartado  Laboral Partes IT"));
+				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral Partes IT"));
 				dialog.info();
 			}
 
 			@Override
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
-				AonDialog dialog = new AonDialog("Info", new HTML("Im en el apartado  Laboral Partes IT"));
+				AonDialog dialog = new AonDialog("Info", new HTML("Comunicarlo desde en el apartado Laboral Partes IT"));
 				dialog.info();
 			}
 			
@@ -1746,7 +1746,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		try {
 			int numDay = Integer.parseInt(dayOfWeekFormat.format(date));
 			
-			// Tratamiento calendario español, 0 = Lunes, 6 = Domingo
+			// Tratamiento calendario espaï¿½ol, 0 = Lunes, 6 = Domingo
 			if (0 == numDay)
 				numDay = 7;
 
