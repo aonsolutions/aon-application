@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.Optional;
 
 import javax.servlet.ServletContext;
@@ -28,19 +29,33 @@ import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 public class HelpServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	private HashMap<String, String> files;
+	
+	
 	public HelpServlet() {
 		super();
+		this.files = new HashMap<String, String>();
+		
+		files.put("LABORAL Manual de USUARIO", "payroll_names.pdf");
+		files.put("CONTABILIDAD Manual de USUARIO", "account_names.pdf");
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/pdf;charset=UTF-8");
-
         response.addHeader("Content-Disposition", "inline; filename=" + request.getPathInfo());
-
         ServletOutputStream output = response.getOutputStream();
         
         
-        try ( InputStream input = PdfIndexer.class.getResourceAsStream("payroll_names.pdf") ) {
+        String filename = this.files.get(request.getPathInfo().substring(1).replaceAll("\\+" , " ").replace(".pdf",""));        
+        
+        System.out.println("PATH INFO: " + request.getPathInfo().substring(1).replaceAll("\\+" , " ").replace(".pdf",""));
+        System.out.println("FILE NAME: " + filename);
+        
+        if(filename == null) {
+        	response.sendError(404);
+        }
+        
+        try ( InputStream input = PdfIndexer.class.getResourceAsStream(filename)) {
 	        
 	        int length;
 	        byte[] bytes = new byte[1024];
