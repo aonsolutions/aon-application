@@ -37,6 +37,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.management.Offer;
+import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -58,6 +60,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Asserts {
@@ -843,6 +846,41 @@ public class Asserts {
 	}
 	public static void assertMod303(Mod303 expected, Mod303 actual) {
 		assertFiscalModel(expected, actual);
+	}
+	
+	public static void assertEqualsOffer(Offer expected, Offer actual) {
+		// TODO Completar...
+		assertEqualsNulls( "Offer", expected, actual);
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
+		}
+	}
+	
+	public static void assertEqualsOfferDetail(OfferDetail expected, OfferDetail actual) {
+		assertEqualsNulls( "Offer Detail", expected, actual);
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Offer", expected.getOffer().getId(), actual.getOffer().getId());
+			assertEquals("Line", expected.getLine(), actual.getLine());
+			assertEquals("Item", expected.getItem().getId(), actual.getItem().getId());
+			assertEquals("Description", expected.getDescription(), actual.getDescription());
+			assertEquals("Quantity", expected.getQuantity(), actual.getQuantity(), DELTA);
+			assertEquals("Discount Expression", expected.getDiscountExpression(), actual.getDiscountExpression());
+			assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
+		}
+	}
+	
+	public static void assertEqualsDelivery(Delivery expected, Delivery actual) {
+		// TODO Completar...
+		assertEqualsNulls( "Delivery", expected, actual);
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
+		}
 	}
 		
 	

@@ -81,6 +81,11 @@ public class Delivery implements Serializable {
 		this.id = id;
 		return this;
 	}
+	
+	public boolean hasId() {
+		return getId() != null;
+	}
+	
 	public int getDomain() {
 		return domain;
 	}

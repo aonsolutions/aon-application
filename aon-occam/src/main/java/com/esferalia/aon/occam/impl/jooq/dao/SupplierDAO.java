@@ -135,6 +135,12 @@ public class SupplierDAO {
 			.orElse(null);
 	}
 	
+	public static Supplier get(AONContext ctx, SupplierFilter filter){
+		return getStream(ctx, filter)
+			.findFirst()
+			.orElse(new Supplier());
+	}
+	
 	public static Supplier save(AONContext ctx, Supplier supplier) {
 		ctx.checkWrite();
 		SupplierAutoComplete.autoComplete(ctx, supplier);
