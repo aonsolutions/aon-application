@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,9 +34,17 @@ public class IndexPDFFiles {
 			PDDocument doc = Loader.loadPDF(file);
 			doc.getDocumentCatalog().setDocumentOutline(new PDDocumentOutline());
 			
+			
+			// Create file outline item, add name to names and set action
 			PDOutlineItem outlineItem = new PDOutlineItem();
 			outlineItem.setTitle(filename);
 			index.getDocumentCatalog().getDocumentOutline().addLast(outlineItem);
+			outlineItem.setTitle(filename);	
+			 
+			
+			PDActionURI action = new PDActionURI();
+			action.setURI("help/" + filename + ".pdf");
+			outlineItem.setAction(action);
 			
 			HashMap<String, PDPageDestination> namesMap = new HashMap<>();
 			List<PDPageDestination> destinations = new ArrayList<PDPageDestination>();
@@ -237,7 +244,6 @@ public class IndexPDFFiles {
 			
 			System.out.println("[DONE] Index generated.");
 			
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
