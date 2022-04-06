@@ -112,6 +112,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		Set<Integer> invoices = dec.createFromInvoices(ctx,mod111);
 		Set<Integer> salaries = dec.createFromSalary(ctx,mod111);
 		for (FiscalModelDetail detail : mod111.getMap().values()) {
+			detail.setAccumulatedAmount( AonMathUtils.round(detail.getAccumulatedAmount()));
 			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
 			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 		}
