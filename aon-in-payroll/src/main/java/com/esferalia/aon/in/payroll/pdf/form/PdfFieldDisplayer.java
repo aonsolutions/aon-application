@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -28,7 +29,7 @@ public class PdfFieldDisplayer {
 
 	//DISPLAY PDF INPUT NAMES
 	static void display_pdf_form_names(InputStream is, String new_pdf) throws UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(is)) {
+		try (PDDocument doc = Loader.loadPDF(is)) {
 			doc.setAllSecurityToBeRemoved(true);
 
 			PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();

@@ -1,7 +1,13 @@
 package net.aonsolutions.aon.google.apis.drive;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -98,9 +104,152 @@ public class SearchFiles {
 		return fl;		
 	}
 
+	/**
+	 * Search files and folders by parent that aren't deleted.
+	 * @param drive - drive object
+	 * @param parent - parent ID
+	 * @return a FileList with the files and folders given by the API
+	 */
+	public static FileList searchByParentNotTrashed(Drive drive, String parent){
+		FileList fl = new FileList();
+		try {
+			fl = drive.files()
+					.list()
+					.setQ("'"+parent+"' in parents and trashed=false")
+					.setFields("files(parents, id, mimeType, name, webContentLink, webViewLink)")
+					.execute();
+		} catch (IOException e) {
+			//e.printStackTrace();
+		}
+		return fl;		
+	}
+	
+	/**
+	 * Search files and folders by parent that aren't deleted.
+	 * @param drive - drive object
+	 * @param parent - parent ID
+	 * @return a FileList with the files and folders given by the API
+	 */
+	public static FileList searchByParentNameNotTrashed(Drive drive, String parent){
+		
+		final FileList matches = SearchFiles.searchByNameNotThrashed(drive, parent);
+		
+		if(matches.getFiles().size() == 0) {
+			return new FileList();
+		}
+		
+		final File parentObject = matches.getFiles().get(0);
+		
+		FileList fl = new FileList();
+		try {
+			fl = drive.files()
+					.list()
+					.setQ("'"+parentObject.getId()+"' in parents and trashed=false")
+					.setFields("files(parents, id, mimeType, name, webContentLink, webViewLink)")
+					.execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fl;		
+	}
+	
+	/**
+	 * Search files and folders by parent and name that aren't deleted
+	 * @param drive
+	 * @param name
+	 * @param parent
+	 * @return
+	 */
+	public static FileList searchByNameAndParentNotThrashed(Drive drive, String name, String parent) {
+		
+		
+		System.out.println("NAME :-" + name + "-");
+		System.out.println("PARENT :-" + parent + "-");
+		
+		FileList fl = new FileList();
+		try {
+			fl = drive.files()
+					.list()
+					.setQ("'"+parent+"' in parents and trashed=false and name='" + name + "'")
+					.setFields("files(parents, id, name, webContentLink, webViewLink)")
+					.execute();
+		} catch (IOException e) {
+			//e.printStackTrace();
+		}
+		return fl;		
+	}
+	
+	/**
+	 * Search files and folders by parent and name that aren't deleted
+	 * @param drive
+	 * @param name
+	 * @param parent
+	 * @return
+	 */
+	public static FileList searchByNameNotThrashed(Drive drive, String name) {
+		
+		FileList fl = new FileList();
+		try {
+			fl = drive.files()
+					.list()
+					.setQ("trashed=false and name='" + name + "'")
+					.setFields("files(parents, id, name, webContentLink, webViewLink)")
+					.execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fl;		
+	}
+	
+	/**
+	 * Download a file by name and parent that is not deleted.
+	 * @param drive - The drive object 
+	 * @param name - The name of the file
+	 * @param parent - The parent ID
+	 * @return an inputStream with the downloaded data.
+	 */
+	public static InputStream downloadByNameAndParentAndNotTrashed(Drive drive, String name, String parent) {
+		
+		final FileList list = searchByNameAndParentNotThrashed(drive, name, parent);
+		if(list.getFiles().size() == 0) {
+			return null;
+		}
+		
+		final File firstEntry = list.getFiles().get(0);
+		System.out.println("Passing check");
+		if(firstEntry.getId() == null) {
+			return null;
+		}
+		
+		InputStream response = downloadById(drive, firstEntry.getId());
+		return response;		
+				
+	}
+	
+	
+	/**
+	 * Download a file by ID
+	 * @param drive - The drive object
+	 * @param id - The file ID 
+	 * @return InputStream containing the downloaded data.
+	 */
+	public static InputStream downloadById(Drive drive, String id) {
+
+		InputStream response = new ByteArrayInputStream(new byte[0]);
+		try {
+			response = drive.files()
+					.get(id)
+					.executeMediaAsInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return response;		
+	}
+	
+	
 	public static FileList searchFilesMimetypeAndTitle(Drive drive, String searcher1, String searcher2) throws IOException{
 		FileList fl = drive.files().list().setQ("mimetype = '"+searcher1+"' and name = '"+searcher2+"'").execute();
-		System.out.println(fl);
 		return fl;
 	}
 
@@ -114,7 +263,13 @@ public class SearchFiles {
 		return fl;
 	}
 
-	public static File searchFile(Drive drive, String id) throws IOException{
-		return drive.files().get(id).execute();
+	public static File searchFile(Drive drive, String id){
+		try {
+			return drive.files().get(id).execute();
+		} catch (IOException e) {}
+		
+		return null;
 	}
+		
+	
 }

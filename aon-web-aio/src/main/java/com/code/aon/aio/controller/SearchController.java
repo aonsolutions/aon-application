@@ -2,6 +2,7 @@ package com.code.aon.aio.controller;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.CONTRACT_SWITCHER;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static com.code.aon.ui.help.controller.HelpSwitcher.HELP_SWITCHER;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import com.code.aon.ui.admin.controller.DomainsController;
 import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.config.controller.ContractSwitcher;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.help.controller.HelpSwitcher;
 import com.code.aon.ui.util.AonUtil;
 
 public class SearchController implements Serializable {
@@ -42,10 +44,16 @@ public class SearchController implements Serializable {
 
 	public void setFilter(String filter) {
 		this.filter = filter;
+		getHelpSwitcher().setFilter(filter);
 		getDomainSwitcher().setFilter(filter);
 		getContractSwitcher().setFilter(filter);
+		
 	}
 	
+	public HelpSwitcher getHelpSwitcher() {
+		return (HelpSwitcher) AonUtil.getRegisteredBean(HELP_SWITCHER);
+	}
+
 	public DomainSwitcher getDomainSwitcher() {
 		return (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 	}

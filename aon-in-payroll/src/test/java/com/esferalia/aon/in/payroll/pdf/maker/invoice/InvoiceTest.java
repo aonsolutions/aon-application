@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.junit.Before;
@@ -738,7 +739,7 @@ public class InvoiceTest {
 			
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
-			PDDocument document = PDDocument.load(bis);
+			PDDocument document = Loader.loadPDF(bis);
 			
 			
 			/** CHECKING PDF DATA **/
