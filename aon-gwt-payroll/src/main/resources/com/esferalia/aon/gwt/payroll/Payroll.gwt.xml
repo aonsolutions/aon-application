@@ -2,12 +2,7 @@
 <module rename-to='aon_gwt_payroll' >
 	<!-- Inherit the core Web Toolkit stuff.                        -->
 	<inherits name='com.google.gwt.user.User' />
-
-
 	<inherits name="com.google.gwt.i18n.I18N" />
-
-	<inherits name="com.vaadin.polymer.Elements"/>
-	
 	<inherits name="com.google.gwt.logging.Logging"/>
 
 	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
@@ -31,6 +26,8 @@
 	<!-- stylesheets search on scrollbar  -->
 	<stylesheet src="codemirror/addon/search/matchesonscrollbar.css"/>
 
+
+	<stylesheet src="aonReadOnly.css"/>
 
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>

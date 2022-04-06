@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal;
 
+import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
@@ -28,27 +29,34 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
+import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -62,7 +70,7 @@ public class FiscalModelDAO {
 	}
 	
 	private static void log(AONContext ctx, String msg, Object ... params ) {
-		ctx.log().info(msg,params);
+		ctx.log().debug(msg,params);
 	}
 	
 	private static final FiscalModelPropertiesDAO FS_MODEL_PROPERTIES = new FiscalModelPropertiesDAO();
@@ -88,15 +96,18 @@ public class FiscalModelDAO {
 		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.DOCUMENT);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.NAME);}
 		@Override public Property<String> getSurnameProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.SURNAME);}
-		
+		@Override public Property<Integer> getAccountEntryProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.ACCOUNT_ENTRY);}
+		@Override public Property<Double> getResultProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.RESULT);}
+		@Override public Property<Byte> getResultTypeProperty() {return new FilterDAO.PropertyDAO<>(FS_MODEL.DECLARATION_TYPE);}
 	}
 	
-	private static class FiscalModelFiller<T extends FiscalModel>  implements BiFunction<Record,Supplier<T>,T> {
+	protected static class FiscalModelFiller<T extends FiscalModel>  implements BiFunction<Record,Supplier<T>,T> {
 		@Override
 		public T apply(Record rec,Supplier<T> modelSupplier) {
 			T model = modelSupplier.get();
 			model.setId(rec.getValue(FS_MODEL.ID));
 			model.setDomain(rec.getValue(FS_MODEL.DOMAIN));
+			model.setDomainName(rec.getValue(DOMAIN.DESCRIPTION));
 			model.setYear(rec.getValue(FS_MODEL.YEAR));
 			model.setPeriod( Period.safeValueOf(rec.getValue(FS_MODEL.PERIOD)));
 			model.setAdministration(Administration.safeValueOf(rec.getValue(FS_MODEL.ADMINISTRATION)));
@@ -128,6 +139,9 @@ public class FiscalModelDAO {
 			model.setContactPhone(rec.getValue(FS_MODEL.CONTACT_PHONE));
 			model.setContactCellular(rec.getValue(FS_MODEL.CONTACT_CELLULAR));
 			model.setContactEmail(rec.getValue(FS_MODEL.CONTACT_EMAIL));
+			model.setDeclarationResult(rec.getValue(FS_MODEL.RESULT));
+			model.setDeclarationResultType(FiscalModelDeclarationType.safeValueOf(rec.getValue(FS_MODEL.DECLARATION_TYPE)));
+			model.setAccountEntry(rec.getValue(FS_MODEL.ACCOUNT_ENTRY));
 			model.setCreationUser(rec.getValue(FS_MODEL.CREATION_USER));
 			model.setCreationDate(rec.getValue(FS_MODEL.CREATION_DATE));
 			model.setModificationUser(rec.getValue(FS_MODEL.MODIFICATION_USER));
@@ -151,10 +165,11 @@ public class FiscalModelDAO {
 		}
 	}
 
-	private static SelectOnConditionStep<Record> getSelect(final AONContext ctx) {
+	public static SelectOnConditionStep<Record> getSelect(final AONContext ctx) {
 		return ctx.getDslContext()
 			.select()
 			.from(FS_MODEL)
+			.join(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL.DOMAIN))
 			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
 			.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
@@ -183,7 +198,7 @@ public class FiscalModelDAO {
 			.where(FS_MODEL_PROPERTIES.getConditions(filter))
 			.and(FS_MODEL.MODEL.eq(model.getValue()))
 			.and(FS_MODEL.DOMAIN.eq(domain))
-			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
+			.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.ADMINISTRATION.desc(),FS_MODEL.PERIOD.desc(),FS_MODEL.ID.desc())
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier));
@@ -203,7 +218,7 @@ public class FiscalModelDAO {
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.and(FS_MODEL.YEAR.eq(fm.getYear()))
 			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
-			.and(FS_MODEL.PERIOD.lessThan(fm.getPeriod().getValue()))
+			.and(FS_MODEL.PERIOD.lessThan(fm.getPeriod().value()))
 			.orderBy(desc?FS_MODEL.PERIOD.desc():FS_MODEL.PERIOD.asc())
 			.fetch()
 			.stream()
@@ -212,18 +227,24 @@ public class FiscalModelDAO {
 			.filter(fim -> fim.getPeriod().isQuarterPeriod() == fm.getPeriod().isQuarterPeriod())
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
-	public static <T extends FiscalModel> Stream<T> getSamePeriodModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
+	
+	public static <T extends FiscalModel> Stream<T> getSamePeriodFiscalModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
 		ctx.checkRead();
 		return getSelect(ctx)
 			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.and(FS_MODEL.YEAR.eq(fm.getYear()))
 			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
-			.and(FS_MODEL.PERIOD.eq(fm.getPeriod().getValue()))
-			.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.notEqual(fm.getId()))
+			.and(FS_MODEL.PERIOD.eq(fm.getPeriod().value()))
+			.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.lt(fm.getId()))
+			.orderBy(FS_MODEL.ID.desc())
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier))
+			;
+	}
+	public static <T extends FiscalModel> Stream<T> getSamePeriodModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
+		return getSamePeriodFiscalModels(ctx, fm, modelSupplier)
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
 	
@@ -253,7 +274,7 @@ public class FiscalModelDAO {
 			.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
 			.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
 			.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().value()))
-			.and(FS_MODEL.PERIOD.eq((byte) ( (fiscalModel.getPeriod().getValue() - 1) )))
+			.and(FS_MODEL.PERIOD.eq((byte) ( fiscalModel.getPeriod().value() - 1 )))
 			.orderBy(FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc()
 					,FS_MODEL.REPLACEMENT.desc(),FS_MODEL.ID.desc())
 			.fetch()
@@ -298,7 +319,7 @@ public class FiscalModelDAO {
 			.insertInto(FS_MODEL)
 				.set(FS_MODEL.DOMAIN, fm.getDomain())
 				.set(FS_MODEL.YEAR, fm.getYear())
-				.set(FS_MODEL.PERIOD, fm.getPeriod().getValue() )
+				.set(FS_MODEL.PERIOD, fm.getPeriod().value() )
 				.set(FS_MODEL.ADMINISTRATION, fm.getAdministration().value() )
 				.set(FS_MODEL.STATUS, AonEnumUtils.getByte( fm.getStatus() ) )
 				.set(FS_MODEL.SECURITY_LEVEL,AonEnumUtils.getByte( fm.isConfidential() ))
@@ -328,6 +349,9 @@ public class FiscalModelDAO {
 				.set(FS_MODEL.CONTACT_PHONE,fm.getContactPhone())
 				.set(FS_MODEL.CONTACT_CELLULAR,fm.getContactCellular())
 				.set(FS_MODEL.CONTACT_EMAIL,fm.getContactEmail())
+				.set(FS_MODEL.RESULT,fm.getDeclarationResult())
+				.set(FS_MODEL.DECLARATION_TYPE,AonEnumUtils.getByte( fm.getDeclarationResultType() ) )
+				.set(FS_MODEL.ACCOUNT_ENTRY,fm.getAccountEntry())
 				.set(FS_MODEL.CREATION_USER,ctx.getUser())
 				.set(FS_MODEL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(FS_MODEL.ID)
@@ -372,6 +396,9 @@ public class FiscalModelDAO {
 			.set(FS_MODEL.CONTACT_PHONE,fm.getContactPhone())
 			.set(FS_MODEL.CONTACT_CELLULAR,fm.getContactCellular())
 			.set(FS_MODEL.CONTACT_EMAIL,fm.getContactEmail())
+			.set(FS_MODEL.RESULT,fm.getDeclarationResult())
+			.set(FS_MODEL.DECLARATION_TYPE,AonEnumUtils.getByte( fm.getDeclarationResultType() ) )
+			.set(FS_MODEL.ACCOUNT_ENTRY,fm.getAccountEntry())
 			.set(FS_MODEL.MODIFICATION_USER,ctx.getUser())
 			.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 		.where(FS_MODEL.ID.equal(fm.getId()))
@@ -421,6 +448,7 @@ public class FiscalModelDAO {
 	public static <T extends FiscalModel> void delete(AONContext ctx, T fm) {
 		ctx.checkWrite();
 		deleteDetails(ctx, fm);
+		AlcatrazDAO.deleteFiscalModel(ctx, fm);
 		int count = ctx.getDslContext()
 			.delete(FS_MODEL)
 				.where(FS_MODEL.ID.equal(fm.getId()))
@@ -492,22 +520,25 @@ public class FiscalModelDAO {
 		fm.setContactPhone(conf.fiscal().getContactPhone() );
 		fm.setContactCellular( conf.fiscal().getContactCellular() );
 		fm.setContactEmail( conf.fiscal().getContactMail() );
+		
+		fm.setName( AonStringUtils.substring(fm.getName(), 0, FS_MODEL.NAME.getDataType().length()));
+		fm.setSurname( AonStringUtils.substring(fm.getSurname(), 0, FS_MODEL.SURNAME.getDataType().length()));
+		fm.setStreetName( AonStringUtils.substring(fm.getStreetName(), 0, FS_MODEL.STREET_NAME.getDataType().length()));
+		fm.setTown( AonStringUtils.substring(fm.getTown(), 0, FS_MODEL.TOWN.getDataType().length())); 
+		fm.setZip( AonStringUtils.substring(fm.getZip(), 0, FS_MODEL.ZIP.getDataType().length()));
+		fm.setPhone( AonStringUtils.substring(fm.getPhone(), 0, FS_MODEL.PHONE.getDataType().length()));
+		fm.setContactPerson( AonStringUtils.substring(fm.getContactPerson(), 0, FS_MODEL.CONTACT_PERSON.getDataType().length()));
+		fm.setContactPhone( AonStringUtils.substring(fm.getContactPhone(), 0, FS_MODEL.CONTACT_PHONE.getDataType().length()));
+		fm.setContactCellular( AonStringUtils.substring(fm.getContactCellular(), 0, FS_MODEL.CONTACT_CELLULAR.getDataType().length()));
+		fm.setContactEmail( AonStringUtils.substring(fm.getContactEmail(), 0, FS_MODEL.CONTACT_EMAIL.getDataType().length())); 
+		
 		return fm;
 	}
 
 	public static <T extends FiscalModel> T initializeForFinish(AONContext ctx,T fiscalModel) {
-		fiscalModel.setDefaultDeclarationType();
-		if (fiscalModel.getDeclarationType().mustCreateFinance()) {
-			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx,new ConfigParams().setBlocks(ConfigBlock.FISCAL)); 
-			Creditor creditor = null;
-			if (fiscalModel.getModel() != null && fiscalModel.getModel().isVat()) {
-				creditor = conf.fiscal().getAdmonVatCreditor();
-			} else if (fiscalModel.getModel() != null && fiscalModel.getModel().isRetention()) {
-				creditor = conf.fiscal().getAdmonRetentionCreditor();
-			}
-			if ( creditor == null ) {
-				creditor = conf.fiscal().getAdmonCreditor();	
-			}
+		if (fiscalModel.getDeclarationResultType() != null && 
+			fiscalModel.getDeclarationResultType().mustCreateFinance()) {
+			Creditor creditor = getCreditor(ctx,fiscalModel);
 			String concept = "Mod." + FiscalModelUtils.getModelName(fiscalModel) 
 				+ " - " + fiscalModel.getYear() 
 				+ " / " + fiscalModel.getPeriod().getName( );
@@ -521,7 +552,7 @@ public class FiscalModelDAO {
 					.setRegistryDocumentType(creditor!=null?creditor.getDocumentType():null)
 					.setRegistryName(creditor!=null?creditor.getName():null)
 					.setConfidential(fiscalModel.isConfidential())
-					.setAmount(fiscalModel.getResult())
+					.setAmount(fiscalModel.getDeclarationResult())
 					.setFinanceStatus(FinanceStatus.PENDING)
 					.setDueDate(FiscalUtils.getPeriodEnd(fiscalModel))
 					.setConcept(concept)
@@ -531,9 +562,23 @@ public class FiscalModelDAO {
 		return fiscalModel;
 	}
 
+	private static <T extends FiscalModel> Creditor getCreditor(AONContext ctx,T fiscalModel) {
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx,new ConfigParams().setBlocks(ConfigBlock.FISCAL)); 
+		Creditor creditor = null;
+		if (fiscalModel.getModel() != null && fiscalModel.getModel().isVat()) {
+			creditor = conf.fiscal().getAdmonVatCreditor();
+		} else if (fiscalModel.getModel() != null && fiscalModel.getModel().isRetention()) {
+			creditor = conf.fiscal().getAdmonRetentionCreditor();
+		}
+		if ( creditor == null ) {
+			creditor = conf.fiscal().getAdmonCreditor();	
+		}
+		return creditor;
+	}
+
 	protected static <T extends FiscalModel> T finish(AONContext ctx,T fm) {
 		fm.setStatus(FiscalStatus.FINISHED);
-		if (fm.getDeclarationType() != null && fm.getDeclarationType().mustCreateFinance()) {
+		if (fm.getDeclarationResultType() != null && fm.getDeclarationResultType().mustCreateFinance()) {
 			if (fm.getFinance().getRegistry() == null || fm.getFinance().getRegistry().getId() == null) {
 				throw new AonCoreException("Acreedor no v\u00E1lido.");
 			}
@@ -563,34 +608,8 @@ public class FiscalModelDAO {
 			throw new AonCoreException(t.getMessage());
 		}
 	}
-
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-	/// ************************************************************
-/*	
-	protected static SelectConditionStep<Record> getModelSelect(AONContext ctx, FiscalModel fiscalModel) {
-		return ctx.getDslContext()
-			.select(FS_MODEL.fields())
-			.select(FINANCE.fields())
-			.select(REGISTRY.fields())
-			.select(PAY_METHOD.fields())
-			.from(FS_MODEL)
-			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
-			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
-			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-			.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()));		
-	}
 	
-
-
-	public static Stream<Record> getMatrixRecords(AONContext ctx,int domain, FiscalModelFilter filter)  {
+	public static Stream<FiscalModel> getMatrixRecords(AONContext ctx,int domain, FiscalModelFilter filter)  {
 		ctx.checkRead();
 		return ctx.getDslContext()
 				.select()
@@ -603,229 +622,54 @@ public class FiscalModelDAO {
 				.where(FS_MODEL_PROPERTIES.getConditions(filter))
 				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
 				.fetch()
-				.stream();
+				.stream()
+				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new));
+	}
+/*
+p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getTypeProperty().ne(InvoiceType.UNDEDUCTIBLE.value()))
+				 .and(p.getStartIssueDateProperty().ge(params.getFromDate())) 
+				 .and(p.getEndIssueDateProperty().le(params.getToDate()))
+				);
+ 
+ */
+	
+	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx,InvoiceModelReportParams params) {
+		ctx.checkRead();
+		return InvoiceDAO.getInvoiceStream(ctx, p-> getFilter(p,params))
+			.map(inv -> new InvoiceFiscalModels().setInvoice(inv))
+			.map(ifm -> ifm.setModels( 
+				getSelect(ctx)
+					.leftOuterJoin(ALCATRAZ).on(ALCATRAZ.FS_MODEL.eq(FS_MODEL.ID))
+					.where(ALCATRAZ.INVOICE.eq(ifm.getInvoice().getId()))
+					.fetch()
+					.stream()
+					.map(rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new))
+					.collect(Collectors.toCollection(LinkedList::new))
+			))
+			.filter(ifm -> !params.isUnbound()
+					||  (params.isUnbound() && (ifm.getModels() == null || ifm.getModels().isEmpty())))
+			.collect(Collectors.toCollection(LinkedList::new));			
 	}
 
-	public static FiscalModel fullMap(AONContext ctx, Record record) {
-		FiscalModel fm = map(record);
-		getModelDetails(ctx, fm);
-		return fm;
-	}
-	
-	public static FiscalModel map(Record rec) {
-		FiscalModelType type = FiscalModelType.safeValueOf( rec.getValue(FS_MODEL.MODEL));
-		if (type == FiscalModelType.M111) {
-			return map111(new Mod111(), rec);
-		} else if (type == FiscalModelType.M115) {
-			return map115(new Mod115(), rec);
-		} else if (type == FiscalModelType.M123) {
-			return map123(new Mod123(), rec);
-		} else if (type == FiscalModelType.M130) {
-			return map130(new Mod130(), rec);
-		} else if (type == FiscalModelType.M131) {
-			return map131(new Mod131(), rec);
-		} else if (type == FiscalModelType.M303) {
-			return map303(new Mod303(), rec);
-		} else if (type == FiscalModelType.M390_HF) {
-			return map303(new Mod303(), rec);
-		} else {
-			return mapGeneric(new FiscalModel(), rec);
+	private static Filter getFilter(InvoiceProperties p, InvoiceModelReportParams params) {
+		if (params.getDomain() == null) {
+			throw new IllegalArgumentException("No se ha indicado el dominio");
 		}
-	}
-	
-	public static Mod303 map303(Mod303 mod303,Record record) {
-		FiscalModelBuilder<Mod303> builder = new FiscalModelBuilder<Mod303>(new Mod303());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static Mod390HF map390HF(Mod390HF mod303,Record record) {
-		FiscalModelBuilder<Mod390HF> builder = new FiscalModelBuilder<Mod390HF>(new Mod390HF());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static Mod111 map111(Mod111 mod111,Record record) {
-		FiscalModelBuilder<Mod111> builder = new FiscalModelBuilder<Mod111>(new Mod111());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static Mod115 map115(Mod115 mod115,Record record) {
-		FiscalModelBuilder<Mod115> builder = new FiscalModelBuilder<Mod115>(new Mod115());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static Mod123 map123(Mod123 mod123,Record record) {
-		FiscalModelBuilder<Mod123> builder = new FiscalModelBuilder<Mod123>(new Mod123());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static Mod130 map130(Mod130 mod130,Record record) {
-		FiscalModelBuilder<Mod130> builder = new FiscalModelBuilder<Mod130>(new Mod130());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static Mod131 map131(Mod131 mod130,Record record) {
-		FiscalModelBuilder<Mod131> builder = new FiscalModelBuilder<Mod131>(new Mod131());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static Mod202 map202(Mod202 mod202,Record record) {
-		FiscalModelBuilder<Mod202> builder = new FiscalModelBuilder<Mod202>(new Mod202());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
-	public static FiscalModel mapGeneric(FiscalModel model,Record record) {
-		FiscalModelBuilder<FiscalModel> builder = new FiscalModelBuilder<FiscalModel>(new FiscalModel());
-		return builder.create( new FiscalModelTemplate(record) );
-	}
+		Filter f = p.getDomainProperty().eq(params.getDomain())
+		 .and(p.getTypeProperty().ne(InvoiceType.UNDEDUCTIBLE.value()));
+		if ( params.getFromDate() != null) {
+			f = f.and(p.getStartIssueDateProperty().ge(params.getFromDate())); 	
+		}
+		if ( params.getToDate() != null) {
+			f = f.and(p.getEndIssueDateProperty().le(params.getToDate()));	
+		}
+		if ( params.getActivity() != null) {
+			f = f.and(p.getActivityProperty().eq(params.getActivity()));
+		}
+		return f;
+	}  
 	
 	
-	private static class FiscalModelTemplate implements FiscalModelBuilder.Template {
-		private Record record;
-		
-		private FiscalModelTemplate( Record record ) {
-			this.record = record;
-		}
-		@Override
-		public Integer getId() {
-			return record.getValue(FS_MODEL.ID);
-		}
-		@Override
-		public Integer getDomain() {
-			return record.getValue(FS_MODEL.DOMAIN);
-		}
-		@Override
-		public Integer getYear() {
-			return record.getValue(FS_MODEL.YEAR);
-		}
-		@Override
-		public Period getPeriod() {
-			return com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Period.class, record.getValue(FS_MODEL.PERIOD));
-		}
-		@Override
-		public Administration getAdministration() {
-			return com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL.ADMINISTRATION));
-		}
-		@Override
-		public FiscalStatus getStatus() {
-			return com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL.STATUS));
-		}
-		@Override
-		public boolean isConfidential() {
-			return AonEnumUtils.getBoolean( record.getValue(FS_MODEL.SECURITY_LEVEL));
-		}
-		@Override
-		public boolean isComplementary() {
-			return AonEnumUtils.getBoolean( record.getValue(FS_MODEL.COMPLEMENTARY));
-		}
-		@Override
-		public boolean isReplacement() {
-			return AonEnumUtils.getBoolean( record.getValue(FS_MODEL.REPLACEMENT));
-		}
-		@Override
-		public boolean isWithoutActivity() {
-			return AonEnumUtils.getBoolean( record.getValue(FS_MODEL.WITHOUTACTIVITY));
-		}
-		@Override
-		public FiscalModelType getModel() {
-			return FiscalModelType.safeValueOf( record.getValue(FS_MODEL.MODEL));
-		}
-		@Override
-		public String getNumber() {
-			return record.getValue(FS_MODEL.NUMBER);
-		}
-		@Override
-		public String getReplacedNumber() {
-			return record.getValue(FS_MODEL.REPLACED_NUMBER);
-		}
-		@Override
-		public String getComments() {
-			return record.getValue(FS_MODEL.COMMENTS);
-		}
-		@Override
-		public Finance getFinance() {
-			return record.getValue(FS_MODEL.FINANCE) == null?null:new FinanceDAO.FullFinanceFiller().apply(record);
-		}
-		@Override
-		public String getDocument() {
-			return record.getValue(FS_MODEL.DOCUMENT);
-		}
-		@Override
-		public String getSurname() {
-			return record.getValue(FS_MODEL.SURNAME);
-		}
-		@Override
-		public String getName() {
-			return record.getValue(FS_MODEL.NAME);
-		}
-		@Override
-		public String getStreetInitial() {
-			return record.getValue(FS_MODEL.STREET_INITIAL);
-		}
-		@Override
-		public String getStreetName() {
-			return record.getValue(FS_MODEL.STREET_NAME);
-		}
-		@Override
-		public String getStreetNumber() {
-			return record.getValue(FS_MODEL.STREET_NUMBER);
-		}
-		@Override
-		public String getStreetStair() {
-			return record.getValue(FS_MODEL.STREET_STAIR);
-		}
-		@Override
-		public String getStreetFloor() {
-			return record.getValue(FS_MODEL.STREET_FLOOR);
-		}
-		@Override
-		public String getStreetDoor() {
-			return record.getValue(FS_MODEL.STREET_DOOR);
-		}
-		@Override
-		public String getPhone() {
-			return record.getValue(FS_MODEL.PHONE);
-		}
-		@Override
-		public String getTown() {
-			return record.getValue(FS_MODEL.TOWN);
-		}
-		@Override
-		public String getProvince() {
-			return record.getValue(FS_MODEL.PROVINCE);
-		}
-		@Override
-		public String getZip() {
-			return record.getValue(FS_MODEL.ZIP);
-		}
-		@Override
-		public String getAdmonAeat() {
-			return record.getValue(FS_MODEL.ADMON_AEAT);
-		}
-		@Override
-		public String getContactPerson() {
-			return record.getValue(FS_MODEL.CONTACT_PERSON);
-		}
-		@Override
-		public String getContactPhone() {
-			return record.getValue(FS_MODEL.CONTACT_PHONE);
-		}
-		@Override
-		public String getContactCellular() {
-			return record.getValue(FS_MODEL.CONTACT_CELLULAR);
-		}
-		@Override
-		public String getContactEmail() {
-			return record.getValue(FS_MODEL.CONTACT_EMAIL);
-		}
-		@Override
-		public String getCreationUser() {
-			return record.getValue(FS_MODEL.CREATION_USER);
-		}
-		@Override
-		public Date getCreationDate() {
-			return record.getValue(FS_MODEL.CREATION_DATE);
-		}
-		@Override
-		public String getModificationUser() {
-			return record.getValue(FS_MODEL.MODIFICATION_USER);
-		}
-		@Override
-		public Date getModificationDate() {
-			return record.getValue(FS_MODEL.MODIFICATION_DATE);
-		}
-		
-	}
-*/	
 }

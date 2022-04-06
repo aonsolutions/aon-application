@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod115;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -12,7 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 
 public enum Model115GipuzkoaScript implements IModelScript<Mod115Key> {
 	
-	 R00 ("Rendimientos dinerarios",new Mod115Key[]{Mod115Key.GP_C01,Mod115Key.GP_C02,Mod115Key.GP_C03},INVOICE,DIFF_INVOICE)
+	 R00 ("Rendimientos dinerarios",new Mod115Key[]{Mod115Key.GP_C01,Mod115Key.GP_C02,Mod115Key.GP_C03},NONE)
 	,R01 ("Rendimientos en especie",new Mod115Key[]{Mod115Key.GP_C04,Mod115Key.GP_C05,Mod115Key.GP_C06},NONE)
 	,R02 ("A Ingresar",new Mod115Key[]{Mod115Key.GP_C07},COMPUTE)
 	,X00 ("NIF del Presentador telem\u00E1tico (en caso de ser diferente del declarante)",new Mod115Key[]{Mod115Key.GP_X00},NONE)

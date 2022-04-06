@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,11 +25,10 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.ibm.icu.text.MessageFormat;
 
 @WebServlet(name = "Mod111 Validate Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod111ValidatePrintAEAT" })
 public class Mod111ValidatePrintAEAT extends HttpServlet {
@@ -102,7 +102,7 @@ public class Mod111ValidatePrintAEAT extends HttpServlet {
 			String headerValue = ModelAdmonUtils.getContentTypeHeader( response );  
 			boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
 			ModelAdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
-		} catch (InterruptedException e) {	
+		} catch (InterruptedException e) {
 			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
 		    // Restore interrupted state...
 		    Thread.currentThread().interrupt();
@@ -110,5 +110,4 @@ public class Mod111ValidatePrintAEAT extends HttpServlet {
 			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
-
 }

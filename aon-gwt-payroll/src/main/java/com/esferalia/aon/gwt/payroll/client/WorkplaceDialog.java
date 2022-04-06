@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -40,7 +41,7 @@ public class WorkplaceDialog extends AonCustomDialog {
 
 		@Override
 		public void onWorkplaceAgreementChange(Integer agreementId) {
-			workplaceDialogObject.setWorkplaceAgreement(AonNumberUtils.equals(-1, agreementId) ? null : agreementId);
+			workplaceDialogObject.setWorkplaceAgreement(agreementId);
 		}
 
 		@Override
@@ -94,9 +95,19 @@ public class WorkplaceDialog extends AonCustomDialog {
 	public void setWorkplaceDialogObject(WorkplaceDialogObject workplaceDialogObject) {
 		this.workplaceDialogObject = workplaceDialogObject;
 		this.workplaceDialogObject.getAgreements(
-				s -> initializeListBox(),
-				f -> {}
+				s -> {
+					initializeListBox();
+					showDialog();
+				}, f -> {}
 		);
+	}
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 
 	private void initializeListBox() {

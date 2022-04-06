@@ -36,6 +36,9 @@ public class AEATJson {
 	
 	public static AEATResponse toJSON(byte[] body) throws JSONException {
 		JSONObject json = new JSONObject( new String(body));
+		System.out.println( " ------ AEAT Response ----" );
+		System.out.println( json.toString(1) );
+		System.out.println( " -------------------------" );
 		AEATResponse aeatResponse = new AEATResponse();
 		JSONObject jsonRespuesta = json.optJSONObject(RESPUESTA);
 		if (jsonRespuesta.has(RESPUESTA_CORRECTA)) {

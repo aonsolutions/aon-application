@@ -187,6 +187,10 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconStatics aonIconStatics;
+.aon_icon_statics { background-image: iconStatics;}
+@url iconClean aonIconClean;
+.aon_icon_clean { background-image: iconClean;}
 @url iconSchedule aonIconSchedule;
 .aon_icon_schedule { background-image: iconSchedule;}
 @url iconReceipt aonIconReceipt;
@@ -307,6 +311,8 @@
 .aon_icon_letter-s { background-image: iconLetterS;}
 @url iconWrench aonIconWrench;
 .aon_icon_wrench { background-image: iconWrench;}
+@url iconRedWrench aonIconRedWrench;
+.aon_icon_red_wrench { background-image: iconRedWrench;}
 @url iconToggleOn aonIconToggleOn;
 .aon_icon_toggle_on { background-image: iconToggleOn;}
 @url iconToggleOff aonIconToggleOff;
@@ -424,6 +430,10 @@
 	white-space: nowrap;
 }
 
+.aon_line_height_double {
+	line-height: 200%;
+}
+
 .aon_ellipsis {
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -450,7 +460,6 @@
 }
 .aon_value_changed {
 	color: #897820;
-	font-weight: bold;
 	text-shadow: 0.1em 0.1em 0.2em #9E945E;
 }
 .aon_width_all {
@@ -515,6 +524,10 @@
 .aon_block_center {
 	margin-left: auto;
 	margin-right: auto;
+}
+.aon_block_right {
+	margin-left: auto;
+	margin-right: 0px;
 }
 
 .aon_nowrap {
@@ -637,7 +650,9 @@
 .aon_color_royalblue {
 	color: RoyalBlue;
 }
-
+.aon_color_orange {
+	color: orange;
+}
 .aon_background_white {
 	background-color: white;
 }
@@ -1517,16 +1532,14 @@
 }
 
 .aon_changed {
-	background-image: iconChanged;
+	background-image: iconRedWrench;
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	background-position: 2px 3px;
 	background-size: 10px auto;
-	background-color: transparent;
 	width: auto;
 	height: auto;
-	background-color: white;
-	padding-left: 10px !important;
+	background-color: blanchedalmond;
 }
 
 .aon_input_error {

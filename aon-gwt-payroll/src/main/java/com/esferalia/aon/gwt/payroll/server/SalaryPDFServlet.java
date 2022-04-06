@@ -72,6 +72,12 @@ public class SalaryPDFServlet extends HttpServlet {
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(macLeodPath);
 				dispatcher.forward(req, resp);
 				return;
+			} else if (AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue() )) {
+				String macLeodPath = req.getServletPath().replace("salary_exporter", "salary_connor_macleod");
+				req.setAttribute(PayrollPrintService.Parameter.PAYROLL_TYPE.getName(), PayrollPrintService.PayrollType.CLASSIC.getName());
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(macLeodPath);
+				dispatcher.forward(req, resp);
+				return;				
 			}
 			
 			Integer selectedSalaries = req.getParameterValues(PayrollPrintService.Parameter.ID.getName()).length;

@@ -701,6 +701,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Sustitutiva")
 	String replacement();
 	
+	@DefaultMessage("Tener en cuenta facturas y n\u00F3minas del ejercicio {0} sin incluir en ninguna declaraci\u00F3n")
+	String generateFromYearStart(int year);
+
+	@DefaultMessage("Tener en cuenta facturas del ejercicio {0} sin incluir en ninguna declaraci\u00F3n")
+	String generateFromYearStartInv(int year);
+
 	@DefaultMessage("Sustit.")
 	String replacementAbbr();
 
@@ -809,6 +815,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Estado Vto.")
 	String financeStatus();
+
+	@DefaultMessage("Contabilizado")
+	String recorded();
+
+	@DefaultMessage("Cont.")
+	String recordedAbbr();
 
 	@DefaultMessage("Descripci\u00F3n")
 	String description();
@@ -2570,6 +2582,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Servicio")
 	String service();
 
+	@DefaultMessage("R\u00E9gimen de importaci\u00F3n")
+	String vatImportationRegime();
+
 	@DefaultMessage("Tipo de factura")
 	String invoiceType();
 
@@ -3536,6 +3551,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Inversi\u00F3n")
 	String investment();
 
+	@DefaultMessage("R\u00E9gimen agrario")
+	String farmerRegime();
+
 	@DefaultMessage("Bien afecto")
 	String actInvestAsset();
 
@@ -4125,6 +4143,12 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Error al cargar el \"m\u00F3dulo {0}\"")
 	String loadError(String module);
+
+	@DefaultMessage("Detalle del c\u00E1lculo")
+	String calcDetail();
+
+	@DefaultMessage("Facturas que afectan a la confecci\u00f3n del modelo {0}")
+	String modelRelatedInvoices(String modelFullName);
 
 }
 

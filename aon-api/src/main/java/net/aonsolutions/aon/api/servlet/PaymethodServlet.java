@@ -27,7 +27,7 @@ public class PaymethodServlet extends AonApiHttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVOICE SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getPaymethods(api));

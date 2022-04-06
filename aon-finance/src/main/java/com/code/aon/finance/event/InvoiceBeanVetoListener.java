@@ -22,7 +22,6 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
-import com.code.aon.config.Domain;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -125,10 +124,12 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		checkLimitDate(invoice);
+		FinanceUtil.checkAlcatraz(invoice);
 		try {
 			if (isRemovable(invoice)) {
 				removeFinanceTrackings(invoice);
 				removeFinances(invoice);
+				removeInvoiceDetailCommission(invoice);
 				removeInvoiceDetails(invoice);
 				removeInvoiceAddress(invoice);
 				removeInvoiceFiscal(invoice);
@@ -158,6 +159,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
 	private void checkInvoice(Invoice invoice, Company company) throws ManagerBeanVetoListenerException {
 		checkLimitDate(invoice);
+		FinanceUtil.checkAlcatraz(invoice);
 		checkInvoiceYear(invoice);
 		if (!invoice.isRectifier()) {
 			if (StringUtils.isEmpty(invoice.getRegistryName())) {
@@ -385,6 +387,14 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
 	private void removeInvoiceFiscal(Invoice invoice) {
 		AON.deleteInvoiceFiscal(HibernateUtil.getSessionFactoryName(), invoice.getId());
+	}
+	
+	private void removeInvoiceDetailCommission(Invoice invoice) {
+		String domainName = AON.getDomain(HibernateUtil.getSessionFactoryName(), invoice.getDomain()).getName();
+		Integer[] ids = AON.getInvoiceDetails(domainName, invoice.getDomain(), "", f-> f.getIdProperty().eq(invoice.getId()))
+				.map(r -> r.getId()).toArray(Integer[]::new);
+		AON.deleteInvoiceDetailCommission(domainName, invoice.getDomain(), "", f -> f.getInvoiceDetailProperty()
+				.in(ids));
 	}
 	
 	public void updateRectifiedInvoices(Invoice invoice) throws ManagerBeanException {

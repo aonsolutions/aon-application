@@ -17,30 +17,35 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities.Peculiarity;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeePeculiarities {
 	
-	private static Settings SETTINGS = null;
+	private JooqEmployeePeculiarities() {
+		super();
+	}
+	
+	private static Settings serttings = null;
 	
 	protected static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
+		if (serttings == null) {
+			serttings = new Settings();
+			serttings.setRenderSchema(false);
 		}
-		return SETTINGS;
+		return serttings;
 	}
 
-	public static Peculiarities getPeculiarities(String domainName, Integer contractId, Connection connection) {
-		return getPeculiaritiesDB(domainName, contractId, DSL.using(connection, getDefaultSettings()));
+	public static Peculiarities getPeculiarities(Integer contractId, Connection connection) {
+		return getPeculiaritiesDB(contractId, DSL.using(connection, getDefaultSettings()));
 	}
 	
 	public static String setPeculiarities(String domainName, Integer contractId, Peculiarities peculiarities, Connection connection) {
 		return setPeculiaritiesDB(domainName, contractId, peculiarities, DSL.using(connection, getDefaultSettings()));
 	}
 	
-	private static Peculiarities getPeculiaritiesDB(String domainName, Integer contractId, DSLContext dslContext) {
+	private static Peculiarities getPeculiaritiesDB(Integer contractId, DSLContext dslContext) {
 		//Peculiarities Names
-		ArrayList<String> peculiaritiesNames = new ArrayList<String>();
+		ArrayList<String> peculiaritiesNames = new ArrayList<>();
 		peculiaritiesNames.add("PORCENTAJE_CGC");
 		peculiaritiesNames.add("PORCENTAJE_DESMPL");
 		peculiaritiesNames.add("PORCENTAJE_FP");
@@ -50,6 +55,15 @@ public class JooqEmployeePeculiarities {
 		peculiaritiesNames.add("PORCENTAJE_FOGASA");
 		peculiaritiesNames.add("PORCENTAJE_FP_E");
 		peculiaritiesNames.add("PORCENTAJE_DESMPL_E");
+		peculiaritiesNames.add("TARIFA_CGC");
+		peculiaritiesNames.add("TARIFA_DESMPL");
+		peculiaritiesNames.add("TARIFA_FP");
+		peculiaritiesNames.add("TARIFA_CGC_E");
+		peculiaritiesNames.add("TARIFA_IT");
+		peculiaritiesNames.add("TARIFA_IMS");
+		peculiaritiesNames.add("TARIFA_FOGASA");
+		peculiaritiesNames.add("TARIFA_FP_E");
+		peculiaritiesNames.add("TARIFA_DESMPL_E");
 		
 		//Peculiarities
 		Peculiarities peculiarities = new Peculiarities();
@@ -87,11 +101,17 @@ public class JooqEmployeePeculiarities {
 					.and(CONTRACT_DATA.START_DATE.eq(pDate.get(CONTRACT_DATA.START_DATE)))
 					.fetchOne(CONTRACT_DATA.EXPRESSION);
 				
-				ArrayList<Peculiarity> peculiaritiesStrech = new ArrayList<Peculiarity>();
+				ArrayList<Peculiarity> peculiaritiesStrech = new ArrayList<>();
 				
 				for(String peculiarityName: peculiaritiesNames) {
+					if(AonStringUtils.containsIgnoreCase(peculiarityName, "TARIFA"))
+						continue;
+					ArrayList<String> peculiaritiesNamesAux = new ArrayList<>();
+					peculiaritiesNamesAux.add(peculiarityName);
+					peculiaritiesNamesAux.add(parseTarifa(peculiarityName));
+					
 					Record peculiarityDataRecord = dslContext.select().from(CONTRACT_DATA)
-						.where(CONTRACT_DATA.NAME.eq(peculiarityName))
+						.where(CONTRACT_DATA.NAME.in(peculiaritiesNamesAux))
 						.and(CONTRACT_DATA.START_DATE.eq(pDate.get(CONTRACT_DATA.START_DATE)))
 						.and(CONTRACT_DATA.CONTRACT.eq(contractId))
 						.fetchOne();
@@ -99,12 +119,14 @@ public class JooqEmployeePeculiarities {
 					Peculiarity peculiarity = null;
 					
 					if(null == peculiarityDataRecord) {
-						peculiarity = new Peculiarity(peculiarityName, "Sistema", false, Integer.parseInt(peculiarityType));
+						peculiarity = new Peculiarity(peculiarityName, "Sistema", false, null == peculiarityType ? null : Integer.parseInt(peculiarityType));
 					}else {
-						peculiarity = new Peculiarity(peculiarityName, peculiarityDataRecord.get(CONTRACT_DATA.EXPRESSION), true, Integer.parseInt(peculiarityType));
+						peculiarity = new Peculiarity(peculiarityName, peculiarityDataRecord.get(CONTRACT_DATA.EXPRESSION), true, null == peculiarityType ? null : Integer.parseInt(peculiarityType));
 					}
 					
 					peculiaritiesStrech.add(peculiarity);
+					
+					System.out.println(peculiarity.getName() + " -> " + peculiarity.getValue() + "(" + pDate.get(CONTRACT_DATA.START_DATE) + ")");
 				}
 				
 				peculiarities.getPeculiarities().put(pDate.get(CONTRACT_DATA.START_DATE), peculiaritiesStrech);
@@ -116,6 +138,10 @@ public class JooqEmployeePeculiarities {
 		return peculiarities;
 	}
 	
+	private static String parseTarifa(String peculiarityName) {
+		return AonStringUtils.replace(peculiarityName, "PORCENTAJE", "TARIFA");
+	}
+
 	private static String parseExpression(String expr) {
 		if(expr.contains("\""))
 			return expr.split("\"")[1];
@@ -125,7 +151,7 @@ public class JooqEmployeePeculiarities {
 	private static String setPeculiaritiesDB(String domainName, Integer contractId, Peculiarities peculiarities, DSLContext dslContext) {
 		
 		//Peculiarities Names
-		ArrayList<String> peculiaritiesNames = new ArrayList<String>();
+		ArrayList<String> peculiaritiesNames = new ArrayList<>();
 		peculiaritiesNames.add("PORCENTAJE_CGC");
 		peculiaritiesNames.add("PORCENTAJE_DESMPL");
 		peculiaritiesNames.add("PORCENTAJE_FP");
@@ -152,21 +178,29 @@ public class JooqEmployeePeculiarities {
 				.where(DOMAIN.NAME.eq(domainName))
 				.fetchOne(DOMAIN.ID);
 		
+		boolean insert = false;
+		
 		for(Entry<java.util.Date, ArrayList<Peculiarity>> entry : peculiarities.getPeculiarities().entrySet()) {
+			insert = false;
 			for(Peculiarity peculiarity : entry.getValue()) {
-				if(peculiarity.isChecked()) {
-					dslContext.insertInto(CONTRACT_DATA)
-						.set(CONTRACT_DATA.DOMAIN, domainId)
-						.set(CONTRACT_DATA.NAME, peculiarity.getName())
-						.set(CONTRACT_DATA.CONTRACT, contractId)
-						.set(CONTRACT_DATA.EXPRESSION, peculiarity.getValue())
-						.set(CONTRACT_DATA.START_DATE, new Date(entry.getKey().getTime()))
-						.set(CONTRACT_DATA.END_DATE, (Date) null)
-						.execute();
+				if(Boolean.TRUE.equals(peculiarity.isChecked())) {
+					Date date = new Date(entry.getKey().getTime());
+					if(notTarifaExist(dslContext, contractId, peculiarity.getName(), date)) {
+						dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+							.set(CONTRACT_DATA.NAME, peculiarity.getName())
+							.set(CONTRACT_DATA.CONTRACT, contractId)
+							.set(CONTRACT_DATA.EXPRESSION, peculiarity.getValue())
+							.set(CONTRACT_DATA.START_DATE, date)
+							.set(CONTRACT_DATA.END_DATE, (Date) null)
+							.execute();
+						
+						insert = true;
+					}
 				}
 			}
 			
-			if(entry.getValue().size() > 0)
+			if(!entry.getValue().isEmpty() && insert)
 				dslContext.insertInto(CONTRACT_DATA)
 					.set(CONTRACT_DATA.DOMAIN, domainId)
 					.set(CONTRACT_DATA.NAME, "PECULIARITY_TYPE")
@@ -178,6 +212,16 @@ public class JooqEmployeePeculiarities {
 		}
 		
 		return "";
+	}
+
+	private static boolean notTarifaExist(DSLContext dslContext, Integer contractId, String name, Date date) {
+		Result<Record> records = dslContext.select().from(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.START_DATE.eq(date))
+			.and(CONTRACT_DATA.NAME.eq(parseTarifa(name)))
+			.fetch();
+		
+		return records.isEmpty();
 	}
 	
 	

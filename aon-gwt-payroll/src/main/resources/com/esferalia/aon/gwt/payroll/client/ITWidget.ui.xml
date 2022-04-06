@@ -54,26 +54,51 @@
 			background-size: contain;
 		}
 		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.margin{
+			margin: 0 1rem;
+		}
+		
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+			width: 100%;
+			margin-top: 50px;
+		}
+		
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-				<g:center>
-					<g:VerticalPanel styleName="{style.mt-50} {style.widthAll}">
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel ui:field="messagePanel" />	
+				<g:DeckPanel ui:field="mainDeckPanel" styleName="{style.widthAll}">
+					<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}">
+						<g:SplitLayoutPanel ui:field="splitLayoutPanel" styleName="{style.widthAll} {style.heightAll}">
+							<g:center>
+								<g:VerticalPanel styleName="{style.widthAll}">
+									<g:HTMLPanel ui:field="filterITListPanel" />
+									
+									<g:DeckPanel ui:field='deckPanel' styleName="{style.deckPanel}">
+										<g:HTMLPanel ui:field='timelinePanel'/>
+										<g:HTMLPanel styleName="{style.messagePanel}">
+											<g:Label styleName="{style.message}">No existen partes IT para para este periodo</g:Label>
+										</g:HTMLPanel>
+									</g:DeckPanel>
+								</g:VerticalPanel>
+							</g:center>
+						</g:SplitLayoutPanel>
+					</g:HTMLPanel>
 					
-						<g:HTMLPanel ui:field="messagePanel" />
-						<g:HTMLPanel ui:field="filterITListPanel" />
-						
-						<g:DeckPanel ui:field='deckPanel' styleName="{style.deckPanel}">
-							<g:HTMLPanel ui:field='timelinePanel'/>
-							<g:HTMLPanel styleName="{style.messagePanel}">
-								<g:Label styleName="{style.message}">No existen partes IT para para este periodo</g:Label>
-							</g:HTMLPanel>
-						</g:DeckPanel>
-					</g:VerticalPanel>
-				</g:center>
-			</g:SplitLayoutPanel>
+					<g:HTMLPanel ui:field="itTablePanel">
+						<c:DataGrid ui:field="itDataGrid" styleName="{style.margin} {style.heightAll}"></c:DataGrid>
+					</g:HTMLPanel>
+				</g:DeckPanel>
+			</g:HTMLPanel>			
 		</g:center>
 	</g:DockLayoutPanel>
 			

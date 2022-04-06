@@ -17,30 +17,48 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class AonFiscalModelIdentificationPanel<T extends FiscalModel> 
-	extends ScrollPanel implements HasValueChangeHandlers<T> {
+public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends ScrollPanel implements HasValueChangeHandlers<T> {
+	
+	private AonDocumentTextBox document;
+	private AonTextBox name;
+	private AonTextBox surname;
+	private InlineLabel nameLabel;
+	private InlineLabel surnameLabel;
+	private AonTextBox phone;
+	private AonTextBox contactPerson;
+	private AonTextBox contactPhone;
+	private AonTextBox contactCellular;
+	private AonTextBox contactMail;
+	private AonTextBox streetInitial;
+	private AonTextBox streetName;
+	private AonTextBox streetNumber;
+	private AonTextBox streetStair;
+	private AonTextBox streetFloor;
+	private AonTextBox streetDoor; 
+	private AonTextBox town;
+	private ProvinceListBox province;
+	private AonTextBox zip;
 
 	public AonFiscalModelIdentificationPanel(T model) {
-
 		setStyleName(AON.CSS.aonScrollArea());
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonMarginTop());
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		setWidget(tab);
 		
-		AonDocumentTextBox document = new AonDocumentTextBox();
+		document = new AonDocumentTextBox();
 		
-		InlineLabel nameLabel = new InlineLabel(AON.MSG.nameCompanyName());
-		InlineLabel surnameLabel  = new InlineLabel(AON.MSG.surname());
+		nameLabel = new InlineLabel(AON.MSG.nameCompanyName());
+		surnameLabel  = new InlineLabel(AON.MSG.surname());
 		FlowPanel nameLabels = new FlowPanel();
 		nameLabels.add(nameLabel);
 		nameLabels.add(surnameLabel);
 		
-		AonTextBox name = new AonTextBox();
+		name = new AonTextBox();
 		name.setVisibleLength(25);
 		name.setMaxLength(45);
 		
-		AonTextBox surname = new AonTextBox();
+		surname = new AonTextBox();
 		surname.addStyleName(AON.CSS.aonMarginLeft());
 		surname.setVisibleLength(25);
 		surname.setMaxLength(45);
@@ -56,7 +74,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel>
 			.addCell(nameLabels, AON.CSS.aonTableLabel())
 			.addCell(nameBoxs);
 		
-		AonTextBox phone = new AonTextBox();
+		phone = new AonTextBox();
 		phone.setVisibleLength(9);
 		phone.setMaxLength(9);
 		tab.addRow()
@@ -67,14 +85,14 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel>
 		InlineLabel streetTypeLabel = new InlineLabel(AON.MSG.streetType());
 		streetTypeLabel.setStyleName(AON.CSS.aonInnerLabel());
 		address1.add(streetTypeLabel);
-		AonTextBox streetInitial = new AonTextBox();
+		streetInitial = new AonTextBox();
 		streetInitial.setVisibleLength(3);
 		streetInitial.setMaxLength(3);
 		address1.add(streetInitial);
 		InlineLabel streetNameLabel = new InlineLabel(AON.MSG.streetName());
 		streetNameLabel.setStyleName(AON.CSS.aonInnerLabel());
 		address1.add(streetNameLabel);
-		AonTextBox streetName = new AonTextBox();
+		streetName = new AonTextBox();
 		streetName.setVisibleLength(30);
 		streetName.setMaxLength(40);
 		address1.add(streetName);
@@ -86,76 +104,75 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel>
 		InlineLabel streetNumberLabel = new InlineLabel(AON.MSG.streetNumber());
 		streetNumberLabel.setStyleName(AON.CSS.aonInnerLabel());
 		address2.add(streetTypeLabel);
-		AonTextBox streetNumber = new AonTextBox();
+		streetNumber = new AonTextBox();
 		streetNumber.setVisibleLength(5);
 		streetNumber.setMaxLength(5);
 		address2.add(streetNumber);
 		InlineLabel streetStairLabel = new InlineLabel(AON.MSG.streetStair());
 		streetStairLabel.setStyleName(AON.CSS.aonInnerLabel());
 		address2.add(streetStairLabel);
-		AonTextBox streetStair = new AonTextBox();
+		streetStair = new AonTextBox();
 		streetStair.setVisibleLength(2);
 		streetStair.setMaxLength(2);
 		address2.add(streetStair);
 		InlineLabel streetFloorLabel = new InlineLabel(AON.MSG.streetFloor());
 		streetFloorLabel.setStyleName(AON.CSS.aonInnerLabel());
 		address2.add(streetFloorLabel);
-		AonTextBox streetFloor = new AonTextBox();
+		streetFloor = new AonTextBox();
 		streetFloor.setVisibleLength(2);
 		streetFloor.setMaxLength(2);
 		address2.add(streetFloor);
 		InlineLabel streetDoorLabel = new InlineLabel(AON.MSG.streetDoor());
 		streetDoorLabel.setStyleName(AON.CSS.aonInnerLabel());
 		address2.add(streetDoorLabel);
-		AonTextBox streetDoor = new AonTextBox();
+		streetDoor = new AonTextBox();
 		streetDoor.setVisibleLength(2);
 		streetDoor.setMaxLength(2);
 		address2.add(streetDoor);
 		tab.addRow()
 			.addCell(new Label(),AON.CSS.aonTableLabel())
 			.addCell(address2);
-
-		AonTextBox town = new AonTextBox();
+		town = new AonTextBox();
 		town.setVisibleLength(35);
 		town.setMaxLength(35);
 		tab.addRow()
 			.addCell(new Label(AON.MSG.town()),AON.CSS.aonTableLabel())
 			.addCell(town);
 
-		ProvinceListBox province = new ProvinceListBox();
+		province = new ProvinceListBox();
 		tab.addRow()
 			.addCell(new Label(AON.MSG.province()),AON.CSS.aonTableLabel())
 			.addCell(province);
 
-		AonTextBox zip = new AonTextBox();
+		zip = new AonTextBox();
 		zip.setVisibleLength(5);
 		zip.setMaxLength(5);
 		tab.addRow()
 			.addCell(new Label(AON.MSG.zip()),AON.CSS.aonTableLabel())
 			.addCell(zip);
 		
-		AonTextBox contactPerson = new AonTextBox();
+		contactPerson = new AonTextBox();
 		contactPerson.setVisibleLength(40);
 		contactPerson.setMaxLength(40);
 		tab.addRow()
 			.addCell(new Label(AON.MSG.contactPerson()),AON.CSS.aonTableLabel())
 			.addCell(contactPerson);
 		
-		AonTextBox contactPhone = new AonTextBox();
+		contactPhone = new AonTextBox();
 		contactPhone.setVisibleLength(9);
 		contactPhone.setMaxLength(9);
 		tab.addRow()
 			.addCell(new Label(AON.MSG.contactPhone()),AON.CSS.aonTableLabel())
 			.addCell(contactPhone);
 		
-		AonTextBox contactCellular = new AonTextBox();
+		contactCellular = new AonTextBox();
 		contactCellular.setVisibleLength(9);
 		contactCellular.setMaxLength(9);
 		tab.addRow()
 			.addCell(new Label(AON.MSG.contactCellular()),AON.CSS.aonTableLabel())
 			.addCell(contactCellular);
 		
-		AonTextBox contactMail = new AonTextBox();
+		contactMail = new AonTextBox();
 		contactMail.setVisibleLength(40);
 		contactMail.setMaxLength(40);
 		tab.addRow()
@@ -258,6 +275,15 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel>
 			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
 
+		populate(model);
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+		return super.addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	public void populate(T model) {
 		document.setValue(model.getDocument());
 		name.setValue(model.getName());
 		surname.setValue(model.getSurname());
@@ -285,11 +311,25 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel>
 		town.setValue(model.getTown());
 		province.setSelectedIndex( Province.getByName(model.getProvince()).ordinal());
 		zip.setValue(model.getZip());
-	}
-
-	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
-		return super.addHandler(handler, ValueChangeEvent.getType());
+		
+		
+		document.setEnabled(model.isEditable());
+		name.setEnabled(model.isEditable());
+		surname.setEnabled(model.isEditable());
+		phone.setEnabled(model.isEditable());
+		contactPerson.setEnabled(model.isEditable());
+		contactPhone.setEnabled(model.isEditable());
+		contactCellular.setEnabled(model.isEditable());
+		contactMail.setEnabled(model.isEditable());
+		streetInitial.setEnabled(model.isEditable());
+		streetName.setEnabled(model.isEditable());
+		streetNumber.setEnabled(model.isEditable());
+		streetStair.setEnabled(model.isEditable());
+		streetFloor.setEnabled(model.isEditable());
+		streetDoor.setEnabled(model.isEditable());
+		town.setEnabled(model.isEditable());
+		province.setEnabled(model.isEditable());
+		zip.setEnabled(model.isEditable());
 	}
 
 	

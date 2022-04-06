@@ -8,7 +8,7 @@
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	<inherits name="com.esferalia.aon.gwt.api.Api" />
 	<inherits name='com.esferalia.aon.gwt.issues.IssuesAio' />
-	<inherits name='net.aonsolutions.aon.gwt.document.DocumentAio' />
+<!-- 	<inherits name='net.aonsolutions.aon.gwt.document.DocumentAio' /> -->
 	<inherits name='com.esferalia.aon.gwt.stat.StatAio' />
 	<inherits name='com.esferalia.aon.gwt.dump.DumpAio' />
 	<inherits name='com.esferalia.aon.gwt.template.TemplateAio' />
@@ -20,10 +20,10 @@
 	<inherits name='net.aonsolutions.aon.gwt.seres.SeresAio' />
 	<inherits name='net.aonsolutions.aon.gwt.communication.CommunicationAio' />
 	<inherits name='net.aonsolutions.aon.gwt.commercial.CommercialAio' />
-	<inherits name='com.esferalia.aon.gwt.fiscal.deposit.DepositAio' />
+	<inherits name='net.aonsolutions.aon.gwt.ccaa.DepositAio' />
 	<inherits name="net.aonsolutions.polymer.Elements"/>
 	<inherits name='com.esferalia.aon.gwt.payroll.PayrollAio' />
-	
+	<inherits name="net.aonsolutions.aon.gwt.vaadin.VaadinAio"/>
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 	
 	<!-- Include GWTUpload library -->

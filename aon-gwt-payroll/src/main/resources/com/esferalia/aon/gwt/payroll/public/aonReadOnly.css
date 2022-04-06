@@ -1,0 +1,34 @@
+.aon-ReadOnly .aon-icon-reset,
+.aon-ReadOnly .aon-icon-delete,
+.aon-ReadOnly .aon-icon-rowSelector,
+.aon-ReadOnly .aon-icon-rowSelector-Parent,
+.aon-ReadOnly .aon-icon-rowSelector-Changed
+{
+	display:none;
+	visibility:hidden;
+}
+
+.gwt-TextBox[readonly],
+.gwt-SuggestBox[readonly],
+.aon-ReadOnly .gwt-TextBox:not(.aon-Editable),
+.aon-ReadOnly .gwt-SuggestBox:not(.aon-Editable)
+{
+  		pointer-events: none;
+		border-color:transparent;
+  		color: inherit !important;
+  		background-color: transparent;
+}
+
+.aon-ReadOnly .gwt-ListBox:not(.aon-Editable) {
+  		pointer-events: none;
+  		color: inherit !important;
+  		background-color: transparent;
+}
+
+
+.gwt-TextBox[readonly]:focus,
+.aon-ReadOnly .gwt-TextBox:focus
+{
+	background-color: inherit;
+}
+

@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
@@ -17,6 +18,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EnterpriseIT extends Composite {
@@ -30,6 +33,11 @@ public class EnterpriseIT extends Composite {
 			enterpriseITObject.getEmployeesInfo(true, 
 					success::accept, 
 					f -> {});
+		}
+		
+		@Override
+		protected List<IT> getITsList() {
+			return enterpriseITObject.getITsList();
 		}
 
 		@Override
@@ -147,13 +155,24 @@ public class EnterpriseIT extends Composite {
 		}
 
 		@Override
-		protected void saveITParts(List<ItNotExist> itNotExist,Consumer<Void> success, Consumer<Throwable> failure) {}
-
-		@Override
-		protected void removeITParts(List<ItNotExist> itNotExist,Consumer<Void> success, Consumer<Throwable> failure) {}
+		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {
+			enterpriseITObject.checkStatus(success::accept, failure::accept);
+		}
+				
 		
 		@Override
-		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {}
+		protected void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
+			enterpriseITObject.saveITParts(list,
+					success::accept, 
+					failure::accept);
+		}
+
+		@Override
+		protected void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
+			enterpriseITObject.removeITParts(list,
+					success::accept, 
+					failure::accept);
+		}
 	}
 	
 	// --------------------------------------------------- Binder
@@ -180,14 +199,17 @@ public class EnterpriseIT extends Composite {
 		itWidget = new ITWidgetImpl();
 
 		initWidget(uiBinder.createAndBindUi(this)); 
+
 	}
-	
+
 	// --------------------------------------------------- OnModuleLoad
-	
 	public void setEnterpriseITObject(EnterpriseITObject enterpriseITObject) {
 		this.enterpriseITObject = enterpriseITObject;
 		itWidget.loadITWidget();
-
 	}
 	
+	// ------ setFooter
+	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
+		itWidget.setFooter(splitLayoutPanel, tab, footPanel);
+	}
 }

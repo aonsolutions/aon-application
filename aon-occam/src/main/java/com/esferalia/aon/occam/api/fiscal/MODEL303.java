@@ -24,7 +24,7 @@ public class MODEL303 {
 
 	public static Mod303 get(Occam occam, int id) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod303(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
@@ -58,13 +58,13 @@ public class MODEL303 {
 		}
 	}
 
-	public static Mod303 finish(Occam occam, Mod303 mod303) {
+	public static Mod303 markAsFinished(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsFinished(ctx, mod303);
 		}
 	}
 
-	public static Mod303 reopen(Occam occam, Mod303 mod303) {
+	public static Mod303 markAsPending(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsPending(ctx, mod303);
 		}
@@ -78,6 +78,16 @@ public class MODEL303 {
 	public static Mod303 markAsCustomerCheck(Occam occam, Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsCustomerCheck(ctx, mod303);
+		}
+	}
+	public static Mod303 markAsCustomerAccepted(Occam occam, Mod303 mod303) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerAccepted(ctx, mod303);
+		}
+	}
+	public static Mod303 markAsCustomerRejected(Occam occam, Mod303 mod303, String reason) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerRejected(ctx, mod303, reason);
 		}
 	}
 	
@@ -97,12 +107,6 @@ public class MODEL303 {
 	public static Mod303 create(Occam occam,Mod303 mod303) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().create(ctx, mod303);
-		}
-	}
-
-	public static Mod303 declarationChanged(Occam occam,Mod303 mod303) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().declarationChanged(ctx, mod303);
 		}
 	}
 

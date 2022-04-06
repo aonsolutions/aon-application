@@ -299,6 +299,12 @@ public class EnterprisePayrollCSVTestCase {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Integer getEmployeeId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	

@@ -394,7 +394,7 @@ public class MainCertificates extends MainEntryPoint{
 		this.mainDigitalCertificatesObject.getEnterpriseId(
 				s -> {
 					mainDigitalCertificatesObject.getDomainUserRoles(domainUserRole -> {
-						if(null == domainUserRole.isAdmin() || !domainUserRole.isAdmin())
+						if(!domainUserRole.isAdmin())
 							hideEnterpriseTab();
 					}, fa -> {});
 					loadDigitalCertificates();
@@ -527,7 +527,7 @@ public class MainCertificates extends MainEntryPoint{
 		Hidden ownerHidden = new Hidden("owner", certificate.getOwner().name());
 		String certificateFor = "-";
 		if(!certificate.getCertificateInfo().isEmpty()) {
-			certificateFor = "(" + certificate.getCertificateInfo().getDocument() + ") " + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
+			certificateFor = (AonStringUtils.isBlank(certificate.getCertificateInfo().getDocument()) ? "" : "(" + certificate.getCertificateInfo().getDocument() + ") ") + certificate.getCertificateInfo().getName() + " " + certificate.getCertificateInfo().getSurname();
 		}
 
 		Label certificateForL = new Label(parseStringLenght(certificateFor));
@@ -536,7 +536,7 @@ public class MainCertificates extends MainEntryPoint{
 		String representation = "-";
 		if(!certificate.getCertificateInfo().isEmpty())
 			representation = AonStringUtils.isBlank(certificate.getCertificateInfo().getEnterprise()) ? "PERSONA F\u00cdSICA" : 
-				"(" + certificate.getCertificateInfo().getCif() + ") " + certificate.getCertificateInfo().getEnterprise();
+				(AonStringUtils.isBlank(certificate.getCertificateInfo().getCif()) ? "" : "(" + certificate.getCertificateInfo().getCif() + ") ") + certificate.getCertificateInfo().getEnterprise();
 		Label representationL = new Label(parseStringLenght(representation));
 		representationL.setTitle(representation);
 		

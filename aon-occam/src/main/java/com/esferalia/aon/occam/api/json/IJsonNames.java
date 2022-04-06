@@ -1,5 +1,11 @@
 package com.esferalia.aon.occam.api.json;
 
+/**
+ * @author ecastellano
+ * Use  com.esferalia.aon.occam.api.model.IJsonNames 
+ * in order to use in client and server side.
+ */
+@Deprecated
 public interface IJsonNames {
 
 	// ---------------------------------------------------------------------------------------------	[A] 
@@ -36,6 +42,7 @@ public interface IJsonNames {
 	String AP1 = "ap1";
 	String AP2 = "ap2";
 	String APA = "apa";
+	String APPS = "apps";
 	String ATTACH = "attach";
 	String ATTACH_MODULE = "attachModule";
 	String ATTACH_TYPE = "attachType";
@@ -98,6 +105,7 @@ public interface IJsonNames {
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
 	String COUNT = "count";
+	String COLOR = "color";
 	String COUNTRY = "country";
 	String CREATION_DATE = "creation_date";
 	String CREATION_USER = "creation_user";
@@ -133,7 +141,7 @@ public interface IJsonNames {
 	String DOCUMENT_TYPE = "documentType";
 	String DOMAIN = "domain";
 	String DOMAIN_ID = "domainId";
-	String DOMAIN_LOGIN = "domain_login";
+	String DOMAIN_LOGIN = "domainLogin";
 	String DOMAIN_MANAGEMENT = "domainManagement";
 	String DOMAIN_NAME = "domainName";
 	String DOMAIN_TYPE = "domainType";
@@ -158,6 +166,7 @@ public interface IJsonNames {
 	String EXPENSES_FIXED = "expensesFixed";
 	String EXPENSES_PERCENT = "expensesPercent";
 	String EXPENSES_RATIO = "expensesRatio";
+	String EXPRESSION = "expression";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	String FARMER_REGIME = "farmerRegime";
 	String FAX = "fax";
@@ -169,9 +178,11 @@ public interface IJsonNames {
 	String FINANCES = "finances";
 	String FOOTER = "footer";
 	String FOOTER_TEXT = "footerText";
+	String FORMULA = "formula";
+	String FROM = "from";
 	String FROM_DATE = "fromDate";
 	String FROM_DUE_DATE = "fromDueDate";
-	String FROM = "from";
+	String FROM_SALARY = "fromSalary";
 	String FROM_NUMBER = "fromNumber";
 	// ---------------------------------------------------------------------------------------------	[G] 
 	String GLOBAL = "global";
@@ -189,6 +200,7 @@ public interface IJsonNames {
 	String IAE = "iae";
 	String IBAN = "iban";
 	String ID = "id";
+	String IN_KIND = "inKind";
 	String IN_PERIOD_BEFORE_CREDIT = "inPeriodBeforeCredit";
 	String IN_PERIOD_BEFORE_DEBIT = "inPeriodBeforeDebit";
 	String IN_PERIOD_CREDIT = "inPeriodCredit";
@@ -216,12 +228,18 @@ public interface IJsonNames {
 	String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
 	String IRPF = "irpf";
 	String IRPF_PARAMS = "irpfParams";
-	String ISSUE_DATE = "irpf";
+	String IRPF_REGIME = "irpfRegime";
+	String ISSUE_DATE = "issueDate";
 	String ITEM = "item";
+
 	// ---------------------------------------------------------------------------------------------	[J] 
+	String JSON = "json";
 	String JOURNAL = "journal";
+	
 	// ---------------------------------------------------------------------------------------------	[K] 
 	String KEY = "key";
+	String KEYS = "keys";
+	String KEY_VALUES = "keyValues";
 	String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
 	String LANGUAGE = "language";
@@ -261,6 +279,7 @@ public interface IJsonNames {
 	String NULL = "null";
 	String NUMBER = "number";
 	String NUMBER_OF_PYMNTS = "numberOfPymnts";
+	String NUMBER_OF_USERS = "numberOfUsers";
 	// ---------------------------------------------------------------------------------------------	[O] 
 	String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
@@ -295,6 +314,7 @@ public interface IJsonNames {
 	String PARENT = "parent";
 	String PARENT_ID = "parentId";
 	String PASSWORD = "password";
+	String PATTERN = "pattern";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
 	String PAYMETHOD = "paymethod";
@@ -322,6 +342,9 @@ public interface IJsonNames {
  	String PROJECTS = "projects";
 	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
+	String PRORRATED = "prorrated";
+	String PRORRATE_PERCENT = "prorratePercent";
+	String PRORRATE_QUOTA = "prorrateQuota";
 	String PROVINCE = "province";
 	String PURCHASE_ACCOUNT = "purchaseAccount";
 	String PURCHASE_PRICE = "purchasePrice";
@@ -395,6 +418,8 @@ public interface IJsonNames {
 	String SIZE = "size";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
+	String SCHEMA = "schema";
+	String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	String START_DATE = "start_date";
 	String STATEMENT = "statement";
 	String STATEMENTS = "statements";
@@ -416,6 +441,8 @@ public interface IJsonNames {
 	String TASK_HOLDER = "task_holder";
 	String TAXES = "taxes";
 	String TAX = "tax";
+	String TAG = "tag";
+	String TAGS = "tags";
 	String TAX_DATE = "taxDate";
 	String TECHNICAL = "technical";
 	String TEST = "test";
@@ -435,6 +462,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[U] 
 	String URL = "url";
 	String USER = "user";
+	String USERS = "users";
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	String VALUE = "value";

@@ -45,7 +45,7 @@ export const createMainView = (aonMessengerChat) =>{
   aonMessengerChat.appendChild(div);
   const mainView = newComponent({
     type: TAG.DIV,
-    classes: [CSS.FLEX_JUSTIFY_BETWEEN, CSS.NO_COPY],
+    classes: [CSS.FLEX_JUSTIFY_BETWEEN], // CSS.NO_COPY
     styles: {
       transition: ".5s",
       display: "flex",
@@ -66,7 +66,7 @@ export const createMainView = (aonMessengerChat) =>{
 
 export const createMobileMainView = () => newComponent({
   type: TAG.DIV,
-  classes: [CSS.FLEX_COLUMN, CSS.NO_COPY],
+  classes: [CSS.FLEX_COLUMN], //  CSS.NO_COPY
   styles: {
     transition: ".5s",
     opacity: 1,
@@ -536,7 +536,6 @@ export const createChatMessage = (properties, chat) => {
     });
     date.appendTo(name.element);
     
-
     checkFilesAddEventClick(message); //ADD EVENT CLICK
 
     downChat();
@@ -692,6 +691,7 @@ const sendHistoric = async (workflowId) => {
         }
       }
     }
+    aonMessengerChat.showMessage("Comentario enviado por correo!");
   }
 }
 

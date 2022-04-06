@@ -11,12 +11,12 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -38,7 +38,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API PRODUCT SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -65,7 +65,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API PRODUCT SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -86,7 +86,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API PRODUCT SERVLET - PUT METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -107,7 +107,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API PRODUCT SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -157,16 +157,16 @@ public class ProductServlet extends AonApiHttpServlet {
 	private Filter productFilter(AonApiData api, ProductProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
-		if(api.getParams().opt("expense") !=null) {
-			if(JsonUtils.getboolean(api.getParams(), "expense")) {
+		if(api.getData().opt("expense") !=null) {
+			if(JsonUtils.getboolean(api.getData(), "expense")) {
 				filter = filter.and(f.getTypeProperty().eq(ProductType.EXPENSE.value()));
 			} else {
 				filter = filter.and(f.getTypeProperty().ne(ProductType.EXPENSE.value()));
 			}
 		}
 		
-		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
-			String value = api.getParams().optString(IJsonNames.VALUE);
+		if(!AonStringUtils.isBlank(api.getData().optString(IJsonNames.VALUE))) {
+			String value = api.getData().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getCodeProperty().like("%" + value + "%")
 					.or(f.getNameProperty().like("%" + value + "%"));
 			filter = filter.and(valueFilter);
@@ -178,13 +178,13 @@ public class ProductServlet extends AonApiHttpServlet {
 	private Filter itemFilter(AonApiData api, ItemProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
-		if(api.getParams().opt(IJsonNames.PRODUCT) != null){
-			Integer product = api.getParams().optInt(IJsonNames.PRODUCT);
+		if(api.getData().opt(IJsonNames.PRODUCT) != null){
+			Integer product = api.getData().optInt(IJsonNames.PRODUCT);
 			filter = filter.and(f.getProductProperty().eq(product));
 		}
 		
-		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
-			String value = api.getParams().optString(IJsonNames.VALUE);
+		if(!AonStringUtils.isBlank(api.getData().optString(IJsonNames.VALUE))) {
+			String value = api.getData().optString(IJsonNames.VALUE);
 			filter = filter.and(
 					f.getDescriptionProperty().like("%" + value + "%")
 					.or(f.getProductCodeProperty().like("%" + value + "%"))

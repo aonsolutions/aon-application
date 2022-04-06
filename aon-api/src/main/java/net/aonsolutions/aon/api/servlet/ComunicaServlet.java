@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +31,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -80,11 +83,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON COMUNICA SERVLET");
 		try {		
-			String path = req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR;
+			String path = req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) 
+					? req.getPathInfo() : IConstants.ROOT_BAR;
 			switch (path) {
 				case "/app-param":
 					LOGGER.info("APP-PARAM SERVLET - POST METHOD");
-					response(req, resp,	getAppParam(initialize(req, resp)));
+					response(req, resp,	getAppParam(initialize(req)));
 				break;
 				case "/rlce":
 					LOGGER.info("RLCE SERVLET - GET METHOD");
@@ -104,15 +108,15 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				break;
 				case "/ipfxnaf":
 					LOGGER.info("IPFXNAF SERVLET - GET METHOD");
-					response(req, resp, getIpfxNaf(initialize(req, resp)));
+					response(req, resp, getIpfxNaf(initialize(req)));
 				break;
 				case "/nafxipf":
 					LOGGER.info("NAFXIPF SERVLET - GET METHOD");
-					response(req, resp, getNafxIpf(initialize(req, resp)));
+					response(req, resp, getNafxIpf(initialize(req)));
 				break;
 				case "/update-contracts":
 					LOGGER.info("UPDATE-CONTRACTS SERVLET - GET METHOD");
-					response(req, resp, updateContracts(initialize(req, resp)));
+					response(req, resp, updateContracts(initialize(req)));
 				break;
 				default:
 					doGetGson(req, resp);
@@ -127,7 +131,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)  {
 		LOGGER.info("AON COMUNICA SERVLET POST");
 		try {		
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case "/alta-directa":
 					LOGGER.info("ALTA-DIRECTA SERVLET - POST METHOD");
@@ -155,7 +159,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private void doGetGson(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		    Gson gjson = new GsonBuilder().setDateFormat(FORMAT_DATE).create();
 		    String jsonInString = null;
 			switch (api.getPath()) {
@@ -181,7 +185,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	}
 	
-	private Collection<Employee> getMovements(AonApiData api) throws Exception {
+	private Collection<Employee> getMovements(AonApiData api) {
 
 		Domain domain = api.getDomain();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
@@ -206,20 +210,20 @@ public class ComunicaServlet extends AonApiHttpServlet{
             }
         });	
         
-        if(!errors.isEmpty()) throw new Exception(errors.get(0));
+        if(!errors.isEmpty()) throw new AonApiException(errors.get(0));
         
 		return employees;
 	}
 	
-	private ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> getMovementsCcc(AonApiData api) throws Exception {
+	private ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> getMovementsCcc(AonApiData api) {
 		ArrayList<com.esferalia.aon.in.payroll.tgss.report.Employee> employees = new ArrayList<>();
 		Domain domain = api.getDomain();
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		List<String> errors = new ArrayList<>();
-	
-		Date startDate = !api.getParams().optString("startDate").isEmpty() ? AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE) : new Date();
-		Date endDate = !api.getParams().optString("endDate").isEmpty() ? AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE) : new Date();
+		
+		Date startDate = !api.getData().optString("startDate").isEmpty() ? AonDateUtils.parse(api.getData().optString("startDate"), FORMAT_DATE) : new Date();
+		Date endDate = !api.getData().optString("endDate").isEmpty() ? AonDateUtils.parse(api.getData().optString("endDate"), FORMAT_DATE) : new Date();
 		
 		PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").forEach(ccc -> {
 		  try {
@@ -241,7 +245,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		  }
 		});	
 
-		if(!errors.isEmpty()) throw new Exception(errors.get(0));
+		if(!errors.isEmpty()) throw new AonApiException(errors.get(0));
 		
 		return employees;
 	}
@@ -249,14 +253,14 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private JSONArray getRlce() {
 		JSONArray arr = new JSONArray();
 		for( Entry<String, String> rlce : RLCE.getRLCE().entrySet()) 
-			arr.put(new JSONObject().put("value", rlce.getKey()).put("name", rlce.getValue()));
+			arr.put(new JSONObject().put(IJsonNames.VALUE, rlce.getKey()).put(IJsonNames.NAME, rlce.getValue()));
 		return arr;
 	}
 	
 	private JSONArray getContractType() {
 		 JSONArray arr = new JSONArray();
 		for( Entry<Integer, ContractTypeRecord> contractType : new ContractType().getContractTypes().entrySet()) 
-			arr.put(new JSONObject().put("value", contractType.getKey()).put("name", contractType.getValue()));
+			arr.put(new JSONObject().put(IJsonNames.VALUE, contractType.getKey()).put(IJsonNames.NAME, contractType.getValue()));
 		return arr;
 	}
 	
@@ -265,7 +269,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		for (Entry<String, String> v : Occupation.getOccupation().entrySet()) {
 			String value = 	v.getValue();
 			if(v.getValue()!=null && v.getValue().equals("-1")) value = " ";
-			arr.put(new JSONObject().put("name",  v.getKey()).put("value",value));		
+			arr.put(new JSONObject().put(IJsonNames.NAME,  v.getKey()).put(IJsonNames.VALUE,value));		
 		}
 	
 		
@@ -275,12 +279,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private JSONArray getQuoteGroup() {
 		JSONArray arr = new JSONArray();
 		for (Entry<String, String> v : QuoteGroup.getQuoteGroup().entrySet()) 
-			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));	
+			arr.put(new JSONObject().put(IJsonNames.VALUE, v.getValue()).put(IJsonNames.NAME,  v.getKey()));	
 
 		return arr;
 	}
 	
-	private JSONArray getIpfxNaf(AonApiData api) throws Exception {
+	private JSONArray getIpfxNaf(AonApiData api) throws SegSocialException, IOException, ParserConfigurationException {
 			Domain domain = api.getDomain();
 
 			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
@@ -288,9 +292,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			JSONArray arr = new JSONArray();			
 			final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 			
-			String nss = api.getParams().optString("nss");
+			String nss = api.getData().optString("nss");
 			if(nss.isEmpty()) 
-				throw new Exception("nss requerido");
+				throw new AonApiException("nss requerido");
 			
 		    ArrayList<String> nssList = new ArrayList<>();
 		    nssList.add(nss);	
@@ -299,15 +303,15 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    for (Employee employee : list) {
 				JSONObject json = new JSONObject();
 				json.put("ipf", employee.getIpf());
-				employee.getName().ifPresent(name-> json.put("name",name) );
+				employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 				json.put("nss", nss);
 				arr.put(json);
 			}
 		    return arr;
 	}
 	
-	private JSONObject getNafxIpf(AonApiData api) throws Exception{
-        JSONObject params = api.getParams(); 
+	private JSONObject getNafxIpf(AonApiData api) throws SegSocialException {
+        JSONObject params = api.getData(); 
 		Domain domain = api.getDomain();//
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		String ipf       =  params.optString("ipf");
@@ -317,7 +321,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Employee employee = SistemaRED.nafxipf(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
 		json.put("ident", employee.getIdent());
 		json.put("ipf", employee.getIpf());
-		employee.getName().ifPresent(name-> json.put("name",name) );
+		employee.getName().ifPresent(name-> json.put(IJsonNames.NAME,name) );
 		json.put("nss", employee.getNss());
 		return json;
 	}
@@ -329,7 +333,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		//first screen
-		String regime = data.optString("regime");
+		String regime = data.optString(IJsonNames.REGIME);
 		String ctaCti = data.optString("ctaCti");
 		String nss    =  data.optString("nss");
 		String ipf    = data.optString("ipf");
@@ -339,12 +343,14 @@ public class ComunicaServlet extends AonApiHttpServlet{
 
 		String gc = data.optString("gc");
 		String contract = data.optString("contract");	
-		String name = data.optString("name");
+		String name = data.optString(IJsonNames.NAME);
 		String ocup = data.has("ocup")  && !data.isNull("ocup") ? data.optString("ocup") : null;
 		String coef = data.has("coef") && !data.isNull("coef") ? data.optString("coef") : null;
 		String convenio =  data.has("convenio")  && !data.isNull("convenio") ? data.optString("convenio") : "60888888888888";
-		String rlce = data.has("rlce")  && !data.isNull("rlce") ? data.optString("rlce") : null; //para regime agrario
+		String rlce = data.has("rlce")  && !data.isNull("rlce") ? data.optString("rlce") : null; 
+		String collective = data.has("collective")  && !data.isNull("collective") ? data.optString("collective") : null;
 		String md_ctz = data.has("md_ctz")  && !data.isNull("md_ctz") ? data.optString("md_ctz") : null; //para regime agrario
+
 //        Ctz mensual = 1
 //        Jornadas reales = 2
 		EmployeeBuilder builder = new EmployeeBuilder()
@@ -358,8 +364,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setColec(convenio)
 		.setGc(gc)
 		.setContract(contract)
-		.setMdctz(md_ctz)
-		.setRlce(rlce);
+		.setCollective(collective)
+		.setRlce(rlce)
+		.setMdctz(md_ctz);
 		
 		if(coef!=null) {
 			Integer fact = Integer.parseInt(coef);
@@ -384,12 +391,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		//first screen
-		String regime = data.optString("regime");
+		String regime = data.optString(IJsonNames.REGIME);
 		String ctaCti = data.optString("ctaCti");
 		String nss = data.optString("nss");
 		
 		String ipf = data.optString("ipf");
-		String name = data.optString("name");
+		String name = data.optString(IJsonNames.NAME);
 		String situation = data.optString("situation");
 		Date frb = AonDateUtils.parse(data.optString("fechaBaja"), FORMAT_DATE);
 
@@ -416,11 +423,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 		
 		//first screen
-		String regime = data.getString("regime");
+		String regime = data.getString(IJsonNames.REGIME);
 		String ctaCti = data.getString("ctaCti");
 		String nss = data.getString("nss");
 		String ipf = data.getString("ipf");
-		String name =  data.getString("name");
+		String name =  data.getString(IJsonNames.NAME);
 		Date date = AonDateUtils.parse(data.getString("fra"), FORMAT_DATE);
 
 		com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee()
@@ -437,7 +444,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 		AonComunica.deleteContract(certificate.getData(), certificate.getPassword(), certificate.getType(), domain, employee , true);
 		
-		if(!data.isNull("name")) {
+		if(!data.isNull(IJsonNames.NAME)) {
 			SituationType situationType = employee.getEndDate().isEmpty() ? SituationType.ALTA : SituationType.BAJA;
 			String body = "Te informamos que se ha realizado una <b>Eliminación de "+situationType.getName()+"</b> en la Seguridad Social de <b>"
 			+name+"</b> en la Cuenta de Cotización <b>"+regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
@@ -449,11 +456,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Employee getEmployee(AonApiData api) throws Exception{
-        JSONObject params = api.getParams(); 
+        JSONObject params = api.getData(); 
 		Domain domain = api.getDomain();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 
-		String regime = params.optString("regime");
+		String regime = params.optString(IJsonNames.REGIME);
 		String ccc    = params.optString("ctaCti");
 		String nss    = params.optString("nss");
 		return SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
@@ -485,11 +492,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private void updateOccupation(AonApiData api, Certificate certificate, JSONObject json, JSONArray errors){
 		JSONObject data = api.getData();
 		String ocup = data.optString("ocup");
-		String regime = data.optString("regime");
+		String regime = data.optString(IJsonNames.REGIME);
 		String ctaCti = data.optString("ctaCti");
 		String nss = data.optString("nss");
 		String ipf = data.optString("ipf");
-		String name = data.optString("name");
+		String name = data.optString(IJsonNames.NAME);
 		Date date = AonDateUtils.parse(data.optString("fecha"), FORMAT_DATE);
 		
 		if(!ocup.isEmpty() && !data.optString("ocup_edit").isEmpty() && data.getBoolean("ocup_edit")) {
@@ -497,7 +504,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
             	SistemaRED.cambioOcupacion( new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, regime, ctaCti, nss, ocup, date);
             	json.put("ocup_edit", true);
             	json.put("contract_edit", true);
-            	if(!data.isNull("name")) {
+            	if(!data.isNull(IJsonNames.NAME)) {
         			String body = "Te informamos que se ha realizado un Cambio de ocupación a "
         					+ "(<b>"+ocup.toUpperCase()+"</b>) en la Seguridad Social de <b>"+ name+"</b> en la Cuenta de Cotización <b>"
         					+ regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
@@ -514,11 +521,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private void updateGrupCtz(AonApiData api, Certificate certificate, JSONObject json, JSONArray errors){
 		JSONObject data = api.getData();
-		String regime = data.optString("regime");
+		String regime = data.optString(IJsonNames.REGIME);
 		String ctaCti = data.optString("ctaCti");
 		String nss = data.optString("nss");
 		String ipf = data.optString("ipf");
-		String name = data.optString("name");
+		String name = data.optString(IJsonNames.NAME);
 		String gc = data.optString("gc");
 		Date date = AonDateUtils.parse(data.optString("fecha"), FORMAT_DATE);
 		if(!gc.isEmpty() && !data.optString("gc_edit").isEmpty() && data.getBoolean("gc_edit")) {
@@ -526,7 +533,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				 SistemaRED.cambioGrupCtz(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, regime, ctaCti, nss, gc, date);
 				 json.put("gc_edit", true);
 				 json.put("contract_edit", true);
-            	 if(!data.isNull("name")) {
+            	 if(!data.isNull(IJsonNames.NAME)) {
         			String body = "Te informamos que se ha realizado un Cambio de Grupo de cotización a (<b>"+gc+"</b>) en la Seguridad Social de <b>"
             	 + name+"</b> en la Cuenta de Cotización <b>"+ regime+"-"+ctaCti+"</b> con fecha <b>"+AonDateUtils.simpleFormat(date)+"</b>";
         			sendEmail(api, "COMUNIC@ | AON SOLUTIONS", body, new LinkedList<>());
@@ -542,7 +549,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private void updateFactor(AonApiData api, Certificate certificate, JSONObject json, JSONArray errors){
 		JSONObject data = api.getData();
-		String regime = data.optString("regime");
+		String regime = data.optString(IJsonNames.REGIME);
 		String ctaCti = data.optString("ctaCti");
 		String nss = data.optString("nss");
 		String ipf = data.optString("ipf");
@@ -587,12 +594,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				String regime = employee.getRegime();
 				String ccc = employee.getCtaCti().get();
 				String nss = employee.getNss();
-				Date dat = employee.getFra();
 
 				LinkedList<File> files = new LinkedList<>();
 				
 				try {
-					byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ccc, regime, situation, nss, dat);
+					byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ccc, regime, situation, nss, date);
 					File file = File.createTempFile("duplicateTA", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
@@ -603,8 +609,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}
 				
 				try {
-					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, dat);
-					File file = File.createTempFile("duplicateIDC", ".pdf");
+					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
+					File file = File.createTempFile("duplicadoIDC", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
 		            os.close();
@@ -612,7 +618,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				}catch (Exception e) {
 					e.printStackTrace();
 				}
-
 				sendEmail(api, subject, body, files);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -622,19 +627,21 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private List<String> getEmails(AonApiData api, User user) {
-	    Domain domain = api.getDomain();
+
 	    List<String> toList = new LinkedList<>();
 	    String alternative = JsonUtils.optString(api.getData(), "alternative");
 	    if(alternative!=null && !alternative.isEmpty()) toList.add(alternative);
 		User newUser = user; //.isPresent() ? user.get() : AON_SOLUTIONS.getUser(domain, api.getToken()) ;
 		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
 		toList.add(auth.getEmail());
-		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId()))).forEach(usr -> {
-    		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
-    		if(Boolean.TRUE.equals(dur.isComunicaManager())) {
-    			toList.add(AON_SOLUTIONS.getAuth(usr.getAuth().getAuth()).getEmail());
-    		}
-    	});
+		
+//	    Domain domain = api.getDomain();
+//		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId()))).forEach(usr -> {
+//    		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
+//    		if(Boolean.TRUE.equals(dur.isComunicaManager())) {
+//    			toList.add(AON_SOLUTIONS.getAuth(usr.getAuth().getAuth()).getEmail());
+//    		}
+//    	});
 	    
 		return toList;
 	}
@@ -700,10 +707,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			ApplicationParameter appParams = appParamsExists(api);
 			
 			//------------MOVEMENTS OLD
-			if(api.getParams().optBoolean("employeesOld")) {
+			if(api.getData().optBoolean("employeesOld")) {
 				Date startIni = AonDateUtils.getYearFirstDay( AonDateUtils.addMonths(new Date(), -6) ); 
-				if(!api.getParams().optString("startDate").isEmpty()) {
-					startIni = AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
+				if(!api.getData().optString("startDate").isEmpty()) {
+					startIni = AonDateUtils.parse(api.getData().optString("startDate"), FORMAT_DATE);
 				} else if(appParams.getId()!=null && appParams.getValue()!=null) 
 					startIni = AonDateUtils.addDays(new Date( Long.parseLong( appParams.getValue() ) ), -15) ;
 
@@ -745,14 +752,14 @@ public class ComunicaServlet extends AonApiHttpServlet{
 						}
 						
 						if( nss!=null) {
-							System.out.println("-------------CREANDO CONTRATO-------------");
-							System.out.println(data.toString());			
+							LOGGER.info("-------------CREANDO CONTRATO-------------");
+							LOGGER.info(data.toString());			
 							EmployeeParse.toEmployeeOccam(data);
 							PAYROLL.addEmployee(domain.getName(), domain.getId(), "", EmployeeParse.toEmployeeOccam(data));
 						}
 					} else {
-						System.out.println("--------YA EXISTE EL CONTRATO-------------");
-						System.out.println(data.toString());
+						LOGGER.info("--------YA EXISTE EL CONTRATO-------------");
+						LOGGER.info(data.toString());
 					}
 		
 				} catch (SegSocialException e) {e.printStackTrace();}	
@@ -777,12 +784,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				.setName(APP_PARAMS_NAME)
 				;
 		if(exists.getId()!=null) {
-			System.out.println("--------UPDATE APP PARAMS-------------");
+			LOGGER.info("--------UPDATE APP PARAMS-------------");
 			AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams, 
 					f->f.getDomainProperty().eq(appParams.getDomain()).and(f.getNameProperty().eq(appParams.getName()))
 				);
 		} else {
-			System.out.println("--------SAVE APP PARAMS-------------");
+			LOGGER.info("--------SAVE APP PARAMS-------------");
 			AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams);
 		}
 	}
@@ -791,8 +798,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		JSONObject json = new JSONObject();
 		ApplicationParameter appParams = appParamsExists(api);
 		if(appParams.getId()!=null && appParams.getValue()!=null) {
-			json.put("name", appParams.getName());
-			json.put("value", appParams.getValue());
+			json.put(IJsonNames.NAME, appParams.getName());
+			json.put(IJsonNames.VALUE, appParams.getValue());
 		}
 		return json;
 	}

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class WorkplaceDraftObject extends AbstractDraftObject {
@@ -187,6 +188,19 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	public String getWorkplaceAgreement(){
 		Integer agreeementId = workplaceInfo.getAgreementId();
 		return null == agreeementId ? null : agreeementId.toString();
+	}
+	
+	public String getAgreementDescription() {
+		String workplaceAgreementId = getWorkplaceAgreement();
+		if(AonStringUtils.isBlank(workplaceAgreementId))
+			return null;
+		else {
+			Integer agreementId = Integer.parseInt(workplaceAgreementId);
+			for(Agreement agreement : agreements)
+				if(agreement.getId().equals(agreementId))
+					return agreement.getDescription();
+		}
+		return null;
 	}
 	
 	public String getWorkplaceActivity(){

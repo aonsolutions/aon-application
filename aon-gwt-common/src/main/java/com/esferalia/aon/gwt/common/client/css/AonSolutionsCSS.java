@@ -178,7 +178,7 @@ public interface AonSolutionsCSS extends CssResource {
 	String aonIconHelp();
 
 	@ClassName("aon_icon_changed")
-	String aonIconChaged();
+	String aonIconChanged();
 
 	@ClassName("aon_icon_calc")
 	String aonIconCalc();
@@ -281,6 +281,12 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
+	
+	@ClassName("aon_icon_statics")
+	String aonIconStatics();
+	
+	@ClassName("aon_icon_clean")
+	String aonIconClean();
 	
 	@ClassName("aon_icon_schedule")
 	String aonIconSchedule();
@@ -462,6 +468,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_wrench")
 	String aonIconWrench();
 	
+	@ClassName("aon_icon_red_wrench")
+	String aonIconRedWrench();
+
 	@ClassName("aon_icon_toggle_on")
 	String aonIconToggleOn();
 	
@@ -673,6 +682,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_block_center")
 	String aonBlockCenter();
 	
+	@ClassName("aon_block_right")
+	String aonBlockRight();	
+	
 	@ClassName("aon_flex_grow_1")
 	String aonFlexGrow1();
 	
@@ -766,6 +778,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_color_royalblue")
 	String aonColorBlue();
 	
+	@ClassName("aon_color_orange")
+	String aonColorOrange();
+
 	@ClassName("aon_background_orange")
 	String aonBackgroundOrange();
 	
@@ -1119,6 +1134,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_custom_scroll")
 	String aonCustomScroll();
+	
+	@ClassName("aon_line_height_double")
+	String aonLineHeightDouble();
 
 }
 

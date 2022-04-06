@@ -13,6 +13,8 @@ import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonFiscal } from './fiscal/aon-fiscal.js';
 import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
 import { AonLaboral } from './laboral/aon-laboral.js';
+import { AonComunica } from './laboral/aon-comunica.js';
+import { AonSaltra } from './laboral/aon-saltra.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { Note } from '../models/note/Note.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
@@ -142,6 +144,12 @@ export class AonMenu extends AonElement {
 				if(this.getDur().isPayrollManager()) {
 					this.buildAppMenu(Apps.PAYROLL);
 				} else this.rootPanel(new AonLaboral());
+				break;
+			case Apps.COMUNICA.app:
+				this.rootPanel(new AonComunica());
+				break;
+			case MenuApps.AON_SALTRA.app:
+				this.rootPanel(new AonSaltra());
 				break;
 			case Apps.INVOICE.app:
 				this.rootPanel(new AonInvoicePanel());
@@ -290,7 +298,7 @@ export class AonMenu extends AonElement {
 			let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 			if(aonMenuSidenav && aonMenuSidenav.style.width !== '250px' && aonMenuSidenav.style.width !== '0px' && localStorage.getItem('aon_domain_id')){
 				aonMenuSidenav.style.transitionDuration = '0ms';
-				aonMenuSidenav.style.width = '175px';
+				aonMenuSidenav.style.width = '190px';
 				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
 					item.style.display = 'inline-block';
 					item.style.fontSize = '12px';
@@ -332,7 +340,6 @@ export class AonMenu extends AonElement {
 	      let img = this.createElement(TAG.IMG);
 	      img.id = 'aonMenuListAppImg-' + app.app;
 	      img.style.width = '30px';
-	      img.style.marginRight = '15px';
 	      img.src = app.logo;
 	      img.title = app.title;
 	      div.appendChild(img);
@@ -592,7 +599,11 @@ export class AonMenu extends AonElement {
 		else if(MenuApps.FISCAL.app === app.app)
 			return this.getDur().isFiscal();
 		else if(MenuApps.PAYROLL.app === app.app)
-			return this.getDur().isPayroll() || this.getDur().isComunica();
+			return this.getDur().isPayroll();
+		else if(MenuApps.COMUNICA.app === app.app) 
+			return !this.getDur().isPayroll() && this.getDur().isComunica();
+		else if(MenuApps.AON_SALTRA.app === app.app) 
+			return !this.getDur().isPayroll() && !this.getDur().isComunica() && this.getDur().isSaltra();
 		else if(MenuApps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		else if(MenuApps.TIMECONTROL.app === app.app)

@@ -6,7 +6,6 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -45,16 +44,12 @@ public class AonTrashAgreementsToolbar extends Composite {
 
 	private List<Listener> listeners;
 	
-	private AonButton showMenuButton;
-	
-	private AonButton backButton;
-	
 	private boolean agreementTreeShowed = true;
 	
 	public AonTrashAgreementsToolbar() {
 		initWidget(uiBinder.createAndBindUi(this));
 		createToolbar();
-		this.listeners = new ArrayList<Listener>();
+		this.listeners = new ArrayList<>();
 	}
 	
 	public void addListener(Listener listener) {
@@ -67,23 +62,19 @@ public class AonTrashAgreementsToolbar extends Composite {
 	
 	private void createToolbar() {
 		
-		showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenu() );
-		showMenuButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(agreementTreeShowed) {
-					showMenuButton.setTitle("Mostrar");
-					for(Listener listener : listeners)
-						listener.onCollapseTrashMenuButtonClick(event);
-				} else {
-					showMenuButton.setTitle("Ocultar");
-					for(Listener listener : listeners)
-						listener.onShowTrashMenuButtonClick(event);
-				}
-				
-				agreementTreeShowed = !agreementTreeShowed;
-				
+		AonButton showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenu() );
+		showMenuButton.addClickHandler(e -> {
+			if(agreementTreeShowed) {
+				showMenuButton.setTitle("Mostrar");
+				for(Listener listener : listeners)
+					listener.onCollapseTrashMenuButtonClick(e);
+			} else {
+				showMenuButton.setTitle("Ocultar");
+				for(Listener listener : listeners)
+					listener.onShowTrashMenuButtonClick(e);
 			}
+			
+			agreementTreeShowed = !agreementTreeShowed;
 		});
 		
 		headerSection.add(showMenuButton);
@@ -92,13 +83,10 @@ public class AonTrashAgreementsToolbar extends Composite {
 		title.addStyleName(style.title());
 		headerSection.add(title);
 		
-		backButton = new AonToolbarButton(AON.MSG.backAction() + " a Convenios", AON.CSS.aonIconBack() );
-		backButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				for(Listener listener : listeners)
-					listener.onBackButtonClick(event);
-			}
+		AonButton backButton = new AonToolbarButton(AON.MSG.backAction() + " a Convenios", AON.CSS.aonIconBack() );
+		backButton.addClickHandler(e -> {
+			for(Listener listener : listeners)
+				listener.onBackButtonClick(e);
 		});
 		toolsSection.add(backButton);
 		

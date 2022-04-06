@@ -8,20 +8,32 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdown;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFComputeKeyInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.irpf.JsIRPFBreakdownInvoiceGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod123.Model123.Model123Callback;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup.IFinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup.IFinishDeclarationPopupCallback;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.shared.mod123.Model123ScriptProvider;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -32,7 +44,11 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -48,8 +64,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class Model123Base extends DockLayoutPanel {
-
 	protected FiscalModelAdmonPanel<Mod123, Model123ModuleOptions> admonPanel;
+	private AonFiscalModelIdentificationPanel<Mod123> identificationData; 
 
 	private static final String WIDTH_140PX = "140px";
 	private static final String BLANK = "_blank";
@@ -80,10 +96,10 @@ public abstract class Model123Base extends DockLayoutPanel {
 	
 	private final AonToolbar decToolbar = new AonToolbar();
 	private final InlineLabel dirtyLabel = new InlineLabel();
-	private final InlineLabel diffLabel = new InlineLabel();
 	private final InlineLabel adjLabel = new InlineLabel();
 	private final InlineLabel replacedLabel = new InlineLabel();
 	private final Label statusLabel = new Label();
+	private AonTextBox receiptBox;
 	
 	protected FormPanel diskForm = new FormPanel(BLANK);
 	protected Hidden mod123Hidden = new Hidden("mod123");
@@ -94,8 +110,8 @@ public abstract class Model123Base extends DockLayoutPanel {
 	protected Model123Base(Mod123 mod123, Model123Callback callback) {
 		super(Unit.PX);
 		setStyleName(AON.CSS.aonSelector());
-		this.callback = callback;
 		fieldsMap = new EnumMap<>(Mod123Key.class);
+		this.callback = callback;
 		
 		select( mod123 );
 		
@@ -116,6 +132,8 @@ public abstract class Model123Base extends DockLayoutPanel {
 		paintDeclarationTab(tabPanel);
 		paintLiquidationTab(tabPanel);
 		paintAdministrationTab(tabPanel);
+		
+		tabPanel.selectTab(2, false);
 	}
 	
 	public Model123Callback getCallback() {
@@ -137,14 +155,17 @@ public abstract class Model123Base extends DockLayoutPanel {
 	void selectAndPopulate( Mod123 mod123) {
 		select(mod123);
 		populate(mod123);
+		showPaymentInfo(mod123);
 		decorateDeclarationTab();
 		decorateAdministrationTab();
 	}
 	
 	private void populate(Mod123 mod123) {
+		identificationData.populate(mod123);
 		for (Entry<Mod123Key, AonDoubleBox> entry : fieldsMap.entrySet()) {
 			double d1 = mod123.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
+			entry.getValue().setEnabled(mod123.isEditable());
 			if (!AonNumberUtils.equals(d1, d2)) {
 				entry.getValue().setValue(d1,false,true);
 			}
@@ -211,7 +232,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 		toolbarPanel.add(auditButton);
 
 		toolbarPanel.add(diskForm);
-		
 		return toolbarPanel;
 	}
 
@@ -239,16 +259,9 @@ public abstract class Model123Base extends DockLayoutPanel {
 		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
-		diffLabel.setStyleName(AON.CSS.aonMarginLeft());
-		diffLabel.addStyleName(AON.CSS.aonLabelWithIcon());
-		diffLabel.addStyleName(AON.CSS.aonIconDiff());
-		diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
-		marksPanels.add(diffLabel);
-
 		adjLabel.setStyleName(AON.CSS.aonMarginLeft());
 		adjLabel.addStyleName(AON.CSS.aonIconLabel());
-		adjLabel.addStyleName(AON.CSS.aonIconWrench());
-		adjLabel.addStyleName(AON.CSS.aonColorBlue());
+		adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
 		adjLabel.setTitle("Ajustes realizados");
 		marksPanels.add(adjLabel);
 
@@ -275,6 +288,36 @@ public abstract class Model123Base extends DockLayoutPanel {
 		return decToolbar;
 	}
 	
+	private void onReset() {
+		resetButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				Model123.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
+						new AsyncCallback<Mod123>() {
+							@Override
+							public void onSuccess(Mod123 m123) {
+								setDirty( true );
+								selectAndPopulate(m123);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+								
+							}
+						});
+			}
+			@Override
+			public void onCancel() {
+				resetButton.setEnabled(true);
+			}
+		});
+	}
+	
+
 	protected void markAsDirty() {
 		setDirty(true);
 	}
@@ -288,8 +331,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 
 	private void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
-		diffLabel.setVisible(!this.getModel().isDiffCalculationDisabled()); 		
-		
 		boolean adjusted = false;
 		for (FiscalModelDetail det : this.getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
@@ -302,25 +343,16 @@ public abstract class Model123Base extends DockLayoutPanel {
 
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(model.getDocument(),AonStringUtils.SPACE,model.getFullName()));
-		resetButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
-		auditButton.setVisible(!model.isNew());
 		newButton.setVisible(!model.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
-		saveButton.setVisible(!model.isFinished() && !model.isSent());
-		deleteButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
+		saveButton.setVisible(model.isEditable());
+		deleteButton.setVisible(!model.isNew() && model.isEditable());
+		resetButton.setVisible(!model.isNew() && model.isEditable());
+		auditButton.setVisible(!model.isNew());
 		printButton.setVisible(!model.isNew());
-		markAsPendingButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED 
-				|| model.getStatus() == FiscalStatus.BATCHED
-				|| model.getStatus() == FiscalStatus.SENT
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.BLOCKED));
-		markAsFinishedButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.PENDING
-				|| model.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| model.getStatus() == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(!model.isNew() &&
-				(model.getStatus() == FiscalStatus.FINISHED));
+		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));
+		markAsFinishedButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.FINISHED));
+		markAsSentButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.SENT));
 	}
 	
 	private void styleStatusLabel(Mod123 mod123) {
@@ -354,11 +386,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 
 				@Override
 				public void onAccept() {
-					if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
-						getCallback().getOptions().getExternalCallback().onExit(getModel());
-					} else {
-						getCallback().onCancel(getModel());
-					}
+					getCallback().onCancel(getModel());
 				}
 				@Override
 				public void onCancel() {
@@ -366,11 +394,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 				}
 			});
 		} else {
-			if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
-				getCallback().getOptions().getExternalCallback().onExit(getModel());
-			} else {
-				getCallback().onCancel(getModel());
-			}
+			getCallback().onCancel(getModel());
 		}
 	}
 	
@@ -489,7 +513,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 						selectAndPopulate(result);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
-						showPaymentInfo(getModel());
 					}
 
 					@Override
@@ -526,7 +549,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 					@Override
 					public void onSuccess(Mod123 m123) {
 						selectAndPopulate(m123);
-						showFinalizePopup(m123);
+						showFinalizePopup(model);
 						markAsFinishedButton.setEnabled(true);
 					}
 
@@ -539,26 +562,26 @@ public abstract class Model123Base extends DockLayoutPanel {
 	}
 	
 	private void showFinalizePopup(Mod123 model) {
-		FinishDeclarationPopup<Mod123,Model123ModuleOptions> finalizeDialog = new FinishDeclarationPopup<>(
-				model,
-				getCallback(), 
-				new IFinishDeclarationPopupCallback<Mod123>() {
+		AonFinishDeclarationPopup<Mod123,Model123ModuleOptions> finalizeDialog = new AonFinishDeclarationPopup<>(
+			model,
+			getCallback(), 
+			new IFinishDeclarationPopupCallback<Mod123>() {
 
-					@Override
-					public void onAccept(Mod123 t) {
-						Model123Base.this.doMarkAsFinished();
-					}
+				@Override
+				public void onAccept(Mod123 t) {
+					Model123Base.this.doMarkAsFinished();
+				}
 
-					@Override
-					public void onCancel(Mod123 t) {
-						// Nothing
-						
-					}
+				@Override
+				public void onCancel(Mod123 t) {
+					// Nothing
+					
+				}
 
-					@Override
-					public void onCustomerCheck(Mod123 t) {
-						Model123Base.this.markAsCustomerCheck();
-					}
+				@Override
+				public void onCustomerCheck(Mod123 t) {
+					Model123Base.this.markAsCustomerCheck();
+				}
 		});
 		finalizeDialog.center();
 		finalizeDialog.show();
@@ -574,11 +597,9 @@ public abstract class Model123Base extends DockLayoutPanel {
 		Model123.SERVICE.markAsFinished(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod123>() {
 			@Override
 			public void onSuccess(Mod123 result) {
-				setDirty(false);
 				selectAndPopulate(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
-				showPaymentInfo(getModel());
 			}
 
 			@Override
@@ -605,7 +626,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 				select(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
-				showPaymentInfo(getModel());
 			}
 
 			@Override
@@ -625,10 +645,10 @@ public abstract class Model123Base extends DockLayoutPanel {
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
-			buff.append(AON.FMT.format(mod.getResult()));
-			if (mod.getDeclarationType() != null) {
+			buff.append(AON.FMT.format(mod.getDeclarationResult()));
+			if (mod.getDeclarationResultType() != null) {
 				buff.append(AonStringUtils.SPACE);
-				buff.append(mod.getDeclarationType().getDescription());
+				buff.append(mod.getDeclarationResultType().getDescription());
 			}
 			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
 				buff.append(AonStringUtils.SPACE);
@@ -654,15 +674,20 @@ public abstract class Model123Base extends DockLayoutPanel {
 		FlexTable table = new FlexTable();
 		container.add(table);
 		defineTable(table);
-		for (IModelScript<Mod123Key> ms : Model123ScriptProvider.obtainScript(getModel())) {
-			if (ms.paintHeaderBefore()) {
-				paintHeader(table);
+		IModelScript<Mod123Key>[] script = null;
+		try {
+			script = Model123ScriptProvider.obtainScript(getModel());
+			for (IModelScript<Mod123Key> ms : script) {
+				if (ms.paintHeaderBefore()) {
+					paintHeader(table);
+				}
+				paintRow(table,getCallback(),ms);	
 			}
-			paintRow(table,getCallback(),ms);	
+			liquidationScrollPanel.setWidget(container);
+			tabPanel.add(liquidationScrollPanel, AON.MSG.liquidacion());
+		} catch (Exception e) {
+			getCallback().showError(e.getMessage());
 		}
-
-		liquidationScrollPanel.setWidget(container);
-		tabPanel.add(liquidationScrollPanel, AON.MSG.liquidacion());
 	}
 	
 	private void defineTable(FlexTable table) {
@@ -784,8 +809,14 @@ public abstract class Model123Base extends DockLayoutPanel {
 		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox();
 		fieldsMap.put(key, input);
-		input.setEnabled(script.isEnabled()); 
-		input.setValue(det1.getAmount());
+		input.setEnabled(model.isEditable() && script.isEnabled()); 
+ 		input.setValue(det1.getAmount());
+		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
+			input.addStyleName(AON.CSS.aonChanged());
+			input.setTitle(AON.MSG.difCalc(
+					AON.FMT.format(det1.getResultAmount()),
+					AON.FMT.format(AonMathUtils.round( det1.getAdjustAmount() * -1))));
+		}
 		input.addValueChangeHandler(event -> {
 			if (event.getValue() == null) input.setValue(0.0, false);
 			double result = getModel().getResultAmount(key);
@@ -795,6 +826,14 @@ public abstract class Model123Base extends DockLayoutPanel {
 				getModel().ensureDetail(key).setAdjustAmount( result - amount);	
 			}
 			getModel().ensureDetail(key).setAmount(input.getValue());
+			if (AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
+				input.addStyleName(AON.CSS.aonChanged());
+				input.setTitle(AON.MSG.difCalc(
+					AON.FMT.format(getModel().ensureDetail(key).getResultAmount()),
+					AON.FMT.format(AonMathUtils.round( getModel().ensureDetail(key).getAdjustAmount() * -1))));
+			} else {
+				input.removeStyleName(AON.CSS.aonChanged());
+			}
 			if (input.isEnabled()) {
 				calculateAndRefresh( callback );
 			}
@@ -808,39 +847,145 @@ public abstract class Model123Base extends DockLayoutPanel {
 		FlowPanel buttonContainer = new FlowPanel();
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
 			buttonContainer.setStyleName(AON.CSS.aonNowrap());
-			if 	(infoKey != FiscalModelKeyInfo.NONE) {
-				final AonTableButton button = new AonTableButton("");
-				button.setTitle(infoKey.getLabel());
-				if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.CSS.aonIconList());
-				else if (infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.CSS.aonIconDiff());
-				else if (infoKey == FiscalModelKeyInfo.SALARY) button.addStyleName(AON.CSS.aonIconEuro());
-				else if (infoKey == FiscalModelKeyInfo.SALARY_IN_KIND) button.addStyleName(AON.CSS.aonIconData());
-				else if (infoKey == FiscalModelKeyInfo.DIFF_SALARY) button.addStyleName(AON.CSS.aonIconDiff());
-				else if (infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.CSS.aonIconCalc());
-				
-				// Botones info diferencia, solo si el modelo se creo por diferencias
-				if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE || infoKey == FiscalModelKeyInfo.DIFF_SALARY) {
-					button.setVisible(!getModel().isDiffCalculationDisabled());				
-				}				
-				
-				button.addClickHandler(event -> Model123.SERVICE.getInfo(
-					callback.getOptions().getOccam(),getModel(),script, infoKey,
-					new AsyncCallback<String>() {
+			infoKey.visit(new IFiscalModelKeyInfoVisitor<Void>() {
 
+				private void showComputeKeyInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model123.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							button.setEnabled(true);
+							callback.showError(AON.MSG.errorMessage());
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							FlowPanel gridContainer = new FlowPanel();
+							Mod123Key key = script.getKeys()[0];
+							JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
+							JsIRPFComputeKeyInfoGridPanel grid = new JsIRPFComputeKeyInfoGridPanel();
+							grid.setTitle(AON.MSG.calcDetail());
+							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
+							grid.addContent(info);
+							gridContainer.add(grid);
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
+						}
+					});
+				}
+				
+				private void showInvoiceIrpfBreakdownInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model123.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
 						}
-
+	
 						@Override
 						public void onSuccess(String result) {
-							callback.showInfoPanel(result);
+							JsIRPFBreakdownInvoiceGridPanel grid = new JsIRPFBreakdownInvoiceGridPanel();
+							grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
+							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+							grid.setSubTitle(script.getLabel());
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsIRPFBreakdown> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								grid.addRow(array.get(i));
+							}
+							grid.addFooterRow();
+							callback.showInfoPanelWidget(grid);
+							button.setEnabled(true);
 						}
+					});
+				}
+
+				private void showComputeInfo(AonTableButton button) {
+					button.setEnabled(false);
+					Model123.SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							FlowPanel gridContainer = new FlowPanel();
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsIRPFComputeInfo> array = arrayObject.cast();
+							
+							for (int i = 0; i < array.length(); i++) {
+								Mod123Key key = script.getKeys()[i];
+								JsIRPFComputeInfoGridPanel grid = new JsIRPFComputeInfoGridPanel() {
+
+									@Override
+									protected String resolveKey(String keyString) {
+										Mod123Key key = Mod123Key.valueOf(keyString);
+										return key.getBoxAsString();
+									}
+									
+								};
+
+								grid.setTitle(AON.MSG.calcDetail());
+								grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
+								grid.addContent(array.get(i));
+								gridContainer.add(grid);
+							}
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
+						}
+					});
+				}
 				
-					}
-				));
-				buttonContainer.add(button);
-			}
+				private AonTableButton addButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
+					buttonContainer.add(button);
+					return button;
+				}
+				
+				@Override
+				public Void visitInvoice() {
+					final AonTableButton button = addButton();
+					button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+					return null;
+				}
+
+				@Override public Void visitModelInvoiceIrpfBreakdown() {
+					return visitInvoice();
+				}
+				
+				@Override public Void visitCompute() { 
+					final AonTableButton button = addButton();
+					button.addClickHandler(event -> showComputeInfo(button));
+					return null; 
+				}
+				@Override 
+				public Void visitComputeKey() {
+					final AonTableButton button = addButton();
+					button.addClickHandler(event -> showComputeKeyInfo(button));
+					return null; 
+				}
+				
+				@Override public Void visitModelInVatAccrualInvoice() {return null;}
+				@Override public Void visitModelOutVatAccrualInvoice() {return null;}
+				@Override public Void visitProrratedModelInvoiceVatBreakdown() {return null;}
+				@Override public Void visitModelInvoiceVatBreakdown() {return null;}
+				@Override public Void visitSalary() { return null; }
+				@Override public Void visitModelSalaryIrpfBreakdown() { return null; }
+				@Override public Void visitDiffInvoice() {return null;}
+				@Override public Void visitDiffSalary() { return null;}
+				@Override public Void visitNone() { return null; }
+				@Override public Void visitInAccrualInvoice() { return null; }
+				@Override public Void visitOutAccrualInvoice() { return null; }
+				@Override public Void visitDiffInAccrualInvoice() { return null; }
+				@Override public Void visitDiffOutAccrualInvoice() { return null; }
+				@Override public Void visitActAccount() { return null; }
+				@Override public Void visitTitle() { return null; }
+				@Override public Void visitIrpfActivity() { return null; }
+				@Override public Void visitCorporate() { return null; }
+			});
 			table.setWidget(row, col, buttonContainer);
 		}
 	}
@@ -863,35 +1008,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 			);	
 	}
 	
-	private void onReset() {
-		resetButton.setEnabled(false);
-		AonConfirmDialog cd = new AonConfirmDialog();
-		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
-
-			@Override
-			public void onAccept() {
-				Model123.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
-						new AsyncCallback<Mod123>() {
-							@Override
-							public void onSuccess(Mod123 m123) {
-								setDirty( true );
-								selectAndPopulate(m123);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
-								
-							}
-						});
-			}
-			@Override
-			public void onCancel() {
-				resetButton.setEnabled(true);
-			}
-		});
-	}
-
 	protected void submitForm(String action) {
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
@@ -910,7 +1026,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 	}
 
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		AonFiscalModelIdentificationPanel<Mod123> identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
+		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
 		identificationData.addValueChangeHandler(event -> {
 			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 			markAsDirty();			
@@ -918,14 +1034,81 @@ public abstract class Model123Base extends DockLayoutPanel {
 		tabPanel.add(identificationData, AON.MSG.identification());
 	}
 
-	void decorateAdministrationTab() {
+	protected void paintDeclarationTab(TabLayoutPanel tabPanel) {
+		ScrollPanel declarationScrollPanel = new ScrollPanel();
+		FlowPanel container = new FlowPanel();
+		AonDisplayTable table = new AonDisplayTable();
+		table.addStyleName(AON.CSS.aonBlockCenter());
+		
+		receiptBox = new AonTextBox();
+		receiptBox.setVisibleLength(15);
+		receiptBox.setMaxLength(13);
+		receiptBox.setValue( getModel().getNumber() );
+		receiptBox.setEnabled(model.isEditable());
+		receiptBox.addValueChangeHandler( event -> {
+			getModel().setNumber(receiptBox.getValue());
+			markAsDirty();
+		});
+
+		table.addRow()
+			.addCell( new Label(AON.MSG.receipt()), AON.CSS.aonTableLabel())
+			.addCell(receiptBox);
+		
+		if (getModel().isReplacedNumberAvailable()) {
+			final AonTextBox previousReceiptBox = new AonTextBox();
+			previousReceiptBox.setVisibleLength(15);
+			previousReceiptBox.setMaxLength(13);
+			previousReceiptBox.setValue( getModel().getReplacedNumber() );
+			previousReceiptBox.setEnabled(model.isEditable());
+			previousReceiptBox.addValueChangeHandler( event -> {
+				getModel().setReplacedNumber(previousReceiptBox.getValue());
+				markAsDirty();
+			});
+			table.addRow()
+				.addCell( new Label(AON.MSG.previousReceipt()), AON.CSS.aonTableLabel())
+				.addCell(previousReceiptBox);
+		}	
+		container.add(table);
+		declarationScrollPanel.setWidget(container);
+		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
+	}
+
+	protected void decorateDeclarationTab() {
+		if (receiptBox != null) {
+			receiptBox.setValue( getModel().getNumber() );
+		}
+	}
+
+	private void showInvoice(JsIRPFBreakdown br) {
+		int invoiceId = br.getInvoice();
+		Model123.SERVICE.getInvoice(getCallback().getOptions().getOccam(), invoiceId,new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				AonCustomPopup dialog = new AonCustomPopup();
+				dialog.setWidth((Window.getClientWidth() - 100) + "px");
+				dialog.setHeight((Window.getClientHeight() - 100) + "px");
+				dialog.setAnimationEnabled(true);
+				dialog.setGlassEnabled(true);
+				dialog.setModal(true);
+				dialog.setCaption(AON.MSG.invoice());
+				dialog.add(new AonInvoiceViewer(inv));
+				dialog.center();
+				dialog.show();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().showError(caught.getMessage());
+			}
+		});
+	}
+	
+	protected void decorateAdministrationTab() {
 		if (admonPanel != null) {
 			admonPanel.manageLinks();
 		}
 	}
 
-	void paintDeclarationTab(TabLayoutPanel tabPanel) {}
-	void paintAdministrationTab(TabLayoutPanel tabPanel) {}
-	void decorateDeclarationTab() {}
+	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {}
 	
 }

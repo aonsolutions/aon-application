@@ -26,17 +26,22 @@ public class AonAgreementsToolbar extends Composite {
 		void onImportButtonClick(ClickEvent event);
 		
 		void onTrashListButtonClick(ClickEvent event);
+		
+		void onSettingsButtonClick(ClickEvent event);
 	}
 	
 	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
 
 	interface AonOptionsToolbarUiBinder extends	UiBinder<Widget, AonAgreementsToolbar> {}
 	
+	
+	
 	@UiField
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
 		String title();
+		String cmdBtn();
 	}
 	
 	@UiField
@@ -50,6 +55,7 @@ public class AonAgreementsToolbar extends Composite {
 	private AonButton showMenuButton;
 	
 	private AonButton importButton;
+	private AonButton settingsButton;
 	private AonButton trashListButton;
 	
 	private boolean agreementTreeShowed = true;
@@ -109,6 +115,16 @@ public class AonAgreementsToolbar extends Composite {
 		});
 		toolsSection.add(importButton);
 		importButton.setVisible(false);
+		
+		settingsButton = new AonToolbarButton("Utilidades", AON.CSS.aonIconSettings() );
+		settingsButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for(Listener listener : listeners)
+					listener.onSettingsButtonClick(event);
+			}
+		});
+		toolsSection.add(settingsButton);
 		
 		trashListButton = new AonToolbarButton("Papelera Convenios", AON.CSS.aonIconTrashList() );
 		trashListButton.addClickHandler(new ClickHandler() {

@@ -83,7 +83,8 @@
 		<module>aon-seres</module>
 		<module>aon-tbai</module>
 		<module>aon-external-sources</module>
-
+		<module>aon-sign</module>
+		
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
 		<module>aon-company</module>
@@ -169,13 +170,16 @@
 		<module>aon-gwt-pdfjs</module>
 		<module>aon-gwt-aio</module>
 		<module>aon-gwt-polymer</module>
+		<module>aon-gwt-vaadin</module>
 		<module>aon-gwt-common</module>
 		<module>aon-gwt-visualization</module>
 		<module>aon-gwt-codemirror</module>
 		<module>aon-gwt-connect</module>
 		<module>aon-gwt-payroll</module>
 		<module>aon-gwt-fiscal</module>
-		<module>aon-gwt-document</module>
+		<module>aon-gwt-mod200</module>
+		<module>aon-gwt-ccaa</module>
+		<!-- <module>aon-gwt-document</module> -->
 		<module>aon-gwt-template</module>
 		<module>aon-gwt-stat</module>
 		<module>aon-gwt-api</module>

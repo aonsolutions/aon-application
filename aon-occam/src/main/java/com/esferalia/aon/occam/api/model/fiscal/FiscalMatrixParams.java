@@ -66,4 +66,10 @@ public class FiscalMatrixParams implements Serializable{
 		return model != null; 
 	}
 	
+	public boolean isMod390HFVisible() {
+		return !isFiscalModelTypePresent() || model == FiscalModelType.M390_HF; 
+	}
+	public boolean accept(FiscalModelType modelType) {
+		return (getModel() == null  || getModel() == modelType);
+	}
 }

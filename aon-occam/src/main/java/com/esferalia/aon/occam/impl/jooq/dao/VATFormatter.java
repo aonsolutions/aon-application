@@ -8,8 +8,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
-import org.jooq.tools.json.JSONObject;
+import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.VatContextJSON;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.KeyTypes;
@@ -21,6 +22,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+@Deprecated
 public class VATFormatter {
 
 	public static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");
@@ -122,7 +124,13 @@ public class VATFormatter {
 			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", length)));
 			buf.append(NO_DATA);			
 			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", length)));
-		}
+		}	
+		/// ********************************************
+		/// ********************************************
+		/// ************************************ NEW ***
+		/// ********************************************
+		/// ********************************************
+
 		
 		double sumBase = 0;
 		double sumQuota = 0;
@@ -543,20 +551,25 @@ public class VATFormatter {
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 	}
 
-	
-	/// ********************************************
-	/// ********************************************
-	/// ************************************ NEW ***
-	/// ********************************************
-	/// ********************************************
 	public static void formatInvoices(final PrintWriter out, Stream<VatContext> stream, String title, String subtitle) {
 		out.print('[');
-		stream.forEach( vat -> writeToJSON(out,vat) );
+		stream
+			.map(vat  -> VatContextJSON.toJSON(vat))
+			.map(json -> print(out,json))
+			.forEach( vat -> out.print(','));
 		out.print(']');
 		out.flush();
 	}
-	
+
+	private static JSONObject print(PrintWriter out, JSONObject json) {
+		out.print(json.toString());
+		return json;
+	}
+
+/*
 	private static void writeToJSON(final PrintWriter out,VatContext vat) {
+		out.print(VatContextJSON.toJSON(vat).toString());
+		out.flush();
 		
 		out.print('{');
 		out.printf("\"invoice\":\"%d\"", vat.getInvoice());
@@ -596,4 +609,5 @@ public class VATFormatter {
 		out.print(',');
 		out.flush();
 	}
+*/
 }

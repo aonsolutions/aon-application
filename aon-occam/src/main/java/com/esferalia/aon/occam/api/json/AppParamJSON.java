@@ -1,10 +1,14 @@
 package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 
 public class AppParamJSON {
 	
@@ -25,7 +29,7 @@ public class AppParamJSON {
 			;
 	}
 	
-	public static JSONArray toJSON(LinkedList<ApplicationParameter> list) {
+	public static JSONArray toJSON(List<ApplicationParameter> list) {
 		return toJSON(list.stream());
 	}
 	

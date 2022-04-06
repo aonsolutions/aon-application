@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -95,7 +96,6 @@ public class InvoiceFaker {
 		}
 		invoice.setSurcharge(false);
 		invoice.setWithholding( params.getWithholding() != null );
-		invoice.setService(false);
 	}
 	
 	private static enum InvoiceFakerTypes {
@@ -124,11 +124,47 @@ public class InvoiceFaker {
 				return InvoiceFaker.fill(params, invoice);
 			}
 		},
-		// Compra Nacional
+		// Venta Nacional Criterio de caja
+		SALES_NATIONAL_ACCRUAL_PAYMENT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setVatAccrualPayment(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Nacional 
 		PURCHASE_NATIONAL {
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Nacional Criterio de caja
+		PURCHASE_NATIONAL_ACCRUAL_PAYMENT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setVatAccrualPayment(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Intracomunitaria
+		PURCHASE_INTRACOMMUNITY {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+				invoice.setVatImportation(false);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra ISP
+		PURCHASE_ISP {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.OTHER_ISP);
+				invoice.setVatImportation(false);
 				return InvoiceFaker.fill(params, invoice);
 			}
 		},
@@ -176,6 +212,15 @@ public class InvoiceFaker {
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
 				InvoiceFaker.fill(params, invoice);
 				return invoice;
+			}
+		},
+		// Gasto Nacional Criterio de caja
+		EXPENSES_NATIONAL_ACCRUAL_PAYMENT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setVatAccrualPayment(true);
+				return InvoiceFaker.fill(params, invoice);
 			}
 		},
 		// Gasto nacional con retención. Se debe suministrar en 
@@ -246,7 +291,8 @@ public class InvoiceFaker {
 					supplier = SupplierDAO.save(params.getCtx(), supplier);
 				}
 				fillRegistryData(invoice, supplier);
-				invoice.setReferenceCode(AonRandom.string(-1,1,15));	
+				//invoice.setReferenceCode(AonRandom.string(-1,1,15));
+				invoice.setReferenceCode(AonRandom.uuid(32));
 				invoice.setScope(new Scope().setId( supplier.getScope() ));
 				invoice.setTransaction(supplier.getTransaction());
 				
@@ -265,10 +311,11 @@ public class InvoiceFaker {
 					creditor = CreditorDAO.save(params.getCtx(), creditor);
 				}
 				fillRegistryData(invoice, creditor);
-				invoice.setReferenceCode(AonRandom.string(-1,1,15));	
-				if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
-					System.out.println("NULL");
-				}
+//				invoice.setReferenceCode(AonRandom.string(-1,1,15));
+				invoice.setReferenceCode(AonRandom.uuid(32));
+//				if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
+//					System.out.println("NULL");
+//				}
 
 				invoice.setScope(new Scope().setId( creditor.getScope() ));
 				invoice.setTransaction( creditor.getTransaction() );
@@ -297,10 +344,47 @@ public class InvoiceFaker {
 	}
 	
 	public static Invoice fill( InvoiceFakerParams params , Invoice invoice) {
+		checkInvoice( invoice );
 		invoice.setDetails( getInvoiceDetails(params, invoice ));
 		calculate(invoice);
 		invoice.setFinances(FinanceDAO.getFinancesForInvoice(params.getCtx(), invoice));
 		return invoice;
+	}
+
+	private static void checkInvoice(Invoice invoice) {
+		invoice.getTransaction().visit( new IInvoiceTransactionTypeVisitor() {
+			
+			@Override
+			public void visitOtherISP() {
+				invoice.setVatImportation(false);
+				invoice.setWithholdingFarmer(false);
+			}
+			
+			@Override
+			public void visitNational() {
+				invoice.setVatImportation(false);
+			}
+			
+			@Override
+			public void visitIntracommunity() {
+				invoice.setVatImportation(false);
+				invoice.setWithholdingFarmer(false);
+				invoice.setVatAccrualPayment(false);
+			}
+			
+			@Override
+			public void visitExtracommunity() {
+				invoice.setWithholdingFarmer(false);
+				invoice.setVatAccrualPayment(false);
+			}
+			
+			@Override
+			public void visitCanCeuMel() {
+				invoice.setWithholdingFarmer(false);
+				invoice.setVatAccrualPayment(false);
+			}
+		});
+		
 	}
 
 	private static LinkedList<InvoiceDetail> getInvoiceDetails(InvoiceFakerParams params, Invoice invoice) {
@@ -344,21 +428,24 @@ public class InvoiceFaker {
 	private static InvoiceTax getRetentionInvoiceTax(InvoiceFakerParams params, Invoice invoice, InvoiceDetail detail) {
 		InvoiceWithholding witholding = getInvoiceWithholding(params,invoice);
 		InvoiceTax tax =  new InvoiceTax()
-				.setTaxType(TaxType.RETENTION)
-				.setBase(detail.getTaxableBase())
-				.setPercentage( witholding.getPercentage())
-				.setSurcharge(0.0)
-				.setDeductiblePercent(getDeductiblePercent( AonRandom.number(0, 100)))
-				.setWithholdingType(witholding.getWithholdingType());
-				;
+			.setTaxType(TaxType.RETENTION)
+			.setBase(detail.getTaxableBase())
+			.setPercentage( witholding.getPercentage())
+			.setSurcharge(0.0)
+			.setDeductiblePercent( 
+				(invoice.isNotNational() || invoice.isSales())
+					? 0.0 
+					: getDeductiblePercent( AonRandom.number(0, 80)))
+			.setWithholdingType(witholding.getWithholdingType());
 			;
-			return calculate(tax);
+		;
+		return calculate(tax);
 	}
 
 	private static InvoiceWithholding getInvoiceWithholding(InvoiceFakerParams params, Invoice invoice) {
 		InvoiceWithholding withholding = params.getWithholding();
 		if (withholding == null && invoice.getDetails() != null) {
-			invoice.getDetails()
+			withholding = invoice.getDetails()
 				.stream()
 				.filter( det -> det.getInvoiceTaxes() != null)
 				.filter( det -> !det.getInvoiceTaxes().isEmpty())
@@ -371,6 +458,8 @@ public class InvoiceFaker {
 				.map(tax -> new InvoiceWithholding()
 						.setPercentage(tax.getPercentage())
 						.setWithholdingType(tax.getWithholdingType()))
+				.findFirst()
+				.orElse(null)
 			;
 		}
 		if (withholding == null ) {
@@ -556,42 +645,57 @@ public class InvoiceFaker {
 		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL_VAT_IMPORT.get(params);
 	}
 	public static Invoice getExpensesProfRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.PROFESSIONAL))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesProfRetention(invParams);
+	}
+	public static Invoice getExpensesProfRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.PROFESSIONAL))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getExpensesCapitalRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.MOVABLE_CAPITAL))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesCapitalRetention(invParams);
+	}
+	public static Invoice getExpensesCapitalRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.MOVABLE_CAPITAL))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getExpensesTransportRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.TRANSPORT_OPERATOR))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesTransportRetention(invParams);
+	}
+	public static Invoice getExpensesTransportRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.TRANSPORT_OPERATOR))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getExpensesRentingRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.RENTING))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getExpensesRentingRetention(invParams);
+	}
+	public static Invoice getExpensesRentingRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.RENTING))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	public static Invoice getPurchaseFarmerRetention(AONContext ctx, AonConfiguration configuration) {
-		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration)
-			.setWithholding(new InvoiceWithholding()
-				.setPercentage(getRetentionPercent())
-				.setWithholdingType(WithholdingType.FARMER))
+		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
+		return getPurchaseFarmerRetention(invParams);
+	}
+	public static Invoice getPurchaseFarmerRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.FARMER))
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.PURCHASE_FARMER_RETENTION.get(invParams);
 	}

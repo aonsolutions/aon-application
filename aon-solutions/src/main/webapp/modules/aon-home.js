@@ -7,6 +7,7 @@ import { AonNewMobileMenu } from './aon-new-mobile-menu.js';
 
 import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
 
+import * as LS from '../services/localStorageService.js';
 
 export class AonHome extends AonElement {
 
@@ -48,7 +49,7 @@ export class AonHome extends AonElement {
 		aonShowMenu.id = this.AON_SHOW_MENU;
 		aonShowMenu.className = CSS.AON_SHOW_MENU;
 		aonShowMenu.addEventListener(EVENT.CLICK, () => {
-			if(localStorage.getItem('aon_domain_id'))
+			if(LS.getDomainId())
 				aonMenu.toogle();
 		});
 

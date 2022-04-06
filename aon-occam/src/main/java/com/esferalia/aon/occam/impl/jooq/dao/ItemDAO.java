@@ -144,7 +144,7 @@ public class ItemDAO {
 		.set(ITEM.PACK_FORMAT_TAG, item.getPackFormatTag() != null ? item.getPackFormatTag().getId() : null)
 		.set(ITEM.PACK_UNITS, item.getPackUnits()!= null ? item.getPackUnits() : 0)
 		.set(ITEM.PACK_UNITS_TAG, item.getPackUnitsTag() != null ? item.getPackUnitsTag().getId() : null)
-		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement()!= null ? item.getPackMeasurement() : 0)
+		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement())
 		.set(ITEM.PACK_MEASUREMENT_TAG, item.getPackMeasurementTag() != null ? item.getPackMeasurementTag().getId() : null)
 		.set(ITEM.STOCK_UNIT_TAG, item.getStockUnitTag() != null ? item.getStockUnitTag().getId() : null)
 		
@@ -182,7 +182,7 @@ public class ItemDAO {
 		.set(ITEM.PACK_FORMAT_TAG, item.getPackFormatTag().getId())
 		.set(ITEM.PACK_UNITS, item.getPackUnits()!= null ? item.getPackUnits() : 0)
 		.set(ITEM.PACK_UNITS_TAG, item.getPackUnitsTag().getId())
-		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement()!= null ? item.getPackMeasurement() : 0)
+		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement())
 		.set(ITEM.PACK_MEASUREMENT_TAG, item.getPackMeasurementTag().getId())
 		.set(ITEM.STOCK_UNIT_TAG, item.getStockUnitTag().getId())
 		
@@ -220,8 +220,8 @@ public class ItemDAO {
 				.setDetail(getValue(r, ITEM.DETAIL))
 				.setDetail2(getValue(r, ITEM.DETAIL2))
 				.setDetail3(getValue(r, ITEM.DETAIL3))
-				.setExpensesFixed(getValue(r, ITEM.EXPENSES_FIXED))
-				.setExpensesPercent(getValue(r, ITEM.EXPENSES_PERCENT))
+				.setExpensesFixed(getDouble(r, ITEM.EXPENSES_FIXED))
+				.setExpensesPercent(getDouble(r, ITEM.EXPENSES_PERCENT))
 				.setInternet(getBoolean(r, ITEM.INTERNET))
 				.setPackFormatTag(new Tag().setId(getValue(r, ITEM.PACK_FORMAT_TAG)))
 				.setPackMeasurement(getDouble(r, ITEM.PACK_MEASUREMENT))

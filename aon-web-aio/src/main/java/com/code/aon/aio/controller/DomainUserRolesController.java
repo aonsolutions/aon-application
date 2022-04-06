@@ -15,12 +15,13 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DomainUserRolesController implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String token;
 	private DomainUserRoles dur;
-	
-	public DomainUserRolesController() {
-
-	}
 	
 	public DomainUserRoles getDur() {
 		if(dur == null) {
@@ -50,7 +51,7 @@ public class DomainUserRolesController implements Serializable {
 	}
 	
 	public boolean isMessenger() {
-		return getDur().isTimecontrol();
+		return getDur().isMessenger();
 	}
 	
 	public boolean isPayroll() {
@@ -70,10 +71,13 @@ public class DomainUserRolesController implements Serializable {
 	}
 	
 	public String getToken() {
-		if(token == null) {
+		if(token == null && getDur().getUser().getAuth().isEmpty()) {
+			token = AonToken.build(getDur().getUser(), AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
+		} else if(token == null) {
 			token = AonToken.build(
 				AON_SOLUTIONS.getAuth(getDur().getUser().getAuth().getAuth()),
-				AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());		}
+				AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
+		}
 		return token;
 	}
 	

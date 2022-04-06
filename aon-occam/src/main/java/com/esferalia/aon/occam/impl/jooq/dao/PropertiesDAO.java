@@ -208,6 +208,7 @@ public class PropertiesDAO {
 		}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ID);}
 		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.DOMAIN);}
+		@Override public Property<Integer> getActivityProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.ACTIVITY);}
 		@Override public Property<Integer> getRegistryProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.REGISTRY);}
 		@Override public Property<String> getRegistryDocumentProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.RDOCUMENT);}
 		@Override public Property<String> getRegistryNameProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.RNAME);}
@@ -1001,6 +1002,8 @@ public class PropertiesDAO {
 		
 		@Override public Property<String> getNameProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getDocumentProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		
+		@Override public Property<Integer> getRegistrationProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.REGISTRATION);}
 	}
 
 	protected static class ContractPropertiesDAO implements ContractProperties{
@@ -1089,6 +1092,8 @@ public class PropertiesDAO {
 		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
 		@Override public Property<String> getNameProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getDocumentProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+
+		@Override public Property<Integer> getRegistrationProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.REGISTRATION);}
 
 	}
 	

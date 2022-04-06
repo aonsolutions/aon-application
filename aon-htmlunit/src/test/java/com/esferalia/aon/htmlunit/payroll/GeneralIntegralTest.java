@@ -494,6 +494,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("cgcBaseLabel", 1572.30);
 		assertValue("cgpBaseLabel", 1125.90);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1629.30);
+		assertValue("cgpBaseLabel", 1166.70);
 		
 		draft("BASE, MÍNIMA ( GRUPO 02 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -505,6 +508,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("cgcBaseLabel", 1303.80);
 		assertValue("cgpBaseLabel", 1125.90);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1351.20);
+		assertValue("cgpBaseLabel", 1166.70);
 
 		draft("BASE, MÍNIMA ( GRUPO 03 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -516,6 +522,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("cgcBaseLabel", 1134.30);
 		assertValue("cgpBaseLabel", 1125.90);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1175.40);
+		assertValue("cgpBaseLabel", 1166.70);
 
 		draft("BASE, MÍNIMA ( GRUPO 04 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -527,6 +536,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("cgcBaseLabel", 1125.90);
 		assertValue("cgpBaseLabel", 1125.90);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1166.70);
+		assertValue("cgpBaseLabel", 1166.70);
 
 		// M : 2
 		// T : 4
@@ -564,6 +576,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("cgcBaseLabel", 1125.90);
 		assertValue("cgpBaseLabel", 1125.90);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1166.70);
+		assertValue("cgpBaseLabel", 1166.70);
 
 		draft("BASE, MÍNIMA ( GRUPO 10 )");
 		calculate(Calendar.AUGUST,2019);
@@ -575,6 +590,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.OCTOBER,2021);
 		assertValue("cgcBaseLabel", 37.53 * 31);
 		assertValue("cgpBaseLabel", 1125.90);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 38.89 * 31);
+		assertValue("cgpBaseLabel", 1166.70);
 
 		draft("BASE, MÍNIMA IT ( GRUPO 01 )");
 		calculate(Calendar.JUNE,2016);
@@ -595,6 +613,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("cgcBaseLabel", 1572.30);
 		//assertValue("cgpBaseLabel", 1050.00);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1629.30);
+		//assertValue("cgpBaseLabel", 1050.00);
 
 		draft("BASE, MÍNIMA PARCIAL ( HORAS )");
 		calculate(Calendar.AUGUST,2019);
@@ -604,8 +625,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 6.33 * 42.00);
 		//assertValue("cgpBaseLabel", 6.33 * 42.00);
 		calculate(Calendar.SEPTEMBER,2021);
-		assertValue("cgcBaseLabel", 6.78 * 44.00);
+		assertValue("cgcBaseLabel", 37.53 * 0.25 * 30.00);
+		//assertValue("cgcBaseLabel", 6.78 * 44.00);
 		//assertValue("cgpBaseLabel", 6.33 * 42.00);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 38.89 * 0.25 * 30.00);
 
 		draft("BASE, MÍNIMA PARCIAL ( MENSUAL )");
 		calculate(Calendar.AUGUST,2019);
@@ -617,6 +641,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.SEPTEMBER,2021);
 		assertValue("cgcBaseLabel", 1125.90 * 0.25);
 		//assertValue("cgpBaseLabel", 1050.00 * 0.25);
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1166.70 * 0.25);
+
+		draft("HORAS TRABAJADAS, MENSUAL");
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 1166.70 * 0.50);
+		calculate(Calendar.FEBRUARY,2022);
+		assertValue("cgcBaseLabel", 1166.70 * 0.50);
+		calculate(Calendar.MARCH,2022);
+		assertValue("cgcBaseLabel", 1166.70 * 0.50);
 	}
 
 	@Test
@@ -1023,8 +1057,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		draft("EXTRAS PRORRATEAR, CONSTANTES");
 		double salarioBase = getValue("db-amount-label-1");
-		double quotePaga1 = getText("quote-label-2");
-		double quotePaga2 = getText("quote-label-3");
+		double quotePaga1 = getValue("quote-label-2");
+		double quotePaga2 = getValue("quote-label-3");
 		Assert.assertEquals(quotePaga1, salarioBase/12.00, 0.005);
 		Assert.assertEquals(quotePaga2, salarioBase/12.00, 0.005);
 

@@ -13,6 +13,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrol
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.DefaultPayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.IPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
@@ -32,8 +34,9 @@ public class PdfMaker {
 	 */
 	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
 		try {
-			InvoiceTemplate.create(out, company, invoice, config, qrUrl, logo, tbaiId);
-		} catch (IOException | CanNotCreatePdfException e) {
+			InvoiceTemplate template = new InvoiceTemplate(company, invoice, config, qrUrl, logo, tbaiId);
+			template.print(out);
+		} catch (CanNotCreatePdfException e) {
 			e.printStackTrace();
 		}		
 	}
@@ -69,7 +72,14 @@ public class PdfMaker {
 	 */
 	public static void printDefaultPayroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
 			throws CanNotCreatePdfException {
-		PayrollTemplate.print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		PayrollTemplate template = new PayrollTemplate(payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		template.print(out);
+	}
+	
+	public static void printDefaultClassicPayroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
+			throws CanNotCreatePdfException {
+		IPayrollTemplate template = new DefaultPayrollTemplate(payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		template.print(out);
 	}
 
 	/**

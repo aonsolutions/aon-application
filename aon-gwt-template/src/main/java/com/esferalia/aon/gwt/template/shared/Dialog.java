@@ -18,9 +18,9 @@ public class Dialog implements IsSerializable{
 	String type;
 	TemplateInfo templateInfo;
 	String url;
-	LinkedList<TemplateInfo> templateList;
+	List<TemplateInfo> templateList;
 	Error error;
-	LinkedList<Warehouse> warehouses;
+	List<Warehouse> warehouses;
 	String warehouseName;
 	LinkedList<String> series;
 	LinkedList<Series> series2;
@@ -28,7 +28,7 @@ public class Dialog implements IsSerializable{
 	List<Seller> sellerList;
 	Boolean closed;
 	EcommerceProduct ecommerceProduct;
-	LinkedList<String> typeList;
+	List<String> typeList;
 	LinkedList<Tag> tagList;
 	Tag tag;
 	
@@ -108,11 +108,11 @@ public class Dialog implements IsSerializable{
 		return this;
 	}
 
-	public LinkedList<TemplateInfo> getTemplateList() {
+	public List<TemplateInfo> getTemplateList() {
 		return templateList;
 	}
 
-	public Dialog setTemplateList(LinkedList<TemplateInfo> templateList) {
+	public Dialog setTemplateList(List<TemplateInfo> templateList) {
 		this.templateList = templateList;
 		return this;
 	}
@@ -126,11 +126,11 @@ public class Dialog implements IsSerializable{
 		return this;
 	}
 
-	public LinkedList<Warehouse> getWarehouses() {
+	public List<Warehouse> getWarehouses() {
 		return warehouses;
 	}
 
-	public Dialog setWarehouses(LinkedList<Warehouse> warehouses) {
+	public Dialog setWarehouses(List<Warehouse> warehouses) {
 		this.warehouses = warehouses;
 		return this;
 	}
@@ -198,11 +198,11 @@ public class Dialog implements IsSerializable{
 		return this;
 	}
 
-	public LinkedList<String> getTypeList() {
+	public List<String> getTypeList() {
 		return typeList;
 	}
 
-	public Dialog setTypeList(LinkedList<String> typeList) {
+	public Dialog setTypeList(List<String> typeList) {
 		this.typeList = typeList;
 		return this;
 	}

@@ -119,6 +119,10 @@ export class DomainUserRoles {
 		return this.parentUser;
 	}
 
+  hasTaskHolder() {	
+		return this.user && this.user.taskHolders && this.user.taskHolders.filter(th => th.domain.id === this.domain.id).length > 0;
+	}
+
   hasOldModule(mod) {
   	return (this.getOldDomainModules() && this.getOldDomainModules().includes(mod)) || (this.getOldParentDomainModules() && this.getOldParentDomainModules().includes(mod));
   }
@@ -174,6 +178,18 @@ export class DomainUserRoles {
 
   hasPackFiscalAccounting() {
     return this.hasPackSuite() || this.hasApp(App.PACK_FISCAL_ACCOUNTING);
+  }
+
+  hasBasicManagement() {
+    return this.hasStandarManagement() || this.hasApp(App.BASIC_MANAGEMENT);
+  }
+
+  hasStandarManagement() {
+    return this.hasProfessionalManagement() || this.hasApp(App.STANDAR_MANAGEMENT);
+  }
+
+  hasProfessionalManagement() {
+    return this.hasApp(App.PROFESSIONAL_MANAGEMENT);
   }
 
   hasParentPackFiscalAccounting() {
@@ -320,11 +336,11 @@ export class DomainUserRoles {
   }
 
 	isMessenger() {
-		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER));
+		return this.hasTaskHolder() && this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER));
 	}
 
 	isMessengerManager() {
-		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
+		return this.hasTaskHolder() && this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
 
   // CALL CENTER
@@ -337,7 +353,7 @@ export class DomainUserRoles {
 
   hasInvoice() {
     return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PORTAL)
-      || this.hasApp(App.INVOICE);
+      || this.hasBasicManagement() || this.hasApp(App.INVOICE);
   }
 
   hasParentInvoice() {
@@ -399,6 +415,10 @@ export class DomainUserRoles {
 
   isSelfconta() {
 		return this.hasApp(App.SELFCONTA) && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
+	}
+
+  isSaltra() {
+		return this.hasApp(App.SALTRA) && (this.isAdmin() || this.hasRole(Role.SALTRA));
 	}
 
   isConfidential() {

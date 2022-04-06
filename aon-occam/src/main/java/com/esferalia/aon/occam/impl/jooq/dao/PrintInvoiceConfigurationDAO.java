@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -10,6 +13,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -80,8 +84,7 @@ public class PrintInvoiceConfigurationDAO {
 			config.setLegal(new String(legalAttach.getData()));
 		}
 		
-		return config;
-		
+		return config;	
 	}
 
 	public static PrintInvoiceConfiguration save(AONContext ctx, PrintInvoiceConfiguration pic) {
@@ -182,7 +185,15 @@ public class PrintInvoiceConfigurationDAO {
 			legalAttach.setData(pic.getLegal().getBytes());
 			if(legalAttach.getId() != null)
 				AttachmentDAO.updateRegistryAttach(ctx, legalAttach);
-			else AttachmentDAO.insertRegistryAttach(ctx, legalAttach);
+			else {
+				Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+				legalAttach.setAttachModule(company.getId());
+				legalAttach.setDate(new Date());
+				legalAttach.setDomain(new Domain().setId(ctx.getDomainId()));
+				legalAttach.setType(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value());
+				legalAttach.setMimeType(MimeType.TXT);
+				AttachmentDAO.insertRegistryAttach(ctx, legalAttach);
+			}
 		}
 		return pic;
 	}

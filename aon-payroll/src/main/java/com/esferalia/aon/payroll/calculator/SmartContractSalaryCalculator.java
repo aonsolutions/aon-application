@@ -41,6 +41,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.mvel2.CompileException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -1555,6 +1556,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				min =  Math.min(value, min);
 			} catch ( ExpressionException e ) {
 				expressionException = e;
+			} catch( CompileException e ) {
+				expressionException = new ExpressionException(e);
 			}
 		}
 		if ( min < Double.MAX_VALUE )

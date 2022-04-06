@@ -1,4 +1,4 @@
-import { request, post, put, get, getToken} from "./request.js";
+import { request, put, get, getToken} from "./request.js";
 import { API } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
@@ -23,12 +23,7 @@ export const getCompanies = () => {
     if (companies) {
       resolve(companies);
     } else {
-      request(
-        "GET",
-        API.COMPANY,
-        getToken(),
-        undefined,
-        (r, error) => {
+      request("GET", API.COMPANY, getToken(), undefined, (r, error) => {
           if (error) {
             reject(error);
           } else {
@@ -48,7 +43,7 @@ export const getCompany = () => {
   const domain = LS.getDomainId();
   return new Promise((resolve, reject) => {
     if(!domain) resolve({});
-    else if (company && company.domain && domain === company.domain.id)
+    else if (company && company.domain && domain == company.domain.id)
       resolve(company);
     else 
       get(API.COMPANY_ONE, {}).then(r => {
@@ -58,7 +53,7 @@ export const getCompany = () => {
   });
 }
 
-export const setDomainApp = (data) => post(API.COMPANY_APP, data);
+export const setDomainApp = (data) => put(API.COMPANY_BOOKING, data);
 
 export const getDomainNotice = (data) => get(API.COMPANY_NOTICE, data);
 

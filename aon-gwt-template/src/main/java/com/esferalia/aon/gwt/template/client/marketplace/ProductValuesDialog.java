@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.template.client.marketplace;
 
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
@@ -137,9 +136,9 @@ public class ProductValuesDialog extends CustomDialogB {
 
 	private void loadSellerList() {
 		sellerList.addItem("-", null, null);
-		templateImpl.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
+		templateImpl.getSellerList(getDomain(), getUser(), new AsyncCallback<List<Seller>>() {
 			@Override
-			public void onSuccess(LinkedList<Seller> result) {				
+			public void onSuccess(List<Seller> result) {				
 				for(Seller seller: result){
 					sellerList.addItem(seller.getName(), seller.getId().toString());
 				}

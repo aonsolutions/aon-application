@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
+import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.BookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
@@ -410,6 +412,18 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void saveDomainMaxDefinedUser(AONContext ctx, Integer maxDefinedUser) {
 		ctx.getDslContext().transaction(configuration -> SecurityDAO.saveDomainMaxDefinedUser(ctx, maxDefinedUser));
+	}
+
+	@Override
+	public Booking getBooking(AONContext ctx, Domain domain) {
+	    return  ctx.getDslContext().transactionResult(
+	            configuration -> BookingDAO.get(ctx, domain));
+	}
+	
+	@Override
+	public Booking saveBooking(AONContext ctx, Booking booking) {
+	    return  ctx.getDslContext().transactionResult(
+	            configuration -> BookingDAO.save(ctx, booking));
 	}
 	
 }

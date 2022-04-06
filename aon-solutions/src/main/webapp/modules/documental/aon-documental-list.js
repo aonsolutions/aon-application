@@ -1,12 +1,12 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles,
-	getDomainUserRoles} from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-table.js';
 
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonDocumentalList extends AonElement {
 
@@ -114,9 +114,9 @@ export class AonDocumentalList extends AonElement {
 	downloadFiles() {
 		let aonDocumentalTable = this.getElement(this.TABLE);
 		let data = {
-			domain_id: localStorage.getItem('aon_domain_id'),
-			domain_name: localStorage.getItem('aon_domain_name'),
-			domain_login: localStorage.getItem('aon_domain_login'),
+			domainId: LS.getDomainId(),
+			domainName: LS.getDomainName(),
+			domainLogin: LS.getDomainLogin(),
 			ids: aonDocumentalTable.selected.map(r => r.id),
 			type: this.getFilter().type
 		};
@@ -128,6 +128,7 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let parent = aonDocumental.getParent();
 		let d = document.getElementById(aonDocumental.DIALOG);
+		let aonDocumentalTable = this.getElement(this.TABLE);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.EDIT_FILES);
@@ -141,6 +142,23 @@ export class AonDocumentalList extends AonElement {
 				documents: aonDocumentalTable.selected
 			}
 	    updateFiles(data);
+		});
+		d.open();
+	}
+
+	removeFiles() {
+		let aonDocumentalTable = this.getElement(this.TABLE);
+		let aonDocumental = this.getApplication();
+		let d = document.getElementById(aonDocumental.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE_FILE);
+		d.setContentHTML(`Estás seguro de eliminar los ficheros?`);
+		d.addAcceptAction(() => {
+		  deleteFile({
+			id: aonDocumentalTable.selected.map(r => r.id),
+			attach_type: 'registry'
+		  }).then(() => this.init() );
 		});
 		d.open();
 	}
@@ -169,8 +187,10 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
-		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())
+		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
 			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
+			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
+		}
 		aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
 	}
@@ -179,6 +199,7 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.removeSeparators();
+		aonDocumental.removeToolbarOption(ACTION.DELETE_FILE);
 		aonDocumental.removeToolbarOption(ACTION.EDIT_FILE);
 		aonDocumental.removeToolbarOption(ACTION.DOWNLOAD_FILE);
 		aonDocumental.removeToolbarOption(ACTION.SEND_FILE);

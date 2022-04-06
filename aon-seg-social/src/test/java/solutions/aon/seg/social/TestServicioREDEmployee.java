@@ -14,7 +14,7 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.exception.invalid.SyntaxException;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 
 //@Ignore
 public class TestServicioREDEmployee extends SegSocialTest {
@@ -96,7 +96,7 @@ public class TestServicioREDEmployee extends SegSocialTest {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			ServicioREDEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","011205360062");
 			fail();
-		} catch (invalidCccException e) {
+		} catch (InvalidCccException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());			
 		} catch (StatusCodeException e) {
 			LOG.severe(e.getMessage());

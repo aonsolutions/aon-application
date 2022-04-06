@@ -4,6 +4,7 @@ public interface IConstants {
 	String EMPTY = "";
 	String ROOT_BAR = "/";
 	String NULL = "null";
+	String ATTACH_TYPE = "attach_type";
 	String AMOUNT = "amount";
 	String ACTIVE = "active";
 	String ACCOUNT = "account";
@@ -38,6 +39,7 @@ public interface IConstants {
 	String FROM = "from";
 	String IBAN = "iban";
 	String ID = "id";
+	String INBOX = "inbox";
 	String INVESTMENT = "investment";
 	String NAME = "name";
 	String NUMBER = "number";

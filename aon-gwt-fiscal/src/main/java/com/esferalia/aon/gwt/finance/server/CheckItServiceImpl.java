@@ -91,6 +91,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	@Override
 	public Integer saveEnterpriseData(String currentDomainName, int currentDomain, String user)
 			throws AonCoreException {
+		String baseErr = "Se produjo un error y no se pudo registrar la empresa";
 		// LLama al cheitApi
 		Enterprise enterprise = CheckItDAO.getEnterprise(currentDomain, currentDomainName, user);
 		String name = enterprise.getName();
@@ -101,6 +102,15 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		String url = currentDomainName;
 		String address = enterprise.getAddress();
 		String phone = enterprise.getPhone();
+		if (AonStringUtils.isEmpty(name)) {
+			throw new AonCoreException(baseErr + ": Falta el nombre de la empresa en su configuraci\u00F3n");
+		}
+		if (AonStringUtils.isEmpty(cif)) {			
+			throw new AonCoreException(baseErr + ": Falta el CIF de la empresa en su configuraci\u00F3n");
+		}
+		if (AonStringUtils.isEmpty(email)) {
+			throw new AonCoreException(baseErr + ": Falta el correo electr\u00F3nico de la empresa en su configuraci\u00F3n");
+		}
 		
 		try {
 			Integer id = null;
@@ -217,6 +227,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 						CheckItAPI.addCredentials(enterpriseId, login.getId(), userID, userPassword, userPIN);
 					JSONObject johnson = CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
 					String msg = johnson.optString("message");
+					msg += johnson.optString("result");
 					String code = johnson.optString("code");
 					return msg + ((code != null && !code.isEmpty()) ? ", código: " + code : "");
 				} catch (Exception e) {

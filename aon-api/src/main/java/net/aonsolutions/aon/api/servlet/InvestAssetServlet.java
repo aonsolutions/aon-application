@@ -11,10 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.InvestAssetJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.InvestAssetProperties;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -33,7 +33,7 @@ public class InvestAssetServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVEST ASSET SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -51,7 +51,7 @@ public class InvestAssetServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVEST ASSET SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -69,7 +69,7 @@ public class InvestAssetServlet extends AonApiHttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVEST ASSET SERVLET - PUT METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -87,7 +87,7 @@ public class InvestAssetServlet extends AonApiHttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVEST ASSET SERVLET - DELETE METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
@@ -122,8 +122,8 @@ public class InvestAssetServlet extends AonApiHttpServlet {
 	private Filter investAssetFilter(AonApiData api, InvestAssetProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 
-		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
-			String value = api.getParams().optString(IJsonNames.VALUE);
+		if(!AonStringUtils.isBlank(api.getData().optString(IJsonNames.VALUE))) {
+			String value = api.getData().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getDescriptionProperty().like("%" + value + "%");
 			filter = filter.and(valueFilter);
 		}

@@ -295,6 +295,10 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		return this.agreements.agreementsTree;
 	}
 
+	public TrashAgreements getAgreements() {
+		return this.agreements;
+	}
+
 	public void selectFirstItem() {
 		agreements.getTrashAgreements(s -> getAgreementsTree().getTree().setSelectedItem(getAgreementsTree().getTree().getItem(0), true));
 	}

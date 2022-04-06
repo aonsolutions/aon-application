@@ -230,6 +230,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -635,6 +636,10 @@ public class AON {
 			return getSecurity().getCertificates(ctx, filter);
 		}
 	}
+
+	public static Certificate getCertificate(Domain domain, User user, String certificateType) {
+		return getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), certificateType); 
+	}	
 	
 	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId, String certificateType) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
@@ -690,6 +695,12 @@ public class AON {
 	// ********************************************
 
 	// --------------------- DOMAIN
+
+	public static Domain getDomain(String schema, Integer domainId) {
+		try (AONContext ctx = AONContext.getAONContext(schema)){
+			return getCommon().getDomain(ctx, domainId);
+		} 
+	}
 	
 	public static Domain getDomain(String domainName, Integer domainId,
 			String user) {
@@ -1088,6 +1099,9 @@ public class AON {
 			return getRegistry().getCompanyFull(ctx, domainId);
 		}
 
+	}
+	public static Company getCompany(Domain domain, User user, CompanyFilter filter){
+		return getCompany(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
 	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){
@@ -1738,6 +1752,12 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	
+	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceStream(ctx, filter);
+		}
+	}
+	
 	public static Stream<Invoice> getInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		AONContext ctx = null;
 		try {
@@ -1782,6 +1802,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteInvoice(Occam occam, Integer invoiceId) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().deleteInvoice(ctx, invoiceId);
+		}
+	}
+	
 	public static void deleteInvoice(String domainName, Integer domainId, String login, Integer invoiceId) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getFinance().deleteInvoice(ctx, invoiceId);
@@ -1805,6 +1831,12 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Invoice getInvoice(Occam occam, Integer invoiceId){
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getFullInvoice(ctx, invoiceId);
+		}
+	}
+
 	public static Invoice getInvoice(String domainName, Integer domainId, String login, InvoiceFilter filter){
 		return getInvoiceStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new Invoice());
@@ -4876,6 +4908,10 @@ public class AON {
 		}
 	}
 	
+	public static Stream<RegistryMedia> getRegistryMediaStream(Domain domain, User user, RegistryMediaFilter filter) {
+		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
 	public static Stream<RegistryMedia> getStream(Domain domain, User user, RegistryMediaFilter filter) {
 		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
@@ -4910,6 +4946,10 @@ public class AON {
 			RegistryMediaFilter filter) {
 		return getRMediaStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static RegistryMedia getRegistryMedia(Domain domain, User user, RegistryMediaFilter filter) {
+		return get(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
 	public static RegistryMedia get(Domain domain, User user, RegistryMediaFilter filter) {
@@ -6412,6 +6452,18 @@ public class AON {
 		}
 	}
 	
+	public static void deleteInvoiceDetailCommission(String domainName, Integer domainId, String login, InvoiceDetailCommissionFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommission().deleteInvoiceDetailCommission(ctx, filter);
+		}
+	}
+	
+	public static void deleteInvoiceDetailCommission(String schema, InvoiceDetailCommissionFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(schema)) {
+			getCommission().deleteInvoiceDetailCommission(ctx, filter);
+		}
+	}
+	
 	/*
 	 * 		MAIL TEMPLATE
 	 */
@@ -6601,14 +6653,13 @@ public class AON {
 		}
 	}
 
+	public static List<RegistryBank> getRegistryBanks(Domain domain, User user, Integer registry) {
+		return getRegistryBanks(domain.getName(), domain.getId(), user.getLogin(), registry);
+	}
+	
 	public static LinkedList<RegistryBank> getRegistryBanks(String domainName, int domainId, String user, Integer registry) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, user)){
 			return getFinance().getRegistryBanks(ctx, registry);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
@@ -7147,6 +7198,18 @@ public class AON {
 	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
+		}
+	}
+
+	public static Booking getBooking(Domain domain, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSecurity().getBooking(ctx, domain);
+		}
+	}
+	
+	public static Booking saveBooking(Domain domain, User user, Booking booking) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getSecurity().saveBooking(ctx, booking);
 		}
 	}
 }

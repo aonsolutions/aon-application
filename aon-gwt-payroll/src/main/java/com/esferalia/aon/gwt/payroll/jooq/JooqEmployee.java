@@ -460,6 +460,16 @@ public class JooqEmployee {
 				.set(CONTRACT_DATA.END_DATE, contractEndDate)
 				.execute();
 		
+		if(AonStringUtils.isNotBlank(contractData.getEmployeesColective()))
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "COLECTIVO_TRABAJADORES")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getEmployeesColective()))
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		
 		dslContext.insertInto(CONTRACT_INFO)
 			.set(CONTRACT_INFO.DOMAIN, domain)
 			.set(CONTRACT_INFO.CONTRACT, contractId)
@@ -914,6 +924,8 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "RLCE")) {
 				contractData.setRlceId(r.get(CONTRACT_DATA.ID));
 				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COLECTIVO_TRABAJADORES")) {
+				contractData.setEmployeesColective(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "ORIGINAL_START_DATE")) {
 				contractData.setHasTransformation(true);
 				try {
@@ -1592,32 +1604,33 @@ public class JooqEmployee {
 					}
 				}
 				
-				if(null == contractData.getMdctzId()){
-					if(null != contractData.getMdctz() && !AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")){
-						ContractDataRecord mdCtzRecord = null;
-						
-						mdCtzRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(contractData.getMdctzId(), domain, "MODELO_COTIZACION_AGRARIO", contractData.getContractId(), contractData.getMdctz(), 
-									startDate, endDate)
-							.returning(CONTRACT_DATA.ID)
-							.fetchOne();
-						
-						contractData.setMdctzId(mdCtzRecord.getId());
-					}
+			}
+			
+			if(null == contractData.getMdctzId()){
+				if(null != contractData.getMdctz() && !AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")){
+					ContractDataRecord mdCtzRecord = null;
+					
+					mdCtzRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getMdctzId(), domain, "MODELO_COTIZACION_AGRARIO", contractData.getContractId(), contractData.getMdctz(), 
+								startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+					
+					contractData.setMdctzId(mdCtzRecord.getId());
+				}
+			}else{
+				if(null == contractData.getMdctz() || ("-1" == contractData.getMdctz() || "-1".equalsIgnoreCase(contractData.getMdctz()))){
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getMdctzId())).execute();
+					contractData.setMdctzId(null);
+					contractData.setMdctz(null);
 				}else{
-					if(null == contractData.getMdctz() || ("-1" == contractData.getMdctz() || "-1".equalsIgnoreCase(contractData.getMdctz()))){
-						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getMdctzId())).execute();
-						contractData.setMdctzId(null);
-						contractData.setMdctz(null);
-					}else{
-						dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, contractData.getMdctz())
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.where(CONTRACT_DATA.ID.eq(contractData.getMdctzId()))
-						.execute();
-					}
+					dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, contractData.getMdctz())
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.where(CONTRACT_DATA.ID.eq(contractData.getMdctzId()))
+					.execute();
 				}
 			}
 			
@@ -1648,6 +1661,24 @@ public class JooqEmployee {
 					.execute();
 				}
 			}
+			
+			// Employees Colective
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("COLECTIVO_TRABAJADORES"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+				.execute();
+			
+			if(AonStringUtils.isNotBlank(contractData.getEmployeesColective())) {
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "COLECTIVO_TRABAJADORES")
+					.set(CONTRACT_DATA.CONTRACT, contractData.getContractId())
+					.set(CONTRACT_DATA.EXPRESSION, "\"" + contractData.getEmployeesColective() + "\"")
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.execute();
+			}
+			
 			
 			if(null == contractData.getContractmodelId()){
 				if(null != contractData.getContractModel()){

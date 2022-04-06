@@ -24,7 +24,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.UserJSON;
 import com.esferalia.aon.occam.api.json.WorkgroupJSON;
@@ -32,6 +31,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
@@ -66,14 +66,14 @@ public class UserServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON USER SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 		
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getDomainUsers(api));
 				break;
 			case "/roles":
-				response(req, resp, getUserRoles(api.getDomain(), JsonUtils.getInteger(api.getParams(), IJsonNames.USER)));
+				response(req, resp, getUserRoles(api.getDomain(), JsonUtils.getInteger(api.getData(), IJsonNames.USER)));
 				break;
 			case "/list":
 				response(req, resp, getUsers(api));
@@ -100,7 +100,7 @@ public class UserServlet extends AonApiHttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			LOGGER.info("[POST] /user" + api.getPath());
 			switch (api.getPath()) {
 			case "/":
@@ -121,7 +121,7 @@ public class UserServlet extends AonApiHttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - PUT METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/workgroup":
 				response(req, resp, insertUserWorkgroup(api));
@@ -138,7 +138,7 @@ public class UserServlet extends AonApiHttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				deleteUser(api);
@@ -175,8 +175,8 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONArray getUsers(AonApiData api) {
-		Integer page = JsonUtils.getInteger(api.getParams(), IJsonNames.PAGE);
-		Integer perPage = JsonUtils.getInteger(api.getParams(), IJsonNames.PER_PAGE);
+		Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
+		Integer perPage = JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE);
 		return UserJSON.toJSON(
 			AON.getDomainUserStream(api.getDomain(), api.getUser(), page, perPage, f -> userFilter(api, f))
 			.map(r -> !r.getAuth().isEmpty() && r.getAuth().getEmail() == null
@@ -221,20 +221,20 @@ public class UserServlet extends AonApiHttpServlet {
 	private Filter userFilter(AonApiData api, UserProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
-		if(!api.getDomain().isParent() && api.getParams().opt("filter") != null 
-				&& api.getParams().optString("filter").equals("entorno")) {
+		if(!api.getDomain().isParent() && api.getData().opt("filter") != null 
+				&& api.getData().optString("filter").equals("entorno")) {
 			filter = f.getDomainProperty().eq(api.getDomain().getParentId());
 			if(api.getDomain().getScope() != null) {
 				filter = filter.and(f.getScopeProperty().eq(api.getDomain().getScope()));
 			}
-		} else if(api.getParams().opt("filter") != null &&
-				api.getParams().optString("filter").equals("shared")) {
+		} else if(api.getData().opt("filter") != null &&
+				api.getData().optString("filter").equals("shared")) {
 			filter = f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getSharedProperty().eq((byte)1));
 		}
 		
-		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
-			String value = api.getParams().optString(IJsonNames.VALUE);
+		if(!AonStringUtils.isBlank(api.getData().optString(IJsonNames.VALUE))) {
+			String value = api.getData().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getLoginProperty().like("%" + value + "%")
 					.or(f.getNameProperty().like("%" + value + "%"))
 					.or(f.getAuthEmailProperty().like("%" + value + "%"))
@@ -243,12 +243,12 @@ public class UserServlet extends AonApiHttpServlet {
 			filter = filter.and(valueFilter);
 		}
 		
-		if(api.getParams().opt(IJsonNames.WORKGROUP) != null) {
-			filter = filter.and(f.getWorkgroupProperty().eq(api.getParams().optInt(IJsonNames.WORKGROUP)));
+		if(api.getData().opt(IJsonNames.WORKGROUP) != null) {
+			filter = filter.and(f.getWorkgroupProperty().eq(api.getData().optInt(IJsonNames.WORKGROUP)));
 		}
 		
-		if(api.getParams().opt(IJsonNames.ID) != null) {
-			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getParams(), IJsonNames.ID)));
+		if(api.getData().opt(IJsonNames.ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.ID)));
 		}
 		
 		return filter;
@@ -256,7 +256,7 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	
 	private JSONObject getDomainUser(AonApiData api) {
-		Integer userId = api.getParams().opt("user") != null ? api.getParams().optInt("user") : null;
+		Integer userId = api.getData().opt("user") != null ? api.getData().optInt("user") : null;
 		User user = new User();
 		if(userId != null) {
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(userId));

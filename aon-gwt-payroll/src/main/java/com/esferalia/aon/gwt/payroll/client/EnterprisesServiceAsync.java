@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -66,6 +68,7 @@ public interface EnterprisesServiceAsync {
 	void deletePaymentConcept(String domain, Payment payment, AsyncCallback<Void> callback);
 	void deleteDeductionConcept(String domain, Deduction deduction, AsyncCallback<Void> callback);
 	void deleteAgreement(String domain, Agreement agreement, AsyncCallback<Void> callback);
+	void deleteAgreements(String currentDomainName, List<Integer> agreementIds, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	void updateAgreementId(String domain, Agreement agreement, AsyncCallback<Void> callback);
 	void getDeleteAgreementMessage(String domain, Agreement agreement, AsyncCallback<String> callback);
 	void getAgreementUsedInfo(String currentDomainName, Agreement agreement, AsyncCallback<String> callback) throws IllegalArgumentException;
@@ -107,8 +110,8 @@ public interface EnterprisesServiceAsync {
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
 			AsyncCallback<String> asyncCallback);
-	void getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId,
-			AsyncCallback<List<SSPECData>> asyncCallback);
+	void getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback) throws IllegalArgumentException;
+	void syncEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback) throws IllegalArgumentException;
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
@@ -142,11 +145,8 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<List<ContractAttach>> asyncCallback);
 	void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> asyncCallback);
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
-	void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback);
-	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses,
-			AsyncCallback<List<ContractClause>> asyncCallback);
-	void createContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> asyncCallback);
-	void deleteContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> asyncCallback);
+	void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException ;
+	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	void getContractOtherInfo(String currentDomainName, Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback);
 	void setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData, AsyncCallback<Map<String, String>> asyncCallback);
@@ -184,8 +184,6 @@ public interface EnterprisesServiceAsync {
 	void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
 			String situation_employee, String licenseNumber, String cias, Date fbaja,
 			Date falta, Date fATEP, String accidentType, String causeType,
-			AsyncCallback<Void> asyncCallback);
-	void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess,
 			AsyncCallback<Void> asyncCallback);
 	void getEmployeeInfo(String currentDomainName, Integer contractId,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
@@ -227,4 +225,9 @@ public interface EnterprisesServiceAsync {
 	void saveITParts(String currentDomainName, String currentUser, List<ItNotExist> itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 
 	void removeITParts(String currentDomainName, String currentUser, List<ItNotExist> itNotExist, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	// --------------------------- Agreements Clean
+	
+	void getAgreementsClean(String currentDomainName, AgreementCleanType cleanType, AsyncCallback<List<AgreementsClean>> asyncCallback) throws IllegalArgumentException;
+	
 }

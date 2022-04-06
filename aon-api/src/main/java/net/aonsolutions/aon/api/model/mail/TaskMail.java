@@ -1,11 +1,12 @@
 package net.aonsolutions.aon.api.model.mail;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import java.util.Date;
 
 public class TaskMail {
 	String number;
@@ -13,6 +14,11 @@ public class TaskMail {
 	String url; 
 	String title;
 	String logo;
+	String description;
+	String companyName;
+	String taskHolderName;
+	Boolean showRating;
+	TaskWorkflowType type;
 	List<TaskWorkflow> workflows;
 	
 	public TaskMail() {}
@@ -53,8 +59,64 @@ public class TaskMail {
 		return this;
 	}
 	
-	public LinkedList<WorkflowMail> getWorkflows() {
-		LinkedList<WorkflowMail> workflowsList = new LinkedList<WorkflowMail>();
+	public TaskMail setType(TaskWorkflowType type) {
+		this.type = type;
+		return this;
+	}
+	
+	public String getTypeText() {
+		String txt = "";
+		switch (type) {
+			case OPEN:
+				txt = "Abierto";
+			break;
+			case CLOSE:
+				txt = "Cerrado";
+			break;
+			default:
+			break;
+		}
+		return txt;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public TaskMail setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+	
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public TaskMail setCompanyName(String companyName) {
+		this.companyName = companyName;
+		return this;
+	}
+	
+	public String getTaskHolderName() {
+		return taskHolderName;
+	}
+
+	public TaskMail setTaskHolderName(String taskHolderName) {
+		this.taskHolderName = taskHolderName;
+		return this;
+	}
+	
+	public Boolean getShowRating() {
+		return showRating!=null && showRating;
+	}
+
+	public TaskMail setShowRating(Boolean showRating) {
+		this.showRating = showRating;
+		return this;
+	}
+	
+	public List<WorkflowMail> getWorkflows() {
+		LinkedList<WorkflowMail> workflowsList = new LinkedList<>();
 		
 		for(TaskWorkflow workflow: workflows) {
 			WorkflowMail wemail = new WorkflowMail();

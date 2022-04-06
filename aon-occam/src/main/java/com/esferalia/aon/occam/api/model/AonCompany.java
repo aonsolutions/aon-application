@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class AonCompany implements Serializable {

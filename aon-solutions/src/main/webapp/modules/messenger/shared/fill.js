@@ -27,11 +27,12 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
 
     if(aonMessengerChat.getDur().hasCallCenter() || (source && source == TASK_SOURCE.CAU) )
-        sources.push({value: TASK_SOURCE.CAU, name: "Soporte" });
+        sources.push({value: TASK_SOURCE.CAU, name: "Call Center" });
 
     aonSelect.setOptions(sources);
-    
-    if(source){  aonSelect.value = source; } 
+
+    if(source)
+        aonSelect.value = source;
 }
 
 export const fillAdvisory = async (task, aonMessengerChat) => {
@@ -276,6 +277,7 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
  */
 export const fillChat = (aonMessengerChat, workflows=[])=>{
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
+        chat.innerHTML = "";
         if(workflows.length == 0){
             let noMessage = createNoMessage();
             noMessage.appendTo(chat);

@@ -298,6 +298,10 @@ public class EnterprisePayrollCSV {
 		private Double noEstructEnterprise;
 
 		
+		@Override
+		public Integer getEmployeeId() {
+			return null;
+		}
 		
 		@Override
 		public String getEmployee() {
@@ -511,6 +515,7 @@ public class EnterprisePayrollCSV {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
 		
 		
 		

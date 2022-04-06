@@ -1,34 +1,29 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod111;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_SALARY_IRPF_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.SALARY;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.SALARY_IN_KIND;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_SALARY;
-
-import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public enum Model110GipuzkoaScript implements IModelScript<Mod111Key> {
 	
 	  R00 ("Retenciones. Rendimientos del trabajo"
-			 ,new Mod111Key[]{Mod111Key.GP_C01,Mod111Key.GP_C02,Mod111Key.GP_C03},SALARY,DIFF_SALARY)
+			 ,new Mod111Key[]{Mod111Key.GP_C01,Mod111Key.GP_C02,Mod111Key.GP_C03},MODEL_SALARY_IRPF_BREAKDOWN)
 	 ,R01 ("Retenciones. Rendimientos de actividades econ\u00F3micas"
-			 ,new Mod111Key[]{Mod111Key.GP_C04,Mod111Key.GP_C05,Mod111Key.GP_C06},INVOICE,DIFF_INVOICE)
+			 ,new Mod111Key[]{Mod111Key.GP_C04,Mod111Key.GP_C05,Mod111Key.GP_C06},MODEL_INVOICE_IRPF_BREAKDOWN)
 	 ,R02 ("Retenciones. Rendimientos de activ. agr\u00EDcolas, ganadera y forestales"
-			 ,new Mod111Key[]{Mod111Key.GP_C07,Mod111Key.GP_C08,Mod111Key.GP_C09},INVOICE,DIFF_INVOICE)
+			 ,new Mod111Key[]{Mod111Key.GP_C07,Mod111Key.GP_C08,Mod111Key.GP_C09},MODEL_INVOICE_IRPF_BREAKDOWN)
 	 ,R03 ("Retenciones. Premios"
 			 ,new Mod111Key[]{Mod111Key.GP_C10,Mod111Key.GP_C11,Mod111Key.GP_C12},NONE)
 	 ,R04 ("Total"
 			 ,new Mod111Key[]{Mod111Key.GP_C13,Mod111Key.GP_C14},COMPUTE)
 	 ,R05 ("Ingresos a cuenta. Rendimientos del trabajo"
-			 ,new Mod111Key[]{Mod111Key.GP_C15,Mod111Key.GP_C16,Mod111Key.GP_C17},SALARY_IN_KIND,DIFF_SALARY)
+			 ,new Mod111Key[]{Mod111Key.GP_C15,Mod111Key.GP_C16,Mod111Key.GP_C17},MODEL_SALARY_IRPF_BREAKDOWN)
 	 ,R06 ("Ingresos a cuenta. Rendimientos de actividades econ\u00F3micas" 
 			 ,new Mod111Key[]{Mod111Key.GP_C18,Mod111Key.GP_C19,Mod111Key.GP_C20},NONE)
 	 ,R07 ("Ingresos a cuenta. Rendimientos de activ. agr\u00EDcolas, ganadera y forestales" 

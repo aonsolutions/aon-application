@@ -61,34 +61,8 @@ public class AccountingOperationDAO {
 	private static final Field<String> OP_DETAIL_ACC_CODE = ACCOUNT.CODE.as("accountCode");
 	private static final Field<String> OP_DETAIL_ACC_DESCRIPTION = ACCOUNT.DESCRIPTION.as("accountDescription");
 	
-	private static Table<Record14<Integer,Integer,Integer,Byte,Integer,java.sql.Date,UInteger,String,String,BigDecimal,BigDecimal,Integer,String,String>> _ACCOUNTING = 
-		DSL.select(  
-			  OP_ID
-			, OP_DOMAIN
-			, OP_JOURNAL
-			, OP_TYPE
-			, OP_ACTIVITY
-			, OP_DATE 
-			, OP_DETAIL_LINE
-			, OP_DETAIL_CONCEPT
-			, OP_DETAIL_DOCUMENT_NUMBER 
-			, OP_DETAIL_DEBIT
-			, OP_DETAIL_CREDIT
-			, OP_DETAIL_ACC_ID
-			, OP_DETAIL_ACC_CODE
-			, OP_DETAIL_ACC_DESCRIPTION
-			)
-		.from(ACCOUNT_ENTRY_DETAIL)
-		.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
-		.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-		.groupBy(OP_ID,OP_DETAIL_ACC_ID)
-		.asTable("accounting");
-	
-	
 	private static InvoiceTax vatInvoiceTax = INVOICE_TAX.as("vatInvoiceTax"); // Para la cuota de IVA y REQ
 	private static InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para la cuota de retención IRPF		
-//	private static Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
-//	private static Field<BigDecimal> sumCredit = DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT);
 	private static Field<BigDecimal> sumBase = DSL.sum(vatInvoiceTax.BASE);
 	private static Field<BigDecimal> sumQuota = DSL.sum(DSL.when(vatInvoiceTax.QUOTA.eq(0.0),DSL.round(vatInvoiceTax.BASE.mul(vatInvoiceTax.PERCENTAGE).div(100),2)).otherwise(vatInvoiceTax.QUOTA));
 	private static Field<BigDecimal> sumDeductibleQuota = DSL.sum(DSL.when(vatInvoiceTax.DEDUCTIBLE_QUOTA.eq(0.0),DSL.round(DSL.round(vatInvoiceTax.BASE.mul(vatInvoiceTax.PERCENTAGE).div(100.0),2).mul(vatInvoiceTax.DEDUCTIBLE_PERCENT).div(100.0),2)).otherwise(vatInvoiceTax.DEDUCTIBLE_QUOTA));

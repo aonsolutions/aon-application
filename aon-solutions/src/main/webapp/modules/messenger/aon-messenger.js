@@ -5,7 +5,7 @@ import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
@@ -14,6 +14,22 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
+	get id() {
+		return this.getAttribute(CONSTANT.ID);
+	}
+
+	set id(id) {
+	   this.setAttribute(CONSTANT.ID, id);
+	}
+
+	get type() {
+		return this.getAttribute(CONSTANT.TYPE);
+	}
+
+	set type(type) {
+	   this.setAttribute(CONSTANT.TYPE, type);
+	}
+
     AON_MESSENGER;
 	_workgroups;
 	_tags;
@@ -40,6 +56,10 @@ export class AonMessenger extends AonElement {
 	}
 
 	initialize(){
+		if(this.type && this.type === 'cau') {
+			this.cau = 1;
+			this._filter.source = TASK_SOURCE.CAU;
+		}
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
 		this._tags = [];
@@ -59,22 +79,23 @@ export class AonMessenger extends AonElement {
 	}
 
 	build() {
-		this.applicationEl = this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
+		let title = this.cau ? MSG.SUPPORT + ' / CAU' : MSG.REQUESTS;
+		this.applicationEl = this.createApplication(this.AON_MESSENGER, title, new AonApplication());
 
-		this.isTaskHolder().then(async(exist) => {
+		this.isTaskHolder().then((exist) => {
 			if(exist){
-
 				if(this.cauInfo && this.cauInfo.auth.email)
 					this._filter.email = this.cauInfo.auth.email;
 
 				localStorage.setItem("taskCau", this.cau ? 1 : 0);
 				
-				this.cauInfo = await getCauInfo();
-				
-				this.buildToolbar();
+				getCauInfo().then(cau=>{
+					this.cauInfo = cau;
 
-				this.init();
-				this.loadWorkgroup();
+					this.buildToolbar();
+					this.init();
+					this.loadWorkgroup();
+				})
 			}
 		});		
 	}
@@ -91,9 +112,10 @@ export class AonMessenger extends AonElement {
 	init(){
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
+		} else if(this.cau){
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this._filter);
 		} else if(this.value){
-			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task))
-			.catch(e=>this.showError(e));
+			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task)).catch(e=>this.showError(e));
 		} else {
 			if(this._filter.sender)
 				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
@@ -162,7 +184,7 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.applicationEl.addSidenavOptions("SOLICITUDES PENDIENTES", messengerOpts);
+		this.applicationEl.addSidenavOptions("PENDIENTES", messengerOpts);
 	}
 
 	statusNavBar(){
@@ -245,7 +267,7 @@ export class AonMessenger extends AonElement {
 
     tagNavBar() {
 		let application = this.applicationEl;
-		const fnTag = () => this.getDur().isMessengerManager() ? this.dialogTag() : false; 
+		const fnTag = this.getDur().isMessengerManager() ? () => this.dialogTag() : null; 
 		application.addSidenavOptions2({
 			id: 'Tag',
 			name: MSG.TAG
@@ -269,13 +291,13 @@ export class AonMessenger extends AonElement {
 				}
 			};
 
-			if(manager)
+			if(manager){
 				option.actions.push(
 					{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
 					{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item) }
 				);
-		
-	
+			}
+
 			application.addSidenavOptionsListValue({
 				id: 'Tag',
 				name: MSG.TAG.toUpperCase()

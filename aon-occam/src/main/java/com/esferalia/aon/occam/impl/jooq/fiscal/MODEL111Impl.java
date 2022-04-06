@@ -41,7 +41,7 @@ public class MODEL111Impl implements IMODEL111 {
 	}
 	@Override
 	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111){
-		return FiscalModelDAO.initializeForFinish(ctx, mod111);
+		return Mod111DAO.initializeForFinish(ctx, mod111);
 	}
 	@Override
 	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111){
@@ -67,6 +67,18 @@ public class MODEL111Impl implements IMODEL111 {
 	}
 
 	@Override
+	public Mod111 markAsCustomerAccepted(AONContext ctx, Mod111 mod111) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsCustomerAccepted(ctx, mod111));		
+	}
+
+	@Override
+	public Mod111 markAsCustomerRejected(AONContext ctx, Mod111 mod111, String reason) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsCustomerRejected(ctx, mod111, reason));		
+	}
+
+	@Override
 	public void delete(AONContext ctx, Mod111 mod111) {
 		ctx.getDslContext().transaction(
 				configuration -> FiscalModelDAO.delete(ctx, mod111));
@@ -74,16 +86,19 @@ public class MODEL111Impl implements IMODEL111 {
 
 	@Override
 	public Mod111 initialize(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.initialize(ctx,mod111);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.initialize(ctx,mod111));
 	}
 
 	@Override
 	public Mod111 create(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.create(ctx,mod111);
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.create(ctx,mod111));
 	}
 	@Override
 	public Mod111 reset(AONContext ctx, Mod111 mod111) {
-		return Mod111DAO.reset(ctx,mod111);
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod111DAO.reset(ctx,mod111));
 	}
 	@Override
 	public String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
@@ -91,7 +106,8 @@ public class MODEL111Impl implements IMODEL111 {
 	}
 	@Override
 	public Mod111 aeatPresentation(AONContext ctx, Mod111 mod111, String aeatResponse) {
-		return Mod111DAO.aeatPresentation(ctx, mod111, aeatResponse);
+		return ctx.getDslContext().transactionResult(
+			configuration -> Mod111DAO.aeatPresentation(ctx, mod111, aeatResponse));
 	}
 
 }

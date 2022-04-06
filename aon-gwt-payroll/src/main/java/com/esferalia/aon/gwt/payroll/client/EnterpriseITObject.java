@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -9,6 +11,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
@@ -96,49 +99,22 @@ public class EnterpriseITObject {
 		});
 	}
 	
-	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-		deleteIT(it, s -> {
-			if(isUserComunica() && it.isComunicate())
-				impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-						itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-							
-							@Override
-							public void onSuccess(EmployeeSegSocial result) {
-								String naf = result.getNss();
-								String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-								String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-								
-								impl.removeIT(
-										regime, 
-										ccc, 
-										naf, 
-										"ALTA", 
-										it.getStartDate(), 
-										it.getStartDate(), 
-										new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										success.accept(result);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										failure.accept(caught);
-									}
-								});
-								
-							}
+	public void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {
+		impl.getEnterpriseITStatus(new AsyncCallback<EnterpriseITStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EnterpriseITStatus result) {
+				 success.accept(result);
+			}
+		});
+	}
 	
-							@Override
-							public void onFailure(Throwable caught) {
-							
-							}
-						});
-			else
-				success.accept(null);
-		}, f -> {});
-		
+	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
+		deleteIT(it, success::accept, failure::accept);
 	}
 	
 	// --------------------------------------------------- DataBase Comunic@ Methods
@@ -581,6 +557,15 @@ public class EnterpriseITObject {
 		for(ITEmployee employee : employeesList)
 			for(IT it : employee.getIts())
 				itsList.add(it);
+		
+		itsList.sort(new Comparator<IT>() {
+			@Override
+			public int compare(IT it1, IT it2) {
+				return it1.getStartDate().compareTo(it2.getStartDate());
+			}
+		});
+		
+		Collections.reverse(itsList);
 	}
 	
 	public List<ITEmployee> getEmployeesList(boolean contractsWithIT, Date startDate, Date endDate){

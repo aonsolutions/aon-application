@@ -5,8 +5,8 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractCost.CONTRACT_COST;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -62,7 +62,6 @@ import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.PersonRecord;
-import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -197,6 +196,7 @@ public class EmployeeDAO {
 		.set(CONTRACT.SENIORITY_DATE, toSql(employee.getStartDate()));
 		employee.getEndDate().ifPresent(endDate -> insertContract.set(CONTRACT.END_DATE, toSql(endDate)));
 		employee.getCategory().ifPresent(category -> insertContract.set(CONTRACT.CATEGORY_DESCRIPTION, category));
+		employee.getRegistration().ifPresent(registration -> insertContract.set(CONTRACT.REGISTRATION, registration));
 		
 		ContractRecord contractRecord = insertContract.returning().fetchOne();
 		

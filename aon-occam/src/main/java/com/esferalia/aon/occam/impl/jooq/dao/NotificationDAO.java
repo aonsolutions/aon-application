@@ -1,17 +1,18 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import org.jooq.Record;
-import org.jooq.SelectSeekStep2;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
 import static com.esferalia.aon.jooq.tables.NotificationReceiver.NOTIFICATION_RECEIVER;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import org.jooq.Record;
+import org.jooq.SelectSeekStep2;
+
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;

@@ -26,6 +26,7 @@ public class Employee implements Serializable{
 	public static final String OCUPACION = "OCUPACION";
 	public static final String GRUPO_COTIZACION = "GRUPO_COTIZACION";
 	public static final String COEFICIENTE_PARCIALIDAD = "COEFICIENTE_PARCIALIDAD";
+	public static final String COLECTIVO_TRABAJADORES = "COLECTIVO_TRABAJADORES";
 
 	public static class Data<T> {
 		private T value;
@@ -91,6 +92,8 @@ public class Employee implements Serializable{
 	
 	private Integer employeeId;
 	private Integer workplaceId;
+	
+	private Integer registration;
 	
 	private Map<String, Collection<ExpressionData>> dataMap;
 	
@@ -162,6 +165,15 @@ public class Employee implements Serializable{
 	
 	public Employee setEmployeeId(Integer employeeId) {
 		this.employeeId = employeeId;
+		return this;
+	}
+	
+	public Optional<Integer> getRegistration() {
+		return Optional.ofNullable(registration);
+	}
+	
+	public Employee setRegistration(Integer registration) {
+		this.registration = registration;
 		return this;
 	}
 	
@@ -324,6 +336,14 @@ public class Employee implements Serializable{
 	
 	public Employee setQuoteGroup(String quoteGroup ) {
 		return setString(GRUPO_COTIZACION, quoteGroup);
+	}
+
+	public Optional<String> getCollective(LocalDate date) {
+		return getData(COLECTIVO_TRABAJADORES, date, String.class);
+	}
+	
+	public Employee setCollective(String collective) {
+		return setString(COLECTIVO_TRABAJADORES, collective);
 	}
 	
 	public Collection<Data<String>> getQuoteGroups() {

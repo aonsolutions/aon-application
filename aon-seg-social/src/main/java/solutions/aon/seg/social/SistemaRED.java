@@ -19,6 +19,7 @@ import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.It;
+import solutions.aon.seg.social.object.PaternityCertificate;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SituationType;
@@ -166,17 +167,47 @@ public class SistemaRED {
 			if (i < 0 || i >= ContractType.values().length) return null;
 			return ContractType.values()[i];
 		}
+		public static ContractType safeValueOf( String i ) {
+			for (ContractType rs : ContractType.values()) {
+				if(i.equalsIgnoreCase(rs.name())) return rs;
+			}
+			return null;
+		}
 	}
 
 
 	// PART TYPE
 	public enum PartType {
-		ALTA, CONFIRMACION, BAJA
+		ALTA, CONFIRMACION, BAJA;
+		public static PartType safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		public static PartType safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= ContractType.values().length) return null;
+			return PartType.values()[i];
+		}
+		public static PartType safeValueOf( String i ) {
+			for (PartType rs : PartType.values()) {
+				if(i.equalsIgnoreCase(rs.name())) return rs;
+			}
+			return null;
+		}
 	}
 
 
 	public enum SituationEmployee {
-		ACTIVO, PERCEPTOR_DE_DESEMPLEO
+		ACTIVO, PERCEPTOR_DE_DESEMPLEO;
+		public static SituationEmployee safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		public static SituationEmployee safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= ContractType.values().length) return null;
+			return SituationEmployee.values()[i];
+		}
 	}
 
 
@@ -517,44 +548,44 @@ public class SistemaRED {
 	}
 
 
-	public static boolean recordCertificate(final InputStream certificateInputStream, final String certificatePassword,
+	public static boolean sendPaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docType, final String docNum, final String applicantType,
-			final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
+			final String contributionAccount, final String docNum, final PaternityCertificate.ApplicantType applicantType,
+			PaternityCertificate.ReasonType reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
 			final int days) throws SegSocialException {
-		return Paternity.grabarCertificado(certificateInputStream, certificatePassword, certificateType,
-				affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom,
+		return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType,
+				affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom,
 				dateTo, baseCC, baseCP, days);
 	}
 
-	public static boolean recordCertificate(final byte[] certificateData, final String certificatePassword,
+	public static boolean sendPaternity(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docType, final String docNum, final String applicantType,
-			final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
+			final String contributionAccount, final String docNum, final PaternityCertificate.ApplicantType applicantType,
+			PaternityCertificate.ReasonType reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
 			final int days) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return Paternity.grabarCertificado(certificateInputStream, certificatePassword, certificateType,
-					affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom,
+			return Paternity.sendPaternity(certificateInputStream, certificatePassword, certificateType,
+					affiliationNumber, regime, contributionAccount, docNum, applicantType, reason, dateFrom,
 					dateTo, baseCC, baseCP, days);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
 	}
 
-	public static void voidPaternity(final InputStream certificateInputStream, final String certificatePassword,
+	public static void removePaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String nss, final String regime,
 			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
-		Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, nss, regime,
+		Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss, regime,
 				ccc, dateFrom, dateTo, startDate);
 	}
 
-	public static void voidPaternity(final byte[] certificateData, final String certificatePassword,
+	public static void removePaternity(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String nss, final String regime,
 			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, nss,
+			Paternity.removePaternity(certificateInputStream, certificatePassword, certificateType, nss,
 					regime, ccc, dateFrom, dateTo, startDate);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -707,7 +738,7 @@ public class SistemaRED {
 	public static byte[] getReportAffiliateInAlta(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED.getReportAffiliateInAlta(certificateInputStream, certificatePassword,
+			return SistemaREDMov.getReportAffiliateInAlta(certificateInputStream, certificatePassword,
 					certificateType, regimen, ccc);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -722,7 +753,7 @@ public class SistemaRED {
 	public static byte[] getReportAffiliateInMovPrev(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificatePassword,
+			return  SistemaREDMov.getReportAffiliateInMovPrev(certificateInputStream, certificatePassword,
 					certificateType, regimen, ccc);
 		} catch (IOException e) {
 			throw new SegSocialException(e);

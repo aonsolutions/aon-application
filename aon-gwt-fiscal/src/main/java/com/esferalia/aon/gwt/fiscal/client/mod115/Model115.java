@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
-import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.google.gwt.core.client.GWT;
@@ -63,7 +62,6 @@ public class Model115 extends MainEntryPoint {
 		public void showError(String msg) {
 			showErrorMessage(msg);
 		}
-		
 		@Override
 		public void hideError() {
 			aonLayout.hideErrorPanel();
@@ -71,13 +69,17 @@ public class Model115 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
-			openFootPanelIfNeeded();
-			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
-			breakdownPanel.scrollToTop();
+			showInfoPanelWidget(new HTMLPanel(htmlText));	
 		}
 		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
+
 		@Override
 		public void cleanInfoPanel() {
 			Widget w = breakdownPanel.getWidget();
@@ -98,12 +100,16 @@ public class Model115 extends MainEntryPoint {
 
 		@Override
 		public void onCancel(Mod115 model) {
-			cleanInfoPanel();
-			declarationContainer.setWidget(model115Table);
-			model115Table.refresh( new Model115Callback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
-			
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				cleanInfoPanel();
+				hideError();
+				declarationContainer.setWidget(model115Table);
+				model115Table.refresh( new Model115Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 
 		@Override
@@ -124,13 +130,13 @@ public class Model115 extends MainEntryPoint {
 					cleanInfoPanel();
 					tabLayout.selectTab(INFORMATION_TAB);
 					closeFootPanel();
-					showNewDeclarationPopup(m115);
+					showNewDeclarationPanel(m115);
 				}
 
 
 				@Override
 				public void onFailure(Throwable caught) {
-					showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					showErrorMessage(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 				}
 			});
 		}
@@ -253,7 +259,7 @@ public class Model115 extends MainEntryPoint {
 					public void onSuccess(Mod115 m115) {
 						tabLayout.selectTab(INFORMATION_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup( m115 );
+						showNewDeclarationPanel( m115 );
 					}
 
 
@@ -388,36 +394,27 @@ public class Model115 extends MainEntryPoint {
 		});
 	}
 	
-	private void showNewDeclarationPopup( Mod115 m115 ) {
-		NewDeclarationPopup<Mod115,Model115ModuleOptions> newDialog = new NewDeclarationPopup<>( m115,
-			new Model115Callback() { 
+	private void showNewDeclarationPanel( Mod115 m115) {
+		Model115NewDeclarationPanel newDeclarationPanel = new Model115NewDeclarationPanel(m115,new Model115Callback() { 
+			@Override
+			public void onAccept(Mod115 mod115) {
+				SERVICE.create(getOptions().getOccam(),mod115,
+					new AsyncCallback<Mod115>() {
+						@Override
+						public void onSuccess(Mod115 m115) {
+							select(m115);
+						}
 
-					@Override
-					public void onAccept(Mod115 mod115) {
-						SERVICE.create(getOptions().getOccam(),mod115,
-							new AsyncCallback<Mod115>() {
-								@Override
-								public void onSuccess(Mod115 m115) {
-									select(m115);
-								}
-	
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-								}
-							});
-					}
-					@Override
-					public void onCancel(Mod115 model) {
-						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-							getOptions().getExternalCallback().onExit(model);
-						}						
-					}
-
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
+			}
+		}); 
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 
 	private void showErrorMessage(String msg) {

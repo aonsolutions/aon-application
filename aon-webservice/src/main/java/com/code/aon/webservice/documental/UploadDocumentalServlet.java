@@ -18,9 +18,9 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -57,14 +57,12 @@ public class UploadDocumentalServlet extends HttpServlet{
 		String domainName = pathInfo[1]; 
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 
-		uploadFile(domain, userName, json);
-		
 		resp.setContentType("application/json;charset=UTF-8");
 		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, new JSONObject(), new JSONObject());	
+		Utils.giveBack(req, resp, uploadFile(domain, userName, json), new JSONObject());	
 	}
 	
-	private void uploadFile(Domain domain, String login, JSONObject json) {
+	private JSONObject uploadFile(Domain domain, String login, JSONObject json) {
 		String base64 = json.optString("content");
 		String contentType = json.optString("contentType");
 		String name = json.optString("contentName");
@@ -129,6 +127,9 @@ public class UploadDocumentalServlet extends HttpServlet{
     	notification.setDomain(domain);
     	notification.send();
 
+    	JSONObject resp = new JSONObject();
+    	resp.put("id", attachId);
+    	return resp;
 //    	attach.setId(attachId);
 //		                   	
 //    	DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);

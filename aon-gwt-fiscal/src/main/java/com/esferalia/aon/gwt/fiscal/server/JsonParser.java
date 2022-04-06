@@ -491,10 +491,10 @@ public class JsonParser {
 		if (registry != null) {
 			params.setRegistry(registry.intValue());	
 		}
-		// ******************* PERCENT ******************* 
-		Double percent = (Double) jsonParams.get(IRequestParamsNames.PERCENT);
+		// ******************* PERCENT *******************
+		Number percent = (Number) jsonParams.get(IRequestParamsNames.PERCENT);
 		if (percent != null) {
-			params.setPercent(percent);	
+			params.setPercent(percent.doubleValue());	
 		}
 		// ******************* VAT_SUMMARY_TYPE ******************* 
 		Long type = (Long) jsonParams.get(IRequestParamsNames.VAT_SUMMARY_TYPE);

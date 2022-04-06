@@ -47,5 +47,14 @@ public enum FiscalModelDeclarationType {
 		}
 		return null;
 	}
-	
+
+	public static FiscalModelDeclarationType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static FiscalModelDeclarationType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= FiscalModelDeclarationType.values().length) return null;
+		return FiscalModelDeclarationType.values()[i];
+	}
 }

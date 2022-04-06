@@ -226,20 +226,20 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	//-------------------- IMPORTAR
-	HashMap<String,LinkedList<FeeInfo>> fis = new HashMap<String, LinkedList<FeeInfo>>();
-	HashMap<String, LinkedList<ProjectCommercial>> pcs = new HashMap<String, LinkedList<ProjectCommercial>>();
-	HashMap<String,LinkedList<CustomerIban>> cis = new HashMap<String, LinkedList<CustomerIban>>();
-	HashMap<String,LinkedList<InvoiceImportClass>> ivs = new HashMap<String, LinkedList<InvoiceImportClass>>();
-	HashMap<String,LinkedList<RegistryImportClass>> rvs = new HashMap<String, LinkedList<RegistryImportClass>>();
-	HashMap<String,LinkedList<AccountEntryImportClass>> dvs = new HashMap<String, LinkedList<AccountEntryImportClass>>();
-	HashMap<String,LinkedList<AccountImportClass>> accounts = new HashMap<String, LinkedList<AccountImportClass>>();
+	HashMap<String, LinkedList<FeeInfo>> fis = new HashMap<>();
+	HashMap<String, LinkedList<ProjectCommercial>> pcs = new HashMap<>();
+	HashMap<String, LinkedList<CustomerIban>> cis = new HashMap<>();
+	HashMap<String, List<InvoiceImportClass>> ivs = new HashMap<>();
+	HashMap<String, LinkedList<RegistryImportClass>> rvs = new HashMap<>();
+	HashMap<String, LinkedList<AccountEntryImportClass>> dvs = new HashMap<>();
+	HashMap<String, LinkedList<AccountImportClass>> accounts = new HashMap<>();
 	HashMap<String, DeliveryInfo> di;
 	LinkedList<String> verror;
 	
-	public LinkedList<InvoiceImportClass> executeInvoice(Domain domain , User user, String data) {
+	public List<InvoiceImportClass> executeInvoice(Domain domain , User user, String data) {
 		byte[] fileData = java.util.Base64.getDecoder().decode(data);
 		saveImportation(domain, user, ImportType.INVOICE, fileData);
-		return InvoiceImport.getInstance().importation(domain, user.getLogin(), fileData);
+		return InvoiceImport.getInstance().importation(fileData);
 	}
 	
 	public LinkedList<RegistryImportClass> executeRegistry(Domain domain , User user, String data) {
@@ -316,15 +316,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			}
 			else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
 				pcs.put(hashId, ProjectCommercialImport.getInstance().importation(domain, user.getLogin(), data));
-			}
-			else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
+			} else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
 				cis.put(hashId, CustomerIbanImport.getInstance().importation(domain, user.getLogin(), data));
-			}
-			else if(ImportType.INVOICE.equals(importType)) {
-				ivs.put(hashId, InvoiceImport.getInstance().importation(domain, user.getLogin(), data));
+			} else if(ImportType.INVOICE.equals(importType)) {
+				ivs.put(hashId, InvoiceImport.getInstance().importation(data));
 				rowCount = ivs.get(hashId).size();
-			}
-			else if(ImportType.REGISTRY.equals(importType)) {
+			} else if(ImportType.REGISTRY.equals(importType)) {
 				rvs.put(hashId, RegistryImport.getInstance().importation(domain, user.getLogin(), data));
 				rowCount = rvs.get(hashId).size();
 			}
@@ -379,7 +376,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 					cis.put(hashId, CustomerIbanImport.getInstance().importationX(domain, user.getLogin(), data));
 				}
 				else if(ImportType.INVOICE.equals(importType)) {
-					ivs.put(hashId, InvoiceImport.getInstance().importationX(domain, user.getLogin(), data));
+					ivs.put(hashId, InvoiceImport.getInstance().importationX(data));
 					rowCount = ivs.get(hashId).size();
 				}
 				else if(ImportType.REGISTRY.equals(importType)) {
@@ -440,12 +437,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	//-------------------- IMPORTAR FEE
 	LinkedList<FeeInfo> fees;
 	FeeInfo fi;
-	List<Seller> sellers = new LinkedList<Seller>();
-	LinkedList<Workplace> workplaces = new LinkedList<Workplace>();
-	LinkedList<InvoicingGroup> invoicingGroupList = new LinkedList<InvoicingGroup>();
+	List<Seller> sellers = new LinkedList<>();
+	LinkedList<Workplace> workplaces = new LinkedList<>();
+	LinkedList<InvoicingGroup> invoicingGroupList = new LinkedList<>();
 	Boolean feeBool;
 	private void executeExcelFee(final Domain domain, User user, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient, FormulaEvaluator evaluator){
-		LinkedList<FeeInfo> fees = new LinkedList<FeeInfo>();
+		LinkedList<FeeInfo> fees = new LinkedList<>();
 
 		sellers = DBFee.getInstance().getSellers(domain, user.getLogin());
 		workplaces = DBFee.getInstance().getWorkplaceList(domain, user);
@@ -1970,7 +1967,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 	
 	@Override
-	public LinkedList<TemplateInfo> searchNameTemplate(String searchStr, LinkedList<TemplateInfo> templates){
+	public LinkedList<TemplateInfo> searchNameTemplate(String searchStr, List<TemplateInfo> templates){
 		LinkedList<TemplateInfo> list = new LinkedList<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
 			if(containsIgnoreCase2(templateInfo.getName(), searchStr)){
@@ -1981,7 +1978,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	@Override
-	public LinkedList<TemplateInfo> searchTypeTemplate(String searchStr, LinkedList<TemplateInfo> templates){
+	public LinkedList<TemplateInfo> searchTypeTemplate(String searchStr, List<TemplateInfo> templates){
 		LinkedList<TemplateInfo> list = new LinkedList<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
 			if(containsIgnoreCase2(templateInfo.getType(), searchStr)){
@@ -2573,7 +2570,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		}
 	}
 
-	public String generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
+	public String generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
 								 Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) {
 		File file = null;
 		try {
@@ -2603,7 +2600,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return key;
 	}
 
-	public String generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
+	public String generateConsumptionExcel(Domain domain, User user, List<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
 			 Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) {
 		File file = null;
 		try {
@@ -2819,8 +2816,4 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	public void importRegistryEmptyFix(Domain domain, User user) {
 		ImportFixer.fixEmptyCustomer(domain, user.getLogin());
 	}
-
-	
-	
-	
 }

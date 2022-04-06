@@ -80,6 +80,12 @@
     .textCenter{
       text-align: center;
     }
+    .cursive{
+    	font-style: italic;
+    }
+    .firstLetters:first-letter {
+    	text-transform: uppercase;
+	}
 
   </style>
 </head>
@@ -104,82 +110,84 @@
 
         <tr>
           <td>
-            <div class="marginDocument grey">
-              Se ha cerrado la solicitud Nº $task.getNumber()
+            <div class="marginDocument">
+              <b>Hola, <span class="firstLetters">$task.getTaskHolderName()</span> :</b><br>
+             Te informamos de que se ha $task.getTypeText() la solicitud en la Empresa <b>$task.getCompanyName()</b> con el siguiente número: <b>$task.getNumber()</b> y fecha $task.getDate().
             </div>
           </td>
         </tr>
 
         <tr>
           <td>
-            <div class="marginDocument grey">
-              <div>
-                <strong>Asunto: </strong>  $task.getTitle()
+            <div class="marginDocument">
+              <div class="cursive bold">
+               <b>$task.getTitle()</b>
               </div>
 
-              <div>
-                <strong>Fecha: </strong> $task.getDate()
+              <div class="grey">
+              	<br>
+                $task.getDescription().
               </div>
-
+                 
             </div>
           </td>
         </tr>
-
-
-        <tr>
-          <td>
-            <hr>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <span style="font-weight: 550;" class="marginDocument grey">¿ Cómo calificaría la atención recibida ?</span>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <div class="divMain" style="justify-content: center !important;">
-              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
-                <div class="faces">
-                  <img alt="Mala" src="https://aonsolutions.org/assets/img/sentiment_dissatisfied_black_36dp.png">
-                </div>
-                <div class="faceText">
-                  <span>Mala</span>
-                </div>
-              </a>
-
-              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
-                <div class="faces">
-                  <img alt="Regular" src="https://aonsolutions.org/assets/img/sentiment_neutral_black_36dp.png">
-                </div>
-                <div class="faceText">
-                  <span>Regular</span>
-                </div>
-              </a>
-
-              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
-                <div class="faces">
-                  <img alt="Buena" src="https://aonsolutions.org/assets/img/sentiment_satisfied_black_36dp.png">
-                </div>
-                <div class="faceText">
-                  <span>Buena</span>
-                </div>
-              </a>
-
-              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
-                <div class="faces">
-                  <img alt="Excelente" src="https://aonsolutions.org/assets/img/insert_emoticon_black_36dp.png">
-                </div>
-                <div class="faceText">
-                  <span>Muy buena</span>
-                </div>
-              </a>
-            </div>
-
-          </td>
-        </tr>
-
+        #if( $task.getShowRating() )
+	        <tr>
+	          <td>
+	            <hr>
+	          </td>
+	        </tr>
+	        
+	        <tr>
+	          <td>
+	            <span style="font-weight: 550;" class="marginDocument grey">¿ Cómo calificaría la atención recibida ?</span>
+	          </td>
+	        </tr>
+	
+	        <tr>
+	          <td>
+	            <div class="divMain" style="justify-content: center !important;">
+	              <a href="$task.getUrl()/0" class="grey styleCircle" target="_blank">
+	                <div class="faces">
+	                  <img alt="Mala" src="https://aonsolutions.org/assets/img/sentiment_dissatisfied_black_36dp.png">
+	                </div>
+	                <div class="faceText">
+	                  <span>Mala</span>
+	                </div>
+	              </a>
+	
+	              <a href="$task.getUrl()/1" class="grey styleCircle" target="_blank">
+	                <div class="faces">
+	                  <img alt="Regular" src="https://aonsolutions.org/assets/img/sentiment_neutral_black_36dp.png">
+	                </div>
+	                <div class="faceText">
+	                  <span>Regular</span>
+	                </div>
+	              </a>
+	
+	              <a href="$task.getUrl()/2" class="grey styleCircle" target="_blank">
+	                <div class="faces">
+	                  <img alt="Buena" src="https://aonsolutions.org/assets/img/sentiment_satisfied_black_36dp.png">
+	                </div>
+	                <div class="faceText">
+	                  <span>Buena</span>
+	                </div>
+	              </a>
+	
+	              <a href="$task.getUrl()/3" class="grey styleCircle" target="_blank">
+	                <div class="faces">
+	                  <img alt="Excelente" src="https://aonsolutions.org/assets/img/insert_emoticon_black_36dp.png">
+	                </div>
+	                <div class="faceText">
+	                  <span>Muy buena</span>
+	                </div>
+	              </a>
+	            </div>
+	
+	          </td>
+	        </tr>
+       #end
         <tr>
           <td>
             <hr>

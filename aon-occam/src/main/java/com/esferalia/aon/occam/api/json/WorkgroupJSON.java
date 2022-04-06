@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workgroup;
 
 public class WorkgroupJSON {
@@ -24,6 +25,7 @@ public class WorkgroupJSON {
 	}
 	
 	public static Workgroup fromJSON(JSONObject json) {
+		if(json.isEmpty()) return new Workgroup();
 		return new Workgroup()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))

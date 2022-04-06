@@ -27,4 +27,4 @@ export const getConvenios = async (data) => {
     resp.map(c =>  convenios.push({ id: c.ssNumber, name: `${c.ssNumber} - ${c.description}`, value: c.ssNumber }) );
 
     return convenios;
-  }
+}

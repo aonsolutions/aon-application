@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, addContract, getTipoJornada, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
@@ -127,10 +127,11 @@ export class AonAltaDirecta extends AonElement {
         await Promise.all([
             this.getWorkplace(),
             this.getContractType(),
-            this.getTipoJornada(),
+            this.getJourneyType(),
             this.getQuoteGroup(),
             this.getOccupation(),
             this.getRlce(),
+            this.getWorkersCollective()
             // this.suggestionConvenio()
         ]).catch(e=> console.log(e));
     }
@@ -257,6 +258,13 @@ export class AonAltaDirecta extends AonElement {
         let dni = this.getElement(`${this.id}DniDiv`);
         if (nss && dni)
             nss.parentNode.className = dni.parentNode.className = `${CSS.AON_COL_SM_12} ${CSS.AON_COL_MD_6}`;
+
+        //COLLECTIVE
+        const collectiveEl = this.getElement('collective');
+
+        if(collectiveEl && obj && obj.fra){
+            collectiveEl.parentNode.style.display = 'none';
+        }
     }
 
     selectTipojornada({ detail }) {
@@ -372,14 +380,17 @@ export class AonAltaDirecta extends AonElement {
                 resp = resp.filter(({enable, value})=> enable || value == contract );
             
             let contractEl = this.querySelector('#contract');
-            contractEl.setOptions(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
+
+            let options = resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
+
+            contractEl.setOptions(options);
         } catch (error) { }
     }
 
-    async getTipoJornada() {
+    async getJourneyType() {
         let tipo_jornada = this.getElement('tipo_jornada');
         try {
-            const resp =  getTipoJornada();
+            const resp = getJourneyType();
             const options = resp.map(r => ({ ...r, name: `${r.name}`, value: r.value }) );
             tipo_jornada.setOptions(options);
             tipo_jornada.value = options[0].value;
@@ -429,6 +440,17 @@ export class AonAltaDirecta extends AonElement {
                 let options = sortBy( resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})), 'value', 'asc');
               
                 rlce.setOptions( options );
+            }
+
+        } catch (error){}
+    }
+
+    async getWorkersCollective() {
+        try {
+            let collective = this.getElement('collective');
+            if(collective){
+                let resp = await getWorkersCollective();
+                collective.setOptions( resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})) );
             }
 
         } catch (error){}
@@ -516,19 +538,6 @@ export class AonAltaDirecta extends AonElement {
         }
         this.applicationEl.stopLoading();
     }
-
-
-    // async addContract(contract){
-    //     try {
-    //         let newContract= {...contract};
-    //         if(contract.coef)
-    //             newContract.coef = parseFloat(contract.coef) / 1000;
-
-    //         await addContract({ ...newContract, fra: newContract.fecha, domain: LS.getDomainId()}).then(()=> console.log("-----SAVED CONTRACT-----") )
-    //     } catch (error) {
-    //         console.log(error);
-    //     }     
-    // }
 
     async baja(){
         this.applicationEl.startLoading();

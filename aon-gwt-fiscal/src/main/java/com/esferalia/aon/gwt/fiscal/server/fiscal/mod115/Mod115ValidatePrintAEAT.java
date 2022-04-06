@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,11 +25,10 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.ibm.icu.text.MessageFormat;
 
 @WebServlet(name = "Mod115 Validate Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod115ValidatePrintAEAT" })
 public class Mod115ValidatePrintAEAT extends HttpServlet {
@@ -82,7 +82,7 @@ public class Mod115ValidatePrintAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod115 mod115 = MODEL115.getMod115(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod115 mod115 = MODEL115.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (mod115 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}

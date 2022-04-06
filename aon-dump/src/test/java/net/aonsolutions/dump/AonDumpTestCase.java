@@ -135,7 +135,7 @@ public class AonDumpTestCase {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
+//	@Test
 	public void testBasic() throws ClassNotFoundException, SQLException, AonSQLException {
 
 		DomainRecord domainRecord = dslContext.insertInto(DOMAIN).set(DOMAIN.NAME, "Test_domainPrueba")

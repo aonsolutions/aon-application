@@ -16,9 +16,9 @@ import org.json.JSONObject;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -51,8 +51,8 @@ import net.aonsolutions.aon.tbai.TbaiData;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DownloadInvoicePdf", urlPatterns = {"/ms/api/download_invoice_pdf/*",
-														"/aon_gwt_aio/download_invoice_pdf/*",
-														"/dip/*"})
+														"/aon_gwt_aio/download_invoice_pdf/*"
+														})
 public class InvoicePdfServlet extends AonApiHttpServlet {
 	
 	@Override
@@ -113,7 +113,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			}
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData(), tbaiId);
 		
-			responseFile(req, resp, "factura", MimeType.PDF);
+			responseFile(resp, "factura", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);
 		}

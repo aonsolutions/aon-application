@@ -2,19 +2,23 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.LinkedList;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.TaskHolderJSON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -30,7 +34,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API TASKHOLDER SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getTaskHolder(api));
@@ -56,7 +60,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API TASKHOLDER SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, setTaskHolder(api));
@@ -113,8 +117,8 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
 		Domain domain     = api.getDomain();
-		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
-		Integer active    = api.getParams().optInt(IJsonNames.ACTIVE);
+		Integer workgroup = api.getData().optInt(IJsonNames.WORKGROUP);
+		Integer active    = api.getData().optInt(IJsonNames.ACTIVE);
 		return TaskHolderJSON.toJSON(AON.getTaskHolderWorkgroupStream(domain, api.getUser(), 
 				f->f.getUserIdProperty().isNotNull()
 				.and(f.getActiveProperty().eq(active.byteValue()))

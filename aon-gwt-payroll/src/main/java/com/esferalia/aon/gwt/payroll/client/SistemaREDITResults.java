@@ -52,7 +52,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 
 		@Template("<span style=\"{0}\">"
 				+ "Para acceder al SISTEMA RED se requiere un certificado aceptado por la Seguridad Social."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un certificado.</span>")
+//				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un certificado.</span>"
+				)
 		SafeHtml noCertificateTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle);
 
 	}
@@ -132,15 +133,15 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		removeAll();
 	}
 
-	@UiHandler("expandAllButton")
-	void onClickExpandAllButton(ClickEvent event ){
-		expandAll();
-	}
+	// @UiHandler("expandAllButton")
+	// void onClickExpandAllButton(ClickEvent event ){
+	// 	collapse(false);
+	// }
 	
-	@UiHandler("collapseAllButton")
-	void onClickCollapseAllButton(ClickEvent event ){
-		collapseAll();
-	}
+	// @UiHandler("collapseAllButton")
+	// void onClickCollapseAllButton(ClickEvent event ){
+	// 	collapse(true);
+	// }
 	
 	// --------------------------------------------------------- RequiresResize
 	
@@ -162,7 +163,17 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		syncMessages();
 	}
 	
-	protected void credentialsFound() {}
+	protected void credentialsFound() {
+		addError(new SaltraEvent() {
+			
+			@Override
+			public void append(SafeHtmlBuilder builder) {
+				builder.append(TEMPLATE.noCertificateTreeItem(getMainStyle(), getAnchorStyle()));
+			}
+		});
+		
+		syncErrors();
+	}
 
 	@Override
 	public void itNotExist(ItNotExist status) {
@@ -206,7 +217,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
 		Anchor remove = new Anchor("aqu\u00ed");
-		if(this.isUserComunica && !isPaternity(status.getType()) ) {
+		if(this.isUserComunica) {
 			remove.addClickHandler(e -> onRemoveITPartToSS(status));
 			remove.getElement().getStyle().setColor("red");
 		} else {
@@ -237,7 +248,7 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		
 		horizontalPanel.add(new HTML("&nbsp;"));
 		Anchor anchor = new Anchor("aqu\u00ed");
-		if(this.isUserComunica && !isPaternity(status.getType()) ) {
+		if(this.isUserComunica) {
 			anchor.addClickHandler(e -> onOpenITPart(status) );
 			anchor.getElement().getStyle().setColor("blue");
 		} else {
@@ -301,6 +312,8 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	protected void onRemoveITPartToAon(ItNotExist itNotExist) {}
 	
 	protected void onRemoveITPartToSS(ItNotExist itNotExist) {}
+	
+	// protected void collapse(boolean collapse) {}
 	
 	// ------------------------------------------------------------------------
 	
@@ -445,18 +458,6 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 		notFoundItem.addItem(treeItem);
 		return treeItem;
 	}
-
-	protected void expandAll() {
-		errorsItem.setState(true);
-		warningsItem.setState(true);
-	}
-
-
-	protected void collapseAll() {
-		errorsItem.setState(false);
-		warningsItem.setState(false);
-	}
-
 	
 	// ------------------------------------------------------------------------
 

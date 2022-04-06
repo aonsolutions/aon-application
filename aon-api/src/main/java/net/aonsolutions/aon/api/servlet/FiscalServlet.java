@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
@@ -29,12 +29,12 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod130DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -54,7 +54,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API FISCAL SERVLET - GET METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req, false);
 			if ( AonStringUtils.endsWith(api.getPath(), "/models") ) {
 				response(req, resp, getFiscalModels(api));
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {
@@ -63,6 +63,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			error(req, resp, e);
 		}
 	}
@@ -71,7 +72,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API FISCAL SERVLET - POST METHOD");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			if ( AonStringUtils.endsWith(api.getPath(), "/markAsFinished") ) {
 				response(req, resp, markAsFinished(api));
 			} else {
@@ -86,7 +87,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-			JSONObject jsonParams = api.getParams();
+			JSONObject jsonParams = api.getData();
 			FiscalMatrixParams params = FiscalMatrixParamsJSON.fromJSON(jsonParams); 
 			return FiscalMenuDAO.getDomainsModels(ctx, api.getDomain().getId(), params); 
 		} finally {
@@ -107,13 +108,19 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			JSONArray jsonModels = new JSONArray();
 
-			models.forEach(model-> jsonModels.put(FiscalModelJSON.toJSON(model)) );
+			models.forEach(model-> {
+				try {jsonModels.put(FiscalModelJSON.toJSON(model));}
+				catch (Exception e) {
+					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
+				}
+			});
+
 
 			return jsonModels; 
 		} 
 	}
 	
-	private JSONObject markAsFinished(AonApiData api) throws Exception {
+	private JSONObject markAsFinished(AonApiData api) {
 		try ( final AONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
 			JSONObject params = api.getData();
 			FiscalModelDeclarationType declarationType = FiscalModelDeclarationType.valueOf(JsonUtils.getString(params, IJsonNames.TYPE));
@@ -129,7 +136,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 					@Override
 					public void visitM111() {
 						Mod111 model = Mod111DAO.get(ctx, id);	
-						model.setDeclarationType(declarationType);
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
@@ -141,8 +148,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 					
 					@Override
 					public void visitM115() {
-						Mod115 model = Mod115DAO.getMod115(ctx, id);	
-						model.setDeclarationType(declarationType);
+						Mod115 model = Mod115DAO.get(ctx, id);	
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
@@ -152,8 +159,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 
 					@Override
 					public void visitM123() {
-						Mod123 model = Mod123DAO.getMod123(ctx, id);	
-						model.setDeclarationType(declarationType);
+						Mod123 model = Mod123DAO.get(ctx, id);	
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
@@ -196,13 +203,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 
 					@Override
 					public void visitM303() {
-						Mod303 model = Mod303DAO.getMod303(ctx, id);
-						model.setDeclarationType(declarationType);
+						Mod303 model = Mod303DAO.get(ctx, id);
+						model.setDeclarationResultType(declarationType);
 						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
 							BankAccount ba = new BankAccount( iban );
 							model.getFinance().setBankAccount(ba);
 						}
-						Mod303DAO.markAsFinishedFromAPI(ctx, model);
+						Mod303DAO.markAsFinished(ctx, model);
 					}
 					
 					@Override public void visitM347() {}
@@ -217,7 +224,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				});
 				return new JSONObject().put("status", "OK"); 
 			} else 
-				throw new Exception("Tipo requerido");
+				throw new AonApiException("Tipo requerido");
 		}
 	}
 }

@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountOper
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountOperatingAccountToJSON;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatementType;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public enum AccountOperatingAccountJSON {

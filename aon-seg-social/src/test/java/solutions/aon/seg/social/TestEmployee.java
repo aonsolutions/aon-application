@@ -98,7 +98,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaREDEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","011205360062");					
 		}
-		catch (invalidCccException | StatusCodeException ignored) {}
+		catch (InvalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -115,7 +115,7 @@ public class TestEmployee {
 				System.out.println( employee.getName().orElse("Unknown"));
 			}
 		}
-		catch (invalidCccException | StatusCodeException ignored) {}
+		catch (InvalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -145,7 +145,7 @@ public class TestEmployee {
 				if(employee == null) fail();
 			}
 		}
-		catch (invalidCccException | StatusCodeException ignored) {}
+		catch (InvalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -201,7 +201,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaREDEmployee.getEmployee(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360z062", "011005185924");					
 		}
-		catch (invalidCccException | StatusCodeException ignored) {}
+		catch (InvalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -269,7 +269,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaREDEmployee.getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "z01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy"));				
 		}
-		catch (invalidCccException | StatusCodeException ignored) {}
+		catch (InvalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}

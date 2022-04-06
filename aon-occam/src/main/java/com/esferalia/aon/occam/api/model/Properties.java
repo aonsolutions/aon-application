@@ -1119,6 +1119,8 @@ public interface Properties {
 		
 		Property<String> getNameProperty();
 		Property<String> getDocumentProperty();
+		
+		Property<Integer> getRegistrationProperty();
 	}
 
 	public interface ContractProperties{
@@ -1517,6 +1519,9 @@ public interface Properties {
 		Property<String> getDocumentProperty();
 		Property<String> getNameProperty();
 		Property<String> getSurnameProperty();
+		Property<Integer> getAccountEntryProperty();
+		Property<Double> getResultProperty();
+		Property<Byte> getResultTypeProperty();
 	}
 	
 	public interface WorkgroupProperties {

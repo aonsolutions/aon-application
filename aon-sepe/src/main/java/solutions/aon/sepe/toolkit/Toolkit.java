@@ -209,7 +209,7 @@ public class Toolkit {
 		return new String[] {dia, mes , anio};
 	}
 	
-	public static String identity(String ipf) {
+	public static String getIdentityType(String ipf) {
 		ipf = removeExtraZeros(ipf);
 		Pattern nif  = Pattern.compile(
 					"^\\d{8}[a-zA-Z]{1}$"
@@ -226,7 +226,7 @@ public class Toolkit {
 				// -------- (1) --> X0000000X
 		
 		
-		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
+		Map<Pattern, Integer> patterns = new HashMap<>();
 		patterns.put(nif, 1);
 		patterns.put(nie, 6);
 		patterns.put(cif, 4);

@@ -11,6 +11,10 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL115Impl;
 
 public class MODEL115 {
+	
+	private MODEL115() {
+		
+	}
 
 	private static IMODEL115 getImpl() {
 		return new MODEL115Impl();
@@ -22,9 +26,9 @@ public class MODEL115 {
 		}
 	}
 
-	public static Mod115 getMod115(Occam occam, int id) {
+	public static Mod115 get(Occam occam, int id) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod115(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
@@ -70,43 +74,55 @@ public class MODEL115 {
 		}
 	}
 
+	public static Mod115 markAsCustomerAccepted(Occam occam, Mod115 mod115) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerAccepted(ctx, mod115);
+		}
+	}
+
+	public static Mod115 markAsCustomerRejected(Occam occam, Mod115 mod115, String reason) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerRejected(ctx, mod115, reason);
+		}
+	}
+
 	public static Mod115 markAsPending(Occam occam, Mod115 mod115) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsPending(ctx, mod115);
 		}
 	}
 
-	public static void deleteMod115(Occam occam, Mod115 mod115) {
+	public static void delete(Occam occam, Mod115 mod115) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod115);
 		}
 	}
 
-	public static Mod115 initializeMod115(Occam occam, Mod115 mod115) {
+	public static Mod115 initialize(Occam occam, Mod115 mod115) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initialize(ctx, mod115);
 		}
 	}
 
-	public static Mod115 createMod115(Occam occam,Mod115 mod115) {
+	public static Mod115 create(Occam occam,Mod115 mod115) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().create(ctx, mod115);
 		}
 	}
 
-	public static String getMod115Info(Occam occam, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
+	public static String getInfo(Occam occam, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod115, script, infoKey);
 		}
 	}
 	
-	public static Mod115 aeatPresentationMod115(Occam occam, Mod115 mod115, String aeatResponse) {
+	public static Mod115 aeatPresentation(Occam occam, Mod115 mod115, String aeatResponse) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().aeatPresentationMod115(ctx, mod115, aeatResponse);
 		}
 	}
 
-	public static Mod115 resetMod115(Occam occam, Mod115 mod115) {
+	public static Mod115 reset(Occam occam, Mod115 mod115) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().reset(ctx, mod115);
 		}

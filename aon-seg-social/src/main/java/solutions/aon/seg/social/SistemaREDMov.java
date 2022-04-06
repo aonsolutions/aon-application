@@ -1,3 +1,4 @@
+
 package solutions.aon.seg.social;
 
 import java.io.ByteArrayInputStream;
@@ -13,11 +14,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.regex.Pattern;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ScriptException;
@@ -32,190 +30,297 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
-import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Employee;
-import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDMov {
-	//HANDLE THE EXCEPTIONS OF ALTA METHOD
+	
+	 private SistemaREDMov() {
+	    throw new IllegalStateException("Utility class");
+	 }
+	 
+	// HANDLE THE EXCEPTIONS OF ALTA METHOD
 	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws SegSocialException{
-		
+			final String certificateType, Employee employee) throws SegSocialException {
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {return sendAltaImpl(certificateInputStream, certificatePassword, certificateType, employee);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+
+		try {
+			return sendAltaImpl(certificateInputStream, certificatePassword, certificateType, employee);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 		return null;
 	}
-	
+
 	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType) throws SegSocialException{
-		try {validateCertImpl(certificateInputStream, certificatePassword, certificateType);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+			final String certificateType) throws SegSocialException {
+		try {
+			validateCertImpl(certificateInputStream, certificatePassword, certificateType);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 	}
 
+	public static byte[] getReportAffiliateInMovPrev(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regime, String ccc)
+			throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		try {
+			return getReportAffiliateInMovPrevImpl(certificateInputStream, certificatePassword, certificateType, regime,
+					ccc);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
+		return null;
+	}
 
-	public static byte[] getReportAffiliateInMovPrev(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String regime, String ccc) throws SegSocialException{
+	public static byte[] getReportAffiliateInAlta(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regime, String ccc)
+			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {return getReportAffiliateInMovPrevImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc);}
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+		try {
+			return getReportAffiliateInAltaImpl(certificateInputStream, certificatePassword, certificateType, regime,
+					ccc);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 		return null;
 	}
-	
-	public static byte[] getReportAffiliateInAlta(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String regime, String ccc) throws SegSocialException{
-		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {return getReportAffiliateInAltaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc);}
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
-		return null;
-	}
-	
-	//HANDLE THE EXCEPTIONS OF ALTA METHOD
+
+	// HANDLE THE EXCEPTIONS OF ALTA METHOD
 	public static Employee sendBaja(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws SegSocialException{
-		
+			final String certificateType, Employee employee) throws SegSocialException {
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {return sendBajaImpl(certificateInputStream, certificatePassword, certificateType, employee);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+
+		try {
+			return sendBajaImpl(certificateInputStream, certificatePassword, certificateType, employee);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 		return null;
 	}
-	
-	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, ArrayList<String> nssList) throws SegSocialException{
-		
+
+	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			throws SegSocialException {
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {return ipfxnafImpl(certificateInputStream, certificatePassword, certificateType, nssList);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+
+		try {
+			return ipfxnafImpl(certificateInputStream, certificatePassword, certificateType, nssList);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 		return null;
 	}
-	
+
 	public static Employee nafxipf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException{
-		
+			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException {
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {return nafxipfImpl(certificateInputStream, certificatePassword, certificateType,  ipf, apellido1, apellido2);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+
+		try {
+			return nafxipfImpl(certificateInputStream, certificatePassword, certificateType, ipf, apellido1, apellido2);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 		return null;
 	}
-	
+
 	public static void movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, SituationType sit, String regimen, String ctaCti, String nss, Date fecha) throws SegSocialException{
+			final String certificateType, SituationType sit, String regimen, String ctaCti, String nss, Date fecha)
+			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {movPrevDeleteImpl(certificateInputStream, certificatePassword, certificateType, sit, regimen, ctaCti, nss, fecha);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+		try {
+			movPrevDeleteImpl(certificateInputStream, certificatePassword, certificateType, sit, regimen, ctaCti, nss,
+					fecha);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 	}
-	
+
 	public static void cambioContratoCoef(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio, Optional<String>contract, String coef) throws SegSocialException{
-		
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio,
+			Optional<String> contract, String coef) throws SegSocialException {
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {cambioContratoCoefImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+
+		try {
+			cambioContratoCoefImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
+					nss, fechaCambio, contract, coef);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 	}
-	
-	
+
 	public static void altaConsolidadaDelete(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String situation, String regimen, String ctaCti, String nss) throws SegSocialException{
-		
+			final String certificateType, String situation, String regimen, String ctaCti, String nss)
+			throws SegSocialException {
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+
+		try {
+			altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti,
+					nss);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 	}
-	
+
 	public static void removeMovConsolidated(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws SegSocialException{
-		
+			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss,
+			String ipf, Date date) throws SegSocialException {
+
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {removeMovConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+
+		try {
+			removeMovConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, situationType,
+					regimen, ctaCti, nss, ipf, date);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 	}
-	
-	
-	public static void cambioGrupCtz(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String grupCtz, Date fecha) throws SegSocialException{
+
+	public static void cambioGrupCtz(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String grupCtz,
+			Date fecha) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {cambioGrupCtzImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grupCtz, fecha);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+		try {
+			cambioGrupCtzImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+					grupCtz, fecha);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 	}
-	
-	public static void cambioOcupacion(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha) throws SegSocialException{
+
+	public static void cambioOcupacion(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String ocup,
+			Date fecha) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {cambioOcupacionImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, ocup, fecha);} 
-		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-		catch (MalformedURLException e) {throw new SegSocialException(e);} 
-		catch (IOException e) {throw new CertificateNotFoundException();} 
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e.getMessage());}
-	}	
-	
-	public static void cambioCatProf(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha) throws SegSocialException{
+		try {
+			cambioOcupacionImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+					ocup, fecha);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
+	}
+
+	public static void cambioCatProf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
+			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try {cambioCatProfImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, cat, fecha);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
@@ -229,255 +334,281 @@ class SistemaREDMov {
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws Exception  {
-			String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
-	    	Integer mov = 0;
-			String ident = identity(employee.getIpf());
-			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
- 			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
- 			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
- 			webclient.getOptions().setUseInsecureSSL(true);
- 			
- 			Optional<String> colect = employee.getColec();
-	    	Optional<String> rlce = employee.getRlce();
-	    	
- 			HtmlPage htmlPage = firstPageAltaBaja(
-					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
-					employee.getRegime(),  dni, ident, employee.getFra()
-	    	);
-	
-			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			
-			if(rlce.isPresent())
-				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce.get());
-			
-			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
-			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
-			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
-			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
-			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
-			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
-	
-			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
-				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get()); 
-			}
-			
-			if (employee.getRegime().equals("0163") && !employee.getMdctz().isEmpty()) {
-				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
-			} else {
-				if(!employee.getFactor().isEmpty()) {
-					Integer coefInt =  (int) Math.round(employee.getFactor().get() * 1000);
-					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt)); 
-				} else if(!employee.getCoef().isEmpty()) {
-					String coef = Integer.toString(employee.getCoef().get().intValue());
-					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
-				}
-				if (employee.getOcup()!=null) 
-					form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
-			}
-	    
-
-			htmlPage = ((HtmlSubmitInput)form.querySelector("input[value=Continuar]")).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-
-			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
-			if(msg1!=null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >=0 ) {
-				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Continuar]")).click();
-				HtmlUnitToolkit.manageStatusCode(htmlPage);
-			}
-			
-			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >=0 ) {
-				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Confirmar]")).click();
-				HtmlUnitToolkit.manageStatusCode(htmlPage);
-			}	
-			
-			return employee;
-	}
-	
-	private static Employee sendBajaImpl(
-			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
-			Employee employee
-	) throws Exception {
-    	String situation = employee.getSituacion()!=null ? employee.getSituacion() : "93";
-    	Integer mov = 1;
-		String ident = identity(employee.getIpf());
+		String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
+    	Integer mov = 0;
+		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
+		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,aÃ±o]
+		WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
+		webclient.getOptions().setUseInsecureSSL(true);
 		
-		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
-		WebClient webClient = getWebClient(certificateInputStream,certificatePassword, certificateType);
+		Optional<String> colect = employee.getColec();
+		Optional<String> mdCtz = employee.getMdctz();
+		Optional<Double> factor = employee.getFactor(); //COEFICIENTE
+    	
+		HtmlPage htmlPage = firstPageAltaBaja(
+				webclient, mov, employee.getNss(), employee.getCtaCti(),
+				employee.getRegime(),  dni, ident
+    	);
+
+		HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+		
+		employee.getRlce().ifPresent(rlce->
+			form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce)
+		);
+		
+		form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
+		form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
+		form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
+		form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
+		//GRUPO DE COTIZACION
+		employee.getGc().ifPresent(gc->
+			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(gc)
+		);
+		//CONTRATO
+		employee.getContract().ifPresent(contract->
+			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract)
+		);
+		
+		//COLLECTIVE
+		employee.getCollective().ifPresent(collective->
+			form.getInputByName("txt_SDFCOLTRA_ayuda").setValueAttribute(collective)
+		);
+		//CONVENIO
+		if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
+			form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get()); 
+		}
+		//OCUPACION
+		if (employee.getOcup() != null)
+			form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase());
+		
+		if (employee.getRegime().equals("0163") && !mdCtz.isEmpty()) {
+			form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(mdCtz.get());
+		} else {
+			//COEFICIENTE
+			if(!factor.isEmpty()) {
+				Integer coefInt =  (int) Math.round(factor.get() * 1000);
+				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt)); 
+			} else if(!employee.getCoef().isEmpty()) {
+				String coef = Integer.toString(employee.getCoef().get().intValue());
+				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
+			}
+		}
+
+		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+		DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
+		if (msg1 != null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >= 0) {
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		}
+
+		DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
+		if (msg2 != null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		}
+
+		return employee;
+	}
+
+	private static Employee sendBajaImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, Employee employee) throws Exception {
+		String situation = employee.getSituacion() != null ? employee.getSituacion() : "93";
+		Integer mov = 1;
+		String ident = Toolkit.getIdentityType(employee.getIpf());
+		String dni = Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
+
+		String[] fra = formatDate(employee.getFra()); // fecha [dia,mes,anio]
+		WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType);
 		webClient.getOptions().setUseInsecureSSL(true);
 		HtmlPage htmlPage = firstPageAltaBaja(
     			webClient,
-				mov, employee.getNss(), employee.getCtaCti().get(),
-				employee.getRegime(),  dni, ident, employee.getFra()
+				mov, employee.getNss(), employee.getCtaCti(),
+				employee.getRegime(),  dni, ident
     	);
 
 		HtmlForm jacadaForm1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-		jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
-		jacadaForm1.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
-		jacadaForm1.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
-		jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
-		
-		if(!employee.getFrb().isEmpty()) {
-			String[] fvac = formatDate(employee.getFrb().get()); // fecha de vacaciones
-			jacadaForm1.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]); 
+		jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
+		jacadaForm1.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]);
+		jacadaForm1.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]);
+		jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]);
+
+		Optional<Date> frv = employee.getFrb();
+		if (!frv.isEmpty()) {
+			String[] fvac = formatDate(frv.get()); // fecha de vacaciones
+			jacadaForm1.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]);
 			jacadaForm1.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
-			jacadaForm1.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]); 
+			jacadaForm1.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]);
 		}
-		
+
 		HtmlInput btnSubmit1 = htmlPage.querySelector("#Sub2207401004");
 		htmlPage = btnSubmit1.click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
-	    return employee;
+		return employee;
 	}
 
-	private static void movPrevDeleteImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			SituationType situation, String regimen, String ctaCti, String nss, Date fecha) throws Exception  {
-		
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	    	webClient.getOptions().setUseInsecureSSL(true);
-	    	Integer mov = SituationType.ALTA.equals(situation) ? 0 : 1;
- 			//Date
- 			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
- 			
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR42&E=I&AP=AFIR");
+	private static void movPrevDeleteImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, SituationType situation, String regimen, String ctaCti, String nss,
+			Date fecha) throws Exception {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+			Integer mov = SituationType.ALTA.equals(situation) ? 0 : 1;
+			// Date
+			String[] fr = formatDate(fecha); // fecha [dia,mes,aÃ±o]
+
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR42&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+
 			HtmlForm jacadaForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			//form fist
-			jacadaForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0,2));
+			// form fist
+			jacadaForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0, 2));
 			jacadaForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
 			jacadaForm.getInputByName("txt_SDFREGCC_ayuda").setValueAttribute(regimen);
-			jacadaForm.getInputByName("txt_SDFTESCC").setValueAttribute(ctaCti.substring(0,2));
+			jacadaForm.getInputByName("txt_SDFTESCC").setValueAttribute(ctaCti.substring(0, 2));
 			jacadaForm.getInputByName("txt_SDFNUMCC").setValueAttribute(ctaCti.substring(2));
-			HtmlOption option = (HtmlOption) jacadaForm.querySelectorAll("select[name=cbo_ListaAltasBajas001]>option").get(mov);				
+			HtmlOption option = (HtmlOption) jacadaForm.querySelectorAll("select[name=cbo_ListaAltasBajas001]>option")
+					.get(mov);
 			option.click();
-			jacadaForm.getInputByName("txt_SDFDIAB").setValueAttribute(fr[0]); 
-			jacadaForm.getInputByName("txt_SDFMESB").setValueAttribute(fr[1]); 
-			jacadaForm.getInputByName("txt_SDFAOB").setValueAttribute(fr[2]); 
-			HtmlOption option1 = (HtmlOption) jacadaForm.querySelectorAll("select[name=cbo_ListaAltasBajas]>option").get(1);				
+			jacadaForm.getInputByName("txt_SDFDIAB").setValueAttribute(fr[0]);
+			jacadaForm.getInputByName("txt_SDFMESB").setValueAttribute(fr[1]);
+			jacadaForm.getInputByName("txt_SDFAOB").setValueAttribute(fr[2]);
+			HtmlOption option1 = (HtmlOption) jacadaForm.querySelectorAll("select[name=cbo_ListaAltasBajas]>option")
+					.get(1);
 			option1.click();
 			HtmlInput btnSubmit = htmlPage.querySelector("#Sub2207101004");
 			htmlPage = btnSubmit.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
-			//second screen
+
+			// second screen
 			HtmlInput btnSubmit1 = htmlPage.querySelector("#Sub2207101004");
 			htmlPage = btnSubmit1.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-		} 
-	}
-		
-	private static void removeMovConsolidatedImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws Exception  {
-			
-		if(SituationType.ALTA.equals(situationType)) {
-			altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss);
-		} else if(SituationType.BAJA.equals(situationType)) {
-			removeBajaConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss, ipf, date);
 		}
 	}
-	
-	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss) throws Exception  {
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	    	webClient.getOptions().setUseInsecureSSL(true);
-	    	webClient.getOptions().setJavaScriptEnabled(true);
-		    webClient.getOptions().setThrowExceptionOnScriptError(false);
-		    webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
-			handleSegSocialExceptions(htmlPage);
-			
-			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
-			formDatos.getInputByName("NA5NumSegSocialCompleto").setValueAttribute(nss);
-			formDatos.getInputByName("CC1EmpresaAut").setValueAttribute(regimen +  ctaCti);
-	
-			HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipoImpresion]>option").get(2);				
-			option.click();
-			
-			Page pageAux = ((HtmlButton)htmlPage.querySelector("#ENVIO_3")).click();
-			if(pageAux instanceof XmlPage) {
-				handleSegSocialExceptions((XmlPage)pageAux);
-			} else 
-				handleSegSocialExceptions((HtmlPage)pageAux);
-		} 
+
+	private static void removeMovConsolidatedImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, SituationType situationType, String regimen,
+			String ctaCti, String nss, String ipf, Date date) throws Exception {
+
+		if (SituationType.ALTA.equals(situationType)) {
+			altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti,
+					nss);
+		} else if (SituationType.BAJA.equals(situationType)) {
+			removeBajaConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti,
+					nss, ipf, date);
+		}
 	}
-	
-	private static void removeBajaConsolidatedImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss, String ipf, Date date) throws Exception  {
-		
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR02&E=I&AP=AFIR");
+
+	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss)
+			throws Exception {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
+			handleSegSocialExceptions(htmlPage);
+
+			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
+					.orElseThrow();
+			formDatos.getInputByName("NA5NumSegSocialCompleto").setValueAttribute(nss);
+			formDatos.getInputByName("CC1EmpresaAut").setValueAttribute(regimen + ctaCti);
+
+			HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipoImpresion]>option").get(2);
+			option.click();
+
+			Page pageAux = ((HtmlButton) htmlPage.querySelector("#ENVIO_3")).click();
+			if (pageAux instanceof XmlPage) {
+				handleSegSocialExceptions((XmlPage) pageAux);
+			} else
+				handleSegSocialExceptions((HtmlPage) pageAux);
+		}
+	}
+
+	private static void removeBajaConsolidatedImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss,
+			String ipf, Date date) throws Exception {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR02&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
-			String ident = identity(ipf);
-			String dni =  Toolkit.fillStringLeft(ipf, "0", 10);
-			String[] fra = formatDate(date); //fecha [dia,mes,año]
-			
+			String ident = Toolkit.getIdentityType(ipf);
+			String dni = Toolkit.fillStringLeft(ipf, "0", 10);
+			String[] fra = formatDate(date); // fecha [dia,mes,aÃ±o]
+
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			form.getInputByName("txt_SDFIDPRONAF").setValueAttribute(nss.substring(0,2));
+			form.getInputByName("txt_SDFIDPRONAF").setValueAttribute(nss.substring(0, 2));
 			form.getInputByName("txt_SDFIDNAFCON").setValueAttribute(nss.substring(2));
-			
+
 			form.getInputByName("txt_SDFIDTIPOPF_ayuda").setValueAttribute(ident);
 			form.getInputByName("txt_SDFIDNIDEPF").setValueAttribute(dni);
-			
+
 			form.getInputByName("txt_SDFIDREGIMEN_ayuda").setValueAttribute(regimen);
-			form.getInputByName("txt_SDFIDTESCTA").setValueAttribute(ctaCti.substring(0,2));
+			form.getInputByName("txt_SDFIDTESCTA").setValueAttribute(ctaCti.substring(0, 2));
 			form.getInputByName("txt_SDFIDCTACON").setValueAttribute(ctaCti.substring(2));
 
-			form.getInputByName("txt_SDFIDFREALDD").setValueAttribute(fra[0]); 
-			form.getInputByName("txt_SDFIDFREALMM").setValueAttribute(fra[1]); 
-			form.getInputByName("txt_SDFIDFREALAA").setValueAttribute(fra[2]); 
-			htmlPage = ((HtmlSubmitInput)form.querySelector("input[value=Continuar]")).click();
+			form.getInputByName("txt_SDFIDFREALDD").setValueAttribute(fra[0]);
+			form.getInputByName("txt_SDFIDFREALMM").setValueAttribute(fra[1]);
+			form.getInputByName("txt_SDFIDFREALAA").setValueAttribute(fra[2]);
+			htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Confirmar]")).click();
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-		} 
+		}
 	}
-	
-	private static Collection<Employee> ipfxnafImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			ArrayList<String> nssList) throws Exception  {
-		
-		if(nssList.size() >= 7) throw new Exception("nss max 7");
-		
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	      webClient.getOptions().setJavaScriptEnabled(true);
-	      webClient.getOptions().setUseInsecureSSL(true);
-	      webClient.getOptions().setThrowExceptionOnScriptError(false);
-	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
-	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
-	      
-    	  for (int i=0;i<nssList.size();i++) {
-    		  String naf = nssList.get(i);
-    		  naf  = naf.length() > 10 ? naf.substring(0, 10) : naf;
-    		  HtmlInput inpt = formDatos.getInputByName("NA1NumSegSocialSinDC" + Integer.toString((i+1)));
-    		  inpt.setValueAttribute(naf);
-    	  }
-    	  
-    	  ArrayList<Employee> employees = new ArrayList<>();
- 
-    	  Page pageAux = ((HtmlButton)formDatos.querySelector("#ENVIO_3")).click();
-    	  
-    	  if(pageAux instanceof XmlPage) {
-    		    XmlPage xmlPage = (XmlPage)pageAux;
-    			DomNodeList<DomNode> employeesHtml = xmlPage.querySelectorAll("trabajador");
-    			EmployeeBuilder builder = new EmployeeBuilder();
+
+	private static Collection<Employee> ipfxnafImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
+			throws Exception {
+
+		if (nssList.size() >= 7)
+			throw new Exception("nss max 7");
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
+			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1"))
+					.orElseThrow();
+
+			for (int i = 0; i < nssList.size(); i++) {
+				String naf = nssList.get(i);
+				naf = naf.length() > 10 ? naf.substring(0, 10) : naf;
+				HtmlInput inpt = formDatos.getInputByName("NA1NumSegSocialSinDC" + Integer.toString((i + 1)));
+				inpt.setValueAttribute(naf);
+			}
+
+			ArrayList<Employee> employees = new ArrayList<>();
+
+			Page pageAux = ((HtmlButton) formDatos.querySelector("#ENVIO_3")).click();
+
+			if (pageAux instanceof XmlPage) {
+				XmlPage xmlPage = (XmlPage) pageAux;
+				DomNodeList<DomNode> employeesHtml = xmlPage.querySelectorAll("trabajador");
+				EmployeeBuilder builder = new EmployeeBuilder();
 				for (DomNode employee : employeesHtml) {
 					String ipf = employee.querySelector("ip9numdoc").getTextContent();
 					String fieldName = employee.querySelector("nombre_completo").getTextContent();
-					if(!ipf.isEmpty()) {
+					if (!ipf.isEmpty()) {
 						String nss = employee.querySelector("na5numsegsocialcompleto").getTextContent().trim();
-						Employee empl = builder
-    					.setNss(nss)
-    					.setName(fieldName.trim())
-    					.setIpf(ipf)
-    					.build();
-    					employees.add(empl);
-					} else if(!fieldName.isEmpty()) {
+						Employee empl = builder.setNss(nss).setName(fieldName.trim()).setIpf(ipf).build();
+						employees.add(empl);
+					} else if (!fieldName.isEmpty()) {
 						throw new Exception(fieldName.trim());
 					}
 				}
@@ -485,53 +616,54 @@ class SistemaREDMov {
 				htmlPage = (HtmlPage) pageAux;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
-    	  return employees;
-		} 
+			return employees;
+		}
 	}
-	
-	private static Employee nafxipfImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String apellido1, String apellido2) throws Exception  {
-		
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	      webClient.getOptions().setUseInsecureSSL(true);
-	      webClient.getOptions().setJavaScriptEnabled(true);
-	      webClient.getOptions().setThrowExceptionOnScriptError(false);
-	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
-	      Integer ident  = 1; //NIF DEFAULT
-	      if(identity(ipf).equals("6")) ident = 3; // NIE
 
-	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
-     
-		  ((HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident)).click();	
-		  
-		  formDatos.getInputByName("ipf6NumeroDocumento").setValueAttribute(ipf);
-		  formDatos.getInputByName("primerApellido").setValueAttribute(apellido1);
-		  if( apellido2 !=null && !apellido2.trim().isEmpty()) {
-			  formDatos.getInputByName("segundoApellido").setValueAttribute(apellido2);
-		  } 
-		  else {
-			  formDatos.getInputByName("checkApellido2").setChecked(true);
-		  }
-		  
-		  EmployeeBuilder builder = new EmployeeBuilder();
-	
-	  	  Page pageAux = ((HtmlButton)formDatos.querySelector("#ENVIO_2")).click();
-    	  if(pageAux instanceof XmlPage) {
-    		    XmlPage xmlPage = (XmlPage)pageAux;
-    		    DomNode employeeHtml = xmlPage.querySelector("usuario_red");
+	private static Employee nafxipfImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String apellido1, String apellido2) throws Exception {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
+			Integer ident = 1; // NIF DEFAULT
+			if (Toolkit.getIdentityType(ipf).equals("6"))
+				ident = 3; // NIE
+
+			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
+
+			((HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident)).click();
+
+			formDatos.getInputByName("ipf6NumeroDocumento").setValueAttribute(ipf);
+			formDatos.getInputByName("primerApellido").setValueAttribute(apellido1);
+			if (apellido2 != null && !apellido2.trim().isEmpty()) {
+				formDatos.getInputByName("segundoApellido").setValueAttribute(apellido2);
+			} else {
+				formDatos.getInputByName("checkApellido2").setChecked(true);
+			}
+
+			EmployeeBuilder builder = new EmployeeBuilder();
+
+			Page pageAux = ((HtmlButton) formDatos.querySelector("#ENVIO_2")).click();
+			if (pageAux instanceof XmlPage) {
+				XmlPage xmlPage = (XmlPage) pageAux;
+				DomNode employeeHtml = xmlPage.querySelector("usuario_red");
 				String nss = employeeHtml.querySelector("na5numsegsocialcompleto").getTextContent().trim();
-	
-				if(!nss.isEmpty()) {
+
+				if (!nss.isEmpty()) {
 					String ipf1 = employeeHtml.querySelector("ip6numero_documento").getTextContent();
 					String name = employeeHtml.querySelector("nombre_completo").getTextContent().trim();
 					String ident1 = employeeHtml.querySelector("codigo_tipo").getTextContent().trim();
-				    builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
+					builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
 				} else {
 					String messageError = "Sin datos para la consulta";
 					DomNode textEl = xmlPage.querySelector("texto");
-					if(textEl!=null && textEl.getTextContent()!=null) {
+					if (textEl != null && textEl.getTextContent() != null) {
 						messageError = textEl.getTextContent().trim();
 					}
 					throw new Exception(messageError);
@@ -542,361 +674,364 @@ class SistemaREDMov {
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
 
-    	  return builder.build();
-		} 
+			return builder.build();
+		}
 	}
-	
-	private static void cambioGrupCtzImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String grupCtz, Date fecha) throws Exception  {
-		
-		  String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00B";
-		  String fieldValue = "codNuevoGrupo";
-		  String fieldDate = "fechaSituacion";
-		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, grupCtz, fieldValue, fieldDate, url);
-	}
-	
-	private static void cambioOcupacionImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha) throws Exception  {
-		
-		  String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00G";
-		  String fieldValue = "NueOcu";
-		  String fieldDate = "fecSit";
-		  String newOcu = ocup.toUpperCase();
-		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, newOcu, fieldValue, fieldDate, url);
-	}
-	
-	private static void cambioCatProfImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha) throws Exception {
-		
-		  String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00I";
-		  String fieldValue = "NueCat";
-		  String fieldDate = "fecSit";
-		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, cat, fieldValue, fieldDate, url);
-	}
-	
-	private static void cambioContratoCoefImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, Date fecha, Optional<String>contract, String coef) throws Exception  {
-		
 
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	private static void cambioGrupCtzImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String grupCtz,
+			Date fecha) throws Exception {
 
-	        Integer ident  = 1; 
-		    if(identity(ipf).equals("6")) 
-		    	ident = 3; // NIE
- 			//Date
- 			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
- 			
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
-			
+		String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00B";
+		String fieldValue = "codNuevoGrupo";
+		String fieldDate = "fechaSituacion";
+		pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+				fecha, grupCtz, fieldValue, fieldDate, url);
+	}
+
+	private static void cambioOcupacionImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String ocup,
+			Date fecha) throws Exception {
+
+		String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00G";
+		String fieldValue = "NueOcu";
+		String fieldDate = "fecSit";
+		String newOcu = ocup.toUpperCase();
+		pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+				fecha, newOcu, fieldValue, fieldDate, url);
+	}
+
+	private static void cambioCatProfImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
+			throws Exception {
+
+		String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00I";
+		String fieldValue = "NueCat";
+		String fieldDate = "fecSit";
+		pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+				fecha, cat, fieldValue, fieldDate, url);
+	}
+
+	private static void cambioContratoCoefImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String ipf, String regimen, String ctaCti,
+			String nss, Date fecha, Optional<String> contract, String coef) throws Exception {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+
+			Integer ident = 1;
+			if (Toolkit.getIdentityType(ipf).equals("6"))
+				ident = 3; // NIE
+			// Date
+			String[] fr = formatDate(fecha); // fecha [dia,mes,aÃ±o]
+
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
+
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			//form fist
-			form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0,2));
+			// form fist
+			form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0, 2));
 			form.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
-			
+
 			form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident.toString());
 			form.getInputByName("txt_SDFNUMPFI").setValueAttribute(ipf);
-			
+
 			form.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
-			form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0,2));
+			form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0, 2));
 			form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
-			
-	
+
 			HtmlInput btnSubmit = htmlPage.querySelector("#Sub2207601004");
 			htmlPage = btnSubmit.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+
 			form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			
-			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fr[0]); 
-			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fr[1]); 
-			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fr[2]); 
-			
-			if(!contract.isEmpty()) 
-				form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); //tipo de contrato
-			
-			if(coef==null) 
+
+			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fr[0]);
+			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fr[1]);
+			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fr[2]);
+
+			if (!contract.isEmpty())
+				form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); // tipo de contrato
+
+			if (coef == null)
 				coef = "0";
-			
-			form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); //coef 3 digits
-			
+
+			form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); // coef 3 digits
+
 			btnSubmit = htmlPage.querySelector("#Sub2207401004");
 			htmlPage = btnSubmit.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >=0 ) {
-				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("input[value=Confirmar]")).click();
+			if (msg2 != null && msg2.getTextContent().trim()
+					.indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
+				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
-			}	
-		} 
+			}
+		}
 	}
-	
-	private static void pageCambioCatOcupGc(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, Date fecha, String newValue, String fieldValue, String fieldDate, String url) throws Exception  {
-		
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClientExplorer(certificateInputStream, certificatePassword, certificateType)) {
-	    	webClient.getOptions().setUseInsecureSSL(true);
-	    	webClient.getOptions().setJavaScriptEnabled(true);
-	      webClient.getOptions().setThrowExceptionOnScriptError(false);
-	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
-	      HtmlPage htmlPage = webClient.getPage(url);
-	     
-	      Integer ident  = 1; 
-	      if(identity(ipf).equals("6")) ident = 3; // NIE
-	      
-	      String[] fr = formatDate(fecha); //fecha [dia,mes,año]
 
-	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow();
-		
-		  HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident);	
-		  option.click();
-		
-		  formDatos.getInputByName("NA5NumSegSocialCompleto").setValueAttribute(nss);
-		  formDatos.getInputByName("IP9NumDoc").setValueAttribute(ipf);
-		  formDatos.getInputByName("CC1EmpresaAut").setValueAttribute(regimen +  ctaCti);
-		  ((HtmlInput)htmlPage.querySelector("#PR_CAMPO_ORIGEN")).setValueAttribute("FORM");
+	private static void pageCambioCatOcupGc(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fecha,
+			String newValue, String fieldValue, String fieldDate, String url) throws Exception {
 
-		  htmlPage  = ((HtmlButton)htmlPage.querySelector("#ENVIO_10")).click();
-		  handleNewSegSocialExceptions(htmlPage);
-		  
-		  formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
-		  formDatos.getInputByName(fieldValue).setValueAttribute(newValue);
-		  formDatos.getInputByName(fieldDate).setValueAttribute(fr[0]+"/"+fr[1]+"/"+fr[2]);
-		  
-		  htmlPage  = ((HtmlButton)htmlPage.querySelector("#ENVIO_7")).click();
-		  handleNewSegSocialExceptions(htmlPage);
-		  
-		  DomNode message=htmlPage.querySelector(".INFO.mensaje");
-		  if(message!=null && !message.getVisibleText().isEmpty()) 
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientExplorer(certificateInputStream, certificatePassword,
+				certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
+			HtmlPage htmlPage = webClient.getPage(url);
+
+			Integer ident = 1;
+			if (Toolkit.getIdentityType(ipf).equals("6"))
+				ident = 3; // NIE
+
+			String[] fr = formatDate(fecha); // fecha [dia,mes,aÃ±o]
+
+			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_6"))
+					.orElseThrow();
+
+			HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident);
+			option.click();
+
+			formDatos.getInputByName("NA5NumSegSocialCompleto").setValueAttribute(nss);
+			formDatos.getInputByName("IP9NumDoc").setValueAttribute(ipf);
+			formDatos.getInputByName("CC1EmpresaAut").setValueAttribute(regimen + ctaCti);
+			((HtmlInput) htmlPage.querySelector("#PR_CAMPO_ORIGEN")).setValueAttribute("FORM");
+
+			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_10")).click();
+			handleNewSegSocialExceptions(htmlPage);
+
+			formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
+			formDatos.getInputByName(fieldValue).setValueAttribute(newValue);
+			formDatos.getInputByName(fieldDate).setValueAttribute(fr[0] + "/" + fr[1] + "/" + fr[2]);
+
+			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_7")).click();
+			handleNewSegSocialExceptions(htmlPage);
+
+			DomNode message = htmlPage.querySelector(".INFO.mensaje");
+			if (message != null && !message.getVisibleText().isEmpty())
 				System.out.println(message.getVisibleText());
-		} 
+		}
 	}
-	
-	private static void handleSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException{
+
+	private static void handleSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException {
 		try {
-			DomNode error=htmlPage.querySelector("#ARQContenMensaje>ul >.mensajeError");
-			if(error!=null && !error.getVisibleText().isEmpty()) 
+			DomNode error = htmlPage.querySelector("#ARQContenMensaje>ul >.mensajeError");
+			if (error != null && !error.getVisibleText().isEmpty())
 				throw new InvalidDataException(error.getVisibleText());
-		} catch (NullPointerException e) {}
+		} catch (NullPointerException e) {
+		}
 	}
-	
-	private static void handleSegSocialExceptions(XmlPage xmlPage) throws InvalidDataException{
+
+	private static void handleSegSocialExceptions(XmlPage xmlPage) throws InvalidDataException {
 		try {
 			DomNode error = xmlPage.querySelector("#MESSAGES");
-			if(error!=null && !error.getVisibleText().isEmpty() && error.getVisibleText().indexOf("realizada correctamente")<0) 
+			if (error != null && !error.getVisibleText().isEmpty()
+					&& error.getVisibleText().indexOf("realizada correctamente") < 0)
 				throw new InvalidDataException(error.getVisibleText());
-		} catch (NullPointerException e) {}
-	}
-	
-	private static void handleNewSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException{
-		try {
-			DomNode error=htmlPage.querySelector(".ERROR.mensaje");
-			if(error!=null && !error.getVisibleText().isEmpty()) 
-				throw new InvalidDataException(error.getVisibleText());
-		} catch (NullPointerException e) {}
-	}
-	
-	private static String identity(String ipf) {
-		ipf = Toolkit.removeExtraZeros(ipf);
-		Pattern nif  = Pattern.compile(
-				//  -------- LEGAL_PERSON_NIF PATTERN  
-				// -------- (1) --> X00000000
-					"^[A-JUV]"
-					+"[\\s-_/]?"
-					+"[0-9]{2}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}$"
-					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		Pattern dni  = Pattern.compile(
-					"[0-9]?"
-					+"[0-9]"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/]?"
-					+"[A-Z]"
-					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-				//  -------- NIE PATTERN 
-				// -------- (1) --> X0000000X
-		Pattern nie  = Pattern.compile(
-					"[XYZ]"
-					+"[\\s-_/]?"
-					+"[0-9]{7}"
-					+"[\\s-_/]?"
-					+"[A-HJ-NP-TV-Z]"
-				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		
-		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
-		patterns.put(nif, 1);
-		patterns.put(dni, 1);
-		patterns.put(nie, 6);
-		
-		String identity = "";
-		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
-			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
+		} catch (NullPointerException e) {
 		}
-		return identity;
+	}
+
+	private static void handleNewSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException {
+		try {
+			DomNode error = htmlPage.querySelector(".ERROR.mensaje");
+			if (error != null && !error.getVisibleText().isEmpty())
+				throw new InvalidDataException(error.getVisibleText());
+		} catch (NullPointerException e) {
+		}
 	}
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
-			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident, Date fecha) throws Exception {
+			Integer mov, String nss, Optional<String> ctaCti, String regimen, String dni, String ident) throws Exception {
 		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 		
 		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-		//form fist
-		HtmlOption option = (HtmlOption) form.querySelectorAll("select[name=cbo_ListaAltasBajas]>option").get(mov);				
+		// form fist
+		HtmlOption option = (HtmlOption) form.querySelectorAll("select[name=cbo_ListaAltasBajas]>option").get(mov);
 		option.click();
-		form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0,2));
+		form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0, 2));
 		form.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
 		form.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
 		form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident);
 		form.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
-		form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0,2));
-		form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
+		form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.get().substring(0, 2));
+		form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.get().substring(2));
 		HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
 		htmlPage = continueIn.click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 		return htmlPage;
 	}
-	
-	private static WebClient getWebClient(final InputStream certificateInputStream, final String certificatePassword, final String certificateType) throws InvalidCertificateException {
+
+	private static WebClient getWebClient(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws InvalidCertificateException {
 		return HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType);
 	}
-	
+
 	private static String[] formatDate(Date fecha) {
-		String[] arr = new String[3]; 
-		String dia="";
-		String mes="";
+		String[] arr = new String[3];
+		String dia = "";
+		String mes = "";
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(fecha);
-		String anio = ""+(calendar.get(Calendar.YEAR));
-		if(calendar.get(Calendar.DATE)<10) dia="0"+calendar.get(Calendar.DATE);
-		else dia=""+calendar.get(Calendar.DATE);
-		if((calendar.get(Calendar.MONTH)+1)<10) mes="0"+(calendar.get(Calendar.MONTH)+1);
-		else mes=""+(calendar.get(Calendar.MONTH)+1);
+		String anio = "" + (calendar.get(Calendar.YEAR));
+		if (calendar.get(Calendar.DATE) < 10)
+			dia = "0" + calendar.get(Calendar.DATE);
+		else
+			dia = "" + calendar.get(Calendar.DATE);
+		if ((calendar.get(Calendar.MONTH) + 1) < 10)
+			mes = "0" + (calendar.get(Calendar.MONTH) + 1);
+		else
+			mes = "" + (calendar.get(Calendar.MONTH) + 1);
 		arr[0] = dia;
 		arr[1] = mes;
 		arr[2] = anio;
 		return arr;
 	}
-	
-	private static byte[] getReportAffiliateInAltaImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			ArrayList<String> cccArr = 	Toolkit.splitStringMultiple(ccc,2);
 
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
+	private static byte[] getReportAffiliateInAltaImpl(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc)
+			throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		Object[] arrFields= {regime, ccc};
+		Toolkit.verifyData(arrFields);
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+			
+			ArrayList<String> cccArr = Toolkit.splitStringMultiple(ccc, 2);
+
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regime);
 			form.getInputByName("txt_SDFTESO62").setValueAttribute(cccArr.get(0));
 			form.getInputByName("txt_SDFNUM62").setValueAttribute(cccArr.get(1));
-		     
-			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();	
-	
+
+			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();
+
 			HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
-	
+
 			Page page = continueIn.click();
-			if(page.isHtmlPage()) {
+			if (page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			} else {
-				try{
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+				try {
+					return page.getWebResponse().getContentAsStream().readAllBytes();
+				} catch (Exception e) {
+					throw new InvalidDataException();
 				}
-				catch(Exception e){throw new InvalidDataException();}
 			}
 		}
 		return null;
 	}
-	
-	private static byte[] getReportAffiliateInMovPrevImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			ArrayList<String> cccArr = 	Toolkit.splitStringMultiple(ccc,2);
 
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR74&E=I&AP=AFIR");
+	private static byte[] getReportAffiliateInMovPrevImpl(InputStream certificateInputStream,
+			String certificatePassword, String certificateType, String regime, String ccc)
+			throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		
+		Object[] arrFields= {regime, ccc};
+		Toolkit.verifyData(arrFields);
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+			
+			ArrayList<String> cccArr = Toolkit.splitStringMultiple(ccc, 2);
+
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR74&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFREGENT_ayuda").setValueAttribute(regime);
 			form.getInputByName("txt_SDFTESCCCENT").setValueAttribute(cccArr.get(0));
 			form.getInputByName("txt_SDFCODCCCENT").setValueAttribute(cccArr.get(1));
-		     
-			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();	
-	
+
+			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();
+
 			HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
-	
+
 			Page page = continueIn.click();
-			if(page.isHtmlPage()) {
+			if (page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			} else {
-				try{
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+				try {
+					return page.getWebResponse().getContentAsStream().readAllBytes();
+				} catch (Exception e) {
+					throw new InvalidDataException();
 				}
-				catch(Exception e){throw new InvalidDataException();}
 			}
 		}
 		return null;
 	}
-	
-	private static void validateCertImpl(
-			final InputStream certificateInputStream, final String certificatePassword, final String certificateType
-	) throws SegSocialException, IOException {
+
+	private static void validateCertImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws SegSocialException, IOException {
 		byte[] certByte = certificateInputStream.readAllBytes();
-		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte), certificatePassword, certificateType)) {
-	    	validateCertExpired( new ByteArrayInputStream(certByte), certificatePassword);
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte),
+				certificatePassword, certificateType)) {
+			validateCertExpired(new ByteArrayInputStream(certByte), certificatePassword);
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
-	
-			if(htmlPage.getUrl().toString().contains("revokedError")) 
-				throw new RevokedCertificateException("Certificado revocado");
-			
-			DomNode section = htmlPage.querySelector("#segsocial section");
-			if(section!=null && section.getVisibleText().toLowerCase().indexOf("no autorizado")>=0) {
-				DomNode error = section.querySelector("p");
-				if(error!=null && !error.getVisibleText().isEmpty()) throw new SegSocialException(error.getVisibleText());
-			}
-		} catch (Exception e) {throw new SegSocialException(e.getMessage());}
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
+
+			Toolkit.validateCert(htmlPage);
+		} catch (Exception e) {
+			throw new SegSocialException(e.getMessage());
+		}
 	}
-	
-	private static void validateCertExpired(InputStream certificateInputStream,  String certificatePassword) throws Exception {
+
+	private static void validateCertExpired(InputStream certificateInputStream, String certificatePassword)
+			throws Exception {
 		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keystore.load(certificateInputStream, certificatePassword.toCharArray());
-        Enumeration<?> aliases = keystore.aliases();
-        Date expiryDate = null;
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        for(; aliases.hasMoreElements();) {
-            String alias = (String) aliases.nextElement();
-            expiryDate = ((X509Certificate) keystore.getCertificate(alias)).getNotAfter();
-            if(expiryDate.compareTo(cal.getTime()) < 0 ) 
-            	throw new Exception("El certificado ha expirado");
-        }
+		keystore.load(certificateInputStream, certificatePassword.toCharArray());
+		Enumeration<?> aliases = keystore.aliases();
+		Date expiryDate = null;
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		for (; aliases.hasMoreElements();) {
+			String alias = (String) aliases.nextElement();
+			expiryDate = ((X509Certificate) keystore.getCertificate(alias)).getNotAfter();
+			if (expiryDate.compareTo(cal.getTime()) < 0)
+				throw new Exception("El certificado ha expirado");
+		}
 	}
-	
+
 	private static JavaScriptErrorListener jascriptFunctionExceptionError() {
 		return new JavaScriptErrorListener() {
-			@Override public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {}
-			@Override public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {}
-			@Override public void scriptException(HtmlPage page, ScriptException scriptException) {}
-			@Override public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {}
-			@Override public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {}
+			@Override
+			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {
+			}
+
+			@Override
+			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {
+			}
+
+			@Override
+			public void scriptException(HtmlPage page, ScriptException scriptException) {
+			}
+
+			@Override
+			public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {
+			}
+
+			@Override
+			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {
+			}
 		};
 	}
-	
+
 }

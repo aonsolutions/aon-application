@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.json;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -149,7 +151,33 @@ public enum FiscalModelJSON {
 		}
 		@Override
 		public JSONObject to(FiscalModel model, JSONObject json) {
-			return json.put(IJsonNames.RESULT, model.getResult());
+			model.getModel().visit(new IFiscalModelTypeVisitor() {
+				
+				private void visitOld() {
+					json.put(IJsonNames.RESULT, model.getResult());	
+				}
+				private void visitNew() {
+					json.put(IJsonNames.RESULT, model.getDeclarationResult());
+				}
+				@Override public void visitM390HF() { visitOld();}
+				@Override public void visitM390()  { visitOld();}
+				@Override public void visitM349()  { visitOld();}
+				@Override public void visitM347()  { visitOld();}
+				@Override public void visitM202()  { visitOld();}
+				@Override public void visitM200()  { visitOld();}
+				@Override public void visitM193()  { visitOld();}
+				@Override public void visitM190()  { visitOld();}
+				@Override public void visitM184()  { visitOld();}
+				@Override public void visitM180()  { visitOld();}
+				@Override public void visitM131()  { visitOld();}
+				@Override public void visitM130()  { visitOld();}
+				
+				@Override public void visitM303()  { visitNew();}
+				@Override public void visitM123()  { visitNew();}
+				@Override public void visitM115()  { visitNew();}
+				@Override public void visitM111()  { visitNew();}
+			});
+			return json;
 		}
 	},
 	DECLARATION_TYPE{
@@ -159,7 +187,33 @@ public enum FiscalModelJSON {
 		}
 		@Override
 		public JSONObject to(FiscalModel model, JSONObject json) {
-			return json.put(IJsonNames.TYPE, model.getDeclarationType());
+			model.getModel().visit(new IFiscalModelTypeVisitor() {
+				
+				private void visitOld() {
+					json.put(IJsonNames.RESULT, model.getResult());	
+				}
+				private void visitNew() {
+					json.put(IJsonNames.RESULT, model.getDeclarationResult());
+				}
+				
+				@Override public void visitM390HF() { visitOld();}
+				@Override public void visitM390()  { visitOld();}
+				@Override public void visitM349()  { visitOld();}
+				@Override public void visitM347()  { visitOld();}
+				@Override public void visitM202()  { visitOld();}
+				@Override public void visitM200()  { visitOld();}
+				@Override public void visitM193()  { visitOld();}
+				@Override public void visitM190()  { visitOld();}
+				@Override public void visitM184()  { visitOld();}
+				@Override public void visitM180()  { visitOld();}
+				@Override public void visitM131()  { visitOld();}
+				@Override public void visitM130()  { visitOld();}
+				@Override public void visitM303()  { visitNew();}
+				@Override public void visitM123()  { visitNew();}
+				@Override public void visitM115()  { visitNew();}
+				@Override public void visitM111()  { visitNew();}
+			});
+			return json;
 		}
 	},
 	;

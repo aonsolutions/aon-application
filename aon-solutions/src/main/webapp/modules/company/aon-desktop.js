@@ -3,7 +3,7 @@ import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
@@ -205,6 +205,7 @@ export class AonDesktop extends AonElement {
 			classicOptions.push({
 				name: 'aonSolutions',
 				img: 'assets/aon.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION_AON,
 				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
 			});
 		}
@@ -213,6 +214,7 @@ export class AonDesktop extends AonElement {
 			classicOptions.push({
 				name: 'Bidoq',
 				img: 'assets/apps/bidoq.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
 				fn: () =>{
 					getAccessBidoq().then(r => {
 						const {datos} = r;
@@ -230,7 +232,17 @@ export class AonDesktop extends AonElement {
 			classicOptions.push({
 				name: 'Selfconta',
 				img: 'assets/apps/selfconta.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
 				fn: () =>open('https://mispapeles.es/selfconta/')
+			});
+		}
+
+		if(this.getDur().isSaltra()){
+			classicOptions.push({
+				name: 'Saltra',
+				img: 'assets/apps/saltra.png',
+				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
+				fn: () =>open('https://app.saltra.es/')
 			});
 		}
 
@@ -505,7 +517,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
-				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development(MSG.REQUEST);
+				this.rootPanel(new AonMessenger());
 				break;
 			}
 	}
@@ -597,7 +609,7 @@ export class AonDesktop extends AonElement {
 				count: rejectedCount,
 				fn: () => {
 					let aonInvoice = new AonInvoicePanel();
-					aonInvoice.status = "refused";
+					aonInvoice.status = CONSTANT.REJECTED;
 					this.rootPanel(aonInvoice);
 				}
 			});
@@ -616,12 +628,9 @@ export class AonDesktop extends AonElement {
 					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 					count:count.task_holder,
 					fn: () =>{
-						if(this.isBeta()){
-							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.task_holder = task_holder;
-							this.rootPanel(aonMessenger);
-						} else 
-							this.development(MSG.REQUEST);
+						let aonMessenger = new AonMessenger();
+						aonMessenger._filter.task_holder = task_holder;
+						this.rootPanel(aonMessenger);
 					}
 				});
 				if(count.sender) this.SIDENAV_ACTIVITY_SUMMARY.push({
@@ -629,12 +638,9 @@ export class AonDesktop extends AonElement {
 					icon: MATERIAL_ICONS.OUTBOX,
 					count:count.sender,
 					fn: () =>{
-						if(this.isBeta()){
-							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.sender = task_holder;
-							this.rootPanel(aonMessenger);
-						}else 
-							this.development(MSG.REQUEST)
+						let aonMessenger = new AonMessenger();
+						aonMessenger._filter.sender = task_holder;
+						this.rootPanel(aonMessenger);
 					} 
 				});
 			}

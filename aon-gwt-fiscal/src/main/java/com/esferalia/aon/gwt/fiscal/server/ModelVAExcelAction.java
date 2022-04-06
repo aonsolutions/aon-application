@@ -1,37 +1,30 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -46,14 +39,6 @@ public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscal
 
 	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
 			AEAT_BG };
-	
-	protected  static final String[] IMAGES = new String[] { 
-			"/com/esferalia/aon/gwt/common/client/css/images/aon-araba-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-bizkaia-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-gipuzkoa-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-navarra-header-image.png"
-			,"/com/esferalia/aon/gwt/common/client/css/images/aon-aeat-header-image.png"
-	};
 	
 	protected Font idFont;
 	protected XSSFCellStyle rowStyle;
@@ -137,38 +122,30 @@ public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscal
 	protected void printModelInfo() {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		try {
-			InputStream inputStream = ModelVAExcelAction.class.getResourceAsStream(
-					IMAGES[ model.getAdministration().ordinal()]);
-			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
-			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
-			inputStream.close();
-			CreationHelper helper = workbook.getCreationHelper();
-			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-			anchor.setCol1(0);
-			anchor.setRow1(rowCount - 1 );
-			anchor.setDx1(10);
-			anchor.setDy1(10);
-			Picture pict = drawing.createPicture(anchor, pictureureIdx);
-			pict.resize();
-		} catch (IOException e) {
-			e.printStackTrace();
-			// Sin Imagen,.
+
+		CellUtil.createCell(row, 0, FiscalModelUtils.getModelName(model),headerCellStyle);
+		sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
+		
+		CellUtil.createCell(row, 1, getTitle(), headerCellStyle);
+
+//		CellUtil.createCell(row, 7, "",headerCellStyle);
+//		row = sheet.createRow(rowCount++);
+		CellUtil.createCell(row, 7, AonNumberUtils.toString(model.getYear()), headerCellStyle);		
+		row = sheet.createRow(rowCount++);
+		
+		String description = "";
+		if (model.getModel() == FiscalModelType.M202) {
+			 if (model.getPeriod() == Period.T1)
+					description = "1\u00BA Periodo";
+				if (model.getPeriod() == Period.T2) 
+					description = "2\u00BA Periodo";
+				if (model.getPeriod() == Period.T3) 
+					description = "3\u00BA Periodo";
 		}
-		CellUtil.createCell(row, 0,"");
-		sheet.addMergedRegion(new CellRangeAddress((rowCount-1), (rowCount+1), 0, 0));
+		else description = model.getPeriod().getDescription();
 		
-		CellUtil.createCell(row, 1, getTitle(),headerCellStyle);
-		sheet.addMergedRegion(new CellRangeAddress((rowCount-1),(rowCount + 1), 1, 6));
-		
-		CellUtil.createCell(row, 7, FiscalModelUtils.getModelName(model),headerCellStyle);
-		row = sheet.createRow(rowCount++);
-		CellUtil.createCell(row, 7, AonNumberUtils.toString(model.getYear()), headerCellStyle);
-		row = sheet.createRow(rowCount++);
-		CellUtil.createCell(row, 7, model.getPeriod().getDescription(), headerCellStyle);
-		
+		CellUtil.createCell(row, 7, description, headerCellStyle);
+		sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 6));
 
 		row = sheet.createRow(rowCount++);
 
@@ -184,49 +161,6 @@ public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscal
 
 		row = sheet.createRow(rowCount++);
 		
-		row = sheet.createRow(rowCount++);
-		cellCount = 0;
-
-		for (int i = 0; i < row.getLastCellNum(); i++) {
-			sheet.autoSizeColumn(i);
-		}
-
-		CellUtil.createCell(row, cellCount, "", headerCellStyle);
-		sheet.setColumnWidth(cellCount++, 8 * 256);
-		sheet.setColumnWidth(cellCount++, 30 * 256);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
-		
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
-		Font vatHeaderFont= workbook.createFont();
-		vatHeaderFont.setBold(true);
-		vatHeaderFont.setFontHeightInPoints((short) 8);
-		vatHeaderFont.setColor( IndexedColors.WHITE.index );
-		rightHeaderCellStyle.setFont(vatHeaderFont);
-		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
-
-		CellUtil.createCell(row, cellCount, "Base Imp.", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 3 * 256);
-		sheet.setColumnWidth(cellCount++, 10 * 256);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 2, 3));
-
-		CellUtil.createCell(row, cellCount, " % ", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 3 * 256);
-		sheet.setColumnWidth(cellCount++, 10 * 256);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 4, 5));
-
-		CellUtil.createCell(row, cellCount, "Cuota", rightHeaderCellStyle);
-		sheet.setColumnWidth(cellCount++, 3 * 256);
-		sheet.setColumnWidth(cellCount++, 10 * 256);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 7));
-
-		
-		row = sheet.createRow(rowCount++);
-		row.createCell(0);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
-		
-		sheet.setRepeatingRows(new CellRangeAddress(0, 7, 0, 7));
-		
-		
 		Footer footer = sheet.getFooter();
 		footer.setLeft("Modelo " + FiscalModelUtils.getModelName(model) + " / " + model.getPeriod().getDescription() );
 		footer.setRight("P\u00E1g: &P/&N");
@@ -241,7 +175,7 @@ public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscal
 	public void beforeFinalize() {
 		if (model.isFinished()) {
 			DecimalFormat format = new DecimalFormat("#,##0.00");
-			String paymentInfo = "Resultado: " + format.format(model.getResult())
+			String paymentInfo = "Resultado: " + format.format(model.getDeclarationResult())
 					+ AonStringUtils.SPACE + getDeclarationType()
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceBankAlias())
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceMaskedIban())
@@ -338,8 +272,8 @@ public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscal
 	}
 
 	protected String getDeclarationType() {
-		return (model.getDeclarationType()!=null
-				?model.getDeclarationType().getDescription()
+		return (model.getDeclarationResultType()!=null
+				?model.getDeclarationResultType().getDescription()
 				:AonStringUtils.EMPTY);
 	}
 	

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +63,7 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
@@ -644,7 +645,7 @@ public class Toolkit {
 	}
 	
 	static void checkLiquidationExceptions(String errText) throws LiquidationDoesNotExist, DataDoesNotExist,
-	WrongRegimeException, invalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
+	WrongRegimeException, InvalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
 		if (errText != null) {
 			if(errText.toUpperCase().contains("NO EXISTE LIQUIDACI"))
 				throw new LiquidationDoesNotExist();
@@ -653,7 +654,7 @@ public class Toolkit {
 			else if(errText.toUpperCase().contains("CUENTA DE COTIZACI") && errText.toUpperCase().contains("N NO EXISTE"))
 				throw new WrongRegimeException();
 			else if(errText.toUpperCase().contains("C.C.C. ERR"))
-				throw new invalidCccException();
+				throw new InvalidCccException();
 			else if(errText.toUpperCase().contains("DEBE TENER CONTENIDO"))
 				throw new UnfilledMandatory();
 			else if(errText.toUpperCase().contains("EL CCC NO PERTENECE AL COLECTIVO DE CLEGIOS CONCERTADOS"))
@@ -1011,6 +1012,18 @@ public class Toolkit {
 			return Toolkit.removeWeirdCharacters(raw);
 	}
 	
+	public static void validateCert(HtmlPage htmlPage) throws SegSocialException {
+		if (htmlPage.getUrl().toString().contains("revokedError"))
+			throw new RevokedCertificateException("Certificado revocado");
+
+		DomNode section = htmlPage.querySelector("#segsocial section");
+		if (section != null && section.getVisibleText().toLowerCase().indexOf("no autorizado") >= 0) {
+			DomNode error = section.querySelector("p");
+			if (error != null && !error.getVisibleText().isEmpty())
+				throw new SegSocialException(error.getVisibleText());
+		}
+	}
+	
 	
 
 	public static String goBackPdf(CloseableHttpClient httpClient, String link, String sessionId)
@@ -1031,22 +1044,56 @@ public class Toolkit {
 		return getBodyPOST(httpClient, httpPost);
 	}
 	
-//	public static void findInfoFromElem(String line, String attribute, String tagName, String refAttr, String refAttrValue) {
-//		tagName = tagName != null ? tagName : "\\w*?";
-//		refAttrValue = refAttrValue != null ? refAttrValue : "";
-//		
-//		String attrMatch = "";
-//		
-//		if (refAttr != null && !refAttr.isEmpty()) {
-//			attrMatch += refAttr + "=(\"|')" + refAttrValue + "(\"|')";
-//		}
-//		
-//		
-//		Pattern pattern = Pattern.compile(
-//				"\\<" + tagName + "\\s*" + ".*?" + attrMatch + ".*?\\>"
-//				, Pattern.CASE_INSENSITIVE);
-//		
-//		
-//	}
+	/**
+	 * 
+	 * @param ipf
+	 * @return 1 (nif, dni), 6 nie
+	 */
+	public static String getIdentityType(String ipf) {
+		Pattern nif  = Pattern.compile(
+				//  -------- LEGAL_PERSON_NIF PATTERN  
+				// -------- (1) --> X00000000
+					"0?"
+					+"^[A-JUV]"
+					+"[\\s-_/]?"
+					+"[0-9]{2}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}$"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		Pattern dni  = Pattern.compile(
+					"0?"
+					+"[0-9]?"
+					+"[0-9]"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/]?"
+					+"[A-Z]"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+				//  -------- NIE PATTERN 
+				// -------- (1) --> X0000000X
+		Pattern nie  = Pattern.compile(
+					"0?"
+					+"[XYZ]"
+					+"[\\s-_/]?"
+					+"[0-9]{7}"
+					+"[\\s-_/]?"
+					+"[A-HJ-NP-TV-Z]"
+				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
+		Map<Pattern, Integer> patterns = new HashMap<>();
+		patterns.put(nif, 1);
+		patterns.put(dni, 1);
+		patterns.put(nie, 6);
+		
+		String identity = "";
+		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
+			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
+		}
+		return identity;
+	}
 	
 }

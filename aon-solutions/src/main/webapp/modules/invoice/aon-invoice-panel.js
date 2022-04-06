@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { insertInvoice, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta, downloadInvoiceExcel } from '../../services/service.js';
+import { insertInvoice, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta, downloadInvoiceExcel, getInvoice } from '../../services/service.js';
 
 import { Invoice } from './Invoice.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -104,7 +104,7 @@ export class AonInvoicePanel extends AonElement {
 			page: 0,
 			per_page: 50
 		}
-		this.option = this.option || (CONSTANT.REFUSED === this.status
+		this.option = this.option || (CONSTANT.REJECTED === this.status
 			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
 	}
 
@@ -120,9 +120,9 @@ export class AonInvoicePanel extends AonElement {
 		let aonInvoice = this.getElement(this.INVOICE);
 
 		let input = this.getElement(this.INPUT_FILE);
-		input.addEventListener('change', () => this.preview(input.files));
+		input.addEventListener(EVENT.CHANGE, () => this.preview(input.files));
 
-		this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => this.preview(target.files));
+		this.getElement(this.INPUT_CAMERA).addEventListener(EVENT.CHANGE,  ({target}) => this.preview(target.files));
 
 		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(e.detail));
 
@@ -133,7 +133,12 @@ export class AonInvoicePanel extends AonElement {
 		
 		this.appendChild(input);
 		this.buildSidenavOptions();
-		this.selectOption(this.option);
+		if(this.invoice && this.invoice.type){
+			this.aonInvoice(this.invoice.type, this.invoice);
+		} else if(this.value){
+			this.aonInvoiceById(this.value);
+		} else 
+			this.selectOption(this.option);
 	}
 
 	buildToolbarOptions(){
@@ -155,7 +160,11 @@ export class AonInvoicePanel extends AonElement {
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
-				// this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel())
+				if(this.selectedOption && (OPTION.INVOICE_ISSUED.id === this.selectedOption.id 
+					|| OPTION.INVOICE_RECEIVED.id === this.selectedOption.id 
+					|| OPTION.INVOICE_TICKET.id === this.selectedOption.id)){
+						this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+					}
 			}
 		}
 		const btnSearch = this.getApplication().addSearchOption();
@@ -165,13 +174,18 @@ export class AonInvoicePanel extends AonElement {
 
 	downloadInvoiceExcel() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-
+		
 		let data = {
-			domain_id: localStorage.getItem('aon_domain_id'),
-			domain_name: localStorage.getItem('aon_domain_name'),
-			domain_login: localStorage.getItem('aon_domain_login'),
+			domainId: localStorage.getItem('aon_domain_id'),
+			domainName: localStorage.getItem('aon_domain_name'),
+			domainLogin: localStorage.getItem('aon_domain_login'),
 			ids: aonInvoiceTable.selected.map(r => r.id),
-			status: this.getFilter().status
+			description: this.getFilter().description,
+			status: this.getFilter().status,
+			type: this.getFilter().type,
+			from: this.getFilter().from,
+			to: this.getFilter().to
+
 		};
 		let json = btoa(JSON.stringify(data));
 		downloadInvoiceExcel(json);
@@ -222,7 +236,7 @@ export class AonInvoicePanel extends AonElement {
 	buildSettingOptions() {
 		let settingOptions = [];
 		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS, OPTION.CHARGES_PAYMENTS ];
+			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS, OPTION.CHARGES_PAYMENTS, OPTION.VAT_PANEL, OPTION.RETENTION_PANEL ];
 		} else settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
 
 
@@ -531,15 +545,20 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvoice(type, invoice) {
-		let aonInvoice = this.getApplication();
-		if(this.isMobile()) {
+		let aonInvoice = this.getApplication(); 
+		if(this.isMobile() && aonInvoice.TOOLBAR) {
 			let toolbar = this.getElement(aonInvoice.TOOLBAR);
 			toolbar.removeButtons();
 		}
-		let ni = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
-		ni.setType(type);
-		ni.setInvoice(invoice);
-		aonInvoice.setContent(ni);
+		let component = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
+		component.setType(type);
+		component.setInvoice(invoice);
+
+		aonInvoice.setContent(component);
+	}
+
+	aonInvoiceById(id) {
+		getInvoice(id).then(invoice => this.aonInvoice(invoice.type, invoice)).catch(error =>this.showToast(error));
 	}
 
 	selectOption(option) {
@@ -572,10 +591,10 @@ export class AonInvoicePanel extends AonElement {
 				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'ticket'});
 				break;
 			case OPTION.RAWDOC_REJECT.id:
-				this.aonInvoiceList({status: CONSTANT.REFUSED});
+				this.aonInvoiceList({status: CONSTANT.REJECTED});
 				break;
 			case OPTION.RAWDOC_DRAFT.id:
-				this.aonInvoiceList({status: CONSTANT.TRASH});
+				this.aonInvoiceList({status: CONSTANT.DRAFT});
 				break;
 			case OPTION.INVOICE_ISSUED.id:
 				this.aonInvoiceList({status:'accounting', type:'sales', page:1, per_page: 50});
@@ -620,6 +639,12 @@ export class AonInvoicePanel extends AonElement {
 				break;
 			case OPTION.CHARGES_PAYMENTS.id:
 				GWT.load(GWT.FINANCE, this.getApplication().CONTENT);
+				break;
+			case OPTION.VAT_PANEL.id:
+				GWT.load(GWT.VAT_REPORT, this.getApplication().CONTENT);
+				break;
+			case OPTION.RETENTION_PANEL.id:
+				GWT.load(GWT.IRPF_REPORT, this.getApplication().CONTENT);
 				break;
 			default:
 				this.aonInvoiceList({status: CONSTANT.INBOX});

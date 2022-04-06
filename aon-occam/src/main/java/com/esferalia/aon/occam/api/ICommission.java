@@ -35,5 +35,6 @@ public interface ICommission {
 	public InvoiceDetailCommission insertInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc);
 	public InvoiceDetailCommission updateInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc);	
 	public void deleteInvoiceDetailCommission(AONContext ctx, Integer id);	
+	public void deleteInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommissionFilter filter);	
 	
 }

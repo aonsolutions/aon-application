@@ -34,6 +34,11 @@ public class WorkplaceIT extends Composite {
 		}
 
 		@Override
+		protected List<IT> getITsList() {
+			return workplaceITObject.getITsList();
+		}
+		
+		@Override
 		public boolean isUserComunica() {
 			return workplaceITObject.isUserComunica();
 		}
@@ -149,6 +154,7 @@ public class WorkplaceIT extends Composite {
 		
 		@Override
 		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {
+			failure.accept(null);
 //			enterpriseITObject.checkStatus(success::accept, failure::accept);
 		}
 
@@ -157,6 +163,7 @@ public class WorkplaceIT extends Composite {
 
 		@Override
 		protected void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure){}
+
 	}
 	
 	// --------------------------------------------------- Binder
@@ -181,6 +188,7 @@ public class WorkplaceIT extends Composite {
 		AON.ensureInjected();
 		
 		itWidget = new ITWidgetImpl();
+		itWidget.removeFootPanel();
 
 		initWidget(uiBinder.createAndBindUi(this)); 
 	}

@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -130,6 +132,14 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteAgreement(domain, agreement,  
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void deleteAgreements(String domain, List<Integer> agreementIds, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.deleteAgreements(domain, agreementIds,  
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
@@ -437,9 +447,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) {
+	public void getEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getEmployeeSSPECs(domain, user, contractId, new AsyncCallbackWrapper<List<SSPECData>>(callback));
+	}
+	
+	@Override
+	public void syncEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.syncEmployeeSSPECs(domain, user, contractId, new AsyncCallbackWrapper<List<SSPECData>>(callback));
 	}
 
 	@Override
@@ -591,27 +607,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> callback) {
+	public void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> callback) throws IllegalArgumentException  {
 		AON.start();
 		enterprisesServiceAsync.getContractClauses(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractClause>>(callback));
 	}
 	
 	@Override
-	public void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses, AsyncCallback<List<ContractClause>> callback) {
+	public void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses, AsyncCallback<Void> callback) throws IllegalArgumentException  {
 		AON.start();
-		enterprisesServiceAsync.setContractClauses(currentDomainName, contractId, contractClauses, new AsyncCallbackWrapper<List<ContractClause>>(callback));
-	}
-
-	@Override
-	public void createContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> callback) {
-		AON.start();
-		enterprisesServiceAsync.createContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<List<ContractClause>>(callback));
-	}
-
-	@Override
-	public void deleteContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> callback) {
-		AON.start();
-		enterprisesServiceAsync.deleteContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<List<ContractClause>>(callback));
+		enterprisesServiceAsync.setContractClauses(currentDomainName, contractId, contractClauses, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
@@ -784,13 +788,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType,
-			Date dateBj, Date dateProcess, AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.removeIT(domainName, userLogin, regime, ccc, naf, partType, dateBj, dateProcess, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
 	public void getContratoSepe(String domainName, String userLogin, String ipf, Date startDate, Date endDate, AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.getContratoSepe(domainName, userLogin, ipf, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
@@ -944,4 +941,13 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.removeITParts(currentDomainName, currentUser, list, asyncCallback);
 	}
+	
+	// ------------------------------------------------ Agreement Clean
+
+	@Override
+	public void getAgreementsClean(String domainName, AgreementCleanType cleanType, AsyncCallback<List<AgreementsClean>> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getAgreementsClean(domainName, cleanType, asyncCallback);
+	}
+
 }

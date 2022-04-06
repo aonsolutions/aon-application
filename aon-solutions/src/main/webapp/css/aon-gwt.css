@@ -478,7 +478,7 @@
     padding-bottom: 4px;
     padding-right:36px;
     display:inline-block;
-    background: url(/images/aon-fiscal.svg) scroll right center no-repeat;
+    background: url(/images/apps/aon-fiscal.svg) scroll right center no-repeat;
     background-size:32px;
 }
 
@@ -487,7 +487,7 @@
     padding-bottom: 4px;
     padding-right:36px;
     display:inline-block;
-    background: url(/images/aon-payroll.svg) scroll right center no-repeat;
+    background: url(/images/apps/aon-payroll.svg) scroll right center no-repeat;
     background-size:32px;
 }
 
@@ -496,7 +496,7 @@
     padding-bottom: 4px;
     padding-right:36px;
     display:inline-block;
-    background: url(/images/aon-account.svg) scroll right center no-repeat;
+    background: url(/images/apps/aon-accounting.svg) scroll right center no-repeat;
     background-size:32px;
 }
 
@@ -505,7 +505,7 @@
     padding-bottom: 4px;
     padding-right:36px;
     display:inline-block;
-    background: url(/images/aon-document.svg) scroll right center no-repeat;
+    background: url(/images/apps/aon-documental.svg) scroll right center no-repeat;
     background-size:32px;
 }
 
@@ -514,7 +514,7 @@
     padding-bottom: 4px;
     padding-right:36px;
     display:inline-block;
-    background: url(/images/aon-tools.svg) scroll right center no-repeat;
+    background: url(/images/apps/aon-tools.svg) scroll right center no-repeat;
     background-size:32px;
 }
 
@@ -523,7 +523,7 @@
     padding-bottom: 4px;
     padding-right:36px;
     display:inline-block;
-    background: url(/images/aon-notes.svg) scroll right center no-repeat;
+    background: url(/images/apps/aon-notes.svg) scroll right center no-repeat;
     background-size:32px;
 }
 

@@ -84,8 +84,8 @@ public abstract class EnterpriseITStatus implements Serializable {
 //		Byte contractType; // 0 = FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL, 1 = RESTO_Y_AUTONOMOS;
 		
 		
-		public ItNotExist setEmployeeIT(EmployeeIT it) {
-			this.employeeIT = it;
+		public ItNotExist setEmployeeIT(EmployeeIT employeeIT) {
+			this.employeeIT = employeeIT;
 			return this;
 		}
 		

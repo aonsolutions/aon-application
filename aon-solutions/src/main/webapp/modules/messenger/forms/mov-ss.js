@@ -9,7 +9,7 @@ import {  serializeForm, sortBy } from "../../../services/utils.js";
 import { setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
-import { getOccupation, getRlce, getContractType, getQuoteGroup, getTipoJornada, sendAlta } from "../../../services/comunicaService.js";
+import { getOccupation, getRlce, getContractType, getQuoteGroup, getJourneyType, sendAlta } from "../../../services/comunicaService.js";
 
 /**
  * 
@@ -328,8 +328,7 @@ const fillSalaryType = (aonSelect, salaryType) => {
 
 //-----------FILL JORNADATYPE
 const fillJornadaType = (aonSelect, jornadaType) => {
-   const resp =  getTipoJornada();
-    aonSelect.setOptions( resp );
+    aonSelect.setOptions( getJourneyType() );
     if(jornadaType) aonSelect.value = jornadaType;
 }
 

@@ -10,21 +10,22 @@ import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public interface IMODEL123 {
 
-	public Mod123 getMod123(AONContext ctx, int id);
+	public Mod123 get(AONContext ctx, int id);
 	public LinkedList<Mod123> getMod123s(AONContext ctx, int domain);
 	public Mod123 calculate(AONContext ctx, Mod123 mod123);
 	public Mod123 save(AONContext ctx, Mod123 mod123);
 	public Mod123 saveComments(AONContext ctx, Mod123 mod123);
 	public Mod123 initializeForFinish(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsFinished(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsSent(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsPending(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsCustomerCheck(AONContext ctx, Mod123 mod123);
 	public Mod123 initialize(AONContext ctx, Mod123 mod123);
 	public Mod123 create(AONContext ctx, Mod123 mod123);
 	public void delete(AONContext ctx, Mod123 mod123);
 	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey);
 	public Mod123 aeatPresentation(AONContext ctx, Mod123 mod123, String aeatResponse);
 	public Mod123 reset(AONContext ctx, Mod123 mod123);
-	
+	public Mod123 markAsFinished(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsSent(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsPending(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsCustomerCheck(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsCustomerAccepted(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsCustomerRejected(AONContext ctx, Mod123 mod123, String reason);
 }

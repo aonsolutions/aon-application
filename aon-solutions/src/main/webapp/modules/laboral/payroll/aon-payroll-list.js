@@ -241,7 +241,13 @@ export class AonPayrollList extends AonElement {
 
   aonEvent({ }, data) {
     const parent = this.applicationParentEl;
-    if(parent) parent.getSalary({salaryId:data.id});
+    if(parent) {
+      parent.getSalary({
+        salaryId: data.id,
+        enterpriseId: data.enterpriseId,
+        type: data.type
+      });
+    }
   }
 
   isEmployee(){

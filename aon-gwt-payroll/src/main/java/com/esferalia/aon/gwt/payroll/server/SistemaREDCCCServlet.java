@@ -10,10 +10,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.SistemaRED;
 
@@ -42,19 +50,22 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response){
 		// Request Type		
-		super.doGet(request, response);
-		String type = request.getParameter("type");
+		// super.doGet(request, response);
+		AonApiData api = initialize(request, false); // Provisional: false para que no compruebe el token
+
+		String type = api.getData().getString("type");
 		Integer typeIdx = Integer.parseInt(type);
 		RequestType requestType = RequestType.values()[typeIdx];
 		
 		// Enterprise CCC
-		String regime = request.getParameter("regime");
-		String ccc = request.getParameter("ccc");
+		String regime = api.getData().getString("regime");
+		String ccc = api.getData().getString("ccc");
 		Connection connection = null;
+		
 		try {
 			// Domian and User
-			String userLogin = request.getParameter("userLogin");
-			String domainName = request.getParameter("domainName");
+			String userLogin = api.getData().getString("login");
+			String domainName = api.getData().getString("domain");
 			
 			connection = AonServletUtils.getConnection(domainName);
 			
@@ -62,48 +73,38 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			// Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			byte[] dataURI = null;
-			
+
 			switch (requestType) {
 				case UPDATE_CERT:
-					dataURI = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
+					dataURI = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case WORKING_EMPLOYEE:
-					dataURI = SistemaRED.getReportAffiliateInAlta(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
+					dataURI = SistemaRED.getReportAffiliateInAlta(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case PRE_MOV_EMPLOYEE:
-					dataURI = SistemaRED.getReportAffiliateInMovPrev(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
+					dataURI = SistemaRED.getReportAffiliateInMovPrev(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case IDC:
-					dataURI = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+					dataURI = SistemaRED.getIDCCCC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
 					break;
 				default:
-					throw new Exception("El tipo introducido es incorrecto.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 			
-			// Prepare response
-			response.setContentType("application/pdf");
-			response.setHeader("Content-Disposition", "attachment;filename=" + requestType.getFileName() + ".pdf");
-		
-			ServletOutputStream out = response.getOutputStream();
-			out.write(dataURI);
-			response.flushBuffer();
-		
+			Attach attach = new Attach()
+					.setData(dataURI)
+					.setMimeType(MimeType.PDF)
+					.setDescription(requestType.getFileName());
+			
+			responseFile(response, attach);
+			
 		} catch (Exception e) {
 			error(request, response, e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		}
-		
 	}
 	
 	@Override

@@ -26,8 +26,8 @@ public class AonComunica {
 	}
 	
 	// ADD CONTRACT AND SEND TGSS
-	public static Employee addContract(final byte certificateData[], final String certificatePassword,
-			final String certificateType, Domain domain, Employee employee, Boolean communicateTGSS) throws Exception {
+	public static Employee addContract(final byte[] certificateData, final String certificatePassword,
+			final String certificateType, Domain domain, Employee employee, Boolean communicateTGSS) throws SegSocialException {
 			
 		   Optional<Employee> exist = contractExist(domain, employee.getCcc(), employee.getNaf(), employee.getStartDate(), employee.getEndDate());
 		   if(exist.isEmpty()) 
@@ -52,7 +52,7 @@ public class AonComunica {
 	 * @param communicateTGSS true communicate (TGSS, AON) or false (AON)
 	 * @throws SegSocialException
 	 */
-	public static void deleteContract(final byte certificateData[], final String certificatePassword,
+	public static void deleteContract(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee, Boolean communicateTGSS) throws SegSocialException {
 		
 		SituationType situationType = SituationType.ALTA;
@@ -118,8 +118,8 @@ public class AonComunica {
 	 * @throws SegSocialException
 	 * @throws Exception
 	 */
-	public static void communicateAlta(final byte certificateData[], final String certificatePassword,
-			final String certificateType, Domain domain, Employee employee) throws SegSocialException, Exception {
+	public static void communicateAlta(final byte[] certificateData, final String certificatePassword,
+			final String certificateType, Domain domain, Employee employee) throws SegSocialException {
 		
 		System.out.println("--------PROCESSING ALTA--------");
 		
@@ -140,7 +140,7 @@ public class AonComunica {
 		return employee;
 	}
 	
-	private static void saveContractAttach(final byte certificateData[], final String certificatePassword,
+	private static void saveContractAttach(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Domain domain, Employee emp) {
 			new Thread(() -> {
 				saveTA(certificateData, certificatePassword, certificateType, domain, emp);
@@ -150,7 +150,7 @@ public class AonComunica {
 	}
 	
 	// employee.getEmployeeId(), employee.getCcc(), employee.getRegime(), employee.getNaf(), employee.getStartDate(), employee.getEndDate() (Optional) 
-	private static void saveTA(final byte certificateData[], final String certificatePassword,
+	private static void saveTA(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee) {
 		try {
 			System.out.println("--------PROCESSING TA---------");
@@ -172,7 +172,7 @@ public class AonComunica {
 		}
 	}
 	
-	private static void saveIDC(final byte certificateData[], final String certificatePassword,
+	private static void saveIDC(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, Domain domain, Employee employee) {
 		
 		if(parseDate(employee.getStartDate()).compareTo(parseDate(new Date())) <= 0 ) {

@@ -1,5 +1,8 @@
 package net.aonsolutions.aon.api.servlet.project;
 
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER;
+import static net.aonsolutions.aon.api.servlet.task.AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP;
+
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -8,18 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.esferalia.aon.occam.api.model.Domain;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
 import com.esferalia.aon.occam.api.json.ProjectTypeJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 
@@ -27,7 +31,6 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
-import net.aonsolutions.aon.api.utils.TaskUtils.APP_PARAMS_REQUEST;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiProjectServlet", urlPatterns = {"/ms/api/project/*"})
@@ -41,7 +44,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[GET /ms/api/project] AON API PROJECT SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case ROOT:
 					response(req, resp, getProjects(api));
@@ -65,7 +68,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[POST /ms/api/project] AON API PROJECT SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case ROOT:
 					response(req, resp, saveProject(api));
@@ -87,7 +90,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[DELETE /ms/api/project] AON API PROJECT SERVLET");
 		try {
-			AonApiData api = initialize(req, resp);
+			AonApiData api = initialize(req);
 			switch (api.getPath()) {
 				case ROOT:
 					response(req, resp, deleteProject(api));
@@ -138,7 +141,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getAppParams(Domain domain) {
-		String[] names = new String[] {APP_PARAMS_REQUEST.APP_REQUESTS_EXT_WORKGROUP, APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER};
+		String[] names = new String[] {APP_REQUESTS_EXT_WORKGROUP.name(), APP_REQUESTS_EXT_TASK_HOLDER.name()};
 		return AppParamJSON.toJSON(
 			AON.getApplicationParameterStream(domain.getName(), domain.getId(), "",
 				f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().in(names))
@@ -150,8 +153,8 @@ public class ProjectServlet extends AonApiHttpServlet{
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId())
 				.and(f.getProjectTypeProperty().isNotNull());
 		
-		if(api.getParams().opt(IJsonNames.REGISTRY) != null) {
-			Integer registry = JsonUtils.getInteger(api.getParams(), IJsonNames.REGISTRY);
+		if(api.getData().opt(IJsonNames.REGISTRY) != null) {
+			Integer registry = JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY);
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		}
 

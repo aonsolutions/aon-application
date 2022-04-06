@@ -13,30 +13,31 @@ public interface IFiscalModel extends Serializable {
 	int getDomain();
 	String getDomainName();
 	FiscalModelType getModel();
-	
-	IFiscalModelKey getDeclarationTypeKey();
-	double getResult();
-	
 	int getYear();
 	Period getPeriod();
 	Administration getAdministration();
 	FiscalStatus getStatus();
-	
 	boolean isReplacement();
 	boolean isComplementary();
-	
 	String getDocument();
 	String getName();
 	String getSurname();
 	String getFullName();
+	Double getDeclarationResult();
+	FiscalModelDeclarationType getDeclarationResultType();
 	
-	public default Finance getFinance() {
-		return null;
-	}
+	@Deprecated
+	IFiscalModelKey getDeclarationTypeKey();
+	@Deprecated
+	double getResult();
+	@Deprecated
 	public default FiscalModelDeclarationType getDeclarationType() {
 		return null;
 	}
 	
+	public default Finance getFinance() {
+		return null;
+	}
 	public default boolean isFirstPeriod() {
 		return getPeriod() != null && getPeriod().isFirstPeriod();
 	}
@@ -64,20 +65,44 @@ public interface IFiscalModel extends Serializable {
 	public default boolean isAEAT() {
 		return (getAdministration() == Administration.COMMON_TERRITORY);
 	}
+	public default boolean isStrictToDeposit() {
+		return false;
+	};
+	
+	
+	public default boolean canBeSent() {
+		return isFinished() || isCustomerAccepted(); 
+	}
+	public default boolean isNotEditable() {
+		return !isEditable(); 
+	}
+	public default boolean isEditable() {
+		return isPending() || isCustomerRejected(); 
+	}
+	public default boolean isPending() {
+		return getStatus() == FiscalStatus.PENDING;
+	}
 	public default boolean isFinished() {
 		return getStatus() == FiscalStatus.FINISHED;
 	}
 	public default boolean isSent() {
 		return getStatus() == FiscalStatus.SENT;
 	}
-	public default boolean isNotFinished() {
-		return getStatus() != FiscalStatus.FINISHED;
-	}
 	public default boolean isBlocked() {
 		return getStatus() == FiscalStatus.BLOCKED;
 	}
-	public default boolean isStrictToDeposit() {
-		return false;
-	};
+	public default boolean isCustomerCheck() {
+		return getStatus() == FiscalStatus.CUSTOMER_CHECK;
+	}
+	public default boolean isCustomerAccepted() {
+		return getStatus() == FiscalStatus.CUSTOMER_ACCEPTED;
+	}
+	public default boolean isCustomerRejected() {
+		return getStatus() == FiscalStatus.CUSTOMER_REJECTED;
+	}
 	
+	@Deprecated
+	public default boolean isNotFinished() {
+		return isEditable();
+	}
 }

@@ -260,15 +260,15 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		removeAll();
 	}
 
-	@UiHandler("expandAllButton")
-	void onClickExpandAllButton(ClickEvent event ){
-		expandAll();
-	}
-	
-	@UiHandler("collapseAllButton")
-	void onClickCollapseAllButton(ClickEvent event ){
-		collapseAll();
-	}
+//	@UiHandler("expandAllButton")
+//	void onClickExpandAllButton(ClickEvent event ){
+//		expandAll();
+//	}
+////	
+//	@UiHandler("collapseAllButton")
+//	void onClickCollapseAllButton(ClickEvent event ){
+//		collapseAll();
+//	}
 	
 	@UiHandler("certificateFileUpload")
 	void onFileUploadChange(ChangeEvent event) {
@@ -683,7 +683,7 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	}
 
 	protected void newEmployee(AffiliatedNotFound affiliatedNotFound) {
-		
+		init();
 		cccHidden.setValue(affiliatedNotFound.getCcc());
 		nafHidden.setValue(affiliatedNotFound.getNaf());
 		regimeHidden.setValue(affiliatedNotFound.getRegime());
@@ -723,7 +723,7 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 //		AON.start();
 //		employeesFormPanel.submit();
 		
-		
+		init();
 		AON.start();
 		submit(affiliatedNotFound, 
 		results -> {
@@ -1038,10 +1038,13 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 			}
 		};
 		
-		
 		inputDialog.center();
 		inputDialog.show();
 	}
+	
+	protected void init() {}
+	
+	protected void finish() {}
 
 	private static native void export2JS(SistemaREDResults saltraResults) /*-{
 		$wnd.cleanEndDate = $entry(function() {

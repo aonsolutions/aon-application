@@ -19,6 +19,7 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -140,7 +141,7 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONObject removeAttach(Domain domain, String login, JSONObject json) {
-		JSONArray array = json.getJSONArray("id");
+		JSONArray array = json.getJSONArray(IJsonNames.ID);
 		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
 		Integer[] ids = new Integer[array.length()];
 		for(Integer i = 0; i < array.length(); i++) {
@@ -171,11 +172,11 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONObject updateFiles(Domain domain, String login, JSONObject json) {
 		JSONArray documentArray = json.getJSONArray("documents");
-		Integer scopeId = json.opt("scope") != null && !AonStringUtils.isEmpty(json.optString("scope"))? json.optInt("scope") : null;
-		Integer categoryId = json.opt("category") != null && !AonStringUtils.isEmpty(json.optString("category"))? json.optInt("category") : null;
+		Integer scopeId = json.opt(IJsonNames.SCOPE) != null && !AonStringUtils.isEmpty(json.optString(IJsonNames.SCOPE))? json.optInt(IJsonNames.SCOPE) : null;
+		Integer categoryId = json.opt(IJsonNames.CATEGORY) != null && !AonStringUtils.isEmpty(json.optString(IJsonNames.CATEGORY))? json.optInt(IJsonNames.CATEGORY) : null;
 		RegistryAttachmentType rat = RegistryAttachmentType.CORPORATE_IDENTITY;
-		if(json.opt("type") != null) { 
-			String type = json.optString("type");
+		if(json.opt(IJsonNames.TYPE) != null) { 
+			String type = json.optString(IJsonNames.TYPE);
 			if(type.equalsIgnoreCase("asesor")) {
 				rat = RegistryAttachmentType.DOCUMENTAL_ASESOR;
 			} else if(type.equalsIgnoreCase("employee")) {
@@ -184,7 +185,7 @@ public class DocumentalServlet extends HttpServlet{
 		}
 		for (int i = 0; i < documentArray.length(); i++) {
 			JSONObject doc = documentArray.getJSONObject(i);
-			Integer attachId = doc.getInt("id");
+			Integer attachId = doc.getInt(IJsonNames.ID);
 			if(scopeId != null || categoryId != null) {
 				Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.REGISTRY, true);
 				attach.setCategory(categoryId);
@@ -193,8 +194,8 @@ public class DocumentalServlet extends HttpServlet{
 				AON.updateAttach(domain.getName(), domain.getId(), login, attach);				
 			}
 			
-			if(json.opt("tag") != null && !AonStringUtils.isEmpty(json.optString("tag"))) {
-				Integer tagId = json.optInt("tag");
+			if(json.opt(IJsonNames.TAG) != null && !AonStringUtils.isEmpty(json.optString(IJsonNames.TAG))) {
+				Integer tagId = json.optInt(IJsonNames.TAG);
 	        	AON.save(domain, login, new RattachTag()
 	        			.setDomain(domain.getId())
 	        			.setRattach(attachId)
@@ -207,7 +208,7 @@ public class DocumentalServlet extends HttpServlet{
 
 	private JSONObject updateAttachJSON(Domain domain, String login, Integer id, JSONObject json) {
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY, true);
-		attach.setDescription(json.getString("name"));
+		attach.setDescription(json.getString(IJsonNames.NAME));
 		try {
 			attach.setConfidential(json.optBoolean("confidential"));
 		}catch (Exception e) {
@@ -215,7 +216,7 @@ public class DocumentalServlet extends HttpServlet{
 		}
 		
 		if(json.opt("type") != null) { 
-			String type = json.optString("type");
+			String type = json.optString(IJsonNames.TYPE);
 			if(type.equalsIgnoreCase("asesor")) {
 				attach.setType(RegistryAttachmentType.DOCUMENTAL_ASESOR.value());
 			} else if(type.equalsIgnoreCase("employee")) {
@@ -233,17 +234,17 @@ public class DocumentalServlet extends HttpServlet{
 			}
 			attach.setCategory(category);
 		}
-		if(json.opt("scope") != null) {
+		if(json.opt(IJsonNames.SCOPE) != null) {
 			Integer scope;
 			try {
-				scope = json.getInt("scope");
+				scope = json.getInt(IJsonNames.SCOPE);
 			}catch (Exception e) {
-				String scopeStr = json.getString("scope");
+				String scopeStr = json.getString(IJsonNames.SCOPE);
 				scope = !"".equals(scopeStr) ?  Integer.parseInt(scopeStr) : null;
 			}
 			attach.setScope(scope);
 		}
-		if(json.opt("tag") != null || json.opt("tags") != null) {
+		if(json.opt(IJsonNames.TAG) != null || json.opt("tags") != null) {
 			try {
 				JSONArray arr = json.optJSONArray("tags");
 				for (Integer index = 0; index < arr.length(); index++) {
@@ -251,7 +252,7 @@ public class DocumentalServlet extends HttpServlet{
 					AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId(), tagId);
 				}
 			} catch (Exception e) {
-				String tagStr = json.getString("tag");
+				String tagStr = json.getString(IJsonNames.TAG);
 				String[] tags = tagStr.split(",");
 				AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId());
 				for(Integer i = 0; i< tags.length; i++) {
@@ -264,7 +265,7 @@ public class DocumentalServlet extends HttpServlet{
 
 		}
 		AON.updateAttach(domain.getName(), domain.getId(), login, attach);
-		User user = AON.getUser(domain.getName(), domain.getId(), login);
+//		User user = AON.getUser(domain.getName(), domain.getId(), login);
 		//SendNotification.sendGmail(domain, user, attach, false);
 		return ToJSON.attachToJSON(attach);
 	}
@@ -342,7 +343,7 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONObject createCategory(Domain domain, String login, JSONObject json) {
-		Category category = new Category().setName(json.getString("name"))
+		Category category = new Category().setName(json.getString(IJsonNames.NAME))
 				.setType(CategoryType.REGISTRY_ATTACHMENT.value())
 				.setDomain(domain.getId());
 		
@@ -352,7 +353,7 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONObject editCategory(Domain domain, String login, Integer catId, JSONObject json) {
 		Category cat = AON.getCategory(domain.getName(), domain.getId(), login, catId);
-		cat.setName(json.getString("name"));
+		cat.setName(json.getString(IJsonNames.NAME));
 		AON.updateCategory(domain.getName(), domain.getId(), login, cat);
 		return ToJSON.categoryToJSON(cat);
 	}
@@ -379,7 +380,7 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONObject createTag(Domain domain, String login, JSONObject json) {
-		Tag tag = new Tag().setName(json.getString("name"))
+		Tag tag = new Tag().setName(json.getString(IJsonNames.NAME))
 				.setType(TagType.RATTACH.value())
 				.setDomain(domain.getId());
 		
@@ -389,7 +390,7 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONObject editTag(Domain domain, String login, Integer tagId, JSONObject json) {
 		Tag tag = AON.getTag(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(tagId));
-		tag.setName(json.getString("name"));
+		tag.setName(json.getString(IJsonNames.NAME));
 		AON.updateTag(domain.getName(), domain.getId(), login, tag);
 		return ToJSON.tagToJSON(tag);
 	}

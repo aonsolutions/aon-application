@@ -21,11 +21,6 @@ abstract class Model303AEAT extends Model303Base {
 		super(mod303, cbk);
 	}
 
-//	protected void paintIdentificationTab(TabLayoutPanel tabPanel) {
-//		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-//		tabPanel.add(identificationData, AON.MSG.identification());
-//	}
-
 	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {
 		IFiscalModelAdmonPanelCallback<Mod303, Model303ModuleOptions> cbk = 
 				new IFiscalModelAdmonPanelCallback<Mod303, Model303ModuleOptions>() {

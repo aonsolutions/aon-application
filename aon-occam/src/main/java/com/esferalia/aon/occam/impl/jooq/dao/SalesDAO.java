@@ -42,7 +42,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SalesDAO {
@@ -279,7 +279,7 @@ public class SalesDAO {
 	public static Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter){
 		return ctx.getDslContext().select().from(SALES)
 				.where(SALES_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new FullSalesFiller()).filter(distinctByKey(p -> p.getId()));
+			.fetch().stream().map(new SalesFiller()).filter(distinctByKey(p -> p.getId()));
 	}
 	public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
 	    Map<Object,Boolean> seen = new ConcurrentHashMap<>();
@@ -288,7 +288,7 @@ public class SalesDAO {
 	
 	public static Sales getSales(AONContext ctx, SalesFilter filter){
 		return ctx.getDslContext().select().from(SALES).where(SALES_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(SALES).stream().map(new FullSalesFiller()).findFirst().orElse(new Sales());
+				.limit(1).fetchInto(SALES).stream().map(new SalesFiller()).findFirst().orElse(new Sales());
 	}
 	
 	public static Sales getSales(AONContext ctx, Integer salesId){	
@@ -305,12 +305,12 @@ public class SalesDAO {
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.join(SALES).on(SALES_DETAIL.SALES.eq(SALES.ID))
 			.where(SALES_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new FullSalesDetailFiller());
+			.fetch().stream().map(new SalesDetailFiller());
 	}
 	
 	public static SalesDetail getSalesDetail(AONContext ctx, SalesDetailFilter filter){
 		return ctx.getDslContext().select().from(SALES_DETAIL).where(SALES_DETAIL_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(SALES_DETAIL).stream().map(new FullSalesDetailFiller()).findFirst().orElse(new SalesDetail());
+				.limit(1).fetchInto(SALES_DETAIL).stream().map(new SalesDetailFiller()).findFirst().orElse(new SalesDetail());
 	}
 	
 	public static SalesDetail getSalesDetail(AONContext ctx, Integer detailId){	
@@ -514,77 +514,83 @@ public class SalesDAO {
 						.setDescription(record.getValue(ITEM.DESCRIPTION)));
 		}
 	}
-
-
 	
-	private static class FullSalesFiller implements Function<Record, Sales> {
+	private static class SalesFiller extends Filler implements Function<Record, Sales> {
 		
 		@Override
 		public Sales apply(Record r) {
-			Customer customer = new Customer();
-			customer.setId(r.getValue(SALES.CUSTOMER));
-
-			Sales sales = new Sales();
-			sales.setId(r.getValue(SALES.ID));
-			sales.setDomain(r.getValue(SALES.DOMAIN));
-			sales.setProject(r.getValue(SALES.PROJECT));
-			sales.setCustomer(customer);
-			sales.setSeries(r.getValue(SALES.SERIES));
-			sales.setNumber(r.getValue(SALES.NUMBER));
-			sales.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE));
-			sales.setShippingAddress(r.getValue(SALES.SHIPPING_ADDRESS));
-			sales.setSeller(r.getValue(SALES.SELLER));
-			sales.setDiscountExpr(r.getValue(SALES.DISCOUNT_EXPR));
-			sales.setIssueDate(r.getValue(SALES.ISSUE_DATE));
-			sales.setDeliveryDate(r.getValue(SALES.DELIVERY_DATE));
-			sales.setPayMethod(r.getValue(SALES.PAY_METHOD));
-			sales.setDocumentType((int) r.getValue(SALES.DOCUMENT_TYPE));
-			sales.setSecurityLevel((int) r.getValue(SALES.SECURITY_LEVEL));
-			sales.setStatus(SalesStatus.values()[r.getValue(SALES.STATUS)]);
-			sales.setComments(r.getValue(SALES.COMMENTS));
-			sales.setRemarks(r.getValue(SALES.REMARKS));
-			sales.setWorkplace(r.getValue(SALES.WORKPLACE));
-			sales.setScope(r.getValue(SALES.SCOPE));
-			sales.setNumberOfPymnts((int) r.getValue(SALES.NUMBER_OF_PYMNTS));
-			sales.setDaysToFirstPymnt((int) r.getValue(SALES.DAYS_TO_FIRST_PYMNT));
-			sales.setDaysBetweenPymnts((int) r.getValue(SALES.DAYS_BETWEEN_PYMNTS));
-			sales.setPymntDays(r.getValue(SALES.PYMNT_DAYS));
-			sales.setBankAccount(r.getValue(SALES.BANK_ACCOUNT));
-			sales.setBankAlias(r.getValue(SALES.BANK_ALIAS));
-			sales.setBic(r.getValue(SALES.BIC));
-			sales.setPurchaseGenerated(r.getValue(SALES.PURCHASE_GENERATED)==1);
-			sales.setCarrier(r.getValue(SALES.CARRIER));
-			sales.setShippingAlternativeAddress(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS));
-			sales.setShippingAlternativeAddress2(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS2));
-			sales.setShippingAlternativeZip(r.getValue(SALES.SHIPPING_ALTERNATIVE_ZIP));
-			sales.setShippingAlternativeCity(r.getValue(SALES.SHIPPING_ALTERNATIVE_CITY));
-			sales.setShippingAlternativePhone(r.getValue(SALES.SHIPPING_ALTERNATIVE_PHONE));
-			sales.setShippingAlternativeRecipient(r.getValue(SALES.SHIPPING_ALTERNATIVE_RECIPIENT));
-			sales.setShippingContact(r.getValue(SALES.SHIPPING_CONTACT));
-			sales.setShippingPeriod(r.getValue(SALES.SHIPPING_PERIOD)!=null?r.getValue(SALES.SHIPPING_PERIOD).intValue():null);
-			return sales;
+			return build(r);
+		}
+		
+		public static Sales build(Record r) {
+			return new Sales()
+				.setId(getValue(r, SALES.ID))
+				.setDomain(r.getValue(SALES.DOMAIN))
+				.setProject(r.getValue(SALES.PROJECT))
+				.setCustomer(new Customer().setId(r.getValue(SALES.CUSTOMER)))
+				.setSeries(r.getValue(SALES.SERIES))
+				.setNumber(r.getValue(SALES.NUMBER))
+				.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE))
+				.setShippingAddress(r.getValue(SALES.SHIPPING_ADDRESS))
+				.setSeller(r.getValue(SALES.SELLER))
+				.setDiscountExpr(r.getValue(SALES.DISCOUNT_EXPR))
+				.setIssueDate(r.getValue(SALES.ISSUE_DATE))
+				.setDeliveryDate(r.getValue(SALES.DELIVERY_DATE))
+				.setPayMethod(r.getValue(SALES.PAY_METHOD))
+				.setDocumentType((int) r.getValue(SALES.DOCUMENT_TYPE))
+				.setSecurityLevel((int) r.getValue(SALES.SECURITY_LEVEL))
+				.setStatus(SalesStatus.values()[r.getValue(SALES.STATUS)])
+				.setComments(r.getValue(SALES.COMMENTS))
+				.setRemarks(r.getValue(SALES.REMARKS))
+				.setWorkplace(r.getValue(SALES.WORKPLACE))
+				.setScope(r.getValue(SALES.SCOPE))
+				.setNumberOfPymnts((int) r.getValue(SALES.NUMBER_OF_PYMNTS))
+				.setDaysToFirstPymnt((int) r.getValue(SALES.DAYS_TO_FIRST_PYMNT))
+				.setDaysBetweenPymnts((int) r.getValue(SALES.DAYS_BETWEEN_PYMNTS))
+				.setPymntDays(r.getValue(SALES.PYMNT_DAYS))
+				.setBankAccount(r.getValue(SALES.BANK_ACCOUNT))
+				.setBankAlias(r.getValue(SALES.BANK_ALIAS))
+				.setBic(r.getValue(SALES.BIC))
+				.setPurchaseGenerated(r.getValue(SALES.PURCHASE_GENERATED)==1)
+				.setCarrier(r.getValue(SALES.CARRIER))
+				.setShippingAlternativeAddress(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS))
+				.setShippingAlternativeAddress2(r.getValue(SALES.SHIPPING_ALTERNATIVE_ADDRESS2))
+				.setShippingAlternativeZip(r.getValue(SALES.SHIPPING_ALTERNATIVE_ZIP))
+				.setShippingAlternativeCity(r.getValue(SALES.SHIPPING_ALTERNATIVE_CITY))
+				.setShippingAlternativePhone(r.getValue(SALES.SHIPPING_ALTERNATIVE_PHONE))
+				.setShippingAlternativeRecipient(r.getValue(SALES.SHIPPING_ALTERNATIVE_RECIPIENT))
+				.setShippingContact(r.getValue(SALES.SHIPPING_CONTACT))
+				.setShippingPeriod(r.getValue(SALES.SHIPPING_PERIOD)!=null?r.getValue(SALES.SHIPPING_PERIOD).intValue():null);
+				
 		}
 	}
+
 	
-	private static class FullSalesDetailFiller implements Function<Record, SalesDetail> {
-		
+	private static class SalesDetailFiller extends Filler implements Function<Record, SalesDetail> {
+
 		@Override
 		public SalesDetail apply(Record r) {
-			SalesDetail detail = new SalesDetail();
-			detail.setId(r.getValue(SALES_DETAIL.ID));
-			detail.setDomain(r.getValue(SALES_DETAIL.DOMAIN));
-			detail.setSales(new Sales().setId(r.getValue(SALES_DETAIL.SALES)));
-			detail.setItem(new OldItem().setId(r.getValue(SALES_DETAIL.ITEM)));
-			detail.setLine(r.getValue(SALES_DETAIL.LINE));
-			detail.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION));
-			detail.setQuantity(r.getValue(SALES_DETAIL.QUANTITY));
-			detail.setPrice(r.getValue(SALES_DETAIL.PRICE));
-			detail.setDiscountExpression(r.getValue(SALES_DETAIL.DISCOUNT_EXPR));
-			detail.setTaxes(r.getValue(SALES_DETAIL.TAXES));
-			detail.setStatus(SalesDetailStatus.values()[r.getValue(SALES_DETAIL.STATUS)]);
-			detail.setOfferDetail(r.getValue(SALES_DETAIL.OFFER_DETAIL));
-			detail.setDelivered(r.getValue(SALES_DETAIL.DELIVERED));
-			return detail;
+			return build(r);
 		}
+	
+		public static SalesDetail build(Record r) {
+			return new SalesDetail()
+				.setId(r.getValue(SALES_DETAIL.ID))
+				.setDomain(r.getValue(SALES_DETAIL.DOMAIN))
+				.setSales(checkField(r, SALES.ID) 
+					? SalesFiller.build(r) 
+					: new Sales().setId(r.getValue(SALES_DETAIL.SALES)))
+				.setItem(new OldItem().setId(r.getValue(SALES_DETAIL.ITEM)))
+				.setLine(r.getValue(SALES_DETAIL.LINE))
+				.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION))
+				.setQuantity(r.getValue(SALES_DETAIL.QUANTITY))
+				.setPrice(r.getValue(SALES_DETAIL.PRICE))
+				.setDiscountExpression(r.getValue(SALES_DETAIL.DISCOUNT_EXPR))
+				.setTaxes(r.getValue(SALES_DETAIL.TAXES))
+				.setStatus(SalesDetailStatus.values()[r.getValue(SALES_DETAIL.STATUS)])
+				.setOfferDetail(r.getValue(SALES_DETAIL.OFFER_DETAIL))
+				.setDelivered(r.getValue(SALES_DETAIL.DELIVERED));
+		}
+	
 	}
 }

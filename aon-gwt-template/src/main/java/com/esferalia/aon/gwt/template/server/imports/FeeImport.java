@@ -140,7 +140,7 @@ public class FeeImport extends Import {
 			return;
 		}
 		
-		if(IConstants.FECHA_FACTURACION.equalsIgnoreCase(title) || IConstants.FECHA_FACTURACIÓN.equalsIgnoreCase(title)) {
+		if(IConstants.FECHA_FACTURACION.equalsIgnoreCase(title) || IConstants.FECHA_FACTURACION2.equalsIgnoreCase(title)) {
 			fee.setBillingDate(parseDate(cell, o));
 			return;
 		}
@@ -160,8 +160,8 @@ public class FeeImport extends Import {
 			return;
 		}
 		
-		if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACIÓN.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)
-				|| IConstants.GRUPO_DE_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_DE_FACTURACIÓN.equalsIgnoreCase(title)) {
+		if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACION2.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)
+				|| IConstants.GRUPO_DE_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_DE_FACTURACION2.equalsIgnoreCase(title)) {
 			fee.getInvoicingGroup().setDescription(o.toString());
 			return;
 		}
@@ -171,7 +171,7 @@ public class FeeImport extends Import {
 			return;
 		}
 		
-		if(IConstants.DESCRIPCION.equalsIgnoreCase(title) || IConstants.DESCRIPCIÓN.equalsIgnoreCase(title)) {
+		if(IConstants.DESCRIPCION.equalsIgnoreCase(title) || IConstants.DESCRIPCION2.equalsIgnoreCase(title)) {
 			fee.setDescription(o.toString());
 			return;
 		}
@@ -196,19 +196,19 @@ public class FeeImport extends Import {
 			return;
 		}
 		
-		if(IConstants.CODIGO_DE_BARRAS.equalsIgnoreCase(title) || IConstants.CÓDIGO_DE_BARRAS.equalsIgnoreCase(title) || IConstants.BARCODE.equalsIgnoreCase(title)
-				|| IConstants.CODIGO_BARRAS.equalsIgnoreCase(title) || IConstants.CÓDIGO_BARRAS.equalsIgnoreCase(title)) {
+		if(IConstants.CODIGO_DE_BARRAS.equalsIgnoreCase(title) || IConstants.CODIGO_DE_BARRAS2.equalsIgnoreCase(title) || IConstants.BARCODE.equalsIgnoreCase(title)
+				|| IConstants.CODIGO_BARRAS.equalsIgnoreCase(title) || IConstants.CODIGO_BARRAS2.equalsIgnoreCase(title)) {
 			fee.getItem().setBarcode(o.toString());
 			return;
 		}
 		
-		if(IConstants.NÚMERO_DE_SERIE.equalsIgnoreCase(title) || IConstants.NUMERO_DE_SERIE.equalsIgnoreCase(title) || IConstants.SERIAL_NUMBER.equalsIgnoreCase(title)
-				|| IConstants.NÚMERO_SERIE.equalsIgnoreCase(title) || IConstants.NUMERO_SERIE.equalsIgnoreCase(title)) {
+		if(IConstants.NUMERO_DE_SERIE2.equalsIgnoreCase(title) || IConstants.NUMERO_DE_SERIE.equalsIgnoreCase(title) || IConstants.SERIAL_NUMBER.equalsIgnoreCase(title)
+				|| IConstants.NUMERO_SERIE2.equalsIgnoreCase(title) || IConstants.NUMERO_SERIE.equalsIgnoreCase(title)) {
 			fee.getItem().setSerialNumber(o.toString());
 			return;
 		}
 		
-		if(IConstants.LINEA.equalsIgnoreCase(title) || IConstants.LÍNEA.equalsIgnoreCase(title)) {
+		if(IConstants.LINEA.equalsIgnoreCase(title) || IConstants.LINEA2.equalsIgnoreCase(title)) {
 			fee.setLine(parseShort(o));
 			return;
 		}

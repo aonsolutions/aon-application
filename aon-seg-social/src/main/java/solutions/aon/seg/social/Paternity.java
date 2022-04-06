@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,21 +37,27 @@ import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.object.PaternityCertificate;
+import solutions.aon.seg.social.object.PaternityCertificate.ApplicantType;
 import solutions.aon.seg.social.object.PaternityDetail;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class Paternity {
+	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testPaternity.html");
+	
+	private Paternity() {
+		 throw new IllegalStateException("Utility class");
+	}
+	 
 	private static String DATE_FORMAT = "dd/MM/yyyy";
 	
-	// M -> Madre, P -> 'Otro progenitor', A -> Primer adoptante, B -> Segundo
+	static final String ADOPTERS = "Adopción/Tutela/Acogimiento";
+	static final String BASE_URL = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100";
 
-	final static String ADOPTERS = "Adopción/Tutela/Acogimiento";
-
-	public static boolean grabarCertificado(final InputStream certificateInputStream, final String certificatePassword,
+	public static boolean sendPaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
-			final String contributionAccount, final String docType, final String docNum, final String applicantType,
-			final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
+			final String contributionAccount, final String docNum, PaternityCertificate.ApplicantType applicantType,
+			PaternityCertificate.ReasonType reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP,
 			final int days) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -62,55 +69,65 @@ public class Paternity {
 							+ ".SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100")
 					.click();
 			HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
-
+			
 			// REGIME
 			formDatos.getInputByName("regimen").setValueAttribute(regime);
 			// CCC
-			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+			String[] cccArr = Toolkit.SplitString(contributionAccount, 2);
+			formDatos.getInputByName("ccc2").setValueAttribute(cccArr[0]);
+			formDatos.getInputByName("ccc9").setValueAttribute(cccArr[1]);
 			// NAF
-			formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			String[] nssArr = Toolkit.SplitString(affiliationNumber, 2);
+			formDatos.getInputByName("naf2").setValueAttribute(nssArr[0]);
+			formDatos.getInputByName("naf10").setValueAttribute(nssArr[1]);
 			// ID TYPE
-			HtmlSelect idTypeSelect = formDatos.getSelectByName("tipoIpf");
-			idTypeSelect.getOptionByText(docType).setSelected(true);
+			HtmlSelect idTypeSelect = htmlPage.querySelector("select[name=tipoIpf]");
+			idTypeSelect.setSelectedAttribute(Toolkit.getIdentityType(docNum), true);
 			// ID NUM
 			formDatos.getInputByName("codIpf").setValueAttribute(docNum);
 			// APPLICANT TYPE
 			HtmlSelect applicantTypeSelect = formDatos.getSelectByName("tipoPrestacion");
-			applicantTypeSelect.getOptionByValue(applicantType).setSelected(true);
+			applicantTypeSelect.setSelectedAttribute(applicantType.getValueTGSS(), true);
 			// REASON
-			HtmlSelect reasonSelect = formDatos.getSelectByName("motivoMadreBiologica");
-			reasonSelect.getOptionByText(reason).setSelected(true);
+			String reasonNameInput = "motivoMadreBiologica";
+			if(applicantType.equals(ApplicantType.OTRO_PROGENITOR)) {
+				reasonNameInput = "motivoOtroProgenitor";
+			} else if(Arrays.asList(ApplicantType.PRIMER_ADOPTANTE, ApplicantType.SEGUNDO_ADOPTANTE).contains(applicantType) ) {
+				reasonNameInput = "motivoAdoptantes";
+			}
+			HtmlSelect reasonSelect = formDatos.getSelectByName(reasonNameInput);
+		
+			reasonSelect.setSelectedAttribute(reason.getValueTGSS(), true);
 			// START DATE
-			formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
-
+			Toolkit.formatDate(dateFrom, DATE_FORMAT).ifPresent(date->
+				formDatos.getInputByName("fechaInicio").setValueAttribute(date)
+			);
 			// SUBMIT
 			htmlPage = formDatos.getInputByValue("Validar").click();
-
+			checkErrors(htmlPage);
+			
 			// GOES TO THE CONFIRM PAGE
 			HtmlForm formDatos2 = (HtmlForm) htmlPage.getElementById("formDatos");
+		
 			// END DATE
-			formDatos2.getInputByName("fechaFinPeriodo1")
-					.setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
+			Toolkit.formatDate(dateTo, DATE_FORMAT).ifPresent(date-> 
+				formDatos2.getInputByName("fechaFinPeriodo1").setValueAttribute(date)
+			);
+			
 			// BASE CC
 			formDatos2.getInputByName("baseCC1").setValueAttribute("" + Float.toString(baseCC).replace(".", ","));
 			formDatos2.getInputByName("baseCP1").setValueAttribute("" + Float.toString(baseCP).replace(".", ","));
 			formDatos2.getInputByName("prestacion1").setValueAttribute("" + days);
+		
 			// CONFIRM
 			htmlPage = formDatos2.getInputByValue("Confirmar").click();
-
+			checkErrors(htmlPage);
 			try {
 				HtmlHeading3 h3 = htmlPage.querySelector("#ARQcapaPrincipalPest>h3");
-				if (h3.getVisibleText().equalsIgnoreCase("Resumen del certificado")) {
-					return true;
-				} else {
-					return false;
-				}
+				return h3!=null && h3.getVisibleText().contains("Resumen del certificado");
 			} catch (ElementNotFoundException | NullPointerException e) {
 				throw new SegSocialException();
 			}
-
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
@@ -124,15 +141,14 @@ public class Paternity {
 
 	}
 
-	public static void voidPaternity(final InputStream certificateInputStream, final String certificatePassword,
+	public static void removePaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,
 			final String ccc, final Date dateFrom, final Date dateTo, final Optional<Date> startDate)
 			throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
+			HtmlPage htmlPage = webClient.getPage(BASE_URL);
 			// MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
 			HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
 			htmlPage = formDatos.getInputByValue("Modificar/Anular certificado").click();
@@ -165,7 +181,7 @@ public class Paternity {
 				htmlPage = htmlPage.getElementById("isn" + rows).click();
 				HtmlPage htmlAux = formDatos.getInputByValue("Anular").click();
 				htmlAux = htmlAux.getElementById("SPM.ACC.AC_GE_ANULAR").click();
-
+				checkErrors(htmlPage);
 			} catch (NullPointerException | ElementNotFoundException e) {
 				checkErrors(htmlPage);
 			}
@@ -202,46 +218,53 @@ public class Paternity {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
+			HtmlPage htmlPage = webClient.getPage(BASE_URL);
 			
-			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
+			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
 			
-			htmlPage = ((HtmlSubmitInput)formDatos.getInputByName("SPM.ACC.AC_TAB2")).click();
+			htmlPage = ((HtmlSubmitInput)form.getInputByName("SPM.ACC.AC_TAB2")).click();
 			checkErrors(htmlPage);		
 			
-			formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
+			HtmlForm formD = (HtmlForm) htmlPage.getElementById("formDatos");
 
-			formDatos.getInputByName("regimen").setValueAttribute(regime);
-			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
-			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
-			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
+			formD.getInputByName("regimen").setValueAttribute(regime);
+			formD.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+			formD.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+			Toolkit.formatDate(dateFrom, DATE_FORMAT).ifPresent(date-> 
+				formD.getInputByName("fechaDesde").setValueAttribute(date)
+			);
+			
+			Toolkit.formatDate(dateTo, DATE_FORMAT).ifPresent(date->
+				formD.getInputByName("fechaHasta").setValueAttribute(date)
+			);
+	
 			// NAF
 			if(nss.isPresent()) {
 				String[] naf = Toolkit.SplitString(nss.get(), 2);
-				formDatos.getInputByName("naf2").setValueAttribute(naf[0]);
-				formDatos.getInputByName("naf10").setValueAttribute(naf[1]);
+				formD.getInputByName("naf2").setValueAttribute(naf[0]);
+				formD.getInputByName("naf10").setValueAttribute(naf[1]);
 			}
 			
 			// START DATE (OPTIONAL)
 			if (!startDate.isEmpty()) 
-				formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
+				formD.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
 
 			// SUBMIT
-			htmlPage = formDatos.getInputByValue("Buscar").click();
+			htmlPage = formD.getInputByValue("Buscar").click();
 			checkErrors(htmlPage);
-
-			// CHECKING IF THE PAGE THREW RESULTS
-			try {
-				
-				ArrayList<PaternityCertificate> paternityCertificates = new ArrayList<>();
-				
+			
+			ArrayList<PaternityCertificate> paternityCertificates = new ArrayList<>();
+			
+			DomNode exist = htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
+			
+			if(exist!=null) {
+				// CHECKING IF THE PAGE THREW RESULTS
 				boolean last = false;
 	
 				while (!last) {
 					ArrayList<PaternityCertificate> certificates = new ArrayList<>();
 					int i = 0;
-					formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
+					HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
 					HtmlTable table = (HtmlTable) formDatos.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
 
 					for (final HtmlTableRow row : table.getRows()) {
@@ -263,7 +286,7 @@ public class Paternity {
 										setDataGeneral(htmlAux, pcb);
 										setDataBases(htmlAux, pcb);
 										setDataDetail(htmlAux, pcb);
-//										setPdf(htmlAux, pcb);
+//											setPdf(htmlAux, pcb);
 									} catch (IOException e) {
 										e.printStackTrace();
 									}
@@ -284,12 +307,9 @@ public class Paternity {
 					}
 					paternityCertificates.addAll(certificates);
 				}
-				
-//				Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testPaternity.html");
-				return paternityCertificates.stream().sorted((o1, o2)-> o1.getStartDate().compareTo(o2.getStartDate())).collect(Collectors.toList());
-			} catch (NullPointerException | ElementNotFoundException e) {
-				checkErrors(htmlPage);
 			}
+	
+			return paternityCertificates.stream().sorted((o1, o2)-> o1.getStartDate().compareTo(o2.getStartDate())).collect(Collectors.toList());
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
@@ -321,10 +341,8 @@ public class Paternity {
 		if(!receptionStr.isEmpty())
 			pcb.setReceptionDate(Toolkit.parseDate(receptionStr, DATE_FORMAT));
 		
-		if(row.getCell(6).getVisibleText().contains("Anulado")) {
+		if(row.getCell(6).getVisibleText().contains("Anulado")) 
 			pcb.setCanceled(true);
-		}
-		
 	}
 	
 
@@ -366,20 +384,20 @@ public class Paternity {
 		}
 	}
 	
-	private static void setPdf(HtmlPage htmlPage, PaternityCertificate pcb) {
-		try {
-			htmlPage = htmlPage.getElementById("SPM.ACC.AC_CO_INFORME").click();
-
-			HtmlButton docButton = htmlPage.querySelector("button[class='botonDesplegable desplegar']");
-			htmlPage = docButton.click();
-			HtmlAnchor docAnchor = htmlPage.querySelector("a[title='Informe:Anulación de certificado de Otro progenitor (Nacimiento de hijo)']");
-			
-			InputStream is = docAnchor.click().getWebResponse().getContentAsStream();
-			byte[] pdf = is.readAllBytes();
-			pcb.setPdf(pdf);		
-			is.close();
-		} catch (Exception e) {}
-	}
+//	private static void setPdf(HtmlPage htmlPage, PaternityCertificate pcb) {
+//		try {
+//			htmlPage = htmlPage.getElementById("SPM.ACC.AC_CO_INFORME").click();
+//
+//			HtmlButton docButton = htmlPage.querySelector("button[class='botonDesplegable desplegar']");
+//			htmlPage = docButton.click();
+//			HtmlAnchor docAnchor = htmlPage.querySelector("a[title='Informe:Anulación de certificado de Otro progenitor (Nacimiento de hijo)']");
+//			
+//			InputStream is = docAnchor.click().getWebResponse().getContentAsStream();
+//			byte[] pdf = is.readAllBytes();
+//			pcb.setPdf(pdf);		
+//			is.close();
+//		} catch (Exception e) {}
+//	}
 
 	private static void setDataGeneral(HtmlPage htmlPage, PaternityCertificate pcb) {
 		htmlPage.querySelectorAll("fieldset dt").forEach(dt->{
@@ -439,8 +457,7 @@ public class Paternity {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-			HtmlPage htmlPage = webClient.getPage(
-					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
+			HtmlPage htmlPage = webClient.getPage(BASE_URL);
 			// MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
 			HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
 			htmlPage = formDatos.getInputByValue("Consultar certificado").click();
@@ -503,7 +520,7 @@ public class Paternity {
 
 	private static void checkErrors(HtmlPage htmlPage) throws InvalidDataException {
 		DomNode errors = htmlPage.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
-		if (errors != null)
+		if (errors != null && !errors.getVisibleText().contains("NO HAY DATOS"))
 			throw new InvalidDataException(errors.getVisibleText());
 	}
 }

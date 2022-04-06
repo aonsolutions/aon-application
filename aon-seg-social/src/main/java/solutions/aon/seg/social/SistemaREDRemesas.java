@@ -30,7 +30,7 @@ import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
 import solutions.aon.seg.social.exception.invalid.PendingProcessesException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
-import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.InvalidCccException;
 import solutions.aon.seg.social.exception.invalid.outOfTimeException;
 import solutions.aon.seg.social.object.*;
 import solutions.aon.seg.social.object.BankData.BankDataBuilder;
@@ -260,7 +260,7 @@ class SistemaREDRemesas {
 				throw new NotExistingYetException(error);
 			}
 			else if(error.toUpperCase().contains("C.C.C. ERRÓNEO")) {
-				throw new invalidCccException(error);
+				throw new InvalidCccException(error);
 			}
 			else if(error.toUpperCase().contains("NO EXISTE LIQUIDACIÓN")) {
 				throw new LiquidationDoesNotExist(error);

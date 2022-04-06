@@ -3,8 +3,11 @@ package com.esferalia.aon.occam.api.json;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.stream.Stream;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 

@@ -4,6 +4,7 @@ import static com.esferalia.aon.occam.api.model.type.ContractLeaveType.MATERNIDA
 import static com.esferalia.aon.occam.api.model.type.ContractLeaveType.PATERNIDAD;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -23,10 +24,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
-import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.Properties.ContractLeaveProperties;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.occam.api.model.type.Gender;
@@ -34,6 +34,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 import solutions.aon.seg.social.Paternity;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.PaternityCertificate;
 
 public class ITStatusUtils {
@@ -48,41 +49,43 @@ public class ITStatusUtils {
 		
 		Date startDate = getFirstDateOfMonth(AonDateUtils.addMonths(new Date(), -1));
 		Date endDate = new Date();
-		
-		AndEmployeeITStatus employeeITStatus = new AndEmployeeITStatus();
-		
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
-		List<CCCInfo> cccs = ITComunica.getCccs(domain);
-		  
-		for ( CCCInfo ccc: cccs ) {
+		try {
+			AndEmployeeITStatus employeeITStatus = new AndEmployeeITStatus();
+			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
+
+			List<CCCInfo> cccs = ITComunica.getCccs(domain);
+			  
+			for ( CCCInfo ccc: cccs ) {
+				try {
+					Thread threadOne = new Thread(() -> {
+						employeeITStatus.and( compareComun(domain, certificate, startDate, endDate, ccc) );
+					});
+					Thread threadTwo = new Thread(() -> {
+						employeeITStatus.and( comparePaternity(domain, user, certificate, startDate, endDate, ccc) );
+					});
 			
-			Thread threadOne = new Thread(() -> {
-				employeeITStatus.and( compareComun(domain, certificate, startDate, endDate, ccc) );
-			});
-			Thread threadTwo = new Thread(() -> {
-				employeeITStatus.and( comparePaternity(domain, user, certificate, startDate, endDate, ccc) );
-			});
+					threadOne.start();
+					threadTwo.start();
+					threadOne.join();
+					threadTwo.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 			
 			try {
-				threadOne.start();
-				threadTwo.start();
-				threadOne.join();
-				threadTwo.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+				EnterpriseITStatus.isUp2Date(employeeITStatus); 
+				employeeITStatus.and(new EnterpriseITStatus.Up2Date());
+			} catch ( OutOfDateException e ) {}
+			
+			employeeITStatus.and(new EnterpriseITStatus.onFinish());
+			EnterpriseITStatus.trace(employeeITStatus);
+			return employeeITStatus;
+		} catch (CertificateNotFoundException e) {
+			return new EnterpriseITStatus.CredentialsNotFound();
+		} catch (Exception e) {
+			return new EnterpriseITStatus.UnknownError().setMessage(e.getMessage());
 		}
-		
-		try {
-			EnterpriseITStatus.isUp2Date(employeeITStatus); 
-			employeeITStatus.and(new EnterpriseITStatus.Up2Date());
-		} catch ( OutOfDateException e ) {}
-		
-		employeeITStatus.and(new EnterpriseITStatus.onFinish());
-		
-		EnterpriseITStatus.trace(employeeITStatus);
-		
-		return employeeITStatus;		
 	}
 	
 	private static AndEmployeeITStatus compareComun(Domain domain, Certificate certificate, Date startDate, Date endDate, CCCInfo ccc) {
@@ -91,16 +94,16 @@ public class ITStatusUtils {
 			logger.info("compareComun");
 			List<EmployeeIT> ssIts = getITFromTGSS(certificate, startDate, endDate, ccc);
 			
-			if(!ssIts.isEmpty()) {
-				List<EmployeeIT> aonEmployeesIT = getITFromAon(domain, ssIts.get(0).getStartDate(), endDate, ccc, false);
-
-				logger.info("------------------NO EXIST EN AON COMUN------------------");
-				compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain);	//NO EXIST EN AON
-	
-				logger.info("------------------NO EXIST EN SS COMUN------------------");
-				compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
-			}
+			Date start = ssIts.isEmpty() ? startDate :  ssIts.get(0).getStartDate();
 			
+			List<EmployeeIT> aonEmployeesIT = getITFromAon(domain, start, endDate, ccc, false);
+
+			logger.info("------------------NO EXIST EN AON COMUN------------------");
+			compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain);	//NO EXIST EN AON
+
+			logger.info("------------------NO EXIST EN SS COMUN------------------");
+			compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -112,61 +115,63 @@ public class ITStatusUtils {
 		try {
 			logger.info("comparePaternity");
 
-			List<EmployeeIT> paternitys = getITFromTGSSPaternity(domain, user, certificate, startDate, endDate, ccc, Optional.empty());
+			List<EmployeeIT> ssIts = getITFromTGSSPaternity(domain, user, certificate, startDate, endDate, ccc, Optional.empty());
 			
-			if(!paternitys.isEmpty()) {
-				List<EmployeeIT> aonEmployeesIT = getITFromAon(domain, paternitys.get(0).getStartDate(), endDate, ccc, true);
-				logger.info("------------------NO EXIST EN AON PATERNITY------------------");
-				compareEmployeesITs(aonEmployeesIT, paternitys, employeeITStatus, domain);	//NO EXIST EN AON
+			Date start = ssIts.isEmpty() ? startDate :  ssIts.get(0).getStartDate();
+			
+			List<EmployeeIT> aonEmployeesIT = getITFromAon(domain, start, endDate, ccc, true);
+			logger.info("------------------NO EXIST EN AON PATERNITY------------------");
+			compareEmployeesITs(aonEmployeesIT, ssIts, employeeITStatus, domain);	//NO EXIST EN AON
 
-				logger.info("------------------NO EXIST EN SS PATERNITY------------------");
-				compareEmployeesITs(paternitys, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
-			}
-			
+			logger.info("------------------NO EXIST EN SS PATERNITY------------------");
+			compareEmployeesITs(ssIts, aonEmployeesIT, employeeITStatus, domain); //NO EXIST EN SS
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return employeeITStatus;
 	}
 	
-	private static List<EmployeeIT> getITFromTGSS(Certificate certificate, Date startDate, Date endDate, CCCInfo ccc) {
+	private static List<EmployeeIT> getITFromAon(Domain domain, Date startDate, Date endDate, CCCInfo ccc, boolean paternity) {
+		Byte[] types = new Byte[] {MATERNIDAD.value(), PATERNIDAD.value()};
+
+		return AON.getEmployeesIT(domain, new User(), f-> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getStartDateProperty().ge(convertDateSql(startDate)).and(f.getStartDateProperty().le(convertDateSql(endDate))))
+			.and(f.getCCCProperty().eq(ccc.getCccAccount()))
+			.and(
+				paternity ? 
+				f.getTypeProperty().in(types) :
+				f.getTypeProperty().notIn(types)
+			)
+		)
+		.collect(Collectors.toList());
+	} 
+	
+	//COMUN
+	private static List<EmployeeIT> getITFromTGSS(Certificate certificate, Date startDate, Date endDate, CCCInfo ccc) throws SegSocialException {
 		List<EmployeeIT> ssIts = new ArrayList<>();
-		try {
-		
-			SistemaRED.getIts(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-					ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, Optional.empty()).forEach(it-> ssIts.add(ITParse.parseTGSSToAon(it)));
-			if(!ssIts.isEmpty() && ssIts.get(0).getStartDate()!=null)
-				return ssIts;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+
+		SistemaRED.getIts(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+				ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, Optional.empty()).forEach(it-> ssIts.add(ITParse.parseTGSSToAon(it)));
 
 		return ssIts;
 	} 
 	
-	private static List<EmployeeIT> getITFromAon(Domain domain, Date startDate, Date endDate, CCCInfo ccc, boolean paternity) {
-		return AON.getEmployeesIT(domain, new User(), f-> getFilter(f, domain, startDate, endDate, ccc, paternity))
-		.collect(Collectors.toList());
-	} 
-
 	//PATERNITY
-	public static List<EmployeeIT> getITFromTGSSPaternity(Domain domain, User user, Certificate certificate, Date startDate, Date endDate, CCCInfo ccc, Optional<String>nssOpt) {
+	private static List<EmployeeIT> getITFromTGSSPaternity(Domain domain, User user, Certificate certificate, Date startDate, Date endDate, CCCInfo ccc, Optional<String>nssOpt) throws SegSocialException, InterruptedException, IOException {
 		List<EmployeeIT> ssIts = new ArrayList<>();
-		try {			
 
-			List<PaternityCertificate> paternitys = Paternity.getPaternitys(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-					 ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, nssOpt, Optional.empty()
-			).stream().distinct().filter(p-> !p.getCanceled()).collect(Collectors.toList());
-			
-			if(!paternitys.isEmpty()) {
-				setEmployeeData(domain, user, paternitys);
-				paternitys.forEach(paternity->{
-					ssIts.add( ITParse.parsePaternityTGSSToAon(paternity).setDomain(domain.getId()) );
-				});
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		List<PaternityCertificate> paternitys = Paternity.getPaternitys(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+				 ccc.getCccRegimeCode(), ccc.getCccAccount(), startDate, endDate, nssOpt, Optional.empty()
+		).stream().distinct().filter(p-> !p.getCanceled()).collect(Collectors.toList());
+		
+		if(!paternitys.isEmpty()) {
+			setEmployeeData(domain, user, paternitys);
+			paternitys.stream().filter(p-> p.getWorkerNif().isPresent()) .forEach(paternity->{
+				ssIts.add( ITParse.parsePaternityTGSSToAon(paternity).setDomain(domain.getId()) );
+			});
 		}
+
 		return ssIts;
 	} 
 	
@@ -186,14 +191,11 @@ public class ITStatusUtils {
 				Optional<EmployeeITPart> ssITAlta = second.getItAlta();
 
 				List<EmployeeIT> first = firstList.stream().filter(e->e.getNss().equals(second.getNss())).collect(Collectors.toList());
-					
 				if(!ssITBaja.isEmpty()) {
 					Optional<EmployeeIT> exist = first.stream()
 					.filter(e-> !e.getItBaja().isEmpty() && e.getItBaja().get().getDate().equals(ssITBaja.get().getDate()))
 					.findFirst();
-					
-					if(!exist.isEmpty()) {
-					
+					if(!exist.isEmpty()) {					
 						second.setType(exist.get().getType());
 						if(ssITBaja.get().getId()!=null && !ssITBaja.get().getStatus().equals(ContractLeaveDetailStatus.PROCESSED)) {
 							ssITBaja.get().setStatus(ContractLeaveDetailStatus.PROCESSED);
@@ -276,11 +278,13 @@ public class ITStatusUtils {
 		if(!list.isEmpty()) {
 			String[] nssAll = list.stream().map(p-> p.getWorkerNaf().get()).toArray(String[]::new);
 			
-			AON.getPersonList(domain.getName(), domain.getId(), user.getLogin(), f->f.getSocialSecurityNumProperty().in(nssAll)).forEach(person->{
+			AON.getPersonList(domain.getName(), domain.getId(), user.getLogin(), f->f.getDocumentProperty().isNotNull().and(f.getSocialSecurityNumProperty().in(nssAll)))
+			.forEach(person->{
 				paternitys
 				.stream()
-				.filter(n-> n.getWorkerNaf().get().contentEquals(person.getSocialSecurityNum()))
+				.filter(p-> p.getWorkerNaf().isPresent() && p.getWorkerNaf().get().equals(person.getSocialSecurityNum()) )
 				.forEach(p-> {
+					System.out.println(person.getName()+", "+person.getDocument());
 					Gender gender = person.getGender();
 					p.setWorkerName(person.getName())
 					.setWorkerNif(person.getDocument())
@@ -301,25 +305,15 @@ public class ITStatusUtils {
 	private static java.sql.Date convertDateSql(Date utilDate) {
 		return new java.sql.Date(utilDate.getTime());
 	}
-	
-	private static Filter getFilter( ContractLeaveProperties f, Domain domain, Date startDate, Date endDate, CCCInfo ccc, boolean paternity) {
-		Byte[] types = new Byte[] {MATERNIDAD.value(), PATERNIDAD.value()};
 		
-		Filter filter = f.getDomainProperty().eq(domain.getId())
-				.and(f.getStartDateProperty().ge(convertDateSql(startDate)).and(f.getStartDateProperty().le(convertDateSql(endDate))))
-				.and(f.getCCCProperty().eq(ccc.getCccAccount()));
-		if(paternity) {
-			filter = filter.and(f.getTypeProperty().in(types));
-		} else {
-			filter = filter.and(f.getTypeProperty().notIn(types));
-		}
-		return filter;
-	}
-	
 	private static Date getFirstDateOfMonth(Date date){
 	     Calendar cal = Calendar.getInstance();
 	     cal.setTime(date);
 	     cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
 	     return cal.getTime();
 	 }
+	
+//	private static Date getDateBefore(Date date1, Date date2) {
+//		return date1.compareTo(date2) < 0  ? date1 : date2;
+//	}
 }

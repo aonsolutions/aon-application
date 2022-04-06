@@ -29,6 +29,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -190,6 +191,11 @@ public abstract class EmployeeDraft extends Composite {
 		public void onContractRLCEChange(String rlce) {
 			employeeDraftObject.setContractRlce(rlce);
 		}
+		
+		@Override
+		public void onContractEmployeesColectiveChange(String employeesColective) {
+			employeeDraftObject.setContractEmployeesColective(employeesColective);
+		}
 
 		@Override
 		public void onContractJourneyTypeChange(Boolean journeyType) {
@@ -290,6 +296,11 @@ public abstract class EmployeeDraft extends Composite {
 			employeeDraftObject.setEmployeeBankAlias(bankAlias);
 			employeeDraftObject.setEmployeeBIC(bankSwift);
 		}
+
+		@Override
+		public void fireError(String title, String message) {
+			showError(title, message);
+		}
 	}
 	
 	// ------------------------------------------------- UiBinder
@@ -331,14 +342,13 @@ public abstract class EmployeeDraft extends Composite {
 		public void execute() {
 			showTa();
 		}
-		
-		private void showTa() {
-			employeeDraftObject.downloadTa(
-			dataURI -> {
-					showPdf();
-					pdfViewer.open(dataURI);
-			}, 
-			trowable -> {});
+	}
+	
+	class TAEndCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showTaEnd();
 		}
 	}
 	
@@ -346,9 +356,7 @@ public abstract class EmployeeDraft extends Composite {
 
 		@Override
 		public void execute() {
-			EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog(employeeDraftObject.getContractId(), employeeDraftObject.getContractStartDate());
-			dialog.center();
-			dialog.show();
+			new EmployeePeculiaritiesDialog(employeeDraftObject.getContractId(), employeeDraftObject.getContractStartDate());
 		}
 	}
 	
@@ -356,14 +364,14 @@ public abstract class EmployeeDraft extends Composite {
 
 		@Override
 		public void execute() {
-			SSPECDraft dialog = new SSPECDraft(employeeDraftObject.getContractId());
-			dialog.setPopupPositionAndShow((x,y) -> dialog.center() );
+			new SSPECDialog(employeeDraftObject.getContractId());
 		}
 	}
 	
 	class NewContextMenu extends ContextMenu {
 		
 		private MenuItem ta;
+		private MenuItem taEnd;
 		private MenuItem afi;
 		private MenuItem idc;
 		private MenuItem idcPlNss;		
@@ -384,22 +392,32 @@ public abstract class EmployeeDraft extends Composite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			pecsSS.ensureDebugId("bonifications");
 			
+			addSeparator();
+			
 			ta = addItem("Duplicados de Documentos TA", new TACommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			ta.ensureDebugId("ta");
 			
-			idc = addItem("Informe de Cotizaci\u00F3n-Trab Cuenta Ajena", new IDCCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			taEnd = addItem("Duplicados de Documentos TA (Baja)", new TAEndCommand(), 
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			taEnd.ensureDebugId("taEnd");
+			
+			idc = addItem("IDC-Trab Cuenta Ajena", new IDCCommand(), 
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
 			
-			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			idcPlNss = addItem("IDC/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
 		}
 
 		public MenuItem getTa() {
 			return ta;
+		}
+		
+		public MenuItem getTaEnd() {
+			return taEnd;
 		}
 
 		public MenuItem getAfi() {
@@ -431,6 +449,7 @@ public abstract class EmployeeDraft extends Composite {
 
 	interface MyStyle extends CssResource {
 		String cmdBtn();
+		String displayNone();
 	}
 	
 	@UiField
@@ -443,7 +462,7 @@ public abstract class EmployeeDraft extends Composite {
 	ScrollPanel scrolledPanel;
 	
 	@UiField
-	HTMLPanel messageContainer;
+	static HTMLPanel messageContainer;
 	
 	@UiField (provided = true)
 	Employee employee;
@@ -461,6 +480,7 @@ public abstract class EmployeeDraft extends Composite {
 	
 	private EmployeeDraftObject employeeDraftObject;
 	
+	private AonToolbarButton saveContract;
 	private AonToolbarButton undoAll;
 	private AonToolbarButton undo;
 	private AonToolbarButton redo;
@@ -509,6 +529,8 @@ public abstract class EmployeeDraft extends Composite {
 					initializeIdcMonthListBox();
 					initializeView();
 					initializeUndoRedo();
+					setVisible(contextMenu.getTaEnd().getElement(), null != employeeDraftObject.getContractData().getEndDate());
+					
 					
 					// Check SS only if not RETA
 					Byte ssRegime = employeeDraftObject.getContractData().getSsRegimen();
@@ -737,6 +759,14 @@ public abstract class EmployeeDraft extends Composite {
 					}
 				} else
 					employee.showElementsFullTimeContract();
+				
+				if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+					employee.showEmployeesColective();
+					setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective()+"");
+				} else {
+					employee.hideEmployeesColective();
+					contractData.setEmployeesColective(null);
+				}
 			} catch (NumberFormatException e) {
 				// Not use here
 			}
@@ -836,7 +866,7 @@ public abstract class EmployeeDraft extends Composite {
 	
 	private void fillToolbarPanel() {
 		
-		AonToolbarButton saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveContract.addClickHandler(e -> onSaveContract());
 		toolbar.add(saveContract);
 		
@@ -914,7 +944,6 @@ public abstract class EmployeeDraft extends Composite {
 	private void onAFIChanges() {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				employee.startDate.getValue(),
-				employee.endDate.getValue(),
 				employee.contractTypeLB.getSelectedValue(),
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
@@ -926,7 +955,7 @@ public abstract class EmployeeDraft extends Composite {
 
 					@Override
 					protected void onAcceptCB() {
-						// Not use in this case
+						setEmployeeDraftObject(getEmployeeDraftObject());
 					}
 
 					@Override
@@ -965,16 +994,37 @@ public abstract class EmployeeDraft extends Composite {
 		dialog.show();
 	}
 	
+	private void showTa() {
+		showLoading("Obteniendo TA...");
+		employeeDraftObject.downloadTa(dataURI -> {
+				hideMessage();
+				showPdf();
+				pdfViewer.open(dataURI);
+		}, f -> showError("Error TA", f.getMessage()));
+	}
+	
+	private void showTaEnd() {
+		showLoading("Obteniendo TA (Baja)...");
+		employeeDraftObject.downloadTaEnd(dataURI -> {
+				hideMessage();
+				showPdf();
+				pdfViewer.open(dataURI);
+		}, f -> showError("Error TA (Baja)", f.getMessage()));
+	}
+	
 	private void showIdcPlNss() {
 		showIdcPlNss(DateUtils.getFirstDayOfMonth());
 	}
 	
 	private void showIdcPlNss(Date month) {
+		showLoading("Obteniendo IDC PL NSS...");
 		employeeDraftObject.downloadIdcPlNss( 
 		month,
 		dataURI -> {
+				hideMessage();
 				showPdf();
 				idcMonthListBox.setVisible(true);
+				idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcMonthListBox.setSelected(month, true);
 				pdfViewer.open(dataURI);
 		}, trowable -> {});
@@ -985,11 +1035,14 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void showIdc(Date date) {
+		showLoading("Obteniendo IDC...");
 		employeeDraftObject.downloadIdc( 
 		date,
 		dataURI -> {
+				hideMessage();
 				showPdf();
 				idcDateListBox.setVisible(true);
+				idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcDateListBox.setSelected(date, true);
 				pdfViewer.open(dataURI);
 		}, trowable -> {});
@@ -1002,29 +1055,32 @@ public abstract class EmployeeDraft extends Composite {
 	// ------------------------------------------------- Toolbar panel auxiliar methods
 	
 	private void showPdf() {
-		contextMenu.getAfi().setVisible(false);
+		saveContract.setVisible(false);
+		undoAll.setEnabled(true);
+		undoAll.addStyleName(style.displayNone());
+		undo.setEnabled(true);
+		undo.addStyleName(style.displayNone());
+		redo.setEnabled(true);
+		redo.addStyleName(style.displayNone());
 		tgss.setVisible(false);
-		contextMenu.getTa().setVisible(false);
-		contextMenu.getIdc().setVisible(false);
-		contextMenu.getIdcPlNss().setVisible(false);
-		undo.setVisible(false);
-		redo.setVisible(false);
-		undoAll.setVisible(false);
-
+		
 		closePDF.setVisible(true);
+		
+		idcDateListBox.setVisible(false);
+		idcMonthListBox.setVisible(false);
 
 		deckPanel.showWidget(PDF_VIEWER_INDEX);		
 	}
 	
 	private void showEmployee() {
-		contextMenu.getAfi().setVisible(true);
+		saveContract.setVisible(true);
+		undoAll.removeStyleName(style.displayNone());
+		undoAll.setEnabled(null != employeeDraftObject && employeeDraftObject.canUndo());
+		undo.removeStyleName(style.displayNone());
+		undo.setEnabled(null != employeeDraftObject && employeeDraftObject.canUndo());
+		redo.removeStyleName(style.displayNone());
+		redo.setEnabled(null != employeeDraftObject && employeeDraftObject.canRedo());
 		tgss.setVisible(true);
-		undo.setVisible(true);
-		redo.setVisible(true);
-		undoAll.setVisible(true);
-		contextMenu.getTa().setVisible(true);
-		contextMenu.getIdcPlNss().setVisible(true);
-		contextMenu.getIdc().setVisible(contextMenu.getIdc().isEnabled());
 		
 		closePDF.setVisible(false);
 		
@@ -1037,10 +1093,7 @@ public abstract class EmployeeDraft extends Composite {
 	// ------------------------------------------------- Callback saved for check status
 	
 	private void saved() {
-		Map<String, String> messageSuccessMap = new HashMap<>();
-		messageSuccessMap.put("Guardado", "El contrato " + employeeDraftObject.getEmployeeFullName() + " ha sido actualizado correctamente");
-		AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
-		
+		showSuccess("Guardado", "El contrato " + employeeDraftObject.getEmployeeFullName() + " ha sido actualizado correctamente");
 		onSaved.accept(employeeDraftObject);
 	}
 	
@@ -1107,6 +1160,28 @@ public abstract class EmployeeDraft extends Composite {
 	
 	private static <T> List<T> filter( List<T> list , Function<Integer, Boolean> filter){
 		return IntStream.range(0, list.size()).filter( i -> filter.apply(i)).mapToObj(i -> list.get(i) ).collect(Collectors.toList());
+	}
+	
+	// ------------------------------------------------- Aon Messages panel
+
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messageContainer, successMap);
+	}
+	
+	public static void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messageContainer, errorMap);
+	}
+	
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messageContainer, message);
+	}
+	
+	private void hideMessage() {
+		AonMessagePanel.hideMessage(messageContainer);
 	}
 	
 }

@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -63,6 +64,10 @@ public class VatContext implements Serializable {
 	private double surchargePercent;
 	private double surchargeQuota;
 
+	private boolean prorrated;
+	private boolean specialProrrate;
+	private double prorratePercent;
+	private double prorrateQuota;
 	
 	private String siiStatus;
 	
@@ -70,9 +75,13 @@ public class VatContext implements Serializable {
 	private Double amortizationPercentage;
 	private Date amortizationInitialDate;
 	
-	private boolean financePending;  // En cirterio de cja, el vencimiento no está pagado/cobrado (se utiliza al generar el 347) 
-	private double amount347; // Importe que se declara en el modelo 347
-	private boolean hasRetention;  // Indicará si la factura lleva retención (se utiliza al generar el 347) 
+	private boolean financePending;  // En criterio de caja, el vencimiento no está pagado/cobrado (se utiliza al generar el 347) 
+	private double amount347;        // Importe que se declara en el modelo 347
+	private boolean hasRetention;    // Indicará si la factura lleva retención (se utiliza al generar el 347)
+	
+	private Date rectificateInvoiceTaxDate;  // Fecha IVA de la factura rectificada (se utiliza al generar el Modelo 349)
+	private int rectificateYear;             // Año del periodo de la factura rectificada (se utiliza al generar el Modelo 349)
+	private Period rectificatePeriod;        // Periodo de la factura rectificada (se utiliza al generar el Modelo 349)
 	
 	public String getSiiStatus() {
 		return siiStatus;
@@ -364,6 +373,34 @@ public class VatContext implements Serializable {
 		this.surchargeQuota = surchargeQuota;
 		return this;
 	}
+	public boolean isProrrated() {
+		return prorrated;
+	}
+	public VatContext setProrrated(boolean prorrated) {
+		this.prorrated = prorrated;
+		return this;
+	}
+	public boolean isSpecialProrrate() {
+		return specialProrrate;
+	}
+	public VatContext setSpecialProrrate(boolean specialProrrate) {
+		this.specialProrrate = specialProrrate;
+		return this;
+	}
+	public double getProrratePercent() {
+		return prorratePercent;
+	}
+	public VatContext setProrratePercent(double prorratePercent) {
+		this.prorratePercent = prorratePercent;
+		return this;
+	}
+	public double getProrrateQuota() {
+		return prorrateQuota;
+	}
+	public VatContext setProrrateQuota(double prorrateQuota) {
+		this.prorrateQuota = prorrateQuota;
+		return this;
+	}
 	public Integer getRectificationInvoice() {
 		return rectificationInvoice;
 	}
@@ -376,6 +413,9 @@ public class VatContext implements Serializable {
 	}
 	public boolean isSales() {
 		return (invoiceType == InvoiceType.SALES);
+	}
+	public boolean isNotSales() {
+		return !isSales();
 	}
 	public boolean isPurchase() {
 		return (invoiceType == InvoiceType.PURCHASE);
@@ -497,6 +537,27 @@ public class VatContext implements Serializable {
 	public VatContext setHasRetention(boolean hasRetention) {
 		this.hasRetention = hasRetention;
 		return this;		
+	}
+	public Date getRectificateInvoiceTaxDate() {
+		return rectificateInvoiceTaxDate;
+	}
+	public VatContext setRectificateInvoiceTaxDate(Date rectificateInvoiceTaxDate) {
+		this.rectificateInvoiceTaxDate = rectificateInvoiceTaxDate;
+		return this;
+	}
+	public int getRectificateYear() {
+		return rectificateYear;
+	}
+	public VatContext setRectificateYear(int rectificateYear) {
+		this.rectificateYear = rectificateYear;
+		return this;
+	}
+	public Period getRectificatePeriod() {
+		return rectificatePeriod;
+	}
+	public VatContext setRectificatePeriod(Period rectificatePeriod) {
+		this.rectificatePeriod = rectificatePeriod;
+		return this;
 	}
 	
 }

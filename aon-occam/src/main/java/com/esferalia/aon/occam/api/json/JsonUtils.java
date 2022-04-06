@@ -34,6 +34,10 @@ public class JsonUtils {
 		return json != null ? json.optString(key,null) : null;
 	}
 	
+	public static String getString(JSONObject json, String key, String defaultValue ) {
+		return json != null ? json.optString(key, defaultValue) : defaultValue;
+	}
+	
 	public static String optString(JSONObject json, String key ) {
 		return json != null ? json.optString(key, "") : "";
 	}
@@ -96,7 +100,7 @@ public class JsonUtils {
 		Date d = null;
 		if(json != null) { 
 			String date = json.optString(key, null);
-			if(date!=null) {
+			if(AonStringUtils.isNotBlank(date)) {
 				d = AonDateUtils.parse(date.replace("\"", ""));
 				if(d == null) d = getDateTime(json, key);
 			}

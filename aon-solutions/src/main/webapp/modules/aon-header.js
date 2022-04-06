@@ -134,13 +134,10 @@ export class AonHeader extends AonElement {
 						name: MSG.SUPPORT + ' / CAU',
 						icon: MATERIAL_ICONS.SUPPORT_AGENT,
 						fn: () =>{
-							if(this.isBeta()){
-								let aonMessenger = new AonMessenger();
-								aonMessenger.cau = 1;
-								aonMessenger._filter.source = TASK_SOURCE.CAU;
-								this.rootPanel(aonMessenger);
-							}  else 
-								alert('en desarrollo');
+							let aonMessenger = new AonMessenger();
+							aonMessenger.cau = 1;
+							aonMessenger._filter.source = TASK_SOURCE.CAU;
+							this.rootPanel(aonMessenger);
 						}
 					};
 					
@@ -181,12 +178,13 @@ export class AonHeader extends AonElement {
 							let iframe = document.createElement("iframe");
 							iframe.height = "100%";
 							iframe.width = "100%";
-							iframe.src = "http://faqs.aonsolutions.es";
+							iframe.src = "https://faqs.aonsolutions.es";
 							this.rootPanel(iframe);
 						} 
 					};
 
-					options.push(support)
+					if(LS.getDomainId())
+						options.push(support)
 					if(this.isBeta()) options.push(language);
 					options.push(help);
 
@@ -236,9 +234,8 @@ export class AonHeader extends AonElement {
 			this.removeAttribute('company');
 			this.removeAttribute('user');
 
-			localStorage.removeItem('aon_domain_id');
-			localStorage.removeItem('aon_domain_name');
-			localStorage.removeItem('aon_domain_login');
+			LS.removeDomain();
+
 			clearDurum();
 			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 			this.defaultLogo();
@@ -362,7 +359,7 @@ export class AonHeader extends AonElement {
 			// aonLogo.style.top = '0px';
 		} else aonLogo.src = '../assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
-			if(localStorage.getItem('aon_domain_id')){
+			if(LS.getDomainId()){
 				this.rootPanelHtml(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');

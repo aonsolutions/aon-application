@@ -59,9 +59,7 @@ import org.junit.rules.TestName;
 
 import com.esferalia.aon.in.payroll.pdf.maker.Logger;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -71,18 +69,22 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
-import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 
 
 public class InvoiceTest {
@@ -269,6 +271,11 @@ public class InvoiceTest {
 		detailOne.setDiscountExpression("97.19");
 		detailOne.setQuantity(781212783);
 		detailOne.setTaxableBase(712382113);
+		detailOne.setSource(InvoiceSource.DELIVERY);
+		
+		DeliveryDetail deliveryDetail = new DeliveryDetail().setId(288).setDelivery(new Delivery().setId(123).setIssueTime(new Date()).setSeries("3434"));
+		detailOne.setDeliveryDetail(deliveryDetail);
+				
 		
 		InvoiceDetail detailTwo = new InvoiceDetail();
 		detailTwo.setAccountCode("0192831092");
@@ -277,6 +284,10 @@ public class InvoiceTest {
 		detailTwo.setDiscountExpression("1.19");
 		detailTwo.setQuantity(1);
 		detailTwo.setTaxableBase(712382113);
+		detailTwo.setSource(InvoiceSource.SALES);
+		
+		SalesDetail deliveryDetailTwo = new SalesDetail().setId(288).setSales(new Sales().setId(123).setIssueDate(new Date()).setPurchaseReference("123456/12345"));
+		detailTwo.setSalesDetail(deliveryDetailTwo);
 		
 		InvoiceDetail detailThree = new InvoiceDetail();
 		detailThree.setAccountCode("0192831010");
@@ -558,18 +569,24 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=119; i++) {
+		for (int i=1; i<=46; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
 		detailX.setDescription(xdesc);
-		detailX.setPrice(0);
-		detailX.setDiscountExpression("30");
-		detailX.setQuantity(0);
-		detailX.setTaxableBase(0);
+//		detailX.setPrice(10);
+//		detailX.setDiscountExpression("30");
+//		detailX.setQuantity(30);
+//		detailX.setTaxableBase(0);
+//		
+		detailX.setPrice(1239675601.12);
+		detailX.setDiscountExpression("97.19");
+		detailX.setQuantity(781212783);
+		detailX.setTaxableBase(712382113);
+		
 		details.add(detailX);
-//		details.add(detailOne);
-//		details.add(detailTwo);
+		details.add(detailOne);
+		details.add(detailTwo);
 //		details.add(detailThree);
 //		details.add(detailThreeAndAHalf);
 //		details.add(detailFour);
@@ -596,10 +613,10 @@ public class InvoiceTest {
 			Attach attach = new Attach();
 			attach.setData(back);
 			
-			config.setLanguage(AonLanguage.ENGLISH);
+//			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-			config.setDetailed(true);
+			config.setDetailed(false);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
@@ -714,8 +731,12 @@ public class InvoiceTest {
 //			company = null;
 //			logo = null;
 			
-			InvoiceTemplate.create(os, company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
-			InvoiceTemplate.create(dos, company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			
+			InvoiceTemplate invoiceTemplate = new InvoiceTemplate(company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			invoiceTemplate.print(os);
+			invoiceTemplate = new InvoiceTemplate(company, invoice, config, "www.aonsolutions.es", logo, "TBAI-00000006Y-251019-btFpwP8dcLGAF-237");
+			invoiceTemplate.print(dos);
+			
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
 			PDDocument document = Loader.loadPDF(bis);

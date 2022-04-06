@@ -50,6 +50,7 @@ import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Geozone;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
@@ -78,6 +79,9 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
+import com.esferalia.aon.occam.api.model.management.OfferDetail;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -99,6 +103,8 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO.GeoZoneFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
@@ -280,7 +286,7 @@ public class InvoiceDAO {
 		ctx.checkRead();
 		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
-			.select(
+			.selectDistinct(
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,orderedType
@@ -335,6 +341,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.WAREHOUSE
 				,INVOICE_DETAIL.WORKPLACE
 				,INVOICE_DETAIL.SOURCE
+				,INVOICE_DETAIL.SOURCE_ID
 				,INVOICE_DETAIL.INVEST_ASSET
 				,INVOICE_DETAIL.PREPAYMENT
 				,SELLER_ALIAS.NAME
@@ -365,7 +372,6 @@ public class InvoiceDAO {
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE,INVOICE.REFERENCE_CODE,INVOICE_DETAIL.LINE)
 			.fetch();
-		
 	}
 	
 	
@@ -426,7 +432,31 @@ public class InvoiceDAO {
 			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
-				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, invoice.getDetails().get(i).getId())
+				InvoiceDetail detail = invoice.getDetails().get(i);
+				
+				if(InvoiceSource.PURCHASE.equals(detail.getSource())) {
+					PurchaseDetail d = PurchaseDAO.getPurchaseDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+						.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new PurchaseDetail());
+					invoice.getDetails().get(i).setPurchaseDetail(d);
+				} else if(InvoiceSource.SALES.equals(detail.getSource())) {
+					SalesDetail d = SalesDAO.getSalesDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new SalesDetail());
+					invoice.getDetails().get(i).setSalesDetail(d);
+				} else if(InvoiceSource.DELIVERY.equals(detail.getSource())) {
+					DeliveryDetail d = DeliveryDAO.getDeliveryDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new DeliveryDetail());
+					invoice.getDetails().get(i).setDeliveryDetail(d);
+				} else if(InvoiceSource.INCOME.equals(detail.getSource())) {
+					IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
+					invoice.getDetails().get(i).setIncomeDetail(d);
+				} else if(InvoiceSource.OFFER.equals(detail.getSource())) {
+					OfferDetail d = OfferDAO.getOfferDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+							.and(f.getIdProperty().eq(detail.getSourceId())));
+					invoice.getDetails().get(i).setOfferDetail(d);
+				}
+				
+				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, detail.getId())
 				.collect(Collectors.toCollection(LinkedList::new));
 				
 				invoice.getDetails().get(i).setInvoiceTaxes(taxes);
@@ -447,7 +477,6 @@ public class InvoiceDAO {
 				invoice.setRectificationInvoiceSeries(rectify.getSeries());
 				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
 				invoice.setRectificationInvoiceNumber(rectify.getNumber());
-				invoice.setRectificationType(rectify.getRectificationType());
 			}
 		}
 		return invoice;
@@ -482,6 +511,10 @@ public class InvoiceDAO {
 		public static RegistryAddress build(Record r) {
 			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
 			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
+			return build(r, parent, child);
+		}
+		
+		public static RegistryAddress build(Record r, Geozone parent, Geozone child) {
 			return new RegistryAddress()
 					.setId(r.getValue(INVOICE_ADDRESS.ID))
 					.setDomain(r.getValue(INVOICE_ADDRESS.DOMAIN))
@@ -721,6 +754,7 @@ public class InvoiceDAO {
 				.setWarehouse(r.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setWarehouseName(r.getValue(WAREHOUSE.NAME))
 				.setSource(InvoiceSource.safeValueOf(r.getValue(INVOICE_DETAIL.SOURCE)))
+				.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
 				.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT))
 				;
 		}

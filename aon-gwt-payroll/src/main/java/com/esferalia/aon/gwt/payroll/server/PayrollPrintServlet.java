@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
-import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.jooq.JooqPayrollBuilder;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 //http://ayudat.aonsolutions.net:8080/aon-aio/aon_gwt_payroll//print_payroll/
 
@@ -43,11 +44,31 @@ public class PayrollPrintServlet extends HttpServlet {
 		for (int i = 0; i < ids.length; i++)
 			ids[i] = Integer.parseInt(req.getParameterValues("id")[i]);
 		resp.setContentType(MimeType.MIME_PDF.getName());
-//		resp.setHeader("Content-disposition", "attachment; filename=\""+req.getParameter("name")+"\";");
-		JooqPayrollBuilder.generatePayroll(Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()))
-				, req.getParameter(PayrollPrintService.Parameter.DOMAIN.getName())
-				, resp.getOutputStream()
-				, ids);
+		String cLimitStr = req.getParameter(PayrollPrintService.Parameter.COMPLEMENTARY_LIMIT.getName());
+		Double cLimit = null;
+		try {
+			if (cLimitStr != null) {
+				cLimit = Double.parseDouble(cLimitStr);
+			}
+		} catch (NumberFormatException e) {
+			cLimit = null;
+		}
+		String payrollType = (String) req.getAttribute(PayrollPrintService.Parameter.PAYROLL_TYPE.getName());
+		resp.setHeader("Content-disposition", "attachment; filename=\""+req.getParameter("name")+"\";");
+		
+		if (AonStringUtils.equalsIgnoreCase(payrollType, PayrollPrintService.PayrollType.CLASSIC.getName())) {
+			JooqPayrollBuilder.generateClassicPayroll(Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()))
+					, req.getParameter(PayrollPrintService.Parameter.DOMAIN.getName())
+					, resp.getOutputStream()
+					, Optional.ofNullable(cLimit)
+					, ids);
+		} else {
+			JooqPayrollBuilder.generatePayroll(Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()))
+					, req.getParameter(PayrollPrintService.Parameter.DOMAIN.getName())
+					, resp.getOutputStream()
+					, Optional.ofNullable(cLimit)
+					, ids);
+		}
 		
 	}
 }

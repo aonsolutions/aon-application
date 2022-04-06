@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public class Mod184 implements IFiscalModel, HasAudit {
@@ -380,5 +381,13 @@ public class Mod184 implements IFiscalModel, HasAudit {
 	public Mod184 setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
+	}
+	@Override
+	public Double getDeclarationResult() {
+		return null;
+	}
+	@Override
+	public FiscalModelDeclarationType getDeclarationResultType() {
+		return null;
 	}
 }

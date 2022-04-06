@@ -69,10 +69,14 @@ public class Model111 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
+			showInfoPanelWidget(new HTMLPanel(htmlText));	
+		}
+		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
+			breakdownPanel.setWidget(widget);
 			breakdownPanel.scrollToTop();
 		}
 		
@@ -96,12 +100,16 @@ public class Model111 extends MainEntryPoint {
 
 		@Override
 		public void onCancel(Mod111 model) {
-			cleanInfoPanel();
-			declarationContainer.setWidget(model111Table);
-			model111Table.refresh( new Model111Callback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
-			
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				cleanInfoPanel();
+				hideError();
+				declarationContainer.setWidget(model111Table);
+				model111Table.refresh( new Model111Callback());
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 
 		@Override
@@ -122,13 +130,13 @@ public class Model111 extends MainEntryPoint {
 					cleanInfoPanel();
 					tabLayout.selectTab(INFORMATION_TAB);
 					closeFootPanel();
-					showNewDeclarationPopup(m111);
+					showNewDeclarationPanel(m111);
 				}
 
 
 				@Override
 				public void onFailure(Throwable caught) {
-					showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					showErrorMessage(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 				}
 			});
 		}
@@ -179,7 +187,7 @@ public class Model111 extends MainEntryPoint {
 		
 		
 		
-		model111Table = new Model111Table( new Model111Callback() );
+		model111Table = new Model111Table( new Model111Callback());
 		model111Table.addSelectionHandler( this::onSelectionChange );
 		declarationContainer.setWidget(model111Table);
 		
@@ -189,7 +197,7 @@ public class Model111 extends MainEntryPoint {
 		} else if (getOptions().getNewModel() != null ) {
 			newModel(getOptions().getNewModel()); 
 		} else {
-			model111Table.refresh( new Model111Callback() );
+			model111Table.refresh( new Model111Callback());
 		}
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler(event -> openFootPanelIfNeeded());
@@ -251,7 +259,7 @@ public class Model111 extends MainEntryPoint {
 					public void onSuccess(Mod111 m111) {
 						tabLayout.selectTab(INFORMATION_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup( m111 );
+						showNewDeclarationPanel( m111 );
 					}
 
 
@@ -410,7 +418,7 @@ public class Model111 extends MainEntryPoint {
 		});
 	}
 	
-	private void showNewDeclarationPopup( Mod111 m111) {
+	private void showNewDeclarationPanel( Mod111 m111) {
 		Model111NewDeclarationPanel newDeclarationPanel = new Model111NewDeclarationPanel(m111,new Model111Callback() { 
 			@Override
 			public void onAccept(Mod111 mod111) {
@@ -423,7 +431,7 @@ public class Model111 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 						}
 					});
 			}

@@ -67,6 +67,7 @@ public class ContractInfo implements Serializable{
 	
 	// Comunic@ Fields
 	private String colectiveAgreement;
+	private String colectiveEmployees;
 	
 	private Integer mdCtzId;
 	private String mdCtz;
@@ -127,6 +128,7 @@ public class ContractInfo implements Serializable{
 		this.payrollDate = null;
 		
 		this.colectiveAgreement = null;
+		this.colectiveEmployees = null;
 		this.mdCtz = null;
 		this.partialityCoef = null;
 		
@@ -462,6 +464,21 @@ public class ContractInfo implements Serializable{
 	public void setAgreementColective(String colectiveAgreement) {
 		this.colectiveAgreement = colectiveAgreement;
 	}
+	
+	public String getEmployeesColective() {
+		return colectiveEmployees;
+	}
+
+	public void setEmployeesColective(String colectiveEmployees) {
+		if(AonStringUtils.isNotBlank(colectiveEmployees) && colectiveEmployees.contains("\""))
+			try {
+				this.colectiveEmployees = colectiveEmployees.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				this.colectiveEmployees = colectiveEmployees;
+			}	
+		else
+			this.colectiveEmployees = colectiveEmployees;
+	}
 
 	public Integer getMdctzId() {
 		return mdCtzId;
@@ -602,6 +619,7 @@ public class ContractInfo implements Serializable{
 		result += "Seniority Date : " + seniorityDate + "\n";
 		result += "Agreement Id : " + agreementId + "\n";
 		result += "Agreement Colective : " + colectiveAgreement + "\n";
+		result += "Employees Colective : " + colectiveEmployees + "\n";
 		result += "Agreement Level Id : " + agreementLevelId + "\n";
 		result += "Agreement Category : " + agreementCategory + "\n";
 		result += "Journey Type : " + journeyType + "\n";
@@ -628,6 +646,7 @@ public class ContractInfo implements Serializable{
 		result += "Seniority Date : " + seniorityDate + "\n";
 		result += "Agreement Id : " + agreementId + "\n";
 		result += "Agreement Colective : " + colectiveAgreement + "\n";
+		result += "Employees Colective : " + colectiveEmployees + "\n";
 		result += "Agreement Level Id : " + agreementLevelId + "\n";
 		result += "Agreement Category : " + agreementCategory + "\n";
 		result += "Quote Group : " + quoteGroup + "\n";

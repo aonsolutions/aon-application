@@ -1,28 +1,32 @@
 import {AonElement} from '../../components/AonElement.js';
-import {Apps, ClassicApps, Services, Packs} from  '../../services/app.js';
+import {Apps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
+	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
-
+import { AonSwitch } from '../../components/aon-switch.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon-button.js';
 import '../../components/aon-icon.js';
 
-import { CSS, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { CSS, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../environments/environments.js'; 
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonToast } from '../../components/aon-toast.js';
-import { IFRAME } from '../../environments/aonTag.js';
+import { AonDialog } from '../../components/aon-dialog.js';
+import { AonCheckbox } from '../../components/aon-checkbox.js';
 export class AonBooking extends AonElement {
 
 	TOOLBAR;
 	USER_NUMBER;
 	APP;
+	SAVE_DIALOG;
 	apps;
 	users;
 	definedUsers;
+	dur;
 
 	get id() {
 		return this.getAttribute('id');
@@ -39,11 +43,11 @@ export class AonBooking extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		getDomainUserRoles({reload: true}).then(r => {
-			const dur = new DomainUserRoles(r);
-			this.apps = dur.getDomainApps();
-			this.users = dur.maxDefinedUsers;
-			this.definedUsers = dur.definedUsers;
-			this.build(dur);
+			this.dur = new DomainUserRoles(r);
+			this.apps = this.dur.getDomainApps();
+			this.users = this.dur.maxDefinedUsers;
+			this.definedUsers = this.dur.definedUsers;
+			this.build(this.dur);
 		});
 	}
 
@@ -52,6 +56,7 @@ export class AonBooking extends AonElement {
 		this.APP = this.id + 'App';
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.USER_NUMBER = this.id + 'UserNumber';
+		this.SAVE_DIALOG = this.id + 'SaveDialog';
 		this.apps = [];
 	}
 
@@ -61,7 +66,7 @@ export class AonBooking extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = 'CONTRATACIÓN';
 		this.appendChild(toolbar);
-		toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.SAVE, () => this.saveDialog());
 
 		let content = this.createElement(TAG.DIV);
 		content.className = CSS.AON_SUB_CONTENT;
@@ -78,17 +83,40 @@ export class AonBooking extends AonElement {
 		users.onChange(r => this.users = users.value);
 		users.addIconWithRemove(MATERIAL_ICONS.PERSON, undefined, () => users.value = '0');	
 
-		this.buildTitle(content, 'Packs');
-		this.buildApps(content, Packs, dur);
+		if(dur.getDomain().isConsultancy()){
+			this.buildTitle(content, 'Packs');
+			this.buildApps(content, Packs, dur);
+		} else {
+			this.buildTitle(content,  this.dur.getDomain().isKitDigital() 
+				? 'Kit Digital' : 'Gestión');
+			this.buildApps(content, this.getGestionPacks(), dur);
+		}
 
-		this.buildTitle(content, MSG.APPLICATIONS);
-		this.buildApps(content, Apps, dur);
+		if(!this.dur.getDomain().isKitDigital()) {
+			this.buildTitle(content, MSG.APPLICATIONS);
+			this.buildApps(content, Apps, dur);
+	
+			this.buildTitle(content, MSG.SERVICES);
+			this.buildApps(content, Services, dur);
+	
+			this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
+			this.buildApps(content, ClassicApps, dur);
+		}
+	}
+	
+	getGestionPacks(){
+		if(this.dur.getDomain().isGarage())
+			return {GARAGE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
+		else if(this.dur.getDomain().isAcademy())
+			return {ACADEMY, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
+		else if(this.dur.getDomain().isCommerce())
+			return {COMMERCE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
+		else if(this.dur.getDomain().isOffice())
+			return {OFFICE};
+		else if(this.dur.getDomain().isKitDigital()) 
+			return {KIT_DIGITAL_FACE, KIT_DIGITAL_CRM, KIT_DIGITAL_ERP}
+		else return {ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 
-		this.buildTitle(content, MSG.SERVICES);
-		this.buildApps(content, Services, dur);
-
-		this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
-		this.buildApps(content, ClassicApps, dur);
 	}
 
 	buildApps(content, apps, dur) {
@@ -108,7 +136,7 @@ export class AonBooking extends AonElement {
 			span.style.margin = '20px';
 
 			if(app.icon) {
-				let color = contratado || app.app.includes('pack') ? app.color : 'lightgray';
+				let color = contratado || app.app.includes('pack') || app.domainType ? app.color : 'lightgray';
 				span.innerHTML = `<aon-icon id="${this.APP + app.app + 'Icon'}" icon="${app.icon}" color="${color}" size="30px"></aon-icon>`;
 			} else {
 				let img = document.createElement('img');
@@ -131,8 +159,10 @@ export class AonBooking extends AonElement {
 			}
 
 			let buttons = document.createElement('span');
+			buttons.id = this.APP + app.app + 'Buttons';
 			buttons.style.position = 'absolute';
 			buttons.style.right = '10px';
+			buttons.style.top = '20px';
 
 			let price = document.createElement('span');
 			price.id = this.APP + app.app + 'Price';
@@ -141,52 +171,57 @@ export class AonBooking extends AonElement {
 			price.innerHTML = app.price;
 			buttons.appendChild(price);
 
-			let moreInfo = document.createElement(TAG.A);
-			moreInfo.style.margin = '10px';
-			moreInfo.style.color = 'gray';
-			moreInfo.style.cursor = 'pointer';
-			moreInfo.innerHTML = 'Más Info';
-			moreInfo.addEventListener('click', () => {
-				window.open(app.moreInfo || 'https://www.aonsolutions.es/');
-			});
-			buttons.appendChild(moreInfo);
+			let parentContract = document.createElement('span');
+			parentContract.id = this.APP + app.app + 'ParentContract';
+			parentContract.style.color = '#002469';
+			parentContract.style.opacity = '0.5';
+			parentContract.innerHTML = 'Contratado en el entorno';
+			parentContract.style.display = 'none';
+			buttons.appendChild(parentContract);
 
-			let contratar = document.createElement('button');
-			contratar.id = this.APP + app.app + 'ContractButton';
-			contratar.className = 'aonButton';
-			contratar.style.width = '110px';
-			contratar.style.padding = '0.3rem 0.8rem';
-			contratar.style.borderRadius = '25px';
-			contratar.innerHTML = contratado ? MSG.DEACTIVATE : MSG.ACTIVATE;
-			contratar.style.backgroundColor = '#002469';
-			contratar.style.opacity = contratado ? '0.3' : '1';
-			if(this.isDisabled(dur, app.app.toUpperCase()) || this.hasParentApp(dur, app.app.toUpperCase()) || app.disabled){
-				contratar.disabled = true;
-				contratar.style.opacity = '0.3';
-				contratar.style.backgroundColor = 'gray';
+			let contract = new AonSwitch();
+			contract.id = this.APP + app.app + 'Contract';
+			contract.checked = contratado;
+			buttons.appendChild(contract);
+
+			if(this.hasParentApp(dur, app.app.toUpperCase())) {
+				contract.style.display = 'none';
+				parentContract.style.display = 'block';
+			} else if(this.isDisabled(dur, app.app.toUpperCase()) ||  app.disabled){
+				contract.style.display = 'none';
+				let pack = this.getPack(dur, app.app.toUpperCase());
+				if(pack) {
+					let message = document.createElement('span');
+					message.id = this.APP + app.app + 'Text';
+					message.style.color = '#002469';
+					message.style.opacity = '0.5';
+					buttons.appendChild(message);
+					message.innerHTML = 'Incluido en ' + pack.title;
+					message.style.display = 'block';
+				}
 			}
 
-			contratar.addEventListener('click', (e) => {
+			contract.addEventListener(EVENT.CHANGE, (e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				contratado = !contratado;
-				this.activate(app, contratado, false);
+				this.activate(app, contract.isChecked(), false);
 			});
 
-			buttons.appendChild(contratar);
-			span.appendChild(buttons);
+
+
+			if(!app.domainType)
+				span.appendChild(buttons);
 			li.appendChild(span);
 			ul.appendChild(li);
 		}
 	}
 
-	activate(app, contract, disabled){
+	activate(app, contract, disabled, text){
 		let contractIcon = this.getElement(this.APP + app.app + 'Icon');
 		if(contractIcon)
 			contractIcon.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
-		let contractButton = this.getElement(this.APP + app.app + 'ContractButton');
-		contractButton.innerHTML = contract ? MSG.DEACTIVATE : MSG.ACTIVATE;
-		contractButton.style.opacity = contract ? '0.3' : '1';
+		let contractSwitch = this.getElement(this.APP + app.app + 'Contract');
+		if(contractSwitch) contractSwitch.checked = contract;
 
 		if(contract && !disabled) {
 			if(!this.apps.includes(app.app.toUpperCase()))
@@ -197,27 +232,71 @@ export class AonBooking extends AonElement {
 					this.apps.splice(i, 1);
 			});
 		}
+		if(contractSwitch) {
+			console.log(app.app + contract);
+			console.log(app.app + disabled);
+			console.log(app.app + app.disabled);
+			console.log(app.app + (contract && disabled));
+			
+			if((contract && disabled)){
+				contractSwitch.style.display = 'none';
+				if(text) {
+					let message = this.getElement(this.APP + app.app + 'Text');
+					if(!message) {
+						message = document.createElement('span');
+						message.id = this.APP + app.app + 'Text';
+						message.style.color = '#002469';
+						message.style.opacity = '0.5';
+						this.getElement(this.APP + app.app + 'Buttons').appendChild(message);
+					}
+					message.innerHTML = text;
+					message.style.display = 'block';
+				}
+			} else {
+				contractSwitch.style.display = 'block';
+				let message = this.getElement(this.APP + app.app + 'Text');
+				if(message) {
+					message.style.display = 'none';
+				}
+			}
 
-		if((contract && disabled) || app.disabled) {
-			contractButton.disabled = true;
-			contractButton.style.opacity = '0.3';
-			contractButton.style.backgroundColor = 'gray';
-		} else {
-			contractButton.disabled = false;
-			contractButton.style.backgroundColor = '#002469';
+			if(app.disabled) {
+				contractSwitch.style.display = 'none';
+			}
+
 		}
 
 		if(app.app === 'pack_suite') {
-			this.activate(Packs.PORTAL, contract, true);
-			this.activate(Packs.PAYROLL, contract, true);
-			this.activate(Packs.FISCAL_ACCOUNTING, contract, true);
+			this.activate(Packs.PORTAL, contract, contract, 'Incluido en ' + app.title);
+			this.activate(Packs.PAYROLL, contract, contract, 'Incluido en ' + app.title);
+			this.activate(Packs.FISCAL_ACCOUNTING, contract, contract, 'Incluido en ' + app.title);
 		}
 
 		if(app.apps && !disabled) {
 			for (let i = 0; i < app.apps.length ; i++) {
-				this.activate(app.apps[i], contract, true);
+				this.activate(app.apps[i], contract, contract, 'Incluido en ' + app.title);
 			}
 		}
+	}
+
+	saveDialog() {
+		let dialog = this.getElement(this.SAVE_DIALOG);
+		if(!dialog){
+			dialog = new AonDialog();
+			dialog.id = this.SAVE_DIALOG;
+			this.appendChild(dialog);
+		}
+		dialog.clear();
+		dialog.setTitle('Contratación');
+		dialog.setContent(this.saveDialogContent());
+		dialog.addAcceptAction(() => this.save());
+		dialog.open();
+	}
+
+	saveDialogContent() {
+		let checkBox = new AonCheckbox();
+		checkBox.description = 'He leido las condiciones de servicio y estoy de acuerdo con las mismas';
+		return checkBox;
 	}
 
 	save() {
@@ -288,6 +367,12 @@ export class AonBooking extends AonElement {
 			return dur.hasPackFiscalAccounting();
 		else if(App.AIO === app)
 			return dur.hasAon();
+		else if(App.BASIC_MANAGEMENT === app)
+			return dur.hasBasicManagement();
+		else if(App.STANDAR_MANAGEMENT === app)
+			return dur.hasStandarManagement();
+		else if(App.PROFESSIONAL_MANAGEMENT === app)
+			return dur.hasProfessionalManagement();
 		else return dur.hasApp(app);
 	}
 
@@ -350,6 +435,25 @@ export class AonBooking extends AonElement {
 			return dur.getDomain().isParent();
 		}
 		else return false;
+	}
+
+	getPack(dur, app){
+		if(dur.hasPackSuite() && (App.DOCUMENTAL === app || App.TIMECONTROL === app
+				|| App.INVOICE === app || App.MESSENGER === app || App.ACCOUNTING === app 
+				|| App.FISCAL === app) || App.PAYROLL === app || App.COMUNICA === app
+				|| App.PACK_PORTAL === app || App.PACK_FISCAL_ACCOUNTING === app
+				|| App.PACK_PAYROLL === app) {
+			return Packs.SUITE;
+		} else if(dur.hasPackFiscalAccounting() && (App.ACCOUNTING === app || App.FISCAL === app)){
+			return Packs.FISCAL_ACCOUNTING;
+		} else if(  dur.hasPackPortal() && (App.DOCUMENTAL === app || App.TIMECONTROL === app
+				|| App.INVOICE === app || App.MESSENGER === app)) {
+			return Packs.PORTAL;
+		} else if(  dur.hasPackPayroll() && (App.PAYROLL === app || App.COMUNICA === app
+				|| App.TIMECONTROL === app)) {
+			return Packs.PORTAL;
+		}
+		return undefined;
 	}
 }
 if(!window.customElements.get('aon-booking')){

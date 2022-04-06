@@ -75,10 +75,11 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod303 mod303) {
+			aonLayout.hideErrorPanel();
+			cleanInfoPanel();
 			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
 				getOptions().getExternalCallback().onExit(mod303);
 			} else {
-				cleanInfoPanel();
 				declarationContainer.setWidget(model303Table);
 				model303Table.refresh( new Model303Callback() );
 				tabLayout.selectTab(INFORMATION_TAB);
@@ -107,16 +108,23 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
+			showInfoPanelWidget(new HTMLPanel(htmlText));	
+		}
+		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
+			breakdownPanel.setWidget(widget);
 			breakdownPanel.scrollToTop();
 		}
 		
 		@Override
 		public void cleanInfoPanel() {
-			Model303.this.cleanInfoPanel(); 
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+			}
 		}
 		
 		@Override
@@ -252,13 +260,6 @@ public class Model303 extends MainEntryPoint {
 				});
 	}
 
-	private void cleanInfoPanel() {
-		Widget w = breakdownPanel.getWidget();
-		if (w != null) {
-			breakdownPanel.remove( breakdownPanel.getWidget() ); 
-		}
-	}
-
 	private void showNewDeclarationPanel(Mod303 m303) {
 		Model303NewDeclarationPanel newDeclarationPanel = new Model303NewDeclarationPanel( m303,
 			new Model303Callback() {
@@ -331,11 +332,21 @@ public class Model303 extends MainEntryPoint {
 	}
 
 	enum Mod303Declarations {
+		AEAT_2022 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() > 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303AEAT2022(mod303,cbk);
+			}
+		},
 		AEAT_2021_LAST_SEMESTER {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAEAT() && ((mod303.getYear() > 2021)
-					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())));
+				return (mod303.isAEAT() && mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
 			}
 
 			@Override
@@ -388,8 +399,30 @@ public class Model303 extends MainEntryPoint {
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303AEAT2017(mod303,cbk);
 			}
-		},
-		ARABA_2017 {
+		}
+		,ARABA_2022 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAraba() && mod303.getYear() > 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303ARABA2022(mod303,cbk);
+			}
+		}
+		,ARABA_2019 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAraba() && mod303.getYear() >= 2019 && mod303.getYear() < 2022);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303ARABA2019(mod303,cbk);
+			}
+		}
+		,ARABA_2017 {
 			@Override
 			public boolean accept(Mod303 mod303) {
 				return (mod303.isAraba() && mod303.getYear() < 2019);
@@ -399,27 +432,38 @@ public class Model303 extends MainEntryPoint {
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303ARABA2017(mod303,cbk);
 			}
-		},
-		ARABA_2019 {
+		}
+		,BIZKAIA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAraba() && mod303.getYear() >= 2019);
+				return (mod303.isBizkaia() && mod303.getYear()>2021);
 			}
 
 			@Override
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
-				return new Model303ARABA2019(mod303,cbk);
+				return new Model303BIZKAIA2022(mod303,cbk);
 			}
-		},
-		BIZKAIA {
+		}
+		,BIZKAIA {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isBizkaia());
+				return (mod303.isBizkaia() && mod303.getYear()<2022);
 			}
 
 			@Override
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303BIZKAIA2017(mod303,cbk);
+			}
+		},
+		GIPUZKOA_2022 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && mod303.getYear() > 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303GIPUZKOA2022(mod303,cbk);
 			}
 		},
 		GIPUZKOA_2017 {
@@ -437,8 +481,7 @@ public class Model303 extends MainEntryPoint {
 		GIPUZKOA_2021_LAST_SEMESTER {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isGipuzkoa() && ((mod303.getYear() > 2021)
-					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())));
+				return (mod303.isGipuzkoa() && mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
 			}
 
 			@Override

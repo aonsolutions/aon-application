@@ -121,11 +121,11 @@ export class AonTextArea extends AonElement {
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.VALUE === name){
-			let textAreaDiv = this.getTextAreaDiv();
+			let textAreaDiv = this.getTextArea();
 			if(textAreaDiv)
 				textAreaDiv.innerHTML = newValue;
 		} else if("height" === name){
-			let textAreaDiv = this.getTextAreaDiv();
+			let textAreaDiv = this.getTextArea();
 			if(textAreaDiv){
 				this.style.minHeight = textAreaDiv.style.minHeight = newValue;
 			}
@@ -211,6 +211,7 @@ export class AonTextArea extends AonElement {
 		} else if (document.selection) { // Opera
 			userSelection = document.selection.createRange();
 		}  
+		console.log(userSelection);
 		return userSelection;
 	} 
 
@@ -256,7 +257,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	clear(){
-		const area = this.getTextAreaDiv();
+		const area = this.getTextArea();
 		area.innerHTML = "";
 		area.value = "";
 	}
@@ -266,7 +267,13 @@ export class AonTextArea extends AonElement {
 		if(toolbar) toolbar.remove();
 	}
 
-	getTextAreaDiv(){
+	setValueHtml(html) {
+		const textarea = this.getTextArea();
+		if(textarea) 
+			textarea.innerHTML = html;
+	}
+
+	getTextArea(){
 		return this.getElement(this.TEXTAREA);
 	}
 
@@ -286,7 +293,7 @@ export class AonTextArea extends AonElement {
 					click : (ev)=> properties.id === MATERIAL_ICONS.ATTACH_FILE ? this.clickFile() : fn(ev)
 				}
 			}).element;
-			this.addToolbarLeft(icon, fn);
+			this.addToolbarLeft(icon);
 		}
 		//ENABLE DRAGGRABLE FILE
 		if(properties.icon === MATERIAL_ICONS.ATTACH_FILE){ 
@@ -295,7 +302,7 @@ export class AonTextArea extends AonElement {
 	}
 	
 	addToolbarLeft(element, fn){
-		element.addEventListener(EVENT.CLICK, fn);
+		if(fn) element.addEventListener(EVENT.CLICK, fn);
 		const el = this.getElement(this.LEFT);
 		if(el) el.appendChild(element);
 	}
@@ -331,7 +338,7 @@ export class AonTextArea extends AonElement {
 	getValue() {return this.value && this.value === 'true';}
 
 	async addFiles(files){
-		const textAreaDiv = this.getTextAreaDiv();
+		const textAreaDiv = this.getTextArea();
 		for await (const file of files) {
 			const reader = await getReader(file).catch(e=>null);
 			if(reader) {
@@ -373,14 +380,12 @@ export class AonTextArea extends AonElement {
 		this.dispatchEvent(new CustomEvent(EVENT.INPUT));
 	}
 
-
-
 	getToolbar(){
 		return this.getElement(this.TOOLBAR);
 	}
 
 	draggableEnable(){
-		const divTextArea = this.getTextAreaDiv();
+		const divTextArea = this.getTextArea();
 		divTextArea.classList.add("divDragOver");
 		
 		const highlight = ()   => {
@@ -420,7 +425,7 @@ export class AonTextArea extends AonElement {
 	}
 
 	removeBackground(){
-		this.getTextAreaDiv().classList.remove(CSS.FOCUS_COLOR_MINUS);
+		this.getTextArea().classList.remove(CSS.FOCUS_COLOR_MINUS);
 	}
 
 	/**

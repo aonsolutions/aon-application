@@ -131,6 +131,10 @@ public class IncomeDAO {
 		return income;
 	}
 	
+	public static IncomeDetail getIncomeDetail(AONContext ctx, IncomeDetailFilter filter){
+		return getIncomeDetailStream(ctx, filter).findFirst().orElse(new IncomeDetail());
+	}
+	
 	public static Stream<IncomeDetail> getIncomeDetailStream(AONContext ctx, IncomeDetailFilter filter){
 		return INCOME_DETAIL_PROPERTIES.build(ctx.getDslContext().select().from(INCOME_DETAIL), filter)
 				.fetch().stream().map(new IncomeDetailFiller());

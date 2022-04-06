@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -50,6 +52,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -183,6 +186,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	ListBox rlce;
+	
+	@UiField
+	ListBox employeesColective;
 
 	@UiField
 	ListBox journeyType;
@@ -263,12 +269,7 @@ public abstract class Employee extends ResizeComposite {
 
 	protected Employee() {
 		//Initialize Nationality SuggestBox
-		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
-		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
-		for (Country c : countries)
-			oracleCountries.add(c.getName());
-		this.nationality = new SuggestBox(oracleCountries);
-		this.nationality.setAutoSelectEnabled(true);
+		providedNationality();
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
@@ -286,6 +287,15 @@ public abstract class Employee extends ResizeComposite {
 		horizontalPanel.add(documentType);	
 	}
 	
+	private void providedNationality() {
+		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
+		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
+		for (Country c : countries)
+			oracleCountries.add(c.getName());
+		this.nationality = new SuggestBox(oracleCountries);
+		this.nationality.setAutoSelectEnabled(true);
+	}
+
 	// ------------------------------------------------- UiHandlers
 	
 	// TABLA DATOS CONTRATO
@@ -314,15 +324,20 @@ public abstract class Employee extends ResizeComposite {
 			showNationality(documentTypeStr);	
 			
 			onEmployeeDocumentChange(documentStr, documentTypeStr);
-		} else {
+		} else
 			removeErrorBorder(this.document);
-		}	
+	}
+	
+	@UiHandler("nationality")
+	void onNationalitySelectionValue(SelectionEvent<Suggestion> event) {
+		String countryIso2 = getIso2(this.nationality.getValue());
+//		Window.alert("Name : " + this.nationality.getValue() + "\nIso2 : " + countryIso2);
+		onEmployeeNationalityChange(countryIso2);
 	}
 	
 	@UiHandler("nationality")
 	void onNationalityChangeValue(ValueChangeEvent<String> event) {
-		String countryIso2 = getIso2(this.nationality.getValue());
-		onEmployeeNationalityChange(countryIso2);
+		if(AonStringUtils.isBlank(event.getValue())) onEmployeeNationalityChange(null);
 	}
 	
 	@UiHandler("securitySocialNum")
@@ -441,6 +456,16 @@ public abstract class Employee extends ResizeComposite {
 			else
 				showElementsFullTimeContract();
 			
+			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
+				showEmployeesColective();
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employeesColective);
+			} else {
+				hideEmployeesColective();
+				onContractEmployeesColectiveChange(null);
+			}
+			
+			checkContracts401And501(contractTypeInt);
+			
 			updateModality(contractTypeInt);
 			
 			onContractTypeChange(contractTypeStr);
@@ -464,6 +489,10 @@ public abstract class Employee extends ResizeComposite {
 		
 		if(null != startDate)
 			this.seniorityDate.setValue(startDateStr, true);
+		
+		String contractTypeStr = String.valueOf(this.contractTypeLB.getSelectedValue());
+		Integer contractTypeInt = Integer.parseInt(contractTypeStr);
+		checkContracts401And501(contractTypeInt);
 		
 	}
 
@@ -546,6 +575,12 @@ public abstract class Employee extends ResizeComposite {
 	@UiHandler("rlce")
 	void onContractRLCEChangeValue(ChangeEvent event) {
 		onContractRLCEChange(this.rlce.getSelectedValue());
+	}
+	
+	@UiHandler("employeesColective")
+	void onContractEmployeesColectiveChangeValue(ChangeEvent event) {
+		String value = this.employeesColective.getSelectedValue();
+		onContractEmployeesColectiveChange(AonStringUtils.isBlank(value) ? null : value);
 	}
 	
 	@UiHandler("journeyType")
@@ -726,6 +761,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractQuoteGroupChange(String quoteGroup);
 	public abstract void onContractOccupationChange(String occupation);
 	public abstract void onContractRLCEChange(String rlce);
+	public abstract void onContractEmployeesColectiveChange(String employeesColective);
 	public abstract void onContractJourneyTypeChange(Boolean journeyType);
 	public abstract void onContractPartialityChange(Double partialityCoef);
 	public abstract void onContractJourneyDurationClick();
@@ -748,6 +784,11 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onEmployeePayMethodChange(Integer payMethodId);
 	public abstract void onEmployeeBICChange(String bic);
 	public abstract void onEmployeeAccountChange(String account, String bankAlias, String bankSwift);
+	
+	//SHOW ERROR
+	
+	public abstract void fireError(String title, String message);
+		
 
 	// ------------------------------------------------- Methods preview
 	
@@ -782,6 +823,7 @@ public abstract class Employee extends ResizeComposite {
 		this.quoteGroup.clear();
 		this.occupation.clear();
 		this.rlce.clear();
+		this.employeesColective.clear();
 		this.journeyType.clear();
 		this.partialityCoef.setValue(null);
 		this.journeyDuration.clear();
@@ -833,6 +875,11 @@ public abstract class Employee extends ResizeComposite {
 		// RLCE
 		RLCE.getRLCE().entrySet().forEach(entry -> rlce.addItem(entry.getKey() + " - " + entry.getValue(), entry.getKey()));
 		
+		// EMPLOYEES COLECTIVE 
+		this.employeesColective.addItem("-", "");
+		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00d3N", "967");
+		this.employeesColective.addItem("CT CIRCUNSTANCIAS PRODUCCI\u00d3N PREVISIBLES", "968");
+		
 		// TIPO DE JORNADA
 		this.journeyType.addItem("Tiempo Completo", "true");
 		this.journeyType.addItem("Tiempo Parcial", "false");
@@ -875,8 +922,8 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Fill default fields
@@ -955,8 +1002,8 @@ public abstract class Employee extends ResizeComposite {
 	public void initContractType() {
 		// TIPO DE CONTRATO
 		contractTypeLB.addItem("-", "-1");
-		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));		
+		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet()) 
+			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));
 	}
 
 	public void initAgreements(List<Agreement> activeAgreements) {
@@ -1029,9 +1076,9 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();
 
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void hideElementsFreelancerTable() {
@@ -1046,19 +1093,19 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Show/hide methods partial/full time
 	
 	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showElementsFullTimeJourneyTypeContract() {
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showPartialTimeContract() {
@@ -1075,8 +1122,8 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	private void showElementsPartialTimeContract() {
+		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();	
 		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();	
-		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
 	}
 	
 	// ------------------------------------------------- Show/hide mdCtz methods
@@ -1090,6 +1137,16 @@ public abstract class Employee extends ResizeComposite {
 		this.mdCTZLB.setSelectedIndex(0);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.mdCTZLB);
 		
+	}
+	
+	// ------------------------------------------------- Show/hide EmployeeColective methods
+	
+	public void showEmployeesColective() {
+		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
+	}
+	
+	public void hideEmployeesColective() {
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
@@ -1287,8 +1344,7 @@ public abstract class Employee extends ResizeComposite {
 		} else {
 			nationalityLabelCell.getStyle().setDisplay(Display.NONE);
 			nationalityCell.getStyle().setDisplay(Display.NONE);
-			nationality.setValue("ESPA\u00D1A");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), nationality);
+			nationality.setValue("");
 		}
 	}
 	
@@ -1333,6 +1389,17 @@ public abstract class Employee extends ResizeComposite {
 	    int d1 = Integer.parseInt(formatter.format(birthDate));                            
 	    int d2 = Integer.parseInt(formatter.format(actualDay));                          
 	    return (d2 - d1) / 10000;                   
+	}
+	
+	private void checkContracts401And501(Integer contractType) {
+		if(AonNumberUtils.equals(contractType, 401) || AonNumberUtils.equals(contractType, 501)) {
+			Date marchEnd = new Date();
+			marchEnd.setMonth(2);
+			marchEnd = DateUtils.getLastDayOfMonth(marchEnd);
+			
+			if(null != startDate.getValue() && DateUtils.isAfterOrEquals(startDate.getValue(), marchEnd))
+				fireError("Error Contrato 401/501", "A partir del 31/03/2022 (incluido) no se pueden crear contratos 401/501, estos han sido reemplazados por 402/502 eligiendo uno de sus Colectivos Trabajadores");
+		} 
 	}
 	
 	// ------------------------------------------------- Save methods

@@ -6263,6 +6263,58 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testProrratedBaseVIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("BASE_CGC_MIN", "38.89.00 * DIAS_NOMINA");
+			}
+			});
+		
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>(){
+				{
+				}
+				}
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, salarioBase, "1125.90 *DIAS_TRABAJADOS /DIAS_MES");
+		addPayment(aonContext, contract, plusSalarial, "PLUS_MENSUAL *DIAS_TRABAJADOS /DIAS_MES");
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE + PLUS_SALARIAL", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE + PLUS_SALARIAL", "_P", PaymentType.CRA_0004);
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals(1125.90 + 1125.90 /12 *2 , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(1125.90 + 1125.90 /12 *2 , salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1125.90 + 1125.90 /12 *2 , salary.getRemuneration(), DELTA);
+
+	}
+
+
+	@Test
 	@Ignore("Not Yet")
 	public void testExtrasWithOutPaymentsI() throws ExpressionException,
 			SQLException, SalaryException {

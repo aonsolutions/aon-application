@@ -45,7 +45,8 @@ public class EmployeeIT implements Serializable {
 	ContractLeaveDischargeCause dischargeCause;
 	ContractType contractType;
 
-	Double dailyCgcBase;	//base TGSS
+	Double dailyCgcBase;	//base CC TGSS
+	Double dailyCgpBase;	//base CP TGSS
 	Integer quoteDays;	// day TGSS
 	
 	String regime;
@@ -134,6 +135,15 @@ public class EmployeeIT implements Serializable {
 
 	public EmployeeIT setDailyCgcBase(Double dailyCgcBase) {
 		this.dailyCgcBase = dailyCgcBase;
+		return this;
+	}
+	
+	public Optional<Double> getDailyCgpBase() {
+		return Optional.ofNullable(dailyCgpBase);
+	}
+
+	public EmployeeIT setDailyCgpBase(Double dailyCgpBase) {
+		this.dailyCgpBase = dailyCgpBase;
 		return this;
 	}
 	
@@ -250,22 +260,39 @@ public class EmployeeIT implements Serializable {
 		addContractData(name, expression, this.startDate, this.endDate);
 		return this;
 	}
+	
+	public Optional<String> getPaternityType() {
+		return getContractDataValue(TIPO_SOLICITANTE_MAT_PAT);
+	}
 	public EmployeeIT setPaternityType(String expression) {
 		addContractData(TIPO_SOLICITANTE_MAT_PAT, expression, this.startDate, this.endDate);
 		return this;
+	}
+	
+	public Optional<String> getPaternityReason() {
+		return getContractDataValue(MOTIVO_MAT_PAT);
 	}
 	public EmployeeIT setPaternityReason(String expression) {
 		addContractData(MOTIVO_MAT_PAT, expression, this.startDate, this.endDate);
 		return this;
 	}
+	
+	public Optional<String> getDirectPay() {
+		return getContractDataValue(INICIO_PAGO_DIRECTO);
+	}
 	public EmployeeIT setDirectPay(String expression) {
 		addContractData(INICIO_PAGO_DIRECTO, expression, this.startDate, this.endDate);
 		return this;
+	}
+	
+	public Optional<String> getRegulationBase() {
+		return getContractDataValue(BASE_REGULADORA);
 	}
 	public EmployeeIT setRegulationBase(Double baseReg) {
 		addContractData(BASE_REGULADORA, baseReg.toString(), this.startDate, this.endDate);
 		return this;
 	}
+	
 	public EmployeeIT setPaternityParciality(Double parciality) {
 		String tmp = getType()!=null && getType().equals(ContractLeaveType.PATERNIDAD) ? COEFICIENTE_PATERNIDAD : COEFICIENTE_MATERNIDAD;
 		addContractData(tmp, parciality.toString(), this.startDate, this.endDate);
@@ -274,6 +301,16 @@ public class EmployeeIT implements Serializable {
 
 	public List<ContractData> getContractDatas() {
 		return new ArrayList<>(contractDatas.values());
+	}
+	
+	private Optional<String> getContractDataValue(String name) {
+		return contractDatas
+				.entrySet()
+				.stream()
+				.filter( e-> e.getKey().equals(name))
+				.map(Map.Entry::getValue)
+				.map(ContractData::getExpression)
+				.findFirst();
 	}
 	
 	private EmployeeIT addContractData(String name, String expression, Date startDate, Date endDate) {
@@ -289,6 +326,10 @@ public class EmployeeIT implements Serializable {
 	}
 	//  ---------------------ADD CONTRACT DATA
 
+	public boolean isPaternity() {
+		return type!=null && (type.equals(ContractLeaveType.MATERNIDAD) ||  type.equals(ContractLeaveType.PATERNIDAD));
+	}
+	
     @Override
     public String toString() {
         return "EmployeeIT{"
@@ -297,12 +338,14 @@ public class EmployeeIT implements Serializable {
         		+ "type=" + type +","
         		+ "contract=" + contract +","
         		+ "nss=" + nss +","
+        		+ "dni=" + dni +","
         		+ "regime=" + regime +","
         		+ "ccc=" + ccc +","
         		+ "description=" + description +","
         		+ "startDate=" + startDate +","
         		+ "endDate=" + endDate +","
         		+ "dailyCgcBase=" + dailyCgcBase +","
+        		+ "dailyCgpBase=" + dailyCgpBase +","
         		+ "quoteDays=" + quoteDays +","
         		+ "parent=" + parent +","
         		+ "dischargeCause=" + dischargeCause +","

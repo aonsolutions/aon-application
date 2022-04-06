@@ -24,12 +24,11 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
@@ -78,7 +77,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -102,7 +100,6 @@ import com.google.gwt.resources.client.CommonResources;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -247,8 +244,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise);
 			workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 			enterpriseContextMenu.hide();
-			workplaceDialog.center();
-			workplaceDialog.show();
 		}
 	}
 
@@ -2192,19 +2187,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		private SalaryDraftObject salaryDraft;
 		
         private Map<Integer, ContractBonusObject> contractBonusMap ;  
+        private Map<Integer, SSPECObject> ssPECMap ;  
 		private Map<Integer, CategoryDraftObject> contractCategoriesMap ;  
 		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
 		private Map<Integer, EmployeeContractVariablesObject> contractVariablesMap ;  
 		
 		public EmployeeTabLayoutPanel() {
 			contractBonusMap = new HashMap<>();
+			ssPECMap = new HashMap<>();
 			contractPaymentsMap = new HashMap<>();
 			contractVariablesMap = new HashMap<>();
 			contractCategoriesMap = new HashMap<>();
 			add("Contrato", getEmployeeDraft(), this::onEmployeeSelected);
 			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
-			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
+//			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
+			add("Peculiaridades", getEmployeeSSPEC(), this::onSSPECSelected);
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
 			add("Variables", getEmployeeEventsDraft(), this::onEventsSelected);
 			add("Convenio", getCategoryDraft(), this::onAgreementSelected);
@@ -2233,6 +2231,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			ContractBonusObject contractBonusObject = 
 					contractBonusMap.computeIfAbsent(salaryDraft.getEmployeeId(), ContractBonusObject::new );
 			getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
+		}
+		
+		void onSSPECSelected() {
+			getEmployeeSSPEC().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			SSPECObject ssPECObject = ssPECMap.get(salaryDraft.getEmployeeId());
+			if(null == ssPECObject) {
+				ssPECObject = new SSPECObject(salaryDraft.getEmployeeId(), salaryDraft.getEndDate());
+				ssPECMap.put(salaryDraft.getEmployeeId(), ssPECObject);
+			}
+			getEmployeeSSPEC().setContractSSPECObject(ssPECObject);
 		}
 
 		void onSalariesSelected() {
@@ -2389,8 +2397,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onCostsSelected() {
 			employees.getEnterpriseCost(enterprise, o -> getCost().setCostDocuments(o));
-			
-			
 		}
 
 		void onStatsSelected() {
@@ -2428,7 +2434,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	SplitLayoutPanel splitLayoutPanel;
 
 	@UiField
-	MinimizePanel footPanel;
+	AonMinimizePanel footPanel;
+	
 	@UiField
 	TabLayoutPanel footTabPanel;
 
@@ -2455,6 +2462,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
 	private ContractBonusUI employeeSSBonus;
+	private SSPECDraft ssPECDraft;
 	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeContractVariables employeeContractVariables; 
 	private EmployeeSalary employeeSalary;
@@ -2589,6 +2597,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		initOpenCloseEmployees();
+			
+		initFootPanel();
+	}
+
+	private void initFootPanel() {
+		logEvent("initFootPanel");
+		footPanel.clearButtons();
+		footPanel.addButtonLess();
+		this.footPanel.addMaximizeHandlerNew(e-> showFootPanel());
+		this.footPanel.addMinimizeHandlerNew(e-> closeFootPanel());
 	}
 	
 	private void initOpenCloseEmployees() {
@@ -3109,28 +3127,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	// ------------------------------------------------------- UiHandler methods
 
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-
-	@UiHandler("footPanel")
-	void onFootMaximize(MinimizeEvent event) {
-
-	}
+//	@UiHandler("footPanel")
+//	void onFootMinimize(MinimizeEvent event) {
+//		closeFootPanel();
+//	}
+//
+//	@UiHandler("footPanel")
+//	void onFootMaximize(MaximizeEvent event) {
+//		showFootPanel();
+//	}
 
 	// --------------------------------------------------------- Private methods
 
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
 	private void showFootPanel() {
-		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+	}
+	
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
 	}
 
 	private void showResultsPanel() {
@@ -3227,8 +3241,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 	
 	private EnterpriseIT getEnterpriseIT() {
-		if (enterpriseIT == null)
+		if (enterpriseIT == null) {
 			enterpriseIT = new EnterpriseIT();
+			enterpriseIT.setFooter(splitLayoutPanel, footTabPanel, footPanel);
+		} 
 		return enterpriseIT;
 	}
 
@@ -3423,6 +3439,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		if (employeeSSBonus == null)
 			employeeSSBonus = new ContractBonusUI();
 		return employeeSSBonus;
+	}
+	
+	private SSPECDraft getEmployeeSSPEC() {
+		if (ssPECDraft == null)
+			ssPECDraft = new SSPECDraft();
+		return ssPECDraft;
 	}
 
 	private EmployeeSalary getEmployeeSalary() {
@@ -4016,8 +4038,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		WorkplaceDialog workplaceDialog = new WorkplaceDialog();
 		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise);
 		workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
-		workplaceDialog.center();
-		workplaceDialog.show();
 	}
 
 	protected static void showNewActivity() {

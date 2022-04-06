@@ -436,6 +436,17 @@ public class PDFToolkit {
 		contents.setLineWidth(size);
 		contents.stroke();
 	}
+	
+	public static void drawDashedLine(PDPageContentStream contents, float x, float y, float width, float thickness, Color color, float[] pattern, float phase) throws IOException {
+		contents.saveGraphicsState();
+		contents.setLineDashPattern(pattern, phase);
+		contents.setStrokingColor(color);
+		contents.setLineWidth(thickness);
+		contents.moveTo(x, y);
+		contents.lineTo(x + width, y);
+		contents.stroke();
+		contents.restoreGraphicsState();
+	}
 
 	/**
 	 * <p>
@@ -562,16 +573,18 @@ public class PDFToolkit {
 		try {
 			ArrayList<String> lines	= new ArrayList<>();
 			ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWordsWithLines(text);
-			String			  line	= "";
+			String line	= "";
 
 			for (int i = 0; i < words.size(); i++) {
 				if (!words.get(i).equals("\n")) {
-					float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
+					String aux = words.get(i).replace("\u00A0", " ");
+					//String aux = words.get(i).replace(" ", " ");
+					float fw = (font.getStringWidth(line + " " + aux) / 1000.0f) * fontSize;
 					if (fw < max) {
-						line += " " + words.get(i);
+						line += " " + aux;
 					} else {
 						lines.add(line);
-						line = "" + words.get(i);
+						line = "" + aux;
 					}
 					if (i == words.size() - 1)
 						lines.add(line);
