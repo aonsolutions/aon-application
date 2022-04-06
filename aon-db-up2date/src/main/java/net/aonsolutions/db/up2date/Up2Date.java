@@ -228,7 +228,7 @@ public class Up2Date {
 //    		TrainingPercentages2022Update.TRAINNINGPERCENTAGES2022UPDATE,
 //    		FellowsPercentages2022Update.FELLOWSPERCENTAGES2022UPDATE,
 //    		Artist2022Update.ARTIST2022UPDATE
-    		RefreshMod303Result.REFRESH_MOD303_RESULT,
+//    		RefreshMod303Result.REFRESH_MOD303_RESULT,
     		Artist2022Fix.ARTIST2022FIX
     };
     
