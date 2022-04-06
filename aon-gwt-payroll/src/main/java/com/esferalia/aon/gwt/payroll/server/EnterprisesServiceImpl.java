@@ -2984,7 +2984,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			return AgreementParser.getAgreementYears(agreementCode);
 		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
