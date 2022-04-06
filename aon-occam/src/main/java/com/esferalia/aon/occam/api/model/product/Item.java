@@ -24,17 +24,17 @@ public class Item implements Serializable {
 	private ProductStatus status;
 	private Product product;
 	
-	private Double price;
-	private Double expensesPercent;
-	private Double expensesFixed;
-	private Double profitPercent;
-	private Double purchasePrice;
+	private double price;
+	private double expensesPercent;
+	private double expensesFixed;
+	private double profitPercent;
+	private double purchasePrice;
 	private boolean internet;
 	
 	private Tag packFormatTag;
 	private Integer packUnits;
 	private Tag packUnitsTag;
- 	private Double packMeasurement;
+ 	private double packMeasurement;
 	private Tag packMeasurementTag;
 	private Tag stockUnitTag;
 
@@ -137,7 +137,7 @@ public class Item implements Serializable {
 		return this;
 	}
 
-	public Double getPrice() {
+	public double getPrice() {
 		return price;
 	}
 	
@@ -146,38 +146,38 @@ public class Item implements Serializable {
 		return this;
 	}
 
-	public Double getExpensesPercent() {
+	public double getExpensesPercent() {
 		return expensesPercent;
 	}
 	
-	public Item setExpensesPercent(Double expensesPercent) {
+	public Item setExpensesPercent(double expensesPercent) {
 		this.expensesPercent = expensesPercent;
 		return this;
 	}
 
-	public Double getExpensesFixed() {
+	public double getExpensesFixed() {
 		return expensesFixed;
 	}
 	
-	public Item setExpensesFixed(Double expensesFixed) {
+	public Item setExpensesFixed(double expensesFixed) {
 		this.expensesFixed = expensesFixed;
 		return this;
 	}
 
-	public Double getProfitPercent() {
+	public double getProfitPercent() {
 		return profitPercent;
 	}
 	
-	public Item setProfitPercent(Double profitPercent) {
+	public Item setProfitPercent(double profitPercent) {
 		this.profitPercent = profitPercent;
 		return this;
 	}
 
-	public Double getPurchasePrice() {
+	public double getPurchasePrice() {
 		return purchasePrice;
 	}
 	
-	public Item setPurchasePrice(Double purchasePrice) {
+	public Item setPurchasePrice(double purchasePrice) {
 		this.purchasePrice = purchasePrice;
 		return this;
 	}
@@ -223,11 +223,11 @@ public class Item implements Serializable {
 		return this;
 	}
 
-	public Double getPackMeasurement() {
+	public double getPackMeasurement() {
 		return packMeasurement;
 	}
 	
-	public Item setPackMeasurement(Double packMeasurement) {
+	public Item setPackMeasurement(double packMeasurement) {
 		this.packMeasurement = packMeasurement;
 		return this;
 	}

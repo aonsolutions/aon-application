@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -558,6 +560,15 @@ public class MainContrataITObject {
 		for(ITEmployee employee : employeesList)
 			for(IT it : employee.getIts())
 				itsList.add(it);
+		
+		itsList.sort(new Comparator<IT>() {
+			@Override
+			public int compare(IT it1, IT it2) {
+				return it1.getStartDate().compareTo(it2.getStartDate());
+			}
+		});
+		
+		Collections.reverse(itsList);
 	}
 	
 	public List<ITEmployee> getEmployeesList(boolean contractsWithIT, Date startDate, Date endDate){

@@ -1,6 +1,6 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { Attach } from '../models/Attach.js';
-import { getReader } from '../services/utils.js';
+import { AonDialog } from './aon-dialog.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonElement } from './AonElement.js';
 
@@ -12,6 +12,7 @@ export class AonUpload extends AonElement {
     LABEL;
     SPAN;
     DELETE_BUTTON;
+    DIALOG;
 
     message;
     deleteMessage;
@@ -45,6 +46,7 @@ export class AonUpload extends AonElement {
         this.LABEL = this.id + 'Label';
         this.SPAN = this.id + 'Span';
         this.DELETE_BUTTON = this.id + 'DeleteButton';
+        this.DIALOG = this.id + 'Dialog';
         this.message = this.message || MSG.ATTACH_FILES_DRAGGING_DROPPING;
         this.deleteMessage = this.deleteMessage || 'Estás seguro de eliminar el fichero';
         this.accept = this.accept || 'image/jpeg, image/png';
@@ -183,7 +185,12 @@ export class AonUpload extends AonElement {
     }
 
     deleteFile() {
-        let d = document.getElementById(this.getApplication().DIALOG);
+        let d = this.getElement(this.DIALOG);
+        if(!d) {
+            d = new AonDialog();
+            d.id = this.DIALOG;
+            this.appendChild(d);
+        }
         d.clear();
         d.setTitle(MSG.DELETE_FILE);
         d.width = '400px';
@@ -199,7 +206,7 @@ export class AonUpload extends AonElement {
             this.dispatchEvent(new Event(EVENT.DELETE));
         });
         d.open();
-      }
+    }
 
     setAttach(attach) {
         let att = new Attach(attach);

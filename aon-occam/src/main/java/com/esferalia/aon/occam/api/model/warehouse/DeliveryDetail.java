@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.warehouse;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 
 public class DeliveryDetail implements Serializable {
 	
@@ -15,10 +15,7 @@ public class DeliveryDetail implements Serializable {
 	private int domain;
 	private Delivery delivery;
 	private short line;
-	private OldItem item;
-	private Integer productId;
-	private String productCode;
-	private String productName;
+	private Item item;
 	private String description;
 	private Integer warehouse;
 	private double quantity;
@@ -47,6 +44,8 @@ public class DeliveryDetail implements Serializable {
 		return this;
 	}
 	public Delivery getDelivery() {
+		if(delivery == null) 
+			delivery = new Delivery();
 		return delivery;
 	}
 	public DeliveryDetail setDelivery(Delivery delivery) {
@@ -60,10 +59,12 @@ public class DeliveryDetail implements Serializable {
 		this.line = line;
 		return this;
 	}
-	public OldItem getItem() {
+	public Item getItem() {
+		if(item == null) 
+			item = new Item();
 		return item;
 	}
-	public DeliveryDetail setItem(OldItem item) {
+	public DeliveryDetail setItem(Item item) {
 		this.item = item;
 		return this;
 	}
@@ -147,25 +148,37 @@ public class DeliveryDetail implements Serializable {
 		this.warehouse = warehouse;
 		return this;
 	}
+	
+	@Deprecated
 	public String getProductCode() {
-		return productCode;
+		return getItem().getProduct().getCode();
 	}
+	
+	@Deprecated
 	public DeliveryDetail setProductCode(String productCode) {
-		this.productCode = productCode;
+		getItem().getProduct().setCode(productCode);
 		return this;
 	}
+	
+	@Deprecated
 	public String getProductName() {
-		return productName;
+		return getItem().getProduct().getName();
 	}
+	
+	@Deprecated
 	public DeliveryDetail setProductName(String productName) {
-		this.productName = productName;
+		getItem().getProduct().setName(productName);
 		return this;
 	}
+	
+	@Deprecated
 	public Integer getProductId() {
-		return productId;
+		return getItem().getProduct().getId();
 	}
+	
+	@Deprecated
 	public DeliveryDetail setProductId(Integer productId) {
-		this.productId = productId;
+		getItem().getProduct().setId(productId);
 		return this;
 	}	
 

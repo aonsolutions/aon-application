@@ -32,6 +32,13 @@
 			text-transform: uppercase;
 		}
 		
+		.cmdBtn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel debugId='buttonBarBeta' styleName="{style.toolbar}" ui:field='toolbar'>

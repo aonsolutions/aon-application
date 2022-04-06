@@ -174,7 +174,7 @@ public class Mod303WriterARABA2017 implements IMod303Writer{
 			
 			// Datos bancarios (CCC), Solo si es devolucion o es domiciliacion y está cumplimentada la cuenta bancaria			
 			,(wr, mod) -> {
-				if ((mod.getDeclarationType() == FiscalModelDeclarationType.BANK || mod.getDeclarationType() == FiscalModelDeclarationType.PAYBACK) &&
+				if ((mod.getDeclarationResultType() == FiscalModelDeclarationType.BANK || mod.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK) &&
 					(mod.getFinanceCCC() != null) && (mod.getFinanceCCC().length() == 20))
 					{
 						wr.append("301" + AonStringUtils.SPACE + AonFiscalFileUtils.unsigned(mod.getFinanceCCC().substring( 0, 4),14,2));

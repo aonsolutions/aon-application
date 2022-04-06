@@ -60,6 +60,9 @@ public class AgreementsClean implements Serializable {
 	}
 	
 	public String getContractsInfo() {
+		
+		if(getContracts().isEmpty())
+			return "No existen contratos asociados a este convenio de la papelera.";
 
 		String message = "";
 		

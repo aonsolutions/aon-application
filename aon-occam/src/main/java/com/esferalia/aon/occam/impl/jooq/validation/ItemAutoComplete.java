@@ -29,37 +29,9 @@ public class ItemAutoComplete {
 		}
 	};
 	
-	public static final BiConsumer<AONContext, Item> COMPLETE_EXPENSES_PERCENT = (ctx, item) -> {
-		if(item.getExpensesPercent() == null) {
-			item.setExpensesPercent(0.0);
-		}
-	};
-	
-	public static final BiConsumer<AONContext, Item> COMPLETE_EXPENSES_FIXED = (ctx, item) -> {
-		if(item.getExpensesFixed() == null) {
-			item.setExpensesFixed(0.0);
-		}
-	};
-	
-	public static final BiConsumer<AONContext, Item> COMPLETE_PROFIT_PERCENT = (ctx, item) -> {
-		if(item.getProfitPercent() == null) {
-			item.setProfitPercent(0.0);
-		}
-	};
-	
-	public static final BiConsumer<AONContext, Item> COMPLETE_PURCHASE_PRICE = (ctx, item) -> {
-		if(item.getPurchasePrice() == null) {
-			item.setPurchasePrice(0.0);
-		}
-	};
-	
 	public static void autoComplete(AONContext ctx, Item item) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_STATUS)
-		.andThen(COMPLETE_EXPENSES_PERCENT)
-		.andThen(COMPLETE_EXPENSES_FIXED)
-		.andThen(COMPLETE_PROFIT_PERCENT)
-		.andThen(COMPLETE_PURCHASE_PRICE)
 		.accept(ctx, item);
 	}
 
