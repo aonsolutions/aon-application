@@ -135,7 +135,15 @@ public class Mod111InfoDAO {
 		public String format(Double amount) {
 			return DEC2.format(amount);
 		}
-
+		
+		@Override
+		public boolean equals(Object o) {
+			return super.equals(o);
+		}
+		@Override
+		public int hashCode() {
+			return super.hashCode();
+		}
 	}
 
 	private static class Mod111MVELExpressionContext extends Mod111MVELContext {
@@ -171,7 +179,14 @@ public class Mod111InfoDAO {
 					 .map(k-> " ["+DEC2.format(mod111.getAmount(k)) +"] " )
 					 .toArray());
 		}
-		
+		@Override
+		public boolean equals(Object o) {
+			return super.equals(o);
+		}
+		@Override
+		public int hashCode() {
+			return super.hashCode();
+		}
 	}
 	
 	private static String getExpression(Mod111 mod111, IModelScript<Mod111Key> script) {

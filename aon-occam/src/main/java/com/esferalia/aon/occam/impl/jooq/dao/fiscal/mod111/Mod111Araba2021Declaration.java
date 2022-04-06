@@ -15,88 +15,88 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 AR_907(Mod111Key.AR_907,null,null,null,null,null)
-		,AR_908(Mod111Key.AR_908,null,null,null,null,null)
-		,AR_909(Mod111Key.AR_909,null,null,null,null,null)
-		,AR_C50(Mod111Key.AR_C50
+		 AR_907(Mod111Key.AR_907,false,null,null,null,null,null)
+		,AR_908(Mod111Key.AR_908,false,null,null,null,null,null)
+		,AR_909(Mod111Key.AR_909,false,null,null,null,null,null)
+		,AR_C50(Mod111Key.AR_C50,false
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C50,mod,docs,pdocs,br)
 			,null,null,null)
-		,AR_C60(Mod111Key.AR_C60
+		,AR_C60(Mod111Key.AR_C60,true
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C60,mod,br)
 			,null,null,null)
-		,AR_C70(Mod111Key.AR_C70
+		,AR_C70(Mod111Key.AR_C70,true
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C70,mod,br)
 			,null,null,null)
-		,AR_C51(Mod111Key.AR_C51,null,null,null,null,null)
-		,AR_C61(Mod111Key.AR_C61,null,null,null,null,null)
-		,AR_C71(Mod111Key.AR_C71,null,null,null,null,null)
-		,AR_C52(Mod111Key.AR_C52,null,null,null,null,null)
-		,AR_C62(Mod111Key.AR_C62,null,null,null,null,null)
-		,AR_C72(Mod111Key.AR_C72,null,null,null,null,null)
-		,AR_C53(Mod111Key.AR_C53,null,null,null,null,null)
-		,AR_C63(Mod111Key.AR_C63,null,null,null,null,null)
-		,AR_C73(Mod111Key.AR_C73,null,null,null,null,null)
-		,AR_C54(Mod111Key.AR_C54
+		,AR_C51(Mod111Key.AR_C51,false,null,null,null,null,null)
+		,AR_C61(Mod111Key.AR_C61,true ,null,null,null,null,null)
+		,AR_C71(Mod111Key.AR_C71,true ,null,null,null,null,null)
+		,AR_C52(Mod111Key.AR_C52,false,null,null,null,null,null)
+		,AR_C62(Mod111Key.AR_C62,true ,null,null,null,null,null)
+		,AR_C72(Mod111Key.AR_C72,true ,null,null,null,null,null)
+		,AR_C53(Mod111Key.AR_C53,false,null,null,null,null,null)
+		,AR_C63(Mod111Key.AR_C63,true ,null,null,null,null,null)
+		,AR_C73(Mod111Key.AR_C73,true ,null,null,null,null,null)
+		,AR_C54(Mod111Key.AR_C54,false
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C54,mod,docs,pdocs,br)
 			,null,null,null)
-		,AR_C64(Mod111Key.AR_C64
+		,AR_C64(Mod111Key.AR_C64,true
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C64,mod,br)
 			,null,null,null)
-		,AR_C74(Mod111Key.AR_C74
+		,AR_C74(Mod111Key.AR_C74,true
 			, (mod,br) -> br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C74,mod,br)
 			,null,null,null)
-		,AR_C58(Mod111Key.AR_C58
+		,AR_C58(Mod111Key.AR_C58,false
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C58,mod,docs,pdocs,br)
 			,null,null,null)
-		,AR_C68(Mod111Key.AR_C68
+		,AR_C68(Mod111Key.AR_C68,true
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C68,mod,br)
 			,null,null,null)
-		,AR_C78(Mod111Key.AR_C78
+		,AR_C78(Mod111Key.AR_C78,true
 			, (mod,br) -> br.isObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C78,mod,br)
 			,null,null,null)
-		,AR_C55(Mod111Key.AR_C55
+		,AR_C55(Mod111Key.AR_C55,false
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C55,mod,docs,pdocs,br)
 			,null,null,null)
-		,AR_C65(Mod111Key.AR_C65
+		,AR_C65(Mod111Key.AR_C65,true
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C65,mod,br)
 			,null,null,null)
-		,AR_C75(Mod111Key.AR_C75
+		,AR_C75(Mod111Key.AR_C75,true
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C75,mod,br)
 			,null,null,null)
-		,AR_C56(Mod111Key.AR_C56,null,null,null,null,null)
-		,AR_C66(Mod111Key.AR_C66,null,null,null,null,null)
-		,AR_C76(Mod111Key.AR_C76,null,null,null,null,null)
-		,AR_C57(Mod111Key.AR_C57
+		,AR_C56(Mod111Key.AR_C56,false,null,null,null,null,null)
+		,AR_C66(Mod111Key.AR_C66,true ,null,null,null,null,null)
+		,AR_C76(Mod111Key.AR_C76,true ,null,null,null,null,null)
+		,AR_C57(Mod111Key.AR_C57,false
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.AR_C56,mod,docs,pdocs,br)
 			,null,null,null)
-		,AR_C67(Mod111Key.AR_C67
+		,AR_C67(Mod111Key.AR_C67,true
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.AR_C66,mod,br)
 			,null,null,null)
-		,AR_C77(Mod111Key.AR_C77
+		,AR_C77(Mod111Key.AR_C77,true
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.AR_C76,mod,br)
 			,null,null,null)
-		,AR_C80(Mod111Key.AR_C80
+		,AR_C80(Mod111Key.AR_C80,false
 			, null,null,null, "AR_C50+AR_C51+AR_C52+AR_C53+AR_C54+AR_C58+AR_C55+AR_C56+AR_C57",null)
-		,AR_C81(Mod111Key.AR_C81
+		,AR_C81(Mod111Key.AR_C81,false
 			, null,null,null, "AR_C60+AR_C61+AR_C62+AR_C63+AR_C64+AR_C68+AR_C65+AR_C66+AR_C67",null)
-		,AR_C82(Mod111Key.AR_C82
+		,AR_C82(Mod111Key.AR_C82,false
 			, null,null,null, "AR_C70+AR_C71+AR_C72+AR_C73+AR_C74+AR_C78+AR_C75+AR_C76+AR_C77",null)
-		,AR_C83(Mod111Key.AR_C83,null,null
+		,AR_C83(Mod111Key.AR_C83,false,null,null
 			, (ctx,mod) -> mod.putAmount(Mod111Key.AR_C83,
 				mod.isReplacement() 
 				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
@@ -110,13 +110,14 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C87)}\""
 				+"]}"
 			)
-		,AR_C84(Mod111Key.AR_C84,null,null,null,null,null)
-		,AR_C85(Mod111Key.AR_C85,null,null,null,null,null)
-		,AR_C87(Mod111Key.AR_C87, null,null,null, "AR_C82-AR_C83+AR_C84+AR_C85",null)
-		,AR_TIP(Mod111Key.AR_TIP, null,null,null,null,null)
+		,AR_C84(Mod111Key.AR_C84,false,null,null,null,null,null)
+		,AR_C85(Mod111Key.AR_C85,false,null,null,null,null,null)
+		,AR_C87(Mod111Key.AR_C87,false,null,null,null, "AR_C82-AR_C83+AR_C84+AR_C85",null)
+		,AR_TIP(Mod111Key.AR_TIP,false,null,null,null,null,null)
 		;
 		
 		private Mod111Key key;
+		private boolean diffEnabled;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
 		private IValueUniqueIntializer uniqueInitializer;
@@ -124,12 +125,14 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 		private String template;
 	
 		private Mod111KeyDAO(Mod111Key key
+				, boolean diffEnabled
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueUniqueIntializer uniqueInitializer
 				, String expression
 				, String template) {
 			this.key = key;
+			this.diffEnabled =  diffEnabled;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.uniqueInitializer = uniqueInitializer;
@@ -140,6 +143,10 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 		@Override
 		public Mod111Key getKey() {
 			return key;
+		}
+		@Override
+		public boolean isDiffEnabled() {
+			return diffEnabled;
 		}
 		@Override
 		public boolean acceptValue(Mod111 mod,IrpfBreakdown  br) {
