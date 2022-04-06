@@ -9,13 +9,17 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
 import com.esferalia.aon.occam.api.model.UteParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,6 +27,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
 public class Page18 extends PageAbs {
@@ -32,23 +37,19 @@ public class Page18 extends PageAbs {
 		addBasePanel();
 		initializeTable();
 		
-//		callback.getMod200Object().register( new IMod200ChangeListener() {
-//			
-//			@Override
-//			public void mod200Changed(Mod2002020 mod200) {
-//				participationDataProvider = new ListDataProvider<UteParticipation>(
-//						callback.getMod200Object().getMod200().getUteParticipations());
-//				participationDataProvider.addDataDisplay(participationTable);
-//				participationTable.redraw();
-//			}
-//		});
+		callback.getMod200Object().register( new IMod200ChangeListener() {
+			
+			@Override
+			public void mod200Changed(Mod2002020 mod200) {
+				paint();
+			}
+		});
 		
 	}
 
 	@Override
 	protected void initializeTable() {
 		paint();		
-		
 	}
 	
 	@Override
@@ -73,6 +74,7 @@ public class Page18 extends PageAbs {
 		basePanel.clear();
 		
 		// A) Porcentaje de imputación de bases imponibles y demás conceptos liquidatorios
+		
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002020Key.C0013)) {
 			paintKey(addTable(AON.MSG.ute1()), Mod2002020Key.UT060, 0);
 		}
@@ -227,19 +229,24 @@ public class Page18 extends PageAbs {
 				}
 			});
 			
-			AonDoubleBox nominal = new AonDoubleBox();
-			nominal.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase());
-			nominal.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setBase(nominal.getValue());
-				callback.markAsDirty();
-			});
+			Label nominal = new Label();
+			nominal.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
+			nominal.addStyleName(AON.CSS.aonMarginRight());
 			
 			AonDoubleBox percent = new AonDoubleBox();
 			percent.setMaxLength(6);
 			percent.setVisibleLength(6);
 			percent.setValue(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getPercent());
 			percent.addValueChangeHandler(event -> {
-				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setPercent(percent.getValue());
+				double per = AonNumberUtils.todouble(percent.getValue());
+				callback.getMod200Object().getMod200().getUteParticipations().get(idx).setPercent(per);
+				
+	    		// Recalcular Base según el porcentaje indicado
+	    		double c1330 = callback.getMod200Object().getMod200().getVariable(Mod2002020Key.UT1330).getValue();
+	    		double base = AonMathUtils.round(c1330 * per / 100); 
+	    		callback.getMod200Object().getMod200().getUteParticipations().get(idx).setBase(base);
+	    		nominal.setText(AON.FMT.format(callback.getMod200Object().getMod200().getUteParticipations().get(idx).getBase()));
 				callback.markAsDirty();
 			});
 			

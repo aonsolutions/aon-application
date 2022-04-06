@@ -230,7 +230,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 		AonToolbar toolbar = new AonToolbar(AON.MSG.fiscalModelDescriptionlong( FiscalModelType.M200));
 		
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		newButton.addClickHandler( event -> showMenuNew(cbk, newButton.getAbsoluteLeft() , newButton.getAbsoluteTop() + newButton.getOffsetHeight()) );
+		newButton.addClickHandler( event -> showMenu(cbk, newButton.getAbsoluteLeft() , newButton.getAbsoluteTop() + newButton.getOffsetHeight()) );
 		toolbar.add(newButton);
 		
 		final AonToolbarButton refreshButton = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
@@ -240,7 +240,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 		return toolbar;
 	}
 	
-	private void showMenuNew(Model200Callback cbk, int x, int y) {
+	private void showMenu(Model200Callback cbk, int x, int y) {
 		
 		ContextMenu menu = new ContextMenu();		
 		menu.addStyleName(AON.AON_CSS.aonSelector());
@@ -294,9 +294,9 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	    , STA("A"					, 20 ,AON.CSS.aonTextCenter()) // Administración
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter()) // Año
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter()) // Periodo
-		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado
+		// LA COLUMNA DE ESTADO NO SE PONDRÁ HASTA QUE SE DESARROLLE LO DEL ESTADO EN EL MODELO 200
+//		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado
 		, CMP("C"					, 20 ,AON.CSS.aonTextCenter()) // Complementaria
-//		, SST("S"					, 20 ,AON.CSS.aonTextCenter()) // Sustitutiva
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())   // Documento
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())   // Nombre
 		, RST(AON.MSG.result()		, 100,AON.CSS.aonTextRight())  // Importe Resultado
@@ -356,11 +356,6 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			comp.setStyleName(AON.CSS.aonIconLabel());
 			comp.addStyleName( mod200.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
 			
-//			InlineLabel sust = new InlineLabel();
-//			sust.setTitle( AON.MSG.replacement());
-//			sust.setStyleName(AON.CSS.aonIconLabel());
-//			sust.addStyleName( mod200.isReplacement()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
-			
 			AonDisplayGridRow row = tab.addRow();
 			row.addStyleName(AON.CSS.aonClickable());
 			row.addClickHandler( event ->  SelectionEvent.fire(Model200Table.this, mod200));					
@@ -370,20 +365,26 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
  				.addCell( new InlineLabel(AonNumberUtils.toString( mod200.getYear())), AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod200.getPeriod().getDescription()), AON.CSS.aonTextCenter());
 			
-			AonDisplayGridCell statusCell = new AonDisplayGridCell();
-			statusCell.add(new InlineLabel(mod200.getStatus().getName()));
-			statusCell.addStyleName(AON.CSS.aonTextCenter());
-			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200.getStatus()) );
-			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200.getStatus()) );
-			row.add( statusCell );
+			// El "Estado" se empezará a usar a partir del Modelo 200 - 2021
+//			AonDisplayGridCell statusCell = new AonDisplayGridCell();
+//			statusCell.add(new InlineLabel(mod200.getYear() < 2021 ? "" : mod200.getStatus().getName()));
+//			statusCell.addStyleName(AON.CSS.aonTextCenter());
+//			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200.getStatus()) );
+//			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200.getStatus()) );
+//			row.add( statusCell );
+			
+			// Tipo Resultado (Ingreso o Devolucion
+			String resultType = "";
+			if (mod200.isDeposit()) 
+				resultType = AON.MSG.deposit(); 
+			else if (mod200.isPayback()) 
+				resultType = AON.MSG.payBack();
 			
 			row.addCell( comp , AON.CSS.aonTextCenter())
-//				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod200.getDocument()))
 				.addCell( new InlineLabel(mod200.getFullName()))
 				.addCell( new InlineLabel(AON.FMT.format(mod200.getResult())), AON.CSS.aonTextRight())
-				//.addCell( new InlineLabel(mod200.getDeclarationType() == null ? "" : mod200.getDeclarationType().getDescription()))
-				.addCell( new InlineLabel(mod200.getDeclarationResultType() == null ? "": mod200.getDeclarationResultType().getDescription()));
+				.addCell( new InlineLabel(resultType));
 				;
 		}
 		

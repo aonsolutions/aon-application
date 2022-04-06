@@ -33,15 +33,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public abstract class PageAbs extends ResizeComposite {
 
-//	interface DeleteButtonTemplate extends SafeHtmlTemplates {
-//		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
-//		SafeHtml render(String option);
-//	}
-//	interface SelectButtonTemplate extends SafeHtmlTemplates {
-//		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-row-selector\" style=\"border: medium none !important;\">")
-//		SafeHtml render(String option);
-//	}
-	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
@@ -49,58 +40,15 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	};
 	
-//	static class SelectButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
-//
-//		private static SelectButtonTemplate template;
-//
-//		protected SelectButtonSafeHtmlTemplates() {
-//			template = GWT.create(SelectButtonTemplate.class);
-//		}
-//		
-//		@Override
-//		public SafeHtml render(String object) {
-//			return template.render(object);
-//		}
-//
-//		@Override
-//		public void render(String object, SafeHtmlBuilder builder) {
-//			builder.append( template.render(object) );
-//		}
-//		
-//	}
-
-//	static class DeleteButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
-//
-//		private static DeleteButtonTemplate template;
-//
-//		protected DeleteButtonSafeHtmlTemplates() {
-//			template = GWT.create(DeleteButtonTemplate.class);
-//		}
-//		
-//		@Override
-//		public SafeHtml render(String object) {
-//			return template.render(object);
-//		}
-//
-//		@Override
-//		public void render(String object, SafeHtmlBuilder builder) {
-//			builder.append( template.render(object) );
-//		}
-//		
-//	}
-
 	private HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
 	private HashMap<IMod200Key, AonBoxLabel> labels = new HashMap<IMod200Key, AonBoxLabel>();
 
-//	@UiField
-//	Panel basePanel;
 	protected FlowPanel basePanel;
 	protected Model200PageCallback callback;
 	
 	public PageAbs(Model200PageCallback callback) {
 		this.callback = callback;
 		
-		// FALTA - CREO QUE ESTO ES LO QUE PERMITE PINTAR EL ASTERISCO EN AQUELLAS CASILLAS DE IMPORTES QUE SE HAN MODIFICADO ??
 		callback.getMod200Object().register(new IMod200ChangeListener() {
 			
 			@Override

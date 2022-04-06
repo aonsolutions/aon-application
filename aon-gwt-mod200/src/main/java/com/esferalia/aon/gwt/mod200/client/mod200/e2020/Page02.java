@@ -60,8 +60,7 @@ public class Page02 extends PageAbs {
 
 	protected void calculate() {
 		populate();
-		callback.getMod200Object().doubleValueChanged(Mod2002020Key.P1501,
-				callback.getMod200Object().getDoubleValue(Mod2002020Key.P1501));
+		callback.getMod200Object().doubleValueChanged(Mod2002020Key.P1501,callback.getMod200Object().getDoubleValue(Mod2002020Key.P1501));
 	}
 
 	@Override

@@ -749,15 +749,6 @@ public class Model200 extends MainEntryPoint {
 	}
 	
 	private void changeView2020(Model200ModuleOptions options, Mod2002020 mod200) {
-//	private void changeView2020(Model200ModuleOptions options, Mod200 mod200) {
-//		Mod2002020Object mod200Obj = new Mod2002020Object(options, mod200);
-		//Model2002020 model2002020 = new Model2002020(options, new Model200Callback());
-//		Model2002020 model2002020 = new Model2002020(new Model200Callback());
-//		model2002020.startModel( mod200Obj );
-//		container.setWidget(model2002020);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-//		declarationContainer.setWidget(model2002020);
 		declarationContainer.setWidget(new Model2002020(new Model200Callback(), mod200));
 	}
 	

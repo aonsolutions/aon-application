@@ -25,20 +25,15 @@ public class Mod2002020Object implements Serializable {
 	
 	private List<IMod200ChangeListener> changeListeners;
 	
-//	private String domainName;
 	private boolean initialized;
 	private Mod2002020 mod200;
-//	private String user;
 	
 	private boolean authomaticCalculation = true;
 	private Model200ModuleOptions options;	
-	
-//	public Mod2002020Object(String currentDomainName, String user, Mod2002020 mod200) {
+
 	public Mod2002020Object(Model200ModuleOptions options, Mod2002020 mod200) {
 		
 		this.options = options;
-//		this.domainName = currentDomainName;
-//		this.user = user;
 		this.mod200 = mod200;
 		initialized = mod200.getId() !=null;
 	}
@@ -68,7 +63,6 @@ public class Mod2002020Object implements Serializable {
 		
 	}
 
-	// ************************************
 	public void initializeMod200(final AsyncCallback<Mod2002020> callback) {
 		Model200.getMod2002020Service().initializeMod2002020(options.getOccam(), mod200, new AsyncCallback<Mod2002020>() {
 			
@@ -136,8 +130,6 @@ public class Mod2002020Object implements Serializable {
 			}
 		});
 	}
-	
-	// ************************************
 	
 	public Administration getAdministration() {
 		return mod200.getAdministration();
@@ -250,6 +242,5 @@ public class Mod2002020Object implements Serializable {
 			}
 		});
 	}
-	
 
 }
