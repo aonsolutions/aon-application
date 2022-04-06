@@ -327,6 +327,12 @@ public abstract class Mod303Declaration {
 					detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 				}
 			}
+		} else {
+			for (FiscalModelDetail detail : mod303.getMap().values()) {
+				detail.setAccumulatedAmount( AonMathUtils.round(detail.getAccumulatedAmount()));
+				detail.setResultAmount( AonMathUtils.round(detail.getResultAmount()));
+				detail.setAmount( AonMathUtils.round(detail.getAmount()));
+			}
 		}
 	}
 

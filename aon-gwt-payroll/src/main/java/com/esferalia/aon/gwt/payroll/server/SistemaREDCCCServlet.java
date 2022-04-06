@@ -52,22 +52,31 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		// Request Type		
 		// super.doGet(request, response);
 		AonApiData api = initialize(request, false); // Provisional: false para que no compruebe el token
+
+		String type = api.getData().getString("type");
+		Integer typeIdx = Integer.parseInt(type);
+		RequestType requestType = RequestType.values()[typeIdx];
 		
-		JSONObject params = api.getData();
-
-		//PARAMS
-		String type = params.optString(IJsonNames.TYPE);
-		String regime = params.optString(IJsonNames.REGIME);
-		String ccc = params.optString("ccc");
-
+		// Enterprise CCC
+		String regime = api.getData().getString("regime");
+		String ccc = api.getData().getString("ccc");
+		Connection connection = null;
+		
 		try {
-	
-			Certificate certificate = AON.getCertificate(api.getDomain(), api.getUser(), "TGSS");
+			// Domian and User
+			String userLogin = api.getData().getString("login");
+			String domainName = api.getData().getString("domain");
+			
+			connection = AonServletUtils.getConnection(domainName);
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			// Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			byte[] dataURI = null;
-			
-			Integer typeIdx = Integer.parseInt(type);
-			RequestType requestType = RequestType.values()[typeIdx];
 
 			switch (requestType) {
 				case UPDATE_CERT:
@@ -92,6 +101,7 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 					.setDescription(requestType.getFileName());
 			
 			responseFile(response, attach);
+			
 		} catch (Exception e) {
 			error(request, response, e);
 		}

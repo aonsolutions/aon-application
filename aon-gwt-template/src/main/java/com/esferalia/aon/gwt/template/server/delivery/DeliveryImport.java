@@ -26,8 +26,9 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -1222,7 +1223,7 @@ public class DeliveryImport {
 				}
 				Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getAlmacen())));
 				if(warehouse == null) {
-					di.getError().getTextError().add("ERROR! ALBV: El almac�n " + r.getAlmacen() + " del albar�n " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
+					di.getError().getTextError().add("ERROR! ALBV: El almacen " + r.getAlmacen() + " del albaran " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
 					di.getError().setError(false);
 				} else {
 					PayMethod pm = new PayMethod();
@@ -1249,7 +1250,7 @@ public class DeliveryImport {
 							.setScope(scope)
 							.setStatus(DeliveryStatus.PENDING)
 							.setNumber(r.getNumero())
-							.setCustomer(customerID)
+							.setCustomer(new Customer().setId(customerID))
 							.setIssueTime(r.getFecha())
 							.setWorkplace(warehouse.getWorkplace())
 							.setAddress(raddress)
@@ -1293,27 +1294,27 @@ public class DeliveryImport {
 	private void importAlbvDet(Domain domain, User user, HashMap<Integer, Delivery> albv) {
 		di.getAlbvDetList().stream().forEach(r -> {
 			if(albv.containsKey(r.getAlbv())) {
-				OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));
+				Product product =  AON.getProduct(domain, user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));
 
 				if(product.getId() == null) {
 					Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(), user.getLogin(), r.getIva() != null ? r.getIva() : 21.0);
-					product = new OldProduct()
-						.setDomain(domain.getId())
+					product = new Product()
+						.setDomain(domain)
 						.setName(r.getConcepto())
 						.setCode(r.getArticulo())
-						.setKind((byte) 2)
-						.setType(ProductType.COMMERCIAL_PRODUCT.value())
-						.setVat(vat.getId() != null ? vat.getId() : null)
+						.setKind(ProductKind.SALE)
+						.setType(ProductType.COMMERCIAL_PRODUCT)
+						.setVat(vat)
 						.setInventoriable(false)
 						.setComposition(false)
 						.setCompositionPrice(false)
 						.setPackaged(false)
-						.setStatus(ProductStatus.ACTIVE.value());
-					product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), product);
+						.setStatus(ProductStatus.ACTIVE);
+					product = AON.saveProduct(domain, user.getLogin(), product);
 				}
 				Integer productId = product.getId();
 
-				OldItem item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(productId)
+				Item item = AON.getItem(domain, user.getLogin(), f -> f.getProductProperty().eq(productId)
 					.and(r.getDetalle() != null ? f.getDetailProperty().eq(r.getDetalle()) :
 						f.getDetailProperty().eq("").or(f.getDetailProperty().isNull()))
 					.and(r.getDetalle2() != null ? f.getDetail2Property().eq(r.getDetalle2()) :
@@ -1322,18 +1323,17 @@ public class DeliveryImport {
 						f.getDetail3Property().eq("").or(f.getDetail3Property().isNull())));
 
 				if(item.getId() == null) {
-					item = new OldItem()
-						.setDomain(domain.getId())
-						.setActive(true)
+					item = new Item()
+						.setDomain(domain)
+						.setStatus(ProductStatus.ACTIVE)
 						.setProduct(product)
-						.setProductId(productId)
 						.setDetail(r.getDetalle())
 						.setDetail2(r.getDetalle2())
 						.setDetail3(r.getDetalle3())
 						.setDescription(r.getConcepto())
 						.setPrice(r.getPrecio())
 						.setPurchasePrice(r.getPrecioCoste() != null ? r.getPrecioCoste() : 0.0);
-					item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), item);
+					item = AON.saveItem(domain, user.getLogin(), item);
 				}
 
 				DeliveryDetail dd = new DeliveryDetail()

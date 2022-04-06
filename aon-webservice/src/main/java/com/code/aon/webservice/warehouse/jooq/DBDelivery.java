@@ -68,7 +68,8 @@ public class DBDelivery {
 			filter = filter.and(f.getItem().eq(id));
 		}
 		
-		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
+		if(filterMap.containsKey(MSG.CARRIER_PACKING) && filterMap.get(MSG.CARRIER_PACKING)[0] != null
+				&& !filterMap.get(MSG.CARRIER_PACKING)[0].equalsIgnoreCase("null")){
 			Integer[] array = AON.getDeliveryStream(domain.getName(), domain.getId(), "", h -> 
 				h.getCarrierPackingProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0])))
 			.map(i -> i.getId()).toArray(Integer[]::new);
@@ -121,11 +122,11 @@ public class DBDelivery {
 			json.put(MSG.ID, detail.getId());
 			json.put(MSG.DOMAIN, detail.getDomain());
 			json.put(MSG.DELIVERY,
-					new JSONObject()
+				new JSONObject()
 					.put(MSG.ID, detail.getDelivery().getId())
 					.put(MSG.REGISTRY, new JSONObject()
-										.put(MSG.ID, detail.getDelivery().getCustomer2().getId())
-										.put(MSG.NAME, detail.getDelivery().getCustomer2().getName()))
+						.put(MSG.ID, detail.getDelivery().getCustomer().getId())
+						.put(MSG.NAME, detail.getDelivery().getCustomer().getName()))
 					.put(MSG.SERIES, detail.getDelivery().getSeries())
 					.put(MSG.NUMBER, detail.getDelivery().getNumber())
 					.put(MSG.ISSUE_DATE, AonDateUtils.dateTimeFormat(detail.getDelivery().getIssueTime())));

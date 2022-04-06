@@ -34,6 +34,11 @@ public class WorkplaceIT extends Composite {
 		}
 
 		@Override
+		protected List<IT> getITsList() {
+			return workplaceITObject.getITsList();
+		}
+		
+		@Override
 		public boolean isUserComunica() {
 			return workplaceITObject.isUserComunica();
 		}
@@ -158,6 +163,7 @@ public class WorkplaceIT extends Composite {
 
 		@Override
 		protected void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure){}
+
 	}
 	
 	// --------------------------------------------------- Binder

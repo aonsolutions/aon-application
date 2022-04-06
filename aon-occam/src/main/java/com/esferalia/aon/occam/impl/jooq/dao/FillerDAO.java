@@ -345,45 +345,6 @@ public class FillerDAO {
 		}
 	}
 	
-	/**
-	 * @deprecated  Use CustomerDAO.CustomerFiller
-	 */
-	@Deprecated
-	public static class CustomerFiller  implements Function<Record, Customer> {
-
-		@Override
-		public Customer apply(Record r) {
-			Customer customer = new Customer();
-			customer.setId(r.getValue(REGISTRY.ID));
-			customer.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			customer.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			customer.setDocumentCountry(null); // TODO
-			customer.setName(r.getValue(REGISTRY.NAME));
-			customer.setAlias(r.getValue(REGISTRY.ALIAS));
-			customer.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));
-			customer.setNationality(null); // TODO
-			customer.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			customer.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)));
-			return customer.setAccount(r.getValue(CUSTOMER.ACCOUNT))
-					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
-					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
-					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED) == 1)
-					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED) == 1)
-					.setEInvoice(r.getValue(CUSTOMER.E_INVOICE) == 1)
-					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
-					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
-					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
-					.setScope(r.getValue(CUSTOMER.SCOPE))
-					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
-					.setSurcharge(r.getValue(CUSTOMER.STATUS)==1)
-					.setTariff(r.getValue(CUSTOMER.TARIFF))
-					.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CUSTOMER.TRANSACTION)))
-					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING)==1)
-					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
-		}
-	}
-	
 	public static class RNoteFiller  implements Function<Record,RegistryNote> {
 
 		@Override
@@ -527,89 +488,6 @@ public class FillerDAO {
 					.setType(r.getValue(PRODUCT.TYPE))
 					.setVat(r.getValue(PRODUCT.VAT))));
 			return detail;
-		}
-	}
-	
-	public static class DeliveryFiller implements Function<Record, Delivery> {
-		@Override
-		public Delivery apply(Record r) {
-			return new Delivery().setId(r.getValue(DELIVERY.ID)).setDomain(r.getValue(DELIVERY.DOMAIN))
-					.setProject(new Project()
-							.setId(r.getValue(DELIVERY.PROJECT)))
-					.setSeries(r.getValue(DELIVERY.SERIES)).setNumber(r.getValue(DELIVERY.NUMBER))
-					.setCustomer(r.getValue(DELIVERY.CUSTOMER)).setAddress(r.getValue(DELIVERY.ADDRESS))
-					.setIssueTime(r.getValue(DELIVERY.ISSUE_TIME)).setPayMethod(r.getValue(DELIVERY.PAY_METHOD))
-					.setSecurityLevel(r.getValue(DELIVERY.SECURITY_LEVEL))
-					.setStatus(DeliveryStatus.safeValueOf(r.getValue(DELIVERY.STATUS)))
-					.setComments(r.getValue(DELIVERY.COMMENTS)).setRemarks(r.getValue(DELIVERY.REMARKS))
-					.setWorkplace(r.getValue(DELIVERY.WORKPLACE)).setScope(r.getValue(DELIVERY.SCOPE))
-					.setNumberOfPymnts(r.getValue(DELIVERY.NUMBER_OF_PYMNTS))
-					.setDaysToFirstPymnt(r.getValue(DELIVERY.DAYS_TO_FIRST_PYMNT))
-					.setDaysBetweenPymnt(r.getValue(DELIVERY.DAYS_BETWEEN_PYMNTS))
-					.setPymntDays(r.getValue(DELIVERY.PYMNT_DAYS)).setBankAccount(r.getValue(DELIVERY.BANK_ACCOUNT))
-					.setBankAlias(r.getValue(DELIVERY.BANK_ALIAS)).setBic(r.getValue(DELIVERY.BIC))
-					.setCarrier(r.getValue(DELIVERY.CARRIER))
-					.setCarrierPacking(r.getValue(DELIVERY.CARRIER_PACKING))
-					.setNumberPlate(r.getValue(DELIVERY.NUMBER_PLATE))
-					.setDriver(r.getValue(DELIVERY.DRIVER))
-					.setDriverDocument(r.getValue(DELIVERY.DRIVER_DOCUMENT))
-					.setTotalPackages(r.getValue(DELIVERY.TOTAL_PACKAGES))
-					.setTotalWeight(r.getValue(DELIVERY.TOTAL_WEIGHT))
-					.setShippingAlternativeAddress(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_ADDRESS))
-					.setShippingAlternativeAddress2(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_ADDRESS2))
-					.setShippingAlternativeZip(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_ZIP))
-					.setShippingAlternativeCity(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_CITY))
-					.setShippingAlternativePhone(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_PHONE))
-					.setShippingAlternativeRecipient(r.getValue(DELIVERY.SHIPPING_ALTERNATIVE_RECIPIENT))
-					.setShippingContact(r.getValue(DELIVERY.SHIPPING_CONTACT))
-					.setShippingPeriod(r.getValue(DELIVERY.SHIPPING_PERIOD))
-					.setTrackingNumber(r.getValue(DELIVERY.TRACKING_NUMBER))
-					.setShippingStatus(r.getValue(DELIVERY.SHIPPING_STATUS))
-					.setStatusModificationDate(r.getValue(DELIVERY.STATUS_MODIFICATION_DATE))
-					.setCreationDate(r.getValue(DELIVERY.CREATION_DATE))
-					.setCreationUser(r.getValue(DELIVERY.CREATION_USER))
-					.setModificationDate(r.getValue(DELIVERY.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(DELIVERY.MODIFICATION_USER));
-		}
-	}
-	
-	public static class RDeliveryFiller extends DeliveryFiller{
-		@Override
-		public Delivery apply(Record r) {
-			return super.apply(r).setCustomerName(r.getValue(REGISTRY.NAME))
-					.setCustomerDocument(r.getValue(REGISTRY.DOCUMENT));
-		}
-	}
-	
-	public static class DeliveryDetailFiller implements Function<Record, DeliveryDetail> {
-		@Override
-		public DeliveryDetail apply(Record r) {
-			return new DeliveryDetail().setId(r.getValue(DELIVERY_DETAIL.ID))
-					.setDomain(r.getValue(DELIVERY_DETAIL.DOMAIN))
-					.setDelivery(new Delivery().setId(r.getValue(DELIVERY_DETAIL.DELIVERY)))
-					.setLine(r.getValue(DELIVERY_DETAIL.LINE))
-					.setItem(new OldItem()
-							.setId(r.getValue(DELIVERY_DETAIL.ITEM)))
-					.setDescription(r.getValue(DELIVERY_DETAIL.DESCRIPTION))
-					.setWarehouse(r.getValue(DELIVERY_DETAIL.WAREHOUSE))
-					.setQuantity(r.getValue(DELIVERY_DETAIL.QUANTITY))
-					.setPrice(r.getValue(DELIVERY_DETAIL.PRICE))
-					.setDiscountExpression(r.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
-					.setSalesDetail(r.getValue(DELIVERY_DETAIL.SALES_DETAIL))
-					.setCreationDate(r.getValue(DELIVERY_DETAIL.CREATION_DATE))
-					.setCreationUser(r.getValue(DELIVERY_DETAIL.CREATION_USER))
-					.setModificationDate(r.getValue(DELIVERY_DETAIL.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(DELIVERY_DETAIL.MODIFICATION_USER));
-		}
-	}
-	
-	public static class PDeliveryDetailFiller extends DeliveryDetailFiller {
-		@Override
-		public DeliveryDetail apply(Record r) {
-			return super.apply(r)
-					.setProductId(r.getValue(PRODUCT.ID))
-					.setProductCode(r.getValue(PRODUCT.CODE))
-					.setProductName(r.getValue(PRODUCT.NAME));
 		}
 	}
 	

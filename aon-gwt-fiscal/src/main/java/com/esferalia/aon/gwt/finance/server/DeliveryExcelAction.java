@@ -141,11 +141,11 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		addCell((detail.getDelivery().getSeries() != null  ?  detail.getDelivery().getSeries() + "/" : "") + detail.getDelivery().getNumber());
 		addCell(detail.getPurchaseReference());
 		addCell(Short.toString(detail.getLine()));
-		alignCenter(addCell(detail.getDelivery().getCustomer2().getDocumentType() == null ? null : 
-			detail.getDelivery().getCustomer2().getDocumentType().getDescription()));
-		alignCenter(addCell(detail.getDelivery().getCustomer2().getDocumentCountry()));
-		addCell( detail.getDelivery().getCustomer2().getDocument());
-		addCell( detail.getDelivery().getCustomer2().getName());
+		alignCenter(addCell(detail.getDelivery().getCustomer().getDocumentType() == null ? null : 
+			detail.getDelivery().getCustomer().getDocumentType().getDescription()));
+		alignCenter(addCell(detail.getDelivery().getCustomer().getDocumentCountry()));
+		addCell( detail.getDelivery().getCustomer().getDocument());
+		addCell( detail.getDelivery().getCustomer().getName());
 		StreetType streetType = detail.getDelivery().getAddressStreetType();
 		addCell( ((streetType !=null) ? (streetType.getAeatCode() + " "): "")
 	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressName())? "":detail.getDelivery().getAddressName() + " ")
@@ -153,8 +153,8 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressZIP())?"":detail.getDelivery().getAddressZIP() + " ")
 	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressTown())?"":detail.getDelivery().getAddressTown() + " ")
 	    		+ (AonStringUtils.isEmpty(detail.getDelivery().getAddressGeozone())?"":detail.getDelivery().getAddressGeozone() + " ") );
-		addCell(detail.getItem()!= null ? detail.getItem().getCode() : null);
-		addCell(detail.getItem()!= null ? detail.getItem().getCategory() : null);
+		addCell(detail.getItem()!= null ? detail.getItem().getProduct().getCode() : null);
+		addCell(detail.getItem()!= null ? detail.getItem().getProduct().getCategory().getName() : null);
 		addCell(AonStringUtils.abbreviate(detail.getDescription(), 60)) ;
 		addCell(detail.getQuantity());
 		addCell(detail.getPrice());
@@ -162,7 +162,7 @@ public class DeliveryExcelAction extends AbsExcelAction implements Consumer<Deli
 		addCell(detail.getDelivery().getScopeName());
 		addCell(detail.getDelivery().getWorkplaceName());
 		addCell(detail.getDelivery().getProject().getName());
-		Integer productId = detail.getItem().getProductId();
+		Integer productId = detail.getItem().getProduct().getId();
 		if (tags != null && productTags != null && productId != null)  {
 			String[] tagArray = productTags.get(productId);
 			for (String tag : tags) {

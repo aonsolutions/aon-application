@@ -189,16 +189,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	public void onBackButtonClick(ClickEvent event) {
 		onBackButtonClick();
 	}
-	
-	@Override
-	public void onDeletedAgreementsButtonClick(ClickEvent event) {
-		onDeletedAgreementsButtonClick();
-	}
-	
-	@Override
-	public void onUnusedAgreementsButtonClick(ClickEvent event) {
-		onUnusedAgreementsButtonClick();
-	}
 
 	@Override
 	public void onAgreementDelete4Ever(Agreement agreement) {
