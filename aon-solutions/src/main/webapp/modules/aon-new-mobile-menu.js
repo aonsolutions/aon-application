@@ -89,10 +89,14 @@ export class AonNewMobileMenu extends AonElement {
     let inputCamera = this.getElement(this.INPUT_CAMERA);
     inputCamera.addEventListener(EVENT.CHANGE,  ({target}) =>{
       const files = target.files;
-      uploadInvoices(inputCamera, files).then(invoices => {
-        if(invoices && invoices.length>0) 
-          this.goInvoice(invoices[0]);
-      });
+      if(this.SELECTED == "documental"){
+        this.saveDocumentFile(files[0]);
+      } else {
+        uploadInvoices(inputCamera, files).then(invoices => {
+          if(invoices && invoices.length>0) 
+            this.goInvoice(invoices[0]);
+        });
+      }
     });
 
     const id = this.id + 'Sidenav';
@@ -303,8 +307,7 @@ export class AonNewMobileMenu extends AonElement {
         fn :  (ev) => {
           if(isInvoice){
             dialog.close();
-            this.SELECTED = "invoice";
-            this.openCamera();
+            this.openCamera("invoice");
           }
         }
       },
@@ -342,8 +345,7 @@ export class AonNewMobileMenu extends AonElement {
         fn :  (ev) => {
           if(isDocumental){
             dialog.close();
-            this.SELECTED = "documental";
-            this.openCamera();
+            this.openCamera("documental");
           }
         }
       },
@@ -409,25 +411,15 @@ export class AonNewMobileMenu extends AonElement {
   }
 
 
-	async openCamera() {
+	async openCamera(type) {
+    this.SELECTED = type;
 		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
 	}
 
   receiveAppImage(file) {
-    console.log(file);
     if(this.SELECTED == "documental"){
-      let type = this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()  ? 'enterprise' : 'employee';
-      const data = {
-        ...file,
-        type,
-        contentName: file.name,
-        contentSize: file.size
-      };
-      uploadFileDocumental(data).then((f)=>{
-        this.goDocumental(f);
-        this.showMessage("Documento registrado");
-      })
+      this.saveDocumentFile(file);
     } else {
       uploadInvoice(file).then(f=>{
         this.goInvoice(f);
@@ -436,6 +428,20 @@ export class AonNewMobileMenu extends AonElement {
     }
 
 	}
+
+  saveDocumentFile(file){
+    let type = this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()  ? 'enterprise' : 'employee';
+    const data = {
+      ...file,
+      type,
+      contentName: file.name,
+      contentSize: file.size
+    };
+    uploadFileDocumental(data).then((f)=>{
+      this.goDocumental(f);
+      this.showMessage("Documento registrado");
+    })
+  }
 
   addDocumentFile() {
     if(LS.getDomainName()) 
