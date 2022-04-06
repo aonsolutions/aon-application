@@ -82,7 +82,11 @@ public class AgreementParser {
 		if(AonStringUtils.contains(agreementCode, 'a'))
 			is = AgreementParser.class.getResourceAsStream(agreementCode + ".xml");
 		else
-			is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
+			try {
+				is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
+			} catch (Exception e) {
+				throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle (no existe XML).");
+			}
 		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder documentBuilder;
