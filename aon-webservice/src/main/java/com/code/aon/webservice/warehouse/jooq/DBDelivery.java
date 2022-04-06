@@ -68,7 +68,8 @@ public class DBDelivery {
 			filter = filter.and(f.getItem().eq(id));
 		}
 		
-		if(filterMap.containsKey(MSG.CARRIER_PACKING)){
+		if(filterMap.containsKey(MSG.CARRIER_PACKING) && filterMap.get(MSG.CARRIER_PACKING)[0] != null
+				&& !filterMap.get(MSG.CARRIER_PACKING)[0].equalsIgnoreCase("null")){
 			Integer[] array = AON.getDeliveryStream(domain.getName(), domain.getId(), "", h -> 
 				h.getCarrierPackingProperty().eq(Integer.parseInt(filterMap.get(MSG.CARRIER_PACKING)[0])))
 			.map(i -> i.getId()).toArray(Integer[]::new);
