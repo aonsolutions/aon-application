@@ -96,7 +96,7 @@ public class CustomerDAO {
 					.setDeliveryGrouped(getBoolean(r, CUSTOMER.DELIVERY_GROUPED))
 					.setDeliveryValuated(getBoolean(r, CUSTOMER.DELIVERY_VALUATED))
 					.setEInvoice(getBoolean(r, CUSTOMER.E_INVOICE))
-					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
+					.setInvoicingGroup(getValue(r, CUSTOMER.INVOICING_GROUP))
 					.setModificationDate(getValue(r, CUSTOMER.MODIFICATION_DATE))
 					.setModificationUser(getValue(r, CUSTOMER.MODIFICATION_USER))
 					.setProjectGrouped(getBoolean(r, CUSTOMER.PROJECT_GROUPED))
