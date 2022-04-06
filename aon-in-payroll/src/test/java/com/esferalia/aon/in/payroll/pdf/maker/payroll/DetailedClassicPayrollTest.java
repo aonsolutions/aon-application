@@ -126,7 +126,7 @@ public class DetailedClassicPayrollTest {
 		ContingencyBases bases = generateRandomContingencies();		
 		builder.setEnterprise(Optional.of("DEMO EMPRESA HERMANOS DE LA PAZ Y ASOCIADOS S.L"))
 				.setAddress(Optional.of("Calle Duque de Wellington, 522 (01010)"))
-				.setAddress2(Optional.of("Vitoria-Gazteiz"))
+				.setAddress2(Optional.of("Vitoria-Gasteiz"))
 				.setCif(Optional.of("58595859M"))
 				.setCcc(Optional.of("8935713546370"))
 				.setEmployee(Optional.of("Iker Gónzalez Con Apellido Inventado de la Fuente Pérez Abech"))

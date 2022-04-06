@@ -187,7 +187,7 @@ public class DefaultPayrollFuseBox {
 		return new PDFDeduction(amount, deductionName, percent, deductionType);
 	}
 	
-	private static List<PDFDeduction> getOtherDeductions(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions) {
+	public static List<PDFDeduction> getOtherDeductions(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions) {
 		
 		DeductionType[] filteredTypes = {	DeductionType.COMMON_CONTINGENCY,
 											DeductionType.UNEMPLOYMENT,
