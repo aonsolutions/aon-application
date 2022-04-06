@@ -3,6 +3,10 @@ package com.esferalia.aon.occam.api.model.product;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.ProductType;
+
 @Deprecated
 public class OldProduct implements Serializable{
 
@@ -260,6 +264,34 @@ public class OldProduct implements Serializable{
 	public OldProduct setBrandName(String brandName){
 		this.brandName = brandName;
 		return this;
+	}
+	
+	public Product toNewProduct() {
+		return new Product()
+			.setId(getId())
+			.setBrand(new Brand().setId(getBrand()).setName(getBrandName()))
+			.setCategory(new ProductCategory().setId(getCategory()))
+			.setCode(getCode())
+			.setComposition(isComposition())
+			.setCompositionPrice(isCompositionPrice())
+			.setDomain(new Domain().setId(getDomain()))
+			.setInventoriable(isInventoriable())
+			.setKind(ProductKind.safeValueOf(getKind()))
+			.setLotable(isLotable())
+			.setManufactured(isManufactured())
+			.setName(getName())
+			.setPackaged(getPackaged())
+			.setPurchaseAccount(new Account().setId(getPurchaseAccount()))
+			.setRetention(new Tax().setId(getRetention()))
+			.setSalesAccount(new Account().setId(getSalesAccount()))
+			.setSerializable(isSerializable())
+			.setStatus(ProductStatus.safeValueOf(getStatus()))
+			.setType(ProductType.safeValueOf(getType()))
+			.setVat(new Tax().setId(getVat()))
+			.setCreationDate(getCreationDate())
+			.setCreationUser(getCreationUser())
+			.setModificationDate(getModificationDate())
+			.setModificationUser(getModificationUser());
 	}
 	
 }

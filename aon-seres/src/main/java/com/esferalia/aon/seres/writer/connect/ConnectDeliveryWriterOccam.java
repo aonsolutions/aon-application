@@ -169,7 +169,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
 				companyEdiCode, getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
-				customerEdiCode, delivery.getCustomer(), department));
+				customerEdiCode, delivery.getCustomer().getId(), department));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
 		// null, null));
 		list.add(createSEH1DRecord(
@@ -177,15 +177,15 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 				companyEdiCode, getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				deliveryPointEdiCode, delivery.getCustomer(), department));
+				deliveryPointEdiCode, delivery.getCustomer().getId(), department));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
 		// null, null));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
-				delivery.getCustomer(), department));
+				delivery.getCustomer().getId(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, companyEdiCode,
 				getWorkPlace(delivery.getWorkplace()).getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
-				customerEdiCode, delivery.getCustomer(), department));
+				customerEdiCode, delivery.getCustomer().getId(), department));
 
 		return list;
 	}
@@ -422,7 +422,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
 			String companyEdiCode, String customerEdiCode, String customerPackage) {
 		OldItem item = getItem(detail.getItem().getId());
-		Integer customerId = delivery.getCustomer();
+		Integer customerId = delivery.getCustomer().getId();
 		String productCustomerCode = obtainProductCustomerCode(item, customerId);
 		
 		SEH1L record = new SEH1L();

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
@@ -51,6 +53,7 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -77,8 +80,12 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -89,6 +96,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -102,6 +110,8 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
@@ -123,6 +133,7 @@ public abstract class ITWidget extends ResizeComposite {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
+	
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	
 	// ------------------------------------------------- ScheduledCommand (TGSS)
@@ -178,7 +189,13 @@ public abstract class ITWidget extends ResizeComposite {
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
+	DeckPanel mainDeckPanel;
+	
+	@UiField
 	HTMLPanel messagePanel;
+	
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
 	
 	@UiField
 	HTMLPanel filterITListPanel;
@@ -190,7 +207,10 @@ public abstract class ITWidget extends ResizeComposite {
 	HTMLPanel timelinePanel;
 	
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	HTMLPanel itTablePanel;
+	
+	@UiField(provided = true)
+	DataGrid<IT> itDataGrid;
 	
 	// --------------------------------------------------- Variables
 	
@@ -200,6 +220,10 @@ public abstract class ITWidget extends ResizeComposite {
 	private SuggestBox employeeSB;
 	private ListBox dateListBox;
 	private CheckBox allContracts;
+	
+	// --------------------------------------------------- DataGrid
+	
+	private List<IT> itsList = Collections.emptyList();
 	
 	// --------------------------------------------------- TimeLineChart.Variables
 	
@@ -237,6 +261,9 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- Toolbar.Variables
 	
 	private AonToolbar toolbar;
+	private AonToolbarButton showList;
+	private AonToolbarButton showStatics;
+	private AonToolbarButton leyend;
 	private MultiFileUpload msjFIEFileUpload;
 	private TGSSContextMenu tgssContextMenu;
 
@@ -261,6 +288,8 @@ public abstract class ITWidget extends ResizeComposite {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
+		provideITsDataGrid();
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		getToolbarPanel();
@@ -270,6 +299,273 @@ public abstract class ITWidget extends ResizeComposite {
 		initFootPanel();
 
 		showResultsPanel();
+		
+		splitLayoutPanel.setHeight((Window.getClientHeight() - 150) + "px");
+		mainDeckPanel.showWidget(0);
+	}
+	
+	// --------------------------------------------------- provideITsDataGrid
+	
+	private void provideITsDataGrid() {
+		itsList = Collections.emptyList();
+
+		itDataGrid = new CustomDataGrid<>(Integer.MAX_VALUE, IT.KEY_PROVIDER);
+		
+		itDataGrid.setAutoHeaderRefreshDisabled(true);
+
+		itDataGrid.setEmptyTableWidget(new Label("No existen its".toUpperCase()));
+
+		NoSelectionModel<IT> selectionITModel = new NoSelectionModel<>(IT.KEY_PROVIDER);
+		itDataGrid.setSelectionModel(selectionITModel);
+
+		addITInfoColumns(selectionITModel);
+
+		new ListDataProvider<IT>(Collections.emptyList()).addDataDisplay(itDataGrid);
+	}
+	
+	private void addITInfoColumns(NoSelectionModel<IT> selectionITModel) {
+		selectionITModel.addSelectionChangeHandler(event -> {
+			IT itSelected = selectionITModel.getLastSelectedObject();
+			openITDialog(itSelected.getContract(), itSelected.getId());
+		});
+
+		// Add Selection Column to table
+		itDataGrid.setSelectionModel(selectionITModel);
+
+		// Columns
+		TextColumn<IT> employeeNameColumn = new TextColumn<IT>() {
+			@Override
+			public String getValue(IT it) {
+				return it.getFullName();
+			}
+			
+			@Override
+			public void render(Context context, IT it, SafeHtmlBuilder sb) {
+				if (null != it) {
+					// it empiez post contrato ROJO
+					if(checkOutOfContractA(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: red;\" title=\"Inactivo\">" + it.getFullName() + "</div>");
+					// it fin antes tipo contrato NARANJA
+					else if(checkOutOfContractB(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: orange;\" title=\"Alta previa\">" + it.getFullName() + "</div>");
+					//  it fin antes tipo contrato y fini post inicio contrato VERDE
+					else if(checkOutOfContractBtw(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: green;\" title=\"Contrato cerca de finalizar\">" + it.getFullName() + "</div>");
+					else super.render(context, it, sb);
+				} else
+					super.render(context, it, sb);
+			}
+		};
+
+		employeeNameColumn.setSortable(true);
+
+		TextColumn<IT> itStartColumn = new TextColumn<IT>() {
+			@Override
+			public String getValue(IT it) {
+				return formatFullDate.format(it.getStartDate());
+			}
+		};
+
+		itStartColumn.setSortable(true);
+		itStartColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		itDataGrid.setColumnWidth(itStartColumn, 10, Unit.PCT);
+
+		TextColumn<IT> startCauseColumn = new TextColumn<IT>() {
+			@Override
+			public String getValue(IT it) {
+				return parseLowCause(it.getTypeLowPart());
+			}
+		};
+
+		startCauseColumn.setSortable(true);
+		startCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		TextColumn<IT> itEndColumn = new TextColumn<IT>() {
+			@Override
+			public String getValue(IT it) {
+				Date endDate = it.getEndDate();
+				return null == endDate ? "" : formatFullDate.format(endDate);
+			}
+		};
+
+		itEndColumn.setSortable(true);
+		itEndColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		itDataGrid.setColumnWidth(itEndColumn, 10, Unit.PCT);
+
+		TextColumn<IT> endCauseColumn = new TextColumn<IT>() {
+			@Override
+			public String getValue(IT it) {
+				return parseHighCause(it.getTypeHighPart());
+			}
+		};
+
+		endCauseColumn.setSortable(true);
+		endCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		TextColumn<IT> startColumn = new TextColumn<IT>() {
+			@Override
+			public String getValue(IT it) {
+				return formatFullDate.format(it.getContractStartDate());
+			}
+		};
+
+		startColumn.setSortable(true);
+		startColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		itDataGrid.setColumnWidth(startColumn, 10, Unit.PCT);
+		
+		TextColumn<IT> endColumn = new TextColumn<IT>() {
+			@Override
+			public String getValue(IT it) {
+				Date endDate = it.getContractEndDate();
+				return null == endDate ? "" : formatFullDate.format(endDate);
+			}
+		};
+
+		endColumn.setSortable(true);
+		endColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		itDataGrid.setColumnWidth(endColumn, 10, Unit.PCT);
+		
+		// Add the columns.
+		itDataGrid.addColumn(employeeNameColumn, "Trabajador");
+		itDataGrid.addColumn(itStartColumn, "F. Baja");
+		itDataGrid.addColumn(startCauseColumn, "Causa Baja");
+		itDataGrid.addColumn(itEndColumn, "F. Alta");
+		itDataGrid.addColumn(endCauseColumn, "Causa Alta");
+		itDataGrid.addColumn(startColumn, "Inicio Contrato");
+		itDataGrid.addColumn(endColumn, "Fin Contrato");
+
+	}
+	
+	private void initITTable() {
+		ListDataProvider<IT> dataProvider = new ListDataProvider<>();
+
+		dataProvider.addDataDisplay(itDataGrid);
+
+		List<IT> itInfoList = dataProvider.getList();
+		itInfoList.clear();
+		
+		for (IT it : this.itsList)
+			itInfoList.add(it);
+
+		itDataGrid.setPageSize(itsList.size());
+		
+		addSortColums(itDataGrid, itInfoList);
+	}
+	
+	private void addSortColums(DataGrid<IT> dataGrid, List<IT> itList) {
+		
+		ListHandler<IT> columnSortHandler = new ListHandler<>(itList);
+
+		columnSortHandler.setComparator(dataGrid.getColumn(0), 
+				(o1, o2) -> compareString(o1, o2, o1.getFullName(), o2.getFullName()));
+
+		columnSortHandler.setComparator(dataGrid.getColumn(1),
+				(o1, o2) -> compareDates(o1, o2, o1.getStartDate(), o2.getStartDate()));
+
+		columnSortHandler.setComparator(dataGrid.getColumn(2),
+				(o1, o2) -> compareString(o1, o2, parseLowCause(o1.getTypeLowPart()), parseLowCause(o2.getTypeLowPart())));
+
+		columnSortHandler.setComparator(dataGrid.getColumn(3), 
+				(o1, o2) -> compareDates(o1, o2, o1.getEndDate(), o2.getEndDate()));
+
+		columnSortHandler.setComparator(dataGrid.getColumn(4),
+				(o1, o2) -> compareString(o1, o2, parseHighCause(o1.getTypeHighPart()), parseHighCause(o2.getTypeHighPart())));
+
+		columnSortHandler.setComparator(dataGrid.getColumn(5),
+				(o1, o2) -> compareDates(o1, o2, o1.getContractStartDate(), o2.getContractStartDate()));
+
+		columnSortHandler.setComparator(dataGrid.getColumn(6),
+				(o1, o2) -> compareDates(o1, o2, o1.getContractEndDate(), o2.getContractEndDate()));
+
+		// We know that the data is sorted alphabetically by default.
+		dataGrid.getColumn(1).setDefaultSortAscending(false);
+		dataGrid.getColumnSortList().push(dataGrid.getColumn(1));
+
+		dataGrid.addColumnSortHandler(columnSortHandler);
+
+	}
+	
+	private int compareString(Object o1, Object o2, String s1, String s2) {
+		if (o1 == o2) return 0;
+		else if (o1 == null) return -1;
+		else if (o2 == null) return 1;
+		else
+        	return s1.compareTo(s2);
+	}
+	
+	private int compareDates(Object o1, Object o2, Date d1, Date d2) {
+		if (o1 == o2 || d1 == d2) return 0;
+		else if (o1 == null || d1 == null) return -1;
+		else if (o2 == null || d2 == null) return 1;
+		else
+        	return d1.compareTo(d2);
+	}
+	
+	// it empiez post contrato ROJO
+	private boolean checkOutOfContractA(IT it) {
+		return null != it.getContractEndDate() && it.getStartDate().after(it.getContractEndDate());
+	}
+
+	// it fin antes tipo contrato NARANJA
+	private boolean checkOutOfContractB(IT it) {
+		return it.getEndDate() != it.getEndDate() && it.getEndDate().before(it.getContractStartDate());
+	}
+
+	//  it fin antes tipo contrato y fini post inicio contrato VERDE
+	private boolean checkOutOfContractBtw(IT it) {
+		return it.getStartDate().after(it.getContractStartDate()) && (null == it.getEndDate() || (null != it.getContractEndDate() && it.getEndDate().after(it.getContractEndDate())));
+	}
+	
+	private String parseLowCause(Byte typeLowPart) {
+		switch (typeLowPart) {
+			case (byte)0:
+				return "Enfermedad Com\u00FAn";
+			case (byte)1:
+				return "Accidente de trabajo";
+			case (byte)2:
+				return "Maternidad";
+			case (byte)3:
+				return "Paternidad";
+			case (byte)4:
+				return "Riesgo para el embarazo";
+			case (byte)5:
+				return "Riesgo durante la lactancia";
+			case (byte)6:
+				return "Accidente no laboral";
+			case (byte)7:
+				return "Enfermedad com\u00FAn periodo de carencia";
+			case (byte)8:
+				return "Enfermedad com\u00FAn, prestaci\u00F3n profesional (COVID-19)";
+			default:
+				return "";
+		}
+	}
+	
+	private String parseHighCause(Byte typeHighPart) {
+		if(null == typeHighPart)
+			return "";
+		
+		switch (typeHighPart) {
+			case (byte)0:
+				return "Curaci\u00F3n";
+			case (byte)1:
+				return "Fallecimiento";
+			case (byte)2:
+				return "Inspecci\u00F3n m\u00E9dica";
+			case (byte)3:
+				return "Propuesta incapacidad";
+			case (byte)4:
+				return "Agotamiento de plazo";
+			case (byte)5:
+				return "Mejor\u00EDa que permite realizar el trabajo habitual";
+			case (byte)6:
+				return "Incomparecencia";
+			case (byte)7:
+				return "Control INSS duraci\u00F3n 12 meses";
+			case (byte)8:
+				return "Recuperaci\u00F3n capacidad profesional";
+			case (byte)9:
+				return "Incomparecencia contratos de formaci\u00F3n";
+			default:
+				return "";
+		}
 	}
 
 	// --------------------------------------------------- TimeLineChart.MouseEventsHandlers
@@ -428,6 +724,7 @@ public abstract class ITWidget extends ResizeComposite {
 		}
 	}
     
+    
     // --------------------------------------------------- TooltipCallback
     
     class TooltipCallBack extends Timer {
@@ -556,27 +853,48 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- OnModuleLoad
 	
 	public void loadITWidget() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo ITs de los trabajadores...");
+		
 		getITEmployeeListDB(itEmployeeList -> {
 			itEmployeeIts = itEmployeeList;
-			this.expressionCallback = new ExpressionCallback();
-			this.tooltipCallback = new TooltipCallBack();
-			this.popupPanel = new PopupPanel(true);
-			this.tooltip = new ITTooltip() {
-				
-				@Override
-				protected void onTooltipClick(Integer contractId, Integer itId) {
-					openITDialog(contractId, itId);
-				}
-			};
+			int deckIdx = mainDeckPanel.getVisibleWidget();
+			if(0 == deckIdx) showStatics();
+			else showList();
+			AonMessagePanel.hideMessage(messagePanel);
 			
-			getFilterITListPanel();
-			initDateListBox();
-			initSuggestBox();
-			printTimelineChart();
-			
-			checkStatusITs();
-			
+		
 		}, f -> {});
+	}
+	
+	private void loadITStatics() {
+		this.expressionCallback = new ExpressionCallback();
+		this.tooltipCallback = new TooltipCallBack();
+		this.popupPanel = new PopupPanel(true);
+		this.tooltip = new ITTooltip() {
+			
+			@Override
+			protected void onTooltipClick(Integer contractId, Integer itId) {
+				openITDialog(contractId, itId);
+			}
+		};
+		
+		AonMessagePanel.hideMessage(messagePanel);
+		getFilterITListPanel();
+		initDateListBox();
+		initSuggestBox();
+		printTimelineChart();
+		
+		checkStatusITs();
+	}
+	
+	private void loadITsList() {
+		itsList = getITsList();
+		initITTable();
+		setTableHeights();
+	}
+	
+	private void setTableHeights() {
+		itDataGrid.getElement().getStyle().setHeight(Window.getClientHeight() - 180.00, Unit.PX);
 	}
 	
 	private void getFilterITListPanel() {
@@ -636,34 +954,42 @@ public abstract class ITWidget extends ResizeComposite {
 	private void initDateListBox() {
 		dateListBox.clear();
 
+		dateListBox.addItem("\u00daltimos 12 meses", "0");
 		for (Integer year : getAviableYears())
 			dateListBox.addItem(String.valueOf(year));
 
 		dateListBox.setSelectedIndex(0);
 		
-		selectedYear = Integer.parseInt(dateListBox.getItemText(dateListBox.getSelectedIndex()));
-
-		startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
-		// Check if selected year is current year
-		int actualYear = DateUtils.getYear();
-		if(AonNumberUtils.equals(selectedYear, actualYear)) {
-			Date nextMonth = DateUtils.addMonths2Date(new Date(), 1);
-			endYear = DateUtils.getLastDayOfMonth(nextMonth);
-		} else
-			endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+		selectedYear = 0;
+		Date date = new Date();
+		endYear = DateUtils.getLastDayOfMonth(date);
+		startYear = DateUtils.copyDateOnly(endYear);
+		startYear = DateUtils.getFirstDayOfMonth(DateUtils.addYears2Date(startYear, -1));
 		
 		dateListBox.addChangeHandler(e -> {
-			selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox.getSelectedIndex()));
-
-			startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0,selectedYear));
+			try {
+				selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox.getSelectedIndex()));
+			} catch (Exception ex) {
+				selectedYear = 0;
+			}
 			
-			// Check if selected year is current year
-			int currentYear = DateUtils.getYear();
-			if(AonNumberUtils.equals(selectedYear, currentYear)) {
-				Date nextMonth = DateUtils.addMonths2Date(new Date(), 1);
-				endYear = DateUtils.getLastDayOfMonth(nextMonth);
-			} else
-				endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+			if(AonNumberUtils.equals(selectedYear, 0)) {
+				Date currentDate = new Date();
+				endYear = DateUtils.getLastDayOfMonth(currentDate);
+				startYear = DateUtils.copyDateOnly(endYear);
+				startYear = DateUtils.getFirstDayOfMonth(DateUtils.addYears2Date(startYear, -1));
+			} else {
+	
+				startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0,selectedYear));
+				
+				// Check if selected year is current year
+				int currentYear = DateUtils.getYear();
+				if(AonNumberUtils.equals(selectedYear, currentYear)) {
+					Date nextMonth = DateUtils.addMonths2Date(new Date(), 1);
+					endYear = DateUtils.getLastDayOfMonth(nextMonth);
+				} else
+					endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+			}
 			
 			initSuggestBox();
 			reloadTimeline();
@@ -675,8 +1001,15 @@ public abstract class ITWidget extends ResizeComposite {
 		
 		centineels = new LinkedHashMap<>();
 		
-		Date startYearAux = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
-		Date endYearAux = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+		Date startYearAux = null;
+		Date endYearAux = null;
+		if(AonNumberUtils.equals(selectedYear, 0)) {
+			startYearAux = DateUtils.copyDateOnly(startYear);
+			endYearAux = DateUtils.getLastDayOfMonth(endYear);
+		} else {
+			startYearAux = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
+			endYearAux = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+		}
 		
 		for (ITEmployee itEmployee : getFilterITEmployeeList(allContracts.getValue(), startYearAux, endYearAux)) {
 
@@ -1419,6 +1752,15 @@ public abstract class ITWidget extends ResizeComposite {
 		addIT.addClickHandler(e -> onAddIT());
 		toolbar.add(addIT);
 		
+		showList = new AonToolbarButton("Lista ITs", AON.CSS.aonIconList());
+		showList.addClickHandler(e -> showList());
+		toolbar.add(showList);
+		
+		showStatics = new AonToolbarButton("L\u00ednea temporal ITs", AON.CSS.aonIconStatics());
+		showStatics.addClickHandler(e -> showStatics());
+		showStatics.setVisible(false);
+		toolbar.add(showStatics);
+		
 		AonExpandButton tgssExpand = new AonExpandButton("Seguridad Social", AON.CSS.aonIconTgss()) {
 			
 			@Override
@@ -1435,13 +1777,30 @@ public abstract class ITWidget extends ResizeComposite {
 		};
 		toolbar.add(tgssExpand);
 		
-		AonToolbarButton leyend = new AonToolbarButton( "Leyenda", AON.CSS.aonIconInfo() );
+		leyend = new AonToolbarButton( "Leyenda", AON.CSS.aonIconInfo() );
 		leyend.addClickHandler(e -> onLeyend());
+		leyend.setVisible(false);
 		toolbar.add(leyend);
 
 	}
 	
 	// --------------------------------------------------- Toolbar.Methods
+	
+	private void showStatics() {
+		mainDeckPanel.showWidget(0);
+		showStatics.setVisible(false);
+		showList.setVisible(true);
+		leyend.setVisible(true);
+		loadITStatics();
+	}
+	
+	private void showList() {
+		mainDeckPanel.showWidget(1);
+		showStatics.setVisible(true);
+		showList.setVisible(false);
+		leyend.setVisible(false);
+		loadITsList();
+	}
 	
 	private void onAddIT() {
 		newITDialog();
@@ -1739,11 +2098,11 @@ public abstract class ITWidget extends ResizeComposite {
 	private void accept(ITEmployee itEmployee, boolean newIT) {
 		setITEmployee(itEmployee, 
 			s -> {
-				loadITWidget();
 				if(Boolean.TRUE.equals(newIT))
 					showCreateMessage();
 				else
 					showUpdateMessage();
+				loadITWidget();
 			},
 			f -> {}
 		);
@@ -1784,8 +2143,8 @@ public abstract class ITWidget extends ResizeComposite {
 	private void delete(IT it, ITEmployee itEmployee) {
 		deleteIT(itEmployee, it, 
 			s -> {
-				loadITWidget();
 				showDeleteMessage();
+				loadITWidget();
 			},
 			f -> {}
 		);
@@ -1794,8 +2153,8 @@ public abstract class ITWidget extends ResizeComposite {
 	private void deletePaternity(IT it, ITEmployee itEmployee) {
 		deletePaternityIT(itEmployee, it, 
 			s -> {
-				loadITWidget();
 				showDeleteMessage();
+				loadITWidget();
 			}, 
 			f -> {}
 		);
@@ -1899,6 +2258,8 @@ public abstract class ITWidget extends ResizeComposite {
 
 		footPanel = new MinimizePanel();
 		footPanel.setStyleName(AON.CSS.aonSelector());
+		footPanel.addMaximizeHandler(e -> showFootPanel());
+		footPanel.addMinimizeHandler(e -> closeFootPanel());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 	
 		tabLayout.setWidth("100%");
@@ -1962,6 +2323,7 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void syncITs(Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void getITEmployeeListDB(Consumer<List<ITEmployee>> success, Consumer<Throwable> failure);
+	protected abstract List<IT> getITsList();
 	
 	public abstract boolean isUserComunica();
 	public abstract SortedSet<Integer> getAviableYears();

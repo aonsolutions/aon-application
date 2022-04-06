@@ -21,6 +21,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -271,15 +272,14 @@ public class ActivityDraft extends Composite{
 
 		FormPanel formPanel = new FormPanel("_blank");
 		formPanel.setAction(fileDownloadURL);
-		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanel.setMethod(FormPanel.METHOD_GET);
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden("ccc", completeCCC.getValue()));
 		flowPanel.add(new Hidden("regime", completeCCC.getKey()));
 		flowPanel.add(new Hidden("type", Integer.toString(type)));
-		flowPanel.add(new Hidden("session_id", Wnd.getToken()));
-		flowPanel.add(new Hidden("domain_login", Wnd.getCurrentUser()));
-		flowPanel.add(new Hidden("domain_name", Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden("login", Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
 		
 		formPanel.add(flowPanel);
 		

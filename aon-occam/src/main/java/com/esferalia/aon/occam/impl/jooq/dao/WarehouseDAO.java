@@ -71,8 +71,8 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryDetailFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
@@ -586,7 +586,7 @@ public class WarehouseDAO {
 		.set(DELIVERY.PROJECT, delivery.getProject().getId())
 		.set(DELIVERY.SERIES, delivery.getSeries())
 		.set(DELIVERY.NUMBER, delivery.getNumber())
-		.set(DELIVERY.CUSTOMER, delivery.getCustomer())
+		.set(DELIVERY.CUSTOMER, delivery.getCustomer().getId())
 		.set(DELIVERY.ADDRESS, delivery.getAddress())
 		.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
 		.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())

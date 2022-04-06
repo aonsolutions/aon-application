@@ -22,10 +22,6 @@ public class RegistryItem implements Serializable {
 	private Priority priority;
 	private Integer workplace;
 	private RegistryItemStatus status;
-	
-	public RegistryItem() {
-	
-	}
 
 	public Integer getId() {
 		return id;
