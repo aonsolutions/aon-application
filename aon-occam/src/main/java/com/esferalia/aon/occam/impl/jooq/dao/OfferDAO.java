@@ -16,7 +16,6 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Timestamp;
@@ -27,6 +26,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class OfferDAO {
 	
@@ -97,6 +98,25 @@ public class OfferDAO {
 	private static final com.esferalia.aon.jooq.tables.Registry TARGET_ALIAS = REGISTRY.as("target");
 	private static final com.esferalia.aon.jooq.tables.Registry SUPPLIER_ALIAS = REGISTRY.as("supplier");
 	
+	public static int getNextNumber(AONContext ctx, String series ) {
+		Integer next = ctx.getDslContext()
+			.select( DSL.max(OFFER.NUMBER))
+			.from(OFFER)
+			.where(OFFER.DOMAIN.eq(ctx.getDomainId()))
+			.and(AonStringUtils.isBlank(series)
+				? OFFER.SERIES.isNull().or(DSL.trim(OFFER.SERIES).eq(""))
+				: OFFER.SERIES.eq(series))
+			.fetch()
+			.stream()
+			.mapToInt(rec -> (rec != null && rec.getValue(DSL.max(OFFER.NUMBER)) != null) 
+					? rec.getValue(DSL.max(OFFER.NUMBER)) 
+					: 0)
+			.findFirst()
+			.orElse(0);
+		if(next < 0) next = 0;
+		return ++next;
+	}
+	
 	public static Offer getOffer(AONContext ctx, OfferFilter filter) {
 		return ctx.getDslContext()
 			.select()
@@ -106,7 +126,8 @@ public class OfferDAO {
 			.limit(1)
 			.fetch()
 			.stream()
-			.map(new OfferFiller()).findFirst().get();	
+			.map(new OfferFiller())
+			.findFirst().orElse(new Offer());	
 	}
 	
 	public static Stream<Offer> getOfferStream(AONContext ctx, OfferFilter filter) {
@@ -192,7 +213,7 @@ public class OfferDAO {
 						offer.getWorkPlace() != null ? offer.getWorkPlace().getId(): null, offer.getBankAccount(), offer.getBic(),
 						offer.getComments(), offer.getRemarks(),
 						modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
-				.returning(OFFER.ID).fetchOne().getId();;
+				.returning(OFFER.ID).fetchOne().getId();
 		offer.setId(id);
 		return offer;
 	}
@@ -238,7 +259,7 @@ public class OfferDAO {
 	}
 	
 	
-	private static class OfferFiller extends Filler implements Function<Record, Offer> {
+	public static class OfferFiller extends Filler implements Function<Record, Offer> {
 
 		@Override
 		public Offer apply(Record r) {
