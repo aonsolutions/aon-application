@@ -208,7 +208,7 @@ public class IndexPDFFiles {
 	public static void main(String[] args) throws Exception {
 		
 		System.out.println("-----------------------------------------------------------");
-		System.out.println(" PDF INDEX GENERATION ");
+		System.out.println(" PDF INDEX GENERATION NEW ");
 		System.out.println("-----------------------------------------------------------");
 		
 		InputStream payrollStream = IndexPDFFiles.class.getResourceAsStream("payroll.pdf");

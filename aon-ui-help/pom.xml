@@ -23,7 +23,7 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>com.code.aon.ui.help.pdf.PdfIndexer</mainClass>
+              <mainClass>com.code.aon.ui.help.pdf.IndexPDFFiles</mainClass>
               <arguments>
                 <!--argument>argument</argument-->
               </arguments>
