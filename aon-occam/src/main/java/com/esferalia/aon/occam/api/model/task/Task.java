@@ -313,13 +313,4 @@ public class Task  implements Serializable{
 		this.parent = parent;
 		return this;
 	}
-	
-	public boolean getIsCau() {
-		return isCau!=null && isCau;
-	}
-
-	public Task setIsCau(Boolean isCau) {
-		this.isCau = isCau;
-		return this;
-	}
 }

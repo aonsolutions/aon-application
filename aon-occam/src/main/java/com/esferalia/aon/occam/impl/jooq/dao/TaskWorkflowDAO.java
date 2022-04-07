@@ -55,6 +55,7 @@ public class TaskWorkflowDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_DATE);}
 		@Override public Property<String> getNotificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.NOTIFICATION_USER);}
 		@Override public Property<Timestamp> getNotificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.NOTIFICATION_DATE);}
+		@Override public Property<String> getEmailProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.EMAIL);}
 	}
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, TaskWorkflowFilter filter){	
