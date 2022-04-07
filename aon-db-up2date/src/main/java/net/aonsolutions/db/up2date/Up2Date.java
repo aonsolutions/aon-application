@@ -28,6 +28,7 @@ import net.aonsolutions.db.up2date.tgss.Bases2022Fix;
 import net.aonsolutions.db.up2date.tgss.Bases2022UpdateII;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2022Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2022Update;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2022UpdateDaily;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2022Update;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2022Update;
 
@@ -231,7 +232,8 @@ public class Up2Date {
 //    		Artist2022Update.ARTIST2022UPDATE
 //    		RefreshMod303Result.REFRESH_MOD303_RESULT,
 //    		Artist2022Fix.ARTIST2022FIX
-    		Bases2022Fix.BASES2022FIX
+    		Bases2022Fix.BASES2022FIX,
+    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY
     };
     
 

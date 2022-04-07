@@ -3,6 +3,7 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -656,6 +657,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2022);
 		assertValue("cgcBaseLabel", 38.89 * 31 * 0.85);
 		assertValue("cgpBaseLabel", 1166.70 * 0.85);
+
+		draft("HORAS NÓMINA, ( GRUPO 10 )");
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 38.89 * 31 * 0.25);
+		assertValue("cgpBaseLabel", 1166.70 * 0.25);
+		double salaryHours = getValue("db-amount-label-1");
+		assertTrue((salaryHours * 7.03 ) <  ( 38.89 * 31 * 0.25 )  ) ;
 	}
 
 	@Test
