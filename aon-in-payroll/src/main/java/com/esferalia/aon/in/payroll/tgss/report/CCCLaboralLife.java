@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -24,7 +25,7 @@ public class CCCLaboralLife {
 
 	//PARSER HANDLE EXCEPTIONS
 	public static Collection<Employee> parse(InputStream is, Employee.EmployeeBuilder builder) throws IOException, UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(is)) {return parser(doc,builder);}
+		try (PDDocument doc = Loader.loadPDF(is)) {return parser(doc,builder);}
 	}
 
 	//TOTAL DOCUMENT PARSER

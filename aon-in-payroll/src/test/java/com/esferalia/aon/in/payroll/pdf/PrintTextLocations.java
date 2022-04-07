@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
@@ -19,7 +20,7 @@ public class PrintTextLocations extends PDFTextStripper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		try (PDDocument document = PDDocument.load(PrintTextLocations.class.getResourceAsStream("nomina.pdf"))) {
+		try (PDDocument document = Loader.loadPDF(PrintTextLocations.class.getResourceAsStream("nomina.pdf"))) {
 			PDFTextStripper stripper = new PrintTextLocations();
 			stripper.setSortByPosition(true);
 			stripper.setStartPage(0);

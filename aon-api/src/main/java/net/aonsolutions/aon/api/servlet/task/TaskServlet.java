@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -226,6 +227,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveWorkflow(AonApiData api, Optional<TaskWorkflow> workflowOpt) {
 		TaskWorkflow workflowTmp = workflowOpt.isPresent() ? workflowOpt.get() : TaskWorkflowJSON.fromJSON(api.getData());
+		if(workflowTmp.getDomain()==null) 
+			workflowTmp.setDomain(api.getDomain().getId());
+
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
 		TaskUtils.changeWorkflow(api, workflow);
 		return TaskWorkflowJSON.toJSON(workflow);
@@ -358,7 +362,10 @@ public class TaskServlet extends AonApiHttpServlet{
 			
 			TaskUtils.sendHistoricWorkflow(api, task);
 			
-			Integer[] ids = taskWorkflow.stream().map(TaskWorkflow::getId).toArray(Integer[]::new);
+			Integer[] ids = taskWorkflow.stream().map(workflow->{
+				workflow.setNotificationDate(new Date());
+				return workflow.getId();
+			}).toArray(Integer[]::new);
 		
 			AON_SOLUTIONS.updateTaskWorkflowBetween(api.getDomain(), api.getUser(),  f->f.getIdProperty().in(ids) );
 			

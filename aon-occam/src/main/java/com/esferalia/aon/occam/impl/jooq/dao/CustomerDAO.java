@@ -143,6 +143,12 @@ public class CustomerDAO {
 			.orElse(null);
 	}
 	
+	public static Customer get(AONContext ctx, CustomerFilter filter){
+		return getStream(ctx, filter)
+			.findFirst()
+			.orElse(new Customer());
+	}
+	
 	public static Customer save(AONContext ctx, Customer customer) {
 		ctx.checkWrite();
 		CustomerAutoComplete.autoComplete(ctx, customer);

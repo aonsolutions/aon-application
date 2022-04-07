@@ -4,20 +4,26 @@ import { get, post, remove, requestSig } from "./request.js";
 
 const isCau  = () => parseInt(localStorage.getItem("taskCau") || 0);
 
-const setCauData = (data) => ({
-    ...data, 
-    cau:isCau(),
-    domain: {
-        id:SIG_DOMAIN_ID,
-        name:SIG_DOMAIN_NAME
+const setCauData = (data) => {
+    return {
+        ...data, 
+        cau:isCau(),
+        domain: {
+            id:SIG_DOMAIN_ID,
+            name:SIG_DOMAIN_NAME
+        }
     }
-});
+}
 
 export const isSigGet = (url, data) => {
     if(data && isCau()){
-        data = setCauData(data);
+        data = {
+            ...data, 
+            cau:isCau(),
+            domainId: SIG_DOMAIN_ID,
+            domainName: SIG_DOMAIN_NAME
+        }   
     }
-
     return isCau() ? getSig(`${SIG_URL}/${url}`, data) : get(`${API_URL}/${url}`, data);
 }  
   

@@ -19,12 +19,15 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod111InsertMonthlyTest.class,
 	Mod111InsertMonthlyComplementaryTest.class,
 	Mod111InsertMonthlyReplacementTest.class,
+	Mod111RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
 	Mod111DeleteTest.class,
 	Mod111InsertQuarterlyTest.class,
 	Mod111InsertQuarterlyComplementaryTest.class,
 	Mod111InsertQuarterlyReplacementTest.class,
+	Mod111RoundedAmountsTest.class,
+	
 	// IRPF JSON 
 	IrpfBreakdownJSONTest.class,
 	

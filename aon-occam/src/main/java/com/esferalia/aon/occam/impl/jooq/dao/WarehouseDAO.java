@@ -503,7 +503,7 @@ public class WarehouseDAO {
 						DELIVERY.MODIFICATION_DATE)
 				.values(delivery.getDomain(), delivery.getProject().getId(),
 						delivery.getSeries(), delivery.getNumber(),
-						delivery.getCustomer(), delivery.getAddress(),
+						delivery.getCustomer().getId(), delivery.getAddress(),
 						delivery.getIssueTime(), delivery.getPayMethod(),
 						delivery.getSecurityLevel(), delivery.getStatus().ordinal(),
 						delivery.getComments(), delivery.getRemarks(),

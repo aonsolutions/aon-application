@@ -80,6 +80,7 @@ public class Certifica2Info implements Serializable {
 	private String representativeName;
 	private String representativeSurname;
 	private String regime;
+	private String mdCtz;
 	private String ccc;
 	private String completeCCC;
 	private String document;
@@ -113,6 +114,10 @@ public class Certifica2Info implements Serializable {
 	public String getRegime() {
 		return regime;
 	}
+	
+	public String getMdCtz() {
+		return mdCtz;
+	}
 
 	public String getRepresentativeDocument() {
 		return representativeDocument;
@@ -140,6 +145,10 @@ public class Certifica2Info implements Serializable {
 
 	public void setRegime(String regime) {
 		this.regime = regime;
+	}
+	
+	public void setMdCtz(String mdCtz) {
+		this.mdCtz = mdCtz;
 	}
 
 	public String getCcc() {
@@ -311,6 +320,7 @@ public class Certifica2Info implements Serializable {
 		String toString = "Certific@2 Info \n { \n";
 		
 		if(AonStringUtils.isNotBlank(regime)) toString += "\t Regime: " + regime + "\n";
+		if(AonStringUtils.isNotBlank(mdCtz)) toString += "\t MdCtz: " + mdCtz + "\n";
 		if(AonStringUtils.isNotBlank(ccc)) toString += "\t CCC: " + ccc + "\n";
 		if(AonStringUtils.isNotBlank(completeCCC)) toString += "\t CompleteCCC: " + completeCCC + "\n";
 		if(AonStringUtils.isNotBlank(document)) toString += "\t Document: " + document + "\n";
