@@ -809,7 +809,7 @@ public class Mod349DAO {
 							.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)							
 							.setBase(rec.getValue(sumBase).doubleValue())
 							.setRectificateInvoiceTaxDate(rec.getValue(rectificationInvoice.TAX_DATE))
-						;
+						; 
 				})
 				;
 	}
