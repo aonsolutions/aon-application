@@ -7,8 +7,6 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.reescale;
 import static com.esferalia.aon.watson.server.AonDateUtils.format;
 import static com.esferalia.aon.watson.util.AonStringUtils.trimToEmpty;
 import static java.awt.Color.BLACK;
-import static org.apache.pdfbox.pdmodel.font.PDType1Font.HELVETICA;
-import static org.apache.pdfbox.pdmodel.font.PDType1Font.HELVETICA_BOLD;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -19,6 +17,8 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
@@ -29,6 +29,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams.PartTimeEntry;
 
 public class PartTimeTemplate {
+
 	private static final float MARGIN_TOP = 50f;
 	private static final float MARGIN_SIDE = 50f;
 	private static final float CELL_HEIGHT = 15f;
@@ -124,28 +125,28 @@ public class PartTimeTemplate {
 			startPoints[i] = x;
 		}
 		
-		PdfText text = new PdfText(startPoints[0], y, startPoints[1] - startPoints[0], TITLE_CELL_HEIGHT, contentStream, dayTitle, BLACK, HELVETICA, titleCellFontSize, PdfSettings.ALIGNMENT.CENTER);
+		PdfText text = new PdfText(startPoints[0], y, startPoints[1] - startPoints[0], TITLE_CELL_HEIGHT, contentStream, dayTitle, BLACK, new PDType1Font(FontName.HELVETICA), titleCellFontSize, PdfSettings.ALIGNMENT.CENTER);
 		text.draw();
-		text = new PdfText(startPoints[1], y, startPoints[2] - startPoints[1], TITLE_CELL_HEIGHT, contentStream, ordinaryTitle, BLACK, HELVETICA, titleCellFontSize, PdfSettings.ALIGNMENT.CENTER);
+		text = new PdfText(startPoints[1], y, startPoints[2] - startPoints[1], TITLE_CELL_HEIGHT, contentStream, ordinaryTitle, BLACK, new PDType1Font(FontName.HELVETICA), titleCellFontSize, PdfSettings.ALIGNMENT.CENTER);
 		text.draw();
-		text = new PdfText(startPoints[2], y, getPageWidth() - MARGIN_SIDE - startPoints[2], TITLE_CELL_HEIGHT, contentStream, complementaryTitle, BLACK, HELVETICA, titleCellFontSize, PdfSettings.ALIGNMENT.CENTER);
+		text = new PdfText(startPoints[2], y, getPageWidth() - MARGIN_SIDE - startPoints[2], TITLE_CELL_HEIGHT, contentStream, complementaryTitle, BLACK, new PDType1Font(FontName.HELVETICA), titleCellFontSize, PdfSettings.ALIGNMENT.CENTER);
 		text.draw();
 		
 		for (int i=1; i<=params.getEntries().size(); i++) {
 			y -= CELL_HEIGHT;
 			String day = String.valueOf(i);
 			
-			text = new PdfText(MARGIN_SIDE, y, startPoints[1] - MARGIN_SIDE, CELL_HEIGHT, contentStream, day, BLACK, HELVETICA, normalCellFontSize, PdfSettings.ALIGNMENT.CENTER);
+			text = new PdfText(MARGIN_SIDE, y, startPoints[1] - MARGIN_SIDE, CELL_HEIGHT, contentStream, day, BLACK, new PDType1Font(FontName.HELVETICA), normalCellFontSize, PdfSettings.ALIGNMENT.CENTER);
 			text.draw();
 			
 			PartTimeEntry entry = params.getEntry(i);
 
 			String ordinaryHours = entry.getOrdinary() != null ? String.format("%.2f", entry.getOrdinary()) : "0,00";
-			text = new PdfText(startPoints[1], y, startPoints[2] - startPoints[1], CELL_HEIGHT, contentStream, ordinaryHours, BLACK, HELVETICA, normalCellFontSize, PdfSettings.ALIGNMENT.CENTER);
+			text = new PdfText(startPoints[1], y, startPoints[2] - startPoints[1], CELL_HEIGHT, contentStream, ordinaryHours, BLACK, new PDType1Font(FontName.HELVETICA), normalCellFontSize, PdfSettings.ALIGNMENT.CENTER);
 			text.draw();
 
 			String complementaryHours = entry.getComplementary() != null ? String.format("%.2f", entry.getComplementary()) : "";
-			text = new PdfText(startPoints[2], y, getPageWidth() - MARGIN_SIDE - startPoints[2], CELL_HEIGHT, contentStream, complementaryHours, BLACK, HELVETICA, normalCellFontSize, PdfSettings.ALIGNMENT.CENTER);
+			text = new PdfText(startPoints[2], y, getPageWidth() - MARGIN_SIDE - startPoints[2], CELL_HEIGHT, contentStream, complementaryHours, BLACK, new PDType1Font(FontName.HELVETICA), normalCellFontSize, PdfSettings.ALIGNMENT.CENTER);
 			text.draw();
 		}
 		
@@ -189,31 +190,31 @@ public class PartTimeTemplate {
 		x = MARGIN_SIDE;
 		
 		String recibi = "Recibí el";
-		PdfText text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, recibi, BLACK, HELVETICA, 10f, PdfSettings.ALIGNMENT.LEFT);
+		PdfText text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, recibi, BLACK, new PDType1Font(FontName.HELVETICA), 10f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
 		
 		x += 50;
 		
 		String paymentDateStr = trimToEmpty(format(params.getPaymentDate(), "dd/MM/yyyy"));
-		text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, paymentDateStr, BLACK, HELVETICA, 10f, PdfSettings.ALIGNMENT.LEFT);
+		text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, paymentDateStr, BLACK, new PDType1Font(FontName.HELVETICA), 10f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
 		
 		x = MARGIN_SIDE;
 		
 		String byEnterprise = "POR LA EMPRESA";
-		text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, byEnterprise, BLACK, HELVETICA, 10f, PdfSettings.ALIGNMENT.RIGHT);
+		text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, byEnterprise, BLACK, new PDType1Font(FontName.HELVETICA), 10f, PdfSettings.ALIGNMENT.RIGHT);
 		text.draw();
 		
 		y -= 20;
 		
 		String theWorker = "EL TRABAJADOR";
-		text = new PdfText(x, y, 150, 10f, contentStream, theWorker, BLACK, HELVETICA, 10f, PdfSettings.ALIGNMENT.RIGHT);
+		text = new PdfText(x, y, 150, 10f, contentStream, theWorker, BLACK, new PDType1Font(FontName.HELVETICA), 10f, PdfSettings.ALIGNMENT.RIGHT);
 		text.draw();
 		
 		y -= 15;
 		
 		String signed = "Fdo.: Nombre y apellidos";
-		text = new PdfText(x, y, 150, 10f, contentStream, signed, BLACK, HELVETICA, 10f, PdfSettings.ALIGNMENT.RIGHT);
+		text = new PdfText(x, y, 150, 10f, contentStream, signed, BLACK, new PDType1Font(FontName.HELVETICA), 10f, PdfSettings.ALIGNMENT.RIGHT);
 		text.draw();
 		
 		y = originalY - 55;
@@ -231,22 +232,22 @@ public class PartTimeTemplate {
 			e.printStackTrace();
 		}
 		y -= 15;
-		text = new PdfText(MARGIN_SIDE, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, signed, BLACK, HELVETICA, 10f, PdfSettings.ALIGNMENT.RIGHT);
+		text = new PdfText(MARGIN_SIDE, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, signed, BLACK, new PDType1Font(FontName.HELVETICA), 10f, PdfSettings.ALIGNMENT.RIGHT);
 		text.draw();
 		
 		y -= 15;
 		
 		String enterpriseSign = "Sello de la empresa";
-		text = new PdfText(MARGIN_SIDE, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, enterpriseSign, BLACK, HELVETICA, 10f, PdfSettings.ALIGNMENT.RIGHT);
+		text = new PdfText(MARGIN_SIDE, y, getPageWidth() - MARGIN_SIDE * 2, 10f, contentStream, enterpriseSign, BLACK, new PDType1Font(FontName.HELVETICA), 10f, PdfSettings.ALIGNMENT.RIGHT);
 		text.draw();
 
 	}
 
 	private void drawTitle() throws IOException {
 		String titleText = "REGISTRO DE LA JORNADA DE LOS TRABAJADORES A TIEMPO PARCIAL";
-		PdfText text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 14f, contentStream, titleText, BLACK, HELVETICA_BOLD, 12f, PdfSettings.ALIGNMENT.CENTER);
+		PdfText text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 14f, contentStream, titleText, BLACK, new PDType1Font(FontName.HELVETICA_BOLD), 12f, PdfSettings.ALIGNMENT.CENTER);
 		text.draw();
-		float titleWidth = getStringWidth(titleText, 12, HELVETICA_BOLD);
+		float titleWidth = getStringWidth(titleText, 12, new PDType1Font(FontName.HELVETICA_BOLD));
 		x = (getPageWidth() - titleWidth) / 2;
 		PdfBox underLine = new PdfBox(x, y, titleWidth, 2f, BLACK, contentStream);
 		underLine.draw();
@@ -255,7 +256,7 @@ public class PartTimeTemplate {
 	private void drawSubTitle() {
 		x = MARGIN_SIDE;
 		String subTitleText = "En cumplimiento de la obligación establecida en el Art. 12.5 h) del Estatuto de los Trabajadores";
-		PdfText text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, subTitleText, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.CENTER);
+		PdfText text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, subTitleText, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.CENTER);
 		text.draw();
 		
 		y -= 60;
@@ -271,22 +272,22 @@ public class PartTimeTemplate {
 		String cccTitle = "CCC:";
 		String nifTitle = "NIF:";
 		
-		PdfText text = new PdfText(x + 2.5f, y + 35, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, enterpriseTitle, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		PdfText text = new PdfText(x + 2.5f, y + 35, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, enterpriseTitle, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
-		float origin = getStringWidth(enterpriseTitle, 11f, HELVETICA) + 5;
-		text = new PdfText(x + origin, y + 35, boxWidth - origin, 10f, contentStream, trimToEmpty(params.getEnterpriseName()).toUpperCase(), BLACK, HELVETICA_BOLD, 10f, PdfSettings.ALIGNMENT.LEFT);
-		text.draw();
-		
-		text = new PdfText(x + 2.5f, y + 20, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, cccTitle, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
-		text.draw();
-		origin = getStringWidth(cccTitle, 11f, HELVETICA) + 5;
-		text = new PdfText(x + origin, y + 20, boxWidth - origin, 11f, contentStream, trimToEmpty(params.getEnterpriseCCC()), BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		float origin = getStringWidth(enterpriseTitle, 11f, new PDType1Font(FontName.HELVETICA)) + 5;
+		text = new PdfText(x + origin, y + 35, boxWidth - origin, 10f, contentStream, trimToEmpty(params.getEnterpriseName()).toUpperCase(), BLACK, new PDType1Font(FontName.HELVETICA_BOLD), 10f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
 		
-		text = new PdfText(x + 2.5f, y + 5, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, nifTitle, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		text = new PdfText(x + 2.5f, y + 20, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, cccTitle, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
-		origin = getStringWidth(nifTitle, 11f, HELVETICA) + 5;
-		text = new PdfText(x + origin, y + 5, boxWidth - origin, 11f, contentStream, trimToEmpty(params.getEnterpriseDocument()), BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		origin = getStringWidth(cccTitle, 11f, new PDType1Font(FontName.HELVETICA)) + 5;
+		text = new PdfText(x + origin, y + 20, boxWidth - origin, 11f, contentStream, trimToEmpty(params.getEnterpriseCCC()), BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
+		text.draw();
+		
+		text = new PdfText(x + 2.5f, y + 5, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, nifTitle, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
+		text.draw();
+		origin = getStringWidth(nifTitle, 11f, new PDType1Font(FontName.HELVETICA)) + 5;
+		text = new PdfText(x + origin, y + 5, boxWidth - origin, 11f, contentStream, trimToEmpty(params.getEnterpriseDocument()), BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
 	
 	}
@@ -299,25 +300,25 @@ public class PartTimeTemplate {
 		String hoursTitle = "Nº horas según contrato:";
 		String monthTitle = "Mes:";
 		
-		PdfText text = new PdfText(x + 2.5f, y + 35, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, employeeTitle, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		PdfText text = new PdfText(x + 2.5f, y + 35, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, employeeTitle, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
-		float origin = getStringWidth(employeeTitle, 11f, HELVETICA) + 5;
-		text = new PdfText(x + origin, y + 35, boxWidth - origin, 10f, contentStream, trimToEmpty(params.getEmployeeName()).toUpperCase(), BLACK, HELVETICA_BOLD, 10f, PdfSettings.ALIGNMENT.LEFT);
-		text.draw();
-		
-		text = new PdfText(x + 2.5f, y + 20, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, hoursTitle, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
-		text.draw();
-		origin = getStringWidth(hoursTitle, 11f, HELVETICA) + 5;
-		text = new PdfText(x + origin, y + 20, boxWidth - origin, 11f, contentStream, params.getContractHours() != null ? trimToEmpty(String.valueOf(params.getContractHours())) : "", BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		float origin = getStringWidth(employeeTitle, 11f, new PDType1Font(FontName.HELVETICA)) + 5;
+		text = new PdfText(x + origin, y + 35, boxWidth - origin, 10f, contentStream, trimToEmpty(params.getEmployeeName()).toUpperCase(), BLACK, new PDType1Font(FontName.HELVETICA_BOLD), 10f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
 		
-		text = new PdfText(x + 2.5f, y + 5, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, monthTitle, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		text = new PdfText(x + 2.5f, y + 20, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, hoursTitle, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
+		text.draw();
+		origin = getStringWidth(hoursTitle, 11f, new PDType1Font(FontName.HELVETICA)) + 5;
+		text = new PdfText(x + origin, y + 20, boxWidth - origin, 11f, contentStream, params.getContractHours() != null ? trimToEmpty(String.valueOf(params.getContractHours())) : "", BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
+		text.draw();
+		
+		text = new PdfText(x + 2.5f, y + 5, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, monthTitle, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
 		String dateStr = trimToEmpty(format(params.getPayrollDate(), "MMMMMMMMMM"));
 		dateStr = dateStr.length() > 0 ? dateStr.substring(0, 1).toUpperCase() + dateStr.substring(1) : dateStr;
 		
-		origin = getStringWidth(monthTitle, 11f, HELVETICA) + 5;
-		text = new PdfText(x + origin, y + 5, boxWidth - origin, 11f, contentStream, dateStr, BLACK, HELVETICA, 11f, PdfSettings.ALIGNMENT.LEFT);
+		origin = getStringWidth(monthTitle, 11f, new PDType1Font(FontName.HELVETICA)) + 5;
+		text = new PdfText(x + origin, y + 5, boxWidth - origin, 11f, contentStream, dateStr, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.LEFT);
 		text.draw();
 	}
 

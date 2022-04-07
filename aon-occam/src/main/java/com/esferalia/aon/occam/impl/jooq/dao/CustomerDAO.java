@@ -96,7 +96,7 @@ public class CustomerDAO {
 					.setDeliveryGrouped(getBoolean(r, CUSTOMER.DELIVERY_GROUPED))
 					.setDeliveryValuated(getBoolean(r, CUSTOMER.DELIVERY_VALUATED))
 					.setEInvoice(getBoolean(r, CUSTOMER.E_INVOICE))
-					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
+					.setInvoicingGroup(getValue(r, CUSTOMER.INVOICING_GROUP))
 					.setModificationDate(getValue(r, CUSTOMER.MODIFICATION_DATE))
 					.setModificationUser(getValue(r, CUSTOMER.MODIFICATION_USER))
 					.setProjectGrouped(getBoolean(r, CUSTOMER.PROJECT_GROUPED))
@@ -141,6 +141,12 @@ public class CustomerDAO {
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
 			.findFirst()
 			.orElse(null);
+	}
+	
+	public static Customer get(AONContext ctx, CustomerFilter filter){
+		return getStream(ctx, filter)
+			.findFirst()
+			.orElse(new Customer());
 	}
 	
 	public static Customer save(AONContext ctx, Customer customer) {

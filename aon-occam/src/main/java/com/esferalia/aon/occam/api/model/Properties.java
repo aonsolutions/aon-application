@@ -1256,6 +1256,19 @@ public interface Properties {
 		Property<Double> getQuantityProperty();
 		Property<Double> getRateProperty();
 	}
+
+	public interface OfferDetailProperties extends AuditProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getOfferProperty();
+		Property<Short> getLineProperty();
+		Property<Integer> getItemProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getDiscountProperty();
+		Property<Byte> getStatusProperty();
+	}
 	
 	public interface OfferDetailCommissionProperties {
 		Property<Integer> getIdProperty();

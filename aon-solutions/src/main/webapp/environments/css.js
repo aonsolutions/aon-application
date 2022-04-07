@@ -267,6 +267,7 @@ export const NOTE_BOX_SHADOW = "noteBoxShadow";
 
 // aon-css-utils
 export const CENTER_FLEX = "centerFlex";
+export const FLEX_WRAP = "flexWrap";
 export const FLEX_ROW = "flexRow";
 export const FLEX_COLUMN = "flexColumn";
 export const FLEX_JUSTIFY_CENTER = "flexJustifyCenter";

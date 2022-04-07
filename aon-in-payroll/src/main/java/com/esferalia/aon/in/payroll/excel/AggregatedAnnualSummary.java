@@ -939,10 +939,6 @@ public class AggregatedAnnualSummary {
 				AggregatedAnnualEntry ent = entry.getMonthlyEntries().get(period);
 				cell = row.createCell(cellInd++);
 				
-				String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
-				
-				putDataFormula(entry.getWorkplace(), dataName, totalsFormulas, period, formula, complete);
-				
 				cell.setCellType(CellType.NUMERIC);
 
 				Double amount = null;
@@ -998,6 +994,10 @@ public class AggregatedAnnualSummary {
 				if (ent != null && amount != null) {
 					hasContent = true;
 					cell.setCellValue(amount);
+					
+					String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+					putDataFormula(entry.getWorkplace(), dataName, totalsFormulas, period, formula, complete);
+					
 				}
 				cell.setCellStyle(amountCellStyle);
 			}
@@ -1007,8 +1007,9 @@ public class AggregatedAnnualSummary {
 			cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
 			if (!hasContent)
 				sheet.removeRow(row);
-			else
+			else {
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+			}
 		}
 	}
 

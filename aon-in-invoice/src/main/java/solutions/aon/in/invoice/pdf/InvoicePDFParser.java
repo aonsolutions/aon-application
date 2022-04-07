@@ -13,6 +13,7 @@ import javax.imageio.spi.IIORegistry;
 
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -41,7 +42,7 @@ public class InvoicePDFParser {
 	}
 	
 	public static void parse( File file , InvoiceBuilder<?> handler) throws InvoicePDFException {
-		try (PDDocument doc = PDDocument.load(file)) {
+		try (PDDocument doc = Loader.loadPDF(file)) {
 			parser(doc, handler);
 		} catch (IOException e) {
 			throw new InvoicePDFException(e);
@@ -51,7 +52,7 @@ public class InvoicePDFParser {
 	}
 
 	public static void parse( InputStream is , InvoiceBuilder<?> handler) throws InvoicePDFException {
-		try (PDDocument doc = PDDocument.load(is)) {
+		try (PDDocument doc = Loader.loadPDF(is)) {
 			
 			parser(doc, handler);
 		} catch (IOException e) {

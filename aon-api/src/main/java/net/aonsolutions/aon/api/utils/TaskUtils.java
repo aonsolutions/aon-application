@@ -279,32 +279,40 @@ public class TaskUtils {
 		Thread newThread = new Thread(() -> {
 			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 			if(company!=null) {
-				AonToken aonToken = SECURITY.getAonToken(api.getToken());
-				Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+				
+				
 				String logo = TaskUtils.getLogoCompany(company.getDomain().getName());
 				
-				String to = auth.getEmail();
-	
-				String subject = "SOLICITUD Nº "+ task.getNumber();
-				String url = URL_BASE;
+				String to = null;
+				if(task.getGtaskId()!=null && !task.getGtaskId().isEmpty()) {
+					to = task.getGtaskId();
+				} else {
+//					AonToken aonToken = SECURITY.getAonToken(api.getToken());
+//					Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+				}
 				
-				TaskMail tm = new TaskMail()
-				.setNumber(task.getNumber().toString())
-				.setDate(task.getStartDate())
-				.setTitle(task.getTitle())
-				.setWorkflows(task.getWorkflows())
-				.setUrl(url)
-				.setLogo(logo);
-				
-				String body = TaskMailTemplate.taskWorkflowContent(tm);
-				
-				SESMessage msg = new SESMessage()
-				.setAlias(company.getName())
-				.setSubject(subject)
-				.setBody(body)
-				.setTo(to);
-				
-			    SES.sendEmail(msg);
+				if(to!=null) {
+					String subject = "SOLICITUD Nº "+ task.getNumber();
+					String url = URL_BASE;
+					
+					TaskMail tm = new TaskMail()
+					.setNumber(task.getNumber().toString())
+					.setDate(task.getStartDate())
+					.setTitle(task.getTitle())
+					.setWorkflows(task.getWorkflows())
+					.setUrl(url)
+					.setLogo(logo);
+					
+					String body = TaskMailTemplate.taskWorkflowContent(tm);
+					
+					SESMessage msg = new SESMessage()
+					.setAlias(company.getName())
+					.setSubject(subject)
+					.setBody(body)
+					.setTo(to);
+
+				    SES.sendEmail(msg);
+				}
 			}
 		});
 		newThread.start();

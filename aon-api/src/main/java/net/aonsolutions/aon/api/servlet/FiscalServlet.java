@@ -108,7 +108,13 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			JSONArray jsonModels = new JSONArray();
 
-			models.forEach(model-> jsonModels.put(FiscalModelJSON.toJSON(model)) );
+			models.forEach(model-> {
+				try {jsonModels.put(FiscalModelJSON.toJSON(model));}
+				catch (Exception e) {
+					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
+				}
+			});
+
 
 			return jsonModels; 
 		} 

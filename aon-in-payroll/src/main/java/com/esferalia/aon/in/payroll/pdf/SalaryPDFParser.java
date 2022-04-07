@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 //import org.apache.pdfbox.text.PDFTextStripper;
@@ -23,26 +24,26 @@ public class SalaryPDFParser {
 	
 	
 	public static void parse( File file , ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(file))
+		try (PDDocument doc = Loader.loadPDF(file))
 		{
 			parser(doc, salaryBuilder);
 		}
 	}
 	public static void parseOmega( File file , ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(file))
+		try (PDDocument doc = Loader.loadPDF(file))
 		{
 			parserOmega(doc, salaryBuilder);
 		}
 	}
 
 	public static void parse( InputStream is , ISalaryBuilder<?> salaryBuilder) throws IOException , UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(is))
+		try (PDDocument doc = Loader.loadPDF(is))
 		{
 			parser(doc, salaryBuilder);
 		}
 	}
 	public static void parseOmega( InputStream is , ISalaryBuilder<?> salaryBuilder) throws IOException , UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(is))
+		try (PDDocument doc = Loader.loadPDF(is))
 		{
 			parserOmega(doc, salaryBuilder);
 		}

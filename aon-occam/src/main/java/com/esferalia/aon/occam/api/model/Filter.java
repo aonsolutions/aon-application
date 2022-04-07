@@ -479,6 +479,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface OfferDetailFilter{
+		Filter filter(OfferDetailProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface OfferDetailCommissionFilter{
 		Filter filter(OfferDetailCommissionProperties properties);
 	}

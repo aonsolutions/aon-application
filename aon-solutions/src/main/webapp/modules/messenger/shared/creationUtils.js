@@ -691,6 +691,7 @@ const sendHistoric = async (workflowId) => {
         }
       }
     }
+    aonMessengerChat.showMessage("Comentario enviado por correo!");
   }
 }
 

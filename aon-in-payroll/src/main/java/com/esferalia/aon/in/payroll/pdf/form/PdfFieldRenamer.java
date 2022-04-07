@@ -1,5 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.form;
 
+import org.apache.pdfbox.*;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.interactive.form.*;
 
@@ -13,7 +14,7 @@ public class PdfFieldRenamer {
 
 	//RENAME PDF BASE
 	static void rename_pdf_fields(InputStream is, String filename, String default_prefix, Map<String, String> names) throws IOException, UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(is)) {
+		try (PDDocument doc = Loader.loadPDF(is)) {
 			doc.setAllSecurityToBeRemoved(true);
 
 			PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();

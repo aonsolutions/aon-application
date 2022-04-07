@@ -33,3 +33,6 @@ export const UPLOAD = 'upload';
 export const DELETE = 'delete';
 export const GEOCODE = 'geocode';
 export const COORDINATES = 'coordinates';
+export const TOUCHSTART = 'touchstart';
+export const TOUCHMOVE = 'touchmove';
+export const TOUCHEND = 'touchend';
