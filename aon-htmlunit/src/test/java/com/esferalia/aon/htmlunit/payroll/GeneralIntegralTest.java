@@ -664,6 +664,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 1166.70 * 0.25);
 		double salaryHours = getValue("db-amount-label-1");
 		assertTrue((salaryHours * 7.03 ) <  ( 38.89 * 31 * 0.25 )  ) ;
+		click("expand-button-system");
+		assertNotElement("editor-base_cgc_min_hora");
 	}
 
 	@Test
