@@ -946,7 +946,7 @@ public class DeliveryCreator implements Serializable {
 	}
 	private void manageSalesDetail(List<Delivery> deliveryList){
 		deliveryList.forEach(delivery->{			
-			AON.getDeliveryDetails(getDomain(), getDomainId(), getUser(),
+			AON.getDeliveryDetailStream(getDomain(), getDomainId(), getUser(),
 					f->f.getIdProperty().eq(delivery.getId()))
 			.filter(d->d.getSalesDetail()!=null)
 			.collect(Collectors.groupingBy(DeliveryDetail::getSalesDetail,
