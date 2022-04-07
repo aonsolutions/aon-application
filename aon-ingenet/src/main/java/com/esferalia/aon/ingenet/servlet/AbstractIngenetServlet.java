@@ -276,7 +276,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 			} else {
 				String recipientsTo = "";
 				if (isDevEnabled()) {
-					recipientsTo = "eagirrezabal@aonsolutions.es";
+					recipientsTo = "aibanez@aonsolutions.es";
 					subject = "[AON/Test-"+logLevel+"] " + subject;
 					LOGGER.info("*** RUNNING TEST ENVIRONMENT, AVOID SPAM RECIPIENTS TO.");
 				} else {
@@ -294,7 +294,7 @@ public abstract class AbstractIngenetServlet extends HttpServlet {
 						.put("content", content).put("subject", subject)
 						.put("login", getUser()).put("domainName", getDomain())
 						.put("domainId", getDomainId())
-						.put("bcc", "eagirrezabal@aonsolutions.es");
+						.put("bcc", "aibanez@aonsolutions.es");
 
 				if (attachValue == null || "".equals(attachValue)) {
 					json.put("md5", "");
