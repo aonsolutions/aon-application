@@ -55,7 +55,9 @@ public class FiscalModelValidation {
 	};
 
 	public static final BiConsumer<FiscalModel,AONContext> SAME_PERIOD_EXISTS_CHECK = (fm,ctx) -> {
-		if (fm.getStatus() != FiscalStatus.BLOCKED && !fm.isReplacement() && !fm.isComplementary()
+		if (fm.getStatus() != FiscalStatus.BLOCKED 
+			&& fm.getId() == null	// New Model
+			&& !fm.isReplacement() && !fm.isComplementary()
 			&& ctx.getDslContext()
 				.select()
 				.from(FS_MODEL)
@@ -80,7 +82,8 @@ public class FiscalModelValidation {
 	};
 
 	public static final BiConsumer<FiscalModel,AONContext> SOMETHING_TO_COMPLEMENT = (fm,ctx) -> {
-		if (fm.getStatus() != FiscalStatus.BLOCKED 
+		if (fm.getStatus() != FiscalStatus.BLOCKED
+			&& fm.getId() == null	// New Model
 			&& (fm.isReplacement() || fm.isComplementary())
 			&& !(ctx.getDslContext()
 				.select()
