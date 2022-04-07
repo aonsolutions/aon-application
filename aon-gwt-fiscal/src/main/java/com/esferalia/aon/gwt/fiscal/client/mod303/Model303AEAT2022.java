@@ -569,7 +569,8 @@ class Model303AEAT2022 extends Model303AEAT {
 				}
 			};
 			Model303AEATActivity2020 actPanel = new Model303AEATActivity2020(activityCallback, getModel().isLastPeriod());
-			actPanel.addValueChangeHandler( event1 ->  
+			actPanel.addValueChangeHandler( event1 -> {
+				getModel().getActivityList().set(currentIndex, event1.getValue());
 				calculateAndRefresh( new AsyncCallback<Mod303>() {
 
 					@Override public void onFailure(Throwable caught) {
@@ -580,8 +581,8 @@ class Model303AEAT2022 extends Model303AEAT {
 					public void onSuccess(Mod303 result) {
 						actPanel.populateActivity(result.getActivityList().get(currentIndex));
 					}
-				})
-			);
+				});
+			});
 			dialog.setCaption(AON.MSG.simplifieedActivities());
 			dialog.setGlassEnabled(true);
 			dialog.setAnimationEnabled(true);

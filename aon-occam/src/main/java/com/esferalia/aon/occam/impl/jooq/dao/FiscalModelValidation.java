@@ -39,7 +39,7 @@ public class FiscalModelValidation {
 	};
 
 	/**
-	 * El ejercicio debe ser v·lido.
+	 * El ejercicio debe ser v√°lido.
 	 */
 	private static final BiConsumer<FiscalModel,AONContext> INVALID_YEAR = (fm,ctx) -> {
 		if (fm.getYear() < 2005 || fm.getYear() > 2025) 
@@ -55,7 +55,9 @@ public class FiscalModelValidation {
 	};
 
 	private static final BiConsumer<FiscalModel,AONContext> SAME_PERIOD_EXISTS_CHECK = (fm,ctx) -> {
-		if (fm.getStatus() != FiscalStatus.BLOCKED && !fm.isReplacement() && !fm.isComplementary()
+		if (fm.getStatus() != FiscalStatus.BLOCKED 
+			&& fm.getId() == null	// New Model
+			&& !fm.isReplacement() && !fm.isComplementary()
 			&& ctx.getDslContext()
 				.select()
 				.from(FS_MODEL)
@@ -81,6 +83,7 @@ public class FiscalModelValidation {
 
 	private static final BiConsumer<FiscalModel,AONContext> SOMETHING_TO_COMPLEMENT = (fm,ctx) -> {
 		if (fm.getStatus() != FiscalStatus.BLOCKED 
+			&& fm.getId() == null	// New Model
 			&& (fm.isReplacement() || fm.isComplementary())
 			&& !(ctx.getDslContext()
 				.select()

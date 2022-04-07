@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -32,14 +33,14 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class IdcplnssParser {
 
 	public static void parse( File file , IdcParserListener listener) throws IOException, UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(file))
+		try (PDDocument doc = Loader.loadPDF(file))
 		{
 			parse(doc, listener);
 		}
 	}
 
 	public static void parse( InputStream is ,IdcParserListener listener) throws IOException , UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(is))
+		try (PDDocument doc = Loader.loadPDF(is))
 		{
 			parse(doc, listener);
 		}
