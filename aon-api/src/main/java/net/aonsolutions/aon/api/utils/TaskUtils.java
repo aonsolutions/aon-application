@@ -15,7 +15,6 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -25,7 +24,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -72,6 +70,7 @@ public class TaskUtils {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		if(!search.isEmpty()) 
 			filter = filter.and(getSearchFilter(f, search));
+		
 		if(customer!=null && customer.getId()!=null) { //CUSTOMER
 			Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
@@ -91,16 +90,24 @@ public class TaskUtils {
 			 if(!workgroupStr.isEmpty()) {
 				 String[]  str = workgroupStr.split(",");
 				 Integer[] arr = new Integer[str.length];
-				 for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
-				 filter = filter.and(taskNotCustomerFilter(params, f, domain, customer).or(f.getWorkgroupProperty().in(arr)));
-			 } else 
-				 filter = filter.and(taskNotCustomerFilter(params, f, domain, customer));
+				 for(int i=0; i<str.length; i++) {
+					 arr[i] = Integer.parseInt(str[i]);
+				 }
+					 
+				 filter = filter.and(taskNotCustomerFilter(params, f, domain).or(f.getWorkgroupProperty().in(arr)));
+			 } else {
+				 filter = filter.and(taskNotCustomerFilter(params, f, domain));
+			 }
 		}
-	
+		
+		 if(isCau(api.getData())) {
+			filter = filter.and(f.getGtaskIdProperty().eq(email));
+		 }
+
 		return filter;
 	}	
 	
-	private static Filter taskNotCustomerFilter(JSONObject params, TaskProperties f, Domain domain, Customer customer) {
+	private static Filter taskNotCustomerFilter(JSONObject params, TaskProperties f, Domain domain) {
 		Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		Integer sender = params.optInt(IJsonNames.SENDER);
@@ -122,7 +129,7 @@ public class TaskUtils {
 		if(registry != null && registry!=0) 
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		
-		if(!email.isEmpty() && (!params.optString("cau").isEmpty() && params.optInt("cau")>0) ) 
+		if(isCau(params)) 
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
 		
 		if(workgroup != null && workgroup !=0) 
@@ -161,14 +168,14 @@ public class TaskUtils {
 		if(customer.getId() != null)
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 
-		if(!email.isEmpty() && (!params.optString("cau").isEmpty() && params.optInt("cau")>0) ) 
+		if(isCau(api.getData())) 
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
 
 		return filter;
 	}
 	
 	public static Filter taskFilterCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
-		
+		String email = api.getData().optString(IJsonNames.EMAIL);
 		Integer taskHolder = api.getData().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getData(), IJsonNames.TASK_HOLDER);
 
 		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
@@ -176,9 +183,9 @@ public class TaskUtils {
 		if(customer.getId()!=null) 
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 		
-		if( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) 
-			filter = filter.and( f.getGtaskIdProperty().eq(api.getData().optString(IJsonNames.EMAIL)) );
-			
+		if(  isCau(api.getData()) || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) 
+			filter = filter.and( f.getGtaskIdProperty().eq(email) );
+	
 		return filter;
 	}
 
@@ -218,8 +225,7 @@ public class TaskUtils {
 			try {
 				Domain domain = api.getDomain();
 				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
-				task.setIsCau(!api.getData().optString("cau").isEmpty() && api.getData().optInt("cau") > 0);
-				
+	
 				if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.CLOSE.getName())) {
 					
 					if( Boolean.TRUE.equals(isNotification(api, task, AppParamsRequest.APP_REQUESTS_INT_CLOSED)) ) {
@@ -251,7 +257,7 @@ public class TaskUtils {
 						workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.OPEN.getName()) &&
 						Boolean.TRUE.equals(isNotification(api, task, AppParamsRequest.APP_REQUESTS_INT_OPENED))
 				) {
-					if(task.getIsCau()) {
+					if(isCau(api.getData())) {
 						sendEmailChangeWorkflow(api, task, workflow, false);
 					}
 					
@@ -279,11 +285,9 @@ public class TaskUtils {
 		Thread newThread = new Thread(() -> {
 			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 			if(company!=null) {
-				
-				
 				String logo = TaskUtils.getLogoCompany(company.getDomain().getName());
-				
 				String to = null;
+				
 				if(task.getGtaskId()!=null && !task.getGtaskId().isEmpty()) {
 					to = task.getGtaskId();
 				} else {
@@ -414,7 +418,7 @@ public class TaskUtils {
 				.setBody(body)
 				.setTo(to);
 				
-				if(task.getIsCau())
+				if(isCau(api.getData()))
 					msg.setCc(EMAIL_SUPPORT);
 
 			    SES.sendEmail(msg);
@@ -541,5 +545,9 @@ public class TaskUtils {
 			return obj.optString("observation");
 		} catch (Exception e) {}
 		return task.getDescription();
+	}
+	
+	public static boolean isCau(JSONObject params) {
+		return !params.optString("cau").isEmpty() && params.optInt("cau") > 0;
 	}
 }

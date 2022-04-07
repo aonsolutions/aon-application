@@ -158,7 +158,7 @@ export const TASK_FILTER = [
         type: "select",
         id: "task_holder",
         name: "task_holder",
-        title: MSG.EMPLOYEE,
+        title: "Asignado a",
         autocomplete: true,
         default:true
     },

@@ -844,12 +844,12 @@ const setTaskTags = () => {
 const addCauForm = (aonMessengerChat, divStatic)=> {
     const task = aonMessengerChat.task;
     if( task.source === TASK_SOURCE.CAU ){
-        if(task.id && !aonMessengerChat.isCau() && task.getDescriptionJson().cauInfo){
+        const cauInfo = aonMessengerChat.getCauInfo();
+        const company = cauInfo.company;
+        const auth = cauInfo.auth;
+        if(task.id && !aonMessengerChat.isCau()){
             try {
-                const cauInfo =  task.getDescriptionJson().cauInfo;
-                const company = cauInfo.company;
                 const parent = cauInfo.parent;
-                const auth = cauInfo.auth;
                 if(company && company.domain)
                     createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
     
@@ -857,18 +857,15 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                     createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN_PARENT, parent.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
 
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
             } catch (error) {}
-        } else if(aonMessengerChat.getCauInfo() && aonMessengerChat.isCau()) {
+        } else if(aonMessengerChat.isCau()) {
             try {
-                const cauInfo = aonMessengerChat.getCauInfo();
-                const auth = cauInfo.auth;
-                const company = cauInfo.company;
                 if(company && company.name)
                     createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
                     
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
             } catch (error) {}
         }
     } 

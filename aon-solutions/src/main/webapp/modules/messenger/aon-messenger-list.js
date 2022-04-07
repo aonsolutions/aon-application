@@ -119,6 +119,7 @@ export class AonMessengerList extends AonElement {
         this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY});
       });
     }
+  
     this.buildToolbarSearch();
   }
 
@@ -129,15 +130,16 @@ export class AonMessengerList extends AonElement {
       this.loadMore(true);
     });
 
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-      if(detail) {
-        this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate, workgroup: detail.workgroup});
-        this.loadMore(true);
-      } 
-    });
-
-    btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
-    this.searchValueDefault();
+    if(!this.isCau()){
+      btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+        if(detail) {
+          this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate, workgroup: detail.workgroup});
+          this.loadMore(true);
+        } 
+      });
+      btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
+      this.searchValueDefault();
+    }
   }
 
   searchValueDefault(){
@@ -145,6 +147,7 @@ export class AonMessengerList extends AonElement {
     let taskHolderEl = this.getElement("task_holder");
     let statusEl = this.getElement("status");
     let workgroup = this.getElement("workgroup");
+    let applicationParent = this.getApplicationParent();
     getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
       registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
     });
@@ -157,13 +160,17 @@ export class AonMessengerList extends AonElement {
         }
     })
     
-    this.getApplicationParent().getMyWorkgroups().then(wgs=>{
-      workgroup.setOptions(wgs);
-    });
 
-    if(this.getApplicationParent())
-      this.getApplicationParent().getTaskHoldersEnterprise().then(ths=>taskHolderEl.setOptions(ths));
-
+    if(applicationParent){
+      applicationParent.getMyWorkgroups().then(wgs=>
+        workgroup.setOptions(wgs)
+      );
+  
+      applicationParent.getTaskHoldersEnterprise().then(ths=>
+        taskHolderEl.setOptions(ths)
+      );
+    }
+    
     statusEl.setOptions(TASK_STATUS_VALUE);
   }
 
@@ -223,7 +230,7 @@ export class AonMessengerList extends AonElement {
 
   async getData(){
     let data = []
-    // try {
+    try {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
       this.setFilter(filter);
@@ -241,10 +248,10 @@ export class AonMessengerList extends AonElement {
         }));
       }
       data = sortBy(data, 'id','desc');
-    // } catch (error) {
-    //   console.log("error>>",error);
-    //   this.showError(error);
-    // }
+    } catch (error) {
+      console.log("error>>",error);
+      this.showError(error);
+    }
     return data;
   }
 
@@ -335,6 +342,10 @@ export class AonMessengerList extends AonElement {
   //   tmp.innerHTML = html;
   //   return tmp.textContent || tmp.innerText || "";
   // }
+
+  isCau(){     //IS CAU
+    return parseInt(localStorage.getItem("taskCau") || 0);
+  }
 
   goMessengerChat(res, idx){
     setIndexTask(idx);

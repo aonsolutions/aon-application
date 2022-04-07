@@ -235,7 +235,8 @@ export class AonMessengerChat extends AonElement {
   }
 
   getCauInfo(){
-    return this.applicationParentEl.cauInfo;
+    let task = this.task;
+    return task && task.id ? task.getDescriptionJson().cauInfo : this.applicationParentEl.cauInfo;
   }
 
   getAuth(){
