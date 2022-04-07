@@ -81,6 +81,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 		try {
 			creator.validateAlbaranesXmlPattern(_xml);
 		} catch (Exception e) {
+			e.printStackTrace();
 			creator.getErrorList().add("Los datos no han pasado el proceso de validacion");
 			creator.getErrorList().add(e.getMessage());
 			content = e.getMessage();
@@ -151,6 +152,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 										handler.onEdiFtpTransfer(d);
 										success = true;
 									} catch (Throwable th) {
+										th.printStackTrace();
 										success = false;
 										subject = "Envio de albaranes a Seresnet";
 										content = "El albaran no se ha podido enviar automaticamente";
@@ -216,6 +218,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 						.append(")");
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.err.println("Error on customer name: " + e.getMessage());
 			}
 			bf.append("<ul>");

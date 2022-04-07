@@ -180,6 +180,36 @@ public class WarehouseDAO {
 				.findFirst().orElse(null);
 	}
 	
+	public static Warehouse save(AONContext ctx, Warehouse warehouse) {
+		return warehouse.getId() != null 
+			? update(ctx, warehouse)
+			: insert(ctx, warehouse);
+	}
+	
+	
+	public static Warehouse update(AONContext ctx, Warehouse warehouse) {
+		ctx.getDslContext().update(WAREHOUSE)
+		.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
+		.set(WAREHOUSE.ACTIVE, warehouse.getActive())
+		.set(WAREHOUSE.DEPARTMENT, warehouse.getDepartment())
+		.set(WAREHOUSE.NAME, warehouse.getName())
+		.set(WAREHOUSE.WORKPLACE, warehouse.getWorkplace())
+		.where(WAREHOUSE.ID.eq(warehouse.getId()))
+		.execute();
+		return warehouse;
+	}
+	
+	public static Warehouse insert(AONContext ctx, Warehouse warehouse) {
+		Integer id = ctx.getDslContext().insertInto(WAREHOUSE)
+				.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
+				.set(WAREHOUSE.ACTIVE, warehouse.getActive())
+				.set(WAREHOUSE.DEPARTMENT, warehouse.getDepartment())
+				.set(WAREHOUSE.NAME, warehouse.getName())
+				.set(WAREHOUSE.WORKPLACE, warehouse.getWorkplace())
+			.returning(WAREHOUSE.ID).fetchOne().getId();
+		return warehouse.setId(id);
+	}	
+	
 	public static WarehouseTransfer getWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
 		return ctx.getDslContext().select().from(WAREHOUSE_TRANSFER).where(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter))
 				.fetchInto(WAREHOUSE_TRANSFER).stream().map(new FullWarehouseTransferFiller()).findFirst().orElse(new WarehouseTransfer());
