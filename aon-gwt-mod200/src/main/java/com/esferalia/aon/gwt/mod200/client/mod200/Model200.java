@@ -67,7 +67,6 @@ public class Model200 extends MainEntryPoint {
 		MOD200_SERVICE = new Mod200ServiceAsyncDecorator(serviceRaw);
 	}
 	
-//	static Mod200ServiceAsync mod200Service;
 	static Mod2002013ServiceAsync mod2002013Service;
 	static Mod2002014ServiceAsync mod2002014Service;
 	static Mod2002015ServiceAsync mod2002015Service;

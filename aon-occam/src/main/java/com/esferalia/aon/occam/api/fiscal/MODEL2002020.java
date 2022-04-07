@@ -49,10 +49,6 @@ public class MODEL2002020 {
 		return getImpl().calculateMod2002020(mod200);
 	}
 
-//	public static Mod2002020 validateMod2002020(Mod2002020 mod200) {
-//		return getImpl().validateMod2002020(mod200);
-//	}
-
 	public static Mod2002020 saveMod2002020(Occam occam, Mod2002020 mod200) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().saveMod2002020(ctx, mod200);

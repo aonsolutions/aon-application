@@ -53,8 +53,6 @@ public class Model2002020 extends DockLayoutPanel {
 	AonToolbarButton aeatAccountingFileButton = new AonToolbarButton("");
 	AonToolbarButton aeatFileButton = new AonToolbarButton("");
 	AonToolbarButton aeatPrintButton = new AonToolbarButton("");
-	
-//	AonToolbarButton validateButton = new AonToolbarButton("");	
 
 	SimpleLayoutPanel pageContainer = new SimpleLayoutPanel();
 	
@@ -159,9 +157,6 @@ public class Model2002020 extends DockLayoutPanel {
 		saveButton.setVisible(mod200Object.isInitialized());
 		removeButton.setVisible(mod200Object.getMod200().getId() != null);
 		resetButton.setVisible(mod200Object.getMod200().getId() != null);
-//		cancelButton.setVisible(true);
-		//validateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
-//		validateButton.setVisible(false); // A partir del 2020 no se utiliza "VALIDAR" de AON ya que está desactualizado y "Validar/Imprimir" de la Agencia Tributaria hace todas las validaciones posibles
 		aeatAccountingFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		aeatAccountingFileButton.setEnabled(!isDirty());
 		aeatFileButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
@@ -175,47 +170,6 @@ public class Model2002020 extends DockLayoutPanel {
 			if (page != null) page.populate();
 		}
 	}
-	
-//	@UiHandler("validateButton")
-//	void onValidateButton(ClickEvent event) {
-//		validate(new PopupAsyncCallback() {
-//			@Override
-//			public void onSuccess(Mod2002020 result) {
-//				super.onSuccess(result);
-//				if (result.getMessages() != null && !result.getMessages().isEmpty()) {
-//					errorPage.addErrorMsg( result.getMessages() );
-//					resultsPanel.setWidget(errorPage);
-//				} else {
-//					errorPage.clearMessages();
-//					errorPage.addInfoMsg( AON.MSG.noValidationMessages() );
-//				}
-//				resultsPanel.setWidget(errorPage);
-//				showResultsPanel();
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				super.onFailure(caught);
-//				errorPage.addErrorMsg(caught);
-//				resultsPanel.setWidget(errorPage);
-//				showResultsPanel();
-//			}
-//			
-//		});
-//	}
-
-//	private void validate(PopupAsyncCallback callback) {
-//		final PopupPanel popup = new PopupPanel(false, true);
-//		Label label = new Label(AON.MSG.processing());
-//		label.addStyleName(AON.AON_CSS.aonTimer());
-//		popup.add(label);
-//		popup.setGlassEnabled(true);
-//		popup.setAnimationEnabled(true);
-//		popup.center();
-//		callback.setPopup(popup);
-//		populatePages();
-//		mod200Object.validate(callback);
-//	}
 	
 	private void submitForm(String action) {
 		
