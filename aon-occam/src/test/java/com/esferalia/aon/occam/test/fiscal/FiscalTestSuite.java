@@ -8,9 +8,11 @@ import com.esferalia.aon.occam.test.fiscal.mod111.Mod111TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod115.Mod115TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod123.Mod123TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod303.Mod303TestSuite;
+import com.esferalia.aon.occam.test.fiscal.model.FiscalModelTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	FiscalModelTestSuite.class,
 	Mod111TestSuite.class,
 	Mod115TestSuite.class,
 	Mod123TestSuite.class,
