@@ -20,7 +20,6 @@ public class Mod111InsertMonthlyTest extends AbstractOccamTest {
 	
 	@Test
 	public void mod111InsertMonthlyTest() {
-		AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration());
 		Date today = new Date();
 		for (Period period : Period.values()) {
 			if (period.isMonthPeriod()) {

@@ -20,15 +20,16 @@ public class Mod115InsertMonthlyComplementaryTest extends AbstractOccamTest {
 	
 	@Test
 	public void mod115InsertMonthlyComplementaryTest() {
-		AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration());
-		Date today = new Date();
-		for (Period period : Period.values()) {
-			if (period.isMonthPeriod()) {
-				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod115InsertMonthlyComplementary(AonRandom.getRangeDate(start,end));
+		ctx.getDslContext().transaction( config -> {
+			Date today = new Date();
+			for (Period period : Period.values()) {
+				if (period.isMonthPeriod()) {
+					Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+					Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+					mod115InsertMonthlyComplementary(AonRandom.getRangeDate(start,end));
+				}
 			}
-		}
+		});
 	}
 	
 	public void mod115InsertMonthlyComplementary(Date date) {

@@ -16,15 +16,29 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod123ExpressionsTest.class,
 	// Modelos mensuale
 	Mod123DeleteTest.class,
+	Mod123InsertInvoicesTest.class,
 	Mod123InsertMonthlyTest.class,
+	Mod123FinishTest.class,
+	
+	Mod123InsertInvoicesTest.class,
 	Mod123InsertMonthlyComplementaryTest.class,
+	Mod123FinishTest.class,
+	
+	Mod123InsertInvoicesTest.class,
 	Mod123InsertMonthlyReplacementTest.class,
 	Mod123RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
 	Mod123DeleteTest.class,
+	Mod123InsertInvoicesTest.class,
 	Mod123InsertQuarterlyTest.class,
+	Mod123FinishTest.class,
+	
+	Mod123InsertInvoicesTest.class,
 	Mod123InsertQuarterlyComplementaryTest.class,
+	Mod123FinishTest.class,
+	
+	Mod123InsertInvoicesTest.class,
 	Mod123InsertQuarterlyReplacementTest.class,
 	Mod123RoundedAmountsTest.class,
 	

@@ -24,6 +24,14 @@ public class EnumVisitors {
 		void visitOtherISP();
 	}
 
+	public static interface IWithholdingTypeVisitor<T> {
+		T visitProfessional(T t);
+		T visitRenting(T t);
+		T visitMovableCapital(T t);
+		T visitFarmer(T t);
+		T visitTransportOperator(T t);	
+	}
+
 	public static interface IFinanceStatusVisitor {
 		void visitPending();
 		void visitBatched();
@@ -73,25 +81,6 @@ public class EnumVisitors {
 		void visitM303();
 	}
 	
-	public static interface IFiscalModelVisitor<T,M> {
-		T visitM111(M m);
-		T visitM115(M m);
-		T visitM123(M m);
-		T visitM130(M m);
-		T visitM131(M m);
-		T visitM347(M m);
-		T visitM349(M m);
-		T visitM390(M m);
-		T visitM390HF(M m);
-		T visitM180(M m);
-		T visitM184(M m);
-		T visitM190(M m);
-		T visitM193(M m);
-		T visitM200(M m);
-		T visitM202(M m);
-		T visitM303(M m);
-	}
-
 	public static interface IFiscalModelKeyInfoVisitor<T> {
 		T visitNone();
 		T visitInvoice();

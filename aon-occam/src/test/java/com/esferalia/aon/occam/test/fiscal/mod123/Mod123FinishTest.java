@@ -16,25 +16,27 @@ public class Mod123FinishTest extends AbstractOccamTest {
 	
 	@Test
 	public void testFinalize() {
-		for (Mod123 model : MODEL123.getMod123s(getOccam()) ) {
-			Mod123 mod123 = MODEL123.get(getOccam(), model.getId());
-			mod123 = MODEL123.initializeForFinish(getOccam(), mod123);
-			double result0 = mod123.getDeclarationResult();
-			assertNotNull("Mod123. Tipo resultado NULL ("+ Mod123TestSuite.toString(mod123)+")",mod123.getDeclarationResultType());
-			boolean finance = mod123.getDeclarationResultType().mustCreateFinance(); 
-			MODEL123.markAsFinished(getOccam(), mod123);
-			Mod123 mod123Bis = MODEL123.get(getOccam(), model.getId());
-			assertEquals("Status not FINISHED", FiscalStatus.FINISHED, mod123Bis.getStatus());
-			Asserts.assertEqualsDouble("Mod123. Resultado no coincide."
-					, result0
-					, mod123Bis.getDeclarationResult());
-			assertNotNull("Mod123. Tipo resultado NULL",mod123Bis.getDeclarationResultType());
-			if (finance) {
-				assertNotNull("Mod123. Finance NULL",mod123Bis.getFinance());	
-			} else {
-				assertNull("Mod123. Finance NOT NULL",mod123Bis.getFinance());
+		ctx.getDslContext().transaction( config -> {
+			for (Mod123 model : MODEL123.getMod123s(getOccam()) ) {
+				Mod123 mod123 = MODEL123.get(getOccam(), model.getId());
+				mod123 = MODEL123.initializeForFinish(getOccam(), mod123);
+				double result0 = mod123.getDeclarationResult();
+				assertNotNull("Mod123. Tipo resultado NULL ("+ Mod123TestSuite.toString(mod123)+")",mod123.getDeclarationResultType());
+				boolean finance = mod123.getDeclarationResultType().mustCreateFinance(); 
+				MODEL123.markAsFinished(getOccam(), mod123);
+				Mod123 mod123Bis = MODEL123.get(getOccam(), model.getId());
+				assertEquals("Status not FINISHED", FiscalStatus.FINISHED, mod123Bis.getStatus());
+				Asserts.assertEqualsDouble("Mod123. Resultado no coincide."
+						, result0
+						, mod123Bis.getDeclarationResult());
+				assertNotNull("Mod123. Tipo resultado NULL",mod123Bis.getDeclarationResultType());
+				if (finance) {
+					assertNotNull("Mod123. Finance NULL",mod123Bis.getFinance());	
+				} else {
+					assertNull("Mod123. Finance NOT NULL",mod123Bis.getFinance());
+				}
 			}
-		}
+		});
 	}
 	
 }
