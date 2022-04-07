@@ -406,7 +406,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 		
 		Customer customer = obtainCustomer(ctx, albaran.getDATOSCLIENTE());
 		if (customer != null && customer.getId() != null) {
-			delivery.setCustomer(customer.getId());
+			delivery.setCustomer(customer);
 		} else {
 			addError(albaran, "El cliente no se ha dado de alta: "
 					+ albaran.getDATOSCLIENTE().getDATOSREGISTRO()
@@ -480,12 +480,12 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						try {
 							item = obtainItem(ctx,
 									linea.getPRODUCTO(), test);
-							RegistryItem customerRItem = obtainCustomerItem(item.getProduct().getId(), delivery.getCustomer());
+							RegistryItem customerRItem = obtainCustomerItem(item.getProduct().getId(), delivery.getCustomer().getId());
 							DeliveryDetail detail = new DeliveryDetail();
 							detail.setDomain(ctx.getDomainId());
 							detail.setDelivery(delivery);
 							detail.setLine(Short.valueOf(linea.getLINEA()));
-							detail.setItem(item);
+							detail.setItem(item.toNewItem());
 							String description = item.getProduct().getName();
 							description += " #" + item.getSerialNumber();
 							detail.setDescription(description);
@@ -541,7 +541,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						detail.setDomain(ctx.getDomainId());
 						detail.setDelivery(delivery);
 						detail.setLine(Integer.valueOf(linesCount+Integer.valueOf(linea.getLINEA())).shortValue());
-						detail.setItem(item);
+						detail.setItem(item.toNewItem());
 						String description = linea.getDESCRIPCION()!=null?linea.getDESCRIPCION():item.getProduct().getName();
 						detail.setDescription(description);
 						detail.setWarehouse(warehouse.getId());
@@ -924,7 +924,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 	}
 	private void manageSalesDetail(List<Delivery> deliveryList){
 		deliveryList.forEach(delivery->{			
-			AON.getDeliveryDetails(getDomain(), getDomainId(), getUser(),
+			AON.getDeliveryDetailStream(getDomain(), getDomainId(), getUser(),
 					f->f.getIdProperty().eq(delivery.getId()))
 			.filter(d->d.getSalesDetail()!=null)
 			.collect(Collectors.groupingBy(DeliveryDetail::getSalesDetail,

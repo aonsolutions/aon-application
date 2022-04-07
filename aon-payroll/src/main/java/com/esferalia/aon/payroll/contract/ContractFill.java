@@ -13,12 +13,14 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
@@ -81,7 +83,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = PDDocument.load(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -225,7 +227,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = PDDocument.load(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -306,7 +308,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = PDDocument.load(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -388,7 +390,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = PDDocument.load(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -571,7 +573,7 @@ public class ContractFill {
 		PDPage page = document.getPage(0);
 
 		// Create a new font object selecting one of the PDF base fonts
-		PDFont font = PDType1Font.HELVETICA_BOLD;
+		PDFont font = new PDType1Font(FontName.HELVETICA_BOLD);
 
 		// Start a new content stream which will "hold" the to be created content
 		try {

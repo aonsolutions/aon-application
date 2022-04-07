@@ -16,14 +16,11 @@ public class Delivery implements Serializable {
 	 */
 	private static final long serialVersionUID = 5693712945852955230L;
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private Project project;
 	private String series;
 	private int number;
-	private Integer customer;
-	private Customer customer2;
-	private String customerName;
-	private String customerDocument;
+	private Customer customer;
 	private Integer address;
 	
 	private StreetType addressStreetType;
@@ -84,10 +81,15 @@ public class Delivery implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	
+	public boolean hasId() {
+		return getId() != null;
+	}
+	
+	public Integer getDomain() {
 		return domain;
 	}
-	public Delivery setDomain(int domain) {
+	public Delivery setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -299,21 +301,16 @@ public class Delivery implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	public Integer getCustomer() {
+	public Customer getCustomer() {
+		if(customer == null)
+			customer = new Customer();
 		return customer;
 	}
-	public Delivery setCustomer(Integer customer) {
+	public Delivery setCustomer(Customer customer) {
 		this.customer = customer;
 		return this;
 	}
 	
-	public Customer getCustomer2() {
-		return customer2;
-	}
-	public Delivery setCustomer2(Customer customer2) {
-		this.customer2 = customer2;
-		return this;
-	}
 	public DeliveryStatus getStatus() {
 		return status;
 	}
@@ -462,20 +459,26 @@ public class Delivery implements Serializable {
 		this.numberPlate = numberPlate;
 		return this;
 	}
+	
+	@Deprecated
 	public String getCustomerName() {
-		return customerName;
+		return getCustomer().getName();
 	}
+	
+	@Deprecated
 	public Delivery setCustomerName(String customerName) {
-		this.customerName = customerName;
+		getCustomer().setName(customerName);
 		return this;
 	}
 	
+	@Deprecated
 	public String getCustomerDocument() {
-		return customerDocument;
+		return getCustomer().getDocument();
 	}
 	
+	@Deprecated
 	public Delivery setCustomerDocument(String customerDocument) {
-		this.customerDocument = customerDocument;
+		getCustomer().setDocument(customerDocument);
 		return this;
 	}
 	

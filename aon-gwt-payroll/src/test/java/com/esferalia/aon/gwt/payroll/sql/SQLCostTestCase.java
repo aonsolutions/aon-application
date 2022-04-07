@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.Ignore;
@@ -112,7 +113,7 @@ public class SQLCostTestCase extends AbstractSQLTestCase {
 		EmployeesServiceImpl.printCostReceiptPDF(domain.getName(), cost, new Salary.Type[] {Salary.Type.SALARY} , os);
 		
 		byte data [] = os.toByteArray();
-		PDDocument pddDocument = PDDocument.load(data);
+		PDDocument pddDocument = Loader.loadPDF(data);
 		PDFTextStripper pdfTextStripper = new PDFTextStripper();
 		pdfTextStripper.setSortByPosition(true);
 		String text = pdfTextStripper.getText(pddDocument);
@@ -182,7 +183,7 @@ public class SQLCostTestCase extends AbstractSQLTestCase {
 		EmployeesServiceImpl.printCostReceiptPDF(domain.getName(), cost, new Salary.Type[] {Salary.Type.SALARY} , os);
 		
 		byte data [] = os.toByteArray();
-		PDDocument pddDocument = PDDocument.load(data);
+		PDDocument pddDocument = Loader.loadPDF(data);
 		PDFTextStripper pdfTextStripper = new PDFTextStripper();
 		pdfTextStripper.setSortByPosition(true);
 		String text = pdfTextStripper.getText(pddDocument);
@@ -251,7 +252,7 @@ public class SQLCostTestCase extends AbstractSQLTestCase {
 		EmployeesServiceImpl.printCostReceiptPDF(domain.getName(), cost, new Salary.Type[] {Salary.Type.SALARY} , os);
 		
 		byte data [] = os.toByteArray();
-		PDDocument pddDocument = PDDocument.load(data);
+		PDDocument pddDocument = Loader.loadPDF(data);
 		PDFTextStripper pdfTextStripper = new PDFTextStripper();
 		pdfTextStripper.setSortByPosition(true);
 		String text = pdfTextStripper.getText(pddDocument);

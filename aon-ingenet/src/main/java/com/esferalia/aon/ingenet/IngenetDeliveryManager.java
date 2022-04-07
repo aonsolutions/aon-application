@@ -192,7 +192,7 @@ public class IngenetDeliveryManager {
 				detail.setWarehouse(warehouseId);
 				detail.setSalesDetail(aonSalesDetail != null ? aonSalesDetail
 						.getId() : null);
-				detail.setItem(item);
+				detail.setItem(item.toNewItem());
 				detail.setDescription(item.getProduct().getName());
 				detail.setDiscountExpression(aonSalesDetail != null ? aonSalesDetail
 						.getDiscountExpression() : "0");

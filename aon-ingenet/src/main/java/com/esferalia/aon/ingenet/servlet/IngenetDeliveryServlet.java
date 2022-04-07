@@ -142,7 +142,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 							FtpDeliveryUploadOccamHandler handler = new FtpDeliveryUploadOccamHandler(getDomain(), getDomainId(), getUser());
 							for(Delivery d: deliveryList){
 								// commit the delivery EDI file
-								RegistryNote rNote = searchCustomerNote(ctx, d.getCustomer(), "", IEdiSupport.SERES_AUTO_COMMIT_DELIVERY);
+								RegistryNote rNote = searchCustomerNote(ctx, d.getCustomer().getId(), "", IEdiSupport.SERES_AUTO_COMMIT_DELIVERY);
 								boolean autoSendDelivery = rNote!=null && new Boolean(rNote.getComments());
 								if(autoSendDelivery){
 									boolean success = false;
@@ -205,7 +205,7 @@ public class IngenetDeliveryServlet extends AbstractIngenetServlet {
 			try {
 				if(!"".equals(alb.getDATOSCLIENTE().getDATOSREGISTRO().getNOMBRE())) {
 					Integer customerId = deliveryList.stream().filter( d -> d.getSeries().startsWith(alb.getSERIE()) && (d.getNumber()==Integer.parseInt(alb.getNUMERO())))
-						.findFirst().orElse(new Delivery()) .getCustomer();
+						.findFirst().orElse(new Delivery()) .getCustomer().getId();
 					bf.append(", a nombre de ");
 					if(customerId!=null){
 						Registry registry = AON.getRegistry(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), customerId);

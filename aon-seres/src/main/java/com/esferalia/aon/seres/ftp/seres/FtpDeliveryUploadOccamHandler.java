@@ -180,13 +180,13 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 	public FileOutput exportEdiFile(Delivery delivery) throws AonException {
 		FileOutput output = null;
 		ConnectDeliveryWriterOccam writer = new ConnectDeliveryWriterOccam(domainName, domainId, login);
-		Map<String, String> ediCodes = obtainEdiCodes(delivery.getCustomer(), delivery.getAddress());
+		Map<String, String> ediCodes = obtainEdiCodes(delivery.getCustomer().getId(), delivery.getAddress());
 		try {			
 			String department = ediCodes.get(IEdiSupport.DEPARTMENT);
 			String customerEdiCode = ediCodes.get(IEdiSupport.ALBARANES);
 			String deliveryPointEdiCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
 			String customerPackage = obtainPackingTag(
-					delivery.getCustomer(),
+					delivery.getCustomer().getId(),
 					delivery.getAddress());
 			String companyEdiCode = obtainEdiCompanyCode();
 			

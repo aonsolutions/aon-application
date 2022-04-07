@@ -897,8 +897,14 @@ class SistemaREDMov {
 	private static byte[] getReportAffiliateInAltaImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc)
 			throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		Object[] arrFields= {regime, ccc};
+		Toolkit.verifyData(arrFields);
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+			
 			ArrayList<String> cccArr = Toolkit.splitStringMultiple(ccc, 2);
 
 			HtmlPage htmlPage = webClient.getPage(
@@ -931,8 +937,15 @@ class SistemaREDMov {
 	private static byte[] getReportAffiliateInMovPrevImpl(InputStream certificateInputStream,
 			String certificatePassword, String certificateType, String regime, String ccc)
 			throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		
+		Object[] arrFields= {regime, ccc};
+		Toolkit.verifyData(arrFields);
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+			
 			ArrayList<String> cccArr = Toolkit.splitStringMultiple(ccc, 2);
 
 			HtmlPage htmlPage = webClient.getPage(

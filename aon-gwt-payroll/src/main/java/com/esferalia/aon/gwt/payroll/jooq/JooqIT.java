@@ -20,14 +20,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.SelectSeekStep1;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -40,7 +37,6 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
-import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.ibm.icu.util.Calendar;
@@ -123,6 +119,10 @@ public class JooqIT {
 			ITEmployee itEmployee = new ITEmployee();
 			setEmployeeInfo(itEmployee, contractId, dslContext);
 			
+			String fullName = itEmployee.getEmployeeInfo().getFullName();
+			java.util.Date startContract = itEmployee.getContractInfo().getStartDate();
+			java.util.Date endContract = itEmployee.getContractInfo().getEndDate();
+			
 			Result<Record> contractLeaveRecords = dslContext.select().from(CONTRACT_LEAVE)
 					.where(CONTRACT_LEAVE.CONTRACT.eq(contractId))
 					.orderBy(CONTRACT_LEAVE.START_DATE.asc())
@@ -148,6 +148,9 @@ public class JooqIT {
 					it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
 					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+					it.setFullName(fullName);
+					it.setContractStartDate(startContract);
+					it.setContractEndDate(endContract);
 					
 					List<Record> contractDataDatePayRecords = dslContext.select().from(CONTRACT_DATA)
 							.where(
@@ -304,6 +307,10 @@ public class JooqIT {
 			ITEmployee itEmployee = new ITEmployee();
 			setEmployeeInfo(itEmployee, contractId, dslContext);
 			
+			String fullName = itEmployee.getEmployeeInfo().getFullName();
+			java.util.Date startContract = itEmployee.getContractInfo().getStartDate();
+			java.util.Date endContract = itEmployee.getContractInfo().getEndDate();
+			
 			Result<Record> contractLeaveRecords = dslContext.select().from(CONTRACT_LEAVE)
 					.where(CONTRACT_LEAVE.CONTRACT.eq(contractId))
 					.orderBy(CONTRACT_LEAVE.START_DATE.asc())
@@ -329,6 +336,9 @@ public class JooqIT {
 					it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
 					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+					it.setFullName(fullName);
+					it.setContractStartDate(startContract);
+					it.setContractEndDate(endContract);
 					
 					List<Record> contractDataDatePayRecords = dslContext.select().from(CONTRACT_DATA)
 							.where(
@@ -457,6 +467,10 @@ public class JooqIT {
 		ITEmployee itEmployee = new ITEmployee();
 		setEmployeeInfo(itEmployee, contractId, dslContext);
 		
+		String fullName = itEmployee.getEmployeeInfo().getFullName();
+		java.util.Date startContract = itEmployee.getContractInfo().getStartDate();
+		java.util.Date endContract = itEmployee.getContractInfo().getEndDate();
+		
 		Result<Record> contractLeaveRecords = dslContext.select().from(CONTRACT_LEAVE)
 				.where(CONTRACT_LEAVE.CONTRACT.eq(contractId))
 				.orderBy(CONTRACT_LEAVE.START_DATE.asc())
@@ -482,6 +496,9 @@ public class JooqIT {
 				it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
 				it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 				it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+				it.setFullName(fullName);
+				it.setContractStartDate(startContract);
+				it.setContractEndDate(endContract);
 				
 				List<Record> contractDataDatePayRecords = dslContext.select().from(CONTRACT_DATA)
 						.where(
@@ -621,6 +638,10 @@ public class JooqIT {
 			
 			ITEmployee itEmployee = new ITEmployee();
 			setEmployeeInfo(itEmployee, contractId, dslContext);
+
+			String fullName = itEmployee.getEmployeeInfo().getFullName();
+			java.util.Date startContract = itEmployee.getContractInfo().getStartDate();
+			java.util.Date endContract = itEmployee.getContractInfo().getEndDate();
 			
 			Result<Record> contractLeaveRecords = 
 					dslContext
@@ -652,6 +673,9 @@ public class JooqIT {
 					it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
 					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+					it.setFullName(fullName);
+					it.setContractStartDate(startContract);
+					it.setContractEndDate(endContract);
 					
 					Record contractDataDatePayRecord = dslContext.select().from(CONTRACT_DATA)
 							.where(

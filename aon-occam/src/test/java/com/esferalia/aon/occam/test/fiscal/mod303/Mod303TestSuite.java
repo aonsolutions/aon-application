@@ -12,11 +12,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
  
 @RunWith(Suite.class)
 @SuiteClasses({
-//	Mod111DeleteTest.class,
-//	Mod115DeleteTest.class,
-//	Mod123DeleteTest.class,
-//	Mod303DeleteTest.class,
-//	DeleteAllInvoicesTest.class,
 	
 	Mod303ExpressionsTest.class,
 	Mod303ScriptTest.class,
@@ -27,27 +22,33 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyTest.class,
+	Mod303RoundedAmountsTest.class,
 	Mod303FinishTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyComplementaryTest.class,
+	Mod303RoundedAmountsTest.class,
 	Mod303FinishTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyReplacementTest.class,
+	Mod303RoundedAmountsTest.class,
 
 	Mod303DeleteTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyTest.class,
+	Mod303RoundedAmountsTest.class,
 	Mod303FinishTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyComplementaryTest.class,
+	Mod303RoundedAmountsTest.class,
 	Mod303FinishTest.class,
 	
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertQuarterlyReplacementTest.class,
+	Mod303RoundedAmountsTest.class,
 	
 	
 	

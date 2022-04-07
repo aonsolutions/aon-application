@@ -211,6 +211,7 @@ export class AonTextArea extends AonElement {
 		} else if (document.selection) { // Opera
 			userSelection = document.selection.createRange();
 		}  
+		console.log(userSelection);
 		return userSelection;
 	} 
 
@@ -292,7 +293,7 @@ export class AonTextArea extends AonElement {
 					click : (ev)=> properties.id === MATERIAL_ICONS.ATTACH_FILE ? this.clickFile() : fn(ev)
 				}
 			}).element;
-			this.addToolbarLeft(icon, fn);
+			this.addToolbarLeft(icon);
 		}
 		//ENABLE DRAGGRABLE FILE
 		if(properties.icon === MATERIAL_ICONS.ATTACH_FILE){ 
@@ -301,7 +302,7 @@ export class AonTextArea extends AonElement {
 	}
 	
 	addToolbarLeft(element, fn){
-		element.addEventListener(EVENT.CLICK, fn);
+		if(fn) element.addEventListener(EVENT.CLICK, fn);
 		const el = this.getElement(this.LEFT);
 		if(el) el.appendChild(element);
 	}

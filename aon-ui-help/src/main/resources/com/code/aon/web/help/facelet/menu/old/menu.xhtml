@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		  <aon:graphicImage style="margin-left: 6px;margin-right: 4px; width:21px; height:21px;"
+			value="#{customize.toolbarLogo}" />		
+          <aon:commandLink id="menu_config_prov"
+                        value="#{bundle.aon_module_configuration}"
+                        action="drive"
+                        immediate="true"
+                        styleClass="aon-top-menu-item" >
+
+                         <f:setPropertyActionListener target="#{help.rootFolder}" value="1hdAHjI7LPKkUY3qrfK_OoYUHNST0Vu-c" />
+                </aon:commandLink>
+
+
+                <aon:commandLink id="menu_management_prov"
+                        value="#{bundle.aon_module_management}"
+                        action="drive"
+                        immediate="true"
+                        styleClass="aon-top-menu-item" >
+
+                         <f:setPropertyActionListener target="#{help.rootFolder}" value="1PDfcIi3dVtc-NKSlPEGQU7h4PgNkqyUw" />
+                </aon:commandLink>
+
+                <aon:commandLink id="menu_accounting_prov"
+                        value="#{bundle.aon_module_accounting}"
+                        action="drive"
+                        immediate="true"
+                        styleClass="aon-top-menu-item" >
+
+                         <f:setPropertyActionListener target="#{help.rootFolder}" value="1WwyfJ8em7pGt0ordWiMWtoEgAvaanF1X" />
+                </aon:commandLink>
+
+                <aon:commandLink id="menu_payroll_prov"
+                        value="#{bundle.aon_module_payroll}"
+                        action="drive"
+                        immediate="true"
+                        styleClass="aon-top-menu-item" >
+
+                         <f:setPropertyActionListener target="#{help.rootFolder}" value="1p_vxSdxJATMaAm36DxIu8Yrb3DjFdO9l" />
+                </aon:commandLink>
+
+	</ui:define>
+	
+		
+ </ui:composition>

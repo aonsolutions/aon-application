@@ -470,7 +470,14 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setEmployeesColective(String colectiveEmployees) {
-		this.colectiveEmployees = colectiveEmployees;
+		if(AonStringUtils.isNotBlank(colectiveEmployees) && colectiveEmployees.contains("\""))
+			try {
+				this.colectiveEmployees = colectiveEmployees.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				this.colectiveEmployees = colectiveEmployees;
+			}	
+		else
+			this.colectiveEmployees = colectiveEmployees;
 	}
 
 	public Integer getMdctzId() {
