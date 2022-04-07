@@ -136,6 +136,7 @@ public class OfferDetailDAO {
 		.set(OFFER_DETAIL.STATUS, detail.getStatus().value())
 		.set(OFFER_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 		.set(OFFER_DETAIL.MODIFICATION_USER, ctx.getUser())
+		.where(OFFER_DETAIL.ID.eq(detail.getId()))
 		.execute();
 		return detail;
 	}
