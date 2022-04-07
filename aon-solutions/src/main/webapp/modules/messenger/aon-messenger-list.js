@@ -203,7 +203,7 @@ export class AonMessengerList extends AonElement {
       datos.map((res, idx) => {
         this.AON_TABLE.addRow({ 
           ...res, 
-          dateParse: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
+          dateParse: this.getNewDateParse(res),
           newTitle: this.getNewTitle(res, document, documentTh),
           assigned: this.getAssigned(res, domainId),
           lettersHtml: this.getIcon(res),
@@ -325,6 +325,31 @@ export class AonMessengerList extends AonElement {
   
     return div.outerHTML;
   }
+
+  getNewDateParse(res){
+    const dateText =  firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
+    const email = res.gtask_id;
+
+    let div = this.createElement(TAG.DIV);
+    div.style.position = "relative";
+
+    let divTwo = this.createElement(TAG.DIV);
+    divTwo.style = `font-weight: 550; bottom:${email ? 1 : -9}px; position:absolute; left:0; right:0; white-space:nowrap; text-overflow:ellipsis; overflow: hidden;`;
+    divTwo.innerText = dateText;
+    divTwo.title = dateText;
+    div.appendChild(divTwo);
+
+    if(email){
+      let divThree = this.createElement(TAG.DIV);
+      divThree.textContent = email;
+      divThree.title = email;
+      divThree.style = "font-weight: 550;color:grey; position:absolute; top:3px; left:0; right:0; white-space:nowrap; text-overflow:ellipsis; overflow: hidden;";
+      div.appendChild(divThree);
+    } 
+    return div.outerHTML;
+
+  }   
+
 
   // createIcon(icon, marginTop="11px"){
   //   let i = this.createElement("i");

@@ -2,10 +2,12 @@ package net.aonsolutions.aon.api.utils;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaskWorkflowProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -155,7 +158,7 @@ public class TaskUtils {
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 
 		if(taskHolder != null && taskHolder!=0 && !workgroupStr.isEmpty()) {
-			String[]  str = workgroupStr.split(",");
+			String[]  str =  workgroupStr.split(",");
 			Integer[] arr = new Integer[str.length];
 			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
 			filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getSenderProperty().eq(taskHolder).or(f.getWorkgroupProperty().in(arr))));
@@ -186,6 +189,27 @@ public class TaskUtils {
 		if(  isCau(api.getData()) || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) 
 			filter = filter.and( f.getGtaskIdProperty().eq(email) );
 	
+		return filter;
+	}
+	
+	public static Filter workflowFilter(AonApiData api, TaskWorkflowProperties f) {
+		JSONObject params = api.getData();
+
+		Integer task = api.getData().optInt(IJsonNames.TASK);
+		
+		Filter filter = f.getTaskProperty().eq(task);
+		
+		if(isCau(params)) {
+			String email = api.getData().optString(IJsonNames.EMAIL);
+			
+			List<Byte> types = new ArrayList<>(Arrays.asList(TaskWorkflowType.COMMENT.value(),TaskWorkflowType.OPEN.value(), TaskWorkflowType.CLOSE.value()));
+
+			filter = filter.and(
+						f.getEmailProperty().eq(email).or(f.getNotificationUserProperty().isNotNull())
+					)
+					.and(f.getTypeProperty().in(types.toArray(Byte[]::new)));
+		}
+		
 		return filter;
 	}
 

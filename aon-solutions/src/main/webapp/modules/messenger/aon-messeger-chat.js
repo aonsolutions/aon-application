@@ -161,7 +161,11 @@ export class AonMessengerChat extends AonElement {
 
   async getTaskWorkflow() {
     try {
-      let workflows = await getTaskWorkflow({ task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name });
+      let params = { task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name };
+      if(this.isCau() && this.getAuth().email){
+        params.email =  this.getAuth().email;
+      }
+      let workflows = await getTaskWorkflow(params);
       fillChat(this, workflows);
       if(workflows.length>0) 
         this.addButtonDelete();
@@ -210,7 +214,7 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceQuery(){
     try {
-      if(this.isCau() && !this.task.id)
+      if(!this.task.id)
         this.setCauData(this.task);
         
       const data = await saveTask(this.task);
@@ -235,13 +239,15 @@ export class AonMessengerChat extends AonElement {
   }
 
   getCauInfo(){
-    let task = this.task;
-    return task && task.id ? task.getDescriptionJson().cauInfo : this.applicationParentEl.cauInfo;
+    return this.applicationParentEl.cauInfo;
   }
 
   getAuth(){
-    if(this.getCauInfo().auth && this.getCauInfo().auth.email)
+    try{
+      if(this.getCauInfo().auth && this.getCauInfo().auth.email)
       return this.getCauInfo().auth;
+    }catch(e){}
+
     return {};
   }
 

@@ -179,11 +179,11 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getWorkflows(AonApiData api) {
-		Integer task = api.getData().optInt(IJsonNames.TASK);
 		Domain domain = new Domain().setId(api.getData().optInt(IJsonNames.DOMAIN_ID)).setName(api.getData().optString(IJsonNames.DOMAIN_NAME));
 		return TaskWorkflowJSON.toJSON(
 				AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
-				f->f.getTaskProperty().eq(task)) 
+						f-> TaskUtils.workflowFilter(api, f)
+				) 
 		);
 	}
 	
