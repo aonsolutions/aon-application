@@ -1062,8 +1062,15 @@ public class InvoiceTemplate {
 
 			drawText(contents, companyName, x + 260, tempY + 35, config.getTheme().getTitleTextColor(), boldFont, 10);		
 			
-			drawText(contents, "NIF:", x + 260, tempY + 22, config.getTheme().getTitleTextColor(), regularFont, 8);		
-			drawText(contents, nif, x + 280, tempY + 22, config.getTheme().getTitleTextColor(), regularFont, 8);
+			drawText(contents, "NIF:", x + 260, tempY + 22, config.getTheme().getTitleTextColor(), regularFont, 8);
+			
+			String enterpriseCountry = "";
+			if (company != null && company.getRegistry() != null && company.getRegistry().getDocumentCountry() != null) {
+				enterpriseCountry = AonStringUtils.trimToEmpty(company.getRegistry().getDocumentCountry().getIso2());
+			
+			}
+			
+			drawText(contents, (!AonStringUtils.isEmpty(enterpriseCountry) ? enterpriseCountry + " " : "") + nif, x + 280, tempY + 22, config.getTheme().getTitleTextColor(), regularFont, 8);
 
 			List<String> addressLines = getLines(address, 235, regularFont, 8);
 			float addrPlus = 11;
@@ -1122,11 +1129,14 @@ public class InvoiceTemplate {
 		y -= 20;
 
 		drawText(contents, "N.I.F.:", x, y, config.getTheme().getTitleTextColor(), boldFont, 11, NIF);
+		
 		String countryCode = "";
-		if (invoice.isExtracommunity() && countryCode != null) {
+//		if (invoice.isExtracommunity() && countryCode != null) {
+//			countryCode = AonStringUtils.trimToEmpty(invoice.getRegistryDocumentCountry().getIso2());
+//		}
+		if (invoice.getRegistryDocumentCountry() != null) {			
 			countryCode = AonStringUtils.trimToEmpty(invoice.getRegistryDocumentCountry().getIso2());
 		}
-		
 		drawText(contents, safeString((!AonStringUtils.isEmpty(countryCode) ? countryCode + " " : "") + invoice.getRegistryDocument()), x + 50, y, config.getTheme().getTextColor(), regularFont, 11, NIF);
 		
 		y -= 10;
