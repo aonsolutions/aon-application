@@ -21,7 +21,7 @@ public class Mod123FinishTest extends AbstractOccamTest {
 				Mod123 mod123 = MODEL123.get(getOccam(), model.getId());
 				mod123 = MODEL123.initializeForFinish(getOccam(), mod123);
 				double result0 = mod123.getDeclarationResult();
-				assertNotNull("Mod123. Tipo resultado NULL ("+ Mod123TestSuite.toString(mod123)+")",mod123.getDeclarationResultType());
+				assertNotNull("Mod123. Tipo resultado NULL", mod123.getDeclarationResultType());
 				boolean finance = mod123.getDeclarationResultType().mustCreateFinance(); 
 				MODEL123.markAsFinished(getOccam(), mod123);
 				Mod123 mod123Bis = MODEL123.get(getOccam(), model.getId());

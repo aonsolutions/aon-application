@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod123InsertMonthlyReplacementTest extends AbstractOccamTest {
@@ -66,7 +67,7 @@ public class Mod123InsertMonthlyReplacementTest extends AbstractOccamTest {
 		MODEL123.save(getOccam(), mod123);
 		Mod123 actual = MODEL123.get(getOccam(), mod123.getId());  
 		Asserts.assertMod123(mod123, actual);
-		Mod123TestSuite.printModel(actual);
+		FiscalTestSuite.printModel(actual);
 		return actual;
 	}
 }

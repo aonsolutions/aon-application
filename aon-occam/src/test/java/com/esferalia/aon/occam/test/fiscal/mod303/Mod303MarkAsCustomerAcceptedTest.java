@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 
 public class Mod303MarkAsCustomerAcceptedTest extends AbstractOccamTest {
 	
@@ -18,7 +19,7 @@ public class Mod303MarkAsCustomerAcceptedTest extends AbstractOccamTest {
 			Mod303 mod303 = MODEL303.get(getOccam(), model.getId());
 			MODEL303.markAsCustomerAccepted(getOccam(), mod303);
 			Mod303 mod303Bis = MODEL303.get(getOccam(), model.getId());
-			Mod303TestSuite.printModel(mod303Bis);
+			FiscalTestSuite.printModel(mod303Bis);
 			assertEquals("Status not CUSTOMER_ACCEPTED", FiscalStatus.CUSTOMER_ACCEPTED, mod303Bis.getStatus());
 			assertNotNull("Mod303. Tipo resultado NULL",mod303Bis.getDeclarationResultType());
 		}

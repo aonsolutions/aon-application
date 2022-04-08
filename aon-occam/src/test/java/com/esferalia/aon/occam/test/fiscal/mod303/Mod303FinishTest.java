@@ -5,15 +5,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Optional;
-
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
@@ -21,6 +17,7 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 
 public class Mod303FinishTest extends AbstractOccamTest {
 	
@@ -55,7 +52,7 @@ public class Mod303FinishTest extends AbstractOccamTest {
 			boolean finance = mod303.getDeclarationResultType().mustCreateFinance(); 
 			MODEL303.markAsFinished(getOccam(), mod303);
 			Mod303 mod303Bis = MODEL303.get(getOccam(), model.getId());
-			Mod303TestSuite.printModel(mod303Bis);
+			FiscalTestSuite.printModel(mod303Bis);
 			assertEquals("Status not FINISHED", FiscalStatus.FINISHED, mod303Bis.getStatus());
 			Asserts.assertEqualsDouble("Mod303. Resultado no coincide."
 					, result0

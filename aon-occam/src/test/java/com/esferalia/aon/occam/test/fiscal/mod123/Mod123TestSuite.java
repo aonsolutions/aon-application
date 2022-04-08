@@ -1,14 +1,8 @@
 package com.esferalia.aon.occam.test.fiscal.mod123;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import com.esferalia.aon.occam.api.model.fiscal.Mod123;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -62,15 +56,4 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 })
 public class Mod123TestSuite {
 
-	private static NumberFormat FMT = DecimalFormat.getInstance();
-	
-	public static String toString( Mod123 mod ) {
-		return AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)
-			+ " Modelo "
-			+ AonStringUtils.rightPad(mod.getModelFullName(), 20)
-			+ AonStringUtils.leftPad(FMT.format(mod.getDeclarationResult()),15);
-	}
-	public static void printModel( Mod123 mod ) {
-		System.out.println( "\t" + toString(mod) );
-	}
 }

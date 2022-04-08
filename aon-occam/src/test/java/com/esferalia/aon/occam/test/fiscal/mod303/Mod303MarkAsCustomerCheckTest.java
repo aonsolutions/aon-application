@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 
 public class Mod303MarkAsCustomerCheckTest extends AbstractOccamTest {
 	
@@ -24,7 +25,7 @@ public class Mod303MarkAsCustomerCheckTest extends AbstractOccamTest {
 			boolean finance = mod303.getDeclarationResultType().mustCreateFinance(); 
 			MODEL303.markAsCustomerCheck(getOccam(), mod303);
 			Mod303 mod303Bis = MODEL303.get(getOccam(), model.getId());
-			Mod303TestSuite.printModel(mod303Bis);			
+			FiscalTestSuite.printModel(mod303Bis);			
 			assertEquals("Status not CUSTOMER_CHECK", FiscalStatus.CUSTOMER_CHECK, mod303Bis.getStatus());
 			Asserts.assertEqualsDouble("Mod303. Resultado no coincide."
 					, result0
