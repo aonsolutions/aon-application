@@ -21,14 +21,16 @@ public class Mod303InsertMonthlyComplementaryTest extends AbstractOccamTest {
 
 	@Test
 	public void mod303InsertMonthlyComplementaryTest() {
-		Date today = new Date();
-		for (Period period : Period.values()) {
-			if (period.isMonthPeriod()) {
-				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod303InsertMonthlyComplementary(AonRandom.getRangeDate(start,end));
+		ctx.getDslContext().transaction( config -> {
+			Date today = new Date();
+			for (Period period : Period.values()) {
+				if (period.isMonthPeriod()) {
+					Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+					Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+					mod303InsertMonthlyComplementary(AonRandom.getRangeDate(start,end));
+				}
 			}
-		}
+		});
 	}
 	
 	public void mod303InsertMonthlyComplementary(Date date) {

@@ -263,10 +263,7 @@ public class FiscalModelValidation {
 	}
 
 	private static final BiConsumer<FiscalModel,AONContext> STATUS_CHECK = (fm,ctx) -> {
-		if (fm.getStatus() == FiscalStatus.FINISHED
-			|| fm.getStatus() == FiscalStatus.SENT
-			|| fm.getStatus() == FiscalStatus.CUSTOMER_CHECK
-			|| fm.getStatus() == FiscalStatus.CUSTOMER_ACCEPTED) {
+		if (!fm.canBeDeleted()) {
 			throw new AonCoreException(AonError.FISCAL_WRONG_STATUS_DELETION.format(fm.getStatus()));
 		}
 	};

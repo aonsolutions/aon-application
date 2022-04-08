@@ -13,7 +13,9 @@ import org.junit.runners.Suite.SuiteClasses;
 	VatContextJSONTest.class,
 	
 	Mod303DeleteTest.class,
+	Mod303ValidationTest.class,
 	
+	Mod303DeleteTest.class,
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyTest.class,
 	Mod303RoundedAmountsTest.class,
