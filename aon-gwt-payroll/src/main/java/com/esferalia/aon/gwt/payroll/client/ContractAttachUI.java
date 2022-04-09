@@ -1,9 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
@@ -233,7 +231,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				JSONValue json = JSONParser.parseStrict(jsonStr);
 				parseJSON(json.isObject());
 			} catch (NullPointerException | IllegalArgumentException err){
-				showError("Formato", "Error formateando la informaci\u00f3n");
+				showErrorMessage("Formato", "Error formateando la informaci\u00f3n");
 			}
 		});
 
@@ -291,7 +289,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 
 				final int size = getFileSize(fileUpload.getElement());
 				if (size > 15000000)
-					showError("Tama\u00F1o fichero", "El archivo adjunto no puede ser superior a 10 MB");
+					showErrorMessage("Tama\u00F1o fichero", "El archivo adjunto no puede ser superior a 10 MB");
 
 			}
 		});
@@ -324,7 +322,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				public void onAccept() {
 					deleteContractAttach(attach.getId(), row,
 						s -> {
-							showSuccess("Borrado", "El documento ha sido eliminado correctamente");
+							showSuccessMessage("Borrado", "El documento ha sido eliminado correctamente");
 							refreshPage();
 						}, f -> {});
 				}
@@ -384,14 +382,14 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		JSONValue type = json.get("type");
 		if(null != type && AonStringUtils.isNotBlank(type.toString())) {
 			if(AonStringUtils.containsIgnoreCase(type.toString(), "create")) {
-				showSuccess("Creaci\u00f3n documento", "El documento se ha generado correctamente");
+				showSuccessMessage("Creaci\u00f3n documento", "El documento se ha generado correctamente");
 				refreshPage();
 			} else if(AonStringUtils.containsIgnoreCase(type.toString(), "update")) {
-				showSuccess("Actualizaci\u00f3n documento", "El documento se ha actualizado correctamente");
+				showSuccessMessage("Actualizaci\u00f3n documento", "El documento se ha actualizado correctamente");
 				refreshPage();
 			} else {
 				JSONValue message = json.get("message");
-				showError("Certificado", message.toString());
+				showErrorMessage("Certificado", message.toString());
 			}
 		}
 	}
@@ -512,32 +510,18 @@ public abstract class ContractAttachUI extends ResizeComposite {
 
 	public void exportContract() {
 		onExportPDF(e -> {
-			showSuccess("Contrato", "El contrato se ha generado correctamente");
+			showSuccessMessage("Contrato", "El contrato se ha generado correctamente");
 			refreshPage();
-		}, f -> showError("Contrato", f.getMessage()));
-	}
-
-	// ------------------------------------------------------ Messages Methods
-
-	private void showSuccess(String title, String description) {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put(title, description);
-		showSuccess(successMap);
-	}
-
-	private void showError(String title, String description) {
-		Map<String, String> errorMap = new HashMap<>();
-		errorMap.put(title, description);
-		showError(errorMap);
+		}, f -> showErrorMessage("Contrato", f.getMessage()));
 	}
 
 	// ------------------------------------------------------ Abstract Methods
 
 	protected abstract void onExportPDF(Consumer<String> consumer, Consumer<Throwable> failure);
 
-	protected abstract void showError(Map<String, String> errorMap);
+	protected abstract void showErrorMessage(String title, String message);
 
-	protected abstract void showSuccess(Map<String, String> errorMap);
+	protected abstract void showSuccessMessage(String title, String message);
 
 	// ------------------------------------------------------ Refresh table
 
