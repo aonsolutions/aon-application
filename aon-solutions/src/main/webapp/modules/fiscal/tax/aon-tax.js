@@ -288,38 +288,38 @@ export class AonTax extends AonElement {
 
   async getData() {
     let data = [];
-    try {
       if(this._list.length){
         data = this._list;
       } else {
-        const datos = await getModelsFiscal();
-        if (datos) {
-          data = sortBy(datos,'year','desc').filter(el=>"PENDING"!==el.status).map((resp) => {
-            let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[resp.model];
-            let color = "";
-            if("PENDING"===resp.status)       color = "fin";
-            else if("FINISHED"===resp.status) color = "in";
-
-            const lettersHtml = /*html*/`<div class="profile-letters size ${color}">${
-              TAX_ENUMS.TAX_MODEL_NUMBER[resp.model]
-            }</div>`;
-            return {
-              ...resp,
-              lettersHtml,
-              resultFormat: !isNaN(resp.result) ? formatNumber(resp.result, 2, "EUR") : null,
-              periodText: TAX_ENUMS.TAX_PERIOD[resp.period],
-              statusText: TAX_ENUMS.TAX_STATUS[resp.status],
-              modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
-              typeText:  TAX_ENUMS.TAX_TYPE[resp.type],
-              newModel
-            }
-          });
+        try {
+          const datos = await getModelsFiscal();
+          if (datos) {
+            data = sortBy(datos,'year','desc').filter(el=>"PENDING"!==el.status).map((resp) => {
+              let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[resp.model];
+              let color = "";
+              if("PENDING"===resp.status)       color = "fin";
+              else if("FINISHED"===resp.status) color = "in";
+  
+              const lettersHtml = /*html*/`<div class="profile-letters size ${color}">${
+                TAX_ENUMS.TAX_MODEL_NUMBER[resp.model]
+              }</div>`;
+              return {
+                ...resp,
+                lettersHtml,
+                resultFormat: !isNaN(resp.result) ? formatNumber(resp.result, 2, "EUR") : null,
+                periodText: TAX_ENUMS.TAX_PERIOD[resp.period],
+                statusText: TAX_ENUMS.TAX_STATUS[resp.status],
+                modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
+                typeText:  TAX_ENUMS.TAX_TYPE[resp.type],
+                newModel
+              }
+            });
+          }
+          this._list = data;
+          if(this.searchFilter) data = this.filterSearch(["periodText", "statusText", "modelText", "newModel", "model"], data);
+        } catch (error) {
+          this.showError(error);
         }
-        this._list = data;
-        if(this.searchFilter) data = this.filterSearch(["periodText", "statusText", "modelText", "newModel", "model"], data);
-      }
-    } catch (e) {
-      console.log(e);
     }
     return data;
   }

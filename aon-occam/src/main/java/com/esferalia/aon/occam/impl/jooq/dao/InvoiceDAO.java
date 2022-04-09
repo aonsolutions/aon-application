@@ -113,6 +113,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.watson.AonError;
@@ -451,7 +452,7 @@ public class InvoiceDAO {
 							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
 					invoice.getDetails().get(i).setIncomeDetail(d);
 				} else if(InvoiceSource.OFFER.equals(detail.getSource())) {
-					OfferDetail d = OfferDAO.getOfferDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+					OfferDetail d = OfferDetailDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
 							.and(f.getIdProperty().eq(detail.getSourceId())));
 					invoice.getDetails().get(i).setOfferDetail(d);
 				}

@@ -21,10 +21,6 @@ public class IrpfBreakdownJSONTest extends AbstractOccamTest {
 			IRPFDAO.getModelInputInvoicesIrpfBreakdown(ctx, mod111)
 				.map( br -> new Pair<IrpfBreakdown,JSONObject>(br,null))
 				.map( pair -> pair.setRight( IrpfBreakdownJSON.toJSON(pair.getLeft())) )
-				.map( pair -> {
-					System.out.println( pair.getRight().toString(1) );
-					return pair; 	
-				})
 				.forEach( pair -> Asserts.assertEqualsIrpfBreakdown(pair.getLeft() , IrpfBreakdownJSON.fromJSON(pair.getRight())))
 			;
 		}

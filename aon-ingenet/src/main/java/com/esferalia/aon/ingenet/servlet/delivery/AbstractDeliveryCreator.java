@@ -271,16 +271,19 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 			checkExistingDelivery(ctx, albaran);
 			fillDelivery(ctx, albaran, delivery);
 		} catch (Throwable th) {
+			th.printStackTrace();
 			addError(albaran, th.getLocalizedMessage());
 		}
 		try {
 			fillDeliveryDetailList(ctx, albaran, delivery, detailList, test);
 		} catch (Throwable th) {
+			th.printStackTrace();
 			addError(albaran, th.getLocalizedMessage());
 		}
 		try {
 			fillAttach(ctx, albaran, delivery, detailList, attach, test);
 		} catch (Throwable th) {
+			th.printStackTrace();
 			addError(albaran, th.getLocalizedMessage());
 		}
 		
@@ -297,6 +300,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 							detailList.forEach(detail -> {detail.getDelivery().setId(deliveryId);});
 							WarehouseDAO.insertDeliveryDetails(ctx, detailList);
 						} catch (Throwable th) {
+							th.printStackTrace();
 							addError(albaran, th.getLocalizedMessage());
 						}
 						
@@ -308,11 +312,13 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 									ctx.getDomainId(),
 									ctx.getUser(), attach);
 						} catch (Throwable th) {
+							th.printStackTrace();
 							addError(albaran, th.getLocalizedMessage());
 						}
 						return delivery;
 					}
 				} catch (Throwable th) {
+					th.printStackTrace();
 					addError(albaran, th.getLocalizedMessage());
 					afterDeliverySavedFail(ctx, albaran, th);
 				}
@@ -335,6 +341,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 									.and(f.getNumberProperty().eq(Integer.parseInt(albaran.getNUMERO()))))
 					.stream().count();
 		} catch (Exception e) {
+			e.printStackTrace();
 			// TODO log me
 //			String errorMsg = "Error desconocido comprobando si existe el albaran " 
 //					+ albaran.getSERIE() + "/" + albaran.getNUMERO();
@@ -371,6 +378,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 		try {
 			number = Integer.parseInt(albaran.getNUMERO());
 		} catch (Exception e) {
+			e.printStackTrace();
 			String errorMsg = "Error desconocido comprobando el numero de albaran "
 					+ albaran.getNUMERO() + ": " + e.getMessage();
 			addError(albaran, errorMsg);
@@ -386,6 +394,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 									.and(f.getNumberProperty().eq(Integer.parseInt(albaran.getNUMERO()))))
 					.stream().count();
 		} catch (Exception e) {
+			e.printStackTrace();
 			String errorMsg = "Error desconocido comprobando si existe el albaran " 
 					+ albaran.getSERIE() + "/" + albaran.getNUMERO();
 			addError(albaran, errorMsg);
@@ -417,6 +426,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 		try {
 			delivery.setIssueTime(getDateFormatter().parse(albaran.getFECHAEMISION()));
 		} catch (ParseException e) {
+			e.printStackTrace();
 			System.err.println("Cannot parse date value. Reason: "+ e.getMessage());
 			delivery.setIssueTime(new Date());
 		}
@@ -429,11 +439,13 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 		try {
 			delivery.setWorkplace(wp.getId());
 		} catch (Throwable th) {
+			th.printStackTrace();
 			addError(albaran, th.getLocalizedMessage());
 		}
 		try {
 			delivery.setScope(scopes.get(0).getId());
 		} catch (Throwable th) {
+			th.printStackTrace();
 			addError(albaran, th.getLocalizedMessage());
 		}
 		
@@ -507,6 +519,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 							detail.setCreationDate(new Date());
 							detailList.add(detail);
 						} catch (Exception e) {
+							e.printStackTrace();
 							addError(albaran, e.getMessage());
 						}
 					});
@@ -524,6 +537,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 					item = obtainItem(ctx,
 							linea.getPRODUCTO(), test);
 				} catch (Exception e) {
+					e.printStackTrace();
 					warningList.add("[ENVASES] " + e.getMessage());
 				}
 				if(item==null || item.getId()==null){
@@ -532,6 +546,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 								linea.getPRODUCTO(), test);
 						warningList.add("Nuevo envase creado " + linea.getPRODUCTO().getCODIGO());
 					} catch (AonException e) {
+						e.printStackTrace();
 						addError(albaran, "[ENVASES] " + e.getMessage());
 					}
 				}
@@ -553,6 +568,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						detailList.add(detail);
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					addError(albaran, "[ENVASES] " + e.getMessage());
 				}
 			}
@@ -587,6 +603,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 //				elaborationDetail.setWarehouse(null);
 //				elaborationDetail.setAddInfo("");
 //			} catch (AonException e) {
+//				e.printStackTrace();
 //				String msg = "[Producto " + linea.getPRODUCTO().getCODIGO() + "] ";
 //				addError(albaran, msg + e.getMessage());
 //			}
@@ -679,7 +696,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						.eq(ctx.getDomainId())
 						.and(f.getCodeProperty().eq(
 								productoelaborado.getCODIGO())))
-				.findFirst().orElse(null);
+				.findFirst().orElse(new OldProduct());
 		List<OldItem> itemList = AON.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getProductProperty().eq(product.getId())
@@ -701,7 +718,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						.eq(ctx.getDomainId())
 						.and(f.getCodeProperty().eq(
 								producto.getCODIGO())))
-				.findFirst().orElse(null);
+				.findFirst().orElse(new OldProduct());
 		OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getProductProperty().eq(product.getId())
@@ -755,6 +772,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 				serialDate = getDateFormatter().parse(
 						producttype.getFECHALOTESERIE());
 			} catch (ParseException e) {
+				e.printStackTrace();
 				serialDate = new Date();
 			}
 			item.setSerialDate(new java.sql.Date(serialDate.getTime()));
@@ -880,6 +898,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 							.append("]");
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					addError(albaran, e.getMessage());
 				}
 			}
@@ -897,6 +916,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 							.append("]");
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					addError(albaran, e.getMessage());
 				}
 			}
@@ -924,8 +944,8 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 	}
 	private void manageSalesDetail(List<Delivery> deliveryList){
 		deliveryList.forEach(delivery->{			
-			AON.getDeliveryDetails(getDomain(), getDomainId(), getUser(),
-					f->f.getIdProperty().eq(delivery.getId()))
+			AON.getDeliveryDetailStream(getDomain(), getDomainId(), getUser(),
+					f->f.getDelivery().eq(delivery.getId()))
 			.filter(d->d.getSalesDetail()!=null)
 			.collect(Collectors.groupingBy(DeliveryDetail::getSalesDetail,
 					Collectors.summingDouble(DeliveryDetail::getQuantity)))
@@ -1021,6 +1041,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						issueDate = getDateFormatter().parse(albaran.getDATOSHOJARUTA()
 								.getFECHAEMISION());
 					} catch (ParseException e) {
+						e.printStackTrace();
 						issueDate = new Date();
 					}
 					carrierPacking.setIssueDate(issueDate);
@@ -1037,6 +1058,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 					carrierPacking.setCreationUser(ctx.getUser());
 					carrierPacking.setCreationDate(new Date());
 				} catch (Throwable th) {
+					th.printStackTrace();
 					addError(albaran, th.getLocalizedMessage());
 				}
 				try {
@@ -1048,6 +1070,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 						}
 					}
 				} catch (Throwable th) {
+					th.printStackTrace();
 					addError(albaran, th.getLocalizedMessage());
 				}
 			} else {
@@ -1162,6 +1185,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 				customer = AON.getCustomer(ctx.getDomainName(), ctx.getDomainId(),
 						ctx.getUser(), ediRNote.getRegistry());
 			} catch (Exception e) {
+				e.printStackTrace();
 				customer = null;
 			}
 		}

@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.junit.Before;
@@ -694,7 +695,7 @@ public class InvoiceTest {
 //					.setValue("https://www.youtube.com"));
 			
 			Company registry = new Company();
-			registry.setName("COMPAÑÍA FALSA PERO MUY FALSA EH XD S.L.").setDocument("L012345678");
+			registry.setName("COMPAÑÍA FALSA PERO MUY FALSA EH XD S.L.").setDocument("L012345678").setDocumentCountry(Country.JP);
 			
 			LinkedList<RegistryAddress> addressList = new LinkedList<>();
 			addressList.add(new RegistryAddress().setAddress("Rey Don Sancho, Rey Don Sancho, no digas que no te aviso, pero, de dentro de Zamora un alevoso ha salido"));
@@ -738,7 +739,7 @@ public class InvoiceTest {
 			
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
-			PDDocument document = PDDocument.load(bis);
+			PDDocument document = Loader.loadPDF(bis);
 			
 			
 			/** CHECKING PDF DATA **/

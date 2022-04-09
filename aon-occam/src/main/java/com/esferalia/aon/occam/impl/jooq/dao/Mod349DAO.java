@@ -6,7 +6,10 @@ import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
 import static com.esferalia.aon.jooq.tables.FsMod349Detail.FS_MOD349_DETAIL;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -700,6 +703,47 @@ public class Mod349DAO {
 		
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		
+//		return ctx.getDslContext().select(
+//				 INVOICE.ID
+//				,INVOICE.SERIES
+//				,INVOICE.NUMBER
+//				,INVOICE.REFERENCE_CODE
+//				,INVOICE.RDOCUMENT
+//				,INVOICE.RDOCUMENT_TYPE
+//				,INVOICE.RDOCUMENT_COUNTRY
+//				,INVOICE.RNAME
+//				,INVOICE.ISSUE_DATE
+//				,INVOICE.TAX_DATE
+//				,INVOICE.TYPE
+//				,INVOICE.RECTIFICATION_TYPE
+//				,INVOICE.SERVICE
+//				,INVOICE.TRANSACTION
+//				,INVOICE.INVESTMENT
+//				,INVOICE.WITHHOLDING_FARMER
+//				,INVOICE.VAT_ACCRUAL_PAYMENT
+//				,INVOICE.TAXABLE_BASE				
+//				,ENTERPRISE_ACTIVITY.ID
+//				,ENTERPRISE_ACTIVITY.DESCRIPTION
+//				,ENTERPRISE_ACTIVITY.VAT_REGIME
+//				,ENTERPRISE_ACTIVITY.SURCHARGE				
+//				,IAE.EPIGRAPH
+//				,rectificationInvoice.TAX_DATE
+//				)
+//				.from(INVOICE)
+//				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
+//				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+//				.leftOuterJoin(rectificationInvoice).on(rectificationInvoice.ID.equal(INVOICE.RECTIFICATION_INVOICE))
+//				.where(INVOICE.DOMAIN.equal(ctx.getDomainId()))
+//				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+//				.and(INVOICE.TRANSACTION.eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
+//				.orderBy(InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+
+		// Leemos la base imponible de invoice_tax, porque no nos podemos fiar del importe que 
+		// tiene el campo taxable_base de invoice, pues no es la base imponible exactamente 
+		// sino que lleva tambien los suplidos por ejemplo
+		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE);
+		
 		return ctx.getDslContext().select(
 				 INVOICE.ID
 				,INVOICE.SERIES
@@ -718,22 +762,26 @@ public class Mod349DAO {
 				,INVOICE.INVESTMENT
 				,INVOICE.WITHHOLDING_FARMER
 				,INVOICE.VAT_ACCRUAL_PAYMENT
-				,INVOICE.TAXABLE_BASE				
 				,ENTERPRISE_ACTIVITY.ID
 				,ENTERPRISE_ACTIVITY.DESCRIPTION
 				,ENTERPRISE_ACTIVITY.VAT_REGIME
 				,ENTERPRISE_ACTIVITY.SURCHARGE				
 				,IAE.EPIGRAPH
+				,sumBase
 				,rectificationInvoice.TAX_DATE
 				)
-				.from(INVOICE)
+				.from(INVOICE_TAX)
+				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 				.leftOuterJoin(rectificationInvoice).on(rectificationInvoice.ID.equal(INVOICE.RECTIFICATION_INVOICE))
 				.where(INVOICE.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(INVOICE.TRANSACTION.eq(InvoiceTransactionType.INTRACOMMUNITY.value()))
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+				.groupBy(INVOICE.ID)
+				.orderBy(InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )				
 				.fetch()
 				.stream()
 				.map( rec -> {
@@ -759,9 +807,9 @@ public class Mod349DAO {
 							.setInvestment(rec.getValue(INVOICE.INVESTMENT) == 1)
 							.setVatAccrualRegime(rec.getValue(INVOICE.VAT_ACCRUAL_PAYMENT) == 1)
 							.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)							
-							.setBase( rec.getValue(INVOICE.TAXABLE_BASE) )
+							.setBase(rec.getValue(sumBase).doubleValue())
 							.setRectificateInvoiceTaxDate(rec.getValue(rectificationInvoice.TAX_DATE))
-						;
+						; 
 				})
 				;
 	}

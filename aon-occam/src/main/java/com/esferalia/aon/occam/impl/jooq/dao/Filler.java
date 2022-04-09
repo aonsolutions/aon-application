@@ -33,6 +33,12 @@ public class Filler {
 			: 0;
 	}
 	
+	protected static short getShort(Record r, Field<Short> field) {
+		return checkField(r, field) && r.getValue(field) != null
+			? r.getValue(field) 
+			: 0;
+	}
+	
 	protected static double getDouble(Record r, Field<Double> field) {
 		return checkField(r, field) && r.getValue(field) != null
 			? r.getValue(field) 

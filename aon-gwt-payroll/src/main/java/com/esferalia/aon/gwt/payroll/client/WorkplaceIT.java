@@ -154,6 +154,7 @@ public class WorkplaceIT extends Composite {
 		
 		@Override
 		protected void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure) {
+			failure.accept(null);
 //			enterpriseITObject.checkStatus(success::accept, failure::accept);
 		}
 
@@ -187,6 +188,7 @@ public class WorkplaceIT extends Composite {
 		AON.ensureInjected();
 		
 		itWidget = new ITWidgetImpl();
+		itWidget.removeFootPanel();
 
 		initWidget(uiBinder.createAndBindUi(this)); 
 	}

@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Assert;
 import org.junit.Test;
@@ -1190,7 +1191,7 @@ public class TestSistemaREDI extends SegSocialTest{
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			byte data[] = SistemaREDI.getContributionInformationNSS(certificateInputStream, "jg@FNMT", "pkcs12", "0111",
 					"01105360062", "011005185924", new Date());
-			PDDocument doc = PDDocument.load(data);
+			PDDocument doc = Loader.loadPDF(data);
 			doc.close();
 		} catch (StatusCodeException | OutOfServiceException e) {
 			assertTrue(true);

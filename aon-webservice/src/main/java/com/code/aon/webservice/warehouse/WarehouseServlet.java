@@ -536,7 +536,7 @@ public class WarehouseServlet extends HttpServlet{
         .forEach(d -> {
     		if(!map3.containsKey(d.getCarrierPacking()))
     			map3.put(d.getCarrierPacking(), new LinkedList<>());
-        	if(!map3.get(d.getCarrierPacking()).contains(d.getCustomer())) {
+        	if(!map3.get(d.getCarrierPacking()).contains(d.getCustomer().getId())) {
         		map3.get(d.getCarrierPacking()).add(d.getCustomer().getId());
     			map.get(d.getCarrierPacking()).put("customer", map.get(d.getCarrierPacking()).get("customer").equals("-") ? 
     					d.getCustomerName() : map.get(d.getCarrierPacking()).get("customer") + "; " + d.getCustomerName());

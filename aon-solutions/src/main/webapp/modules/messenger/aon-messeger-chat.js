@@ -74,15 +74,15 @@ export class AonMessengerChat extends AonElement {
   }
 
   setTask(){
-
-    let data = {...this.data, domainCompany:this.getDur().domain};
-
-    data.auth = this.getAuth();
+    let data = {
+      ...this.data, 
+      domainCompany:this.getDur().domain,
+      auth:this.getAuth()
+    };
       
     const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
     if(myTaskHolder && myTaskHolder.id) 
       data.myTaskHolder = myTaskHolder;
-      
 
     this.setData(data); 
     this.task = new Task(this.getData());
@@ -161,7 +161,11 @@ export class AonMessengerChat extends AonElement {
 
   async getTaskWorkflow() {
     try {
-      let workflows = await getTaskWorkflow({ task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name });
+      let params = { task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name };
+      if(this.isCau() && this.getAuth().email){
+        params.email =  this.getAuth().email;
+      }
+      let workflows = await getTaskWorkflow(params);
       fillChat(this, workflows);
       if(workflows.length>0) 
         this.addButtonDelete();
@@ -210,7 +214,7 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceQuery(){
     try {
-      if(this.isCau() && !this.task.id)
+      if(!this.task.id)
         this.setCauData(this.task);
         
       const data = await saveTask(this.task);
@@ -239,8 +243,11 @@ export class AonMessengerChat extends AonElement {
   }
 
   getAuth(){
-    if(this.getCauInfo().auth && this.getCauInfo().auth.email)
+    try{
+      if(this.getCauInfo().auth && this.getCauInfo().auth.email)
       return this.getCauInfo().auth;
+    }catch(e){}
+
     return {};
   }
 

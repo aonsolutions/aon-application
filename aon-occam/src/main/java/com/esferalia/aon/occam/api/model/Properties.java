@@ -634,6 +634,7 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTaskProperty();
 		Property<Integer> getTaskHolderProperty();
+		Property<String> getEmailProperty();
 		Property<Byte> getTypeProperty();
 		Property<String> getCommentProperty();
 		Property<String> getNotificationUserProperty();
@@ -1255,6 +1256,19 @@ public interface Properties {
 		Property<Integer> getCategoryProperty();
 		Property<Double> getQuantityProperty();
 		Property<Double> getRateProperty();
+	}
+
+	public interface OfferDetailProperties extends AuditProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getOfferProperty();
+		Property<Short> getLineProperty();
+		Property<Integer> getItemProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getDiscountProperty();
+		Property<Byte> getStatusProperty();
 	}
 	
 	public interface OfferDetailCommissionProperties {

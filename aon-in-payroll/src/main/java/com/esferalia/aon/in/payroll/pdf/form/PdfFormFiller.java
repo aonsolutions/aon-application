@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -17,7 +18,7 @@ public class PdfFormFiller {
 
 	//FILL FORM FIELDS WITH ASSOCIATED VALUES
 	static void fill_form_fields(InputStream pdf, Map<String,String> values, String new_pdf) throws UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(pdf)) {
+		try (PDDocument doc = Loader.loadPDF(pdf)) {
 			doc.setAllSecurityToBeRemoved(true);
 	
 			PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();
