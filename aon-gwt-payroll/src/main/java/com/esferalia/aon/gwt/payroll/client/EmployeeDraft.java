@@ -703,7 +703,7 @@ public abstract class EmployeeDraft extends Composite {
 		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
-		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
+		employee.agreement.setValue(employeeDraftObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
 				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
@@ -780,7 +780,7 @@ public abstract class EmployeeDraft extends Composite {
 		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
-		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
+		employee.agreement.setValue(employeeDraftObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
 				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");

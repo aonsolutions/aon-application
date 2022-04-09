@@ -454,8 +454,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
 		
 		//AGREEMENT
-		setSelectedValueLB(employee.agreement, this.employeeDialogObject.getWorkplaceAgreement()+"");
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.agreement);
+//		setSelectedValueLB(employee.agreement, this.employeeDialogObject.getWorkplaceAgreement()+"");
+//		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.agreement);
 	}
 	
 	private void initFocus() {
@@ -529,7 +529,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
 		
 		Integer agreementId = contractData.getAgreementId();
-		setSelectedValueLB(employee.agreement, agreementId+"");
+		employee.agreement.setValue(employeeDialogObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
 				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
@@ -578,7 +578,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
 		
 		Integer agreementId = contractData.getAgreementId();
-		setSelectedValueLB(employee.agreement, agreementId+"");
+		employee.agreement.setValue(employeeDialogObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
 				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");

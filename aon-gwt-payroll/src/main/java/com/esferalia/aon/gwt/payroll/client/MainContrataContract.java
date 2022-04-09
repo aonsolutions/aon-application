@@ -355,7 +355,7 @@ public class MainContrataContract extends MainEntryPoint {
 			Integer contractId = employeeContractInfoSelected.getContractInfo().getContractId();
 
 			Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
-
+			
 			contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
 			contrataEmployee.setIsComunica(mainContrataContractObject.isComunica());
 			ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
@@ -802,12 +802,13 @@ public class MainContrataContract extends MainEntryPoint {
 	public void onModuleLoad(MainContrataContractObject mainContrataContractObject) {
 		this.mainContrataContractObject = mainContrataContractObject;
 		
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo contexto de la empresa...");
+		
 		this.mainContrataContractObject.getEmployeesInfo(false, 
 				s -> {
 					initEnterpriseSB();
 					initContractTable();
 					setTableHeights();
-					AonMessagePanel.showLoading(messageContainer, "Obteniendo contexto de la empresa...");
 					checkStatus(this.mainContrataContractObject);
 				}, 
 				f -> {}
