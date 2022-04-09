@@ -149,7 +149,6 @@
 					<g:center>
 						<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
 							<g:HTMLPanel ui:field="messageContainer" />
-							<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}" />
 							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 								<g:tab>
 							    	<g:header size='7'>Datos Afiliación</g:header>

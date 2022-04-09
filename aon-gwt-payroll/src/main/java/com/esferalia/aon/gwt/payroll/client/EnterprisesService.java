@@ -207,15 +207,18 @@ public interface EnterprisesService extends RemoteService {
 
 	EnterpriseITStatus getEnterpriseITStatus(String domain, String user);
 
+	// ------------------------------------------------ Contract Attachments
+	
 	List<Attach> getContractAttachments(String currentDomainName, String login, Integer contractId) throws IllegalArgumentException;
 	
-	List<ContractAttach> setContractAttachments(String currentDomainName, Integer contractId,
-			List<ContractAttach> contractAttachments);
+	void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments) throws IllegalArgumentException;
 
-	List<ContractAttach> createContractAttach(String currentDomainName, ContractAttach contractAttach);
+	void createContractAttach(String currentDomainName, ContractAttach contractAttach) throws IllegalArgumentException;
 
 	void deleteContractAttach(String currentDomainName, String login, Integer attachId) throws IllegalArgumentException;
 
+	// ------------------------------------------------ Contract Clauses
+	
 	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId) throws IllegalArgumentException ;
 
 	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses) throws IllegalArgumentException ;

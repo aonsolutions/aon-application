@@ -2263,6 +2263,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} 
 	}
 	
+	// --------------------------------------------- Contract Attachments
+	
 	@Override
 	public List<Attach> getContractAttachments(String domainName, String login, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -2274,27 +2276,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					f -> f.getDomainProperty().eq(domainId).and(f.getContractProperty().eq(contractId)), 
 					AttachType.CONTRACT, 
 					false);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
 	@Override
-	public List<ContractAttach> setContractAttachments(String domainName, Integer contractId, List<ContractAttach> contractAttachments) {
+	public void setContractAttachments(String domainName, Integer contractId, List<ContractAttach> contractAttachments) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqContractAttach.setContractAttachments(connection, contractAttachments);
+			JooqContractAttach.setContractAttachments(connection, contractAttachments);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
 	@Override
-	public List<ContractAttach> createContractAttach(String domainName, ContractAttach contractAttach) {
+	public void createContractAttach(String domainName, ContractAttach contractAttach) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContractAttach.createContractAttach(connection, domainId, contractAttach);
+			JooqContractAttach.createContractAttach(connection, contractAttach);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

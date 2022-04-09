@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
@@ -734,7 +733,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public String getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha) {
+	public String getEmployeeTa(String domain, String user, Integer contractId, String situation, String regimen, String ctaCti, String nss, Date fecha) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -769,10 +768,9 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<ContractAttach> fillContract(String currentDomainName,  Integer contractId, Integer contractType, String formativeLvl) {
+	public void fillContract(String currentDomainName,  Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
-		return null;
 	}
 
 	@Override
@@ -867,7 +865,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate)
+	public String getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
@@ -979,13 +977,6 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen,
-			String ctaCti, String nss, Date fecha, Integer contractId) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
