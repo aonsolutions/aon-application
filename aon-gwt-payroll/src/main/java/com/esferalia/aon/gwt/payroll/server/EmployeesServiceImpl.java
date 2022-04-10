@@ -197,6 +197,9 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -3413,6 +3416,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
+	private static Collection<String> getFiscalModels(Connection conn, ISalary salary) throws ManagerBeanException {
+		AONContext aonContext = new AONContext(conn);
+		return AON.getFiscalModels(aonContext, new com.esferalia.aon.occam.api.model.Salary().setId(salary.getId()))
+		.stream().map( FiscalModel::getModelFullName).collect(Collectors.toList());
+	}
+
 	private static List<Variable> getDBSalaryData(Connection conn, ISalary salary) throws ManagerBeanException {
 
 		AONContext aonContext = new AONContext(conn);
@@ -3472,6 +3481,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
 				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
+				salaryDraftBuilder.setFiscalModels(getFiscalModels(conn, dbSalary));
 			}
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
@@ -3790,6 +3800,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
 				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
+				salaryDraftBuilder.setFiscalModels(getFiscalModels(conn, dbSalary));
 			}
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
@@ -3857,6 +3868,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
 				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
+				salaryDraftBuilder.setFiscalModels(getFiscalModels(conn, dbSalary));
 			} else {
 				// draft.clearDb();
 			}

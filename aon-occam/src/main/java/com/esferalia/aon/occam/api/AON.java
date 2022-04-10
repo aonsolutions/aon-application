@@ -180,6 +180,7 @@ import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
@@ -2588,6 +2589,9 @@ public class AON {
 		return getSystem().getAvailableBonus(ctx, filter, Bonus::new);
 	}
 	
+	public static Collection<FiscalModel> getFiscalModels(AONContext ctx, Salary salary) {
+		return getSalary().getFiscalModels(ctx, salary);
+	}
 
 	// ********************************************
 	// ************************************* FEE **
