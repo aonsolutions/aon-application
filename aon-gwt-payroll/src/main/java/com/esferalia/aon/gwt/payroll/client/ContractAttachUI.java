@@ -398,7 +398,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		ListBox typeLB = new ListBox();
 		typeLB.addItem("-", "-1");
 		typeLB.addItem("Borrador del contrato", "0");
-		typeLB.addItem("Contrato laboral", "1");
+		typeLB.addItem("Copia Contrato laboral", "1");
 		typeLB.addItem("Borrador de copia basica", "2");
 		typeLB.addItem("Copia basica", "3");
 		typeLB.addItem("Domiciliacion bancaria", "7");
@@ -407,8 +407,11 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("Borrador prorroga", "10");
 		typeLB.addItem("Prorroga", "11");
 		typeLB.addItem("Borrador del certificado de empresa", "22");
-		typeLB.addItem("TA", "98");
-		typeLB.addItem("IDC", "99");
+		typeLB.addItem("TA (Alta)", "98");
+		typeLB.addItem("TA (Baja)", "99");
+		typeLB.addItem("IDC", "101");
+		typeLB.addItem("IDCPlNss", "102");
+		typeLB.addItem("Certifica2 (Pdf)", "102");
 		return typeLB;
 	}
 

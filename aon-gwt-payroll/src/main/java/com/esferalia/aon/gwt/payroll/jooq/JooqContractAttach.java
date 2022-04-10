@@ -301,7 +301,7 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.DOMAIN, domainId)
 				.set(CONTRACT_ATTACH.CONTRACT, contractId)
 				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
-				.set(CONTRACT_ATTACH.DESCRIPTION, "TA (Alta)")
+				.set(CONTRACT_ATTACH.DESCRIPTION, "TA (Baja)")
 				.set(CONTRACT_ATTACH.DATA, data)
 				.set(CONTRACT_ATTACH.TYPE, (byte)99)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
@@ -364,7 +364,7 @@ public class JooqContractAttach {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.TYPE.eq((byte)3))
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)1))
 				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 				.fetchOne(CONTRACT_ATTACH.ID);
 		
@@ -381,7 +381,7 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
 				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Contrato")
 				.set(CONTRACT_ATTACH.DATA, data)
-				.set(CONTRACT_ATTACH.TYPE, (byte)3)
+				.set(CONTRACT_ATTACH.TYPE, (byte)1)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
 				.execute();
 		
