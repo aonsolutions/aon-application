@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,11 +19,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.sepe.Sepe;
+import solutions.aon.sepe.exceptions.SepeException;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -86,7 +90,7 @@ public class Certifica2Servlet extends HttpServlet {
 				String endDateStr = req.getParameter("endDate");
 				Date endDate = formatEndDate(endDateStr);
 				
-				data = getCertEnterprisePDF(domainName, userLogin, document, endDate);
+				data = getCertEnterprisePDF(domainName, userLogin, contractId, document, endDate);
 			}
 			
 			res.setStatus(HttpServletResponse.SC_OK);
@@ -100,27 +104,32 @@ public class Certifica2Servlet extends HttpServlet {
 		
 	}
 
-	private byte[] getCertEnterprisePDF(String domainName, String userLogin, String document, Date endDate) {
-		try {
-			
+	private byte[] getCertEnterprisePDF(String domainName, String userLogin, Integer contractId, String document, Date endDate) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Get domain id
-			Connection connection = AonServletUtils.getConnection(domainName);
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			// Copy Contract
+			byte[] pdfBytes = JooqContractAttach.getCertifica2PDF(connection, contractId);
+
+			// If not exist download
+			if (null == pdfBytes) {
+				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+				pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getData()),
+						certificate.getPassword(), certificate.getType(), document, endDate);
+
+				JooqContractAttach.setCertifica2PDF(connection, domainId, contractId, pdfBytes);
+			}
+
+			return pdfBytes;
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
-			
-			// Get Certifica2 PDF
-			return Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getCertificate()), 
-					certificate.getPassword(), 
-					certificate.getType(), 
-					document, 
-					endDate);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
+		} catch (CertificateNotFoundException e) {
+			throw new IllegalArgumentException(
+					"No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");
+		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

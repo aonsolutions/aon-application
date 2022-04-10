@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
@@ -255,9 +254,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info,
 			AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
-	void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	// ------------------------------------------------- TGSS Files
 	
-	void getEmployeeTa(String domain,  String user,  String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getEmployeeTa(String domain,  String user, Integer contractId, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException;
 
@@ -267,16 +266,18 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
-	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-			AsyncCallback<List<ContractAttach>> callback) throws IllegalArgumentException;
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
+	// ------------------------------------------------- SEPE Files
+	
 	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate,
-			AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
+	
+	void getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
 	
@@ -316,8 +317,6 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException;
-
-	void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData,
 			ContractTransform contractTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;

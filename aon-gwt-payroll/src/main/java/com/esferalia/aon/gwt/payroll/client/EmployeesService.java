@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
@@ -238,9 +237,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 //	
 //	EmployeeStatus unregister(String domain, Integer contractId);
 	
-	void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId) throws IllegalArgumentException;
+	// ------------------------------------------------- TGSS Files
 	
-	String getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha) throws IllegalArgumentException;
+	String getEmployeeTa(String domain, String user, Integer contractId, String situation, String regimen, String ctaCti, String nss, Date fecha) throws IllegalArgumentException;
 
 	String getEmployeeIdc(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 
@@ -250,14 +249,17 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
-	List<ContractAttach> fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException;
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
-	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
-			Date startDate, Date endDate) throws IllegalArgumentException;
+	// ------------------------------------------------- SEPE Files
+	
+	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException;
 
 	String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException;
+
+	String getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
 	
@@ -295,8 +297,6 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
 	
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info)  throws IllegalArgumentException;
-
-	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;
 
 	void sendContractTransform(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData,
 			ContractTransform contractTransform) throws IllegalArgumentException;

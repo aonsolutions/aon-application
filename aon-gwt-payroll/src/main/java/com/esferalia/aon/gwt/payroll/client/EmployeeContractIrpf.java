@@ -104,13 +104,13 @@ public abstract class EmployeeContractIrpf extends Composite {
 					if(AonStringUtils.isBlank(ssNumber)) {
 						this.yearLB.setEnabled(false);
 						this.saveButton.setEnabled(false);
-						fireSSNumberErrorMessage();
+						showErrorMessage("Error n\u00FAmero Seguridad Social", "El contrato " + employeeContractIrpfObject.getFullName() + " no tiene definido el n\u00FAmero de la Seguridad Social. Def\u00EDnalo antes de rellas los IRPFs");
 					}
 				},
 				t -> {});
 	}
 
-	protected abstract void fireSSNumberErrorMessage();
+	protected abstract void showErrorMessage(String title, String message);
 
 	// ----------------------------------------------- setEmployeeContractPaymentsObject.Methods
 	

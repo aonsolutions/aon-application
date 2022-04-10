@@ -520,7 +520,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
-		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
+		employee.agreement.setValue(contrataEmployeeObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s-> {
 				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
@@ -597,7 +597,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
-		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
+		employee.agreement.setValue(contrataEmployeeObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
 				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
