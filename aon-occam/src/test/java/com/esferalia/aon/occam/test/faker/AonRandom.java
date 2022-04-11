@@ -460,7 +460,7 @@ public class AonRandom {
 	}
 	
 	public static Invoice generateRandomRetentionInvoices(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
-		return withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
+		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 			@Override
 			public Invoice visitProfessional(Invoice i) {
 				return Stream.of( AonRandom.getYearDay(new Date()) )
@@ -506,6 +506,7 @@ public class AonRandom {
 					.orElse(null);
 			}
 		},null);
+		return inv;
 	}
 	
 }

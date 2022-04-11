@@ -9,6 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	// MVEL expresions syntax check en las declaraciones
 	Mod123ExpressionsTest.class,
 	// Modelos mensuale
+	Mod123ReopenTest.class,
 	Mod123DeleteTest.class,
 	Mod123InsertInvoicesTest.class,
 	Mod123InsertMonthlyTest.class,
@@ -23,6 +24,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod123RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
+	Mod123ReopenTest.class,
 	Mod123DeleteTest.class,
 	Mod123InsertInvoicesTest.class,
 	Mod123InsertQuarterlyTest.class,

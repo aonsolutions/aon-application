@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.mod111;
 
 import java.text.MessageFormat;
-import java.util.stream.IntStream;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,12 +14,12 @@ public class Mod111InsertInvoicesTest extends AbstractOccamTest {
 	@Test
 	public void test() {
 		ctx.getDslContext().transaction( config -> {
-			System.out.println(MessageFormat.format("\t\t {0} Invoices inserted "
-				,IntStream.range(0 , AonRandom.getInt(1, 50))
-					.mapToObj(i -> AonRandom.getRandomWithholdingType() )
-					.map(wt -> AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration(),wt))
-					.count()));
-		});		
+			int times = AonRandom.getInt(1, 50);
+			for ( int i = 0; i < times; i++) {
+				AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration(),AonRandom.getRandomWithholdingType());	
+			}
+			System.out.println(MessageFormat.format("\t\t {0} Invoices inserted ", times ));
+		});
 		
 		Assert.assertTrue( AON.getInvoiceStream(getOccam(), p -> p.getDomainProperty().eq(DOMAIN_ID))
 				.findFirst()

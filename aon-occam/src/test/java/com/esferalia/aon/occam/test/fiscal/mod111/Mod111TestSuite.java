@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod111ScriptTest.class,
 	
 	// Modelos mensuale
+	Mod111ReopenTest.class,					// Pendiente
 	Mod111DeleteTest.class,
 	Mod111InsertInvoicesTest.class,
 	Mod111InsertMonthlyTest.class,
@@ -25,6 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod111RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
+	Mod111ReopenTest.class,					// Pendiente
 	Mod111DeleteTest.class,
 	Mod111InsertInvoicesTest.class,
 	Mod111InsertQuarterlyTest.class,

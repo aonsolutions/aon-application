@@ -107,7 +107,7 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 					+ "@foreach{fm : periodModels}"
 					+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
 					+ "@end{}"
-					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C87)}\""
+					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C83)}\""
 				+"]}"
 			)
 		,AR_C84(Mod111Key.AR_C84,false,null,null,null,null,null)

@@ -10,6 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod115ExpressionsTest.class,
 	
 	// Modelos mensuale
+	Mod115ReopenTest.class,
 	Mod115DeleteTest.class,
 	Mod115InsertInvoicesTest.class,
 	Mod115InsertMonthlyTest.class,
@@ -24,6 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod115RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
+	Mod115ReopenTest.class,
 	Mod115DeleteTest.class,
 	Mod115InsertInvoicesTest.class,
 	Mod115InsertQuarterlyTest.class,

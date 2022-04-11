@@ -12,9 +12,11 @@ import org.junit.runners.Suite.SuiteClasses;
 
 	VatContextJSONTest.class,
 	
+	Mod303ReopenTest.class,					// Pendiente
 	Mod303DeleteTest.class,
 	Mod303ValidationTest.class,
 	
+	Mod303ReopenTest.class,					// Pendiente
 	Mod303DeleteTest.class,
 	Mod303InsertInvoicesTest.class,
 	Mod303InsertMonthlyTest.class,
@@ -30,6 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod303InsertMonthlyReplacementTest.class,
 	Mod303RoundedAmountsTest.class,
 
+	Mod303ReopenTest.class,					// Pendiente
 	Mod303DeleteTest.class,
 	
 	Mod303InsertInvoicesTest.class,

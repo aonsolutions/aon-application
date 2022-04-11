@@ -20,7 +20,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class Mod111InsertMonthlyComplementaryTest extends AbstractOccamTest {
 	
 	@Test
-	public void mod111InsertMonthlyComplementaryTest() {
+	public void test() {
 		Date today = new Date();
 		for (Period period : Period.values()) {
 			if (period.isMonthPeriod()) {
@@ -39,8 +39,8 @@ public class Mod111InsertMonthlyComplementaryTest extends AbstractOccamTest {
 		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA,date);
 		Mod111 navarra = insertModel( Administration.NAVARRA,date);
 		
-		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), bizkaia.getDeclarationResult());
 		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), gipuzkoa.getDeclarationResult());
+		Asserts.assertEqualsDouble("Bizkaia" + bizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), bizkaia.getDeclarationResult());
 		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), navarra.getDeclarationResult());
 	}
 	
