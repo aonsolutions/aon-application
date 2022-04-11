@@ -57,7 +57,7 @@ public class HelpTooltipServlet extends HttpServlet {
         	InputStream image;
         	
         	if(request.getParameter("page") != null) {
-        		image = PdfImageExtractor.imageFromPdfPage(input, 0);
+        		image = PdfImageExtractor.imageFromPdfPage(input, 0 , 300, 150);
         	} else { 
             	image = PdfImageExtractor.imageFromPdfDestinationName(input, name); 		
         	}

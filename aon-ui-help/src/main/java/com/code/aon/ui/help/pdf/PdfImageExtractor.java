@@ -22,11 +22,10 @@ public class PdfImageExtractor {
 	 * @param page The page to take the screenshot from
 	 * @param x The x coordinate
 	 * @param y The y coordinate
+	 * @param height The height to crop
 	 * @return The file 
-	 * 
-	 * TODO, FIX y 
 	 */
-	public static InputStream imageFromPdfPageRegion(PDDocument doc, int page, int x, int y) {
+	public static InputStream imageFromPdfPageRegion(PDDocument doc, int page, int x, int y, int height) {
 		
 			// DPI Scales
 			final float xsc = 2483 / 596;
@@ -36,11 +35,10 @@ public class PdfImageExtractor {
 			y *= ysc;
 		
 			PDFRenderer renderer = new PDFRenderer(doc);
-
 			
 			try {
 				BufferedImage image = renderer.renderImageWithDPI(page, 300, ImageType.RGB);
-				BufferedImage subImage = image.getSubimage(0, (int) y, image.getWidth(), (int)(100 * ysc) );
+				BufferedImage subImage = image.getSubimage(0, (int) y, image.getWidth(), (int)(height * ysc) );
 				 
 				ByteArrayOutputStream output = new ByteArrayOutputStream();
 				ImageIO.write(subImage, "jpg", output);
@@ -71,7 +69,7 @@ public class PdfImageExtractor {
 			int page = doc.getPages().indexOf(dest.getPage());
 			int y =(int) (doc.getPage(page + 1).getMediaBox().getHeight() - dest.getTop());
 			
-			return imageFromPdfPageRegion(doc, page, 0, y);
+			return imageFromPdfPageRegion(doc, page, 0, y, 150);
 			
 		} catch (IOException e) {e.printStackTrace();}	
 		
@@ -82,31 +80,18 @@ public class PdfImageExtractor {
 	 * Get an image from a given page
 	 * @param stream The pdf file stream
 	 * @param name The name to search for
+	 * @param y The y coordinate
+	 * @param height The height to crop
 	 * @return The image of the pdf region containing the given destination name
 	 */
-	public static InputStream imageFromPdfPage(InputStream stream, int page) {
+	public static InputStream imageFromPdfPage(InputStream stream, int page, int y, int height) {
 		
 		PDDocument doc;
 		try {
 			doc = Loader.loadPDF(stream);
-			
-			// DPI Scales
-			final float xsc = 2483 / 596;
-			final float ysc = 3508 / 842;
-			
 			int x = 0;
-			int y = 0;
 			
-			PDFRenderer renderer = new PDFRenderer(doc);
-
-			BufferedImage image = renderer.renderImageWithDPI(page, 300, ImageType.RGB);
-			BufferedImage subImage = image.getSubimage(0, (int) y, image.getWidth(), (int)(400 * ysc) );
-			 
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			ImageIO.write(subImage, "jpg", output);
-			InputStream is = new ByteArrayInputStream(output.toByteArray());
-				
-			return is;
+			return imageFromPdfPageRegion(doc, page, x, y, height);
 		} catch (IOException e) {}
 		
 		return null;		
