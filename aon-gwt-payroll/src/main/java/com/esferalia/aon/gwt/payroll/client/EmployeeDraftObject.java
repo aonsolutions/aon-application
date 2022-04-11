@@ -157,6 +157,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
 		Date date = new Date();
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		Date contractEndDate = employeeContractData.getContractInfo().getEndDate();
 		String situation = (null == contractEndDate || DateUtils.isBeforeOrEquals(date, contractEndDate)) ? "ALTA" : "BAJA";
 		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
@@ -164,7 +165,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
 		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
 		
-		employeesService.getEmployeeTa(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
+		employeesService.getEmployeeTa(contractId, situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -706,6 +707,18 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	public void setEmployeeRbankId(Integer rbankId) {
 		employeeData.setRbankId(rbankId);
+	}
+
+	public String getAgreementDescription() {
+		Integer agreementId = contractData.getAgreementId();
+		if(null == agreementId)
+			return null;
+		else {
+			for(Agreement agreement : this.enterpriseContext.getAgreements())
+				if(agreement.getId().equals(agreementId))
+					return agreement.getDescription();
+		}
+		return null;
 	}
 	
 }

@@ -19,16 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AgreementClean;
-import net.aonsolutions.db.up2date.payroll.CertificatesClean;
-import net.aonsolutions.db.up2date.tgss.Artist2022Fix;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod303Result;
-import net.aonsolutions.db.up2date.tgss.Artist2022Update;
-import net.aonsolutions.db.up2date.tgss.Bases2022UpdateII;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2022Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2022Update;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2022Update;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2022Update;
+import net.aonsolutions.db.up2date.management.UdapaSalesFix;
+import net.aonsolutions.db.up2date.tgss.Bases2022Fix;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2022UpdateDaily;
 
 
 public class Up2Date {
@@ -229,7 +222,10 @@ public class Up2Date {
 //    		FellowsPercentages2022Update.FELLOWSPERCENTAGES2022UPDATE,
 //    		Artist2022Update.ARTIST2022UPDATE
 //    		RefreshMod303Result.REFRESH_MOD303_RESULT,
-    		Artist2022Fix.ARTIST2022FIX
+//    		Artist2022Fix.ARTIST2022FIX
+    		Bases2022Fix.BASES2022FIX,
+    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
+    		UdapaSalesFix.UDAPA_SALES_FIX
     };
     
 

@@ -2268,6 +2268,121 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				settle.getTotalPayment(), 0.001);
 	}
 
+	@Test
+	public void testSettleWithExtrasMismatchOverriden() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord pagaMarzo = addConcept(aonContext, "PAGA_MARZO", PaymentType.CRA_0004);
+		PaymentConceptRecord pagaSeptiembre = addConcept(aonContext, "PAGA_SEPTIEMBRE", PaymentType.CRA_0004);
+		
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.concept = pagaExtra.getId();
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "31/12";
+						this.month = Month.DECEMBER;
+						this.expression = "/*DICIEMBRE*/(P_0) + (P_1) + (P_2)";
+					}
+				}, new Extra() {
+					{
+						this.concept = pagaExtra.getId();
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "30/06";
+						this.month = Month.JUNE;
+						this.expression = "/*JUNIO*/(P_0 + P_1 + P_2)";
+					}
+				}, new Extra() {
+					{
+						this.concept = pagaMarzo.getId();
+						this.start = "01/03 -1";
+						this.end = "28/02";
+						this.issue = "15/03";
+						this.month = Month.MARCH;
+						this.expression = "/*MARZO*/(P_0 + P_1 + P_2)";
+					}
+				}, new Extra() {
+					{
+						this.concept = pagaSeptiembre.getId();
+						this.start = "01/09 -1";
+						this.end = "31/08";
+						this.issue = "15/09";
+						this.month = Month.SEPTEMBER;
+						this.expression = "/*SEPTIEMBRE*/(P_0 + P_1 + P_2)";
+					}
+				}, });
+		
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date contractStart = add(firstDayOfYear, Calendar.YEAR, -1);
+		Date contractEnd = add(add(firstDayOfYear, Calendar.MONTH, 3), Calendar.DATE, 5 ); 
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+				{
+					put(TC2.getName(), "\"100\"");
+					put(MONTH_DAYS.getName(), "30");
+					put(QUOTE_GROUP.getName(), "\"01\"");
+				}
+				}, 
+				new String[] { 
+					"( P_1 + P_2 ) * 0.10 ",
+					"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+//					"BASE_CGC * 0.10", 
+//					"BASE_CGP * 0.05",
+//					"BASE_IRPF * 0.00/100" 
+				}, 
+				category);
+		//@formatter:off	
+		
+		
+		addPayment(aonContext, contract, firstDayOfYear, null, pagaSeptiembre, "PAGA SEPTIEMBRE", "REMOVE()", null, null, PaymentType.CRA_0004);
+		addPayment(aonContext, contract, firstDayOfYear, null, pagaMarzo, "PAGA MARZO", "/*MARZO*/(P_0 + P_1 + P_2)", null, null, PaymentType.CRA_0004);
+		
+		addSSRegimeStuff(aonContext);
+		
+		
+		for ( int i = 0 ; i < 16 ; i++ ) {
+			Date startDate = add(contractStart, Calendar.MONTH, i);
+			Date endDate = getLastDayOfMonth(startDate);
+			JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+			.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate , endDate , contract));
+			jooqSalaryBuilder.execute();
+			System.out.println(startDate +".." + endDate);
+		}
+
+		
+		System.out.println("*" +contractStart +".." + contractEnd);
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contractEnd, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		for ( SalaryPayment p : settle.getSalaryPayments() ) 
+			System.out.println(p.getDescription() + "= " + p.getAmount() );
+		
+		Assert.assertEquals( 
+				1750.00 * 1.10 / 12.00 * 9.00 /*J,A,S,O,N,D,E,F,M*/
+				+ 1750.00 * 1.10 / 12.00 * 3.00 /*E,F,M*/
+				+ 1750.00 * 1.10 / 12.00 / 30.00 * 6 /*A*/
+				+ 1750.00 * 1.10 / 12.00 / 30.00 * 6 /*A*/
+				,
+				settle.getTotalPayment(), 0.05);
+	}
+
+
 	// ------------------------------------------------------------------------
 
 	@Test

@@ -1,3 +1,4 @@
+
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
@@ -360,7 +361,7 @@
 								<g:Label>Convenio</g:Label>
 							</td>
 							<td colspan="5">
-								<g:ListBox ui:field="agreement" debugId="agreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:SuggestBox ui:field="agreement" debugId="agreement" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 						</tr>
 						<!-- LINEA 11 -->

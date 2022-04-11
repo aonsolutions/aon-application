@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 
 public interface ISalary {
 
@@ -23,4 +24,7 @@ public interface ISalary {
 
 	public Collection<Salary> saveSalaries(AONContext ctx, 
 			Integer domainId, Collection<Salary> salaries);
+	
+	public Collection<FiscalModel> getFiscalModels(AONContext ctx, 
+			Salary salary);
 }

@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
@@ -499,12 +498,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, certifica2Info, callback);
 	}
 	
-	public void downloadTA_IDC(String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.downloadTA_IDC(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, contractId, callback);
-	}
+	// ------------------------------------------------- TGSS Files
 	
-	public void getEmployeeTa(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, callback);
+	public void getEmployeeTa(Integer contractId, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), contractId, situation, regimen, ctaCti, nss, fecha, callback);
 	}
 	
 	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
@@ -523,7 +520,7 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 	}
 	
-	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) throws IllegalArgumentException {
+	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, callback);
 	}
 	
@@ -531,12 +528,18 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setData(getCurrentDomainName(), getCurrentUser(), contractId, data, callback);
 	}
 	
+	// ------------------------------------------------- SEPE Files
+	
 	public void getEmployeeCbc(String document, Integer contractId, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, callback);
 	}
 
 	public void getEmployeeCto(String document, Integer contractId, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, callback);
+	}
+	
+	public void getCertifica2PDF(Integer contractId, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), contractId, nif, endDate, callback);
 	}
 	
 	// ------------------------------------------------- TGSS Comunications
@@ -595,10 +598,6 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, certifica2Info, callback);
 	}
 	
-	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
-		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), nif, endDate, callback);
-	}
-
 	public void sendContractTransform(EmployeeContractInfo employeeContractData, ContractTransform contractTransform,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendContractTransform(getCurrentDomainName(), getCurrentUser(), employeeContractData, contractTransform, callback);

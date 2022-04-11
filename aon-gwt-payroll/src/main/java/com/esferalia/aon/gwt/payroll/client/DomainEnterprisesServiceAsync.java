@@ -361,22 +361,25 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterpriseITStatus(getCurrentDomainName(), getCurrentUser(), asyncCallback);		
 	}
 	
+	// ------------------------------------------------ Contract Attachments
 	
 	public void getContractAttachments(Integer contractId, AsyncCallback<List<Attach>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getContractAttachments(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 	
-	public void setContractAttachments(Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<List<ContractAttach>> asyncCallback) {
+	public void setContractAttachments(Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.setContractAttachments(getCurrentDomainName(), contractId, contractAttachments, asyncCallback);
 	}
 
-	public void createContractAttach(ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> asyncCallback) {
+	public void createContractAttach(ContractAttach contractAttach, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.createContractAttach(getCurrentDomainName(), contractAttach, asyncCallback);	
 	}
 	
 	public void deleteContractAttach(Integer attachId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.deleteContractAttach(getCurrentDomainName(), getCurrentUser(), attachId, asyncCallback);
 	}
+	
+	// ------------------------------------------------ Contract Clauses
 	
 	public void getContractClauses(Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException  {
 		enterprisesServiceAsync.getContractClauses(getCurrentDomainName(), contractId, asyncCallback);

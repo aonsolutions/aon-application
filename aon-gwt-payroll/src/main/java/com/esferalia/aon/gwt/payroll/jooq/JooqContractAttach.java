@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -73,33 +75,22 @@ public class JooqContractAttach {
 		return contractAttachs;
 	}
 
-	public static List<ContractAttach> createContractAttach(Connection conn, Integer domainId,ContractAttach contractAttach) {
-		return createContractAttachDB(DSL.using(conn, getDefaultSettings()), domainId, contractAttach);
+	public static void createContractAttach(Connection conn, ContractAttach contractAttach) {
+		createContractAttachDB(DSL.using(conn, getDefaultSettings()), contractAttach);
 	}
 
-	private static List<ContractAttach> createContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
+	private static void createContractAttachDB(DSLContext dslContext, ContractAttach contractAttach) {
 		 dslContext.insertInto(CONTRACT_ATTACH)
 			.set(CONTRACT_ATTACH.DOMAIN, contractAttach.getDomain())
 			.set(CONTRACT_ATTACH.CONTRACT, contractAttach.getContract())
 			.execute();
-		 
-		 return getContractAttachmentsDB(dslContext, domainId, contractAttach.getContract());
 	}
 	
-	public static List<ContractAttach> deleteContractAttach(Connection conn, Integer domainId, ContractAttach contractAttach) {
-		return deleteContractAttachDB(DSL.using(conn, getDefaultSettings()), domainId, contractAttach);
+	public static void setContractAttachments(Connection conn, List<ContractAttach> contractAttachments) {
+		setContractAttachmentsDB(DSL.using(conn, getDefaultSettings()), contractAttachments);
 	}
 	
-	private static List<ContractAttach> deleteContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
-		dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.ID.eq(contractAttach.getId())).execute();
-		return getContractAttachmentsDB(dslContext, domainId, contractAttach.getContract());
-	}
-	
-	public static List<ContractAttach> setContractAttachments(Connection conn, List<ContractAttach> contractAttachments) {
-		return setContractAttachmentsDB(DSL.using(conn, getDefaultSettings()), contractAttachments);
-	}
-	
-	private static List<ContractAttach> setContractAttachmentsDB(DSLContext dslContext, List<ContractAttach> contractAttachments) {
+	private static void setContractAttachmentsDB(DSLContext dslContext, List<ContractAttach> contractAttachments) {
 		
 		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 		
@@ -119,8 +110,6 @@ public class JooqContractAttach {
 		}
 		
 		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
-		
-		return contractAttachments;
 	}
 	
 	public static void setContractAttachAttachment(String domainName, Integer attachId, String fileName, byte[] data, byte mimeType) {
@@ -156,6 +145,103 @@ public class JooqContractAttach {
 		} 
 	}
 
+	// ------------------------------------------ IDC
+
+	public static String getContractIdc(Connection connection, Integer contractId, Date date) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> idcRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)101))
+				.and(CONTRACT_ATTACH.ATTACH_DATE.eq(new Timestamp(date.getTime())))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_ATTACH.ID.desc())
+				.fetch();
+		
+		return idcRecords.isEmpty() ? null : Base64.getEncoder().encodeToString(idcRecords.get(0).get(CONTRACT_ATTACH.DATA));
+	}
+	
+	public static void setContractIDC(Connection connection, Integer domainId, Integer contractId, byte[] data, Date date) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		List<Integer> contractAttachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)101))
+				.and(CONTRACT_ATTACH.ATTACH_DATE.eq(new Timestamp(date.getTime())))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_ATTACH.ID.desc())
+				.fetch(CONTRACT_ATTACH.ID);
+		
+		if(!contractAttachIds.isEmpty())
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, data)
+				.where(CONTRACT_ATTACH.ID.eq(contractAttachIds.get(0)))
+				.execute();
+		else
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "IDC")
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.TYPE, (byte)101)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(date.getTime()))
+				.execute();
+	}
+	
+	// ------------------------------------------ IDCPlNss
+
+	public static String getContractIdcPlNss(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> idcRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)102))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_ATTACH.ID.desc())
+				.fetch();
+		
+		return idcRecords.isEmpty() ? null : Base64.getEncoder().encodeToString(idcRecords.get(0).get(CONTRACT_ATTACH.DATA));
+	}
+	
+	public static void setContractIdcPlNss(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		List<Integer> contractAttachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)102))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_ATTACH.ID.desc())
+				.fetch(CONTRACT_ATTACH.ID);
+		
+		if(!contractAttachIds.isEmpty())
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttachIds.get(0)))
+				.execute();
+		else
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "IDC PL NSS")
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.TYPE, (byte)102)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+	}
+	
+	// ------------------------------------------ TA (Alta)
+	
+	public static String getContractTA(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> idcRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)98))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_ATTACH.ID.desc())
+				.fetch();
+		
+		return idcRecords.isEmpty() ? null : Base64.getEncoder().encodeToString(idcRecords.get(0).get(CONTRACT_ATTACH.DATA));
+	}
+	
 	public static void setContractTA(Connection connection, Integer domainId, Integer contractId, byte[] data) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
@@ -175,18 +261,32 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.DOMAIN, domainId)
 				.set(CONTRACT_ATTACH.CONTRACT, contractId)
 				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
-				.set(CONTRACT_ATTACH.DESCRIPTION, "TA")
+				.set(CONTRACT_ATTACH.DESCRIPTION, "TA (Alta)")
 				.set(CONTRACT_ATTACH.DATA, data)
 				.set(CONTRACT_ATTACH.TYPE, (byte)98)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
 				.execute();
 	}
-
-	public static void setContractIDC(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+	
+	// ------------------------------------------ TA (Baja)
+	
+	public static String getContractTAEnd(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> idcRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)99))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_ATTACH.ID.desc())
+				.fetch();
+		
+		return idcRecords.isEmpty() ? null : Base64.getEncoder().encodeToString(idcRecords.get(0).get(CONTRACT_ATTACH.DATA));
+	}
+	
+	public static void setContractTAEnd(Connection connection, Integer domainId, Integer contractId, byte[] data) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.TYPE.eq((byte)99))
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)98))
 				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 				.fetchOne(CONTRACT_ATTACH.ID);
 		
@@ -201,7 +301,7 @@ public class JooqContractAttach {
 				.set(CONTRACT_ATTACH.DOMAIN, domainId)
 				.set(CONTRACT_ATTACH.CONTRACT, contractId)
 				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
-				.set(CONTRACT_ATTACH.DESCRIPTION, "IDC")
+				.set(CONTRACT_ATTACH.DESCRIPTION, "TA (Baja)")
 				.set(CONTRACT_ATTACH.DATA, data)
 				.set(CONTRACT_ATTACH.TYPE, (byte)99)
 				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
@@ -221,15 +321,126 @@ public class JooqContractAttach {
 		return copyBasicRecords.isEmpty() ? null : copyBasicRecords.get(0).get(CONTRACT_ATTACH.DATA);
 	}
 	
+	public static void setCopyBasic(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)3))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetchOne(CONTRACT_ATTACH.ID);
+		
+		if(null != contractAttachId)
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttachId))
+				.execute();
+		else
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Basica")
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.TYPE, (byte)3)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+	}
+	
+	// ------------------------------------------ CopyContract
+	
 	public static byte[] getCopyContract(Connection connection, Integer contractId) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
-		Result<Record> copyBasicRecords = dslContext.select().from(CONTRACT_ATTACH)
+		Result<Record> copyContractRecords = dslContext.select().from(CONTRACT_ATTACH)
 				.where(CONTRACT_ATTACH.TYPE.eq((byte)1))
 				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 				.fetch();
 		
+		return copyContractRecords.isEmpty() ? null : copyContractRecords.get(0).get(CONTRACT_ATTACH.DATA);
+	}
+	
+	public static void setCopyContract(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)1))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetchOne(CONTRACT_ATTACH.ID);
+		
+		if(null != contractAttachId)
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttachId))
+				.execute();
+		else
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "Copia Contrato")
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.TYPE, (byte)1)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+		
+		/**
+		 * 		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+				
+				Attach attach = new Attach()
+						.setAttachType(AttachType.CONTRACT)
+						.setDomain(domain)
+						.setAttachModule(contractId)
+						.setDescription("Copia Contrato")
+						.setData(pdfBytes)
+						.setType((byte)1)
+						.setConfidential(false)
+						.setDate(new Date())
+						.setScope(null)
+						.setMimeType(MimeType.PDF);
+				
+				AON.insertAttach(domainName, domain.getId(), userLogin, attach);
+		 */
+	}
+	
+	// ------------------------------------------ Certific@2 PDF
+	
+	public static byte[] getCertifica2PDF(Connection connection, Integer contractId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Result<Record> copyBasicRecords = dslContext.select().from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)103))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetch();
+		
 		return copyBasicRecords.isEmpty() ? null : copyBasicRecords.get(0).get(CONTRACT_ATTACH.DATA);
+	}
+	
+	public static void setCertifica2PDF(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)103))
+				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.fetchOne(CONTRACT_ATTACH.ID);
+		
+		if(null != contractAttachId)
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttachId))
+				.execute();
+		else
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "Certific@2")
+				.set(CONTRACT_ATTACH.DATA, data)
+				.set(CONTRACT_ATTACH.TYPE, (byte)103)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
 	}
 	
 }

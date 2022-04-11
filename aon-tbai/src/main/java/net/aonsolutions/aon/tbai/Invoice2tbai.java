@@ -270,10 +270,10 @@ public class Invoice2tbai {
 		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
 			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
 			detalle.setCantidad(Double.toString(AonMathUtils.round(detail.getQuantity())));
-			String description = detail.getDescription();
+			String description = detail.getDescription().replace("\n", " ");
 			if(description.length() > 249) {
-				description.substring(0, 249);
-			}
+				description = description.substring(0, 249);
+			}			
 			detalle.setDescripcionDetalle(description);
 			detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice())));
 

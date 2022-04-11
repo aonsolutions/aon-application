@@ -319,6 +319,8 @@
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR EXTRA" visible="false"/>
 								<g:Button debugId='salaryButton' ui:field='settleButton'
 									styleName='aon-finding-toolbar-item aon_icon_emit {style.aon-toolbar-button}' text="EMITIR FINIQUITO" visible="false"/>
+								<g:Button debugId='fiscalModelsButton' ui:field='fiscalModelsButton'
+									styleName='aon-finding-toolbar-item aon-icon-aeat' text="MODELOS FISCALES" visible="false"/>
 								<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
 									styleName='aon-finding-toolbar-item aon_icon_pdf {style.aon-toolbar-button}'
 									text="Vista Previa" />

@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -91,7 +89,7 @@ public abstract class ContractClauseUI extends ResizeComposite {
 				showEmptyTable();
 			else 
 				loadClauses();
-		}, f -> showError("Error obtenci\u00f3n Clausulas", f.getMessage()));
+		}, f -> showErrorMessage("Error obtenci\u00f3n Clausulas", f.getMessage()));
 	}
 	
 	private void loadClauses() {
@@ -256,35 +254,21 @@ public abstract class ContractClauseUI extends ResizeComposite {
 	
 	public void saveClauses() {
 		saveContractClause(s -> {
-			showSuccess("Clausulas", "Clausulas guardadas correctamente");
+			showSuccessMessage("Clausulas", "Clausulas guardadas correctamente");
 			getContractClauses(su -> {
 				if(employeeContractInfo.getContractClauses().isEmpty())
 					showEmptyTable();
 				else 
 					loadClauses();
-			}, f -> showError("Error obtenci\u00f3n Clausulas", f.getMessage()));
+			}, f -> showErrorMessage("Error obtenci\u00f3n Clausulas", f.getMessage()));
 		}, f -> {});
-	}
-	
-	// ------------------------------------------------------ Messages Methods
-
-	private void showSuccess(String title, String description) {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put(title, description);
-		showSuccess(successMap);
-	}
-
-	private void showError(String title, String description) {
-		Map<String, String> errorMap = new HashMap<>();
-		errorMap.put(title, description);
-		showError(errorMap);
 	}
 	
 	// ------------------------------------------------------ Abstract Methods
 
-	protected abstract void showError(Map<String, String> errorMap);
+	protected abstract void showErrorMessage(String title, String message);
 
-	protected abstract void showSuccess(Map<String, String> errorMap);
+	protected abstract void showSuccessMessage(String title, String message);
 	
 	// ------------------------------------------------------ Refresh table
 

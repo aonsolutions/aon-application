@@ -81,6 +81,10 @@ public class EmployeeContractIrpfObject {
 	public String getSSNumber() {
 		return this.ssNumber;
 	}
+	
+	public String getFullName() {
+		return this.fullName;
+	}
 
 	public List<EmployeeIrpf> getEmployeeIrpf(Date date) {
 		DateUtils.resetTime(date);

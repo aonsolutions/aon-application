@@ -48,7 +48,7 @@ public abstract class Mod111Declaration {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
 		if (mod.getYear() < 2010 && mod.getYear() > 2025) {
-			throw new AonCoreException("No se ha indicado una ejercicio v·lido para la declaraci\u00F3n");
+			throw new AonCoreException("No se ha indicado una ejercicio v√°lido para la declaraci\u00F3n");
 		}
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaraci\u00F3n");	
@@ -187,7 +187,13 @@ public abstract class Mod111Declaration {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> salaries = new HashSet<>();
-		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111)
+		Stream<IrpfBreakdown> stream = null;
+		if (mustApplyReplacementSearch(mod111)) {
+			stream =  IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111);
+		} else {
+			stream = 		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111);
+		}
+		stream
 			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
 			.map( kbr -> addSalary(salaries, kbr))
@@ -195,6 +201,19 @@ public abstract class Mod111Declaration {
 		;
 		return salaries; 
 	}
+
+//	Set<Integer> createFromSalary(final AONContext ctx, final Mod111 mod111) {
+//		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
+//		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
+//		final Set<Integer> salaries = new HashSet<>();
+//		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111)
+//			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+//			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
+//			.map( kbr -> addSalary(salaries, kbr))
+//			.forEach(kbr -> kbr.getKey().initialize(ctx, mod111, docs, pdocs, kbr.getIrpfBreakdown()))
+//		;
+//		return salaries; 
+//	}
 	
 	private static class KeyedIrpfBreakdown {
 		private IMod111KeyDAO key;
@@ -255,20 +274,16 @@ public abstract class Mod111Declaration {
 			mod111.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
 		}
 	}
-	protected boolean _mustApplyReplacementSearch( Mod111 mod111 ) {
-		return (mod111.isReplacement()
-			|| (mod111.isComplementary() && getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT)); 
-	}
+  
 	protected boolean mustApplyReplacementSearch( Mod111 mod111 ) {
 		return (mod111.isReplacement()
 			|| (mod111.isComplementary() && getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
+  
 	abstract Mod111 initialize(AONContext ctx, Mod111 mod111);
 	abstract IMod111KeyDAO valueOf(String string);
 	abstract IMod111KeyDAO[] getKeys();
 	abstract double getResult(final Mod111 mod111);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
 	
-	
-
 }
