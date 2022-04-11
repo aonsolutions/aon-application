@@ -45,7 +45,7 @@ public class PdfImageExtractor {
 				InputStream is = new ByteArrayInputStream(output.toByteArray());
 					
 				return is;
-			} catch (IOException e) {}
+			} catch (IOException e) {e.printStackTrace();}
 		return null;		
 	}
 	
@@ -92,7 +92,7 @@ public class PdfImageExtractor {
 			int x = 0;
 			
 			return imageFromPdfPageRegion(doc, page, x, y, height);
-		} catch (IOException e) {}
+		} catch (IOException e) {e.printStackTrace();}
 		
 		return null;		
 	}

@@ -52,12 +52,10 @@ public class HelpSwitcher implements Serializable {
 			.collect(Collectors.toList());
 			
 			// if nothing is here
-			if(filteredList.size() == 0) {
+			if(filteredList.isEmpty()) {
 				
 				filteredList.addAll(((List<HelpData>) model.getWrappedData()).stream()
-				.filter(d -> {
-					return PdfSearcher.containsMatching(d.getTitle(), filter, 2);
-				})
+				.filter(d -> AonStringUtils.containsMatching(d.getTitle(), filter, 2))
 				.collect(Collectors.toList()));
 			}
 			
@@ -129,7 +127,7 @@ public class HelpSwitcher implements Serializable {
 			PDActionURI actionURI = (PDActionURI)item.getAction();
 			helpData.setURI(actionURI.getURI());
 		} catch ( Exception e ) {
-			
+			e.printStackTrace();
 		}
 		
 		return helpData;
