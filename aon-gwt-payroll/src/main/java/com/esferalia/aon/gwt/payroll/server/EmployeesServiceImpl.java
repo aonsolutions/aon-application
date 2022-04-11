@@ -6356,7 +6356,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Double coefD = Double.parseDouble(coef);
 			if (coefD != null) {
 				coefD = coefD * 1000;
-				String coefStr = coefD.toString();
+				String coefStr = coefD.intValue() + "";
 				coef = AonStringUtils.leftPad(coefStr, 3, '0');
 			}
 
@@ -6366,9 +6366,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
-					employeeAux.getNss(), fecha, null, coef);
+					employeeAux.getNss(), fecha, Optional.empty(), coef);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
 				throw new IllegalArgumentException("No existe certificado TGSS para realizar esta comunicacion");
 			throw new IllegalArgumentException(e.getMessage());
