@@ -10,7 +10,7 @@ public class ContainsMatchingTest {
 	public void accentVariationTest() {
 		
 		final String searcher = "nomina";
-		final String text = "Importación de nominas y trabajadores";
+		final String text = "Importación de nóminas y trabajadores";
 		
 		assertTrue(AonStringUtils.containsMatching(text, searcher, 2));
 	
@@ -20,7 +20,7 @@ public class ContainsMatchingTest {
 	public void accentBigVariationFailTest() {
 		
 		final String searcher = "nominaaa";
-		final String text = "Importación de nominas y trabajadores";
+		final String text = "Importación de nóminas y trabajadores";
 		
 		assertFalse(AonStringUtils.containsMatching(text, searcher, 2));
 	

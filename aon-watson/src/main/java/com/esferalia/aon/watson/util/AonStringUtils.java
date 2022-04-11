@@ -1,6 +1,5 @@
 package com.esferalia.aon.watson.util;
 
-import java.text.Normalizer;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -7465,12 +7464,10 @@ public class AonStringUtils {
 	 */
 	public static boolean containsMatching(String text, String searcher, int tolerance) {
 
+		text = normalized(text.toUpperCase());
+		searcher = normalized(searcher.toUpperCase());
 		
-		text = normalized(text).toUpperCase();
-		searcher = normalized(searcher).toUpperCase();	
-				
 		String[] words = text.split("\\s");
-		
 		for (String word : words) {
 			
 			int currentDistance = AonStringUtils.getLevenshteinDistance(searcher, word);
@@ -7495,12 +7492,16 @@ public class AonStringUtils {
 	 * @return the text without accents
 	 */
 	public static String normalized(String text) {
-		text = Normalizer.normalize(text, Normalizer.Form.NFD);
-		text = text.replaceAll("\\p{M}", "");
+
+		final String[] sensible = {"\u00C1","\u00C9","\u00CD","\u00D3","\u00DA","\u00D1"};
+		final String[] normalized = {"A","E","I","O","U","Ñ"};
+		
+		for (int i = 0; i < normalized.length; i++) {
+			text = text.replaceAll(sensible[i], normalized[i]);
+		}
+		
 		return text;
 	}
-    
-    
     
     
     // ------------------------------------------------------------------------
