@@ -7494,7 +7494,7 @@ public class AonStringUtils {
 	public static String normalized(String text) {
 
 		final String[] sensible = {"\u00C1","\u00C9","\u00CD","\u00D3","\u00DA","\u00D1"};
-		final String[] normalized = {"A","E","I","O","U","Ñ"};
+		final String[] normalized = {"A","E","I","O","U","N"};
 		
 		for (int i = 0; i < normalized.length; i++) {
 			text = text.replaceAll(sensible[i], normalized[i]);
