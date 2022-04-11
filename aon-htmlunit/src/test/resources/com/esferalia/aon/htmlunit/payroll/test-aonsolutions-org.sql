@@ -807,6 +807,40 @@ LOCK TABLES `alarm` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `alcatraz`
+--
+
+DROP TABLE IF EXISTS `alcatraz`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alcatraz` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Id Dominio',
+  `fs_model` int(4) DEFAULT NULL COMMENT 'Id Modelo fiscal',
+  `invoice` int(4) DEFAULT NULL COMMENT 'Id Factura',
+  `salary` int(4) DEFAULT NULL COMMENT 'Id Nomina',
+  PRIMARY KEY (`id`),
+  KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
+  KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
+  KEY `IDX_ALCATRAZ_INVOICE` (`invoice`),
+  KEY `IDX_ALCATRAZ_SALARY` (`salary`),
+  CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `alcatraz`
+--
+
+LOCK TABLES `alcatraz` WRITE;
+/*!40000 ALTER TABLE `alcatraz` DISABLE KEYS */;
+/*!40000 ALTER TABLE `alcatraz` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `allotment`
 --
 
@@ -4347,7 +4381,7 @@ CREATE TABLE `domain` (
 
 LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
-INSERT INTO `domain` VALUES (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2020-12-09 20:01:33'),(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2020-12-10 15:51:50',NULL,'admin','2022-04-07 18:17:18'),(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-04-07 19:16:26'),(8778,'trainning-payroll-test.aonsolutions.org','FORMACIÓN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2021-04-27 19:18:31'),(8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2021-04-27 19:27:55'),(8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2021-04-27 19:35:50'),(8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2018-03-19 17:35:16'),(8784,'hosteleria-baleares-payroll-test.aonsolutions.org','HOSTELERÍA ISLAS BALEARES',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-18 15:06:04',NULL,NULL,NULL,'admin','2016-05-18 15:06:13'),(8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),(8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2017-11-09 16:43:50'),(8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÓN DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2018-11-28 11:01:48'),(8789,'home-payroll-test.aonsolutions.org','EMPLEADOS DE HOGAR',8776,0,NULL,NULL,0,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2018-02-05 17:30:56',NULL,NULL,NULL,'admin','2022-03-31 20:17:45'),(8790,'sistem-red-payroll-test.aonsolutions.org','SISTEMA RED',8776,0,NULL,NULL,1,0,0,1,100,0,1,'admon@aonsolutions.org','admin','2020-12-09 19:53:26',NULL,NULL,NULL,'portal','2020-12-11 08:38:43');
+INSERT INTO `domain` VALUES (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2020-12-09 20:01:33'),(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2020-12-10 15:51:50',NULL,'admin','2022-04-07 20:35:38'),(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2022-04-07 20:36:09'),(8778,'trainning-payroll-test.aonsolutions.org','FORMACIÓN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2021-04-27 19:18:31'),(8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2021-04-27 19:27:55'),(8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2021-04-27 19:35:50'),(8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2018-03-19 17:35:16'),(8784,'hosteleria-baleares-payroll-test.aonsolutions.org','HOSTELERÍA ISLAS BALEARES',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-18 15:06:04',NULL,NULL,NULL,'admin','2016-05-18 15:06:13'),(8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),(8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2017-11-09 16:43:50'),(8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÓN DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2018-11-28 11:01:48'),(8789,'home-payroll-test.aonsolutions.org','EMPLEADOS DE HOGAR',8776,0,NULL,NULL,0,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2018-02-05 17:30:56',NULL,NULL,NULL,'admin','2022-03-31 20:17:45'),(8790,'sistem-red-payroll-test.aonsolutions.org','SISTEMA RED',8776,0,NULL,NULL,1,0,0,1,100,0,1,'admon@aonsolutions.org','admin','2020-12-09 19:53:26',NULL,NULL,NULL,'portal','2020-12-11 08:38:43');
 /*!40000 ALTER TABLE `domain` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5481,9 +5515,14 @@ CREATE TABLE `fs_model` (
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `account_entry` int(4) DEFAULT NULL COMMENT 'identificador del apunte',
+  `result` double(15,3) DEFAULT NULL COMMENT 'Resultado',
+  `declaration_type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de resultado',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL_FINANCE` (`finance`),
+  KEY `IDX_FS_MODEL_ACCOUNT_ENTRY` (`account_entry`),
+  CONSTRAINT `FK_FS_MODEL_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
@@ -13587,7 +13626,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (2862,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),(10248,8776,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-04-07 19:16:25',NULL,0),(10249,8790,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
+INSERT INTO `user` VALUES (2862,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),(10248,8776,'ADMIN','admin',NULL,8628665,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,7,'es',NULL,NULL,'','2022-04-07 20:36:09',NULL,0),(10249,8790,'portal','portal',8628664,NULL,1,0,'I/P9d6Rky+JQFQ9g14XwiXjQfkA=','2021-06-08',7,NULL,NULL,NULL,NULL,'2020-12-11 08:38:40',NULL,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -14209,4 +14248,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-07 17:17:37
+-- Dump completed on 2022-04-11  7:29:30
