@@ -225,7 +225,7 @@ public class Up2Date {
 //    		Artist2022Fix.ARTIST2022FIX
     		Bases2022Fix.BASES2022FIX,
     		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
-    		UdapaSalesFix.UDAPA_SALES_FIX
+//    		UdapaSalesFix.UDAPA_SALES_FIX
     };
     
 
