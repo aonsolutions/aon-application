@@ -3416,10 +3416,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
-	private static Collection<String> getFiscalModels(Connection conn, ISalary salary) throws ManagerBeanException {
+	private static Collection<FiscalModel> getFiscalModels(Connection conn, ISalary salary) throws ManagerBeanException {
 		AONContext aonContext = new AONContext(conn);
-		return AON.getFiscalModels(aonContext, new com.esferalia.aon.occam.api.model.Salary().setId(salary.getId()))
-		.stream().map( FiscalModel::getModelFullName).collect(Collectors.toList());
+		return AON.getFiscalModels(aonContext, new com.esferalia.aon.occam.api.model.Salary().setId(salary.getId()));
 	}
 
 	private static List<Variable> getDBSalaryData(Connection conn, ISalary salary) throws ManagerBeanException {
