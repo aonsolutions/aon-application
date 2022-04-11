@@ -1,0 +1,456 @@
+package com.esferalia.aon.occam.mod200.impl.jooq;
+
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.mod200.api.IFiscal;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2013.Mod2002013DAO;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2014.Mod2002014DAO;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2015.Mod2002015DAO;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2016.Mod2002016DAO;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2017.Mod2002017DAO;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2018.Mod2002018DAO;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2019.Mod2002019DAO;
+
+public class FiscalImpl implements IFiscal {
+
+	// ----------------------------------------------------------- [MODELO 200]
+//	@Override
+//	public Mod200 getMod200(AONContext ctx, int domain, Integer id) {
+//		return Mod200DAO.getMod200s(ctx, domain)
+//			.filter(mod-> AonNumberUtils.equals(mod.getId(), id))
+//			.findFirst()
+//			.orElse(null);
+//	}
+//	@Override
+//	public LinkedList<Mod200> getMod200s(AONContext ctx, int domain) {
+//		LinkedList<Mod200> list = new LinkedList<Mod200>();
+//		Mod200DAO.getMod200s(ctx, domain)
+//			.forEach(list::add);
+//		return list;
+//	}
+	// ----------------------------------------------------------- [MODELO 200 - 2013]
+	@Override
+	public Mod2002013 createMod2002013(AONContext ctx, int year) {
+		return Mod2002013DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002013 initializeNewMod2002013(AONContext ctx, Mod2002013 mod200) {
+		return Mod2002013DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002013 initializeMod2002013(AONContext ctx, Mod2002013 mod200) {
+		return Mod2002013DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002013 getMod2002013ByYear(AONContext ctx, int year) {
+		return Mod2002013DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002013 getMod2002013ById(AONContext ctx, int id) {
+		return Mod2002013DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002013 calculateMod2002013(Mod2002013 mod200) {
+		return Mod2002013DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002013 validateMod2002013(Mod2002013 mod200) {
+		return Mod2002013DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002013 saveMod2002013(AONContext ctx, Mod2002013 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002013DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002013(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002013DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002013(Mod2002013 mod200) {
+		return Mod2002013DAO.dumpAEAT(mod200);
+	}
+
+	// ----------------------------------------------------------- [MODELO 200 - 2014]
+	@Override
+	public Mod2002014 createMod2002014(AONContext ctx, int year) {
+		return Mod2002014DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002014 initializeNewMod2002014(AONContext ctx, Mod2002014 mod200) {
+		return Mod2002014DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002014 initializeMod2002014(AONContext ctx, Mod2002014 mod200) {
+		return Mod2002014DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002014 getMod2002014ByYear(AONContext ctx, int year) {
+		return Mod2002014DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002014 getMod2002014ById(AONContext ctx, int id) {
+		return Mod2002014DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002014 calculateMod2002014(Mod2002014 mod200) {
+		return Mod2002014DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002014 validateMod2002014(Mod2002014 mod200) {
+		return Mod2002014DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002014 saveMod2002014(AONContext ctx, Mod2002014 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002014DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002014(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002014DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002014(Mod2002014 mod200) {
+		return Mod2002014DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200) {
+		return Mod2002014DAO.importMod2002013(ctx,mod200);
+	}
+
+	// ----------------------------------------------------------- [MODELO 200 - 2015]
+	@Override
+	public Mod2002015 createMod2002015(AONContext ctx, int year) {
+		return Mod2002015DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002015 initializeNewMod2002015(AONContext ctx, Mod2002015 mod200) {
+		return Mod2002015DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002015 initializeMod2002015(AONContext ctx, Mod2002015 mod200) {
+		return Mod2002015DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002015 getMod2002015ByYear(AONContext ctx, int year) {
+		return Mod2002015DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002015 getMod2002015ById(AONContext ctx, int id) {
+		return Mod2002015DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002015 calculateMod2002015(Mod2002015 mod200) {
+		return Mod2002015DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002015 validateMod2002015(Mod2002015 mod200) {
+		return Mod2002015DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002015 saveMod2002015(AONContext ctx, Mod2002015 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002015DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002015(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002015DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002015(Mod2002015 mod200) {
+		return Mod2002015DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002015 importMod2002014(AONContext ctx, Mod2002015 mod200) {
+		return Mod2002015DAO.importMod2002014(ctx,mod200);
+	}
+	
+	// ----------------------------------------------------------- [MODELO 200 - 2016]
+	@Override
+	public Mod2002016 createMod2002016(AONContext ctx, int year) {
+		return Mod2002016DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002016 initializeNewMod2002016(AONContext ctx, Mod2002016 mod200) {
+		return Mod2002016DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002016 initializeMod2002016(AONContext ctx, Mod2002016 mod200) {
+		return Mod2002016DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002016 getMod2002016ByYear(AONContext ctx, int year) {
+		return Mod2002016DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002016 getMod2002016ById(AONContext ctx, int id) {
+		return Mod2002016DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002016 calculateMod2002016(Mod2002016 mod200) {
+		return Mod2002016DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002016 validateMod2002016(Mod2002016 mod200) {
+		return Mod2002016DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002016 saveMod2002016(AONContext ctx, Mod2002016 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002016DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002016(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002016DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002016(Mod2002016 mod200) {
+		return Mod2002016DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002016 importMod2002015(AONContext ctx, Mod2002016 mod200) {
+		return Mod2002016DAO.importMod2002015(ctx,mod200);
+	}
+	
+	// ----------------------------------------------------------- [MODELO 200 - 2017]
+	@Override
+	public Mod2002017 createMod2002017(AONContext ctx, int year) {
+		return Mod2002017DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002017 initializeNewMod2002017(AONContext ctx, Mod2002017 mod200) {
+		return Mod2002017DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002017 initializeMod2002017(AONContext ctx, Mod2002017 mod200) {
+		return Mod2002017DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002017 getMod2002017ByYear(AONContext ctx, int year) {
+		return Mod2002017DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002017 getMod2002017ById(AONContext ctx, int id) {
+		return Mod2002017DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002017 calculateMod2002017(Mod2002017 mod200) {
+		return Mod2002017DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002017 validateMod2002017(Mod2002017 mod200) {
+		return Mod2002017DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002017 saveMod2002017(AONContext ctx, Mod2002017 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002017DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002017(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002017DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002017(Mod2002017 mod200) {
+		return Mod2002017DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002017 importMod2002016(AONContext ctx, Mod2002017 mod200) {
+		return Mod2002017DAO.importMod2002016(ctx,mod200);
+	}
+	
+	// ----------------------------------------------------------- [MODELO 200 - 2018]
+	@Override
+	public Mod2002018 createMod2002018(AONContext ctx, int year) {
+		return Mod2002018DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002018 initializeNewMod2002018(AONContext ctx, Mod2002018 mod200) {
+		return Mod2002018DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002018 initializeMod2002018(AONContext ctx, Mod2002018 mod200) {
+		return Mod2002018DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002018 getMod2002018ByYear(AONContext ctx, int year) {
+		return Mod2002018DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002018 getMod2002018ById(AONContext ctx, int id) {
+		return Mod2002018DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002018 calculateMod2002018(Mod2002018 mod200) {
+		return Mod2002018DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002018 validateMod2002018(Mod2002018 mod200) {
+		return Mod2002018DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002018 saveMod2002018(AONContext ctx, Mod2002018 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002018DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002018(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002018DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002018(Mod2002018 mod200) {
+		return Mod2002018DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002018 importMod2002017(AONContext ctx, Mod2002018 mod200) {
+		return Mod2002018DAO.importMod2002017(ctx,mod200);
+	}
+	
+	// ----------------------------------------------------------- [MODELO 200 - 2019]
+	@Override
+	public Mod2002019 createMod2002019(AONContext ctx, int year) {
+		return Mod2002019DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002019 initializeNewMod2002019(AONContext ctx, Mod2002019 mod200) {
+		return Mod2002019DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002019 initializeMod2002019(AONContext ctx, Mod2002019 mod200) {
+		return Mod2002019DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002019 getMod2002019ByYear(AONContext ctx, int year) {
+		return Mod2002019DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002019 getMod2002019ById(AONContext ctx, int id) {
+		return Mod2002019DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002019 calculateMod2002019(Mod2002019 mod200) {
+		return Mod2002019DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002019 validateMod2002019(Mod2002019 mod200) {
+		return Mod2002019DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002019 saveMod2002019(AONContext ctx, Mod2002019 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002019DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002019(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002019DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002019(Mod2002019 mod200) {
+		return Mod2002019DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002019 importMod2002018(AONContext ctx, Mod2002019 mod200) {
+		return Mod2002019DAO.importMod2002018(ctx,mod200);
+	}
+	
+	// ----------------------------------------------------------- [MODELO 200 - 2020]
+//	@Override
+//	public Mod2002020 createMod2002020(AONContext ctx, int year) {
+//		return Mod2002020DAO.createNewMod200(ctx,year);
+//	}
+//	@Override
+//	public Mod2002020 initializeNewMod2002020(AONContext ctx, Mod2002020 mod200) {
+//		return Mod2002020DAO.initializeNewMod200(ctx,mod200);
+//	}
+//	
+//	@Override
+//	public Mod2002020 initializeMod2002020(AONContext ctx, Mod2002020 mod200) {
+//		return Mod2002020DAO.initializeMod200(ctx,mod200);
+//	}
+//
+//	@Override
+//	public Mod2002020 getMod2002020ByYear(AONContext ctx, int year) {
+//		return Mod2002020DAO.getByYear(ctx,year);
+//	}
+//
+//	@Override
+//	public Mod2002020 getMod2002020ById(AONContext ctx, int id) {
+//		return Mod2002020DAO.getById(ctx,id);
+//	}
+//	@Override
+//	public Mod2002020 calculateMod2002020(Mod2002020 mod200) {
+//		return Mod2002020DAO.calculate(mod200);
+//	}
+//	@Override
+//	public Mod2002020 validateMod2002020(Mod2002020 mod200) {
+//		return Mod2002020DAO.validate(mod200);
+//	}
+//	@Override
+//	public Mod2002020 saveMod2002020(AONContext ctx, Mod2002020 mod200) {
+//		return ctx.getDslContext().transactionResult(
+//				configuration -> Mod2002020DAO.save(ctx, mod200));
+//	}
+//	@Override
+//	public void deleteMod2002020(AONContext ctx, int id) {
+//		ctx.getDslContext().transaction(
+//				configuration -> Mod2002020DAO.delete(ctx, id));
+//	}
+//
+//	@Override
+//	public String dumpAEATMod2002020(Mod2002020 mod200) {
+//		return Mod2002020DAO.dumpAEAT(mod200);
+//	}
+//
+//	@Override
+//	public Mod2002020 importMod2002019(AONContext ctx, Mod2002020 mod200) {
+//		return Mod2002020DAO.importMod2002019(ctx,mod200);
+//	}	
+	
+}

@@ -6,9 +6,9 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.Mod200Service;
-import com.esferalia.aon.occam.api.fiscal.MODEL200;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.mod200.api.MODEL200;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Mod200 Servlet", urlPatterns = { "/aon_gwt_mod200/ms/Mod200" })

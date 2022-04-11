@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2016;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Character.CHARACTERS_KEYS;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Character.CHARACTER_ALSO_CHECK_MAP;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Character.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016Character.CHARACTERS_KEYS;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016Character.CHARACTER_ALSO_CHECK_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,12 +17,12 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Mod2002016Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Model2002016.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016.BalanceType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.DoubleVariable2016;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016.BalanceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;

@@ -7,11 +7,11 @@ import java.util.List;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

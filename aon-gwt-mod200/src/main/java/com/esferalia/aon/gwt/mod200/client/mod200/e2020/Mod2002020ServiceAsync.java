@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface Mod2002020ServiceAsync {

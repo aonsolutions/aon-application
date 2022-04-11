@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.mod200.client.mod200;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface Mod200ServiceAsync {

@@ -15,7 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;

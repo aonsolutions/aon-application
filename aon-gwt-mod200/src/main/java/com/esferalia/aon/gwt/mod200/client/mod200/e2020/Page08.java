@@ -5,10 +5,10 @@ import java.io.Serializable;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.IMod200KeysProvider;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020CorrectionKey;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.IMod200KeysProvider;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020CorrectionKey;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;

@@ -10,9 +10,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanS
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;

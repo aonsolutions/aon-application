@@ -12,12 +12,12 @@ import javax.xml.bind.Unmarshaller;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Service;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.fiscal.MODEL2002020;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.MOD2002020;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.XMLtoMod2002020;
+import com.esferalia.aon.occam.mod200.api.MODEL2002020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2020.jaxb.MOD2002020;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2020.jaxb.XMLtoMod2002020;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")

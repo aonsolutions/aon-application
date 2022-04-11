@@ -3,16 +3,16 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN082Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN1040Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN1041Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN565Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN584Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN585Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN588Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN590Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Constants;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN082Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN1040Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN1041Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN565Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN584Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN585Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN588Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN590Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Constants;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.google.gwt.user.client.ui.FlexTable;
 
 public class Page11 extends PageAbs {

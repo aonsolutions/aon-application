@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
