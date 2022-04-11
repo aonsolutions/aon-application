@@ -90,6 +90,8 @@ import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -137,6 +139,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
@@ -2834,6 +2837,8 @@ public class SalaryDraft extends ResizeComposite
 	Button settleButton;
 	@UiField
 	Button extraButton;
+	@UiField
+	Button fiscalModelsButton;
 
 	@UiField
 	Button fxButton;
@@ -2916,6 +2921,8 @@ public class SalaryDraft extends ResizeComposite
 	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.MONTH_ABBR);
 
+	private Timer fiscalModelsPopupTimer ;
+	
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
@@ -2970,13 +2977,12 @@ public class SalaryDraft extends ResizeComposite
 
 	@Override
 	public void onChange(SalarySelect salarySelect) {
-		extraButton.setVisible(isExtra());
-		settleButton.setVisible(isSettle());
-		//settleButton.setVisible(isAutomatic());
+		fiscalModelsButton.setVisible(hasFiscalModels());
+		extraButton.setVisible(!hasFiscalModels() && isExtra());
+		settleButton.setVisible(!hasFiscalModels() && isSettle());
+		salaryButton.setVisible(!hasFiscalModels() && !isSettle() && !isExtra());
 		
-		salaryButton.setVisible(!isSettle() && !isExtra());
 		
-		//acceptButton.setEnabled( hasDrafts() && !isSettle() && !isExtra());
 
 		calculateAndSync();
 		
@@ -3017,9 +3023,10 @@ public class SalaryDraft extends ResizeComposite
 		setAutomatic(  isAutomatic());
 		setReadOnly(  isReadOnly());
 		
-		extraButton.setVisible(isExtra());
-		settleButton.setVisible(isSettle());
-		salaryButton.setVisible(!isSettle() && !isExtra());
+		fiscalModelsButton.setVisible(hasFiscalModels());
+		extraButton.setVisible(!hasFiscalModels() && isExtra());
+		settleButton.setVisible(!hasFiscalModels() && isSettle());
+		salaryButton.setVisible(!hasFiscalModels() && !isSettle() && !isExtra());
 		
 		showTimeRulePanel();
 		showDbTimeRulePanel();
@@ -3037,6 +3044,22 @@ public class SalaryDraft extends ResizeComposite
 //	void onPrintButtonClick(ClickEvent event) {
 //		pdfViewer.print();
 //	}
+	
+	@UiHandler("fiscalModelsButton")
+	void onFiscalModelsButtonOver(MouseOverEvent e) {
+		if ( fiscalModelsPopupTimer  != null )
+			fiscalModelsPopupTimer.cancel();
+		fiscalModelsPopupTimer = new Timer () {
+			@Override
+			public void run() {
+				ContextMenu contextMenu = new ContextMenu();
+				salaryDraftObject.getFiscalModels()
+				.forEach( text -> contextMenu.addItem(text, () -> {}));
+				contextMenu.showRelativeTo(fiscalModelsButton);
+			}
+		};
+		fiscalModelsPopupTimer.schedule(600);
+	}
 	
 	
 	@UiHandler(
@@ -3287,9 +3310,10 @@ public class SalaryDraft extends ResizeComposite
 		notDefinedVarsCheck.setVisible(true);
 		disabledPaymentsCheck.setVisible(true);
 		
-		extraButton.setVisible(isExtra());
-		settleButton.setVisible(isSettle());
-		salaryButton.setVisible(!isSettle() && !isExtra());
+		fiscalModelsButton.setVisible(hasFiscalModels());
+		extraButton.setVisible(!hasFiscalModels() && isExtra());
+		settleButton.setVisible(!hasFiscalModels() && isSettle());
+		salaryButton.setVisible(!hasFiscalModels() && !isSettle() && !isExtra());
 
 		acceptButton.setEnabled(hasDrafts() && !isAutomatic() );
 	}
@@ -3328,6 +3352,7 @@ public class SalaryDraft extends ResizeComposite
 		salarySelect.setVisible(false);
 		acceptButton.setVisible(false);
 		salaryButton.setVisible(false);
+		fiscalModelsButton.setVisible(false);
 		tgssCheck.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		irpfPreviewButton.setVisible(false);
@@ -6233,6 +6258,10 @@ public class SalaryDraft extends ResizeComposite
 		return salaryDraftObject != null && salaryDraftObject.hasEvents();
 	}
 	
+	private boolean hasFiscalModels() {
+		return salaryDraftObject != null && salaryDraftObject.hasFiscalModels();
+	}
+
 	private boolean hasAonInfoEvents() {
 		if ( salaryDraftObject == null )
 			return false;
