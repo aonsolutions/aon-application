@@ -1,0 +1,92 @@
+package com.code.aon.web.help.servlet;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.code.aon.ui.help.pdf.PdfImageExtractor;
+import com.code.aon.ui.help.pdf.PdfSearcher;
+
+
+@WebServlet("/Tooltip/*")
+public class HelpTooltipServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	private HashMap<String, String> files;
+	
+	
+	public HelpTooltipServlet() {
+		super();
+		this.files = new HashMap<>();
+		
+		files.put("LABORAL Manual de USUARIO", "payroll_names.pdf");
+		files.put("CONTABILIDAD Manual de USUARIO", "account_names.pdf");
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		if((request.getParameter("name") == null && request.getParameter("page") == null) || request.getParameter("filename") == null) {
+			response.sendError(400);
+			return;
+		}		
+		
+		String name = request.getParameter("name");		
+        String filename = this.files.get(request.getParameter("filename"));
+		
+        if(filename == null) {
+        	response.sendError(404);
+        	return;
+        }
+        
+        
+        response.setContentType("image/jpg");
+		response.addHeader("Content-Disposition", "inline; filename=tooltip-" + name + ".jpg" );
+        ServletOutputStream output = response.getOutputStream();
+
+        
+        try ( InputStream input = PdfSearcher.class.getResourceAsStream(filename)) {
+	        
+        	InputStream image;
+        	
+        	if(request.getParameter("page") != null) {
+        		image = PdfImageExtractor.imageFromPdfPage(input, 0);
+        	} else { 
+            	image = PdfImageExtractor.imageFromPdfDestinationName(input, name); 		
+        	}
+        	
+ 	        if(image == null) {
+	        	response.sendError(404);
+	        	return;
+	        }
+        	
+        	int length;
+ 	        byte[] bytes = new byte[1024];
+ 	
+ 	        // copy data from input stream to output stream
+ 	        while ((length = image.read(bytes)) != -1) {
+ 	            output.write(bytes, 0, length);
+ 	        }
+ 	       
+ 	        image.close();
+
+        }
+        
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+	}
+	
+	
+	
+
+
+}

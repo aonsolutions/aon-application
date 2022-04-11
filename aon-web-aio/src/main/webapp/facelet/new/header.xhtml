@@ -1361,6 +1361,27 @@
 		background-clip: padding-box;
 	}
 	
+	#helpTooltip {
+		display: none;
+		position: absolute;
+		z-index: 100;
+		width: 40rem;
+		opacity: 0;
+		background: "#fafafa";
+		transition: opacity .35s; 
+
+	}
+	
+	#helpTooltip img {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: .35rem;
+		box-shadow: 0 .1rem .2rem rgba(0,0,0,.14);
+		border: 0.12rem solid rgba(0,0,0,.11);
+	}
+
 	</style>
 
 	<script type="text/javascript">
@@ -1384,6 +1405,43 @@
       				e.cancelBubble = true;
       				return false;
 				}
+			}
+			
+			let helpTooltipTimeout;
+			
+			function showHelpTooltip(event,url){
+				
+					helpTooltipTimeout = setTimeout(function(){
+						
+						const tooltip = document.getElementById("helpTooltip");
+						const image = document.querySelector("#helpTooltip img");
+						
+						const filename = url.substr( url.lastIndexOf('/') + 1, url.lastIndexOf('.pdf')-5);
+						let name = url.substr( url.lastIndexOf('#') + 1);
+						
+						if(url.lastIndexOf('#') == -1) {
+							image.src = "/aon-aio/Tooltip/?page=" + 0 + "&amp;filename=" + filename
+						} else {
+							image.src = "/aon-aio/Tooltip/?name=" + name + "&amp;filename=" + filename
+						}
+								
+						tooltip.style.display = "block";
+						tooltip.style.top = (20 + event.clientY) + "px";
+						tooltip.style.left = event.clientX  + "px";
+						tooltip.style.transform = "translateX(-50%)";
+				
+						setTimeout(() => tooltip.style.opacity = "1", 250);
+						
+					}, 500);
+			}
+			
+			
+			function hideHelpTooltip() {
+				clearTimeout(helpTooltipTimeout);
+				
+				document.getElementById("helpTooltip").style.opacity = "0";
+				setTimeout(() => document.getElementById("helpTooltip").style.display = "none", 260);
+				
 			}
 	</script>
 		
@@ -1485,11 +1543,11 @@
 								<ui:param name="skipFocusFirst" value="true" />
 							
 								<ui:define name="columns">
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" onmouseover="javascript:showHelpTooltip(event,'#{to.getURI()}')" onmouseout="javascript:hideHelpTooltip()">
 									<h:outputLink target="#{to.getTitle()}" value="#{to.getURI()}">
 										<aon:outputText 
 											value="#{to.getDisplay(search.filter)}"
-											title="#{to.getTitle()}"
+											
 											escape="false" />
 									</h:outputLink> 					
 								</aon:column>
@@ -1710,5 +1768,7 @@
 	<aon:if test="#{desktop.logEnabled}">
 		<a4j:log hotkey="Z" level="ALL" popup="true" />
 	</aon:if>
-
+	<aon:div id="helpTooltip"> 
+		<img/>
+	</aon:div>
 </ui:composition>
