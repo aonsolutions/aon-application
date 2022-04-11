@@ -634,6 +634,7 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTaskProperty();
 		Property<Integer> getTaskHolderProperty();
+		Property<String> getEmailProperty();
 		Property<Byte> getTypeProperty();
 		Property<String> getCommentProperty();
 		Property<String> getNotificationUserProperty();

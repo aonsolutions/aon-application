@@ -480,5 +480,17 @@ public class EmployeeDialogObject {
 	public void setEmployeeAccount(String rbankAccount) {
 		employeeData.setAccount(rbankAccount);
 	}
+	
+	public String getAgreementDescription() {
+		Integer agreementId = contractData.getAgreementId();
+		if(null == agreementId)
+			return null;
+		else {
+			for(Agreement agreement : agreements)
+				if(agreement.getId().equals(agreementId))
+					return agreement.getDescription();
+		}
+		return null;
+	}
 		
 }

@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Occupation;
 import com.esferalia.aon.occam.api.model.type.QuoteGroup;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -497,9 +498,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		}
 	}
 
-	private void checkPartialityVisibility(Integer contractTypeAux) {
-		if (null != contractTypeAux && (contractTypeAux == 0 || (contractTypeAux >= 200 && contractTypeAux < 300)
-				|| (contractTypeAux >= 500 && contractTypeAux < 600))) {
+	private void checkPartialityVisibility(Integer contractTypeInt) {
+		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 			partialityCoefL.getElement().getStyle().clearDisplay();
 			partialityCoef.getElement().getStyle().clearDisplay();
 		} else {

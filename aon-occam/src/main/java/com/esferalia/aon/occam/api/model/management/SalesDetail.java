@@ -49,6 +49,8 @@ public class SalesDetail implements Serializable {
 		return this;
 	}
 	public OldItem getItem() {
+		if(item == null) 
+			item = new OldItem();
 		return item;
 	}
 	public SalesDetail setItem(OldItem item) {

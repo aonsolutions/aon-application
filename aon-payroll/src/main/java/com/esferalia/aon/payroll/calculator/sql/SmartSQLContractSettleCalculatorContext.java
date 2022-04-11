@@ -126,18 +126,16 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		AONContext aonCtx = new AONContext(connection);
 		DSLContext dslCtx = aonCtx.getDslContext();
 		
-		boolean redefined = 
-		dslCtx.fetchCount(
-		DSL
-		.select(CONTRACT_PAYMENT.ID)
+		List<String> redefined = 
+		dslCtx
+		.select()
 		.from(CONTRACT_PAYMENT)
 		.innerJoin(PAYMENT_CONCEPT).onKey()
 		.where(CONTRACT_PAYMENT.CONTRACT.eq(getId()))
 		.and(CONTRACT_PAYMENT.TYPE.eq((byte)4)
 		.or(CONTRACT_PAYMENT.TYPE.isNull().and(PAYMENT_CONCEPT.TYPE.eq((byte)4))))
-		) > 0 ;
-		if ( redefined )
-			return Collections.emptyList();
+		.fetch(PAYMENT_CONCEPT.CODE)
+		;
 
 		Result<Record> extras = dslCtx
 		.select()
@@ -145,7 +143,9 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		.innerJoin(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
 		.innerJoin(AGREEMENT_EXTRA).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT_EXTRA.AGREEMENT))
 		.leftJoin(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
+		.leftJoin(PAYMENT_CONCEPT).on(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.eq(PAYMENT_CONCEPT.ID))
 		.where(CONTRACT.ID.eq(getId()))
+		.and (PAYMENT_CONCEPT.CODE.notIn(redefined))
 		.fetch()
 //		.fetchInto(AGREEMENT_EXTRA)
 		;

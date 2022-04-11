@@ -446,6 +446,11 @@ public class SalaryDraftBuilder
 		
 	}
 
+	public void setFiscalModels(Collection<String> fiscalModels) {
+		fiscalModels.forEach(salaryDraft::addFiscalModel);
+	}
+	
+
 	public void setDbSalaryData(List<Variable> data) throws SalaryException {
 		for ( Variable var: data )
 			salaryDraft.addDbVariable(

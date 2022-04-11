@@ -18,7 +18,6 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaD
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject_COPIA.Callback;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
@@ -291,7 +290,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) {
+			public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -407,7 +406,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate,
+			public void getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate,
 					AsyncCallback<String> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
@@ -571,17 +570,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen,
-					String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback)
-					throws IllegalArgumentException {
-				// TODO Auto-generated method stub
-				
-			}
-
-
-
-			@Override
-			public void getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti,
+			public void getEmployeeTa(String domain, String user, Integer contractId, String situation, String regimen, String ctaCti,
 					String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				

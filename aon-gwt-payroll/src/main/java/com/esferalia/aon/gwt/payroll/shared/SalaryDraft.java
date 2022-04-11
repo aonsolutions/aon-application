@@ -92,6 +92,8 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Bonus> bonuses;
 	private List<Deduction> costs;
 
+	private List<String> fiscalModels;
+
 	private List<Variable> draftContext;
 	private List<Payment> draftPayments;
 	private List<Deduction> draftDeductions;
@@ -101,6 +103,7 @@ public class SalaryDraft extends SalaryPreview {
 	private List<ITDataPerson> draftLeaveIts;
 
 	private List<Payment> agreementPayments;
+	
 
 	public SalaryDraft() {
 		context = new LinkedList<Variable>();
@@ -113,6 +116,8 @@ public class SalaryDraft extends SalaryPreview {
 		bonuses = new LinkedList<Bonus>();
 		embargos = new LinkedList<Deduction>();
 
+		fiscalModels = new LinkedList<String>();
+
 		draftContext = new Stack<Variable>();
 		draftPayments = new Stack<Payment>();
 		draftDeductions = new Stack<Deduction>();
@@ -121,6 +126,7 @@ public class SalaryDraft extends SalaryPreview {
 		draftBonuses = new Stack<Bonus>();
 		
 		agreementPayments = new LinkedList<Payment>();
+		
 	}
 
 	public SalaryDraft clear() {
@@ -132,6 +138,7 @@ public class SalaryDraft extends SalaryPreview {
 		clearDeductions();
 		clearEmbargos();
 		clearBonuses();
+		clearFiscalModels();
 		return this;
 	}
 
@@ -535,6 +542,10 @@ public class SalaryDraft extends SalaryPreview {
 
 	public void clearBonuses() {
 		bonuses.clear();
+	}
+
+	public void clearFiscalModels() {
+		fiscalModels.clear();
 	}
 
 	public Integer getDbId() {
@@ -989,6 +1000,16 @@ public class SalaryDraft extends SalaryPreview {
 		this.agreementPayments.add(payment);
 		return this;
 	}
+	
+	public List<String> getFiscalModels() {
+		return fiscalModels;
+	}
+
+	public SalaryDraft addFiscalModel(String fiscalModel) {
+		fiscalModels.add(fiscalModel);
+		return this;
+	}
+	
 	// ------------------------------------------------------------------------
 
 }

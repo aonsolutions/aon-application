@@ -8,11 +8,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
@@ -286,10 +284,10 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (Export Contract)
 	
-	public void saveContractExport(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
-		employeesService.fillContract(contractData.getContractId(), Integer.parseInt(contractData.getContractType()), getFormativeLevel(), new AsyncCallback<List<ContractAttach>>() {
+	public void saveContractExport(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.fillContract(contractData.getContractId(), Integer.parseInt(contractData.getContractType()), getFormativeLevel(), new AsyncCallback<Void>() {
 			@Override
-			public void onSuccess(List<ContractAttach> result) {
+			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 			@Override
@@ -327,28 +325,9 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void getContratoSepe(Consumer<String> success, Consumer<Throwable> failure) {
-		String ipf = employeeContractData.getEmployeeInfo().getDocument();
-		Date startDate = employeeContractData.getContractInfo().getOriginalStartDate();
-		Date endDate = employeeContractData.getContractInfo().getStartDate();
-		
-		enterprisesService.getContratoSepe(ipf, startDate, endDate, new AsyncCallback<String>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				success.accept(result);	
-			}
-			
-		});
-	}
-	
 	public void getCertifica2PDF(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getCertifica2PDF(
+				employeeContractData.getContractInfo().getContractId(),
 				employeeContractData.getEmployeeInfo().getDocument(),
 				employeeContractData.getContractInfo().getEndDate(), 
 				new AsyncCallback<String>() {
@@ -606,54 +585,14 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (TGSS Get files)
 	
-	public void downloadTAAndIDC(Consumer<Void> success, Consumer<Throwable> failure) {
-		Date date = new Date();
-		Date contractEndDate = employeeContractData.getContractInfo().getEndDate();
-		String situation = (null == contractEndDate || DateUtils.isBeforeOrEquals(date, contractEndDate)) ? "ALTA" : "BAJA";
+	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure, String situation) {
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
 		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
 		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
 		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
 		
-		employeesService.downloadTA_IDC(situation, regimen, ctaCti, nss, fecha, contractData.getContractId(), new AsyncCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {
-				success.accept(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-
-	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
-		Date date = new Date();
-		Date contractEndDate = employeeContractData.getContractInfo().getEndDate();
-		String situation = (null == contractEndDate || DateUtils.isBeforeOrEquals(date, contractEndDate)) ? "ALTA" : "BAJA";
-		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
-		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
-		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
-		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
-		
-		employeesService.getEmployeeTa(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String result) {
-				success.accept(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void downloadTaEnd(Consumer<String> success, Consumer<Throwable> failure) {
-		downloadTa(success, failure);
-	}
-
-	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+		employeesService.getEmployeeTa(contractId, situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -666,6 +605,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadIdc(Date date, Consumer<String> success, Consumer<Throwable> failure) {
+		date = null == date ? new Date() : date;
 		employeesService.getEmployeeIdc(contractData.getContractId(), date, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
@@ -1019,6 +959,18 @@ public class ContrataEmployeeObject {
 
 	public void setPayMethodsMap(Map<String, String> payMethodsMap) {
 		this.payMethodsMap = payMethodsMap;
+	}
+
+	public String getAgreementDescription() {
+		Integer agreementId = contractData.getAgreementId();
+		if(null == agreementId)
+			return null;
+		else {
+			for(Agreement agreement : agreements)
+				if(agreement.getId().equals(agreementId))
+					return agreement.getDescription();
+		}
+		return null;
 	}
 
 }

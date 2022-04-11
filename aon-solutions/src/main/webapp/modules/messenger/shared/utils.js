@@ -857,7 +857,7 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                     createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN_PARENT, parent.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
 
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
             } catch (error) {}
         } else if(aonMessengerChat.getCauInfo() && aonMessengerChat.isCau()) {
             try {
@@ -868,7 +868,7 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                     createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
                     
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
             } catch (error) {}
         }
     } 

@@ -8,7 +8,9 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISalary;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 
 public class SalaryImpl implements ISalary {
 	
@@ -39,5 +41,9 @@ public class SalaryImpl implements ISalary {
 	public Collection<Salary> saveSalaries(AONContext ctx, Integer domainId, Collection<Salary> salaries) {
 		return SalaryDAO.saveSalaries(ctx, domainId, salaries);
 	}
-
+	
+	@Override
+	public Collection<FiscalModel> getFiscalModels(AONContext ctx, Salary salary) {
+		return AlcatrazDAO.isSalaryDeclared(ctx, salary.getId());
+	}
 }

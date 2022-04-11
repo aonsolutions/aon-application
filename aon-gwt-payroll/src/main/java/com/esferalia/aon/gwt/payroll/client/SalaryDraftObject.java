@@ -768,6 +768,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getEvents();
 	}
 	
+	public List<String> getFiscalModels() {
+		return salaryDraft.getFiscalModels();
+	}
+	
 	@Override
 	public String getEmployeeCity() {
 		return salaryDraft.getEmployeeCity();
@@ -991,6 +995,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public boolean hasDrafts() {
 		return salaryDraft.hasDrafts() || !isDraftPeriodSet(getDraftStartDate(),
 				getDraftEndDate(), salaryDraft);
+	}
+
+	public boolean hasFiscalModels() {
+		return salaryDraft.getFiscalModels() != null 
+				&& !salaryDraft.getFiscalModels().isEmpty();
 	}
 
 	public List<Variable> getDrafContext() {

@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
@@ -751,35 +750,28 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.generateCertifaca2(domainName, contractId, certifica2Info, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
-	@Override
-	public void downloadTA_IDC(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		AON.start();
-		employeesServiceAsync.downloadTA_IDC(domain, user, situation, regimen, ctaCti, nss, fecha, contractId, new AsyncCallbackWrapper<Void>(callback));
-	}
+	// ------------------------------------------------- TGSS Files
 	
 	@Override
-	public void getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getEmployeeTa(String domain, String user, Integer contractId, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeTa(domain, user, situation, regimen, ctaCti, nss, fecha, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeTa(domain, user, contractId, situation, regimen, ctaCti, nss, fecha, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void getEmployeeIdc(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getEmployeeIdc(String domain, String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeIdc(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeIdcPlNss(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void getEmployeeIdcDates(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<List<Date>> callback) throws IllegalArgumentException {
+	public void getEmployeeIdcDates(String domain, String user, Integer contractId, Date date, AsyncCallback<List<Date>> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeIdcDates(domain, user, contractId, date, new AsyncCallbackWrapper<List<Date>>(callback));
 	}
@@ -791,9 +783,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) throws IllegalArgumentException {
+	public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.fillContract(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+		employeesServiceAsync.fillContract(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
@@ -802,6 +794,8 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.setData(currentDomainName, user, contractId, data, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	// ------------------------------------------------- SEPE Files
 
 	@Override
 	public void getEmployeeCbc(String currentDomainName, String user, String document, Integer contractId, Date startDate,
@@ -815,6 +809,13 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 			Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, contractId, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
+	public void getCertifica2PDF(String currentDomainName, String user, Integer contractId, String nif, Date endDate, 
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getCertifica2PDF(currentDomainName, user, contractId, nif, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	// ------------------------------------------------- TGSS Comunications
@@ -897,12 +898,6 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void sendCertifica2(String currentDomainName, String user, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.sendCertifica2(currentDomainName, user, contractId, certifica2Info, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void getCertifica2PDF(String currentDomainName, String user, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
-		AON.start();
-		employeesServiceAsync.getCertifica2PDF(currentDomainName, user, nif, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
