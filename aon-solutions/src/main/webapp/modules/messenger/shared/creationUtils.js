@@ -645,6 +645,13 @@ export const createInputContact = () =>  setAttributes(new AonInput(),{
   description: MSG.CONTACT + ` (${MSG.OPTIONAL})`
 });
 
+export const createInputTitle = () =>  setAttributes(new AonInput(),{
+  name:MESSENGER_IDS.TITLE_TASK,
+  id: MESSENGER_IDS.TITLE_TASK,
+  description: MSG.ISSUE
+});
+
+
 export const createLabelFileText = () => {
   const label = setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
   const span  = setStyles(document.createElement(TAG.SPAN),{ margin:"0 5px"});
@@ -703,22 +710,9 @@ const sendHistoric = async (workflowId) => {
  * @returns 
  */
 export const appendTaskTag = ( tag, parent, fn) =>{
-  const divOne = setStyles(document.createElement(TAG.DIV),{ 
-    whiteSpace: "nowrap",
-    borderRadius: "4px",
-    padding: "0 4px",
-    backgroundColor: "rgb(221, 221, 221)",
-    color: "rgb(102, 102, 102)",
-    margin: "5px",
-    fontWeight: "450" 
-  });
-  divOne.dataset.taskTag = JSON.stringify(tag);
-  parent.appendChild(divOne);
-
-  const divTwo = setStyles(document.createElement(TAG.DIV),{ display: "inline-block"});
-  divTwo.innerText = tag.name;
-  divOne.appendChild(divTwo);
-
+  
+  const divOne = createTagHtml(tag, parent);
+  
   const divThree = setStyles(document.createElement(TAG.DIV),{  display: "inline-block", verticalAlign:"bottom", cursor:"pointer"});
   divThree.title = MSG.DELETE_TAG;
   divThree.addEventListener(EVENT.CLICK,()=>{
@@ -733,4 +727,27 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   divThree.appendChild(i);
 
   return divThree;
+}
+
+
+export const createTagHtml = (tag, parent) => {
+  const color = tag.color;
+  const divOne = setStyles(document.createElement(TAG.DIV),{ 
+    whiteSpace: "nowrap",
+    borderRadius: "10px",
+    padding: "3px 7px",
+    backgroundColor: color || "rgb(221, 221, 221)",
+    color: color ? CSS.variable(COLORS.AON_WHITE) : CSS.variable(COLORS.GRAYSON),
+    margin: "5px",
+    fontWeight: "550" 
+  });
+  divOne.title = tag.name;
+  divOne.dataset.taskTag = JSON.stringify(tag);
+  parent.appendChild(divOne);
+
+  const divTwo = setStyles(document.createElement(TAG.DIV),{ display: "inline-block"});
+  divTwo.innerText = tag.name;
+  divOne.appendChild(divTwo);
+
+  return divOne;
 }

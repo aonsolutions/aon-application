@@ -230,6 +230,7 @@ class SistemaREDMov {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
 	}
@@ -765,8 +766,7 @@ class SistemaREDMov {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-			if (msg2 != null && msg2.getTextContent().trim()
-					.indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
+			if (msg2 != null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >= 0) {
 				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}

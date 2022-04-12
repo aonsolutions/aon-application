@@ -6,7 +6,7 @@ import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
-import { checkFilesAddEventDescription, sendMessage } from "./shared/utils.js";
+import { checkFilesAddEventDescription, sendMessage, setTaskTags } from "./shared/utils.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
@@ -89,6 +89,8 @@ export class AonMessengerChat extends AonElement {
     this.task.onPropertyChanged = (propName, val) => {
         if(propName == "project")
           this.onChangeProject();
+        else if(propName == "tags")
+          setTaskTags();
     }
   }
 

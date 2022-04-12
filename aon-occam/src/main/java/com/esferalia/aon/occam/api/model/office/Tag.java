@@ -23,8 +23,8 @@ public class Tag implements Serializable, HasId {
 	private User user;
 
 	public Tag() {
-
-	}
+     // TODO document why this constructor is empty
+    }
 
 	public Tag setId(Integer id) {
 		this.id = id;
@@ -48,6 +48,15 @@ public class Tag implements Serializable, HasId {
 	public Tag setType(byte type) {
 		this.type = type;
 		return this;
+	}
+	
+	public Tag setTagType(TagType tagType) {
+		if(tagType!=null) this.type = tagType.value();
+		return this;
+	}
+	
+	public TagType getTagType() {
+		return TagType.safeValueOf(type);
 	}
 
 	public byte getType() {

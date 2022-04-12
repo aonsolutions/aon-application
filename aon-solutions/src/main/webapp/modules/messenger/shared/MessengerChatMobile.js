@@ -36,7 +36,7 @@ export const buildMobile = (aonMessengerChat)=> {
  */
 const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
     const task = aonMessengerChat.task;
-    buildToolbar(aonMessengerChat,wrapper, false);
+    buildToolbar(aonMessengerChat, wrapper, false);
     
     let titleText = task.title;
     if(task.registry && task.registry.name)
@@ -52,9 +52,6 @@ const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
         borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
     });
     wrapper.appendChild(title);
-    
-    let titleEl = document.getElementById(MESSENGER_IDS.TITLE_TASK);
-    if(titleEl) titleEl.addEventListener(EVENT.KEYUP, ({target})=>  title.innerText = target.innerText);
 
         /**
      * The chat itself

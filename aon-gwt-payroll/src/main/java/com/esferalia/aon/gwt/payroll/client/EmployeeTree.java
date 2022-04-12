@@ -2603,8 +2603,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private void initFootPanel() {
 		logEvent("initFootPanel");
-		footPanel.clearButtons();
-		footPanel.addButtonLess();
+		footPanel.initNewButtons();
 		this.footPanel.addMaximizeHandlerNew(e-> showFootPanel());
 		this.footPanel.addMinimizeHandlerNew(e-> closeFootPanel());
 	}
@@ -3140,10 +3139,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	// --------------------------------------------------------- Private methods
 
 	private void showFootPanel() {
+		footPanel.addButtonMore();
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 	}
 	
 	private void closeFootPanel() {
+		footPanel.addButtonLess();
 		splitLayoutPanel.setWidgetSize(footPanel, 20);
 	}
 

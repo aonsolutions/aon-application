@@ -1,10 +1,11 @@
 import { MSG, CONSTANT, AON_ICONS } from '../environments/environments.js';
 import * as GWT from '../gwt/gwt.js';
-
+import * as MSG_ES from '../environments/msg-es.js';
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
   title: MSG.TIMECONTROL,
   description: MSG.TIMECONTROL,
+  tag: MSG_ES.TIMECONTROL,
   icon: AON_ICONS.AON_TIMECONTROL,
   color: '#D1C36D',
   access: [{
@@ -31,6 +32,7 @@ export const ACCOUNTING = {
   app: CONSTANT.ACCOUNTING,
   title: MSG.ACCOUNTING,
   description: MSG.ACCOUNTING,
+  tag: MSG_ES.ACCOUNTING,
   icon: AON_ICONS.AON_ACCOUNTING,
   color: '#002469',
   access: [{
@@ -53,6 +55,7 @@ export const FISCAL = {
   app: CONSTANT.FISCAL,
   title: MSG.FISCAL,
   description: MSG.FISCAL,
+  tag: MSG_ES.FISCAL,
   icon: AON_ICONS.AON_FISCAL,
   color: '#002469',
   access: [{
@@ -75,6 +78,7 @@ export const PAYROLL = {
   app: CONSTANT.PAYROLL,
   title: MSG.PAYROLL,
   description: MSG.PAYROLL,
+  tag: MSG_ES.PAYROLL,
   icon: AON_ICONS.AON_PAYROLL,
   color: '#002469',
   access: [{
@@ -100,6 +104,7 @@ export const COMUNICA = {
   app: CONSTANT.COMUNICA,
   title: MSG.COMUNICA,
   description: MSG.COMUNICA,
+  tag: MSG_ES.COMUNICA,
   icon: AON_ICONS.AON_COMUNICA,
   color: '#002469',
   access: [{
@@ -120,6 +125,7 @@ export const DOCUMENTAL = {
   app: CONSTANT.DOCUMENTAL,
   title: MSG.DOCUMENTARY,
   description: MSG.DOCUMENTARY,
+  tag: MSG_ES.DOCUMENTARY,
   icon: AON_ICONS.AON_DOCUMENTAL,
   color: '#6986BB',
   access: [{
@@ -146,6 +152,7 @@ export const INVOICE = {
   app: CONSTANT.INVOICE,
   title: MSG.INVOICES,
   description: MSG.INVOICES,
+  tag: MSG_ES.INVOICES,
   icon: AON_ICONS.AON_INVOICE,
   color: '#4472C4',
   access: [{
@@ -180,6 +187,7 @@ export const MESSENGER = {
   app: CONSTANT.MESSENGER,
   title: MSG.REQUESTS,
   description: MSG.REQUESTS,
+  tag: MSG_ES.REQUESTS,
   icon: AON_ICONS.AON_MESSENGER,
   color: '#1fd8b9',
   access: [{

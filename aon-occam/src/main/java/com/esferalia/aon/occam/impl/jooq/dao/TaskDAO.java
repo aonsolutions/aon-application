@@ -2,33 +2,43 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
-import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
+import com.esferalia.aon.jooq.tables.records.TagRecord;
+import com.esferalia.aon.jooq.tables.records.TaskTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -36,6 +46,7 @@ import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
@@ -55,6 +66,7 @@ public class TaskDAO {
 	private static final Registry SENDER_REGISTRY = REGISTRY.as("registry_sender");
 	
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
+
 	protected static class TaskPropertiesDAO implements TaskProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, TaskFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -94,32 +106,48 @@ public class TaskDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_DATE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(TASK.PARENT);}
+		@Override public Property<String> getTagNameProperty(){return new FilterDAO.PropertyDAO<>(TAG.NAME);}
 	}
 	
-	public static SelectSeekStep1<Record, Timestamp> select(AONContext ctx, TaskFilter filter){	
-		return ctx.getDslContext()
-				.select()
-				.from(TASK)
-				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
-				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
-				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
-				.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-				.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
-				.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
-				.where(TASK_PROPERTIES.getConditions(filter))
-				.orderBy(TASK.CREATION_DATE.desc());
+	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
+		SelectConditionStep<Record> condition = ctx.getDslContext()
+			.select()
+			.from(TASK)
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
+			.leftOuterJoin(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+			.leftOuterJoin(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
+			.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
+			.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
+			.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+			.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
+			.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
+			.where(TASK_PROPERTIES.getConditions(filter));
+	
+		if(page.isPresent() && perPage.isPresent()) {
+			Integer per = perPage.get();
+			Integer p = page.get();
+			condition.limit(per).offset(per * (p -1));
+		}
+		
+		Map<Task, List<Tag>> taskMaps = condition
+	   .orderBy(TASK.CREATION_DATE.desc())
+	   .fetchGroups( 
+			new TaskFiller()::apply,
+			new TagFiller()::apply
+		);
+		
+		 taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
+		 
+		 return taskMaps.keySet().stream();
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
-		return select(ctx, filter).fetch().stream().map(new TaskFiller());
+		return getStream(ctx, filter, Optional.empty(), Optional.empty());
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		return select(ctx, filter)
-			.limit(perPage)
-			.offset(perPage * (page -1))
-			.fetch().stream().map(new TaskFiller());
+		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
 	public static LinkedList<Task> getList(AONContext ctx, TaskFilter filter){	
@@ -131,9 +159,9 @@ public class TaskDAO {
 	}
 	
 	public static Task get(AONContext ctx, TaskFilter filter) {
-		Task task = select(ctx, filter).limit(1)
-			.stream().map(new TaskFiller())
-			.findFirst().orElse(new Task());
+		ctx.checkRead();
+
+		Task task =  getStream(ctx, filter).findFirst().orElse(new Task());
 		if(task.getId() != null) {
 			task.setWorkflows(TaskWorkflowDAO.getList(ctx, f -> f.getTaskProperty().eq(task.getId())));
 		}
@@ -143,9 +171,13 @@ public class TaskDAO {
 	public static Task save(AONContext ctx, Task task) {
 		TaskAutoComplete.autoComplete(ctx, task);
 		TaskValidation.validate(ctx, task);
-		return task.getId() != null 
-			? update(ctx, task)
-			: insert(ctx, task);
+		if(task.getId() != null) {
+			update(ctx, task);
+		} else {
+			insert(ctx, task);
+		}
+		setTaskTags(ctx, task);
+		return task;
 	}
 	
 	public static Task update(AONContext ctx, Task task) {
@@ -214,6 +246,86 @@ public class TaskDAO {
 		ctx.log().debug("INSERT TASK id: " + task.getId());	
 		return task;
 	}	
+	
+	private static void setTaskTags(AONContext ctx, Task task) {
+		DSLContext dslContext = ctx.getDslContext();
+		InsertSetMoreStep<TaskTagRecord> insertTaskTags = null;
+		
+		setTag(ctx, task);
+		
+		for(Tag tag: task.getTags()) {
+			
+			Optional<TaskTagRecord> tagExist = dslContext.select()
+			.from(TASK_TAG)
+			.where(TASK_TAG.TASK.eq(task.getId()))
+			.and(TASK_TAG.TAG.eq(tag.getId()))
+			.fetchStreamInto(TASK_TAG)
+			.findFirst();
+			
+			if(!tagExist.isPresent()) {
+				InsertSetStep<TaskTagRecord> insert = null != insertTaskTags ? insertTaskTags.newRecord() : dslContext.insertInto(TASK_TAG);
+						
+				InsertSetMoreStep<TaskTagRecord> recordSets = insert
+				.set(TASK_TAG.DOMAIN, task.getDomain().getId())
+				.set(TASK_TAG.TASK, task.getId())
+				.set(TASK_TAG.TAG, tag.getId())
+				;
+				
+				insertTaskTags = recordSets;
+			}
+		}	
+		
+		if(null!=insertTaskTags) insertTaskTags.execute();
+		
+		deleteTags(ctx, task);
+	}
+	
+	/**
+	 * Create tag not exist
+	 * @param ctx
+	 * @param task
+	 */
+	private static void setTag(AONContext ctx, Task task) {
+		DSLContext dslContext = ctx.getDslContext();
+
+		List<Tag> tagNotId = task.getTags().stream().filter(tag->tag.getId()==null).collect(Collectors.toList());
+		
+		for (Tag tag: tagNotId) {
+			String name = tag.getName().toUpperCase();
+			
+			Optional<TagRecord> tagExist = dslContext.select()
+			.from(TAG)
+			.where(TAG.DOMAIN.eq(task.getDomain().getId()))
+			.and(TAG.NAME.upper().eq(name))
+			.and(TAG.TYPE.eq(tag.getTagType().value()))
+			.fetchStreamInto(TAG)
+			.findFirst();
+			
+			Integer tagId = null;
+			
+			if(tagExist.isPresent()) {
+				TagRecord r = tagExist.get();
+				tagId = r.getId();
+				if(tag.getColor()!=null) {
+					r.set(TAG.COLOR, tag.getColor());
+					r.update();
+				}
+			} else {
+		
+				InsertSetMoreStep<TagRecord> condition = dslContext
+				.insertInto(TAG)
+				.set(TAG.DOMAIN, task.getDomain().getId())
+				.set(TAG.NAME, tag.getName())
+				.set(TAG.TYPE, tag.getTagType().value());
+				if(tag.getColor()!=null) 
+					condition.set(TAG.COLOR, tag.getColor());
+				
+				tagId = condition.returning(TAG.ID).fetchOne().getId();
+			}
+			
+			tag.setId(tagId);
+		}
+	}
 
 	public static void delete(AONContext ctx, Integer id){
 		TaskAttachDAO.deleteByTask(ctx, id);
@@ -267,6 +379,11 @@ public class TaskDAO {
 	
 	private static SelectConditionStep<Record1<Integer>> selectCount(AONContext ctx, TaskFilter filter) {
 		return ctx.getDslContext().selectCount().from(TASK).where(TASK_PROPERTIES.getConditions(filter));
+	}	
+	
+	private static void deleteTags(AONContext ctx, Task task) {
+		Integer[] idsTag = task.getTags().stream().map(Tag::getId).toArray(Integer[]::new);
+		TaskOldDAO.deleteTaskTag(ctx, f -> f.getTaskProperty().eq(task.getId()).and(f.getTagProperty().notIn(idsTag)) );
 	}
 	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
@@ -340,6 +457,20 @@ public class TaskDAO {
 				.setModificationUser(r.getValue(TASK.MODIFICATION_USER))
 				.setModificationDate(r.getValue(TASK.MODIFICATION_DATE))
 				.setParent(r.getValue(TASK.PARENT));
+		}
+	}
+	
+	public static class TagFiller extends Filler implements Function<Record, Tag> {
+
+		@Override
+		public Tag apply(Record r) {
+			return new Tag()
+					.setId(r.getValue(TAG.ID))
+					.setColor(r.getValue(TAG.COLOR))
+					.setDomain(r.getValue(TAG.DOMAIN))
+					.setName(r.getValue(TAG.NAME))
+					.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)))
+			;
 		}
 	}
 }
