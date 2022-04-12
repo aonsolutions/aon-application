@@ -12,11 +12,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2017.jaxb.MOD2002017;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2017.jaxb.Mod2002017toMOD2002017;
+import com.esferalia.aon.occam.mod200.api.FISCAL;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2017.jaxb.MOD2002017;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2017.jaxb.Mod2002017toMOD2002017;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 
 @SuppressWarnings("serial")

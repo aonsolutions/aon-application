@@ -4,24 +4,20 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 import java.text.ParseException;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020.EcpnType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class Page07 extends PageAbs {
 
-	private FlexTable table;
-	
 	private static enum Page7Column {
 		 COL00(""                 ,true ,true ,true )
 		,COL01(AON.MSG.ecpnMsg1() ,true ,true ,true )
@@ -126,41 +122,27 @@ public class Page07 extends PageAbs {
 
 	public Page07( Model200PageCallback callback ) {
 		super(callback);
-		ScrollPanel container = new ScrollPanel();
-		container.setStyleName(AON.AON_CSS.aonScrollArea());
-		FlowPanel baseContainerPanel = new FlowPanel();
-		baseContainerPanel.setStyleName(AON.AON_CSS.aonFiscalContainer());
-		
-		FlowPanel groupPanel= new FlowPanel();
-		groupPanel.setStyleName(AON.AON_CSS.aonGroup());
-			
-				FlowPanel groupHeaderPanel = new FlowPanel();
-				groupHeaderPanel.setStyleName(AON.AON_CSS.aonGroupTitle());
-				groupHeaderPanel.add (new InlineLabel(AON.MSG.patrimonioCambios())); 
-				groupPanel.add(groupHeaderPanel);
-				
-				FlowPanel groupBodyPanel = new FlowPanel();
-				groupBodyPanel.setStyleName(AON.AON_CSS.aonGroupBody());
-				
-				FlowPanel tableContainer = new FlowPanel();
-				tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
-				tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
-				table = new FlexTable();
-				table.setStyleName(AON.AON_CSS.aonMarginBottom());
-				tableContainer.add(table);
-				groupBodyPanel.add(tableContainer);
-				groupPanel.add(groupBodyPanel);
-		
-		baseContainerPanel.add(groupPanel);	
-		container.add(baseContainerPanel);
-		initWidget(container);
+		addBasePanel();
 		initializeTable();		
-		
 	}
 
 	@Override
 	protected void initializeTable() {
-		table.setCellSpacing(0);
+		
+		basePanel.clear();
+		basePanel.add(getTitle(AON.MSG.patrimonioCambios()));
+		
+		FlexTable table = new FlexTable();
+		table = new FlexTable();
+		table.setStyleName(AON.AON_CSS.aonMarginBottom());
+		
+		FlowPanel tableContainer = new FlowPanel();
+		tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
+		tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
+		tableContainer.add(table);
+		
+		basePanel.add(tableContainer);
+		
 		Label label = null;
 		int tableCol = 0;
 		for (int col = 0; col < Page7Column.values().length; col++) {
@@ -187,7 +169,7 @@ public class Page07 extends PageAbs {
 			if (rowVisible) {
 				table.setWidget(row, 0, new Label(Page7Row.values()[row].getName()));
 				table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
-				if (Page7Row.values()[row].isTitle()) {
+								if (Page7Row.values()[row].isTitle()) {
 					table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());	
 				}
 				tableCol = 1;
@@ -202,11 +184,11 @@ public class Page07 extends PageAbs {
 						panel.setStyleName(AON.AON_CSS.aonNowrap());
 						final Mod2002020Key key = Page7Row.values()[row].getKeys()[col - 1];
 						if (key != null) {
-							BoxLabel code = new BoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
+							AonBoxLabel code = new AonBoxLabel(key.getCode( callback.getMod200Object().getAdministration() ));
 							panel.add(code);
 							getLabels().put(key, code);
 							
-							final DoubleBox text = new DoubleBox(8);
+							final AonDoubleBox text = new AonDoubleBox(8);
 							text.addChangeHandler(new ChangeHandler() {
 								@Override
 								public void onChange(ChangeEvent event) {
@@ -217,6 +199,7 @@ public class Page07 extends PageAbs {
 										Double d = text.getValueOrThrow();
 										text.addStyleName(AON.AON_CSS.aonChanged());
 										callback.getMod200Object().doubleValueChanged(key, d);
+										callback.markAsDirty();
 									} catch (ParseException e) {
 										// nothing.
 									}

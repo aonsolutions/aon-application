@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.js.payroll.client.Reports.Payroll;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.logging.client.LogConfiguration;
@@ -768,7 +769,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getEvents();
 	}
 	
-	public List<String> getFiscalModels() {
+	public List<FiscalModel> getFiscalModels() {
 		return salaryDraft.getFiscalModels();
 	}
 	
