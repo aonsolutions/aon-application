@@ -28,6 +28,8 @@
 	<extend-property name="user.agent" values="ie10" />
 	
 	<set-configuration-property name="locale.useragent" value="Y" />
+	
+	<!-- Other module inherits -->
 
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->
@@ -36,16 +38,16 @@
 	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
-
-	<!-- Specify the app entry point class. -->
+	
 	<inherits name="com.esferalia.aon.gwt.common.Common" />
 	<!-- <inherits name="com.esferalia.aon.gwt.api.Api" /> -->
-	<inherits name="com.esferalia.aon.occam.api.Occam" />
+	<!-- <inherits name="com.esferalia.aon.occam.api.Occam" /> -->
+	<inherits name="com.esferalia.aon.occam.mod200.api.OccamMod200" />
 	
 	<!-- Include GWTUpload library -->
   	<inherits name="gwtupload.GWTUpload"/>
-  	
-	<!-- Other module inherits --> 
+	
+	<!-- Specify the app entry point class. --> 
 	<entry-point class='com.esferalia.aon.gwt.mod200.client.MainEntryPoint' />
 
 	<!-- Specify the paths for translatable code -->

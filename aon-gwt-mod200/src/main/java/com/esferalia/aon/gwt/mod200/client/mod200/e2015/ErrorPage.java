@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200Table;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.ValidationMessage2015;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.ValidationMessage2015;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;

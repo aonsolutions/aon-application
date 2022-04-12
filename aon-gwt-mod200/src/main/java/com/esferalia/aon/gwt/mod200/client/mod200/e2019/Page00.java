@@ -1,9 +1,9 @@
 // IDENTIFICACION, TIPO DE DECLARACION, CARACTERES 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2019;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Character.CHARACTERS_KEYS;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Character.CHARACTER_ALSO_CHECK_MAP;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Character.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Character.CHARACTERS_KEYS;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Character.CHARACTER_ALSO_CHECK_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,13 +18,13 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Model2002019.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.DoubleVariable2019;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019.BalanceType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019.EcpnType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2019.DoubleVariable2019;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019.EcpnType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
