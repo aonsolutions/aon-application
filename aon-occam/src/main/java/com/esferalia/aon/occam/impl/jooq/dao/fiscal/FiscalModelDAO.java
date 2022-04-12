@@ -447,6 +447,7 @@ public class FiscalModelDAO {
 	
 	public static <T extends FiscalModel> void delete(AONContext ctx, T fm) {
 		ctx.checkWrite();
+		FiscalModelValidation.validateDelete(ctx, fm);
 		deleteDetails(ctx, fm);
 		AlcatrazDAO.deleteFiscalModel(ctx, fm);
 		int count = ctx.getDslContext()

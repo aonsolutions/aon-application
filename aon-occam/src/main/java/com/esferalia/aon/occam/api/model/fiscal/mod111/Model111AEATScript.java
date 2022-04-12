@@ -1,9 +1,6 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod111;
+package com.esferalia.aon.occam.api.model.fiscal.mod111;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_SALARY_IRPF_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -11,13 +8,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
-public enum Model111AEAT2022Script implements IModelScript<Mod111Key> {
+enum Model111AEATScript implements IModelScript<Mod111Key> {
 	
 	 R00 ("I. Rendimientos del trabajo",null,TITLE)
-	,R01 ("Rendimientos dinerarios" ,new Mod111Key[]{Mod111Key.CT_C01,Mod111Key.CT_C02,Mod111Key.CT_C03},MODEL_SALARY_IRPF_BREAKDOWN)
-	,R02 ("Rendimientos en especie",new Mod111Key[]{Mod111Key.CT_C04,Mod111Key.CT_C05,Mod111Key.CT_C06},MODEL_SALARY_IRPF_BREAKDOWN)
+	,R01 ("Rendimientos dinerarios" ,new Mod111Key[]{Mod111Key.CT_C01,Mod111Key.CT_C02,Mod111Key.CT_C03},NONE)
+	,R02 ("Rendimientos en especie",new Mod111Key[]{Mod111Key.CT_C04,Mod111Key.CT_C05,Mod111Key.CT_C06},NONE)
 	,R03 ("II. Rendimientos de actividades econ\u00F3micas",null,TITLE)
-	,R04 ("Rendimientos dinerarios" ,new Mod111Key[]{Mod111Key.CT_C07,Mod111Key.CT_C08,Mod111Key.CT_C09},MODEL_INVOICE_IRPF_BREAKDOWN)
+	,R04 ("Rendimientos dinerarios" ,new Mod111Key[]{Mod111Key.CT_C07,Mod111Key.CT_C08,Mod111Key.CT_C09},NONE)
 	,R05 ("Rendimientos en especie",new Mod111Key[]{Mod111Key.CT_C10,Mod111Key.CT_C11,Mod111Key.CT_C12},NONE)
 	,R06 ("III. Premios por la participaci\u00F3n en juegos, concursos, rifas o combinaciones aleatorias",null,TITLE)
 	,R07 ("Rendimientos en met\u00E1lico"  ,new Mod111Key[]{Mod111Key.CT_C13,Mod111Key.CT_C14,Mod111Key.CT_C15},NONE)
@@ -29,7 +26,7 @@ public enum Model111AEAT2022Script implements IModelScript<Mod111Key> {
 	,R13 ("Contraprestaciones dinerarias o en especie"  ,new Mod111Key[]{Mod111Key.CT_C25,Mod111Key.CT_C26,Mod111Key.CT_C27},NONE)
 	,R14 ("Suma de retenciones e ingresos a cuenta",new Mod111Key[]{Mod111Key.CT_C28},COMPUTE)
 	,R15 ("A deducir. Resultados a ingresar de anteriores autoliquidaciones por el mismo concepto, ejercicio y periodo."
-				  ,new Mod111Key[]{Mod111Key.CT_C29},COMPUTE_KEY)
+				  ,new Mod111Key[]{Mod111Key.CT_C29},NONE)
 	,R16 ("Resultado a ingresar",new Mod111Key[]{Mod111Key.CT_C30},COMPUTE)
 	;
 	
@@ -37,7 +34,7 @@ public enum Model111AEAT2022Script implements IModelScript<Mod111Key> {
 	private Mod111Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model111AEAT2022Script(String label, Mod111Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model111AEATScript(String label, Mod111Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;

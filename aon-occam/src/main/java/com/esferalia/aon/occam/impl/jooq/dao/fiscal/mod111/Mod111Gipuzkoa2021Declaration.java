@@ -15,80 +15,81 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 GP_X00 (Mod111Key.GP_X00
+		 GP_X00 (Mod111Key.GP_X00,false
 			, null
 			, null
 			, Mod111Declaration::addDeponentDocument
 			, null,null)
-		,GP_C01(Mod111Key.GP_C01
+		,GP_C01(Mod111Key.GP_C01,false
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C01,mod,docs,pdocs,br)
 			,null,null,null)
-		,GP_C02(Mod111Key.GP_C02
+		,GP_C02(Mod111Key.GP_C02,true
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C02,mod,br)
 			,null,null,null)
-		,GP_C03(Mod111Key.GP_C03
+		,GP_C03(Mod111Key.GP_C03,true
 			, (mod,br) -> br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C03,mod,br)
 			,null,null,null)
-		,GP_C04(Mod111Key.GP_C04
+		,GP_C04(Mod111Key.GP_C04,false
 			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C04,mod,docs,pdocs,br)
 			,null,null,null)
-		,GP_C05(Mod111Key.GP_C05
+		,GP_C05(Mod111Key.GP_C05,true
 			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C05,mod,br)
 			,null,null,null)
-		,GP_C06(Mod111Key.GP_C06
+		,GP_C06(Mod111Key.GP_C06,true
 			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C06,mod,br)
 			,null,null,null)
-		,GP_C07(Mod111Key.GP_C07
+		,GP_C07(Mod111Key.GP_C07,false
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C07,mod,docs,pdocs,br)
 			,null,null,null)
-		,GP_C08(Mod111Key.GP_C08
+		,GP_C08(Mod111Key.GP_C08,true
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C08,mod,br)
 			,null,null,null)
-		,GP_C09(Mod111Key.GP_C09
+		,GP_C09(Mod111Key.GP_C09,true
 			, (mod,br) -> br.isFarmer()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C09,mod,br)
 			,null,null,null)
-		,GP_C10(Mod111Key.GP_C10,null,null,null,null,null)
-		,GP_C11(Mod111Key.GP_C11,null,null,null,null,null)
-		,GP_C12(Mod111Key.GP_C12,null,null,null,null,null)
-		,GP_C13(Mod111Key.GP_C13,null,null,null, "GP_C02+GP_C05+GP_C08+GP_C11",null)
-		,GP_C14(Mod111Key.GP_C14,null,null,null, "GP_C03+GP_C06+GP_C09+GP_C12",null)
-		,GP_C15(Mod111Key.GP_C15
+		,GP_C10(Mod111Key.GP_C10,false,null,null,null,null,null)
+		,GP_C11(Mod111Key.GP_C11,true ,null,null,null,null,null)
+		,GP_C12(Mod111Key.GP_C12,true ,null,null,null,null,null)
+		,GP_C13(Mod111Key.GP_C13,false,null,null,null, "GP_C02+GP_C05+GP_C08+GP_C11",null)
+		,GP_C14(Mod111Key.GP_C14,false,null,null,null, "GP_C03+GP_C06+GP_C09+GP_C12",null)
+		,GP_C15(Mod111Key.GP_C15,false
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C15,mod,docs,pdocs,br)
 			,null,null,null)
-		,GP_C16(Mod111Key.GP_C16
+		,GP_C16(Mod111Key.GP_C16,true
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C16,mod,br)
 			,null,null,null)
-		,GP_C17(Mod111Key.GP_C17
+		,GP_C17(Mod111Key.GP_C17,true
 			, (mod,br) -> br.isSalaryInKindRetention()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C17,mod,br)
 			,null,null,null)
-		,GP_C18(Mod111Key.GP_C18,null,null,null,null,null)
-		,GP_C19(Mod111Key.GP_C19,null,null,null,null,null)
-		,GP_C20(Mod111Key.GP_C20,null,null,null,null,null)
-		,GP_C21(Mod111Key.GP_C21,null,null,null,null,null)
-		,GP_C22(Mod111Key.GP_C22,null,null,null,null,null)
-		,GP_C23(Mod111Key.GP_C23,null,null,null,null,null)
-		,GP_C24(Mod111Key.GP_C24,null,null,null,null,null)
-		,GP_C25(Mod111Key.GP_C25,null,null,null,null,null)
-		,GP_C26(Mod111Key.GP_C26,null,null,null,null,null)
-		,GP_C27(Mod111Key.GP_C27,null,null,null, "GP_C16+GP_C19+GP_C22+GP_C25",null)
-		,GP_C28(Mod111Key.GP_C28,null,null,null, "GP_C17+GP_C20+GP_C23+GP_C26",null)
-		,GP_C29(Mod111Key.GP_C29,null,null,null, "GP_C14+GP_C28",null)
-		,GP_TIP (Mod111Key.GP_TIP,null,null,null,null,null)
+		,GP_C18(Mod111Key.GP_C18,false,null,null,null,null,null)
+		,GP_C19(Mod111Key.GP_C19,true ,null,null,null,null,null)
+		,GP_C20(Mod111Key.GP_C20,true ,null,null,null,null,null)
+		,GP_C21(Mod111Key.GP_C21,false,null,null,null,null,null)
+		,GP_C22(Mod111Key.GP_C22,true ,null,null,null,null,null)
+		,GP_C23(Mod111Key.GP_C23,true ,null,null,null,null,null)
+		,GP_C24(Mod111Key.GP_C24,false,null,null,null,null,null)
+		,GP_C25(Mod111Key.GP_C25,true ,null,null,null,null,null)
+		,GP_C26(Mod111Key.GP_C26,true ,null,null,null,null,null)
+		,GP_C27(Mod111Key.GP_C27,false,null,null,null, "GP_C16+GP_C19+GP_C22+GP_C25",null)
+		,GP_C28(Mod111Key.GP_C28,false,null,null,null, "GP_C17+GP_C20+GP_C23+GP_C26",null)
+		,GP_C29(Mod111Key.GP_C29,false,null,null,null, "GP_C14+GP_C28",null)
+		,GP_TIP(Mod111Key.GP_TIP,false,null,null,null,null,null)
 		;
 		
 		private Mod111Key key;
+		private boolean diffEnabled;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
 		private IValueUniqueIntializer uniqueInitializer;
@@ -96,12 +97,14 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 		private String template;
 	
 		private Mod111KeyDAO(Mod111Key key
+				, boolean diffEnabled
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueUniqueIntializer uniqueInitializer
 				, String expression
 				, String template) {
 			this.key = key;
+			this.diffEnabled = diffEnabled;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.uniqueInitializer = uniqueInitializer;
@@ -112,6 +115,10 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 		@Override
 		public Mod111Key getKey() {
 			return key;
+		}
+		@Override
+		public boolean isDiffEnabled() {
+			return diffEnabled;
 		}
 		@Override
 		public boolean acceptValue(Mod111 mod,IrpfBreakdown  br) {

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod111;
+package com.esferalia.aon.occam.api.model.fiscal.mod111;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN;
@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
-public enum Model111Bizkaia2022Script implements IModelScript<Mod111Key> {
+enum Model111Bizkaia2022Script implements IModelScript<Mod111Key> {
 	 R00 ("Rendimientos procedentes de trabajos o servicios que se presten en Bizkaia"
 			 ,new Mod111Key[]{Mod111Key.BZ_C01,Mod111Key.BZ_C12,Mod111Key.BZ_C23},MODEL_SALARY_IRPF_BREAKDOWN)
 	,R01 ("Retribuciones de miembros de Consejos de Administraci\u00F3n y Juntas que hagan sus veces de empresas o entidades con domicilio fiscal en Bizkaia"

@@ -17,21 +17,23 @@ import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod115InsertMonthlyReplacementTest extends AbstractOccamTest {
 	
 	@Test
 	public void mod115InsertMonthlyReplacementTest() {
-		AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration());
-		Date today = new Date();
-		for (Period period : Period.values()) {
-			if (period.isMonthPeriod()) {
-				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod115InsertMonthlyReplacement(AonRandom.getRangeDate(start,end));
+		ctx.getDslContext().transaction( config -> {
+			Date today = new Date();
+			for (Period period : Period.values()) {
+				if (period.isMonthPeriod()) {
+					Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+					Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+					mod115InsertMonthlyReplacement(AonRandom.getRangeDate(start,end));
+				}
 			}
-		}
+		});
 	}
 	
 	public void mod115InsertMonthlyReplacement(Date date) {
@@ -65,7 +67,7 @@ public class Mod115InsertMonthlyReplacementTest extends AbstractOccamTest {
 		MODEL115.save(getOccam(), mod115);
 		Mod115 actual = MODEL115.get(getOccam(), mod115.getId());  
 		Asserts.assertMod115(mod115, actual);
-		Mod115TestSuite.printModel(actual);
+		FiscalTestSuite.printModel(actual);
 		return actual;
 	}
 }

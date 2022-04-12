@@ -1,4 +1,7 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod111;
+package com.esferalia.aon.occam.api.model.fiscal.mod111;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
@@ -154,4 +157,5 @@ public class Model111ScriptProvider {
 		}
 		return ms;
 	}
+	
 }

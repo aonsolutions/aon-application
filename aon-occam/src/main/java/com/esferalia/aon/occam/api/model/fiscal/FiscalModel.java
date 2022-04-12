@@ -645,5 +645,13 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
 		// REDEFINE
 	}
+	
+	public boolean canBeDeleted() {
+		return getStatus() != FiscalStatus.FINISHED
+			&& getStatus() != FiscalStatus.SENT
+			&& getStatus() != FiscalStatus.CUSTOMER_CHECK
+			&& getStatus() != FiscalStatus.CUSTOMER_ACCEPTED;
+	}
+
 }
 
