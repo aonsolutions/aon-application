@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -155,9 +156,12 @@ public class AonMinimizePanel extends ResizeComposite implements HasWidgets, Acc
 	
 	private FlowPanel buttons;
 
+	private AbsolutePanel absolutePanel;
+
 	public AonMinimizePanel() {
-		AbsolutePanel absolutePanel = new AbsolutePanel();
+		absolutePanel = new AbsolutePanel();
 		absolutePanel.setStyleName(AON.CSS.aonSelector());
+
 		buttons = new FlowPanel();
 		buttons.setStyleName(AON.CSS.aonSelector());
 		buttons.addStyleName(AON.CSS.aonTextRight());
@@ -253,14 +257,26 @@ public class AonMinimizePanel extends ResizeComposite implements HasWidgets, Acc
 		return addHandler(handler, MaximizeEvent.getType());
 	}
 	
+	public void initNewButtons() {
+		clearButtons();
+
+		this.getElement().getStyle().setOverflow(Overflow.VISIBLE);
+		this.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
+
+		buttons.getElement().getStyle().setMarginTop(-18,  Unit.PX);
+		buttons.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		buttons.getElement().getStyle().setZIndex(3);
+		buttons.getElement().getStyle().setRight(0, Unit.PX);
+	}
+	
 	public void clearButtons() {
 		buttons.clear();
 	}
 	
 	public void addButtonLess() {
+		clearButtons();
 		Button btn = createButtonIcon("expand_less", "Maximizar");
 		btn.addClickHandler( (e)->{ 
-			clearButtons();
 			addButtonMore();
 			MaximizeEvent.fire(AonMinimizePanel.this);
 		});
@@ -268,9 +284,9 @@ public class AonMinimizePanel extends ResizeComposite implements HasWidgets, Acc
 	}
 	
 	public void addButtonMore() {
+		clearButtons();
 		Button btn = createButtonIcon("expand_more", "Minimizar");
 		btn.addClickHandler( (e)-> {
-			clearButtons();
 			addButtonLess();
 			MinimizeEvent.fire(AonMinimizePanel.this);
 		});
@@ -294,13 +310,12 @@ public class AonMinimizePanel extends ResizeComposite implements HasWidgets, Acc
 				new SafeStylesBuilder()
 				.fontSize(24, Unit.PX)
 				.cursor(Cursor.POINTER)
-				.trustedColor("black").toSafeStyles()
+				.trustedColor(AON.AON_BLACK).toSafeStyles()
 		));
 		btn.removeStyleName("gwt-Button");
 		btn.getElement().setAttribute("title", title);
 		btn.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		btn.getElement().getStyle().setBackgroundColor("white");
-		btn.getElement().getStyle().setMarginTop(-5, Unit.PX);
+		btn.getElement().getStyle().setBackgroundColor("transparent");
 
 		return btn;
 	}
