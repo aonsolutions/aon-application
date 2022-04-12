@@ -6,8 +6,9 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.Mod200Service;
-import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.mod200.api.MODEL200;
+import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Mod200 Servlet", urlPatterns = { "/aon_gwt_mod200/ms/Mod200" })
@@ -16,12 +17,12 @@ public class Mod200ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	private static final long serialVersionUID = -3045020929753519103L;
 	
 	@Override
-	public LinkedList<Mod200> getMod200s(String domainName,int domain,String user) throws AonCoreException {
-		return FISCAL.getMod200s(domainName, domain,user);
+	public LinkedList<Mod200> getMod200s(Occam occam) throws AonCoreException {
+		return MODEL200.getMod200s(occam);
 	}
 	
 	@Override
-	public Mod200 getMod200(String domainName,int domain,String user,Integer id) throws AonCoreException {
-		return FISCAL.getMod200(domainName, domain,user,id);
+	public Mod200 getMod200(Occam occam, Integer id) throws AonCoreException {
+		return MODEL200.getMod200(occam, id);
 	}
 }

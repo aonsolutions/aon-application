@@ -1,49 +1,43 @@
 // IDENTIFICACION, TIPO DE DECLARACION, CARACTERES 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Character.CHARACTERS_KEYS;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Character.CHARACTER_ALSO_CHECK_MAP;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Character.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Character.CHARACTERS_KEYS;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Character.CHARACTER_ALSO_CHECK_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
-import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020.BalanceType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020.EcpnType;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Page00 extends PageAbs {
 	
@@ -133,96 +127,29 @@ public class Page00 extends PageAbs {
 	};
 	
 	private Map<Mod2002020Key, CheckBox> inputs = new HashMap<Mod2002020Key, CheckBox>();
-
 	
-	interface Page1Binder extends
-			UiBinder<Widget, Page00> {
-	}
-
-	private static final Page1Binder page1Binder = GWT
-			.create(Page1Binder.class);
-
-	@UiField
-	Panel basePanel;
-	
-	@UiField
-	FlowPanel periodPanel;
-	@UiField
-	DateBoxEx periodStart;
-	@UiField
-	DateBoxEx periodEnd;
-	@UiField(provided=true)
-	ListBox periodType;
-	@UiField
-	TextBox  cnae;
-	@UiField
-	InlineLabel cnaeLabel;	
-	@UiField
-	Button showCnae;
-
-	Cnae2009Panel cnaePanel;
-	
-	@UiField
-	DocumentTextBox nif;
-	@UiField
-	TextBox  companyName;
-	@UiField
-	TextBox  phone1;
-	@UiField
-	TextBox  phone2;
-	@UiField
-	CheckBox complementary;
-	@UiField
-	TextBox  complementaryReceipt;
-	
-	@UiField(provided = true)
-	FlexTable charactersTable1;
-	@UiField(provided = true)
-	FlexTable charactersTable2;
-	@UiField(provided = true)
-	FlexTable charactersTable3;
-	
-	@UiField
-	ListBox balanceSheetType;
-	@UiField
-	ListBox ecpnType;
-	@UiField
-	ListBox profitAndLossType;
-	
-	CheckBox c061; // Esta casilla no se utiliza en el Modelo 200 de AON
-	
-	@UiField
-	DoubleBox c041;
-	@UiField
-	DoubleBox c042;
+	private AonDocumentTextBox nif = new AonDocumentTextBox();
+	private AonTextBox companyName = new AonTextBox();
+	private AonTextBox phone1 = new AonTextBox();
+	private AonTextBox phone2 = new AonTextBox();
+	private AonTextBox cnae = new AonTextBox();
+	private InlineLabel cnaeLabel = new InlineLabel();
+	private CheckBox complementary = new CheckBox();
+	private AonTextBox complementaryReceipt = new AonTextBox();
+	private ListBox periodType = new ListBox();
+	private FlowPanel periodPanel = new FlowPanel();
+	private AonDateBox periodStart = new AonDateBox();
+	private AonDateBox periodEnd = new AonDateBox();
+	private ListBox balanceSheetType = new ListBox();
+	private ListBox ecpnType = new ListBox();
+	private ListBox profitAndLossType = new ListBox();
+	private AonDoubleBox c041 = new AonDoubleBox();
+	private AonDoubleBox c042 = new AonDoubleBox();	
+	private CheckBox c061 = new CheckBox(); // Esta casilla no se utiliza en el Modelo 200 de AON
 	
 	public Page00( Model200PageCallback callback ) {
 		super(callback);
-		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
-			@Override
-			public void onSelect(CNAE2009 selected) {
-				cnae.setText(selected.getCode());
-				cnaeLabel.setText(selected.getDescription());
-			}
-			@Override
-			public void onClose() {
-				// Nothing
-			}
-		});
-		periodType = new ListBox();
-		periodType.addItem(AON.MSG.periodType1());
-		periodType.addItem(AON.MSG.periodType2());
-		periodType.addItem(AON.MSG.periodType3());
-		
-		charactersTable1 = new FlexTable();
-		charactersTable2 = new FlexTable();
-		charactersTable3 = new FlexTable();
-		
-		c061 = new CheckBox();
-		
-		Widget ui = page1Binder.createAndBindUi(this);
-		initWidget(ui);
-		
+		addBasePanel();
 		initializeTable();
 		
 		callback.getMod200Object().register( new IMod200ChangeListener() {
@@ -237,16 +164,15 @@ public class Page00 extends PageAbs {
 		});
 	}
 	
-	
 	@Override
 	public void dump() {
 		super.dump();
-		nif.setValue(callback.getMod200Object().getMod200().getEnterpriseDocument());
-		companyName.setValue(callback.getMod200Object().getMod200().getEnterpriseName());
+		nif.setValue(callback.getMod200Object().getMod200().getDocument());
+		companyName.setValue(callback.getMod200Object().getMod200().getName());
 		phone1.setValue(callback.getMod200Object().getMod200().getEnterprisePhone1());
 		phone2.setValue(callback.getMod200Object().getMod200().getEnterprisePhone2());
 		complementary.setValue(callback.getMod200Object().getMod200().isComplementary());
-		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getComplementaryReceipt());
+		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getReplacedNumber());
 		complementaryReceipt.setEnabled(complementary.getValue());
 		periodType.setSelectedIndex(callback.getMod200Object().getMod200().getPeriodType() - 1 );
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
@@ -296,12 +222,12 @@ public class Page00 extends PageAbs {
 
 	@Override
 	protected void populate() {
-		callback.getMod200Object().getMod200().setEnterpriseDocument(nif.getValue());
-		callback.getMod200Object().getMod200().setEnterpriseName(companyName.getValue());
+		callback.getMod200Object().getMod200().setDocument(nif.getValue());
+		callback.getMod200Object().getMod200().setName(companyName.getValue());
 		callback.getMod200Object().getMod200().setEnterprisePhone1(phone1.getValue());
 		callback.getMod200Object().getMod200().setEnterprisePhone2(phone2.getValue());
 		callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
-		callback.getMod200Object().getMod200().setComplementaryReceipt(complementaryReceipt.getValue());
+		callback.getMod200Object().getMod200().setReplacedNumber(complementaryReceipt.getValue());
 		callback.getMod200Object().getMod200().setPeriodType(periodType.getSelectedIndex() + 1 );
 		callback.getMod200Object().getMod200().setPeriodStart( periodStart.getValue() );
 		callback.getMod200Object().getMod200().setPeriodEnd( periodEnd.getValue() );
@@ -372,46 +298,9 @@ public class Page00 extends PageAbs {
 		c061.setText(Mod2002020Key.C0061.getDescription());
 		inputs.put(Mod2002020Key.C0061, c061);
 		
-		int row = 0;
-		row = initializeBlock(charactersTable1,row, DECLARATION_CHARACTERS_BLOCK1);
-		row = initializeBlock(charactersTable2,row, DECLARATION_CHARACTERS_BLOCK2);
-		row = initializeBlock(charactersTable3,row, DECLARATION_CHARACTERS_BLOCK3);
+		paint();
 	}
 
-	private int initializeBlock(FlexTable table,int row, Mod2002020Key[] declarationCharatersBlock) {
-		initializeTable(table);
-		
-		Administration adm = (callback.getMod200Object()==null)
-				?Administration.COMMON_TERRITORY
-				:callback.getMod200Object().getAdministration();
-		for (final Mod2002020Key key : declarationCharatersBlock ) {
-			if (key != Mod2002020Key.C0012R) {
-			   BoxLabel l = new BoxLabel( key.getCode( adm ) , Model2002020.BOX_LENGTH );
-			   table.setWidget(row, 0, l);
-			}
-			
-			final CheckBox check = new CheckBox(key.getDescription() 
-					+ (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
-			check.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
-						MessageDialog.show("ERROR",AON.MSG.unsupportedCharacter(key.getDescription()));
-						check.setValue(false);
-					} else {
-						changeAvailability(key);
-					}
-				}
-				
-			});
-			inputs.put(key, check);
-			check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
-			table.setWidget(row, 1, check);
-			row++;
-		}
-		return row++;
-	}
-	
 	private void changeAvailability(Mod2002020Key key) {
 		boolean enabled = inputs.get(key).getValue();
 		if (CHARACTER_INCOMPATIBILITY_MAP.get(key) != null) {
@@ -435,46 +324,6 @@ public class Page00 extends PageAbs {
 		}
 	}
 
-	private void initializeTable(FlexTable table) {
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		ColumnFormatter cf = table.getColumnFormatter();
-		cf.setStyleName(0, AON.AON_CSS.aonWidth40());
-		cf.setStyleName(1, AON.AON_CSS.aonWidthAuto());
-	}
-	
-	@UiHandler("complementary")
-	void onChangeComplementary(ClickEvent event) {
-		callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
-		complementaryReceipt.setEnabled(complementary.getValue());
-	}
-
-	@UiHandler("showCnae")
-	void onSelectCnae(ClickEvent event) {
-		cnaePanel.onShow();
-	}
-	
-	@UiHandler("periodType")
-	void onChangePeriodType( ChangeEvent event) {
-		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
-	}
-	
-	@UiHandler("cnae")
-	void onChangeCNAE( ChangeEvent event) {
-		if (AonStringUtils.isEmpty(cnae.getText())) {
-			cnaeLabel.setText(AonStringUtils.EMPTY);
-		} else {
-			CNAE2009 c = CNAE2009.valueOfCode(cnae.getText()); 
-			if (c == null) {
-				MessageDialog.show("CNAE no encontrado");
-				cnaeLabel.setText(AonStringUtils.EMPTY);
-			} else {
-				cnaeLabel.setText(c.getDescription());
-			}
-		}
-		
-	}
-	
 	protected void enableCharacters( boolean enabled) {
 		periodType.setEnabled(enabled);
 		balanceSheetType.setEnabled(enabled);
@@ -488,6 +337,254 @@ public class Page00 extends PageAbs {
 			if (inputs.containsKey( key ) && inputs.get( key ).getValue()) {
 				changeAvailability(key);
 			}
+		}
+	}
+	
+	private void paint() {
+		
+		// IDENTIFICACION 
+		
+		basePanel.add(getTitle(AON.MSG.identification()));
+		
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab);
+		
+		nif.setVisibleLength(9);
+		nif.setMaxLength(9);
+		nif.addValueChangeHandler(event -> {
+			callback.markAsDirty();
+		});		
+		
+		companyName.setVisibleLength(45);
+		companyName.setMaxLength(45);
+		companyName.addValueChangeHandler(event -> {
+			callback.markAsDirty();
+		});
+		
+		phone1.setVisibleLength(9);
+		phone1.setMaxLength(9);
+		phone2.setVisibleLength(9);
+		phone2.setMaxLength(9);
+		
+		FlowPanel phones = new FlowPanel(); 
+		phones.add(phone1);
+		phones.add(phone2);
+		
+		phone1.addValueChangeHandler(event -> {
+			callback.markAsDirty();
+		});
+		phone2.addValueChangeHandler(event -> {
+			callback.markAsDirty();
+		});
+		
+		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();		
+		cnae2009Panel.addSelectionHandler(event -> {
+			CNAE2009 selected = event.getSelectedItem();
+			cnae.setValue(selected.getCode());
+			cnaeLabel.setText(selected.getDescription());
+			callback.markAsDirty();
+		});
+		
+		cnae.setVisibleLength(5);
+		cnae.setMaxLength(5);
+		cnae.setReadOnly(true);
+		
+		AonTableButton cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(),AON.CSS.aonIconSearch());
+		cnaeButton.addStyleName(AON.CSS.aonMarginLeft());
+		cnaeButton.setTitle(AON.MSG.mainActivityCNAE());		
+		cnaeButton.addClickHandler(event -> cnae2009Panel.onShow());
+		
+		cnaeLabel.setStyleName(AON.CSS.aonMarginLeft());
+
+		FlowPanel cnaePanel = new FlowPanel();
+		cnaePanel.add(cnae);
+		cnaePanel.add(cnaeButton);
+		cnaePanel.add(cnaeLabel);
+
+		periodType.addItem(AON.MSG.periodType1());
+		periodType.addItem(AON.MSG.periodType2());
+		periodType.addItem(AON.MSG.periodType3());
+		periodType.addChangeHandler( event -> {
+			periodPanel.setVisible(periodType.getSelectedIndex() != 0);
+			callback.markAsDirty();
+		});
+		
+		periodStart.addStyleName(AON.CSS.aonMarginLeft());
+		periodStart.addValueChangeHandler( event -> {
+			callback.markAsDirty();
+		});
+		
+		periodEnd.addStyleName(AON.CSS.aonMarginLeft());
+		periodEnd.addValueChangeHandler( event -> {
+			callback.markAsDirty();
+		});
+		
+		InlineLabel fromLabel = new InlineLabel(AON.MSG.periodLabel());
+		fromLabel.setStyleName(AON.CSS.aonMarginLeft());
+		
+		InlineLabel toLabel = new InlineLabel(AON.MSG.to());
+		toLabel.setStyleName(AON.CSS.aonMarginLeft());
+		
+		periodPanel.add(fromLabel);
+		periodPanel.add(periodStart);
+		periodPanel.add(toLabel);
+		periodPanel.add(periodEnd);
+	
+		FlowPanel complementaryPanel = new FlowPanel();
+		complementaryReceipt.addStyleName(AON.CSS.aonMarginLeft());
+		complementaryReceipt.setVisibleLength(13);
+		complementaryReceipt.setMaxLength(13);
+		
+		complementary.addClickHandler(event -> {
+			complementaryReceipt.setEnabled(complementary.getValue());
+			if (!complementary.getValue()) {
+				complementaryReceipt.setValue("", true);
+			}
+			callback.markAsDirty();
+		});
+		complementaryReceipt.addValueChangeHandler(event -> {
+			callback.markAsDirty();
+		});
+
+		InlineLabel complementaryLabel = new InlineLabel(AON.MSG.complementaryReceipt());
+		complementaryLabel.setStyleName(AON.CSS.aonMarginLeft());
+		
+		complementaryPanel.add(complementary);
+		complementaryPanel.add(complementaryLabel);
+		complementaryPanel.add(complementaryReceipt);
+		
+		tab.addLabelWidgetRow(AON.MSG.document(), nif)
+		   .addLabelWidgetRow(AON.MSG.name(), companyName)
+		   .addLabelWidgetRow(AON.MSG.phone(), phones)
+		   .addLabelWidgetRow(AON.MSG.mainActivityCNAE(), cnaePanel)
+		   .addLabelWidgetRow(AON.MSG.periodType(), periodType)
+		   .addLabelWidgetRow("", periodPanel)
+		   .addLabelWidgetRow(AON.MSG.complementary(), complementaryPanel);
+		
+		// ESTADOS DE CUENTAS
+		
+		basePanel.add(getSubtitle("Estados de Cuentas"));
+		
+		AonDisplayTable tab2 = new AonDisplayTable();
+		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab2.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab2);
+		
+		balanceSheetType.addItem("Modalidad Normal");
+		balanceSheetType.addItem("Modalidad Abreviada");
+		balanceSheetType.addItem("Modalidad PYMES");		
+		balanceSheetType.addChangeHandler( event -> {
+			callback.markAsDirty();
+		});		
+		
+		ecpnType.addItem("Modalidad Normal");
+		ecpnType.addItem("Modalidad Abreviado (voluntario)");
+		ecpnType.addItem("Modalidad PYMES (voluntario)");
+		ecpnType.addItem("No consta");
+		ecpnType.addChangeHandler( event -> {
+			callback.markAsDirty();
+		});
+		
+		profitAndLossType.addItem("Modalidad Normal");
+		profitAndLossType.addItem("Modalidad Abreviada");
+		profitAndLossType.addItem("Modalidad PYMES");
+		profitAndLossType.addChangeHandler( event -> {
+			callback.markAsDirty();
+		});		
+				
+		tab2.addLabelWidgetRow(AON.MSG.balanceSheet(), balanceSheetType)
+		    .addLabelWidgetRow(AON.MSG.ecpn(), ecpnType)
+		    .addLabelWidgetRow(AON.MSG.profitAndLoss(), profitAndLossType);
+		
+		// PERSONAL ASALARIADO
+		
+		basePanel.add(getSubtitle("Personal asalariado"));
+		
+		AonDisplayTable tab3 = new AonDisplayTable();
+		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab3.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab3);
+		
+		c041.setMaxLength(8);
+		c041.setVisibleLength(8);		
+		c041.addValueChangeHandler(event -> {
+			callback.markAsDirty();
+		});
+		
+		c042.setMaxLength(8);
+		c042.setVisibleLength(8);		
+		c042.addValueChangeHandler(event -> {
+			callback.markAsDirty();
+		});
+		
+		tab3.addLabelWidgetRow(AON.MSG.fixedPersonal(), c041)
+	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
+		
+		// CARACTERES DE LA DECLARACION
+		
+		FlexTable charactersTable1 = new FlexTable();
+		FlexTable charactersTable2 = new FlexTable();
+		FlexTable charactersTable3 = new FlexTable();
+		
+		initializeTable(charactersTable1, DECLARATION_CHARACTERS_BLOCK1);
+		initializeTable(charactersTable2, DECLARATION_CHARACTERS_BLOCK2);
+		initializeTable(charactersTable3, DECLARATION_CHARACTERS_BLOCK3);
+		
+		FlexTable tab4 = new FlexTable();
+		tab4.addStyleName(AON.CSS.aonWidthAll());
+		tab4.getColumnFormatter().setWidth(0, "33%");
+		tab4.getColumnFormatter().setWidth(1, "33%");
+		tab4.getColumnFormatter().setWidth(2, "33%");
+		tab4.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+		tab4.getCellFormatter().setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
+		tab4.getCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_TOP);
+		
+		tab4.setWidget(0, 0, getSubtitle("Tipo de Entidad"));
+		tab4.setWidget(1, 0, charactersTable1);
+		tab4.setWidget(0, 1, getSubtitle("Reg\u00EDmenes Aplicables"));
+		tab4.setWidget(1, 1, charactersTable2);
+		tab4.setWidget(0, 2, getSubtitle("Otros caracteres"));
+		tab4.setWidget(1, 2, charactersTable3);
+		
+		basePanel.add(getTitle("CARACTERES DE LA DECLARACION"));
+		basePanel.add(tab4);
+				
+	}
+	
+	private void initializeTable(FlexTable table, Mod2002020Key[] declarationCharatersBlock) {
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		ColumnFormatter cf = table.getColumnFormatter();
+		cf.setStyleName(0, AON.AON_CSS.aonWidth40());
+		cf.setStyleName(1, AON.AON_CSS.aonWidthAuto());
+		
+		int row = 0;
+		
+		for (final Mod2002020Key key : declarationCharatersBlock ) {
+			if (key != Mod2002020Key.C0012R) {
+			   AonBoxLabel l = new AonBoxLabel( key.getCode() , Model2002020.BOX_LENGTH );
+			   table.setWidget(row, 0, l);
+			}
+			
+			final CheckBox check = new CheckBox(key.getDescription() + (NOT_SUPPORTED_CHARACTERS.contains(key)?" (NO)":""));
+			check.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					if (NOT_SUPPORTED_CHARACTERS.contains(key)) {
+						AonMessageDialog.error(AON.MSG.unsupportedCharacter(key.getDescription()));
+						check.setValue(false);
+					} else {
+						changeAvailability(key);
+						callback.markAsDirty();
+					}
+				}				
+			});
+			inputs.put(key, check);
+			check.setStyleName(AON.AON_CSS.aonFiscalCheckbox());
+			table.setWidget(row, 1, check);
+			row++;
 		}
 	}
 	
