@@ -77,20 +77,19 @@ public class SalaryHours2022UpdateDaily implements Update {
 		calendar.set(Calendar.YEAR, 2021);
 		Date end2021Date = new Date(calendar.getTimeInMillis());
 
-		Integer maxBaseCgcMinHora = 
-		dslContext.select(DSL.max(SYSTEM_DATA.ID))
-		.from(SYSTEM_DATA)
-		.where(SYSTEM_DATA.DOMAIN.eq(0))
-		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN_HORA"))
-		.and(SYSTEM_DATA.START_DATE.eq(startSeptember2021Date))
-		.fetchOne().value1();
-
+		
 		DeleteConditionStep<SystemDataRecord> deleteDuplicates2021BaseCgcMinHora 
 		= dslContext.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN_HORA"))
 		.and(SYSTEM_DATA.START_DATE.eq(startSeptember2021Date))
-		.and(SYSTEM_DATA.ID.lt(	maxBaseCgcMinHora));
+		.and(SYSTEM_DATA.ID.lt(		
+		DSL.select(DSL.max(SYSTEM_DATA.ID))
+		.from(SYSTEM_DATA)
+		.where(SYSTEM_DATA.DOMAIN.eq(0))
+		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN_HORA"))
+		.and(SYSTEM_DATA.START_DATE.eq(startSeptember2021Date))
+		));
 		
 		
 		UpdateConditionStep<SystemDataRecord> 

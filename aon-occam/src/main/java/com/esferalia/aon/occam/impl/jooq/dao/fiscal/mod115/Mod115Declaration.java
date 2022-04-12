@@ -200,7 +200,7 @@ public abstract class Mod115Declaration {
 		final Map<Mod115Key,Set<String>> pdocs = new EnumMap<>(Mod115Key.class);
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream = null;
-		if (mustApplyReplacementSearch(mod115)) {
+		if (getComplementaryBehaviour(mod115) == ComplementaryBeahaviour.REPLACEMENT) {
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod115);
 		} else {
 			stream = IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod115);	
@@ -220,11 +220,6 @@ public abstract class Mod115Declaration {
 		} else {
 			mod115.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
 		}
-	}
-	
-	protected boolean mustApplyReplacementSearch( Mod115 mod115 ) {
-		return (mod115.isReplacement()
-			|| (mod115.isComplementary() && getComplementaryBehaviour(mod115) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
 	
 	abstract Mod115 initialize(AONContext ctx, Mod115 mod115);

@@ -3,9 +3,9 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2019;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Model2002019.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Constants;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Key;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;

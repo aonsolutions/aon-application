@@ -1,23 +1,24 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
-import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ParticipationPanel extends AonCustomDialog {
+public class ParticipationPanel extends CustomDialog {
 	
 	public static interface ParticipationPanelCallback {
 		void onAccept(int index, Mod200CompanyParticipation cp);
@@ -26,25 +27,58 @@ public class ParticipationPanel extends AonCustomDialog {
 			this.onCancel();
 		}
 	}
+
+	interface ParticipationPanelBinder extends UiBinder<Widget, ParticipationPanel> {
+	}
+	private static final ParticipationPanelBinder participationPanelBinder = GWT
+			.create(ParticipationPanelBinder.class);
+
+	@UiField
+	Button acceptButton;
+	@UiField
+	Button cancelButton;
 	
-	private AonDocumentTextBox document = new AonDocumentTextBox();
-	private AonTextBox name = new AonTextBox();
-	private ProvinceCountryListBox province = new ProvinceCountryListBox();
-	private AonDoubleBox percent = new AonDoubleBox();
-	private AonDoubleBox nominalValue = new AonDoubleBox();
-	private AonDoubleBox bookValue = new AonDoubleBox();
-	private AonDoubleBox incomes = new AonDoubleBox();
-	private AonDoubleBox aValue = new AonDoubleBox();
-	private AonDoubleBox bValue = new AonDoubleBox();
-	private AonDoubleBox cValue = new AonDoubleBox();
-	private AonDoubleBox dValue = new AonDoubleBox();
-	private AonDoubleBox eValue = new AonDoubleBox();
-	private AonDoubleBox fValue = new AonDoubleBox();
-	private AonDoubleBox gValue = new AonDoubleBox();
-	private AonDoubleBox capital = new AonDoubleBox();
-	private AonDoubleBox reserve = new AonDoubleBox();
-	private AonDoubleBox otherAmounts = new AonDoubleBox();
-	private AonDoubleBox result = new AonDoubleBox();
+	@UiField
+	TextBox document;
+	@UiField
+	TextBox  name;
+	@UiField
+	ProvinceCountryListBox  province;
+	
+	@UiField
+	DoubleBox percent;
+
+	@UiField
+	DoubleBox nominalValue;
+	
+	@UiField
+	DoubleBox bookValue;
+	@UiField
+	DoubleBox incomes;
+	
+	@UiField
+	DoubleBox aValue;
+	@UiField
+	DoubleBox bValue;
+	@UiField
+	DoubleBox cValue;
+	@UiField
+	DoubleBox dValue;
+	@UiField
+	DoubleBox eValue;
+	@UiField
+	DoubleBox fValue;
+	@UiField
+	DoubleBox gValue;
+	
+	@UiField
+	DoubleBox capital;
+	@UiField
+	DoubleBox reserve;
+	@UiField
+	DoubleBox otherAmounts;
+	@UiField
+	DoubleBox result;
 
 	private ParticipationPanelCallback callback;
 	private int index;
@@ -56,7 +90,8 @@ public class ParticipationPanel extends AonCustomDialog {
 		setGlassEnabled(true);
 		setModal(true);
 		setCaption(AON.MSG.participationsOut());
-		paint();
+		Widget ui = participationPanelBinder.createAndBindUi(this);
+		setWidget(ui);
 	}
 
 	public void dump(int index, Mod200CompanyParticipation companyParticipation) {
@@ -89,14 +124,23 @@ public class ParticipationPanel extends AonCustomDialog {
 		this.result.setValue(companyParticipation.getResult());
 	}
 
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent event) {
+		onAccept();
+	}
+	@UiHandler("cancelButton")
+	void onCancelButtonClick(ClickEvent event) {
+		onCancel();
+	}
+	
 	@Override
 	public void onClose() {
 		onCancel();	
 	}
 	
 	public void onCancel() {
-		AonConfirmDialog cd = new AonConfirmDialog();
-		cd.confirm(AON.MSG.cancelAction(), new AonConfirmDialogCallback() {
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm(AON.MSG.cancelAction(), new ConfirmDialogCallback() {
 			
 			@Override
 			public void onCancel() {}
@@ -136,125 +180,6 @@ public class ParticipationPanel extends AonCustomDialog {
 		companyParticipation.setResult(this.result.getValue());
 		callback.onAccept(index,companyParticipation);
 		this.hide();
-	}
-	
-	private void paint() {
-		
-		FlowPanel rootPanel = new FlowPanel();
-		
-		Label label = new Label(AON.MSG.partMsg1_2018());
-		label.setStyleName(AON.CSS.aonMargin());
-		label.addStyleName(AON.CSS.aonBold());
-		label.addStyleName(AON.CSS.aonWidthAlmostAll());
-		label.addStyleName(AON.CSS.aonBlockCenter());
-		rootPanel.add(label);
-		
-		// Datos de la participada
-		
-		rootPanel.add(getSubtitle(AON.MSG.partMsg2()));
-		
-		AonDisplayTable tab1 = new AonDisplayTable();
-		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab1.addStyleName(AON.CSS.aonBlockCenter());
-		rootPanel.add(tab1);
-
-		document.setVisibleLength(9);
-		name.setVisibleLength(40);
-		name.setMaxLength(30);
-		
-		addRow(tab1, AON.MSG.nif(), document);
-		addRow(tab1, AON.MSG.companyName(), name);
-		addRow(tab1, AON.MSG.province() + "/" + AON.MSG.country(), province);
-		
-		// Datos en los registros de la declarante
-		
-		rootPanel.add(getSubtitle(AON.MSG.partMsg3()));
-		
-		AonDisplayTable tab2 = new AonDisplayTable();
-		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab2.addStyleName(AON.CSS.aonBlockCenter());
-		rootPanel.add(tab2);
-		
-		addRow(tab2, AON.MSG.partMsg4(), percent);
-		addRow(tab2, AON.MSG.partMsg5(), nominalValue);
-		addRow(tab2, AON.MSG.partMsg6(), bookValue);
-		addRow(tab2, AON.MSG.partMsg7(), incomes);
-		
-		// Correcciones valorativas por deterioro y cambio de valor razonable
-		
-		rootPanel.add(getSubtitle(AON.MSG.partMsg8()));
-		
-		AonDisplayTable tab3 = new AonDisplayTable();
-		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab3.addStyleName(AON.CSS.aonBlockCenter());
-		rootPanel.add(tab3);
-		
-		addRow(tab3, AON.MSG.partMsg9(), aValue);
-		addRow(tab3, AON.MSG.partMsg101(), bValue);
-		addRow(tab3, AON.MSG.partMsg111(), cValue);
-		addRow(tab3, AON.MSG.partMsg123(), dValue);
-		addRow(tab3, AON.MSG.partMsg124(), eValue);
-		addRow(tab3, AON.MSG.partMsg125(), fValue);
-		addRow(tab3, AON.MSG.partMsg126(), gValue);
-		
-		// Datos adicionales de la participada
-		
-		rootPanel.add(getSubtitle(AON.MSG.partMsg13()));
-		
-		AonDisplayTable tab4 = new AonDisplayTable();
-		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab4.addStyleName(AON.CSS.aonBlockCenter());
-		rootPanel.add(tab4);
-		
-		addRow(tab4, AON.MSG.partMsg14(), capital);
-		addRow(tab4, AON.MSG.partMsg15(), reserve);
-		addRow(tab4, AON.MSG.partMsg16(), otherAmounts);
-		addRow(tab4, AON.MSG.partMsg17(), result);
-		
-		// Botones Aceptar y Cancelar
-		
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.CSS.aonPadding());
-		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
-		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
-
-		Button acceptButton = new Button();
-		acceptButton.setStyleName(AON.CSS.aonOkButton());
-		acceptButton.setText(AON.MSG.accept());
-		acceptButton.addClickHandler(event -> {
-			onAccept();
-		});
-		
-		Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
-    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
-    	cancelButton.setText( AON.MSG.cancelAction());
-		cancelButton.addClickHandler(event -> {
-			onCancel();
-		});
-		
-		buttonsPanel.add(acceptButton);
-		buttonsPanel.add(cancelButton);
-		rootPanel.add(buttonsPanel);
-		
-		add(rootPanel);
-		
-	}
-	
-	private Label getSubtitle(String text) {
-		Label subtitle = new Label(text);
-		subtitle.setStyleName(AON.CSS.aonMarginTop());
-		subtitle.addStyleName(AON.CSS.aonBold());
-		subtitle.addStyleName(AON.CSS.aonWidthAlmostAll());
-		subtitle.addStyleName(AON.CSS.aonBlockCenter());
-		subtitle.addStyleName(AON.CSS.aonBorderBottom());
-		return subtitle;
-	}
-	
-	public void addRow(AonDisplayTable tab, String label, Widget widget) {
-		tab.addRow()
-			.addCell(new Label(label), AON.CSS.aonWidth600(), AON.CSS.aonBorderBottom())
-			.addCell(widget);
 	}
 
 }

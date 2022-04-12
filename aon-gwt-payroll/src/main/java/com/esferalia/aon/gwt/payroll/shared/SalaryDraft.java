@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 
 public class SalaryDraft extends SalaryPreview {
 
@@ -93,7 +92,7 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Bonus> bonuses;
 	private List<Deduction> costs;
 
-	private List<FiscalModel> fiscalModels;
+	private List<String> fiscalModels;
 
 	private List<Variable> draftContext;
 	private List<Payment> draftPayments;
@@ -107,26 +106,26 @@ public class SalaryDraft extends SalaryPreview {
 	
 
 	public SalaryDraft() {
-		context = new LinkedList<>();
-		dbContext = new LinkedList<>();
-		ssContext = new LinkedList<>();
-		events = new LinkedList<>();
-		payments = new LinkedList<>();
-		deductions = new LinkedList<>();
-		costs = new LinkedList<>();
-		bonuses = new LinkedList<>();
-		embargos = new LinkedList<>();
+		context = new LinkedList<Variable>();
+		dbContext = new LinkedList<Variable>();
+		ssContext = new LinkedList<Variable>();
+		events = new LinkedList<Event>();
+		payments = new LinkedList<Payment>();
+		deductions = new LinkedList<Deduction>();
+		costs = new LinkedList<Deduction>();
+		bonuses = new LinkedList<Bonus>();
+		embargos = new LinkedList<Deduction>();
 
-		fiscalModels = new LinkedList<>();
+		fiscalModels = new LinkedList<String>();
 
-		draftContext = new Stack<>();
-		draftPayments = new Stack<>();
-		draftDeductions = new Stack<>();
-		draftEmbargos = new Stack<>();
-		draftLeaveIts = new Stack<>();
-		draftBonuses = new Stack<>();
+		draftContext = new Stack<Variable>();
+		draftPayments = new Stack<Payment>();
+		draftDeductions = new Stack<Deduction>();
+		draftEmbargos = new Stack<Deduction>();
+		draftLeaveIts = new Stack<ITDataPerson>();
+		draftBonuses = new Stack<Bonus>();
 		
-		agreementPayments = new LinkedList<>();
+		agreementPayments = new LinkedList<Payment>();
 		
 	}
 
@@ -1002,11 +1001,11 @@ public class SalaryDraft extends SalaryPreview {
 		return this;
 	}
 	
-	public List<FiscalModel> getFiscalModels() {
+	public List<String> getFiscalModels() {
 		return fiscalModels;
 	}
 
-	public SalaryDraft addFiscalModel(FiscalModel fiscalModel) {
+	public SalaryDraft addFiscalModel(String fiscalModel) {
 		fiscalModels.add(fiscalModel);
 		return this;
 	}

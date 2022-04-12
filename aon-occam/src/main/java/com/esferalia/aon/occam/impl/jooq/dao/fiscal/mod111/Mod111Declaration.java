@@ -187,13 +187,7 @@ public abstract class Mod111Declaration {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> salaries = new HashSet<>();
-		Stream<IrpfBreakdown> stream = null;
-		if (mustApplyReplacementSearch(mod111)) {
-			stream =  IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111);
-		} else {
-			stream = 		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111);
-		}
-		stream
+		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111)
 			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
 			.map( kbr -> addSalary(salaries, kbr))
@@ -201,19 +195,6 @@ public abstract class Mod111Declaration {
 		;
 		return salaries; 
 	}
-
-//	Set<Integer> createFromSalary(final AONContext ctx, final Mod111 mod111) {
-//		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
-//		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
-//		final Set<Integer> salaries = new HashSet<>();
-//		IRPFDAO.getNotInModelSalaryIrpfBreakdown(ctx, mod111)
-//			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
-//			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
-//			.map( kbr -> addSalary(salaries, kbr))
-//			.forEach(kbr -> kbr.getKey().initialize(ctx, mod111, docs, pdocs, kbr.getIrpfBreakdown()))
-//		;
-//		return salaries; 
-//	}
 	
 	private static class KeyedIrpfBreakdown {
 		private IMod111KeyDAO key;
@@ -253,7 +234,7 @@ public abstract class Mod111Declaration {
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream = null;
-		if (mustApplyReplacementSearch(mod111)) {
+		if (getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT) {
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod111);
 		} else {
 			stream = IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod111);	
@@ -274,8 +255,8 @@ public abstract class Mod111Declaration {
 			mod111.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
 		}
 	}
-  
-	protected boolean mustApplyReplacementSearch( Mod111 mod111 ) {
+
+  protected boolean mustApplyReplacementSearch( Mod111 mod111 ) {
 		return (mod111.isReplacement()
 			|| (mod111.isComplementary() && getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}

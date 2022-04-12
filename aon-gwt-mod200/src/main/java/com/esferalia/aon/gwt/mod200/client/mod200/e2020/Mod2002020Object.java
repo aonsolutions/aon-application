@@ -5,13 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
-import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -25,15 +24,16 @@ public class Mod2002020Object implements Serializable {
 	
 	private List<IMod200ChangeListener> changeListeners;
 	
+	private String domainName;
 	private boolean initialized;
 	private Mod2002020 mod200;
+	private String user;
 	
 	private boolean authomaticCalculation = true;
-	private Model200ModuleOptions options;	
-
-	public Mod2002020Object(Model200ModuleOptions options, Mod2002020 mod200) {
-		
-		this.options = options;
+	
+	public Mod2002020Object(String currentDomainName, String user, Mod2002020 mod200) {
+		this.domainName = currentDomainName;
+		this.user = user;
 		this.mod200 = mod200;
 		initialized = mod200.getId() !=null;
 	}
@@ -63,8 +63,9 @@ public class Mod2002020Object implements Serializable {
 		
 	}
 
+	// ************************************
 	public void initializeMod200(final AsyncCallback<Mod2002020> callback) {
-		Model200.getMod2002020Service().initializeMod2002020(options.getOccam(), mod200, new AsyncCallback<Mod2002020>() {
+		Model200.getMod2002020Service().initializeMod2002020(domainName, mod200.getDomain(), user, mod200, new AsyncCallback<Mod2002020>() {
 			
 			@Override
 			public void onSuccess(Mod2002020 result) {
@@ -82,7 +83,7 @@ public class Mod2002020Object implements Serializable {
 	}
 
 	public void save(final AsyncCallback<Mod2002020> callback) {
-		Model200.getMod2002020Service().saveMod2002020(options.getOccam(), mod200, new AsyncCallback<Mod2002020>() {
+		Model200.getMod2002020Service().saveMod2002020(domainName, mod200.getDomain(), user, mod200, new AsyncCallback<Mod2002020>() {
 			
 			@Override
 			public void onSuccess(Mod2002020 result) {
@@ -98,7 +99,7 @@ public class Mod2002020Object implements Serializable {
 	}
 	
 	public void delete(final AsyncCallback<Void> callback) {
-		Model200.getMod2002020Service().deleteMod2002020(options.getOccam(), mod200.getId(), new AsyncCallback<Void>() {
+		Model200.getMod2002020Service().deleteMod2002020(domainName,mod200.getDomain(), user, mod200.getId(), new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -113,7 +114,7 @@ public class Mod2002020Object implements Serializable {
 	}
 	
 	public void fillMod2002020AccountingData(String domainName, int domain, String user, String data, final AsyncCallback<Mod2002020> callback) {
-		Model200.getMod2002020Service().fillMod2002020AccountingData(options.getOccam(), mod200, data, new AsyncCallback<Mod2002020>() {
+		Model200.getMod2002020Service().fillMod2002020AccountingData(domainName, domain, user, mod200, data, new AsyncCallback<Mod2002020>() {
 			
 			@Override
 			public void onSuccess(Mod2002020 result) {
@@ -130,6 +131,8 @@ public class Mod2002020Object implements Serializable {
 			}
 		});
 	}
+	
+	// ************************************
 	
 	public Administration getAdministration() {
 		return mod200.getAdministration();
@@ -172,7 +175,6 @@ public class Mod2002020Object implements Serializable {
 			calculate();
 		}
 	}
-	
 	public void mathExpression(String expression,AsyncCallback<Double> callback) {
 		try {
 			double ret = Model200.resolve(expression);
@@ -197,6 +199,22 @@ public class Mod2002020Object implements Serializable {
 		});
 	}
 
+	public void validate(final AsyncCallback<Mod2002020> callback) {
+		Model200.getMod2002020Service().validateMod2002020(mod200, new AsyncCallback<Mod2002020>() {
+			
+			@Override
+			public void onSuccess(Mod2002020 result) {
+				mod200 = result;
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
 	public void dumpAEAT(final AsyncCallback<String> callback) {
 		Model200.getMod2002020Service().dumpAEATMod2002020(mod200, new AsyncCallback<String>() {
 			
@@ -213,7 +231,7 @@ public class Mod2002020Object implements Serializable {
 	}
 
 	public void getCompanyBanks(final AsyncCallback<LinkedList<CompanyBank>> callback) {
-		Model200.getMod2002020Service().getCompanyBanks(options.getOccam(), new AsyncCallback<LinkedList<CompanyBank>>() {
+		Model200.getMod2002020Service().getCompanyBanks(domainName,mod200.getDomain(),user,new AsyncCallback<LinkedList<CompanyBank>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<CompanyBank> result) {
@@ -226,5 +244,6 @@ public class Mod2002020Object implements Serializable {
 			}
 		});
 	}
+	
 
 }

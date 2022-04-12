@@ -66,10 +66,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.occam.api.json.IJsonNames;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -77,7 +73,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -96,6 +91,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -112,11 +108,6 @@ import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safecss.shared.SafeStyles;
-import com.google.gwt.safecss.shared.SafeStylesUtils;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -216,23 +207,10 @@ public class SalaryDraft extends ResizeComposite
 		STANDARD_COLS
 	}
 
-	private static Map<Administration, String> ADMINISTRATION_ICONS = new HashMap<Administration, String>() {
-		private static final long serialVersionUID = 784424826829639284L;
-
-		{
-			put(Administration.ALAVA, AON.AON_ICON_ARABA);
-			put(Administration.BIZKAIA, AON.AON_ICON_BIZKAIA);
-			put(Administration.GIPUZKOA, AON.AON_ICON_GIPUZKOA);
-			put(Administration.NAVARRA, AON.AON_ICON_NAVARRA);
-			put(Administration.COMMON_TERRITORY, AON.AON_ICON_AET);
-		}
-	};
-
 	private static Map<String, String> IRPF_ICONS = new HashMap<String, String>() {
 		private static final long serialVersionUID = 784424826829639284L;
 
 		{
-			put(null, AON.AON_ICON_AET);
 			put("01", AON.AON_ICON_ARABA);
 			put("48", AON.AON_ICON_BIZKAIA);
 			put("20", AON.AON_ICON_GIPUZKOA);
@@ -2726,14 +2704,6 @@ public class SalaryDraft extends ResizeComposite
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	static interface Template extends SafeHtmlTemplates {
-
-		@Template("<span style=\"padding-right: 4.00em;\">{0}</span><span style=\"{1}; color: black; float:right\">{2}</span>")
-		SafeHtml fiscalModelItem(String title, SafeStyles style, String message);
-	}
-
-	private static final Template template = GWT.create(Template.class);	
-	
 	@UiField
 	FlowPanel toolbar;
 	
@@ -3007,7 +2977,6 @@ public class SalaryDraft extends ResizeComposite
 
 	@Override
 	public void onChange(SalarySelect salarySelect) {
-		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
 		extraButton.setVisible(!hasFiscalModels() && isExtra());
 		settleButton.setVisible(!hasFiscalModels() && isSettle());
@@ -3054,7 +3023,6 @@ public class SalaryDraft extends ResizeComposite
 		setAutomatic(  isAutomatic());
 		setReadOnly(  isReadOnly());
 		
-		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
 		extraButton.setVisible(!hasFiscalModels() && isExtra());
 		settleButton.setVisible(!hasFiscalModels() && isSettle());
@@ -3086,7 +3054,7 @@ public class SalaryDraft extends ResizeComposite
 			public void run() {
 				ContextMenu contextMenu = new ContextMenu();
 				salaryDraftObject.getFiscalModels()
-				.forEach( fiscalModel -> contextMenu.addItem("Modelo " + fiscalModel.getModelFullName(), newMenuBar(fiscalModel)));
+				.forEach( text -> contextMenu.addItem(text, () -> {}));
 				contextMenu.showRelativeTo(fiscalModelsButton);
 			}
 		};
@@ -3291,46 +3259,6 @@ public class SalaryDraft extends ResizeComposite
 	void onSettlePreviewChange(ChangeEvent event) {
 		printSettle();
 	}
-	
-	private void setFiscalModelIcon(Widget widget) {
-		if ( salaryDraftObject == null )
-			return;
-		List<FiscalModel> fiscalModels = 
-		salaryDraftObject.getFiscalModels();
-		
-		if ( fiscalModels == null || fiscalModels.isEmpty() )
-			return;
-		
-		ADMINISTRATION_ICONS.values().forEach(widget::removeStyleName);
-		
-		Administration administration =
-		fiscalModels.stream()
-		.map(FiscalModel::getAdministration)
-		.filter(Objects::nonNull)
-		.reduce(Administration.COMMON_TERRITORY, (a1,a2) -> a1.compareTo(a2) <= 0 ? a1 : a2 );
-		
-		widget.addStyleName(ADMINISTRATION_ICONS.getOrDefault(administration, AON.AON_ICON_AET));
-	}
-	
-	private MenuBar newMenuBar(FiscalModel fiscalModel) {
-		MenuBar menuBar = new MenuBar(true);
-		FiscalStatus status = fiscalModel.getStatus();
-		if ( status == null ) {
-			status = FiscalStatus.MISSING;
-		}
-		menuBar.addItem(template.fiscalModelItem("Estado", SafeStylesUtils.forFontWeight(FontWeight.BOLD), status.getName()), () -> {} );
-		
-		String document = fiscalModel.getDocument();
-		if ( document == null ) {
-			document = "";
-		}
-		menuBar.addItem(template.fiscalModelItem("Documento", SafeStylesUtils.forFontWeight(FontWeight.BOLD), document), () -> {} );
-
-		Double result = AonNumberUtils.todouble(fiscalModel.getDeclarationResult()); 
-		menuBar.addItem(template.fiscalModelItem("Resultado", SafeStylesUtils.forFontWeight(FontWeight.BOLD), format(result)), () -> {} );
-
-		return menuBar;
-	}
 
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
@@ -3382,7 +3310,6 @@ public class SalaryDraft extends ResizeComposite
 		notDefinedVarsCheck.setVisible(true);
 		disabledPaymentsCheck.setVisible(true);
 		
-		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
 		extraButton.setVisible(!hasFiscalModels() && isExtra());
 		settleButton.setVisible(!hasFiscalModels() && isSettle());

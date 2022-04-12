@@ -2,92 +2,109 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Constants;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class Page14 extends PageAbs {
 
-	private AonTextBox nrsAnexoIII = new AonTextBox();
-	private AonTextBox justCanarias = new AonTextBox();
-	private AonTextBox nrsAnexoIV = new AonTextBox();
-	private AonTextBox nrsAnexoV = new AonTextBox();
-	private AonTextBox nrsAnexoVric = new AonTextBox();
-	private AonTextBox justActivos = new AonTextBox();
+	interface PageBinder extends
+			UiBinder<Widget, Page14> {
+	}
+
+	private static final PageBinder pageBinder = GWT
+			.create(PageBinder.class);
+
+	@UiField(provided = true)
+	FlexTable table;
+	@UiField(provided = true)
+	FlexTable table1;
+	@UiField(provided = true)
+	FlexTable table2;
+	
+	TextBox nrsAnexoIII;
+	TextBox justCanarias;
+	TextBox nrsAnexoIV;
+	TextBox nrsAnexoV;
+	TextBox nrsAnexoVric;
+	TextBox justActivos;
 
 	public Page14( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
+		table  = new FlexTable();
+		table1 = new FlexTable();
+		table2 = new FlexTable();
+		
+		nrsAnexoIII = new TextBox();
+		nrsAnexoIII.setVisibleLength(22);
+		nrsAnexoIII.setMaxLength(22);
+		nrsAnexoIII.setStyleName(AON.AON_CSS.aonInputText());
+		
+		nrsAnexoIV = new TextBox();
+		nrsAnexoIV.setVisibleLength(22);
+		nrsAnexoIV.setMaxLength(22);
+		nrsAnexoIV.setStyleName(AON.AON_CSS.aonInputText());
+		
+		nrsAnexoVric = new TextBox();
+		nrsAnexoVric.setVisibleLength(22);
+		nrsAnexoVric.setMaxLength(22);
+		nrsAnexoVric.setStyleName(AON.AON_CSS.aonInputText());
+		
+		nrsAnexoV = new TextBox();
+		nrsAnexoV.setVisibleLength(22);
+		nrsAnexoV.setMaxLength(22);
+		nrsAnexoV.setStyleName(AON.AON_CSS.aonInputText());
+		
+		justCanarias = new TextBox();
+		justCanarias.setVisibleLength(22);
+		justCanarias.setMaxLength(13);
+		justCanarias.setStyleName(AON.AON_CSS.aonInputText());
+		
+		justActivos = new TextBox();
+		justActivos.setVisibleLength(22);
+		justActivos.setMaxLength(13);
+		justActivos.setStyleName(AON.AON_CSS.aonInputText());
+
+		Widget ui = pageBinder.createAndBindUi(this);
+		initWidget(ui);
 		initializeTable();
 	}
 
 	@Override
 	protected void initializeTable() {
-		
-		basePanel.clear();
-		
-		basePanel.add(getTitle(AON.MSG.incomeDistribution()));
-		
-		basePanel.add(getSubtitle(AON.MSG.distributionBases()));
-		
-		addTable("", Mod2002020Constants.INCOME_DISTRIBUTION_KEYS_1);
-		
-		basePanel.add(getSubtitle(AON.MSG.aplication()));
-		
-		FlexTable table1 = addTable();
-
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		table.getColumnFormatter().setWidth(1, "200px");
 		int row = 0;
+		for (final Mod2002020Key key : Mod2002020Constants.INCOME_DISTRIBUTION_KEYS_1) {
+			if (callback.getMod200Object().isVisible(key)) {
+				row = paintKey(table,key,row);
+			}
+		}
+
+		table1.setWidth("100%");
+		table1.setCellSpacing(0);
+		table1.getColumnFormatter().setWidth(1, "200px");
+		row = 0;
 		for (final Mod2002020Key key : Mod2002020Constants.INCOME_DISTRIBUTION_KEYS_2) {
 			if (callback.getMod200Object().isVisible(key)) {
 				row = paintKey(table1,key,row);
 				if (key == Mod2002020Key.ID1270 || key == Mod2002020Key.ID1271 || key == Mod2002020Key.ID1522) {
 					table1.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
-				}				
+				}
+				
 			}
 		}
-		
-		basePanel.add(getTitle(AON.MSG.documentsElectronicSede()));
-		
-		nrsAnexoIII.setVisibleLength(22);
-		nrsAnexoIII.setMaxLength(22);
-		nrsAnexoIV.setVisibleLength(22);
-		nrsAnexoIV.setMaxLength(22);
-		nrsAnexoVric.setVisibleLength(22);
-		nrsAnexoVric.setMaxLength(22);
-		nrsAnexoV.setVisibleLength(22);
-		nrsAnexoV.setMaxLength(22);
-		justCanarias.setVisibleLength(22);
-		justCanarias.setMaxLength(13);
-		justActivos.setVisibleLength(22);
-		justActivos.setMaxLength(13);
-		
-		nrsAnexoIII.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
 
-		nrsAnexoIV.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-
-		nrsAnexoVric.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-
-		nrsAnexoV.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-
-		justCanarias.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-
-		justActivos.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-
-		FlexTable table2 = addTable();
+		table2.setWidth("100%");
+		table2.setCellSpacing(0);
+		table2.getColumnFormatter().setWidth(1, "200px");
 		
 		paintDescription(table2, AON.MSG.nrsAnexoIII(), 0, 0, false);
 		table2.setWidget(0, 1, nrsAnexoIII);
@@ -119,7 +136,6 @@ public class Page14 extends PageAbs {
 		nrsAnexoVric.setValue( callback.getMod200Object().getMod200().getNrsAnexoVric());
 		justActivos.setValue( callback.getMod200Object().getMod200().getJustActivos());
 	}
-	
 	@Override
 	public void populate() {
 		callback.getMod200Object().getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());

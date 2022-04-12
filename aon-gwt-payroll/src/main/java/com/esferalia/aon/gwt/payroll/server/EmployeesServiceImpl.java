@@ -3416,9 +3416,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
-	private static Collection<FiscalModel> getFiscalModels(Connection conn, ISalary salary) throws ManagerBeanException {
+	private static Collection<String> getFiscalModels(Connection conn, ISalary salary) throws ManagerBeanException {
 		AONContext aonContext = new AONContext(conn);
-		return AON.getFiscalModels(aonContext, new com.esferalia.aon.occam.api.model.Salary().setId(salary.getId()));
+		return AON.getFiscalModels(aonContext, new com.esferalia.aon.occam.api.model.Salary().setId(salary.getId()))
+		.stream().map( FiscalModel::getModelFullName).collect(Collectors.toList());
 	}
 
 	private static List<Variable> getDBSalaryData(Connection conn, ISalary salary) throws ManagerBeanException {
@@ -6355,7 +6356,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Double coefD = Double.parseDouble(coef);
 			if (coefD != null) {
 				coefD = coefD * 1000;
-				String coefStr = coefD.intValue() + "";
+				String coefStr = coefD.toString();
 				coef = AonStringUtils.leftPad(coefStr, 3, '0');
 			}
 
@@ -6365,10 +6366,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
-					employeeAux.getNss(), fecha, Optional.empty(), coef);
+					employeeAux.getNss(), fecha, null, coef);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
 				throw new IllegalArgumentException("No existe certificado TGSS para realizar esta comunicacion");
 			throw new IllegalArgumentException(e.getMessage());

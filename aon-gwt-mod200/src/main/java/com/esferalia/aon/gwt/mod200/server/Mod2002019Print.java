@@ -14,7 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -27,10 +26,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.esferalia.aon.occam.mod200.api.FISCAL;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002019Writer;
+import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
+import com.esferalia.aon.occam.server.fiscal.format.Mod2002019Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")

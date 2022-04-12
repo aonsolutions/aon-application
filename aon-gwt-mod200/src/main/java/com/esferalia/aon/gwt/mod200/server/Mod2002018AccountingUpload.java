@@ -10,7 +10,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2018.jaxb.MOD2002018;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2018.jaxb.MOD2002018;
 
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;

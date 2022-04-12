@@ -286,7 +286,7 @@ public class JooqContractAttach {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		Integer contractAttachId = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.TYPE.eq((byte)99))
+				.where(CONTRACT_ATTACH.TYPE.eq((byte)98))
 				.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 				.fetchOne(CONTRACT_ATTACH.ID);
 		

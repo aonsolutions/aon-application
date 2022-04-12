@@ -1,24 +1,24 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2015;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.IMod200KeysProvider;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015Constants;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015LQ1032Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015LQ1033_1Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015LQ1033_2Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015LQ547Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015LQ554Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015LQ561Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015LQ579Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.IMod200KeysProvider;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ1032Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ1033_1Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ1033_2Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ547Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ554Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ561Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ579Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 

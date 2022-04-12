@@ -1,12 +1,12 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2013;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013Constants;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013LQ547Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013LQ554Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013LQ561Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013LQ579Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ547Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ554Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ561Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013LQ579Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;

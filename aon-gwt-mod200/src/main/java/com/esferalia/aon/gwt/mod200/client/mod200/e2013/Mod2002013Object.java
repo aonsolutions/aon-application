@@ -6,10 +6,10 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.DoubleVariable2013;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013Key;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

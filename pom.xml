@@ -54,7 +54,6 @@
 		<!-- CORE  -->
 		<module>aon-watson</module>
 		<module>aon-occam</module>
-		<module>aon-occam-mod200</module>
 		
 		<!-- FRAMEWORK -->
 		<module>aon-audit</module>

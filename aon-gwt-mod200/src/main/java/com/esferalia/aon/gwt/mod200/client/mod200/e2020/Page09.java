@@ -3,26 +3,37 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.IMod200KeysProvider;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Constants;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ1032Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ1033_1Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ1033_2Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ547Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ554Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ561Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ579Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.IMod200KeysProvider;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020LQ1032Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020LQ1033_1Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020LQ1033_2Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020LQ547Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020LQ554Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020LQ561Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020LQ579Key;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class Page09 extends PageAbs {
 	
+	interface PageBinder extends
+			UiBinder<Widget, Page09> {
+	}
+
+	private static final PageBinder pageBinder = GWT
+			.create(PageBinder.class);
 	private static final String[] HEADERS_2 = new String[]{"",
 		 AON.MSG.previousPending()
 		,AON.MSG.current()
@@ -38,20 +49,24 @@ public class Page09 extends PageAbs {
 	 	,"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
 	};
 	
+	@UiField(provided = true)
+	FlexTable table;
+
 	public Page09( Model200PageCallback callback ) {
 		super(callback);
-		addBasePanel();
+		table = new FlexTable();
+		Widget ui = pageBinder.createAndBindUi(this);
+		initWidget(ui);
 		initializeTable();
 	}
 	
 	@Override
 	protected void initializeTable() {
+		table.setWidth("100%");
+		table.setCellSpacing(0);
 		
-		basePanel.clear();
-		
-		basePanel.add(getTitle("BASE IMPONIBLE. CUOTA INTEGRA"));
-		
-		FlexTable table = addTable();
+		ColumnFormatter cf = table.getColumnFormatter();
+		cf.setWidth(1, "200px");
 
 		int row = 0;
 		boolean margin = false;
@@ -227,7 +242,6 @@ public class Page09 extends PageAbs {
 		
 		return ++row;
 	}
-	
 	@Override
 	protected boolean isDisabled(IMod200Key key) {
 		if (key == Mod2002020Key.LQ1032 
@@ -249,5 +263,4 @@ public class Page09 extends PageAbs {
 	
 	@Override
 	protected void populate() {}
-	
 }

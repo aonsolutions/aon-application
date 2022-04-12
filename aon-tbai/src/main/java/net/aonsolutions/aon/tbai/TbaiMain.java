@@ -57,6 +57,7 @@ import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
+import net.aonsolutions.aon.sign.TbaiSigner;
 import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.lroe.LROE140_1_1;
@@ -132,7 +133,7 @@ public class TbaiMain {
 
 			byte[] data = bos.toByteArray();
 			TbaiSign tbaiSign = new TbaiSign();
-			byte[] xml = tbaiSign.sign(tbaiConfiguration, data);
+			byte[] xml = TbaiSigner.getInstance().sign(tbaiConfiguration, data);
 			String sign = tbaiSign.getSign(xml);
 			TbaiResponse response = new TbaiResponse().setResponseStatus("pending").setSign(sign)
 				.setTbaiId(tbaiSign.buildTbaiId(tbai, sign));
@@ -205,8 +206,7 @@ public class TbaiMain {
 		jaxbMarshaller.marshal(tbai, bos);
 		byte[] data = bos.toByteArray();
 
-		TbaiSign tbaiSign = new TbaiSign();
-		byte[] xml = tbaiSign.sign(tbaiConfiguration, data);
+		byte[] xml = TbaiSigner.getInstance().sign(tbaiConfiguration, data);
 		DataRequest request = tbaiData.saveRequestAnulacion(company.getDomain(), new User().setLogin(""), invoice, xml);
 		if (!tbaiConfiguration.isBizkaia()) {
 			String uri = TbaiUri.getUrlAnulacion(tbaiConfiguration);

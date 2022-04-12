@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.mod200.client.mod200;
 
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -7,8 +8,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
-import com.esferalia.aon.gwt.mod200.client.IFiscalModelCallback;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.mod200.client.MainEntryPoint;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2013.Mod2002013Object;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2013.Model2002013;
@@ -24,49 +24,55 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018Object;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Model2002018;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019Object;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Model2002019;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Service;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020ServiceAsync;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020ServiceAsyncDecorator;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Object;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.mod200.api.model.Mod200;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.NoSelectionModel;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model200 extends MainEntryPoint {
-	
 	private static final Logger LOGGER = Logger.getLogger(Model200.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
-// POR AHORA NO SE MUESTRA NADA EN EL PANEL DE INFORMACION DE LA PARTE INFERIOR, POR LO TANTO NO SE UTILIZA
-// ANTES EN LA PARTE INFERIOR DEL MODELO 200 SE MOSTRABAN LOS ERRORES, PERO AHORA LOS ERRORES APARECEN EN EL 
-// PANEL SUPERIOR POR LO TANTO EL PANEL INFERIOR POR AHORA NO CONTIENE NADA
-//	private static final int INFORMATION_TAB = 0;
-	
-	public static final Mod200ServiceAsync MOD200_SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-		
-		Mod200ServiceAsync serviceRaw = GWT.create(Mod200Service.class);
-		MOD200_SERVICE = new Mod200ServiceAsyncDecorator(serviceRaw);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
 	}
 	
+	static Mod200ServiceAsync mod200Service;
 	static Mod2002013ServiceAsync mod2002013Service;
 	static Mod2002014ServiceAsync mod2002014Service;
 	static Mod2002015ServiceAsync mod2002015Service;
@@ -76,21 +82,17 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002019ServiceAsync mod2002019Service;
 	static Mod2002020ServiceAsync mod2002020Service;
 	
-	private Model200ModuleOptions options;
-
-	private AonLayoutPanel aonLayout;
-//	private SplitLayoutPanel splitLayoutPanel;
-	private SimpleLayoutPanel declarationContainer;
+	Model200Table table;
+	DeckLayoutPanel deckPanel;
+	SimpleLayoutPanel container;
 	
-	private Model200Table model200Table;
-	
-//	private AonMinimizePanel footPanel;
-//	private TabLayoutPanel tabLayout;
-//	private ScrollPanel breakdownPanel;
-	
-//	Model200Table table;
-//	DeckLayoutPanel deckPanel;
-//	SimpleLayoutPanel container;
+	public static Mod200ServiceAsync getMod200Service() {
+		if (mod200Service == null) {
+			Mod200ServiceAsync mod200ServiceRaw = GWT.create(Mod200Service.class);
+			mod200Service = new Mod200ServiceAsyncDecorator(mod200ServiceRaw);
+		}
+		return mod200Service;
+	}
 	
 	public static Mod2002020ServiceAsync getMod2002020Service() {
 		if (mod2002020Service == null) {
@@ -156,89 +158,14 @@ public class Model200 extends MainEntryPoint {
 		return mod2002013Service;
 	}
 
-	public class Model200Callback implements IFiscalModelCallback<Mod200, Model200ModuleOptions> {
-		
-		// LO PONGO POR AHORA PARA COMPILAR LOS Model200*
+	public class Model200Callback {
 		public void canceled() {
-			cleanErrorMessage();
-			declarationContainer.setWidget(model200Table);
-			model200Table.refresh( new Model200Callback() );
-//			closeFootPanel();
+			container.clear();
+			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);	
 		}
 		public void removed() {
-			canceled();
-	    }
-		// -------------------------------------------------
-		
-		@Override
-		public Model200ModuleOptions getOptions() {
-			return Model200.this.options;
+			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		}
-
-		@Override
-		public void onAccept(Mod200 mod200) {
-			// 
-		}
-
-		@Override
-		public void onRemove(Mod200 model) {
-			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onRemove(model);
-			} else {
-				onCancel(model);
-			}
-		}
-		
-		@Override
-		public void onCancel(Mod200 mod200) {
-			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-				getOptions().getExternalCallback().onExit(mod200);
-			} else {
-				cleanErrorMessage();
-				declarationContainer.setWidget(model200Table);
-				model200Table.refresh( new Model200Callback() );
-//				closeFootPanel();
-			}
-		}
-		
-		@Override
-		public void onNew() {					
-		}
-		public void onNew(int year) {
-			newModel(getOptions(), year);			
-		}
-
-		@Override
-		public void showError(String msg) {
-			showErrorMessage(msg);
-		}
-		
-		@Override
-		public void hideError() {
-			aonLayout.hideErrorPanel();
-		}
-		
-		@Override
-		public void showInfoPanel(String htmlText) {
-//			openFootPanelIfNeeded();
-//			tabLayout.selectTab(INFORMATION_TAB);
-//			HTMLPanel panel = new HTMLPanel(htmlText);
-//			breakdownPanel.setWidget(panel);
-//			breakdownPanel.scrollToTop();
-		}
-
-		@Override
-		public void cleanInfoPanel() {
-//			Widget w = breakdownPanel.getWidget();
-//			if (w != null) {
-//				breakdownPanel.remove( breakdownPanel.getWidget() ); 
-//			}
-		}
-
-//		public void onSelect(Model200ModuleOptions options, Mod200 mod200) {
-////			select(mod200, selectedIndexDeclared, selectedIndexAsset, tabPanelIndex);
-//			changeView(options, mod200);
-//		}
 		
 		public void reset(Model200ModuleOptions options,Mod2002020 mod200) {
 			// El botón inicializar, se utiliza a partir del 2020
@@ -246,18 +173,6 @@ public class Model200 extends MainEntryPoint {
 				changeView2020(options, mod200);			
 		}
 		
-		public void cleanErrorPanel() {
-			Model200.this.cleanErrorMessage();
-		}
-		
-	}
-	
-	private void cleanErrorMessage() {
-		aonLayout.hideErrorPanel();
-	}
-	
-	private void showErrorMessage(String msg) {
-		aonLayout.showErrorPanel(msg);
 	}
 	
 	@Override
@@ -267,13 +182,13 @@ public class Model200 extends MainEntryPoint {
 			@Override
 			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-				Model200ModuleOptions opts = new Model200ModuleOptions();
-				opts.setParentWidget(root);
-				opts.setDomainName(getCurrentDomainName());
-				opts.setDomain(getCurrentDomain());
-				opts.setUser(getCurrentUser());
-				opts.setConfiguration(config);
-				onModuleLoad( opts );
+				Model200ModuleOptions options = new Model200ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setConfiguration(config);
+				onModuleLoad( options );
 			}
 			
 			@Override public void onFailure(Throwable caught) {
@@ -282,161 +197,90 @@ public class Model200 extends MainEntryPoint {
 		});
 	}
 	
-	
-//	public void onModuleLoad(Model200ModuleOptions options) {
-//		AON.ensureInjected();
-//
-//		deckPanel = new DeckLayoutPanel();
-//		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-//		tableDockLayout.addNorth(getToolbarPanel(options), 25);
-//		
-//		ScrollPanel tablePanel = new ScrollPanel();
-//		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
-//		
-//		ProvidesKey<Mod200> providesKey = new ProvidesKey<Mod200>() {
-//			@Override
-//			public Object getKey(Mod200 model) {
-//				return model == null ? null : model.getId();
-//			}
-//		};
-//		table = new Model200Table(providesKey);
-//		NoSelectionModel<Mod200> tableModel = new NoSelectionModel<Mod200>(providesKey);
-//		table.setSelectionModel(tableModel);
-//		tableModel.addSelectionChangeHandler( new SelectionChangeEvent.Handler() {
-//			
-//			@Override
-//			public void onSelectionChange(SelectionChangeEvent event) {
-//				changeView( options, tableModel.getLastSelectedObject() );
-//			}
-//		});
-//		
-//		table.addRangeChangeHandler( new RangeChangeEvent.Handler() {
-//		
-//			@Override
-//			public void onRangeChange(RangeChangeEvent event) {
-//				
-//				getMod200Service().getMod200s(options.getOccam(),
-//					new AsyncCallback<LinkedList<Mod200>>() {
-//						@Override
-//						public void onSuccess(LinkedList<Mod200> result) {
-//							int i = deckPanel.getWidgetIndex(tableDockLayout);
-//							table.setRowData(result);
-//							deckPanel.showWidget(i);
-//						}
-//	
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							Window.alert(AON.MSG.unableToReadDeclaration(AonStringUtils.abbreviate(caught.getMessage(), 300)));
-//						}
-//					});
-//
-//			}
-//		});
-//		tablePanel.setWidget(table);
-//		tableDockLayout.add(tablePanel);
-//		deckPanel.add(tableDockLayout);
-//		
-//		container = new SimpleLayoutPanel();
-//		deckPanel.add(container);
-//		
-//		options.getParentWidget().add(deckPanel);
-//		if (options.getFiscalModelId() != null ) {
-//			LOGGER.info("Access to Model200 with a ID: " + options.getFiscalModelId());
-//			onSelect(options,options.getFiscalModelId());
-//		} else if (options.getNewModel() != null ) {
-//			LOGGER.info("Access to Model200 new Model");
-//			if (options.getNewModel().getYear() == 2013) new2013(options);
-//			else if (options.getNewModel().getYear() == 2014) new2014(options); 
-//			else if (options.getNewModel().getYear() == 2015) new2015(options); 
-//			else if (options.getNewModel().getYear() == 2016) new2016(options); 
-//			else if (options.getNewModel().getYear() == 2017) new2017(options); 
-//			else if (options.getNewModel().getYear() == 2018) new2018(options); 
-//			else if (options.getNewModel().getYear() == 2019) new2019(options);
-//			else if (options.getNewModel().getYear() == 2020) new2020(options);
-//		} else {
-//			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-//			LOGGER.info("Model200 setting NOTIFICATIONS_TAB");
-//		}
-//		
-//	}
-	
 	public void onModuleLoad(Model200ModuleOptions options) {
-		this.options = options;
-		
 		AON.ensureInjected();
 
-		aonLayout = new AonLayoutPanel();
-// POR AHORA NO APARECE NADA EN LA PARTE INFERIOR DE INFORMACION, APARECIAN LOS ERRORES QUE
-// AHORA APARECEN EN EL PANEL SUPERIOR DE ERRORES, POR ESO NO LO MUESTRO
-// SE PODRIA PONER POR EJEMPLO AL INFORMACION DE LAS CASILLAS CALCULADAS O ALGO ASI, PERO PARA 
-// ESO HABRIA QUE PREPARARLO CON LO QUE QUERAMOS QUE SALGA
-//		splitLayoutPanel = new SplitLayoutPanel( 2 );
-//		aonLayout.add(splitLayoutPanel);
+		deckPanel = new DeckLayoutPanel();
+		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
+		tableDockLayout.addNorth(getToolbarPanel(options), 25);
 		
-		declarationContainer = new SimpleLayoutPanel();
-//		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
-//		splitLayoutPanel.add(declarationContainer);
-		aonLayout.add(declarationContainer);
+		ScrollPanel tablePanel = new ScrollPanel();
+		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
 		
-		model200Table = new Model200Table(new Model200Callback());
-		model200Table.addSelectionHandler(event -> onSelectionChange(options,event));
+		ProvidesKey<Mod200> providesKey = new ProvidesKey<Mod200>() {
+			@Override
+			public Object getKey(Mod200 model) {
+				return model == null ? null : model.getId();
+			}
+		};
+		table = new Model200Table(providesKey);
+		NoSelectionModel<Mod200> tableModel = new NoSelectionModel<Mod200>(providesKey);
+		table.setSelectionModel(tableModel);
+		tableModel.addSelectionChangeHandler( new SelectionChangeEvent.Handler() {
+			
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				changeView( options, tableModel.getLastSelectedObject() );
+			}
+		});
 		
-		declarationContainer.setWidget(model200Table);
+		table.addRangeChangeHandler( new RangeChangeEvent.Handler() {
+		
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				
+				getMod200Service().getMod200s(options.getDomainName(), options.getDomain(), options.getUser(),
+				new AsyncCallback<LinkedList<Mod200>>() {
+					@Override
+					public void onSuccess(LinkedList<Mod200> result) {
+						int i = deckPanel.getWidgetIndex(tableDockLayout);
+						table.setRowData(result);
+						deckPanel.showWidget(i);
+					}
 
-		options.getParentWidget().add(aonLayout);
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(AON.MSG.unableToReadDeclaration(AonStringUtils.abbreviate(caught.getMessage(), 300)));
+					}
+				});
+
+			}
+		});
+		tablePanel.setWidget(table);
+		tableDockLayout.add(tablePanel);
+		deckPanel.add(tableDockLayout);
+		
+		container = new SimpleLayoutPanel();
+		deckPanel.add(container);
+		
+		options.getParentWidget().add(deckPanel);
 		if (options.getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model200 with a ID: " + options.getFiscalModelId());
 			onSelect(options,options.getFiscalModelId());
 		} else if (options.getNewModel() != null ) {
-			newModel(options,options.getNewModel().getYear()); 
+			LOGGER.info("Access to Model200 new Model");
+			if (options.getNewModel().getYear() == 2013) new2013(options);
+			else if (options.getNewModel().getYear() == 2014) new2014(options); 
+			else if (options.getNewModel().getYear() == 2015) new2015(options); 
+			else if (options.getNewModel().getYear() == 2016) new2016(options); 
+			else if (options.getNewModel().getYear() == 2017) new2017(options); 
+			else if (options.getNewModel().getYear() == 2018) new2018(options); 
+			else if (options.getNewModel().getYear() == 2019) new2019(options);
+			else if (options.getNewModel().getYear() == 2020) new2020(options);
 		} else {
-			model200Table.refresh(new Model200Callback());
+			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+			LOGGER.info("Model200 setting NOTIFICATIONS_TAB");
 		}
+		
 	}
-	
-//	private AonMinimizePanel getMinimizePanel() {
-//		footPanel = new AonMinimizePanel();
-//		footPanel.addMinimizeHandler( event -> closeFootPanel() );
-//		footPanel.addMaximizeHandler( event -> {
-//			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
-//			splitLayoutPanel.animate(500);
-//		});
-//		footPanel.setStyleName(AON.CSS.aonSelector());
-//		tabLayout = new TabLayoutPanel(26, Unit.PX);
-//		tabLayout.setWidth("100%");
-//		footPanel.add(tabLayout);
-//		
-//		breakdownPanel = new ScrollPanel();
-//		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
-//
-//		tabLayout.setAnimationDuration(300);
-//		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
-//		return footPanel; 
-//	}
-	
-//	private void closeFootPanel() {
-//		splitLayoutPanel.setWidgetSize(footPanel, 30);
-//		splitLayoutPanel.animate(500);
-//	}
-	
-//	private void openFootPanelIfNeeded() {
-//		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-//			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
-//			splitLayoutPanel.animate(500);
-//		}
-//	}
-	
-	private void onSelectionChange(Model200ModuleOptions options, SelectionEvent<Mod200> event) {
-		Mod200 sel = event.getSelectedItem();
-		onSelect(options, sel.getId());
-	}
-	
+
 	private void onSelect(Model200ModuleOptions options, Integer id ) {
 		LOGGER.info("OnSelect Model200 with a ID: " + options.getFiscalModelId());
-		MOD200_SERVICE.getMod200(options.getOccam(), id , new AsyncCallback<Mod200>() {
+		getMod200Service().getMod200(options.getDomainName(), options.getDomain(), options.getUser(), id , new AsyncCallback<Mod200>() {
 			@Override
 			public void onSuccess(Mod200 selected) {
 				if (selected == null) {
-					showErrorMessage(AON.MSG.unableToFindDeclaration());
+					Window.alert( "Error al cargar el module" );
 				} else {
 					changeView(options, selected);
 				}
@@ -444,126 +288,127 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+				Window.alert( "Error al cargar el module" );
 			}
 		});
 	}
+	
+	private Widget getToolbarPanel(Model200ModuleOptions options) {
+		FlowPanel toolbarPanel = new FlowPanel();
+		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
+		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
+		FlexTable toolbar = new FlexTable();
+		toolbar.setCellPadding(0);
+		toolbar.setCellSpacing(0);
+		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
+		FlowPanel titlePanel = new FlowPanel();
+		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
+		toolbar.setWidget(0, 0, titlePanel);
+		toolbar.setWidget(0, 0, new Label( "Mod. 200"));
+		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
+		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
+		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
+		toolbar.setWidget(0, 1, new Label());
+		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
+		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
+		toolbar.setWidget(0, 2, buttonContainer);
+		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		
+		// Botón Nuevo 2020 
+		final Button new2020 = new Button();
+		new2020.setText(AON.MSG.newSomething("2020"));
+		//new2020.setTitle(new2020.getText()+" (Beta)");
+		new2020.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		new2020.addStyleName(AON.AON_CSS.aonIconReset());
+		//new2020.addStyleName("aon-icon-beta-text");
+		//new2020.setVisible(options.getAonData().isBetaEnabled());
+		new2020.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				new2020(options);
+			}
+		});
+		buttonContainer.add(new2020);
+		
+		final NewContextMenu newContextMenu = new NewContextMenu( options );
+		final Button newButton = new Button();
+		newButton.setText(AON.MSG.newAction());
+		newButton.setTitle(newButton.getText());
+		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		newButton.addStyleName(AON.AON_CSS.aonIconReset());
+		newButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				newContextMenu.setPopupPosition(nativeEvent.getClientX(),
+						nativeEvent.getClientY());
+				newContextMenu.show();
+			}
+		});
+		buttonContainer.add(newButton);
 
+		toolbarPanel.add(toolbar);
+		return toolbarPanel;
+	}
 	
-//	private Widget getToolbarPanel(Model200ModuleOptions options) {
-//		FlowPanel toolbarPanel = new FlowPanel();
-//		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-//		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-//		FlexTable toolbar = new FlexTable();
-//		toolbar.setCellPadding(0);
-//		toolbar.setCellSpacing(0);
-//		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-//		FlowPanel titlePanel = new FlowPanel();
-//		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-//		toolbar.setWidget(0, 0, titlePanel);
-//		toolbar.setWidget(0, 0, new Label( "Mod. 200"));
-//		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-//		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-//		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-//		toolbar.setWidget(0, 1, new Label());
-//		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-//		FlowPanel buttonContainer = new FlowPanel();
-//		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-//		toolbar.setWidget(0, 2, buttonContainer);
-//		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-//		
-//		// Botón Nuevo 2020 
-//		final Button new2020 = new Button();
-//		new2020.setText(AON.MSG.newSomething("2020"));
-//		//new2020.setTitle(new2020.getText()+" (Beta)");
-//		new2020.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-//		new2020.addStyleName(AON.AON_CSS.aonIconReset());
-//		//new2020.addStyleName("aon-icon-beta-text");
-//		//new2020.setVisible(options.getAonData().isBetaEnabled());
-//		new2020.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				new2020(options);
-//			}
-//		});
-//		buttonContainer.add(new2020);
-//		
-//		final NewContextMenu newContextMenu = new NewContextMenu( options );
-//		final Button newButton = new Button();
-//		newButton.setText(AON.MSG.newAction());
-//		newButton.setTitle(newButton.getText());
-//		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-//		newButton.addStyleName(AON.AON_CSS.aonIconReset());
-//		newButton.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				NativeEvent nativeEvent = event.getNativeEvent();
-//				newContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-//				newContextMenu.show();
-//			}
-//		});
-//		buttonContainer.add(newButton);
-//
-//		toolbarPanel.add(toolbar);
-//		return toolbarPanel;
-//	}
-	
-//	private class NewContextMenu extends ContextMenu {
-//		public NewContextMenu( Model200ModuleOptions options ) {
-//			super.addItem("200", AON.MSG.newSomething("2013"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2013(options);
-//				}
-//			});
-//			super.addItem("200", AON.MSG.newSomething("2014"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2014(options);
-//				}
-//			});
-//			super.addItem("200", AON.MSG.newSomething("2015"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2015(options);
-//				}
-//			});
-//			super.addItem("200", AON.MSG.newSomething("2016"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2016(options);
-//				}
-//			});
-//			super.addItem("200", AON.MSG.newSomething("2017"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2017(options);
-//				}
-//			});
-//			super.addItem("200", AON.MSG.newSomething("2018"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2018(options);
-//				}
-//			});
-//			super.addItem("200", AON.MSG.newSomething("2019"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2019(options);
-//				}
-//			});
-//			
-//			addStyleName(AON.AON_CSS.aonSelector());
-//		}
-//	}
+	private class NewContextMenu extends ContextMenu {
+		public NewContextMenu( Model200ModuleOptions options ) {
+			super.addItem("200", AON.MSG.newSomething("2013"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2013(options);
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2014"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2014(options);
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2015"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2015(options);
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2016"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2016(options);
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2017"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2017(options);
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2018"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2018(options);
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2019"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2019(options);
+				}
+			});
+			
+			addStyleName(AON.AON_CSS.aonSelector());
+		}
+	}
+
 
 	protected void changeView(Model200ModuleOptions options, Mod200 mod) {
 		if (mod.getYear() == 2013) {
@@ -658,7 +503,7 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2020) {
-			getMod2002020Service().getMod2002020ById(options.getOccam(), mod.getId()
+			getMod2002020Service().getMod2002020ById(options.getDomainName(), options.getDomain(), options.getUser(), mod.getId()
 					, new AsyncCallback<Mod2002020>() {
 
 						@Override
@@ -681,104 +526,72 @@ public class Model200 extends MainEntryPoint {
 		Mod2002013Object mod200Obj = new Mod2002013Object(options.getDomainName(), mod200);
 		Model2002013 model2002013 = new Model2002013( options, new Model200Callback() );
 		model2002013.startModel( mod200Obj);
-//		container.setWidget(model2002013);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002013);
+		container.setWidget(model2002013);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 
 	private void changeView2014(Model200ModuleOptions options,Mod2002014 mod200) {
 		Mod2002014Object mod200Obj = new Mod2002014Object(options.getDomainName(), mod200);
 		Model2002014 model2002014 = new Model2002014( options, new Model200Callback() );
 		model2002014.startModel( mod200Obj);
-//		container.setWidget(model2002014);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002014);
+		container.setWidget(model2002014);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 
 	private void changeView2015(Model200ModuleOptions options,Mod2002015 mod200) {
 		Mod2002015Object mod200Obj = new Mod2002015Object(options.getDomainName(), mod200);
 		Model2002015 model2002015 = new Model2002015( options, new Model200Callback() );
 		model2002015.startModel( mod200Obj );
-//		container.setWidget(model2002015);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002015);
+		container.setWidget(model2002015);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 
 	private void changeView2016(Model200ModuleOptions options,Mod2002016 mod200) {
 		Mod2002016Object mod200Obj = new Mod2002016Object(options.getDomainName(), mod200);
 		Model2002016 model2002016 = new Model2002016( options, new Model200Callback() );
 		model2002016.startModel( mod200Obj );
-//		container.setWidget(model2002016);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002016);
+		container.setWidget(model2002016);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 
 	private void changeView2017(Model200ModuleOptions options,Mod2002017 mod200) {
 		Mod2002017Object mod200Obj = new Mod2002017Object(options.getDomainName(), mod200);
 		Model2002017 model2002017 = new Model2002017( options, new Model200Callback() );
 		model2002017.startModel( mod200Obj );
-//		container.setWidget(model2002017);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002017);
+		container.setWidget(model2002017);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 	
 	private void changeView2018(Model200ModuleOptions options,Mod2002018 mod200) {
 		Mod2002018Object mod200Obj = new Mod2002018Object(options.getDomainName(), mod200);
 		Model2002018 model2002018 = new Model2002018( options, new Model200Callback() );
 		model2002018.startModel( mod200Obj );
-//		container.setWidget(model2002018);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002018);
+		container.setWidget(model2002018);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 	
 	private void changeView2019(Model200ModuleOptions options,Mod2002019 mod200) {
 		Mod2002019Object mod200Obj = new Mod2002019Object(options.getDomainName(), mod200);
 		Model2002019 model2002019 = new Model2002019( options, new Model200Callback() );
 		model2002019.startModel( mod200Obj );
-//		container.setWidget(model2002019);
-//		int i = deckPanel.getWidgetIndex(container);
-//		deckPanel.showWidget(i);
-		declarationContainer.setWidget(model2002019);
+		container.setWidget(model2002019);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 	
-	private void changeView2020(Model200ModuleOptions options, Mod2002020 mod200) {
-		declarationContainer.setWidget(new Model2002020(new Model200Callback(), mod200));
-	}
-	
-	protected void newModel(Model200ModuleOptions options, int year) {
-		switch (year) {
-			case 2013:
-				new2013(options);	
-				break;
-			case 2014:
-				new2014(options);	
-				break;
-			case 2015:
-				new2015(options);	
-				break;
-			case 2016:
-				new2016(options);	
-				break;
-			case 2017:
-				new2017(options);	
-				break;
-			case 2018:
-				new2018(options);	
-				break;
-			case 2019:
-				new2019(options);	
-				break;
-			case 2020:
-				new2020(options);	
-				break;
-		}
-		
+	private void changeView2020(Model200ModuleOptions options,Mod2002020 mod200) {
+		Mod2002020Object mod200Obj = new Mod2002020Object(options.getDomainName(), options.getUser(), mod200);
+		Model2002020 model2002020 = new Model2002020( options, new Model200Callback() );
+		model2002020.startModel( mod200Obj );
+		container.setWidget(model2002020);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
 	}
 	
 	protected void new2013(Model200ModuleOptions options) {
@@ -884,7 +697,7 @@ public class Model200 extends MainEntryPoint {
 	}
 	
 	protected void new2020(Model200ModuleOptions options) {
-		getMod2002020Service().createMod2002020(options.getOccam(), 2020
+		getMod2002020Service().createMod2002020(options.getDomainName(), options.getDomain(), options.getUser(), 2020
 		, new AsyncCallback<Mod2002020>() {
 
 			@Override

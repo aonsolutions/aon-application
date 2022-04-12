@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200Table;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2016.Model2002016.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016Key;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.Style.Unit;

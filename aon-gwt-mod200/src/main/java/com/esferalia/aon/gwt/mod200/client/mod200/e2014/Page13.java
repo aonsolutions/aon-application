@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2014;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014Constants;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

@@ -15,11 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.connect.client.ConnectService;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.mod200.api.FISCAL;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002013Reader;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.server.fiscal.format.Mod2002013Reader;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 

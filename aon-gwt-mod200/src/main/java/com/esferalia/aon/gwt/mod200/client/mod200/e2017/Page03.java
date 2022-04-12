@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2017;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2017.Model2002017.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017Constants;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017Constants;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017Key;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;

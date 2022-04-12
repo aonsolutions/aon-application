@@ -180,7 +180,7 @@ public abstract class Mod123Declaration {
 		final Map<Mod123Key,Set<String>> docs = new EnumMap<>(Mod123Key.class); 
 		final Set<Integer> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream = null;
-		if (mustApplyReplacementSearch(mod123)) {
+		if (getComplementaryBehaviour(mod123) == ComplementaryBeahaviour.REPLACEMENT) {
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod123);
 		} else {
 			stream = IRPFDAO.getNotInModelInputInvoicesIrpfBreakdown(ctx, mod123);	
@@ -200,11 +200,6 @@ public abstract class Mod123Declaration {
 		} else {
 			mod123.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
 		}
-	}
-	
-	protected boolean mustApplyReplacementSearch( Mod123 mod123 ) {
-		return (mod123.isReplacement()
-			|| (mod123.isComplementary() && getComplementaryBehaviour(mod123) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
 	
 	abstract Mod123 initialize(AONContext ctx, Mod123 mod123);

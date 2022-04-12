@@ -12,11 +12,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.mod200.api.FISCAL;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2014.Mod2002014;
-import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
-import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2014.jaxb.Mod2002014toMOD2002014;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.Mod2002014toMOD2002014;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 - 2014 Accounting File", urlPatterns = { "/aon_gwt_mod200/Model2002014AccountingFile" })

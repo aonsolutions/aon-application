@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2019;
 
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Behaviour.BEHAVIOUR_KEYS_MAP;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Behaviour.BEHAVIOUR_KEYS_MAP;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -12,11 +12,11 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Mod2002019Object.IMod200ChangeListener;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2019.Model2002019.Model200PageCallback;
-import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.DoubleVariable2019;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.IMod200KeysProvider;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.DoubleVariable2019;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.IMod200KeysProvider;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
