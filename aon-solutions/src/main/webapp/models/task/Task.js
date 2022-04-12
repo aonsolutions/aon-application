@@ -240,12 +240,20 @@ export class Task {
   }
 
   addTag(tag) {
-    this.tags.push(tag);
+    const existName = this.tags.find(t=> t.name === tag.name);
+    if(!existName) 
+      this.tags.push(tag);
+  
     this.onPropertyChanged('tags', this.tags);
   }
 
   removeTag(id) {
     this.tags = this.tags.filter(tag=> tag.id != id);
+    this.onPropertyChanged('tags', this.tags);
+  }
+
+  removeTagName(name) {
+    this.tags = this.tags.filter(tag=> tag.name != name);
     this.onPropertyChanged('tags', this.tags);
   }
 

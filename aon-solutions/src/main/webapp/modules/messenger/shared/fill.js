@@ -110,9 +110,6 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
                 else 
                     task.setProject({});
             });
-
-            // if(!task.isExternal() && task.getId())
-            //     aonSelect.setDisabled(true);
         } catch (error) {
             console.log(error);
         }
@@ -249,7 +246,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 }
 
 /**
- * fill processType (Titular de la tarea)
+ * fill processType 
  * @param {Task} Class task 
  * @param {HTMLElement} aon-messenger-chat component
  */
@@ -368,6 +365,7 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
     if(aonSelect){
         aonSelect.clear();
         try {
+            let prev = {};
             const apps = getAppPermission(aonMessengerChat.getDur());
             let options = apps.map(app => ({...app, value:app.tag, name:app.title}));
     
@@ -376,7 +374,12 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.value) {
-                    task.addTag({name:detail.tag, color:detail.color, type:TAG_TYPE.TASK_LABEL});
+                    if(!task.id && prev.name)  
+                        task.removeTagName(prev.name);
+
+                    const tag = { name:detail.tag, color:detail.color, type:TAG_TYPE.TASK_LABEL };
+                    prev = tag;
+                    task.addTag(tag);
                 }
             });
         } catch (error) {

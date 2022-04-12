@@ -712,6 +712,7 @@ const sendHistoric = async (workflowId) => {
 export const appendTaskTag = ( tag, parent, fn) =>{
   
   const divOne = createTagHtml(tag, parent);
+  
   const divThree = setStyles(document.createElement(TAG.DIV),{  display: "inline-block", verticalAlign:"bottom", cursor:"pointer"});
   divThree.title = MSG.DELETE_TAG;
   divThree.addEventListener(EVENT.CLICK,()=>{

@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
@@ -511,13 +512,18 @@ public class TaskUtils {
 				if(registry!=null && registry.getId()!=null)
 					task.setRegistry(registry);
 			}
+			
+			if(task.getId()==null) {
+				 task.setSender(new TaskHolder());
+			}
 		} catch (Exception e) {e.printStackTrace();}
 	}
 	
 	private static Filter getSearchFilter(TaskProperties f, String search) {
 		Filter filter = f.getDescriptionProperty().like("%" + search + "%")
 				.or(f.getRegistryNameProperty().like("%" + search + "%"))
-				.or(f.getCommentsProperty().like("%" + search + "%")) ;
+				.or(f.getCommentsProperty().like("%" + search + "%")) 
+				.or(f.getTagNameProperty().like("%" + search + "%"));
 		Integer numberSearch = 0;
 		try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", "")); } 
 		catch(NumberFormatException e){}

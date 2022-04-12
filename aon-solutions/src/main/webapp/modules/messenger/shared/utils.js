@@ -4,7 +4,7 @@ import { domainName } from "../../../services/request.js";
 import { setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { appendTaskTag, createAdvisory, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createDivGrid, createInputContact, createInputTitle, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createTaskHolder, createTitle, createWorkgroup } from "./creationUtils.js";
+import { appendTaskTag, createAdvisory, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createDivGrid, createInputContact, createInputTitle, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createTagHtml, createTaskHolder, createWorkgroup } from "./creationUtils.js";
 import { fillAdvisory, fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
@@ -354,7 +354,7 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
     const dataDefault = aonMessengerChat.getData();
 
     //-----------------------APPEND DIV TAGS
-    createTagsDiv(firstDiv, task);
+    createTagsDiv(firstDiv);
     
     //-----------------------CREATE FIRST CARD
     const aonCard = createCardMessenger(MSG.DATA, "");
@@ -758,17 +758,12 @@ const addCustomerAndContact = (task, aonMessengerChat, divDinamic) => {
  * create div tags
  * @param {HTMLElement} parent insertBefore
  */
-const createTagsDiv = (parent, task) => {
+const createTagsDiv = (parent) => {
     const div = createReceiverDiv().element;
     div.style.flexWrap = "wrap";
     div.id = MESSENGER_IDS.DIV_TASK_TAGS;
     parent.insertBefore(div, parent.firstChild);
-
-    if(task.id && task.isExternal()){
-        showTags(false);
-    } else {
-        setTaskTags();
-    }
+    setTaskTags();
 }
 
 
@@ -792,7 +787,7 @@ export const dialogTaskTags = (ev, aonMessengerChat) => {
     for (let tag of tags) {
         let aonCheckbox = new AonCheckbox();
         aonCheckbox.description = tag.name;
-        aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id) ? true : false;
+        aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id || tag.name===t.name  ) ? true : false;
         aonCheckbox.addEventListener(EVENT.CHANGE, ({target})=>{
           if(target.checked)
             task.addTag(tag);
@@ -813,11 +808,16 @@ export const dialogTaskTags = (ev, aonMessengerChat) => {
 export const setTaskTags = () => {
     const div = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
     div.innerHTML = "";
-    const task = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT).task;
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const task = aonMessengerChat.task;
     task.getTags()
     .filter(t=>t.tag_type && t.tag_type.toUpperCase() == TAG_TYPE.TASK_LABEL)
     .forEach(tag=>{
-        appendTaskTag(tag, div, (id)=>  task.removeTag(id));
+        if(task.id && task.isExternal() || aonMessengerChat.isCau()){
+            createTagHtml(tag, div);
+        } else {
+            appendTaskTag(tag, div, (id)=>  task.removeTag(id));
+        }
     });
 }
 
@@ -887,26 +887,4 @@ const createLabelAnchor = (text, domainNam, clickable = true) => {
     label.appendChild(anchor);
 
     return label;
-}
-
-/**
- * 
- * @param {Boolean} b 
- */
- const showTags = (b) => {
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    if(aonMessengerChat) {
-        const toolbar = aonMessengerChat.querySelector(`#${aonMessengerChat.id}Toolbar`);
-        if(toolbar){
-            const iconBtn = toolbar.querySelector(`#${toolbar.TOOL_SECTION}LabelsButton`);
-            if(iconBtn){
-                const buttonToolbar = iconBtn.parentNode;
-                let display = b ? "block" : "none";
-                buttonToolbar.style.display = display;
-                const div = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
-                if(div)
-                    div.style.display = display;
-            }
-        }
-    }
 }
