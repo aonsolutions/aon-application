@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.test.faker;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
@@ -10,6 +12,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -98,6 +101,13 @@ public class FiscalFaker {
 		}
 	}
 	
+	public static FiscalFakerParams getRandomParams(AONContext ctx, Occam occam) {
+		return new FiscalFakerParams(ctx,occam)
+			.setIssueDate(AonRandom.getYearDay(new Date()))
+			.setMonthly(AonRandom.gt(80))
+			.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
+	}
+	
 	public static Period getRandomPeriod() {
     	return Period.values()[faker.random().nextInt(Period.values().length)];
 	}
@@ -110,20 +120,32 @@ public class FiscalFaker {
 	public static Administration getRandomAdministration() {
     	return Administration.values()[faker.random().nextInt(Administration.values().length - 1)];
 	}
+	public static <T extends FiscalModel> T getFiscalModel(FiscalFakerParams params,Supplier<T> modelSupplier) {
+		return getFiscalModel(params,modelSupplier,null);
+	}
 	
-	public static Mod111 getMod111( FiscalFakerParams params) {
-		Mod111 mod111 = new Mod111();
-		mod111.setDomain(params.getOccam().getDomain());
-		mod111.setYear(AonDateUtils.getYear(params.getIssueDate()));
-		mod111.setPeriod( params.isMonthly()
+	public static <T extends FiscalModel> T getFiscalModel(FiscalFakerParams params
+			,Supplier<T> modelSupplier
+			,Consumer<T> initializer) {
+		T t = modelSupplier.get();
+		t.setDomain(params.getOccam().getDomain());
+		t.setYear(AonDateUtils.getYear(params.getIssueDate()));
+		t.setPeriod( params.isMonthly()
 			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
-		mod111.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
-		MODEL111.initialize( params.getOccam(), mod111);
-		mod111.setComplementary(params.isComplementary());
-		mod111.setReplacement(params.isReplacement());
-		mod111.setGenerateFromYearStart(mod111.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
-		return mod111;
+		t.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		if (initializer != null)  {
+			initializer.accept(t);
+		}
+		t.setComplementary(params.isComplementary());
+		t.setReplacement(params.isReplacement());
+		t.setGenerateFromYearStart(t.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
+		return t; 
+	}
+	
+	public static Mod111 getMod111( FiscalFakerParams params) {
+		return getFiscalModel(params,Mod111::new,
+			(m) -> MODEL111.initialize( params.getOccam(), m));
 	}
 
 	public static Mod111 createMod111( FiscalFakerParams params) {
@@ -133,18 +155,8 @@ public class FiscalFaker {
 	}
 	
 	public static Mod115 getMod115( FiscalFakerParams params) {
-		Mod115 mod115 = new Mod115();
-		mod115.setDomain(params.getOccam().getDomain());
-		mod115.setYear(AonDateUtils.getYear(params.getIssueDate()));
-		mod115.setPeriod( params.isMonthly()
-			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
-			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
-		mod115.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
-		MODEL115.initialize( params.getOccam(), mod115);
-		mod115.setComplementary(params.isComplementary());
-		mod115.setReplacement(params.isReplacement());
-		mod115.setGenerateFromYearStart(mod115.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
-		return mod115;
+		return getFiscalModel(params,Mod115::new,
+			(m) -> MODEL115.initialize( params.getOccam(), m));
 	}
 
 	public static Mod115 createMod115( FiscalFakerParams params) {
@@ -154,18 +166,8 @@ public class FiscalFaker {
 	}
 
 	public static Mod123 getMod123( FiscalFakerParams params) {
-		Mod123 mod123 = new Mod123();
-		mod123.setDomain(params.getOccam().getDomain());
-		mod123.setYear(AonDateUtils.getYear(params.getIssueDate()));
-		mod123.setPeriod( params.isMonthly()
-			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
-			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
-		mod123.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
-		MODEL123.initialize( params.getOccam(), mod123);
-		mod123.setComplementary(params.isComplementary());
-		mod123.setReplacement(params.isReplacement());
-		mod123.setGenerateFromYearStart(mod123.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
-		return mod123;
+		return getFiscalModel(params,Mod123::new,
+			(m) -> MODEL123.initialize( params.getOccam(), m));
 	}
 
 	public static Mod123 createMod123( FiscalFakerParams params) {
@@ -175,19 +177,12 @@ public class FiscalFaker {
 	}
 
 	public static Mod303 getMod303( FiscalFakerParams params) {
-		Mod303 mod303 = new Mod303();
-		mod303.setDomain(params.getOccam().getDomain());
-		mod303.setYear(AonDateUtils.getYear(params.getIssueDate()));
-		mod303.setPeriod( params.isMonthly()
-			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
-			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
-		mod303.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
-		mod303.setProratePercent( params.getProrratePercent() );
-		MODEL303.initialize( params.getOccam(), mod303);
-		mod303.setComplementary(params.isComplementary());
-		mod303.setReplacement(params.isReplacement());
-		mod303.setGenerateFromYearStart(mod303.isGenerateFromYearStartAvailable() && params.isGenerateFromYearStart());
-		return mod303;
+		return  getFiscalModel(params,Mod303::new,
+			(m) -> {
+				m.setProratePercent( params.getProrratePercent() );
+				MODEL303.initialize( params.getOccam(), m);
+			}
+		);
 	}
 
 	public static Mod303 createMod303( FiscalFakerParams params) {
@@ -195,18 +190,5 @@ public class FiscalFaker {
 		MODEL303.create(params.getOccam(), mod303);
 		return mod303;
 	}
-
-//	public static Mod303 getMod303( FiscalFakerParams params) {
-//		Mod303 mod303 = new Mod303();
-//		mod303.setDomain(params.getOccam().getDomain());
-//		MODEL303.initialize( params.getOccam(), mod303);
-//		mod303.setYear(AonDateUtils.getYear(params.getIssueDate()));
-//		mod303.setPeriod( params.isMonthly()
-//			? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
-//			: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
-//		mod303.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
-//		MODEL303.create(params.getOccam(), mod303);
-//		return mod303;
-//	}
 	
 }

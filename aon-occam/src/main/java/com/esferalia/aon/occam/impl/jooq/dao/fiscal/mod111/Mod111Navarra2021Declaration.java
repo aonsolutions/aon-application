@@ -15,14 +15,15 @@ public class Mod111Navarra2021Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 NF_A1(Mod111Key.NF_A1
+		 NF_A1(Mod111Key.NF_A1,true
 			, (mod,br) -> (br.isProfessional() || br.isTransportOperator() || br.isFarmer() || br.isSalaryRetention() || br.isSalaryInKindRetention()) 
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.NF_A1,mod,br)
 			,null,null,null)
-		,NF_TIP (Mod111Key.NF_TIP, null,null,null,null,null)
+		,NF_TIP (Mod111Key.NF_TIP,false,null,null,null,null,null)
 		;
 		
 		private Mod111Key key;
+		private boolean diffEnabled;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
 		private IValueUniqueIntializer uniqueInitializer;
@@ -30,12 +31,14 @@ public class Mod111Navarra2021Declaration extends Mod111Declaration {
 		private String template;
 	
 		private Mod111KeyDAO(Mod111Key key
+				, boolean diffEnabled
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueUniqueIntializer uniqueInitializer
 				, String expression
 				, String template) {
 			this.key = key;
+			this.diffEnabled = diffEnabled;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
 			this.uniqueInitializer = uniqueInitializer;
@@ -46,6 +49,10 @@ public class Mod111Navarra2021Declaration extends Mod111Declaration {
 		@Override
 		public Mod111Key getKey() {
 			return key;
+		}
+		@Override
+		public boolean isDiffEnabled() {
+			return diffEnabled;
 		}
 		@Override
 		public boolean acceptValue(Mod111 mod,IrpfBreakdown  br) {

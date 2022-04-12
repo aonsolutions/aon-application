@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod111;
+package com.esferalia.aon.occam.api.model.fiscal.mod111;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 
-public enum Model715NavarraScript implements IModelScript<Mod111Key> {
+enum Model715NavarraScript implements IModelScript<Mod111Key> {
 	
 	 R00 ("Deuda tributaria a ingresar",new Mod111Key[]{Mod111Key.NF_A1},NONE)
 	;
