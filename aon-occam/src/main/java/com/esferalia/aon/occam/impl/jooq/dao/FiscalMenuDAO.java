@@ -150,6 +150,7 @@ public class FiscalMenuDAO {
 					if (params.accept( FiscalModelType.M200 )) {
 						Mod200DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
+						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put );
