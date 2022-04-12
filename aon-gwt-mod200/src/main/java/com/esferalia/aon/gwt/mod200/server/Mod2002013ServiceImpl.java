@@ -7,9 +7,9 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.Mod2002013Service;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.mod200.api.FISCAL;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
