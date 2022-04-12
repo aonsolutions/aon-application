@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -205,11 +207,10 @@ class DomainProviderForTests {
 		CreditorDAO.save(context, defaultFiscalCreditor);
 		context.log().info("Default Fiscal Creditor inserted!");
 		
-		context.getDslContext().insertInto(APP_PARAM)
-			.set(APP_PARAM.DOMAIN, context.getDomainId())
-			.set(APP_PARAM.NAME, AppParam.FS_ADMON_CREDITOR.toString())
-			.set(APP_PARAM.VALUE, defaultFiscalCreditor.getId().toString() )
-			.execute();
+		AppParamDAO.saveApplicationParameter(context, new ApplicationParameter()
+				.setDomain(context.getDomainId())
+				.setName(AppParam.FS_ADMON_CREDITOR)
+				.setValue(defaultFiscalCreditor.getId().toString()));
 		context.log().info("App Param FS_ADMON_CREDITOR set to " + defaultFiscalCreditor.getId());
 	}
 	

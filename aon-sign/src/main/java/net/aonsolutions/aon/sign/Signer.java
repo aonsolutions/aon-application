@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Enumeration;
 
 import com.esferalia.aon.occam.api.model.security.Certificate;
 
@@ -29,9 +30,10 @@ public class Signer {
 	}
 	
 	protected String getAlias(KeyStore keyStore) throws KeyStoreException {
+		Enumeration<String> enumas = keyStore.aliases();
 		String alias = null;
-		while (keyStore.aliases().hasMoreElements()) {
-			alias = keyStore.aliases().nextElement();
+		while (enumas.hasMoreElements()) {
+			alias = enumas.nextElement();
 		}
 		return alias;
 	}

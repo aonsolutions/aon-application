@@ -1104,7 +1104,11 @@ public class InvoiceTemplate {
 		}
 				
 		if (logo != null) {				
-			PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
+			try {
+				PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		String invoiceTitle = "";

@@ -106,12 +106,12 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE.ID);} 
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(WAREHOUSE.ACTIVE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE.DOMAIN);}
-		@Override public Property<Integer> getDepartmentProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE.DEPARTMENT);}
-		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE.WORKPLACE);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE.NAME);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE.ID);} 
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE.ACTIVE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE.DOMAIN);}
+		@Override public Property<Integer> getDepartmentProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE.DEPARTMENT);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE.WORKPLACE);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE.NAME);}
 	}
 
 	protected static class WarehouseTransferPropertiesDAO implements WarehouseTransferProperties {
@@ -120,21 +120,21 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.DOMAIN);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.COMMENTS);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.CREATION_USER);}
-		@Override public Property<Integer> getInventoryProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.INVENTORY);}
-		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.ISSUE_TIME);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.MODIFICATION_USER);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.NUMBER);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.SERIES);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(WAREHOUSE_TRANSFER.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.SOURCE_ID);}
-		@Override public Property<Integer> getSourceWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE);}
-		@Override public Property<Integer> getTargetWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.DOMAIN);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.COMMENTS);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.CREATION_USER);}
+		@Override public Property<Integer> getInventoryProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.INVENTORY);}
+		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.ISSUE_TIME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.MODIFICATION_USER);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.NUMBER);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SERIES);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SOURCE_ID);}
+		@Override public Property<Integer> getSourceWarehouseProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE);}
+		@Override public Property<Integer> getTargetWarehouseProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE);}
 	}
 	
 	protected static class WarehouseTransferDetailPropertiesDAO implements WarehouseTransferDetailProperties {
@@ -143,15 +143,15 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getWarehouseTransferProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.CREATION_USER);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.ITEM);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(WAREHOUSE_TRANSFER_DETAIL.QUANTITY);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getWarehouseTransferProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.CREATION_USER);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.ITEM);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.QUANTITY);}
 	}
 	
 	protected static class DepartmentPropertiesDAO implements DepartmentProperties {
@@ -160,9 +160,9 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(DEPARTMENT.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(DEPARTMENT.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(DEPARTMENT.NAME);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DEPARTMENT.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DEPARTMENT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(DEPARTMENT.NAME);}
 	}
 	
 	public static Stream<Warehouse> getWarehouseStream(AONContext ctx, WarehouseFilter filter){
@@ -458,7 +458,9 @@ public class WarehouseDAO {
 	}
 	
 	
-	
+	/**
+	 * @deprecated  Replaced by DeliveryDAO.get(AONContext ctx, DeliveryFilter filter)
+	 */
 	public static Delivery getDelivery(AONContext ctx, Integer deliveryId) {
 		return ctx.getDslContext().select().from(DELIVERY)
 				.where(DELIVERY.ID.eq(deliveryId)).limit(1).fetchInto(DELIVERY)
@@ -466,13 +468,9 @@ public class WarehouseDAO {
 				.orElse(new Delivery());
 	}
 
-	public static Delivery getDelivery(AONContext ctx, DeliveryFilter filter) {
-		return ctx.getDslContext().select().from(DELIVERY)
-				.where(DELIVERY_PROPERTIES.getConditions(filter)).limit(1)
-				.fetchInto(DELIVERY).stream().map(new DeliveryFiller())
-				.findFirst().orElse(new Delivery());
-	}
-
+	/**
+	 * @deprecated  Replaced by DeliveryDAO.getList(AONContext ctx, DeliveryFilter filter)
+	 */
 	public static LinkedList<Delivery> getDeliveryList(AONContext ctx,
 			DeliveryFilter filter) {
 		return ctx.getDslContext().select().from(DELIVERY)
@@ -510,6 +508,9 @@ public class WarehouseDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	/**
+	 * @deprecated  Replaced by DeliveryDAO.save(AONContext ctx, Delivery delivery)
+	 */
 	public static int insertDelivery(AONContext ctx, Delivery delivery) {
 		ctx.checkWrite();
 		Timestamp creationDate = null, modificationDate = null;
@@ -604,6 +605,9 @@ public class WarehouseDAO {
 		});
 	}
 	
+	/**
+	 * @deprecated  Replaced by DeliveryDAO.save(AONContext ctx, Delivery delivery)
+	 */
 	public static void updateDelivery(AONContext ctx, Delivery delivery) {
 		ctx.checkWrite();
 		Timestamp creationDate = null, modificationDate = null;
@@ -643,6 +647,9 @@ public class WarehouseDAO {
 		.execute();
 	}
 	
+	/**
+	 * @deprecated  Replaced by DeliveryDAO.delete(AONContext ctx, Integer deliveryId)
+	 */
 	public static Delivery deleteDelivery(AONContext ctx, Integer deliveryId) {
 		Delivery delivery = getDelivery(ctx, deliveryId);
 		ctx.getDslContext().delete(DELIVERY).where(DELIVERY.ID.eq(deliveryId)).execute();

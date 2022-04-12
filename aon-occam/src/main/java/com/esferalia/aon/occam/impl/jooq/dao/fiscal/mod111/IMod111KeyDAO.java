@@ -16,6 +16,6 @@ public interface IMod111KeyDAO {
 	void uniqueInitialize(AONContext ctx,Mod111 mod);
 	String getExpression();
 	String getTemplate();
-	
+	boolean isDiffEnabled();
 }
 

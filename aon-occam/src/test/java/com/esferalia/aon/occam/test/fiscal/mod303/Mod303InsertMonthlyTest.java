@@ -14,20 +14,23 @@ import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod303InsertMonthlyTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		Date today = new Date();
-		for (Period period : Period.values()) {
-			Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-			Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-			if (period.isMonthPeriod()) {
-				mod303InsertMonthly(AonRandom.getRangeDate(start,end));
+		ctx.getDslContext().transaction( config -> {
+			Date today = new Date();
+			for (Period period : Period.values()) {
+				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+				if (period.isMonthPeriod()) {
+					mod303InsertMonthly(AonRandom.getRangeDate(start,end));
+				}
 			}
-		}
+		});
 	}
 	
 	public void mod303InsertMonthly(Date date) {
@@ -54,7 +57,7 @@ public class Mod303InsertMonthlyTest extends AbstractOccamTest {
 		MODEL303.save(getOccam(), mod303);
 		Mod303 actual = MODEL303.get(getOccam(), mod303.getId());  
 		Asserts.assertMod303(mod303, actual);
-		Mod303TestSuite.printModel(actual);
+		FiscalTestSuite.printModel(actual);
 		return actual;
 	}
 

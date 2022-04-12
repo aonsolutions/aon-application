@@ -14,21 +14,23 @@ import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod123InsertQuarterlyComplementaryTest extends AbstractOccamTest {
 
 	@Test
 	public void mod123InsertQuarterlyComplementaryTest() {
-		AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration());
-		Date today = new Date();
-		for (Period period : Period.values()) {
-			if (period.isQuarterPeriod()) {
-				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
-				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod123InsertQuarterlyComplementary(AonRandom.getRangeDate(start,end));
+		ctx.getDslContext().transaction( config -> {
+			Date today = new Date();
+			for (Period period : Period.values()) {
+				if (period.isQuarterPeriod()) {
+					Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
+					Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
+					mod123InsertQuarterlyComplementary(AonRandom.getRangeDate(start,end));
+				}
 			}
-		}
+		});
 	}
 	
 	public void mod123InsertQuarterlyComplementary(Date date) {
@@ -56,7 +58,7 @@ public class Mod123InsertQuarterlyComplementaryTest extends AbstractOccamTest {
 		MODEL123.save(getOccam(), mod123);
 		Mod123 actual = MODEL123.get(getOccam(), mod123.getId());  
 		Asserts.assertMod123(mod123, actual);
-		Mod123TestSuite.printModel(actual);
+		FiscalTestSuite.printModel(actual);
 		return actual;
 	}
 }

@@ -16,7 +16,7 @@ public enum FiscalStatus implements Serializable {
 	CUSTOMER_ACCEPTED("Aceptado por cliente"){ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitCustomerAccepted();} },
 	CUSTOMER_REJECTED("Rechazado por cliente"){ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitCustomerRejected();} },
 	;
-	
+
 	private String name;
 	
 	private FiscalStatus(String name) {

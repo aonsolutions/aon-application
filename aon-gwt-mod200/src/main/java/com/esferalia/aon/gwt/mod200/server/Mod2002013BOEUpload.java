@@ -1,9 +1,5 @@
 package com.esferalia.aon.gwt.mod200.server;
 
-import gwtupload.server.UploadAction;
-import gwtupload.server.exceptions.UploadActionException;
-import gwtupload.server.exceptions.UploadException;
-
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
@@ -12,8 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.server.fiscal.format.Mod2002013Reader;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
+import com.esferalia.aon.occam.mod200.server.format.Mod2002013Reader;
+
+import gwtupload.server.UploadAction;
+import gwtupload.server.exceptions.UploadActionException;
+import gwtupload.server.exceptions.UploadException;
 
 @WebServlet(name = "Mod200 - 2013 BOE Upload ", urlPatterns = { "/aon_gwt_mod200/Mod2002013BOEUpload" })
 public class Mod2002013BOEUpload extends UploadAction {

@@ -11,9 +11,11 @@ public class Mod303DeleteTest extends AbstractOccamTest {
 	
 	@Test
 	public void test() {
-		for (Mod303 mod303 : MODEL303.getMod303s(getOccam())) {
-			MODEL303.delete(getOccam(), mod303);
-		};
+		ctx.getDslContext().transaction( config -> {
+			for (Mod303 mod303 : MODEL303.getMod303s(getOccam())) {
+				MODEL303.delete(getOccam(), mod303);
+			};
+		});
 		Asserts.assertEmptyCollection("Existen modelos después del borrado", MODEL303.getMod303s(getOccam()));
 	}
 		

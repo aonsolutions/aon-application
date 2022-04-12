@@ -22,6 +22,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import es.mityc.firmaJava.libreria.xades.DataToSign;
@@ -32,6 +33,7 @@ import es.mityc.firmaJava.role.SimpleClaimedRole;
 import es.mityc.javasign.EnumFormatoFirma;
 import es.mityc.javasign.xml.refs.AllXMLToSign;
 import es.mityc.javasign.xml.refs.ObjectToSign;
+import net.aonsolutions.aon.sign.exception.AonSignerException;
 
 public class FacturaeSigner {
 	
@@ -62,6 +64,11 @@ public class FacturaeSigner {
 		}
 		return out.toByteArray();
 	}	
+	
+	public byte[] sign(Certificate certificate, byte[] data) throws AonSignerException {
+		return net.aonsolutions.aon.sign.FacturaeSigner.getInstance()
+			.sign(certificate, data);
+	}
 	
 	public Document sign(KeyStoreData store, Document doc) throws AonCoreException {
 		int providerPos = -1;

@@ -3,30 +3,19 @@ package com.esferalia.aon.gwt.mod200.client.mod200.e2020;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020.Model200PageCallback;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN1280Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN1344Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN570Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN571Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN572Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020BN573Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Constants;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
+import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN1280Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN1344Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN570Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN571Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN572Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN573Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Constants;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Page10 extends PageAbs {
 
-	interface PageBinder extends
-			UiBinder<Widget, Page10> {
-	}
-
-	private static final PageBinder pageBinder = GWT
-			.create(PageBinder.class);
-	
 	private static final String[] HEADERS_1 = new String[]{null,
 		AON.MSG.pendingDeduction(),
 		AON.MSG.taxType(),
@@ -39,22 +28,21 @@ public class Page10 extends PageAbs {
 		AON.MSG.appliedDeduction(),
 		AON.MSG.futureDeduction()};
 	
-	@UiField(provided = true)
-	FlexTable table;
-
 	public Page10( Model200PageCallback callback ) {
 		super(callback);
-		table = new FlexTable();
-		Widget ui = pageBinder.createAndBindUi(this);
-		initWidget(ui);
-		table.setWidth("100%");
-		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(1, "200px");
+		addBasePanel();
 		initializeTable();
 	}
 	
 	@Override
 	protected void initializeTable() {
+		
+		basePanel.clear();
+		
+		basePanel.add(getTitle(AON.MSG.bonus()));
+		
+		FlexTable table = addTable();
+		
 		int row = 0;
 		boolean margin = false;
 		for (final Mod2002020Key key : Mod2002020Constants.LIQUIDATION_III_KEYS) {
@@ -112,4 +100,5 @@ public class Page10 extends PageAbs {
 	
 	@Override
 	protected void populate() {}
+	
 }
