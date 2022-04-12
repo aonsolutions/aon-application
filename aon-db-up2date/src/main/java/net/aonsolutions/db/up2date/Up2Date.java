@@ -19,9 +19,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.tgss.Bases2022Fix;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2022UpdateDaily;
-
 
 public class Up2Date {
 
@@ -222,9 +219,10 @@ public class Up2Date {
 //    		Artist2022Update.ARTIST2022UPDATE
 //    		RefreshMod303Result.REFRESH_MOD303_RESULT,
 //    		Artist2022Fix.ARTIST2022FIX
-    		Bases2022Fix.BASES2022FIX,
-    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY
+//    		Bases2022Fix.BASES2022FIX,
+//    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
 //    		UdapaSalesFix.UDAPA_SALES_FIX
+//    		SalaryHours2022Fix.SALARYHOURS2022FIX
     };
     
 
