@@ -147,7 +147,7 @@ public class JooqContractAttach {
 
 	// ------------------------------------------ IDC
 
-	public static String getContractIdc(Connection connection, Integer contractId, Date date) {
+	public static String __getContractIdc(Connection connection, Integer contractId, Date date) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		Result<Record> idcRecords = dslContext.select().from(CONTRACT_ATTACH)
@@ -160,7 +160,7 @@ public class JooqContractAttach {
 		return idcRecords.isEmpty() ? null : Base64.getEncoder().encodeToString(idcRecords.get(0).get(CONTRACT_ATTACH.DATA));
 	}
 	
-	public static void setContractIDC(Connection connection, Integer domainId, Integer contractId, byte[] data, Date date) {
+	public static void __setContractIDC(Connection connection, Integer domainId, Integer contractId, byte[] data, Date date) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		List<Integer> contractAttachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
@@ -189,7 +189,7 @@ public class JooqContractAttach {
 	
 	// ------------------------------------------ IDCPlNss
 
-	public static String getContractIdcPlNss(Connection connection, Integer contractId) {
+	public static String __getContractIdcPlNss(Connection connection, Integer contractId) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		Result<Record> idcRecords = dslContext.select().from(CONTRACT_ATTACH)
@@ -201,7 +201,7 @@ public class JooqContractAttach {
 		return idcRecords.isEmpty() ? null : Base64.getEncoder().encodeToString(idcRecords.get(0).get(CONTRACT_ATTACH.DATA));
 	}
 	
-	public static void setContractIdcPlNss(Connection connection, Integer domainId, Integer contractId, byte[] data) {
+	public static void __setContractIdcPlNss(Connection connection, Integer domainId, Integer contractId, byte[] data) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		List<Integer> contractAttachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)

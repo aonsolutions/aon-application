@@ -3569,8 +3569,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						
 					}, throwable -> {
 						closeFootPanel();
-						getEmployeeDraft().setTaVisible(false);
-						getEmployeeDraft().setIdcVisible(false);
+						getEmployeeDraft().disableSistemaRED();
 					});
 				}
 				
@@ -3632,13 +3631,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						employeeStatus.visit(this);
 						selectResultsPanel();
 						EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
-							getEmployeeDraft().setTaVisible(true);
-							getEmployeeDraft().setIdcVisible(true);
+							getEmployeeDraft().enableSistemaRED();
 							getEmployeeDraft().setOnSaved(e -> run());
 						}, () -> {
-							getEmployeeDraft().setTaVisible(false);
-							getEmployeeDraft().setIdcVisible(false);
-
+							getEmployeeDraft().disableSistemaRED();
 						});
 						EmployeeStatus.ifSistemaREDError(
 								employeeStatus,
@@ -3647,8 +3643,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 								);
 					}, throwable -> {
 						closeFootPanel();
-						getEmployeeDraft().setTaVisible(false);
-						getEmployeeDraft().setIdcVisible(false);
+						getEmployeeDraft().disableSistemaRED();
 					});
 				}
 				
@@ -3660,12 +3655,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			selectResultsPanel();
 
 			EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
-				getEmployeeDraft().setTaVisible(true);
-				getEmployeeDraft().setIdcVisible(true);
+				getEmployeeDraft().enableSistemaRED();
 				getEmployeeDraft().setOnSaved(e -> sistemaREDResults.run());
 			}, () -> {
-				getEmployeeDraft().setTaVisible(false);
-				getEmployeeDraft().setIdcVisible(false);
+				getEmployeeDraft().disableSistemaRED();
 			});
 			
 			EmployeeStatus.ifSistemaREDError(
@@ -3676,8 +3669,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		}, throwable -> {
 			closeFootPanel();
-			getEmployeeDraft().setTaVisible(false);
-			getEmployeeDraft().setIdcVisible(false);
+			getEmployeeDraft().disableSistemaRED();
 		});
 	}
 
@@ -4382,6 +4374,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				
 				@Override
 				public void notAuthorizedCCC() {
+				}
+				
+				@Override
+				public void noQueryData(String message) {
 				}
 				
 				@Override
