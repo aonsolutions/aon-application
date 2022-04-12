@@ -180,6 +180,7 @@ export class AonTable extends AonElement {
         }
         this.dispatchEvent(new CustomEvent("select"));
       });
+      return tr;
     }
 
     this.columns.forEach((item, i) => {

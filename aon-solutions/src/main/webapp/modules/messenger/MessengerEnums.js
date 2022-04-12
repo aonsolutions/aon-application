@@ -112,6 +112,11 @@ export const TASK_STATUS = {
 	FAQ:"faq"
 } 
 
+export const TAG_TYPE = {
+    TASK_TYPE:"TASK_TYPE",
+    TASK_LABEL: "TASK_LABEL"
+}
+
 export const TASK_STATUS_VALUE  = [
     {
         name:AON_MESSENGER_LIST_OPEN.name,

@@ -54,19 +54,23 @@ const buildToolbar = (aonMessengerChat) => {
 
     if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
       if(task.id){
-        toolbar.addButton2({
-          ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
-          name: MSG.CLOSE,
-          icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
-        }, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED));
-      }
+          toolbar.addButton2({
+            id: 'Labels',
+            name: MSG.LABELS,
+            icon: MATERIAL_ICONS.LABEL
+            }, (ev) =>  dialogTaskTags(ev, aonMessengerChat)
+          );
 
-      toolbar.addButton2({
-        id: 'Labels',
-        name: MSG.LABELS,
-        icon: MATERIAL_ICONS.LABEL
-        }, (ev) =>  dialogTaskTags(ev, aonMessengerChat)
-      );
+          toolbar.addButton2({
+            ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
+            name: MSG.CLOSE,
+            icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
+          }, () =>{
+            aonMessengerChat.getApplication().confirmDialog(MSG.CLOSE, MSG.REQUEST_CLOSE_CONFIRM, ()=>{
+              aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED)
+            })
+          });
+      }
     }
 
     if(task.id){

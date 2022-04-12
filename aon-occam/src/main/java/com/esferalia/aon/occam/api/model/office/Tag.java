@@ -21,8 +21,6 @@ public class Tag implements Serializable, HasId {
 	private Date startDate;
 	private Date endDate;
 	private User user;
-	
-	private TagType tagType;
 
 	public Tag() {
      // TODO document why this constructor is empty
@@ -53,12 +51,12 @@ public class Tag implements Serializable, HasId {
 	}
 	
 	public Tag setTagType(TagType tagType) {
-		this.tagType = tagType;
+		if(tagType!=null) this.type = tagType.value();
 		return this;
 	}
 	
 	public TagType getTagType() {
-		return tagType;
+		return TagType.safeValueOf(type);
 	}
 
 	public byte getType() {

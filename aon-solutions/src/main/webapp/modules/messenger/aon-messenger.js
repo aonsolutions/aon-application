@@ -5,7 +5,7 @@ import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
@@ -288,7 +288,7 @@ export class AonMessenger extends AonElement {
 	loadTag() {
 		let application = this.applicationEl;
 		const manager =  this.getDur().isMessengerManager();
-		getTaskTags({type:"task_label"}).then(tags => {
+		getTaskTags({type:TAG_TYPE.TASK_LABEL}).then(tags => {
 		  this._tags =  tags.map(t => ({...t,value: t.id, description: t.name, name:t.name}));
 		  this.clearElementById(application.SIDENAV+'TagList');
 		  this._tags.forEach(item => {
@@ -332,7 +332,7 @@ export class AonMessenger extends AonElement {
 		d.addAcceptAction(() => {
 			if(aonInput.value){
 				tag.name = aonInput.value;
-				tag.type = "task_label";
+				tag.type = TAG_TYPE.TASK_LABEL;
 				saveTaskTag(tag).then(() => {
 					this.loadTag();
 				});
