@@ -52,6 +52,7 @@ public abstract class Mod303Declaration {
 		if (Mod303GIPUZKOA2022Declaration.accept(mod)) 	return new Mod303GIPUZKOA2022Declaration();
 		if (Mod303GIPUZKOA20212Declaration.accept(mod)) 	return new Mod303GIPUZKOA20212Declaration();
 		if (Mod303GIPUZKOA2017Declaration.accept(mod)) 	return new Mod303GIPUZKOA2017Declaration();
+		if (Mod303NAVARRA2022Declaration.accept(mod)) 	return new Mod303NAVARRA2022Declaration();
 		
 		throw new AonCoreException(MessageFormat.format(
 			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
