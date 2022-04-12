@@ -30,13 +30,17 @@ public class TagJSON {
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setName(JsonUtils.getString(json, IJsonNames.NAME))
-			.setType( TagType.safeValueOf(JsonUtils.optString(json, "type")).value() ) 
+			.setTagType(TagType.safeValueOf(JsonUtils.optString(json, "type"))) 
 			.setColor(JsonUtils.getString(json, "color"))
 			;
 	}
 	
 	public static JSONArray toJSON(LinkedList<Tag> list) {
 		return toJSON(list.stream());
+	}
+	
+	public static JSONArray toJSON(List<Tag> list) {
+		return toJSON(list.stream().filter(t-> t.getName()!=null));
 	}
 	
 	public static JSONArray toJSON(Stream<Tag> tags) {
@@ -51,6 +55,7 @@ public class TagJSON {
 			.put(IJsonNames.DOMAIN, tag.getDomain())
 			.put(IJsonNames.NAME, tag.getName())
 			.put(IJsonNames.TYPE, tag.getType() )
+			.put("tag_type", tag.getTagType())
 			.put("color", tag.getColor());
 	}
 

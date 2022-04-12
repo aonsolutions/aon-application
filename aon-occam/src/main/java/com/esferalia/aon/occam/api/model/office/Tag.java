@@ -21,10 +21,12 @@ public class Tag implements Serializable, HasId {
 	private Date startDate;
 	private Date endDate;
 	private User user;
+	
+	private TagType tagType;
 
 	public Tag() {
-
-	}
+     // TODO document why this constructor is empty
+    }
 
 	public Tag setId(Integer id) {
 		this.id = id;
@@ -48,6 +50,15 @@ public class Tag implements Serializable, HasId {
 	public Tag setType(byte type) {
 		this.type = type;
 		return this;
+	}
+	
+	public Tag setTagType(TagType tagType) {
+		this.tagType = tagType;
+		return this;
+	}
+	
+	public TagType getTagType() {
+		return tagType;
 	}
 
 	public byte getType() {
