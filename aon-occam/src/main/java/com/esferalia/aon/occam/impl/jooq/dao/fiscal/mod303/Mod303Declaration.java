@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -24,7 +25,9 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -231,14 +234,28 @@ public abstract class Mod303Declaration {
 					.findFirst()
 					.isPresent();
 				if (!something) {
-					mod303.setDiffCalculationMandatory(true);
-					mod303.setDiffCalculationDisabled(false);			
-					mod303.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
-							+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
-							+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
-							+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
-					);
-					resolved = true;
+					Date start = AonDateUtils.getYearFirstDay(mod303.getYear());
+					Date end = FiscalUtils.getPeriodEnd(mod303);
+					boolean existsInvoices = ctx.getDslContext()
+						.select(INVOICE.ID)
+						.from(INVOICE)
+						.where(INVOICE.DOMAIN.eq(mod303.getDomain()))
+						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(start), AonDateUtils.toSql(end)))
+						.limit(1)
+						.fetch()
+						.stream()
+						.findFirst()
+						.isPresent();
+					if (existsInvoices) {
+						mod303.setDiffCalculationMandatory(true);
+						mod303.setDiffCalculationDisabled(false);			
+						mod303.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
+								+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
+								+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
+								+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
+								);
+						resolved = true;
+					}
 				} 
 			}
 		}
