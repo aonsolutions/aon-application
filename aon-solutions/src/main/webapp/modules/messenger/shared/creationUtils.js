@@ -262,7 +262,7 @@ export const createAction = (icon, message, submessage) => {
       text:submessage,
       styles : {
         margin:"0px 0px 0px 5.8ex",
-        borderLeft:"1px solid rgb(204,204,204)",
+        borderLeft:"1px solid #cccccc",
         paddingLeft:"1ex",
         flex: "100%",
         fontWeight: 500,
@@ -458,7 +458,7 @@ const iconComment = (icon_name) => {
         marginBottom: "auto",
         visibility: "visible",
         float: "right",
-        background: "rgba(0, 0, 0, 0)",
+        background: "transparent",
         cursor: "pointer"
     });
 
@@ -504,7 +504,11 @@ export const createChatMessage = (properties, chat) => {
 
       if(me){
         setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
-        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(parseInt(message.dataset.id)));
+        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> {
+          const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+          if(aonMessengerChat) 
+            aonMessengerChat.sendMessageHistoric(parseInt(message.dataset.id), true);
+        });
 
         //-------------------icon share
         // const textShare = "Compartir entre ramas (En desarrollo)";
@@ -679,31 +683,6 @@ export const createNoMessage = ()=>  newComponent({
 
 /**
  * 
- * @param {Number} workflowId taskworkflow id 
- */
-const sendHistoric = async (workflowId) => {
-  const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-  const workflows  = await taskHistoricSend({...aonMessengerChat.task, workflowId});
-  if(workflows && workflows.length) {
-    for (const workflow of workflows) {
-      const message = document.querySelector( `#${MESSENGER_IDS.MESSENGER_CHAT} ${MESSENGER_COMPONENTS.MESSAGE}[data-id='${workflow.id}']`);
-      if(message){
-        //CHANGE STYLE IF SEND MESSAGE
-        message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
-        const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
-        if(iconSendWorkflow){
-          iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
-          iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
-          iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
-        }
-      }
-    }
-    aonMessengerChat.showMessage("Comentario enviado por correo!");
-  }
-}
-
-/**
- * 
  * @param {Tag} tag 
  * @param {HTMLElement} parent div for append 
  * @param {Function} fn click
@@ -732,20 +711,20 @@ export const appendTaskTag = ( tag, parent, fn) =>{
 
 export const createTagHtml = (tag, parent) => {
   const color = tag.color;
-  const divOne = setStyles(document.createElement(TAG.DIV),{ 
-    whiteSpace: "nowrap",
-    borderRadius: "10px",
-    padding: "3px 7px",
-    backgroundColor: color || "rgb(221, 221, 221)",
-    color: color ? CSS.variable(COLORS.AON_WHITE) : CSS.variable(COLORS.GRAYSON),
-    margin: "5px",
-    fontWeight: "550" 
-  });
+  const divOne = document.createElement(TAG.DIV);
+  divOne.style.whiteSpace = "nowrap";
+  divOne.style.borderRadius = "10px";
+  divOne.style.padding = "3px 7px";
+  divOne.style.background = color ? color : "#dddddd";
+  divOne.style.color = color ? CSS.variable(COLORS.AON_WHITE) : CSS.variable(COLORS.GRAYSON);
+  divOne.style.margin = "5px";
+  divOne.style.fontWeight = "550";
   divOne.title = tag.name;
   divOne.dataset.taskTag = JSON.stringify(tag);
   parent.appendChild(divOne);
-
-  const divTwo = setStyles(document.createElement(TAG.DIV),{ display: "inline-block"});
+  
+  const divTwo = document.createElement(TAG.DIV);
+  divTwo.style.display = "inline-block";
   divTwo.innerText = tag.name;
   divOne.appendChild(divTwo);
 

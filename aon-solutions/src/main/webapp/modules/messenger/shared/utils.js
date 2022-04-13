@@ -111,7 +111,7 @@ const blockquote = ()=>{
     const selection = document.getSelection();
     const blockquoteEl = setStyles(document.createElement("blockquote"),{
         margin:"0px 0px 0px 0.8ex",
-        borderLeft: "1px solid rgb(204, 204, 204)",
+        borderLeft: "1px solid #cccccc",
         paddingLeft: "1ex"
     });
     blockquoteEl.textContent = selection;
@@ -468,6 +468,11 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
                     task.setProject({});
                     task.setRegistry({});
                     task.setGTaskId(undefined);
+                    if(aonMessengerChat.isBeta()){
+                        const myTaskHolder = task.myTaskHolder;
+                        if(myTaskHolder && myTaskHolder.id && task.getTaskHolder() && !task.getTaskHolder().id)
+                            task.setTaskHolder(myTaskHolder);
+                    }
                 } 
             }
 
@@ -888,3 +893,27 @@ const createLabelAnchor = (text, domainNam, clickable = true) => {
 
     return label;
 }
+
+
+
+/**
+ * 
+ * @param {Arrays} workflows workflows 
+ */
+export const setStyleMessageHistoric = async (workflows) => {
+    if(workflows && workflows.length) {
+      for (const workflow of workflows) {
+        const message = document.querySelector( `#${MESSENGER_IDS.MESSENGER_CHAT} ${MESSENGER_COMPONENTS.MESSAGE}[data-id='${workflow.id}']`);
+        if(message){  //CHANGE STYLE IF SEND MESSAGE
+          message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
+          const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
+          if(iconSendWorkflow){
+            iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
+            iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
+            iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
+          }
+        }
+      }
+    }
+}
+  

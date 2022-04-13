@@ -207,12 +207,12 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
 		boolean edit = task.getId() != null;
-		if(TaskUtils.isCau(api.getData())) {
+		if(TaskUtils.isCau(api.getData())) 
 			TaskUtils.setCauInfo(api, task);
-		}
-		if(edit) {
+		
+		if(edit) 
 			TaskUtils.checkFiles(api, task);
-		}
+	
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		
 		if(!edit) { // SAVE CREATE
@@ -231,15 +231,14 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveWorkflow(AonApiData api, Optional<TaskWorkflow> workflowOpt) {
 		TaskWorkflow workflowTmp = workflowOpt.isPresent() ? workflowOpt.get() : TaskWorkflowJSON.fromJSON(api.getData());
 		
-		if(workflowTmp.getDomain()==null) {
-			workflowTmp.setDomain(api.getDomain().getId());
-		}
-		if(TaskUtils.isCau(api.getData())) {
-			workflowTmp.setTaskHolder(new TaskHolder());
-		}
+		if(TaskUtils.isCau(api.getData())) 
+			TaskUtils.setCauWorkflow(api, workflowTmp);
+		
+		if(workflowTmp.getDomain()==null) 
+			workflowTmp.setDomain(api.getDomain().getId());	
 	
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
-		TaskUtils.changeWorkflow(api, workflow);
+//		TaskUtils.changeWorkflow(api, workflow);
 		return TaskWorkflowJSON.toJSON(workflow);
 	}
 
@@ -474,7 +473,7 @@ public class TaskServlet extends AonApiHttpServlet{
 				boolean workgroupExist = task.getWorkgroup().getId()!=null;
 				if(!workgroupExist) {
 					appParams.stream().filter(p-> 
-						p.getName().contentEquals(TaskUtils.isCau(api.getData()) ? AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP.name() : AppParamsRequest.APP_REQUESTS_INT_WORKGROUP.name())
+						p.getName().contentEquals(isCau ? AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP.name() : AppParamsRequest.APP_REQUESTS_INT_WORKGROUP.name())
 					).findFirst().ifPresent(d->
 						task.setWorkgroup(new Workgroup().setId(Integer.parseInt(d.getValue())))
 					);

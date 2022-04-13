@@ -27,7 +27,7 @@ public class WorkflowMail{
 	}
 	
 	public WorkflowMail setDate(Date date) {
-		this.date = AonDateUtils.format(date, "dd/MM/yyyy H:m");
+		this.date = AonDateUtils.format(date, "dd/MM/yyyy HH:mm");
 		return this;
 	}
 	public WorkflowMail setMessage(String message) {
