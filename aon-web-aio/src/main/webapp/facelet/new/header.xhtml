@@ -1451,7 +1451,9 @@
 						tooltip.classList.add("loading");
 						tooltip.onclick = () => window.open(url, '_blank').focus();
 						
+						image.style.transition = "none";
 						image.style.opacity = 0;
+						
 
 						// Get the right tooltip URL						
 						const filename = url.substr( url.lastIndexOf('/') + 1, url.lastIndexOf('.pdf')-5);
@@ -1482,9 +1484,13 @@
 						// when image is loaded stop loading animation
 						const loadingCheckInterval = setInterval(() => {
 							if(image.complete){
-								image.style.opacity = "1";
-								tooltip.classList.add("loading");
-								clearInterval(loadingCheckInterval);
+								setTimeout(() => {
+									image.style.transition = "opacity .25s";
+									image.style.opacity = "1";
+									tooltip.classList.add("loading");
+									clearInterval(loadingCheckInterval);
+								}, 350);
+								
 							}
 						}, 100);
 						
