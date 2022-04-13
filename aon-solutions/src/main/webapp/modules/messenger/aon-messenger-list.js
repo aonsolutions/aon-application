@@ -132,7 +132,7 @@ export class AonMessengerList extends AonElement {
     if(!this.isCau()){
       btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
         if(detail) {
-          this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate, workgroup: detail.workgroup});
+          this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate, workgroup: detail.workgroup, sender:detail.sender});
           this.loadMore(true);
         } 
       });
@@ -144,6 +144,7 @@ export class AonMessengerList extends AonElement {
   searchValueDefault(){
     let registryEl = this.getElement("registry");
     let taskHolderEl = this.getElement("task_holder");
+    let senderEl = this.getElement("senderFilter");
     let statusEl = this.getElement("status");
     let workgroup = this.getElement("workgroup");
     let applicationParent = this.getApplicationParent();
@@ -165,9 +166,10 @@ export class AonMessengerList extends AonElement {
         workgroup.setOptions(wgs)
       );
   
-      applicationParent.getTaskHoldersEnterprise().then(ths=>
-        taskHolderEl.setOptions(ths)
-      );
+      applicationParent.getTaskHoldersEnterprise().then(ths=>{
+        senderEl.setOptions(ths);
+        taskHolderEl.setOptions(ths);
+      });
     }
     
     statusEl.setOptions(TASK_STATUS_VALUE);

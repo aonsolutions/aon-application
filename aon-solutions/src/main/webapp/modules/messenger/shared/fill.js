@@ -105,6 +105,7 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             aonSelectParet.style.display = display;
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                console.log("setProject");
                 if(detail && detail.id)
                     task.setProject(detail);
                 else 
@@ -165,18 +166,20 @@ export const fillTaskHolder = async (aonMessengerChat) => {
         try {
             const workgroup = task.getWorkgroup().id;
             const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
+
+            const taskHolder = task.getTaskHolder();
     
             let options = [];
             if(taskHolders && taskHolders.length>0){
                 options = taskHolders.map( th=> ({...th, value: th.id}) )
-            } else if(task.task_holder.id && task.task_holder.name) {
-                options = [{...task.task_holder, value:task.task_holder.id}];
+            } else if(taskHolder.id && taskHolder.name) {
+                options = [{...taskHolder, value:taskHolder.id}];
             }
     
             aonSelect.setOptions(options);
             
-            if(task.task_holder && task.task_holder.id) 
-                aonSelect.value = task.task_holder.id;
+            if(taskHolder && taskHolder.id) 
+                aonSelect.value = taskHolder.id;
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail){

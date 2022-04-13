@@ -613,6 +613,7 @@ public interface Properties {
 		Property<Integer> getParentProperty();
 		
 		Property<String> getTagNameProperty();
+		Property<String> getCommentsWorkflowProperty();
 	}
 	
 	public interface TaskTagProperties{

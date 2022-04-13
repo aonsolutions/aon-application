@@ -312,12 +312,12 @@ public class TaskUtils {
 			if(company!=null) {
 				String logo = TaskUtils.getLogoCompany(company.getDomain().getName());
 				String to = null;
-				
-				if(task.getGtaskId()!=null && !task.getGtaskId().isEmpty()) {
+				String bcc = null;
+				if( isCau(api.getData()) ) {
+					to = EMAIL_SUPPORT;
+				} else if(task.getGtaskId()!=null && !task.getGtaskId().isEmpty()) {
 					to = task.getGtaskId();
-				} else {
-//					AonToken aonToken = SECURITY.getAonToken(api.getToken());
-//					Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+					bcc = EMAIL_SUPPORT;
 				}
 				
 				if(to!=null) {
@@ -339,6 +339,9 @@ public class TaskUtils {
 					.setSubject(subject)
 					.setBody(body)
 					.setTo(to);
+					
+					if(bcc!=null) 
+						msg.setBcc(bcc);
 
 				    SES.sendEmail(msg);
 				}
@@ -444,7 +447,7 @@ public class TaskUtils {
 				.setTo(to);
 				
 				if(isCau(api.getData()))
-					msg.setCc(EMAIL_SUPPORT);
+					msg.setBcc(EMAIL_SUPPORT);
 
 			    SES.sendEmail(msg);
 			}
@@ -513,17 +516,23 @@ public class TaskUtils {
 					task.setRegistry(registry);
 			}
 			
-			if(task.getId()==null) {
-				 task.setSender(new TaskHolder());
-			}
+			task.setSender(new TaskHolder());
 		} catch (Exception e) {e.printStackTrace();}
+	}
+	
+	
+	public static void setCauWorkflow(AonApiData api, TaskWorkflow workflow) {
+		workflow.setDomain(api.getDomain().getId());
+		workflow.setTaskHolder(new TaskHolder());
 	}
 	
 	private static Filter getSearchFilter(TaskProperties f, String search) {
 		Filter filter = f.getDescriptionProperty().like("%" + search + "%")
 				.or(f.getRegistryNameProperty().like("%" + search + "%"))
 				.or(f.getCommentsProperty().like("%" + search + "%")) 
-				.or(f.getTagNameProperty().like("%" + search + "%"));
+				.or(f.getTagNameProperty().like("%" + search + "%"))
+				.or(f.getCommentsWorkflowProperty().like("%" + search + "%"))
+				;
 		Integer numberSearch = 0;
 		try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", "")); } 
 		catch(NumberFormatException e){}

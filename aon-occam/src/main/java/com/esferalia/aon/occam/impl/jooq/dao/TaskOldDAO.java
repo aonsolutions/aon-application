@@ -204,6 +204,7 @@ public class TaskOldDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.CREATION_DATE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.PARENT);}
 		@Override public Property<String> getTagNameProperty() {return null;}
+		@Override public Property<String> getCommentsWorkflowProperty() {return null;}
 	}
 	
 	public static OldTask getTask(AONContext ctx, TaskFilter filter){
