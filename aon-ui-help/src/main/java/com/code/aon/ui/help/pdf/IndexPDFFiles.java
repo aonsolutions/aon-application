@@ -29,8 +29,15 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 public class IndexPDFFiles {
 	
 	
-	private static PDDocument index(InputStream file, String filename, PDDocument index) {
+	private static PDDocument index(InputStream file, String filename, PDDocument index, int indexPages) {
 		try {
+			
+			
+			System.out.println("---------------------------------------------------");
+			System.out.println(" INDEXING " + filename);
+			System.out.println("---------------------------------------------------");
+			
+			
 			PDDocument doc = Loader.loadPDF(file);
 			doc.getDocumentCatalog().setDocumentOutline(new PDDocumentOutline());
 			
@@ -49,7 +56,7 @@ public class IndexPDFFiles {
 			HashMap<String, PDPageDestination> namesMap = new HashMap<>();
 			List<PDPageDestination> destinations = new ArrayList<PDPageDestination>();
 			
-			for (int i = 1; i <= 3; i++) {
+			for (int i = 1; i <= indexPages; i++) {
 				IndexPDFFiles.extractPage(doc, i, destinations, namesMap, index , filename);
 			}
 
@@ -160,9 +167,10 @@ public class IndexPDFFiles {
 	    	String standardPatternStr = "^\\s*[\\d\\.]*\\s*(((?!\\.{3,}).)*)\\s*$";
 	       	Pattern standardPattern = Pattern.compile(standardPatternStr,Pattern.CASE_INSENSITIVE);
 	    	Matcher standardMatcher = standardPattern.matcher(stripper.getTextForRegion(r));
-	    	
+	 	    	
 	    	boolean dotOutlineMode = dotMatcher.matches();
 	    	boolean standardOutlineMode = standardMatcher.matches();
+	    	
 	    	
 	    	if(!dotOutlineMode && !standardOutlineMode) {
 	    		return;
@@ -174,10 +182,11 @@ public class IndexPDFFiles {
 	    	if(dotOutlineMode) {	    		
 		    	name = dotMatcher.group(1);
 	    	}
-
+	    	
 	    	// if standard outline
-	    	else if(standardMatcher.matches()) {
+	    	else if(standardOutlineMode) {
 	    		name = standardMatcher.group(1);
+	    		
 	    	}
 	    	
 	    	//If no outline item return
@@ -185,17 +194,13 @@ public class IndexPDFFiles {
 	    		return;
 	    	}
 	    	
+	    	
+	    	name = name.replaceAll("(\\w+)?[\\.\\s]{3,}\\s*\\d+", "$1");
 	    	System.out.println("\nDESTINATION NAME: " + name);
 	    	
-	    	/*
-	    	if("".equals(name.trim())) {
-	    	
-	    		return;
-	    	}
-	    	*/
 	    	
 	    	// Create outline item, add name to names and set action
-	    	PDOutlineItem item = new PDOutlineItem();	
+	    	PDOutlineItem item = new PDOutlineItem();
 			item.setDestination(destinations.get(namesMap.size()));
 			item.setTitle(name);	
 			    
@@ -212,14 +217,44 @@ public class IndexPDFFiles {
 	}
 	
 
+	public static class PdfIndexProperties {
+		
+		private String name;
+		private int index;
+		
+		public PdfIndexProperties(String name, int index) {
+			super();
+			this.name = name;
+			this.index = index;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public int getIndex() {
+			return index;
+		}
+	
+	}
+	
 	public static void main(String[] args) throws Exception {
 		
+		
+		HashMap<String, PdfIndexProperties> files = new HashMap<>();
+		files.put("payroll", new PdfIndexProperties("LABORAL Manual de USUARIO", 3));
+		files.put("account", new PdfIndexProperties("CONTABILIDAD Manual de USUARIO", 2));
+		
+		/**
+		files.put("comunica", new PdfIndexProperties("COMUNIC@ Manual de USUARIO", 1));
+		files.put("portal_company", new PdfIndexProperties("PORTAL ASESOR (Usuario empresa) Manual de usuario", 1));
+		files.put("portal_asesor", new PdfIndexProperties("PORTAL ASESOR (Usuario asesor) Manual de usuario", 1));
+		files.put("portal_asesor_user_config", new PdfIndexProperties("PORTAL ASESOR (Configuración usuarios) Guia rápida", 1));
+		**/
+	
 		System.out.println("-----------------------------------------------------------");
 		System.out.println(" PDF INDEX GENERATION NEW ");
 		System.out.println("-----------------------------------------------------------");
-		
-		InputStream payrollStream = IndexPDFFiles.class.getResourceAsStream("payroll.pdf");
-		InputStream accountStream = IndexPDFFiles.class.getResourceAsStream("account.pdf");
 		
 		PDDocument index = new PDDocument();		
 		PDDocumentOutline outline = new PDDocumentOutline();
@@ -227,16 +262,24 @@ public class IndexPDFFiles {
 		
 		PDPage blankPage = new PDPage();
 		index.addPage( blankPage );	
-	
-		PDDocument payrollNamed = index(payrollStream, "LABORAL Manual de USUARIO", index );
-		PDDocument accountNamed = index(accountStream, "CONTABILIDAD Manual de USUARIO", index );
+		
 		try {
-			
-			payrollNamed.save("target/classes/com/code/aon/ui/help/pdf/payroll_names.pdf");
-			payrollNamed.save("src/main/resources/com/code/aon/ui/help/pdf/payroll_names.pdf");
-			
-			accountNamed.save("target/classes/com/code/aon/ui/help/pdf/account_names.pdf");
-			accountNamed.save("src/main/resources/com/code/aon/ui/help/pdf/account_names.pdf");
+
+			files.keySet().forEach( filename -> {
+				
+				String indexName = files.get(filename).getName();
+				int indexPages = files.get(filename).getIndex();
+				
+				InputStream stream = IndexPDFFiles.class.getResourceAsStream( filename + ".pdf");
+				
+				PDDocument named = index(stream, indexName, index ,indexPages);
+				try {
+					named.save("target/classes/com/code/aon/ui/help/pdf/" + filename + "_names.pdf");
+					named.save("src/main/resources/com/code/aon/ui/help/pdf/" + filename + "_names.pdf");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});		
 			
 			index.save("target/classes/com/code/aon/ui/help/pdf/index.pdf");
 			index.save("src/main/resources/com/code/aon/ui/help/pdf/index.pdf");

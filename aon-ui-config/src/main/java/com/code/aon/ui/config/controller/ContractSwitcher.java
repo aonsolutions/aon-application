@@ -117,8 +117,8 @@ public class ContractSwitcher implements
 				List<ContractData> list = (List<ContractData>) model
 						.getWrappedData();
 				for (ContractData d : list) {
-					if (StringUtils
-							.containsIgnoreCase(
+					if (AonStringUtils
+							.containsMatching(
 									d.getFullName(), getFilter())
 							|| StringUtils.containsIgnoreCase(
 									d.getSsNumber(), getFilter())

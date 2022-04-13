@@ -59,6 +59,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
 		ITemplateController, Serializable {
@@ -215,9 +216,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 				List<DomainData> list = (List<DomainData>) model
 						.getWrappedData();
 				for (DomainData d : list) {
-					if (StringUtils
-							.containsIgnoreCase(d.getName(), getFilter())
-							|| StringUtils.containsIgnoreCase(
+					if (AonStringUtils.containsMatching(d.getName(), getFilter())
+							|| AonStringUtils.containsMatching(
 									d.getDescription(), getFilter())
 							|| StringUtils.containsIgnoreCase(
 									d.getDocument(), getFilter())
