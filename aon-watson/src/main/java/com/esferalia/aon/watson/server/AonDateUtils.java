@@ -12,6 +12,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonDateUtils {
+	
     /**
      * Number of milliseconds in a standard second.
      * @since 2.1
@@ -33,15 +34,16 @@ public class AonDateUtils {
      */
     public static final long MILLIS_PER_DAY = 24 * MILLIS_PER_HOUR;
 
-    private static final SimpleDateFormat ORDER_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd"); 
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT2 = new SimpleDateFormat("dd-MM-yyyy");
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT3 = new SimpleDateFormat("yyyy/MM/dd");
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT4 = new SimpleDateFormat("yyyy-MM-dd");
-	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	private static final SimpleDateFormat DATE_TIME_FORMAT_AUX = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    
+    public static final String ORDER_DATE_FORMAT = "yyyyMMdd"; 
+	public static final String SIMPLE_DATE_FORMAT = "dd/MM/yyyy";
+	public static final String SIMPLE_DATE_FORMAT2 = "dd-MM-yyyy";
+	public static final String SIMPLE_DATE_FORMAT3 = "yyyy/MM/dd";
+	public static final String SIMPLE_DATE_FORMAT4 = "yyyy-MM-dd";
+	public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	public static final String DATE_TIME_FORMAT_AUX = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+	public static final String TIME_FORMAT = "HH:mm";
 	
 	private static final int MODIFY_ROUND = 1;
 	private static final int MODIFY_CEILING = 2;
@@ -53,6 +55,10 @@ public class AonDateUtils {
 			{ Calendar.DATE, Calendar.DAY_OF_MONTH, Calendar.AM_PM },
 			{ Calendar.MONTH, SEMI_MONTH }, { Calendar.YEAR },
 			{ Calendar.ERA } };
+	
+	private AonDateUtils() {
+		
+	}
 
 	/**
 	 * Comprueba si las fecha pasadas por parámetros son el mismo dia. Si
@@ -1048,7 +1054,7 @@ public class AonDateUtils {
 	}
     
 	public static String simpleFormat(Date date) {
-		return date == null ? null : SIMPLE_DATE_FORMAT.format(date);
+		return date == null ? null : format(date, SIMPLE_DATE_FORMAT);
 	}
 	
 	public static Date parse(String date) {
@@ -1086,37 +1092,28 @@ public class AonDateUtils {
 	}
 
 	public static String orderFormat(Date date) {
-		return date == null ? null : ORDER_DATE_FORMAT.format(date);
+		return date == null ? null : format(date, ORDER_DATE_FORMAT);
 	}
 	public static Date orderParse(String date) {
-		try {
-			return date == null ? null : ORDER_DATE_FORMAT.parse(date);
-		} catch (ParseException e) {
-			return null;
-		}
+		return date == null ? null : parse(date, ORDER_DATE_FORMAT);	
 	}
 	
 	public static String dateTimeFormat(Date date) {
-		return date == null ? null : DATE_TIME_FORMAT.format(date);
+		return date == null ? null : format(date, DATE_TIME_FORMAT);
 	}
 	
 	public static Date dateTimeParse(String date) {
-		try {
-			return date == null ? null : DATE_TIME_FORMAT.parse(date);
-		} catch (ParseException e) {
-			return parse(date, DATE_TIME_FORMAT_AUX);
-		}
+		if(date == null) return null;
+		Date d = parse(date, DATE_TIME_FORMAT);
+		if(d == null) d = parse(date, DATE_TIME_FORMAT_AUX);
+		return d;
 	}
 	
 	public static String timeFormat(Date date) {
-		return date == null ? null : TIME_FORMAT.format(date);
+		return date == null ? null : format(date, TIME_FORMAT);
 	}
 	public static Date timeParse(String date) {
-		try {
-			return date == null ? null : TIME_FORMAT.parse(date);
-		} catch (ParseException e) {
-			return null;
-		}
+		return date == null ? null : parse(date, TIME_FORMAT);
 	}
 	
     /**
