@@ -1,4 +1,4 @@
-import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
 import { domainName } from "../../../services/request.js";
 import { setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
@@ -172,7 +172,7 @@ const appendChatMessage = (properties) => {
 } 
 
 /**
- * @param {String} text optional
+ * @param {String} text Optional
  * @param {HTMLElement} aon-messenger-chat 
  * @returns {Array} [value, messageEl] message element html
  */
@@ -228,18 +228,22 @@ const checkFilesAndSend = async (textArea)=>{
             const fileId = el.dataset.id;
             const file = files.find(({id})=> id == fileId);
             if(file){
-                const taskAttach = await aonMessengerChat.uploadFile({ file, task:taskId });
-                if(taskAttach){
+                const attach = await aonMessengerChat.uploadFile({ file, task:taskId });
+                if(attach){
                     const json = {
-                        domain_name: domainName(),
-                        attach_type:"task",
-                        domain_id:taskAttach.domain,
-                        id:taskAttach.id
+                        domain_name: attach.domain_name,
+                        attach_type: attach.attach_type,
+                        domain_id:attach.domain,
+                        id:attach.id
                     };
+
                     const jsonBase64 = btoa( JSON.stringify(json) );
                     
-                    const linkTmp = `/${API_URL}/file/${jsonBase64}`;
-    
+                    let linkTmp = `/${API_URL}/file/${jsonBase64}`;
+
+                    if(aonMessengerChat.isCau())
+                        linkTmp = SIG_URL+linkTmp;
+
                     if(file.contentType.indexOf("image")>=0)
                         el.src = linkTmp;
                     else 
@@ -468,7 +472,7 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
                     task.setProject({});
                     task.setRegistry({});
                     task.setGTaskId(undefined);
-                    if(aonMessengerChat.isBeta()){
+                    if(aonMessengerChat.isBeta() && !aonMessengerChat.isCau()){
                         const myTaskHolder = task.myTaskHolder;
                         if(myTaskHolder && myTaskHolder.id && task.getTaskHolder() && !task.getTaskHolder().id)
                             task.setTaskHolder(myTaskHolder);
@@ -642,8 +646,10 @@ export const getIconJson =({source,status}) => {
 export const downChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat){
-        chat.scrollTo(0, chat.scrollHeight); //GO DOWN
-        addLine(chat);
+        setTimeout(() =>{
+            chat.scrollTo(0, chat.scrollHeight);  //GO DOWN
+            addLine(chat);
+        }, 100) 
     }
 }
 /**
@@ -651,8 +657,9 @@ export const downChat = () => {
  */
 export const upChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
+    console.log(chat);
     if(chat)
-        chat.scrollTo(0,0) //GO UP   
+        setTimeout(() => chat.scrollTo(0, 0), 100)      //GO UP   
 }
 
 /**
