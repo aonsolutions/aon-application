@@ -24,7 +24,7 @@ export const isSigGet = (url, data) => {
             domainName: SIG_DOMAIN_NAME
         }   
     }
-    return isCau() ? getSig(`${SIG_URL}/${url}`, data) : get(`${API_URL}/${url}`, data);
+    return isCau() ? getSig(`${SIG_URL}/${API_URL}/${url}`, data) : get(`${API_URL}/${url}`, data);
 }  
   
 export const isSigPost = (url, data) => {
@@ -32,7 +32,7 @@ export const isSigPost = (url, data) => {
         data = setCauData(data);
     }
     
-    return isCau() ? postSig(`${SIG_URL}/${url}`, data) : post(`${API_URL}/${url}`, data);
+    return isCau() ? postSig(`${SIG_URL}/${API_URL}/${url}`, data) : post(`${API_URL}/${url}`, data);
 } 
     
 export const isSigRemove = (url, data) => {
@@ -40,7 +40,7 @@ export const isSigRemove = (url, data) => {
         data = setCauData(data);
     }
 
-    return isCau() ? removeSig(`${SIG_URL}/${url}`, data) : remove(`${API_URL}/${url}`, data);
+    return isCau() ? removeSig(`${SIG_URL}/${API_URL}/${url}`, data) : remove(`${API_URL}/${url}`, data);
 } 
 
   

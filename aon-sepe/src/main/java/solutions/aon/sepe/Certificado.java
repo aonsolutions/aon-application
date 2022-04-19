@@ -30,7 +30,11 @@ import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
 import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Certificado {
-
+	
+	private Certificado() {
+		throw new IllegalStateException("Utility class");
+	}
+	
 	private static DecimalFormat decimalFormat = new DecimalFormat("#00.00");
 	
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
@@ -42,7 +46,10 @@ public class Certificado {
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e.getMessage());
+			}
 	}
 	
 	private static byte[] certEnterprisePdfImpl(final InputStream certificateInputStream, 
@@ -155,39 +162,59 @@ public class Certificado {
 			handleSepeExceptions(htmlPage);
 			
 			{//DATA REPRESENTATIVE
-				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				form.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getNameManager());
-				form.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(certificates.getSurnameManager());
-				if(certificates.getLastSurname().isPresent()) {
-					form.getInputByName("orDatosRepresentante.srSegundoApellidoRepresentante").setValueAttribute(certificates.getLastSurname().get());
-				} 
-					
-				((HtmlSelect)form.querySelector("select[name=\"orDatosRepresentante.srTipoDocRepresentante\"]")).setSelectedAttribute(tipodocManager, true);
-				form.getInputByName("orDatosRepresentante.srNifRepresentante").setValueAttribute(ipfManager);
+				HtmlForm formRepresentative = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
+				formRepresentative.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getNameManager());
+				formRepresentative.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(certificates.getSurnameManager());
 				
-				if(certificates.getCargoManager().isPresent()) {
-					form.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(certificates.getCargoManager().get());
-				}
+				certificates.getLastSurnameManager().ifPresent(d->
+					formRepresentative.getInputByName("orDatosRepresentante.srSegundoApellidoRepresentante").setValueAttribute(d)
+				);
+
+				((HtmlSelect)formRepresentative.querySelector("select[name=\"orDatosRepresentante.srTipoDocRepresentante\"]")).setSelectedAttribute(tipodocManager, true);
+				formRepresentative.getInputByName("orDatosRepresentante.srNifRepresentante").setValueAttribute(ipfManager);
+				
+				certificates.getCargoManager().ifPresent(d->
+					formRepresentative.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(d)
+				);
 					
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
 			
 			{//DATA EMPLOYEE
-				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csGrupoCotizacion.valor\"]")).setSelectedAttribute(certificates.getGz(), true);
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoContrato.valor\"]")).setSelectedAttribute(typeContract, true);
-				form.getInputByName("orDatosTrabajador.srDuracionContratoTrab").setValueAttribute(certificates.getDurationContract().toString());
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csIndicadorDuracionContrato.valor\"]")).setSelectedAttribute(certificates.getTypeDuration().getValue(), true);
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoProfesion.valor\"]")).setSelectedAttribute(certificates.getCatProfessional(), true);
+				HtmlForm formEmployee = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
+				
+				certificates.getEmployeeName().ifPresent(d->
+					formEmployee.getInputByName("orDatosTrabajador.srNombreTrabajador").setValueAttribute(d)
+				);
+				
+				certificates.getEmployeeSurname().ifPresent(d->
+					formEmployee.getInputByName("orDatosTrabajador.srPrimerApellidoTrabajador").setValueAttribute(d)
+				);
+		
+				certificates.getEmployeeSecondSurname().ifPresent(d->
+					formEmployee.getInputByName("orDatosTrabajador.srSegundoApellidoTrabajador").setValueAttribute(d)
+				);
+				
+				certificates.getNaf().ifPresent(naf->
+					formEmployee.getInputByName("orDatosTrabajador.srNumSSTrabajador").setValueAttribute(naf)
+				);
+
+				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csGrupoCotizacion.valor\"]")).setSelectedAttribute(certificates.getGz(), true);
+				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csTipoContrato.valor\"]")).setSelectedAttribute(typeContract, true);
+				formEmployee.getInputByName("orDatosTrabajador.srDuracionContratoTrab").setValueAttribute(certificates.getDurationContract().toString());
+				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csIndicadorDuracionContrato.valor\"]")).setSelectedAttribute(certificates.getTypeDuration().getValue(), true);
+				((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csTipoProfesion.valor\"]")).setSelectedAttribute(certificates.getCatProfessional(), true);
 				if( Arrays.asList("2","5").contains( typeContract.substring(0,1) ) ) {
-					form.getInputByName("orDatosTrabajador.existenDetalles").setChecked(true);
+					formEmployee.getInputByName("orDatosTrabajador.existenDetalles").setChecked(true);
 				}
 				if(certificates.getPublicPosition()!=null) {
-					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoCargoPublicoOSindical.valor\"]")).setSelectedAttribute(certificates.getPublicPosition().getValue().toString(), true);
-					if(certificates.getDedicationPer().isPresent()) {
-						form.getInputByName("orDatosTrabajador.srPorcentualDedicacion").setValueAttribute(certificates.getDedicationPer().get().toString());
-					}  
+					((HtmlSelect)formEmployee.querySelector("select[name=\"orDatosTrabajador.csTipoCargoPublicoOSindical.valor\"]"))
+					.setSelectedAttribute(certificates.getPublicPosition().getValue().toString(), true);
+					
+					certificates.getDedicationPer().ifPresent(d->
+						formEmployee.getInputByName("orDatosTrabajador.srPorcentualDedicacion").setValueAttribute(d.toString())
+					);
 				}
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
@@ -236,20 +263,28 @@ public class Certificado {
 					}
 					handleSepeExceptions(htmlPage);
 				}
-				
+		
 				{//DATA VACATION
-					form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
+					HtmlForm formVacation = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 					if(certificates.getDaysCtzVc()!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion").setValueAttribute(certificates.getDaysCtzVc().toString());
-					if(certificates.getBcccVc().isPresent())
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValueAttribute(decimalFormat.format(certificates.getBcccVc().get()));
-					if(certificates.getBcdVc().isPresent())
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo").setValueAttribute(decimalFormat.format(certificates.getBcdVc().get()));
+						formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion").setValueAttribute(certificates.getDaysCtzVc().toString());
+					
+					certificates.getBcccVc().ifPresent(d->
+						formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes")
+						.setValueAttribute(decimalFormat.format(d))
+					);
+			
+					certificates.getBcdVc().ifPresent(d->
+						formVacation.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo")
+						.setValueAttribute(decimalFormat.format(d))
+					);
+						
 					htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btActualizarTotales]")).click();
 					handleSepeExceptions(htmlPage);
 				}
-				
+	
 				Page page =((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
+				
 				if(page.isHtmlPage()) {
 					handleSepeExceptions((HtmlPage) page);
 				} else {
@@ -259,8 +294,7 @@ public class Certificado {
 					catch(Exception e){throw new InvalidDataException();}
 				}
 			}
-			
-//	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testCertificates.html");
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testCertificates.html");
 	        System.out.println("END");
 		} 
 	    return null;

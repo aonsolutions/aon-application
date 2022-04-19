@@ -15,10 +15,12 @@ import { AonDateUtils } from "../utils/AonDateUtils.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { firstLetters, StringTwoLetters } from "../timecontrol/time-control/utils.js";
 import { createTagHtml } from "./shared/creationUtils.js";
+
 export class AonMessengerList extends AonElement {
   MORE;
   TASK_HOLDER;
   AON_TABLE;
+
   static get observedAttributes() {
     return [];
   }
@@ -44,10 +46,8 @@ export class AonMessengerList extends AonElement {
 
   disconnectedCallback() {
     if(this.AON_TABLE) this.AON_TABLE.removeEventListener(EVENT.MORE, this.fnMore);
-    if (this.getApplication()){
+    if (this.getApplication())
       this.getApplication().removeFloatOption();
-      this.getApplication().removeToolbarOptions();
-    } 
   }
 
   initialize() {
@@ -63,7 +63,8 @@ export class AonMessengerList extends AonElement {
 
   async build() {
     this.paintTable();
-    this.buildToolbar();
+    if(this.isMobile())
+      this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
   }
 
   async paintTable(divNotification) {
@@ -89,12 +90,7 @@ export class AonMessengerList extends AonElement {
 
     this.AON_TABLE.addEventListener(EVENT.MORE, this.fnMore);
 
-    setTasks([]);
-
-    const application = this.getApplication();
-    if(application) application.startLoader();
-    await this.loadMore(true);
-    if(application) application.stopLoader();    
+    await this.loadMore(true);  
   }
   
 
@@ -109,90 +105,23 @@ export class AonMessengerList extends AonElement {
     }
   }
 
-  buildToolbar() {
-    this.applicationEl.removeToolbarOptions();
-    if(this.isMobile()){
-      this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
-    } else {
-      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>{
-        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY});
-      });
-    }
-  
-    this.buildToolbarSearch();
-  }
-
-  buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption();
-    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      this.setFilter({...this.getFilter(), page:0, perPage:30, search:detail});
-      this.loadMore(true);
-    });
-
-    if(!this.isCau()){
-      btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-        if(detail) {
-          this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate, workgroup: detail.workgroup, sender:detail.sender});
-          this.loadMore(true);
-        } 
-      });
-      btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
-      this.searchValueDefault();
-    }
-  }
-
-  searchValueDefault(){
-    let registryEl = this.getElement("registry");
-    let taskHolderEl = this.getElement("task_holder");
-    let senderEl = this.getElement("senderFilter");
-    let statusEl = this.getElement("status");
-    let workgroup = this.getElement("workgroup");
-    let applicationParent = this.getApplicationParent();
-    getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
-      registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
-    });
-
-    registryEl.addEventListener(EVENT.INPUT,async({target})=>{
-        const value = target.value;
-        if(value.length > 2){
-          const cs = await getCustomers({reload:true, page:1, perPage:30, value});
-          registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
-        }
-    })
-    
-
-    if(applicationParent){
-      applicationParent.getMyWorkgroups().then(wgs=>
-        workgroup.setOptions(wgs)
-      );
-  
-      applicationParent.getTaskHoldersEnterprise().then(ths=>{
-        senderEl.setOptions(ths);
-        taskHolderEl.setOptions(ths);
-      });
-    }
-    
-    statusEl.setOptions(TASK_STATUS_VALUE);
-  }
-
-  async loadMore(search = false) {
-
-    const application = this.getApplication();
-
-    if(application && !search) application.startLoader();
+  async loadMore(reload) {
 
     const datos = await this.getData();
 
-    addTasks(datos);
-    if(this.isMobile()){
-      if(search)this.AON_TABLE.removeAllLi();
-      this.getDataMobile(datos);
+    if(reload){
+      setTasks(datos);
     } else {
-      if(search)this.AON_TABLE.removeRows();
-      this.getDataDesktop(datos);
+      addTasks(datos);
     }
 
-    if(application && !search) application.stopLoader();    
+    if(this.isMobile()){
+      if(reload)this.AON_TABLE.removeAllLi();
+      this.getDataMobile(datos);
+    } else {
+      if(reload)this.AON_TABLE.removeRows();
+      this.getDataDesktop(datos);
+    } 
 	}
 
   getDataDesktop(datos){
@@ -450,7 +379,6 @@ export class AonMessengerList extends AonElement {
       return tags.filter(tag=> tag.tag_type === TAG_TYPE.TASK_LABEL);
     return [];
   }
-  
 
   isCau(){  //IS CAU
     return parseInt(localStorage.getItem("taskCau") || 0);

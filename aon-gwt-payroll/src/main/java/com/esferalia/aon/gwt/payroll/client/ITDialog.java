@@ -249,6 +249,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	private DoubleBox baseCP;
 	
 	private boolean userComunica = false;
+
+	private AonToolbar toolbarDetail;
 	
 	// --------------------------------------------------- ProvideITDataGrid
 	
@@ -1401,9 +1403,9 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbar = new AonToolbar("Baja IT");
+		toolbarDetail = new AonToolbar("Baja IT");
 		
-		listIT = new AonToolbarButton( "Listar ITs", AON.CSS.aonIconList() );
+		listIT = new AonToolbarButton("Listar ITs", AON.CSS.aonIconList() );
 		listIT.setAccessKey('L');
 		listIT.addClickHandler(new ClickHandler() {
 			@Override
@@ -1411,7 +1413,7 @@ public abstract class ITDialog extends AonCustomDialog {
 				onListIT(event);
 			}
 		});
-		toolbar.add(listIT);
+		toolbarDetail.add(listIT);
 		
 		backListIT = new AonToolbarButton( "Volver a ITs", AON.CSS.aonIconBack() );
 		backListIT.setAccessKey('B');
@@ -1419,9 +1421,10 @@ public abstract class ITDialog extends AonCustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				onBackListIT(event);
+				toolbarDetail.setTitle("Baja IT");
 			}
 		});
-		toolbar.add(backListIT);
+		toolbarDetail.add(backListIT);
 		
 		newIT = new AonToolbarButton( "Nueva IT", AON.CSS.aonIconAdd() );
 		newIT.setAccessKey('N');
@@ -1431,7 +1434,7 @@ public abstract class ITDialog extends AonCustomDialog {
 				onNewIT(event);
 			}
 		});
-		toolbar.add(newIT);
+		toolbarDetail.add(newIT);
 		
 		deleteIT = new AonToolbarButton( "Borrar IT", AON.CSS.aonIconDelete() );
 		deleteIT.setAccessKey('D');
@@ -1441,7 +1444,7 @@ public abstract class ITDialog extends AonCustomDialog {
 				onDeleteIT(event);
 			}
 		});
-		toolbar.add(deleteIT);
+		toolbarDetail.add(deleteIT);
 		
 		showCertificate = new AonToolbarButton( "Certificado IT", AON.CSS.aonIconPdf());
 		showCertificate.setAccessKey('C');
@@ -1451,14 +1454,14 @@ public abstract class ITDialog extends AonCustomDialog {
 				onShowCertitificateIT(event);
 			}
 		});
-		toolbar.add(showCertificate);
+		toolbarDetail.add(showCertificate);
 		showCertificate.setVisible(false);
 
 		backListIT.setVisible(false);
 		newIT.setVisible(false);
 		deleteIT.setVisible(false);
 
-		return toolbar;
+		return toolbarDetail;
 
 	}
 	
@@ -1844,12 +1847,15 @@ public abstract class ITDialog extends AonCustomDialog {
 		switch(itPart.getType()){
 			case (byte)0:
 				cause = getSelectedTextByValue(causeLowPart, it.getTypeLowPart());
+				toolbarDetail.setTitle("Baja");
 			break;
 			case (byte)1:
 				cause = "Confirmaci\u00F3n";
+				toolbarDetail.setTitle(cause);
 			break;
 			case (byte)2:
 				cause = getSelectedTextByValue(causeHighPart, it.getTypeHighPart());
+				toolbarDetail.setTitle("Alta");
 			break;
 			default:
 				cause = "";

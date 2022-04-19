@@ -438,8 +438,6 @@ class SistemaREDITParts {
 			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
 			htmlPage = validate.click();
 			handleItPartErrors(htmlPage);
-			
-//			Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"/home/rvasquez/Documentos/testCertificates.html");
 
 			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
 			htmlPage = confim.click();
