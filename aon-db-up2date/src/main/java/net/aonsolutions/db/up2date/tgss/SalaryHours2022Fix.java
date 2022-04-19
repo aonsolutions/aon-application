@@ -21,7 +21,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class SalaryHours2022Fix implements Update {
 	
-	private static final SalaryData BASE_CGC = SALARY_DATA.as("base_cgc");
+	private static final SalaryData BASE_CGP = SALARY_DATA.as("base_cgp");
 	private static final SalaryData HORAS_NOMINA = SALARY_DATA.as("horas_nomina");
 	private static final SalaryData GRUPO_COTIZACION = SALARY_DATA.as("grupo_cotizacion");
 	
@@ -93,34 +93,35 @@ public class SalaryHours2022Fix implements Update {
 				
 				dslContext
 				.select()
-				.from(BASE_CGC)
+				.from(BASE_CGP)
 				
 				.innerJoin(HORAS_NOMINA)
 				.on(HORAS_NOMINA.NAME.eq("HORAS_NOMINA") 
-				.and(BASE_CGC.SALARY.eq(HORAS_NOMINA.SALARY))
-				.and(BASE_CGC.START_DATE.eq(HORAS_NOMINA.START_DATE)))
+				.and(BASE_CGP.SALARY.eq(HORAS_NOMINA.SALARY))
+				.and(BASE_CGP.START_DATE.eq(HORAS_NOMINA.START_DATE)))
 
 				.innerJoin(GRUPO_COTIZACION)
 				.on(GRUPO_COTIZACION.NAME.eq("GRUPO_COTIZACION") 
 				.and(GRUPO_COTIZACION.EXPRESSION.eq(grupoCotizacion))
-				.and(BASE_CGC.SALARY.eq(GRUPO_COTIZACION.SALARY))
-				.and(BASE_CGC.START_DATE.eq(GRUPO_COTIZACION.START_DATE)))
+				.and(BASE_CGP.SALARY.eq(GRUPO_COTIZACION.SALARY))
+				.and(BASE_CGP.START_DATE.eq(GRUPO_COTIZACION.START_DATE)))
 
-				.innerJoin(SALARY).on(SALARY.ID.eq(BASE_CGC.SALARY))
+				.innerJoin(SALARY).on(SALARY.ID.eq(BASE_CGP.SALARY))
 				
-				.where(BASE_CGC.NAME.eq("BASE_CGC"))
-				.and(BASE_CGC.START_DATE.ge(startMarch2022Date))
-				.and(BASE_CGC.EXPRESSION.lt(HORAS_NOMINA.EXPRESSION.mul(basesCgcMinHour.get(grupoCotizacion))))
+				.where(BASE_CGP.NAME.eq("BASE_CGP"))
+				.and(BASE_CGP.START_DATE.ge(startMarch2022Date))
+				.and(BASE_CGP.EXPRESSION.lt(HORAS_NOMINA.EXPRESSION.mul(basesCgcMinHour.get(grupoCotizacion))))
 				.fetchStream()
 				.forEach( r -> {
-					System.out.println( r.get(SALARY.ID) + "-." + r.get(SALARY.EMPLOYEE_NAME) + " [" + r.get(GRUPO_COTIZACION.EXPRESSION) + "] : " + r.get(BASE_CGC.EXPRESSION)  + " < " + basesCgcMinHour.get(grupoCotizacion) + " * " + r.get(HORAS_NOMINA.EXPRESSION));
 					
-					double baseCgc = Double.parseDouble(r.get(BASE_CGC.EXPRESSION));
+					double baseCgc = Double.parseDouble(r.get(BASE_CGP.EXPRESSION));
 					double baseCgcMinHour = basesCgcMinHour.get(grupoCotizacion);
 
 					double newHorasNomina = Math.floor(baseCgc / baseCgcMinHour);
 					newHorasNomina = Math.floor(newHorasNomina * 100.00) / 100.00; 
 					
+					System.out.println( r.get(SALARY.ID) + "-." + r.get(SALARY.EMPLOYEE_NAME) + " [" + r.get(GRUPO_COTIZACION.EXPRESSION) + "] : " + r.get(BASE_CGP.EXPRESSION)  + " < " + basesCgcMinHour.get(grupoCotizacion) + " * " + r.get(HORAS_NOMINA.EXPRESSION) + "( " + newHorasNomina + " )");
+
 					dslContext.update(SALARY_DATA).set(SALARY_DATA.EXPRESSION, Double.toString(newHorasNomina)).where(SALARY_DATA.ID.eq(r.get(HORAS_NOMINA.ID))).execute();
 				});
 				
