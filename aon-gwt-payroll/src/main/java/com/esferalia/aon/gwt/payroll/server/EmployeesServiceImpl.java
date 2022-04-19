@@ -6340,7 +6340,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if (coefD != null) {
 				coefD = coefD * 1000;
 				String coefStr = coefD.intValue() + "";
-				coef = AonStringUtils.leftPad(coefStr, 3, '0');
+				coef = AonNumberUtils.equals(1000, coefD.intValue()) ? "000" : AonStringUtils.leftPad(coefStr, 3, '0');
 			}
 
 			// cambioContratoCoef
