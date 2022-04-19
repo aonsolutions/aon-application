@@ -1638,12 +1638,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void showIdc(Date date) {
 		showLoading("Obteniendo IDC...");
+		showPdf();
+		idcDateListBox.setVisible(true);
+		idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+		idcDateListBox.setSelected(date, true);
 		contrataEmployeeObject.downloadIdc(date, dataURI -> {
 			hideMessage();
-			showPdf();
-			idcDateListBox.setVisible(true);
-			idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
-			idcDateListBox.setSelected(date, true);
+//			showPdf();
+//			idcDateListBox.setVisible(true);
+//			idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+//			idcDateListBox.setSelected(date, true);
 			pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC", f.getMessage()));
 	}
@@ -1654,12 +1658,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void showIdcPlNss(Date month) {
 		showLoading("Obteniendo IDC PL NSS...");
+		showPdf();
+		idcMonthListBox.setVisible(true);
+		idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+		idcMonthListBox.setSelected(month, true);
 		contrataEmployeeObject.downloadIdcPlNss(month, dataURI -> {
 			hideMessage();
-			showPdf();
-			idcMonthListBox.setVisible(true);
-			idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
-			idcMonthListBox.setSelected(month, true);
 			pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC PL NSS", f.getMessage()));
 	}
