@@ -757,8 +757,10 @@ public class TediParser {
 	
 	private static Consumer<TediParserContext> INVOICE_FINANCES = (ctx) -> {
 		TediResult result = ctx.getTediResult();
-		boolean hasFinances = (result.getTedi().getFinances() != null && result.getTedi().getFinances().size() > 0);
-		if (hasFinances) {
+		boolean hasFinances = (result.getTedi().getFinances() != null && !result.getTedi().getFinances().isEmpty());
+		if(result.getInv().getFinances() != null && !result.getInv().getFinances().isEmpty()) {
+			result.getInvoice().setFinances(result.getInv().getFinances());
+		} else if(hasFinances) {
 			for ( int i = 0; i < result.getTedi().getFinances().size(); i++) {
 				TediFinance tfin = result.getTedi().getFinances().get(i);
 				Finance fin = new Finance();
@@ -777,7 +779,7 @@ public class TediParser {
 				TediFinanceTransfer.toAon(ctx.getAonConfiguration(),result,tfin,fin);
 		} else {
 			AccountingInvoice ai = result.getAccountingInvoice();
-			if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
+			if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().isEmpty()) {
 				ai.setAuthFinanceCalculation(true);
 				if (ctx.getAONContext() != null) {
 					ai.getInvoice().setFinances( FinanceDAO.getFinancesForInvoice(ctx.getAONContext(), ai.getInvoice())); 
