@@ -114,6 +114,11 @@
               <div>
                 <strong>Fecha: </strong> $task.getDate()
               </div>
+              #if( $task.getDomainName() )
+	       		  <div>
+	                <strong>Dominio: </strong> https://$task.getDomainName()
+	              </div>
+	          #end
 
             </div>
           </td>
