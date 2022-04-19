@@ -17,6 +17,7 @@ public class TediResult implements Serializable {
 
 	private boolean checked;
 	private TediInvoice tedi;
+	private Invoice inv;
 	private AccountingInvoice ai;
 
 	public TediResult() {
@@ -26,6 +27,12 @@ public class TediResult implements Serializable {
 	public TediResult(TediInvoice tedi, AccountingInvoice ai) {
 		this.tedi = tedi;
 		this.ai = ai;
+	}
+	
+	public TediResult(TediInvoice tedi, AccountingInvoice ai, Invoice inv) {
+		this.tedi = tedi;
+		this.ai = ai;
+		this.inv = inv;
 	}
 	
 	public String getUuid() {
@@ -46,6 +53,18 @@ public class TediResult implements Serializable {
 
 	public TediResult setTedi(TediInvoice tedi) {
 		this.tedi = tedi;
+		return this;
+	}
+	
+	public Invoice getInv() {
+		if(inv == null) {
+			inv = new Invoice();
+		}
+		return inv;
+	}
+	
+	public TediResult setInv(Invoice inv) {
+		this.inv = inv;
 		return this;
 	}
 

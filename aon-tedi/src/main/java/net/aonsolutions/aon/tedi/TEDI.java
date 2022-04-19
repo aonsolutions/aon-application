@@ -116,7 +116,7 @@ public class TEDI {
 				rawdoc = RawdocDAO.getFull(ctx, rawdocId);
 				result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()), rawdoc.getMimeType());
 			} else {
-				result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc.getTediInvoice());
+				result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc);
 			}
 			Attach attach = new Attach();
 			attach.setId(rawdoc.getId());

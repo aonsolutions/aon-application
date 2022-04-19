@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
@@ -149,7 +150,11 @@ public class TediParser {
 	}
 
 	public static TediResult toFullInvoice(AONContext ctx, AonConfiguration aonCtx, TediInvoice tedi) {
-		return toAccountingInvoice(ctx, aonCtx, tedi);
+		return toAccountingInvoice(ctx, aonCtx, new Rawdoc().setTediInvoice(tedi));
+	}
+	
+	public static TediResult toFullInvoice(AONContext ctx, AonConfiguration aonCtx, Rawdoc rawdoc) {
+		return toAccountingInvoice(ctx, aonCtx, rawdoc);
 	}
 	
 	private static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx,AccountingInvoice ai) {
@@ -405,11 +410,15 @@ public class TediParser {
 
 	};
 	private static Consumer<TediParserContext> INVOICE_ISSUE_DATE = (ctx) -> {
-		ctx.getTediResult().getInvoice().setIssueDate(ctx.getTediResult().getTedi().getDate());
+		if(ctx.getTediResult().getTedi().getDate() != null) 
+			ctx.getTediResult().getInvoice().setIssueDate(ctx.getTediResult().getTedi().getDate());
+		else ctx.getTediResult().getInvoice().setIssueDate(ctx.getTediResult().getInv().getIssueDate());
 	};
 	
 	private static Consumer<TediParserContext> INVOICE_TAX_DATE = (ctx) -> {
-		ctx.getTediResult().getInvoice().setTaxDate(ctx.getTediResult().getTedi().getDate());
+		if(ctx.getTediResult().getTedi().getDate() != null) 
+			ctx.getTediResult().getInvoice().setTaxDate(ctx.getTediResult().getTedi().getDate());
+		else ctx.getTediResult().getInvoice().setTaxDate(ctx.getTediResult().getInv().getTaxDate());
 	};
 	
 	private static Consumer<TediParserContext> INVOICE_EMITIDA_REGISTRY = (ctx) -> {
@@ -605,16 +614,18 @@ public class TediParser {
 
 	private static Consumer<TediParserContext> INVOICE_DETAILS = (ctx) -> {
 		TediResult result = ctx.getTediResult();
-		if ( result.getTedi().getDetails() != null) {
+		if(!ctx.getTediResult().getInv().getDetails().isEmpty()) {
+			result.getInvoice().setDetails(ctx.getTediResult().getInv().getDetails());
+		} else if ( result.getTedi().getDetails() != null) {
 			if (result.getInvoice().getDetails() == null) {
-				result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
+				result.getInvoice().setDetails( new LinkedList<>());
 			}
 			for ( int i = 0; i < result.getTedi().getDetails().size(); i++) {
 				TediInvoiceDetail tediDetail = result.getTedi().getDetails().get(i);
 				InvoiceDetail aonDetail = new InvoiceDetail()
 					.setLine( (short) (1 + i));
 				result.getInvoice().getDetails().add(aonDetail);
-				toAccountingInvoiceDetail( ctx, tediDetail,aonDetail);
+				toAccountingInvoiceDetail( ctx, tediDetail, aonDetail);
 			}
 		}
 	};
@@ -746,8 +757,10 @@ public class TediParser {
 	
 	private static Consumer<TediParserContext> INVOICE_FINANCES = (ctx) -> {
 		TediResult result = ctx.getTediResult();
-		boolean hasFinances = (result.getTedi().getFinances() != null && result.getTedi().getFinances().size() > 0);
-		if (hasFinances) {
+		boolean hasFinances = (result.getTedi().getFinances() != null && !result.getTedi().getFinances().isEmpty());
+		if(result.getInv().getFinances() != null && !result.getInv().getFinances().isEmpty()) {
+			result.getInvoice().setFinances(result.getInv().getFinances());
+		} else if(hasFinances) {
 			for ( int i = 0; i < result.getTedi().getFinances().size(); i++) {
 				TediFinance tfin = result.getTedi().getFinances().get(i);
 				Finance fin = new Finance();
@@ -766,7 +779,7 @@ public class TediParser {
 				TediFinanceTransfer.toAon(ctx.getAonConfiguration(),result,tfin,fin);
 		} else {
 			AccountingInvoice ai = result.getAccountingInvoice();
-			if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
+			if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().isEmpty()) {
 				ai.setAuthFinanceCalculation(true);
 				if (ctx.getAONContext() != null) {
 					ai.getInvoice().setFinances( FinanceDAO.getFinancesForInvoice(ctx.getAONContext(), ai.getInvoice())); 
@@ -813,10 +826,10 @@ public class TediParser {
 		}		
 	};
 
-	public static TediResult toAccountingInvoice(AONContext ctx, AonConfiguration aonCtx, TediInvoice tedi) {
+	public static TediResult toAccountingInvoice(AONContext ctx, AonConfiguration aonCtx, Rawdoc rawdoc) {
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setInvoice(new Invoice());
-		TediResult result = new TediResult(tedi, ai);
+		TediResult result = new TediResult(rawdoc.getTediInvoice(), ai, rawdoc.getInvoice());
 		TediParserContext tctx = new  TediParserContext(ctx, aonCtx, result);
 		
 		ACCOUNTING_INVOICE_WORKPLACE
