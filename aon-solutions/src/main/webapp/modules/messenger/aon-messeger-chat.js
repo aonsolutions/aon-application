@@ -1,12 +1,12 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
 import {  MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask} from "../../services/taskService.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, taskHistoricSend} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
-import { checkFilesAddEventDescription, sendMessage } from "./shared/utils.js";
+import { checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
@@ -89,6 +89,8 @@ export class AonMessengerChat extends AonElement {
     this.task.onPropertyChanged = (propName, val) => {
         if(propName == "project")
           this.onChangeProject();
+        else if(propName == "tags")
+          setTaskTags();
     }
   }
 
@@ -125,8 +127,11 @@ export class AonMessengerChat extends AonElement {
       const [comment, messengeEl] = resp;
       if(comment){
         const workflow = await saveTaskWorkflow({...this.task.getWorkflowTmp(), comment});
-        if(workflow)
+        if(workflow){
           messengeEl.dataset["id"] = workflow.id;
+          if(this.isCau()) 
+            this.sendMessageHistoric(workflow.id);
+        }
       }
     } catch (error) {
       this.showError(error);
@@ -275,6 +280,23 @@ export class AonMessengerChat extends AonElement {
       })
     }
     return this.WORKGROUPS;
+  }
+
+  /**
+   * 
+   * @param {number} workflowId 
+   * @param {Boolean} showSuccess 
+   */
+  async sendMessageHistoric(workflowId, showSuccess=false){
+    try {
+      const workflows  = await taskHistoricSend({...this.task, workflowId});
+      if(showSuccess)
+        this.showMessage("Comentario enviado por correo!");
+
+      setStyleMessageHistoric(workflows);
+    } catch (error) {
+      console.log(error);
+    }
   }
   
   getDur(){

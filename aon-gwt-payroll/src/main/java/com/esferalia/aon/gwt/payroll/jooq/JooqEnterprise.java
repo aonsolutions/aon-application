@@ -23,6 +23,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -695,6 +696,120 @@ public class JooqEnterprise {
 		
 		Date findPeriod = new Date(calendar.getTimeInMillis());
 		
+		Date findEndPeriod = getFindEndDate(findPeriodTime);
+		
+		List<Record> enterpriseCCCActivities = 
+			dslContext.select().from(ENTERPRISE_CCC)
+			.leftJoin(ENTERPRISE_ACTIVITY)
+			.on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
+			.leftJoin(CONTRACT)
+			.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+			.leftJoin(SALARY)
+			.on(CONTRACT.ID.eq(SALARY.CONTRACT))
+			.leftJoin(GEOZONE)
+			.on(ENTERPRISE_CCC.GEOZONE.eq(GEOZONE.ID))
+			.leftJoin(REGISTRY)
+			.on(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(REGISTRY.ID))
+			.where(ENTERPRISE_ACTIVITY.ID.in(
+					dslContext.select(ENTERPRISE_ACTIVITY.ID).from(ENTERPRISE_ACTIVITY)
+					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.in(
+							dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
+								.where(ENTERPRISE.DOMAIN.in(
+										dslContext.select(DOMAIN.ID).from(DOMAIN)
+											.where(DOMAIN.ID.eq(domainId).or(DOMAIN.PARENT.eq(domainId)))
+											.and(DOMAIN.SCOPE.in(
+													dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+														.where(USER_SCOPE.USER_ID.eq(userId))
+														.fetch(USER_SCOPE.SCOPE))
+											.or(DOMAIN.SCOPE.isNull()))
+										.fetch(DOMAIN.ID)))
+							.fetch(ENTERPRISE.REGISTRY)))
+				.fetch(ENTERPRISE_ACTIVITY.ID)))
+			.and(ENTERPRISE_CCC.TYPE.ne((byte)6))
+			.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
+			.and(CONTRACT.SS_REGIME.ne((byte) 3))
+			.and(
+				(SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)))
+				.or(SALARY.END_DATE.between(findPeriod, findEndPeriod)))
+			.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+			.fetch();
+		
+		System.err.println("enterpriseCCCActivities START");
+		System.err.println("enterpriseCCCActivities size : " + enterpriseCCCActivities.size());
+		
+		List<String> visitedCCCs = new ArrayList<>();
+		
+		for(Record enterprise : enterpriseCCCActivities) {
+			Integer enterpriseActivityId = enterprise.get(ENTERPRISE_ACTIVITY.ID);
+			String enterpriseActivityDescription = enterprise.get(ENTERPRISE_ACTIVITY.DESCRIPTION);
+
+			Integer cccId = enterprise.get(ENTERPRISE_CCC.ID);
+			String cccCode = enterprise.get(ENTERPRISE_CCC.CCC);
+			String regime = getSSRegime(enterprise.get(ENTERPRISE_CCC.TYPE)).getCode();
+			Byte type = enterprise.get(ENTERPRISE_CCC.TYPE);
+			
+			String completeCCCAccount = regime + cccCode;
+			
+			if(visitedCCCs.contains(completeCCCAccount)) continue;
+			visitedCCCs.add(completeCCCAccount);
+			
+			// ---------------------------------- Has CRA emited
+			
+			List<Timestamp> craDates = dslContext.select(CRA_BATCH.OUTCOME_FILE_DATE) .from(CRA_BATCH)
+				.where(CRA_BATCH.ID.in(
+						dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
+							.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(cccId))
+							.fetch(CRA_BATCH_DETAIL.CRA_BATCH)
+				)).fetch(CRA_BATCH.OUTCOME_FILE_DATE);
+			
+			List<java.util.Date> craDatesList = new ArrayList<>();
+			
+			craDates.forEach(craDate -> {
+				if(null != craDate) {
+					java.util.Date date = new java.util.Date(craDate.getTime());
+					DateUtils.resetTime(date);
+					craDatesList.add(date);
+				}
+			});
+						
+			
+			// ENTERPRISE REGISTRY
+			
+			String geozoneCode = enterprise.get(GEOZONE.CODE);
+			Integer enterpriseId = enterprise.get(REGISTRY.ID);
+			String enterpriseName =  enterprise.get(REGISTRY.NAME);
+			
+			CCCInfo cccInfo = new CCCInfo();
+			cccInfo.setCccId(cccId);
+			cccInfo.setCcc(cccCode);
+			cccInfo.setCccAccount(cccCode);
+			cccInfo.setCccRegimeCode(regime);
+			cccInfo.setTypeStr(regime);
+			cccInfo.setGeozone(geozoneCode);
+			cccInfo.setType(type);
+			cccInfo.setActivityId(enterpriseActivityId);
+			cccInfo.setActivityDescription(enterpriseActivityDescription);
+			cccInfo.setUseByContracts(true);
+			cccInfo.setEnterpriseDesciption(enterpriseName);
+			cccInfo.setEnterpriseId(enterpriseId);
+			cccInfo.setCRADates(craDatesList);
+			
+			enterprisesCCCInfo.add(cccInfo);
+		}
+		
+		System.err.println("enterpriseCCCActivities size : " + enterprisesCCCInfo.size());
+		
+		return enterprisesCCCInfo;
+	}
+	
+	private static List<CCCInfo> getEnterprisesCCCInfoDB2(DSLContext dslContext, Integer userId, Integer domainId, long findPeriodTime) {
+		
+		List<CCCInfo> enterprisesCCCInfo = new ArrayList<>();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(findPeriodTime);
+		
+		Date findPeriod = new Date(calendar.getTimeInMillis());
+		
 		List<Record> enterpriseCCCActivities = 
 				dslContext.select().from(ENTERPRISE_CCC)
 					.leftJoin(ENTERPRISE_ACTIVITY)
@@ -813,7 +928,6 @@ public class JooqEnterprise {
 		
 		return enterprisesCCCInfo;
 	}
-	
 
 	private static Date getFindEndDate(long findPeriodTime) {
 		Calendar endPeriod = Calendar.getInstance();

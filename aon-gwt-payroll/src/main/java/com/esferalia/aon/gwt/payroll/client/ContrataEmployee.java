@@ -260,7 +260,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			movPrevDelete();
+			AonDialog dialog = new AonDialog("Movimiento Previo", new HTML("\u00bfDesea realmente eliminar el movimiento previo\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					movPrevDelete();
+				}
+			});
 		}
 	}
 
@@ -268,7 +280,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			altaConsolidadaDelete();
+			AonDialog dialog = new AonDialog("Alta Consolidada", new HTML("\u00bfDesea realmente eliminar el alta consolidada\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					altaConsolidadaDelete();
+				}
+			});
 		}
 	}
 
@@ -414,7 +438,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			sendBasicCopy();
+			AonDialog dialog = new AonDialog("Notificar copia basica", new HTML("\u00bfDesea realmente notificar la copia basica\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					sendBasicCopy();
+				}
+			});
 		}
 	}
 
@@ -422,7 +458,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			sendContract();
+			AonDialog dialog = new AonDialog("Notificar contrato", new HTML("\u00bfDesea realmente notificar el contrato\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					sendContract();
+				}
+			});
 		}
 	}
 
@@ -447,7 +495,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			deleteContractExtension();
+			AonDialog dialog = new AonDialog("Pr\u00F3rroga contrato", new HTML("\u00bfDesea realmente eliminar la pr\u00f3 del contrato\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					deleteContractExtension();
+				}
+			});
 		}
 
 	}
@@ -465,7 +525,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			sendContractTransform();
+			AonDialog dialog = new AonDialog("Notifici\u00f3n transformaci\u00F3n contrato", new HTML("\u00bfDesea realmente notificar la transformaci\u00f3n del contrato\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					sendContractTransform();
+				}
+			});
 		}
 
 	}
@@ -474,7 +546,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			removeContract();
+			AonDialog dialog = new AonDialog("Notifici\u00f3n contrato", new HTML("\u00bfDesea realmente eliminar el contrato del SEPE\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					removeContract();
+				}
+			});
 		}
 
 	}
@@ -1554,12 +1638,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void showIdc(Date date) {
 		showLoading("Obteniendo IDC...");
+		showPdf();
+		idcDateListBox.setVisible(true);
+		idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+		idcDateListBox.setSelected(date, true);
 		contrataEmployeeObject.downloadIdc(date, dataURI -> {
 			hideMessage();
-			showPdf();
-			idcDateListBox.setVisible(true);
-			idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
-			idcDateListBox.setSelected(date, true);
+//			showPdf();
+//			idcDateListBox.setVisible(true);
+//			idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+//			idcDateListBox.setSelected(date, true);
 			pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC", f.getMessage()));
 	}
@@ -1570,12 +1658,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void showIdcPlNss(Date month) {
 		showLoading("Obteniendo IDC PL NSS...");
+		showPdf();
+		idcMonthListBox.setVisible(true);
+		idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+		idcMonthListBox.setSelected(month, true);
 		contrataEmployeeObject.downloadIdcPlNss(month, dataURI -> {
 			hideMessage();
-			showPdf();
-			idcMonthListBox.setVisible(true);
-			idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
-			idcMonthListBox.setSelected(month, true);
 			pdfViewer.open(dataURI);
 		}, f -> showError("Error IDC PL NSS", f.getMessage()));
 	}

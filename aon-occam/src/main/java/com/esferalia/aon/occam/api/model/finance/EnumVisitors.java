@@ -24,6 +24,14 @@ public class EnumVisitors {
 		void visitOtherISP();
 	}
 
+	public static interface IWithholdingTypeVisitor<T> {
+		T visitProfessional(T t);
+		T visitRenting(T t);
+		T visitMovableCapital(T t);
+		T visitFarmer(T t);
+		T visitTransportOperator(T t);	
+	}
+
 	public static interface IFinanceStatusVisitor {
 		void visitPending();
 		void visitBatched();

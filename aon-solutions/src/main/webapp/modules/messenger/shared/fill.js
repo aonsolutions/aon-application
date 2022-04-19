@@ -1,11 +1,11 @@
 import {  EVENT, MSG } from "../../../environments/environments.js";
 import {Apps, getApp} from "../../../services/app.js";
 import { getProjects} from "../../../services/projectService.js";
-import { getCustomers } from "../../../services/registryService.js";
+import { getCustomer, getCustomers } from "../../../services/registryService.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
-import { getTaskProcess } from "../../../services/taskService.js";
+import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
 import { waitEl } from "../../../services/utils.js";
-import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { MESSENGER_DIRECTION, MESSENGER_IDS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { createAction, createChatMessage, createNoMessage} from "./creationUtils.js";
 import { chooseIconMessage } from "./utils.js";
 
@@ -105,14 +105,12 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             aonSelectParet.style.display = display;
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                console.log("setProject");
                 if(detail && detail.id)
                     task.setProject(detail);
                 else 
                     task.setProject({});
             });
-
-            // if(!task.isExternal() && task.getId())
-            //     aonSelect.setDisabled(true);
         } catch (error) {
             console.log(error);
         }
@@ -164,26 +162,32 @@ export const fillTaskHolder = async (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     if(aonSelect){
         aonSelect.clear();
-        const workgroup = task.getWorkgroup().id;
-        const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
+        aonSelect.loading(true);
+        try {
+            const workgroup = task.getWorkgroup().id;
+            const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
 
-        let options = [];
-        if(taskHolders && taskHolders.length>0){
-            options = taskHolders.map( th=> ({...th, value: th.id}) )
-        } else if(task.task_holder.id && task.task_holder.name) {
-            options = [{...task.task_holder, value:task.task_holder.id}];
-        }
-
-        aonSelect.setOptions(options);
-        
-        if(task.task_holder && task.task_holder.id) 
-            aonSelect.value = task.task_holder.id;
-
-        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail){
-                task.setTaskHolder(detail);
-            } 
-        });
+            const taskHolder = task.getTaskHolder();
+    
+            let options = [];
+            if(taskHolders && taskHolders.length>0){
+                options = taskHolders.map( th=> ({...th, value: th.id}) )
+            } else if(taskHolder.id && taskHolder.name) {
+                options = [{...taskHolder, value:taskHolder.id}];
+            }
+    
+            aonSelect.setOptions(options);
+            
+            if(taskHolder && taskHolder.id) 
+                aonSelect.value = taskHolder.id;
+    
+            aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                if(detail){
+                    task.setTaskHolder(detail);
+                } 
+            });
+        } catch (error) {}
+        aonSelect.loading(false);
     }
 }
 
@@ -199,14 +203,13 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
         aonSelect.clear();
         aonSelect.loading(true);
         try {
-
             const customers = await getCustomers({reload:false, page:1, perPage:50});
             
             let options = [];
             if(customers && customers.length>0)
                 options = customers.map( c=> ({...c, value: c.id}) ) ;
             
-            const exist = options.some(({id})=> id  ===registry.id );
+            const exist = options.some(({id})=> id  === registry.id );
             if( !exist && registry.id && registry.name){
                 options.push({...registry, value:registry.id});
             }
@@ -226,7 +229,18 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail){
                     task.setRegistry(detail);
-                    fillProject(task, undefined,  task.getRegistry().id);
+                    let registry = task.getRegistry().id;
+                    fillProject(task, undefined,  registry);
+
+                    const contact = document.getElementById(MESSENGER_IDS.GTASK_ID_TASK);
+                    if(!task.getGTaskId() && contact){
+                        getCustomer({ id:registry, additional_info: ['MEDIA']})
+                        .then(resp=>{
+                            const media = (resp.media || []).find(m => m.media ==="email");
+                            if(media && media.value)
+                                contact.value = media.value;
+                        });
+                    }
                 } 
             });
         } catch (error) { }
@@ -235,7 +249,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 }
 
 /**
- * fill processType (Titular de la tarea)
+ * fill processType 
  * @param {Task} Class task 
  * @param {HTMLElement} aon-messenger-chat component
  */
@@ -315,74 +329,65 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
 
 
 /**
- * fill processType (Titular de la tarea)
+ * fill processType Tipo de incidencia
  * @param {Task} Class task 
  */
- export const fillTypeRequestCau =  (aonMessengerChat) => {
+ export const fillTypeRequestCau =  async (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const aonSelect = document.getElementById(MESSENGER_IDS.TYPE_REQUEST_CAU);
-    aonSelect.clear();
-
-    let value = task.getDescriptionJson().type;
-
-    const options = [
-        { value:1, name:"CONSULTA"},
-        { value:2, name:"ERROR"},
-        { value:3, name:"SERVICIOS"},
-        { value:4, name:"SUGERENCIAS"},
-        { value:5, name:"eMail"},
-    ];
-
-    if(options)
-        aonSelect.setOptions( options );
-
-    aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-      let title = "";
-      if(detail && detail.value) {
-        title = detail.name;
-        task.setDescriptionJson({type:detail.value});
-        const selectApp = document.getElementById(MESSENGER_IDS.SELECT_APP);
-        if(selectApp) title = detail.name+ " / "+ selectApp.getText();
-        
-        task.setTitle(title);
-      }
-    });
-
-    if(value) aonSelect.value = value;
+    if(aonSelect){
+        aonSelect.clear();
+        aonSelect.loading(true);
+        try {
+            const tags  = await getTaskTags({type:TAG_TYPE.TASK_TYPE});
+            const options = tags.map(t => ({...t,value: t.id, description: t.name, name:t.name}));
+    
+            if(options)
+                aonSelect.setOptions( options );
+    
+            aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                if(detail && detail.value) {
+                   task.setTaskType(detail);
+                }
+            });
+            const value = task.getTaskType();
+            if(value) aonSelect.value = value;
+        }catch(e){}
+        aonSelect.loading(false);
+    }
 }
 
 
 /**
- * fill processType (Titular de la tarea)
+ * fill processType Aplicacion
  * @param {Task} Class task 
  */
  export const fillSelectAppCau =  (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const aonSelect = document.getElementById(MESSENGER_IDS.SELECT_APP);
-    aonSelect.clear();
+    if(aonSelect){
+        aonSelect.clear();
+        try {
+            let prev = {};
+            const apps = getAppPermission(aonMessengerChat.getDur());
+            let options = apps.map(app => ({...app, value:app.tag, name:app.title}));
+    
+            if(options)
+                aonSelect.setOptions( options );
+    
+            aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                if(detail && detail.value) {
+                    if(!task.id && prev.name)  
+                        task.removeTagName(prev.name);
 
-    try {
-        let value = task.getDescriptionJson().app;
-
-        const apps = getAppPermission(aonMessengerChat.getDur(), value);
-        let options = apps.map(app => ({value:app.app, name:app.title}));
-
-        if(options)
-            aonSelect.setOptions( options );
-
-        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            let title = "";
-            if(detail && detail.value) {
-                task.setDescriptionJson({app:detail.value});
-                const selectTypeRequest = document.getElementById(MESSENGER_IDS.TYPE_REQUEST_CAU);
-                if(selectTypeRequest) title = selectTypeRequest.getText() +" / "+detail.name;
-            }
-            task.setTitle(title);
-        });
-        
-        if(value) aonSelect.value = value;
-    } catch (error) {
-        console.log(error);
+                    const tag = { name:detail.tag, color:detail.color, type:TAG_TYPE.TASK_LABEL };
+                    prev = tag;
+                    task.addTag(tag);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

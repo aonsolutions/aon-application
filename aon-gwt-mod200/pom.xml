@@ -28,6 +28,7 @@
             <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>
             <!-- <compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact> -->
             <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
+            <compileSourcesArtifact>com.esferalia.aon:aon.occam.mod200</compileSourcesArtifact>
           </compileSourcesArtifacts>
           <extraJvmArgs>-Xmx3072M</extraJvmArgs>
           <localWorkers>4</localWorkers>
@@ -86,7 +87,9 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
+    
+<!--
+     <dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.occam</artifactId>
       <version>${project.version}</version>
@@ -99,6 +102,22 @@
       <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
+ -->    
+ 
+    <dependency>
+      <groupId>com.esferalia.aon</groupId>
+      <artifactId>aon.occam.mod200</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.esferalia.aon</groupId>
+      <artifactId>aon.occam.mod200</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <classifier>sources</classifier>
+    </dependency>
+    
     <!-- 
 	<dependency>
 		<groupId>net.aonsolutions</groupId>

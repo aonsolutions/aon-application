@@ -317,6 +317,9 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public FinanceStatus getFinanceStatus() {
+		if(financeStatus == null) {
+			financeStatus = FinanceStatus.PENDING;
+		}
 		return financeStatus;
 	}
 

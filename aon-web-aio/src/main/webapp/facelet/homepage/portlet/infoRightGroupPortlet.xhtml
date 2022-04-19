@@ -8,7 +8,7 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 	
 	
-	<aon:div id="desktopRightDiv1" style="padding-top: 5px; width:100%" >
+	<aon:div id="desktopRightDiv1" style="display:none;padding-top: 5px; width:100%" >
 		
 	<style>
 		.aon-portlets-column3{
@@ -77,15 +77,15 @@
 
 		<aon:div id="infoGroupRightDiv"
 		styleClass="aon-rigth-bar" 
-		style="min-width: 42px; display:block;  position:absolute; right: 12px; transition-duration: 350ms; padding-top: 16px;" 
+		style="min-width: 42px; display:none;  position:absolute; right: 12px; transition-duration: 350ms; padding-top: 16px;" 
 		onmouseout="javascript:hideInfoGroupRightSupportDiv()"
 		onmouseover="javascript:showInfoGroupRightSupportDiv()"
 		>
-			<ui:include src="/facelet/new/portlet/menuPortlet.xhtml" />	
+			<!-- <ui:include src="/facelet/new/portlet/menuPortlet.xhtml" />	 -->
 			
 			<aon:div id="infoGroupRightSupportDiv" style="display:none" >				
-				<ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
-				<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
+				<!-- <ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
+				<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" /> -->
 			</aon:div>
 		
 		</aon:div>

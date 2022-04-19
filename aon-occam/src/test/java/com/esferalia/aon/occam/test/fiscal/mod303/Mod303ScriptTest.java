@@ -161,23 +161,25 @@ public class Mod303ScriptTest extends AbstractOccamTest {
 					String info = MODEL303.getInfo(getOccam(), mod303, script, infoKey);
 					infoKey.visit( new IFiscalModelKeyInfoVisitor<String>(){
 						
-						@Override 
-						public String visitCompute() {
+						private String arrayNotNull() {
 							JSONArray array = new JSONArray(info);
 							Assert.assertNotNull(array);
 							return null;
 						}
+
+						@Override public String visitModelInvoiceVatBreakdown() { return arrayNotNull(); }
+						@Override public String visitCompute() { return arrayNotNull(); }
+						@Override public String visitModelInvoiceIrpfBreakdown() {return arrayNotNull(); }
+						@Override public String visitModelSalaryIrpfBreakdown() {return arrayNotNull(); }
+						@Override public String visitProrratedModelInvoiceVatBreakdown() {return arrayNotNull(); }
+						@Override public String visitModelOutVatAccrualInvoice() {return arrayNotNull(); }
+						@Override public String visitModelInVatAccrualInvoice() {return arrayNotNull(); }
+						
 						@Override 
 						public String visitComputeKey() {
 							JSONObject json = new JSONObject(info);
 							Assert.assertNotNull(json);
 							JSONArray array = json.getJSONArray("messages");
-							Assert.assertNotNull(array);
-							return null;
-						}
-						@Override 
-						public String visitModelInvoiceVatBreakdown() {
-							JSONArray array = new JSONArray(info);
 							Assert.assertNotNull(array);
 							return null;
 						}
@@ -200,11 +202,6 @@ public class Mod303ScriptTest extends AbstractOccamTest {
 						@Override public String visitTitle() {return null;}
 						@Override public String visitIrpfActivity() {return null;}
 						@Override public String visitCorporate() {return null;}
-						@Override public String visitModelInvoiceIrpfBreakdown() {return null;}
-						@Override public String visitModelSalaryIrpfBreakdown() {return null;}
-						@Override public String visitProrratedModelInvoiceVatBreakdown() {return null;}
-						@Override public String visitModelOutVatAccrualInvoice() {return null;}
-						@Override public String visitModelInVatAccrualInvoice() {return null;}
 					});
 				}
 			} catch (Exception e) {

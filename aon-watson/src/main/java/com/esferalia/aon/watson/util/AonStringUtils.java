@@ -7453,6 +7453,57 @@ public class AonStringUtils {
         return result.stream().collect(Collectors.joining());
     }
 
+    
+	
+	/**
+	 * Returns if a text contains a word with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @param tolerance The tolerance to use 
+	 * @return
+	 */
+	public static boolean containsMatching(String text, String searcher, int tolerance) {
+
+		text = normalized(text.toUpperCase());
+		searcher = normalized(searcher.toUpperCase());
+		
+		String[] words = text.split("\\s");
+		for (String word : words) {
+			
+			int currentDistance = AonStringUtils.getLevenshteinDistance(searcher, word);
+			int realTolerance = tolerance;
+			
+			if(word.contains(searcher)){
+				return true;
+			}
+			
+			if(currentDistance < realTolerance) {
+				return true;
+			}
+		
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Get normalized text (no accents)
+	 * @param text
+	 * @return the text without accents
+	 */
+	public static String normalized(String text) {
+
+		final String[] sensible = {"\u00C1","\u00C9","\u00CD","\u00D3","\u00DA","\u00D1"};
+		final String[] normalized = {"A","E","I","O","U","N"};
+		
+		for (int i = 0; i < normalized.length; i++) {
+			text = text.replaceAll(sensible[i], normalized[i]);
+		}
+		
+		return text;
+	}
+    
+    
     // ------------------------------------------------------------------------
 
 	private static int __romanIntValue(String string) {

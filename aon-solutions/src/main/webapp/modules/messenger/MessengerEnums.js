@@ -112,6 +112,11 @@ export const TASK_STATUS = {
 	FAQ:"faq"
 } 
 
+export const TAG_TYPE = {
+    TASK_TYPE:"TASK_TYPE",
+    TASK_LABEL: "TASK_LABEL"
+}
+
 export const TASK_STATUS_VALUE  = [
     {
         name:AON_MESSENGER_LIST_OPEN.name,
@@ -156,9 +161,17 @@ export const TASK_FILTER = [
     },
     {
         type: "select",
+        id: "senderFilter",
+        name: "sender",
+        title: "Creador",
+        autocomplete: true,
+        default:true
+    },
+    {
+        type: "select",
         id: "task_holder",
         name: "task_holder",
-        title: "Asignado a",
+        title: "Asignado",
         autocomplete: true,
         default:true
     },

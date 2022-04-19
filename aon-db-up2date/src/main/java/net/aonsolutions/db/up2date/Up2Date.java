@@ -22,7 +22,6 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.tgss.BaseCgpMin2022Fix;
 import net.aonsolutions.db.up2date.tgss.SalaryHours2022Fix;
 
-
 public class Up2Date {
 
     private static Update [] UPDATES  = {

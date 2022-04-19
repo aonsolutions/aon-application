@@ -48,7 +48,7 @@ public abstract class Mod111Declaration {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
 		if (mod.getYear() < 2010 && mod.getYear() > 2025) {
-			throw new AonCoreException("No se ha indicado una ejercicio v·lido para la declaraci\u00F3n");
+			throw new AonCoreException("No se ha indicado una ejercicio v√°lido para la declaraci\u00F3n");
 		}
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaraci\u00F3n");	
@@ -255,11 +255,16 @@ public abstract class Mod111Declaration {
 			mod111.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
 		}
 	}
-	
+
+  protected boolean mustApplyReplacementSearch( Mod111 mod111 ) {
+		return (mod111.isReplacement()
+			|| (mod111.isComplementary() && getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT)); 
+	}
+  
 	abstract Mod111 initialize(AONContext ctx, Mod111 mod111);
 	abstract IMod111KeyDAO valueOf(String string);
 	abstract IMod111KeyDAO[] getKeys();
 	abstract double getResult(final Mod111 mod111);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
-
+	
 }

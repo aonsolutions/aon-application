@@ -2,13 +2,25 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
+
 public enum WithholdingType implements Serializable {
 
-	 PROFESSIONAL("Profesional")
-	,RENTING("Arrendamiento")
-	,MOVABLE_CAPITAL("Cap. Mobiliario")
-	,FARMER("Agricultura")
-	,TRANSPORT_OPERATOR("Transpor. y Asim.")	
+	 PROFESSIONAL("Profesional") {
+		@Override public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {return visitor.visitProfessional(t);}
+	}
+	,RENTING("Arrendamiento") {
+		@Override public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {return visitor.visitRenting(t);}
+	}
+	,MOVABLE_CAPITAL("Cap. Mobiliario")  {
+		@Override public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {return visitor.visitMovableCapital(t);}
+	}
+	,FARMER("Agricultura")  {
+		@Override public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {return visitor.visitFarmer(t);}
+	}
+	,TRANSPORT_OPERATOR("Transpor. y Asim.")  {
+		@Override public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {return visitor.visitTransportOperator(t);}
+	}	
 	;
 	private String description;
 	
@@ -53,5 +65,8 @@ public enum WithholdingType implements Serializable {
 		}
 		return PROFESSIONAL;
 	}
+	
+	public abstract <T> T visit(IWithholdingTypeVisitor<T> visitor, T t);
+	
 }
 

@@ -67,6 +67,7 @@ export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
 export const COMMUNICATION = 'Comunicación';
+export const COMUNICA = "Comunic@";// TODO
 export const COMPANIES = 'Empresas';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = 'Costes de Empresa';
@@ -95,7 +96,7 @@ export const DEACTIVATE = 'Desactivar';
 export const DELETE = 'Borrar';
 export const DELETE_BACKGROUND_CONFIRM = 'Estás seguro de eliminar el fondo';
 export const DELETE_CATEGORY = 'Borrar Categoría';
-export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_CONFIRM = "Estás seguro de eliminar";
 export const DELETE_FILE = 'Borrar Fichero';
 export const DELETE_FILE_CONFIRM = 'Estás seguro de eliminar el fichero';
 export const DELETE_FOREVER = 'Borrar Definitivamente';
@@ -141,6 +142,7 @@ export const EXPIRATIONS = 'Vencimientos';
 // ----- F
 
 export const FAX = 'Fax';
+export const FISCAL = 'Fiscal';//TODO
 export const FILE = 'Fichero';
 export const FILE_DATA = 'Datos del Fichero';
 export const FILTER = "Filtro";

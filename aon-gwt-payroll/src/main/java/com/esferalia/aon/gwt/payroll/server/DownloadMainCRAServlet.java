@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,15 +13,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jooq.Record;
+
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Download-CRA", urlPatterns = { "/aon_gwt_payroll/download_cra/*" })
 public class DownloadMainCRAServlet extends HttpServlet {
 	
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddHHmmss");
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -31,19 +34,17 @@ public class DownloadMainCRAServlet extends HttpServlet {
 		String domainName = request.getServerName();
 		
 		try {
-			Date currentDate = new Date();
-			String day = currentDate.getDate() < 10 ? "0"+currentDate.getDate() : currentDate.getDate()+"";
-			String month = (currentDate.getMonth()+1) < 10 ? "0"+(currentDate.getMonth()+1) : (currentDate.getMonth()+1)+"";
-			String hour = currentDate.getHours() < 10 ? "0"+currentDate.getHours() : currentDate.getHours()+"";
-			String minutes = currentDate.getMinutes() < 10 ? "0"+currentDate.getMinutes() : currentDate.getMinutes()+"";
-			String fileName = day + month + hour + minutes;
-			dateFormatter.applyPattern("yyyy/MM/dd");
-			response.setContentType("text/html;charset=utf-8");
-			response.setHeader("Content-disposition", "attachment; filename=\""
-					+ fileName + ".CRA\"");
-			ServletOutputStream output = response.getOutputStream();
 			
-			byte[] data = JooqCRA.getDownloadMainCRA(domainName, _craBatchId);
+			Record craRecord = JooqCRA.getDownloadMainCRA(domainName, _craBatchId);
+			
+			Date fileNameDate = craRecord.get(CRA_BATCH.DATE);
+			String fileName = dateFormatter.format(fileNameDate);
+			
+			byte[] data = craRecord.get(CRA_BATCH.OUTCOME_FILE);
+			
+			response.setContentType("text/html;charset=utf-8");
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".CRA\"");
+			ServletOutputStream output = response.getOutputStream();
 			
 			output.write(data);
 			

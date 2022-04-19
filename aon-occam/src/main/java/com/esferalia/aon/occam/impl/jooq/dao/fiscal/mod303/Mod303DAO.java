@@ -43,8 +43,10 @@ public class Mod303DAO extends FiscalModelDAO {
 	public static Mod303 get(AONContext ctx,int id) {
 		ctx.checkRead();
 		Mod303 mod303 = FiscalModelDAO.get(ctx,Mod303::new,id);
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		dec.fillSimplifiedRegime(mod303);
+		if ( mod303 != null) {
+			Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+			dec.fillSimplifiedRegime(mod303);
+		}
 		return mod303;
 	}
 

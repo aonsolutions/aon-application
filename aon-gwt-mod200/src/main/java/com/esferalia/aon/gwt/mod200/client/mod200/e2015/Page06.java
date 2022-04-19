@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2015;
 
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Behaviour.BEHAVIOUR_KEYS_MAP;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015Behaviour.BEHAVIOUR_KEYS_MAP;
 
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Constants;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015Constants;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015.BalanceType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
