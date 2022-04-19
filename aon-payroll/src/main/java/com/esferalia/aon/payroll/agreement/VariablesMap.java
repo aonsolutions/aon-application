@@ -387,6 +387,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COOPERATIVAS_DE_CONSUMO_MENSUAL", "COOPERATIVAS_CONSUMO");
 		variablesMap.put("COR_MENSUAL", "COR");
 		variablesMap.put("C_P_P__MENSUAL", "C_P_P");
+		variablesMap.put("C_P_P__CARGO_MENSUAL", "C_P_P_CARGO");
 		variablesMap.put("C_TEMP_CARGO_MENSUAL", "C_TEMP_CARGO");
 		variablesMap.put("CUATRIENIOS_DIARIO", "CUATRIENIOS");
 		variablesMap.put("CUATRIENIOS_HORAS", "CUATRIENIOS");
@@ -807,6 +808,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_COMPENSACION_ANTIGUEDAD_MENSUAL", "P_COMPENSACION_ANT");
 		variablesMap.put("PLUS_COMPENSACION_ANUAL", "PLUS_COMPENSACION");
 		variablesMap.put("PLUS_COMPENSACION_MENSUAL", "PLUS_COMPENSACION");
+		variablesMap.put("PLUS_COMPENSACION_DIARIO", "PLUS_COMPENSACION_DIARIO");
 		variablesMap.put("PLUS_CONVENIO_ANUAL", "PLUS_CONVENIO");
 		variablesMap.put("PLUS_CONVENIO_B_MENSUAL", "PLUS_CONVENIO_B");
 		variablesMap.put("PLUS_CONVENIO_DIARIO", "PLUS_CONVENIO");
@@ -818,6 +820,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_CUSTODIA_DE_LLAVES_DIARIO", "PLUS_CUSTODIA_LLAVES");
 		variablesMap.put("PLUS_CUSTODIA_DE_LLAVES_MENSUAL", "PLUS_CUSTODIA_LLAVES");
 		variablesMap.put("PLUS_DEDICACION_ANUAL", "PLUS_DEDICACION");
+		variablesMap.put("PLUS_DEDICACION_MENSUAL", "PLUS_DEDICACION");
 		variablesMap.put("PLUS_DESCANSO_ANUAL", "PLUS_DESCANSO");
 		variablesMap.put("PLUS_DESCANSO_DIARIO", "PLUS_DESCANSO");
 		variablesMap.put("PLUS_DESCANSO_HORAS", "PLUS_DESCANSO");
@@ -1201,6 +1204,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("QUINQUENIOS_ANUAL", "QUINQUENIOS");
 		variablesMap.put("QUINQUENIOS_DIARIO", "QUINQUENIOS");
 		variablesMap.put("QUINQUENIOS_MENSUAL", "QUINQUENIOS");
+		variablesMap.put("RECONOCIMIENTO_MEDICO_DIARIO", "RECONOCIMIENTO_MEDICO");
 		variablesMap.put("RESTAURANTES_MENSUAL", "RESTAURANTES");
 		variablesMap.put("RETIRADA_DE_BASURA_MENSUAL", "RETIRADA_BASURA");
 		variablesMap.put("RETRIBUCION_EN_ESPECIE_MENSUAL", "RETRIBUCION_ESPECIE");
