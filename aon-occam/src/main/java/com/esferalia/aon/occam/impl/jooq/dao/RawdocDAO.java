@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.api.model.RawdocNotice;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -92,6 +94,9 @@ public class RawdocDAO {
 					.setTediInvoice( AonStringUtils.isBlank(r.getValue(RAWDOC.JSON)) 
 							? null 
 							: TediInvoiceJSON.fromJSON( new JSONObject(r.getValue(RAWDOC.JSON) ) ) )
+					.setInvoice(AonStringUtils.isBlank(r.getValue(RAWDOC.JSON))
+							? new Invoice()
+							: InvoiceJSON.fromJSON(r.getValue(RAWDOC.JSON)))
 					.setLog(r.getValue(RAWDOC.LOG))
 					.setMimeType(MimeType.safeValueOf( r.getValue(RAWDOC.MIME_TYPE)))
 					.setCreationUser(r.getValue(RAWDOC.CREATION_USER))
