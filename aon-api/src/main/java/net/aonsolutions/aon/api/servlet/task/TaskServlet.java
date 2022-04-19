@@ -238,7 +238,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			workflowTmp.setDomain(api.getDomain().getId());	
 	
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
-//		TaskUtils.changeWorkflow(api, workflow);
+		TaskUtils.changeWorkflow(api, workflow);
 		return TaskWorkflowJSON.toJSON(workflow);
 	}
 
