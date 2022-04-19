@@ -1892,12 +1892,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				return "No existe n\u00F3minas con valores para notificar en el CRA";
 			}
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, connection);
+			java.util.Date fileNameDate = new java.util.Date();
+			
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, fileNameDate, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
-			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, connection);
+			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
