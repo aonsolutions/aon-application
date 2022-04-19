@@ -381,9 +381,9 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
     firstDiv.appendChild(divProcess);
     //---------------------END CREATE DIV PROCESS
 
-    const divStatic = createDivGrid(divCard, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
+    const divStatic = createDivGrid(divCard, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:"0" } });
 
-    const divDinamic = createDivGrid(undefined, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
+    const divDinamic = createDivGrid(undefined, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:"0" } });
 
     divCard.appendChild(divDinamic);
     //-----------------TYPE REQUEST
@@ -407,7 +407,7 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
         let titleBtn = isAdvisoryCompany ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
 
         btnForExternal = createAonSwitch(titleBtn);
-        const divBtnForExternal = createDivGrid(divStatic, btnForExternal, {classes:[CSS.AON_COL_XS_6], styles:{ top:'16px',  marginLeft: 0, display:"none"}});
+        const divBtnForExternal = createDivGrid(divStatic, btnForExternal, {classes:[CSS.AON_COL_XS_6], styles:{ top:'16px',  marginLeft: "0", display:"none"}});
         btnForExternal.checked = task.isOtherDomain();
         if(task.id || task.isOtherDomain()) btnForExternal.disabled = CONSTANT.TRUE;
 
@@ -842,10 +842,11 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                 const company = cauInfo.company;
                 const auth = cauInfo.auth;
                 if(company && company.domain)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                   createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
     
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+
             } catch (error) {}
         } else if(aonMessengerChat.getCauInfo() && aonMessengerChat.isCau()) {
             try {
@@ -853,10 +854,11 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                 const auth = cauInfo.auth;
                 const company = cauInfo.company;
                 if(company && company.name)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                   createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
                     
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+ 
             } catch (error) {}
         }
     } 
