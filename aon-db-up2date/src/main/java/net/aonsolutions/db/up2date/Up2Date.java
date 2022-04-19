@@ -19,10 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.management.UdapaSalesFix;
-import net.aonsolutions.db.up2date.tgss.Bases2022Fix;
+import net.aonsolutions.db.up2date.tgss.BaseCgpMin2022Fix;
 import net.aonsolutions.db.up2date.tgss.SalaryHours2022Fix;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2022UpdateDaily;
 
 
 public class Up2Date {
@@ -187,8 +185,8 @@ public class Up2Date {
     		//CertificatesUpdate.CERTIFICATESUPDATE,
     		//DataRequestUpdate.DATA_REQUEST_UPDATE,
     		//Bases2021UpdateIII.BASES2021UPDATEIII,
-//    		HomeBases2019Close.HOMEBASES2019CLOSE,
-//    		HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
+    		//HomeBases2019Close.HOMEBASES2019CLOSE,
+    		//HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
 //    		SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
 //    		TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
 //    		AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
@@ -227,7 +225,8 @@ public class Up2Date {
 //    		Bases2022Fix.BASES2022FIX,
 //    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
 //    		UdapaSalesFix.UDAPA_SALES_FIX
-//    		SalaryHours2022Fix.SALARYHOURS2022FIX
+//   		SalaryHours2022Fix.SALARYHOURS2022FIX,
+    		BaseCgpMin2022Fix.BASECGPMIN2022FIX
     };
     
 
