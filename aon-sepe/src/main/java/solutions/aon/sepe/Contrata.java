@@ -46,7 +46,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrata {
 	
-	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testTransformation.html");
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testContrata.html");
 	
 	private Contrata() {
 		throw new IllegalStateException("Utility class");
@@ -212,7 +212,7 @@ public class Contrata {
 					form.getInputByName("mesfechafin").setValueAttribute(dateFinContract[1]);
 					form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
 				}
-			
+
 				if(cto.getJndType()!=null)
 					((HtmlSelect)form.querySelector("select[name=codtipojornada]")).setSelectedAttribute(cto.getJndType().getValue(), true); //review
 			
@@ -248,6 +248,21 @@ public class Contrata {
 			}
 			
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
+			
+			//---------------------PREVISIBLE---------------------
+			if( Arrays.asList("402", "502").contains(cto.getCodContract()) ) { // es previsible
+				DomNode back = htmlPage.querySelector("#volver");
+				if(back!=null) {
+					htmlPage = ((HtmlSubmitInput)back).click();
+					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+					DomNode previsible = form.querySelector("select[name=preg90dias]"); 
+					if(previsible!=null) {
+						((HtmlSelect)previsible).setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
+						htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
+					}
+				}
+			}
+
 			handleSepeExceptions(htmlPage);
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 
@@ -327,7 +342,7 @@ public class Contrata {
 				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
 				
 				((HtmlSelect)form.querySelector("select[name=nacionalidadCT]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
-				String municipio = cto.getCodMunWork().toString();
+				String municipio = cto.getCodMunWork();
 				form.getInputByName("municipiocontrato").setValueAttribute(municipio);// repeat cod contract
 				form.getInputByName("municipioCT").setValueAttribute(municipio);// repeat cod contract
 				
@@ -574,8 +589,7 @@ public class Contrata {
 				handleSepeExceptions(htmlPage);
 			} else {
 				try{
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+					return page.getWebResponse().getContentAsStream().readAllBytes();
 				}
 				catch(Exception e){throw new InvalidDataException();}
 			}
@@ -612,8 +626,7 @@ public class Contrata {
 				handleSepeExceptions(htmlPage);
 			} else {
 				try{
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+					return page.getWebResponse().getContentAsStream().readAllBytes();
 				}
 				catch(Exception e){throw new InvalidDataException();}
 			}
@@ -779,8 +792,7 @@ public class Contrata {
 				handleSepeExceptions(htmlPage);
 			} else {
 				try{
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+					return page.getWebResponse().getContentAsStream().readAllBytes();
 				}
 				catch(Exception e){throw new InvalidDataException();}
 			}

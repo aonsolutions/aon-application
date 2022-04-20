@@ -33,7 +33,9 @@ public class Contract {
 	private String durationTypeCvnHour;
 	private String durationTypeCvnMin;
 	private String interinidad;
+	
 	private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
+	private boolean previsible; // ¿ El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
 	
 	public String getSepeId() {
 		return sepeId;
@@ -151,6 +153,10 @@ public class Contract {
 		return Optional.ofNullable(interinidad);
 	}
 	
+	public boolean getPrevisible() {
+		return previsible;
+	}
+	
 	public boolean getDiscontinuo() {
 		return discontinuo;
 	}
@@ -194,6 +200,7 @@ public class Contract {
 		private String interinidad;
 		
 		private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
+		private boolean previsible; // ¿El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
 
 		public ContractBuilder setCifEnterprise(String cifEnterprise) {
 			this.cifEnterprise = cifEnterprise;
@@ -345,6 +352,12 @@ public class Contract {
 			this.discontinuo = discontinuo;
 			return this;
 		}
+		
+		
+		public ContractBuilder setPrevisible(boolean previsible) {
+			this.previsible = previsible;
+			return this;
+		}
 
 
 		public ContractBuilder() {
@@ -382,6 +395,7 @@ public class Contract {
 			contract.sepeId = this.sepeId;
 			contract.interinidad = this.interinidad;
 			contract.discontinuo = this.discontinuo;
+			contract.previsible = this.previsible;
 			return contract;
 		}
 	}
