@@ -53,9 +53,8 @@ public class HelpSwitcher implements Serializable {
 			
 			// if nothing is here
 			if(filteredList.isEmpty()) {
-				
 				filteredList.addAll(((List<HelpData>) model.getWrappedData()).stream()
-				.filter(d -> AonStringUtils.containsMatching(d.getTitle(), filter, 2))
+				.filter(d -> AonStringUtils.containsMatching(d.getTitle(), filter))
 				.collect(Collectors.toList()));
 			}
 			
