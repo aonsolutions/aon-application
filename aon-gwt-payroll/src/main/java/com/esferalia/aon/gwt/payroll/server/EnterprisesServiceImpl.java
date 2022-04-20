@@ -1948,8 +1948,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			syncWithIdcs(domainName, user, contractId, connection);
 			return getPECs(domainName, domainId, user, contractId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -2732,7 +2732,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	private static void syncWithIdcs(String currentDomainName, String currentUser, Integer contractId, Connection connection)
-			throws SQLException {
+			throws Exception {
 		Integer domainId = AonServletUtils.getDomainID(currentDomainName);
 		Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
 		Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);			
@@ -3465,7 +3465,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return JooqSSBonus.getSSBonus(connection, contractId);
 		} catch (CertificateNotFoundException e) {
 			throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
