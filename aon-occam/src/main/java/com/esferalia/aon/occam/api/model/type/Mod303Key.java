@@ -788,6 +788,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// 	----------------------------------------------------------------------------------
 	,CM_020("303-CM020",false,null,"\u00BFHa realizado operaciones exentas sin derecho a deducci\u00F3n durante este periodo de liquidaci\u00F3n?")
 	,CM_021("303-CM021",false,null,"\u00BFRealiza actividades acogidas al r\u00E9gimen simplificado?")
+	
 	,NF_I00("303-GPI00",false,null,"NIF del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
 	,NF_I01("303-GPI01",false,null,"Razón social del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
 	,NF_010("303-NF010",false,"010","Entregas intracomunitarias de bienes y servicios")
@@ -846,8 +847,10 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,NF_450("303-NF450",false,"450","Regularizaci\u00F3n porcentaje definitivo de prorrata")
 	
 	,NF_050("303-NF050",false,"050","Total Cuotas a deducir")
+	,NF_055("303-NF055",false,"055","Cifra relativa")
 	,NF_061("303-NF061",false,"061","Cuota resultante. Sujetos pasivos con tributaci\u00F3n exclusiva en Navarra")
 	,NF_062("303-NF062",false,"062","Cuotas a compensar de periodos anteriores")
+	,NF_069("303-NF069",false,"069","Resultado regularizaci\u00F3n anual")
 	,NF_063("303-NF063",false,"063","Resultado")
 	;
 	private String value;

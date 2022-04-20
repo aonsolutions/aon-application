@@ -76,9 +76,10 @@ public enum Model3032022NAVARRARGScript implements IModelScript<Mod303Key> {
 	,DED11 (Mod303Key.NF_050.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_050},null,COMPUTE)
 	
 	,TOT  ("Resultado",null,null,TITLE)
-	,TOT01 (Mod303Key.NF_061.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_061},null,COMPUTE)
-	,TOT02 (Mod303Key.NF_062.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_062},null,COMPUTE_KEY)
-	,TOT03 (Mod303Key.NF_063.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_063},null,COMPUTE)
+	,TOT01 (Mod303Key.NF_055.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_055},null,NONE)
+	,TOT02 (Mod303Key.NF_061.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_061},null,COMPUTE)
+	,TOT03 (Mod303Key.NF_062.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_062},null,COMPUTE_KEY)
+	,TOT04 (Mod303Key.NF_063.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_063},null,COMPUTE)
 	;
 	
 	private String label;

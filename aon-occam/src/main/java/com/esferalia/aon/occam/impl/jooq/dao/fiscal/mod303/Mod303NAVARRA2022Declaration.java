@@ -220,8 +220,10 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 		,NF_045(Mod303Key.NF_045)
 		,NF_450(Mod303Key.NF_450)
 		,NF_050(Mod303Key.NF_050,null,null,null,"NF_041+NF_141+NF_042+NF_049+NF_043+NF_175+NF_179+NF_045+NF_450",null)
-		
-		,NF_061(Mod303Key.NF_061,null,null,null,"NF_020-NF_050",null)
+		,NF_055(Mod303Key.NF_055,null,null
+			,(ctx,mod) -> add( Mod303Key.NF_055, mod, 100.0)  
+			,null,null)
+		,NF_061(Mod303Key.NF_061,null,null,null,"round((NF_020-NF_050)*NF_055/100)",null)
 		,NF_062(Mod303Key.NF_062,null,null
 			,(ctx,mod) -> add( Mod303Key.NF_062, mod, 
 				Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
