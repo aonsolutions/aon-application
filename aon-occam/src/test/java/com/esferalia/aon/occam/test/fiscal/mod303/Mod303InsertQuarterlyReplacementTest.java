@@ -65,7 +65,7 @@ public class Mod303InsertQuarterlyReplacementTest extends AbstractOccamTest {
 			.setIssueDate(date)
 			.setMonthly(false)
 			.setAdministration(admon)
-			.setReplacement(admon == Administration.ALAVA)
+			.setReplacement(admon == Administration.ALAVA || admon == Administration.NAVARRA)
 			.setComplementary(admon == Administration.COMMON_TERRITORY || admon == Administration.BIZKAIA)
 			.setGenerateFromYearStart(true)
 			;

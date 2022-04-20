@@ -107,6 +107,15 @@ public class InvoiceFaker {
 				return InvoiceFaker.fill(params, invoice);
 			}
 		},
+		// Venta Nacional
+		SALES_NATIONAL_SURCHARGE {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setSurcharge(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
 		// Venta Canarias, Ceuta y Melilla
 		SALES_CAN_CEU_MEL {
 			public Invoice get( InvoiceFakerParams params ) {
@@ -236,6 +245,16 @@ public class InvoiceFaker {
 		PURCHASE_FARMER_RETENTION{
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setWithholding(true);
+				invoice.setWithholdingFarmer(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Gasto con retención en régimen agríccola
+		EXPENSE_FARMER_RETENTION{
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
 				invoice.setWithholding(true);
 				invoice.setWithholdingFarmer(true);
