@@ -216,7 +216,7 @@ public class InvoiceTest {
 		Finance financeOne = new Finance();
 		financeOne.setBic("BBVAESMMXXX");
 		financeOne.setAdvance(true);
-		financeOne.setAmount(39687.23);
+		financeOne.setAmount(1039687.23);
 		financeOne.setBankAccount(accountOne);
 		financeOne.setPayMethodType(PayMethodType.OTHER);
 		financeOne.setPayMethodName("TRANSFERENCIA A 6000 DÍAS");
@@ -243,6 +243,13 @@ public class InvoiceTest {
 		financeFour.setPayMethodType(PayMethodType.NEGOTIABLE_DOCUMENT);
 		financeFour.setDueDate(new Date());
 		
+		finances.add(financeOne);
+		finances.add(financeOne);
+		finances.add(financeOne);
+		finances.add(financeOne);
+		finances.add(financeOne);
+		finances.add(financeOne);
+		finances.add(financeOne);
 		finances.add(financeOne);
 		finances.add(financeTwo);
 		finances.add(financeThree);

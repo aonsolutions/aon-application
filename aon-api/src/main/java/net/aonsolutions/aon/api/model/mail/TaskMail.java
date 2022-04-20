@@ -16,6 +16,7 @@ public class TaskMail {
 	String logo;
 	String description;
 	String companyName;
+	String domainName;
 	String taskHolderName;
 	Boolean showRating;
 	TaskWorkflowType type;
@@ -97,6 +98,15 @@ public class TaskMail {
 		return this;
 	}
 	
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public TaskMail setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
+	
 	public String getTaskHolderName() {
 		return taskHolderName;
 	}
@@ -115,6 +125,20 @@ public class TaskMail {
 		return this;
 	}
 	
+	public TaskMail setWorkflows(List<TaskWorkflow> workflows) {
+		this.workflows = workflows;
+		return this;
+	}
+	
+	public String getLogo() {
+		return logo;
+	}
+
+	public TaskMail setLogo(String logo) {
+		this.logo = logo;
+		return this;
+	}
+	
 	public List<WorkflowMail> getWorkflows() {
 		LinkedList<WorkflowMail> workflowsList = new LinkedList<>();
 		
@@ -129,17 +153,4 @@ public class TaskMail {
 		return workflowsList;
 	}
 
-	public TaskMail setWorkflows(List<TaskWorkflow> workflows) {
-		this.workflows = workflows;
-		return this;
-	}
-	
-	public String getLogo() {
-		return logo;
-	}
-
-	public TaskMail setLogo(String logo) {
-		this.logo = logo;
-		return this;
-	}
 }

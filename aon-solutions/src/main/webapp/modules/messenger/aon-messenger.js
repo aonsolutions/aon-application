@@ -1,16 +1,18 @@
 import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
-import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
 import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import { SigninSidenav } from '../timecontrol/signinEnums.js';
+import { getCustomers } from '../../services/registryService.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
@@ -18,6 +20,7 @@ export class AonMessenger extends AonElement {
 	_workgroups;
 	_tags;
 	_filter={};
+	_listFilter;
 	TASK_HOLDER;
 	TASK_HOLDER_ENTERPRISE;
 	cau; //BOOLEAN
@@ -44,6 +47,14 @@ export class AonMessenger extends AonElement {
 		super();
 	}
 
+	setListFilter(filter) {
+		this._listFilter = filter;
+	}
+
+	getListFilter() {
+		return this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
+	}
+	
 	connectedCallback () {
 		this.initialize();
 		getDomainUserRoles({}).then(r => {
@@ -64,8 +75,8 @@ export class AonMessenger extends AonElement {
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
 		this._tags = [];
-		this.TASK_HOLDER = {};
 		this.TASK_HOLDER_ENTERPRISE = [];
+		this.TASK_HOLDER = {};
 		this._filter = {
 			workgroup: undefined,
 			workgroups: undefined,
@@ -140,8 +151,20 @@ export class AonMessenger extends AonElement {
 	}
 
 	async buildToolbar(){
-		if(this.isMobile())
+			
+		if(this.isMobile()){
 			this.applicationEl.addMobileSidenavHeader(Apps.MESSENGER);
+			this.applicationEl.addFloatOption(SigninSidenav.ADD, () => 
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
+			);
+		} else {
+			this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
+			);
+		}
+
+		this.buildToolbarSearch();
+			
 	
 		this.taskNavBar();
 		this.statusNavBar();
@@ -151,6 +174,57 @@ export class AonMessenger extends AonElement {
 			this.tagNavBar();
 		}
 	}
+
+
+	buildToolbarSearch(){
+		let btnSearch = this.applicationEl.addSearchOption();
+		btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
+		  this.setListFilter({...this.getListFilter(), page:0, perPage:30, search:detail});
+		  this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+		});
+	
+		if(!this.cau){
+		  btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+			if(detail) {
+			  this.setListFilter({...this.getListFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate, workgroup: detail.workgroup, sender:detail.sender});
+			  this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+			} 
+		  });
+		  btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
+		  this.searchValueDefault();
+		}
+	}
+
+
+	searchValueDefault(){
+		let registryEl = this.getElement("registry");
+		let taskHolderEl = this.getElement("task_holder");
+		let senderEl = this.getElement("senderFilter");
+		let statusEl = this.getElement("status");
+		let workgroup = this.getElement("workgroup");
+		getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
+		  registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
+		});
+	
+		registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+			const value = target.value;
+			if(value.length > 2){
+			  const cs = await getCustomers({reload:true, page:1, perPage:30, value});
+			  registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+			}
+		})
+	
+		this.getMyWorkgroups().then(wgs=>
+			workgroup.setOptions(wgs)
+		);
+	
+		this.getTaskHoldersEnterprise().then(ths=>{
+			senderEl.setOptions(ths);
+			taskHolderEl.setOptions(ths);
+		});
+
+		statusEl.setOptions(TASK_STATUS_VALUE);
+	  }
 
 	taskNavBar(){
 		let messengerOpts = [

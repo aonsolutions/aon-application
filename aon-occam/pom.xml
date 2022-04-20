@@ -124,6 +124,12 @@
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20180813</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>es.translogia</groupId>
 			<artifactId>tedi.api</artifactId>
 			<version>${project.version}</version>
