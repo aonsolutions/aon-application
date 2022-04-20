@@ -207,17 +207,18 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
 		boolean edit = task.getId() != null;
-		if(TaskUtils.isCau(api.getData())) {
+		if(TaskUtils.isCau(api.getData())) 
 			TaskUtils.setCauInfo(api, task);
-		}
-		if(edit) {
+		
+		if(edit) 
 			TaskUtils.checkFiles(api, task);
-		}
+		else 
+		 setWgAndThDefault(api, task);
+
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		
 		if(!edit) { // SAVE CREATE
 			TaskUtils.checkFiles(api, task);
-			setWgAndThDefault(api, task);
 			task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		}
 		
@@ -231,12 +232,11 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveWorkflow(AonApiData api, Optional<TaskWorkflow> workflowOpt) {
 		TaskWorkflow workflowTmp = workflowOpt.isPresent() ? workflowOpt.get() : TaskWorkflowJSON.fromJSON(api.getData());
 		
-		if(workflowTmp.getDomain()==null) {
-			workflowTmp.setDomain(api.getDomain().getId());
-		}
-		if(TaskUtils.isCau(api.getData())) {
-			workflowTmp.setTaskHolder(new TaskHolder());
-		}
+		if(TaskUtils.isCau(api.getData())) 
+			TaskUtils.setCauWorkflow(api, workflowTmp);
+		
+		if(workflowTmp.getDomain()==null) 
+			workflowTmp.setDomain(api.getDomain().getId());	
 	
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
 		TaskUtils.changeWorkflow(api, workflow);
@@ -257,6 +257,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		Domain domain = api.getDomain();
 		JSONObject params = api.getData();
 		Integer task = api.getData().optInt(IJsonNames.TASK);
+		JSONObject json = new JSONObject();
 		if(params.opt(IJsonNames.FILE)!= null) { 
 			JSONObject file  = params.optJSONObject(IJsonNames.FILE);
 			String base64 = file.optString(IJsonNames.CONTENT);
@@ -268,9 +269,11 @@ public class TaskServlet extends AonApiHttpServlet{
 			.setData(fileData)
 			.setMimetype(MimeType.get(contentType));
 			
-			return TaskAttachJSON.toJSON(AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach));
+			json = TaskAttachJSON.toJSON(AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach));
+			json.put("domain_name", domain.getName());
+			json.put("attach_type", "task");
 		}
-		return new JSONObject();
+		return json;
 	}
 	
 	private JSONObject getTaskStatusCount(AonApiData api) {
@@ -459,38 +462,40 @@ public class TaskServlet extends AonApiHttpServlet{
 	private void setWgAndThDefault(AonApiData api, Task task) {
 		try {
 			boolean isCau = TaskUtils.isCau(api.getData());
-			List<String> params = new ArrayList<>();
-			if(isCau) {
-				params.add(AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP.name());
-				params.add(AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER.name());
-			} else {
-				params.add(AppParamsRequest.APP_REQUESTS_INT_WORKGROUP.name());
-				params.add(AppParamsRequest.APP_REQUESTS_INT_TASK_HOLDER.name());
-			}
-
-			List<ApplicationParameter> appParams = getAppParamsList(api, params).stream().filter(p-> p.getName()!=null && p.getValue()!=null).collect(Collectors.toList());
-			if(!appParams.isEmpty()) {
-				boolean taskHolderExist = task.getTaskHolder().getId()!=null;
-				boolean workgroupExist = task.getWorkgroup().getId()!=null;
-				if(!workgroupExist) {
-					appParams.stream().filter(p-> 
-						p.getName().contentEquals(TaskUtils.isCau(api.getData()) ? AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP.name() : AppParamsRequest.APP_REQUESTS_INT_WORKGROUP.name())
-					).findFirst().ifPresent(d->
-						task.setWorkgroup(new Workgroup().setId(Integer.parseInt(d.getValue())))
-					);
+			boolean workgroupExist = task.getWorkgroup().getId()!=null;
+			boolean taskHolderExist = task.getTaskHolder().getId()!=null;
+			if(!workgroupExist || !taskHolderExist) {
+				List<String> params = new ArrayList<>();
+				if(isCau) {
+					params.add(AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP.name());
+					params.add(AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER.name());
+				} else {
+					params.add(AppParamsRequest.APP_REQUESTS_INT_WORKGROUP.name());
+					params.add(AppParamsRequest.APP_REQUESTS_INT_TASK_HOLDER.name());
 				}
-				
-				if(!taskHolderExist) { 
-					appParams.stream().filter(p-> 
-						p.getName().contentEquals(isCau ? AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER.name() : AppParamsRequest.APP_REQUESTS_INT_TASK_HOLDER.name())
-					).findFirst().ifPresent(d->{
-						TaskHolder th = new TaskHolder();
-						th.setId(Integer.parseInt(d.getValue()));
-						task.setTaskHolder(th);
-					});
+
+				List<ApplicationParameter> appParams = getAppParamsList(api, params).stream().filter(p-> p.getName()!=null && p.getValue()!=null).collect(Collectors.toList());
+				if(!appParams.isEmpty()) {
+					
+					if(!workgroupExist) {
+						appParams.stream().filter(p-> 
+							p.getName().contentEquals(isCau ? AppParamsRequest.APP_REQUESTS_EXT_WORKGROUP.name() : AppParamsRequest.APP_REQUESTS_INT_WORKGROUP.name())
+						).findFirst().ifPresent(d->
+							task.setWorkgroup(new Workgroup().setId(Integer.parseInt(d.getValue())))
+						);
+					}
+
+					if(!taskHolderExist) { 
+						appParams.stream().filter(p-> 
+							p.getName().contentEquals(isCau ? AppParamsRequest.APP_REQUESTS_EXT_TASK_HOLDER.name() : AppParamsRequest.APP_REQUESTS_INT_TASK_HOLDER.name())
+						).findFirst().ifPresent(d->{
+							TaskHolder th = new TaskHolder();
+							th.setId(Integer.parseInt(d.getValue()));
+							task.setTaskHolder(th);
+						});
+					}
 				}
 			}
-
 		} catch (Exception e) {}
 	}
 }

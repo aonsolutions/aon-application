@@ -161,9 +161,17 @@ export const TASK_FILTER = [
     },
     {
         type: "select",
+        id: "senderFilter",
+        name: "sender",
+        title: "Creador",
+        autocomplete: true,
+        default:true
+    },
+    {
+        type: "select",
         id: "task_holder",
         name: "task_holder",
-        title: "Asignado a",
+        title: "Asignado",
         autocomplete: true,
         default:true
     },

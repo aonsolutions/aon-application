@@ -1,4 +1,4 @@
-import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
 import { domainName } from "../../../services/request.js";
 import { setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
@@ -111,7 +111,7 @@ const blockquote = ()=>{
     const selection = document.getSelection();
     const blockquoteEl = setStyles(document.createElement("blockquote"),{
         margin:"0px 0px 0px 0.8ex",
-        borderLeft: "1px solid rgb(204, 204, 204)",
+        borderLeft: "1px solid #cccccc",
         paddingLeft: "1ex"
     });
     blockquoteEl.textContent = selection;
@@ -172,7 +172,7 @@ const appendChatMessage = (properties) => {
 } 
 
 /**
- * @param {String} text optional
+ * @param {String} text Optional
  * @param {HTMLElement} aon-messenger-chat 
  * @returns {Array} [value, messageEl] message element html
  */
@@ -228,18 +228,22 @@ const checkFilesAndSend = async (textArea)=>{
             const fileId = el.dataset.id;
             const file = files.find(({id})=> id == fileId);
             if(file){
-                const taskAttach = await aonMessengerChat.uploadFile({ file, task:taskId });
-                if(taskAttach){
+                const attach = await aonMessengerChat.uploadFile({ file, task:taskId });
+                if(attach){
                     const json = {
-                        domain_name: domainName(),
-                        attach_type:"task",
-                        domain_id:taskAttach.domain,
-                        id:taskAttach.id
+                        domain_name: attach.domain_name,
+                        attach_type: attach.attach_type,
+                        domain_id:attach.domain,
+                        id:attach.id
                     };
+
                     const jsonBase64 = btoa( JSON.stringify(json) );
                     
-                    const linkTmp = `/${API_URL}/file/${jsonBase64}`;
-    
+                    let linkTmp = `/${API_URL}/file/${jsonBase64}`;
+
+                    if(aonMessengerChat.isCau())
+                        linkTmp = SIG_URL+linkTmp;
+
                     if(file.contentType.indexOf("image")>=0)
                         el.src = linkTmp;
                     else 
@@ -377,9 +381,9 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
     firstDiv.appendChild(divProcess);
     //---------------------END CREATE DIV PROCESS
 
-    const divStatic = createDivGrid(divCard, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
+    const divStatic = createDivGrid(divCard, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:"0" } });
 
-    const divDinamic = createDivGrid(undefined, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:0 } });
+    const divDinamic = createDivGrid(undefined, undefined,{ classes:[CSS.AON_COL_XS_12], styles:{ padding:"0" } });
 
     divCard.appendChild(divDinamic);
     //-----------------TYPE REQUEST
@@ -403,7 +407,7 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
         let titleBtn = isAdvisoryCompany ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
 
         btnForExternal = createAonSwitch(titleBtn);
-        const divBtnForExternal = createDivGrid(divStatic, btnForExternal, {classes:[CSS.AON_COL_XS_6], styles:{ top:'16px',  marginLeft: 0, display:"none"}});
+        const divBtnForExternal = createDivGrid(divStatic, btnForExternal, {classes:[CSS.AON_COL_XS_6], styles:{ top:'16px',  marginLeft: "0", display:"none"}});
         btnForExternal.checked = task.isOtherDomain();
         if(task.id || task.isOtherDomain()) btnForExternal.disabled = CONSTANT.TRUE;
 
@@ -468,6 +472,11 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
                     task.setProject({});
                     task.setRegistry({});
                     task.setGTaskId(undefined);
+                    if(aonMessengerChat.isBeta() && !aonMessengerChat.isCau()){
+                        const myTaskHolder = task.myTaskHolder;
+                        if(myTaskHolder && myTaskHolder.id && task.getTaskHolder() && !task.getTaskHolder().id)
+                            task.setTaskHolder(myTaskHolder);
+                    }
                 } 
             }
 
@@ -637,8 +646,10 @@ export const getIconJson =({source,status}) => {
 export const downChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat){
-        chat.scrollTo(0, chat.scrollHeight); //GO DOWN
-        addLine(chat);
+        setTimeout(() =>{
+            chat.scrollTo(0, chat.scrollHeight);  //GO DOWN
+            addLine(chat);
+        }, 100) 
     }
 }
 /**
@@ -646,8 +657,9 @@ export const downChat = () => {
  */
 export const upChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
+    console.log(chat);
     if(chat)
-        chat.scrollTo(0,0) //GO UP   
+        setTimeout(() => chat.scrollTo(0, 0), 100)      //GO UP   
 }
 
 /**
@@ -830,10 +842,11 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                 const company = cauInfo.company;
                 const auth = cauInfo.auth;
                 if(company && company.domain)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                   createDivGrid(divStatic, createLabelAnchor(MSG.DOMAIN, company.domain.name), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
     
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+
             } catch (error) {}
         } else if(aonMessengerChat.getCauInfo() && aonMessengerChat.isCau()) {
             try {
@@ -841,10 +854,11 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
                 const auth = cauInfo.auth;
                 const company = cauInfo.company;
                 if(company && company.name)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:5}});
+                   createDivGrid(divStatic, createLabelAnchor(MSG.ENTERPRISE, company.name, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"5px"}});
                     
                 if(auth && auth.email)
-                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:10}});
+                    createDivGrid(divStatic, createLabelAnchor(MSG.USER, auth.email, false), {classes:[CSS.AON_COL_XS_12], styles:{paddingBottom:"10px"}});
+ 
             } catch (error) {}
         }
     } 
@@ -888,3 +902,27 @@ const createLabelAnchor = (text, domainNam, clickable = true) => {
 
     return label;
 }
+
+
+
+/**
+ * 
+ * @param {Arrays} workflows workflows 
+ */
+export const setStyleMessageHistoric = async (workflows) => {
+    if(workflows && workflows.length) {
+      for (const workflow of workflows) {
+        const message = document.querySelector( `#${MESSENGER_IDS.MESSENGER_CHAT} ${MESSENGER_COMPONENTS.MESSAGE}[data-id='${workflow.id}']`);
+        if(message){  //CHANGE STYLE IF SEND MESSAGE
+          message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
+          const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
+          if(iconSendWorkflow){
+            iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
+            iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
+            iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
+          }
+        }
+      }
+    }
+}
+  

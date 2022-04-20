@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
@@ -380,10 +381,12 @@ public class DeliveryDAO {
 				,PROJECT.NAME
 				,DELIVERY_DETAIL.LINE
 				,DELIVERY_DETAIL.ITEM
+				,PCATEGORY.ID
 				,PCATEGORY.NAME
 				,PRODUCT.ID
 				,PRODUCT.NAME
 				,PRODUCT.CODE
+				,ITEM.ID
 				,ITEM.DETAIL
 				,ITEM.DETAIL2
 				,ITEM.DETAIL3
@@ -441,6 +444,15 @@ public class DeliveryDAO {
 						? CustomerFiller.build(r)
 						: new Customer().setId(getValue(r, DELIVERY.CUSTOMER)))
 					.setAddress(getValue(r, DELIVERY.ADDRESS))
+					 
+					.setAddressStreetType( StreetType.safeValueOf(getValue(r, RADDRESS.STREET_TYPE)))
+					.setAddressName(getValue(r, RADDRESS.ADDRESS))
+					.setAddressNumber(getValue(r, RADDRESS.NUMBER))
+					.setAddressTown(getValue(r, RADDRESS.CITY))
+					.setAddressZIP(getValue(r, RADDRESS.ZIP))
+					.setAddressGeozoneCode(getValue(r, GEOZONE.CODE))
+					.setAddressGeozone(getValue(r, GEOZONE.NAME))
+					
 					.setIssueTime(getValue(r, DELIVERY.ISSUE_TIME))
 					.setPayMethod(getValue(r, DELIVERY.PAY_METHOD))
 					.setSecurityLevel(getByte(r, DELIVERY.SECURITY_LEVEL))

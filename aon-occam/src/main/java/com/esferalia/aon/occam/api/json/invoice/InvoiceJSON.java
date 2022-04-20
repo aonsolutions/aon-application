@@ -17,12 +17,19 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import es.translogia.tedi.json.TediJSONUtils;
-
 public class InvoiceJSON {
-
+	
+	private InvoiceJSON() {
+	
+	}
+	
+	public static Invoice fromJSON(String json) {
+		return fromJSON(new JSONObject(json));
+	}
+	
 	public static Invoice fromJSON(JSONObject json) {
 		Date date = JsonUtils.getDate(json, IJsonNames.DATE);
 		String category = json.optString(IJsonNames.CATEGORY);
@@ -78,7 +85,7 @@ public class InvoiceJSON {
 	}
 	
 	public static JSONObject toJSON(Invoice invoice) {
-		String date = TediJSONUtils.formatDate(invoice.getIssueDate());
+		String date = AonDateUtils.format(invoice.getIssueDate(), AonDateUtils.DATE_TIME_FORMAT_AUX);
 		InvoiceStatus status = invoice.getStatus() != null 
 				? InvoiceStatus.safeValueOf(invoice.getStatus())
 				: InvoiceStatus.PENDING; 
@@ -110,7 +117,7 @@ public class InvoiceJSON {
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, invoice.getActivity());
 		
-		if(invoice.getDetails() != null && invoice.getDetails().size() > 0) {
+		if(invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
 		}
 			

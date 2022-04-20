@@ -311,6 +311,19 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	}
 	
 	@Override
+	public void noQueryData(String message) {
+		addError(new SaltraEvent() {
+			
+			@Override
+			public void append(SafeHtmlBuilder builder) {
+				builder.append(TEMPLATE.unknownError(getMainStyle(), message));
+			}
+		});
+		
+		syncErrors();
+	}
+	
+	@Override
 	public void unknownError(String message) {
 		addError(new SaltraEvent() {
 			

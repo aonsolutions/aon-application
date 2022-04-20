@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
+import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -107,6 +108,7 @@ public class TaskDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_DATE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(TASK.PARENT);}
 		@Override public Property<String> getTagNameProperty(){return new FilterDAO.PropertyDAO<>(TAG.NAME);}
+		@Override public Property<String> getCommentsWorkflowProperty(){return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.COMMENT);}
 	}
 	
 	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
@@ -122,6 +124,7 @@ public class TaskDAO {
 			.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 			.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
 			.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
+			.leftOuterJoin(TASK_WORKFLOW).on(TASK_WORKFLOW.TASK.eq(TASK.ID))
 			.where(TASK_PROPERTIES.getConditions(filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
@@ -131,6 +134,7 @@ public class TaskDAO {
 		}
 		
 		Map<Task, List<Tag>> taskMaps = condition
+	   .groupBy(TASK.ID, TAG.ID)
 	   .orderBy(TASK.CREATION_DATE.desc())
 	   .fetchGroups( 
 			new TaskFiller()::apply,

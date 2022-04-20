@@ -67,7 +67,7 @@ export class Task {
 
   setTask(task) {
     if(task) {
-      this.myTaskHolder= new TaskHolder(task.myTaskHolder);
+      this.myTaskHolder = new TaskHolder(task.myTaskHolder);
       this.setId(task.id || undefined);
       this.setAuth(task.auth || {});
       this.setStatus(task.status || TASK_STATUS.PENDING);

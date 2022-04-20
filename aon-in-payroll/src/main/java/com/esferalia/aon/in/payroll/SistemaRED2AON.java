@@ -681,7 +681,7 @@ public class SistemaRED2AON {
 	}
 	
 	public static void syncWithIdcs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
-			String ccc, String naf, Date endDate) {
+			String ccc, String naf, Date endDate) throws IllegalArgumentException {
 	
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
@@ -723,6 +723,7 @@ public class SistemaRED2AON {
 		
 		} catch (SegSocialException e) {
 			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

@@ -5795,16 +5795,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			// Idc from DB
-			String base64Pdf = JooqContractAttach.getContractIdc(connection, contractId, date);
-
-			// If not exist download
-			if (AonStringUtils.isBlank(base64Pdf)) {
-				base64Pdf = EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId,
+			String base64Pdf = EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId,
 						contractId, date);
-				JooqContractAttach.setContractIDC(connection, domainId, contractId,
-						Base64.getDecoder().decode(base64Pdf), date);
-			}
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -5830,16 +5822,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			// IdcPlNss from DB
-			String base64Pdf = JooqContractAttach.getContractIdcPlNss(connection, contractId);
-
-			// If not exist download
-			if (AonStringUtils.isBlank(base64Pdf)) {
-				base64Pdf = EmployeesServiceHelper.getIDCNSS(connection, domainName, domainId, userLogin, userId,
-						contractId, date);
-				JooqContractAttach.setContractIdcPlNss(connection, domainId, contractId,
-						Base64.getDecoder().decode(base64Pdf));
-			}
+			String base64Pdf = EmployeesServiceHelper.getIDCNSS(connection, domainName, domainId, userLogin, userId,
+					contractId, date);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -6356,7 +6340,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if (coefD != null) {
 				coefD = coefD * 1000;
 				String coefStr = coefD.intValue() + "";
-				coef = AonStringUtils.leftPad(coefStr, 3, '0');
+				coef = AonNumberUtils.equals(1000, coefD.intValue()) ? "000" : AonStringUtils.leftPad(coefStr, 3, '0');
 			}
 
 			// cambioContratoCoef
