@@ -19,8 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.UpdateFinanceRname;
 import net.aonsolutions.db.up2date.tgss.BaseCgpMin2022Fix;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2022Fix;
 
 public class Up2Date {
 
@@ -225,7 +225,8 @@ public class Up2Date {
 //    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
 //    		UdapaSalesFix.UDAPA_SALES_FIX
 //   		SalaryHours2022Fix.SALARYHOURS2022FIX,
-    		BaseCgpMin2022Fix.BASECGPMIN2022FIX
+    		BaseCgpMin2022Fix.BASECGPMIN2022FIX,
+    		UpdateFinanceRname.UPDATE_FINANCE_RNAME
     };
     
 
