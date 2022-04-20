@@ -1932,8 +1932,13 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 	}
 
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat, Mod303 mod) {
-		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isFarmerRegime()
-				&& !vat.isRectification() && vat.isNationalPurchase();
+		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
+				&& !vat.isVatSurchargeRegime() 
+				&& vat.isFarmerRegime()
+				&& !vat.isRectification() 
+				&& vat.isNationalPurchase()
+				&& vat.isNationalExpenses()
+				;
 	}
 
 	public static boolean  ventasIntracomunitarias(VatContext vat, Mod303 mod) {
