@@ -251,6 +251,16 @@ public class InvoiceFaker {
 				return InvoiceFaker.fill(params, invoice);
 			}
 		},
+		// Gasto con retención en régimen agríccola
+		EXPENSE_FARMER_RETENTION{
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setWithholding(true);
+				invoice.setWithholdingFarmer(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
 		;
 		public abstract Invoice get( InvoiceFakerParams params );
 		

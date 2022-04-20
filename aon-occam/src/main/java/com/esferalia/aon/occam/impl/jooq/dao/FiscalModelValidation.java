@@ -77,7 +77,7 @@ public class FiscalModelValidation {
 				.stream()
 				.findFirst()
 				.isPresent() ) {
-			throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+			throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format( fm.getModelFullName() ));
 		}
 	};
 

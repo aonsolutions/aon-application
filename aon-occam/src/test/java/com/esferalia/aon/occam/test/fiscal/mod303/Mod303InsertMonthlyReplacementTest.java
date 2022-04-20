@@ -42,6 +42,7 @@ public class Mod303InsertMonthlyReplacementTest extends AbstractOccamTest {
 		Mod303 aeat  = insertModel( Administration.COMMON_TERRITORY,date);
 		insertModel( Administration.ALAVA,date);
 		insertModel( Administration.BIZKAIA,date);
+		insertModel( Administration.NAVARRA,date);
 		
 		Map<Administration, Double> results = Mod303DAO.getMod303s(ctx, getOccam().getDomain())
 			.filter(mod -> mod.getYear() == aeat.getYear())
@@ -56,6 +57,9 @@ public class Mod303InsertMonthlyReplacementTest extends AbstractOccamTest {
 			Asserts.assertEqualsDouble("Sumatorios no coinciden."
 					, results.get(Administration.COMMON_TERRITORY)
 					, results.get(Administration.BIZKAIA));
+//			Asserts.assertEqualsDouble("Sumatorios no coinciden."
+//					, results.get(Administration.COMMON_TERRITORY)
+//					, results.get(Administration.NAVARRA));
 		}
 			
 	}
@@ -65,7 +69,7 @@ public class Mod303InsertMonthlyReplacementTest extends AbstractOccamTest {
 			.setIssueDate(date)
 			.setMonthly(true)
 			.setAdministration(admon)
-			.setReplacement(admon == Administration.ALAVA)
+			.setReplacement(admon == Administration.ALAVA || admon == Administration.NAVARRA)
 			.setComplementary(admon == Administration.COMMON_TERRITORY || admon == Administration.BIZKAIA)
 			.setGenerateFromYearStart(true)
 			;

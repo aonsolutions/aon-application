@@ -225,7 +225,7 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 			,null,null)
 		,NF_061(Mod303Key.NF_061,null,null,null,"round((NF_020-NF_050)*NF_055/100)",null)
 		,NF_062(Mod303Key.NF_062,null,null
-			,(ctx,mod) -> add( Mod303Key.NF_062, mod, 
+			,(ctx,mod) -> add( Mod303Key.NF_062, mod,
 				Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
 					.filter(m303 -> m303.getYear() ==  (mod.getYear() - (mod.isFirstPeriod()?1:0)) )
 					.filter(m303 -> m303.getAdministration() ==  mod.getAdministration() )
@@ -239,14 +239,14 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 					+ "\"\u2022 Declaraciones del \u00FAltimo periodo del ejercicio anterior:\","
 					+ "@foreach{fm : models}"
 						+ "@if{ fm.getYear() == (mod.getYear() - 1) && fm.isLastPeriod() && fm.getAdministration() == mod.getAdministration() }"
-							+ "\"- Resultado de la liquidaci\u00F3n @{fm.isComplementary()?' (C) ':''}:	Casilla [063] --> @{fm.getDeclarationResult()}\","
+							+ "\"- Resultado de la liquidaci\u00F3n @{fm.getModelFullName()}:	Casilla [063] --> @{fm.getDeclarationResult()}\","
 						+ "@end{}" 
 					+ "@end{}" 
 				+ "@else{}"
 					+ "\"\u2022 Declaraciones del periodo anterior:\","
 					+ "@foreach{fm : lastPeriodModels}"
 						+ "@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-							+ "\"- Resultado de la liquidaci\u00F3n @{fm.isComplementary()?' (C) ':''}:	Casilla [063] --> @{fm.getDeclarationResult()}\","
+							+ "\"- Resultado de la liquidaci\u00F3n @{fm.getModelFullName()}:	Casilla [063] --> @{fm.getDeclarationResult()}\","
 						+ "@end{}" 
 					+ "@end{}" 
 				+ "@end{}"

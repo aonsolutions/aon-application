@@ -789,8 +789,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CM_020("303-CM020",false,null,"\u00BFHa realizado operaciones exentas sin derecho a deducci\u00F3n durante este periodo de liquidaci\u00F3n?")
 	,CM_021("303-CM021",false,null,"\u00BFRealiza actividades acogidas al r\u00E9gimen simplificado?")
 	
-	,NF_I00("303-GPI00",false,null,"NIF del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
-	,NF_I01("303-GPI01",false,null,"Razón social del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
+	,NF_I00("303-NFI00",false,null,"NIF del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
+	,NF_I01("303-NFI01",false,null,"Razón social del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
 	,NF_010("303-NF010",false,"010","Entregas intracomunitarias de bienes y servicios")
 	,NF_001("303-NF001",false,"001","Exportaciones")
 	,NF_002("303-NF002",false,"002","Operaciones exentas sin derecho a deducci\u00F3n")
