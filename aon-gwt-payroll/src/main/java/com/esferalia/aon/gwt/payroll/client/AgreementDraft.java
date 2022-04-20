@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
-import static com.esferalia.aon.gwt.payroll.client.Constants.PERCENT_FORMAT;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.ERROR;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.WARNING;
 
@@ -724,10 +723,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					if (!StringUtils.isBlank(value)) {
 						value = "REMOVE()";
 					}
-
+					
 					var.setExpression(event.getValue());
 					// TODO: Check syntax????
-					Period draftPeriod = getCurrentDraftPeriod();
+					Period draftPeriod = null;
+					try {
+						draftPeriod = getCurrentDraftPeriod();
+					} catch (IndexOutOfBoundsException e) {
+						draftPeriod = getLastDraftPeriod();
+					}
 					var.setEndDate(draftPeriod.getEnd());
 					var.setStartDate(draftPeriod.getStart());
 					AgreementDraft.this.agreementDraftObject.addDraftVariable(level, var);
@@ -1645,8 +1649,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		moreToggleButtonsPanel.add(variablesVisivility);
 		
 		// Initialize toggleButtonsPanel
-		if(agreementDraftObject instanceof CategoryDraftObject)
+		if(agreementDraftObject instanceof CategoryDraftObject && !agreementDraftObject.getDatesWithChanges().contains(draftStratDate))
 			tabPos = (datesList.length - 1) * 2;
+		
 		inicializeToggleButtons(datesList, readOnly, tabPos);
 		
 	}
@@ -4710,6 +4715,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 		
 		throw new IndexOutOfBoundsException();
+	}
+	
+	private Period getLastDraftPeriod() {
+		// Use for CategoryDraftObject
+		SortedSet<Date> dates = agreementDraftObject.getDatesWithChanges();
+		Date lastDate = dates.last();
+		agreementDraftObject.setStartDate(lastDate);
+		agreementDraftObject.setEndDate(getClickedTabEndDate(lastDate));
+		return new Period(lastDate, getClickedTabEndDate(lastDate));
 	}
 	
 	// ------------------------------------------------------------------------
