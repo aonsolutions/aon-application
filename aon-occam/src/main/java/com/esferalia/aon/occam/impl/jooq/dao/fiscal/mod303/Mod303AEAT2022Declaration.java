@@ -228,9 +228,9 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 
 		// Rectificación de deducciones
 		,
-		CT_C40(Mod303Key.CT_C40, (mod, vat) -> rectificaciónDeduccionesFilter(vat, mod),
+		CT_C40(Mod303Key.CT_C40, (mod, vat) -> rectificacionDeduccionesFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C40, mod, vat.getBase()), null, null, null),
-		CT_C41(Mod303Key.CT_C41, (mod, vat) -> rectificaciónDeduccionesFilter(vat, mod),
+		CT_C41(Mod303Key.CT_C41, (mod, vat) -> rectificacionDeduccionesFilter(vat, mod),
 				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C41, mod, vat), null, null, null)
 
 		// Compensaciones Régimen Especial A.G. y P.
@@ -1926,14 +1926,17 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 		return vat.isInvestment() && !vat.isRectification() && adqIntracomunitariasFilterGene(vat, mod);
 	}
 
-	private static boolean rectificaciónDeduccionesFilter(VatContext vat, Mod303 mod) {
+	private static boolean rectificacionDeduccionesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isRectification()
 				&& (vat.isPurchase() || vat.isExpenses());
 	}
 
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat, Mod303 mod) {
-		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isFarmerRegime()
-				&& !vat.isRectification() && vat.isNationalPurchase();
+		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
+				&& !vat.isVatSurchargeRegime() 
+				&& vat.isFarmerRegime()
+				&& !vat.isRectification() 
+				&& (vat.isNationalPurchase() || vat.isNationalExpenses());
 	}
 
 	public static boolean  ventasIntracomunitarias(VatContext vat, Mod303 mod) {
