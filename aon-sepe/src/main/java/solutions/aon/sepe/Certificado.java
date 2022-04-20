@@ -130,11 +130,8 @@ public class Certificado {
 	    	
 	    	String ctaCti = certificates.getCtaCti();
 	    	String ipfManager= certificates.getIpfManager();
-			
 	    	String typeContract = certificates.getTypeContract();
-
-	    	String tipodocManager =  "NIF";
-	    	
+	    	String tipodocManager = "NIF";
 	    	if(Toolkit.getIdentityType(ipfManager).equals("4")) 
 	    		tipodocManager = "CIF";
 	    	else if(Toolkit.getIdentityType(ipfManager).equals("6")) 
@@ -147,19 +144,17 @@ public class Certificado {
 			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/CertificadosRedTrabajaWEB/ActionMecanizacionEntradaEmpresa.do")).orElseThrow();
 			htmlPage = (HtmlPage) hrefButton.click();
 			
-			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-			
 			{//DATA ENTERPRISE
-				form.getInputByName("orDatosEmpresa.srCCCRegimenCot").setValueAttribute(certificates.getRegimen());
-				form.getInputByName("orDatosEmpresa.srCCCProvincia").setValueAttribute(ctaCti.substring(0,2));
-				form.getInputByName("orDatosEmpresa.srCCCSecuencial").setValueAttribute(ctaCti.substring(2,9));
-				form.getInputByName("orDatosEmpresa.srCCCDC").setValueAttribute(ctaCti.substring(9));
-				form.getInputByName("stDniNie").setValueAttribute(certificates.getIpf());
+				HtmlForm formEnterprise = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCRegimenCot").setValueAttribute(certificates.getRegimen());
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCProvincia").setValueAttribute(ctaCti.substring(0,2));
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCSecuencial").setValueAttribute(ctaCti.substring(2,9));
+				formEnterprise.getInputByName("orDatosEmpresa.srCCCDC").setValueAttribute(ctaCti.substring(9));
+				formEnterprise.getInputByName("stDniNie").setValueAttribute(certificates.getIpf());
+				htmlPage = formEnterprise.getInputByName("btBuscar").click();
+				handleSepeExceptions(htmlPage);
 			}
 			
-			htmlPage = form.getInputByName("btBuscar").click();
-			handleSepeExceptions(htmlPage);
-
 			htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 			handleSepeExceptions(htmlPage);
 			
@@ -237,15 +232,15 @@ public class Certificado {
 			}
 			
 			{//DATA SUSPENSION OR TERMINATION
-				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
+				HtmlForm formTermination = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 				if(certificates.getCauseSuspension()!=null)
-					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csCausaSuspension.valor\"]")).setSelectedAttribute(certificates.getCauseSuspension(), true);
-				form.getInputByName("orDatosTrabajador.srDiaFechaAlta").setValueAttribute(fAE[0]);
-				form.getInputByName("orDatosTrabajador.srMesFechaAlta").setValueAttribute(fAE[1]);
-				form.getInputByName("orDatosTrabajador.srAnyoFechaAlta").setValueAttribute(fAE[2]);
-				form.getInputByName("orDatosTrabajador.srDiaFechaInicioSuspension").setValueAttribute(fST[0]);
-				form.getInputByName("orDatosTrabajador.srMesFechaInicioSuspension").setValueAttribute(fST[1]);
-				form.getInputByName("orDatosTrabajador.srAnyoFechaInicioSuspension").setValueAttribute(fST[2]);
+					((HtmlSelect)formTermination.querySelector("select[name=\"orDatosTrabajador.csCausaSuspension.valor\"]")).setSelectedAttribute(certificates.getCauseSuspension(), true);
+				formTermination.getInputByName("orDatosTrabajador.srDiaFechaAlta").setValueAttribute(fAE[0]);
+				formTermination.getInputByName("orDatosTrabajador.srMesFechaAlta").setValueAttribute(fAE[1]);
+				formTermination.getInputByName("orDatosTrabajador.srAnyoFechaAlta").setValueAttribute(fAE[2]);
+				formTermination.getInputByName("orDatosTrabajador.srDiaFechaInicioSuspension").setValueAttribute(fST[0]);
+				formTermination.getInputByName("orDatosTrabajador.srMesFechaInicioSuspension").setValueAttribute(fST[1]);
+				formTermination.getInputByName("orDatosTrabajador.srAnyoFechaInicioSuspension").setValueAttribute(fST[2]);
 
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
