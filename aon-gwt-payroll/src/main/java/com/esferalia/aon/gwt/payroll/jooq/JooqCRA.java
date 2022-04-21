@@ -232,7 +232,7 @@ public class JooqCRA {
 
 	// --------------------------------------------- Get CRA data
 	
-	public static byte[] getDownloadMainCRA(String domainName, String craBatchId) {
+	public static Record getDownloadMainCRA(String domainName, String craBatchId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
@@ -240,7 +240,7 @@ public class JooqCRA {
 					.where(CRA_BATCH.ID.eq(Integer.parseInt(craBatchId)))
 					.fetchOne();
 			
-			return craBatchRecord.get(CRA_BATCH.OUTCOME_FILE);
+			return craBatchRecord;
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -263,7 +263,7 @@ public class JooqCRA {
 	
 	// --------------------------------------------- Set CRA
 
-	public static String setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String agrarianAFI, long startDateTime, String craDocumentType, Connection connection) {
+	public static String setMainCra(Integer domainId, List<String> cccList, ArrayList<Integer> cccIdList, String agrarianAFI, long startDateTime, String craDocumentType, Date fileNameDate, Connection connection) {
 		
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		java.util.Date startDate = new java.util.Date(startDateTime);
@@ -331,11 +331,9 @@ public class JooqCRA {
 			System.out.println("RESULTADO FINAL");
 			System.out.println(newCRA);
 			
-			Date currentDate = new Date();
-			
 			CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 					.set(CRA_BATCH.DOMAIN, domainId)
-					.set(CRA_BATCH.DATE, new Timestamp(currentDate.getTime()))
+					.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
 					.set(CRA_BATCH.STATUS, (byte)1)
 					.set(CRA_BATCH.COMMUNICATION_ID, "R")
 					.set(CRA_BATCH.INCOME_FILE, (byte[])null)
@@ -354,11 +352,10 @@ public class JooqCRA {
 				.execute();
 			}
 		} else {
-			Date currentDate = new Date();
 			
 			CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 				.set(CRA_BATCH.DOMAIN, domainId)
-				.set(CRA_BATCH.DATE, new Timestamp(currentDate.getTime()))
+				.set(CRA_BATCH.DATE, new Timestamp(fileNameDate.getTime()))
 				.set(CRA_BATCH.STATUS, (byte)1)
 				.set(CRA_BATCH.COMMUNICATION_ID, "N")
 				.set(CRA_BATCH.INCOME_FILE, (byte[])null)

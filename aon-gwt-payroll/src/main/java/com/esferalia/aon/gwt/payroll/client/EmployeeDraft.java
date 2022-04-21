@@ -1,15 +1,18 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
@@ -436,7 +439,7 @@ public abstract class EmployeeDraft extends Composite {
 			return pecs;
 		}
 
-		public MenuItem getBonifications() {
+		public MenuItem getSSPeculiarities() {
 			return pecsSS;
 		}
 		
@@ -486,6 +489,7 @@ public abstract class EmployeeDraft extends Composite {
 	private AonToolbarButton redo;
 	private AonExpandButton tgss;
 	private AonToolbarButton closePDF;
+	private AonToolbarButton openPDF;
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
 	
@@ -521,6 +525,9 @@ public abstract class EmployeeDraft extends Composite {
 	// ------------------------------------------------- setEmployeeDraft
 
 	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraftObject) {
+		
+		disableSistemaRED();
+
 		showEmployee();
 		this.employeeDraftObject = employeeDraftObject;
 		this.employeeDraftObject.initializeEmployee(
@@ -560,16 +567,26 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void initializeIdcDateListBox() {
+		idcDateListBox.setRowCount(1, true);
+		Date startDate = employeeDraftObject.getEmployee().getStartDate();
+		idcDateListBox.setRowData(0, Collections.singletonList(startDate));
+		idcDateListBox.setSelected(startDate, true);
+
 		employeeDraftObject.getIdcDates(
 		dates -> {
 			// filter out 'Baja' dates
 			dates = filterEven(dates);
+			Collections.sort(dates);
 			int count = dates.size();
 			idcDateListBox.setRowCount(count, true);
 			idcDateListBox.setRowData(0, dates);
-			idcDateListBox.setVisibleRange(0, count+1);
-			idcDateListBox.setSelected(count-1, true);
-			idcDateListBox.onResizeDropDownPopup();
+
+			Date selectedDate =
+			dates.stream()
+			.filter(d -> Objects.equals(d,startDate))
+			.findAny().orElse(dates.get(count-1));
+			
+			idcDateListBox.setSelected(selectedDate, true);
 		}, 
 		error -> {} );
 	}
@@ -904,6 +921,10 @@ public abstract class EmployeeDraft extends Composite {
 		closePDF.addClickHandler(e -> onClosePDF());
 		toolbar.add(closePDF);
 
+		openPDF = new AonToolbarButton( AON.MSG.reopen(), AON.CSS.aonIconPdf() );
+		openPDF.addClickHandler(e -> onOpenPDF());
+		toolbar.add(openPDF);
+
 		idcMonthListBox = new MonthListBox();
 		idcMonthListBox.addChangeHandler(e -> showIdcPlNss(idcMonthListBox.getSelectedMonth()));
 		toolbar.add(idcMonthListBox);
@@ -1013,7 +1034,10 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void showIdcPlNss() {
-		showIdcPlNss(DateUtils.getFirstDayOfMonth());
+		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(); 
+		Date endDate = employeeDraftObject.getEmployee().getEndDate();
+		Date idcPlNssDate = AonDateUtils.min(endDate, firstDayOfMonth); 
+		showIdcPlNss(idcPlNssDate);
 	}
 	
 	private void showIdcPlNss(Date month) {
@@ -1027,7 +1051,9 @@ public abstract class EmployeeDraft extends Composite {
 				idcMonthListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcMonthListBox.setSelected(month, true);
 				pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, trowable -> {
+			showError("IdcPlNss", trowable.getMessage());
+		});
 	}
 	
 	private void showIdc() {
@@ -1045,13 +1071,22 @@ public abstract class EmployeeDraft extends Composite {
 				idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcDateListBox.setSelected(date, true);
 				pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, trowable -> {
+			showError("Idc", trowable.getMessage());
+			Date idcDate = idcDateListBox.getSelected();
+			if ( !Objects.equals(date, idcDate ) )
+				showIdc();
+		});
 	}
 
 	private void onClosePDF() {
 		showEmployee();
 	}
 	
+	private void onOpenPDF() {
+		open(pdfViewer.getDataURI(), "_blank");
+	}
+
 	// ------------------------------------------------- Toolbar panel auxiliar methods
 	
 	private void showPdf() {
@@ -1064,6 +1099,7 @@ public abstract class EmployeeDraft extends Composite {
 		redo.addStyleName(style.displayNone());
 		tgss.setVisible(false);
 		
+		openPDF.setVisible(true);
 		closePDF.setVisible(true);
 		
 		idcDateListBox.setVisible(false);
@@ -1082,6 +1118,7 @@ public abstract class EmployeeDraft extends Composite {
 		redo.setEnabled(null != employeeDraftObject && employeeDraftObject.canRedo());
 		tgss.setVisible(true);
 		
+		openPDF.setVisible(false);
 		closePDF.setVisible(false);
 		
 		idcDateListBox.setVisible(false);
@@ -1145,13 +1182,20 @@ public abstract class EmployeeDraft extends Composite {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.occupation);
 	}
 	
-	public void setTaVisible(boolean visible ) {
-		contextMenu.getTa().setVisible(visible);
+	
+	public void disableSistemaRED() {
+		contextMenu.getTa().setEnabled(false);
+		contextMenu.getIdc().setEnabled(false);
+		contextMenu.getIdcPlNss().setEnabled(false);
+		contextMenu.getSSPeculiarities().setEnabled(false);
 	}
 
-	public void setIdcVisible(boolean visible ) {
+	public void enableSistemaRED() {
 		initializeIdcDateListBox();
-		contextMenu.getIdcPlNss().setVisible(visible);
+		contextMenu.getTa().setEnabled(true);
+		contextMenu.getIdc().setEnabled(true);
+		contextMenu.getIdcPlNss().setEnabled(true);
+		contextMenu.getSSPeculiarities().setEnabled(true);
 	}
 
 	private static <T> List<T> filterEven( List<T> list ){
@@ -1184,4 +1228,15 @@ public abstract class EmployeeDraft extends Composite {
 		AonMessagePanel.hideMessage(messageContainer);
 	}
 	
+	private static native void open(String datauristring, String name) /*-{
+
+		//var string = doc.output(datauristring);
+        var iframe = "<iframe src='" + datauristring + "' frameborder='0' style='border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;' allowfullscreen></iframe>";
+        var x = window.open("", name);
+        x.document.open();
+        x.document.write(iframe);
+        x.document.close();
+
+  	}-*/;
+
 }

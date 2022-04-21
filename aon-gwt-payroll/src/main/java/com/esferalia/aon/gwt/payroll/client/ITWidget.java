@@ -2259,8 +2259,6 @@ public abstract class ITWidget extends ResizeComposite {
 		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
 		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
 		footPanel.setStyleName(AON.CSS.aonSelector());
-		footPanel.addMaximizeHandler(e -> showFootPanel());
-		footPanel.addMinimizeHandler(e -> closeFootPanel());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 	
 		tabLayout.setWidth("100%");
@@ -2272,17 +2270,18 @@ public abstract class ITWidget extends ResizeComposite {
 		tabLayout.setAnimationDuration(300);
 
 		splitLayoutPanel.addSouth(footPanel, 30);
-		footPanel.clearButtons();
-		footPanel.addButtonLess();
+		footPanel.initNewButtons();
 	}
 
 	
 	private void showFootPanel() {
+		footPanel.addButtonMore();
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 		splitLayoutPanel.animate(500);
 	}
 	
 	private void closeFootPanel() {
+		footPanel.addButtonLess();
 		splitLayoutPanel.setWidgetSize(footPanel, 20);
 		splitLayoutPanel.animate(500);
 	}

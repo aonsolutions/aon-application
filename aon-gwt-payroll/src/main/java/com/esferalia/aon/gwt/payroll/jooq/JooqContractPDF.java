@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -102,7 +103,7 @@ public class JooqContractPDF {
 				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
 				Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
 				
-				Map<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
+				TreeMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
 				
 				FormativeLevel formativeLevel = new FormativeLevel();
 				contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
@@ -152,9 +153,9 @@ public class JooqContractPDF {
 	
 	// ---------------------------------------------------- Contract PDF (fill - clauses)
 	
-	private static Map<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
-		Map<String, String> contractClausesMap = new HashMap<>();
-		contractClauses.forEach(contractClause -> contractClausesMap.put(contractClause.getName(), contractClause.getDescription()));
+	private static TreeMap<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
+		TreeMap<String, String> contractClausesMap = new TreeMap<>();
+		contractClauses.forEach(contractClause -> contractClausesMap.put(contractClause.getLineNumber() + " - " + contractClause.getName(), contractClause.getDescription()));
 		return contractClausesMap;
 	}
 	

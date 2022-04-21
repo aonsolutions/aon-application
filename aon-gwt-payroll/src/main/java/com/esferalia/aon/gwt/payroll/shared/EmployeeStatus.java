@@ -22,6 +22,7 @@ public abstract class EmployeeStatus implements Serializable {
 		void employeeNotFound();
 		void notAuthorizedCCC();
 		void occupationNotFound();
+		void noQueryData(String message);
 		void unknownError(String message);
 		void saltraCredentialsNotFound();
 		void mismatchedCCC(MismatchedCCC status);
@@ -85,6 +86,26 @@ public abstract class EmployeeStatus implements Serializable {
 		@Override
 		public void visit(Visitor visitor) {
 			visitor.unknownError(message);
+		}
+	}	
+	
+	public static class NoQueryData extends EmployeeStatus{
+		
+		private String message;
+		
+		public String getMessage() {
+			return message;
+		}
+		
+		public NoQueryData setMessage(String message) {
+			this.message = message;
+			return this;
+		}
+		
+
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.noQueryData(message);
 		}
 	}	
 
@@ -410,6 +431,11 @@ public abstract class EmployeeStatus implements Serializable {
 			}
 			
 			@Override
+			public void noQueryData(String message) {
+				saltraEnable.run();
+			}
+			
+			@Override
 			public void unknownError(String message) {
 				saltraDisabled.run();
 			}
@@ -488,6 +514,11 @@ public abstract class EmployeeStatus implements Serializable {
 	
 			@Override
 			public void notAuthorizedCCC() {
+				onError.run();
+			}
+			
+			@Override
+			public void noQueryData(String message) {
 				onError.run();
 			}
 			
@@ -595,6 +626,11 @@ public abstract class EmployeeStatus implements Serializable {
 			}
 			
 			@Override
+			public void noQueryData(String message) {
+				System.out.println("noQueryData");
+			}
+			
+			@Override
 			public void unknownError(String message) {
 				System.out.println("unknownError " + message);
 			}
@@ -670,6 +706,11 @@ public abstract class EmployeeStatus implements Serializable {
 			
 			@Override
 			public void notAuthorizedCCC() {
+				throw new OutOfDateException();				
+			}
+			
+			@Override
+			public void noQueryData(String message) {
 				throw new OutOfDateException();				
 			}
 			

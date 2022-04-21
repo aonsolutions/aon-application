@@ -7453,6 +7453,185 @@ public class AonStringUtils {
         return result.stream().collect(Collectors.joining());
     }
 
+    
+    public static final int DEFAULT_TOLERANCE = 2;
+    
+	
+	/**
+	 * Returns if a text contains a word with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @param tolerance The tolerance to use 
+	 * @return
+	 */
+	public static boolean containsMatching(String text, String searcher, int tolerance) {
+
+		text = normalized(text.toUpperCase());
+		searcher = normalized(searcher.toUpperCase());
+		
+		String[] words = text.split("\\s");
+		for (String word : words) {
+			
+			int currentDistance = AonStringUtils.getLevenshteinDistance(searcher, word);
+			int realTolerance = tolerance;
+			
+			if(word.contains(searcher)){
+				return true;
+			}
+			
+			if(currentDistance < realTolerance) {
+				return true;
+			}
+		
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Returns a word matching with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @param tolerance The tolerance to use 
+	 * @return
+	 */
+	public static String getMatching(String text, String searcher) {
+		return AonStringUtils.getMatching(text, searcher, DEFAULT_TOLERANCE);
+	}
+	
+	
+	/**
+	 * Returns a word matching with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @param tolerance The tolerance to use 
+	 * @return
+	 */
+	public static String getMatching(String text, String searcher, int tolerance) {
+
+		String[] words = text.split("\\s");
+		for (String word : words) {
+		
+			String[] searcherWords = searcher.split("\\s");
+			
+			for (String string : searcherWords) {
+				int currentDistance = AonStringUtils.getLevenshteinDistance(normalized(searcher).toUpperCase(), normalized(word).toUpperCase());
+				int realTolerance = tolerance;			
+				
+				if(normalized(word).toUpperCase().contains(searcher.toUpperCase())){
+					return word;
+				}
+				
+				if(currentDistance < realTolerance) {
+					return word;
+				}
+			
+			}
+		
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns a word matching with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @param tolerance The tolerance to use 
+	 * @return
+	 */
+	public static List<String> getAllMatching(String text, String searcher, int tolerance) {
+
+		List<String> matchingWords = new ArrayList<String>();
+		String[] words = text.split("\\s");
+		for (String word : words) {
+		
+			String[] searcherWords = searcher.split("\\s");
+			
+			for (String string : searcherWords) {
+				int currentDistance = AonStringUtils.getLevenshteinDistance(normalized(searcher).toUpperCase(), normalized(word).toUpperCase());
+				int realTolerance = tolerance;			
+				
+				if(normalized(word).toUpperCase().contains(searcher.toUpperCase())){
+					matchingWords.add(word);
+				}
+				
+				if(currentDistance < realTolerance) {
+					matchingWords.add(word);
+				}
+			
+			}
+		
+		}
+		
+		return matchingWords;
+	}
+	
+	/**
+	 * Returns if a text contains any of the words inside a searchers with  typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The words to search for
+	 * @return
+	 */
+	public static boolean containsWordMatching(String text, String searcher) {
+		
+		String[] words = searcher.split("\\s");
+		for (String word : words) {
+		
+			if(containsMatching(text, word)) {
+				return true;
+			}
+			
+		}
+		
+		return false;		
+	}
+	
+	
+	/**
+	 * Returns if a text contains a word with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @return
+	 */
+	public static boolean containsMatching(String text, String searcher) {
+		return AonStringUtils.containsMatching(text, searcher, DEFAULT_TOLERANCE);
+	}
+	
+	
+	/**
+	 * Get normalized text (no accents)
+	 * @param text
+	 * @return the text without accents
+	 */
+	public static String normalized(String text) {
+
+		final String[] sensible = {
+				"\u00C1",
+				"\u00C9",
+				"\u00CD",
+				"\u00D3",
+				"\u00DA",
+				"\u00D1",
+				
+				"\u00E1",
+				"\u00E9",
+				"\u00ED",
+				"\u00F3",
+				"\u00FA",
+				"\u00F1",
+				
+		};
+		final String[] normalized = {"A","E","I","O","U","N","a","e","i","o","u","n"};
+		
+		for (int i = 0; i < normalized.length; i++) {
+			text = text.replaceAll(sensible[i], normalized[i]);
+		}
+		
+		return text;
+	}
+    
+    
     // ------------------------------------------------------------------------
 
 	private static int __romanIntValue(String string) {

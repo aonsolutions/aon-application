@@ -112,6 +112,11 @@ export const TASK_STATUS = {
 	FAQ:"faq"
 } 
 
+export const TAG_TYPE = {
+    TASK_TYPE:"TASK_TYPE",
+    TASK_LABEL: "TASK_LABEL"
+}
+
 export const TASK_STATUS_VALUE  = [
     {
         name:AON_MESSENGER_LIST_OPEN.name,
@@ -152,29 +157,42 @@ export const TASK_FILTER = [
       name: "registry",
       title: MSG.CUSTOMER,
       autocomplete: true,
-      default:true
+      default:true,
+      emptyclear:true
+    },
+    {
+        type: "select",
+        id: "senderFilter",
+        name: "sender",
+        title: "Creador",
+        autocomplete: true,
+        default:true,
+        emptyclear:true
     },
     {
         type: "select",
         id: "task_holder",
         name: "task_holder",
-        title: "Asignado a",
+        title: "Asignado",
         autocomplete: true,
-        default:true
+        default:true,
+        emptyclear:true
     },
     {
         type: "select",
         id: "status",
         name: "status",
         title: MSG.STATUS,
-        default:true
+        default:true,
+        emptyclear:true
     },
     {
       type: "select",
       name: "workgroup",
       id: "workgroup",
       title: MSG.WORKGROUP,
-      default:true
+      default:true,
+      emptyclear:true
     }
 ];
 

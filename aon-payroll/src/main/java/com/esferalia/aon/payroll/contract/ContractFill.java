@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.cos.COSDictionary;
@@ -18,6 +19,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
@@ -39,7 +41,7 @@ public class ContractFill {
 			Date comunicationDate, 
 			Map<String, String> contractOtherInfo, 
 			Map<String, String> contractFillInfo, 
-			Map<String, String> contractClauses) {
+			TreeMap<String, String> contractClauses) {
 		
 		if(null == contractType)
 			return null;
@@ -79,18 +81,22 @@ public class ContractFill {
 		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
 	}
 
-	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
 		try (PDDocument pdfDocument = Loader.loadPDF(is)){
-			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();
 			
 			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
 				for(PDField field : acroForm.getFields()) {
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
@@ -223,7 +229,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillFormationContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillFormationContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -235,6 +241,11 @@ public class ContractFill {
 			PDAcroForm acroForm = doc.getAcroForm();
 			
 			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
 				for(PDField field : acroForm.getFields()) {
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
@@ -304,7 +315,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillPracticeContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillPracticeContract(String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -316,6 +327,11 @@ public class ContractFill {
 			PDAcroForm acroForm = doc.getAcroForm();
 			
 			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
 				for(PDField field : acroForm.getFields()) {
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
@@ -386,7 +402,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillTemporalContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
+	private static byte[] fillTemporalContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -397,9 +413,14 @@ public class ContractFill {
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();
 			
-			System.out.println("acroForm size : " + acroForm.getFields().size());
+//			System.out.println("acroForm size : " + acroForm.getFields().size());
 			
 			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				acroForm.setDefaultResources(resources);
+				
 				for(PDField field : acroForm.getFields()) {
 					String valueStr = field.getValueAsString();
 					String fieldName = field.getPartialName();
@@ -538,33 +559,37 @@ public class ContractFill {
 	    if (field instanceof PDCheckBox) {
 	        field.setValue("No");
 	    } else if (field instanceof PDTextField) {
-	    	field.getCOSObject().removeItem(COSName.AP);
-	        System.out.println("Original value: " + field.getValueAsString());
-	        field.setValue(value);
-	        ((PDTextField) field).setDefaultValue(value);
-	        System.out.println("New value: " + field.getValueAsString());
+	    	try{
+		    	field.getCOSObject().removeItem(COSName.AP);
+//		        System.out.println("Original value: " + field.getValueAsString());
+		        field.setValue(value);
+		        ((PDTextField) field).setDefaultValue(value);
+//		        System.out.println("New value: " + field.getValueAsString());
+	    	} catch (Exception e) {
+//				System.out.println("ERR : " + field.getValueAsString());
+			}
 	    } else {
 	        System.out.println("Tipo no identificado");
 	    }
 	}
 	
-	public static void setAditionalClauses(PDField field, Map<String, String> contractClauses) throws IOException {
+	public static void setAditionalClauses(PDField field, TreeMap<String, String> contractClauses) throws IOException {
 	    
-		System.out.println("Original value: " + field.getValueAsString());
+//		System.out.println("Original value: " + field.getValueAsString());
 		
 		field.getCOSObject().removeItem(COSName.AP);
 		
 		String clauses = "\n";
-		Integer line = 1;
 		for(Entry<String, String> entry : contractClauses.entrySet()) {
-			clauses += "\t" + line + "  -  " + entry.getKey() + " :  \t\t" + entry.getValue() + "\n\n";
-			line++;
+			System.out.println("setAditionalClauses  --> " + entry.getKey());
+			clauses += "\t" + entry.getKey() + " :  \t\t" + entry.getValue() + "\n\n";
 		}
-		
-		field.setValue(clauses);
+		try {
+			field.setValue(clauses);
+		} catch (Exception e) {}
 		((PDTextField) field).setDefaultValue(clauses);
 		
-		System.out.println("New value: " + field.getValueAsString());
+//		System.out.println("New value: " + field.getValueAsString());
 		
 	}
 	

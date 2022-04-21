@@ -6,7 +6,9 @@ public class TaskTag {
 	Integer task;
 	Integer tag;
 	
-	public TaskTag() {}
+	public TaskTag() { 
+		/* TODO document why this constructor is empty */ 
+	}
 
 	public Integer getDomain() {
 		return domain;
@@ -43,6 +45,4 @@ public class TaskTag {
 		this.tag = tag;
 		return this;
 	}
-	
-	
 }

@@ -298,6 +298,20 @@ public class BankAccount implements Serializable {
 		return sb.toString();
 	}
 
+	public String getSeparatedIban(){
+		StringBuilder sb = new StringBuilder();
+		String bban = getBban();
+		if (AonStringUtils.isNotBlank(bban)) {
+			sb.append(getCountry().getIso2());
+			sb.append(getCheck());
+			sb.append(" " + getBban1());
+			for (int i=4; i<bban.length(); i=i+4) {
+				sb.append(" " + AonStringUtils.substring(bban, i, i+4));
+			}
+		}
+		return sb.toString();
+	}
+	
 	public boolean isValidBankAccount() {
 		return isValidBban() && isValidIban();
 	}

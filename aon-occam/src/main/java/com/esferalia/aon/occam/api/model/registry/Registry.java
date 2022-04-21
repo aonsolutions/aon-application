@@ -160,6 +160,9 @@ public class Registry implements Serializable{
 	 */
 	@Deprecated() 
 	public RAddress getMainAddress() {
+		if(mainAddress == null) {
+			mainAddress = new RAddress();
+		}
 		return mainAddress;
 	}
 	/**

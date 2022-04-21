@@ -29,7 +29,7 @@ public abstract class AbstractOccamTest {
 	protected static AONContext ctx;
 	private static AonConfiguration config;
 	protected static Integer DOMAIN_ID;
-	
+
 	protected static String DOMAIN_NAME = System.getProperty("domainName", "occamtest.aonsolutions.test");	
 	protected static String USER 		= System.getProperty("domainUser", "admin");
 	private static String getDbPort() {		return System.getProperty("dbPort", "3306");	}

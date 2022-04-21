@@ -2,12 +2,8 @@ package com.code.aon.web.help.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.Optional;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
@@ -15,14 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
-import com.code.aon.ui.help.pdf.PdfIndexer;
-import com.code.aon.web.help.service.drive.DriveService;
-import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
-import com.google.api.services.drive.Drive;
-
-import net.aonsolutions.aon.google.apis.drive.SearchFiles;
+import com.code.aon.ui.help.pdf.PdfSearcher;
+import com.code.aon.ui.help.pdf.IndexPDFFiles.PdfIndexProperties;
 
 
 @WebServlet("/help/*")
@@ -38,6 +28,12 @@ public class HelpServlet extends HttpServlet {
 		
 		files.put("LABORAL Manual de USUARIO", "payroll_names.pdf");
 		files.put("CONTABILIDAD Manual de USUARIO", "account_names.pdf");
+		/**
+		files.put("COMUNIC@ Manual de USUARIO", "comunica_names.pdf");
+		files.put("PORTAL ASESOR (Usuario empresa) Manual de usuario", "portal_company_names.pdf");
+		files.put("PORTAL ASESOR (Usuario asesor) Manual de usuario", "portal_asesor_names.pdf");
+		files.put("PORTAL ASESOR (Configuración usuarios) Guia rápida", "portal_asesor_user_config_names.pdf");
+		**/
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -55,7 +51,7 @@ public class HelpServlet extends HttpServlet {
         	response.sendError(404);
         }
         
-        try ( InputStream input = PdfIndexer.class.getResourceAsStream(filename)) {
+        try ( InputStream input = PdfSearcher.class.getResourceAsStream(filename)) {
 	        
 	        int length;
 	        byte[] bytes = new byte[1024];

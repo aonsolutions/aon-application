@@ -20,7 +20,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlin
 
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.help.HelpData;
-import com.code.aon.ui.help.pdf.PdfIndexer;
+import com.code.aon.ui.help.pdf.PdfSearcher;
 import com.esferalia.aon.watson.util.AonStringUtils; 
 
 public class HelpSwitcher implements Serializable {
@@ -50,8 +50,17 @@ public class HelpSwitcher implements Serializable {
 			((List<HelpData>) model.getWrappedData()).stream()
 			.filter(d -> containsIgnoreCase(d.getTitle(), filter))
 			.collect(Collectors.toList());
-			this.filteredModel = new SerializableListDataModel(filteredList);
+			
+			// if nothing is here
+			if(filteredList.isEmpty()) {
+				filteredList.addAll(((List<HelpData>) model.getWrappedData()).stream()
+				.filter(d -> AonStringUtils.containsMatching(d.getTitle(), filter))
+				.collect(Collectors.toList()));
+			}
+			
+			this.filteredModel = new SerializableListDataModel(filteredList);			
 		}
+		
 		return filteredModel;
 	}
 	
@@ -90,11 +99,12 @@ public class HelpSwitcher implements Serializable {
 	
 
 	private static  DataModel getAllModel() throws IOException {
-		try  ( InputStream is = PdfIndexer.class.getResourceAsStream("index.pdf");
+		try  ( InputStream is = PdfSearcher.class.getResourceAsStream("index.pdf");
 		   PDDocument document = Loader.loadPDF(is) ) {
 			
 			List<HelpData> list = 
-			PdfIndexer.search(document, "").stream()
+			PdfSearcher.search(document, "").stream()
+			.filter( i -> i.getTitle().trim().length() > 0)
 			.map(HelpSwitcher::map)
 			.collect(Collectors.toList());
 					
@@ -116,7 +126,7 @@ public class HelpSwitcher implements Serializable {
 			PDActionURI actionURI = (PDActionURI)item.getAction();
 			helpData.setURI(actionURI.getURI());
 		} catch ( Exception e ) {
-			
+			e.printStackTrace();
 		}
 		
 		return helpData;

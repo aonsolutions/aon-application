@@ -8,6 +8,8 @@ import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class HelpData {
 	
 	private String uri;
@@ -34,15 +36,22 @@ public class HelpData {
 	public String getDisplay(String filter) {
 		
 		String htmlTitle = StringEscapeUtils.escapeHtml(title);
+
 		
 		if ( isBlank(filter) ) 
 			return htmlTitle;
 		
 		StringBuilder display = new StringBuilder();
+
 		try {
-			display.append(replace(htmlTitle, filter, s -> "<b>"+s+"</b>"));
+			display.append(replace(htmlTitle,filter, s -> "<b>"+s+"</b>"));
 		} catch ( Exception e ) {
-			display.append(htmlTitle);
+			try {
+				display.append(title.replaceAll("(" + AonStringUtils.getMatching(title, filter) + ")?", "<b>$1</b>"));
+			} catch(Exception ex) {
+				display.append(htmlTitle);
+			}
+			
 		}
 		
 		return display.toString();

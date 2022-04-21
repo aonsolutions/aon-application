@@ -1,4 +1,4 @@
-import { TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES } from "../../modules/messenger/MessengerEnums.js";
+import { TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES } from "../../modules/messenger/MessengerEnums.js";
 import * as LS from '../../services/localStorageService.js';
 import { Domain } from "../Domain.js";
 import { Project } from "../project/Project.js";
@@ -25,6 +25,7 @@ export class Task {
   start_date;
   parent;
   project;
+  tags;
   //TMP
   domainTmp;
   workflowTmp;
@@ -54,6 +55,7 @@ export class Task {
       this.source      = TASK_SOURCE.QUERY;
       this.status      = TASK_STATUS.PENDING;
       this.workflow    = [];
+      this.tags    = [];
       this.setWorkflowTmp({domain: this.domain.id});
       this.files = [];
     }
@@ -65,7 +67,7 @@ export class Task {
 
   setTask(task) {
     if(task) {
-      this.myTaskHolder= new TaskHolder(task.myTaskHolder);
+      this.myTaskHolder = new TaskHolder(task.myTaskHolder);
       this.setId(task.id || undefined);
       this.setAuth(task.auth || {});
       this.setStatus(task.status || TASK_STATUS.PENDING);
@@ -82,6 +84,7 @@ export class Task {
       this.setGTaskId(task.gtask_id  || undefined);
       this.setDomain(new Domain(task.domain));
       this.setWorkflow(task.workflow || []);
+      this.setTags(task.tags || []);
       this.setDomainTmp(this.domain);
       if(task.domainCompany) 
         this.setDomainCompany(task.domainCompany);
@@ -227,6 +230,33 @@ export class Task {
     this.workgroup = workgroup;
   }
 
+  setTags(tags) {
+    this.tags = tags;
+    this.onPropertyChanged('tags', this.tags);
+  }
+
+  getTags() {
+    return this.tags || [];
+  }
+
+  addTag(tag) {
+    const existName = this.tags.find(t=> t.name === tag.name);
+    if(!existName) 
+      this.tags.push(tag);
+  
+    this.onPropertyChanged('tags', this.tags);
+  }
+
+  removeTag(id) {
+    this.tags = this.tags.filter(tag=> tag.id != id);
+    this.onPropertyChanged('tags', this.tags);
+  }
+
+  removeTagName(name) {
+    this.tags = this.tags.filter(tag=> tag.name != name);
+    this.onPropertyChanged('tags', this.tags);
+  }
+
   getTaskHolder() {
     return this.task_holder;
   }
@@ -267,14 +297,6 @@ export class Task {
     this.workflow = workflow;
   }
 
-  getWorkflowTmp(){
-    return this.workflowTmp;
-  }
-
-  setWorkflowTmp(workflowTmp){
-    this.workflowTmp = workflowTmp;
-  }
- 
   addWorkflow(workflow) {
     this.workflow.push(workflow);
   }
@@ -286,20 +308,7 @@ export class Task {
   getDescription(){
     return this.description;
   }
-  
-  setDescriptionJson(json) {
-    this.description = JSON.stringify({...this.getDescriptionJson(), ...json}); 
-  }
 
-  getDescriptionJson() {
-    let json = {};
-    try { json = JSON.parse(this.description);  } catch (e) {json.observation = this.description;}
-    return json;
-  }
- 
-  deleteWorkflow(id) {
-    this.workflow = this.workflow.filter(workflow=> workflow.id!=id);
-  }
 
   getFiles() {
     return this.files;
@@ -333,6 +342,40 @@ export class Task {
     this.parent = parent;
   }
 
+  //-----------------------------------------------------AUX------------------------------------------------
+  
+  setTaskType(tagType){
+    this.tags = this.tags.filter(tag=> tag.tag_type != TAG_TYPE.TASK_TYPE);
+    this.addTag(tagType);
+  }
+
+  getTaskType(){
+    let type = this.tags.find(tag=> tag.tag_type === TAG_TYPE.TASK_TYPE);
+    return type ? type.id : null;
+  }
+    
+  setDescriptionJson(json) {
+    this.description = JSON.stringify({...this.getDescriptionJson(), ...json}); 
+  }
+
+  getDescriptionJson() {
+    let json = {};
+    try { json = JSON.parse(this.description);  } catch (e) {json.observation = this.description;}
+    return json;
+  }
+ 
+  deleteWorkflow(id) {
+    this.workflow = this.workflow.filter(workflow=> workflow.id!=id);
+  }
+
+  getWorkflowTmp(){
+    return this.workflowTmp;
+  }
+
+  setWorkflowTmp(workflowTmp){
+    this.workflowTmp = workflowTmp;
+  }
+ 
   isProject(){
     return this.project && this.project.id ? true : false;
   }

@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
@@ -246,6 +247,10 @@ public class DeliveryDAO {
 		return delivery;
 	}
 	
+	public static void delete(AONContext ctx, Integer id) {
+		deleteDelivery(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
 	public static void deleteDelivery(AONContext ctx, DeliveryFilter filter) {
 		Integer[] ids = getDeliveryStream(ctx, filter)
 				.map(Delivery::getId)
@@ -376,10 +381,12 @@ public class DeliveryDAO {
 				,PROJECT.NAME
 				,DELIVERY_DETAIL.LINE
 				,DELIVERY_DETAIL.ITEM
+				,PCATEGORY.ID
 				,PCATEGORY.NAME
 				,PRODUCT.ID
 				,PRODUCT.NAME
 				,PRODUCT.CODE
+				,ITEM.ID
 				,ITEM.DETAIL
 				,ITEM.DETAIL2
 				,ITEM.DETAIL3
@@ -432,14 +439,23 @@ public class DeliveryDAO {
 					.setProject(new Project()
 							.setId(getValue(r, DELIVERY.PROJECT)))
 					.setSeries(getValue(r, DELIVERY.SERIES))
-					.setNumber(getValue(r, DELIVERY.NUMBER))
+					.setNumber(getInteger(r, DELIVERY.NUMBER))
 					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, REGISTRY.ID)
 						? CustomerFiller.build(r)
 						: new Customer().setId(getValue(r, DELIVERY.CUSTOMER)))
 					.setAddress(getValue(r, DELIVERY.ADDRESS))
+					 
+					.setAddressStreetType( StreetType.safeValueOf(getValue(r, RADDRESS.STREET_TYPE)))
+					.setAddressName(getValue(r, RADDRESS.ADDRESS))
+					.setAddressNumber(getValue(r, RADDRESS.NUMBER))
+					.setAddressTown(getValue(r, RADDRESS.CITY))
+					.setAddressZIP(getValue(r, RADDRESS.ZIP))
+					.setAddressGeozoneCode(getValue(r, GEOZONE.CODE))
+					.setAddressGeozone(getValue(r, GEOZONE.NAME))
+					
 					.setIssueTime(getValue(r, DELIVERY.ISSUE_TIME))
 					.setPayMethod(getValue(r, DELIVERY.PAY_METHOD))
-					.setSecurityLevel(getValue(r, DELIVERY.SECURITY_LEVEL))
+					.setSecurityLevel(getByte(r, DELIVERY.SECURITY_LEVEL))
 					.setStatus(DeliveryStatus.safeValueOf(getValue(r, DELIVERY.STATUS)))
 					.setComments(getValue(r, DELIVERY.COMMENTS))
 					.setRemarks(getValue(r, DELIVERY.REMARKS))
@@ -487,7 +503,7 @@ public class DeliveryDAO {
 		public static DeliveryDetail build(Record r) {
 			return new DeliveryDetail()
 				.setId(getValue(r, DELIVERY_DETAIL.ID))
-				.setDomain(getValue(r, DELIVERY_DETAIL.DOMAIN))
+				.setDomain(getInteger(r, DELIVERY_DETAIL.DOMAIN))
 				.setDelivery(checkField(r, DELIVERY.ID)
 					? DeliveryFiller.build(r)
 					: new Delivery().setId(getValue(r, DELIVERY_DETAIL.DELIVERY)))

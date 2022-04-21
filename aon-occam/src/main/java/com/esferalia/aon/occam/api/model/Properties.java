@@ -611,6 +611,9 @@ public interface Properties {
 		Property<Integer> getWorkgroupProperty();
 		Property<Integer> getNumberProperty();
 		Property<Integer> getParentProperty();
+		
+		Property<String> getTagNameProperty();
+		Property<String> getCommentsWorkflowProperty();
 	}
 	
 	public interface TaskTagProperties{

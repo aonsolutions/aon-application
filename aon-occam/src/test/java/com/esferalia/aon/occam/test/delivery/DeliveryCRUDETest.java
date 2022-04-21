@@ -56,15 +56,15 @@ public class DeliveryCRUDETest extends AbstractOccamTest {
 		Delivery delivery = AonFaker.getDelivery(ctx); 
 		Integer deliveryId = WarehouseDAO.insertDelivery(ctx, delivery);
 		delivery.setId(deliveryId);
-		Delivery inserted = WarehouseDAO.getDelivery(ctx, f -> f.getIdProperty().eq(deliveryId));
+		Delivery inserted = WarehouseDAO.getDelivery(ctx, deliveryId);
 		Asserts.assertEqualsDelivery(delivery, inserted);
 			
 		WarehouseDAO.updateDelivery(ctx, delivery);
-		Delivery updated = WarehouseDAO.getDelivery(ctx, f -> f.getIdProperty().eq(deliveryId));
+		Delivery updated = WarehouseDAO.getDelivery(ctx,deliveryId);
 		Asserts.assertEqualsDelivery(delivery, updated);
 			
 		WarehouseDAO.deleteDelivery(ctx, deliveryId);
-		Delivery deleted = WarehouseDAO.getDelivery(ctx, f -> f.getIdProperty().eq(deliveryId));
+		Delivery deleted = WarehouseDAO.getDelivery(ctx, deliveryId);
 		assertNull(deleted.getId());
 	}
 }

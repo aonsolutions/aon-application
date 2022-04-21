@@ -547,6 +547,15 @@ public class SistemaRED {
 		SistemaREDMov.cambioContratoCoef(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);
 	}
 
+	public static void cambioContratoCoef(final byte[] certificateData, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio, Optional<String>contract, String coef)
+					throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			SistemaREDMov.cambioContratoCoef(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
 
 	public static boolean sendPaternity(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,

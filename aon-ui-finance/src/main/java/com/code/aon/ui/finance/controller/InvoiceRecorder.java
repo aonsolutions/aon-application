@@ -3,7 +3,6 @@ package com.code.aon.ui.finance.controller;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INACCURACY_MSG;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_NO_AMORTIZATION_MSG;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
 import java.sql.Connection;
@@ -12,23 +11,20 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
-import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -48,6 +44,8 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 import net.aonsolutions.core.dbutils.DatabaseUtil;
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -127,12 +125,11 @@ public class InvoiceRecorder implements ITransferObject {
 	}
 
 	public boolean isDateEquals() {
-		boolean b = DateUtils.isSameDay(getInvoice().getIssueDate(), getInvoice().getTaxDate());
-		return b;
+		return AonDateUtils.isSameDay(getInvoice().getIssueDate(), getInvoice().getTaxDate());
 	}
 
 	public boolean isMessagesPresent() {
-		return getMessages() != null && getMessages().size() > 0;
+		return getMessages() != null && !getMessages().isEmpty();
 	}
 	
 	public boolean isShowTaxBreakDowns() {
@@ -177,7 +174,7 @@ public class InvoiceRecorder implements ITransferObject {
 
 	public void addMessage(String msg) {
 		if (this.messages == null) {
-			setMessages( new LinkedList<String>()); 
+			setMessages(new LinkedList<>()); 
 		}
 		getMessages().add(msg);
 	}
@@ -251,11 +248,11 @@ public class InvoiceRecorder implements ITransferObject {
 					} else {
 						Connection connection = null; 
 						try {
-							IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+//							IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 							connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 							DSLContext ctx = DSL.using(connection, AccountingUtil.getDefaultSettings());
 							AggregateFunction<Integer> countFunc = DSL.countDistinct(ACCOUNT_ENTRY_DETAIL.ID);
-							Result<Record4<Integer,String,String,Integer>> record = 
+							Result<Record4<Integer,String,String,Integer>> r = 
 								ctx.select(ACCOUNT_ENTRY_DETAIL.ACCOUNT,ACCOUNT.CODE,ACCOUNT.DESCRIPTION,countFunc)
 									.from(ACCOUNT_ENTRY_DETAIL)
 									.innerJoin(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
@@ -266,7 +263,7 @@ public class InvoiceRecorder implements ITransferObject {
 									.fetch();
 							Account first = null;
 							boolean used = false;
-							for (Record4<Integer,String,String,Integer> step : record) {
+							for (Record4<Integer,String,String,Integer> step : r) {
 								Integer id = step.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT);
 								String code = step.getValue(ACCOUNT.CODE);
 								if (first == null && "6".startsWith(code)) {
@@ -327,9 +324,9 @@ public class InvoiceRecorder implements ITransferObject {
 	}
 
 	private void checkFinanceInaccuracyPresent() throws ManagerBeanException {
-		double invoiceTotal = getInvoiceTotal();
-		double financeTotal = getFinanceTotal(getInvoice());
-		boolean ok = InvoiceStatus.PENDING.equals(getInvoice().getStatus()) && (financeTotal == 0 || invoiceTotal == financeTotal);
+		double total = AonMathUtils.round(getInvoiceTotal());
+		double financeTotal = AonMathUtils.round(getFinanceTotal(getInvoice()));
+		boolean ok = InvoiceStatus.PENDING.equals(getInvoice().getStatus()) && (financeTotal == 0 || total == financeTotal);
 		if (!ok) {
 			setRecordable(false);
 			addFinanceInaccuracyMessage();
@@ -350,7 +347,7 @@ public class InvoiceRecorder implements ITransferObject {
 		Criteria c = new Criteria();
 		c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), getInvoice().getId() );
 		List<ITransferObject> list = bean.getList(c);
-		return (list != null && list.size() > 0);
+		return (list != null && !list.isEmpty());
 	}
 
 	private double getInvoiceTotal(Invoice invoice) {

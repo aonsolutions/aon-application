@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -40,7 +41,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Cra {
-
+	
 	// ********************************************************************************************************************************************
 	//																MAIN
 	// ********************************************************************************************************************************************
@@ -90,7 +91,7 @@ public class Cra {
 			
 			Long findingDate = parseDate(cmd.getOptionValue(findingDateOpt.getLongOpt()));
 			
-			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(cccList, findingDate, connection));
+			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(cccList, findingDate, null, connection));
 			System.out.println(agrarianAFI);
 
 		} catch (ParseException e) {
@@ -231,8 +232,10 @@ public class Cra {
 	//													GENERATE JSON AGRARIAN
 	// ********************************************************************************************************************************************
 	
+	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddHHmmss");
+	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMainCRAByCRA(List<String> cccList, long findingDate, Connection connection)  {
+	public static JSONObject getMainCRAByCRA(List<String> cccList, long findingDate, java.util.Date fileNameDate, Connection connection)  {
 		
 		// Get dslContext for given connection
 		@SuppressWarnings("resource")
@@ -256,10 +259,12 @@ public class Cra {
 		// GET AuthKey from DB
 		String authKey = getAuthKeyFromDomain(dslContext, cccList.get(0));
 		
+		String fileName = dateFormatter.format(fileNameDate);
+		
 		// ETI
 		JSONObject eti = new JSONObject();
 		eti.put("authkey", authKey);
-		eti.put("fileName", null);
+		eti.put("fileName", fileName);
 		eti.put("prorityCode", "N");
 		
 		mainCRAJSON.put("ETI", eti);

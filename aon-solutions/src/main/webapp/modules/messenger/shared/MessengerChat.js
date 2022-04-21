@@ -53,20 +53,26 @@ const buildToolbar = (aonMessengerChat) => {
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
     if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
-      if(task.id){
+      if(!aonMessengerChat.isCau()){
         toolbar.addButton2({
-          ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
-          name: MSG.CLOSE,
-          icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
-        }, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED));
+          id: 'Labels',
+          name: MSG.LABELS,
+          icon: MATERIAL_ICONS.LABEL
+          }, (ev) =>  dialogTaskTags(ev, aonMessengerChat)
+        );
       }
-
-      toolbar.addButton2({
-        id: 'Labels',
-        name: MSG.LABELS,
-        icon: MATERIAL_ICONS.LABEL
-        }, (ev) =>  dialogTaskTags(ev, aonMessengerChat)
-      );
+      
+      if(task.id){
+          toolbar.addButton2({
+            ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
+            name: MSG.CLOSE,
+            icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
+          }, () =>{
+            aonMessengerChat.getApplication().confirmDialog(MSG.CLOSE, MSG.REQUEST_CLOSE_CONFIRM, ()=>{
+              aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED)
+            })
+          });
+      }
     }
 
     if(task.id){
@@ -99,7 +105,7 @@ const buildSectionHistoric = (secondDiv) => {
         type: MESSENGER_COMPONENTS.WRAPPER,
         classes: [CSS.FLEX_COLUMN],
         styles: {
-            width:'100%',
+            width:'92%',
             height: '100%',
         }
     });
@@ -162,7 +168,8 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   if (!aonMessengerChat.isMobile()) dialog.width = "600px";
   const textarea = setStyles(createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
     height: '100%',
-    maxHeight: '300px'
+    maxHeight: '300px',
+    minHeight: '250px'
   });
   dialog.setContent(textarea);
 
@@ -192,7 +199,7 @@ const createFirstDiv = (mainView) => {
     styles: {
       width: "50%",
       minWidth: "400px",
-      paddingTop: "20px",
+      paddingTop: "15px",// "20px",
       paddingRight: "20px",
       paddingLeft: "30px",
       paddingBottom: "30px",
@@ -211,7 +218,7 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
       width: "50%",
-      paddingTop: "4px",
+      // paddingTop: "4px",
       paddingBottom: "30px",
       paddingRight: "10px"
     },
@@ -227,15 +234,19 @@ const createSecondDiv = (mainView) => {
  * @param {HTMLElement} chat div chat
  */
 const addChatButtonsUpDown = (secondDiv) => {
+  const transparent = "transparent";
   const leftButtonBar = newComponent({
-    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER]
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
+    styles: {
+      width: "8%"
+    }
   });
   leftButtonBar.appendTo(secondDiv);
 
   const upIcon = setAttributes(new AonIconButton(), {
     icon: MATERIAL_ICONS.EXPAND_LESS,
     id: "upIcon",
-    background: "transparent",
+    background: transparent,
   });
   upIcon.addEventListener(EVENT.CLICK, ()=>upChat());
   leftButtonBar.appendChild(upIcon);
@@ -243,7 +254,7 @@ const addChatButtonsUpDown = (secondDiv) => {
   const downIcon = setAttributes(new AonIconButton(), {
     icon: MATERIAL_ICONS.EXPAND_MORE,
     id: "downIcon",
-    background: "transparent",
+    background: transparent,
   });
   downIcon.addEventListener(EVENT.CLICK, ()=>downChat())
   leftButtonBar.appendChild(downIcon);

@@ -229,6 +229,8 @@ public class ItemDAO {
 				.setPackUnits(getInteger(r, ITEM.PACK_UNITS))
 				.setPackUnitsTag(new Tag().setId(getValue(r, ITEM.PACK_UNITS_TAG)))
 				.setPrice(getDouble(r, ITEM.PRICE))
+				.setPurchasePrice(getDouble(r, ITEM.PURCHASE_PRICE))
+				.setProfitPercent(getDouble(r, ITEM.PROFIT_PERCENT))
 				.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
 				.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
 				.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))

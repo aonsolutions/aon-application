@@ -1104,7 +1104,11 @@ public class InvoiceTemplate {
 		}
 				
 		if (logo != null) {				
-			PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
+			try {
+				PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		String invoiceTitle = "";
@@ -1420,13 +1424,13 @@ public class InvoiceTemplate {
 		drawText(contents, getMsg().payMethod(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
 		x += 110;
 		if (theme.getBoxTitleBackgroundColor() != null)
-			drawBox(contents, x, y, 145 - BOX_BORDER, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, x, y, 160 - BOX_BORDER, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().bankAccount(), x + 5f, y + 5.5f, theme.getBoxTitleTextColor(), regularFont, 9);
-		x += 145;
+		x += 160;
 
 		if (theme.getBoxTitleBackgroundColor() != null)
-			drawBox(contents, x, y, 70, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
-		drawTextRight(contents, new PDRectangle(x, y, 69, TITLE_BOX_SIZE), getMsg().amount(), theme.getBoxTitleTextColor(), regularFont, 9, 5, 5.5f);
+			drawBox(contents, x, y, 55, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
+		drawTextRight(contents, new PDRectangle(x, y, 54, TITLE_BOX_SIZE), getMsg().amount(), theme.getBoxTitleTextColor(), regularFont, 9, 5, 5.5f);
 		
 		if (config.isBoxTitleBorder()) {
 			drawBox(contents, 180, y + TITLE_BOX_SIZE, 370, BOX_BORDER, theme.getBorderColor());
@@ -1442,8 +1446,8 @@ public class InvoiceTemplate {
 			if (theme.getBoxBodyBackgroundColor() != null) {
 				drawBox(contents, 180, y, 45 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor(), opacity);
 				drawBox(contents, 225, y, 110 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor(), opacity);
-				drawBox(contents, 335, y, 145 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor(), opacity);
-				drawBox(contents, 480, y, 70f, -fSize, theme.getBoxBodyBackgroundColor(), opacity);				
+				drawBox(contents, 335, y, 160 - BOX_BORDER, -fSize, theme.getBoxBodyBackgroundColor(), opacity);
+				drawBox(contents, 495, y, 55f, -fSize, theme.getBoxBodyBackgroundColor(), opacity);				
 			}
 			
 			
@@ -1458,8 +1462,9 @@ public class InvoiceTemplate {
 				x += 110;
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null) {
-					String bicCode = !AonStringUtils.isEmpty(finance.getBic()) ? " [" + finance.getBic() + "]" : "";
-					drawText(contents, finance.getBankAccount().getIban() + bicCode, x + 5f, y - 12, theme.getTextColor(), regularFont, 6, i + FINANCE_BANK_ACCOUNT);
+					String bicCode = !AonStringUtils.isEmpty(finance.getBic()) ? finance.getBic() : "";
+					drawText(contents, finance.getBankAccount().getIbanLength() <= 24 ? finance.getBankAccount().getSeparatedIban() : finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
+					drawTextRight(contents, new PDRectangle(x + 92, y, 69, 15), bicCode, theme.getTextColor(), regularFont, 5.5f, 5, -12, i + FINANCE_AMOUNT);
 				} else
 					drawText(contents, "", x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
 			
@@ -1477,7 +1482,7 @@ public class InvoiceTemplate {
 				drawBox(contents, 180, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 225 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 335 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
-				drawBox(contents, 480 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
+				drawBox(contents, 495 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 550 - BOX_BORDER, y, BOX_BORDER, backHeight + TITLE_BOX_SIZE, theme.getBorderColor());
 				drawBox(contents, 180, y, 370, BOX_BORDER, theme.getBorderColor());
 			}

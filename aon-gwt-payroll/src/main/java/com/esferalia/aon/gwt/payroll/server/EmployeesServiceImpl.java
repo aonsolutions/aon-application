@@ -5795,16 +5795,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			// Idc from DB
-			String base64Pdf = JooqContractAttach.getContractIdc(connection, contractId, date);
-
-			// If not exist download
-			if (AonStringUtils.isBlank(base64Pdf)) {
-				base64Pdf = EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId,
+			String base64Pdf = EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId,
 						contractId, date);
-				JooqContractAttach.setContractIDC(connection, domainId, contractId,
-						Base64.getDecoder().decode(base64Pdf), date);
-			}
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -5830,16 +5822,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			// IdcPlNss from DB
-			String base64Pdf = JooqContractAttach.getContractIdcPlNss(connection, contractId);
-
-			// If not exist download
-			if (AonStringUtils.isBlank(base64Pdf)) {
-				base64Pdf = EmployeesServiceHelper.getIDCNSS(connection, domainName, domainId, userLogin, userId,
-						contractId, date);
-				JooqContractAttach.setContractIdcPlNss(connection, domainId, contractId,
-						Base64.getDecoder().decode(base64Pdf));
-			}
+			String base64Pdf = EmployeesServiceHelper.getIDCNSS(connection, domainName, domainId, userLogin, userId,
+					contractId, date);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -6356,7 +6340,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if (coefD != null) {
 				coefD = coefD * 1000;
 				String coefStr = coefD.intValue() + "";
-				coef = AonStringUtils.leftPad(coefStr, 3, '0');
+				coef = AonNumberUtils.equals(1000, coefD.intValue()) ? "000" : AonStringUtils.leftPad(coefStr, 3, '0');
 			}
 
 			// cambioContratoCoef
@@ -7030,10 +7014,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		if (contractType == 410) {
 			String interimCause = employeeContractInfo.getContractSpecificData().getInterimCause();
 			if (AonStringUtils.isBlank(interimCause))
-				throw new IllegalArgumentException(
-						"La interinidad es obligatoria para este tipo de contrato. Debe rellenarlo en la pesta\u00F1a Datos SEPE");
+				throw new IllegalArgumentException("La interinidad es obligatoria para este tipo de contrato. Debe rellenarlo en la pesta\u00F1a Datos SEPE");
 			builder.setInterinidad(interimCause);
 		}
+		if(contractType == 402 || contractType == 502) {
+			String employeesColective = employeeContractInfo.getContractInfo().getEmployeesColective();
+			if(AonStringUtils.isBlank(employeesColective))
+				throw new IllegalArgumentException("El colectivo de trabajadores es obligatorio para los contratos de tipo 402 y 502. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00f3n");
+			if(AonStringUtils.equalsIgnoreCase(employeesColective, "967")) {
+				builder.setPrevisible(false);
+			} else {
+				Date startDate = employeeContractInfo.getContractInfo().getStartDate();
+				Date endDate = employeeContractInfo.getContractInfo().getEndDate();
+				if(null == endDate) throw new IllegalArgumentException("La fecha fin es obligatoria para los contratos de tipo 402 y 502 con situaci\u00f3n previsible. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00f3n");
+				int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
+				builder.setPrevisible(daysBetween <= 90);
+			}
+		} else
+			builder.setPrevisible(false);
+		
+			
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
