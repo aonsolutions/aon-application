@@ -149,7 +149,7 @@ export class AonMessengerList extends AonElement {
     try{
       datos.map((res, idx) => {
         this.AON_TABLE.addLi({
-          title: `#${res.newNumber} ${res.title}`,
+          title: `${res.newNumber} ${res.title}`,
           subtitle: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
           ...this.getIconList(res)
         }, idx, () => this.goMessengerChat(res, idx));
@@ -310,7 +310,7 @@ export class AonMessengerList extends AonElement {
       let divOne = this.createElement(TAG.DIV);
       divOne.style = "border: 2px solid #949393; color: #949393;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
       divOne.title  = workgroup;
-      let icon = this.createElement("i");
+      let icon = this.createElement(TAG.I);
       icon.style.fontSize = "17px";
       icon.style.lineHeight = "19px";
       icon.className = CSS.MATERIAL_ICONS;
@@ -321,7 +321,7 @@ export class AonMessengerList extends AonElement {
 
     if(person){
       let divTwo = this.createElement(TAG.DIV);
-      divTwo.style = "border: 2px solid #949393; color: #949393;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
+      divTwo.style = "border: 2px solid var(--aonBlack); color: var(--aonBlack);border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
       divTwo.innerText  = StringTwoLetters(person.toUpperCase());
       divTwo.title  = person;
       div.appendChild(divTwo);
@@ -329,9 +329,9 @@ export class AonMessengerList extends AonElement {
 
     if(!workgroup && !person){
       let divOne = this.createElement(TAG.DIV);
-      divOne.style = "border: 2px solid #949393; color: #949393;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
+      divOne.style = "border: 2px solid #FF6F1D; color: #FF6F1D;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
       divOne.title  = "Sin asignar";
-      let icon = this.createElement("i");
+      let icon = this.createElement(TAG.I);
       icon.style.fontSize = "17px";
       icon.style.lineHeight = "19px";
       icon.className = CSS.MATERIAL_ICONS;
@@ -357,7 +357,7 @@ export class AonMessengerList extends AonElement {
     span.style.color = icon.icon_color;
     span.title = source;
 
-    let iOne = this.createElement("i");
+    let iOne = this.createElement(TAG.I);
     iOne.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
     iOne.textContent = icon.icon;
     span.appendChild(iOne);

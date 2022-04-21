@@ -266,6 +266,7 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = undefined;
+					this._filter.workgroup = undefined;
 					this._filter.status = TASK_STATUS.PENDING;
 					this._filter.workgroups = this.getWorkgroupsStr();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
@@ -292,6 +293,8 @@ export class AonMessenger extends AonElement {
 			{
 				...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
 				fn: () =>{
+					this._filter.task_holder = undefined;
+					this._filter.sender = undefined;
 					this._filter.workgroup = undefined;
 					this._filter.status = TASK_STATUS.FINISHED;
 					this._filter.workgroups = this.getWorkgroupsStr();
@@ -301,6 +304,8 @@ export class AonMessenger extends AonElement {
 			{
 				...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE,
 				fn: () =>{
+					this._filter.task_holder = undefined;
+					this._filter.sender = undefined;
 					this._filter.workgroup = undefined;
 					this._filter.status = TASK_STATUS.DELETED;
 					this._filter.workgroups = this.getWorkgroupsStr();
@@ -327,10 +332,12 @@ export class AonMessenger extends AonElement {
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  let options = [];
 			options.push({
-				name: "SIN GRUPO",
+				name: "SIN ASIGNAR",
 				icon: MATERIAL_ICONS.GROUP_OFF,
 				fn: () => {
-					this._filter.workgroup = undefined;
+					this._filter.task_holder = undefined;
+					this._filter.sender = undefined;
+					this._filter.workgroup = true;
 					this._filter.status = TASK_STATUS.PENDING;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
@@ -341,6 +348,8 @@ export class AonMessenger extends AonElement {
 				name: item.description,
 				icon: MATERIAL_ICONS.PEOPLE_ALT,
 				fn: () => {
+					this._filter.task_holder = undefined;
+					this._filter.sender = undefined;
 					this._filter.status = TASK_STATUS.PENDING;
 					this._filter.workgroup = item.id;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
@@ -378,6 +387,9 @@ export class AonMessenger extends AonElement {
 				icon: MATERIAL_ICONS.LABEL,
 				actions:[],
 				fn: () => {
+					this._filter.task_holder = undefined;
+					this._filter.sender = undefined;
+					this._filter.workgroup = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, {...this._filter, search:item.description});
 				}
 			};

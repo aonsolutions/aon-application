@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
 import {  MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, taskHistoricSend} from "../../services/taskService.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, taskHistoricSend, deleteTaskWorkflow} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
@@ -263,6 +263,19 @@ export class AonMessengerChat extends AonElement {
         this.showToast({message:MSG.DELETED_DATA});
         this.applicationParentEl.updateCount();
         this.back();
+      } catch (error) {
+        this.showError(error);
+      }
+    });
+  }
+
+  deleteTaskWorkflow(id){
+    this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+      try {
+        await deleteTaskWorkflow({id});
+        this.showToast({message:MSG.DELETED_DATA});
+        const element = document.querySelector(`[data-id='${id}']`);
+        if(element) element.remove();
       } catch (error) {
         this.showError(error);
       }
