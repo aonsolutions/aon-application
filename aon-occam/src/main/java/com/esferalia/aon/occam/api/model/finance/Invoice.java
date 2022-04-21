@@ -558,6 +558,9 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	public Account getRegistryAccount() {
+		if(registryAccount == null) {
+			registryAccount = new Account();
+		}
 		return registryAccount;
 	}
 	
