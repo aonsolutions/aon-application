@@ -199,7 +199,7 @@ const createFirstDiv = (mainView) => {
     styles: {
       width: "50%",
       minWidth: "400px",
-      paddingTop: "20px",
+      paddingTop: "15px",// "20px",
       paddingRight: "20px",
       paddingLeft: "30px",
       paddingBottom: "30px",
@@ -218,7 +218,7 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
       width: "50%",
-      paddingTop: "4px",
+      // paddingTop: "4px",
       paddingBottom: "30px",
       paddingRight: "10px"
     },
