@@ -1440,6 +1440,8 @@
 			
 			function showHelpTooltip(event,url){
 				
+					hideHelpTooltip(true);
+				
 					helpTooltipTimeout = setTimeout(function(){
 						
 						const tooltip = document.getElementById("helpTooltip");
@@ -1492,7 +1494,7 @@
 						}, 100);
 						
 						
-					}, 500);
+					}, 1000);
 			}
 			
 			
@@ -1500,7 +1502,7 @@
 				clearTimeout(helpTooltipTimeout);
 				const tooltip = document.getElementById("helpTooltip");
 				
-				if(!force &amp;&amp; tooltip.classList.indexOf("focus") != -1){
+				if(!force &amp;&amp; tooltip.classList.contains("focus")){
 					return;
 				}
 				
@@ -1630,7 +1632,6 @@
 								<aon:column 
 									styleClass="aon-editDataTable-textColumn aon-width-auto" 
 									onmouseover="javascript:showHelpTooltip(event,'#{to.getURI()}')"
-									onmouseout="javascript:hideHelpTooltip()"
 									onclick="javascript:hideHelpTooltip(true)"
 									>
 									
