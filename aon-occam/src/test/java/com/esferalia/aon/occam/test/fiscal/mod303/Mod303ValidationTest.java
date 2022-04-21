@@ -71,11 +71,11 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setReplacement(false);
 		deleteAllModels();
 		ctx.getDslContext().transaction( config -> {
-			insertModel( params );
+			Mod303 mod303 = insertModel( params );
 			Exception e = assertThrows(AonCoreException.class, () -> {
 				insertModel( params );
 		    });
-			String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage();
+			String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod303.getModelFullName());
 			assertEquals("Wrong Exception", expected, e.getMessage());
 		});
 	}

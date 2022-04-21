@@ -45,12 +45,12 @@ public class Mod303InsertQuarterlyTest extends AbstractOccamTest {
 		Mod303 araba = insertModel( params.setAdministration(Administration.ALAVA));
 		Mod303 bizkaia = insertModel( params.setAdministration(Administration.BIZKAIA));
 		Mod303 gipuzkoa = insertModel( params.setAdministration(Administration.GIPUZKOA));
-//		Mod303 navarra = insertModel( Administration.NAVARRA, date);
+		Mod303 navarra = insertModel( params.setAdministration(Administration.NAVARRA));
 		
 		Asserts.assertEqualsDouble("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), araba.getDeclarationResult());
 		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), bizkaia.getDeclarationResult());
 		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), gipuzkoa.getDeclarationResult());
-//		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), navarra.getDeclarationResult());
+		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), navarra.getDeclarationResult());
 	}
 
 	private Mod303 insertModel( FiscalFakerParams params) {

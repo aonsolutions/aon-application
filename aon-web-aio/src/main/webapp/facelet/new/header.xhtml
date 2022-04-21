@@ -1369,7 +1369,11 @@
 		opacity: 0;
 		background: "#fafafa";
 		transition: opacity .35s; 
-
+		cursor: pointer;
+		border-radius: .35rem;
+		box-shadow: 0 .1rem .2rem rgba(0,0,0,.14);
+		overflow: hidden;
+		border: 0.12rem solid rgba(0,0,0,.11);
 	}
 	
 	#helpTooltip img {
@@ -1377,28 +1381,53 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		border-radius: .35rem;
-		box-shadow: 0 .1rem .2rem rgba(0,0,0,.14);
-		border: 0.12rem solid rgba(0,0,0,.11);
+				
 	}
+	
+	
+	#helpTooltip.loading {
+		background:  #f1f1f1;
+	}
+
+	#helpTooltip.loading::before {
+	  content: "";
+	  position: absolute;
+	  left: 0%;
+	  top: 0;
+	  height: 100%;
+	  width: 15rem;
+	  background: linear-gradient(to right, #f1f1f1 25%, #fafafa 50%, #f1f1f1 100%);
+	  animation-name: gradient-animation;
+	  animation-duration: 2s;
+	  animation-iteration-count: infinite;
+	  filter: blur(5px);
+	} 
+	
+	@keyframes gradient-animation {
+	  from {
+	    left: 0%;
+	  }
+	  to {
+	    left: 100%;
+	  }
+	}
+		
 
 	</style>
 
 	<script type="text/javascript">
 			function showSearchResults(){
-				if ( #{rich:element('smartFilter')}.value ) {
-					#{rich:element('smartFilterTablePanel')}.style.display='block';
-				}
+			 	#{rich:element('smartFilter')}.focus();
 			}
 			function hideSearchResults(){
 				setTimeout(function() {
 					if ( document.activeElement != #{rich:element('smartFilterTablePanel')} )
-						#{rich:element('smartFilterTablePanel')}.style.display='none';
+			 			#{rich:element('smartFilter')}.blur();
 				}, 500);
 			}
 			function escSearchResults(e){
 				if ( e.which === 27 ) {
-					#{rich:element('smartFilterTablePanel')}.style.display='none';
+					#{rich:element('smartFilter')}.blur();
 					e.stopPropagation();
       				e.preventDefault();  
       				e.returnValue = false;
@@ -1416,6 +1445,15 @@
 						const tooltip = document.getElementById("helpTooltip");
 						const image = document.querySelector("#helpTooltip img");
 						
+						// Set loading animation
+						tooltip.classList.add("loading");
+						tooltip.onclick = () => window.open(url, '_blank').focus();
+						
+						image.style.transition = "none";
+						image.style.opacity = 0;
+						
+
+						// Get the right tooltip URL						
 						const filename = url.substr( url.lastIndexOf('/') + 1, url.lastIndexOf('.pdf')-5);
 						let name = url.substr( url.lastIndexOf('#') + 1);
 						
@@ -1424,13 +1462,36 @@
 						} else {
 							image.src = "Tooltip/?name=" + name + "&amp;filename=" + filename
 						}
-								
+						
+						// Show tooltip
 						tooltip.style.display = "block";
-						tooltip.style.top = (20 + event.clientY) + "px";
+						tooltip.style.top = ( event.clientY) + "px";
 						tooltip.style.left = event.clientX  + "px";
 						tooltip.style.transform = "translateX(-50%)";
-				
 						setTimeout(() => tooltip.style.opacity = "1", 250);
+						
+						// Set interactive tooltip
+						tooltip.onmouseover = () => tooltip.classList.add("focus");
+						tooltip.onmouseout = () => {
+							tooltip.classList.remove("focus");
+							document.getElementById("helpTooltip").style.opacity = "0";
+							setTimeout(() => document.getElementById("helpTooltip").style.display = "none", 260);
+						}
+						
+						
+						// when image is loaded stop loading animation
+						const loadingCheckInterval = setInterval(() => {
+							if(image.complete){
+								setTimeout(() => {
+									image.style.transition = "opacity .25s";
+									image.style.opacity = "1";
+									tooltip.classList.add("loading");
+									clearInterval(loadingCheckInterval);
+								}, 350);
+								
+							}
+						}, 100);
+						
 						
 					}, 500);
 			}
@@ -1438,10 +1499,15 @@
 			
 			function hideHelpTooltip() {
 				clearTimeout(helpTooltipTimeout);
-				
-				document.getElementById("helpTooltip").style.opacity = "0";
-				setTimeout(() => document.getElementById("helpTooltip").style.display = "none", 260);
-				
+
+				const hideTimeout = setTimeout(() => {
+					document.getElementById("helpTooltip").style.opacity = "0";
+					setTimeout(() => document.getElementById("helpTooltip").style.display = "none", 260);
+				}, 1000);
+
+				if(focus){
+					clearTimeout(hideTimeout);
+				}
 			}
 	</script>
 		
@@ -1493,8 +1559,7 @@
 			</aon:panelGroup>
 			
 			<aon:panelGroup style="text-align:left; display:flex" >
-					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
-						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
+					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" onclick="javascript:showSearchResults()" >
 					</aon:commandLink>
 					<aon:inputText 
 						id="smartFilter" 
@@ -1503,8 +1568,6 @@
 						placeholder="Buscar Empresas y Trabajadores" 
 						styleClass="aon-input-search aon-skip-focus"
 						autocomplete="off" 
-						onblur="javascript:hideSearchResults()" 
-						onfocus="javascript:showSearchResults()" 
 						onkeydown="javascript:escSearchResults(event)"
 						style="width:100%"
 						>
@@ -1520,6 +1583,29 @@
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 						</a4j:support> 
 						
+						<a4j:support 
+						event="onfocus"
+						onsubmit="if (!#{rich:element('smartFilter')}.value) {return false;}"
+						reRender="smartFilterTableContainer"
+						eventsQueue="domainSwitcherFilterFocus"
+						requestDelay="500"
+						ajaxSingle="true"
+						ignoreDupResponses="true"
+						limitToList="true">
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
+						</a4j:support> 
+
+						<a4j:support 
+						event="onblur"
+						reRender="smartFilterTableContainer"
+						eventsQueue="domainSwitcherFilterBlur"
+						requestDelay="500"
+						ajaxSingle="true"
+						ignoreDupResponses="true"
+						limitToList="true">
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{false}" />
+						</a4j:support> 
+
 					</aon:inputText>
 					
 					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;">

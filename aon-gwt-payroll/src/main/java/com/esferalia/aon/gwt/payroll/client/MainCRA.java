@@ -3,7 +3,9 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -13,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -74,6 +77,9 @@ public class MainCRA extends MainEntryPoint {
 	
 	@UiField(provided = true)
 	AonToolbar toolbar;
+	
+	@UiField
+	HTMLPanel messagePanel;
 
 	@UiField
 	DeckPanel deckPanel;
@@ -610,7 +616,7 @@ public class MainCRA extends MainEntryPoint {
 		// Create findPeriod, first day of previus month
 		createInitialDate();
 		setInitialLBAndCBSelected();
-		peddingCCCsCB.setValue(true, true);
+		peddingCCCsCB.setValue(true, false);
 		onListCras();
 
 		selectionCCCInfoModel.addSelectionChangeHandler(
@@ -847,11 +853,13 @@ public class MainCRA extends MainEntryPoint {
 	@UiHandler({ "month", "year" })
 	public void onMonthChange(ChangeEvent event) {
 		findingDate = DateUtils.getDate(Integer.parseInt(month.getSelectedValue()), Integer.parseInt(year.getSelectedValue()));
+		showLoading("Obteniendo CCCs para generar CRAs...");
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), 
 				s -> {
 					setInitialLBAndCBSelected();
 					clearSelectionModel();
 					initCCCsTable();
+					hideMessage();
 				},
 				f -> {});
 	}
@@ -897,9 +905,12 @@ public class MainCRA extends MainEntryPoint {
 	@UiHandler({ "monthTillT", "yearTillT" })
 	public void onFilterDatesChange(ChangeEvent event) {
 		findingDateCRA = DateUtils.getDate(Integer.parseInt(monthTillT.getSelectedValue()), Integer.parseInt(yearTillT.getSelectedValue()));
+		showLoading("Obteniendo CRAs generados...");
 		mainCRAObjectNew.getCRAs(findingDateCRA.getTime(), 
-				s -> initCRATable(), 
-				f -> {});
+				s -> {
+					initCRATable();
+					hideMessage();
+				}, f -> {});
 	}
 
 	@UiHandler("collapsePanel")
@@ -1015,21 +1026,25 @@ public class MainCRA extends MainEntryPoint {
 	}
 
 	private void onListCras() {
+		showLoading("Obteniendo CRAs generados...");
 		this.mainCRAObjectNew.getCRAs(
 				mainCRAObjectNew.getDefaultLiquidDate().getTime(), 
 				s -> {
 					showCRAS();
 					initCRATable();
+					hideMessage();
 				}, 
 				f -> {});
 	}
 
 	private void onNewCRA() {
+		showLoading("Obteniendo CCCs para generar CRAs...");
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), s -> {
 			initEnterpriseSB();
 			showCCCs();
 			initCCCsTable();
 			clearSelectionModel();
+			hideMessage();
 		}, f -> {
 		});
 	}
@@ -1105,9 +1120,10 @@ public class MainCRA extends MainEntryPoint {
 		}
 	}
 
-	public void createNewCRA(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList,
-			Integer cccId) {
+	public void createNewCRA(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
+		showLoading("Generando CRA...");
 		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N", v -> {
+			showSuccess("CRA", "CRA generado correctamente");
 			if (AonStringUtils.isBlank(v)) {
 				for (CCCInfo cccInfo : cccsSelected) {
 					cccInfo.getCRADates().add(findingDate);
@@ -1119,21 +1135,19 @@ public class MainCRA extends MainEntryPoint {
 				}, b -> {
 				});
 
-			} else {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("ERROR", v);
-			}
+			} else
+				showError("Error CRA", v);
 		}, f -> {
 		});
 	}
 
 	public void createNewCRARectificative(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
+		showLoading("Generando CRA Rectificativo...");
 		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R", v -> {
 			if (AonStringUtils.isBlank(v)) {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("INTRUCCIONES: CRA Rectificativo",
-						"Debe enviar el CRA rectificativo que se ha generado en el historial de CRAs rectificativos, para anular el anterior y actualizar la informacion.");
-
+				showSuccess("CRA", "CRA Rectificativo generado correctamente");
+				showInfo("INTRUCCIONES: CRA Rectificativo", "Debe enviar el CRA rectificativo que se ha generado en el historial de CRAs rectificativos, para anular el anterior y actualizar la informacion.");
+				
 				for (CCCInfo cccInfo : cccsSelected) {
 					cccInfo.getCRADates().add(findingDate);
 				}
@@ -1144,13 +1158,38 @@ public class MainCRA extends MainEntryPoint {
 					setInitialLBAndCBSelected();
 				}, f -> {
 				});
-			} else {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("ERROR", v);
-
-			}
+			} else 
+				showError("Error CRA Rectificativo", v);
 		}, f -> {
 		});
+	}
+
+	// --------------------------- MessagePanel
+
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+
+	private void showInfo(String title, String message) {
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put(title, message);
+		AonMessagePanel.showInfo(messagePanel, infoMap);
+	}
+
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messagePanel, errorMap);
+	}
+
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
+	}
+
+	private void hideMessage() {
+		AonMessagePanel.hideMessage(messagePanel);
 	}
 
 }

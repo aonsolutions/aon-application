@@ -47,12 +47,17 @@ export class AonMessenger extends AonElement {
 		super();
 	}
 
+	addListFilter(obj) {
+		this.setListFilter({...this.getListFilter, ...obj});
+	}
+
 	setListFilter(filter) {
 		this._listFilter = filter;
 	}
 
 	getListFilter() {
-		return this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
+		let filter =  this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
+		return filter;
 	}
 	
 	connectedCallback () {
@@ -68,7 +73,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	initialize(){
-		if(this.type && this.type === 'cau') {
+		if(this.type && this.type === TASK_SOURCE.CAU) {
 			this.cau = 1;
 			this._filter.source = TASK_SOURCE.CAU;
 		}
@@ -110,6 +115,7 @@ export class AonMessenger extends AonElement {
 							this.loadWorkgroup();
 						} else {
 							this._filter.email = email;
+							this.addListFilter(this._filter);
 						}
 						
 						this.init();	
@@ -165,10 +171,9 @@ export class AonMessenger extends AonElement {
 
 		this.buildToolbarSearch();
 			
-	
 		this.taskNavBar();
 		this.statusNavBar();
-
+		
 		if(!this.cau){
 			this.groupNavBar();
 			this.tagNavBar();
@@ -192,6 +197,8 @@ export class AonMessenger extends AonElement {
 		  });
 		  btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
 		  this.searchValueDefault();
+		} else {
+			btnSearch.removeButtonAvanced();
 		}
 	}
 

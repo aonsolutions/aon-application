@@ -36,32 +36,89 @@ public abstract class Mod303Declaration {
 	// 1 de Julio del 2021		
 	protected static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
+	private enum Declarations {
+		 AEAT_2022 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2022Declaration();}
+		}
+		,AEAT_2021_2{
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT20212Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT20212Declaration();}
+		}
+		,AEAT_2021 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2021Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2021Declaration();}
+		}
+		,AEAT_2020 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2020Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2020Declaration();}
+		}
+		,AEAT_2018 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2018Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2018Declaration();}
+		}
+		,AEAT_2017 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2017Declaration();}
+		}
+		,BIZKAIA_2022 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2022Declaration();}
+		}
+		,BIZKAIA_2018{
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2018Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2018Declaration();}
+		}
+		,BIZKAIA_2017 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2017Declaration();}
+		}
+		,ARABA_2022{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2022Declaration();}
+		}
+		,ARABA_2019{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2019Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2019Declaration();}
+		}
+		,ARABA_2017{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2017Declaration();}
+		}
+		,GIPUZKOA_2022 {
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2022Declaration();}
+		}
+		,GIPUZKOA_2021_2{
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA20212Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA20212Declaration();}
+		}
+		,GIPUZKOA_2017{
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2017Declaration();}
+		}
+		,NAVARRA_2022{
+			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303NAVARRA2022Declaration();}
+		}
+		;
+		abstract boolean accept(Mod303 mod);
+		abstract Mod303Declaration get();
+	}
+	
 	protected static Mod303Declaration getInstance( Mod303 mod) {
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaración");	
 		}
-		if (Mod303AEAT2022Declaration.accept(mod)) 		return new Mod303AEAT2022Declaration();
-		if (Mod303AEAT20212Declaration.accept(mod)) 	return new Mod303AEAT20212Declaration();
-		if (Mod303AEAT2021Declaration.accept(mod)) 		return new Mod303AEAT2021Declaration();
-		if (Mod303AEAT2020Declaration.accept(mod)) 		return new Mod303AEAT2020Declaration();
-		if (Mod303AEAT2018Declaration.accept(mod)) 		return new Mod303AEAT2018Declaration();
-		if (Mod303AEAT2017Declaration.accept(mod)) 		return new Mod303AEAT2017Declaration();
-		if (Mod303BIZKAIA2022Declaration.accept(mod)) 	return new Mod303BIZKAIA2022Declaration();
-		if (Mod303BIZKAIA2018Declaration.accept(mod)) 	return new Mod303BIZKAIA2018Declaration();
-		if (Mod303BIZKAIA2017Declaration.accept(mod)) 	return new Mod303BIZKAIA2017Declaration();
-		if (Mod303ARABA2022Declaration.accept(mod)) 	return new Mod303ARABA2022Declaration();
-		if (Mod303ARABA2019Declaration.accept(mod)) 	return new Mod303ARABA2019Declaration();
-		if (Mod303ARABA2017Declaration.accept(mod)) 	return new Mod303ARABA2017Declaration();
-		if (Mod303GIPUZKOA2022Declaration.accept(mod)) 	return new Mod303GIPUZKOA2022Declaration();
-		if (Mod303GIPUZKOA20212Declaration.accept(mod)) 	return new Mod303GIPUZKOA20212Declaration();
-		if (Mod303GIPUZKOA2017Declaration.accept(mod)) 	return new Mod303GIPUZKOA2017Declaration();
-		
-		throw new AonCoreException(MessageFormat.format(
-			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
-			mod.getAdministration().getDescription()
-			,mod.getYear()
-			,mod.getPeriod().getDescription()));
-		
+		return Arrays.stream(Declarations.values())
+			.filter(dec -> dec.accept(mod))
+			.map(Declarations::get)
+			.findFirst()
+			.orElseThrow( () -> new AonCoreException(MessageFormat.format(
+				"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
+				mod.getAdministration().getDescription()
+				,mod.getYear()
+				,mod.getPeriod().getDescription())));
 	}
 
 	protected static void add(Mod303Key key,Mod303 mod,double amount) {

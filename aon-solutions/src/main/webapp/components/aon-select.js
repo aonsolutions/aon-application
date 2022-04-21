@@ -64,6 +64,14 @@ export class AonSelect extends AonElement {
     this.setAttribute(CONSTANT.AUTOCOMPLETE, autocomplete);
   }
 
+  get emptyclear() {
+    return this.getAttribute("emptyclear");
+  }
+
+  set emptyclear(emptyclear) {
+    this.setAttribute("emptyclear", emptyclear);
+  }
+
   get disabled() {
     return this.getAttribute(CONSTANT.DISABLED)
   }
@@ -132,6 +140,7 @@ export class AonSelect extends AonElement {
   }
 
   build() {
+
     let input = this.getElement(this.INPUT);
     if(input){
       input.readonly = this.isReadonly();
@@ -156,13 +165,18 @@ export class AonSelect extends AonElement {
         }
       });
 
+      const emptyclear = this.hasAttribute("emptyclear");
+
       input.addEventListener(EVENT.BLUR, ()=>{
-        const exists = this.getOptions().some(opt => opt[this.nameAlias] == input.value);
-        if(!exists){
+        const value = input.value;
+        const exists = this.getOptions().some(opt => opt[this.nameAlias] == value);
+        if(!exists && !emptyclear ){
           const option = this.getOptions().find(f => f[this.valueAlias] == this.value);
           if(option)
             input.value = option[this.nameAlias];
-        } 
+        } else if(!value && emptyclear){
+          this.clear();
+        }
       })
 
       if(this.disabled)

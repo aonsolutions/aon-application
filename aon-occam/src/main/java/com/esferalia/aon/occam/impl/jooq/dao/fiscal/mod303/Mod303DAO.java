@@ -253,5 +253,9 @@ public class Mod303DAO extends FiscalModelDAO {
 		mod303 = save(ctx, mod303);
 		return mod303;
 	}
+	
+	public static Stream<Mod303> getEffectivePreviousModels(AONContext ctx, Mod303 mod) {
+		return FiscalModelDAO.getEffectivePreviousModels(ctx, mod, Mod303::new);
+	}
 }
 
