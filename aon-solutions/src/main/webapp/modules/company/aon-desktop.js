@@ -383,7 +383,7 @@ export class AonDesktop extends AonElement {
 				buttons.appendChild(stat);
 			}
 
-			if(app.options && app.options.upload) {
+			if(app.options && app.options.upload && this.hasUploadRole(app)) {
 				let upload = new AonIconButton();
 				upload.id = li.id + 'Upload';
 				upload.icon = "file_upload";
@@ -812,6 +812,12 @@ export class AonDesktop extends AonElement {
 		}];
 		d.setMenuOptions(options, top, left);
 		d.open();
+	}
+
+	hasUploadRole(app) {
+		if(app.app === Apps.DOCUMENTAL.app){
+			return this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager();
+		} else return true;
 	}
 }
 
