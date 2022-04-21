@@ -137,11 +137,12 @@ public class TaskUtils {
 		
 		if(isCau(params)) 
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
-		
+
 		if(workgroup != null && workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
-		else if(params.optBoolean(IJsonNames.WORKGROUP))  //TRUE = ALL
-			filter = filter.and(f.getWorkgroupProperty().isNull());
+		else if(params.optBoolean(IJsonNames.WORKGROUP)) {//TRUE = ALL
+			filter = filter.and(f.getWorkgroupProperty().isNull()).and(f.getTaskHolderProperty().isNull());
+		} 
 	
 		if(!params.optString("startDate").isEmpty()) {
 			Date startDate = AonDateUtils.parse(params.optString("startDate"), "yyyy-MM-dd");
@@ -234,7 +235,7 @@ public class TaskUtils {
 		return logo;
 	}
 	
-	public static Matcher regexFile(Task task, String dataId) {
+	private static Matcher regexFile(Task task, String dataId) {
 		String description = task.getDescription();
 	    String regex = "(\\<\\S[^<>]*?href=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
 	    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);

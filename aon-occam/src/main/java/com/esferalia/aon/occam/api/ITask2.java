@@ -31,6 +31,7 @@ public interface ITask2 {
 	public List<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
 	public TaskWorkflow saveTaskWorkflow(AONContext ctx, TaskWorkflow task);
 	public void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter);
+	public void deleteTaskWorkflow(AONContext ctx, Integer id);
 	
 	//TASKATTACH
 	public TaskAttach getTaskAttach(AONContext ctx, TaskAttachFilter filter);

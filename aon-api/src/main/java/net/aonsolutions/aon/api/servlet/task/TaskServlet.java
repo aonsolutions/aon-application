@@ -148,6 +148,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			case "/":
 				response(req, resp, deleteTask(api));
 				break;
+			case "/workflow":
+				response(req, resp, deleteTaskWorkflow(api));
+				break;
 			case "/tag":
 				response(req, resp, deleteTaskTag(api));
 				break;
@@ -349,6 +352,12 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject deleteTask(AonApiData api) {
 		Integer task = api.getData().optInt(IJsonNames.TASK);
 		AON_SOLUTIONS.deleteTask(api.getDomain(), api.getUser(), task);
+		return new JSONObject();
+	}
+	
+	private JSONObject deleteTaskWorkflow(AonApiData api) {
+		Integer id = api.getData().optInt(IJsonNames.ID);
+		AON_SOLUTIONS.deleteTaskWorkflow(api.getDomain(), api.getUser(), id);
 		return new JSONObject();
 	}
 	
