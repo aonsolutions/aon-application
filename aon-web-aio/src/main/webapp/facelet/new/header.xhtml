@@ -1446,6 +1446,17 @@
 						
 						const tooltip = document.getElementById("helpTooltip");
 						const image = document.querySelector("#helpTooltip img");
+						const optionRect = event.target.getBoundingClientRect();;
+						
+						
+						console.log("\n testing the coordinates");
+						console.log("Mouse Y: " + event.clientY);
+						console.log("Option Y: " + optionRect.top);
+						
+						if(Math.abs(event.clientY - optionRect.top) > 18)
+						{
+							return;
+						}
 						
 						// Set loading animation
 						tooltip.classList.add("loading");
@@ -1465,9 +1476,9 @@
 							image.src = "Tooltip/?name=" + name + "&amp;filename=" + filename
 						}
 						
-						// Show tooltip
+						// Show tooltip						
 						tooltip.style.display = "block";
-						tooltip.style.top = ( event.clientY + 10) + "px";
+						tooltip.style.top = ( optionRect.top + 25) + "px";
 						tooltip.style.left = event.clientX  + "px";
 						tooltip.style.transform = "translateX(-50%)";
 						setTimeout(() => tooltip.style.opacity = "1", 250);
