@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.mod200.api.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -10,11 +9,11 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 
 public interface IMod200<K extends IMod200Key> {
 	
-	public static enum BalanceType implements Serializable {
-		NORMAL,
-		ABREVIADO,
-		PYMES;
-	}
+//	public static enum BalanceType implements Serializable {
+//		NORMAL,
+//		ABREVIADO,
+//		PYMES;
+//	}
 
 	public Integer getId();
 	public void setId(Integer id);

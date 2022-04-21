@@ -7,8 +7,9 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.IMod200KeysProvider;
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN082Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020BN1040Key;
@@ -42,7 +43,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ554Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020LQ561Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020RIC_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020RIC_2Key;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;

@@ -34,6 +34,9 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
+import com.esferalia.aon.occam.mod200.api.model.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
+import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.GroupEntitie;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.MinorEntity;
@@ -44,13 +47,10 @@ import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.DoubleVariable2020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Character;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020KeyDC;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.BalanceType;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2019.Mod2002019DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2020.jaxb.MOD2002020;
@@ -481,7 +481,7 @@ public class Mod2002020DAO  {
 		FsModel200DetailRecord detail = null;
 		// Insertamos los valores de Mod2002020Key
 		for (Mod2002020Key k : Mod2002020Key.values()) {
-			DoubleVariable2020 dv = null;	
+			DoubleVariableEx dv = null;	
 			if (mod200.getDraftMap().containsKey(k)) {
 				dv = mod200.getDraftMap().get(k);
 			} else {
@@ -498,7 +498,7 @@ public class Mod2002020DAO  {
 		}
 		// Insertamos los valores de Mod2002020KeyDC (Detalle correcciones)
 		for (Mod2002020KeyDC k : Mod2002020KeyDC.values()) {
-			DoubleVariable2020 dv = null;	
+			DoubleVariableEx dv = null;	
 			if (mod200.getDraftMap().containsKey(k)) {
 				dv = mod200.getDraftMap().get(k);
 			} else {
@@ -738,10 +738,10 @@ public class Mod2002020DAO  {
 			}
 		}
 
-		DoubleVariable2020 v = null;
+		DoubleVariableEx v = null;
 		// Cargamos las claves de Mod2002020Key
 		for (Mod2002020Key key : Mod2002020Key.values() ) {
-			v = new DoubleVariable2020( key );
+			v = new DoubleVariableEx( key );
 			if (map.containsKey(key.toString())) {
 				v.setValue( map.get(key.toString()));
 			} else {
@@ -752,7 +752,7 @@ public class Mod2002020DAO  {
 		
 		// Cargamos las claves de Mod2002020KeyDC (Detalle correcciones)
 		for (Mod2002020KeyDC key : Mod2002020KeyDC.values() ) {
-			v = new DoubleVariable2020( key );
+			v = new DoubleVariableEx( key );
 			if (map.containsKey(key.toString())) {
 				v.setValue( map.get(key.toString()));
 			} else {
@@ -883,7 +883,7 @@ public class Mod2002020DAO  {
 			mvelCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 			addCharacters(mvelCtx,mod200);
 			addBalanceCharacters(mvelCtx,mod200);
-			DoubleVariable2020 dv = null;
+			DoubleVariableEx dv = null;
 			for (Mod2002020Key k : INITIALIZE_EXPRESSION_MAP.keySet()) {
 				String stringKey = k.toString();
 				String expression = INITIALIZE_EXPRESSION_MAP.get(k);
@@ -891,12 +891,12 @@ public class Mod2002020DAO  {
 				Object ret = mvelCtx.evaluateExpression(k,expression);
 				mvelCtx.put(stringKey, ret );
 				if (ret instanceof Double ) {
-					dv = new DoubleVariable2020( k );
+					dv = new DoubleVariableEx( k );
 					dv.setValue( (Double) ret );
 					mod200.addVariable( dv );
 				} 
 				if (ret instanceof Boolean) {
-					dv = new DoubleVariable2020( k );
+					dv = new DoubleVariableEx( k );
 					dv.setValue((Boolean) ret );
 					mod200.addVariable( dv );
 				}
@@ -927,7 +927,7 @@ public class Mod2002020DAO  {
 					key = Mod2002020Key.BN605;
 				}
 				if (key != null) {
-					DoubleVariable2020 dv = new DoubleVariable2020( key );
+					DoubleVariableEx dv = new DoubleVariableEx( key );
 					dv.setValue( (Double) mod202.getResult() );
 					mod200.addVariable( dv );
 				}
@@ -942,13 +942,13 @@ public class Mod2002020DAO  {
 		try {
 			Mod2002020MVELContext ctx = new Mod2002020MVELContext( mod200, ACCEPTER );
 			ctx.setExpressionMap(Mod2002020Compute.COMPUTE_EXPRESSION_MAP);
-			for (DoubleVariable2020 dv : mod200.getKeysMap().values()) {
+			for (DoubleVariableEx dv : mod200.getKeysMap().values()) {
 				ctx.put(dv.getKey().toString(), dv.getValue());
 			}
 			addCharacters(ctx,mod200);
 			addBalanceCharacters(ctx,mod200);
 			
-			DoubleVariable2020 d = null;
+			DoubleVariableEx d = null;
 			for (IMod200Key key : mod200.getDraftMap().keySet() ) {
 				d = mod200.getDraftMap().get(key);
 				if (d.isChangedByUser()) {
@@ -957,10 +957,10 @@ public class Mod2002020DAO  {
 			}
 			
 			// Actualmente las casillas calculadas solo son de Mod2002020Key
-			DoubleVariable2020 v = null;
+			DoubleVariableEx v = null;
 			for (Mod2002020Key k : Mod2002020Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
 				String stringKey = k.toString();
-				DoubleVariable2020 existingVariable = mod200.getVariable(k);
+				DoubleVariableEx existingVariable = mod200.getVariable(k);
 				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
 				ctx.put(stringKey, existingValue);
 				Object ret = ctx.evaluateExpression(k,Mod2002020Compute.COMPUTE_EXPRESSION_MAP.get(k));
@@ -968,7 +968,7 @@ public class Mod2002020DAO  {
 					Double calculated = (Double) ret;
 					ctx.put(stringKey, calculated);
 					if ( !AonMathUtils.equals( existingValue , calculated ) ) {
-						v = new DoubleVariable2020( k );
+						v = new DoubleVariableEx( k );
 						v.setValue( calculated );
 						if (addToDraft) {
 							mod200.addDraftVariable(v);	
@@ -1022,7 +1022,7 @@ public class Mod2002020DAO  {
 	private static void addCharacters(Mod2002020MVELContext ctx, Mod2002020 mod200) {
 		// Caracteres de la declaración, solo están en Mod2002020Key
 		for (Mod2002020Key key : Mod2002020Character.CHARACTERS_KEYS) {
-			DoubleVariable2020 dv = mod200.getKeysMap().get(key);
+			DoubleVariableEx dv = mod200.getKeysMap().get(key);
 			ctx.put(key.toString(), (dv != null && dv.getBooleanValue() )); 
 		}		
 	}

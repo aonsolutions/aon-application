@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Desglose Casilla 588
 // Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI y DT 24\u00AA.3 LIS)  
 public enum Mod2002020BN588Key implements Serializable, IMod200KeysProvider {

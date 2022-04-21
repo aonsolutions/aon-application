@@ -60,14 +60,14 @@ import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.mod200.api.model.BalanceType;
+import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020KeyDC;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.BalanceType;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020.EcpnType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;

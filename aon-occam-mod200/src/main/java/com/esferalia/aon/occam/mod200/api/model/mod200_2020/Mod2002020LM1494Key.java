@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2020;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
+
 // Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
 public enum Mod2002020LM1494Key implements Serializable, IMod200KeysProvider  {
