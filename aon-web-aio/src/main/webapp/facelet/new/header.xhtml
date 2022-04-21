@@ -1386,17 +1386,19 @@
 
 	<script type="text/javascript">
 			function showSearchResults(){
-			 	#{rich:element('smartFilter')}.focus();
+				if ( #{rich:element('smartFilter')}.value ) {
+					#{rich:element('smartFilterTablePanel')}.style.display='block';
+				}
 			}
 			function hideSearchResults(){
 				setTimeout(function() {
 					if ( document.activeElement != #{rich:element('smartFilterTablePanel')} )
-			 			#{rich:element('smartFilter')}.blur();
+						#{rich:element('smartFilterTablePanel')}.style.display='none';
 				}, 500);
 			}
 			function escSearchResults(e){
 				if ( e.which === 27 ) {
-					#{rich:element('smartFilter')}.blur();
+					#{rich:element('smartFilterTablePanel')}.style.display='none';
 					e.stopPropagation();
       				e.preventDefault();  
       				e.returnValue = false;
@@ -1491,7 +1493,8 @@
 			</aon:panelGroup>
 			
 			<aon:panelGroup style="text-align:left; display:flex" >
-					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" onclick="javascript:showSearchResults()" >
+					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
+						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 					</aon:commandLink>
 					<aon:inputText 
 						id="smartFilter" 
@@ -1500,6 +1503,8 @@
 						placeholder="Buscar Empresas y Trabajadores" 
 						styleClass="aon-input-search aon-skip-focus"
 						autocomplete="off" 
+						onblur="javascript:hideSearchResults()" 
+						onfocus="javascript:showSearchResults()" 
 						onkeydown="javascript:escSearchResults(event)"
 						style="width:100%"
 						>
@@ -1515,29 +1520,6 @@
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 						</a4j:support> 
 						
-						<a4j:support 
-						event="onfocus"
-						onsubmit="if (!#{rich:element('smartFilter')}.value) {return false;}"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterFocus"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
-						</a4j:support> 
-
-						<a4j:support 
-						event="onblur"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterBlur"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{false}" />
-						</a4j:support> 
-
 					</aon:inputText>
 					
 					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;">
