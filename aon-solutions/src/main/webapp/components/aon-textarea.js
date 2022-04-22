@@ -270,7 +270,7 @@ export class AonTextArea extends AonElement {
 											[...element.querySelectorAll("link")].forEach(elem=> elem.remove());
 											
 											this.addValueHtml(element.outerHTML);
-										}, 10000);
+										}, 50);
 									});
 									return false;
 								}

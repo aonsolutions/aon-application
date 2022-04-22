@@ -15,8 +15,8 @@ import { addZero } from "../../services/utils.js";
  * @return {String} AonDateUtils.setDateTimestamp dd-MM-yyyy H:m
  * @param {Date} AonDateUtils.lastThreeDayStr date
  * @return {String} AonDateUtils.lastThreeDayStr DAY OR NULL
- * @param {Date} AonDateUtils.dayStr date
- * @return {String} AonDateUtils.dayStr DAY OR NULL
+ * @param {Date} AonDateUtils.getDayStr date
+ * @return {String} AonDateUtils.getDayStr DAY OR NULL
  * @param {Date} AonDateUtils.setDateTpDay date
  * @return {String} AonDateUtils.setDateTpDay DAY, dd-MM-yyyy
  * @param {Date} AonDateUtils.setDateTimestampDay date
@@ -76,19 +76,19 @@ export const AonDateUtils = {
     getYearFirstDay: function(d) {
         return new Date(d.getFullYear(), 0, 1);
     },
-    dayStr: function(date) { //DAY STR
+    getDayStr: function(date) { //DAY STR
         return this.lastThreeDayStr(date) || DAYS[date.getDay()]
     },
     setDateTpDay: function(d) { // DAY, dd-MM-yyyy
         const date = new Date(d);
-        return this.dayStr(date)+", "+this.formatDate(date);
+        return this.getDayStr(date)+", "+this.formatDate(date);
     },
     setDateTimestampDay: function(d) { // DAY, dd-MM-yyyy H:m
         return this.setDateTpDay(new Date(d)) +" " + this.setTime(new Date(d));
     },
     setFullDate: function(d) { // DAY, dd de mm de yyyy
         const date = new Date(d);
-        const dayText = this.dayStr(date);
+        const dayText = this.getDayStr(date);
         const monthText = MONTHS[date.getMonth()];
         return `${dayText}, ${date.getDate()} de ${monthText} de ${date.getFullYear()}`;
     },
@@ -96,7 +96,10 @@ export const AonDateUtils = {
         const d = new Date(date);
         const day = addZero(d.getDate(), 2);
         const month = MONTHS[d.getMonth()];
-        return day + '-' + month;
+        return day + ' ' + month;
+    },
+    dayStr: function(date) { // dd-MONTH
+      return this.getDayMonth(date);
     },
     getMonthYear: function(date) { // MONTH. yyyy
         const d = new Date(date)

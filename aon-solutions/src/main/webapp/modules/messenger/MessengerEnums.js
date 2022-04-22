@@ -178,14 +178,14 @@ export const TASK_FILTER = [
         default:true,
         emptyclear:true
     },
-    {
-        type: "select",
-        id: "status",
-        name: "status",
-        title: MSG.STATUS,
-        default:true,
-        emptyclear:true
-    },
+    // {
+    //     type: "select",
+    //     id: "status",
+    //     name: "status",
+    //     title: MSG.STATUS,
+    //     default:true,
+    //     emptyclear:true
+    // },
     {
       type: "select",
       name: "workgroup",
