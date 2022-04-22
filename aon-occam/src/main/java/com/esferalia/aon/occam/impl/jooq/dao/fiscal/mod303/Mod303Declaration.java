@@ -252,7 +252,13 @@ public abstract class Mod303Declaration {
 
 	Mod303 initializeModel(AONContext ctx, Mod303 mod303) {
 		initializeComplementaryAndReplacement(ctx,mod303);
-		initializePreviousData(ctx,mod303);
+		if ( !mod303.isManualDeclaration() ) {
+			initializePreviousData(ctx,mod303);
+		} else {
+			mod303.getMessages().clear();		
+			mod303.setDiffCalculationMandatory(false);
+			mod303.setDiffCalculationDisabled(true);
+		}
 		return mod303;
 	}
 	
@@ -415,10 +421,13 @@ public abstract class Mod303Declaration {
 			initializeSimplifiedRegime(ctx, mod303);
 		}
 		firstInitialization(ctx, mod303);
-		Set<Integer> invoices = createFromInvoices(ctx,mod303);
-		invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod303) );
-		resolveDiffCalculation(ctx, mod303);
-		return invoices;
+		if (!mod303.isManualDeclaration()) {
+			Set<Integer> invoices = createFromInvoices(ctx,mod303);
+			invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod303) );
+			resolveDiffCalculation(ctx, mod303);
+			return invoices;
+		}
+		return new HashSet<>();
 	}
 	
 	private void firstInitialization(AONContext ctx, Mod303 mod303) {

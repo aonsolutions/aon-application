@@ -60,7 +60,7 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		} catch (ManagerBeanException e) {
 			LOGGER.error("No se ha podido recuperar el porcentaje de IRPF");
 		}
-		completeHandicap();
+		reverseHandicap();
 	}
 	
 	@Override
@@ -158,6 +158,17 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		}
 	}
 	
+	private void reverseHandicap() {
+		IrpfDataController controller = (IrpfDataController) getController();
+		IrpfData data = ((IrpfData) getController().getTo());
+		if(data.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
+			controller.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65);
+		} else {
+			controller.setDisabilityLevel(data.getDisabilityLevel());
+		}
+		
+	}
+
 	private ContractData getPercentData(IrpfData irpf) throws ManagerBeanException {
 		List<ITransferObject> data = SEPEUtils.getInstance().getContractData(
 				irpf.getContract(), irpf.getStartDate(), irpf.getEndDate(),
