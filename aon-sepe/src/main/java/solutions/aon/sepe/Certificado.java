@@ -168,12 +168,12 @@ public class Certificado {
 				formRepresentative.getInputByName("orDatosRepresentante.srNifRepresentante").setValueAttribute(ipfManager);
 				
 				certificates.getLastSurnameManager().ifPresent(d->{
-					DomNode input = formRepresentative.getInputByName("[name=\"orDatosRepresentante.srSegundoApellidoRepresentante\"]");
+					DomNode input = formRepresentative.querySelector("[name=\"orDatosRepresentante.srSegundoApellidoRepresentante\"]");
 					if(input!=null) ((HtmlInput)input).setValueAttribute(d);
 				});
 
 				certificates.getCargoManager().ifPresent(d->{
-					DomNode input = formRepresentative.getInputByName("[name=\"orDatosRepresentante.srCargoRepresentante\"]");
+					DomNode input = formRepresentative.querySelector("[name=\"orDatosRepresentante.srCargoRepresentante\"]");
 					if(input!=null) ((HtmlInput)input).setValueAttribute(d);
 				});
 					
