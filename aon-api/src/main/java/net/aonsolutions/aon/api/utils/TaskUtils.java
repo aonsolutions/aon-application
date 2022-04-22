@@ -386,7 +386,11 @@ public class TaskUtils {
 		else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ 
 			AON.getTaskHolderWorkgroupStream(
 					domain, api.getUser(), 
-					f->f.getIdProperty().ne(workflow.getTaskHolder().getId())
+					f-> f.getIdProperty().isNotNull().and(
+							workflow.getTaskHolder().getId()!=null ?
+							f.getIdProperty().ne(workflow.getTaskHolder().getId()) :
+							f.getIdProperty().isNotNull()
+					)
 					.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))),
 					task.getWorkgroup().getId()
 			)
