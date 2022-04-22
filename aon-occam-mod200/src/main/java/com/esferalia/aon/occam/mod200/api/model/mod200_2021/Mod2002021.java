@@ -69,10 +69,11 @@ public class Mod2002021 extends Mod200 {
 	private Secretary secretary = new Secretary(); // Secretario del Consejo de Administración, declarante o representante
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();     // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
-	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado 
-	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // C. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
+	// FALTA - C. Participaciones indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado 
+	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // D. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
 
-	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // D. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // E. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 	
 	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>();
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();

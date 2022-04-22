@@ -71,10 +71,10 @@ public class Mod2002020 extends Mod200 {
 	private Secretary secretary = new Secretary(); // Secretario del Consejo de Administración, declarante o representante
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();     // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
-	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado 
-	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // C. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B.1. Participaciones de la declarante en otras entidades 
+	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // B.2. Participaciones de personas o entidades en la declarante
 
-	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // D. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 	
 	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>();
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();

@@ -51,7 +51,7 @@ public class MODEL2002021Impl implements IMODEL2002021 {
 	}
 
 	@Override
-	public Mod2002021 importMod2002019(AONContext ctx, Mod2002021 mod200) {
+	public Mod2002021 importMod2002020(AONContext ctx, Mod2002021 mod200) {
 		return Mod2002021DAO.importMod2002020(ctx,mod200);
 	}	
 	

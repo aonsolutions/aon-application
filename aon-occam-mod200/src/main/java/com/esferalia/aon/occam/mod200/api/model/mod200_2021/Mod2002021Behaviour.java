@@ -1,4 +1,3 @@
-
 package com.esferalia.aon.occam.mod200.api.model.mod200_2021;
 
 import static java.lang.Boolean.FALSE;
@@ -595,7 +594,7 @@ public class Mod2002021Behaviour {
 			// Columna de totales
 			// Normalmente la última columna es el total, salvo que venga cumlimentado positionsColumnsTotal, 
 			// en tal caso se le pasará un array con las posiciones (base 0), que ocupan las columnas de los totales
-			// ya que algunos desgloses llevan mas de una columna de totales, o la ultima columna no es el tocal, 
+			// ya que algunos desgloses llevan mas de una columna de totales, o la ultima columna no es el total, 
 			// o no llevan columnas de totales
 			if (positionsColumnsTotal == null) {
 				if (keys[keys.length-1] != null)

@@ -62,7 +62,7 @@ public enum Mod2002021Key implements IMod200Key {
 	
 // --------------- PAGINA 2 --------------- //	
 	
-	// PARTICIPACIONES (Totales)
+	// PARTICIPACIONES DIRECTAS (Totales)
 	,P1501
 	,P1502
 	,P1503
@@ -77,6 +77,7 @@ public enum Mod2002021Key implements IMod200Key {
 	
 // --------------- PAGINA 2 BIS --------------- //	
 	
+	// PARTICIPACIONES INDIRECTAS (Totales)
 	,P1516
 	,P1517
 	,P1523
@@ -835,7 +836,6 @@ public enum Mod2002021Key implements IMod200Key {
 	,BN220	,BN221	,BN222
 	,BN886  		,BN887
 	
-	
 // --------------- PAGINAS 17 Y 18 --------------- //
 	
 	// Deducciones inversión en Canarias con límites incrementados (continuación)	
@@ -876,9 +876,9 @@ public enum Mod2002021Key implements IMod200Key {
 	,BN2353	,BN2354	,BN2355
 	,BN2356	,BN2357	,BN2358
 	,BN2359	,BN2360	,BN2361
-	,BN223 ,BN224 ,BN227
-	,BN228 ,BN229 ,BN230
-	,BN234 ,BN235 ,BN236
+	,BN223  ,BN224  ,BN227
+	,BN228  ,BN229  ,BN230
+	,BN234  ,BN235  ,BN236
 	,BN1360	,BN1361	,BN1362
 	,BN1363	,BN1364	,BN1365
 	,BN1366	,BN1367	,BN1368
@@ -1060,8 +1060,6 @@ public enum Mod2002021Key implements IMod200Key {
 	,DC2307 ,DC2308 
 	,I0417B ,D0418B 
 	,DC2309 ,DC2310
-	
-	
 	
 // --------------- PAGINA 20 --------------- //	
 

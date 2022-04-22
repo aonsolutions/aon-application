@@ -319,7 +319,7 @@ public class Mod2002021DAO  {
 			}
 		}
 		
-		// B1. Participaciones directas de la declarante en otras sociedades
+		// B. Participaciones directas de la declarante en otras sociedades
 		if (mod200.getParticipationsOut() != null) {
 			for ( Mod200CompanyParticipation cp : mod200.getParticipationsOut() ) {
 				detail = new FsModel200RegistryRecord();
@@ -349,7 +349,9 @@ public class Mod2002021DAO  {
 			}
 		}
 		
-		// B2. Participaciones de personas o entidades en la declarante
+		// FALTA - C. Participaciones indirectas de la declarante en otras sociedades
+		
+		// D. Participaciones de personas o entidades en la declarante
 		if (mod200.getParticipationsIn() != null) {
 			for ( Mod200CompanyParticipation cp : mod200.getParticipationsIn() ) {
 				detail = new FsModel200RegistryRecord();
@@ -368,7 +370,7 @@ public class Mod2002021DAO  {
 			}
 		}
 		
-		// C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+		// E. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 		if (mod200.getMinorEntities() != null) {
 			for ( MinorEntity me : mod200.getMinorEntities() ) {
 				detail = new FsModel200RegistryRecord();
@@ -1059,23 +1061,6 @@ public class Mod2002021DAO  {
 		ctx.put(Mod2002021Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
-	// YA NO SE USA ESTA VALIDACION, SE USA LA DE LA AGENCIA TRIBUTARIA
-//	public static Mod2002021 validate(Mod2002021 mod200) {
-//		mod200.setMessages(new LinkedList<ValidationMessage2021>());
-//		Mod2002021MVELContext ctx = new Mod2002021MVELContext( mod200, ACCEPTER );
-//		for (DoubleVariable2021 dv : mod200.getKeysMap().values()) {
-//			ctx.put(dv.getKey().toString(), dv.getValue());
-//		}
-//		DoubleVariable2021 d = null;
-//		for (IMod200Key key : mod200.getDraftMap().keySet() ) {
-//			d = mod200.getDraftMap().get(key);
-//			ctx.put(key.toString(), d.getValue());
-//		}
-//		addCharacters(ctx,mod200);
-////		Mod2002021Validation.validate(mod200);
-//		return mod200;
-//	}
-	
 	public static String dumpAEAT(Mod2002021 mod200)  {
 		try {
 			MOD2002021 mod = Mod2002021toMOD2002021.getMOD2002021(mod200);

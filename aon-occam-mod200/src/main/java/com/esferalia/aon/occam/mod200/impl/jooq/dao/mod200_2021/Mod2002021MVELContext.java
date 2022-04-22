@@ -73,7 +73,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod2002021MVELContext implements Map<String, Object> { // extends AccMiningMVELContext {
+public class Mod2002021MVELContext implements Map<String, Object> { 
 	
 	private Map<String, AccountBalance> accounts;
 	private Map<String, Object> context;
@@ -165,7 +165,7 @@ public class Mod2002021MVELContext implements Map<String, Object> { // extends A
 				}
 			}
 		}
-		return 0.0; // new Double(0);		
+		return 0.0; 		
 	}
 	
 	public Object evaluateExpression(Mod2002021Key key,String expression) {
@@ -226,9 +226,7 @@ public class Mod2002021MVELContext implements Map<String, Object> { // extends A
 	@Override
 	protected void finalize() throws Throwable {
 		context = null;
-//		super.finalize();
 	}
-
 	
 	public Boolean isChecked(Mod2002021Key key) {
 		return (Boolean) get(key.toString());
@@ -339,10 +337,8 @@ public class Mod2002021MVELContext implements Map<String, Object> { // extends A
 		if ( isChecked(C0006) ) return 25.0;
 		
 		if ( isChecked(C0012) ) return 25.0;
-		//if ( isChecked(C0013) && (getValue(Mod2002021Key.UT060) == 100.0) ) return 0.0;
 		if ( isChecked(C0014) ) return 0.0;
-		
-		// --- 
+		 
 		if ( isChecked(C0034) ) return 30.0;
 		if ( isChecked(C0036) ) return 25.0;
 		if ( isChecked(C0038) ) return 25.0;

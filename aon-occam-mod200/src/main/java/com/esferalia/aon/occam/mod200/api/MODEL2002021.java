@@ -65,9 +65,9 @@ public class MODEL2002021 {
 		return getImpl().dumpAEATMod2002021(mod200);
 	}
 
-	public static Mod2002021 importMod2002019(Occam occam, Mod2002021 mod200) {
+	public static Mod2002021 importMod2002020(Occam occam, Mod2002021 mod200) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().importMod2002019(ctx, mod200);
+			return getImpl().importMod2002020(ctx, mod200);
 		} 
 	}
 
