@@ -91,7 +91,7 @@ public class Cra {
 			
 			Long findingDate = parseDate(cmd.getOptionValue(findingDateOpt.getLongOpt()));
 			
-			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(cccList, findingDate, null, connection));
+			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(null, cccList, findingDate, null, connection));
 			System.out.println(agrarianAFI);
 
 		} catch (ParseException e) {
@@ -235,7 +235,7 @@ public class Cra {
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddHHmmss");
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMainCRAByCRA(List<String> cccList, long findingDate, java.util.Date fileNameDate, Connection connection)  {
+	public static JSONObject getMainCRAByCRA(Integer domainId, List<String> cccList, long findingDate, java.util.Date fileNameDate, Connection connection)  {
 		
 		// Get dslContext for given connection
 		@SuppressWarnings("resource")
@@ -284,6 +284,7 @@ public class Cra {
 					.and(SALARY.TYPE.eq((byte)0))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+					.and(SALARY.DOMAIN.eq(domainId))
 					.fetch();
 			
 			filterRETARecords(salaryRecords, dslContext);
@@ -336,7 +337,8 @@ public class Cra {
 					// Prepare TRB
 					JSONObject trb = new JSONObject();
 					
-					if(null != salary.get(SALARY.SOCIAL_SECURITY_NUMBER) && salary.get(SALARY.SOCIAL_SECURITY_NUMBER).length()>0)
+					String ssSalary = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
+					if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000"))
 						trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
 					else {
 						String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
@@ -437,6 +439,7 @@ public class Cra {
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)3))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.DOMAIN.eq(domainId))
 					.fetch();
 			
 			if(salaryRecords.isEmpty()){
@@ -474,7 +477,8 @@ public class Cra {
 						Double craAmount = Double.parseDouble(salaryData.get(SALARY_DATA.EXPRESSION));
 						String numAfilicionAtraso;
 						
-						if(null != salary.get(SALARY.SOCIAL_SECURITY_NUMBER) && salary.get(SALARY.SOCIAL_SECURITY_NUMBER).length()>0)
+						String ssSalary = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
+						if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000"))
 							numAfilicionAtraso = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
 						else {
 							String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
@@ -551,6 +555,7 @@ public class Cra {
 						.and(SALARY.TYPE.eq((byte)2))
 						.and(SALARY.SS_REGIME.notEqual((byte)3))
 						.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+						.and(SALARY.DOMAIN.eq(domainId))
 					.fetch();
 			
 			if(salaryRecords.isEmpty()){
@@ -576,7 +581,8 @@ public class Cra {
 					
 					String numAfilicionFiniquito;
 					
-					if(null != salary.get(SALARY.SOCIAL_SECURITY_NUMBER) && salary.get(SALARY.SOCIAL_SECURITY_NUMBER).length()>0)
+					String ssSalary = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
+					if(AonStringUtils.isNotBlank(ssSalary) && !AonStringUtils.containsIgnoreCase(ssSalary, "0000000000"))
 						numAfilicionFiniquito = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
 					else {
 						String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
