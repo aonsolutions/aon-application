@@ -231,8 +231,8 @@ public class Up2Date {
     		BaseCgpMin2022Fix.BASECGPMIN2022FIX,
 			UpdateFinanceRname.UPDATE_FINANCE_RNAME,
     		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII,
-    		TaskEvent2TaskWorkfow.TASK_COMMENT_2_TASK_WORKFLOW,
-    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
+//    		TaskEvent2TaskWorkfow.TASK_COMMENT_2_TASK_WORKFLOW,
+//    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
     };
     
 

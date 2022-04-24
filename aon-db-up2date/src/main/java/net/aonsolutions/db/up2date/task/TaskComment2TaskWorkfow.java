@@ -17,7 +17,7 @@ import com.esferalia.aon.jooq.tables.User;
 import net.aonsolutions.db.up2date.Update;
 
 public class TaskComment2TaskWorkfow implements Update{
-	public static final TaskComment2TaskWorkfow TASK_EVEMT_2_TASK_WORKFLOW = new TaskComment2TaskWorkfow();
+	public static final TaskComment2TaskWorkfow TASK_COMMENT_2_TASK_WORKFLOW = new TaskComment2TaskWorkfow();
 
 	private TaskComment2TaskWorkfow() {
 		super();
