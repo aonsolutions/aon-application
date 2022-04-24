@@ -20,7 +20,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class TaskEvent2TaskWorkfow implements Update {
 
-	public static final TaskEvent2TaskWorkfow TASK_COMMENT_2_TASK_WORKFLOW = new TaskEvent2TaskWorkfow();
+	public static final TaskEvent2TaskWorkfow TASK_EVENT_2_TASK_WORKFLOW = new TaskEvent2TaskWorkfow();
 
 	private TaskEvent2TaskWorkfow() {
 		super();
