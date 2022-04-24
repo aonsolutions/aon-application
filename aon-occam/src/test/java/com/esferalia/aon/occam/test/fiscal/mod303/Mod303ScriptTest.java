@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022BIZKAIASpecif
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022NAVARRARGScript;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -154,6 +155,19 @@ public class Mod303ScriptTest extends AbstractOccamTest {
 		test( mod303,Model3032022ARABARScript1.values() );
 		test( mod303,Model3032022ARABAScript2.values() );
 	}
+	
+	@Test
+	public void testNavarraExpressions() {
+		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
+				.setIssueDate(new Date())
+				.setMonthly(true)
+				.setAdministration(Administration.NAVARRA);
+		Mod303 mod303 = FiscalFaker.getMod303(params);
+		MODEL303.calculate(getOccam(), mod303);
+		test( mod303, Model3032022NAVARRARGScript.values() );
+	}
+	
+	
 	private void test( Mod303 mod303, IModelScript<Mod303Key>[] scripts) {
 		for (IModelScript<Mod303Key> script : scripts) {
 			try {

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format.m190;
+package com.esferalia.aon.occam.server.fiscal.format.mod190;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -6,11 +6,11 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.m190.Mod190Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer.IPropertyFiller;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-enum Mod190File2016Gipuzkoa {
+enum Mod190File2017Gipuzkoa {
 
 	TYPE_1 (new IPropertyFiller[] { 
 			(wr, mod190,detail) -> wr.append("1")
@@ -26,9 +26,14 @@ enum Mod190File2016Gipuzkoa {
 		   ,(wr, mod190,detail) -> wr.append(mod190.isReplacement()?"S":" ")
 		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 13))
 		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().size(),9,0))
-		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(mod190.getDetails().stream().mapToDouble(det -> AonMathUtils.round(det .getPerception())).sum(),16,2))
-		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().stream().mapToDouble( det -> AonMathUtils.round(det.getRetention())).sum(),15,2))
-		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 312))		
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(mod190.getDetails().stream().mapToDouble(
+				   det -> AonMathUtils.round(det.getPerception() + det.getInKindPerception() + det.getPerceptionIL() + det.getInKindPerceptionIL())
+				   ).sum(),16,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getDetails().stream().mapToDouble( 
+				   det -> AonMathUtils.round(det.getRetention() + det.getInKindDeposit() + det.getRetentionIL() + det.getInKindDepositIL()) 
+				   ).sum(),15,2))
+		   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getContactMail(),50))
+		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 262)) 
 		   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 13))
 		   ,(wr, mod190,detail) -> wr.append("\r\n")
 		})
@@ -62,15 +67,17 @@ enum Mod190File2016Gipuzkoa {
 			   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 26))
 			   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(AonMathUtils.round(detail.getPerceptionIL()),14,2))
 			   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getRetentionIL()),13,2))
-			   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getOutputRetentionIL()),13,2))
-			   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 206))		
+			   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(AonMathUtils.round(detail.getInKindPerceptionIL()),14,2))
+			   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindDepositIL()),13,2))
+			   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindOutputDepositIL()),13,2))
+			   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 179))		
 			   ,(wr, mod190,detail) -> wr.append("\r\n")
 		})
 	;
 
 	private IPropertyFiller[] propertyFillers;
 
-	private Mod190File2016Gipuzkoa(IPropertyFiller[] pf) {
+	private Mod190File2017Gipuzkoa(IPropertyFiller[] pf) {
 		this.propertyFillers = pf;
 	}
 
@@ -80,9 +87,9 @@ enum Mod190File2016Gipuzkoa {
 		}
 	}
 	static void fill(Mod190 mod190, Writer wr) throws IOException {
-		Mod190File2016Gipuzkoa.TYPE_1.fillPage(mod190, null, wr);	
+		Mod190File2017Gipuzkoa.TYPE_1.fillPage(mod190, null, wr);	
 		for (Mod190Detail detail : mod190.getDetails()) {
-			Mod190File2016Gipuzkoa.TYPE_2.fillPage(mod190, detail, wr);	
+			Mod190File2017Gipuzkoa.TYPE_2.fillPage(mod190, detail, wr);	
 		}
 	}
 

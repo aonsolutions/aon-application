@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format.m190;
+package com.esferalia.aon.occam.server.fiscal.format.mod190;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -6,11 +6,11 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.m190.Mod190Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer.IPropertyFiller;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-enum Mod190File2016Bizkaia {
+enum Mod190File2016Araba {
 	TYPE_1 (new IPropertyFiller[] { 
 		(wr, mod190,detail) -> wr.append("1")
 	   ,(wr, mod190,detail) -> wr.append("190")
@@ -39,7 +39,7 @@ enum Mod190File2016Bizkaia {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(mod190.getYear(), 4,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(mod190.getDocument(),9))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getDocument(),9))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getRepresentativeDocument(),9))	 									// APELLIDOS Y NOMBRE, RAZÓN DENOMINACIÓN DEL PERCEPTOR
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getRepresentativeDocument(),9))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(AonFiscalFileUtils.changeInvalidCharacters(detail.getName()),40))	 			
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getProvince(),2,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getKey(),1))
@@ -53,7 +53,8 @@ enum Mod190File2016Bizkaia {
 	   ,(wr, mod190,detail) -> wr.append("0")
 	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 14))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisability(), 1,0))
-	   ,(wr, mod190,detail) -> wr.append("000")
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getContract(), 1,0))
+	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat('0', 2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getApplicableReduction()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getDeducibleExpense()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getCompensatoryPension()),13,2))
@@ -69,7 +70,7 @@ enum Mod190File2016Bizkaia {
 	;
 	private IPropertyFiller[] propertyFillers;
 
-	private Mod190File2016Bizkaia(IPropertyFiller[] pf) {
+	private Mod190File2016Araba(IPropertyFiller[] pf) {
 		this.propertyFillers = pf;
 	}
 
@@ -78,11 +79,12 @@ enum Mod190File2016Bizkaia {
 			propertyFiller.propertyFill(wr, mod190, detail);
 		}
 	}
+	
 	static void fill(Mod190 mod190, Writer wr) throws IOException {
-		Mod190File2016Bizkaia.TYPE_1.fillPage(mod190, null, wr);	
+		Mod190File2016Araba.TYPE_1.fillPage(mod190, null, wr);	
 		for (Mod190Detail detail : mod190.getDetails()) {
-			Mod190File2016Bizkaia.TYPE_2.fillPage(mod190, detail, wr);	
+			Mod190File2016Araba.TYPE_2.fillPage(mod190, detail, wr);	
 		}
 	}
-
+	
 }

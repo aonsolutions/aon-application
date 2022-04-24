@@ -689,15 +689,28 @@ public class JooqCertifica2 {
 	private static Certificates createCertificates(com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info)
 			throws IllegalArgumentException {
 		CertificatesBuilder bd = new CertificatesBuilder();
-		bd.setIpfManager(certifica2Info.getRepresentativeDocument()).setName(certifica2Info.getRepresentativeName())
-				.setSurname(certifica2Info.getRepresentativeSurname()).setLastSurname("")
-				.setIpf(certifica2Info.getDocument()).setRegimen(certifica2Info.getRegime())
-				.setCtaCti(certifica2Info.getCcc()).setTypeContract(certifica2Info.getContractType())
-				.setGz(certifica2Info.getQuoteGroup()).setDurationContract(certifica2Info.getContractDuration())
-				.setTypeDuration(TypeDuration.DIAS).setCatProfessional(certifica2Info.getProfesionalCategory())
-				.setCauseSuspension(certifica2Info.getSuspensionCode()).setfAEd(certifica2Info.getStartDate())
-				.setfSTd(certifica2Info.getEndDate()).setDaysCtzVc(certifica2Info.getSettleQuoteDays())
-				.setBcccVc(certifica2Info.getBaseCgc()).setBcdVc(certifica2Info.getBaseUnemployment());
+		bd.setIpfManager(certifica2Info.getRepresentativeDocument())
+			.setName(certifica2Info.getRepresentativeName())
+			.setSurname(certifica2Info.getRepresentativeSurname())
+			.setLastSurname("")
+			.setIpf(certifica2Info.getDocument())
+			.setEmployeeName(certifica2Info.getName())
+			.setEmployeeSurname(certifica2Info.getSurname())
+			.setEmployeeSecondSurname(certifica2Info.getSecondSurname())
+			.setNaf(certifica2Info.getSSNumber())
+			.setRegimen(certifica2Info.getRegime())
+			.setCtaCti(certifica2Info.getCcc())
+			.setTypeContract(certifica2Info.getContractType())
+			.setGz(certifica2Info.getQuoteGroup())
+			.setDurationContract(certifica2Info.getContractDuration())
+			.setTypeDuration(TypeDuration.DIAS)
+			.setCatProfessional(certifica2Info.getProfesionalCategory())
+			.setCauseSuspension(certifica2Info.getSuspensionCode())
+			.setfAEd(certifica2Info.getStartDate())
+			.setfSTd(certifica2Info.getEndDate())
+			.setDaysCtzVc(certifica2Info.getSettleQuoteDays())
+			.setBcccVc(certifica2Info.getBaseCgc())
+			.setBcdVc(certifica2Info.getBaseUnemployment());
 
 		List<QuoteData> quoteDatas = new ArrayList<>();
 

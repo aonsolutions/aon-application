@@ -51,6 +51,8 @@
 .aon_icon_back { background-image: iconBack;}
 @url iconEdit aonIconEdit;
 .aon_icon_edit { background-image: iconEdit;}
+@url iconEditRed aonIconEditRed;
+.aon_icon_edit_red { background-image: iconEditRed;}
 @url iconRefresh aonIconRefresh;
 .aon_icon_refresh { background-image: iconRefresh;}
 @url iconClear aonIconClear;

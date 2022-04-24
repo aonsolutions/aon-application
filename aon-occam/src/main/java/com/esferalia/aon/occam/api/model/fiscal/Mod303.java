@@ -31,7 +31,12 @@ public class Mod303 extends FiscalModel implements Serializable {
 				&& (isComplementary() || isReplacement()); 
 	}
 	
-	
+	public boolean isManualDeclaration() {
+		return getAmount(Mod303Key.CM_000) == 1;
+	}
+	public void setManualDeclaration(boolean manual) {
+		ensureDetail(Mod303Key.CM_000).setAmount(manual?1:0);
+	}
 	
 	public VATRegime getDefaultVATRegime() {
 		return  VATRegime.safeValueOf( (byte) getAmount(Mod303Key.CM_005) );

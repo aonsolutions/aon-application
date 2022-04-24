@@ -737,6 +737,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Sin actividad")
 	String withoutActivity();
 
+	@DefaultMessage("Realizar la declaraci\u00F3n manualmente.")
+	String manualDeclaration();
+
 	@DefaultMessage("N. justificante anterior")
 	String complementaryReceipt();
 	

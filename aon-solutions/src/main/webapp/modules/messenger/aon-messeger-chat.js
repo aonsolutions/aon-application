@@ -51,16 +51,7 @@ export class AonMessengerChat extends AonElement {
     this.build();
   }
 
-  disconnectedCallback() {
-    this.deleteToolbar();
-  }
-
-  deleteToolbar() {
-    try {
-      this.getApplication().removeFloatOption();
-      this.getApplication().removeToolbarOptions();
-    } catch (error) {}
-  }
+  disconnectedCallback() {}
 
   initialize() {
     this.id = MESSENGER_VIEWS.AON_MESSENGER_CHAT;
@@ -69,7 +60,6 @@ export class AonMessengerChat extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this.PROJECTS = [];
     this.WORKGROUPS = [];
-    this.deleteToolbar();
     this.setTask();
   }
 
@@ -96,8 +86,7 @@ export class AonMessengerChat extends AonElement {
 
   build() {
     this.paintView();
-    //FILL CHATS WORKFLOW
-    if (this.task.id) 
+    if(this.task.id)  //FILL CHATS WORKFLOW
       this.getTaskWorkflow();
   }
 
@@ -122,18 +111,21 @@ export class AonMessengerChat extends AonElement {
    * @param {String} text Optional
    */
   async saveComment(text) {
-    const resp = await sendMessage(text, this); 
     try {
-      const [comment, messengeEl] = resp;
-      if(comment){
-        const workflow = await saveTaskWorkflow({...this.task.getWorkflowTmp(), comment});
-        if(workflow){
-          messengeEl.dataset["id"] = workflow.id;
-          if(this.isCau()) 
-            this.sendMessageHistoric(workflow.id);
+      const resp = await sendMessage(text, this); 
+      if(resp){
+        const [comment, messengeEl] = resp;
+        if(comment){
+          const workflow = await saveTaskWorkflow({...this.task.getWorkflowTmp(), comment});
+          if(workflow){
+            messengeEl.dataset["id"] = workflow.id;
+            if(this.isCau()) 
+              this.sendMessageHistoric(workflow.id);
+          }
         }
       }
     } catch (error) {
+      console.error("saveComment", error);
       this.showError(error);
     }
   }
@@ -156,8 +148,11 @@ export class AonMessengerChat extends AonElement {
         break;
         case TASK_STATUS.FINISHED:
           type = WORKFLOW_TYPES.CLOSE;
+          await this.saveComment();
         break;
       }
+
+      
       await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment, auth:this.getAuth()});
       await this.save();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
@@ -174,13 +169,14 @@ export class AonMessengerChat extends AonElement {
       fillChat(this, workflows);
       if(workflows.length>0) 
         this.addButtonDelete();
-    } catch (error) {}
+    } catch (error) {
+      console.error("getTaskWorkflow", error);
+    }
   }
 
   addButtonDelete(){
-    if(this.task.status == TASK_STATUS.DELETED) {
+    if(this.task.status == TASK_STATUS.DELETED) 
       this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask(), ACTIONS.PREVIOUS.id);
-    }
   }
 
   async save() {
@@ -434,7 +430,7 @@ export class AonMessengerChat extends AonElement {
   }
   
   back(){
-    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
+    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._listFilter);
   }
 }
 

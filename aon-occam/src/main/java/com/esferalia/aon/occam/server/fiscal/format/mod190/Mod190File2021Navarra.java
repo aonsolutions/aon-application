@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format.m190;
+package com.esferalia.aon.occam.server.fiscal.format.mod190;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -6,11 +6,11 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.m190.Mod190Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer.IPropertyFiller;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-enum Mod190File2017Aeat {
+enum Mod190File2021Navarra {
 	TYPE_1 (new IPropertyFiller[] { 
 		(wr, mod190,detail) -> wr.append("1")
 	   ,(wr, mod190,detail) -> wr.append("190")
@@ -56,41 +56,17 @@ enum Mod190File2017Aeat {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindOutputDeposit()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getAccrualYear(), 4,0))
 	   ,(wr, mod190,detail) -> wr.append(detail.isCeutaMelilla()?"1":"0")
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getBirthYear(), 4,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getFamilySituation(), 1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getSpouseDocument(), 9))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisability(), 1,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getContract(), 1,0))
-	   ,(wr, mod190,detail) -> wr.append(" ")
-	   ,(wr, mod190,detail) -> wr.append(detail.isGeographicMobility()?"1":"0")
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getBirthYear(), 4,0))
+	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat('0', 21))
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(
+			   (detail.getLessThan3Descendent() + detail.getOtherDescendent() 
+			   + detail.getDisabilityDescendent33() + detail.getDisabilityDescendent65()),2,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getApplicableReduction()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getDeducibleExpense()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getCompensatoryPension()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getFoodAnnuality()),13,2))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getLessThan3Descendent(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getLessThan3DescendentRatio(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getOtherDescendent(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getOtherDescendentRatio(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityDescendent33(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityDescendent33Ratio(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityDescendentDependence(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityDescendentDependenceRatio(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityDescendent65(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityDescendent65Ratio(),2,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getLessThan75Ascendant(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getLessThan75AscendantRatio(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getAscendant(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getAscendantRatio(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityAscendant33(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityAscendant33Ratio(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityAscendantDependence(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityAscendantDependenceRatio(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityAscendant65(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisabilityAscendant65Ratio(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getFirstChildCalculation(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getSecondChildCalculation(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getThirdChildCalculation(),1,0))
-	   ,(wr, mod190,detail) -> wr.append(detail.isHomeLoanCommunnication()?"1":"0")
+	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 22))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(AonMathUtils.round(detail.getPerceptionIL()),14,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getRetentionIL()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.signedSpace(AonMathUtils.round(detail.getInKindPerceptionIL()),14,2))
@@ -102,7 +78,7 @@ enum Mod190File2017Aeat {
 	;
 	private IPropertyFiller[] propertyFillers;
 
-	private Mod190File2017Aeat(IPropertyFiller[] pf) {
+	private Mod190File2021Navarra(IPropertyFiller[] pf) {
 		this.propertyFillers = pf;
 	}
 
@@ -113,9 +89,9 @@ enum Mod190File2017Aeat {
 	}
 	
 	static void fill(Mod190 mod190, Writer wr) throws IOException {
-		Mod190File2017Aeat.TYPE_1.fillPage(mod190, null, wr);
+		Mod190File2021Navarra.TYPE_1.fillPage(mod190, null, wr);
 		for (Mod190Detail detail : mod190.getDetails()) {
-			Mod190File2017Aeat.TYPE_2.fillPage(mod190, detail, wr);	
+			Mod190File2021Navarra.TYPE_2.fillPage(mod190, detail, wr);	
 		}
 	}
 }

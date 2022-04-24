@@ -56,6 +56,9 @@ public class AonFiscalFileUtils {
 	public static String spaces(int size) {
 		return AonStringUtils.repeat(AonStringUtils.SPACE, size);
 	}
+	public static String number(String text, int size) {
+		return AonStringUtils.leftPad(AonStringUtils.trimToEmpty(text), size,'0');
+	}
 	public static String text(String text, int size) {
 		return AonStringUtils.substring(
 			AonStringUtils.rightPad(
@@ -259,55 +262,9 @@ public class AonFiscalFileUtils {
 	
 	
 	public static void main(String[] args) {
-
-		int length = 20;
-		System.out.println( AonStringUtils.repeat("*",length) );
-		System.out.println(text("AAA", length));
-		System.out.println(text("       AAA", length));
-		System.out.println(text("AAA   LLL", length));
-		System.out.println(text("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", length));
-		System.out.println(text("", length));
-		System.out.println(text("  s   sd", length));
-		System.out.println(spaces(length));
-		System.out.println( AonStringUtils.repeat("*",length) );
-		
-		System.out.println("****");
-		System.out.println(year(null));
-		System.out.println(year(2));
-		System.out.println(year(20));
-		System.out.println(year(201));
-		System.out.println(year(2015));
-		System.out.println(year(20115));
-		System.out.println("****");
-
-		length = 13;
-		System.out.println( AonStringUtils.repeat("*",length) );
-		Double[] values = new Double[]{
-				null
-				,0.0
-				,15.15
-				,-15.15
-				,15.1583423
-				,222342.13
-				,922342.13
-		};
-		for (Double d : values) {
-			Double db = d == null ? null : d * (-1);
-			System.out.println(unsigned( d, length) + " ----> " + d );	
-			System.out.println(unsigned( db,length) + " ----> " + db );
-			System.out.println(signed( d, length) + " ----> " + d );	
-			System.out.println(signed( db,length) + " ----> " + db );
-			System.out.println(signedZero( d, length) + " ----> " + d );	
-			System.out.println(signedZero( db,length) + " ----> " + db );
-			System.out.println(signedSpace( d, length) + " -S--> " + d );	
-			System.out.println(signedSpace( db,length) + " -S--> " + db );
-		}
-		
-		System.out.println( AonStringUtils.repeat("*",length) );
-		
-		System.out.println(unsigned( 1.0, 1, 0) + " ----> " + 1 );
-		 
-		System.out.println( "MARA LUISA".replaceAll("[^a-zA-Z0-9.-]", "_"));
+		System.out.println( AonFiscalFileUtils.number("123", 20));
 	}
+	
+	
 }
 	

@@ -26,11 +26,18 @@ public class Certificates {
 	private Integer dedicationPer;
 	private Date fAEd; // Fecha de alta
 	private Date fSTd; // Fecha de suspensión o extinción
-	//data vacation
+	//DATA VACATION
 	private Integer daysCtzVc; // Dias cotizados vacaciones
 	private Double bcccVc; // Base cotizacion vacaciones 0.00
 	private Double bcdVc; // 0.00
 
+	//DATA EMPLOYEE
+	private String employeeName;
+	private String employeeSurname;
+	private String employeeSecondSurname;
+	private String naf;
+
+	
 	private List<QuoteData> quoteData;
 	
 	private Integer durationContract; // Duracion contrato (horas)
@@ -63,13 +70,31 @@ public class Certificates {
 		return surnameManager;
 	}
 
-	public Optional<String> getLastSurname() {
+	public Optional<String> getLastSurnameManager() {
 		return Optional.ofNullable(lastSurnameManager);
 	}
 
 	public Optional<String> getCargoManager() {
 		return Optional.ofNullable(cargoManager);
 	}
+
+	
+	public Optional<String> getEmployeeName() {
+		return Optional.ofNullable(employeeName);
+	}
+	
+	public Optional<String> getEmployeeSurname() {
+		return Optional.ofNullable(employeeSurname);
+	}
+
+	public Optional<String> getEmployeeSecondSurname() {
+		return Optional.ofNullable(employeeSecondSurname);
+	}
+	
+	public Optional<String> getNaf() {
+		return Optional.ofNullable(naf);
+	}
+
 
 	public String getTypeContract() {
 		return typeContract;
@@ -136,6 +161,10 @@ public class Certificates {
 				",\n\tnameManager=" + nameManager + 
 				",\n\tsurnameManager=" + surnameManager + 
 				",\n\tlastSurnameManager=" + lastSurnameManager + 
+				",\n\temployeeName=" + employeeName + 
+				",\n\temployeeSurname=" + employeeSurname + 
+				",\n\temployeeSecondSurname=" + employeeSecondSurname + 
+				",\n\tnaf=" + naf + 
 				",\n\tcargoManager=" + cargoManager + 
 				",\n\ttypeContract=" + typeContract + 
 				",\n\tgz=" + gz + 
@@ -181,6 +210,12 @@ public class Certificates {
 		private Integer durationContract;
 		private List<QuoteData> quoteData;
 		
+		//DATA EMPLOYEE
+		private String employeeName;
+		private String employeeSurname;
+		private String employeeSecondSurname;
+		private String naf;
+
 
 		public CertificatesBuilder setQuoteData(List<QuoteData> quoteData) {
 			this.quoteData = quoteData;
@@ -224,6 +259,27 @@ public class Certificates {
 
 		public CertificatesBuilder setSurname(String surnameManager) {
 			this.surnameManager = surnameManager;
+			return this;
+		}
+		
+		
+		public CertificatesBuilder setEmployeeName(String employeeName) {
+			this.employeeName = employeeName;
+			return this;
+		}
+
+		public CertificatesBuilder setEmployeeSurname(String employeeSurname) {
+			this.employeeSurname = employeeSurname;
+			return this;
+		}
+		
+		public CertificatesBuilder setEmployeeSecondSurname(String employeeSecondSurname) {
+			this.employeeSecondSurname = employeeSecondSurname;
+			return this;
+		}
+		
+		public CertificatesBuilder setNaf(String naf) {
+			this.naf = naf;
 			return this;
 		}
 
@@ -341,6 +397,10 @@ public class Certificates {
 			ct.bcdVc = this.bcdVc;
 			ct.quoteData = this.quoteData;
 			ct.durationContract = this.durationContract;
+			ct.employeeName = this.employeeName;
+			ct.employeeSurname = this.employeeSurname;
+			ct.employeeSecondSurname = this.employeeSecondSurname;
+			ct.naf = this.naf;
 			return ct;
 		}
 	}

@@ -238,6 +238,11 @@ export class AonTextArea extends AonElement {
 				input: (ev)=>{
 					preventDefault(ev);
 					this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target:ev.target}))
+				},
+				paste: (ev)=>{
+					preventDefault(ev);
+					let text = ev.clipboardData.getData('text/plain');
+					document.execCommand('insertText', false, text);
 				}
 			},
 			styles : {

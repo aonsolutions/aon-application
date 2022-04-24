@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.ui.help.pdf.PdfSearcher;
+import com.code.aon.ui.help.pdf.IndexPDFFiles.PdfIndexProperties;
 
 
 @WebServlet("/help/*")
@@ -27,6 +28,12 @@ public class HelpServlet extends HttpServlet {
 		
 		files.put("LABORAL Manual de USUARIO", "payroll_names.pdf");
 		files.put("CONTABILIDAD Manual de USUARIO", "account_names.pdf");
+		/**
+		files.put("COMUNIC@ Manual de USUARIO", "comunica_names.pdf");
+		files.put("PORTAL ASESOR (Usuario empresa) Manual de usuario", "portal_company_names.pdf");
+		files.put("PORTAL ASESOR (Usuario asesor) Manual de usuario", "portal_asesor_names.pdf");
+		files.put("PORTAL ASESOR (Configuración usuarios) Guia rápida", "portal_asesor_user_config_names.pdf");
+		**/
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

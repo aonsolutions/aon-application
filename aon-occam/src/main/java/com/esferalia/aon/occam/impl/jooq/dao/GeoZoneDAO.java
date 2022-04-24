@@ -36,7 +36,7 @@ public class GeoZoneDAO {
 		@Override public Property<Byte> getSystemProperty() {return new FilterDAO.PropertyDAO<Byte>(GEOZONE.SYSTEM);}
 	}
 	
-	protected static class GeoZoneFiller  implements Function<Record,GeoZone> {
+	public static class GeoZoneFiller  implements Function<Record,GeoZone> {
 		@Override
 		public GeoZone apply(Record record) {
 			return build(record);

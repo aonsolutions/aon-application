@@ -1463,7 +1463,7 @@ public class InvoiceTemplate {
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null) {
 					String bicCode = !AonStringUtils.isEmpty(finance.getBic()) ? finance.getBic() : "";
-					drawText(contents, finance.getBankAccount().getSeparatedIban(), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
+					drawText(contents, finance.getBankAccount().getIbanLength() <= 24 ? finance.getBankAccount().getSeparatedIban() : finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
 					drawTextRight(contents, new PDRectangle(x + 92, y, 69, 15), bicCode, theme.getTextColor(), regularFont, 5.5f, 5, -12, i + FINANCE_AMOUNT);
 				} else
 					drawText(contents, "", x + 5f, y - 12, theme.getTextColor(), regularFont, 7, i + FINANCE_BANK_ACCOUNT);
