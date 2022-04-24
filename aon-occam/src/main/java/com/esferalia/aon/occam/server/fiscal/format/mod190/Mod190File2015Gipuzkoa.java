@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format.m190;
+package com.esferalia.aon.occam.server.fiscal.format.mod190;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -6,7 +6,7 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.m190.Mod190Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer.IPropertyFiller;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format.m190;
+package com.esferalia.aon.occam.server.fiscal.format.mod190;
 
 import java.io.IOException;
 import java.io.Writer;

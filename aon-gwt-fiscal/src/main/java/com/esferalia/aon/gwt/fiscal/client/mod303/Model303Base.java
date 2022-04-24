@@ -115,6 +115,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final AonToolbar decToolbar = new AonToolbar();
 	protected final InlineLabel dirtyLabel = new InlineLabel();
 	protected final InlineLabel diffLabel = new InlineLabel();
+	protected final InlineLabel manualLabel = new InlineLabel();
 	protected final InlineLabel adjLabel = new InlineLabel();
 	protected final InlineLabel replacedLabel = new InlineLabel();
 	protected final InlineLabel prorataLabel = new InlineLabel();
@@ -416,7 +417,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		addField(key, input,enabled);
 		input.setEnabled(getModel().isEditable() && enabled);
 		input.setValue(det1.getAmount());
-		if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
+		if (!getModel().isManualDeclaration() && AonMathUtils.isNotZero(det1.getAdjustAmount())) {
 			input.addStyleName(AON.CSS.aonChanged());
 			input.setTitle(AON.MSG.difCalc(
 					AON.FMT.format(det1.getResultAmount()),
@@ -432,7 +433,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 			getModel().ensureDetail(key).setAmount(input.getValue());
 
-			if (AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
+			if (!getModel().isManualDeclaration() && AonMathUtils.isNotZero(getModel().ensureDetail(key).getAdjustAmount())) {
 				input.addStyleName(AON.CSS.aonChanged());
 				input.setTitle(AON.MSG.difCalc(AON.FMT.format(getModel().ensureDetail(key).getResultAmount()),
 						AON.FMT.format(AonMathUtils.round( getModel().ensureDetail(key).getAdjustAmount() * -1))));
@@ -716,7 +717,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				}
 				
 				private Optional<AonTableButton>  addDiffButton() {
-					if (getModel().isDiffCalculationEnabled()) {
+					if (!getModel().isManualDeclaration() && getModel().isDiffCalculationEnabled()) {
 						boolean diffKey = Arrays.stream(script.getKeys())
 								.filter(Objects::nonNull)
 								.anyMatch(Mod303Key::isDiffEnabled);
@@ -739,17 +740,21 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				
 				@Override 
 				public Void visitModelInvoiceVatBreakdown() {
-					final AonTableButton button = addButton();
-					button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button, false));
-					addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) ); 
+					if (!getModel().isManualDeclaration()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button, false));
+						addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) ); 
+					}
 					return null;
 				}
 				
 				@Override 
 				public Void visitProrratedModelInvoiceVatBreakdown() {
-					final AonTableButton button = addButton();
-					button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button,true));
-					addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) );
+					if (!getModel().isManualDeclaration()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button,true));
+						addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) );
+					}
 					return null;
 				}
 				@Override 
@@ -770,8 +775,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				}
 				@Override 
 				public Void visitComputeKey() {
-					final AonTableButton button = addButton();
-					button.addClickHandler(event -> showComputeKeyInfo(button));
+					if (!getModel().isManualDeclaration()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showComputeKeyInfo(button));
+					}
 					return null; 
 				}
 				
@@ -1153,6 +1160,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		marksPanels.add(replacedLabel);
 		marksPanels.add(prorataLabel);
 		
+		manualLabel.setStyleName(AON.CSS.aonMarginLeft());
+		manualLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+		manualLabel.addStyleName(AON.CSS.aonIconEditRed());
+		manualLabel.setTitle("Declaraci\u00F3n realizada manualmente");
+		marksPanels.add(manualLabel);
+
 		styleDirtyLabel();
 		styleStatusLabel();
 		
@@ -1165,12 +1178,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
 		diffLabel.setVisible(!getModel().isDiffCalculationDisabled());
+		manualLabel.setVisible(getModel().isManualDeclaration());
 		
 		boolean adjusted = false;
-		for (FiscalModelDetail det : getModel().getMap().values()) {
-			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
-				adjusted = true;
-				break;
+		if (!getModel().isManualDeclaration()) {
+			for (FiscalModelDetail det : getModel().getMap().values()) {
+				if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
+					adjusted = true;
+					break;
+				}
 			}
 		}
 		adjLabel.setVisible(adjusted);

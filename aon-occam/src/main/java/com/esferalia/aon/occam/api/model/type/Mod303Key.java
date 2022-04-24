@@ -14,8 +14,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
-
-	 CM_001("303-CM001",false,null,"C\u00E1lculo por diferencia.")
+	 CM_000("303-CM000",false,null,"Confecci\u00F3n manual")
+	,CM_001("303-CM001",false,null,"C\u00E1lculo por diferencia.")
 	,CM_002("303-CM002",false,null,"Sujeto pasivo inscrito en el Registro de devoluci\u00F3n mensual")
 	,CM_003("303-CM003",false,null,"Porcentaje de prorrata.")
 	,CM_004("303-CM004",false,null,"Tipo de declaraci\u00F3n")

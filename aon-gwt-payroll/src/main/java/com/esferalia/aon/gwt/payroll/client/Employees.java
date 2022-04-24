@@ -1381,7 +1381,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 	
 	private void onWorkplaceOpen(final TreeItem workplaceItem, final int limit, Runnable callback) {
-
 		Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
 		loadWorkplaceCosts(workplaceItem, workplace);
@@ -2564,8 +2563,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	private void select( String pattern ) {
 		
-		for ( int i = 0; i < tree.getItemCount(); i++ ) {
-			TreeItem enterpriseItem = tree.getItem(i);	
+		if ( tree.getItemCount() > 0 ) {
+			TreeItem enterpriseItem = tree.getItem(0);	
 			selectEmployee( pattern, 0, workplaceItem -> {
 				enterpriseItem.setState(true); // open
 			});
@@ -2576,6 +2575,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void selectEmployee( String pattern, int index, Consumer<TreeItem> found) {
 		int workplacesOffset = getWorkplacesOffset(tree);
 		int i = workplacesOffset + index ; 
+		log("selectEmployee(" + pattern +"," + index +") " 
+		+ "[" + i +"," + tree.getItemCount() + "]");
 		if ( i >= tree.getItemCount() )
 			return;
 		

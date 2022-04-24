@@ -19,9 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.UpdateFinanceRname;
+import net.aonsolutions.db.up2date.task.TaskComment2TaskWorkfow;
+import net.aonsolutions.db.up2date.task.TaskEvent2TaskWorkfow;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateII;
 import net.aonsolutions.db.up2date.tgss.BaseCgpMin2022Fix;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2022Fix;
 
 public class Up2Date {
 
@@ -227,7 +229,10 @@ public class Up2Date {
 //    		UdapaSalesFix.UDAPA_SALES_FIX
 //   		SalaryHours2022Fix.SALARYHOURS2022FIX,
     		BaseCgpMin2022Fix.BASECGPMIN2022FIX,
-    		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII
+			UpdateFinanceRname.UPDATE_FINANCE_RNAME,
+    		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII,
+//    		TaskEvent2TaskWorkfow.TASK_COMMENT_2_TASK_WORKFLOW,
+//    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
     };
     
 

@@ -78,6 +78,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_edit")
 	String aonIconEdit();
 
+	@ClassName("aon_icon_edit_red")
+	String aonIconEditRed();
+
 	@ClassName("aon_icon_clear")
 	String aonIconClear();
 
