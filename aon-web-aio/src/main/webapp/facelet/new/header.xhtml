@@ -1636,7 +1636,7 @@
 								</ui:define>
 							</ui:decorate>
 
-							<aon:if test="#{domainSwitcher.domainCount > 0}">
+							<aon:if test="#{(!domainSwitcher.adminDomain) and (domainSwitcher.domainCount > 0)}">
 								<aon:div styleClass="search-results-popup-title" >
 									<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
 									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
@@ -1677,6 +1677,7 @@
 								<aon:div></aon:div>
 							</aon:if>
 
+							<aon:if test="#{(!domainSwitcher.adminDomain)}">
 							<aon:div styleClass="search-results-popup-title" >
 								<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
@@ -1706,6 +1707,7 @@
 								</ui:define>
 							</ui:decorate>
 							<aon:div></aon:div>
+							</aon:if>
 						
 						</aon:div>
 					</aon:div>
