@@ -157,7 +157,8 @@ export const TASK_FILTER = [
       name: "registry",
       title: MSG.CUSTOMER,
       autocomplete: true,
-      default:true
+      default:true,
+      emptyclear:true
     },
     {
         type: "select",
@@ -165,7 +166,8 @@ export const TASK_FILTER = [
         name: "sender",
         title: "Creador",
         autocomplete: true,
-        default:true
+        default:true,
+        emptyclear:true
     },
     {
         type: "select",
@@ -173,21 +175,24 @@ export const TASK_FILTER = [
         name: "task_holder",
         title: "Asignado",
         autocomplete: true,
-        default:true
+        default:true,
+        emptyclear:true
     },
     {
         type: "select",
         id: "status",
         name: "status",
         title: MSG.STATUS,
-        default:true
+        default:true,
+        emptyclear:true
     },
     {
       type: "select",
       name: "workgroup",
       id: "workgroup",
       title: MSG.WORKGROUP,
-      default:true
+      default:true,
+      emptyclear:true
     }
 ];
 

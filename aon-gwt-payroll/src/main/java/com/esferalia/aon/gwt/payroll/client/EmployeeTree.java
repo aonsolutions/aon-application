@@ -77,6 +77,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -2527,29 +2528,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		logEvent("richStylesInjected");
 		
-		if ( false )
-			employees = new Employees(true, true) {
-				@Override
-				public void onEnterprise(Enterprise enterprise) {
-					super.onEnterprise(enterprise);
-					String employeeSearch = 
-					getParameter(GWT.getModuleName(), EMPLOYEE_SEARCH_PARAM);
-					if ( AonStringUtils.isNotBlank(employeeSearch) )
-						employees.search(employeeSearch);
-				}
-			};
-		else 
-			employees = new Workers(true, true) {
+		employees = new Workers(true, true) {
 			@Override
 			public void onEnterprise(Enterprise enterprise) {
-				super.onEnterprise(enterprise);
 				String employeeSearch = 
 				getParameter(GWT.getModuleName(), EMPLOYEE_SEARCH_PARAM);
-				if ( AonStringUtils.isNotBlank(employeeSearch) )
-					employees.search(employeeSearch);
+				
+				super.onEnterprise(enterprise, AonStringUtils.isBlank(employeeSearch));
+				
+				if ( AonStringUtils.isNotBlank(employeeSearch) ) {
+					Scheduler.get().scheduleDeferred(() -> employees.search(employeeSearch) );
+				}
 			}
-			};
-		
+		};
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);

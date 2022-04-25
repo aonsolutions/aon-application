@@ -443,7 +443,10 @@ export class AonInvoicePanel extends AonElement {
     					yearSelect.title = MSG.YEAR;
 						yearSelect.options = JSON.stringify([
 							{name:'2022', value:2022},
-							{name:'2021', value:2021}
+							{name:'2021', value:2021},
+							{name:'2020', value:2020},
+							{name:'2019', value:2019},
+							{name:'2018', value:2018}
 						]);
 						div.appendChild(yearSelect);
 

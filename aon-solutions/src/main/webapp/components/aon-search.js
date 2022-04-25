@@ -146,8 +146,10 @@ export class AonSearch extends AonElement {
 		divOpts.style.maxHeight = "none";
 		divOpts.style.padding = "10px";
 		divOpts.style.display = "none";
-		if(!isMobile)
-			divOpts.style.width = "292px";
+		if(!isMobile){
+			input.style.width = "300px";
+			divOpts.style.width = "380px";
+		}
 
 		this.appendChild(divOpts);
 
@@ -186,23 +188,14 @@ export class AonSearch extends AonElement {
 		}
 	}
 
-	//   buildOptions(options) {
-		// this.clearElementById(this.OPTIONS);
-		// let divOpts = this.getElement(this.OPTIONS);
-		// divOpts.style.width = this.getElement(this.SPAN).clientWidth;
-		// divOpts.classList.add('is-visible');
-		// divOpts.innerHTML = 'HOLAA';
-		//   divOpts.appendChild(ul)
-	
-		// document.addEventListener('click', function (event) {
-		// 	let isClickInside = this.contains(event.target);
-		// 	if (!isClickInside) {
-		// 		if (divOpts.classList.contains('is-visible')) {
-		// 			divOpts.classList.remove('is-visible');
-		// 		}
-		// 	}
-		// });
-	//   }
+	getButtonAvanced(){
+		return this.getElement(this.ADVANCED_BUTTON);
+	}
+
+	removeButtonAvanced(){
+		if(this.getButtonAvanced())
+			this.getButtonAvanced().remove();
+	}
 	  /**
 	   * 
 	   * @param {array} inputs  examples [{

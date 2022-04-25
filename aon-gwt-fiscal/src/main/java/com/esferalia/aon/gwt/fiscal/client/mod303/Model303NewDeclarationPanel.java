@@ -42,6 +42,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	private AonDoubleBox prorate = new AonDoubleBox(7);
 	private CheckBox specialProrate = new CheckBox("Especial");
 	private PeriodListBox periodList = new PeriodListBox(true);
+	private CheckBox manualDeclaration = new CheckBox();
 	
 	private FlowPanel rootPanel;
 	private FlowPanel calculateProratePanel = new FlowPanel();	
@@ -89,15 +90,20 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		paintAdministration(model,callback,tab);
 		paintYear(model,callback,tab);
 		paintPeriod(model,callback,tab);
-		paintDefaultVatRegime(model,callback,tab);
 		paintComplementary(model,callback,tab);
 		paintReplacement(model,callback,tab);
 		paintWithoutActivity(model,callback,tab);
-		paintGenerateFromYearStart(model,tab);
-		paintDiffCalculationMandatory(model,tab);
-		paintProrrate(model,callback,tab);
 		
-		rootPanel.add(calculateProratePanel);		
+		paintManualDeclaration(model,callback,tab);
+		
+		if ( !model.isManualDeclaration() ) {
+			paintDefaultVatRegime(model,callback,tab);
+			paintGenerateFromYearStart(model,tab);
+			paintDiffCalculationMandatory(model,tab);
+			paintProrrate(model,callback,tab);
+			rootPanel.add(calculateProratePanel);		
+		}
+		
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
 	
@@ -208,6 +214,20 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			tab.addLabelWidgetRow("", replacement);
 		}
 		
+	}
+
+	private void paintManualDeclaration(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
+		manualDeclaration.setText(AON.MSG.manualDeclaration());
+		manualDeclaration.setValue(model.isManualDeclaration());
+		manualDeclaration.addClickHandler(event -> {
+			model.setManualDeclaration(manualDeclaration.getValue());
+			if ( model.isManualDeclaration()) {
+				model.setProratePercent(0);
+				model.setSpecialProrateValue(false);
+			}
+			initialize(model, callback );
+		});
+		tab.addLabelWidgetRow("", manualDeclaration);
 	}
 
 	private void paintWithoutActivity(Mod303 model, Model303Callback callback, AonDisplayTable tab) {
@@ -405,6 +425,8 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		periodList.setValue(model.getPeriod());
 		complementary.setValue(model.isComplementary());
 		replacement.setValue(model.isReplacement());
+		withoutActivity.setValue(model.isWithoutActivity());
+		manualDeclaration.setValue(model.isManualDeclaration());
 		generateFromYearStart.setValue(model.isGenerateFromYearStart());
 		previousProrate.setValue(model.ensureDetail(model.getPreviousProrateKey()).getAmount(),false,false);
 		specialProrate.setValue(model.isSpecialProrate());

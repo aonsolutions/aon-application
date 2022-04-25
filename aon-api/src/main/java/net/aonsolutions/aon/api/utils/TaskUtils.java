@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskWorkflowProperties;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -196,19 +198,21 @@ public class TaskUtils {
 	public static Filter workflowFilter(AonApiData api, TaskWorkflowProperties f) {
 		JSONObject params = api.getData();
 
-		Integer task = api.getData().optInt(IJsonNames.TASK);
+		Integer task = params.optInt(IJsonNames.TASK);
 		
 		Filter filter = f.getTaskProperty().eq(task);
 		
 		if(isCau(params)) {
-			String email = api.getData().optString(IJsonNames.EMAIL);
+			String email = params.optString(IJsonNames.EMAIL);
 			
-			List<Byte> types = new ArrayList<>(Arrays.asList(TaskWorkflowType.COMMENT.value(),TaskWorkflowType.OPEN.value(), TaskWorkflowType.CLOSE.value()));
+			List<Byte> types = new ArrayList<>(Arrays.asList(TaskWorkflowType.OPEN.value(), TaskWorkflowType.CLOSE.value()));
 
-			filter = filter.and(
-						f.getEmailProperty().eq(email).or(f.getNotificationUserProperty().isNotNull())
-					)
-					.and(f.getTypeProperty().in(types.toArray(Byte[]::new)));
+			filter = filter
+					.and(
+							f.getEmailProperty().eq(email)
+							.or(f.getNotificationUserProperty().isNotNull())
+							.or(f.getTypeProperty().in(types.toArray(Byte[]::new)))
+					);
 		}
 		
 		return filter;
@@ -258,13 +262,13 @@ public class TaskUtils {
 								? workflow.getComment() :"Solicitud Cerrada." ;
 						sendNotificationThAndWg(api, task, workflow, body);
 					}
-					if(task.getGtaskId()!=null && task.getGtaskId().indexOf("@")>=0 && 
-						workflow.getEmail()!=null && !workflow.getEmail().equals(task.getGtaskId())) {
+					
+					if(task.getGtaskId()!=null && task.getGtaskId().indexOf("@")>=0 && workflow.getEmail()!=null && !workflow.getEmail().equals(task.getGtaskId())) {
 						ApplicationParameter exists = AON.getApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), AppParamsRequest.APP_REQUESTS_EMAIL_RATING.name());
 						if(exists.getId()!=null && exists.getValue().equals("true")) {
 							Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
 							if(!auth.getEmail().isEmpty()) 
-								sendEmailChangeWorkflow(api, task, workflow, true);
+								sendEmailChangeWorkflow(api, task, workflow, Optional.of(auth)); // true
 						}
 					}
 					
@@ -283,7 +287,7 @@ public class TaskUtils {
 						Boolean.TRUE.equals(isNotification(api, task, AppParamsRequest.APP_REQUESTS_INT_OPENED))
 				) {
 					if(isCau(api.getData())) {
-						sendEmailChangeWorkflow(api, task, workflow, false);
+						sendEmailChangeWorkflow(api, task, workflow, Optional.empty()); // false
 					}
 					
 					String body = "Solicitud Abierta";
@@ -329,6 +333,7 @@ public class TaskUtils {
 					.setDate(task.getStartDate())
 					.setTitle(task.getTitle())
 					.setWorkflows(task.getWorkflows())
+					.setDomainName(task.getDomain().getName())
 					.setUrl(url)
 					.setLogo(logo);
 					
@@ -344,6 +349,7 @@ public class TaskUtils {
 						msg.setBcc(bcc);
 
 				    SES.sendEmail(msg);
+					System.out.println("SEND EMAIL HISTORIC: "+ to);
 				}
 			}
 		});
@@ -359,7 +365,7 @@ public class TaskUtils {
 		if(task.getSender()!=null && task.getSender().getUserId()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getSender().getUserId()));
 			if(usr!=null) auths.add(usr.getAuth());
-			System.out.println("SENDER SEND ID:"+ task.getSender().getId());
+			System.out.println("SENDER SEND NOTIFICATION ID:"+ task.getSender().getId());
 		} else if(task.getGtaskId()!=null && !workflow.getType().getName().equals(TaskWorkflowType.ASSIGN.getName())) {
 			Auth authSender = AON_SOLUTIONS.getAuth(task.getGtaskId());
 			if(
@@ -367,14 +373,14 @@ public class TaskUtils {
 					!Arrays.equals(user.getAuth().getAuth(), authSender.getAuth())
 			) {
 				auths.add(authSender);
-				System.out.println("SENDER SEND EMAIL:"+ authSender.getEmail());
+				System.out.println("SENDER SEND NOTIFICATION EMAIL:"+ authSender.getEmail());
 			}
 		}
 		//SEND TASKHOLDER ASSIGNED
 		if(task.getTaskHolder().getId()!=null && !task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId()) ) {
 			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
 			if(usr!=null) auths.add(usr.getAuth());
-			System.out.println("TASKHOLDER SEND ID:"+ task.getTaskHolder().getId());
+			System.out.println("TASKHOLDER SEND NOTIFICATION ID:"+ task.getTaskHolder().getId());
 		} // SEND WORKGROUP ASSIGNED
 		else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ 
 			AON.getTaskHolderWorkgroupStream(
@@ -387,7 +393,7 @@ public class TaskUtils {
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 				if(usr!=null) auths.add(usr.getAuth());
 			});
-			System.out.println("WORKGROUP SEND ID:"+ task.getWorkgroup().getId());
+			System.out.println("WORKGROUP SEND NOTIFICATION ID:"+ task.getWorkgroup().getId());
 		}
 		
 		if(!auths.isEmpty()) {
@@ -405,21 +411,30 @@ public class TaskUtils {
 		}
 	}
 	
-	private static void sendEmailChangeWorkflow(AonApiData api, Task task, TaskWorkflow workflow, Boolean showRating){
+	private static void sendEmailChangeWorkflow(AonApiData api, Task task, TaskWorkflow workflow, Optional<Auth> authOpt){
 		try {
-			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+			Domain domain = api.getDomain();
+			JSONObject params = api.getData();
+			Company company = AON.getCompany(domain.getName(),domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 			if(company!=null) {
 				String logo = getLogoCompany(company.getDomain().getName());
 				String companyName = company.getName();
 				
-				String email = workflow.getEmail();
+				String to = workflow.getEmail();
+				String taskHolderName = to;	
+				Auth auth = new Auth();
+
+				if(authOpt.isPresent()) {
+					auth = authOpt.get();
+				} else if(!params.isNull(IJsonNames.AUTH)) {
+					auth = AuthJSON.fromJSON(params.optJSONObject(IJsonNames.AUTH));
+				}
 				
-				Auth auth = AuthJSON.fromJSON(api.getData().optJSONObject(IJsonNames.AUTH));
-				
-				String to = auth.getEmail()!=null ? auth.getEmail() : email;
-				
-				String taskHolderName = auth.getName();
-				
+				if(auth.getEmail()!=null && auth.getName()!=null) {
+					to = auth.getEmail();
+					taskHolderName = auth.getName();
+				}
+
 				String title = task.getTitle()+" "+getNumberStr(task.getNumber());
 				String description = getTaskDescription(task);
 				
@@ -435,7 +450,7 @@ public class TaskUtils {
 				.setDescription(description)
 				.setCompanyName(companyName)
 				.setTaskHolderName(taskHolderName)
-				.setShowRating(showRating)
+				.setShowRating(authOpt.isPresent())
 				;
 				
 				String body = TaskMailTemplate.taskContent(tm);
@@ -446,10 +461,11 @@ public class TaskUtils {
 				.setBody(body)
 				.setTo(to);
 				
-				if(isCau(api.getData()))
+				if(isCau(params))
 					msg.setBcc(EMAIL_SUPPORT);
 
 			    SES.sendEmail(msg);
+			    System.out.println("SEND EMAIL CHANGE_WORKFLOW: "+ to);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -496,6 +512,7 @@ public class TaskUtils {
 	
 	public static void setCauInfo(AonApiData api, Task task) {
 		try {
+			boolean edit = task.getId() != null;
 			task.setDomain(api.getDomain());
 			JSONObject description = new JSONObject(task.getDescription());
 			JSONObject cauInfo = description.optJSONObject("cauInfo");
@@ -517,6 +534,11 @@ public class TaskUtils {
 			}
 			
 			task.setSender(new TaskHolder());
+			if(!edit) {
+				task.setTaskHolder(new TaskHolder());
+				task.setWorkgroup(new Workgroup());
+			}
+
 		} catch (Exception e) {e.printStackTrace();}
 	}
 	
@@ -530,6 +552,7 @@ public class TaskUtils {
 		Filter filter = f.getDescriptionProperty().like("%" + search + "%")
 				.or(f.getRegistryNameProperty().like("%" + search + "%"))
 				.or(f.getCommentsProperty().like("%" + search + "%")) 
+				.or(f.getGtaskIdProperty().like("%" + search + "%"))
 				.or(f.getTagNameProperty().like("%" + search + "%"))
 				.or(f.getCommentsWorkflowProperty().like("%" + search + "%"))
 				;

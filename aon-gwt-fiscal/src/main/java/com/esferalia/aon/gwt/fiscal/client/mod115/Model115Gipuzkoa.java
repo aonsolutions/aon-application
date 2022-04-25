@@ -5,7 +5,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115.Model115Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
-import com.esferalia.aon.gwt.fiscal.shared.mod115.Model115GipuzkoaScript;
+import com.esferalia.aon.gwt.fiscal.shared.mod115.Model115Gipuzkoa2022Script;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
@@ -22,7 +22,7 @@ public class Model115Gipuzkoa extends Model115Base {
 
 	@Override
 	protected void paintParticularyRow(FlexTable table, final Model115Callback callback, IModelScript<Mod115Key> script) {
-		if (script == Model115GipuzkoaScript.X00) {
+		if (script == Model115Gipuzkoa2022Script.X00) {
 			int row = table.getRowCount();
 			table.getFlexCellFormatter().setColSpan(row, 0, 8);
 			table.getFlexCellFormatter().setStyleName(row, 0,AON.CSS.aonBold() );

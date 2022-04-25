@@ -31,6 +31,10 @@ public class Mod303ExpressionsTest extends AbstractOccamTest {
 	public void testGipuzkoaExpression() {
 		test( Administration.GIPUZKOA);
 	}
+	@Test
+	public void testNavarraExpression() {
+		test( Administration.NAVARRA);
+	}
 	
 	private void test( Administration admon) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())

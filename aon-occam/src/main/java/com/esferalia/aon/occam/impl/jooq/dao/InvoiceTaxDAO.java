@@ -124,7 +124,7 @@ public class InvoiceTaxDAO {
 		.execute();
 	}
 	
-	public static class InvoiceTaxFiller implements Function<Record, InvoiceTax> {
+	public static class InvoiceTaxFiller extends Filler implements Function<Record, InvoiceTax> {
 
 		@Override
 		public InvoiceTax apply(Record r) {
@@ -133,14 +133,14 @@ public class InvoiceTaxDAO {
 		
 		public static InvoiceTax build(Record r) {
 			InvoiceTax tax = new InvoiceTax()
-				.setId(r.getValue(INVOICE_TAX.ID))
-				.setTaxType(TaxType.values()[r.getValue(INVOICE_TAX.TAX_TYPE)])
-				.setPercentage(r.getValue(INVOICE_TAX.PERCENTAGE))
-				.setBase(r.getValue(INVOICE_TAX.BASE))
-				.setSurcharge(r.getValue(INVOICE_TAX.SURCHARGE))
-				.setQuota(r.getValue(INVOICE_TAX.QUOTA))
-				.setSurchargeQuota(r.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-				.setWithholdingType(WithholdingType.safeValueOf(r.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));
+				.setId(getValue(r, INVOICE_TAX.ID))
+				.setTaxType(TaxType.safeValueOf(getValue(r, INVOICE_TAX.TAX_TYPE)))
+				.setPercentage(getDouble(r, INVOICE_TAX.PERCENTAGE))
+				.setBase(getDouble(r, INVOICE_TAX.BASE))
+				.setSurcharge(getDouble(r, INVOICE_TAX.SURCHARGE))
+				.setQuota(getDouble(r, INVOICE_TAX.QUOTA))
+				.setSurchargeQuota(getDouble(r, INVOICE_TAX.SURCHARGE_QUOTA))
+				.setWithholdingType(WithholdingType.safeValueOf(getValue(r, INVOICE_TAX.WITHHOLDING_TYPE)));
 
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));

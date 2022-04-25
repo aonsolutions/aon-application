@@ -9,7 +9,6 @@ import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
@@ -17,6 +16,8 @@ import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TARGET_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SUPPLIER_ALIAS;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -59,6 +60,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class OfferDAO {
 	
+	private OfferDAO() {
+	
+	}
+	
 	private static final OfferPropertiesDAO OFFER_PROPERTIES = new OfferPropertiesDAO();
 	private static class OfferPropertiesDAO implements OfferProperties {
 
@@ -70,13 +75,13 @@ public class OfferDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 		
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(OFFER.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(OFFER.DOMAIN);}
 		@Override public Property<Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
 		@Override public Property<Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(OFFER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.SCOPE);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(OFFER.SECURITY_LEVEL);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(OFFER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SCOPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SECURITY_LEVEL);}
 
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SELLER);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(OFFER.WORKPLACE);}
@@ -95,8 +100,6 @@ public class OfferDAO {
 		@Override public Property<String> getExternalReferenceProperty() {return new FilterDAO.PropertyDAO<>(OFFER.EXTERNAL_REFERENCE);}
 	}
 
-	private static final com.esferalia.aon.jooq.tables.Registry TARGET_ALIAS = REGISTRY.as("target");
-	private static final com.esferalia.aon.jooq.tables.Registry SUPPLIER_ALIAS = REGISTRY.as("supplier");
 	
 	public static int getNextNumber(AONContext ctx, String series ) {
 		Integer next = ctx.getDslContext()
@@ -149,8 +152,8 @@ public class OfferDAO {
 			.from(OFFER)
 			.join(OFFER_DETAIL).on(OFFER_DETAIL.OFFER.equal(OFFER.ID))
 			.join(TARGET).on(TARGET.REGISTRY.equal(OFFER.TARGET))
-			.join(REGISTRY).on(REGISTRY.ID.equal(TARGET.REGISTRY))
-			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(REGISTRY.ID).and(RADDRESS.TYPE.equal((byte) 0)))
+			.join(TARGET_ALIAS).on(TARGET_ALIAS.ID.equal(TARGET.REGISTRY))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(TARGET_ALIAS.ID).and(RADDRESS.TYPE.equal((byte) 0)))
 			.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
 			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(OFFER.SCOPE))
 			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(OFFER.PROJECT))
@@ -202,18 +205,18 @@ public class OfferDAO {
 		Byte signed = (byte)(offer.getSigned() != null && offer.getSigned() ? 1 : 0);
 		java.sql.Date issueDate = new java.sql.Date(offer.getIssueDate().getTime());
 		Integer id = ctx.getDslContext()
-				.insertInto(OFFER, OFFER.DOMAIN, OFFER.EXTERNAL_REFERENCE, OFFER.ISSUE_DATE, OFFER.NUMBER, 
-						OFFER.PROJECT, OFFER.SCOPE, OFFER.SELLER, OFFER.SERIES, OFFER.SIGNED, OFFER.STATUS,
-						OFFER.SUPPLIER, OFFER.TARGET, OFFER.TYPE, OFFER.VERSION, OFFER.WORKPLACE,
-						OFFER.BANK_ACCOUNT, OFFER.BIC, OFFER.COMMENTS, OFFER.REMARKS,
-						OFFER.CREATION_DATE, OFFER.CREATION_USER, OFFER.MODIFICATION_DATE, OFFER.MODIFICATION_USER)
-				.values(offer.getDomain(), offer.getExternalReference(), issueDate, offer.getNumber(), offer.getProject() != null ? offer.getProject().getId() : null, offer.getScope().getId(),
-						offer.getSeller() != null ? offer.getSeller().getId(): null, offer.getSeries(),signed , offer.getStatus().value(), 
-						offer.getSupplier() != null ? offer.getSupplier().getId(): null, offer.getTarget().getId(), offer.getType().value(), (Short) offer.getVersion().shortValue(), 
-						offer.getWorkPlace() != null ? offer.getWorkPlace().getId(): null, offer.getBankAccount(), offer.getBic(),
-						offer.getComments(), offer.getRemarks(),
-						modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
-				.returning(OFFER.ID).fetchOne().getId();
+			.insertInto(OFFER, OFFER.DOMAIN, OFFER.EXTERNAL_REFERENCE, OFFER.ISSUE_DATE, OFFER.NUMBER, 
+				OFFER.PROJECT, OFFER.SCOPE, OFFER.SELLER, OFFER.SERIES, OFFER.SIGNED, OFFER.STATUS,
+				OFFER.SUPPLIER, OFFER.TARGET, OFFER.TYPE, OFFER.VERSION, OFFER.WORKPLACE,
+				OFFER.BANK_ACCOUNT, OFFER.BIC, OFFER.COMMENTS, OFFER.REMARKS,
+				OFFER.CREATION_DATE, OFFER.CREATION_USER, OFFER.MODIFICATION_DATE, OFFER.MODIFICATION_USER)
+			.values(offer.getDomain(), offer.getExternalReference(), issueDate, offer.getNumber(), offer.getProject() != null ? offer.getProject().getId() : null, offer.getScope().getId(),
+				offer.getSeller() != null ? offer.getSeller().getId(): null, offer.getSeries(),signed , offer.getStatus().value(), 
+				offer.getSupplier() != null ? offer.getSupplier().getId(): null, offer.getTarget().getId(), offer.getType().value(), offer.getVersion().shortValue(), 
+				offer.getWorkPlace() != null ? offer.getWorkPlace().getId(): null, offer.getBankAccount(), offer.getBic(),
+				offer.getComments(), offer.getRemarks(),
+				modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
+			.returning(OFFER.ID).fetchOne().getId();
 		offer.setId(id);
 		return offer;
 	}

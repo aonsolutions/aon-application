@@ -1165,6 +1165,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
+		this.tabLayOutPanel.selectTab(0, false);
 		
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
@@ -1177,6 +1178,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
+		this.tabLayOutPanel.selectTab(0, false);
 		
 		loadWindow(s -> {
 			employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);

@@ -266,10 +266,9 @@ export class AonNewMobileMenu extends AonElement {
     dialog.setTitle("Acceso Rápido");
     dialog.open();
 
-
     const isInvoice = this.getDur().isInvoice();
     const isMessenger = this.getDur().isMessenger();
-    const isDocumental = this.getDur().isDocumental();
+    const isDocumentalManager = this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager();
 
     let buttons = [
       {
@@ -277,7 +276,7 @@ export class AonNewMobileMenu extends AonElement {
         icon: 'add',
         permission: isInvoice,
         backgroundColor: "#4472C4",
-        fn :  (ev) => {
+        fn :  () => {
           if(isInvoice){
             dialog.close();
             let aonComponent = new AonInvoicePanel();
@@ -304,7 +303,7 @@ export class AonNewMobileMenu extends AonElement {
         icon: 'photo_camera',
         permission: isInvoice,
         backgroundColor: "#4472C4",
-        fn :  (ev) => {
+        fn :  () => {
           if(isInvoice){
             dialog.close();
             this.openCamera("invoice");
@@ -316,7 +315,7 @@ export class AonNewMobileMenu extends AonElement {
         icon: 'add',
         permission: isMessenger,
         backgroundColor: "#1fd8b9",
-        fn :  (ev) => {
+        fn :  () => {
           if(isMessenger){
             dialog.close();
             let aonComponent = new AonMessenger();	
@@ -328,10 +327,10 @@ export class AonNewMobileMenu extends AonElement {
       {
         icon: 'upload',
         title:"Subir documento",
-        permission: isDocumental,
+        permission: isDocumentalManager,
         backgroundColor: "#6986BB",
-        fn :  (ev) => {
-          if(isDocumental){
+        fn :  () => {
+          if(isDocumentalManager){
             dialog.close();
             this.addDocumentFile();
           }
@@ -340,10 +339,10 @@ export class AonNewMobileMenu extends AonElement {
       {
         title:"Foto documento",
         icon: 'photo_camera',
-        permission: isDocumental,
+        permission: isDocumentalManager,
         backgroundColor: "#6986BB",
-        fn :  (ev) => {
-          if(isDocumental){
+        fn :  () => {
+          if(isDocumentalManager){
             dialog.close();
             this.openCamera("documental");
           }
@@ -409,7 +408,6 @@ export class AonNewMobileMenu extends AonElement {
     d.addAcceptAction(() => closeSession());
     d.open();
   }
-
 
 	async openCamera(type) {
     this.SELECTED = type;

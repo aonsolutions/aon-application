@@ -182,9 +182,8 @@ export const fillTaskHolder = async (aonMessengerChat) => {
                 aonSelect.value = taskHolder.id;
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-                if(detail){
+                if(detail)
                     task.setTaskHolder(detail);
-                } 
             });
         } catch (error) {}
         aonSelect.loading(false);
