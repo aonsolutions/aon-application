@@ -202,7 +202,9 @@ public class Contrata {
 				if(cto.getCodMunWork()!=null) 
 					form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork());//disabled
 		
- 				((HtmlSelect)form.querySelector("select[name=procedeDeOfertaEmpleo]")).setSelectedAttribute(cto.getOffer().getValue(), true);
+				DomNode ofertaEmpleo = form.querySelector("select[name=procedeDeOfertaEmpleo]");
+				if(ofertaEmpleo!=null) 
+	 				((HtmlSelect)ofertaEmpleo).setSelectedAttribute(cto.getOffer().getValue(), true);
 			}
 			
 			{//OTHERS DATA CONTRACT (OPTIONAL)
@@ -246,7 +248,7 @@ public class Contrata {
 					((HtmlSelect)form.querySelector("select[name=codobjetointerinidad]")).setSelectedAttribute(interinidad.get(), true);
 				}
 			}
-			
+
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 			
 			//---------------------PREVISIBLE---------------------
