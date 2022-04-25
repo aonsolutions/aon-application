@@ -155,6 +155,9 @@ public class Task  implements Serializable{
 	}
 
 	public TaskHolder getTaskHolder() {
+		if(taskHolder == null) {
+			taskHolder = new TaskHolder();
+		}
 		return taskHolder;
 	}
 

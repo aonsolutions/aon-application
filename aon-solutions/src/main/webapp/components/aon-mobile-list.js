@@ -76,18 +76,19 @@ export class AonMobileList extends AonElement {
     let span = this.createElement(TAG.SPAN);
     span.className = "aonLiSpan";
     let spanHtml = null;
+    let icon = null;
     if (data.aonIcon) {
-      let aonIcon = new AonIcon();
-      aonIcon.className = "aonAvatar";
-      aonIcon.icon      = data.aonIcon
-      aonIcon.size      = "24";
-      spanHtml = aonIcon.outerHTML;
+      icon = new AonIcon();
+      icon.className = "aonAvatar";
+      icon.icon      = data.aonIcon
+      icon.size      = "24";
+      spanHtml = icon.outerHTML;
     } else if (data.icon) {
-      let ic = this.createElement("i");
-      ic.classList.add(data.icon_class||"material-icons","aonAvatar");
-      ic.textContent = data.icon;
-      if(data.icon_color) ic.style.color = data.icon_color;
-      spanHtml = ic.outerHTML;
+      icon = this.createElement("i");
+      icon.classList.add(data.icon_class||"material-icons","aonAvatar");
+      icon.textContent = data.icon;
+      if(data.icon_color) icon.style.color = data.icon_color;
+      spanHtml = icon.outerHTML;
     } else if (data.iconHtmlCustom) {
       spanHtml = `${data.iconHtmlCustom}`;
     }
@@ -100,13 +101,33 @@ export class AonMobileList extends AonElement {
 
     span.appendChild(div);
 
-    if(data.subtitle){
-      let span3 = this.createElement(TAG.SPAN);
+    if(data.subtitleTwo){
+      li.style.paddingBottom = "37px";
+      if(icon){
+        icon.style.marginTop = "16px";
+      }
+      const span3 = this.createElement(TAG.SPAN);
+      span3.className = "aonLiSpanSubtitle";
+      span3.style.display = "flex";
+      span3.style.flexDirection = "column";
+      span.appendChild(span3);
+
+      let subtitle = this.createElement(TAG.SPAN);
+      subtitle.innerHTML = data.subtitle;
+      span3.appendChild(subtitle);
+
+      let subtitleTwo = this.createElement(TAG.SPAN);
+      subtitleTwo.innerHTML = data.subtitleTwo;
+      span3.appendChild(subtitleTwo);
+
+    } else if(data.subtitle){
+      const span3 = this.createElement(TAG.SPAN);
       span3.className = "aonLiSpanSubtitle";
       span3.innerHTML = data.subtitle;
       span.appendChild(span3);
     }
 
+ 
 
     li.appendChild(span);
 
@@ -126,6 +147,8 @@ export class AonMobileList extends AonElement {
     }
 
     this.getElement(this.UL).appendChild(li);
+    
+    return li;
   }
 
   removeAllLi() {

@@ -262,9 +262,19 @@ const checkFilesAndSend = async (textArea)=>{
  */
 export const checkFilesAddEventClick = (parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
+        const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+        const task = aonMessengerChat.task;
         parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`).forEach(element=>{
-            const url = element.src || element.href;
+            let url = element.src || element.href;      
             if(url){
+                if(task.id && aonMessengerChat.isCau()){
+                    url = SIG_URL+url.substr(url.indexOf("/ms"));
+                    if(element.src)
+                        element.src = url;
+                    else if(element.href)
+                        element.href = url;
+                }
+
                 element.addEventListener(EVENT.CLICK, (ev)=> {
                     ev.preventDefault();
                     openFileUrl(url);
