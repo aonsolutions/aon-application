@@ -657,6 +657,10 @@ button:disabled, button[disabled]{
   display: none;
 }
 
+/* TOOLBAR POSITION FIXED CLASSIC */
+.aonSubContent:not(aon-module *){
+  height: calc(100vh - 174px);
+}
 
 .aonScroll {
   overflow: auto;
@@ -1361,4 +1365,3 @@ button:disabled, button[disabled]{
   padding-top: 8px;
   margin-left: 2px;
 }
-

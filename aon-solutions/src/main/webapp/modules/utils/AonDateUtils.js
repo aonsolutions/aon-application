@@ -92,14 +92,20 @@ export const AonDateUtils = {
         const monthText = MONTHS[date.getMonth()];
         return `${dayText}, ${date.getDate()} de ${monthText} de ${date.getFullYear()}`;
     },
-    getDayMonth: function(date) { // dd-MONTH
-        const d = new Date(date);
-        const day = addZero(d.getDate(), 2);
-        const month = MONTHS[d.getMonth()];
+    getDayMonth: function(d) { // dd-MONTH
+        const date = new Date(d);
+        const day = addZero(date.getDate(), 2);
+        const month = MONTHS[date.getMonth()];
         return day + ' ' + month;
     },
-    dayStr: function(date) { // dd-MONTH
-      return this.getDayMonth(date);
+    getDayMonthOrFull: function(d) { // dd-MONTH OR OTHER YEAR dd-mm-yyyy
+        const date = new Date(d);
+        const now = new Date();
+        
+        if( date.getFullYear() === now.getFullYear() )
+            return this.lastThreeDayStr(date) || this.getDayMonth(date);
+
+        return this.formatDate(date);
     },
     getMonthYear: function(date) { // MONTH. yyyy
         const d = new Date(date)

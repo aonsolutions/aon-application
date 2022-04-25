@@ -180,57 +180,57 @@ export class AonMessengerChat extends AonElement {
   }
 
   async save() {
+    let success = false;
     this.applicationEl.startLoading();
     this.autoComplete();
-    
-    if(this.task.source === TASK_SOURCE.REQUEST)
-      await this.saveSourceRequest();
-    else 
-      await this.saveSourceQuery();
 
-    this.getTaskWorkflow();
-
-    this.applicationParentEl.updateCount();
-    this.applicationEl.stopLoading();    
-  }
-
-  async saveSourceRequest(){
     try {
-        const json = this.getFormJson();
-        if(json){
-          this.task.setDescriptionJson(json);
-          const data = await saveTask(this.task);
-          this.task.editTask(data);
-          if(this.getData().id){
-            this.setData(data);
-          } else {
-            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-          }
-        }
+      if(this.task.source === TASK_SOURCE.REQUEST)
+        await this.saveSourceRequest();
+      else 
+        await this.saveSourceQuery();
+
+      success = true;
+
+      this.getTaskWorkflow();
     } catch (error) {
       console.log(error);
       this.showError(error);
     }
+    
+    this.applicationParentEl.updateCount();
+    this.applicationEl.stopLoading();  
+    
+    return success;
+  }
+
+  async saveSourceRequest(){
+      const json = this.getFormJson();
+      if(json){
+        this.task.setDescriptionJson(json);
+        const data = await saveTask(this.task);
+        this.task.editTask(data);
+        if(this.getData().id){
+          this.setData(data);
+        } else {
+          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
+        }
+      }
   }
 
   async saveSourceQuery(){
-    try {
-      if(!this.task.id)
-        this.setCauData(this.task);
-        
-      const data = await saveTask(this.task);
-      this.task.editTask(data);
+    if(!this.task.id)
+      this.setCauData(this.task);
+      
+    const data = await saveTask(this.task);
+    this.task.editTask(data);
 
-      checkFilesAddEventDescription(this.task);//check files description
+    checkFilesAddEventDescription(this.task);//check files description
 
-      if(this.getData().id){
-        this.setData(data);
-      } else {
-        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-      }
-    } catch (error) {
-      console.log(error);
-      this.showError(error);
+    if(this.getData().id){
+      this.setData(data);
+    } else {
+      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     }
   }
 
