@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
@@ -15,7 +16,6 @@ import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,18 +38,26 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
-import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO.PayMethodFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -91,6 +99,10 @@ public class DeliveryDAO {
 			.from(DELIVERY)
 			.join(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
 			.where(DELIVERY_PROPERTIES.getConditions(filter));
+	}
+
+	public static Delivery get(AONContext ctx, Integer deliveryId){
+		return get(ctx, f -> f.getIdProperty().eq(deliveryId));
 	}
 	
 	public static Delivery get(AONContext ctx, DeliveryFilter filter){
@@ -168,11 +180,11 @@ public class DeliveryDAO {
 						DELIVERY.MODIFICATION_USER, DELIVERY.MODIFICATION_DATE)
 				.values(delivery.getDomain(), delivery.getProject().getId(),
 						delivery.getSeries(), delivery.getNumber(),
-						delivery.getCustomer().getId(), delivery.getAddress(),
-						delivery.getIssueTime(), delivery.getPayMethod(),
-						delivery.getSecurityLevel(), delivery.getStatus().ordinal(),
+						delivery.getCustomer().getId(), delivery.getAddress().getId(),
+						delivery.getDate(), delivery.getPayMethod().getId(),
+						delivery.getSecurityLevel().value(), delivery.getStatus().ordinal(),
 						delivery.getComments(), delivery.getRemarks(),
-						delivery.getWorkplace(), delivery.getScope(),
+						delivery.getWorkplace().getId(), delivery.getScope().getId(),
 						delivery.getNumberOfPymnts(),
 						delivery.getDaysToFirstPymnt(),
 						delivery.getDaysBetweenPymnt(),
@@ -206,15 +218,15 @@ public class DeliveryDAO {
 			.set(DELIVERY.SERIES, delivery.getSeries())
 			.set(DELIVERY.NUMBER, delivery.getNumber())
 			.set(DELIVERY.CUSTOMER, delivery.getCustomer().getId())
-			.set(DELIVERY.ADDRESS, delivery.getAddress())
-			.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
-			.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
-			.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
+			.set(DELIVERY.ADDRESS, delivery.getAddress().getId())
+			.set(DELIVERY.ISSUE_TIME, AonDateUtils.toTimestamp(delivery.getDate()))
+			.set(DELIVERY.PAY_METHOD, delivery.getPayMethod().getId())
+			.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel().value())
 			.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())
 			.set(DELIVERY.COMMENTS, delivery.getComments())
 			.set(DELIVERY.REMARKS, delivery.getRemarks())
-			.set(DELIVERY.WORKPLACE, delivery.getWorkplace())
-			.set(DELIVERY.SCOPE, delivery.getScope())
+			.set(DELIVERY.WORKPLACE, delivery.getWorkplace().getId())
+			.set(DELIVERY.SCOPE, delivery.getScope().getId())
 			.set(DELIVERY.NUMBER_OF_PYMNTS, delivery.getNumberOfPymnts())
 			.set(DELIVERY.DAYS_TO_FIRST_PYMNT, delivery.getDaysToFirstPymnt())
 			.set(DELIVERY.DAYS_BETWEEN_PYMNTS, delivery.getDaysBetweenPymnt())
@@ -368,6 +380,7 @@ public class DeliveryDAO {
 				,REGISTRY.DOCUMENT_COUNTRY
 				,REGISTRY.NAME
 				,REGISTRY.ID
+				,RADDRESS.ID
 				,RADDRESS.STREET_TYPE
 				,RADDRESS.ADDRESS
 				,RADDRESS.NUMBER
@@ -443,24 +456,24 @@ public class DeliveryDAO {
 					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, REGISTRY.ID)
 						? CustomerFiller.build(r)
 						: new Customer().setId(getValue(r, DELIVERY.CUSTOMER)))
-					.setAddress(getValue(r, DELIVERY.ADDRESS))
-					 
-					.setAddressStreetType( StreetType.safeValueOf(getValue(r, RADDRESS.STREET_TYPE)))
-					.setAddressName(getValue(r, RADDRESS.ADDRESS))
-					.setAddressNumber(getValue(r, RADDRESS.NUMBER))
-					.setAddressTown(getValue(r, RADDRESS.CITY))
-					.setAddressZIP(getValue(r, RADDRESS.ZIP))
-					.setAddressGeozoneCode(getValue(r, GEOZONE.CODE))
-					.setAddressGeozone(getValue(r, GEOZONE.NAME))
+					.setAddress(checkField(r, RADDRESS.ID)
+						? RegistryAddressFiller.build(r, GEOZONE, GEOZONE)
+						: new RegistryAddress().setId(getValue(r, DELIVERY.ADDRESS)))
 					
-					.setIssueTime(getValue(r, DELIVERY.ISSUE_TIME))
-					.setPayMethod(getValue(r, DELIVERY.PAY_METHOD))
-					.setSecurityLevel(getByte(r, DELIVERY.SECURITY_LEVEL))
+					.setDate(getValue(r, DELIVERY.ISSUE_TIME))
+					.setPayMethod(checkField(r, PAY_METHOD.ID)
+							? PayMethodFiller.build(r)
+							: new PayMethod().setId(getValue(r, DELIVERY.PAY_METHOD)))
+					.setSecurityLevel(SecurityLevel.safeValueOf(getByte(r, DELIVERY.SECURITY_LEVEL)))
 					.setStatus(DeliveryStatus.safeValueOf(getValue(r, DELIVERY.STATUS)))
 					.setComments(getValue(r, DELIVERY.COMMENTS))
 					.setRemarks(getValue(r, DELIVERY.REMARKS))
-					.setWorkplace(getValue(r, DELIVERY.WORKPLACE))
-					.setScope(getValue(r, DELIVERY.SCOPE))
+					.setWorkplace(checkField(r, WORKPLACE.ID)
+							? WorkplaceFiller.build(r)
+							: new Workplace().setId(getValue(r, DELIVERY.WORKPLACE)))
+					.setScope(checkField(r, SCOPE.ID)
+							? ScopeFiller.buildScope(r)
+							: new Scope().setId(getValue(r, DELIVERY.SCOPE)))
 					.setNumberOfPymnts(getShort(r, DELIVERY.NUMBER_OF_PYMNTS))
 					.setDaysToFirstPymnt(getShort(r, DELIVERY.DAYS_TO_FIRST_PYMNT))
 					.setDaysBetweenPymnt(getShort(r, DELIVERY.DAYS_BETWEEN_PYMNTS))

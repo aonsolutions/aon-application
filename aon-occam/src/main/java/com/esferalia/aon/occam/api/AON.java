@@ -2420,16 +2420,18 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static Stream<Delivery> getDeliveryStream(Domain domain, User user, DeliveryFilter filter) {
+		return getDeliveryStream(domain.getName(),  domain.getId(), user.getLogin(), filter);
+	}
 	
-	public static Stream<Delivery> getDeliveryStream(String domainName,
-			Integer domainId, String login, DeliveryFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Stream<Delivery> getDeliveryStream(Domain domain, String login, DeliveryFilter filter) {
+		return getDeliveryStream(domain.getName(),  domain.getId(),  login, filter);
+	}
+
+	public static Stream<Delivery> getDeliveryStream(String domainName, Integer domainId, String login, DeliveryFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getManagement().getDeliveryStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	

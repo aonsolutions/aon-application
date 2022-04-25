@@ -133,7 +133,7 @@ public class FeeDAO {
 					? SellerFiller.build(r)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
-					? WorkplaceFiller.buildWorkplace(r)
+					? WorkplaceFiller.build(r)
 					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
 		}
 	}

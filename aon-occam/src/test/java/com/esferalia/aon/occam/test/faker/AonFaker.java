@@ -616,13 +616,13 @@ public class AonFaker {
 		return new Delivery()
 				.setDomain(ctx.getDomainId())
 				.setProject(new Project())
-				.setIssueTime(new Date())
+				.setDate(new Date())
 				.setSeries(series)
 				.setNumber(number)
 				.setCustomer(customer)
-				.setWorkplace(workplace.getId())
+				.setWorkplace(workplace)
 				.setStatus(DeliveryStatus.PENDING)
-				.setScope(customer.getScope());		
+				.setScope(new Scope().setId(customer.getScope()));		
 	}
 	
 	public static DeliveryDetail getDeliveryDetail(AONContext ctx, Delivery delivery) {

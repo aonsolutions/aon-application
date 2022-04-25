@@ -70,9 +70,9 @@ import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
@@ -512,41 +512,7 @@ public class WarehouseDAO {
 	 * @deprecated  Replaced by DeliveryDAO.save(AONContext ctx, Delivery delivery)
 	 */
 	public static int insertDelivery(AONContext ctx, Delivery delivery) {
-		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
-		return ctx
-				.getDslContext()
-				.insertInto(DELIVERY, DELIVERY.DOMAIN, DELIVERY.PROJECT,
-						DELIVERY.SERIES, DELIVERY.NUMBER, DELIVERY.CUSTOMER,
-						DELIVERY.ADDRESS, DELIVERY.ISSUE_TIME,
-						DELIVERY.PAY_METHOD, DELIVERY.SECURITY_LEVEL,
-						DELIVERY.STATUS, DELIVERY.COMMENTS, DELIVERY.REMARKS,
-						DELIVERY.WORKPLACE, DELIVERY.SCOPE,
-						DELIVERY.NUMBER_OF_PYMNTS,
-						DELIVERY.DAYS_TO_FIRST_PYMNT,
-						DELIVERY.DAYS_BETWEEN_PYMNTS, DELIVERY.PYMNT_DAYS,
-						DELIVERY.BANK_ACCOUNT, DELIVERY.BANK_ALIAS,
-						DELIVERY.BIC, DELIVERY.CREATION_USER,
-						DELIVERY.CREATION_DATE, DELIVERY.MODIFICATION_USER,
-						DELIVERY.MODIFICATION_DATE)
-				.values(delivery.getDomain(), delivery.getProject().getId(),
-						delivery.getSeries(), delivery.getNumber(),
-						delivery.getCustomer().getId(), delivery.getAddress(),
-						delivery.getIssueTime(), delivery.getPayMethod(),
-						delivery.getSecurityLevel(), delivery.getStatus().ordinal(),
-						delivery.getComments(), delivery.getRemarks(),
-						delivery.getWorkplace(), delivery.getScope(),
-						delivery.getNumberOfPymnts(),
-						delivery.getDaysToFirstPymnt(),
-						delivery.getDaysBetweenPymnt(),
-						delivery.getPymntDays(), delivery.getBankAccount(),
-						delivery.getBankAlias(), delivery.getBic(),
-						ctx.getUser(), creationDate, ctx.getUser(),
-						modificationDate).returning(DELIVERY.ID).fetchOne()
-				.getId();
+		return DeliveryDAO.insertDelivery(ctx, delivery).getId();
 	}
 	
 	public static void insertDeliveryDetail(AONContext ctx,
@@ -609,42 +575,7 @@ public class WarehouseDAO {
 	 * @deprecated  Replaced by DeliveryDAO.save(AONContext ctx, Delivery delivery)
 	 */
 	public static void updateDelivery(AONContext ctx, Delivery delivery) {
-		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
-		
-		ctx.getDslContext().update(DELIVERY)
-		.set(DELIVERY.DOMAIN, delivery.getDomain())
-		.set(DELIVERY.PROJECT, delivery.getProject().getId())
-		.set(DELIVERY.SERIES, delivery.getSeries())
-		.set(DELIVERY.NUMBER, delivery.getNumber())
-		.set(DELIVERY.CUSTOMER, delivery.getCustomer().getId())
-		.set(DELIVERY.ADDRESS, delivery.getAddress())
-		.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
-		.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
-		.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
-		.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())
-		.set(DELIVERY.COMMENTS, delivery.getComments())
-		.set(DELIVERY.REMARKS, delivery.getRemarks())
-		.set(DELIVERY.WORKPLACE, delivery.getWorkplace())
-		.set(DELIVERY.SCOPE, delivery.getScope())
-		.set(DELIVERY.NUMBER_OF_PYMNTS, delivery.getNumberOfPymnts())
-		.set(DELIVERY.DAYS_TO_FIRST_PYMNT, delivery.getDaysToFirstPymnt())
-		.set(DELIVERY.DAYS_BETWEEN_PYMNTS, delivery.getDaysBetweenPymnt())
-		.set(DELIVERY.PYMNT_DAYS, delivery.getPymntDays())
-		.set(DELIVERY.BANK_ACCOUNT, delivery.getBankAccount())
-		.set(DELIVERY.BANK_ALIAS, delivery.getBankAlias())
-		.set(DELIVERY.BIC, delivery.getBic())
-		.set(DELIVERY.CARRIER, delivery.getCarrier())
-		.set(DELIVERY.CARRIER_PACKING, delivery.getCarrierPacking())
-		.set(DELIVERY.CREATION_USER, ctx.getUser())
-		.set(DELIVERY.CREATION_DATE, creationDate)
-		.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
-		.set(DELIVERY.MODIFICATION_DATE, modificationDate)
-		.where(DELIVERY.ID.eq(delivery.getId()))
-		.execute();
+		DeliveryDAO.update(ctx, delivery);
 	}
 	
 	/**

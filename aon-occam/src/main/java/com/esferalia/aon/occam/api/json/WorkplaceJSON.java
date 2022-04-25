@@ -1,0 +1,65 @@
+package com.esferalia.aon.occam.api.json;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Workplace;
+
+public class WorkplaceJSON {
+	
+	private WorkplaceJSON() {
+	
+	}
+	
+	public static List<Workplace> fromJSON(JSONArray json) {
+		LinkedList<Workplace> list = new LinkedList<>();
+		for(Integer i = 0; i < json.length(); i++) {
+			list.add(fromJSON(json.getJSONObject(i)));
+		}
+ 		return list;
+	}
+	
+	public static Workplace fromJSON(JSONObject json) {
+		return new Workplace()
+			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
+			.setEnterprise(JsonUtils.getInteger(json, IJsonNames.ENTERPRISE))
+			.setCustomer(JsonUtils.getInteger(json, IJsonNames.CUSTOMER))
+			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+			.setAddress(JsonUtils.getInteger(json, IJsonNames.ADDRESS))
+			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
+			.setEconomicagreement(JsonUtils.getByte(json, IJsonNames.ECONOMIC_AGREEMENT))
+			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
+			;
+	}
+	
+	public static JSONArray toJSON(List<Workplace> list) {
+		return toJSON(list.stream());
+	}
+	
+	public static JSONArray toJSON(Stream<Workplace> stream) {
+		JSONArray array = new JSONArray();
+		stream.forEach(object -> array.put(toJSON(object)));
+		return array;
+	}
+	
+	
+	public static JSONObject toJSON(Workplace object) {
+		return new JSONObject()
+				.put(IJsonNames.ID, object.getId())
+				.put(IJsonNames.DOMAIN, object.getDomain())
+				.put(IJsonNames.ENTERPRISE, object.getEnterprise())
+				.put(IJsonNames.CUSTOMER, object.getCustomer())
+				.put(IJsonNames.DESCRIPTION, object.getDescription())
+				.put(IJsonNames.ADDRESS, object.getAddress())
+				.put(IJsonNames.SCOPE, object.getScope())
+				.put(IJsonNames.ECONOMIC_AGREEMENT, object.getEconomicagreement())
+				.put(IJsonNames.ACTIVE, object.isActive())
+				;
+	}
+}

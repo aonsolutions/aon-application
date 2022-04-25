@@ -73,6 +73,8 @@ public final class IJsonNames {
 	public static final String BY_MONTH = "byMonth";
 	// ---------------------------------------------------------------------------------------------	[C] 
 	public static final String CALLBACK = "callback";
+	public static final String CARRIER = "carrier";
+	public static final String CARRIER_PACKING = "carrierPacking";
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CITY = "city";
@@ -107,6 +109,7 @@ public final class IJsonNames {
 	public static final String CREATION_DATE = "creation_date";
 	public static final String CREATION_USER = "creation_user";
 	public static final String CREDIT = "credit";
+	public static final String CUSTOMER = "customer";
 	public static final String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
 	
 	// ---------------------------------------------------------------------------------------------	[D] 
@@ -144,16 +147,20 @@ public final class IJsonNames {
 	public static final String DOMAIN_TYPE = "domainType";
 	public static final String DOMAINS = "domains";
 	public static final String DRIVE_ID = "driveId";
+	public static final String DRIVER = "driver";
+	public static final String DRIVER_DOCUMENT = "driverDocument";
 	public static final String DRS = "drs";
 	public static final String DUA_LINKED = "duaLinked";
 	public static final String DUE_DATE = "due_date";
 	// ---------------------------------------------------------------------------------------------	[E] 
 	public static final String E_INVOICE = "eInvoice";
+	public static final String ECONOMIC_AGREEMENT = "economicAgreement";
 	public static final String EJER = "ejer";
 	public static final String EMAIL = "email";
 	public static final String EMPTY = "";
 	public static final String ENABLE_HEREDITY = "enableHeredity";
 	public static final String END_DATE = "end_date";
+	public static final String ENTERPRISE = "enterprise";
 	public static final String ENTRY_DATE = "entryDate";
 	public static final String ENTRY_ENABLED = "entryEnabled";
 	public static final String ENTRY_ID = "entryId";
@@ -278,6 +285,7 @@ public final class IJsonNames {
 	public static final String NUMBER = "number";
 	public static final String NUMBER_OF_PYMNTS = "numberOfPymnts";
 	public static final String NUMBER_OF_USERS = "numberOfUsers";
+	public static final String NUMBER_PLATE = "numberPlate";
 	// ---------------------------------------------------------------------------------------------	[O] 
 	public static final String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	public static final String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
@@ -410,6 +418,15 @@ public final class IJsonNames {
 	public static final String SETTLED = "settled";
 	public static final String SHARED = "shared";
 	public static final String SHEET = "sheet";
+	public static final String SHIPPING_ALTERNATIVE_ADDRESS = "shippingAlternativeAddress";
+	public static final String SHIPPING_ALTERNATIVE_ADDRESS2 = "shippingAlternativeAddress2";
+	public static final String SHIPPING_ALTERNATIVE_ZIP = "shippingAlternativeZip";
+	public static final String SHIPPING_ALTERNATIVE_CITY = "shippingAlternativeCity";
+	public static final String SHIPPING_ALTERNATIVE_PHONE = "shippingAlternativePhone";
+	public static final String SHIPPING_ALTERNATIVE_RECIPIENT = "shippingAlternativeRecipient";
+	public static final String SHIPPING_CONTACT = "shippingContact";
+	public static final String SHIPPING_PERIOD = "shippingPeriod";
+	public static final String SHIPPING_STATUS = "shippingStatus";
 	public static final String SHOW_COVER = "showCover";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SIGNATURE = "signature";
@@ -420,6 +437,7 @@ public final class IJsonNames {
 	public static final String STATEMENT = "statement";
 	public static final String STATEMENTS = "statements";
 	public static final String STATUS = "status";
+	public static final String STATUS_MODIFICATION_DATE = "statusModificationDate";
 	public static final String STOCK_UNIT_TAG = "stockUnitTag";
 	public static final String STREET_TYPE = "streetType";
 	public static final String SUBJECT = "subject";
@@ -451,6 +469,9 @@ public final class IJsonNames {
 	public static final String TO_NUMBER = "toNumber";
 	public static final String TOTAL = "total";
 	public static final String TOTAL_BALANCE = "totalBalance";
+	public static final String TOTAL_PACKAGES = "totalPackages";
+	public static final String TOTAL_WEIGHT = "totalWeight";
+	public static final String TRACKING_NUMBER = "trackingNumber";	
 	public static final String TRANSACTION = "transaction";
 	public static final String TYPE = "type";
 	// ---------------------------------------------------------------------------------------------	[U] 
