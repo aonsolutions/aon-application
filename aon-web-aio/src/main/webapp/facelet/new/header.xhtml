@@ -1383,7 +1383,12 @@
 		object-fit: cover;
 				
 	}
-	
+
+	#helpTooltip.focus{
+		display: block !important;
+		opacity: 1 !important;
+	}
+
 	
 	#helpTooltip.loading {
 		background:  #f1f1f1;
@@ -1402,6 +1407,27 @@
 	  animation-iteration-count: infinite;
 	  filter: blur(5px);
 	} 
+	
+	#helpTooltip #tooltip-key {
+		background: #fafafa;
+		padding: 0.1rem 1rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
+	#helpTooltip.focus #tooltip-key {
+		background: #f1f1f1;
+	}
+	#helpTooltip #tooltip-key #pin{
+		display: none;
+		font-size: 1rem;
+		color: #ccc;
+	}
+	
+	#helpTooltip.focus #tooltip-key #pin {
+		display: inline;	
+	}
 	
 	@keyframes gradient-animation {
 	  from {
@@ -1440,18 +1466,11 @@
 			
 			function showHelpTooltip(event,url){
 				
-					hideHelpTooltip(true);
-				
 					helpTooltipTimeout = setTimeout(function(){
 						
 						const tooltip = document.getElementById("helpTooltip");
 						const image = document.querySelector("#helpTooltip img");
 						const optionRect = event.target.getBoundingClientRect();;
-						
-						
-						console.log("\n testing the coordinates");
-						console.log("Mouse Y: " + event.clientY);
-						console.log("Option Y: " + optionRect.top);
 						
 						if(Math.abs(event.clientY - optionRect.top) > 18)
 						{
@@ -1459,9 +1478,7 @@
 						}
 						
 						// Set loading animation
-						tooltip.classList.add("loading");
-						tooltip.onclick = () => window.open(url, '_blank').focus();
-						
+						tooltip.classList.add("loading");	
 						image.style.transition = "none";
 						image.style.opacity = 0;
 						
@@ -1478,18 +1495,10 @@
 						
 						// Show tooltip						
 						tooltip.style.display = "block";
-						tooltip.style.top = ( optionRect.top + 25) + "px";
+						tooltip.style.top = ( optionRect.top + 20) + "px";
 						tooltip.style.left = event.clientX  + "px";
 						tooltip.style.transform = "translateX(-50%)";
 						setTimeout(() => tooltip.style.opacity = "1", 250);
-						
-						// Set interactive tooltip
-						tooltip.onmouseover = () => tooltip.classList.add("focus");
-						tooltip.onmouseout = () => {
-							tooltip.classList.remove("focus");
-							document.getElementById("helpTooltip").style.opacity = "0";
-							setTimeout(() => document.getElementById("helpTooltip").style.display = "none", 260);
-						}
 						
 						// when image is loaded stop loading animation
 						const loadingCheckInterval = setInterval(() => {
@@ -1497,7 +1506,8 @@
 								setTimeout(() => {
 									image.style.transition = "opacity .25s";
 									image.style.opacity = "1";
-									tooltip.classList.add("loading");
+									image.onclick = () => window.open(url, '_blank').focus();
+									tooltip.classList.remove("loading");
 									clearInterval(loadingCheckInterval);
 								}, 350);
 								
@@ -1520,6 +1530,33 @@
 				tooltip.style.opacity = "0";
 				setTimeout(() => tooltip.style.display = "none", 260);
 			}
+			
+			
+			document.documentElement.addEventListener("keydown",(e) => {
+				const key = e.keyCode || e.witch;
+				if(key == 113){
+					
+					const tooltip = document.getElementById("helpTooltip");
+					const image = document.querySelector("#helpTooltip img");
+					const message = document.getElementById("tooltip-key-message");
+					tooltip.onclick = () => tooltip.classList.remove("focus");
+					
+					if(!image.src){
+						return;
+					}
+					
+					const isSearch = !document.querySelector(".search-results-popup div") == false;
+					
+					if(isSearch &amp;&amp; tooltip.className.indexOf("focus") == -1){
+						tooltip.classList.add("focus");
+						message.innerHTML = "Pulse F2 para desenfocar la ventana";
+					} else {
+						tooltip.classList.remove("focus");
+						message.innerHTML = "Pulse F2 para enfocar la ventana";
+					}
+				}
+			})
+		
 	</script>
 		
 	<a4j:region>
@@ -1643,6 +1680,7 @@
 								<aon:column 
 									styleClass="aon-editDataTable-textColumn aon-width-auto" 
 									onmouseover="javascript:showHelpTooltip(event,'#{to.getURI()}')"
+									onmouseout="javascript:hideHelpTooltip(event)"
 									onclick="javascript:hideHelpTooltip(true)"
 									>
 									
@@ -1872,5 +1910,9 @@
 	</aon:if>
 	<aon:div id="helpTooltip"> 
 		<img/>
+		<div id="tooltip-key">
+			<span id="tooltip-key-message">Pulse F2 para enfocar la ventana</span>
+			<span class="material-icons" id="pin">push_pin</span>
+		</div>
 	</aon:div>
 </ui:composition>
