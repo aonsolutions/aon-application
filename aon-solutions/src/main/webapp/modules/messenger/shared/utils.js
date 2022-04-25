@@ -657,7 +657,7 @@ export const downChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat){
         setTimeout(() =>{
-            chat.scrollTo(0, chat.scrollHeight);  //GO DOWN
+            chat.lastChild.scrollIntoView();  //GO DOWN
             addLine(chat);
         }, 100) 
     }
@@ -667,9 +667,8 @@ export const downChat = () => {
  */
 export const upChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
-    console.log(chat);
     if(chat)
-        setTimeout(() => chat.scrollTo(0, 0), 100)      //GO UP   
+        setTimeout(() => chat.firstChild.scrollIntoView(), 100)      //GO UP   
 }
 
 /**
@@ -835,7 +834,7 @@ export const setTaskTags = () => {
     task.getTags()
     .filter(t=>t.tag_type && t.tag_type.toUpperCase() == TAG_TYPE.TASK_LABEL)
     .forEach(tag=>{
-        if(task.id && task.isExternal() || aonMessengerChat.isCau()){
+        if(task.id && task.isExternal() || aonMessengerChat.isCau() || aonMessengerChat.isMobile()){
             createTagHtml(tag, div);
         } else {
             appendTaskTag(tag, div, (id)=>  task.removeTag(id));

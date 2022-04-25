@@ -23,6 +23,7 @@ public class Employee {
 	private Date fra;
 	private Date fea;
 	private Date frb;
+	private Date frv;
 	private Date feb;
 	private String contract;
 	private String coef; // EXAMPLE "530"
@@ -71,6 +72,7 @@ public class Employee {
 		if(profesCat != null)		visitor.visitProfesCat(profesCat);
 		if(reducingCoefic != null)	visitor.visitReducingcoefic(reducingCoefic);
 		if(collective != null)	visitor.visitCollective(collective);
+		if(frv != null)	visitor.visitFrv(frv);
 	}
 	
 	public String getIpf() {return ipf;}
@@ -81,6 +83,7 @@ public class Employee {
 	public Optional<String> getName() {return Optional.ofNullable(name);}
 	public Optional<String> getGc() {return Optional.ofNullable(gc);}
 	public Optional<Date> getFrb() {return Optional.ofNullable(frb);}
+	public Optional<Date> getFrv() {return Optional.ofNullable(frv);} // FECHA DE VA
 	public Optional<String>  getCtaCti() {return Optional.ofNullable(ctaCti);}
 	public Optional<String> getContract(){return Optional.ofNullable(contract);}	
 	public Optional<Date> getBirthDate() {return Optional.ofNullable(birthDate);}
@@ -145,6 +148,8 @@ public class Employee {
 			@Override
 			public void visitrFeb(Date feb) {stringBuffer.append(String.format(" feb : \"%s\" ", feb));	}
 			@Override
+			public void visitFrv(Date frv) {stringBuffer.append(String.format(" Date holidays : \"%s\" ", frv));}
+			@Override
 			public void visitContract(String contract) {stringBuffer.append(String.format(" contract : \"%s\" ", contract));}
 			@Override
 			public void visitCoef(String coef) {stringBuffer.append(String.format(" coef : \"%s\" ", coef));}
@@ -188,10 +193,11 @@ public class Employee {
 		private String gcDesc;
 		private Boolean agricultPromo;
 		private Boolean workTimeReduct;
-		private Date fra;
-		private Date fea;
-		private Date frb;
-		private Date feb;
+		private Date fra;// FECHA DE ALTA
+		private Date fea;// FECHA ESTIMADA DE ALTA
+		private Date frb;// FECHA DE BAJA
+		private Date feb;// FECHA ESTIMADA DE ALTA
+		private Date frv; // FECHA DE VACACIONES
 		private String contract;
 		private String coef;
 		private Double factor;
@@ -319,6 +325,11 @@ public class Employee {
 			this.frb = frb;
 			return this;
 		}
+		
+		public EmployeeBuilder setFrv(Date frv) {
+			this.frv = frv;
+			return this;
+		}
 
 
 		public EmployeeBuilder setFeb(Date feb) {
@@ -421,6 +432,7 @@ public class Employee {
 			employee.fea = this.fea;
 			employee.frb = this.frb;
 			employee.feb = this.feb;
+			employee.frv = this.frv;
 			employee.contract = this.contract;
 			employee.coef = this.coef;
 			employee.factor = this.factor;
@@ -441,6 +453,7 @@ public class Employee {
 	
 	public static interface Visitor{
 		void visitrFra(Date fra);
+		void visitFrv(Date frv);
 		void visitrFea(Date fea);
 		void visitrFrb(Date frb);
 		void visitrFeb(Date feb);
@@ -481,6 +494,8 @@ public class Employee {
 		public void visitrFrb(Date frb) {}
 		@Override
 		public void visitrFeb(Date feb) {}
+		@Override
+		public void visitFrv(Date frv) {}
 		@Override
 		public void visitNSS(String nss) {}
 		@Override

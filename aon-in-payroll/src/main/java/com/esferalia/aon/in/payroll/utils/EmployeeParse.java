@@ -120,6 +120,12 @@ public class EmployeeParse {
 			@Override public void visitSituation(String situaction) {}
 			@Override public void visitReducingcoefic(String reducingCoefic) {}
 			@Override public void visitProfesCat(String profesCat) {}
+
+			@Override
+			public void visitFrv(Date frv) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
 		return employee;

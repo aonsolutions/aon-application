@@ -106,7 +106,13 @@ export class AonMessengerList extends AonElement {
 
   async loadMore(reload) {
 
+    const application = this.getApplication();
+
+    // if(reload) application.startLoader();
+    
     const datos = await this.getData();
+
+    // if(reload) application.stopLoader();
 
     if(reload){
       setTasks(datos);
@@ -203,7 +209,7 @@ export class AonMessengerList extends AonElement {
   }
 
   getTitleHtmlDesktop(res){
-    const title = res.title;
+    const title = res.title || "Sin asunto";
     let div = this.createElement(TAG.DIV);
     div.style.top = "-15px";
     div.style.position = "absolute";
@@ -273,30 +279,31 @@ export class AonMessengerList extends AonElement {
     const div = this.createElement(TAG.DIV);
     div.style.display = "flex";
 
-    const sender = this.createElement(TAG.DIV);
-    sender.style.overflow = "hidden";
-    sender.style.whiteSpace = "hidden";
-    sender.style.textOverflow = "ellipsis";
-    sender.style.fontWeight = "500";
-    sender.innerText = this.getSender(res, document, documentTh);
-    div.appendChild(sender);
+    const senderDiv = this.createElement(TAG.DIV);
+    senderDiv.style.overflow = "hidden";
+    senderDiv.style.whiteSpace = "hidden";
+    senderDiv.style.textOverflow = "ellipsis";
+    senderDiv.style.fontWeight = "500";
+    senderDiv.innerText = this.getSender(res, document, documentTh);
+    div.appendChild(senderDiv);
 
-    const date = this.createElement(TAG.DIV);
-    date.style.color = "grey";
-    date.style.marginLeft = "auto";
-    date.style.fontSize = "14px";
-    date.style.fontWeight = "500";
-    date.innerText = AonDateUtils.getDayMonth(res.date);
-    div.appendChild(date);
+    const dateDiv = this.createElement(TAG.DIV);
+    dateDiv.style.color = "grey";
+    dateDiv.style.marginLeft = "auto";
+    dateDiv.style.fontSize = "14px";
+    dateDiv.style.fontWeight = "500";
+    div.appendChild(dateDiv);
+
+    let date = AonDateUtils.getDayMonthOrFull(res.date);
+    dateDiv.innerText = date;
 
     return div.outerHTML;
   }
 
-
   getSubtitleMobileOne(res){
     const div = this.createElement(TAG.DIV);
     div.style.color = "black";
-    div.innerText = res.title;
+    div.innerText = res.title || "Sin asunto";
     return div.outerHTML;
   }
 
@@ -313,14 +320,21 @@ export class AonMessengerList extends AonElement {
     divTwo.style.display = "flex";
     divTwo.style.gap = "2px";
     divTwo.style.marginLeft = "2px";
-    divTwo.style.flexWrap = "wrap";
+    divTwo.style.overflow = "hidden";
+    // divTwo.style.textOverflow = "ellipsis";
+    // divTwo.style.flexWrap = "nowrap";
+
+    divTwo.style.height =  "19px";
+    divTwo.style.flexWrap =  "wrap";
     div.appendChild(divTwo);
 
-    // this.getTagsLabel(res.tags).forEach(tag => {
-    //   const divTag = createTagHtml(tag, divTwo);
-    //   divTag.style.margin = "0";
-    //   divTag.style.textAlign = "center";
-    // });
+    this.getTagsLabel(res.tags).forEach(tag => {
+      const divTag = createTagHtml(tag, divTwo);
+      divTag.style.margin = "0";
+      divTag.style.textAlign = "center";
+      divTag.style.padding = "0px 5px";
+      divTwo.style.height =  "19px";
+    });
 
 
    return div.outerHTML;
@@ -359,6 +373,10 @@ export class AonMessengerList extends AonElement {
         sender = `${res.registry.name} ${sender}`;
       else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
         sender = `${res.sender.name} ${sender}`;
+      else if(res.workgroup && res.workgroup.description) // GRUPO ASIGNADO
+        sender = res.workgroup.description;
+      else 
+        sender = "SIN GRUPO ASIGNADO";
 
       return sender;
   }
