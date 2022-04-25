@@ -31,6 +31,8 @@ public class FullViewer extends Frame {
 		}
 	}
 	
+	private String dataURI;
+	
 	public FullViewer() {
 		this( null, ViewerDefaultScale.AUTO);
 	}
@@ -72,8 +74,13 @@ public class FullViewer extends Frame {
 		return AonStringUtils.contains(url,"ms/download_attachment")
 			|| AonStringUtils.contains(url,"ms/download_rawdoc");
 	}
+	
+	public String getDataURI() {
+		return dataURI;
+	}
 
 	public void open(String dataURI) {
+		this.dataURI = dataURI;
 		LOGGER.info("Attemp to native OPEN");
 		nativeOpen( this.getElement().cast() ,dataURI);
 	}

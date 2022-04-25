@@ -28,14 +28,16 @@ public class OfferDetail implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-	public OfferDetail setDomain(int domain) {
+	public OfferDetail setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
 	public Offer getOffer() {
+		if(offer == null) 
+			offer = new Offer();
 		return offer;
 	}
 	public OfferDetail setOffer(Offer offer) {
@@ -43,6 +45,8 @@ public class OfferDetail implements Serializable {
 		return this;
 	}
 	public Item getItem() {
+		if(item == null) 
+			item = new Item();
 		return item;
 	}
 	public OfferDetail setItem(Item item) {

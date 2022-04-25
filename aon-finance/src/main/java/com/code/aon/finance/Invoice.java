@@ -299,6 +299,10 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return getType() == InvoiceType.SALES;
 	}
 	@Transient
+	public boolean isNotSales() {
+		return getType() != InvoiceType.SALES;
+	}
+	@Transient
 	public boolean isPurchase() {
 		return getType() == InvoiceType.PURCHASE;
 	}

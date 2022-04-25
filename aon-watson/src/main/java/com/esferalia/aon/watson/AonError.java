@@ -130,8 +130,10 @@ public enum AonError implements Serializable{
 	,FISCAL_SUITABLE_DECLARATION("No hay declaraci\u00F3n disponible para: {0} {1} {2}")
 	,FISCAL_NO_REPLACED_DECLARATION("No existe una declaraci\u00F3n a la que sustituir/complementar.")
 	,FISCAL_DECLARATION_ALREADY_REPLACED("Ya existe una declaraci\u00F3n sustitutiva.")
-	,FISCAL_DECLARATION_ALREADY_EXISTS("Ya existe una declaraci\u00F3n en el periodo.")
+	,FISCAL_DECLARATION_ALREADY_EXISTS("Ya existe una declaraci\u00F3n en el periodo \"Modelo {0}\"")
 	,FISCAL_WRONG_STATUS_CHANGE("La declaraci\u00F3n no puede cambiar de estado \"{0}\" a estado \"{1}\"")
+	,FISCAL_WRONG_STATUS_DELETION("No se puede borrar una declaraci\u00F3n en estado \"{0}\"")
+	,FISCAL_WRONG_REPLACED_DELETION("No se puede borrar la declaraci\u00F3n. Existen declaraciones que complementano sustituyen a la que se pretende borrar.")
 
 	// --------------------------------------------- PRODUCT
 	,DUPLICATE_PRODUCT_CODE("Ya existe un Producto con el mismo C\u00F3digo {0}.")

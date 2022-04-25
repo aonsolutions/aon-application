@@ -37,6 +37,7 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SupplierDAO {
 	
+	public static final com.esferalia.aon.jooq.tables.Registry SUPPLIER_ALIAS = REGISTRY.as("registry_supplier");
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 	public static class SupplierPropertiesDAO extends RegistryPropertiesDAO implements SupplierProperties {
 		
@@ -133,6 +134,12 @@ public class SupplierDAO {
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
 			.findFirst()
 			.orElse(null);
+	}
+	
+	public static Supplier get(AONContext ctx, SupplierFilter filter){
+		return getStream(ctx, filter)
+			.findFirst()
+			.orElse(new Supplier());
 	}
 	
 	public static Supplier save(AONContext ctx, Supplier supplier) {

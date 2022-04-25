@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -60,20 +61,33 @@ public class JooqContractPDF {
 	
 	// ---------------------------------------------------- Contract PDF (Save)
 	
-	public static void saveDraftContract(String domainName, Integer contractId, byte[] pdfBytes) {
+	public static void saveDraftContract(String domainName, Integer domainId, Integer contractId, byte[] pdfBytes) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
-			dslContext.insertInto(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DOMAIN, domainId)
-				.set(CONTRACT_ATTACH.CONTRACT, contractId)
-				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
-				.set(CONTRACT_ATTACH.DESCRIPTION, "BORRADOR CONTRATO")
-				.set(CONTRACT_ATTACH.DATA, pdfBytes)
-				.set(CONTRACT_ATTACH.TYPE, (byte)0)
-				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
-				.execute();
+			// Id borrador contrato
+			List<Integer> attachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+					.where(CONTRACT_ATTACH.DOMAIN.eq(domainId))
+					.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+					.and(CONTRACT_ATTACH.TYPE.eq((byte)0))
+					.orderBy(CONTRACT_ATTACH.ID.desc()).fetch(CONTRACT_ATTACH.ID);
+			
+			if(attachIds.isEmpty())
+				dslContext.insertInto(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DOMAIN, domainId)
+					.set(CONTRACT_ATTACH.CONTRACT, contractId)
+					.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+					.set(CONTRACT_ATTACH.DESCRIPTION, "BORRADOR CONTRATO")
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.TYPE, (byte)0)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.execute();
+			else
+				dslContext.update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.where(CONTRACT_ATTACH.ID.eq(attachIds.get(0)))
+					.execute();
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -89,7 +103,7 @@ public class JooqContractPDF {
 				Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
 				Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
 				
-				Map<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
+				TreeMap<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
 				
 				FormativeLevel formativeLevel = new FormativeLevel();
 				contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
@@ -139,9 +153,9 @@ public class JooqContractPDF {
 	
 	// ---------------------------------------------------- Contract PDF (fill - clauses)
 	
-	private static Map<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
-		Map<String, String> contractClausesMap = new HashMap<>();
-		contractClauses.forEach(contractClause -> contractClausesMap.put(contractClause.getName(), contractClause.getDescription()));
+	private static TreeMap<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
+		TreeMap<String, String> contractClausesMap = new TreeMap<>();
+		contractClauses.forEach(contractClause -> contractClausesMap.put(contractClause.getLineNumber() + " - " + contractClause.getName(), contractClause.getDescription()));
 		return contractClausesMap;
 	}
 	

@@ -400,6 +400,7 @@ export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
 export const REOPEN = "Reabrir"; // TODO
 export const REGIME = "Régimen"; // TODO
 export const RGPD_URL = 'RGPD Url';
+export const REQUEST_CLOSE_CONFIRM =  "Estás seguro de cerrar la solicitud?"; //TODO
 
 // ----- S
 

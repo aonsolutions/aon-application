@@ -19,17 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AgreementClean;
-import net.aonsolutions.db.up2date.payroll.CertificatesClean;
-import net.aonsolutions.db.up2date.tgss.Artist2022Fix;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod303Result;
-import net.aonsolutions.db.up2date.tgss.Artist2022Update;
-import net.aonsolutions.db.up2date.tgss.Bases2022UpdateII;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2022Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2022Update;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2022Update;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2022Update;
-
+import net.aonsolutions.db.up2date.finance.UpdateFinanceRname;
+import net.aonsolutions.db.up2date.task.TaskComment2TaskWorkfow;
+import net.aonsolutions.db.up2date.task.TaskEvent2TaskWorkfow;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateII;
+import net.aonsolutions.db.up2date.tgss.BaseCgpMin2022Fix;
+import net.aonsolutions.db.up2date.tgss.BaseCgpMin2022FixIII;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2022Fix;
 
 public class Up2Date {
 
@@ -193,8 +189,8 @@ public class Up2Date {
     		//CertificatesUpdate.CERTIFICATESUPDATE,
     		//DataRequestUpdate.DATA_REQUEST_UPDATE,
     		//Bases2021UpdateIII.BASES2021UPDATEIII,
-//    		HomeBases2019Close.HOMEBASES2019CLOSE,
-//    		HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
+    		//HomeBases2019Close.HOMEBASES2019CLOSE,
+    		//HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
 //    		SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
 //    		TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
 //    		AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
@@ -229,7 +225,17 @@ public class Up2Date {
 //    		FellowsPercentages2022Update.FELLOWSPERCENTAGES2022UPDATE,
 //    		Artist2022Update.ARTIST2022UPDATE
 //    		RefreshMod303Result.REFRESH_MOD303_RESULT,
-    		Artist2022Fix.ARTIST2022FIX
+//    		Artist2022Fix.ARTIST2022FIX
+//    		Bases2022Fix.BASES2022FIX,
+//    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
+//    		UdapaSalesFix.UDAPA_SALES_FIX
+//   		  SalaryHours2022Fix.SALARYHOURS2022FIX,
+//    		BaseCgpMin2022Fix.BASECGPMIN2022FIX,
+//    		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII
+//    		TaskEvent2TaskWorkfow.TASK_COMMENT_2_TASK_WORKFLOW,
+//    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
+			    UpdateFinanceRname.UPDATE_FINANCE_RNAME,
+    		  BaseCgpMin2022FixIII.BASECGPMIN2022FIX
     };
     
 

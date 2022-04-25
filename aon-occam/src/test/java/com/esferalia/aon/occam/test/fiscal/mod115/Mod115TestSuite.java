@@ -1,30 +1,41 @@
 package com.esferalia.aon.occam.test.fiscal.mod115;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import com.esferalia.aon.occam.api.model.fiscal.Mod115;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @RunWith(Suite.class)
 @SuiteClasses({
 	// MVEL expresions syntax check en las declaraciones
 	Mod115ExpressionsTest.class,
+	
 	// Modelos mensuale
+	Mod115ReopenTest.class,
 	Mod115DeleteTest.class,
+	Mod115InsertInvoicesTest.class,
 	Mod115InsertMonthlyTest.class,
+	Mod115FinishTest.class,
+	
+	Mod115InsertInvoicesTest.class,
 	Mod115InsertMonthlyComplementaryTest.class,
+	Mod115FinishTest.class,
+	
+	Mod115InsertInvoicesTest.class,
 	Mod115InsertMonthlyReplacementTest.class,
 	Mod115RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
+	Mod115ReopenTest.class,
 	Mod115DeleteTest.class,
+	Mod115InsertInvoicesTest.class,
 	Mod115InsertQuarterlyTest.class,
+	Mod115FinishTest.class,
+	
+	Mod115InsertInvoicesTest.class,
 	Mod115InsertQuarterlyComplementaryTest.class,
+	Mod115FinishTest.class,
+
+	Mod115InsertInvoicesTest.class,
 	Mod115InsertQuarterlyReplacementTest.class,
 	Mod115RoundedAmountsTest.class,
 	
@@ -48,14 +59,4 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 })
 public class Mod115TestSuite {
 
-	private static NumberFormat FMT = DecimalFormat.getInstance();
-	
-	public static void printModel( Mod115 mod ) {
-		System.out.println( "\t" 
-			+ AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)
-			+ " Modelo "
-			+ AonStringUtils.rightPad(mod.getModelFullName(), 20)
-			+ AonStringUtils.leftPad(FMT.format(mod.getDeclarationResult()),15)
-			);
-	}
 }

@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -44,6 +42,7 @@ import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -52,7 +51,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -170,7 +168,7 @@ public abstract class Employee extends ResizeComposite {
 	DateBoxEx seniorityDate;
 	
 	@UiField
-	ListBox agreement;
+	SuggestBox agreement;
 
 	@UiField
 	ListBox level;
@@ -264,6 +262,8 @@ public abstract class Employee extends ResizeComposite {
 	private Municipalities municipalities;
 	
 	private AonToolbarSmallButton clearEmployee;
+	
+	private List<Agreement> agreements;
 
 	// ------------------------------------------------- Constructor
 
@@ -524,19 +524,20 @@ public abstract class Employee extends ResizeComposite {
 	}
 
 	@UiHandler("agreement")
-	void onContractAgreementChangeValue(ChangeEvent event) {
-		String agreementValue = String.valueOf(this.agreement.getSelectedValue());
-		
-		if(AonStringUtils.equalsIgnoreCase(agreementValue, "-1")) {
-			this.level.clear();
-			this.category.setValue("");
-			onContractAgreementChange(null, null);
-		} else {
-			Integer agreementId = Integer.valueOf(this.agreement.getSelectedValue().split("/")[0]); 
-			String ssNumber = this.agreement.getSelectedValue().split("/")[1];
-			onContractAgreementChange(agreementId, ssNumber);
-		}
+	void onContractAgreementSelection(SelectionEvent<Suggestion> event) {		
+		String agreementDescription = agreement.getValue();
+		for(Agreement agreementIt : this.agreements)
+			if(AonStringUtils.equalsIgnoreCase(agreementIt.getDescription(), agreementDescription))
+				onContractAgreementChange(agreementIt.getId(), agreementIt.getSSNumber());		
 	}
+
+	@UiHandler("agreement")
+	void onEnterpriseAgreementValueChange(ValueChangeEvent<String> event) {
+		String agreementDescription = agreement.getValue();
+		if(AonStringUtils.isBlank(agreementDescription))
+			onContractAgreementChange(null, null);
+	}
+	
 
 	@UiHandler("level")
 	void onContractAgreementLevelChangeValue(ChangeEvent event) {
@@ -817,7 +818,7 @@ public abstract class Employee extends ResizeComposite {
 		this.startDate.setValue(null);
 		this.endDate.setValue(null);
 		this.seniorityDate.setValue(null);
-		this.agreement.clear();
+		this.agreement.setValue(null);
 		this.level.clear();
 		this.category.setValue("");
 		this.quoteGroup.clear();
@@ -1008,9 +1009,26 @@ public abstract class Employee extends ResizeComposite {
 
 	public void initAgreements(List<Agreement> activeAgreements) {
 		// CONVENIO
-		agreement.addItem("-", "-1");
-		for (Agreement agreementInfo : activeAgreements)
-			agreement.addItem(agreementInfo.getDescription(), String.valueOf(agreementInfo.getId()) + "/" + agreementInfo.getSSNumber());	
+		this.agreements = activeAgreements;
+
+		List<String> agreementDescriptions = new ArrayList<>();
+
+		for (Agreement agreementIt : this.agreements)
+			agreementDescriptions.add(agreementIt.getDescription());
+
+		MultiWordSuggestOracle orclAgreements = (MultiWordSuggestOracle) agreement.getSuggestOracle();
+		orclAgreements.addAll(agreementDescriptions);
+		orclAgreements.setDefaultSuggestionsFromText(agreementDescriptions);
+		agreement.setAutoSelectEnabled(true);
+		agreement.getElement().setPropertyString("placeholder", "Escriba el nombre del convenio... (Ctrl + espacio para ver sugerencias)");
+
+		agreement.getValueBox().addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				agreement.setText("");
+				agreement.showSuggestionList();
+			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+				agreement.hideSuggestionList();
+		});
 	}
 
 	public void initPayMethods(Map<String, String> payMethods) {
@@ -1503,8 +1521,8 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	private boolean isAgreementAndLevelSelected() {
-		String agreementValue = agreement.getSelectedValue();
-		if(AonStringUtils.equalsIgnoreCase(agreementValue, "-1")) {
+		String agreementValue = agreement.getValue();
+		if(AonStringUtils.isBlank(agreementValue)) {
 			return true;
 		} else {
 			String agreementLevelValue = level.getSelectedValue();

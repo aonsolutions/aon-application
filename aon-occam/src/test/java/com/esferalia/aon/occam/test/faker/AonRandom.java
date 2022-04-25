@@ -25,6 +25,8 @@ import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
@@ -286,12 +289,21 @@ public class AonRandom {
 	}
 	
 	public static Administration getRandomAdministration() {
-		return getRandomAdministration(0);
+		return getRandomAdministration(-1);
 	}
 	public static Administration getRandomAdministration(int nullThreshold) {
     	return gt(nullThreshold)
     			?Administration.values()[faker.random().nextInt(Administration.values().length)]
     			:null;
+	}
+
+	public static WithholdingType getRandomWithholdingType() {
+		return getRandomWithholdingType(-1);
+	}
+	public static WithholdingType getRandomWithholdingType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?WithholdingType.values()[faker.random().nextInt(WithholdingType.values().length)]
+			:null;
 	}
 
 	public static BalanceType getRandomBalanceType() {
@@ -447,33 +459,54 @@ public class AonRandom {
 			:null;
 	}
 	
-	public static void generateRandomRetentionInvoices(AONContext ctx, Occam occam, AonConfiguration configuration) {
-		Date today = new Date();
-		Stream.of(AonRandom.getInt(0, 50))
-			.map(i -> AonRandom.getYearDay(today))
-			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesProfRetention(params)))
-			;
-		Stream.of(AonRandom.getInt(0, 50))
-			.map(i -> AonRandom.getYearDay(today))
-			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesRentingRetention(params)))
-			;
-		Stream.of(AonRandom.getInt(0, 50))
-			.map(i -> AonRandom.getYearDay(today))
-			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesCapitalRetention(params)))
-			;
-		Stream.of(AonRandom.getInt(0, 50))
-			.map(i -> AonRandom.getYearDay(today))
-			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesTransportRetention(params)))
-			;
-		Stream.of(AonRandom.getInt(0, 50))
-			.map(i -> AonRandom.getYearDay(today))
-			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-			.forEach(params -> AON.insertInvoice(occam, InvoiceFaker.getPurchaseFarmerRetention(params)))
-			;
+	public static Invoice generateRandomRetentionInvoices(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
+		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
+			@Override
+			public Invoice visitProfessional(Invoice i) {
+				return Stream.of( AonRandom.getYearDay(new Date()) )
+					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesProfRetention(params)))
+					.findFirst()
+					.orElse(null);
+			}
+
+			@Override
+			public Invoice visitRenting(Invoice t) {
+				return Stream.of( AonRandom.getYearDay(new Date()) )
+					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesRentingRetention(params)))
+					.findFirst()
+					.orElse(null);
+			}
+
+			@Override
+			public Invoice visitMovableCapital(Invoice t) {
+				return Stream.of( AonRandom.getYearDay(new Date()) )
+					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesCapitalRetention(params)))
+					.findFirst()
+					.orElse(null);
+			}
+
+			@Override
+			public Invoice visitFarmer(Invoice t) {
+				return Stream.of( AonRandom.getYearDay(new Date()) )
+					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getPurchaseFarmerRetention(params)))
+					.findFirst()
+					.orElse(null);
+			}
+
+			@Override
+			public Invoice visitTransportOperator(Invoice t) {
+				return Stream.of( AonRandom.getYearDay(new Date()) )
+					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
+					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesTransportRetention(params)))
+					.findFirst()
+					.orElse(null);
+			}
+		},null);
+		return inv;
 	}
 	
 }

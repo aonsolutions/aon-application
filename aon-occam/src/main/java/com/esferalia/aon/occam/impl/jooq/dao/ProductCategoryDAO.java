@@ -104,7 +104,7 @@ public class ProductCategoryDAO {
 	}
 	
 	
-	protected static class ProductCategoryFiller implements Function<Record, ProductCategory> {
+	protected static class ProductCategoryFiller extends Filler implements Function<Record, ProductCategory> {
 		@Override
 		public ProductCategory apply(Record r) {
 			return build(r);			
@@ -112,12 +112,12 @@ public class ProductCategoryDAO {
 		
 		public static ProductCategory build(Record r) {
 			return new ProductCategory()
-					.setId(r.getValue(PCATEGORY.ID))
-					.setDomain(r.getValue(PCATEGORY.DOMAIN))
-					.setName(r.getValue(PCATEGORY.NAME))
-					.setDetail(r.getValue(PCATEGORY.DETAIL))
-					.setDetail2(r.getValue(PCATEGORY.DETAIL2))
-					.setDetail3(r.getValue(PCATEGORY.DETAIL3));
+					.setId(getValue(r, PCATEGORY.ID))
+					.setDomain(getValue(r, PCATEGORY.DOMAIN))
+					.setName(getValue(r, PCATEGORY.NAME))
+					.setDetail(getValue(r, PCATEGORY.DETAIL))
+					.setDetail2(getValue(r, PCATEGORY.DETAIL2))
+					.setDetail3(getValue(r, PCATEGORY.DETAIL3));
 		}
 		
 	}

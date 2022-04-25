@@ -32,12 +32,12 @@
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.udapa</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.vaadin</compileSourcesArtifact>  
-					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.templates</compileSourcesArtifact>
+					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.template</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.sii</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.seres</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.communication</compileSourcesArtifact>
   					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.commercial</compileSourcesArtifact>
-					  <compileSourcesArtifact>net.aonsoluitions:aon.gwt.ccaa</compileSourcesArtifact>
+					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.ccaa</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
 				</configuration>

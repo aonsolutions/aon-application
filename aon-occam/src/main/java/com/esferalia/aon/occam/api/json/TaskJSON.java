@@ -40,7 +40,6 @@ public class TaskJSON {
 			.setSender(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SENDER)))
 			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
 			.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
-			.setRepeatPeriod(TaskPeriod.NONE) // TODO
 			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
 			.setSourceId(JsonUtils.getInteger(json, IJsonNames.SOURCE_ID))
 			.setStatus( TaskStatus.safeValueOf(JsonUtils.optString(json, IJsonNames.STATUS))) 
@@ -48,7 +47,8 @@ public class TaskJSON {
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
 			.setGtaskId(JsonUtils.getString(json, "gtask_id"))
-			.setIsCau(!json.optString("cau").isEmpty() && json.optInt("cau") > 0) 
+			.setTags( TagJSON.fromJSON(JsonUtils.getJSONArray(json, "tags")) )
+			.setRepeatPeriod(TaskPeriod.NONE) // TODO
 			;
 	}
 	
@@ -86,6 +86,7 @@ public class TaskJSON {
 			.put(IJsonNames.END_DATE, task.getEndDate()!=null ?  task.getEndDate().getTime() : null)
 			.put("gtask_id", task.getGtaskId())
 			.put(IJsonNames.PARENT, task.getParent())
+			.put("tags", TagJSON.toJSON(task.getTags()))
 //			.put(IJsonNames.CREATION_USER, task.getCreationUser())
 //			.put(IJsonNames.CREATION_DATE, task.getCreationDate())
 //			.put(IJsonNames.MODIFICATION_USER, task.getModificationUser())

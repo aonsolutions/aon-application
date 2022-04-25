@@ -5,8 +5,11 @@ import java.io.Serializable;
 public enum ContractAttachType implements Serializable {
 	
 	 TA(98)
-	,IDC(99)
+	,TABAJA(99)
 	,CERTIFICA2(100)
+	,IDC(101)
+	,IDCPLNSS(102)
+	,CERTIFICA(103)
 	;
 
 	private Integer value;

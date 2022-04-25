@@ -25,7 +25,7 @@ public class FiscalModelValidation {
 	/**
 	 * El dominio no puede estar vacio.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> EMPTY_DOMAIN = (fm,ctx) -> {
+	private static final BiConsumer<FiscalModel,AONContext> EMPTY_DOMAIN = (fm,ctx) -> {
 		if (fm.getDomain() == 0) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
@@ -33,15 +33,15 @@ public class FiscalModelValidation {
 	/**
 	 * El ejercicio no puede estar vacio.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> EMPTY_YEAR = (fm,ctx) -> {
+	private static final BiConsumer<FiscalModel,AONContext> EMPTY_YEAR = (fm,ctx) -> {
 		if (fm.getYear() == 0) 
 			throw new AonCoreException(AonError.EMPTY_YEAR.getMessage());
 	};
 
 	/**
-	 * El ejercicio debe ser v·lido.
+	 * El ejercicio debe ser v√°lido.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> INVALID_YEAR = (fm,ctx) -> {
+	private static final BiConsumer<FiscalModel,AONContext> INVALID_YEAR = (fm,ctx) -> {
 		if (fm.getYear() < 2005 || fm.getYear() > 2025) 
 			throw new AonCoreException(AonError.INVALID_YEAR.getMessage());
 	};
@@ -49,13 +49,15 @@ public class FiscalModelValidation {
 	/**
 	 * El periodo no puede estar vacio.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> EMPTY_PERIOD = (fm,ctx) -> {
+	private static final BiConsumer<FiscalModel,AONContext> EMPTY_PERIOD = (fm,ctx) -> {
 		if (fm.getPeriod() == null) 
 			throw new AonCoreException(AonError.EMPTY_PERIOD.getMessage());
 	};
 
-	public static final BiConsumer<FiscalModel,AONContext> SAME_PERIOD_EXISTS_CHECK = (fm,ctx) -> {
-		if (fm.getStatus() != FiscalStatus.BLOCKED && !fm.isReplacement() && !fm.isComplementary()
+	private static final BiConsumer<FiscalModel,AONContext> SAME_PERIOD_EXISTS_CHECK = (fm,ctx) -> {
+		if (fm.getStatus() != FiscalStatus.BLOCKED 
+			&& fm.getId() == null	// New Model
+			&& !fm.isReplacement() && !fm.isComplementary()
 			&& ctx.getDslContext()
 				.select()
 				.from(FS_MODEL)
@@ -75,12 +77,13 @@ public class FiscalModelValidation {
 				.stream()
 				.findFirst()
 				.isPresent() ) {
-			throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.getMessage());
+			throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format( fm.getModelFullName() ));
 		}
 	};
 
-	public static final BiConsumer<FiscalModel,AONContext> SOMETHING_TO_COMPLEMENT = (fm,ctx) -> {
+	private static final BiConsumer<FiscalModel,AONContext> SOMETHING_TO_COMPLEMENT = (fm,ctx) -> {
 		if (fm.getStatus() != FiscalStatus.BLOCKED 
+			&& fm.getId() == null	// New Model
 			&& (fm.isReplacement() || fm.isComplementary())
 			&& !(ctx.getDslContext()
 				.select()
@@ -108,58 +111,67 @@ public class FiscalModelValidation {
 	/**
 	 * El Nombre debe tener 45 caracters como maximo.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> NAME_LENGTH = (fm,ctx) -> {
+	public static final String NAME = "Nombre o raz\u00F3n social";
+	private static final BiConsumer<FiscalModel,AONContext> NAME_LENGTH = (fm,ctx) -> {
 		if (AonStringUtils.length( fm.getName()) > 45  ) 
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Nombre o raz\u00F3n social", "45" ));
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( NAME, "45" ));
 	};
 	
 	/**
 	 * El Documento debe tener 9 caracters como maximo.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> DOCUMENT_LENGTH = (fm,ctx) -> {
-		if (AonStringUtils.length( fm.getDocument()) > 45  ) 
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Documento", "9" ));
+	public static final String DOCUMENT = "Documento";
+	private static final BiConsumer<FiscalModel,AONContext> DOCUMENT_LENGTH = (fm,ctx) -> {
+		int length = FS_MODEL.DOCUMENT.getDataType().length();
+		if (AonStringUtils.length( fm.getDocument()) > length  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( DOCUMENT, length ));
 	};
 
 	/**
 	 * El apellido debe tener 30 caracters como maximo.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> SURNAME_LENGTH = (fm,ctx) -> {
-		if (AonStringUtils.length( fm.getSurname()) > 45  ) 
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Apellidos", "30" ));
+	public static final String SURNAME = "Apellidos";
+	private static final BiConsumer<FiscalModel,AONContext> SURNAME_LENGTH = (fm,ctx) -> {
+		if (AonStringUtils.length( fm.getSurname()) > 30  ) 
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( SURNAME, "30" ));
 	};
 
 	/**
 	 * El Numero de calle debe tener 4 caracters como maximo.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> STREET_NUMBER_LENGTH = (fm,ctx) -> {
+	public static final String STREET_NUMBER = "Direcci\u00F3n. N\u00FAmero";
+	private static final BiConsumer<FiscalModel,AONContext> STREET_NUMBER_LENGTH = (fm,ctx) -> {
 		if (AonStringUtils.length( fm.getStreetNumber()) > 4  ) 
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Direcci\u00F3n. N\u00FAmero", "4" ));
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( STREET_NUMBER, "4" ));
 	};
 
 	/**
 	 * El codigo postal debe tener 5 caracters como maximo.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> ZIP_LENGTH = (fm,ctx) -> {
+	public static final String ZIP = "C\u00F3digo postal";
+	private static final BiConsumer<FiscalModel,AONContext> ZIP_LENGTH = (fm,ctx) -> {
 		if (AonStringUtils.length( fm.getZip()) > 5  ) 
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "C\u00F3digo postal", "5" ));
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( ZIP, "5" ));
 	};
 
 	/**
 	 * El telefono debe tener nueve caracters como maximo.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> CONTACT_CELLULAR = (fm,ctx) -> {
+	public static final String CONTACT_CELLULAR = "Tel\u00E9fono m\u00F3vil de Contacto";
+	private static final BiConsumer<FiscalModel,AONContext> CONTACT_CELLULAR_LENGTH = (fm,ctx) -> {
 		if (AonStringUtils.length( fm.getContactCellular()) > 9  ) 
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Tel\u00E9fono de Contacto", "9" ));
+			throw new AonCoreException(AonError.INVALID_LENGTH.format(CONTACT_CELLULAR , "9" ));
 	};
 
 	/**
 	 * El telefono debe tener nueve caracters como maximo.
 	 */
-	public static final BiConsumer<FiscalModel,AONContext> CONTACT_PHONE = (fm,ctx) -> {
+	public static final String CONTACT_PHONE = "Tel\u00E9fono de Contacto";
+	private static final BiConsumer<FiscalModel,AONContext> CONTACT_PHONE_LENGTH = (fm,ctx) -> {
 		if (AonStringUtils.length( fm.getContactPhone()) > 9  ) 
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Tel\u00E9fono de Contacto", "9" ));
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( CONTACT_PHONE, "9" ));
 	};
+	
 
 	public static void validate(AONContext ctx, FiscalModel fm) {
 		EMPTY_DOMAIN
@@ -171,8 +183,8 @@ public class FiscalModelValidation {
 		.andThen(SURNAME_LENGTH)
 		.andThen(STREET_NUMBER_LENGTH)
 		.andThen(ZIP_LENGTH)
-		.andThen(CONTACT_CELLULAR)
-		.andThen(CONTACT_PHONE)
+		.andThen(CONTACT_CELLULAR_LENGTH)
+		.andThen(CONTACT_PHONE_LENGTH)
 		.andThen(SAME_PERIOD_EXISTS_CHECK)
 		.andThen(SOMETHING_TO_COMPLEMENT)
 		.accept(fm, ctx);
@@ -250,4 +262,38 @@ public class FiscalModelValidation {
 		
 	}
 
+	private static final BiConsumer<FiscalModel,AONContext> STATUS_CHECK = (fm,ctx) -> {
+		if (!fm.canBeDeleted()) {
+			throw new AonCoreException(AonError.FISCAL_WRONG_STATUS_DELETION.format(fm.getStatus()));
+		}
+	};
+
+	private static final BiConsumer<FiscalModel,AONContext> SAME_PERIOD_CHECK = (fm,ctx) -> {
+		if (fm.getStatus() != FiscalStatus.BLOCKED && !fm.isReplacement() && !fm.isComplementary()
+			&& ctx.getDslContext()
+				.select()
+				.from(FS_MODEL)
+				.where(FS_MODEL.DOMAIN.equal(fm.getDomain()))
+					.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
+					.and(FS_MODEL.YEAR.equal(fm.getYear()))
+					.and(FS_MODEL.PERIOD.eq( fm.getPeriod().value() ))
+					.and( fm.getModel().isOtherDeponentAllowedInSamePeriod()
+							?FS_MODEL.DOCUMENT.eq( fm.getDocument() )
+							:DSL.trueCondition() )
+					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().value() ))
+					.and(FS_MODEL.STATUS.notEqual( (byte) FiscalStatus.BLOCKED.ordinal() ))
+					.and((fm.isNew())?DSL.trueCondition():FS_MODEL.ID.ne(fm.getId()))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent() ) {
+			throw new AonCoreException(AonError.FISCAL_WRONG_REPLACED_DELETION.getMessage());
+		}
+	};
+
+	public static void validateDelete(AONContext ctx, FiscalModel fm) {
+		STATUS_CHECK
+		.andThen( SAME_PERIOD_CHECK )
+		.accept(fm, ctx);
+	}
 }

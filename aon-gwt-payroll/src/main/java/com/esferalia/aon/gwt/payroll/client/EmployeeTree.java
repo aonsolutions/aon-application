@@ -77,6 +77,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -2527,29 +2528,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		logEvent("richStylesInjected");
 		
-		if ( false )
-			employees = new Employees(true, true) {
-				@Override
-				public void onEnterprise(Enterprise enterprise) {
-					super.onEnterprise(enterprise);
-					String employeeSearch = 
-					getParameter(GWT.getModuleName(), EMPLOYEE_SEARCH_PARAM);
-					if ( AonStringUtils.isNotBlank(employeeSearch) )
-						employees.search(employeeSearch);
-				}
-			};
-		else 
-			employees = new Workers(true, true) {
+		employees = new Workers(true, true) {
 			@Override
 			public void onEnterprise(Enterprise enterprise) {
-				super.onEnterprise(enterprise);
 				String employeeSearch = 
 				getParameter(GWT.getModuleName(), EMPLOYEE_SEARCH_PARAM);
-				if ( AonStringUtils.isNotBlank(employeeSearch) )
-					employees.search(employeeSearch);
+				
+				super.onEnterprise(enterprise, AonStringUtils.isBlank(employeeSearch));
+				
+				if ( AonStringUtils.isNotBlank(employeeSearch) ) {
+					Scheduler.get().scheduleDeferred(() -> employees.search(employeeSearch) );
+				}
 			}
-			};
-		
+		};
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -2603,8 +2594,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private void initFootPanel() {
 		logEvent("initFootPanel");
-		footPanel.clearButtons();
-		footPanel.addButtonLess();
+		footPanel.initNewButtons();
 		this.footPanel.addMaximizeHandlerNew(e-> showFootPanel());
 		this.footPanel.addMinimizeHandlerNew(e-> closeFootPanel());
 	}
@@ -3140,10 +3130,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	// --------------------------------------------------------- Private methods
 
 	private void showFootPanel() {
+		footPanel.addButtonMore();
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 	}
 	
 	private void closeFootPanel() {
+		footPanel.addButtonLess();
 		splitLayoutPanel.setWidgetSize(footPanel, 20);
 	}
 
@@ -3568,8 +3560,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						
 					}, throwable -> {
 						closeFootPanel();
-						getEmployeeDraft().setTaVisible(false);
-						getEmployeeDraft().setIdcVisible(false);
+						getEmployeeDraft().disableSistemaRED();
 					});
 				}
 				
@@ -3631,13 +3622,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						employeeStatus.visit(this);
 						selectResultsPanel();
 						EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
-							getEmployeeDraft().setTaVisible(true);
-							getEmployeeDraft().setIdcVisible(true);
+							getEmployeeDraft().enableSistemaRED();
 							getEmployeeDraft().setOnSaved(e -> run());
 						}, () -> {
-							getEmployeeDraft().setTaVisible(false);
-							getEmployeeDraft().setIdcVisible(false);
-
+							getEmployeeDraft().disableSistemaRED();
 						});
 						EmployeeStatus.ifSistemaREDError(
 								employeeStatus,
@@ -3646,8 +3634,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 								);
 					}, throwable -> {
 						closeFootPanel();
-						getEmployeeDraft().setTaVisible(false);
-						getEmployeeDraft().setIdcVisible(false);
+						getEmployeeDraft().disableSistemaRED();
 					});
 				}
 				
@@ -3659,12 +3646,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			selectResultsPanel();
 
 			EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
-				getEmployeeDraft().setTaVisible(true);
-				getEmployeeDraft().setIdcVisible(true);
+				getEmployeeDraft().enableSistemaRED();
 				getEmployeeDraft().setOnSaved(e -> sistemaREDResults.run());
 			}, () -> {
-				getEmployeeDraft().setTaVisible(false);
-				getEmployeeDraft().setIdcVisible(false);
+				getEmployeeDraft().disableSistemaRED();
 			});
 			
 			EmployeeStatus.ifSistemaREDError(
@@ -3675,8 +3660,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		}, throwable -> {
 			closeFootPanel();
-			getEmployeeDraft().setTaVisible(false);
-			getEmployeeDraft().setIdcVisible(false);
+			getEmployeeDraft().disableSistemaRED();
 		});
 	}
 
@@ -4381,6 +4365,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				
 				@Override
 				public void notAuthorizedCCC() {
+				}
+				
+				@Override
+				public void noQueryData(String message) {
 				}
 				
 				@Override

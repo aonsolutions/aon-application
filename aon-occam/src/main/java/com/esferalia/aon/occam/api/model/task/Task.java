@@ -1,11 +1,14 @@
 package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Priority;
@@ -43,11 +46,12 @@ public class Task  implements Serializable{
 	
 	private List<TaskWorkflow> workflows; 
 	
+	private List<Tag> tags;
+	
 	// GOOGLE TASK IDS
 	
 	private String gtaskId; 
 	private String gtasklistId;
-	private Boolean isCau;
 	
 	// AUDIT
 	
@@ -56,8 +60,8 @@ public class Task  implements Serializable{
 	private String modificationUser;
 	private Date modificationDate;
 	
-	public Task() {
-		
+	public Task() { 
+		this.tags = new ArrayList<>();
 	}
 
 	public Integer getId() {
@@ -151,6 +155,9 @@ public class Task  implements Serializable{
 	}
 
 	public TaskHolder getTaskHolder() {
+		if(taskHolder == null) {
+			taskHolder = new TaskHolder();
+		}
 		return taskHolder;
 	}
 
@@ -314,12 +321,31 @@ public class Task  implements Serializable{
 		return this;
 	}
 	
-	public boolean getIsCau() {
-		return isCau!=null && isCau;
+	public List<Tag> getTags() {
+		return tags;
 	}
 
-	public Task setIsCau(Boolean isCau) {
-		this.isCau = isCau;
+	public Task setTags(List<Tag> tags) {
+		this.tags = tags;
 		return this;
+	}
+	
+	public void addTag(Tag tag) {
+		this.tags.add(tag);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Task ) )
+			return false;
+		
+		Task task = (Task) obj;
+		
+		return Objects.equals(id, task.id);
 	}
 }

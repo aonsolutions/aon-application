@@ -63,6 +63,8 @@ public class JooqContractClauses {
 			contractClauses.add(contractClause);
 		}
 		
+		contractClauses.sort((o1, o2) -> o1.getLineNumber().compareTo(o2.getLineNumber()));
+		
 		return contractClauses;
 	}
 	

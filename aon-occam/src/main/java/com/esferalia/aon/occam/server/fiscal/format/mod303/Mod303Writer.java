@@ -40,6 +40,7 @@ public class Mod303Writer {
 		,GIPUZKOA_2021_2(mod303 -> (mod303.isGipuzkoa() && (mod303.getYear() >= 2021 || (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())) ), Mod303WriterGIPUZKOA2021::new)
 		,GIPUZKOA_2021_1(mod303 -> (mod303.isGipuzkoa() && (mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester()) ), Mod303WriterGIPUZKOA2017::new)
 		,GIPUZKOA_2017	(mod303 -> (mod303.isGipuzkoa() && mod303.getYear() < 2021), Mod303WriterGIPUZKOA2017::new)
+		,NAVARRA_2022	(mod303 -> (mod303.isNavarra() && mod303.getYear() > 2021 && mod303.getPeriod().isQuarterPeriod()), Mod303WriterNAVARRA2022::new)
 		;
 		private IModelAccepter accepter;
 		private IWriterInstance instancer;

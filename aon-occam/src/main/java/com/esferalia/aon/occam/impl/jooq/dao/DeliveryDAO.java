@@ -20,12 +20,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -36,6 +41,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
@@ -45,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class DeliveryDAO {
@@ -59,7 +66,59 @@ public class DeliveryDAO {
 	}
 	
 	// -------------------- DELIVERY
+
+	public static int getNextNumber(AONContext ctx, String series ) {
+		Integer next = ctx.getDslContext()
+			.select( DSL.max(DELIVERY.NUMBER))
+			.from(DELIVERY)
+			.where(DELIVERY.DOMAIN.eq(ctx.getDomainId()))
+			.and(AonStringUtils.isBlank(series)
+				? DELIVERY.SERIES.isNull().or(DSL.trim(DELIVERY.SERIES).eq(""))
+				: DELIVERY.SERIES.eq(series))
+			.fetch()
+			.stream()
+			.mapToInt(rec -> (rec != null && rec.getValue(DSL.max(DELIVERY.NUMBER)) != null) 
+					? rec.getValue(DSL.max(DELIVERY.NUMBER)) 
+					: 0)
+			.findFirst()
+			.orElse(0);
+		if(next < 0) next = 0;
+		return ++next;
+	}
+
+	private static SelectConditionStep<Record> select(AONContext ctx, DeliveryFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(DELIVERY)
+			.join(REGISTRY).on(REGISTRY.ID.eq(DELIVERY.CUSTOMER))
+			.where(DELIVERY_PROPERTIES.getConditions(filter));
+	}
 	
+	public static Delivery get(AONContext ctx, DeliveryFilter filter){
+		return select(ctx, filter).limit(1).fetch().stream().map(new DeliveryFiller())
+			.findFirst().orElse(new Delivery());
+	}
+	
+	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter){
+		return select(ctx, filter).fetch().stream().map(new DeliveryFiller());
+	}
+	
+	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
+		return select(ctx, filter)
+			.limit(perPage).offset(perPage * (page -1))
+			.fetch().stream().map(new DeliveryFiller());
+	}
+	
+	public static List<Delivery> getList(AONContext ctx, DeliveryFilter filter){
+		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static List<Delivery> getList(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
+		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	/**
+	 * @deprecated  Replaced by getStream(AONContext ctx, DeliveryFilter filter)
+	 */
 	public static Stream<Delivery> getDeliveryStream(AONContext ctx, DeliveryFilter filter){
 		return DELIVERY_PROPERTIES.build(ctx.getDslContext()
 				.select()
@@ -68,6 +127,17 @@ public class DeliveryDAO {
 			,filter).fetch().stream().map(new DeliveryFiller());
 	}
 	
+	public static Delivery save(AONContext ctx, Delivery delivery) {
+		ctx.checkWrite();
+		
+		return delivery.hasId() 
+			? update(ctx, delivery)
+			: insertDelivery(ctx, delivery);
+	}
+	
+	/**
+	 * @deprecated  Replaced by save(AONContext ctx, Delivery delivery)
+	 */
 	public static Delivery insertDelivery(AONContext ctx, Delivery delivery) {
 		ctx.checkWrite();
 		return ctx.getDslContext()
@@ -98,7 +168,7 @@ public class DeliveryDAO {
 						DELIVERY.MODIFICATION_USER, DELIVERY.MODIFICATION_DATE)
 				.values(delivery.getDomain(), delivery.getProject().getId(),
 						delivery.getSeries(), delivery.getNumber(),
-						delivery.getCustomer(), delivery.getAddress(),
+						delivery.getCustomer().getId(), delivery.getAddress(),
 						delivery.getIssueTime(), delivery.getPayMethod(),
 						delivery.getSecurityLevel(), delivery.getStatus().ordinal(),
 						delivery.getComments(), delivery.getRemarks(),
@@ -122,9 +192,15 @@ public class DeliveryDAO {
 				.returning().fetch().stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
 	}
 	
+	public static Delivery update(AONContext ctx, Delivery delivery) {
+		return updateDelivery(ctx, delivery, f -> f.getIdProperty().eq(delivery.getId()));
+	}
+	/**
+	 * @deprecated  Replaced by save(AONContext ctx, Delivery delivery)
+	 */
 	public static Delivery updateDelivery(AONContext ctx, Delivery delivery, DeliveryFilter filter) {
 		ctx.checkWrite();		
-		return ctx.getDslContext().update(DELIVERY)
+		ctx.getDslContext().update(DELIVERY)
 			.set(DELIVERY.DOMAIN, delivery.getDomain())
 			.set(DELIVERY.PROJECT, delivery.getProject().getId())
 			.set(DELIVERY.SERIES, delivery.getSeries())
@@ -166,8 +242,13 @@ public class DeliveryDAO {
 			.set(DELIVERY.STATUS_MODIFICATION_DATE, AonDateUtils.toTimestamp(delivery.getStatusModificationDate()))
 			.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
 			.set(DELIVERY.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
-		.where(DELIVERY_PROPERTIES.getConditions(filter)).returning().fetch()
-		.stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
+		.where(DELIVERY_PROPERTIES.getConditions(filter))
+		.execute();
+		return delivery;
+	}
+	
+	public static void delete(AONContext ctx, Integer id) {
+		deleteDelivery(ctx, f -> f.getIdProperty().eq(id));
 	}
 	
 	public static void deleteDelivery(AONContext ctx, DeliveryFilter filter) {
@@ -175,7 +256,9 @@ public class DeliveryDAO {
 				.map(Delivery::getId)
 				.toArray(Integer[]::new);
 		deleteDeliveryDetail(ctx, f -> f.getDelivery().in(ids));
-		ctx.getDslContext().delete(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter));
+		ctx.getDslContext()
+			.delete(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	// -------------------- DELIVERY DETAIL
@@ -298,10 +381,12 @@ public class DeliveryDAO {
 				,PROJECT.NAME
 				,DELIVERY_DETAIL.LINE
 				,DELIVERY_DETAIL.ITEM
+				,PCATEGORY.ID
 				,PCATEGORY.NAME
 				,PRODUCT.ID
 				,PRODUCT.NAME
 				,PRODUCT.CODE
+				,ITEM.ID
 				,ITEM.DETAIL
 				,ITEM.DETAIL2
 				,ITEM.DETAIL3
@@ -354,22 +439,31 @@ public class DeliveryDAO {
 					.setProject(new Project()
 							.setId(getValue(r, DELIVERY.PROJECT)))
 					.setSeries(getValue(r, DELIVERY.SERIES))
-					.setNumber(getValue(r, DELIVERY.NUMBER))
+					.setNumber(getInteger(r, DELIVERY.NUMBER))
 					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, REGISTRY.ID)
 						? CustomerFiller.build(r)
 						: new Customer().setId(getValue(r, DELIVERY.CUSTOMER)))
 					.setAddress(getValue(r, DELIVERY.ADDRESS))
+					 
+					.setAddressStreetType( StreetType.safeValueOf(getValue(r, RADDRESS.STREET_TYPE)))
+					.setAddressName(getValue(r, RADDRESS.ADDRESS))
+					.setAddressNumber(getValue(r, RADDRESS.NUMBER))
+					.setAddressTown(getValue(r, RADDRESS.CITY))
+					.setAddressZIP(getValue(r, RADDRESS.ZIP))
+					.setAddressGeozoneCode(getValue(r, GEOZONE.CODE))
+					.setAddressGeozone(getValue(r, GEOZONE.NAME))
+					
 					.setIssueTime(getValue(r, DELIVERY.ISSUE_TIME))
 					.setPayMethod(getValue(r, DELIVERY.PAY_METHOD))
-					.setSecurityLevel(getValue(r, DELIVERY.SECURITY_LEVEL))
+					.setSecurityLevel(getByte(r, DELIVERY.SECURITY_LEVEL))
 					.setStatus(DeliveryStatus.safeValueOf(getValue(r, DELIVERY.STATUS)))
 					.setComments(getValue(r, DELIVERY.COMMENTS))
 					.setRemarks(getValue(r, DELIVERY.REMARKS))
 					.setWorkplace(getValue(r, DELIVERY.WORKPLACE))
 					.setScope(getValue(r, DELIVERY.SCOPE))
-					.setNumberOfPymnts(getValue(r, DELIVERY.NUMBER_OF_PYMNTS))
-					.setDaysToFirstPymnt(getValue(r, DELIVERY.DAYS_TO_FIRST_PYMNT))
-					.setDaysBetweenPymnt(getValue(r, DELIVERY.DAYS_BETWEEN_PYMNTS))
+					.setNumberOfPymnts(getShort(r, DELIVERY.NUMBER_OF_PYMNTS))
+					.setDaysToFirstPymnt(getShort(r, DELIVERY.DAYS_TO_FIRST_PYMNT))
+					.setDaysBetweenPymnt(getShort(r, DELIVERY.DAYS_BETWEEN_PYMNTS))
 					.setPymntDays(getValue(r, DELIVERY.PYMNT_DAYS))
 					.setBankAccount(getValue(r, DELIVERY.BANK_ACCOUNT))
 					.setBankAlias(getValue(r, DELIVERY.BANK_ALIAS))
@@ -409,18 +503,18 @@ public class DeliveryDAO {
 		public static DeliveryDetail build(Record r) {
 			return new DeliveryDetail()
 				.setId(getValue(r, DELIVERY_DETAIL.ID))
-				.setDomain(getValue(r, DELIVERY_DETAIL.DOMAIN))
+				.setDomain(getInteger(r, DELIVERY_DETAIL.DOMAIN))
 				.setDelivery(checkField(r, DELIVERY.ID)
 					? DeliveryFiller.build(r)
 					: new Delivery().setId(getValue(r, DELIVERY_DETAIL.DELIVERY)))
-				.setLine(getValue(r, DELIVERY_DETAIL.LINE))
+				.setLine(getShort(r, DELIVERY_DETAIL.LINE))
 				.setItem(checkField(r, ITEM.ID)
 					? ItemFiller.build(r)
 					: new Item().setId(getValue(r, DELIVERY_DETAIL.ITEM)))
 				.setDescription(getValue(r, DELIVERY_DETAIL.DESCRIPTION))
 				.setWarehouse(getValue(r, DELIVERY_DETAIL.WAREHOUSE))
-				.setQuantity(getValue(r, DELIVERY_DETAIL.QUANTITY))
-				.setPrice(getValue(r, DELIVERY_DETAIL.PRICE))
+				.setQuantity(getDouble(r, DELIVERY_DETAIL.QUANTITY))
+				.setPrice(getDouble(r, DELIVERY_DETAIL.PRICE))
 				.setDiscountExpression(getValue(r, DELIVERY_DETAIL.DISCOUNT_EXPR))
 				.setSalesDetail(getValue(r, DELIVERY_DETAIL.SALES_DETAIL))
 				.setPurchaseReference(getValue(r, SALES.PURCHASE_REFERENCE))

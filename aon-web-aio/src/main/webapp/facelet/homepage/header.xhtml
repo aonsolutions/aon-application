@@ -7,6 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich">
 	
+	
 	<style>
 	.aon-gray {
 		color: #5f6368;
@@ -340,7 +341,7 @@
 		background-color: #fff;
 		border-bottom: 1px solid #ddd;	
 	}
-
+	
 	.aon-dataTable,
 	.aon-dataTable tr ,
 	.aon-editDataTable,
@@ -721,6 +722,21 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-email.svg']}) ;
 	}
 	
+	.aon-icon-circle-green {
+		background-size: 24px;
+		background: transparent url(css/images/aon-icon/aon-icon-circle-green.svg) no-repeat scroll center center;		
+	}
+	
+	.aon-icon-circle-gray {
+		background-size: 24px;
+		background: transparent url(css/images/aon-icon/aon-icon-circle-gray.svg) no-repeat scroll center center;
+	}
+	
+	.aon-icon-circle-red {
+		background-size: 24px;
+		background: transparent url(css/images/aon-icon/aon-icon-circle-red.svg) no-repeat scroll center center;
+	}
+	
 	.aon-icon-webmail2{
 		background-size: cover;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-email.svg']}) ;
@@ -740,6 +756,7 @@
 		background-size: 17px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-download.svg']}) ;
 	}
+	
 	
 	.aon-icon-sepe {
 		padding: 24px;
@@ -1038,6 +1055,286 @@
     	border: solid #F3F3F3 1px !important;
     }
     
+.aon-menu-popup
+	 {
+		opacity:0.94;	 
+	 	color: #FFF !important;
+	 	box-shadow: 0px 6px 6px #2152A5;
+    	background-color: #2152A5 !important;
+    }
+    
+
+    .aon-menu-popup * ,
+    .aon-menu-popup a {
+    	color: #FFF;
+    	font-size:13px;
+    	white-space: nowrap;
+    	
+	}   
+    .aon-menu-popup .aon-icon-new-text,
+    .aon-menu-popup .aon-icon-beta-text{
+    	background: none;
+    	margin-left: 0px !important;
+    	padding-left: 0px !important;
+     }
+
+    .aon-menu-popup .aon-direct-access-panel {
+    	color: #FFF;
+    	height: 24px;
+    	border-bottom: 1px solid #FFF;
+    	background-color: #2152A5 !important;
+    	padding-left: 12px;
+    	background-image: none;
+	}   
+
+    .aon-menu-popup .aon-menu-icon-aeat,
+    .aon-menu-popup .aon-menu-icon-araba,
+    .aon-menu-popup .aon-menu-icon-bizkaia,
+    .aon-menu-popup .aon-menu-icon-gipuzkoa,
+    .aon-menu-popup .aon-menu-icon-navarra
+     {
+    	border-color: #2152A5;
+    }
+    
+    .aon-menu-popup .aon-menu-fiscal-label {
+    	background-image: none;
+    }
+	.aon-menu-popup .aon-menu-fiscal{
+		border-bottom: 1px solid #2152A5;
+	}
+    
+    .aon-menu-popup .aon-direct-access-list-element {
+    	padding: 0px;
+    }
+    
+    .aon-menu-popup .aon-direct-access-list-element a {
+    	padding: 5px 0 8px 12px;
+    }
+
+    .aon-menu-popup .aon-direct-access-list-element:hover {
+    	color: #FFF;
+    	background-color: #2152A5 !important;
+	}
+
+    .aon-menu-popup .aon-direct-access-list-element *:hover {
+    	/*font-weight: bold;*/
+    	color: #2152A5 !important;
+    	background-color: #FFF !important;
+		border-top-right-radius: 50px 50px;
+    	border-bottom-right-radius: 50px 50px;
+	}
+	
+	/*.aon-top-menu-item:hover ,*/
+	.aon-top-menu-item-selected {
+    	opacity: 95%;
+    	color: #FFF !important;
+    	background-color: #2152A5 !important;
+	}
+
+	div[id$='aonContentPopup']{
+    	border-right: 1px solid #F6F6F6;
+	 	box-shadow: 0px 6px 6px #F3F3F3;
+    	background-color: #FFFFFF !important;
+    	
+    }
+
+	div[id$='aonContentPopup'] .aon-support{
+    	border: none !important;
+    	box-shadow: none !important;
+    	background-color: #FFFFFF !important;
+    }
+    
+    div[id$='infoGroupRightSupportDiv'] {
+    	padding-top: 50px;
+    }
+    
+	/*
+	div[id$='aonContentPopup'] .aon-button-parent,
+	div[id$='aonContentPopup'] .aon-button-tools-parent,
+	div[id$='aonContentPopup'] .aon-button-fiscal-parent,
+	div[id$='aonContentPopup'] .aon-button-account-parent,
+	div[id$='aonContentPopup'] .aon-button-payroll-parent
+	{
+		display: none;
+	}
+	*/
+
+	div[id$='aonContentPopup'] .aon-button,
+	div[id$='aonContentPopup'] .aon-button-notes,
+	div[id$='aonContentPopup'] .aon-button-tools,
+	div[id$='aonContentPopup'] .aon-button-fiscal,
+	div[id$='aonContentPopup'] .aon-button-account,
+	div[id$='aonContentPopup'] .aon-button-payroll,
+	div[id$='aonContentPopup'] .aon-button-document,
+	div[id$='aonContentPopup'] .aon-button-invoice,
+	div[id$='aonContentPopup'] .aon-button-timecontrol,
+	div[id$='aonContentPopup'] .aon-button-messenger
+	{
+		padding-top: 2px;
+		padding-left: 34px;
+		padding-bottom: 2px;
+		background-size: 30px;
+		background-position-x: left;
+	}
+	
+	div[id$='aonContentPopup'] .aon-button:hover,
+	div[id$='aonContentPopup'] .aon-button-notes:hover,
+	div[id$='aonContentPopup'] .aon-button-tools:hover,
+	div[id$='aonContentPopup'] .aon-button-fiscal:hover,
+	div[id$='aonContentPopup'] .aon-button-account:hover,
+	div[id$='aonContentPopup'] .aon-button-payroll:hover,
+	div[id$='aonContentPopup'] .aon-button-document:hover,
+	div[id$='aonContentPopup'] .aon-button-invoice:hover,
+	div[id$='aonContentPopup'] .aon-button-timecontrol:hover,
+	div[id$='aonContentPopup'] .aon-button-messenger:hover
+	{
+		padding-left:40px;
+		background-size: 36px;
+	}
+	
+
+	div[id$='aonContentPopup'] .aon-rigth-menu {
+		text-align:left;
+		padding-left: 8px;
+	}
+
+	div[id$='aonContentPopup'] .aon-menu-portlet {
+		min-height: 300px;
+	}
+	
+	div[id$='companyLogo'] {
+		height: 70px;
+		padding-left: 1em;
+		display: table-cell;
+		vertical-align: middle;
+	}
+	
+	.aon-note{
+		color:#000;
+		cursor:text;
+  		padding:1em;
+  		display:block;
+  		background:#FFD70045;
+		text-decoration:none;
+		box-shadow: 3px 3px 5px rgba(200,200,200,.7);
+	}
+	
+	.aon-note:hover,
+	.aon-note:focus { 
+  		z-index:5;
+  		box-shadow:6px 6px 5px rgba(100,100,100,.7);
+  		transform: scale(1.07) !important;
+  	}
+	
+	div[id$='notesMenuPortlet'] {
+		/*min-height: 65vh !important;*/
+	}
+	
+	div[id$='notesMenuPortlet'] table tr:nth-child(odd) .aon-note {
+		transform:rotate(-2deg);
+	}
+	
+	div[id$='notesMenuPortlet'] table tr:nth-child(even) .aon-note {
+		transform:rotate(2deg);
+	}
+
+	.aon-note-delete {
+		float: right;
+		border: none;
+		cursor:pointer;
+  		background:transparent;
+	}
+
+	.aon-note-text {
+		display:block;
+		padding-top: 0.5em;
+  		font-weight: normal;
+  		word-wrap: break-word;
+  		/*font-family: 'Reenie Beanie';*/
+	}
+
+	.aon-note-title {
+		display:block;
+  		font-weight: bold;
+  		word-wrap: break-word;
+	}
+	
+	.aon-note-date {
+		display:block;
+		text-align:right;
+		padding-top: 0.5em;
+  		font-weight: normal;
+	}
+	
+	.aon-width-third {
+		width: 33%;
+	}
+	
+	.aon-width-fourth {
+		width: 25%;
+	}
+
+	.aon-width-fifth {
+		width: 20%;
+	}
+
+
+	.aon-option-favorite .menu_aonFinance,
+	.aon-option-favorite .menu_finance_portal,
+	.aon-option-favorite .menu_eCommerce,
+	.aon-option-favorite .menu_call_center,
+	.aon-option-favorite .menu_aonOne,
+	.aon-option-favorite .menu_garage,
+	.aon-option-favorite .menu_academy,
+	.aon-option-favorite .menu_hotel,
+	.aon-option-favorite .menu_enterprise,
+	.aon-option-favorite .menu_warehouse,
+	.aon-option-favorite .menu_pos,
+	.aon-option-favorite .menu_groupware,
+	.aon-option-favorite .menu_crm {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/aon-icon-logo.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_payroll,
+	.aon-option-favorite .menu_contrata,
+	.aon-option-favorite .menu_payroll_portal{
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/apps/aon-payroll.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+	
+	.aon-option-favorite .menu_document  {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/apps/aon-documental.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_fiscal {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/apps/aon-fiscal.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_management {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/apps/aon-invoice.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+	
+	.aon-option-favorite .menu_accounting {
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/apps/aon-accounting.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
+	.aon-option-favorite .menu_configuration{
+		padding-left:32px;
+		background: url(#{aonResource.resolve['/images/apps/aon-tools.svg']}) scroll left center no-repeat;
+		background-size:28px;
+	}
+
 	.aon-finding-title-toolbar + .aon-scroll-area {
 		padding-top: 0px;
 		overflow-y: scroll;
@@ -1055,6 +1352,27 @@
 		background-color: white;
 		background-clip: padding-box;
 	}
+	
+	#helpTooltip {
+		display: none;
+		position: absolute;
+		z-index: 100;
+		width: 40rem;
+		opacity: 0;
+		background: "#fafafa";
+		transition: opacity .35s; 
+
+	}
+	
+	#helpTooltip img {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: .35rem;
+		box-shadow: 0 .1rem .2rem rgba(0,0,0,.14);
+		border: 0.12rem solid rgba(0,0,0,.11);
+	}
 
 	</style>
 
@@ -1064,12 +1382,14 @@
 					#{rich:element('smartFilterTablePanel')}.style.display='block';
 				}
 			}
+			
 			function hideSearchResults(){
 				setTimeout(function() {
 					if ( document.activeElement != #{rich:element('smartFilterTablePanel')} )
 						#{rich:element('smartFilterTablePanel')}.style.display='none';
-				}, 500);
+				}, 200);
 			}
+			
 			function escSearchResults(e){
 				if ( e.which === 27 ) {
 					#{rich:element('smartFilterTablePanel')}.style.display='none';
@@ -1080,8 +1400,54 @@
       				return false;
 				}
 			}
+			
+			function focusSearchResults(){
+				setTimeout(function() {
+					if ( #{rich:element('smartFilterTablePanel')} ) {
+						#{rich:element('smartFilterTablePanel')}.style.display='block';
+					}
+					#{rich:element('smartFilter')}.focus();
+				}, 300);
+			}
+
+			let helpTooltipTimeout;
+			
+			function showHelpTooltip(event,url){
+				
+					helpTooltipTimeout = setTimeout(function(){
+						
+						const tooltip = document.getElementById("helpTooltip");
+						const image = document.querySelector("#helpTooltip img");
+						
+						const filename = url.substr( url.lastIndexOf('/') + 1, url.lastIndexOf('.pdf')-5);
+						let name = url.substr( url.lastIndexOf('#') + 1);
+						
+						if(url.lastIndexOf('#') == -1) {
+							image.src = "Tooltip/?page=" + 0 + "&amp;filename=" + filename
+						} else {
+							image.src = "Tooltip/?name=" + name + "&amp;filename=" + filename
+						}
+								
+						tooltip.style.display = "block";
+						tooltip.style.top = (20 + event.clientY) + "px";
+						tooltip.style.left = event.clientX  + "px";
+						tooltip.style.transform = "translateX(-50%)";
+				
+						setTimeout(() => tooltip.style.opacity = "1", 250);
+						
+					}, 500);
+			}
+			
+			
+			function hideHelpTooltip() {
+				clearTimeout(helpTooltipTimeout);
+				
+				document.getElementById("helpTooltip").style.opacity = "0";
+				setTimeout(() => document.getElementById("helpTooltip").style.display = "none", 260);
+				
+			}
+			
 	</script>
-	
 		
 	<a4j:region>
 		<h:form>
@@ -1110,7 +1476,6 @@
 
 				</aon:div>
 			</aon:panelGroup>
-			
 			<aon:panelGroup>
 		<aon:commandLink 
 			id="new_aon"
@@ -1126,14 +1491,13 @@
 				/>
 			<aon:outputText
 			value="Nuevo Diseño" 
-			style="padding-left: 38px; white-space:nowrap;" 
+			style="padding-left: 38px; white-space: nowrap;" 
 			/>
 		</aon:commandLink>
 			</aon:panelGroup>
-
+			
 			<aon:panelGroup style="text-align:left; display:flex" >
-					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
-						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
+					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" onclick="javascript:focusSearchResults(); return true;">
 					</aon:commandLink>
 					<aon:inputText 
 						id="smartFilter" 
@@ -1150,6 +1514,7 @@
 						<a4j:support 
 						event="onkeyup"
 						onsubmit="if (window.event.which == 27) {return false;}"
+						oncomplete="javascript:showSearchResults()"
 						reRender="smartFilterTableContainer"
 						eventsQueue="domainSwitcherFilterKeyUp"
 						requestDelay="500"
@@ -1161,41 +1526,81 @@
 						
 					</aon:inputText>
 					
-					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;">
-						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" >
+					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" >
+						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" style="display:none;" >
+
 							<aon:div styleClass="search-results-popup-filter" >
 								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
 							</aon:div>
-						
+							
 							<aon:div styleClass="search-results-popup-title" >
-								<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
+								<aon:outputText value=" #{helpSwitcher.model.rowCount} resultados en Ayuda"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
 							</aon:div>
-						
-							<aon:methodParam name="rowSelectorAction" value="start" />
-							<aon:methodParam name="rowSelectorReRender" value="smartFilterForm" />
-							<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectChildDomain}" type="actionListener" />
 							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 								<ui:param name="rows" value="10" />
 							
 								<ui:param name="skipSelectButton" value="#{true}" />
 								<ui:param name="showDataScroller" value="#{false}" />
 							
-								<ui:param name="controller" value="#{domainSwitcher}" />
+								<ui:param name="controller" value="#{helpSwitcher}" />
 								<ui:param name="skipFocusFirst" value="true" />
 							
 								<ui:define name="columns">
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-									<aon:outputText value="#{to.getDisplay(search.filter)}"
-										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
-										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"  escape="false" />					
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" onmouseover="javascript:showHelpTooltip(event,'#{to.getURI()}')" onmouseout="javascript:hideHelpTooltip()">
+									<h:outputLink target="#{to.getTitle()}" value="#{to.getURI()}" style="display: inline-block;width: 100%;" >
+										<aon:outputText 
+											value="#{to.getDisplay(search.filter)}"
+											
+											escape="false" />
+									</h:outputLink> 					
 								</aon:column>
 								</ui:define>
 							</ui:decorate>
-							
-							<aon:div></aon:div>
 
+							<aon:if test="#{(!domainSwitcher.adminDomain) and (domainSwitcher.domainCount > 0)}">
+								<aon:div styleClass="search-results-popup-title" >
+									<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:div>
+						
+								<aon:methodParam name="rowSelectorAction" value="start" />
+								<aon:methodParam name="rowSelectorReRender" value="smartFilterForm" />
+								<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectChildDomain}" type="actionListener" />
+								<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+									<ui:param name="rows" value="10" />
+								
+									<ui:param name="skipSelectButton" value="#{true}" />
+									<ui:param name="showDataScroller" value="#{false}" />
+								
+									<ui:param name="controller" value="#{domainSwitcher}" />
+									<ui:param name="skipFocusFirst" value="true" />
+								
+									<ui:define name="columns">
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+										<aon:outputText value="#{to.getDisplay(search.filter)}"
+											title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+											style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"  escape="false" />					
+									</aon:column>
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="text-align: right;">
+										<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
+											onmouseout="enableRowSelector();" layout="inline" >										
+										<h:outputLink 
+										value="https://#{domainSwitcher.currentDomainURL}" target="_blank"
+										title="https://#{to.name}"
+										styleClass="aon-icon"
+										style="background: url(#{aonResource.resolve['/images/aon-right-arrow.png']}) no-repeat scroll left center transparent; display: inline-block; height: 21px;vertical-align: middle;}" >
+										</h:outputLink>
+										</aon:div>
+									</aon:column>
+									</ui:define>
+								</ui:decorate>
+						
+								<aon:div></aon:div>
+							</aon:if>
+
+							<aon:if test="#{(!domainSwitcher.adminDomain)}">
 							<aon:div styleClass="search-results-popup-title" >
 								<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
@@ -1210,7 +1615,7 @@
 							
 								<ui:param name="controller" value="#{contractSwitcher}" />
 								<ui:param name="skipFocusFirst" value="true" />
-							
+						
 								<ui:define name="columns">
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<aon:outputText value="#{to.getDisplay(search.filter)}"
@@ -1218,13 +1623,14 @@
 										style="#{(!to.active)?'color:gray;font-style:italic;':''}"  escape="false" />					
 								</aon:column>
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="text-align: right;">
-									<aon:outputText value="#{to.domainDescription}"
+								<aon:outputText value="#{to.domainDescription}"
 										title="#{(!to.active)?bundle.admin_domain_inactive:''}"
 										style="#{(!to.active)?'color:gray;font-style:italic;':''}" />					
 								</aon:column>
 								</ui:define>
 							</ui:decorate>
-							
+							<aon:div></aon:div>
+							</aon:if>
 						
 						</aon:div>
 					</aon:div>
@@ -1234,6 +1640,7 @@
 			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="color:#999; padding-left: 10px;">
 
+					
 					<aon:panelGroup style="display:inline;">
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
@@ -1262,7 +1669,7 @@
 								action="start" />
 						</aon:if>
 
-						<aon:dropDownMenu>
+						<aon:dropDownMenu id="aonHelpMenu">
 			                <f:facet name="label"> 
 			 					<h:outputLink 
 									title="#{bundle.aon_help}"
@@ -1270,6 +1677,22 @@
 									style="#{customize.fontStyle}" >
 								</h:outputLink>
 							</f:facet>
+							<aon:menuItem id="enableSupport"
+								value="Activar Soporte"
+								rendered="#{!desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}"
+								actionListener="#{desktop.onEnableSupport}"
+								reRender="aonHelpMenu"
+								iconClass="aon-icon-circle-green" />
+	                		<aon:menuItem id="disableSupport"
+								value="Desactivar Soporte"
+								rendered="#{desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}"
+								actionListener="#{desktop.onDisableSupport}"
+								reRender="aonHelpMenu"
+								iconClass="aon-icon-circle-red" />
+	                		<aon:menuItem id="cauMessenger"
+								value="Soporte / CAU"
+								action="portal_cau_messenger" 
+								iconClass="aon-icon-helpdesk" />
 			                <aon:if test="#{aonConfiguration.bean.alarm.showList}">
 		                		<aon:menuItem id="alarm"
 									value="#{bundle.aon_alarm}"
@@ -1288,10 +1711,10 @@
 								rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 								value="#{bundle.admin_advanced_mode}" />
 							</aon:if>
-							<aon:menuItem id="config_userProfile" action="home_user"
+							<!-- <aon:menuItem id="config_userProfile" action="home_user"
 								iconClass="aon-icon-menu-user"
 								actionListener="#{domainUser.onInitUserProfile}"
-								value="#{bundle.admin_user_profile}" />
+								value="#{bundle.admin_user_profile}" /> -->
 							<aon:menuItem id="changePassword" action="home_password"
 								iconClass="aon-icon-changePassword"
 								actionListener="#{changePassword.onInit}"

@@ -123,6 +123,9 @@ public class Offer implements Serializable {
 	}
 	
 	public Target getTarget() {
+		if(target == null) {
+			target = new Target();
+		}
 		return target;
 	}
 	

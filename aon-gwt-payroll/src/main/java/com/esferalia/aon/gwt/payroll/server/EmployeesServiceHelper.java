@@ -121,6 +121,7 @@ import com.esferalia.aon.watson.util.AonUtils;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
@@ -361,6 +362,8 @@ public class EmployeesServiceHelper {
 			
 		} catch ( ForbiddenException e ) {
 			return new EmployeeStatus.Forbidden();
+		} catch ( NoQueryData e ) {
+			return new EmployeeStatus.NoQueryData().setMessage(e.getMessage());
 		} 
 		//catch ( NoSuchDataException e ) {
 		//	return new EmployeeStatus.EmployeeNotFound();

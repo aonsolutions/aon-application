@@ -5555,7 +5555,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			monthDays = (Number) monthDaysVar.getValue(monthDaysVar.getPeriod());
 		}catch ( Exception e ) {
-			
+			try {
+				getExpressionContext().eval(MONTH_DAYS.getName(), contractStartDate, contractEndDate);
+				monthDaysVar  = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
+				monthDays = (Number) monthDaysVar.getValue(monthDaysVar.getPeriod());
+			} catch (Exception e1) {
+				return false;
+			}
 		}
 		
 		if ( monthDays == null )

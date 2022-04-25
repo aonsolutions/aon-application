@@ -51,6 +51,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -445,6 +446,11 @@ public class SalaryDraftBuilder
 		}
 		
 	}
+
+	public void setFiscalModels(Collection<FiscalModel> fiscalModels) {
+		fiscalModels.forEach(salaryDraft::addFiscalModel);
+	}
+	
 
 	public void setDbSalaryData(List<Variable> data) throws SalaryException {
 		for ( Variable var: data )

@@ -489,6 +489,17 @@ public class Model303 extends MainEntryPoint {
 				return new Model303GIPUZKOA2021(mod303,cbk);
 			}
 		},
+		NAVARRA_2022 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isNavarra() && mod303.getYear() > 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303NAVARRA2022(mod303,cbk);
+			}
+		},
 		;
 		public abstract boolean accept(Mod303 mod303);
 		public abstract Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk);

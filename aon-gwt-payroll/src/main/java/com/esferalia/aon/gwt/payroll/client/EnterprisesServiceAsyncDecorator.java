@@ -582,6 +582,8 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.createUpdateITEmployee(currentDomainName, employeeITInfo, new AsyncCallbackWrapper<String>(callback));
 	}
 	
+	// ------------------------------------------------ Contract Attachments
+	
 	@Override
 	public void getContractAttachments(String currentDomainName, String login, Integer contractId, AsyncCallback<List<Attach>> callback) throws IllegalArgumentException {
 		AON.start();
@@ -589,15 +591,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<List<ContractAttach>> callback) {
+	public void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.setContractAttachments(currentDomainName, contractId, contractAttachments, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+		enterprisesServiceAsync.setContractAttachments(currentDomainName, contractId, contractAttachments, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> callback) {
+	public void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.createContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+		enterprisesServiceAsync.createContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -605,6 +607,8 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deleteContractAttach(currentDomainName, login, attachId, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	// ------------------------------------------------ Contract Clauses
 	
 	@Override
 	public void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> callback) throws IllegalArgumentException  {

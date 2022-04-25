@@ -823,7 +823,7 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	// TASKWORKFLOW
+	//----------------------- TASKWORKFLOW
 	public static TaskWorkflow getTaskWorkflow(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflow(ctx, filter);
@@ -858,9 +858,16 @@ public class AON_SOLUTIONS {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().saveTaskWorkflow(ctx, workflow);
 		}
+		
 	}
 	
-	// TASKATTACH
+	public static void deleteTaskWorkflow(Domain domain, User user, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){		
+			getTask2().deleteTaskWorkflow(ctx, id);
+		}
+	}
+	
+	//-------------------- TASKATTACH
 	public static TaskAttach getTaskAttach(Domain domain, User user, TaskAttachFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskAttach(ctx, filter);

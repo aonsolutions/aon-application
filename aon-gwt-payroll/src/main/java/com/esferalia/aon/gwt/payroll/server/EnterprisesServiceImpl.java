@@ -1886,18 +1886,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public String createNewCRA(String domainName, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
 			
 			if(Boolean.FALSE.equals(existAnySalary)) {
 				return "No existe n\u00F3minas con valores para notificar en el CRA";
 			}
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, connection);
+			java.util.Date fileNameDate = new java.util.Date();
+			
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, cccList, findingDate, fileNameDate, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			
-			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, connection);
+			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1946,8 +1947,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			syncWithIdcs(domainName, user, contractId, connection);
 			return getPECs(domainName, domainId, user, contractId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -2263,6 +2264,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} 
 	}
 	
+	// --------------------------------------------- Contract Attachments
+	
 	@Override
 	public List<Attach> getContractAttachments(String domainName, String login, Integer contractId) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -2274,27 +2277,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					f -> f.getDomainProperty().eq(domainId).and(f.getContractProperty().eq(contractId)), 
 					AttachType.CONTRACT, 
 					false);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
 	@Override
-	public List<ContractAttach> setContractAttachments(String domainName, Integer contractId, List<ContractAttach> contractAttachments) {
+	public void setContractAttachments(String domainName, Integer contractId, List<ContractAttach> contractAttachments) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqContractAttach.setContractAttachments(connection, contractAttachments);
+			JooqContractAttach.setContractAttachments(connection, contractAttachments);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
 	@Override
-	public List<ContractAttach> createContractAttach(String domainName, ContractAttach contractAttach) {
+	public void createContractAttach(String domainName, ContractAttach contractAttach) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContractAttach.createContractAttach(connection, domainId, contractAttach);
+			JooqContractAttach.createContractAttach(connection, contractAttach);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -2729,7 +2731,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	private static void syncWithIdcs(String currentDomainName, String currentUser, Integer contractId, Connection connection)
-			throws SQLException {
+			throws Exception {
 		Integer domainId = AonServletUtils.getDomainID(currentDomainName);
 		Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
 		Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);			
@@ -3462,7 +3464,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return JooqSSBonus.getSSBonus(connection, contractId);
 		} catch (CertificateNotFoundException e) {
 			throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

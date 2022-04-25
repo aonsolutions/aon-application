@@ -5,12 +5,10 @@ import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceAddress.INVOICE_ADDRESS;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
@@ -50,7 +48,6 @@ import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.Geozone;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
@@ -99,20 +96,20 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO.GeoZoneFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.offer.OfferDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.watson.AonError;
@@ -428,7 +425,7 @@ public class InvoiceDAO {
 		Invoice invoice = getInvoice(ctx, id);
 		if(invoice != null) {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
-			invoice.setAddress(getInvoiceAddress(ctx, invoice));
+			invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
 			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
@@ -451,7 +448,7 @@ public class InvoiceDAO {
 							.and(f.getIdProperty().eq(detail.getSourceId()))).findFirst().orElse(new IncomeDetail());	
 					invoice.getDetails().get(i).setIncomeDetail(d);
 				} else if(InvoiceSource.OFFER.equals(detail.getSource())) {
-					OfferDetail d = OfferDAO.getOfferDetail(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
+					OfferDetail d = OfferDetailDAO.get(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())
 							.and(f.getIdProperty().eq(detail.getSourceId())));
 					invoice.getDetails().get(i).setOfferDetail(d);
 				}
@@ -480,59 +477,6 @@ public class InvoiceDAO {
 			}
 		}
 		return invoice;
-	}
-	
-	public static RegistryAddress getInvoiceAddress(AONContext ctx, Invoice invoice) {
-		com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
-		com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
-
-		RegistryAddress invoiceAddress = ctx.getDslContext()
-			.select()
-			.from(INVOICE_ADDRESS)
-			.leftOuterJoin(child).on(child.ID.eq(INVOICE_ADDRESS.GEOZONE))
-			.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(INVOICE_ADDRESS.GEOZONE))
-			.leftOuterJoin(parent).on(parent.ID.eq(GEOTREE.PARENT))
-			.where(INVOICE_ADDRESS.INVOICE.eq(invoice.getId()))
-			.limit(1).fetch().stream().map(new InvoiceAddressFiller())
-			.findFirst().orElse(new RegistryAddress());
-		
-		return invoiceAddress.isEmpty() 
-			? RegistryAddressDAO.get(ctx, invoice.getRegistryAddress())
-			: invoiceAddress;
-	}
-	
-	public static class InvoiceAddressFiller implements Function<Record, RegistryAddress> {
-
-		@Override
-		public RegistryAddress apply(Record r) {
-			return build(r);
-		}
-		
-		public static RegistryAddress build(Record r) {
-			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
-			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
-			return build(r, parent, child);
-		}
-		
-		public static RegistryAddress build(Record r, Geozone parent, Geozone child) {
-			return new RegistryAddress()
-					.setId(r.getValue(INVOICE_ADDRESS.ID))
-					.setDomain(r.getValue(INVOICE_ADDRESS.DOMAIN))
-					.setStreetType(StreetType.safeValueOf(r.getValue(INVOICE_ADDRESS.STREET_TYPE)))
-					.setAddress(r.getValue(INVOICE_ADDRESS.ADDRESS))
-					.setNumber(r.getValue(INVOICE_ADDRESS.NUMBER))
-					.setAddress2(r.getValue(INVOICE_ADDRESS.ADDRESS2))
-					.setZip(r.getValue(INVOICE_ADDRESS.ZIP))
-					.setCity(r.getValue(INVOICE_ADDRESS.CITY))
-					.setProvince(r.getValue(INVOICE_ADDRESS.PROVINCE))
-					.setGeozone(r.getValue(INVOICE_ADDRESS.GEOZONE))
-					.setGeozoneCode(r.getValue(child.CODE))
-					.setGeozoneName(r.getValue(child.NAME))
-					.setChild(GeoZoneFiller.build(r, child))
-					.setParent(GeoZoneFiller.build(r, parent))
-					.setDirty(false);
-		}
-		
 	}
 	
 	public static List<InvoiceSeries> getSalesSeries(AONContext ctx) {
@@ -1051,6 +995,10 @@ public class InvoiceDAO {
 			.fetchOne();
 		invoice.setId(record.getValue(INVOICE.ID));
 		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),invoice.getActivity());
+	
+		if(invoice.getAddress() != null && !invoice.getAddress().isEmpty())
+			invoice.setAddress(InvoiceAddressDAO.save(ctx, invoice.getAddress(), invoice.getId()));
+		
 		insertDetails(ctx, config, invoice);
 		InvoiceFiscalDAO.save(ctx, config, invoice);
 		return invoice.setCreationDate(new Date()); 

@@ -27,14 +27,23 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.management.Offer;
+import com.esferalia.aon.occam.api.model.management.OfferDetail;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -43,22 +52,45 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
+import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
+import com.esferalia.aon.occam.api.model.type.OfferStatus;
+import com.esferalia.aon.occam.api.model.type.OfferType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
+import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.api.model.type.TargetStatus;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -158,6 +190,23 @@ public class AonFaker {
 		
 	}
 
+	public static Target getTarget( AONContext ctx ) {
+		return getTarget(ctx, getRegistry(ctx));
+	}
+	
+	public static Target getTarget( AONContext ctx , Registry registry) {
+		Tariff tariff = AonRandom.getTariff(ctx);
+		Scope scope = AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		return new Target()
+			.copy(registry)
+			.setTariff(tariff)
+			.setSurcharge( AonRandom.gt(95) )
+			.setWithholding( AonRandom.gt(85) )
+			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.getRandomInvoiceTransactionType())
+			.setStatus(TargetStatus.ACTIVE )
+			.setScope(scope);		
+	}
+	
 	public static Customer getCustomer( AONContext ctx ) {
 		return getCustomer(ctx, getRegistry(ctx));
 	}
@@ -495,7 +544,25 @@ public class AonFaker {
 		return  new Product()
 			.setDomain(new Domain().setId(ctx.getDomainId()))
 			.setName(faker.commerce().productName())
-			.setCode(AonRandom.string(0, 1, 14));
+			.setCode(AonRandom.string(0, 1, 14))
+			.setVat(new Tax()
+					.setDomain(ctx.getDomainId())
+					.setName("test")
+					.setType(TaxType.VAT)
+					.setPercentage(21.0)
+					.setStartDate(new Date()));
+	}
+	
+	public static Item getItem(AONContext ctx ) {
+		Product product = ProductDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(product == null || product.getId() == null) product = ProductDAO.save(ctx, getProduct(ctx));
+		
+		return  new Item()
+			.setDomain(new Domain().setId(ctx.getDomainId()))
+			.setProduct(product)
+			.setDetail("11")
+			.setDetail2("22")
+			.setDetail2("33");
 	}
 	
 	public static Brand getBrand( AONContext ctx ) {
@@ -511,6 +578,150 @@ public class AonFaker {
 			.setDescription(faker.beer().name())
 			.setStatus(WorkgroupStatus.ACTIVE);
 	}
+	public static Workplace getWorkplace(AONContext ctx) {
+		CompanyFull company = CompanyDAO.getFull(ctx, ctx.getDomainId());
+		Scope scope = AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		return new Workplace()
+			.setDomain(ctx.getDomainId())
+			.setEnterprise(company.getId())
+			.setDescription(faker.beer().name())
+			.setScope(scope.getId())
+			.setAddress(company.getAddresses().getFirst().getId());
+	}
+	
+	public static Warehouse getWarehouse(AONContext ctx) {
+		CompanyFull company = CompanyDAO.getFull(ctx, ctx.getDomainId());
+		Scope scope = AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		
+		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
+
+		return new Warehouse()
+			.setDomain(ctx.getDomainId())	
+			.setWorkplace(workplace.getId())
+			.setName(faker.beer().name())
+			.setActive((byte) 1);
+	}
+
+	public static Delivery getDelivery(AONContext ctx) {
+		Customer customer = CustomerDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(customer.isEmpty()) customer = CustomerDAO.save(ctx, getCustomer(ctx));
+		
+		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
+		
+		
+		String series = "TEST";
+		int number = DeliveryDAO.getNextNumber(ctx, series);
+		return new Delivery()
+				.setDomain(ctx.getDomainId())
+				.setProject(new Project())
+				.setIssueTime(new Date())
+				.setSeries(series)
+				.setNumber(number)
+				.setCustomer(customer)
+				.setWorkplace(workplace.getId())
+				.setStatus(DeliveryStatus.PENDING)
+				.setScope(customer.getScope());		
+	}
+	
+	public static DeliveryDetail getDeliveryDetail(AONContext ctx, Delivery delivery) {
+		Item item = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(item == null || item.getId() == null) item = ItemDAO.save(ctx, getItem(ctx));
+		
+		Warehouse warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(warehouse == null || warehouse.getId() == null) warehouse = WarehouseDAO.save(ctx, getWarehouse(ctx));
+		
+		return new DeliveryDetail()
+				.setDelivery(delivery)
+				.setDomain(ctx.getDomainId())
+				.setItem(item)
+				.setLine((short) 1)
+				.setDescription(faker.beer().name())
+				.setWarehouse(warehouse.getId())
+				.setQuantity(1.0)
+				.setPrice(1.0)
+				.setDiscountExpression("0.0");	
+	}
+	
+	public static Sales getSales(AONContext ctx) {
+		Customer customer = CustomerDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(customer.isEmpty()) customer = CustomerDAO.save(ctx, getCustomer(ctx));
+		
+		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
+		
+		String series = "TEST";
+		int number = SalesDAO.getNextNumber(ctx, series);
+		return new Sales()
+				.setDomain(ctx.getDomainId())
+				.setIssueDate(new Date())
+				.setSeries(series)
+				.setNumber(number)
+				.setCustomer(customer)
+				.setWorkplace(workplace.getId())
+				.setStatus(SalesStatus.PENDING)
+				.setScope(customer.getScope());		
+	}
+	
+	public static SalesDetail getSalesDetail(AONContext ctx, Sales sales) {
+		
+		Item item = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(item == null || item.getId() == null) item = ItemDAO.save(ctx, getItem(ctx));
+		return new SalesDetail()
+				.setSales(sales)
+				.setDomain(ctx.getDomainId())
+				.setLine((short) 1)
+				.setItem(new OldItem().setId(item.getId()))
+				.setDescription(faker.beer().name())
+				.setQuantity(1.0)
+				.setPrice(1.0)
+				.setDiscountExpression("0.0")
+				.setStatus(SalesDetailStatus.PENDING);		
+	}
+	
+	public static Offer getOffer(AONContext ctx) {
+		Target target = TargetDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(target.isEmpty()) target = TargetDAO.save(ctx, getTarget(ctx));
+		
+		Supplier supplier = SupplierDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(supplier.isEmpty()) supplier = SupplierDAO.save(ctx, getSupplier(ctx));
+		
+		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.insert(ctx, getWorkplace(ctx));
+		
+		String series = "TEST";
+		int number = OfferDAO.getNextNumber(ctx, series);
+		
+		return new Offer()
+				.setDomain(ctx.getDomainId())
+				.setIssueDate(new Date())
+				.setSeries(series)
+				.setNumber(number)
+				.setType(OfferType.NORMAL)
+				.setVersion(0)
+				.setStatus(OfferStatus.PENDING)
+				.setTarget(target)
+				.setSupplier(supplier)
+				.setScope(target.getScope())
+				.setWorkPlace(workplace);		
+	}
+	
+	public static OfferDetail getOfferDetail(AONContext ctx) {
+		Offer offer = OfferDAO.getOffer(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(offer == null || offer.getId() == null) offer = OfferDAO.insertOffer(ctx, getOffer(ctx));
+		
+		return new OfferDetail()
+				.setOffer(offer)
+				.setDomain(ctx.getDomainId())
+				.setLine((short) 1)
+				.setDescription(faker.beer().name())
+				.setQuantity(1.0)
+				.setPrice(1.0)
+				.setDiscountExpression("0.0")
+				.setStatus(OfferDetailStatus.PENDING);		
+	}
+	
 	
 	public static Project getProject( AONContext ctx ) {
 		ProjectType type = ProjectTypeDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));

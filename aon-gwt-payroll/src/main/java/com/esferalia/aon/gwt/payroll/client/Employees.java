@@ -461,6 +461,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	public void onEnterprise(Enterprise enterprise) {
+		onEnterprise(enterprise, true);
+	}
+
+	public void onEnterprise(Enterprise enterprise, boolean open) {
 
 		clearEnterprise(enterprise);
 
@@ -496,7 +500,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		TreeItem visibleWorkplacesItems [] = workplaceItems.stream().filter( w -> w.isVisible()).toArray(TreeItem[]::new);
 		
 		if (visibleWorkplacesItems.length == 1) {
-			visibleWorkplacesItems[0].setState(true, true); // Send event to show employees
+			visibleWorkplacesItems[0].setState(open, true); // Send event to show employees
 		} else if ( visibleWorkplacesItems.length == 0 ){
 			this.inactive = true;
 			workplaceItems.forEach( workplaceItem -> workplaceItem.setVisible(true));
@@ -1381,7 +1385,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 	
 	private void onWorkplaceOpen(final TreeItem workplaceItem, final int limit, Runnable callback) {
-
 		Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
 		loadWorkplaceCosts(workplaceItem, workplace);
@@ -2564,8 +2567,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	private void select( String pattern ) {
 		
-		for ( int i = 0; i < tree.getItemCount(); i++ ) {
-			TreeItem enterpriseItem = tree.getItem(i);	
+		if ( tree.getItemCount() > 0 ) {
+			TreeItem enterpriseItem = tree.getItem(0);	
 			selectEmployee( pattern, 0, workplaceItem -> {
 				enterpriseItem.setState(true); // open
 			});
@@ -2576,6 +2579,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void selectEmployee( String pattern, int index, Consumer<TreeItem> found) {
 		int workplacesOffset = getWorkplacesOffset(tree);
 		int i = workplacesOffset + index ; 
+		log("selectEmployee(" + pattern +"," + index +") " 
+		+ "[" + i +"," + tree.getItemCount() + "]");
 		if ( i >= tree.getItemCount() )
 			return;
 		

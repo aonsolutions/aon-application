@@ -10,20 +10,19 @@ import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Mod111InsertMonthlyReplacementTest extends AbstractOccamTest {
 	
 	@Test
-	public void mod111InsertMonthlyReplacementTest() {
-		AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration());
+	public void test() {
 		Date today = new Date();
 		for (Period period : Period.values()) {
 			if (period.isMonthPeriod()) {
@@ -40,12 +39,12 @@ public class Mod111InsertMonthlyReplacementTest extends AbstractOccamTest {
 		Mod111 aeat  = insertModel( Administration.COMMON_TERRITORY,date);
 		insertModel( Administration.ALAVA,date);
 		
-		Map<Administration, Double> results = Mod111DAO.getMod111s(ctx, getOccam().getDomain())
+		Map<Administration, Double> results = MODEL111.getMod111s(getOccam())
+			.stream()
 			.filter(mod -> mod.getYear() == aeat.getYear())
 			.filter(mod -> mod.getPeriod() == aeat.getPeriod())
 			.collect(Collectors.groupingBy(Mod111::getAdministration , Collectors.summingDouble(Mod111::getDeclarationResult)));
 			;
-		
 		Asserts.assertEqualsDouble("Sumatorios no coinciden."
 				, results.get(Administration.COMMON_TERRITORY)
 				, results.get(Administration.ALAVA));
@@ -65,7 +64,7 @@ public class Mod111InsertMonthlyReplacementTest extends AbstractOccamTest {
 		MODEL111.save(getOccam(), mod111);
 		Mod111 actual = MODEL111.get(getOccam(), mod111.getId());  
 		Asserts.assertMod111(mod111, actual);
-		Mod111TestSuite.printModel(actual);
+		FiscalTestSuite.printModel(actual);
 		return actual;
 	}
 }

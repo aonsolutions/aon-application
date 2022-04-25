@@ -166,9 +166,9 @@ public class ContractSwitcher implements
 			condition = condition.or(DOMAIN.SCOPE.in(scopes));
 		}
 		if ( parentDomain != null ) {
-			condition = condition.and(DOMAIN.PARENT.eq(parentDomain));
+			condition = condition.and(DOMAIN.PARENT.eq(parentDomain).or(DOMAIN.ID.eq(parentDomain)));
 		} else if ( domain != null ) {
-			condition = condition.and(DOMAIN.ID.eq(parentDomain));
+			condition = condition.and(DOMAIN.ID.eq(domain));
 		}
 		return condition;
 	}

@@ -211,7 +211,6 @@ export class AonTextArea extends AonElement {
 		} else if (document.selection) { // Opera
 			userSelection = document.selection.createRange();
 		}  
-		console.log(userSelection);
 		return userSelection;
 	} 
 
@@ -238,6 +237,47 @@ export class AonTextArea extends AonElement {
 				input: (ev)=>{
 					preventDefault(ev);
 					this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target:ev.target}))
+				},
+				paste: (ev)=>{
+					preventDefault(ev);
+					const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
+
+					let items = clipboardData.items;
+					let files = [];
+					if(items && items.length){
+						for (let index in items) {
+							let item = items[index];
+							if(item.kind){
+								if (item.kind == "file") {
+									console.log("FILE");
+									files.push(item.getAsFile());
+								} else {
+									console.log("HTML");
+									item.getAsString( (html)=>{
+										const element = document.createElement(TAG.DIV);
+										element.innerHTML = html;
+										setTimeout(()=>{
+											[...element.querySelectorAll(TAG.IMG)]
+											.filter(elem=> elem&&elem.getAttribute(CONSTANT.TYPE)!=CONSTANT.AON_FILE)
+											.forEach(elem=> {
+												elem.remove();
+											});
+											[...element.querySelectorAll(TAG.A)].forEach(elem=> {
+												elem.target = "_blank";
+												elem.className = CSS.AON_LINK;
+											});
+											[...element.querySelectorAll("script")].forEach(elem=> elem.remove());
+											[...element.querySelectorAll("link")].forEach(elem=> elem.remove());
+											
+											this.addValueHtml(element.outerHTML);
+										}, 50);
+									});
+									return false;
+								}
+							}
+						}
+					}
+					this.addFiles(files);
 				}
 			},
 			styles : {
@@ -271,6 +311,15 @@ export class AonTextArea extends AonElement {
 		const textarea = this.getTextArea();
 		if(textarea) 
 			textarea.innerHTML = html;
+	}
+
+	addValueHtml(html) {
+		const textarea = this.getTextArea();
+		if(textarea) {
+			const element = document.createElement(TAG.DIV);
+			element.innerHTML = html;
+			textarea.appendChild(element);
+		}
 	}
 
 	getTextArea(){

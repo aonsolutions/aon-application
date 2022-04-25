@@ -1,3 +1,4 @@
+
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
@@ -149,7 +150,6 @@
 					<g:center>
 						<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
 							<g:HTMLPanel ui:field="messageContainer" />
-							<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}" />
 							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 								<g:tab>
 							    	<g:header size='7'>Datos Afiliación</g:header>
@@ -228,7 +228,9 @@
 							 </g:TabLayoutPanel>
 	
 							<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.center}">
-							 	<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+								<g:HTMLPanel styleName="{style.mt10} {style.center}">
+							 		<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+						 		</g:HTMLPanel>
 							</g:SimpleLayoutPanel> 
 						 </g:HTMLPanel>
 					</g:center>

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -24,7 +25,9 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -33,32 +36,89 @@ public abstract class Mod303Declaration {
 	// 1 de Julio del 2021		
 	protected static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
+	private enum Declarations {
+		 AEAT_2022 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2022Declaration();}
+		}
+		,AEAT_2021_2{
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT20212Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT20212Declaration();}
+		}
+		,AEAT_2021 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2021Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2021Declaration();}
+		}
+		,AEAT_2020 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2020Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2020Declaration();}
+		}
+		,AEAT_2018 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2018Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2018Declaration();}
+		}
+		,AEAT_2017 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2017Declaration();}
+		}
+		,BIZKAIA_2022 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2022Declaration();}
+		}
+		,BIZKAIA_2018{
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2018Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2018Declaration();}
+		}
+		,BIZKAIA_2017 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2017Declaration();}
+		}
+		,ARABA_2022{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2022Declaration();}
+		}
+		,ARABA_2019{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2019Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2019Declaration();}
+		}
+		,ARABA_2017{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2017Declaration();}
+		}
+		,GIPUZKOA_2022 {
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2022Declaration();}
+		}
+		,GIPUZKOA_2021_2{
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA20212Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA20212Declaration();}
+		}
+		,GIPUZKOA_2017{
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2017Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2017Declaration();}
+		}
+		,NAVARRA_2022{
+			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2022Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303NAVARRA2022Declaration();}
+		}
+		;
+		abstract boolean accept(Mod303 mod);
+		abstract Mod303Declaration get();
+	}
+	
 	protected static Mod303Declaration getInstance( Mod303 mod) {
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaración");	
 		}
-		if (Mod303AEAT2022Declaration.accept(mod)) 		return new Mod303AEAT2022Declaration();
-		if (Mod303AEAT20212Declaration.accept(mod)) 	return new Mod303AEAT20212Declaration();
-		if (Mod303AEAT2021Declaration.accept(mod)) 		return new Mod303AEAT2021Declaration();
-		if (Mod303AEAT2020Declaration.accept(mod)) 		return new Mod303AEAT2020Declaration();
-		if (Mod303AEAT2018Declaration.accept(mod)) 		return new Mod303AEAT2018Declaration();
-		if (Mod303AEAT2017Declaration.accept(mod)) 		return new Mod303AEAT2017Declaration();
-		if (Mod303BIZKAIA2022Declaration.accept(mod)) 	return new Mod303BIZKAIA2022Declaration();
-		if (Mod303BIZKAIA2018Declaration.accept(mod)) 	return new Mod303BIZKAIA2018Declaration();
-		if (Mod303BIZKAIA2017Declaration.accept(mod)) 	return new Mod303BIZKAIA2017Declaration();
-		if (Mod303ARABA2022Declaration.accept(mod)) 	return new Mod303ARABA2022Declaration();
-		if (Mod303ARABA2019Declaration.accept(mod)) 	return new Mod303ARABA2019Declaration();
-		if (Mod303ARABA2017Declaration.accept(mod)) 	return new Mod303ARABA2017Declaration();
-		if (Mod303GIPUZKOA2022Declaration.accept(mod)) 	return new Mod303GIPUZKOA2022Declaration();
-		if (Mod303GIPUZKOA20212Declaration.accept(mod)) 	return new Mod303GIPUZKOA20212Declaration();
-		if (Mod303GIPUZKOA2017Declaration.accept(mod)) 	return new Mod303GIPUZKOA2017Declaration();
-		
-		throw new AonCoreException(MessageFormat.format(
-			"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
-			mod.getAdministration().getDescription()
-			,mod.getYear()
-			,mod.getPeriod().getDescription()));
-		
+		return Arrays.stream(Declarations.values())
+			.filter(dec -> dec.accept(mod))
+			.map(Declarations::get)
+			.findFirst()
+			.orElseThrow( () -> new AonCoreException(MessageFormat.format(
+				"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
+				mod.getAdministration().getDescription()
+				,mod.getYear()
+				,mod.getPeriod().getDescription())));
 	}
 
 	protected static void add(Mod303Key key,Mod303 mod,double amount) {
@@ -192,7 +252,13 @@ public abstract class Mod303Declaration {
 
 	Mod303 initializeModel(AONContext ctx, Mod303 mod303) {
 		initializeComplementaryAndReplacement(ctx,mod303);
-		initializePreviousData(ctx,mod303);
+		if ( !mod303.isManualDeclaration() ) {
+			initializePreviousData(ctx,mod303);
+		} else {
+			mod303.getMessages().clear();		
+			mod303.setDiffCalculationMandatory(false);
+			mod303.setDiffCalculationDisabled(true);
+		}
 		return mod303;
 	}
 	
@@ -231,14 +297,28 @@ public abstract class Mod303Declaration {
 					.findFirst()
 					.isPresent();
 				if (!something) {
-					mod303.setDiffCalculationMandatory(true);
-					mod303.setDiffCalculationDisabled(false);			
-					mod303.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
-							+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
-							+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
-							+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
-					);
-					resolved = true;
+					Date start = AonDateUtils.getYearFirstDay(mod303.getYear());
+					Date end = FiscalUtils.getPeriodEnd(mod303);
+					boolean existsInvoices = ctx.getDslContext()
+						.select(INVOICE.ID)
+						.from(INVOICE)
+						.where(INVOICE.DOMAIN.eq(mod303.getDomain()))
+						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(start), AonDateUtils.toSql(end)))
+						.limit(1)
+						.fetch()
+						.stream()
+						.findFirst()
+						.isPresent();
+					if (existsInvoices) {
+						mod303.setDiffCalculationMandatory(true);
+						mod303.setDiffCalculationDisabled(false);			
+						mod303.addMessage("Se han encontrado declaraciones en el ejercicio, anteriores a la que se pretende crear."
+								+ " El nuevo módulo de IVA vincula las facturas con las declaraciones, de tal forma que dichas facturas no se podrán modificar ni borrar."
+								+ " Para el correcto funcionamiento, se calculará el modelo por diferencia "
+								+ "y se vincularán todas las facturas, desde el inicio del ejercicio, al modelo que se está creando."
+								);
+						resolved = true;
+					}
 				} 
 			}
 		}
@@ -341,10 +421,13 @@ public abstract class Mod303Declaration {
 			initializeSimplifiedRegime(ctx, mod303);
 		}
 		firstInitialization(ctx, mod303);
-		Set<Integer> invoices = createFromInvoices(ctx,mod303);
-		invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod303) );
-		resolveDiffCalculation(ctx, mod303);
-		return invoices;
+		if (!mod303.isManualDeclaration()) {
+			Set<Integer> invoices = createFromInvoices(ctx,mod303);
+			invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod303) );
+			resolveDiffCalculation(ctx, mod303);
+			return invoices;
+		}
+		return new HashSet<>();
 	}
 	
 	private void firstInitialization(AONContext ctx, Mod303 mod303) {

@@ -3,6 +3,7 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -629,7 +630,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		//assertValue("cgcBaseLabel", 6.78 * 44.00);
 		//assertValue("cgpBaseLabel", 6.33 * 42.00);
 		calculate(Calendar.JANUARY,2022);
-		assertValue("cgcBaseLabel", 38.89 * 0.25 * 30.00);
+		assertValue("cgcBaseLabel", 38.89 * 0.25 * 31.00);
+		assertValue("cgpBaseLabel", 38.89 * 0.25 * 31.00);
 
 		draft("BASE, MÍNIMA PARCIAL ( MENSUAL )");
 		calculate(Calendar.AUGUST,2019);
@@ -643,6 +645,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		//assertValue("cgpBaseLabel", 1050.00 * 0.25);
 		calculate(Calendar.JANUARY,2022);
 		assertValue("cgcBaseLabel", 1166.70 * 0.25);
+		assertValue("cgpBaseLabel", 1166.70 * 0.25);
 
 		draft("HORAS TRABAJADAS, MENSUAL");
 		calculate(Calendar.JANUARY,2022);
@@ -651,6 +654,21 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1166.70 * 0.50);
 		calculate(Calendar.MARCH,2022);
 		assertValue("cgcBaseLabel", 1166.70 * 0.50);
+		assertValue("cgpBaseLabel", 1166.70 * 0.50);
+
+		draft("BASE MÍNIMA, DIARIA ( TRAMOS )");
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 38.89 * 31 * 0.85);
+		assertValue("cgpBaseLabel", 38.89 * 31 * 0.85);
+
+		draft("HORAS NÓMINA, ( GRUPO 10 )");
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 38.89 * 31 * 0.25);
+		assertValue("cgpBaseLabel", 38.89 * 31 * 0.25);
+		double salaryHours = getValue("db-amount-label-1");
+		assertTrue((salaryHours * 7.03 ) <  ( 38.89 * 31 * 0.25 )  ) ;
+		click("expand-button-system");
+		assertNotElement("editor-base_cgc_min_hora");
 	}
 
 	@Test
