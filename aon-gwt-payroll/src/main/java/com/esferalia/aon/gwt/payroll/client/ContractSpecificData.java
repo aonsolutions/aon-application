@@ -1363,7 +1363,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		agreementHoursTB.setText("");
 		agreementMinutesTB.setText("");
 		journeyDurationHoursTB.setText("");
+		journeyDurationHoursTB.setMaxLength(4);
 		journeyDurationMinutesTB.setText("");
+		journeyDurationMinutesTB.setMaxLength(2);
 		formationHoursTB.setText("");
 		formationMinutesTB.setText("");
 		retirementPercentTB.setText("");
@@ -1541,6 +1543,23 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			default:
 				setDefaultView();
 				break;
+		}
+		
+		// Set journeyType for contracts 300
+		createJourneyType(contractType);
+	}
+
+	private void createJourneyType(String contractType) {
+		journeyTypeLB.clear();
+		journeyTypeLB.addItem("-","");
+		
+		if(AonStringUtils.equalsIgnoreCase(contractType, "300"))
+			journeyTypeLB.addItem("JORNADA ANUAL","A");
+		else {
+			journeyTypeLB.addItem("JORNADA ANUAL","A");
+			journeyTypeLB.addItem("JORNADA MENSUAL","M");
+			journeyTypeLB.addItem("JORNADA SEMANAL","S");
+			journeyTypeLB.addItem("JORNADA DIARIA","D");
 		}
 	}
 

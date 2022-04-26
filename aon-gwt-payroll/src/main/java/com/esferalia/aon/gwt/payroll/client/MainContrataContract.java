@@ -1297,6 +1297,7 @@ public class MainContrataContract extends MainEntryPoint {
 				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
 				contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
 				contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
+				contrataEmployee.setChanges(true);
 				contrataEmployee.setContrataEmployeeObject(
 						contrataEmployeeDialogObject, 
 						contractId,
