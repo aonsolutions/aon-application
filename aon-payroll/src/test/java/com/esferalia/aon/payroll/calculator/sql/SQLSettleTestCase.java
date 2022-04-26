@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -52,6 +53,7 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
@@ -3232,6 +3234,59 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
 		
 	}
+
+	@Test
+	public void testSettleWithEmbargoSave() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						//put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05" }, null);
+		//@formatter:off
+		
+		addSSRegimeStuff(aonContext);
+		
+		int year = get(getToday(), Calendar.YEAR);
+		
+		AgreementExtraRecord julyExtra;
+		ISQLContractSalaryCalculatorContext extraCtx;
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder;
+		
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		addSettleEmbargo(aonContext, contract, "EMBARGO FIJO", "6.66");
+		
+		jooqSalaryBuilder = new JooqSalaryBuilder<>(aonContext.getDslContext());
+		Salary settle = new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		Embargo embargo = 
+		AON.getSalaries(aonContext, 
+		p -> p.getContractProperty().eq(contract.getId()))
+		.map(salary -> salary.getEmbargos())
+		.flatMap(List::stream)
+		.findFirst().orElseThrow(AssertionError::new )
+		;
+		
+		System.out.println(embargo.getDescription() + " = " + embargo.getAmount() );
+	}
+
 	// ------------------------------------------------------------------------
 
 	public  void addSSRegimeStuff(AONContext aonContext) {
@@ -3326,6 +3381,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, startDate, endDate, description, expression, irpfExpression, quoteExpression, type, SalaryType.SETTLE);
 	}
 	
+	protected void addSettleEmbargo(AONContext aonContext, ContractRecord contract, String description, String expression) {
+		addEmbargo(aonContext, contract, "EMBARGO FIJO", "6.66");		
+	}
 	
 	protected ISQLContractSalaryCalculatorContext getSmartSQLContractSettleContext(Connection connection, Date contractStart,
 			ContractRecord contract) throws SQLException, ExpressionException {

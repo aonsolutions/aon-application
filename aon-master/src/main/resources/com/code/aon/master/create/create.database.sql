@@ -8173,7 +8173,7 @@ CREATE TABLE `salary_embargo` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
-  `contract_embargo` int(4) NOT NULL COMMENT 'Embargo',
+  `contract_embargo` int(4) DEFAULT NULL COMMENT 'Embargo',
   `amount` double(15,3) DEFAULT '0.000' COMMENT 'Importe',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   PRIMARY KEY (`id`),

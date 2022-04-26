@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.domain.DomainName2LowerCase;
 import net.aonsolutions.db.up2date.finance.UpdateFinanceRname;
+import net.aonsolutions.db.up2date.payroll.AlterSalaryEmbargo;
 import net.aonsolutions.db.up2date.task.TaskComment2TaskWorkfow;
 import net.aonsolutions.db.up2date.task.TaskEvent2TaskWorkfow;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateII;
@@ -237,7 +238,8 @@ public class Up2Date {
 //    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
 //			UpdateFinanceRname.UPDATE_FINANCE_RNAME,
 //    		BaseCgpMin2022FixIII.BASECGPMIN2022FIX
-    		DomainName2LowerCase.DOMAINNAME2LOWERCASE
+    		DomainName2LowerCase.DOMAINNAME2LOWERCASE,
+    		AlterSalaryEmbargo.ALTERSALARYEMBARGO
     };
     
 
