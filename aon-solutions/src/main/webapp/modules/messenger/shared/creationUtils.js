@@ -4,7 +4,6 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
-import { taskHistoricSend } from "../../../services/taskService.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
@@ -394,7 +393,8 @@ export const createRequestType = () =>setAttributes( new AonSelect(),{
 export const createWorkgroup = () =>setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.WORKGROUP,
     name: MESSENGER_IDS.WORKGROUP,
-    title: MSG.WORKGROUP
+    title: MSG.WORKGROUP,
+    autocomplete:true
 });
 
 //----------------PROCESS
@@ -408,7 +408,8 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createTaskHolder = () => setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.TASKHOLDER,
     name: MESSENGER_IDS.TASKHOLDER,
-    title: "Asignar a"
+    title: "Asignar a",
+    autocomplete:true
 });
 
  //-----------------TAG
@@ -488,7 +489,7 @@ export const createChatMessage = (properties, chat) => {
 
     const message = createMessageBox(properties);
     chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
-
+    console.log(properties);
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
       iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
@@ -547,6 +548,29 @@ export const createChatMessage = (properties, chat) => {
     return message;
 }
 
+
+/**
+ * Create a new message
+ * @param {*} properties 
+ * @returns 
+ */
+ export const createMessageOpen = (properties, chat) => {
+  properties = checkProperties(properties);
+
+  const message = createMessageBox(properties);
+  message.style.width = "100%";
+  message.style.background = "#f5f5f5";
+
+  chat.appendChild(message); //ADD MESSAGE IN DIV CHA
+
+  const description = createCommentContent(properties);
+  description.appendTo(message);
+
+  checkFilesAddEventClick(message); //ADD EVENT CLICK
+
+  return message;
+}
+
 /**
  * 
  * @param {HTMLElement} div div append
@@ -554,7 +578,7 @@ export const createChatMessage = (properties, chat) => {
  */
 export const createSectionComment = (div) => {
 
-    const divWrite =  setStyles(document.createElement(TAG.DIV),{ width: "100%", display: "flex", flexDirection: "column" });
+    const divWrite = setStyles(document.createElement(TAG.DIV),{ width: "100%", display: "flex", flexDirection: "column" });
     div.appendChild(divWrite);
 
     const divComment = setStyles(document.createElement(TAG.DIV),{ display: "flex", minHeight: "57px"});

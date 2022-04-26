@@ -214,6 +214,23 @@ export class AonTextArea extends AonElement {
 		return userSelection;
 	} 
 
+	getSelectionForAdd(){
+		const textArea = this.getTextArea();
+		const range = this.getSelection().getRangeAt(0);
+		const selectedText = range.extractContents();
+
+		let div = document.createElement(TAG.DIV); 
+		div.appendChild(selectedText);
+		range.insertNode(div);
+
+		const baseSelection = this.getSelection().baseNode;
+
+		const inside = textArea.contains(baseSelection);
+
+		if(!inside) div = textArea; // not inside
+		return div;
+	}
+
 	generateTextArea(){
 		const preventDefault = (ev) =>{
 			ev.preventDefault();
@@ -238,46 +255,48 @@ export class AonTextArea extends AonElement {
 					preventDefault(ev);
 					this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target:ev.target}))
 				},
+				
 				paste: (ev)=>{
-					preventDefault(ev);
-					const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
+					// preventDefault(ev);
+					// const clipboardData = ev.clipboardData || ev.originalEvent.clipboardData;
 
-					let items = clipboardData.items;
-					let files = [];
-					if(items && items.length){
-						for (let index in items) {
-							let item = items[index];
-							if(item.kind){
-								if (item.kind == "file") {
-									console.log("FILE");
-									files.push(item.getAsFile());
-								} else {
-									console.log("HTML");
-									item.getAsString( (html)=>{
-										const element = document.createElement(TAG.DIV);
-										element.innerHTML = html;
-										setTimeout(()=>{
-											[...element.querySelectorAll(TAG.IMG)]
-											.filter(elem=> elem&&elem.getAttribute(CONSTANT.TYPE)!=CONSTANT.AON_FILE)
-											.forEach(elem=> {
-												elem.remove();
-											});
-											[...element.querySelectorAll(TAG.A)].forEach(elem=> {
-												elem.target = "_blank";
-												elem.className = CSS.AON_LINK;
-											});
-											[...element.querySelectorAll("script")].forEach(elem=> elem.remove());
-											[...element.querySelectorAll("link")].forEach(elem=> elem.remove());
+					// let items = clipboardData.items;
+					// let files = [];
+					// if(items && items.length){
+					// 	for (let index in items) {
+					// 		let item = items[index];
+					// 		if(item.kind){
+					// 			if (item.kind == "file") {
+					// 				console.log("FILE");
+					// 				files.push(item.getAsFile());
+					// 			} else {
+					// 				console.log("HTML");
+					// 				item.getAsString( (html)=>{
+					// 					const element = document.createElement(TAG.DIV);
+					// 					element.innerHTML = html;
+					// 					setTimeout(()=>{
+					// 						[...element.querySelectorAll(TAG.IMG)]
+					// 						.filter(elem=> elem&&elem.getAttribute(CONSTANT.TYPE)!=CONSTANT.AON_FILE)
+					// 						.forEach(elem=> {
+					// 							elem.remove();
+					// 						});
+					// 						[...element.querySelectorAll(TAG.A)].forEach(elem=> {
+					// 							elem.target = "_blank";
+					// 							elem.className = CSS.AON_LINK;
+					// 						});
+					// 						[...element.querySelectorAll("script")].forEach(elem=> elem.remove());
+					// 						[...element.querySelectorAll("link")].forEach(elem=> elem.remove());
 											
-											this.addValueHtml(element.outerHTML);
-										}, 50);
-									});
-									return false;
-								}
-							}
-						}
-					}
-					this.addFiles(files);
+					// 						const div = this.getSelectionForAdd();
+					// 						div.appendChild(element)
+					// 					}, 50);
+					// 				});
+					// 				return false;
+					// 			}
+					// 		}
+					// 	}
+					// }
+					// this.addFiles(files);
 				}
 			},
 			styles : {
@@ -387,7 +406,8 @@ export class AonTextArea extends AonElement {
 	getValue() {return this.value && this.value === 'true';}
 
 	async addFiles(files){
-		const textAreaDiv = this.getTextArea();
+		let div = this.getSelectionForAdd();
+
 		for await (const file of files) {
 			const reader = await getReader(file).catch(e=>null);
 			if(reader) {
@@ -422,8 +442,8 @@ export class AonTextArea extends AonElement {
 				element.dataset.id = fileId;
 				element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
 				element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
-				textAreaDiv.appendChild(element);
-				textAreaDiv.appendChild(document.createElement("br"));
+				div.appendChild(element);
+				div.appendChild(document.createElement("br"));
 			}
 		}
 		this.dispatchEvent(new CustomEvent(EVENT.INPUT));
@@ -466,7 +486,7 @@ export class AonTextArea extends AonElement {
 
 		let span = document.createElement(TAG.SPAN);
 		span.style.margin = "0px 5px";
-		span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING;
+		span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING+" "+"dentro del recuadro";
 		label.appendChild(span);
 		
 		this.appendChild(label);

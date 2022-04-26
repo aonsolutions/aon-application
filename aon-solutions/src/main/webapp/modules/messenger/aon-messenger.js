@@ -5,18 +5,20 @@ import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from './MessengerEnums.js';
+import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
-import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
+import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskAppParams } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { getCustomers } from '../../services/registryService.js';
+import { sortBy } from '../../services/utils.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
+	APP_PARAMS=[];
 	_workgroups;
 	_tags;
 	_filter={};
@@ -124,6 +126,10 @@ export class AonMessenger extends AonElement {
 				})
 			}
 		});		
+
+		if(!this.cau){
+			this.getAppParams(); 
+		}
 	}
 
 	async isTaskHolder(){
@@ -392,7 +398,7 @@ export class AonMessenger extends AonElement {
 		let application = this.applicationEl;
 		const manager =  this.getDur().isMessengerManager();
 		getTaskTags({type:TAG_TYPE.TASK_LABEL}).then(tags => {
-		  this._tags =  tags.map(t => ({...t, value: t.id, description: t.name, name:t.name}));
+		  this._tags = sortBy(tags, "name", "asc").map(t => ({...t, value: t.id, description: t.name, name:t.name}));
 		  this.clearElementById(application.SIDENAV+'TagList');
 		  this._tags.forEach(item => {
 			let option = {
@@ -542,6 +548,32 @@ export class AonMessenger extends AonElement {
 			});
 		}
 		return this._workgroups;
+	}
+
+	async getAppParams(){
+		if(!this.APP_PARAMS.length){
+			try {
+				await getTaskAppParams({
+					params:[
+						APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER, 
+						APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER, 
+						APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP, 
+						APP_PARAMS_REQUEST.APP_REQUESTS_EXT_WORKGROUP
+					]
+				}).then(params=>{
+					let newResp = [];
+					params
+					.filter(p => p.value)
+					.forEach(p => 
+						newResp[p.name] = p.value
+					);
+					this.APP_PARAMS = newResp;
+				});
+			} catch (e) {
+				console.log("error getAppParams", e);
+			}
+		}
+		return this.APP_PARAMS;
 	}
 
 	showView(view, data = undefined, filter = undefined){

@@ -620,7 +620,7 @@ public class TaskUtils {
 		return appParam.getId() == null || (appParam.getId()!=null && appParam.getValue().equals("true"));
 	}
 	
-	private static String getTaskDescription(Task task) {
+	public static String getTaskDescription(Task task) {
 		try {
 			JSONObject obj = new JSONObject(task.getDescription());
 			return obj.optString("observation");

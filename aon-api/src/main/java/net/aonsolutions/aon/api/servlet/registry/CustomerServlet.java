@@ -108,7 +108,8 @@ public class CustomerServlet extends AonApiHttpServlet {
 		if(json.opt(IJsonNames.VALUE) != null) {
 			String value = json.optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getNameProperty().like("%" + value + "%")
-					.or(f.getDocumentProperty().like("%" + value + "%"));
+					.or(f.getDocumentProperty().like("%" + value + "%"))
+					.or(f.getAliasProperty().like("%" + value + "%"));
 			filter = filter.and(valueFilter);
 		}
 		return filter;

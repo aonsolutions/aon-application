@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
@@ -190,12 +191,9 @@ public class Contrata {
 					if(cto.getCodFormativo()!=null && cto.getCodFormativo() > 0) 
 						((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
 				}
+				
+				setOccupation(cto, form);
 	
-				if(cto.getCodOccupation()!=null) {
-					form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation()); // disabled
-					form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
-				}
-
 				if(cto.getCodPaisWork()!=null) 
 					((HtmlSelect)form.querySelector("select[name=codpais]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
 				
@@ -250,7 +248,7 @@ public class Contrata {
 			}
 
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-			
+
 			//---------------------PREVISIBLE---------------------
 			if( Arrays.asList("402", "502").contains(cto.getCodContract()) ) { // es previsible
 				DomNode back = htmlPage.querySelector("#volver");
@@ -260,13 +258,17 @@ public class Contrata {
 					DomNode previsible = form.querySelector("select[name=preg90dias]"); 
 					if(previsible!=null) {
 						((HtmlSelect)previsible).setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
-						htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 					}
+					
+					setOccupation(cto, form);
+
+					htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 				}
 			}
 
 			handleSepeExceptions(htmlPage);
 			handleSepeAlert(alertHandler.getCollectedAlerts());
+			
 
 			String message = getSuccessMessage(htmlPage);
 			
@@ -276,7 +278,9 @@ public class Contrata {
 			}
 			
 			if(message!=null && message.indexOf("E")>=0) 
-				return message.substring(1);
+				message.substring(1);
+			else 
+				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
 		} 
 		return null;
 	}
@@ -384,7 +388,7 @@ public class Contrata {
 			if(message!=null && message.contains("se ha realizado correctamente"))
 				System.out.println(message);
 			else 
-				throw new SepeException("no se ha realizado");
+				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
 		} 
 	}
 	
@@ -394,10 +398,12 @@ public class Contrata {
 				return getContractDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-			catch (MalformedURLException e) {throw new SepeException(e);} 
+			catch (MalformedURLException | InterruptedException  e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new SepeException(e.getMessage());
+			}
 			return null;
 	}
 	
@@ -426,35 +432,44 @@ public class Contrata {
 	    	DomNodeList<DomNode> data =form.querySelectorAll("fieldset > div > div[class*=titulo]");
 	    	
 			ContractBuilder builder = new ContractBuilder();
+
 			//DATOS DE CONSULTA
 			data.forEach(title->{
 				String titleStr = Toolkit.removeNBSP(title.getVisibleText()).trim();
-				String valueStr = Toolkit.removeNBSP(Toolkit.getNextSibling(title).getVisibleText().trim());
-				Integer valueInt = valueStr.length();
-				if(valueInt > 0) {
-					if(titleStr.indexOf("CIF")>=0) { builder.setCifEnterprise(valueStr); }
-					else if(titleStr.indexOf("Cuenta de Cotizaci\u00F3n :")>=0) { 
-						String newStr = Toolkit.noSpaces(valueStr);
-						builder.setRegimen(newStr.substring(0,4));
-						builder.setCtaCti(newStr.substring(4));
-					}
-					else if(titleStr.indexOf("NIF/NIE :")>=0) { builder.setIpf(valueStr); }
-					else if(titleStr.indexOf("Fecha de Nacimiento :")>=0) { builder.setDateBirth(Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
-					else if(titleStr.indexOf("Nombre / Apellidos :")>=0) { builder.setName(valueStr); }
-					else if(titleStr.indexOf("Sexo :")>=0) {
-						if(valueStr.indexOf("HOM")>=0) {
-							builder.setSex(SexType.HOMBRE);
-						} else if(valueStr.indexOf("MUJ")>=0) {
-							builder.setSex(SexType.MUJER);
+				DomNode valueNode = Toolkit.getNextSibling(title);
+				if(titleStr.length()>0 && valueNode!=null) {
+					String valueStr = Toolkit.removeNBSP(valueNode.getVisibleText().trim());
+					if(valueStr.length() > 0) {
+						if(titleStr.indexOf("CIF")>=0) { 
+							builder.setCifEnterprise(valueStr); 
+						} else if(titleStr.indexOf("Cuenta de Cotizaci\u00F3n :")>=0) { 
+							String newStr = Toolkit.noSpaces(valueStr);
+							builder.setRegimen(newStr.substring(0,4));
+							builder.setCtaCti(newStr.substring(4));
+						} else if(titleStr.indexOf("NIF/NIE :")>=0) { 
+							builder.setIpf(valueStr); 
+						} else if(titleStr.indexOf("Fecha de Nacimiento :")>=0) { 
+							builder.setDateBirth(Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
+						} else if(titleStr.indexOf("Nombre / Apellidos :")>=0) { 
+							builder.setName(valueStr); 
+						} else if(titleStr.indexOf("Sexo :")>=0) {
+							if(valueStr.indexOf("HOM")>=0) {
+								builder.setSex(SexType.HOMBRE);
+							} else if(valueStr.indexOf("MUJ")>=0) {
+								builder.setSex(SexType.MUJER);
+							}
+						} else if(titleStr.indexOf("N\u00FCmero de afiliación SS :")>=0) { 
+							builder.setNss(valueStr); 
+						} else if(titleStr.indexOf("Identificador del contrato :")>=0) {
+							builder.setSepeId(valueStr.trim().replace("-", "").substring(1)); 
+						} else if(titleStr.indexOf("Fecha de inicio del contrato :")>=0) { 
+							builder.setDateIniContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
+						} else if(titleStr.indexOf("Fecha Fin del Contrato :")>=0) { 
+							builder.setDateFinContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
+						} else if(titleStr.indexOf("Fecha en que se comunica :")>=0) { 
+							builder.setDateComContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); 
 						}
 					}
-					else if(titleStr.indexOf("N\u00FCmero de afiliación SS :")>=0) { builder.setNss(valueStr); }
-					else if(titleStr.indexOf("Identificador del contrato :")>=0) {
-						builder.setSepeId(valueStr.trim().replaceAll("-", "").substring(1)); 
-					}
-					else if(titleStr.indexOf("Fecha de inicio del contrato :")>=0) { builder.setDateIniContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
-					else if(titleStr.indexOf("Fecha Fin del Contrato :")>=0) { builder.setDateFinContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
-					else if(titleStr.indexOf("Fecha en que se comunica :")>=0) { builder.setDateComContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
 				}
 			});
 			
@@ -800,6 +815,18 @@ public class Contrata {
 			}
 		} 
 	    return null;
+	}
+	
+	private static void setOccupation(Contract cto, HtmlForm form) {
+		if(cto.getCodOccupation()!=null) {
+			DomNode ocupacion = form.querySelector("[name=\"ocupacion\"]");
+			if(ocupacion!=null) 
+				((HtmlInput) ocupacion).setValueAttribute(cto.getCodOccupation());
+			
+			DomNode cocupacion = form.querySelector("[name=\"cocupacion\"]");
+			if(cocupacion!=null) 
+				((HtmlInput) cocupacion).setValueAttribute(cto.getCodOccupation());
+		}
 	}
 	
 	private static HtmlPage getFirstPageSepeContrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
