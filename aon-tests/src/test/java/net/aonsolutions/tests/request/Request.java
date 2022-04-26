@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.api.test.request;
+package net.aonsolutions.tests.request;
 
 import static org.mockito.Mockito.when;
 
@@ -11,13 +11,24 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Request {
 
+	public static JSONObject requestJSONObject(Method method, HttpServletRequest request, HttpServletResponse response, IServlet visitor, JSONObject json) {
+		String result = request(method, request, response, visitor, json);
+		return new JSONObject(result);
+	}
 	
-	public static JSONObject request(Method method, HttpServletRequest request, HttpServletResponse response, ServletVisitor visitor, JSONObject json) {
+	public static JSONArray requestJSONArray(Method method, HttpServletRequest request, HttpServletResponse response, IServlet visitor, JSONObject json) {
+		String result = request(method, request, response, visitor, json);
+		return new JSONArray(result);
+	}
+
+	public static String request(Method method, HttpServletRequest request, HttpServletResponse response, IServlet visitor, JSONObject json) {
 		try {
+			
 			when(request.getReader()).thenReturn(
 			    new BufferedReader(new StringReader(json.toString())));
 		} catch (IOException e1) {
@@ -25,10 +36,9 @@ public class Request {
 		}
 		when(request.getContentType()).thenReturn("application/json");
 		when(request.getCharacterEncoding()).thenReturn("UTF-8");
-	
+			
 	    StringWriter sw = new StringWriter();
 	    PrintWriter pw = new PrintWriter(sw);
-	         
 
 		try {
 			when(response.getWriter()).thenReturn(pw);
@@ -48,7 +58,6 @@ public class Request {
 	    	visitor.patch(request, response);
 	    }
 	    
-	    String result = sw.getBuffer().toString().trim();
-	    return new JSONObject(result);
+	    return sw.getBuffer().toString().trim();
 	}
 }

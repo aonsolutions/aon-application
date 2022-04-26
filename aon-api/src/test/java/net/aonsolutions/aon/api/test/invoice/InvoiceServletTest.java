@@ -1,37 +1,37 @@
-package net.aonsolutions.aon.api.test.login;
+package net.aonsolutions.aon.api.test.invoice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.aonsolutions.aon.api.servlet.LoginServlet;
-import net.aonsolutions.aon.api.test.request.ServletVisitor;
+import net.aonsolutions.aon.api.servlet.InvoiceServlet;
+import net.aonsolutions.tests.request.IServlet;
 
-public class LoginVisit implements ServletVisitor{
+public class InvoiceServletTest implements IServlet {
 
-	LoginServlet ls = new LoginServlet();
+	InvoiceServlet is = new InvoiceServlet();
 	
 	@Override
 	public void get(HttpServletRequest req, HttpServletResponse resp) {
-
+		is.doGet(req, resp);
 	}
 
 	@Override
 	public void post(HttpServletRequest req, HttpServletResponse resp) {
-		ls.doPost(req, resp);
+		is.doPost(req, resp);
 	}
 
 	@Override
 	public void put(HttpServletRequest req, HttpServletResponse resp) {
-	
+		is.doPut(req, resp);
 	}
 
 	@Override
 	public void delete(HttpServletRequest req, HttpServletResponse resp) {
-	
+		is.doDelete(req, resp);
 	}
 
 	@Override
 	public void patch(HttpServletRequest req, HttpServletResponse resp) {
-	
+
 	}
 }

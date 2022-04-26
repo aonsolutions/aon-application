@@ -84,27 +84,9 @@ public class AonApiHttpServlet extends HttpServlet{
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
 		
 		Domain domain = getDomain(req, api);
-		
 		api.setDomain(domain);
 		
-		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
-		if(AonStringUtils.isBlank(domainLogin) && api.getData().opt(IConstants.DOMAIN_LOGIN) != null) {
-			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
-		} else if(AonStringUtils.isBlank(domainLogin) && api.getData().opt("userLogin") != null) {
-			domainLogin = api.getData().getString("userLogin");
-		}
-		User user = new User().setLogin("");
-		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
-			AonToken aonToken = SECURITY.getAonToken(api.getToken());
-			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
-					.and(f.getDomainProperty().eq(api.getDomain().getId())));
-			if(user == null || user.getId() == null) {
-				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
-						.and(f.getDomainProperty().eq(api.getDomain().getParentId())));
-			}
-		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
-			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
-		}
+		User user = getUser(req, api, domain);
 		api.setUser(user);
 		
 		api.setPath(req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR);
@@ -135,6 +117,29 @@ public class AonApiHttpServlet extends HttpServlet{
 			e.printStackTrace();
 		}
 		return domain;
+	}
+	
+	private User getUser(HttpServletRequest req, AonApiData api, Domain domain) {
+		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
+		if(AonStringUtils.isBlank(domainLogin) && api.getData().opt(IConstants.DOMAIN_LOGIN) != null) {
+			domainLogin = api.getData().getString(IConstants.DOMAIN_LOGIN);
+		} else if(AonStringUtils.isBlank(domainLogin) && api.getData().opt("userLogin") != null) {
+			domainLogin = api.getData().getString("userLogin");
+		}
+		User user = new User().setLogin("");
+		if(!api.isPredefinedToken() && AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+					.and(f.getDomainProperty().eq(api.getDomain().getId())));
+			if(user == null || user.getId() == null) {
+				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+						.and(f.getDomainProperty().eq(api.getDomain().getParentId())));
+			}
+		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
+			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
+		}
+		if(user.getLogin() == null) user.setLogin("");
+		return user;
 	}
 	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {

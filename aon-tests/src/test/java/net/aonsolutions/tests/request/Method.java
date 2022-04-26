@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.api.test.request;
+package net.aonsolutions.tests.request;
 
 public enum Method {
 
