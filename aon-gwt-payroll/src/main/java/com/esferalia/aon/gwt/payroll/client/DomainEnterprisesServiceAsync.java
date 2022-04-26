@@ -255,7 +255,7 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), findingDate, cccList, cccIdList, cccId, type, asyncCallback);
+		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), getCurrentUser(), findingDate, cccList, cccIdList, cccId, type, asyncCallback);
 	}
 	
 	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<String> asyncCallback) {
