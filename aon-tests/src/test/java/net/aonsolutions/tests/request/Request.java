@@ -60,4 +60,38 @@ public class Request {
 	    
 	    return sw.getBuffer().toString().trim();
 	}
+	
+	public static String request(Method method, HttpServletRequest request, HttpServletResponse response, IServlet visitor, String data) {
+		try {
+			when(request.getReader()).thenReturn(
+			    new BufferedReader(new StringReader(data)));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		when(request.getContentType()).thenReturn("application/x-www-form-urlencoded");
+		when(request.getCharacterEncoding()).thenReturn("UTF-8");
+			
+	    StringWriter sw = new StringWriter();
+	    PrintWriter pw = new PrintWriter(sw);
+
+		try {
+			when(response.getWriter()).thenReturn(pw);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+	    if(Method.GET.equals(method)) {
+	    	visitor.get(request, response);
+	    } else if(Method.POST.equals(method)) {
+	    	visitor.post(request, response);
+	    } else if(Method.PUT.equals(method)) {
+	    	visitor.put(request, response);
+	    } else if(Method.DELETE.equals(method)) {
+	    	visitor.delete(request, response);
+	    } else if(Method.PATCH.equals(method)) {
+	    	visitor.patch(request, response);
+	    }
+	    
+	    return sw.getBuffer().toString().trim();
+	}
 }
