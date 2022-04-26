@@ -192,6 +192,11 @@ public class DomainData implements Serializable {
 			buf.append(text.substring(start, end)).append(replacement);
 			start = end + replLength;
 			end = indexOfIgnoreCase(text,searchString, start);
+			
+			// Array overflow control
+			if(buf.toString().length() > Integer.MAX_VALUE / 2) {
+				break;
+			}
 		}
 		buf.append(text.substring(start));
 		return buf.toString();
