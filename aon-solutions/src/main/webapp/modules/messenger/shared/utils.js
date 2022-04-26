@@ -683,6 +683,8 @@ const addLine = (chat) => chat.style.setProperty("--height", chat.scrollHeight +
  */
 const addTaskDescription = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
+    if(task.id) return;
+    
     const aonTextArea = createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`);
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
 
