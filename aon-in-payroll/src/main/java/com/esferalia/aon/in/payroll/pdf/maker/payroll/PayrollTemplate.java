@@ -399,9 +399,11 @@ public class PayrollTemplate implements IPayrollTemplate{
 
 		if (logo.isPresent())
 		{
-			byte[]	 bytes = logo.get().readAllBytes();
-			PdfImage img   = new PdfImage(x + 20, y - 60, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);
-			img.scale(170, 70, LEFT).draw();
+				byte[]	 bytes = logo.get().readAllBytes();
+				PdfImage img   = new PdfImage(x + 20, y - 60, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);
+			try {
+				img.scale(170, 70, LEFT).draw();
+			} catch (Exception e) {}
 		}
 		y -= 15;
 

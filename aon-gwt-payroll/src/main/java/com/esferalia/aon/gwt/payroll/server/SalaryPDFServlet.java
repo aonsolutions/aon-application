@@ -79,7 +79,6 @@ public class SalaryPDFServlet extends HttpServlet {
 				dispatcher.forward(req, resp);
 				return;				
 			}
-			
 			Integer selectedSalaries = req.getParameterValues(PayrollPrintService.Parameter.ID.getName()).length;
 			Condition condition = getConditionSalaryIds(req.getParameterValues(PayrollPrintService.Parameter.ID.getName()), selectedSalaries);
 			extension = "pdf";
