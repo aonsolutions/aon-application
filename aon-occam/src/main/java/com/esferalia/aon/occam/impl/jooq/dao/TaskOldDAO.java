@@ -203,6 +203,7 @@ public class TaskOldDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.CREATION_DATE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.PARENT);}
+		@Override public Property<Integer> getTagIdProperty() {return null;}
 		@Override public Property<String> getTagNameProperty() {return null;}
 		@Override public Property<String> getCommentsWorkflowProperty() {return null;}
 	}

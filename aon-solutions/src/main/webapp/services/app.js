@@ -78,7 +78,7 @@ export const PAYROLL = {
   app: CONSTANT.PAYROLL,
   title: MSG.PAYROLL,
   description: MSG.PAYROLL,
-  tag: MSG_ES.PAYROLL,
+  tag: MSG.PAYROLL,
   icon: AON_ICONS.AON_PAYROLL,
   color: '#002469',
   access: [{

@@ -561,7 +561,7 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C104,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C105	(Mod303Key.BZ_C105
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && !vat.isService()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C105,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C106	(Mod303Key.BZ_C106
@@ -572,10 +572,7 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C107,mod,vat.getBase())
 			,null,null,null)
-		,BZ_C108	(Mod303Key.BZ_C108
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales() && vat.isService()
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C108,mod,vat.getBase())
-			,null,null,null)
+		,BZ_C108	(Mod303Key.BZ_C108)
 		,BZ_C109 (Mod303Key.BZ_C109)
 		;
 		

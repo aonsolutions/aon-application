@@ -4,6 +4,7 @@ import static com.esferalia.aon.watson.util.AonStringUtils.INDEX_NOT_FOUND;
 import static com.esferalia.aon.watson.util.AonStringUtils.indexOfIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
 
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -47,9 +48,16 @@ public class HelpData {
 			display.append(replace(htmlTitle,filter, s -> "<b>"+s+"</b>"));
 		} catch ( Exception e ) {
 			try {
-				display.append(title.replaceAll("(" + AonStringUtils.getMatching(title, filter) + ")?", "<b>$1</b>"));
+				List<String> matches = AonStringUtils.getMatching(title, filter);				
+				String aux = title;
+				
+				for (String match : matches) {
+					aux = replace(aux, match, p -> "<b>" + p + "</b>" ); // aux.replace(match , "<b>" + match + "</b>");
+				}
+				
+				display.append(aux);
 			} catch(Exception ex) {
-				display.append(htmlTitle);
+				display.append(title);
 			}
 			
 		}
@@ -63,7 +71,7 @@ public class HelpData {
 		int start = 0;
 		int end = indexOfIgnoreCase(text, searchString, start);
 		if (end == INDEX_NOT_FOUND) {
-			throw new RuntimeException();
+			throw new IndexOutOfBoundsException();
 		}
 		final int replLength = searchString.length();
 		final StringBuilder buf = new StringBuilder();
@@ -72,9 +80,16 @@ public class HelpData {
 			buf.append(text.substring(start, end)).append(replacement);
 			start = end + replLength;
 			end = indexOfIgnoreCase(text,searchString, start);
+			
+			// Array overflow control
+			if(buf.toString().length() > Integer.MAX_VALUE / 2) {
+				break;
+			}
 		}
 		buf.append(text.substring(start));
 		return buf.toString();
 	}
+	
+	
 
 }

@@ -66,7 +66,8 @@ public class TaskUtils {
 		String email  = params.optString(IJsonNames.EMAIL);
 		String search = params.optString(IJsonNames.SEARCH);
 		String status = params.optString(IJsonNames.STATUS);
-
+		Integer tag = params.optInt(IJsonNames.TAG);
+		
 		String workgroupStr = params.optString(IJsonNames.WORKGROUPS);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
@@ -74,6 +75,10 @@ public class TaskUtils {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
 		else if(!status.isEmpty())
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
+		
+		if(tag!=null && tag>0) 
+			filter = filter.and(f.getTagIdProperty().eq(tag));
+		
 		if(!search.isEmpty()) 
 			filter = filter.and(getSearchFilter(f, search));
 		
@@ -137,11 +142,12 @@ public class TaskUtils {
 		
 		if(isCau(params)) 
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
-		
+
 		if(workgroup != null && workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
-		else if(params.optBoolean(IJsonNames.WORKGROUP))  //TRUE = ALL
-			filter = filter.and(f.getWorkgroupProperty().isNull());
+		else if(params.optBoolean(IJsonNames.WORKGROUP)) {//TRUE = ALL
+			filter = filter.and(f.getWorkgroupProperty().isNull()).and(f.getTaskHolderProperty().isNull());
+		} 
 	
 		if(!params.optString("startDate").isEmpty()) {
 			Date startDate = AonDateUtils.parse(params.optString("startDate"), "yyyy-MM-dd");
@@ -154,16 +160,20 @@ public class TaskUtils {
 		JSONObject params = api.getData();
 
 		String source = params.optString(IJsonNames.SOURCE);
+		
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
+		
 		String workgroupStr = params.optString(IJsonNames.WORKGROUPS);
-		String email = params.optString(IJsonNames.EMAIL);
 
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 
 		if(taskHolder != null && taskHolder!=0 && !workgroupStr.isEmpty()) {
-			String[]  str =  workgroupStr.split(",");
+			String[]  str = workgroupStr.split(",");
 			Integer[] arr = new Integer[str.length];
-			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
+			for(int i=0; i<str.length; i++) {
+				arr[i] = Integer.parseInt(str[i]);
+			}
+				 
 			filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getSenderProperty().eq(taskHolder).or(f.getWorkgroupProperty().in(arr))));
 		} else if(taskHolder != null && taskHolder!=0 && customer.getId()==null)
 			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getSenderProperty().eq(taskHolder)));
@@ -174,23 +184,28 @@ public class TaskUtils {
 		if(customer.getId() != null)
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 
-		if(isCau(api.getData())) 
+		if(isCau(params)) {
+			String email = params.optString(IJsonNames.EMAIL);
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
+		}
 
 		return filter;
 	}
 	
 	public static Filter taskFilterCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
-		String email = api.getData().optString(IJsonNames.EMAIL);
-		Integer taskHolder = api.getData().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getData(), IJsonNames.TASK_HOLDER);
+		JSONObject params = api.getData();
+		Integer taskHolder = params.getInt(IJsonNames.TASK_HOLDER);
 
 		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
 		
 		if(customer.getId()!=null) 
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 		
-		if(  isCau(api.getData()) || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) 
+		if( isCau(api.getData()) || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) {
+			String email =  params.optString(IJsonNames.EMAIL);
 			filter = filter.and( f.getGtaskIdProperty().eq(email) );
+		}
+		
 	
 		return filter;
 	}
@@ -234,7 +249,7 @@ public class TaskUtils {
 		return logo;
 	}
 	
-	public static Matcher regexFile(Task task, String dataId) {
+	private static Matcher regexFile(Task task, String dataId) {
 		String description = task.getDescription();
 	    String regex = "(\\<\\S[^<>]*?href=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
 	    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -385,7 +400,11 @@ public class TaskUtils {
 		else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ 
 			AON.getTaskHolderWorkgroupStream(
 					domain, api.getUser(), 
-					f->f.getIdProperty().ne(workflow.getTaskHolder().getId())
+					f-> f.getIdProperty().isNotNull().and(
+							workflow.getTaskHolder().getId()!=null ?
+							f.getIdProperty().ne(workflow.getTaskHolder().getId()) :
+							f.getIdProperty().isNotNull()
+					)
 					.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))),
 					task.getWorkgroup().getId()
 			)
@@ -552,8 +571,8 @@ public class TaskUtils {
 		Filter filter = f.getDescriptionProperty().like("%" + search + "%")
 				.or(f.getRegistryNameProperty().like("%" + search + "%"))
 				.or(f.getCommentsProperty().like("%" + search + "%")) 
-				.or(f.getGtaskIdProperty().like("%" + search + "%"))
 				.or(f.getTagNameProperty().like("%" + search + "%"))
+				.or(f.getGtaskIdProperty().like("%" + search + "%"))
 				.or(f.getCommentsWorkflowProperty().like("%" + search + "%"))
 				;
 		Integer numberSearch = 0;

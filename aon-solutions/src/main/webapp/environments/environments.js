@@ -9,7 +9,7 @@ export const SIG_URL = "https://aonsolutions.org";
 export const SIG_DOMAIN_NAME = "sig.aonsolutions.org";
 export const SIG_DOMAIN_ID = 5;
 //----TEST
-// export const SIG_URL = "https://8fb8-47-62-53-208.ngrok.io";
+// export const SIG_URL = "https://b4da-47-62-53-208.ngrok.io";
 // export const SIG_DOMAIN_NAME = "b72384936-ayudat.rvasquez.net";
 // export const SIG_DOMAIN_ID = 7138;
 

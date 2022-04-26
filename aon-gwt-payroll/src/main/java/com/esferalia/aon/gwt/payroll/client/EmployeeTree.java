@@ -2531,9 +2531,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employees = new Workers(true, true) {
 			@Override
 			public void onEnterprise(Enterprise enterprise) {
-				super.onEnterprise(enterprise);
 				String employeeSearch = 
 				getParameter(GWT.getModuleName(), EMPLOYEE_SEARCH_PARAM);
+				
+				super.onEnterprise(enterprise, AonStringUtils.isBlank(employeeSearch));
+				
 				if ( AonStringUtils.isNotBlank(employeeSearch) ) {
 					Scheduler.get().scheduleDeferred(() -> employees.search(employeeSearch) );
 				}

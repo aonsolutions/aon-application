@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
 import {  MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, taskHistoricSend} from "../../services/taskService.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, taskHistoricSend, deleteTaskWorkflow} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
@@ -180,57 +180,57 @@ export class AonMessengerChat extends AonElement {
   }
 
   async save() {
+    let success = false;
     this.applicationEl.startLoading();
     this.autoComplete();
-    
-    if(this.task.source === TASK_SOURCE.REQUEST)
-      await this.saveSourceRequest();
-    else 
-      await this.saveSourceQuery();
 
-    this.getTaskWorkflow();
-
-    this.applicationParentEl.updateCount();
-    this.applicationEl.stopLoading();    
-  }
-
-  async saveSourceRequest(){
     try {
-        const json = this.getFormJson();
-        if(json){
-          this.task.setDescriptionJson(json);
-          const data = await saveTask(this.task);
-          this.task.editTask(data);
-          if(this.getData().id){
-            this.setData(data);
-          } else {
-            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-          }
-        }
+      if(this.task.source === TASK_SOURCE.REQUEST)
+        await this.saveSourceRequest();
+      else 
+        await this.saveSourceQuery();
+
+      success = true;
+
+      this.getTaskWorkflow();
     } catch (error) {
       console.log(error);
       this.showError(error);
     }
+    
+    this.applicationParentEl.updateCount();
+    this.applicationEl.stopLoading();  
+    
+    return success;
+  }
+
+  async saveSourceRequest(){
+      const json = this.getFormJson();
+      if(json){
+        this.task.setDescriptionJson(json);
+        const data = await saveTask(this.task);
+        this.task.editTask(data);
+        if(this.getData().id){
+          this.setData(data);
+        } else {
+          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
+        }
+      }
   }
 
   async saveSourceQuery(){
-    try {
-      if(!this.task.id)
-        this.setCauData(this.task);
-        
-      const data = await saveTask(this.task);
-      this.task.editTask(data);
+    if(!this.task.id)
+      this.setCauData(this.task);
+      
+    const data = await saveTask(this.task);
+    this.task.editTask(data);
 
-      checkFilesAddEventDescription(this.task);//check files description
+    checkFilesAddEventDescription(this.task);//check files description
 
-      if(this.getData().id){
-        this.setData(data);
-      } else {
-        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-      }
-    } catch (error) {
-      console.log(error);
-      this.showError(error);
+    if(this.getData().id){
+      this.setData(data);
+    } else {
+      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     }
   }
 
@@ -263,6 +263,19 @@ export class AonMessengerChat extends AonElement {
         this.showToast({message:MSG.DELETED_DATA});
         this.applicationParentEl.updateCount();
         this.back();
+      } catch (error) {
+        this.showError(error);
+      }
+    });
+  }
+
+  deleteTaskWorkflow(id){
+    this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+      try {
+        await deleteTaskWorkflow({id});
+        this.showToast({message:MSG.DELETED_DATA});
+        const element = document.querySelector(`[data-id='${id}']`);
+        if(element) element.remove();
       } catch (error) {
         this.showError(error);
       }

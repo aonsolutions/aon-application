@@ -243,9 +243,18 @@ public class InvoiceDetailController extends LinesController implements IFinance
 
 	public boolean isVatIncluded() {
 		Invoice invoice = getInvoice();
-		return !invoice.isVatFree() || (!invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP()));
+		return !invoice.isVatFree() || 
+			   ((invoice.isNotSales() && invoice.isIntracommunity() 
+			 || (invoice.isNotSales() && invoice.isOtherISP()))
+			 || (invoice.isExpense() && invoice.isExtracommunity())
+			 || (invoice.isExpense() && invoice.isCanCeuMel())
+			 || (invoice.isPurchase() && invoice.isService() && invoice.isExtracommunity())
+			 || (invoice.isPurchase() && invoice.isService() && invoice.isCanCeuMel())
+			 )
+			;
 	}
-
+	
+	
 	public double getVatPercent() {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
@@ -329,7 +338,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		if (to != null && to.getItem() != null && to.getItem().getId() != null) {
 			rowStock = getRowStock(to);
 		}
-		return new Double(rowStock);
+		return Double.valueOf(rowStock);
 	}
 
 	private double getRowStock(InvoiceDetail to) throws ManagerBeanException {

@@ -1883,8 +1883,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(String domainName, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
+	public String createNewCRA(String domainName, String user, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
 			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
 			
@@ -1894,10 +1898,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			java.util.Date fileNameDate = new java.util.Date();
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, fileNameDate, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(domainId, userId, cccList, findingDate, fileNameDate, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
-			
-			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, fileNameDate, connection);
 			

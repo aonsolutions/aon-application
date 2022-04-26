@@ -1,5 +1,5 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT} from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
@@ -84,7 +84,11 @@ const buildToolbar = (aonMessengerChat) => {
     }
 
     if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) )
-      toolbar.addButton2(ACTIONS.SAVE, () => aonMessengerChat.save());
+      toolbar.addButton2(ACTIONS.SAVE, () =>{
+        aonMessengerChat.save().then((success) =>{
+          if(success) aonMessengerChat.showMessage();
+        });
+      });
 
     toolbar.addButton2(ACTIONS.BACK, () => aonMessengerChat.back());
 
@@ -112,11 +116,10 @@ const buildSectionHistoric = (secondDiv) => {
     wrapper.appendTo(secondDiv);
 
     const title = setStyles(createTitle(MSG.HISTORIC), {
-          alignSelf: 'center',
-          paddingBottom: '10px',
-          borderBottom: '1px solid #f0f0f0',
-        }
-    );
+      alignSelf: 'center',
+      paddingBottom: '10px',
+      borderBottom: '1px solid #f0f0f0',
+    });
     wrapper.appendChild(title);
     
     /**
@@ -237,9 +240,7 @@ const addChatButtonsUpDown = (secondDiv) => {
   const transparent = "transparent";
   const leftButtonBar = newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-    styles: {
-      width: "8%"
-    }
+    styles: { width: "8%" }
   });
   leftButtonBar.appendTo(secondDiv);
 

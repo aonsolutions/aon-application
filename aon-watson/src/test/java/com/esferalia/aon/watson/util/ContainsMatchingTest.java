@@ -11,6 +11,7 @@ public class ContainsMatchingTest {
 	public void generalLevenshteinDistanceTest() {
 		
 		final String searcher = "La nóminas d imprtación";
+		final String searcher2 = "La naminas de impertación";
 		final String text = "Las nóminas de importación";
 		
 		AonStringUtils.containsMatching(text, searcher, 2);
@@ -89,7 +90,7 @@ public class ContainsMatchingTest {
 		final String searcher = "nom";
 		final String text = "IMPORTACIÓN DE Nóminas Y TRABAJADORES";
 
-		assertEquals("Nóminas",AonStringUtils.getMatching(text, searcher));	
+		assertEquals("Nóminas",AonStringUtils.getMatchingWord(text, searcher));	
 	}
 	
 
