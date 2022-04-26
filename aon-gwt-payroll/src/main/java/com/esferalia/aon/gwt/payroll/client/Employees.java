@@ -461,6 +461,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	public void onEnterprise(Enterprise enterprise) {
+		onEnterprise(enterprise, true);
+	}
+
+	public void onEnterprise(Enterprise enterprise, boolean open) {
 
 		clearEnterprise(enterprise);
 
@@ -496,7 +500,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		TreeItem visibleWorkplacesItems [] = workplaceItems.stream().filter( w -> w.isVisible()).toArray(TreeItem[]::new);
 		
 		if (visibleWorkplacesItems.length == 1) {
-			visibleWorkplacesItems[0].setState(true, true); // Send event to show employees
+			visibleWorkplacesItems[0].setState(open, true); // Send event to show employees
 		} else if ( visibleWorkplacesItems.length == 0 ){
 			this.inactive = true;
 			workplaceItems.forEach( workplaceItem -> workplaceItem.setVisible(true));

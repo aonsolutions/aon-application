@@ -57,7 +57,10 @@ public class TaskWorkflow implements Serializable{
 	}
 
 	public TaskHolder getTaskHolder() {
-		return taskHolder;
+		if(taskHolder == null) {
+			taskHolder = new TaskHolder();
+		}	
+		return taskHolder;	
 	}
 
 	public TaskWorkflow setTaskHolder(TaskHolder taskHolder) {

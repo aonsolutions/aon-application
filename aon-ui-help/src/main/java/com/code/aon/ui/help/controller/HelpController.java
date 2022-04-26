@@ -153,7 +153,7 @@ public class HelpController implements Serializable {
 		
 		if(file.isPDF()) {
 			StringBuilder url = new StringBuilder();
-			url.append("../DriveServlet");
+			url.append("../../DriveServlet");
 			url.append("?action=pdf");
 			url.append("&name=").append(file.getName());
 			url.append("&parent=").append(file.getParents().get(0));
@@ -163,11 +163,12 @@ public class HelpController implements Serializable {
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
+
 		}
 		
 		if(file.isVideo()) {
 			StringBuilder url = new StringBuilder();
-			url.append("../DriveServlet");
+			url.append("../../DriveServlet");
 			url.append("?action=video");
 			url.append("&name=").append(file.getName());
 			url.append("&parent=").append(file.getParents().get(0));

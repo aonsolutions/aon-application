@@ -111,6 +111,12 @@ public class Task2Impl implements ITask2 {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		TaskWorkflowDAO.save(ctx, task));
 	}	
+	
+	@Override
+	public void deleteTaskWorkflow(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> TaskWorkflowDAO.delete(ctx, id));
+	}
+	
 	//END----------------TASKWORKFLOW
 	
 	

@@ -7461,10 +7461,59 @@ public class AonStringUtils {
 	 * Returns if a text contains a word with typo tolerance
 	 * @param text The text to search in
 	 * @param searcher The word to search for
-	 * @param tolerance The tolerance to use 
+	 * @return
+	 */
+	public static boolean containsMatching(String text, String searcher) {
+		return AonStringUtils.containsMatching(text, searcher, DEFAULT_TOLERANCE);
+	}
+	
+	
+	/**
+	 * Returns if a text contains a phrase with typo tolerance
+	 * @param text
+	 * @param searcher
+	 * @param tolerance
 	 * @return
 	 */
 	public static boolean containsMatching(String text, String searcher, int tolerance) {
+		text = text.trim();
+		searcher = searcher.trim();
+		
+		if(text.toUpperCase().contains(searcher.toUpperCase())) {
+			return true;
+		}
+		
+		String[] words = searcher.split("\\s");
+		boolean matching = true;
+		
+		
+		for (String word : words) {		
+			 matching = matching && containsMatchingWord(text, word, tolerance);
+		}
+		
+		return matching;
+	}
+	
+	/**
+	 * Returns if a text contains a word with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @return
+	 */
+	public static boolean containsMatchingWord(String text, String searcher) {
+		return containsMatchingWord(text, searcher, DEFAULT_TOLERANCE);
+	}
+	
+	/**
+	 * Returns if a text contains a word with typo tolerance
+	 * @param text The text to search in
+	 * @param searcher The word to search for
+	 * @param tolerance The tolerance to use 
+	 * @return
+	 */
+	public static boolean containsMatchingWord(String text, String searcher, int tolerance) {
+		text = text.trim();
+		searcher = searcher.trim();
 
 		text = normalized(text.toUpperCase());
 		searcher = normalized(searcher.toUpperCase());
@@ -7487,16 +7536,57 @@ public class AonStringUtils {
 		
 		return false;
 	}
+	
 
+	/**
+	 * Returns a phrase matching with typo tolerance
+	 * @param text
+	 * @param searcher
+	 * @param tolerance
+	 * @return
+	 */
+	public static List<String> getMatching(String text, String searcher) {
+		return getMatching(text, searcher, DEFAULT_TOLERANCE);
+	}
+	
+	/**
+	 * Returns a phrase matching with typo tolerance
+	 * @param text
+	 * @param searcher
+	 * @param tolerance
+	 * @return
+	 */
+	public static List<String> getMatching(String text, String searcher, int tolerance) {
+		text = text.trim();
+		searcher = searcher.trim();
+		
+		List<String> matches = new ArrayList<>();
+		
+		if(text.toUpperCase().contains(searcher.toUpperCase())) {
+			matches.add(searcher);
+			return matches;
+		}
+		
+		String[] words = searcher.split("\\s");
+		
+		for (String word : words) {
+			String matching = getMatchingWord(text, word, tolerance);
+			if(matching != null) {
+				matches.add(matching);
+			}
+		}
+		
+		return matches;
+	}
+	
 	/**
 	 * Returns a word matching with typo tolerance
 	 * @param text The text to search in
 	 * @param searcher The word to search for
-	 * @param tolerance The tolerance to use 
 	 * @return
 	 */
-	public static String getMatching(String text, String searcher) {
-		return AonStringUtils.getMatching(text, searcher, DEFAULT_TOLERANCE);
+	public static String getMatchingWord(String text, String searcher) {
+		return AonStringUtils.getMatchingWord(text, searcher, DEFAULT_TOLERANCE);
 	}
 	
 	
@@ -7507,8 +7597,14 @@ public class AonStringUtils {
 	 * @param tolerance The tolerance to use 
 	 * @return
 	 */
-	public static String getMatching(String text, String searcher, int tolerance) {
-
+	public static String getMatchingWord(String text, String searcher, int tolerance) {
+		text = text.trim();
+		searcher = searcher.trim();
+		
+		if(text.toUpperCase().contains(searcher.toUpperCase())) {
+			return searcher;
+		}
+		
 		String[] words = text.split("\\s");
 		for (String word : words) {
 		
@@ -7532,72 +7628,6 @@ public class AonStringUtils {
 		
 		return null;
 	}
-	
-	/**
-	 * Returns a word matching with typo tolerance
-	 * @param text The text to search in
-	 * @param searcher The word to search for
-	 * @param tolerance The tolerance to use 
-	 * @return
-	 */
-	public static List<String> getAllMatching(String text, String searcher, int tolerance) {
-
-		List<String> matchingWords = new ArrayList<String>();
-		String[] words = text.split("\\s");
-		for (String word : words) {
-		
-			String[] searcherWords = searcher.split("\\s");
-			
-			for (String string : searcherWords) {
-				int currentDistance = AonStringUtils.getLevenshteinDistance(normalized(searcher).toUpperCase(), normalized(word).toUpperCase());
-				int realTolerance = tolerance;			
-				
-				if(normalized(word).toUpperCase().contains(searcher.toUpperCase())){
-					matchingWords.add(word);
-				}
-				
-				if(currentDistance < realTolerance) {
-					matchingWords.add(word);
-				}
-			
-			}
-		
-		}
-		
-		return matchingWords;
-	}
-	
-	/**
-	 * Returns if a text contains any of the words inside a searchers with  typo tolerance
-	 * @param text The text to search in
-	 * @param searcher The words to search for
-	 * @return
-	 */
-	public static boolean containsWordMatching(String text, String searcher) {
-		
-		String[] words = searcher.split("\\s");
-		for (String word : words) {
-		
-			if(containsMatching(text, word)) {
-				return true;
-			}
-			
-		}
-		
-		return false;		
-	}
-	
-	
-	/**
-	 * Returns if a text contains a word with typo tolerance
-	 * @param text The text to search in
-	 * @param searcher The word to search for
-	 * @return
-	 */
-	public static boolean containsMatching(String text, String searcher) {
-		return AonStringUtils.containsMatching(text, searcher, DEFAULT_TOLERANCE);
-	}
-	
 	
 	/**
 	 * Get normalized text (no accents)
@@ -7665,5 +7695,21 @@ public class AonStringUtils {
 		if (number.startsWith("I"))
 			return 1 + __romanIntValue(number.substring(1));
 		throw new IllegalArgumentException("unexpected roman numerals");
+	}	
+	
+	
+	/**
+	 * --------------------------------------------------------
+	 *  MAIN 4 TESTING (DELETE)
+	 * --------------------------------------------------------
+	**/
+	public static void main(String[] args) {
+		
+		String original = "AYUDAT SOLUCIONES PROFESIONALES S.L";
+		String searcher = "SOLICIONES AYIDAT S.L";
+		
+		System.out.println(containsMatching(original, searcher, DEFAULT_TOLERANCE));
+		System.out.println(getMatching(original, searcher));		
 	}
+	
 }

@@ -1,5 +1,6 @@
 package com.code.aon.ui.config;
 
+import static com.code.aon.ui.config.DomainData.replace;
 import static com.esferalia.aon.watson.util.AonStringUtils.INDEX_NOT_FOUND;
 import static com.esferalia.aon.watson.util.AonStringUtils.indexOfIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -16,6 +18,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainData implements Serializable {
 	
@@ -134,15 +137,22 @@ public class DomainData implements Serializable {
 		if ( isBlank(filter) ) 
 			return htmlDescription;
 		
-		Function<String, String> repl = s -> "<b>"+s+"</b>";
+		UnaryOperator<String> repl = s -> "<b>"+s+"</b>";
+		StringBuilder display = new StringBuilder();
 		
-		StringBuffer display = new StringBuffer();
-		try {
-			display.append(replace(htmlDescription, filter, repl));
-		} catch ( Exception e ) {
-			display.append(htmlDescription);
+		// Replace names
+		String aux = description;
+		List<String> matches = AonStringUtils.getMatching(description, filter);
+		
+		for (String match : matches) {
+			try {
+				aux = replace(aux, match, repl); 
+			} catch (Exception e) {}
 		}
+				
+		display.append(aux);
 		
+
 		try {
 			display.append(" " + replace(document, filter, repl));
 		} catch ( Exception e ) {
@@ -168,12 +178,12 @@ public class DomainData implements Serializable {
 	}
 	
 	public static String replace(final String text, final String searchString,
-			Function<String, String> replace) {
+			UnaryOperator<String> replace) {
 
 		int start = 0;
 		int end = indexOfIgnoreCase(text, searchString, start);
 		if (end == INDEX_NOT_FOUND) {
-			throw new RuntimeException();
+			throw new IndexOutOfBoundsException();
 		}
 		final int replLength = searchString.length();
 		final StringBuilder buf = new StringBuilder();

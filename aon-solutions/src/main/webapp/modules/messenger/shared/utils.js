@@ -262,9 +262,19 @@ const checkFilesAndSend = async (textArea)=>{
  */
 export const checkFilesAddEventClick = (parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
+        const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+        const task = aonMessengerChat.task;
         parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`).forEach(element=>{
-            const url = element.src || element.href;
+            let url = element.src || element.href;      
             if(url){
+                if(task.id && aonMessengerChat.isCau()){
+                    url = SIG_URL+url.substr(url.indexOf("/ms"));
+                    if(element.src)
+                        element.src = url;
+                    else if(element.href)
+                        element.href = url;
+                }
+
                 element.addEventListener(EVENT.CLICK, (ev)=> {
                     ev.preventDefault();
                     openFileUrl(url);
@@ -647,7 +657,7 @@ export const downChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat){
         setTimeout(() =>{
-            chat.scrollTo(0, chat.scrollHeight);  //GO DOWN
+            chat.lastChild.scrollIntoView();  //GO DOWN
             addLine(chat);
         }, 100) 
     }
@@ -657,9 +667,8 @@ export const downChat = () => {
  */
 export const upChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
-    console.log(chat);
     if(chat)
-        setTimeout(() => chat.scrollTo(0, 0), 100)      //GO UP   
+        setTimeout(() => chat.firstChild.scrollIntoView(), 100)      //GO UP   
 }
 
 /**
@@ -825,7 +834,7 @@ export const setTaskTags = () => {
     task.getTags()
     .filter(t=>t.tag_type && t.tag_type.toUpperCase() == TAG_TYPE.TASK_LABEL)
     .forEach(tag=>{
-        if(task.id && task.isExternal() || aonMessengerChat.isCau()){
+        if(task.id && task.isExternal() || aonMessengerChat.isCau() || aonMessengerChat.isMobile()){
             createTagHtml(tag, div);
         } else {
             appendTaskTag(tag, div, (id)=>  task.removeTag(id));

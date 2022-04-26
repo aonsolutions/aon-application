@@ -1,5 +1,5 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
@@ -188,7 +188,11 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
 
     if(create){
         if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
-            toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
+            toolbar.addButton2(ACTIONS.SAVE,() => {
+                aonMessengerChat.save().then((success) =>{
+                    if(success) aonMessengerChat.showMessage();
+                });
+            })
         }
     } else {
         toolbar.addButton2({...ACTIONS.SHOW_FILE, name:"Mostrar"},() =>showForm(true, true));
