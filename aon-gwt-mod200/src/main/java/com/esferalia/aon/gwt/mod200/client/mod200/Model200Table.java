@@ -245,11 +245,21 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 		ContextMenu menu = new ContextMenu();		
 		menu.addStyleName(AON.AON_CSS.aonSelector());
 		
-		for (int i = 2020; i >= 2013; i--) {
+		for (int i = 2021; i >= 2013; i--) {
+			
+			// Ejercicio 2021 solo dominios BETA
+			if (i==2021 && !cbk.getOptions().getConfiguration().isBetaEnabled())
+				continue;			
+			
+			String msg = AON.MSG.newSomething(String.valueOf(i));
+			
+			// Ejercicio 2021 BETA
+			if (i==2021)
+				msg = msg + " (BETA)";
 			
 			final int year = i;
 			
-			menu.addItem("200", AON.MSG.newSomething(String.valueOf(year)), new ScheduledCommand() {
+			menu.addItem("200", msg, new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
@@ -294,7 +304,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	    , STA("A"					, 20 ,AON.CSS.aonTextCenter()) // Administración
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter()) // Año
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter()) // Periodo
-		// LA COLUMNA DE ESTADO NO SE PONDRÁ HASTA QUE SE DESARROLLE LO DEL ESTADO EN EL MODELO 200
+		// FALTA - LA COLUMNA DE ESTADO NO SE PONDRÁ HASTA QUE SE DESARROLLE LO DEL ESTADO EN EL MODELO 200
 //		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado
 		, CMP("C"					, 20 ,AON.CSS.aonTextCenter()) // Complementaria
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())   // Documento
@@ -365,7 +375,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
  				.addCell( new InlineLabel(AonNumberUtils.toString( mod200.getYear())), AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod200.getPeriod().getDescription()), AON.CSS.aonTextCenter());
 			
-			// El "Estado" se empezará a usar a partir del Modelo 200 - 2021
+			// FALTA - El "Estado" se empezará a usar a partir del Modelo 200 - 2021
 //			AonDisplayGridCell statusCell = new AonDisplayGridCell();
 //			statusCell.add(new InlineLabel(mod200.getYear() < 2021 ? "" : mod200.getStatus().getName()));
 //			statusCell.addStyleName(AON.CSS.aonTextCenter());

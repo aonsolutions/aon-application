@@ -335,7 +335,7 @@ public class Mod2002021Import2020 {
 		,PAG16 ( new IPropertyFiller[] {
 			
 			// Deducciones por doble imposición internacional RDL 4/2004
-			(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN153, adjustDoubleTax(  // 2005
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN153, adjustDoubleTax(  // 2005
 					mod200old.getDoubleValue(Mod2002020Key.BN639), mod200old.getDoubleValue(Mod2002020Key.BN728), mod200old.getDoubleValue(Mod2002020Key.BN103C) ))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002021Key.BN154, adjustDoubleTax( // 2006
 					mod200old.getDoubleValue(Mod2002020Key.BN197), mod200old.getDoubleValue(Mod2002020Key.BN729), mod200old.getDoubleValue(Mod2002020Key.BN103C) ))  
@@ -754,7 +754,6 @@ public class Mod2002021Import2020 {
 			    (mod200old,mod200new) -> mod200new.getUteParticipations().addAll(mod200old.getUteParticipations()) 
 			    
 		})
-
         
         ,PAG26B ( new IPropertyFiller[] {
         		

@@ -28,6 +28,10 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020Service;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020ServiceAsync;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Mod2002020ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2020.Model2002020;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021ServiceAsyncDecorator;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
@@ -38,6 +42,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -75,6 +80,7 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002018ServiceAsync mod2002018Service;
 	static Mod2002019ServiceAsync mod2002019Service;
 	static Mod2002020ServiceAsync mod2002020Service;
+	static Mod2002021ServiceAsync mod2002021Service;
 	
 	private Model200ModuleOptions options;
 
@@ -91,7 +97,15 @@ public class Model200 extends MainEntryPoint {
 //	Model200Table table;
 //	DeckLayoutPanel deckPanel;
 //	SimpleLayoutPanel container;
-	
+
+	public static Mod2002021ServiceAsync getMod2002021Service() {
+		if (mod2002021Service == null) {
+			Mod2002021ServiceAsync mod2002021ServiceRaw = GWT.create(Mod2002021Service.class);
+			mod2002021Service = new Mod2002021ServiceAsyncDecorator(mod2002021ServiceRaw);
+		}
+		return mod2002021Service;
+	}	
+
 	public static Mod2002020ServiceAsync getMod2002020Service() {
 		if (mod2002020Service == null) {
 			Mod2002020ServiceAsync mod2002020ServiceRaw = GWT.create(Mod2002020Service.class);
@@ -240,10 +254,12 @@ public class Model200 extends MainEntryPoint {
 //			changeView(options, mod200);
 //		}
 		
-		public void reset(Model200ModuleOptions options,Mod2002020 mod200) {
+		public void reset(Model200ModuleOptions options, Mod200 mod200) {
 			// El botón inicializar, se utiliza a partir del 2020
 			if (mod200.getYear() == 2020)
-				changeView2020(options, mod200);			
+				changeView2020(options, (Mod2002020) mod200);
+			else if (mod200.getYear() == 2021)
+				changeView2021(options, (Mod2002021) mod200);
 		}
 		
 		public void cleanErrorPanel() {
@@ -366,6 +382,7 @@ public class Model200 extends MainEntryPoint {
 		AON.ensureInjected();
 
 		aonLayout = new AonLayoutPanel();
+		
 // POR AHORA NO APARECE NADA EN LA PARTE INFERIOR DE INFORMACION, APARECIAN LOS ERRORES QUE
 // AHORA APARECEN EN EL PANEL SUPERIOR DE ERRORES, POR ESO NO LO MUESTRO
 // SE PODRIA PONER POR EJEMPLO AL INFORMACION DE LAS CASILLAS CALCULADAS O ALGO ASI, PERO PARA 
@@ -670,6 +687,19 @@ public class Model200 extends MainEntryPoint {
 						public void onFailure(Throwable caught) {
 						}
 					});
+		} else if (mod.getYear() == 2021) {
+			getMod2002021Service().getMod2002021ById(options.getOccam(), mod.getId()
+					, new AsyncCallback<Mod2002021>() {
+
+						@Override
+						public void onSuccess(Mod2002021 mod200) {
+							changeView2021(options, mod200);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+					});
 		}		
 		
 		else {
@@ -751,6 +781,10 @@ public class Model200 extends MainEntryPoint {
 		declarationContainer.setWidget(new Model2002020(new Model200Callback(), mod200));
 	}
 	
+	private void changeView2021(Model200ModuleOptions options, Mod2002021 mod200) {
+		declarationContainer.setWidget(new Model2002021(new Model200Callback(), mod200));
+	}
+	
 	protected void newModel(Model200ModuleOptions options, int year) {
 		switch (year) {
 			case 2013:
@@ -776,6 +810,9 @@ public class Model200 extends MainEntryPoint {
 				break;
 			case 2020:
 				new2020(options);	
+				break;
+			case 2021:
+				new2021(options);	
 				break;
 		}
 		
@@ -890,6 +927,21 @@ public class Model200 extends MainEntryPoint {
 			@Override
 			public void onSuccess(Mod2002020 mod200) {				
 				changeView2020(options, mod200);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}
+	
+	protected void new2021(Model200ModuleOptions options) {
+		getMod2002021Service().createMod2002021(options.getOccam(), 2021
+		, new AsyncCallback<Mod2002021>() {
+
+			@Override
+			public void onSuccess(Mod2002021 mod200) {				
+				changeView2021(options, mod200);
 			}
 
 			@Override
