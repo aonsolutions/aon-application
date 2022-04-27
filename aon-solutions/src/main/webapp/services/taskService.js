@@ -12,7 +12,8 @@ export const deleteTask = (data) => isSigRemove("task",data);
 export const getTaskStatusCount = (data) => isSigGet("task/status/count",data);
 export const getTaskCount = (data) => isSigGet("task/count",data);
 export const getTaskNotice = (data) => isSigGet("task/notice",data);
-export const taskHistoricSend = (data) => isSigPost(`task/historic-send`,data);
+export const sendTaskHistoric = (data) => isSigPost(`task/historic`,data);
+export const sendTaskHistoricEmail = (data) => isSigPost(`task/historic-email`,data);
 export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
 
 //----------------TASK WORKFLOW

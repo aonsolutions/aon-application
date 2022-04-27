@@ -107,6 +107,11 @@
         <tr>
           <td>
             <div class="marginDocument grey">
+             #if( $task.getNote() )
+               <div>
+                <strong>Texto: </strong> $task.getNote()
+              </div>
+             #end
               <div>
                 <strong>Asunto: </strong> $task.getTitle()
               </div>
@@ -119,6 +124,11 @@
 	                <strong>Dominio: </strong> https://$task.getDomainName()
 	              </div>
 	          #end
+	          
+	          <div class="grey">
+              	<br>
+                $task.getDescription()
+              </div>
 
             </div>
           </td>
@@ -127,7 +137,7 @@
         <tr>
           <td>
             <div class="marginDocument grey">
-              Histórico solicitud Nº $task.getNumber()
+              <strong> Histórico solicitud $task.getNumber()</strong>
             </div>
           </td>
         </tr>
