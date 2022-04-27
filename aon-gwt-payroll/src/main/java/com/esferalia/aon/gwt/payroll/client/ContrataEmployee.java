@@ -138,6 +138,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
 		}
+
+		@Override
+		protected void downloadCtoDocument() {
+			downloadCto();
+		}
 	}
 
 	// ------------------------------------------------- ContractClausesUIImpl
