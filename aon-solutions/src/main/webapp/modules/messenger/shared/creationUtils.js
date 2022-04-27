@@ -8,6 +8,7 @@ import { newComponent, setAttributes, setStyles } from "../../../services/utilsC
 import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import { sendTaskHistoricEmail } from "../../../services/taskService.js";
 
 
 /**
@@ -750,4 +751,58 @@ export const createTagHtml = (tag, parent) => {
   divOne.appendChild(divTwo);
 
   return divOne;
+}
+
+
+export const openSendTaskHistoricEmail= (ev)=> {
+  const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+  const application = aonMessengerChat.getApplication();
+  const rect = ev.target.getBoundingClientRect();
+  const x = ev.clientX - rect.left + 180;
+  const y = ev.clientY - rect.top;
+  const top  = rect.top + y;
+  let left = rect.left + x;
+  const dialog = application.getOptionDialog();
+  const content = dialog.getContent();
+  dialog.clear();
+  dialog.setContentTitle(MSG.SEND+" por correo");
+    
+  if(aonMessengerChat.isMobile()) {
+    content.style.left = 0;
+    content.style.right = 0;
+  }
+
+  const div = document.createElement(TAG.DIV);
+  div.style.margin = "0 9px";
+  div.style.textAlign = "center";
+  //---FORM------
+  const emailId  = "sendHistoricEmail";
+  const email = setAttributes(new AonInput(),{ name:emailId, id: emailId, description: MSG.EMAIL });
+  div.appendChild(email);
+
+  const noteId  = "sendHistoricId";
+  const note = setAttributes(new AonInput(),{ name:noteId, id: noteId, description: MSG.NOTE });
+  div.appendChild(note);
+
+
+  const btn = document.createElement(TAG.BUTTON);
+  btn.className = CSS.AON_BUTTON;
+  btn.textContent = MSG.SEND;
+  btn.style.padding ="0.5rem 1rem";
+  btn.style.marginBottom = "5px"; 
+  btn.addEventListener(EVENT.CLICK, async ()=>{
+    application.startLoading();
+    try {
+      await sendTaskHistoricEmail({...aonMessengerChat.task, email:email.value, note: note.value});
+      aonMessengerChat.showMessage(`${MSG.EMAIL} enviado!`);
+      dialog.close();
+    } catch (error) {
+      console.log(error);
+    }
+    application.stopLoading();
+  })
+  div.appendChild(btn);
+
+  dialog.setContent(div);
+  dialog.openPosition({top, left});
 }

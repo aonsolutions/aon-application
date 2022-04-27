@@ -161,6 +161,11 @@ export class AonElement extends HTMLElement{
 		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
 	}
 
+  isSig(){
+    const href = window.location.href;
+		return href.includes('sig.aonsolutions.org');
+	}
+
   showMessage(msg) {
     this.showToast({
       type: CONSTANT.SUCCESS,

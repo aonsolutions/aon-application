@@ -277,7 +277,6 @@ export class AonEventAdd extends AonElement {
           table.addCell(this.creationHeader("F. Registro anterior"));
           table.addCell(this.creationHeader(MSG.LOCATION));
           table.addCell(this.creationHeader(MSG.STATUS));
-          console.table(historics);
 
           for(let i = length>1 ? 1 : 0; i < length; i++){
             const historic = historics[i];
