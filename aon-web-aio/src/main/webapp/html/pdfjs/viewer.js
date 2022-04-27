@@ -69,7 +69,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER
   },
   defaultZoomValue: {
-    value: "",
+    value: "100",
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   disableHistory: {
@@ -812,7 +812,7 @@ const PDFViewerApplication = {
       return;
     }
 
-    this.pdfViewer.currentScaleValue = _ui_utils.DEFAULT_SCALE_VALUE;
+    this.pdfViewer.currentScaleValue = "page-width"; // _ui_utils.DEFAULT_SCALE_VALUE;
   },
 
   get pagesCount() {

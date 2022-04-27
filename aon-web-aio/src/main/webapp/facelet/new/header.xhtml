@@ -1369,7 +1369,7 @@
 		width: 50rem;
 		opacity: 0;
 		background: "#fafafa";
-		transition: opacity .35s; 
+		transition: opacity .15s; 
 		cursor: pointer;
 		border-radius: .35rem;
 		box-shadow: 0 .1rem .2rem rgba(0,0,0,.14);
@@ -1430,7 +1430,16 @@
 	#helpTooltip.focus #tooltip-key #pin {
 		display: inline;	
 	}
-	
+
+	#helpTooltip .keyboard-icon {
+		background: #002469;
+		color: #fff;
+		border-radius: .25rem;
+		padding: .01rem .3rem;
+		font-size: .6rem;
+		font-weight: bold;
+	}
+
 	@keyframes gradient-animation {
 	  from {
 	    left: 0%;
@@ -1466,9 +1475,12 @@
       				e.preventDefault();  
       				e.returnValue = false;
       				e.cancelBubble = true;
+      				
+      				hideHelpTooltip(true);
       				return false;
 				}
 				
+				// if arrows or enter
 				if(e.which === 38 || e.which === 40 || e.which === 13) {
 					e.stopPropagation();
       				e.preventDefault();  
@@ -1476,17 +1488,19 @@
       				e.cancelBubble = true;
       				
       				const searchResults = #{rich:element('smartFilterTablePanel')}.querySelectorAll(".selectable");
+      				if(searchResults.length == 0){
+      					return;
+      				}
       				
     				// Arrow up
     				if(e.which === 38) {
     					selected--;
     					
-    					if(selected == -1){
+    					if(selected &lt; 0){
     						selected = searchResults.length -1;
     					}
     					
-    					searchResults.forEach(p => { p.style.background = "#fff"})
-    					searchResults[selected].style.background = "#f1f1f1";
+    					resetResultStates(searchResults, selected)
     					
     				}
     				
@@ -1494,23 +1508,54 @@
     				if(e.which === 40) {
           				selected++;
           				
-          				if(selected == searchResults.length){
+          				if(selected >= searchResults.length){
           					selected = 0;
           				}
           				
-          				searchResults.forEach(p => { p.style.background = "#fff"})
-          				searchResults[selected].style.background = "#f1f1f1";
+          				resetResultStates (searchResults, selected)
     				}
     				
     				// Enter
     				if(e.which === 13) {
+    					
+    					const link = searchResults[selected].querySelector("a");
     					searchResults[selected].click();
+    					
+    					if(link) {
+    						link.click();
+    					}
+    					
     				}
       				
+				} else {
+					selected = -1;
 				}
 				
 
 				
+			}
+			
+			function resetResultStates (searchResults, selected) {
+				searchResults.forEach(p => {
+					p.style.background = "#fff";
+					
+					const mouseout = searchResults[selected].onmouseout;
+					if(mouseout){
+						mouseout({
+							target : searchResults[selected],
+						});
+					} 
+					})
+				
+				const mouseover =  searchResults[selected].onmouseover;
+				if(mouseover){
+					mouseover({
+						target : searchResults[selected],
+						clientX : searchResults[selected].getBoundingClientRect().right - (searchResults[selected].offsetWidth / 2),
+					});
+				}
+				
+				searchResults[selected].style.background = "#f1f1f1";
 			}
 			
 			function focusSearchResults(){
@@ -1524,22 +1569,30 @@
 
 			let helpTooltipTimeout;
 			
-			function showHelpTooltip(event,url){
+			/**
+			* 	Show help tooltip
+			*	@param event The event activating the function
+			*   @param url The url to show
+			*/
+			function showHelpTooltip( event, url ){
 				
 					helpTooltipTimeout = setTimeout(function(){
 						
 						const tooltip = document.getElementById("helpTooltip");
-						// const image = document.querySelector("#helpTooltip img");
 						const frame = document.querySelector("#helpTooltip iframe");
 						const optionRect = event.target.getBoundingClientRect();;
 						
-						if(Math.abs(event.clientY - optionRect.top) > 18)
-						{
+						if(!tooltip || !frame){
 							return;
 						}
 						
+						if(Math.abs(event.clientY - optionRect.top) > 18){
+							return;
+						}
+						
+						tooltip.dataset.url = url;
+						
 						// Set loading animation
-						//tooltip.classList.add("loading");	
 						frame.style.transition = "none";
 						frame.style.opacity = 1;
 						
@@ -1556,39 +1609,25 @@
 							tooltipUrl = b64EncodeUnicode("../../Tooltip/?name=" + name + "&amp;filename=" + filename)
 						}
 						
-						frame.src =  "html/pdfjs/viewer.html?encoded=true&amp;file=" + tooltipUrl; 
+						frame.src =  "html/pdfjs/viewer.html?encoded=true&amp;file=" + tooltipUrl +"#zoom=page-width"; 
 						
 						// Show tooltip						
 						tooltip.style.display = "block";
-						tooltip.style.top = ( optionRect.top + 20) + "px";
+						tooltip.style.top = ( optionRect.top + 20 ) + "px";
+						
 						tooltip.style.left = event.clientX  + "px";
 						tooltip.style.transform = "translateX(-50%)";
 						setTimeout(() => tooltip.style.opacity = "1", 250);
-						
-						// when image is loaded stop loading animation
-						/*
-						const loadingCheckInterval = setInterval(() => {
-							if(image.complete){
-								setTimeout(() => {
-									image.style.transition = "opacity .25s";
-									image.style.opacity = "1";
-									image.onclick = () => window.open(url, '_blank').focus();
-									tooltip.classList.remove("loading");
-									clearInterval(loadingCheckInterval);
-								}, 350);
-								
-							}
-						}, 100);
-						*/
-						
-						
-					}, 1000);
-					
-					
-					
-					
+												
+					}, 150);
+
 			}
 			
+			
+			/**
+			*	Encode unicode to base64 
+			*	@param str The string to encode
+			*/
 			function b64EncodeUnicode(str) {
 		        // first we use encodeURIComponent to get percent-encoded UTF-8,
 		        // then we convert the percent encodings into raw bytes which
@@ -1599,19 +1638,32 @@
 		        }));
 		    }
 			
+			/**
+			* Hide the help tooltip
+			* @param force force the hide tooltip, false by default
+			*/
 			function hideHelpTooltip(force = false) {
 				clearTimeout(helpTooltipTimeout);
 				const tooltip = document.getElementById("helpTooltip");
+				
+				if(!tooltip){
+					return;
+				}
+				
+				console.log("Hiding tooltip. FORCE = " + force);
 				
 				if(!force &amp;&amp; tooltip.classList.contains("focus")){
 					return;
 				}
 				
+			
+				
 				tooltip.style.opacity = "0";
-				setTimeout(() => tooltip.style.display = "none", 260);
+				setTimeout(() => tooltip.style.display = "none", 20);
 			}
 			
-			document.documentElement.addEventListener("keydown",(e) => {
+			
+			function listenGlobalKeys(e) {
 				const key = e.keyCode || e.witch;
 				if(key == 113){
 					
@@ -1624,17 +1676,64 @@
 						return;
 					}
 					
-					const isSearch = !document.querySelector(".search-results-popup div") == false;
+					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";
+					
+					
 					
 					if(isSearch &amp;&amp; tooltip.className.indexOf("focus") == -1){
 						tooltip.classList.add("focus");
-						message.innerHTML = "Pulse F2 para desenfocar la ventana";
+						
+						const content = frame.contentWindow || frame.contentDocument;
+						content.addEventListener("keydown", (e) => {
+							listenGlobalKeys(e);
+							
+							const key = e.keyCode || e.witch;
+							if(key == 113 || key == 27){
+								tooltip.classList.remove("focus");
+								hideHelpTooltip();
+							}
+							
+							 // CTRL + ENTER
+				            if (event.ctrlKey &amp;&amp; event.code === 'Enter') {
+				            	tooltip.classList.remove("focus");
+				            	hideHelpTooltip(true);				            	
+				            	window.open(tooltip.dataset.url,'_blank');
+				            }
+				               
+						});
+						
+						frame.focus();
+												
+						const f2Icon = document.createElement("span");
+						const ctrlIcon = document.createElement("span");
+						const enterIcon = document.createElement("span");
+						
+						f2Icon.className = "keyboard-icon";
+						ctrlIcon.className = "keyboard-icon";
+						enterIcon.className = "keyboard-icon";
+						
+						f2Icon.innerHTML = "F2";
+						ctrlIcon.innerHTML = "Ctrl";
+						enterIcon.innerHTML = "Enter";
+						
+						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para soltar la ventana | " + ctrlIcon.outerHTML + " " + enterIcon.outerHTML + " para ir al pdf";
 					} else {
 						tooltip.classList.remove("focus");
-						message.innerHTML = "Pulse F2 para enfocar la ventana";
+						
+						const f2Icon = document.createElement("span");
+						f2Icon.className = "keyboard-icon";
+						f2Icon.innerHTML = "F2";
+						
+						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
 					}
 				}
-			})
+			}
+			
+			
+			/**
+			*  GLOBAL WINDOW CONTROLS
+			*/
+			document.documentElement.addEventListener("keydown", listenGlobalKeys)
 		
 	</script>
 		
@@ -2009,7 +2108,7 @@
 	<aon:div id="helpTooltip"> 
 		<iframe></iframe>
 		<div id="tooltip-key">
-			<span id="tooltip-key-message">Pulse F2 para enfocar la ventana</span>
+			<span id="tooltip-key-message">Pulse <span class="keyboard-icon">F2</span> para fijar la ventana</span>
 			<span class="material-icons" id="pin">push_pin</span>
 		</div>
 	</aon:div>
