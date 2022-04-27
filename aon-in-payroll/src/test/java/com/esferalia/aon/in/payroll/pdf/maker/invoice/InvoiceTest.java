@@ -148,7 +148,7 @@ public class InvoiceTest {
 		raddress.setStreetType(StreetType.AV);
 		raddress.setAddress(address);
 		raddress.setCountry(Country.KP);
-		raddress.setProvince("PYONGYANG");
+		raddress.setProvince("PYONGAN");
 		raddress.setZip("07002");
 		raddress.setCity("PYONGYANG");
 //		raddress.setGeozone(52216);
@@ -710,9 +710,10 @@ public class InvoiceTest {
 					.setStreetType(StreetType.AV).setAddress("ISAAC NEWTON")
 					.setNumber("287")
 					.setAddress2("EDIFICIO AYUDA-T, P.I. LAS SALINAS DE PONIENTE")
-					.setProvince("CÁDIZ")
-					.setCity("PUERTO DE SANTA MARÍA, EL")
+					.setProvince("PYONGAN")
+					.setCity("PYONGYANG")
 					.setCountry(Country.KP)
+					.setZip("28001")
 					.setMain(true));
 			
 			company.setAddresses(addressList);
