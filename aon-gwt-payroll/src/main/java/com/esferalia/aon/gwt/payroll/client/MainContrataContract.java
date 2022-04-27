@@ -966,7 +966,7 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		FormPanel formPanel = new FormPanel("_blank");
 		formPanel.setAction(printURL);
-		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanel.setMethod(FormPanel.METHOD_GET);
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
