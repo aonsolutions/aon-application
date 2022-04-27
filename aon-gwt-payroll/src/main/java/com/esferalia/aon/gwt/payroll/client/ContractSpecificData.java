@@ -392,6 +392,8 @@ public abstract class ContractSpecificData extends ResizeComposite {
 						
 						contractSpecificData.setIde(sepeData.getOrDefault("ide", null));
 						contractSpecificData.setComunicationDate(AonStringUtils.isBlank(communicationDate) ? null : formatDate.parse(communicationDate));
+						
+						downloadCtoDocument();
 					}
 					
 					@Override
@@ -409,6 +411,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	protected abstract void showErrorMessage(String title, String message);
 	protected abstract void showSuccessMessage(String title, String message);
 	protected abstract void showLoadingMessage(String message);
+	protected abstract void downloadCtoDocument();
 	
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
 
