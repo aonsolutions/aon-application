@@ -197,7 +197,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
 
 const createFirstDiv = (mainView) => {
   const div = newComponent({
-    classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.NO_SCROLLBAR],
     id: MESSENGER_IDS.FIRST_DIV,
     styles: {
       width: "50%",

@@ -227,7 +227,18 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		if(!task.getWorkflows().isEmpty()) {
 			Integer taskId = task.getId();
-			task.getWorkflows().stream().forEach(w-> saveWorkflow( api, Optional.of(w.setTask(taskId)) )); // SAVE WORKFLOW ALL
+		
+			String description = TaskUtils.getTaskDescription(task);
+			
+			task.getWorkflows().stream()
+			.forEach(w-> {
+				
+				if(w.getType().equals(TaskWorkflowType.OPEN)) {
+					w.setComment(description);
+				}
+				
+				saveWorkflow( api, Optional.of(w.setTask(taskId)) );
+			}); // SAVE WORKFLOW ALL
 		}
 		return TaskJSON.toJSON(task);
 	}
