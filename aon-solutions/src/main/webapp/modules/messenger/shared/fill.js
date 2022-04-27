@@ -28,7 +28,8 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
 
     if(aonMessengerChat.getDur().hasCallCenter() || (source && source == TASK_SOURCE.CAU) ){
         sources.push({value: TASK_SOURCE.CAU, name: "Call Center" });
-        if(!aonMessengerChat.task.id)
+        
+        if(!aonMessengerChat.task.id && aonMessengerChat.isSig())
             source = TASK_SOURCE.CAU;
     }
     
@@ -310,15 +311,16 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
             const firstComment = workflows.find(w=> WORKFLOW_TYPES.OPEN.includes(w.type));
             const observation = task.getDescriptionJson().observation;
             if(!firstComment){
-                const now = new Date.getTime();
+                const date = (task.getCreationDate() || new Date().getTime());
                 workflows.unshift({
                     id: "noIdDescription",
                     type:WORKFLOW_TYPES.OPEN,
                     comment: observation,
                     direction: MESSENGER_DIRECTION.RIGHT,
-                    date:  (task.getStartDate() || now),
-                    notification_date: now,
-                    creation_date: now,
+                    creation_user: task.getCreationUser(),
+                    date: date,
+                    notification_date: date,
+                    creation_date: date,
                     notification_user: null,
                     task_holder:{},
                     email:null
