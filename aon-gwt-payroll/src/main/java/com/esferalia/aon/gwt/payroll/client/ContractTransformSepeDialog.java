@@ -59,7 +59,7 @@ public abstract class ContractTransformSepeDialog extends AonCustomDialog {
 		getButtonsPanel();
 		
 		this.showCloseButton(true);
-		acceptDialog.setVisible(false);
+		acceptDialog.setEnabled(false);
 		
 		initializeView();
 		showDialog();
@@ -100,7 +100,7 @@ public abstract class ContractTransformSepeDialog extends AonCustomDialog {
 	private void checkAcceptBtn() {
 		String signBasicCopyValue = signBasicCopyLB.getSelectedValue();
 		String useEnterpriseFree = useEnterpriseFreeTB.getValue();
-		acceptDialog.setVisible(AonStringUtils.isNotBlank(signBasicCopyValue) && AonStringUtils.isNotBlank(useEnterpriseFree));
+		acceptDialog.setEnabled(AonStringUtils.isNotBlank(signBasicCopyValue) && AonStringUtils.isNotBlank(useEnterpriseFree));
 	}
 
 	// ------------------------------------------------- ToggleButton

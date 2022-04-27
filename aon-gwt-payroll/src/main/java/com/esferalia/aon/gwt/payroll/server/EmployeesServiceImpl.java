@@ -6698,7 +6698,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			Sepe.sendTransformation(certificateIS, certificate.getPassword(), certificate.getType(), cto, copyBasic);
 
-		} catch (SQLException | SepeException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
