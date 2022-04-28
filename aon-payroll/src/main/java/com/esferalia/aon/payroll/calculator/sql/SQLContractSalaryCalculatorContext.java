@@ -92,6 +92,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
@@ -251,6 +252,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.NotFoundVariableError;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
@@ -5186,7 +5188,46 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 
 		}
+		
+		// TGSS Periods ...
+		
+		List<Period> ssPeriods = getPeriods(MONTH_DAYS);
+		for (ContextVariable ctxVar : new ContextVariable [] {
+										TC2,
+										UNEMPLOY_EMPLOYEE_PERCENT}) {
+			
+			List<Period> varPeriods = getPeriods(ctxVar);
+			ssPeriods= split(ssPeriods, varPeriods);
+			
+		}
+		
+		ssPeriods = split(ssPeriods, leaves);
+		for ( ContextVariable ctxVar : new ContextVariable [] {
+					MONTH_DAYS
+					,REGULATORY_BASE
+		}) {
+				
+			List<ITimedVariable<Object>> aonTimedVars = ctx.getVariables(ctxVar);
+			
+			for ( ITimedVariable<Object> aonTimedVar : aonTimedVars ) {				
+				
+				for ( Period ssPeriod: ssPeriods ) {
 
+					Period intersect = aonTimedVar.getPeriod().intersect(ssPeriod);
+
+					if ( intersect == null || ssPeriod.equals(aonTimedVar.getPeriod()))
+						continue;
+
+					ITimedVariable<?> ssTimedVar = 
+					Variables.getNarrowVariable(aonTimedVar, intersect);
+					
+					ctx.putVariable(ctxVar, ssTimedVar);
+				}
+			
+			}
+		
+		}
+		
 	}
 
 	private void loadTotalsContextVars(ContractExpressionContext ctx) {

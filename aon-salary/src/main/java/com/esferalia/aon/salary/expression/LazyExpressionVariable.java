@@ -60,7 +60,11 @@ public class LazyExpressionVariable implements IExpressionVariable<Object> {
 	public IExpression getExpression() {
 		return expression;
 	}
-
+	
+	public ExpressionContext getExpressionContext() {
+		return ctx;
+	}
+	
 	// -------------------------------------------------------------------------
 
 	private void addExpression() {

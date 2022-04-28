@@ -211,7 +211,9 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator4Dummies<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
-		ISalary salary = calculator.calculate(ctx);
+		Salary salary = calculator.calculate(ctx);
+		
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount() ));
 
 		Assert.assertEquals(1000.00 * 9 / 30, salary.getTotalPayment());
 
