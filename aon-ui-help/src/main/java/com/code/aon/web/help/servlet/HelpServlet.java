@@ -24,35 +24,27 @@ public class HelpServlet extends HttpServlet {
 	
 	public HelpServlet() {
 		super();
-		this.files = new HashMap<String, String>();
+		this.files = new HashMap<>();
 		
 		files.put("LABORAL Manual de USUARIO", "payroll_names.pdf");
 		files.put("CONTABILIDAD Manual de USUARIO", "account_names.pdf");
-		/**
-		files.put("COMUNIC@ Manual de USUARIO", "comunica_names.pdf");
-		files.put("PORTAL ASESOR (Usuario empresa) Manual de usuario", "portal_company_names.pdf");
-		files.put("PORTAL ASESOR (Usuario asesor) Manual de usuario", "portal_asesor_names.pdf");
-		files.put("PORTAL ASESOR (Configuración usuarios) Guia rápida", "portal_asesor_user_config_names.pdf");
-		**/
+		files.put("FISCAL Manual de USUARIO", "fiscal_names.pdf");
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/pdf;charset=UTF-8");
         response.addHeader("Content-Disposition", "inline; filename=" + request.getPathInfo());
+        
         ServletOutputStream output = response.getOutputStream();
-        
-        
         String filename = this.files.get(request.getPathInfo().substring(1).replaceAll("\\+" , " ").replace(".pdf",""));        
-        
-        System.out.println("PATH INFO: " + request.getPathInfo().substring(1).replaceAll("\\+" , " ").replace(".pdf",""));
-        System.out.println("FILE NAME: " + filename);
-        
+
         if(filename == null) {
         	response.sendError(404);
+        	return;
         }
         
         try ( InputStream input = PdfSearcher.class.getResourceAsStream(filename)) {
-	        
+        	
 	        int length;
 	        byte[] bytes = new byte[1024];
 	

@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.imageio.ImageIO;
 
@@ -56,7 +58,7 @@ public class PdfImageExtractor {
 	 * @return The image of the pdf region containing the given destination name
 	 */
 	public static InputStream imageFromPdfDestinationName(InputStream stream, String name) {
-		
+		Instant before = Instant.now();
 		PDDocument doc;
 		try {
 			doc = Loader.loadPDF(stream);
@@ -67,9 +69,15 @@ public class PdfImageExtractor {
 			}
 			
 			int page = doc.getPages().indexOf(dest.getPage());
-			int y =(int) (doc.getPage(page + 1).getMediaBox().getHeight() - dest.getTop());
+			int y = (int) (doc.getPage(page + 1).getMediaBox().getHeight() - dest.getTop());
 			
-			return imageFromPdfPageRegion(doc, page, 0, y, 150);
+			InputStream res = imageFromPdfPageRegion(doc, page, 0, y, 150);
+			
+			Instant after = Instant.now();
+			long delta = Duration.between(before, after).toMillis();
+			
+			System.out.println("Extracted Image region " + name + " in: " + delta + "ms");
+			return res;
 			
 		} catch (IOException e) {e.printStackTrace();}	
 		
