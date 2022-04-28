@@ -358,14 +358,18 @@ public abstract class ContractSpecificData extends ResizeComposite {
 
 	public void setEmployeeContractInfo(String contractType, boolean isTransformation, boolean isComunica, String document, Date fini, Integer contractId, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
 		this.contractSpecificData = contractSpecificDataIn;
-		if(Boolean.TRUE.equals(isTransformation))
-			showSepeMessage();
-		else {
-			showSepeData();
-			setDefaultView(contractType);
-			createUpdateSepeInfo(isComunica, document, fini, contractId);
-			fillSpecificData();
-		}
+//		if(Boolean.TRUE.equals(isTransformation))
+//			showSepeMessage();
+//		else {
+//			showSepeData();
+//			setDefaultView(contractType);
+//			createUpdateSepeInfo(isComunica, document, fini, contractId);
+//			fillSpecificData();
+//		}
+		showSepeData();
+		setDefaultView(contractType);
+		createUpdateSepeInfo(isComunica, document, fini, contractId);
+		fillSpecificData();
 	}
 
 	private void createUpdateSepeInfo(boolean isComunica, String document, Date fini, Integer contractId) {

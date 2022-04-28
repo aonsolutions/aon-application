@@ -1811,6 +1811,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		new ContractTransformSepeDialog() {
 			@Override
 			protected void onTransformAccept(ContractTransform contractTransform) {
+				hide();
 				showLoading("Notificando transformaci\u00f3n contrato...");
 
 				contrataEmployeeObject.sendContractTransform(contractTransform,

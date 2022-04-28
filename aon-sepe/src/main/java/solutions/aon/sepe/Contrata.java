@@ -309,6 +309,11 @@ public class Contrata {
 				
 				form.getInputByName("tipoacceso").setValueAttribute("2");
 				
+				String tipodocEnterprise =  " "; // CIF
+				if(Toolkit.getIdentityType(cto.getCifEnterprise()).equals("1")) tipodocEnterprise = "D"; // NIF
+				
+				((HtmlSelect)form.querySelector("select[name=tipodocumentoaux]")).setSelectedAttribute(tipodocEnterprise, true);
+				
 				if(cto.getCifEnterprise()!=null) 
 					form.getInputByName("cifnifnie").setValueAttribute(cto.getCifEnterprise());
 			
@@ -324,7 +329,7 @@ public class Contrata {
 			}
 //
 			{//DATA CONTRACT
-				String[] dateInitContract = Toolkit.dateString(cto.getDateIniContract());
+				String[] dateInitContract = Toolkit.dateString(cto.getOldDateIniContract());
 				form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
 				form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
 				form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);

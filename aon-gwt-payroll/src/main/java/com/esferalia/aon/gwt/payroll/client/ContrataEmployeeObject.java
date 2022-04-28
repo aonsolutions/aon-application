@@ -300,7 +300,7 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (SEPE Get files)
 
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getContractId(), contractData.getOriginalStartDate(), contractData.getOriginalStartDate(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -313,7 +313,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCto(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getContractId(), contractData.getOriginalStartDate(), contractData.getOriginalStartDate(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
