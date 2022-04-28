@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
@@ -31,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -63,8 +66,11 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
+import com.esferalia.aon.in.payroll.tgss.idc.AllIdcHighlighter;
+import com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -115,8 +121,10 @@ import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+import com.google.api.client.util.Objects;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.ForbiddenException;
@@ -134,6 +142,15 @@ public class EmployeesServiceHelper {
 	public static final String REMOVE = "REMOVE()";
 	
 	
+	@FunctionalInterface
+	private interface ThrowableRunnable<T extends Exception> {
+	   void apply() throws T;
+	}
+	
+	private static class TooManyValuesException extends Exception {
+		
+	}
+
 	public static String getTA(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId) throws SQLException, IOException, SegSocialException{
 		
 		Contract contract = 
@@ -185,6 +202,226 @@ public class EmployeesServiceHelper {
 		
 		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
+	}
+	
+
+	public static String checkIDCNSS(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date, String idcBase64 ) throws SQLException, IOException, SegSocialException, UnknownPDFException{
+		
+//		Contract contract = 
+//		PAYROLL.
+//		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+//		.orElseThrow(() -> new IOException() );
+//		
+//		String ccc = contract.getEnterpriseCCC();
+//		String naf = contract.getPersonSsNumber();
+//		String regime = contract.getSsRegime().getCode();
+		
+		byte [] idcData = Base64.getDecoder().decode(idcBase64);
+		
+		byte[] idcHighlightData = IdcHighlighter.highlight(idcData, new AllIdcHighlighter() {
+			
+			private List<ThrowableRunnable<IOException>> delayed = new LinkedList<>();
+
+			private SQLContractSalaryCalculatorContext ctx = null;
+			
+			private Number parseNumber(String str) {
+				return AonNumberUtils.todouble(str.replace(',', '.'));
+			}
+
+			private java.sql.Date parseDate(String string) throws IOException {
+				if ( AonStringUtils.isBlank(string))
+					return new java.sql.Date(AonDateUtils.getLastDayOfMonth(new Date()).getTime());
+				try {
+					Date date = new SimpleDateFormat("dd-MM-yyyy").parse(string);
+					return new java.sql.Date(date.getTime());
+				} catch (ParseException e) {
+					throw new IOException(e);
+				}		
+			}
+			
+			// ------------------------------------------------------- Disabled
+			@Override
+			public void onEmployeeName(String name, IdcHighlighter idcHighlighter) throws IOException {
+				// Employee's name really don´t matter so much 
+			}
+
+			@Override
+			public void onEnterpriseName(String name, IdcHighlighter idcHighlighter) throws IOException {
+				// Enterprise's name really don´t matter so much 
+			}
+			
+			@Override
+			public void onEmployeeBirthDate(String date, IdcHighlighter idcHighlighter) throws IOException {
+				// Employee's birth date really don´t matter so much
+				
+			}
+			
+			// -------------------------------------------------------- Delayed
+			
+			@Override
+			public void onEnterpriseIpf(String type, String ipf, IdcHighlighter idcHighlighter) throws IOException {
+				delayed.add ( () -> {
+					if ( !AonStringUtils.equalsIgnoreCase(ctx.getEnterpriseDocument(), ipf) )
+						idcHighlighter.highlight(ipf);
+				});
+			}
+			
+			@Override
+			public void onEnterpriseCCC(String ccc, IdcHighlighter idcHighlighter) throws IOException {
+				delayed.add ( () -> {
+					if ( !AonStringUtils.equalsIgnoreCase(ctx.getCcc(), ccc) )
+						idcHighlighter.highlight(ccc);
+				});
+			}
+			
+			@Override
+			public void onEnterpriseActivity(String code, String description, IdcHighlighter idcHighlighter)
+					throws IOException {
+				delayed.add ( () -> {
+					Integer cnae2009 = AonNumberUtils.toInteger(code);
+					if ( !AonNumberUtils.equals(ctx.getCnae2009(), cnae2009 ) ) {
+						idcHighlighter.highlight(code, AonStringUtils.defaultIfBlank(AonNumberUtils.toString(ctx.getCnae2009()) , "Empresa sin actividad economica"));
+					}
+				});
+			}
+			
+			@Override
+			public void onEmployeeIpf(String type, String ipf, IdcHighlighter idcHighlighter) throws IOException {
+				delayed.add ( () -> {
+					if ( !AonStringUtils.equalsIgnoreCase(ctx.getEmployeeDocument(), ipf) )
+						idcHighlighter.highlight(ipf, AonStringUtils.defaultIfBlank(ctx.getEmployeeDocument() , "Trabajador sin documento de identidad"));
+				});
+			}
+			
+			@Override
+			public void onEmployeeNaf(String province, String num, IdcHighlighter idcHighlighter) throws IOException {
+				delayed.add ( () -> {
+					String employeeSSNumber = ctx.getSocialSecurityNumber();
+					String employeeProvince = employeeSSNumber.substring(0,2);
+					String employeeNum = employeeSSNumber.substring(2);
+					if ( !AonStringUtils.equalsIgnoreCase(employeeProvince, province) )
+						idcHighlighter.highlight(province);
+					if ( !AonStringUtils.equalsIgnoreCase(employeeNum, num) )
+						idcHighlighter.highlight(num);
+				});
+			}
+			
+			// ----------------------------------------------------------- Live
+			
+			@Override
+			public void onIdcPeriod(String start, String end, IdcHighlighter idcHighlighter) throws IOException {
+				java.sql.Date startDate = parseDate(start);
+				java.sql.Date endDate = parseDate(end);
+				
+				 try {
+					this.ctx = getContractSalaryCalculatorContext(connection, contractId, startDate, endDate, endDate);
+					for( ThrowableRunnable<IOException> t : delayed) {
+						t.apply();
+					}
+				} catch (ExpressionException | SQLException e) {
+					// highlight period...
+					super.onIdcPeriod(start, end, idcHighlighter);
+				}
+			}
+			
+			@Override
+			public void onContractStart(String date, IdcHighlighter idcHighlighter) throws IOException {
+				checkDate(ContextVariable.CONTRACT_START, date, idcHighlighter );
+			}
+			
+			@Override
+			public void onQuoteGroup(String group, Boolean monthly, IdcHighlighter idcHighlighter) throws IOException {
+				checkString(ContextVariable.QUOTE_GROUP, group, idcHighlighter);
+			}
+			
+			@Override
+			public void onContractType(String code, String description, IdcHighlighter idcHighlighter)
+					throws IOException {
+				checkString(ContextVariable.TC2, code, idcHighlighter);
+			}
+			
+			@Override
+			public void onQuotes(String it, String ims, String unemployment, IdcHighlighter idcHighlighter)
+					throws IOException {
+				checkNumber(ContextVariable.IT_RATE, it, idcHighlighter);
+				checkNumber(ContextVariable.IMS_RATE, ims, idcHighlighter);
+				checkNumber(String.format("%s + %s", ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT ), unemployment, idcHighlighter);
+			}
+			
+			@Override
+			public void onCoefficient(String partial, String reduction, IdcHighlighter idcHighlighter)
+					throws IOException {
+				if ( AonStringUtils.isBlank(partial))
+					;
+				else 	
+					checkNumber(ContextVariable.PARTIAL_FACTOR, partial, idcHighlighter);
+			}
+			
+			// ----------------------------------------------------------- PECs
+			
+			@Override
+			public void onPEC(String code, String description, String tipo, String quota, String start, String end,
+					IdcHighlighter idcHighlighter) throws IOException {
+				super.onPEC(code, description, tipo, quota, start, end, idcHighlighter);
+				switch (code) {
+				case "18": // ERTE PARCIAL (PEC 18) 
+					break;
+				default:
+					break;
+				}
+			}
+			
+			// -------------------------------------------------------- Private
+			
+			private void checkDate(ContextVariable var, String string, IdcHighlighter idcHighlighter ) throws IOException {
+				check(var.getName(), string, parseDate(string), Date.class, (d1,d2) -> Objects.equal(d1, d2), idcHighlighter);
+			}
+
+			private void checkString(ContextVariable var, String string, IdcHighlighter idcHighlighter ) throws IOException {
+				check(var.getName(), string, string, String.class, AonStringUtils::equalsIgnoreCase, idcHighlighter);
+			}
+
+			private void checkNumber(ContextVariable var, String string, IdcHighlighter idcHighlighter ) throws IOException {
+				check(var.getName(), string, parseNumber(string), Number.class, AonNumberUtils::equals, idcHighlighter);
+			}
+			
+			private void checkNumber(String expression, String string, IdcHighlighter idcHighlighter ) throws IOException {
+				check(expression, string, parseNumber(string), Number.class, AonNumberUtils::equals, idcHighlighter);
+			}
+
+			private <T> void check(String expression, String string, T t, Class<T> clazz, BiFunction<T, T, Boolean> equals,  IdcHighlighter idcHighlighter ) throws IOException {
+				try {
+					T value = getValue(expression, clazz);
+					if ( !equals.apply(value, t))
+						idcHighlighter.highlight(string);
+				} catch ( TooManyValuesException e) {
+					idcHighlighter.highlight(string);
+				}
+			}
+			
+			private <T> T getValue( ContextVariable var, Class<T> type) throws TooManyValuesException{
+				return getValue(var.getName(), type);
+			}
+			
+			private <T> T getValue( String name, Class<T> type) throws TooManyValuesException{
+				List<ITimedResult<T>> vars;
+				try {
+					vars = ctx.getExpressionContext().eval(name, ctx.getStartDate(), ctx.getEndDate(), type);
+				} catch (ExpressionException e) {
+					return null;
+				}
+				List<T> values = vars.stream().map(ITimedResult::getValue).distinct().collect(Collectors.toList());
+				if ( values.isEmpty()) 
+					return null;
+				else if ( values.size() > 1)
+					throw new TooManyValuesException();
+				else 
+					return values.get(0);
+			}
+			
+		});
+		
+		return Base64.getEncoder().encodeToString(idcHighlightData);
 	}
 
 	public static List<Date> getIDCDates(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws SQLException, IOException, SegSocialException{
@@ -1473,7 +1710,7 @@ public class EmployeesServiceHelper {
 
 		return draftCtx;
 	}
-
+	
 	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 			final Connection conn, final SalaryDraft draft,
 			final IContractSalaryCalculatorContext.IListener listener)
@@ -1635,5 +1872,18 @@ public class EmployeesServiceHelper {
 		return d -> d.setScale(scale, RoundingMode.HALF_UP);
 	}
 
+	private static SQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection, Integer contractId, Date startDate, Date endDate, Date issueDate) 
+	throws ExpressionException, SQLException {
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),contractId);
+		
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, criteria);
+		
+		ctx.next();
+		
+		return ctx;
+	}
 	
 }

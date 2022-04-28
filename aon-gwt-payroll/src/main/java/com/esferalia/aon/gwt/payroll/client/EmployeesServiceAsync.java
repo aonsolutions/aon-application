@@ -260,6 +260,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException;
 
+	void checkEmployeeIdc(String domain, String user, Integer contractId, Date date, String idc, AsyncCallback<String> callback) throws IllegalArgumentException;
+
 	void getEmployeeIdcPlNss(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException ;
 	
 	void getEmployeeIdcDates(String domain,  String user, Integer contractId, Date date, AsyncCallback<List<Date>> callback) throws IllegalArgumentException;
