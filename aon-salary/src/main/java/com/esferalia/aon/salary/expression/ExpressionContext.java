@@ -420,6 +420,37 @@ public class ExpressionContext {
 
 	}
 
+	public static class DaysVariable implements ITimedObject<Long> , ITimedVariable<Long> {
+		
+		Period period;
+		
+		public DaysVariable(Date start, Date end) {
+			this( new Period(start, end) );
+		}
+
+		public DaysVariable(Period period) {
+			this.period = period;
+		}
+		
+		@Override
+		public Period getPeriod() {
+			return period;
+		}
+		
+		@Override
+		public Long getValue() {
+			return period.getDays();
+		}
+
+		@Override
+		public Long getValue(Period period) {
+			Period intersect = period.intersect(this.period);
+			if ( intersect == null )
+				return 0L;
+			return intersect.getDays();
+		}
+	}
+
 	public static Set<String> getVarNames(String script) {
 		Set<String> names = new HashSet<String>();
 		// clean strings literals

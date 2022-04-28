@@ -13,10 +13,8 @@ import static java.lang.String.format;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringBufferInputStream;
 import java.io.UnsupportedEncodingException;
@@ -24,7 +22,6 @@ import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Month;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -68,7 +65,6 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Province;
-import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.in.payroll.tgss.idc.TrabajadoresTramosCallback;
 import com.esferalia.aon.jooq.Keys;
@@ -77,7 +73,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -109,10 +104,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
-import net.aonsolutions.core.tgss.creta.jaxb.DatosLiquidacion;
 import net.aonsolutions.core.tgss.creta.jaxb.Fecha;
 import net.aonsolutions.core.tgss.creta.jaxb.Liquidacion;
-import net.aonsolutions.core.tgss.creta.jaxb.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.Periodo;
 import net.aonsolutions.core.tgss.creta.jaxb.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.Tramo;
@@ -1844,11 +1837,11 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req) throws SQLException{
-		String login = ":-)" ; 
 		Date from = getFromDate();
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
+		String login = req.getParameter(CretaService.Parameter.USER.name());
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from, cccs)
@@ -1866,10 +1859,10 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findNotStarted(HttpServletRequest req) throws SQLException{
-		String login = ":-)" ; 
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());				
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
-
+		//String login = req.getParameter(CretaService.Parameter.USER.name());  
+		
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getParameterValues(req, Parameter.CCC));
@@ -1895,11 +1888,11 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req) throws SQLException{
-		String login = ":-)" ; 
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date from = getFromDate();
 		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
+		String login = req.getParameter(CretaService.Parameter.USER.name());; //":-)" ; 
 
 		
 		return distinct(
@@ -2023,12 +2016,14 @@ public class CretaServlet extends HttpServlet
 
 	private static Attach getAttach(String domainName, Integer domainId, String login, RegistryAttachmentType type, String md5) {
 
+		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain();
+
 		return  AON.getAttach(
 				domainName, 
 				domainId, 
 				login,
 				p -> 
-				p.getDomainProperty().eq(domainId)
+				p.getDomainProperty().in(new Integer[]{domainId, userDomain})
 				.and(p.getTypeProperty().eq((byte)type.ordinal()))
 				.and(p.getDescriptionProperty().eq(md5)), 
 				AttachType.REGISTRY
@@ -2037,12 +2032,15 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from, Collection<String>  cccs) {
+		
+		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain();
+		
 		return  AON.getAttachList(
 				domainName, 
 				domainId, 
 				login,    
 				p -> 
-					p.getDomainProperty().eq(domainId)
+					p.getDomainProperty().in(new Integer[]{domainId, userDomain})
 					.and(p.getTypeProperty().eq((byte)type.ordinal()))
 					.and(p.getAttachDateProperty().ge(new java.sql.Date(from.getTime())))
 					.and(cccs.stream().map(ccc -> p.getDataProperty().like(("%"+ccc.substring(2)+"%").getBytes())).reduce((f1,f2)->f1.or(f2)).orElse(null))

@@ -2460,6 +2460,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		List<String> cccCodes = cccs.stream().map(ccc -> ccc.getCode()).collect(Collectors.toList());
 		Map<String, Collection<String>> options  = new HashMap<String, Collection<String>>();
 		options.put(CretaService.Parameter.CCC.name(), cccCodes );
+		options.put(CretaService.Parameter.USER.name(), Collections.singleton(Wnd.getCurrentUser()));
 		sync(cb, options);
 	}
 
