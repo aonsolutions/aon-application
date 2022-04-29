@@ -90,7 +90,7 @@ public enum Mod2002021BN588Key implements Serializable, IMod200KeysProvider {
 	,C080(new Mod2002021Key[]{Mod2002021Key.BN297 ,Mod2002021Key.BN298 ,Mod2002021Key.BN299 },"2021: Madrid Horse Week 21/23 (HW21)")
 	,C081(new Mod2002021Key[]{Mod2002021Key.BN315 ,Mod2002021Key.BN316 ,Mod2002021Key.BN319 },"2021: Centenario del Rugby en Espa\u00F1a y de la Uni\u00F3 Esportiva Santboiana (CRE)")
 	,C082(new Mod2002021Key[]{Mod2002021Key.BN320 ,Mod2002021Key.BN349 ,Mod2002021Key.BN350 },"2021: Solheim Cup 2023 (SC23)")
-	,C083(new Mod2002021Key[]{Mod2002021Key.BN352 ,Mod2002021Key.BN353 ,Mod2002021Key.BN354 },"2021: IX Centenario de la Reconquista de Sigüenza (CRS)")
+	,C083(new Mod2002021Key[]{Mod2002021Key.BN352 ,Mod2002021Key.BN353 ,Mod2002021Key.BN354 },"2021: IX Centenario de la Reconquista de Sig\u00FCenza (CRS)")
 	,C084(new Mod2002021Key[]{Mod2002021Key.BN366 ,Mod2002021Key.BN367 ,Mod2002021Key.BN369 },"2021: Barcelona Mobile World Capital (BMWC)")
 	,C085(new Mod2002021Key[]{Mod2002021Key.BN395 ,Mod2002021Key.BN401 ,Mod2002021Key.BN405 },"2021: Valencia, Capital Mundial del Dise\u00F1o 2022/Valencia World Design Capital 2022 (VD22)")
 	,C086(new Mod2002021Key[]{Mod2002021Key.BN406 ,Mod2002021Key.BN407 ,Mod2002021Key.BN419 },"2021: Cincuenta aniversario de la Universidad Nacional de Educaci\u00F3n a Distancia (UNED)")

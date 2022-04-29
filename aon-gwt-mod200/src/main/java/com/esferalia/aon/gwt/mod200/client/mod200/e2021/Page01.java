@@ -127,96 +127,108 @@ public class Page01 extends PageAbs {
 		
 		// GRUPO FISCAL (solo habilitados si caracteres 9 o 10 marcados)
 		
-		basePanel.add(getTitle(AON.MSG.fiscalGroupLabel()));
+		if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0009) || 
+			callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010)) {
 		
-		AonDisplayTable tab2 = new AonDisplayTable();
-		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab2.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab2);
+			basePanel.add(getTitle(AON.MSG.fiscalGroupLabel()));
+			
+			AonDisplayTable tab2 = new AonDisplayTable();
+			tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
+			tab2.addStyleName(AON.CSS.aonBlockCenter());
+			basePanel.add(tab2);
+					
+			fiscalGroup.setVisibleLength(7);
+			fiscalGroup.setMaxLength(7);
+//			fiscalGroup.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0009) || 
+//					               callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010));
+			fiscalGroup.addValueChangeHandler(event -> {
+				callback.markAsDirty();
+			});
+			
+//			dominantDocument.setEnabled(fiscalGroup.isEnabled());
+			dominantDocument.setMaxLength(9);
+			dominantDocument.addValueChangeHandler(event -> {
+				callback.markAsDirty();
+			});
+			
+			tab2.addRow()
+				.addCell(new Label(AON.MSG.fiscalGroup()), AON.CSS.aonWidth400())
+				.addCell(fiscalGroup);
+			tab2.addRow()
+				.addCell(new Label(AON.MSG.groupDocument()), AON.CSS.aonWidth400())
+				.addCell(dominantDocument);
+			
+			if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010)) {
+				dominantIdentificationNumber.setVisibleLength(15);
+				dominantIdentificationNumber.setMaxLength(15);
+//				dominantIdentificationNumber.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010));		
+				dominantIdentificationNumber.addValueChangeHandler(event -> {
+					callback.markAsDirty();
+				});						
 				
-		fiscalGroup.setVisibleLength(7);
-		fiscalGroup.setMaxLength(7);
-		fiscalGroup.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0009) || 
-				               callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010));
-		fiscalGroup.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-		
-		dominantDocument.setEnabled(fiscalGroup.isEnabled());
-		dominantDocument.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-						
-		dominantIdentificationNumber.setVisibleLength(9);
-		dominantIdentificationNumber.setMaxLength(9);
-		dominantIdentificationNumber.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010));		
-		dominantIdentificationNumber.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});						
-		
-		tab2.addRow()
-			.addCell(new Label(AON.MSG.fiscalGroup()), AON.CSS.aonWidth400())
-			.addCell(fiscalGroup);
-		tab2.addRow()
-			.addCell(new Label(AON.MSG.groupDocument()), AON.CSS.aonWidth400())
-			.addCell(dominantDocument);
-		tab2.addRow()
-			.addCell(new Label(AON.MSG.dominantIdentificationNumber()), AON.CSS.aonWidth400())
-			.addCell(dominantIdentificationNumber);		    
+				tab2.addRow()
+					.addCell(new Label(AON.MSG.dominantIdentificationNumber()), AON.CSS.aonWidth400())
+					.addCell(dominantIdentificationNumber);		    
+			}
+		}
 		
 		// GRUPO MERCANTIL (solo habilitados si caracter 81 marcado)
 		
-		basePanel.add(getTitle("Grupo mercantil"));
+		if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081)) {
 		
-		AonDisplayTable tab3 = new AonDisplayTable();
-		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab3.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab3);
-		
-		ultimateDocument.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
-		ultimateDocument.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-		
-		ultimateDocumentCountry.setWidth("240px");
-		ultimateDocumentCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
-		ultimateDocumentCountry.addChangeHandler(new ChangeHandler() {			
-			@Override
-			public void onChange(ChangeEvent event) {
-				callback.getMod200Object().getMod200().setUltimateDocumentCountry(Country.safeValueOf(ultimateDocumentCountry.getSelectedValue()));
+			basePanel.add(getTitle("Grupo mercantil"));
+			
+			AonDisplayTable tab3 = new AonDisplayTable();
+			tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
+			tab3.addStyleName(AON.CSS.aonBlockCenter());
+			basePanel.add(tab3);
+			
+//			ultimateDocument.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
+			ultimateDocument.addValueChangeHandler(event -> {
 				callback.markAsDirty();
-			}
-		});
-		
-		ultimateName.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
-		ultimateName.setVisibleLength(40); 
-		ultimateName.setMaxLength(40);
-		ultimateName.addValueChangeHandler(event -> {
-			callback.markAsDirty();
-		});
-		
-		ultimateCountry.setWidth("240px");
-		ultimateCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
-		ultimateCountry.addChangeHandler(new ChangeHandler() {			
-			@Override
-			public void onChange(ChangeEvent event) {
-				callback.getMod200Object().getMod200().setUltimateCountry(Country.safeValueOf(ultimateCountry.getSelectedValue()));
+			});
+			
+			ultimateDocumentCountry.setWidth("240px");
+//			ultimateDocumentCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
+			ultimateDocumentCountry.addChangeHandler(new ChangeHandler() {			
+				@Override
+				public void onChange(ChangeEvent event) {
+					callback.getMod200Object().getMod200().setUltimateDocumentCountry(Country.safeValueOf(ultimateDocumentCountry.getSelectedValue()));
+					callback.markAsDirty();
+				}
+			});
+			
+//			ultimateName.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
+			ultimateName.setVisibleLength(40); 
+			ultimateName.setMaxLength(40);
+			ultimateName.addValueChangeHandler(event -> {
 				callback.markAsDirty();
-			}
-		});
+			});
+			
+			ultimateCountry.setWidth("240px");
+//			ultimateCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0081));
+			ultimateCountry.addChangeHandler(new ChangeHandler() {			
+				@Override
+				public void onChange(ChangeEvent event) {
+					callback.getMod200Object().getMod200().setUltimateCountry(Country.safeValueOf(ultimateCountry.getSelectedValue()));
+					callback.markAsDirty();
+				}
+			});
+			
+			tab3.addRow()
+				.addCell(new Label(AON.MSG.ultimateDocument()), AON.CSS.aonWidth400())
+				.addCell(ultimateDocument);
+			tab3.addRow()
+				.addCell(new Label(AON.MSG.ultimateDocumentCountry()), AON.CSS.aonWidth400())
+				.addCell(ultimateDocumentCountry);
+			tab3.addRow()
+				.addCell(new Label(AON.MSG.ultimateName()), AON.CSS.aonWidth400())
+				.addCell(ultimateName);
+			tab3.addRow()
+				.addCell(new Label(AON.MSG.ultimateCountry()), AON.CSS.aonWidth400())
+				.addCell(ultimateCountry);
 		
-		tab3.addRow()
-			.addCell(new Label(AON.MSG.ultimateDocument()), AON.CSS.aonWidth400())
-			.addCell(ultimateDocument);
-		tab3.addRow()
-			.addCell(new Label(AON.MSG.ultimateDocumentCountry()), AON.CSS.aonWidth400())
-			.addCell(ultimateDocumentCountry);
-		tab3.addRow()
-			.addCell(new Label(AON.MSG.ultimateName()), AON.CSS.aonWidth400())
-			.addCell(ultimateName);
-		tab3.addRow()
-			.addCell(new Label(AON.MSG.ultimateCountry()), AON.CSS.aonWidth400())
-			.addCell(ultimateCountry);
+		}
 		
 		// REPRESENTANTES LEGALES DE LA ENTIDAD
 		
@@ -346,7 +358,7 @@ public class Page01 extends PageAbs {
 			});
 			
 			AonTextBox address = new AonTextBox();
-			address.setMaxLength(17); // FALTA - LONGITUD  (solo 17???)
+			address.setMaxLength(17); 
 			address.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).getResidence());
 			address.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getAdministrators().get(idx).setResidence(address.getValue());

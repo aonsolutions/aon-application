@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
 // Detalle de la compensación de bases imponibles negativas
 public enum Mod2002021LQ547Key implements Serializable, IMod200KeysProvider  {
+	
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED

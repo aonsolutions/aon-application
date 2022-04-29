@@ -16,17 +16,34 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 public class Page10 extends PageAbs {
 
-	private static final String[] HEADERS_1 = new String[]{null,
-		AON.MSG.pendingDeduction(),
-		AON.MSG.taxType(),
-		"2021 deducci\u00F3n pendiente",
-		AON.MSG.appliedDeduction(),
-		AON.MSG.futureDeduction()};
+//	private static final String[] HEADERS_1 = new String[]{null,
+//		AON.MSG.pendingDeduction(),
+//		AON.MSG.taxType(),
+//		"2021 deducci\u00F3n pendiente",
+//		AON.MSG.appliedDeduction(),
+//		AON.MSG.futureDeduction()};
+//	
+//	private static final String[] HEADERS_2 = new String[]{null,
+//		AON.MSG.pendingDeduction(),
+//		AON.MSG.appliedDeduction(),
+//		AON.MSG.futureDeduction()};
 	
-	private static final String[] HEADERS_2 = new String[]{null,
-		AON.MSG.pendingDeduction(),
-		AON.MSG.appliedDeduction(),
-		AON.MSG.futureDeduction()};
+	private static final String[] HEADERS_1 = new String[] {
+			null,
+			"Deducci\u00F3n pendiente",
+			"Tipo gravamen per\u00EDodo generaci\u00F3n",
+			"2021 deducci\u00F3n pendiente",
+			AON.MSG.current(),
+			AON.MSG.futurePending()
+	};
+		
+	private static final String[] HEADERS_2 = new String[] {
+			null,
+			AON.MSG.generatedDeduction(),
+			AON.MSG.current(),
+			AON.MSG.futurePending()
+	};
+	
 	
 	public Page10( Model200PageCallback callback ) {
 		super(callback);

@@ -17,23 +17,47 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 public class Page11 extends PageAbs {
 
-	private static final String[] HEADERS_1 = new String[]{null,
-		AON.MSG.pendingDeduction(),
-		AON.MSG.appliedDeduction(),
-		AON.MSG.futureDeduction()};
+//	private static final String[] HEADERS_1 = new String[]{null,
+//		AON.MSG.pendingDeduction(),
+//		AON.MSG.appliedDeduction(),
+//		AON.MSG.futureDeduction()};
 	
-	private static final String[] HEADERS_2 = new String[]{null,
-		AON.MSG.generatedDeduction(),
-		AON.MSG.reducedDeduction(),
-		AON.MSG.quotableAmount(),
-		AON.MSG.pendingDueToQuota(),
-		"Deducci\u00F3n resto del grupo"};
+	private static final String[] HEADERS_1 = new String[] {
+			null,
+			AON.MSG.pendingDeduction(),
+			AON.MSG.current(),
+			AON.MSG.futurePending()
+	};
 	
-	private static final String[] HEADERS_3 = new String[]{null,
+//	private static final String[] HEADERS_2 = new String[]{null,
+//		AON.MSG.generatedDeduction(),
+//		AON.MSG.reducedDeduction(),
+//		AON.MSG.quotableAmount(),
+//		AON.MSG.pendingDueToQuota(),
+//		"Deducci\u00F3n resto del grupo"};
+	
+	private static final String[] HEADERS_2 = new String[] {
+			null,
+			AON.MSG.pendingDeduction(),
+			AON.MSG.reducedDeduction(),
+			AON.MSG.current(),
+			"Importe abonado por insuficiencia de cuota",
+			"Deducci\u00F3n resto del grupo"
+	};
+	
+//	private static final String[] HEADERS_3 = new String[]{null,
+//			AON.MSG.deductionTaxablebase(),
+//			AON.MSG.liquiMsg2(),
+//			AON.MSG.liquiMsg31(),
+//			AON.MSG.pendingAmount()};
+	
+	private static final String[] HEADERS_3 = new String[] {
+			null,
 			AON.MSG.deductionTaxablebase(),
-			AON.MSG.liquiMsg2(),
+			"Importe generado/pendiente al principio del periodo",
 			AON.MSG.liquiMsg31(),
-			AON.MSG.pendingAmount()};
+			AON.MSG.pendingAmount()
+	};
 
 	public Page11( Model200PageCallback callback ) {
 		super(callback);
@@ -65,10 +89,15 @@ public class Page11 extends PageAbs {
 				} 
 				if (key == Mod2002021Key.BN082) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN082,Mod2002021BN082Key.values(),HEADERS_2);
-				} 
+				}
+				
+				// FALTA - ESTE DESGLOSE ESTE AÑO TIENE DOS APARTADOS, VER SI AL FINAL DEJAN LOS DOS APARTADOS PARA 
+				// VER COMO SE PONE
 				if (key == Mod2002021Key.BN565) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN565,Mod2002021BN565Key.values(),HEADERS_1);
-				} 
+				}
+				//----------
+				
 				if (key == Mod2002021Key.BN590) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN590,Mod2002021BN590Key.values(),HEADERS_1);
 				}
@@ -78,6 +107,9 @@ public class Page11 extends PageAbs {
 				if (key == Mod2002021Key.BN1041) {
 					row = paintKeyBreakdownLink(table,row,Mod2002021Key.BN1041,Mod2002021BN1041Key.values(),HEADERS_3);
 				}
+				
+				// FALTA - COMPROBAR QUE ESTAS DOS CASILLAS ADICIONALES SIGUEN APARECIENDO EN EL DISEÑO DEL REGISTRO
+				// PUES EN EL MODELO NO ESTAN
 				if (key == Mod2002021Key.BN1039) {
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
@@ -98,6 +130,7 @@ public class Page11 extends PageAbs {
 					table.setWidget(row, 0, table2);
 					row++;
 				}
+				//----------
 				
 			}
 		}

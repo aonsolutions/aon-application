@@ -79,6 +79,12 @@ public class Page02 extends PageAbs {
 	
 	private void paint() {
 		
+		// FALTA - EN EL PROYECTO DE ORDEN EL APARTADO PARTICIPACIONES DE LA DECLARANTE EN OTRAS SOCIEDADES, AHORA SE DEGLOSA EN DOS:
+		// - PARTICIPACIONES DIRECTAS DE LA DECLARANTE EN OTRAS SOCIEDADES A LA FECHA DE CIERRE DEL PERIODO DECLARADO
+		// - PARTICIPACIONES INDIRECTAS DE LA DECLARANTE EN OTRAS SOCIEDADES A LA FECHA DE CIERRE DEL PERIODO DECLARADO
+		// ADEMAS AÑADEN VARIOS CAMPOS EN LOS 2 APARTADOS Y VARIAS CASILLAS DE TOTALES		
+		// COMPROBAR CUANDO SALGA LA ORDEN DEFINITIVA, SI AL FINAL SE QUEDA COMO ESTÁ EN EL PROYECTO DE ORDEN O NO 
+		
 		// PARTICIPACIONES DE LA DECLARANTE EN OTRAS SOCIEDADES
 		basePanel.clear();
 		
@@ -157,7 +163,7 @@ public class Page02 extends PageAbs {
 			}
 		}
 		
-		// PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE
+		// PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE A LA FECHA DE CIERRE DEL PERIODO DECLARADO
 		
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
 		
@@ -207,8 +213,8 @@ public class Page02 extends PageAbs {
 			});
 			
 			AonTextBox name = new AonTextBox();
-			name.setMaxLength(45);
-			name.setVisibleLength(45);			
+			name.setMaxLength(37);
+			name.setVisibleLength(37);			
 			name.setValue(callback.getMod200Object().getMod200().getParticipationsIn().get(idx).getName());
 			name.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setName(name.getValue());
@@ -311,7 +317,8 @@ public class Page02 extends PageAbs {
 		for (int i = 0; i < callback.getMod200Object().getMod200().getMinorEntities().size(); i++) {
 			final int idx = i;
 			
-			AonDocumentTextBox document = new AonDocumentTextBox();			
+			AonDocumentTextBox document = new AonDocumentTextBox();
+			document.setMaxLength(9);
 			document.setValue(callback.getMod200Object().getMod200().getMinorEntities().get(idx).getDocument());
 			document.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getMinorEntities().get(idx).setDocument(document.getValue());
@@ -349,7 +356,14 @@ public class Page02 extends PageAbs {
 			callback.getMod200Object().getMod200().getMinorEntities().add(new MinorEntity());
 			paint();
 		});
-		basePanel.add(addButton4);		
+		basePanel.add(addButton4);
+		
+		// FALTA - AHORA EN LA PAGINA 2 BIS TAMBIEN ESTA EL APARTADO DE LAS UTE
+		// Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración
+		// análoga a UTE
+		// VER CUANDO SE DEBE CUMPLIMENTAR ESE APARTADO PARA VER SI SE TRAE A ESTA PAGINA O SE DEJA EN 
+		// PAGINA DE LAS UTES COMO ESTÁ AHORA, SI ES UN APARTADO A CUMPLIMENTAR POR CUALQUIER ENTIDAD
+		// SE TRAERA A ESTA PAGINA PARA QUE SE QUEDE ABIERTO PARA SU CUMPLIMENTACION
 		
 	}
 

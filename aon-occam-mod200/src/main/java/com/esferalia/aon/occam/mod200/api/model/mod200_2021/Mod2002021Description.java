@@ -222,7 +222,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.BP190,"Prima de emisi\u00F3n (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP191,"Reservas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP192,"Legal y estatutarias (N)");
-		DESCRIPTION_MAP.put(Mod2002021Key.BP193,"Otras reservas (N, A, P))");
+		DESCRIPTION_MAP.put(Mod2002021Key.BP193,"Otras reservas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP702,"Reserva de revalorizaci\u00F3n (Ley 16/2012 de 27 de diciembre) (N)");		
 		DESCRIPTION_MAP.put(Mod2002021Key.BP1001,"Reserva de capitalizaci\u00F3n (N,A,P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP1002,"Reserva de nivelaci\u00F3n (N,A,P)");
@@ -262,7 +262,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.BP226,"Acreedores comerciales no corrientes (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP227,"Deuda con caracter\u00EDsticas especiales a largo plazo (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP228,"PASIVO CORRIENTE (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.BP229,"Pasivos vinculados con activos no corr. mantenidos para la venta(N, A)");
+		DESCRIPTION_MAP.put(Mod2002021Key.BP229,"Pasivos vinculados con activos no corr. mantenidos para la venta (N, A)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP230,"Provisiones a corto plazo (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP703,"Provisiones por derechos de emisi\u00F3n de gases de efecto invernadero (N)");
 		DESCRIPTION_MAP.put(Mod2002021Key.BP704,"Otras provisiones (N)");
@@ -308,8 +308,8 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.PG262,"Consumo de materias primas y otras materias consumibles (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG762,"Compras de materias primas y otras materias consumibles (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG763,"Variaci\u00F3n de materias primas y otras materias consumibles (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG263,"Trabajos realizados por otras empresas (N, A, P))");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG264,"Deterioro de mercader\u00EDas, materias primas y otros aprovisionamientos (N, A, P))");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG263,"Trabajos realizados por otras empresas (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG264,"Deterioro de mercader\u00EDas, materias primas y otros aprovisionamientos (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG265,"Otros ingresos de explotaci\u00F3n (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG266,"Ingresos accesorios y otros de gesti\u00F3n corriente (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG267,"Ingresos por arrendamientos (N, A, P)");
@@ -341,7 +341,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.PG291,"Resultados por enajenaciones y otras (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG292,"Beneficios (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG293,"P\u00E9rdidas (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG710,"Deterioro y resultados por enajenaciones del inmovilizado de las sociedades holding (N, A, P))");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG710,"Deterioro y resultados por enajenaciones del inmovilizado de las sociedades holding (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG294,"Diferencia negativa de combinaciones de negocio (N, A)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG295,"Otros resultados (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG296,"RESULTADO DE EXPLOTACI\u00D3N (N, A, P)");
@@ -379,7 +379,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.PG324,"RESULTADO FINANCIERO (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG325,"RESULTADO ANTES DE IMPUESTOS (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG326,"Impuestos sobre beneficios (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002021Key.PG327,"RESULTADO DEL EJERCICIO PROCEDENTE DE OPERACIONES CONTINUADAS (N, A, P) (2)");
+		DESCRIPTION_MAP.put(Mod2002021Key.PG327,"RESULTADO DEL EJERCICIO PROCEDENTE DE OPERACIONES CONTINUADAS (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG328,"RESULTADO DEL EJERCICIO PROCEDENTE DE OPERACIONES INTERRUMPIDAS NETO DE IMPUESTOS (N)");
 		DESCRIPTION_MAP.put(Mod2002021Key.PG500,"RESULTADO DE LA CUENTA DE P\u00C9RDIDAS Y GANANCIAS (N, A, P)");
 	}
@@ -560,7 +560,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ2842, "Deuda tributaria resultante del fraccionamiento art. 19.1 LIS"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ2844, "1er fraccionamiento");  
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ2846, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ2848, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS procedente de autoliquidaciones anteriores correspondientes al período impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ2848, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS procedente de autoliquidaciones anteriores correspondientes al periodo impositivo 2021"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ2850, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento tras autoliquidaci\u00F3n complementaria"); 
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LM150, "Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
@@ -570,9 +570,9 @@ public class Mod2002021Description {
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1021,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");		
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN1044,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ3243, "Devolución acordada/compensada"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ3243, "Devoluci\u00F3n acordada/compensada"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ3317, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono"); 
-		DESCRIPTION_MAP.put(Mod2002021Key.LQ3320, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensación"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.LQ3320, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n"); 
 		DESCRIPTION_MAP.put(Mod2002021Key.LQ3353, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
 		
 	}
@@ -624,8 +624,8 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.LM1260,"Total gastos financieros del per\u00EDodo impositivo no deducibles (= [c2+k2])");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.LM393,"Importe del cr\u00E9dito exigible");
-		DESCRIPTION_MAP.put(Mod2002021Key.LM150,"Opciones: Abono.");
-		DESCRIPTION_MAP.put(Mod2002021Key.LM506,"Opciones: Compensaci\u00F3n,");
+		//DESCRIPTION_MAP.put(Mod2002021Key.LM150,"Opciones: Abono.");
+		//DESCRIPTION_MAP.put(Mod2002021Key.LM506,"Opciones: Compensaci\u00F3n,");
 		
 	}
 	static {
@@ -656,19 +656,47 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.UTC05 ,"b) De ejercicios en los que la sociedad haya tributado en el r\u00E9gimen especial");
 	}
 	
-	static {
-		DESCRIPTION_MAP.put(Mod2002021Key.TR050,"Volumen total de las operaciones realizadas por la entidad en el ejercicio (incluidas las operaciones realizadas en el extranjero)");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR051,"Volumen de las operaciones realizadas en el extranjero durante el ejercicio");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR052,"ARABA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR053,"GIPUZKOA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR054,"BIZKAIA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR055,"NAVARRA");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR056,"Territorio com\u00FAn");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR626,"Diputaci\u00F3n Foral de ARABA: 052 / ( 050 - 051 ) x 100");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR627,"Diputaci\u00F3n Foral de GIPUZKOA: 053 / ( 050 - 051 ) x 100");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR628,"Diputaci\u00F3n Foral de BIZKAIA: 054 / ( 050 - 051 ) x 100");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR629,"Diputaci\u00F3n Foral de NAVARRA: 055 / ( 050 - 051 ) x 100");
-		DESCRIPTION_MAP.put(Mod2002021Key.TR625,"Administraci\u00F3n del Estado: 056 / ( 050 - 051 ) x 100");
+	static {		
+		// Tributación Conjunta
+		DESCRIPTION_MAP.put(Mod2002021Key.TR050 ,"Volumen total de las operaciones realizadas por la entidad en el ejercicio (incluidas las operaciones realizadas en el extranjero)");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR051 ,"Volumen de las operaciones realizadas en el extranjero durante el ejercicio");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR052 ,"ARABA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR053 ,"GIPUZKOA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR054 ,"BIZKAIA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR055 ,"NAVARRA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR056 ,"Territorio com\u00FAn");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR626 ,"Diputaci\u00F3n Foral de ARABA: 052 / ( 050 - 051 ) x 100");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR627 ,"Diputaci\u00F3n Foral de GIPUZKOA: 053 / ( 050 - 051 ) x 100");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR628 ,"Diputaci\u00F3n Foral de BIZKAIA: 054 / ( 050 - 051 ) x 100");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR629 ,"Diputaci\u00F3n Foral de NAVARRA: 055 / ( 050 - 051 ) x 100");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR625 ,"Administraci\u00F3n del Estado: 056 / ( 050 - 051 ) x 100");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR420 , "Cuota del ejercicio a ingresar o a devolver");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR402 , "Pago fraccionado 1\u00BA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR445 , "Pago fraccionado 2\u00BA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR449 , "Pago fraccionado 3\u00BA");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR474 , "Cuota diferencial");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR482 , "Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR913 , "Incremento por incumplimiento de requisitos SOCIMI");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR486	, "Intereses de demora");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1334, "Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 39.2 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1338, "Abono de deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 39.3 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR494	, "Resultado de la autoliquidaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1607, "Resultados a ingresar procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1611, "Devoluciones acordadas procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1624, "Resultado tras regularizaci\u00F3n por autoliquidaci\u00F3n complementaria"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1631, "Importe integrado en la base imponible");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1635, "Deuda tributaria resultante del fraccionamiento art. 19.1 LIS"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1642, "1er fraccionamiento");  
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1646, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1650, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento de art. 19.1 LIS procedente de autoliquidaciones anteriores correspondientes al periodo impositivo 2021"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1654, "Resultado de la autoliquidaci\u00F3n incluido el 1er fraccionamiento tras autoliquidaci\u00F3n complementaria"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1300, "Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1305, "Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");		
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1658, "Devoluci\u00F3n acordada/compensada"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1662, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1666, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n"); 
+		DESCRIPTION_MAP.put(Mod2002021Key.TR1670, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
+		
 	}
 	
 }

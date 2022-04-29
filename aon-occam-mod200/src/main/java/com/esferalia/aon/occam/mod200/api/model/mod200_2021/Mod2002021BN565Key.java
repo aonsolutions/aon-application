@@ -19,7 +19,8 @@ public enum Mod2002021BN565Key implements Serializable, IMod200KeysProvider {
 	
 	// Deducciones de carácter general
 
-	 C01(new Mod2002021Key[]{Mod2002021Key.BN201 ,Mod2002021Key.BN202 ,null                },"2011")
+	 C00(new Mod2002021Key[]{null ,null ,null},"DONACIONES DE CARACTER GENERAL")
+	,C01(new Mod2002021Key[]{Mod2002021Key.BN201 ,Mod2002021Key.BN202 ,null                },"2011")
 	,C02(new Mod2002021Key[]{Mod2002021Key.BN904 ,Mod2002021Key.BN905 ,Mod2002021Key.BN906 },"2012")
 	,C03(new Mod2002021Key[]{Mod2002021Key.BN990 ,Mod2002021Key.BN991 ,Mod2002021Key.BN992 },"2013")
 	,C04(new Mod2002021Key[]{Mod2002021Key.BN997 ,Mod2002021Key.BN998 ,Mod2002021Key.BN999 },"2014")
@@ -46,7 +47,7 @@ public enum Mod2002021BN565Key implements Serializable, IMod200KeysProvider {
 	,C22(new Mod2002021Key[]{Mod2002021Key.BN974 ,null                ,null                },"Donaciones del per\u00EDodo impositivo efectuadas a entidades sin fines de lucro (Ley 49/2002)")
 	
 	// Donaciones para actividades prioritarias de mecenazgo y otras con derecho a deducción incrementada
-	
+	,C50(new Mod2002021Key[]{null ,null ,null},"DONACIONES PARA ACTIVIDADES PRIORITARIAS DE MECENAZGO Y OTRAS CON DERECHO A DEDUCCION INCREMENTADA")
 	,C51(new Mod2002021Key[]{Mod2002021Key.BN897 ,Mod2002021Key.BN898 ,null                },"2011")                                                          
 	,C52(new Mod2002021Key[]{Mod2002021Key.BN899 ,Mod2002021Key.BN901 ,Mod2002021Key.BN902 },"2012")                                                          
 	,C53(new Mod2002021Key[]{Mod2002021Key.BN903 ,Mod2002021Key.BN917 ,Mod2002021Key.BN929 },"2013")                                                          

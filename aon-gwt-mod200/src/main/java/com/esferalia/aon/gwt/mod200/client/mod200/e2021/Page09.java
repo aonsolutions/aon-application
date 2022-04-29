@@ -37,6 +37,12 @@ public class Page09 extends PageAbs {
 	 	,"Reducci\u00F3n B.I. aplicada"
 	 	,"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
 	};
+	public static final String[] HEADERS_4 = new String[]{
+		"",
+		"Pendiente de aplicaci\u00F3n a principio del periodo/generada en el periodo",
+		AON.MSG.current(),
+		AON.MSG.futurePending()		
+	};
 	
 	public Page09( Model200PageCallback callback ) {
 		super(callback);
@@ -108,6 +114,11 @@ public class Page09 extends PageAbs {
 				if (key == Mod2002021Key.LQ550 || key == Mod2002021Key.LQ558 || key == Mod2002021Key.LQ562 || key == Mod2002021Key.LQ1032) {
 					margin = false;
 				}
+				if (key == Mod2002021Key.LQ1576) {
+					paintDescription(table, "R\u00E9gimen especial de entidades navieras en Canarias", row, 0, true);
+					row++;
+					margin = true;
+				}
 								
 				row = paintKey(table,key,row);
 				if (margin) {
@@ -115,24 +126,24 @@ public class Page09 extends PageAbs {
 				}
 				
      			if (key == Mod2002021Key.LQ554) {
-					row = paintKeyBreakdownLink(table,row,Mod2002021Key.LQ554,Mod2002021LQ554Key.values(),HEADERS_1);
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ554, Mod2002021LQ554Key.values(), HEADERS_1);
 				}
 				if (key == Mod2002021Key.LQ561) {
-					row = paintKeyBreakdownLink(table,row,Mod2002021Key.LQ561,Mod2002021LQ561Key.values(),HEADERS_2);
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ561, Mod2002021LQ561Key.values(), HEADERS_2);
 				}
     			if (key == Mod2002021Key.LQ579) {
-					row = paintKeyBreakdownLink(table,row,Mod2002021Key.LQ579,Mod2002021LQ579Key.values(),null);
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ579, Mod2002021LQ579Key.values(), null);
 				}
     			if (key == Mod2002021Key.LQ1032 
 					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002021Key.C0009) 
 					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002021Key.C0010)) {
-					row = paintKeyBreakdownLink(table,row,Mod2002021Key.LQ1032,Mod2002021LQ1032Key.values(),HEADERS_3);
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ1032, Mod2002021LQ1032Key.values(), HEADERS_3);
 				}
     			if (key == Mod2002021Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
-					row = paintKeyBreakdownLink(table,row,Mod2002021Key.LQ547,Mod2002021LQ547Key.values(),HEADERS_2);
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ547, Mod2002021LQ547Key.values(), HEADERS_4);    				
 				}
     			if (key == Mod2002021Key.LQ1033) {
-					row = paintKeyBreakdownLinkLQ1033(table,row,Mod2002021Key.LQ1033.getDescription());
+					row = paintKeyBreakdownLinkLQ1033(table, row, Mod2002021Key.LQ1033.getDescription());
 				}
 			}
 		}
@@ -161,9 +172,9 @@ public class Page09 extends PageAbs {
 				 "Ejercicio de generaci\u00F3n"
 				,"Importe minoraci\u00F3n B.I. en el per\u00EDodo/pendiente de adicionar a inicio del per\u00EDodo"
 				,"Importe adicionado a base imponible en el per\u00EDodo"
+				,"Importe integrado en la declaraci\u00F3n por incumplimiento de requisitos"
 				,"Importe pendiente de adicionar en per\u00EDodos futuros"
-				}				
-				);
+				});
 		int r = 1;
 		int col = 0;
 		for (IMod200KeysProvider key : Mod2002021LQ1033_1Key.values()) {

@@ -61,7 +61,7 @@ public enum Mod2002021BN590Key implements Serializable, IMod200KeysProvider {
 	 ,C44(new Mod2002021Key[]{Mod2002021Key.BN886 ,Mod2002021Key.BN590 ,Mod2002021Key.BN887 },"Total")
 	 ,C45(new Mod2002021Key[]{Mod2002021Key.BN2287,null                ,null                },"2021: Deducci\u00F3n por investigaci\u00F3n y desarrollo en Canarias generada en el per\u00EDodo impositivo")	 		
 	 ,C46(new Mod2002021Key[]{Mod2002021Key.BN2288,null                ,null                },"2021: Deducci\u00F3n por innovaci\u00F3n tecnol\u00F3gica en Canarias generada en el per\u00EDodo impositivo")
-	 ,C47(new Mod2002021Key[]{Mod2002021Key.BN3356,null                ,null                },"2021: Deducci\u00F3n por producciones cinematogr\u00E1ficas españolas en Canarias generada en el per\u00EDodo impositivo")
+	 ,C47(new Mod2002021Key[]{Mod2002021Key.BN3356,null                ,null                },"2021: Deducci\u00F3n por producciones cinematogr\u00E1ficas espa\u00F1olas en Canarias generada en el per\u00EDodo impositivo")
 	 ,C48(new Mod2002021Key[]{Mod2002021Key.BN3357,null                ,null                },"2021: Deducci\u00F3n por espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales en Canarias generada en el per\u00EDodo impositivo")
 	 
 	;

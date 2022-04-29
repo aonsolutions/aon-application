@@ -90,13 +90,15 @@ public abstract class PageAbs extends ResizeComposite {
 		paintDescription(tab, description, row,col,isTitle(key));	
 	}
 	
-	protected void paintDescription(FlexTable tab, String description, int row,int col, boolean title) {
-		paintDescription(tab, description, row,col, title, 120);	
+	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean title) {
+//		paintDescription(tab, description, row,col, title, 120);
+		paintDescription(tab, description, row,col, title, 0);
 	}
 	
-	protected void paintDescription(FlexTable tab, String description, int row,int col, boolean title, int size) {
-		Label desc = new Label( AonStringUtils.abbreviate(description, size) );
-		if (AonStringUtils.length(description) > 117) {
+	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean title, int size) {
+		Label desc = new Label( size > 0 ? AonStringUtils.abbreviate(description, size) : description );
+		//if (AonStringUtils.length(description) > 117) {
+		if (size > 0 && AonStringUtils.length(description) > (size-3)) {
 			desc.setTitle(description);
 		}
 		if (title) {
@@ -122,17 +124,18 @@ public abstract class PageAbs extends ResizeComposite {
 		boolean disabled = isDisabled(k);
 		
 		FlowPanel panel = new FlowPanel();
-		String codeId = k.getCode( callback.getMod200Object().getAdministration());
-		boolean show = true;
-		try {
-			show = Integer.parseInt(codeId) > 0;
-		} catch (NumberFormatException e) {
-			// Nothing;
-		}
-		if (show) {
-			AonBoxLabel code = new AonBoxLabel(codeId, Model2002021.BOX_LENGTH);
-			getLabels().put(k, code);
-			panel.add(code);
+		String code = k.getCode( callback.getMod200Object().getAdministration());
+//		boolean show = true;
+//		try {
+//			show = Integer.parseInt(codeId) > 0;
+//		} catch (NumberFormatException e) {
+//			// Nothing;
+//		}
+//		if (show) {
+		if (!code.isEmpty()) {
+			AonBoxLabel codeBoxLabel = new AonBoxLabel(code, Model2002021.BOX_LENGTH);
+			getLabels().put(k, codeBoxLabel);
+			panel.add(codeBoxLabel);
 		}
 
 		final AonDoubleBox text = new AonDoubleBox(fieldLength);
@@ -183,6 +186,7 @@ public abstract class PageAbs extends ResizeComposite {
 		panel.add(text);
 		
 		getInputs().put(k, text);
+		// PRUEBA - NO PADDING
 		if (!isTitle(k)) {
 			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
 		}
@@ -417,6 +421,9 @@ public abstract class PageAbs extends ResizeComposite {
 		return addTable(title, numAmountCols, columnWidth, false);			
 	}
 	protected FlexTable addTable(String title, int numAmountCols, String columnWidth, boolean horizontalScroll) {
+		return addTable(title, numAmountCols, columnWidth, horizontalScroll, "auto");
+	}
+	protected FlexTable addTable(String title, int numAmountCols, String columnWidth, boolean horizontalScroll, String descriptionWidth) {
 
 		if (AonStringUtils.isNotBlank(title)) {
 			basePanel.add(getTitle(title));			
@@ -437,8 +444,11 @@ public abstract class PageAbs extends ResizeComposite {
 			basePanel.add(tab);			
 		}
 		
+		// Ancho de la columna de la descripción
+		tab.getColumnFormatter().setWidth(0, descriptionWidth);
+		
 		// Ancho de las columnas de importes
-		for (int i = 0; i < numAmountCols; i++  ) {
+		for (int i = 0; i < numAmountCols; i++) {
 			tab.getColumnFormatter().setWidth((i+1), columnWidth);	
 		}
 		
@@ -467,6 +477,46 @@ public abstract class PageAbs extends ResizeComposite {
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
+		
+	}
+	
+	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key... boldKeys ) {
+		paintTable(table, liquidationKeys, AonDoubleBox.VISIBLE_LENGTH, headers, boldKeys);
+	}
+	
+	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, int fieldLength, String[] headers, Mod2002021Key... boldKeys ) {
+		
+		int row = 0;
+		
+		paintEmptyCell(table, row, 0);
+		int col = 1;
+		for (String s : headers) {
+			paintTitle(table, s, row, col);
+			col++;			
+		}
+		
+		row++;
+		
+		for (Mod2002021Key[] keys : liquidationKeys) {
+			boolean paintDescription = true;							
+			for (int i = 0; i < keys.length; i++) {
+				if (keys[i] != null) {
+					if (paintDescription) {						
+						boolean bold = false;
+						for (Mod2002021Key key : boldKeys) {
+							if (keys[i] == key)
+								bold = true;
+						}
+						
+						paintDescription(table, keys[i].getDescription(), row, 0, bold, 0);
+						
+						paintDescription = false;
+					}
+					paintKeyField(table, keys[i], row, i+1, fieldLength);
+				}
+			}
+			row++;
+		}
 		
 	}
 	

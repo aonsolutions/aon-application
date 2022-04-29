@@ -142,13 +142,14 @@ public class Page01 extends PageAbs {
 			callback.markAsDirty();
 		});
 		
+		dominantDocument.setMaxLength(9);
 		dominantDocument.setEnabled(fiscalGroup.isEnabled());
 		dominantDocument.addValueChangeHandler(event -> {
 			callback.markAsDirty();
 		});
 						
-		dominantIdentificationNumber.setVisibleLength(9);
-		dominantIdentificationNumber.setMaxLength(9);
+		dominantIdentificationNumber.setVisibleLength(15);
+		dominantIdentificationNumber.setMaxLength(15);
 		dominantIdentificationNumber.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002020Key.C0010));		
 		dominantIdentificationNumber.addValueChangeHandler(event -> {
 			callback.markAsDirty();
@@ -346,7 +347,7 @@ public class Page01 extends PageAbs {
 			});
 			
 			AonTextBox address = new AonTextBox();
-			address.setMaxLength(17); // FALTA - LONGITUD  (solo 17???)
+			address.setMaxLength(17); 
 			address.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).getResidence());
 			address.addValueChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getAdministrators().get(idx).setResidence(address.getValue());
