@@ -2749,7 +2749,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				currentDomainName, 
 				domainId, 
 				userId, 
-				contract.getSsRegime().getCode(), 
+				contract.getEnterpriseCCCRegime().getCode(), 
 				contract.getEnterpriseCCC(), 
 				contract.getPersonSsNumber(),
 				contract.getEndDate() ) );
