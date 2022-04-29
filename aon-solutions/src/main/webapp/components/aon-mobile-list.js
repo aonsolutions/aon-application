@@ -199,7 +199,7 @@ export class AonMobileList extends AonElement {
     div.style.textAlign = 'center';
     div.innerHTML = message;
     this.appendChild(div);
-}
+  }
 }
 if(!window.customElements.get('aon-mobile-list')){
   window.customElements.define("aon-mobile-list", AonMobileList);

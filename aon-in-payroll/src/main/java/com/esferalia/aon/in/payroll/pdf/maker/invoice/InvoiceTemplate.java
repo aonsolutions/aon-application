@@ -1033,17 +1033,23 @@ public class InvoiceTemplate {
 				if (!city.isEmpty()) {
 					location += city;
 				}
-				if (!province.isEmpty()) {
-					location += ", " + province;
+				if (!province.isEmpty() && !AonStringUtils.equalsIgnoreCase(city, province)) {
+					location += " (" + province + ")";
 				}
 				if (!country.isEmpty()) {
-					location += ", " + country;
+					RegistryAddress clientAddress = invoice.getAddress();
+					Country clientCountry = clientAddress != null ? clientAddress.getCountry() : null;
+					Country transmitterCountry = transmitterAddr.getCountry() != null ? transmitterAddr.getCountry() : null;
+					if (!(clientCountry != null && transmitterCountry != null && transmitterCountry.equals(clientCountry))) {						
+						location += " - " + country;
+					}
+					
 				}
 				
 				if (cp.isEmpty())
 					zip = location;
 				else {
-					zip = cp + ", " + location;
+					zip = cp + " " + location;
 				}
 			} else {
 				address = "";
@@ -1187,7 +1193,7 @@ public class InvoiceTemplate {
 			if (transmitterAddr != null && transmitterAddr.getCountry() != null && address.getCountry() != null) {
 				Country transmitterCountry = transmitterAddr.getCountry();
 				if (!transmitterCountry.equals(address.getCountry())) {
-					float textWidth = PDFToolkit.fontWidth(province + transmitterAddr.getCountry().getName(), 9, regularFont);
+					float textWidth = PDFToolkit.fontWidth(province + address.getCountry().getName(), 9, regularFont);
 					province += textWidth <= 230 ? address.getCountry().getName() : address.getCountry().getIso3();
 				}
 			}		

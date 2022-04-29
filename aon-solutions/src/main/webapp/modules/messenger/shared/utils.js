@@ -399,7 +399,8 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
   
-    if(task.id || dataDefault.source_id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
+    if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true; // || dataDefault.source_id
+    
     const divRequest = createDivGrid(divStatic, requestTypeSelect, {classes:[CSS.AON_COL_XS_6]});
   
     //-----------------END TYPE REQUEST
@@ -683,6 +684,8 @@ const addLine = (chat) => chat.style.setProperty("--height", chat.scrollHeight +
  */
 const addTaskDescription = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
+    if(task.id) return;
+    
     const aonTextArea = createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`);
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
 
@@ -739,7 +742,6 @@ const addTaskDescription = (aonMessengerChat) => {
  * @param {HTMLElement} divDinamic 
  */
 const addTaskHolderAndWorkgroup = (aonMessengerChat, divDinamic) => {
-
     //-----------------WORKGROUP
     const workgroupSelect = createWorkgroup();
     workgroupSelect.default = true;

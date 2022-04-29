@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
-import {  MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, taskHistoricSend, deleteTaskWorkflow} from "../../services/taskService.js";
+import {  APP_PARAMS_REQUEST, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, sendTaskHistoric, deleteTaskWorkflow} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
@@ -82,6 +82,8 @@ export class AonMessengerChat extends AonElement {
         else if(propName == "tags")
           setTaskTags();
     }
+    
+    this.setWhAndTh();
   }
 
   build() {
@@ -298,7 +300,7 @@ export class AonMessengerChat extends AonElement {
    */
   async sendMessageHistoric(workflowId, showSuccess=false){
     try {
-      const workflows  = await taskHistoricSend({...this.task, workflowId});
+      const workflows  = await sendTaskHistoric({...this.task, workflowId});
       if(showSuccess)
         this.showMessage("Comentario enviado por correo!");
 
@@ -430,15 +432,37 @@ export class AonMessengerChat extends AonElement {
   onChangeWhAndTh(appParams){
     if(!this.task.getId() && this.task.isOtherDomain() && appParams){
       if(!this.task.getWorkgroup().id){
-        const exist = appParams.find(({name})=> name ==="APP_DEFAULT_REQUESTS_WORKGROUP");
+        const exist = appParams.find(({name})=> name ===APP_PARAMS_REQUEST.APP_REQUESTS_EXT_WORKGROUP);
         if(exist)
           this.task.setWorkgroup({id: parseInt(exist.value)});
       }
       if(!this.task.getTaskHolder().id){
-        const exist = appParams.find(({name})=> name ==="APP_DEFAULT_REQUESTS_TASK_HOLDER");
+        const exist = appParams.find(({name})=> name ===APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER);
         if(exist) 
           this.task.setTaskHolder({id:parseInt(exist.value)});
       }
+    }
+  }
+
+    
+  setWhAndTh(){
+    if(!this.task.getId()){
+      this.applicationParentEl.getAppParams().then(params=>{
+
+        const externa = this.task.isOtherDomain() || this.isCau() || this.task.getSource() === TASK_SOURCE.CAU;
+
+        const thParam = params[externa ? APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER : APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER];
+        const wgParam = params[externa ? APP_PARAMS_REQUEST.APP_REQUESTS_EXT_WORKGROUP : APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP];
+
+        if(!this.task.getWorkgroup().id && wgParam){
+          this.task.setWorkgroup({id: parseInt(wgParam)});
+        }
+
+        if(!this.task.getTaskHolder().id && thParam){
+          this.task.setTaskHolder({id:parseInt(thParam)});
+        }
+
+      });
     }
   }
   

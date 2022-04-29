@@ -358,14 +358,18 @@ public abstract class ContractSpecificData extends ResizeComposite {
 
 	public void setEmployeeContractInfo(String contractType, boolean isTransformation, boolean isComunica, String document, Date fini, Integer contractId, com.esferalia.aon.gwt.payroll.shared.ContractSpecificData contractSpecificDataIn) {
 		this.contractSpecificData = contractSpecificDataIn;
-		if(Boolean.TRUE.equals(isTransformation))
-			showSepeMessage();
-		else {
-			showSepeData();
-			setDefaultView(contractType);
-			createUpdateSepeInfo(isComunica, document, fini, contractId);
-			fillSpecificData();
-		}
+//		if(Boolean.TRUE.equals(isTransformation))
+//			showSepeMessage();
+//		else {
+//			showSepeData();
+//			setDefaultView(contractType);
+//			createUpdateSepeInfo(isComunica, document, fini, contractId);
+//			fillSpecificData();
+//		}
+		showSepeData();
+		setDefaultView(contractType);
+		createUpdateSepeInfo(isComunica, document, fini, contractId);
+		fillSpecificData();
 	}
 
 	private void createUpdateSepeInfo(boolean isComunica, String document, Date fini, Integer contractId) {
@@ -392,6 +396,8 @@ public abstract class ContractSpecificData extends ResizeComposite {
 						
 						contractSpecificData.setIde(sepeData.getOrDefault("ide", null));
 						contractSpecificData.setComunicationDate(AonStringUtils.isBlank(communicationDate) ? null : formatDate.parse(communicationDate));
+						
+						downloadCtoDocument();
 					}
 					
 					@Override
@@ -409,6 +415,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 	protected abstract void showErrorMessage(String title, String message);
 	protected abstract void showSuccessMessage(String title, String message);
 	protected abstract void showLoadingMessage(String message);
+	protected abstract void downloadCtoDocument();
 	
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
 

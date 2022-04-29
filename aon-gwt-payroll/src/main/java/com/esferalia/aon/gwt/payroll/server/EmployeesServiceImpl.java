@@ -6698,7 +6698,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			Sepe.sendTransformation(certificateIS, certificate.getPassword(), certificate.getType(), cto, copyBasic);
 
-		} catch (SQLException | SepeException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -7036,6 +7037,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
+		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
 		builder.setDateComContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setOffer(OfferType.NO);

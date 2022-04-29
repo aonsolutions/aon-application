@@ -3,7 +3,7 @@ import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT} from "../../../envir
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
-import {  createMainView, createTitle, createAonTextArea, createChat, createSectionComment, createLabelFileText} from "./creationUtils.js";
+import {  createMainView, createTitle, createAonTextArea, createChat, createSectionComment, createLabelFileText, openSendTaskHistoricEmail} from "./creationUtils.js";
 import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
@@ -52,6 +52,14 @@ const buildToolbar = (aonMessengerChat) => {
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
+    if(task.id && aonMessengerChat.isBeta() && !aonMessengerChat.isCau()){
+      toolbar.addButton2({
+        id:"sendEmail",
+        name: MSG.SEND,
+        icon:MATERIAL_ICONS.FORWARD_TO_INBOX
+      }, (e) =>openSendTaskHistoricEmail(e));
+    }
+
     if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
       if(!aonMessengerChat.isCau()){
         toolbar.addButton2({
@@ -63,15 +71,15 @@ const buildToolbar = (aonMessengerChat) => {
       }
       
       if(task.id){
-          toolbar.addButton2({
-            ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
-            name: MSG.CLOSE,
-            icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
-          }, () =>{
-            aonMessengerChat.getApplication().confirmDialog(MSG.CLOSE, MSG.REQUEST_CLOSE_CONFIRM, ()=>{
-              aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED)
-            })
-          });
+        toolbar.addButton2({
+          ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
+          name: MSG.CLOSE,
+          icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
+        }, () =>{
+          aonMessengerChat.getApplication().confirmDialog(MSG.CLOSE, MSG.REQUEST_CLOSE_CONFIRM, ()=>{
+            aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED)
+          })
+        });
       }
     }
 
@@ -197,7 +205,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
 
 const createFirstDiv = (mainView) => {
   const div = newComponent({
-    classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.NO_SCROLLBAR],
     id: MESSENGER_IDS.FIRST_DIV,
     styles: {
       width: "50%",
