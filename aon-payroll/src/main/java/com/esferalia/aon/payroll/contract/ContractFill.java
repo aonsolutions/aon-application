@@ -488,24 +488,8 @@ public class ContractFill {
 	}
 	
 	private static void removeTemporalPages(Integer contractType, PDDocument pdfDocument) {
-		if(contractType.equals(401) || contractType.equals(501)) {
+		if(contractType.equals(401) || contractType.equals(501) || contractType.equals(402) || contractType.equals(502)) {
 			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-			pdfDocument.removePage(4);
-		} else if(contractType.equals(402) || contractType.equals(502)) {
-			pdfDocument.removePage(3);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
 			pdfDocument.removePage(4);
