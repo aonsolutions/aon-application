@@ -6,7 +6,7 @@ import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js"
 import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
 import { waitEl } from "../../../services/utils.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { createAction, createChatMessage, createNoMessage} from "./creationUtils.js";
+import { createAction, createChatMessage, createMessageOpen, createNoMessage} from "./creationUtils.js";
 import { chooseIconMessage } from "./utils.js";
 
 /**
@@ -26,9 +26,13 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(TASK_SOURCE.MANUAL === source)
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
 
-    if(aonMessengerChat.getDur().hasCallCenter() || (source && source == TASK_SOURCE.CAU) )
+    if(aonMessengerChat.getDur().hasCallCenter() || (source && source == TASK_SOURCE.CAU) ){
         sources.push({value: TASK_SOURCE.CAU, name: "Call Center" });
-
+        
+        if(!aonMessengerChat.task.id && aonMessengerChat.isSig())
+            source = TASK_SOURCE.CAU;
+    }
+    
     aonSelect.setOptions(sources);
 
     if(source)
@@ -139,8 +143,8 @@ export const fillWorkGroup = async (aonMessengerChat) => {
         
         aonSelect.setOptions(options);
         
-        if(task.workgroup && task.workgroup.id)
-            aonSelect.value = task.workgroup.id;
+        if(workgroup && workgroup.id)
+            aonSelect.value = workgroup.id;
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
             if(detail)
@@ -161,14 +165,13 @@ export const fillTaskHolder = async (aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKHOLDER}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
-        aonSelect.clear();
         aonSelect.loading(true);
         try {
+            const taskHolder = task.getTaskHolder();
+
             const workgroup = task.getWorkgroup().id;
             const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
 
-            const taskHolder = task.getTaskHolder();
-    
             let options = [];
             if(taskHolders && taskHolders.length>0){
                 options = taskHolders.map( th=> ({...th, value: th.id}) )
@@ -177,10 +180,17 @@ export const fillTaskHolder = async (aonMessengerChat) => {
             }
     
             aonSelect.setOptions(options);
-            
-            if(taskHolder && taskHolder.id) 
+
+
+            let exist = false;
+
+            if(taskHolder && taskHolder.id) {
                 aonSelect.value = taskHolder.id;
-    
+                exist = options.some(t=> t.id ===taskHolder.id);
+            }
+
+            if(!exist) aonSelect.clear();
+
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail)
                     task.setTaskHolder(detail);
@@ -298,9 +308,35 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
             const task = aonMessengerChat.task;
             const meId = aonMessengerChat.getApplicationParent().TASK_HOLDER.id;
 
+            const firstComment = workflows.find(w=> WORKFLOW_TYPES.OPEN.includes(w.type));
+            const observation = task.getDescriptionJson().observation;
+            if(!firstComment){
+                const date = (task.getCreationDate() || new Date().getTime());
+                workflows.unshift({
+                    id: "noIdDescription",
+                    type:WORKFLOW_TYPES.OPEN,
+                    comment: observation,
+                    direction: MESSENGER_DIRECTION.RIGHT,
+                    creation_user: task.getCreationUser(),
+                    date: date,
+                    notification_date: date,
+                    creation_date: date,
+                    notification_user: null,
+                    task_holder:{},
+                    email:null
+                });
+            } else if(firstComment && !firstComment.comment){
+                workflows = workflows.map(w=>{
+                    if(w.id == firstComment.id)
+                        w.comment = observation;
+                    return w;
+                })
+            }
+
             workflows.forEach(workflow => {
-                const {id, comment, type, creation_date, notification_user, notification_date, email, task_holder:{name, id:taskHolderId}} = workflow;
+                const {id, comment, type, creation_date, creation_user, notification_user, notification_date, email, task_holder:{name, id:taskHolderId}} = workflow;
                 const me = (taskHolderId == meId) || (email ===task.auth.email); // if taskHolder id is me
+                const userName = name || email || creation_user;
                 let message = {
                     id,
                     type,
@@ -311,15 +347,18 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
                     notification_user
                 }
 
-                if(!me) message.name = name || email;
+                if(!me) message.name = userName;
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
-                } else{
-                    message.name = name || email;
+                } else {
+                    message.name = userName;
                     const actionJson = chooseIconMessage(message);
                     const submessage =  message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
                     const action = createAction(actionJson, actionJson.comment, submessage);
                     action.appendTo(chat);
+
+                    if(WORKFLOW_TYPES.OPEN.includes(type) && message.comment)
+                        createMessageOpen({comment: message.comment, id:message.id }, action.element);
                 }
             });
         }

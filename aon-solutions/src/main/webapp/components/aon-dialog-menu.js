@@ -103,8 +103,9 @@ export class AonDialogMenu extends AonElement {
 		let content = this.getElement(this.CONTENT);
 		let p = this.createElement('p');
 		p.innerHTML = title;
-		p.style.fontWeight = "600";http://localhost:8080/
+		p.style.fontWeight = "600";
 		p.style.margin = "auto";
+		p.style.marginTop = "3px";
 		p.style.textAlign = "center";
 
 		if(content.children.length > 0) {

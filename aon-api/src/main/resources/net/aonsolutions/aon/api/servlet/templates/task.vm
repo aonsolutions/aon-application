@@ -126,7 +126,7 @@
 
               <div class="grey">
               	<br>
-                $task.getDescription().
+                $task.getDescription()
               </div>
                  
             </div>

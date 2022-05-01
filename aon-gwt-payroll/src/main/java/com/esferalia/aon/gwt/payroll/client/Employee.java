@@ -923,6 +923,8 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
+		hideEmployeesColective();
+		
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 	}

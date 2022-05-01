@@ -262,9 +262,19 @@ const checkFilesAndSend = async (textArea)=>{
  */
 export const checkFilesAddEventClick = (parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
+        const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+        const task = aonMessengerChat.task;
         parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`).forEach(element=>{
-            const url = element.src || element.href;
+            let url = element.src || element.href;      
             if(url){
+                if(task.id && aonMessengerChat.isCau()){
+                    url = SIG_URL+url.substr(url.indexOf("/ms"));
+                    if(element.src)
+                        element.src = url;
+                    else if(element.href)
+                        element.href = url;
+                }
+
                 element.addEventListener(EVENT.CLICK, (ev)=> {
                     ev.preventDefault();
                     openFileUrl(url);
@@ -389,7 +399,8 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
   
-    if(task.id || dataDefault.source_id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
+    if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true; // || dataDefault.source_id
+    
     const divRequest = createDivGrid(divStatic, requestTypeSelect, {classes:[CSS.AON_COL_XS_6]});
   
     //-----------------END TYPE REQUEST
@@ -647,7 +658,7 @@ export const downChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat){
         setTimeout(() =>{
-            chat.scrollTo(0, chat.scrollHeight);  //GO DOWN
+            chat.lastChild.scrollIntoView();  //GO DOWN
             addLine(chat);
         }, 100) 
     }
@@ -657,9 +668,8 @@ export const downChat = () => {
  */
 export const upChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
-    console.log(chat);
     if(chat)
-        setTimeout(() => chat.scrollTo(0, 0), 100)      //GO UP   
+        setTimeout(() => chat.firstChild.scrollIntoView(), 100)      //GO UP   
 }
 
 /**
@@ -674,6 +684,8 @@ const addLine = (chat) => chat.style.setProperty("--height", chat.scrollHeight +
  */
 const addTaskDescription = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
+    if(task.id) return;
+    
     const aonTextArea = createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`);
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
 
@@ -730,7 +742,6 @@ const addTaskDescription = (aonMessengerChat) => {
  * @param {HTMLElement} divDinamic 
  */
 const addTaskHolderAndWorkgroup = (aonMessengerChat, divDinamic) => {
-
     //-----------------WORKGROUP
     const workgroupSelect = createWorkgroup();
     workgroupSelect.default = true;
@@ -825,7 +836,7 @@ export const setTaskTags = () => {
     task.getTags()
     .filter(t=>t.tag_type && t.tag_type.toUpperCase() == TAG_TYPE.TASK_LABEL)
     .forEach(tag=>{
-        if(task.id && task.isExternal() || aonMessengerChat.isCau()){
+        if(task.id && task.isExternal() || aonMessengerChat.isCau() || aonMessengerChat.isMobile()){
             createTagHtml(tag, div);
         } else {
             appendTaskTag(tag, div, (id)=>  task.removeTag(id));

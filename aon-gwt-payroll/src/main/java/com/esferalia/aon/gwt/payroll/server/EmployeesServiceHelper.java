@@ -160,7 +160,7 @@ public class EmployeesServiceHelper {
 		Date date = contract.getStartDate();
 		String ccc = contract.getEnterpriseCCC();
 		String naf = contract.getPersonSsNumber();
-		String regime = contract.getSsRegime().getCode();	
+		String regime = contract.getEnterpriseCCCRegime().getCode();	
 		
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
@@ -178,7 +178,7 @@ public class EmployeesServiceHelper {
 		.orElseThrow(() -> new IOException() );
 		String ccc = contract.getEnterpriseCCC();
 		String naf = contract.getPersonSsNumber();
-		String regime = contract.getSsRegime().getCode();	
+		String regime = contract.getEnterpriseCCCRegime().getCode();	
 		
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
@@ -195,7 +195,7 @@ public class EmployeesServiceHelper {
 		.orElseThrow(() -> new IOException() );
 		String ccc = contract.getEnterpriseCCC();
 		String naf = contract.getPersonSsNumber();
-		String regime = contract.getSsRegime().getCode();	
+		String regime = contract.getEnterpriseCCCRegime().getCode();	
 		
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
@@ -432,7 +432,7 @@ public class EmployeesServiceHelper {
 		.orElseThrow(() -> new IOException() );
 		String ccc = contract.getEnterpriseCCC();
 		String naf = contract.getPersonSsNumber();
-		String regime = contract.getSsRegime().getCode();	
+		String regime = contract.getEnterpriseCCCRegime().getCode();	
 		
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
@@ -453,7 +453,7 @@ public class EmployeesServiceHelper {
 		String nif = contract.getPersonDocument();
 		String nss = contract.getPersonSsNumber();
 		String ccc = contract.getEnterpriseCCC();
-		String regime = contract.getSsRegime().getCode();
+		String regime = contract.getEnterpriseCCCRegime().getCode();
 		Date endDate = contract.getEndDate();
 		Date startDate = contract.getStartDate();
 		
@@ -627,7 +627,7 @@ public class EmployeesServiceHelper {
 			.orElseThrow(() -> new IOException() );
 			String ccc = contract.getEnterpriseCCC();
 			String naf = contract.getPersonSsNumber();
-			String regime = contract.getSsRegime().getCode();	
+			String regime = contract.getEnterpriseCCCRegime().getCode();	
 			
 //			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");

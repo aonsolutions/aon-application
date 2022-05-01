@@ -610,11 +610,19 @@ export class AonApplication extends AonElement {
     this.addSidenavOptionsList(data, options);
   }
 
+  removeBackgroundSidenavAll(){
+    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
+      li.style.backgroundColor = 'transparent';
+    });
+  }
+
   addBackgroundSidenav(id){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
-    if(li)
+    if(li){
       li.style.backgroundColor = "#ddd";
+    }
   }
 
   /**
@@ -695,20 +703,25 @@ export class AonApplication extends AonElement {
   }
 
   addFloatOption(action, fn) {
-    let span =
-      this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
-    span.id = this.id + "FloatSpan";
-    span.style.position = "fixed";
-    span.style.right = "20px";
-    span.style.bottom = this.isSab() ? "80px" : "70px";
-    let aonIconButton = new AonIconButton();
-    aonIconButton.icon = action.icon;
-    aonIconButton.id = this.id + action.id + "Button";
-    aonIconButton.title = action.name;
-    aonIconButton.background = "#f1f1f1";
-    span.appendChild(aonIconButton);
-    this.appendChild(span);
-    this.getElement(this.id + action.id + "Button").addEventListener(EVENT.CLICK, fn);
+    const buttonId = this.id + action.id + "Button";
+    let aonIconButton = this.getElement(buttonId);
+    if(!aonIconButton){
+      let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
+      span.id = this.id + "FloatSpan";
+      span.style.position = "fixed";
+      span.style.right = "20px";
+      span.style.bottom = this.isSab() ? "80px" : "70px";
+      
+      aonIconButton = new AonIconButton();
+      aonIconButton.icon = action.icon;
+      aonIconButton.id = buttonId;
+      aonIconButton.title = action.name;
+      aonIconButton.background = "#f1f1f1";
+      span.appendChild(aonIconButton);
+      this.appendChild(span);
+      aonIconButton.addEventListener(EVENT.CLICK, fn);
+    }
+
     return aonIconButton;
   }
   

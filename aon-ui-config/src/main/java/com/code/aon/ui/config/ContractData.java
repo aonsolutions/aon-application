@@ -6,9 +6,13 @@ import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang.StringEscapeUtils;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractData implements Serializable {
 	
@@ -83,19 +87,21 @@ public class ContractData implements Serializable {
 			return htmlFullName;
 		
 
-		Function<String, String> repl = s -> "<b>"+s+"</b>";
-
-		for ( String word : filter.split("\\s+") ) {
+		UnaryOperator<String> repl = s -> "<b>"+s+"</b>";
+		StringBuilder display = new StringBuilder();
+		List<String> matches = AonStringUtils.getMatching(fullName, filter);
+		String aux = fullName;
+		
+		for (String match : matches) {
 			try {
-				htmlFullName = replace(htmlFullName, word, repl);
-			} catch ( Exception e ) {
+				aux = replace(aux, match, repl); 
+			} catch (Exception e) {
+				
 			}
 		}
-		
-		StringBuffer display = new StringBuffer();
-
-		display.append(htmlFullName);
-
+				
+		display.append(aux);
+	
 		try {
 			display.append(" " + replace(document, filter, repl));
 		} catch ( Exception e ) {
@@ -104,10 +110,7 @@ public class ContractData implements Serializable {
 		try {
 			display.append( " " + replace(ssNumber, filter, repl));
 		} catch ( Exception e ) {			
-		}
-
-		
-		
+		}		
 
 		return display.toString();
 	}

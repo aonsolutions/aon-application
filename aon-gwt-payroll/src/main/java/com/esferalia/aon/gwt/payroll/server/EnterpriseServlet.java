@@ -28,9 +28,9 @@ public class EnterpriseServlet extends AonApiHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
 		try {
-			AonApiData api = initialize(req);
+			AonApiData api = initialize(req, false);
 			
-			String domainName = req.getParameter("domain");
+			String domainName = api.getData().getString("domain");
 			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
 			
 			responseFile(resp, "Contratos", new FileInputStream(getEnterpriseContractsExcel(api, domain.getId())), MimeType.MS_EXCEL);

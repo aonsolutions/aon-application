@@ -780,6 +780,20 @@ public class JooqEmployee {
 		//WORKPLACE TABLE		
 		contractData.setWorkplaceId(workplaceId);
 		
+		Record workplaceRecord = dslContext.select().from(WORKPLACE).where(WORKPLACE.ID.eq(workplaceId)).fetchOne();
+		
+		contractData.setWorkplaceName(workplaceRecord.get(WORKPLACE.DESCRIPTION));
+		
+		Record raddressRecord = dslContext.select().from(RADDRESS)
+				.where(RADDRESS.ID.eq(
+						dslContext.select(WORKPLACE.ADDRESS).from(WORKPLACE)
+							.where(WORKPLACE.ID.eq(workplaceId))
+							.fetchOne(WORKPLACE.ADDRESS)
+				)).fetchOne();
+		
+		contractData.setWorkplaceZIP(raddressRecord.get(RADDRESS.MUNICIPALITY_CODE));
+		contractData.setWorkplaceFullAddress(raddressRecord.get(RADDRESS.STREET_TYPE)+". "+raddressRecord.get(RADDRESS.ADDRESS)+" "+raddressRecord.get(RADDRESS.NUMBER));
+		
 		if(contractData.getSsRegimen() != 3){ //NO ES RETA
 			//ENTERPRISE ACTIVITY TABLE
 			Integer enterpriseActivityId = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);

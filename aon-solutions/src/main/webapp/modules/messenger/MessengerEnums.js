@@ -178,22 +178,23 @@ export const TASK_FILTER = [
         default:true,
         emptyclear:true
     },
-    {
-        type: "select",
-        id: "status",
-        name: "status",
-        title: MSG.STATUS,
-        default:true,
-        emptyclear:true
-    },
-    {
-      type: "select",
-      name: "workgroup",
-      id: "workgroup",
-      title: MSG.WORKGROUP,
-      default:true,
-      emptyclear:true
-    }
+    // {
+    //     type: "select",
+    //     id: "status",
+    //     name: "status",
+    //     title: MSG.STATUS,
+    //     default:true,
+    //     emptyclear:true
+    // },
+    // {
+    //   type: "select",
+    //   name: "workgroup",
+    //   id: "workgroup",
+    //   title: MSG.WORKGROUP,
+    //   autocomplete: true,
+    //   default:true,
+    //   emptyclear:true
+    // }
 ];
 
 export const APP_PARAMS_REQUEST = {
