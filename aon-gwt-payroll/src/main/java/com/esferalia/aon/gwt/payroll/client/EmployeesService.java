@@ -247,6 +247,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	List<Date> getEmployeeIdcDates(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 
+	String checkEmployeeIdc(String domain, String user, Integer contractId, Date date, String idc) throws IllegalArgumentException;
+
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException;

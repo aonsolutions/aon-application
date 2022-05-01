@@ -763,7 +763,14 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getEmployeeIdc(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
 	}
-
+	
+	@Override
+	public void checkEmployeeIdc(String domain, String user, Integer contractId, Date date, String idc, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.checkEmployeeIdc(domain, user, contractId, date, idc, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	
 	@Override
 	public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();

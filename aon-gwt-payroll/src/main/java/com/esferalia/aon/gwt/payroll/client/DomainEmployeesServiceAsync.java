@@ -507,6 +507,10 @@ public class DomainEmployeesServiceAsync {
 	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
+	
+	public void checkEmployeeIdc(Integer contractId, Date date, String idc, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.checkEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, idc, callback);
+	}
 
 	public void getEmployeeIdcPlNss(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeIdcPlNss(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);

@@ -87,6 +87,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.CCCType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -707,6 +708,7 @@ public class FillerDAO {
 					.setRegistration(r.getValue(CONTRACT.REGISTRATION))
 					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
 					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
+					.setSsRegime(CCCType.getSsRegimeType(r.getValue(ENTERPRISE_CCC.TYPE)))
 					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
 					
 					.setEnterpriseCCC(r.getValue(ENTERPRISE_CCC.CCC))
@@ -743,7 +745,7 @@ public class FillerDAO {
 					.setId(r.getValue(IRPF_DATA.ID))
 					.setDomain(r.getValue(IRPF_DATA.DOMAIN))
 					.setDisability(r.getValue(IRPF_DATA.DISABILITY_LEVEL));
-			// TODO A—ADIR LOS PAR¡METROS QUE FALTAN.
+			// TODO A√ëADIR LOS PAR√ÅMETROS QUE FALTAN.
 		}
 	}
 
