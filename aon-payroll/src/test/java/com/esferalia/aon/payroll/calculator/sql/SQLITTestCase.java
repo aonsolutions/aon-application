@@ -4458,7 +4458,9 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(
 				0.75 * 1750.00/30.00 * it21Days 
 				+  0.60 * 1750.00/30.00 , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * ( it21Days + 1 ), salary.getCommonBase(), DELTA);
+		
+		Assert.assertEquals(1750.00 , 
+		salary.getCommonBase(), DELTA);
 	}
 
 	@Test
