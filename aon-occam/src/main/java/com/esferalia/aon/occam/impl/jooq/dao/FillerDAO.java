@@ -708,11 +708,10 @@ public class FillerDAO {
 					.setRegistration(r.getValue(CONTRACT.REGISTRATION))
 					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
 					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
-					.setSsRegime(CCCType.getSsRegimeType(r.getValue(ENTERPRISE_CCC.TYPE)))
+					.setEnterpriseCCCRegime(CCCType.getSsRegimeType(r.getValue(ENTERPRISE_CCC.TYPE)))
 					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
 					
 					.setEnterpriseCCC(r.getValue(ENTERPRISE_CCC.CCC))
-					.setEnterpriseCCCRegime(getCCCRegime(r.getValue(ENTERPRISE_CCC.TYPE)))
 					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
 					.setPersonSsNumber(r.getValue(PERSON.SOCIAL_SECURITY_NUM))
 
@@ -1071,29 +1070,5 @@ public class FillerDAO {
 		}
 	}
 
-	private static SSRegimeType getCCCRegime(Byte cccRegime) {
-		switch (cccRegime) {
-		case 0: // Principal
-			return SSRegimeType.GENERAL;
-		case 1: // Formacion y aprendizaje
-			return SSRegimeType.GENERAL;
-		case 2: // Aprendizaje
-			return SSRegimeType.GENERAL;
-		case 3: // Representantes del comercio
-			return SSRegimeType.GENERAL;
-		case 4: // Asimilado R. General
-			return SSRegimeType.GENERAL;
-		case 5: // Becarios
-			return SSRegimeType.GENERAL;
-		case 6: // Empleados del hogar
-			return SSRegimeType.DOMESTIC_EMPLOYEES;
-		case 7: // Agrario
-			return SSRegimeType.AGRICULTURAL;
-		case 8: // Artistas
-			return SSRegimeType.ARTIST;
-		default:
-			return SSRegimeType.GENERAL;
-		}
-	}
 	
 }
