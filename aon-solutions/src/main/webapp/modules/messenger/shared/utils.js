@@ -365,7 +365,7 @@ const jsonDiv = ()=> {
 export const buildForm = (firstDiv, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const isAdvisoryCompany = task.isAdvisoryCompany();
-    const dataDefault = aonMessengerChat.getData();
+    // const dataDefault = aonMessengerChat.getData();
 
     //-----------------------APPEND DIV TAGS
     createTagsDiv(firstDiv);
@@ -441,8 +441,11 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
 
     requestTypeSelect.addEventListener(EVENT.CHANGE, ()=>{
         let type = requestTypeSelect.getDetail().value;
-        if(!task.id && btnForExternal){
-            hideBtnExternal(type, btnForExternal, divRequest);
+        if(!task.id){
+            if(btnForExternal){
+                hideBtnExternal(type, btnForExternal, divRequest);
+            }
+            aonMessengerChat.setWhAndTh();
         }
         onChangeTypeSelect(aonMessengerChat, requestTypeSelect, divDinamic, divProcess, btnForExternal ? btnForExternal.isChecked() : false)
     });
