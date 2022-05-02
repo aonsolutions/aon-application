@@ -448,10 +448,12 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONArray saveAppParams(AonApiData api) {
 		JSONArray arr = new JSONArray();
 		Domain domain = api.getDomain();
+		String login = api.getUser().getLogin();
+		
 		LinkedList<ApplicationParameter> appParams = AppParamJSON.fromJSON(api.getData().optJSONArray("appParams"));
 		for (ApplicationParameter param : appParams) {
 
-			 ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), param.getName());
+			 ApplicationParameter exists = AON.getApplicationParameter(domain.getName(), domain.getId(), login, param.getName());
 			 if(exists.getId()!=null) {
 				 if(param.getValue()!=null) {
 					 

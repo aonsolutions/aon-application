@@ -128,7 +128,9 @@ export class AonMessengerList extends AonElement {
       this.getDataDesktop(datos);
     } 
 
-    if(datos.length<=0) this.AON_TABLE.empty();
+    if(reload && datos.length<=0) {
+      this.AON_TABLE.empty();
+    }
 	}
 
   getDataDesktop(datos){
@@ -227,6 +229,7 @@ export class AonMessengerList extends AonElement {
     divOne.innerText = title;
     divOne.title = title;
     divOne.style.fontWeight = 550;
+    divOne.style.fontSize = "14px";
     divOne.style.overflow = CONSTANT.HIDDEN;
     divFlex.appendChild(divOne);
     
