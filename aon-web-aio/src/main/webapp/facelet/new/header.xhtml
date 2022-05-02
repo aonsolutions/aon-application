@@ -1476,6 +1476,10 @@
       				e.returnValue = false;
       				e.cancelBubble = true;
       				
+      				// Set default message to tooltip
+      				const message = document.getElementById("tooltip-key-message");
+					setTooltipFixMessage(message);      				
+
       				hideHelpTooltip(true);
       				return false;
 				}
@@ -1491,6 +1495,30 @@
       				if(searchResults.length == 0){
       					return;
       				}
+      				
+      				const resultsAreHidden = #{rich:element('smartFilterTablePanel')}.style.display == "none";
+      				if(resultsAreHidden){
+      					return;
+      				}
+      				
+      				// Set default message to tooltip
+      				const message = document.getElementById("tooltip-key-message");
+					setTooltipFixMessage(message);
+      				
+      				// Enter
+    				if(e.which === 13) {
+    					
+    					const link = searchResults[selected].querySelector("a");
+    					searchResults[selected].click();
+    					
+    					if(link) {
+    						link.click();
+    					}
+
+    					return;
+    				}
+      				
+      				hideHelpTooltip();
       				
     				// Arrow up
     				if(e.which === 38) {
@@ -1514,24 +1542,10 @@
           				
           				resetResultStates (searchResults, selected)
     				}
-    				
-    				// Enter
-    				if(e.which === 13) {
-    					
-    					const link = searchResults[selected].querySelector("a");
-    					searchResults[selected].click();
-    					
-    					if(link) {
-    						link.click();
-    					}
-    					
-    				}
       				
 				} else {
 					selected = -1;
 				}
-				
-
 				
 			}
 			
@@ -1540,12 +1554,12 @@
 					p.style.background = "#fff";
 					
 					const mouseout = searchResults[selected].onmouseout;
-					if(mouseout){
+					if(false){
 						mouseout({
 							target : searchResults[selected],
 						});
 					} 
-					})
+				})
 				
 				const mouseover =  searchResults[selected].onmouseover;
 				if(mouseover){
@@ -1566,6 +1580,7 @@
 					#{rich:element('smartFilter')}.focus();
 				}, 300);
 			}
+			
 
 			let helpTooltipTimeout;
 			
@@ -1576,6 +1591,7 @@
 			*/
 			function showHelpTooltip( event, url ){
 				
+					clearTimeout(helpTooltipTimeout)				
 					helpTooltipTimeout = setTimeout(function(){
 						
 						const tooltip = document.getElementById("helpTooltip");
@@ -1596,7 +1612,6 @@
 						frame.style.transition = "none";
 						frame.style.opacity = 1;
 						
-
 						// Get the right tooltip URL						
 						const filename = url.substr( url.lastIndexOf('/') + 1, url.lastIndexOf('.pdf')-5);
 						let name = url.substr( url.lastIndexOf('#') + 1);
@@ -1617,9 +1632,9 @@
 						
 						tooltip.style.left = event.clientX  + "px";
 						tooltip.style.transform = "translateX(-50%)";
-						setTimeout(() => tooltip.style.opacity = "1", 250);
+						setTimeout(() => tooltip.style.opacity = "1", 350);
 												
-					}, 150);
+					}, 250);
 
 			}
 			
@@ -1650,14 +1665,10 @@
 					return;
 				}
 				
-				console.log("Hiding tooltip. FORCE = " + force);
-				
 				if(!force &amp;&amp; tooltip.classList.contains("focus")){
 					return;
 				}
-				
-			
-				
+
 				tooltip.style.opacity = "0";
 				setTimeout(() => tooltip.style.display = "none", 20);
 			}
@@ -1670,15 +1681,12 @@
 					const tooltip = document.getElementById("helpTooltip");
 					const frame = document.querySelector("#helpTooltip iframe");
 					const message = document.getElementById("tooltip-key-message");
-					tooltip.onclick = () => tooltip.classList.remove("focus");
 					
 					if(!frame.src){
 						return;
 					}
 					
-					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";
-					
-					
+					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";					
 					
 					if(isSearch &amp;&amp; tooltip.className.indexOf("focus") == -1){
 						tooltip.classList.add("focus");
@@ -1695,38 +1703,57 @@
 							
 							 // CTRL + ENTER
 				            if (event.ctrlKey &amp;&amp; event.code === 'Enter') {
-				            	tooltip.classList.remove("focus");
-				            	hideHelpTooltip(true);				            	
+				            	
+				            	tooltip.classList.remove("focus");				            	
+				            	hideHelpTooltip(true);
+
+								const message = document.getElementById("tooltip-key-message");
+								setTooltipFixMessage(message);
+								
 				            	window.open(tooltip.dataset.url,'_blank');
 				            }
 				               
 						});
 						
 						frame.focus();
-												
-						const f2Icon = document.createElement("span");
-						const ctrlIcon = document.createElement("span");
-						const enterIcon = document.createElement("span");
-						
-						f2Icon.className = "keyboard-icon";
-						ctrlIcon.className = "keyboard-icon";
-						enterIcon.className = "keyboard-icon";
-						
-						f2Icon.innerHTML = "F2";
-						ctrlIcon.innerHTML = "Ctrl";
-						enterIcon.innerHTML = "Enter";
-						
-						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para soltar la ventana | " + ctrlIcon.outerHTML + " " + enterIcon.outerHTML + " para ir al pdf";
+						setTooltipUnfixMessage(message);
 					} else {
 						tooltip.classList.remove("focus");
-						
-						const f2Icon = document.createElement("span");
-						f2Icon.className = "keyboard-icon";
-						f2Icon.innerHTML = "F2";
-						
-						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
+						setTooltipFixMessage(message);
 					}
 				}
+			}
+			
+			/**
+			* Set fix message to provided element
+			* @param htmlElement The HTML element to set the message to 
+			*/
+			function setTooltipFixMessage(htmlElement){
+				const f2Icon = document.createElement("span");
+				f2Icon.className = "keyboard-icon";
+				f2Icon.innerHTML = "F2";
+				
+				htmlElement.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
+			}
+			
+			/**
+			* Set unfix message to provided element
+			* @param htmlElement The HTML element to set the message to 
+			*/
+			function setTooltipUnfixMessage(htmlElement){
+				const f2Icon = document.createElement("span");
+				const ctrlIcon = document.createElement("span");
+				const enterIcon = document.createElement("span");
+				
+				f2Icon.className = "keyboard-icon";
+				ctrlIcon.className = "keyboard-icon";
+				enterIcon.className = "keyboard-icon";
+				
+				f2Icon.innerHTML = "F2";
+				ctrlIcon.innerHTML = "Ctrl";
+				enterIcon.innerHTML = "Enter";
+				
+				htmlElement.innerHTML = "Pulse " + f2Icon.outerHTML + " para soltar la ventana | " + ctrlIcon.outerHTML + " " + enterIcon.outerHTML + " para ir al pdf";
 			}
 			
 			
