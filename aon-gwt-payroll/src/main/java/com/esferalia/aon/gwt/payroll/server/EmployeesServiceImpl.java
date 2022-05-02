@@ -188,6 +188,7 @@ import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.SettleBuilder;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -5811,6 +5812,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public String checkEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date, String idcDataUri)
+			throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			String idcBase64 = decodeURIComponent(idcDataUri);
+			
+			String base64Pdf = EmployeesServiceHelper.checkIDCNSS(connection, domainName, parentDomainId, userLogin, userId, contractId, date, idcBase64);
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+
+		} catch (SQLException | IOException | SegSocialException | UnknownPDFException  e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public String getEmployeeIdcPlNss(String domainName, String userLogin, Integer contractId, Date date)
@@ -6698,7 +6727,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			Sepe.sendTransformation(certificateIS, certificate.getPassword(), certificate.getType(), cto, copyBasic);
 
-		} catch (SQLException | SepeException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -7036,6 +7066,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
+		builder.setOldDateIniContract(employeeContractInfo.getContractInfo().getOriginalStartDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
 		builder.setDateComContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setOffer(OfferType.NO);

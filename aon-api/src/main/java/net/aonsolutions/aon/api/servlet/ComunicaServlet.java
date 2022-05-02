@@ -407,6 +407,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setNss(nss)
 		.setIpf(ipf)
 		.setFra(frb)
+		.setFrb(frb)
 		.setName(name)
 		.setSituation(situation)
 		.build();

@@ -236,6 +236,17 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		
 		
 	}
+	
+	public static ITimedVariable<?>  getNarrowVariable(ITimedVariable<?> var, Period period){
+		if ( var instanceof LazyExpressionVariable )
+			return new LazyExpressionVariable( ((LazyExpressionVariable)var).getExpressionContext(), ((LazyExpressionVariable)var).getExpression(), period);
+		else if ( var instanceof IExpressionVariable<?>  )	
+			return new WrapExpressionVariable<>(period, (IExpressionVariable<?>) var);
+		else if ( var instanceof IConstantVariable ) 
+			return new WrapTimedConstant<>(period, var); 
+		else 
+			return new WrapTimedVariable<>(period, var);
+	}
 
 	public Variables() {
 		this(NoopNotFoundHandler.INSTANCE);

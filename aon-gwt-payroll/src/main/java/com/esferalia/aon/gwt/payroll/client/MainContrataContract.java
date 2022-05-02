@@ -966,7 +966,7 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		FormPanel formPanel = new FormPanel("_blank");
 		formPanel.setAction(printURL);
-		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanel.setMethod(FormPanel.METHOD_GET);
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
@@ -1297,6 +1297,7 @@ public class MainContrataContract extends MainEntryPoint {
 				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
 				contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
 				contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
+				contrataEmployee.setChanges(true);
 				contrataEmployee.setContrataEmployeeObject(
 						contrataEmployeeDialogObject, 
 						contractId,

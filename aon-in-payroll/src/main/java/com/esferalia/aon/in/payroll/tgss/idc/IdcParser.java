@@ -25,6 +25,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -258,94 +259,100 @@ public class IdcParser {
 		return Optional.empty();
 				
 	}
+	protected static Double parseDouble(String string) throws ParseException {
+		return AonNumberUtils.toDouble(AonStringUtils.replace(string,",", "."));
+	}
+	protected static Date parseDate(String string) throws ParseException {
+		return new SimpleDateFormat("dd-MM-yyyy").parse(string);		
+	}
 	
 	//NOMBRE Y APELLIDOS: JOSEFA LOPEZ VARO
-	private static final Pattern EMPLOYEE_NAME = 
+	protected static final Pattern EMPLOYEE_NAME = 
 	Pattern.compile(
 	"^NOMBRE\\s*Y\\s*APELLIDOS\\s*:\\s*(?<name>.+)$"
 	, Pattern.CASE_INSENSITIVE);
 		
 	//NSS: 11 1058186657 DOC.IDENTIFICATIVO: D.N.I. NUM: 052300641K SEXO: MUJER NACIMIENTO: 30-04-1964
-	private static final Pattern EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE = 
+	protected static final Pattern EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE = 
 	Pattern.compile(
 			"^NSS\\s*:\\s*(?<province>[0-9]{2})\\s*(?<nss>[0-9]+)\\s*DOC.\\s*IDENTIFICATIVO\\s*:\\s*(?<docType>.*)NUM\\s*:\\s*(?<doc>.+)SEXO\\s*:\\s*(?<gender>.*)NACIMIENTO\\s*:\\s*(?<birthDate>[0-9]+-[0-9]+-[0-9]+)$"
 			, Pattern.CASE_INSENSITIVE);
 	
 	//RAZÓN SOCIAL: SOUTHWEST GOLF S.L. CCC: 11 112501771 DNI/NIE/CIF: 9 0B85729648
-	private static final Pattern ENTERPRISE_NAME_CCC_CIF = 
+	protected static final Pattern ENTERPRISE_NAME_CCC_CIF = 
 	Pattern.compile(
 	"^RAZÓN\\s*SOCIAL\\s*:\\s*(?<name>.+)CCC\\s*:\\s*(?<province>[0-9]{2})\\s*(?<ccc>[0-9]+)\\s*DNI/NIE/CIF\\s*:\\s*(?<type>[0-9]{1})\\s*(?<cif>.+)$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
-	private static final Pattern ENTERPRISE_ACTIVITY_REGIME = 
+	protected static final Pattern ENTERPRISE_ACTIVITY_REGIME = 
 	Pattern.compile(
 	"^ACTIVIDAD\\s*ECONOMICA\\s*:\\s*(?<code>[0-9]+)\\s*(?<description>.*)REGIMEN\\s*:\\s*(?<regime>.*)$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
-	private static final Pattern EMPLOYEE_PERIOD_START = 
+	protected static final Pattern EMPLOYEE_PERIOD_START = 
 	Pattern.compile(
 	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)(\\s*HASTA\\s*(?<end>[0-9]+-[0-9]+-[0-9]+))?.*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TIPO CONTRATO: 289 INDEFINIDO.TIEMPO PARCIAL.TRANSFORMACION ALTA: 01-05-2018 BAJA:  
-	private static final Pattern CONTRACT_TYPE_START_END = 
+	protected static final Pattern CONTRACT_TYPE_START_END = 
 	Pattern.compile(
 	"^TIPO\\s*CONTRATO\\s*:\\s*(?<contractType>[0-9]*).*ALTA\\s*:\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*BAJA\\s*:\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//COEF.TIEMPO PARCIAL: 500 REDUCCIÓN JORNADA/COEFIC:  FECHA: 01-11-2019 EDAD: 55
-	private static final Pattern CONTRACT_PARTIALCOEF_DATE_AGE = 
+	protected static final Pattern CONTRACT_PARTIALCOEF_DATE_AGE = 
 	Pattern.compile(
 	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//GC/M*: 08 RELEVO:  TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300 C.C.C.: 0111 11 112501771
-	private static final Pattern CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC =
+	protected static final Pattern CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC =
 	Pattern.compile(
 	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TRABAJADOR SUSTITUTO*:  OCUPACION*:   
-	private static final Pattern CONTRACT_OCUPATION =
+	protected static final Pattern CONTRACT_OCUPATION =
 	Pattern.compile(
 	"^TRABAJADOR\\s*SUSTITUTO\\*:\\s*(?<sustituteEmployee>.*)OCUPACION\\*\\s*:\\s*(?<ocupation>[a-z]?).*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//MODALIDAD DE COTIZACIÓN:   DISCAPACIDAD -GRADO Y TIPO-
-	private static final Pattern CONTRACT_QUOTEMODALITY =
+	protected static final Pattern CONTRACT_QUOTEMODALITY =
 	Pattern.compile(
 	"^MODALIDAD\\s*DE\\s*COTIZACIÓN\\s*:\\s*(?<quoteModality>.*)*DISCAPACIDAD\\s*-GRADO\\s*Y\\s*TIPo-$"
 	, Pattern.CASE_INSENSITIVE);
 
 	
 	//JORNADAS REALES REALIZADAS:  JORNADAS REALES PREVISTAS:  TIPO:
-	private static final Pattern CONTRACT_REALJOURNEY =
+	protected static final Pattern CONTRACT_REALJOURNEY =
 	Pattern.compile(
 	"^JORNADAS\\s*REALES\\s*REALIZADAS\\s*:\\s*(?<realJourney>.*)*JORNADAS\\s*REALES\\s*PREVISTAS\\s*:\\s*(?<realJourneyProvided>.*)\\s*TIPO:\\s*(?<disabilityType>.*)*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TIPO DE PECULIARIDAD PORCENTAJE/TIPO CUANTÍA/MES FRACCIÓN DE CUOTA DESDE HASTA CLV
-	private static final Pattern PECULIARITIES_HEADER =
+	protected static final Pattern PECULIARITIES_HEADER =
 	Pattern.compile(
 	"^TIPO\\s*DE\\s*PECULIARIDAD\\s*PORCENTAJE/TIPO\\s*.*$"
 	, Pattern.CASE_INSENSITIVE);
 
 	//37 EXONE.ERE.F.MAY.COMP 85,00  01   CUOTA EMPRESARIAL 14-05-2020 31-05-2020 FD4
-	private static final Pattern EMPLOYEE_QUOTE_PEC = 
+	protected static final Pattern EMPLOYEE_QUOTE_PEC = 
 	Pattern.compile(
 	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)?.*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TOTAL CLV NFL
-	private static final Pattern TOTAL_CLV =
+	protected static final Pattern TOTAL_CLV =
 	Pattern.compile(
 	"^TOTAL\\s*CLV.*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TIPOS DE COTIZACIÓN* CONTINGENCIAS PROFESIONALES: IT: 1,70 I.M.S.: 1,30 TOTAL: 3,00 DESEMPLEO: 7,05
-	private static final Pattern QUOTATION_TYPES = 
+	protected static final Pattern QUOTATION_TYPES = 
 	Pattern.compile(
 	"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)?\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+)?.*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)?(EXCLUIDO)?$"
 	, Pattern.CASE_INSENSITIVE);

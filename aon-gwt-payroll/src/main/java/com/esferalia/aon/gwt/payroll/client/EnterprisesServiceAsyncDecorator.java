@@ -415,9 +415,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void createNewCRA(String domainName, long findingDate, List<String> ccc, ArrayList<Integer> cccIds, Integer cccId, String type, AsyncCallback<String> callback) {
+	public void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIds, Integer cccId, String type, AsyncCallback<String> callback) {
 		AON.start();
-		enterprisesServiceAsync.createNewCRA(domainName, findingDate, ccc, cccIds, cccId, type, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.createNewCRA(domainName, user, findingDate, ccc, cccIds, cccId, type, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	@Override

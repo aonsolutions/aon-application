@@ -15,6 +15,7 @@ public class Contract implements Serializable{
 	Integer person;
 	Integer workplace;
 	String enterpriseCCC;
+	SSRegimeType enterpriseCCCRegime;
 	Date startDate;
 	Date endDate;
 	Integer calendar;
@@ -23,7 +24,6 @@ public class Contract implements Serializable{
 	Integer registration;
 	Date seniorityDate;
 	Integer enterpriseActivity;
-	SSRegimeType ssRegime;
 	Integer agreementLevel;
 	ContractModel model;
 	String categoryDescription;
@@ -77,6 +77,15 @@ public class Contract implements Serializable{
 
 	public Contract setEnterpriseCCC(String enterpriseCCC) {
 		this.enterpriseCCC = enterpriseCCC;
+		return this;
+	}
+	
+	public SSRegimeType getEnterpriseCCCRegime() {
+		return enterpriseCCCRegime;
+	}
+
+	public Contract setEnterpriseCCCRegime(SSRegimeType enterpriseCCCRegime) {
+		this.enterpriseCCCRegime = enterpriseCCCRegime;
 		return this;
 	}
 
@@ -149,15 +158,6 @@ public class Contract implements Serializable{
 
 	public Contract setEnterpriseActivity(Integer enterpriseActivity) {
 		this.enterpriseActivity = enterpriseActivity;
-		return this;
-	}
-
-	public SSRegimeType getSsRegime() {
-		return ssRegime;
-	}
-
-	public Contract setSsRegime(SSRegimeType ssRegime) {
-		this.ssRegime = ssRegime;
 		return this;
 	}
 

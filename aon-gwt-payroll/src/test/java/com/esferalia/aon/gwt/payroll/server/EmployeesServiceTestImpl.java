@@ -745,6 +745,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
+	
+	@Override
+	public String checkEmployeeIdc(String domain, String user, Integer contractId, Date date, String idc)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
 
 	@Override
 	public String getEmployeeIdcPlNss(String domain, String user,Integer contractId, Date date) {

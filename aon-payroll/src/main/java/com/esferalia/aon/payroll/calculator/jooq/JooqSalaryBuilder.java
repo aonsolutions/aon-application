@@ -332,9 +332,12 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		InsertSetStep<SalaryEmbargoRecord> insertEmbargo = insertMoreEmbargo == null
 				? dslContext.insertInto(SALARY_EMBARGO) : insertMoreEmbargo.newRecord();
 
-		insertMoreEmbargo = insertEmbargo.set(SALARY_EMBARGO.DOMAIN, this.domainId).set(SALARY_EMBARGO.SALARY, salaryId)
-				.set(SALARY_EMBARGO.AMOUNT, amount).set(SALARY_EMBARGO.CONTRACT_EMBARGO, id)
-				.set(SALARY_EMBARGO.DESCRIPTION, description);
+		insertMoreEmbargo = insertEmbargo
+				.set(SALARY_EMBARGO.DOMAIN, this.domainId)
+				.set(SALARY_EMBARGO.SALARY, salaryId)
+				.set(SALARY_EMBARGO.AMOUNT, amount)
+				.set(SALARY_EMBARGO.DESCRIPTION, description)
+				.set(SALARY_EMBARGO.CONTRACT_EMBARGO, id < 0 ? null: id );
 
 		putContext(context);
 	}

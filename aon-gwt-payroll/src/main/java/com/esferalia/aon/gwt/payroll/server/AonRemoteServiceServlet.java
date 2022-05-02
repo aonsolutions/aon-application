@@ -260,6 +260,16 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		base64 = base64.replace('_', '/');
 		writer.write(base64);
 	}
+	
+	static String decodeURIComponent(String dataUrl) 
+	throws IOException {
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		String encodingPrefix = "base64,";
+		int contentStartIndex = dataUrl.indexOf(encodingPrefix) + encodingPrefix.length();
+		return dataUrl.substring(contentStartIndex);
+	}
+	
+	
 	// ------------------------------------------------------------------------
 
 	/**

@@ -1,12 +1,11 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { COLORS, CSS, EVENT, MSG, TAG, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
-import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
+import {  MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
 import { addIconToolbar, buildForm, buildTextareaToolbar } from "./utils.js";
 import * as ACTIONS from "../../actions.js";
-
 /**
  * 
  * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
@@ -187,11 +186,40 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
     div.appendChild(toolbar);
 
     if(create){
-        if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
-            toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
+        const status = task.status;
+        if(task.id){
+
+            if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status) ){
+                toolbar.addButton2({
+                  ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
+                  name: MSG.CLOSE,
+                  icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
+                }, () =>{
+                  aonMessengerChat.getApplication().confirmDialog(MSG.CLOSE, MSG.REQUEST_CLOSE_CONFIRM, ()=>{
+                    aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED)
+                  })
+                });
+            }
+
+            if([TASK_STATUS.DELETED, TASK_STATUS.FINISHED].includes(status))
+                toolbar.addButton2({...ACTIONS.RESTORE, name:MSG.REOPEN}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
+        
+            if(status != TASK_STATUS.DELETED) 
+                toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE,  icon: MATERIAL_ICONS.ARCHIVE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
+        }
+    
+        if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(status)){
+            toolbar.addButton2(ACTIONS.SAVE,() => {
+                aonMessengerChat.save().then((success) =>{
+                    if(success) aonMessengerChat.showMessage();
+                });
+            });
         }
     } else {
-        toolbar.addButton2({...ACTIONS.SHOW_FILE, name:"Mostrar"},() =>showForm(true, true));
+        if(task.source === TASK_SOURCE.PROCESS){
+            toolbar.addButton2({...ACTIONS.SHOW_FILE, name:MSG.TO_SHOW},() =>showForm(true, true));
+        }
+
         toolbar.addButton2(ACTIONS.EDIT,() => showForm(true));
     }
     
