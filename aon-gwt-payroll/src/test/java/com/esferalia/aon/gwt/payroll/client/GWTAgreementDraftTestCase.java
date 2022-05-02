@@ -265,20 +265,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
-				Date endDate, AsyncCallback<String> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
-				Date endDate, AsyncCallback<String> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void sendEmployeeAlta(String currentDomainName, String currentUser,
 				EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
@@ -530,6 +516,38 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 				Integer contractId, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
+				Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback)
+				throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getEmployeeCbcTransform(String currentDomainName, String currentUser, String document,
+				Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback)
+				throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId,
+				Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback)
+				throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getEmployeeCtoTransform(String currentDomainName, String currentUser, String document,
+				Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback)
+				throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
 		}		
 	}
 
@@ -775,20 +793,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<Void> callback) throws IllegalArgumentException {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
-							Date startDate, Date endDate, AsyncCallback<String> callback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId,
-							Date startDate, Date endDate, AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						
 					}
@@ -1045,6 +1049,38 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getSepeComunicationData(String currentDomainName, String currentUser, String document,
 							Date date, Integer contractId, AsyncCallback<Map<String, String>> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeCbc(String currentDomainName, String currentUser, String document,
+							Integer contractId, Date startDate, Date endDate, String sepeIde,
+							AsyncCallback<String> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeCbcTransform(String currentDomainName, String currentUser, String document,
+							Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback)
+							throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeCto(String currentDomainName, String currentUser, String document,
+							Integer contractId, Date startDate, Date endDate, String sepeIde,
+							AsyncCallback<String> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeCtoTransform(String currentDomainName, String currentUser, String document,
+							Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback)
 							throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						

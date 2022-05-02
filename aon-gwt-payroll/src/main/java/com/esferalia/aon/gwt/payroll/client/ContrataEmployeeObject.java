@@ -300,7 +300,27 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (SEPE Get files)
 
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
+		if(contractData.isHasTransformation())
+			downloadCbcTransform(success, failure);
+		else
+			downloadCbcContract(success, failure);
+	}
+	
+	public void downloadCbcContract(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadCbcTransform(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCbcTransform(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -313,7 +333,27 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCto(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
+		if(contractData.isHasTransformation())
+			downloadCtoTransform(success, failure);
+		else
+			downloadCtoContract(success, failure);
+	}
+	
+	public void downloadCtoContract(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadCtoTransform(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCtoTransform(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
