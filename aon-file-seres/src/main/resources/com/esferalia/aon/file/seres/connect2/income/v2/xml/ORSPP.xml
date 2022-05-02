@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ORSPP">
+<field name="Tipo registro ORSPP" value="ORSPP" format="AlphaNumeric" pattern="X(6)" />
+<field name="Calificador del Interlocutor" value="bean" bean ="ORSPP" property="calificadorDelInterlocutor" format="AlphaNumeric" pattern="X(3)" />
+<field name="Código Interlocutor" value="bean" bean ="ORSPP" property="codigoInterlocutor" format="AlphaNumeric" pattern="X(17)" />
+<field name="Agencia responsable de la lista de códigos" value="bean" bean ="ORSPP" property="agenciaResponsableDeLaListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
+<field name="Nombre 1" value="bean" bean ="ORSPP" property="nombre1" format="AlphaNumeric" pattern="X(35)" />
+<field name="Nombre 2" value="bean" bean ="ORSPP" property="nombre2" format="AlphaNumeric" pattern="X(35)" />
+<field name="Nombre 3" value="bean" bean ="ORSPP" property="nombre3" format="AlphaNumeric" pattern="X(35)" />
+<field name="Nombre 4" value="bean" bean ="ORSPP" property="nombre4" format="AlphaNumeric" pattern="X(35)" />
+<field name="Nombre 5" value="bean" bean ="ORSPP" property="nombre5" format="AlphaNumeric" pattern="X(35)" />
+<field name="Calle y numero 1" value="bean" bean ="ORSPP" property="calleYNumero1" format="AlphaNumeric" pattern="X(35)" />
+<field name="Calle y numero 2" value="bean" bean ="ORSPP" property="calleYNumero2" format="AlphaNumeric" pattern="X(35)" />
+<field name="Calle y numero 3" value="bean" bean ="ORSPP" property="calleYNumero3" format="AlphaNumeric" pattern="X(35)" />
+<field name="Calle y numero 4" value="bean" bean ="ORSPP" property="calleYNumero4" format="AlphaNumeric" pattern="X(35)" />
+<field name="Población" value="bean" bean ="ORSPP" property="poblacion" format="AlphaNumeric" pattern="X(35)" />
+<field name="Provincia" value="bean" bean ="ORSPP" property="provincia" format="AlphaNumeric" pattern="X(9)" />
+<field name="Código postal" value="bean" bean ="ORSPP" property="codigoPostal" format="AlphaNumeric" pattern="X(9)" />
+<field name="Código país" value="bean" bean ="ORSPP" property="codigoPais" format="AlphaNumeric" pattern="X(3)" />
+<field name="Calificador referencia 1" value="bean" bean ="ORSPP" property="calificadorReferencia1" format="AlphaNumeric" pattern="X(3)" />
+<field name="Referencia 1" value="bean" bean ="ORSPP" property="referencia1" format="AlphaNumeric" pattern="X(35)" />
+<field name="Función de contacto" value="bean" bean ="ORSPP" property="funcionDeContacto" format="AlphaNumeric" pattern="X(3)" />
+<field name="Departamento o identificación del empleado" value="bean" bean ="ORSPP" property="departamentoOIdentificacionDelEmpleado" format="AlphaNumeric" pattern="X(17)" />
+<field name="Departamento o empleado" value="bean" bean ="ORSPP" property="departamentoOEmpleado" format="AlphaNumeric" pattern="X(35)" />
+<field name="Calificador referencia 2" value="bean" bean ="ORSPP" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(3)" />
+<field name="Referencia 2" value="bean" bean ="ORSPP" property="referencia2" format="AlphaNumeric" pattern="X(17)" />	
+</register>

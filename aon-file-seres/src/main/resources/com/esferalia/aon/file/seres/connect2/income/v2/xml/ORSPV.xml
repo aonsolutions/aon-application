@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ORSPV">
+<field name="Tipo registro ORSPV" value="ORSPV" format="AlphaNumeric" pattern="X(6)" />
+<field name="Contador vencimiento" value="bean" bean ="ORSPV" property="contadorVencimiento" format="Numeric" pattern="9(2)" />
+<field name="Referencia del tiempo de pago, codificado" value="bean" bean ="ORSPV" property="referenciaDelTiempoDePago_codificado" format="AlphaNumeric" pattern="X(3)" />
+<field name="Relación de tiempo, codificado" value="bean" bean ="ORSPV" property="relacionDeTiempo_codificado" format="AlphaNumeric" pattern="X(3)" />
+<field name="Tipo de período, codificado (D/M/Y)" value="bean" bean ="ORSPV" property="tipoDePeriodo_codificado_D_M_Y_" format="AlphaNumeric" pattern="X(3)" />
+<field name="Número de periodos" value="bean" bean ="ORSPV" property="numeroDePeriodos" format="Numeric" pattern="9(3)" />
+<field name="Fecha de vencimiento" value="bean" bean ="ORSPV" property="fechaDeVencimiento" format="AlphaNumeric" pattern="X(8)" />
+<field name="Importe de vencimiento" value="bean" bean ="ORSPV" property="importeDeVencimiento" format="Numeric" pattern="9(14).999" />
+</register>
