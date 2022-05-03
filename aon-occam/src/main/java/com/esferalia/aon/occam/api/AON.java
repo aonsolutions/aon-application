@@ -2089,6 +2089,12 @@ public class AON {
 		}
 	}
 	
+	public static Finance saveFinance(String domainName, Integer domainId, String login, Finance finance) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().saveFinance(ctx, finance);
+		} 
+	}
+	
 	public static LinkedList<Finance> getFinanceList(String domainName,
 			Integer domainId, String login, FinanceFilter filter) {
 		return getFinanceStream(domainName, domainId, login, filter)

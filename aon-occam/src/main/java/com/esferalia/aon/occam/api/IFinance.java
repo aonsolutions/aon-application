@@ -49,6 +49,7 @@ public interface IFinance {
 	Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter);
 	Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter, int offset, int limit);
 	Finance insertFinance(AONContext ctx, Finance finance);
+	Finance saveFinance(AONContext ctx, Finance finance);
 	Stream<Finance> getSiiFinanceStream(AONContext ctx, FinanceFilter filter);
 	LinkedList<FinanceTracking> getFinanceTracking(AONContext ctx, Integer finance);
 	
