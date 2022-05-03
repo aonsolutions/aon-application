@@ -107,13 +107,13 @@ public class TaskUtils {
 				 }
 					
 				if(taskHolder!=0) 
-					filter = filter.and(taskNotCustomerFilter(params, f, domain).or(
+					filter = filter.and(taskNotCustomerFilter(api, f, domain).or(
 							f.getWorkgroupProperty().in(arr).and(f.getTaskHolderProperty().isNull()))
 					);
 				else 
-					filter = filter.and(taskNotCustomerFilter(params, f, domain).or(f.getWorkgroupProperty().in(arr)));
+					filter = filter.and(taskNotCustomerFilter(api, f, domain).or(f.getWorkgroupProperty().in(arr)));
 			 } else {
-				 filter = filter.and(taskNotCustomerFilter(params, f, domain));
+				 filter = filter.and(taskNotCustomerFilter(api, f, domain));
 			 }
 		}
 		
@@ -124,7 +124,8 @@ public class TaskUtils {
 		return filter;
 	}	
 	
-	private static Filter taskNotCustomerFilter(JSONObject params, TaskProperties f, Domain domain) {
+	private static Filter taskNotCustomerFilter(AonApiData api, TaskProperties f, Domain domain) {
+		JSONObject params = api.getData();
 		Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
 		Integer sender = params.optInt(IJsonNames.SENDER);
 		Integer registry = params.optInt(IJsonNames.REGISTRY);
@@ -133,9 +134,14 @@ public class TaskUtils {
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-		
-		if(taskHolder!=0) 
-			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
+
+		if(taskHolder!=0) {
+			if(api.getDur().isMessengerManager()) {
+				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
+			} else {
+				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
+			}
+		}
 
 		if(sender != null && sender!=0) 
 			filter = filter.and(f.getSenderProperty().eq(sender));
@@ -339,7 +345,9 @@ public class TaskUtils {
 					.setAlias(company.getName())
 					.setSubject(subject)
 					.setBody(body)
-					.setTo(to);
+					.setTo(to)
+//					.setReplyTo(to)
+					;
 					
 					if(bcc!=null && sendSupport) 
 						msg.setBcc(bcc);

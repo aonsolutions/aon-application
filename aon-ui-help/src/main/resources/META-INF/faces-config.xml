@@ -12,20 +12,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-    <!--  *************** HELP SWITCHER ***************** -->
-	<managed-bean>
-		<managed-bean-name>helpSwitcher</managed-bean-name>
-		<managed-bean-class>
-		        com.code.aon.ui.help.controller.HelpSwitcher
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>helpSwitcher</value>
-		</managed-property>		
-	</managed-bean>
-	
-
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>

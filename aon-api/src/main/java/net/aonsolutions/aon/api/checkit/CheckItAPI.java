@@ -1260,7 +1260,7 @@ public class CheckItAPI implements IParamNames{
 				.setRemainder(obj.optDouble("disponible", 0))
 				.setBankAccountType(obj.optInt("tipo_cuenta_bancaria_id", 0))
 				.setBankLoginType(obj.optInt("tipo_login_banco_id", 0))
-				.setLogs(getCheckItLogs(empresaId, obj.optInt(BANK_ID_PARAM, 0)))
+				.setLogs(getCheckItLogs(empresaId, obj.optInt("id_cuentabancaria", 0)))
 				.setLogo(getLogo(allBanks, obj.optInt(BANK_ID_PARAM, 0)))
 			);
 		}

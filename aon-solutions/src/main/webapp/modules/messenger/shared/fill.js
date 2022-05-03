@@ -2,7 +2,6 @@ import {  EVENT, MSG } from "../../../environments/environments.js";
 import {Apps, getApp} from "../../../services/app.js";
 import { getProjects} from "../../../services/projectService.js";
 import { getCustomer, getCustomers } from "../../../services/registryService.js";
-import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
 import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
 import { waitEl } from "../../../services/utils.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, TAG_TYPE, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
@@ -130,19 +129,14 @@ export const fillWorkGroup = async (aonMessengerChat) => {
     try {
         const task = aonMessengerChat.task;
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
-        const workgroup = task.getWorkgroup();
         aonSelect.loading(true);
-        const workgroups = await aonMessengerChat.getWorkGroups();
-        let options = [];
-        if(workgroups && workgroups.length>0)
-            options = workgroups.map( wg=> ({...wg, id: wg.value}) );
-        
-        const exist = options.some(({id})=> id  === workgroup.id );
-        if( !exist && workgroup.id && workgroup.description)
-            options.push({...workgroup, value:workgroup.id, name:workgroup.description});
-        
+
+        const workgroup = task.getWorkgroup();
+
+        let options = await aonMessengerChat.getWorkgroup(workgroup);
+
         aonSelect.setOptions(options);
-        
+
         if(workgroup && workgroup.id)
             aonSelect.value = workgroup.id;
 
@@ -170,17 +164,11 @@ export const fillTaskHolder = async (aonMessengerChat) => {
             const taskHolder = task.getTaskHolder();
 
             const workgroup = task.getWorkgroup().id;
-            const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
 
-            let options = [];
-            if(taskHolders && taskHolders.length>0){
-                options = taskHolders.map( th=> ({...th, value: th.id}) )
-            } else if(taskHolder.id && taskHolder.name) {
-                options = [{...taskHolder, value:taskHolder.id}];
-            }
+            let options = await aonMessengerChat.getTaskHolderByWorkgroup(taskHolder, {workgroup});
+
     
             aonSelect.setOptions(options);
-
 
             let exist = false;
 
@@ -195,7 +183,9 @@ export const fillTaskHolder = async (aonMessengerChat) => {
                 if(detail)
                     task.setTaskHolder(detail);
             });
-        } catch (error) {}
+        } catch (error) {
+            console.log(error);
+        }
         aonSelect.loading(false);
     }
 }
@@ -246,8 +236,11 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
                         getCustomer({ id:registry, additional_info: ['MEDIA']})
                         .then(resp=>{
                             const media = (resp.media || []).find(m => m.media ==="email");
-                            if(media && media.value)
-                                contact.value = media.value;
+                            if(media && media.value){
+                                const email = media.value;
+                                contact.value = email;
+                                task.setGTaskId(email);
+                            }
                         });
                     }
                 } 
