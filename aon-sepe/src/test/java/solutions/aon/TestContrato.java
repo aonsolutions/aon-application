@@ -141,12 +141,12 @@ public class TestContrato {
 	public void getContratoPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {		
 			@SuppressWarnings("deprecation")
-			Date fini =  new Date("2022/02/18");
+			Date fini =  new Date("2020/08/03");
 			@SuppressWarnings("deprecation")
-			Date ffin =  new Date("2022/02/18");
-			String ipf = "16262835H";
+			Date ffin =  new Date("2020/08/03");
+			String ipf = "47227931F";
 			String sepeId = "0120200070286";
-			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
+			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -178,7 +178,7 @@ public class TestContrato {
 			String ipf = "16262835H";
 			String sepeId = "0120200070286";
 			
-			byte[] pdf = Sepe.getTransformacionsPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
+			byte[] pdf = Sepe.getTransformationPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();

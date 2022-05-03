@@ -6122,7 +6122,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = AonStringUtils.isBlank(sepeIde) ?  Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate)
+				String cif = "43443804R";
+				pdfBytes = AonStringUtils.isBlank(sepeIde) ?  Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
 						: Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyBasic(connection, domainId, contractId, pdfBytes);
 			}
@@ -6196,8 +6197,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformacionsPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate)
-						: Sepe.getTransformacionsPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
+				String cif = "43443804R";
+				
+				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
+						: Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyContract(connection, domainId, contractId, pdfBytes);
 			}
 
