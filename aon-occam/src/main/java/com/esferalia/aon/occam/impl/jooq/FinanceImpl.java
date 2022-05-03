@@ -537,6 +537,12 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceTrackingDAO.save(ctx, invoiceTracking));				
 	}
+	
+	@Override
+	public void deleteInvoiceTracking(AONContext ctx, Integer invoiceId) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceTrackingDAO.delete(ctx, invoiceId));
+	}
 
 	@Override
 	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter) {
@@ -548,5 +554,11 @@ public class FinanceImpl implements IFinance {
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceInfoDAO.save(ctx, invoiceInfo));				
+	}
+
+	@Override
+	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceInfoDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
 	}
 }

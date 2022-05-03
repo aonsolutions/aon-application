@@ -187,7 +187,10 @@ public interface IFinance {
 	
 	public InvoiceInfo getInvoiceInfo(AONContext ctx, InvoiceInfoFilter filter);
 	public InvoiceInfo saveInvoiceInfo(AONContext ctx, InvoiceInfo invoiceInfo);
-
+	public void deleteInvoiceInfo(AONContext ctx, Integer invoiceId);
+	
 	public InvoiceTracking saveInvoiceTracking(AONContext ctx, InvoiceTracking invoiceTracking);
+	public void deleteInvoiceTracking(AONContext ctx, Integer invoiceId);
+
 }
 	
