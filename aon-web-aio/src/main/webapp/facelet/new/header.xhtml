@@ -1812,29 +1812,6 @@
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 						</a4j:support> 
 						
-						<a4j:support 
-						event="onfocus"
-						onsubmit="if (!#{rich:element('smartFilter')}.value) {return false;}"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterFocus"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
-						</a4j:support> 
-
-						<a4j:support 
-						event="onblur"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterBlur"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{false}" />
-						</a4j:support> 
-
 					</aon:inputText>
 					
 					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" >
