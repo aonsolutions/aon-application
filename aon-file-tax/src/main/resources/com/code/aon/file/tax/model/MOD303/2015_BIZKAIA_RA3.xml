@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<register name="BankData">
-	<field name="type" value="RA3" format="AlphaNumeric" pattern="X(3)" />
-	<field name="bankName" value="bean" bean="Declaration" property="bankName" format="AlphaNumeric" pattern="X(25)" />
-	<field name="bankAccount" value="bean" bean="Declaration" property="bankAccount" format="AlphaNumeric" pattern="X(24)" />
-</register>

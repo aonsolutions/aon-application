@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<register name="Entry_P3">
-	<field name="reg" value="P00" format="AlphaNumeric" pattern="X(3)" />
-	<field name="type" value="bean" bean="Entries" property="stringType" format="AlphaNumeric" pattern="X(2)" />
-	<field name="code" value="bean" bean="Entries" property="code" format="Numeric" pattern="9(4)" />
-	<field name="percent3" value="bean" bean="Entries" property="percent3" format="Numeric" pattern="9(3).9(3)" />
-</register>
