@@ -3602,7 +3602,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain.getName());
 
 	    	Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), parentDomainId);		
-			
+	    	List<String> messages = new ArrayList<>();
+	    	
 			 for (ItNotExist itNotExist : itNotExists) {
 			 	EmployeeIT employeeIT = itNotExist.getEmployeeIT();
 			 	EmployeeITPart part = itNotExist.getEmployeeITPart();
@@ -3612,14 +3613,20 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    if(employeeIT.getId()!=null) {
 			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
 			    } else { //DELETE TGSS
-
 			    	
 				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
 				 	
 					Certificate certificate = AON.getCertificate(domainName, domain.getId(), userLogin, userId, "TGSS");
-			    	ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
+			    	List<String> msgs = ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
+			    	messages.addAll(msgs);
 			    }
 			 }
+			 
+	    	if(!messages.isEmpty()) {
+				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
+				if(!msg.isEmpty())
+					throw new IllegalArgumentException(msg);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
