@@ -24,6 +24,10 @@
 			<value>domainSwitcher</value>
 		</managed-property>		
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>11</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<value>#{domainSwitcherListeners}</value>
 		</managed-property>		
@@ -45,6 +49,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>contractSwitcher</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>11</value>
 		</managed-property>		
 	</managed-bean>
 	

@@ -131,8 +131,12 @@ public class CretaListener implements IdcParserListener {
 	
 	@Override
 	public void onEmployeeQuoteGroup(String group) {
+	}
+	
+	@Override
+	public void onEmployeeQuoteGroup(String group, boolean monthly) {
 		tramoBuilder.ifPresent(b -> b.setGrupoCotizacion(group));
-		if ( isDaily(group )) {
+		if ( !monthly && isDaily(group ) ) {
 			tramoBuilder.ifPresent(b -> addModalidadSalario(b));
 		}
 	}
