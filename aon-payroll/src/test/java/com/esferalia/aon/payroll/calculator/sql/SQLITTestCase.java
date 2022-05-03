@@ -4451,16 +4451,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 		
-		salary.getSalaryPayments().forEach( p -> System.out.println(p.getExpression() +":" + p.getAmount() ));
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getExpression() +":" + p.getAmount() + "/ " + p.getQuote() ));
 		
+		//salary.getSalaryDatas().forEach( p -> System.out.println(p.getName() + " = " + p.getExpression() + "(" + p.getStartDate() + ".." + p.getEndDate() +")" ));
+
 		int it21Days =  get(endDate, DAY_OF_MONTH) - get(contract.getStartDate(),DAY_OF_MONTH);
 		
 		Assert.assertEquals(
 				0.75 * 1750.00/30.00 * it21Days 
 				+  0.60 * 1750.00/30.00 , salary.getTotalPayment(), DELTA);
-		
-		Assert.assertEquals(1750.00 , 
-		salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1750.00/30.00 * Math.min( it21Days + 1, 30.00 ), salary.getCommonBase(), DELTA);
 	}
 
 	@Test
