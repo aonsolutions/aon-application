@@ -745,6 +745,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
+	
+	@Override
+	public String checkEmployeeIdc(String domain, String user, Integer contractId, Date date, String idc)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
 
 	@Override
 	public String getEmployeeIdcPlNss(String domain, String user,Integer contractId, Date date) {
@@ -778,20 +786,6 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		
-	}
-
-	@Override
-	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
-			Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
-			Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -1025,6 +1019,34 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
 			Date date, Integer contractId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
+			Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCbcTransform(String currentDomainName, String currentUser, String document,
+			Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId,
+			Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCtoTransform(String currentDomainName, String currentUser, String document,
+			Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}

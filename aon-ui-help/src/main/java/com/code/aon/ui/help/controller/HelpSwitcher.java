@@ -27,56 +27,53 @@ public class HelpSwitcher implements Serializable {
 	
 	public static final String HELP_SWITCHER = "helpSwitcher";
 
+	private static final List<HelpData> HELP_DATA = getHelpData();
 	
 	private String filter;
 	private String beanName;
-	private DataModel model;
-	private DataModel filteredModel;
-	
-	public HelpSwitcher() {
-		try {
-			this.model = getAllModel();
-		} catch (IOException e) {
-			this.model = getEmptyModel();
-		}
-	}
+	private int pageLimit ;
+	private transient DataModel model;
 	
 	public DataModel getModel() {
 		if (StringUtils.isBlank(filter))
-			return model;
+			return new SerializableListDataModel(HELP_DATA);
 		
-		if (filteredModel == null) {
+		if (model == null) {
 			List<HelpData> filteredList = 
-			((List<HelpData>) model.getWrappedData()).stream()
+			HELP_DATA.stream()
 			.filter(d -> containsIgnoreCase(d.getTitle(), filter))
+			.limit(pageLimit)
 			.collect(Collectors.toList());
 			
 			// if nothing is here
 			if(filteredList.isEmpty()) {
-				filteredList.addAll(((List<HelpData>) model.getWrappedData()).stream()
-				.filter(d -> AonStringUtils.containsMatching(d.getTitle(), filter))
-				.collect(Collectors.toList()));
+				filteredList.addAll(
+					HELP_DATA.stream()
+					.filter(d -> AonStringUtils.containsMatching(d.getTitle(), filter.trim()))
+					.limit(pageLimit)
+					.collect(Collectors.toList())
+				);
 			}
 			
-			this.filteredModel = new SerializableListDataModel(filteredList);			
+			this.model = new SerializableListDataModel(filteredList);			
 		}
 		
-		return filteredModel;
-	}
-	
-	public void setModel(DataModel model) {
-		this.model = model;
+		return model;
 	}
 	
 	public void setFilter(String filter) {
 		if ( AonStringUtils.equalsIgnoreCase(this.filter, filter)) 
 			return;
 		this.filter = filter;
-		this.filteredModel = null;
+		this.model = null;
 	}
 	
-	public void setFilteredModel(DataModel filteredModel) {
-		this.filteredModel = filteredModel;
+	public int getPageLimit() {
+		return pageLimit;
+	}
+	
+	public void setPageLimit(int pageLimit) {
+		this.pageLimit = pageLimit;
 	}
 	
 	public String getBeanName() {
@@ -92,31 +89,24 @@ public class HelpSwitcher implements Serializable {
 	}
 
 	public void onEditSearch(ActionEvent event) {
-		setModel(null);
-		setFilter(null);
-		setFilteredModel(null);
 	}
 	
-
-	private static  DataModel getAllModel() throws IOException {
+	private static  List<HelpData> getHelpData() {
 		try  ( InputStream is = PdfSearcher.class.getResourceAsStream("index.pdf");
 		   PDDocument document = Loader.loadPDF(is) ) {
 			
-			List<HelpData> list = 
+			return 
 			PdfSearcher.search(document, "").stream()
 			.filter( i -> i.getTitle().trim().length() > 0)
 			.map(HelpSwitcher::map)
 			.collect(Collectors.toList());
 					
-			return new SerializableListDataModel( list );
+		} catch (IOException e) {
+			return Collections.emptyList();
 		}
 		
 	}
 	
-	private static DataModel getEmptyModel() {
-		return new SerializableListDataModel(Collections.emptyList());
-	}
-
 	private static HelpData map( PDOutlineItem item) {
 		HelpData helpData = 
 		new HelpData()

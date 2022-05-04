@@ -18,6 +18,7 @@ public class TaskMail {
 	String companyName;
 	String domainName;
 	String taskHolderName;
+	String note;
 	Boolean showRating;
 	TaskWorkflowType type;
 	List<TaskWorkflow> workflows;
@@ -38,7 +39,7 @@ public class TaskMail {
 	}
 
 	public TaskMail setDate(Date date) {
-		this.date = AonDateUtils.format(date, "dd/MM/yyyy");
+		this.date = AonDateUtils.format(date, "dd/MM/yyyy HH:mm");
 		return this;
 	}
 
@@ -98,6 +99,15 @@ public class TaskMail {
 		return this;
 	}
 	
+	public TaskMail setNote(String note) {
+		this.note = note;
+		return this;
+	}
+	
+	public String getNote() {
+		return note;
+	}
+
 	public String getDomainName() {
 		return domainName;
 	}

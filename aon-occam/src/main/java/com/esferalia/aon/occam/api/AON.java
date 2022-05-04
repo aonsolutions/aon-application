@@ -2032,6 +2032,12 @@ public class AON {
 		}
 	}
 	
+	public static Finance saveFinance(String domainName, Integer domainId, String login, Finance finance) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().saveFinance(ctx, finance);
+		} 
+	}
+	
 	public static LinkedList<Finance> getFinanceList(String domainName,
 			Integer domainId, String login, FinanceFilter filter) {
 		return getFinanceStream(domainName, domainId, login, filter)
@@ -7056,11 +7062,23 @@ public class AON {
 		}
 	}
 	
+	public static void deleteInvoiceInfo(String schema, Integer invoiceId) {
+		try(AONContext ctx = AONContext.getAONContext(schema)){
+			getFinance().deleteInvoiceInfo(ctx, invoiceId);
+		}
+	}	
+	
 	public static InvoiceTracking saveInvoiceTracking(Domain domain, User user, InvoiceTracking invoiceTracking) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {
 			return getFinance().saveInvoiceTracking(ctx, invoiceTracking);
 		}
 	}
+	
+	public static void deleteInvoiceTracking(String schema, Integer invoiceId) {
+		try(AONContext ctx = AONContext.getAONContext(schema)){
+			getFinance().deleteInvoiceTracking(ctx, invoiceId);
+		}
+	}	
 
 	public static Booking getBooking(Domain domain, User user) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)) {

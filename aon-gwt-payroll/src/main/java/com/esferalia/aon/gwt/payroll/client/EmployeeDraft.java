@@ -39,6 +39,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -493,6 +494,11 @@ public abstract class EmployeeDraft extends Composite {
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
 	
+	private Label checkIDCLabel;
+	private Label unCheckIDCLabel;
+	private AonToolbarButton checkIDCButton;
+	private AonToolbarButton unCheckIDCButton;
+	
 	private NewContextMenu contextMenu;
 	
 	private Consumer<EmployeeDraftObject> onSaved ;
@@ -933,6 +939,23 @@ public abstract class EmployeeDraft extends Composite {
 		idcDateListBox.addChangeHandler(e -> showIdc(idcDateListBox.getSelectedDate()));
 		toolbar.add(idcDateListBox);
 
+		
+		checkIDCLabel = new Label("Comparar con AON", false);
+		checkIDCButton = new AonToolbarButton("", AON.AON_ICON_DISABLE);
+		unCheckIDCLabel = new Label("Comparar con AON", false);
+		unCheckIDCButton = new AonToolbarButton("", AON.AON_ICON_ENABLE);
+		toolbar.add(checkIDCButton);
+		toolbar.add(checkIDCLabel);
+		toolbar.add(unCheckIDCButton);
+		toolbar.add(unCheckIDCLabel);
+		checkIDCButton.addClickHandler( e -> checkIdc());
+		unCheckIDCButton.addClickHandler( e -> unCheckIdc());
+		checkIDCLabel.setVisible(false);
+		checkIDCButton.setVisible(false);
+		unCheckIDCLabel.setVisible(false);
+		unCheckIDCButton.setVisible(false);
+		
+
 	}
 
 	private void onSaveContract() {
@@ -1060,6 +1083,30 @@ public abstract class EmployeeDraft extends Composite {
 		showIdc(idcDateListBox.getSelected());
 	}
 	
+	private void checkIdc() {
+		employeeDraftObject.checkIdc(
+			null, 
+			pdfViewer.getDataURI(), 
+			dataURI -> {
+				//checkIDCLabel.setVisible(false);
+				//checkIDCButton.setVisible(false);
+				//unCheckIDCLabel.setVisible(true);
+				//unCheckIDCButton.setVisible(true);
+				
+				pdfViewer.open(dataURI);
+			}, 
+			trowable -> {
+				showError("Idc", trowable.getMessage());
+			});
+	}
+	
+	private void unCheckIdc() {
+		//unCheckIDCLabel.setVisible(false);
+		//unCheckIDCButton.setVisible(false);
+		//checkIDCLabel.setVisible(true);
+		//checkIDCButton.setVisible(true);
+	}
+
 	private void showIdc(Date date) {
 		showLoading("Obteniendo IDC...");
 		employeeDraftObject.downloadIdc( 
@@ -1068,6 +1115,9 @@ public abstract class EmployeeDraft extends Composite {
 				hideMessage();
 				showPdf();
 				idcDateListBox.setVisible(true);
+				//checkIDCLabel.setVisible(true);
+				//checkIDCButton.setVisible(true);
+				
 				idcDateListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 				idcDateListBox.setSelected(date, true);
 				pdfViewer.open(dataURI);
@@ -1104,6 +1154,10 @@ public abstract class EmployeeDraft extends Composite {
 		
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
+		//checkIDCLabel.setVisible(false);
+		//checkIDCButton.setVisible(false);
+		//unCheckIDCLabel.setVisible(false);
+		//unCheckIDCButton.setVisible(false);
 
 		deckPanel.showWidget(PDF_VIEWER_INDEX);		
 	}
@@ -1123,6 +1177,10 @@ public abstract class EmployeeDraft extends Composite {
 		
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
+		//checkIDCLabel.setVisible(false);
+		//checkIDCButton.setVisible(false);
+		//unCheckIDCLabel.setVisible(false);
+		//unCheckIDCButton.setVisible(false);
 		
 		deckPanel.showWidget(EMPLOYEE_INDEX);		
 	}

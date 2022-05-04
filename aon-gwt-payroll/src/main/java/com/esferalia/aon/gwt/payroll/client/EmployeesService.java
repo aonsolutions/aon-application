@@ -247,6 +247,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	List<Date> getEmployeeIdcDates(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 
+	String checkEmployeeIdc(String domain, String user, Integer contractId, Date date, String idc) throws IllegalArgumentException;
+
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl) throws IllegalArgumentException;
@@ -255,10 +257,14 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- SEPE Files
 	
-	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException;
+	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException;
 
-	String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate) throws IllegalArgumentException;
+	String getEmployeeCbcTransform(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException;
+	
+	String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException;
 
+	String getEmployeeCtoTransform(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException;
+	
 	String getCertifica2PDF(String currentDomainName, String currentUser, Integer contractId, String nif, Date endDate) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications

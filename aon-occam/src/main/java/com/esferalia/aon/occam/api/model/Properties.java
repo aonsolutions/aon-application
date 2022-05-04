@@ -612,6 +612,7 @@ public interface Properties {
 		Property<Integer> getNumberProperty();
 		Property<Integer> getParentProperty();
 		
+		Property<Integer> getTagIdProperty();
 		Property<String> getTagNameProperty();
 		Property<String> getCommentsWorkflowProperty();
 	}

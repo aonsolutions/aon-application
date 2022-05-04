@@ -2,7 +2,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG, MATERIAL_ICONS } from "../../environments/environments.js";
-import { getTasks } from "../../services/taskService.js";
+import { getTaskOne, getTasks } from "../../services/taskService.js";
 import { sortBy } from "../../services/utils.js";
 import { MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
@@ -106,7 +106,13 @@ export class AonMessengerList extends AonElement {
 
   async loadMore(reload) {
 
+    const application = this.getApplication();
+
+    // if(reload) application.startLoader();
+    
     const datos = await this.getData();
+
+    // if(reload) application.stopLoader();
 
     if(reload){
       setTasks(datos);
@@ -115,12 +121,16 @@ export class AonMessengerList extends AonElement {
     }
 
     if(this.isMobile()){
-      if(reload)this.AON_TABLE.removeAllLi();
+      if(reload) this.AON_TABLE.removeAllLi();
       this.getDataMobile(datos);
     } else {
-      if(reload)this.AON_TABLE.removeRows();
+      if(reload) this.AON_TABLE.removeRows();
       this.getDataDesktop(datos);
     } 
+
+    if(reload && datos.length<=0) {
+      this.AON_TABLE.empty();
+    }
 	}
 
   getDataDesktop(datos){
@@ -133,12 +143,12 @@ export class AonMessengerList extends AonElement {
        const row = this.AON_TABLE.addRow({ 
           ...res, 
           dateParse: this.getNewDateParse(res),
-          newTitle: this.getNewTitle(res, document, documentTh),
+          newTitle: this.getTitleDesktop(res, document, documentTh),
           assigned: this.getAssigned(res, domainId),
           lettersHtml: this.getIcon(res),
         }, () =>  this.goMessengerChat(res, idx));
 
-        row.style.padding = "20px 0";
+        row.style.padding = "16px 0px 20px";
       });
     } catch (e) {
       console.log(e);
@@ -147,10 +157,14 @@ export class AonMessengerList extends AonElement {
   
   getDataMobile(datos){
     try{
+      const company = LS.getCompany();
+      const document = company ? company.document: undefined;
+      const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
       datos.map((res, idx) => {
-        this.AON_TABLE.addLi({
-          title: `#${res.newNumber} ${res.title}`,
-          subtitle: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
+       this.AON_TABLE.addLi({
+          title: this.getTitleMobile(res, document, documentTh), //`${res.newNumber} ${res.title}`,
+          subtitle: this.getSubtitleMobileOne(res),//AonDateUtils.getDayMonth(res.date),
+          subtitleTwo: this.getSubtitleMobile(res),//AonDateUtils.getDayMonth(res.date),
           ...this.getIconList(res)
         }, idx, () => this.goMessengerChat(res, idx));
       });
@@ -186,22 +200,25 @@ export class AonMessengerList extends AonElement {
     return data;
   }
 
-  getNewTitle(res, document, documentTh){
+  getTitleDesktop(res, document, documentTh){
   
     let div = this.createElement(TAG.DIV);
     div.style.position = "relative";
 
-    div.appendChild(this.getTitleHtml(res));
+    div.appendChild(this.getTitleHtmlDesktop(res));
     
     div.appendChild(this.getSubTitleHtml(res, document, documentTh));
 
     return div.outerHTML;
   }
 
-  getTitleHtml(res){
-    const title = res.title;
+  getTitleHtmlDesktop(res){
+    const title = res.title || "Sin asunto";
     let div = this.createElement(TAG.DIV);
-    div.style = `top:-20px; position:absolute; left:0; right:0;`;
+    div.style.top = "-15px";
+    div.style.position = "absolute";
+    div.style.left = "0";
+    div.style.right = "0";
 
     let divFlex = this.createElement(TAG.DIV);
     divFlex.style.display = "flex";
@@ -212,6 +229,7 @@ export class AonMessengerList extends AonElement {
     divOne.innerText = title;
     divOne.title = title;
     divOne.style.fontWeight = 550;
+    divOne.style.fontSize = "14px";
     divOne.style.overflow = CONSTANT.HIDDEN;
     divFlex.appendChild(divOne);
     
@@ -235,12 +253,8 @@ export class AonMessengerList extends AonElement {
   getSubTitleHtml(res, document, documentTh){
     const type = this.getTagType(res.tags) || "";
     // sender
-    let sender  ="";
-    if(res.registry && res.registry.name && document !== res.registry.document) 
-      sender = `${res.registry.name} ${sender}`;
-    else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
-      sender = `${res.sender.name} ${sender}`;
-    
+    const sender  = this.getSender(res, document, documentTh);
+  
     //----------- DESCRIPTION
     let description = res.description;
     try { description = JSON.parse(res.description).observation;  } catch (e) {}
@@ -260,10 +274,78 @@ export class AonMessengerList extends AonElement {
       span.textContent = dText;
       span.title = dText;
       span.style.color = "grey";
+      span.style.marginLeft = "3px";
       div.appendChild(span);
     }
     return div;
   }
+  
+  getTitleMobile(res, document, documentTh){
+    const div = this.createElement(TAG.DIV);
+    div.style.display = "flex";
+
+    const senderDiv = this.createElement(TAG.DIV);
+    senderDiv.style.overflow = "hidden";
+    senderDiv.style.whiteSpace = "hidden";
+    senderDiv.style.textOverflow = "ellipsis";
+    senderDiv.style.fontWeight = "500";
+    senderDiv.innerText = this.getSender(res, document, documentTh);
+    div.appendChild(senderDiv);
+
+    const dateDiv = this.createElement(TAG.DIV);
+    dateDiv.style.color = "grey";
+    dateDiv.style.marginLeft = "auto";
+    dateDiv.style.fontSize = "14px";
+    dateDiv.style.fontWeight = "500";
+    div.appendChild(dateDiv);
+
+    let date = AonDateUtils.getDayMonthOrFull(res.date);
+    dateDiv.innerText = date;
+
+    return div.outerHTML;
+  }
+
+  getSubtitleMobileOne(res){
+    const div = this.createElement(TAG.DIV);
+    div.style.color = "black";
+    div.innerText = res.title || "Sin asunto";
+    return div.outerHTML;
+  }
+
+  getSubtitleMobile(res){
+    const type = this.getTagType(res.tags) || "";
+    const div = this.createElement(TAG.DIV);
+    div.style.display = "flex";
+
+    const divOne = this.createElement(TAG.DIV);
+    divOne.innerText = type+" "+ res.newNumber;
+    div.appendChild(divOne);
+
+    const divTwo = this.createElement(TAG.DIV);
+    divTwo.style.display = "flex";
+    divTwo.style.gap = "2px";
+    divTwo.style.marginLeft = "2px";
+    divTwo.style.overflow = "hidden";
+    // divTwo.style.textOverflow = "ellipsis";
+    // divTwo.style.flexWrap = "nowrap";
+
+    divTwo.style.height =  "19px";
+    divTwo.style.flexWrap =  "wrap";
+    div.appendChild(divTwo);
+
+    this.getTagsLabel(res.tags).forEach(tag => {
+      const divTag = createTagHtml(tag, divTwo);
+      divTag.style.margin = "0";
+      divTag.style.textAlign = "center";
+      divTag.style.padding = "1px 4px";
+      divTwo.style.height =  "19px";
+      divTag.style.fontSize = "12px";
+    });
+
+
+   return div.outerHTML;
+  }
+
 
   getNewDateParse(res){
     const dateText =  firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
@@ -275,11 +357,11 @@ export class AonMessengerList extends AonElement {
     const style = `position:absolute; left:0; right:0; white-space:nowrap; text-overflow:ellipsis; overflow: hidden;`;
 
     let divTwo = this.createElement(TAG.DIV);
-    divTwo.style = `bottom:${email ? 6 : -9}px; ${style}`;
+    divTwo.style = `bottom:${email ? -1 : -9}px; ${style}`;
     divTwo.innerText = dateText;
     divTwo.title = dateText;
     div.appendChild(divTwo);
-
+    
     if(email){
       let divThree = this.createElement(TAG.DIV);
       divThree.textContent = email;
@@ -291,53 +373,71 @@ export class AonMessengerList extends AonElement {
 
   }   
 
+  getSender(res, document, documentTh){
+      let sender  ="";
+      if(res.registry && res.registry.name && document !== res.registry.document) 
+        sender = `${res.registry.name} ${sender}`;
+      else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
+        sender = `${res.sender.name} ${sender}`;
+      else if(res.workgroup && res.workgroup.description) // GRUPO ASIGNADO
+        sender = res.workgroup.description;
+      else 
+        sender = "SIN GRUPO ASIGNADO";
+
+      return sender;
+  }
+
   getAssigned(res, domainId){
-    let workgroup = undefined;
+    const workgroup = res.workgroup;
     let person = undefined;
+    let workgroupDescription = undefined;
     if( res.domain && res.domain.id && domainId !== parseInt(res.domain.id) )  
       person = res.domain.description;
     else if(res.task_holder&&res.task_holder.id)                                                
       person = res.task_holder.alias || res.task_holder.name; 
 
-    if(res.workgroup&&res.workgroup.description) 
-      workgroup = res.workgroup.description;
+    if(workgroup&&workgroup.description) 
+      workgroupDescription = workgroup.description;
 
     let div = this.createElement(TAG.DIV);
     div.style.display = "flex";
     div.style.gap = "4px";
 
-    if(workgroup){
+    if(workgroupDescription){
       let divOne = this.createElement(TAG.DIV);
-      divOne.style = "border: 2px solid #949393; color: #949393;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
-      divOne.title  = workgroup;
-      let icon = this.createElement("i");
+      const color = person ? "949393" :"FF6F1D";
+      divOne.style = `border: 2px solid #${color}; color: #${color};border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center`;
+      divOne.title  = workgroupDescription;
+      div.appendChild(divOne);
+
+      let icon = this.createElement(TAG.I);
       icon.style.fontSize = "17px";
       icon.style.lineHeight = "19px";
       icon.className = CSS.MATERIAL_ICONS;
       icon.innerText = MATERIAL_ICONS.PEOPLE_ALT;
       divOne.appendChild(icon);
-      div.appendChild(divOne);
     }
 
     if(person){
       let divTwo = this.createElement(TAG.DIV);
-      divTwo.style = "border: 2px solid #949393; color: #949393;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
+      divTwo.style = "border: 2px solid var(--aonBlack); color: var(--aonBlack);border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
       divTwo.innerText  = StringTwoLetters(person.toUpperCase());
       divTwo.title  = person;
       div.appendChild(divTwo);
     }
 
-    if(!workgroup && !person){
+    if(!workgroupDescription && !person){
       let divOne = this.createElement(TAG.DIV);
-      divOne.style = "border: 2px solid #949393; color: #949393;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
+      divOne.style = "border: 2px solid #f44336; color: #f44336;border-radius: 29px;height: 23px; line-height: 21px; width: 23px; display: block  font-size: 15px;text-align: center;";
       divOne.title  = "Sin asignar";
-      let icon = this.createElement("i");
+      div.appendChild(divOne);
+
+      let icon = this.createElement(TAG.I);
       icon.style.fontSize = "17px";
       icon.style.lineHeight = "19px";
       icon.className = CSS.MATERIAL_ICONS;
       icon.innerText = MATERIAL_ICONS.GROUP_OFF;
       divOne.appendChild(icon);
-      div.appendChild(divOne);
     }
 
     return div.outerHTML;
@@ -357,7 +457,7 @@ export class AonMessengerList extends AonElement {
     span.style.color = icon.icon_color;
     span.title = source;
 
-    let iOne = this.createElement("i");
+    let iOne = this.createElement(TAG.I);
     iOne.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
     iOne.textContent = icon.icon;
     span.appendChild(iOne);
@@ -383,14 +483,23 @@ export class AonMessengerList extends AonElement {
     return parseInt(localStorage.getItem("taskCau") || 0);
   }
 
-  goMessengerChat(res, idx){
+  async goMessengerChat(res, idx){
     setIndexTask(idx);
     if(!this.applicationParentEl){
       let aonMessenger = new AonMessenger();
       aonMessenger.data = res;
       this.rootPanel(aonMessenger);
-    } else
-      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, res);
+    } else if(res && res.id){
+      this.applicationEl.startLoading();
+      try{
+        const data = await getTaskOne({id:res.id});
+        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, data);
+      } catch(err){
+        this.showError(err);
+      }
+      this.applicationEl.stopLoading();
+    }
+
   }
 }
 window.customElements.define("aon-messenger-list", AonMessengerList);

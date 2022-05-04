@@ -19,11 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.UpdateFinanceRname;
-import net.aonsolutions.db.up2date.task.TaskComment2TaskWorkfow;
-import net.aonsolutions.db.up2date.task.TaskEvent2TaskWorkfow;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2022UpdateII;
-import net.aonsolutions.db.up2date.tgss.BaseCgpMin2022Fix;
+import net.aonsolutions.db.up2date.domain.DomainName2LowerCase;
+import net.aonsolutions.db.up2date.payroll.AlterSalaryEmbargo;
+import net.aonsolutions.db.up2date.payroll.Holidays2022Update;
 
 public class Up2Date {
 
@@ -117,7 +115,7 @@ public class Up2Date {
     		//GarantizadoFix.GARANTIZADOFIX
     		//EresUpdateII.ERESUPDATE,
     		//MejoraInsert.MEJORAINSERT,
-    		//MejoraUpdate.MEJORAUPDATE
+    		//DomainName2LowerCase.DOMAINNAME2LOWERCASE
     		//EmbargarFix.EMBARGARFIX
     		//RealDecreeLaw182020Insert.REALDECREELAW182020INSERT
     		//InvoiceDUACreation.INVOICEDUACREATION
@@ -228,11 +226,15 @@ public class Up2Date {
 //    		SalaryHours2022UpdateDaily.SALARYHOURS2022UPDATEDAILY,
 //    		UdapaSalesFix.UDAPA_SALES_FIX
 //   		SalaryHours2022Fix.SALARYHOURS2022FIX,
-    		BaseCgpMin2022Fix.BASECGPMIN2022FIX,
-			UpdateFinanceRname.UPDATE_FINANCE_RNAME,
-    		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII,
+//    		BaseCgpMin2022Fix.BASECGPMIN2022FIX,
+//    		AgriculturalBases2022UpdateII.AGRICULTURALBASES2021UPDATEIII
 //    		TaskEvent2TaskWorkfow.TASK_COMMENT_2_TASK_WORKFLOW,
 //    		TaskComment2TaskWorkfow.TASK_EVEMT_2_TASK_WORKFLOW
+//			UpdateFinanceRname.UPDATE_FINANCE_RNAME,
+//    		BaseCgpMin2022FixIII.BASECGPMIN2022FIX
+    		DomainName2LowerCase.DOMAINNAME2LOWERCASE,
+    		AlterSalaryEmbargo.ALTERSALARYEMBARGO,
+    		Holidays2022Update.HOLIDAYS2022UPDATE
     };
     
 

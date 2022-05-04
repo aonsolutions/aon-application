@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
@@ -129,8 +131,12 @@ public class CretaListener implements IdcParserListener {
 	
 	@Override
 	public void onEmployeeQuoteGroup(String group) {
+	}
+	
+	@Override
+	public void onEmployeeQuoteGroup(String group, boolean monthly) {
 		tramoBuilder.ifPresent(b -> b.setGrupoCotizacion(group));
-		if ( isDaily(group )) {
+		if ( !monthly && isDaily(group ) ) {
 			tramoBuilder.ifPresent(b -> addModalidadSalario(b));
 		}
 	}
@@ -229,6 +235,8 @@ public class CretaListener implements IdcParserListener {
 	}
 
 	private static String getRegime(String description) {
+		if ( AonStringUtils.containsIgnoreCase(description, "AGRARIO"))
+			return "0163";
 		return "0111";	
 	}
 	

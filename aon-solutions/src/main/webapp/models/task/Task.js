@@ -23,6 +23,8 @@ export class Task {
   gtask_id;
   files;
   start_date;
+  creation_user;
+  creation_date;
   parent;
   project;
   tags;
@@ -58,6 +60,8 @@ export class Task {
       this.tags    = [];
       this.setWorkflowTmp({domain: this.domain.id});
       this.files = [];
+      this.creation_user  = undefined;
+      this.creation_date  = undefined;
     }
   }
 
@@ -80,6 +84,8 @@ export class Task {
       this.setSource(task.source || TASK_SOURCE.QUERY);
       this.setSourceId(task.source_id || undefined);
       this.setStartDate(task.start_date || undefined);
+      this.setCreationUser(task.creation_user || undefined);
+      this.setCreationDate(task.creation_date || undefined);
       this.setParent(task.parent || undefined);
       this.setGTaskId(task.gtask_id  || undefined);
       this.setDomain(new Domain(task.domain));
@@ -116,6 +122,8 @@ export class Task {
       if(task.project && task.project.id)         this.setProject(new Project(task.project));
       if(task.description)                        this.setDescription(task.description);
       if(task.start_date)                         this.setStartDate(task.start_date);
+      if(task.creation_user)                      this.setCreationUser(task.creation_user);
+      if(task.creation_date)                      this.setCreationDate(task.creation_date);
       if(task.parent)                             this.setParent(task.parent);
       this.setFiles([]);
     }
@@ -332,6 +340,22 @@ export class Task {
 
   setStartDate(start_date) {
     this.start_date = start_date;
+  }
+
+  getCreationUser() {
+    return this.creation_user;
+  }
+
+  setCreationUser(creation_user) {
+    this.creation_user = creation_user;
+  }
+
+  getCreationDate() {
+    return this.creation_date;
+  }
+
+  setCreationDate(creation_date) {
+    this.creation_date = creation_date;
   }
 
   getParent() {

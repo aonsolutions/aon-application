@@ -3,7 +3,6 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
@@ -19,6 +18,7 @@ import static java.util.Calendar.YEAR;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -53,9 +53,10 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
+import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -64,12 +65,198 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import junit.framework.Assert;
 
 public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.0000001;
+
+	private static class DefaultIrpfCalculatorContext implements IIrpfCalculatorContext {
+		@Override
+		public boolean next() {
+			return true;
+		}
+
+		@Override
+		public String getRetenedorNif() {
+			return "P7198848I"; 
+		}
+
+		@Override
+		public String getRetenedorApellidosNombre() {
+			return "RETENEDOR APELLIDOS, NOMBRE";
+		}
+
+		@Override
+		public String getNif() {
+			return "89105637A";
+		}
+
+		@Override
+		public String getApellidosNombre() {
+			return "APELLIDOS, NOMBRE";
+		}
+
+		@Override
+		public int getAñoNacimiento() {
+			return 1975;
+		}
+
+		@Override
+		public String getComunidadAutonoma() {
+			return "ARABA/ÁLAVA";
+		}
+
+		@Override
+		public SituacionLaboral getSituacionLaboral() {
+			return SituacionLaboral.TRABAJADOR_ACTIVO;
+		}
+
+		@Override
+		public Contrato getContrato() {
+			// General
+			return Contrato.UNO;
+		}
+
+		@Override
+		public boolean getMovilidadGeografica() {
+			return false;
+		}
+
+		@Override
+		public boolean getProlongacionLaboral() {
+			return false;
+		}
+
+		@Override
+		public SituacionFamiliar getSituacionFamiliar() {
+			// Otra ...
+			return SituacionFamiliar.TRES;
+		}
+
+		@Override
+		public String getNifConyuge() {
+			return "65950716X";
+		}
+
+		@Override
+		public boolean getMovilidadReducida() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Discapacidad getDiscapacidad() {
+			return Discapacidad.GRADO0;
+		}
+
+		@Override
+		public boolean getResidenciaCeutaMelilla() {
+			return false;
+		}
+
+		@Override
+		public boolean getRdtosObtenidosCeutaMelilla() {
+			return false;
+		}
+
+		@Override
+		public BigDecimal getRetribAnuales() {
+			return BigDecimal.valueOf(40000);
+		}
+
+		@Override
+		public BigDecimal getGastosAnuales() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getIrregularidad1() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getIrregularidad2() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getPensionCompensatoria() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getAnualidadesHijos() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public boolean getPagoPrestamosVivienda() {
+			return false;
+		}
+
+		@Override
+		public Iterable<Ascendiente> getAscendientes() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public Iterable<Descendiente> getDescendientes() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public BigDecimal getRetribSatisfechas() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getRetencionPracticada() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getRetribAnualesIniciales() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getRetencionAnualInicial() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public boolean getResidenciaInicialCeutaMelilla() {
+			return false;
+		}
+
+		@Override
+		public BigDecimal getBaseRetencion() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getMinimoPersonalFamiliarInicial() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getMinoracionPrestamosVivienda() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public BigDecimal getTipoRetencion() {
+			return null; //BigDecimal.ZERO;
+		}
+
+		@Override
+		public CausaRegularizacion getCausaRegularizacion() {
+			return null;
+		}
+	}
 
 	private static class Listener implements IListener {
 
@@ -2024,6 +2211,204 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		}
 		
 		
+	}
+	
+	
+	@Test
+	public void testErrorsI() {
+		// Descendiente > 25  
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public Iterable<Descendiente> getDescendientes() {
+					Descendiente descendiente = new Descendiente() {
+
+						@Override
+						public Integer getAñoNacimiento() {
+							return 1975;
+						}
+
+						@Override
+						public Integer getAñoAdopcion() {
+							return 1975;
+						}
+
+						@Override
+						public boolean getComputadoEntero() {
+							return true;
+						}
+
+						@Override
+						public boolean getMovilidadReducida() {
+							return false;
+						}
+
+						@Override
+						public Discapacidad getDiscapacidad() {
+							return Discapacidad.GRADO0;
+						}
+						
+					};
+					return Collections.singleton(descendiente);
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+	
+		// Ascendiente < 65    
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public Iterable<Ascendiente> getAscendientes() {
+					Ascendiente ascendiente = new Ascendiente() {
+
+						@Override
+						public Integer getAñoNacimiento() {
+							return 2015;
+						}
+
+						@Override
+						public Convivencia getConvivecia() {
+							return Convivencia.UNO;
+						}
+
+						@Override
+						public boolean getMovilidadReducida() {
+							// TODO Auto-generated method stub
+							return false;
+						}
+
+						@Override
+						public Discapacidad getDiscapacidad() {
+							return Discapacidad.GRADO0;
+						}
+						
+					};
+					return Collections.singleton(ascendiente);
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+		
+		
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public String getRetenedorNif() {
+					return "987654321";
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public String getNif() {
+					return "123456789";
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public boolean getPagoPrestamosVivienda() {
+					return true;
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public String getRetenedorApellidosNombre() {
+					return null;
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public boolean getPagoPrestamosVivienda() {
+					return true;
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public SituacionFamiliar getSituacionFamiliar() {
+					return SituacionFamiliar.DOS;
+				}
+				@Override
+				public String getComunidadAutonoma() {
+					return null;
+				}
+				@Override
+				public String getNifConyuge() {
+					return "666666666";
+				}
+				
+				@Override
+				public boolean getPagoPrestamosVivienda() {
+					return true;
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+
+		try {
+			IrpfCalculator.calculateIrpf2022(new DefaultIrpfCalculatorContext() {
+				@Override
+				public CausaRegularizacion getCausaRegularizacion() {
+					return CausaRegularizacion.ONCE;
+				}
+			});
+		} catch ( Exception e ) {
+			if ( AonStringUtils.equalsIgnoreCase(e.getCause().getMessage(), "Error al calcular el IRPF") ) { 
+				org.junit.Assert.fail();
+			}
+			System.out.println(e.getCause().getMessage());
+		}
+
 	}
 
 	// ------------------------------------------------------------------------

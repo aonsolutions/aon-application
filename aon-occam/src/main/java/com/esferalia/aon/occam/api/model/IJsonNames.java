@@ -455,6 +455,7 @@ public final class IJsonNames {
 	public static final String TASK_HOLDER = "task_holder";
 	public static final String TAXES = "taxes";
 	public static final String TAX = "tax";
+	public static final String TAG = "tag";
 	public static final String TAX_DATE = "taxDate";
 	public static final String TECHNICAL = "technical";
 	public static final String TEST = "test";
