@@ -181,6 +181,19 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		downloadTa(success, failure);
 	}
 
+	public void checkIdc(Date date, String idc, Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.checkEmployeeIdc(employee.getId(), date, idc, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+
 	public void downloadIdc(Date date, Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeIdc(employee.getId(), date, new AsyncCallback<String>() {
 			@Override

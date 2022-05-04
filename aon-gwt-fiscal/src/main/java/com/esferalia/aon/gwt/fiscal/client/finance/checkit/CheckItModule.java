@@ -286,7 +286,10 @@ public class CheckItModule extends MainEntryPoint {
 				if(bankAccount.getLogs() != null && !bankAccount.getLogs().isEmpty()) {
 					if (!isMobile()) {						
 						for (CheckItLog log : bankAccount.getLogs()) {
-							Label logLabel = new Label("Error en " + bankAccount.getBank() + " " + bankAccount.getCcc() + " - " + log.getErrorMessage());
+							String date = "";
+							if (log.getCreated() != null)
+								date = AON.DATE_FORMAT.format(log.getCreated());
+							Label logLabel = new Label(date +": Error en " + bankAccount.getBank() + " " + bankAccount.getCcc() + " - " + log.getErrorMessage());
 							logLabel.setStyleName(AON.CSS.aonColorRed());
 							sessionLog.add(logLabel);
 						}

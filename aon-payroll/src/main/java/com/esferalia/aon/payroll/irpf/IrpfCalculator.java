@@ -4,10 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -102,6 +107,8 @@ import net.aonsolutions.core.aeat.v2021.jaxb.TipoRetenidoSalida2021;
 import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesEntrada2022;
 import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesError2022;
 import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesSalida2022;
+import net.aonsolutions.core.aeat.v2022.jaxb.TipoError;
+import net.aonsolutions.core.aeat.v2022.jaxb.TipoErrorGeneral;
 import net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenedorEntrada2022;
 import net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenedorError2022;
 import net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenedorSalida2022;
@@ -2309,34 +2316,58 @@ public class IrpfCalculator {
 				AEATRetencionesError2022 error = e
 						.getAEATRetencionesError2022();
 
-				for (net.aonsolutions.core.aeat.v2022.jaxb.TipoErrorGeneral tipoErrorGeneral : error
-						.getErrorGeneral())
-					throw new ExpressionExceptionWrapper(new CheckException(
-							tipoErrorGeneral.getDescripcion()));
-
-				List<TipoRetenedorError2022> retenedores = error.getRetenedor();
-
 				String message = null;
-				TipoRetenedorError2022 retenedor = retenedores.get(0);
-				List<TipoRetenidoError2022> retenidos = retenedor.getRetenido();
-				if (retenidos.size() > 0) {
-					TipoRetenidoError2022 retenido = retenidos.get(0);
-					List<net.aonsolutions.core.aeat.v2022.jaxb.TipoError> tipoErrores = retenido
-							.getError();
-					if (tipoErrores.size() > 0) {
-						net.aonsolutions.core.aeat.v2022.jaxb.TipoError tipoError = tipoErrores
-								.get(0);
-						message = tipoError.getDescripcion();
-					}
-				}
-				if (message == null) {
-					List<net.aonsolutions.core.aeat.v2022.jaxb.TipoErrorGeneral> errores = error
-							.getErrorGeneral();
-					if (errores.size() > 0) {
-						message = errores.get(0).getDescripcion();
-					}
+				
+				List<String> messages = new LinkedList<>();
+				
+				error.getErrorGeneral().stream()
+				.map(TipoErrorGeneral::getDescripcion )
+				.forEach( messages::add );
 
-				}
+				List<TipoRetenedorError2022> retenedores = 
+				error.getRetenedor();
+
+				retenedores.stream()
+				.map(TipoRetenedorError2022::getError)
+				.filter(Objects::nonNull)
+				.map( TipoError::getDescripcion)
+				.forEach(messages::add);
+
+				List<TipoRetenidoError2022> retenidos =
+				retenedores.stream()
+				.map(TipoRetenedorError2022::getRetenido)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+				
+				// Errores 
+				retenidos.stream()
+				.map(TipoRetenidoError2022::getError)
+				.flatMap(List::stream)
+				.map(TipoError::getDescripcion )
+				.forEach( messages::add );
+
+				// Descendientes
+				retenidos.stream()
+				.map(TipoRetenidoError2022::getDescendiente)
+				.flatMap(List::stream)
+				.map(TipoRetenidoError2022.Descendiente::getError)
+				.flatMap(List::stream)
+				.map(TipoError::getDescripcion )
+				.forEach( messages::add );
+				
+				// Ascendientes
+				retenidos.stream()
+				.map(TipoRetenidoError2022::getAscendiente)
+				.flatMap(List::stream)
+				.map(TipoRetenidoError2022.Ascendiente::getError)
+				.flatMap(List::stream)
+				.map(TipoError::getDescripcion )
+				.forEach( messages::add )
+				;
+
+				message = messages.stream().findFirst().orElse("Error al calcular el IRPF");
+				
+
 				ExpressionException expressionException = new CheckException(
 						message);
 				throw new ExpressionExceptionWrapper(expressionException);

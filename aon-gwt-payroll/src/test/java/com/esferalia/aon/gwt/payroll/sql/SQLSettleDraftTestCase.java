@@ -67,6 +67,22 @@ public class SQLSettleDraftTestCase extends
 		draft.addDraftPayment(payment);
 	}
 	
+	
+	@Override
+	protected void addSettleEmbargo(AONContext aonContext, ContractRecord contract, String description,
+			String expression) {
+		com.esferalia.aon.gwt.payroll.shared.Deduction embargo = new com.esferalia.aon.gwt.payroll.shared.Deduction();
+		embargo.setScope(Scope.SALARY);
+		embargo.setDescription(description);
+		embargo.setExpression(expression);
+		embargo.setSalaryType(Salary.Type.SETTLE);
+		embargo.setStartDate(contract.getStartDate());
+		embargo.setEndDate(contract.getEndDate());
+		//embargo.setId(Integer.MIN_VALUE);
+		
+		draft.addDraftEmbargo(embargo);
+	}
+	
 	@Override
 	protected  ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection,
 			Date contractStart, ContractRecord contract) throws SQLException,

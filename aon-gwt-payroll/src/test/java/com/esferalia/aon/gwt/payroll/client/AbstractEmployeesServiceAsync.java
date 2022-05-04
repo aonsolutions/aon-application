@@ -471,6 +471,12 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 			AsyncCallback<String> callback) {
 		failure(callback);		
 	}
+	
+	@Override
+	public void checkEmployeeIdc(String domain, String user, Integer contractId, Date date, String idc,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		failure(callback);		
+	}
 
 	@Override
 	public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date,

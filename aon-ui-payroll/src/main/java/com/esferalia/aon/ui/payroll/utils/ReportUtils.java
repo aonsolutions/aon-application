@@ -30,6 +30,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.product.enumeration.AttachmentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
@@ -52,6 +53,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 import com.ibm.icu.text.RuleBasedNumberFormat;
@@ -359,6 +361,18 @@ public class ReportUtils {
 			if ( rattachRecord == null )
 				return null;
 			
+			/**
+			 * checks if img type is valid, not to crash afterwards
+			 */
+			if (RegistryAttachmentType.LOGO.ordinal() == AonNumberUtils.toInteger(rattachRecord.getType()) || 
+			RegistryAttachmentType.SIGNATURE.ordinal() == AonNumberUtils.toInteger(rattachRecord.getType()) ) {
+				try {
+					com.lowagie.text.Image.getInstance(rattachRecord.getData());
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			
 			
 			RegistryAttachment registryAttachment = new RegistryAttachment();
 			registryAttachment.setId(rattachRecord.getId());
@@ -371,7 +385,6 @@ public class ReportUtils {
 			registryAttachment.setDparentId(rattachRecord.getDparentId());
 			registryAttachment.setCreationDate(rattachRecord.getCreationDate());
 			registryAttachment.setCreationUser(rattachRecord.getCreationUser());
-			
 			if ( data == null )
 				registryAttachment.setData(data = datas.get().get(registryAttachment.getDriveId()));
 			
@@ -408,7 +421,7 @@ public class ReportUtils {
 				t.printStackTrace();
 				return null;
 			}
-			
+				
 			return registryAttachment;
 		} catch (AonConnectionException e) {
 			throw new ManagerBeanException(e);

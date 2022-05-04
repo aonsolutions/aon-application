@@ -24,7 +24,6 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
-import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
@@ -115,8 +114,11 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/attach":
 					response(req, resp, saveTaskAttach(api));
 					break;
-				case "/historic-send":
-					response(req, resp, taskHistoricSend(api));
+				case "/historic":
+					response(req, resp, sendTaskHistoric(api));
+					break;
+				case "/historic-email":
+					response(req, resp, sendTaskHistoricEmail(api));
 					break;
 				case "/workflow":
 					response(req, resp, saveWorkflow(api, Optional.empty()));
@@ -227,7 +229,18 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		if(!task.getWorkflows().isEmpty()) {
 			Integer taskId = task.getId();
-			task.getWorkflows().stream().forEach(w-> saveWorkflow( api, Optional.of(w.setTask(taskId)) )); // SAVE WORKFLOW ALL
+		
+			String description = TaskUtils.getTaskDescription(task);
+			
+			task.getWorkflows().stream()
+			.forEach(w-> {
+				
+				if(w.getType().equals(TaskWorkflowType.OPEN)) {
+					w.setComment(description);
+				}
+				
+				saveWorkflow( api, Optional.of(w.setTask(taskId)) );
+			}); // SAVE WORKFLOW ALL
 		}
 		return TaskJSON.toJSON(task);
 	}
@@ -304,7 +317,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskCount(AonApiData api) {
 		
-		Integer taskHolder = api.getData().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getData(), IJsonNames.TASK_HOLDER);
+		Integer taskHolder = api.getData().optInt(IJsonNames.TASK_HOLDER);
 		
 		HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
 				f-> TaskUtils.taskFilterCount(api, api.getDomain(), f, new Customer()), 
@@ -366,7 +379,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private JSONArray taskHistoricSend(AonApiData api) {
+	private JSONArray sendTaskHistoric(AonApiData api) {
 		 Integer workflowId = api.getData().optInt("workflowId");
 		 JSONArray json = new JSONArray();
 		 if(workflowId > 0) {
@@ -380,7 +393,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
 			task.setWorkflows(taskWorkflow);
 			
-			TaskUtils.sendHistoricWorkflow(api, task);
+			TaskUtils.sendHistoricWorkflow(api, task, true);
 			
 			Integer[] ids = taskWorkflow.stream().map(workflow->{
 				workflow.setNotificationDate(new Date());
@@ -394,6 +407,30 @@ public class TaskServlet extends AonApiHttpServlet{
 
 		return json;
 	}
+
+	private JSONObject sendTaskHistoricEmail(AonApiData api) {
+		JSONObject params = api.getData();
+		String email = params.optString(IJsonNames.EMAIL);
+		String note = params.optString("note");
+		
+		if(!email.isEmpty()) {
+		   Task task = TaskJSON.fromJSON(params);
+		   LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
+					f->f.getTaskProperty().eq(task.getId())
+					.and(f.getTypeProperty().eq(TaskWorkflowType.COMMENT.value()))
+			).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
+		   task.setWorkflows(taskWorkflow);
+		   
+		   task.setGtaskId(email);
+		   
+		   if(!note.isEmpty())
+			   task.setGtasklistId(note);
+		   
+		   TaskUtils.sendHistoricWorkflow(api, task, false);
+		}
+
+	   return new JSONObject();
+   }
 
 	private JSONArray getTasksOffice(AonApiData api, JSONArray arr) {
 //		String status = api.getParams().optString("status");
@@ -411,10 +448,12 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONArray saveAppParams(AonApiData api) {
 		JSONArray arr = new JSONArray();
 		Domain domain = api.getDomain();
+		String login = api.getUser().getLogin();
+		
 		LinkedList<ApplicationParameter> appParams = AppParamJSON.fromJSON(api.getData().optJSONArray("appParams"));
 		for (ApplicationParameter param : appParams) {
 
-			 ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), param.getName());
+			 ApplicationParameter exists = AON.getApplicationParameter(domain.getName(), domain.getId(), login, param.getName());
 			 if(exists.getId()!=null) {
 				 if(param.getValue()!=null) {
 					 
@@ -507,4 +546,5 @@ public class TaskServlet extends AonApiHttpServlet{
 			}
 		} catch (Exception e) {}
 	}
+	
 }

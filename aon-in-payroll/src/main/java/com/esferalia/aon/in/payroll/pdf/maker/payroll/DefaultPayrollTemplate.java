@@ -505,7 +505,9 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		if (logo.isPresent()) {
 			byte[]	 bytes = logo.get().readAllBytes();
 			PdfImage img   = new PdfImage(x + 120, y - 50, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);
+			try {				
 			img.scale(100, 50, ALIGNMENT.CENTER).draw();
+			} catch (Exception e) {}
 		}
 	}
 	private void listDeductions(List<PDFDeduction> deductions, boolean percent) throws IOException {

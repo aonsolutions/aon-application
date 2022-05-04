@@ -13,11 +13,8 @@ import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
-import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
@@ -51,7 +48,6 @@ import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -91,9 +87,9 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.CCCType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
-import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.Gender;
@@ -111,8 +107,6 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
-import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -714,7 +708,7 @@ public class FillerDAO {
 					.setRegistration(r.getValue(CONTRACT.REGISTRATION))
 					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
 					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
-					.setSsRegime(SSRegimeType.safeValueOf(r.getValue(CONTRACT.SS_REGIME)))
+					.setEnterpriseCCCRegime(CCCType.getSsRegimeType(r.getValue(ENTERPRISE_CCC.TYPE)))
 					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
 					
 					.setEnterpriseCCC(r.getValue(ENTERPRISE_CCC.CCC))
@@ -750,7 +744,7 @@ public class FillerDAO {
 					.setId(r.getValue(IRPF_DATA.ID))
 					.setDomain(r.getValue(IRPF_DATA.DOMAIN))
 					.setDisability(r.getValue(IRPF_DATA.DISABILITY_LEVEL));
-			// TODO A—ADIR LOS PAR¡METROS QUE FALTAN.
+			// TODO A√ëADIR LOS PAR√ÅMETROS QUE FALTAN.
 		}
 	}
 
@@ -1076,6 +1070,5 @@ public class FillerDAO {
 		}
 	}
 
-	
 	
 }
