@@ -789,20 +789,6 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
-			Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate,
-			Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void sendEmployeeAlta(String currentDomainName, String currentUser,
 			EmployeeContractInfo employeeContractInfo) {
 		// TODO Auto-generated method stub
@@ -1033,6 +1019,34 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public Map<String, String> getSepeComunicationData(String currentDomainName, String currentUser, String document,
 			Date date, Integer contractId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Integer contractId,
+			Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCbcTransform(String currentDomainName, String currentUser, String document,
+			Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId,
+			Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCtoTransform(String currentDomainName, String currentUser, String document,
+			Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}

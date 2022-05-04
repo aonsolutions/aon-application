@@ -109,6 +109,10 @@ public class IdcplnssParser {
 				
 				String group = matcher.group("group");
 				onEmployeeQuoteGroup(listener, group);
+
+				boolean monthly = matcher.group("monthly") != null;
+				onEmployeeQuoteGroup(listener, group, monthly );
+				
 				
 				matcher = tryy(reader, EMPLOYEE_PEC);
 				while ( matcher != null ) {
@@ -163,6 +167,11 @@ public class IdcplnssParser {
 	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group) {
 		group = trim(group);
 		listener.onEmployeeQuoteGroup(group);
+	}
+
+	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group, boolean monthly) {
+		group = trim(group);
+		listener.onEmployeeQuoteGroup(group, monthly);
 	}
 
 	private static void onEmployeePeriod(IdcParserListener listener, String enterpriseCCC, String employeeeNss,
@@ -256,7 +265,7 @@ public class IdcplnssParser {
 	//1   01-12-2020        31-12-2020	
 	private static final Pattern EMPLOYEE_PERIOD = 
 	Pattern.compile(
-	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+).*$"
+	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+)(/(?<monthly>S))?.*$"
 	, Pattern.CASE_INSENSITIVE);
 
 	//03-07-2020 31-07-2020   37 EXONE.ERE.F.MAY.COMP 60,00  01 CUOTA EMPRESARIAL 4608 EX.FM37CV<50.789R 0222 RDL 24/2020      H1B

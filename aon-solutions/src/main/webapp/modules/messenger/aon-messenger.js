@@ -284,7 +284,7 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.applicationEl.addSidenavOptions("PENDIENTES", messengerOpts);
+		this.applicationEl.addSidenavOptions("BANDEJAS", messengerOpts);
 	}
 
 	statusNavBar(){
@@ -335,6 +335,8 @@ export class AonMessenger extends AonElement {
 		this.getMyWorkgroups().then( workgroups => {
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  let options = [];
+
+		  if(this.getDur().isMessengerManager()){
 			options.push({
 				id:true,
 				name: "SIN ASIGNAR",
@@ -348,7 +350,8 @@ export class AonMessenger extends AonElement {
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 				}
 			});
-	
+		  }
+
 		  workgroups.forEach(item => 
 			options.push({
 				id:item.id,
@@ -574,10 +577,15 @@ export class AonMessenger extends AonElement {
 	//MY WORKGROUPRS
 	async getMyWorkgroups(){
 		if(!this._workgroups.length){
-			let isManager = this.getDur().isMessengerManager();
+
 			let filter = {status:"ACTIVE"};
-			if(!isManager && this.TASK_HOLDER.id) 
+
+			let isManager = this.getDur().isMessengerManager();
+
+			if(!isManager && this.TASK_HOLDER.id) {
 				filter.task_holder = this.TASK_HOLDER.id;
+			}
+
 			await getWorkgroups(filter).then( workgroup => {
 				this._workgroups = workgroup.map(t => ({...t, value: t.id, description: t.description, name:t.description}));
 			});

@@ -15,6 +15,7 @@ import { getFormTimeJson } from "./forms/time-control.js";
 import { getOfficeProjects } from "../../services/projectService.js";
 import { Workgroup } from "../../models/project/Workgroup.js";
 import { TaskHolder } from "../../models/project/TaskHolder.js";
+import { getTastHoldersWorkGroup } from "../../services/taskHolderService.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -464,6 +465,34 @@ export class AonMessengerChat extends AonElement {
 
       });
     }
+  }
+
+  async getWorkgroup(workgroup){
+    const workgroups = await this.getWorkGroups();
+    let options = [];
+    if(workgroups && workgroups.length>0)
+        options = workgroups.map( wg=> ({...wg, id: wg.value}) );
+    
+    if( workgroup.id && workgroup.description){
+      const exist = options.some(({id})=> id  === workgroup.id );
+      if(!exist)
+        options.push({...workgroup, value:workgroup.id, name:workgroup.description});  
+    }
+
+    return options;
+  }
+
+  async getTaskHolderByWorkgroup(taskHolder, {workgroup}){
+    const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
+
+    let options = [];
+    if(taskHolders && taskHolders.length>0){
+      options = taskHolders.map( th=> ({...th, value: th.id}) )
+    } else if(taskHolder.id && taskHolder.name) {
+      options = [{...taskHolder, value:taskHolder.id}];
+    }
+
+    return options;
   }
   
   back(){

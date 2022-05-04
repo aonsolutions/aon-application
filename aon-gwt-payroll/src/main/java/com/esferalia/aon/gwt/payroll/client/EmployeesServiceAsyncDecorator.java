@@ -806,16 +806,28 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 
 	@Override
 	public void getEmployeeCbc(String currentDomainName, String user, String document, Integer contractId, Date startDate,
-			Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
+			Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeCbc(currentDomainName, user, document, contractId, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeCbc(currentDomainName, user, document, contractId, startDate, endDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
+	public void getEmployeeCbcTransform(String currentDomainName, String user, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEmployeeCbcTransform(currentDomainName, user, document, contractId, startDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
 	public void getEmployeeCto(String currentDomainName, String user, String document, Integer contractId, Date startDate,
-			Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
+			Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, contractId, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, contractId, startDate, endDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
+	public void getEmployeeCtoTransform(String currentDomainName, String user, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEmployeeCtoTransform(currentDomainName, user, document, contractId, startDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	@Override

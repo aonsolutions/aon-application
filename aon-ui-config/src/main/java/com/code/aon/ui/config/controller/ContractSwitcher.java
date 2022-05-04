@@ -47,13 +47,15 @@ public class ContractSwitcher implements
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(ContractSwitcher.class);
+	private int page;
+
 	private DataModel model;
-	private DataModel filteredModel;
 	private String filter;
 	private String modelFilter;
-	private int page;
-	private Integer pageLimit;
+	private DataModel filteredModel;
 	private String beanName;
+	private Integer pageLimit;
+	
 	
 	private ContractData contractData;
 
@@ -128,6 +130,8 @@ public class ContractSwitcher implements
 	
 							) {
 						filteredList.add(d);
+						if ( filteredList.size() == pageLimit )
+							break;
 					}
 				}
 				setFilteredModel(new SerializableListDataModel(filteredList));
