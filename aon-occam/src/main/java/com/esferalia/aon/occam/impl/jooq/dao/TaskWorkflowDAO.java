@@ -94,7 +94,7 @@ public class TaskWorkflowDAO {
 	
 	public static TaskWorkflow save(AONContext ctx, TaskWorkflow taskWorkflow) {
 		// TODO AUTOCOMPLETE && VALIDATE.
-		return taskWorkflow.getId() != null 
+		return taskWorkflow.getId() != null && taskWorkflow.getId()>0
 			? update(ctx, taskWorkflow)
 			: insert(ctx, taskWorkflow);
 	}

@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet.task;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -26,8 +27,10 @@ import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
+import com.esferalia.aon.occam.api.json.TaskHolderJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
+import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -170,17 +173,33 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(TaskUtils.isCau(api.getData()) && api.getData().optString(IJsonNames.EMAIL).isEmpty()) {
 			throw new AonApiException("Auth inexistente");
 		}
-		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> TaskUtils.taskFilter(api, f, api.getDomain(), new Customer()), page, perPage));
+		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
+				f -> TaskUtils.taskFilter(api, f, api.getDomain(), new Customer()), page, perPage));
+		
 		if(page==1)
 			getTasksOffice(api, jsonArr);
 		return jsonArr;
 	}
 
 	private JSONObject getTask(AonApiData api) {
+		Domain domain = api.getDomain();
+		User user = api.getUser();
 		Integer taskId = api.getData().optInt(IJsonNames.ID);
-		Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId) );
+		Integer number = api.getData().optInt(IJsonNames.NUMBER);
+		
+		Task task = AON_SOLUTIONS.getTask(domain, user, f-> 
+			number>0 ? 
+			f.getNumberProperty().eq(number) :
+			f.getIdProperty().eq(taskId) 
+		);
 		if(task.getId()==null) throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
-		return TaskJSON.toJSON(task);
+		JSONObject json = TaskJSON.toJSON(task);
+		
+		if(task.getParent()==null) {
+			json.put("childs", TaskJSON.toJSON( AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getParentProperty().eq(task.getId()) ) ));
+		}
+		
+		return json;
 	}
 	
 	private JSONArray getWorkflows(AonApiData api) {
@@ -317,19 +336,21 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskCount(AonApiData api) {
 		
-		Integer taskHolder = api.getData().optInt(IJsonNames.TASK_HOLDER);
-		
+	
 		HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
-				f-> TaskUtils.taskFilterCount(api, api.getDomain(), f, new Customer()), 
-				taskHolder
+				f -> TaskUtils.taskHolderFilterCount(api, api.getDomain(), f, new Customer()), 
+				f -> TaskUtils.taskReceiverFilterCount(api, api.getDomain(), f, new Customer())
 		);
 		
-		Integer taskHolder1  = Boolean.TRUE.equals(api.getDur().isMessengerManager()) ? 0 : taskHolder;
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
-			HashMap<String, Integer> aux = AON_SOLUTIONS.getTaskCount(domain, new User(),
-			f -> TaskUtils.taskFilterCount(api, domain, f, customer), taskHolder1);
+			HashMap<String, Integer> aux = AON_SOLUTIONS.getTaskCount(
+					domain, new User(),
+					f -> TaskUtils.taskHolderFilterCount(api, domain, f, customer),
+					f -> TaskUtils.taskReceiverFilterCount(api, domain, f, customer)
+			);
+			
 			aux.keySet().stream().forEach(key -> {
 				if(counts.containsKey(key)) 
 					counts.put(key, counts.get(key) + aux.get(key));
@@ -410,24 +431,69 @@ public class TaskServlet extends AonApiHttpServlet{
 
 	private JSONObject sendTaskHistoricEmail(AonApiData api) {
 		JSONObject params = api.getData();
-		String email = params.optString(IJsonNames.EMAIL);
+		Domain domain = api.getDomain();
+		String login = api.getUser().getLogin();
+		
+		Integer taskId = params.optInt(IJsonNames.TASK);
+		
 		String note = params.optString("note");
 		
-		if(!email.isEmpty()) {
-		   Task task = TaskJSON.fromJSON(params);
-		   LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
-					f->f.getTaskProperty().eq(task.getId())
-					.and(f.getTypeProperty().eq(TaskWorkflowType.COMMENT.value()))
-			).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
-		   task.setWorkflows(taskWorkflow);
-		   
-		   task.setGtaskId(email);
-		   
-		   if(!note.isEmpty())
-			   task.setGtasklistId(note);
-		   
-		   TaskUtils.sendHistoricWorkflow(api, task, false);
-		}
+		TaskWorkflow workflow = TaskWorkflowJSON.fromJSON(params);
+		
+		TaskHolder taskHolderReceiver = TaskHolderJSON.fromJSON(params.optJSONObject("task_holder_receiver"));
+		
+		Workgroup workgroup = WorkgroupJSON.fromJSON(params.optJSONObject(IJsonNames.WORKGROUP));
+
+		User user = AON.getUser(domain, login, f->f.getIdProperty().eq(taskHolderReceiver.getUserId()));
+		
+		Auth auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
+		
+	    String email = auth.getEmail();
+		
+		Task task = AON_SOLUTIONS.getTask(domain, user, f-> f.getIdProperty().eq(taskId) );
+		
+		List<Byte> types = new ArrayList<>(Arrays.asList(TaskWorkflowType.OPEN.value()));
+		
+	    LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
+				f->f.getTaskProperty().eq(taskId)
+				.and(f.getTypeProperty().in(types.toArray(Byte[]::new)))
+		).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
+	    
+	   
+	   task.setTaskHolder(taskHolderReceiver);
+	   task.setWorkgroup(workgroup);
+	   
+	   task.setId(null);
+	   
+	   task.setGtaskId(null);
+	   
+	   task.setParent(taskId);
+	   
+	   task.setSender(workflow.getTaskHolder());
+
+	   Task newTask = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
+	   
+	   saveWorkflow( api, Optional.of(workflow.setTask(taskId).setComment(newTask.getNumber().toString())) ); // SAVE CONNECTED TASK PARENT
+
+	   taskWorkflow.forEach(wf->{
+		    wf.setId(null);
+		   	wf.setTask(newTask.getId());
+		   	
+		    if(wf.getType().equals(TaskWorkflowType.OPEN)) {
+			    wf.setEmail(workflow.getEmail());
+			    wf.setTaskHolder(workflow.getTaskHolder());
+		    }
+	
+			saveWorkflow( api, Optional.of(wf) );
+	   });
+//	   
+	   newTask.setGtaskId(email);
+	   
+	   if(note!=null && !note.isEmpty())
+		   newTask.setGtasklistId(note);
+	   
+//	   TaskUtils.sendHistoricWorkflow(api, newTask, false);
+	
 
 	   return new JSONObject();
    }
