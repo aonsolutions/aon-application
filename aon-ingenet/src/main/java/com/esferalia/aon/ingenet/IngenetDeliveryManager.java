@@ -154,7 +154,7 @@ public class IngenetDeliveryManager {
 		delivery.setIssueTime(new Date());
 		delivery.setPayMethod(null);
 		delivery.setWorkplace(new Workplace().setId(workplaceId));
-		delivery.setAddress(new RegistryAddress().setId(aonSales.getShippingAddress()));
+		delivery.setAddress(new RegistryAddress().setId(aonSales.getShippingAddress().getId()));
 		delivery.setComments("Fecha de carga: "
 				+ dateFormat.format(aonSales.getIssueDate()));
 		delivery.setId(WarehouseDAO.insertDelivery(ctx, delivery));

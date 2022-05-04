@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.warehouse;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -16,9 +18,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Delivery implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5693712945852955230L;
 	private Integer id;
 	private Integer domain;
@@ -65,6 +64,9 @@ public class Delivery implements Serializable {
 	private Byte shippingStatus;
 	private Date statusModificationDate;	
 	// shippingAlternative
+	
+	private List<DeliveryDetail> details;
+	
 	private Date creationDate;
 	private String creationUser;
 	private Date modificationDate;
@@ -609,6 +611,23 @@ public class Delivery implements Serializable {
 	public Delivery setCustomerDocument(String customerDocument) {
 		getCustomer().setDocument(customerDocument);
 		return this;
+	}
+	
+	public List<DeliveryDetail> getDetails() {
+		if(details == null) {
+			details = new LinkedList<>();
+		}
+		return details;
+	}
+	
+	public Delivery setDetails(List<DeliveryDetail> details) {
+		this.details = details;
+		return this;
+	}
+	
+	public List<DeliveryDetail> addDetail(DeliveryDetail detail) {
+		getDetails().add(detail);
+		return getDetails();
 	}
 	
 	public String getReferenceCode() {

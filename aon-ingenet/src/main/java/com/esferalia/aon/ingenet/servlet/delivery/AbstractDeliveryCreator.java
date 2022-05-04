@@ -1014,7 +1014,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 				DATOSAGENCIATRANSPORTETYPE at = albaran.getDATOSHOJARUTA().getDATOSAGENCIATRANSPORTE();
 				carrier = new Carrier();
 				carrier.setDomain(new Domain().setId(ctx.getDomainId()));
-				carrier.setScope(scopes.get(0).getId());
+				carrier.setScope(new Scope().setId(scopes.get(0).getId()));
 				carrier.setName(at.getDATOSREGISTRO().getNOMBRE());
 				carrier.setAlias(at.getDATOSREGISTRO().getALIAS());
 				carrier.setDocument(at.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO());

@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
@@ -60,7 +59,6 @@ import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -79,10 +77,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 
 
 public class WarehouseDAO {
@@ -588,27 +584,11 @@ public class WarehouseDAO {
 	}
 	
 	// ----------------- CARRIER 
+
+	@Deprecated
 	public static int insertCarrier(AONContext ctx, Carrier carrier) {
 		ctx.checkWrite();
-		Registry registry = ctx
-				.getDslContext()
-				.insertInto(REGISTRY, REGISTRY.ALIAS, REGISTRY.DOCUMENT,
-						REGISTRY.DOMAIN, REGISTRY.NAME, REGISTRY.NATIONALITY,
-						REGISTRY.TYPE)
-				.values(carrier.getAlias(), carrier.getDocument(),
-						carrier.getDomain().getId(), carrier.getName(),
-						carrier.getDocumentCountry().getIso2(),
-						AonEnumUtils.getByte(carrier.isLegalPerson())
-						).returning().fetch().stream()
-				.map(new RegistryFiller()).findFirst().orElse(new Registry());
-
-		ctx.getDslContext()
-				.insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.SCOPE,
-						CARRIER.REGISTRY, CARRIER.STATUS)
-				.values(carrier.getDomain().getId(), carrier.getScope(),
-						registry.getId(), carrier.getStatus().value())
-				.execute();
-		return registry.getId();
+		return CarrierDAO.save(ctx, carrier).getId();
 	}
 	
 	// ----------------- CARRIER PACKING

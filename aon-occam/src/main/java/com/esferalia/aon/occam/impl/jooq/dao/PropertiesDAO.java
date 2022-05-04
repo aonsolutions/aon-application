@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEV
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
-import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
@@ -29,6 +28,7 @@ import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
+import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
@@ -58,7 +58,6 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
-import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -72,7 +71,6 @@ import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
-import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
@@ -125,7 +123,6 @@ import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProper
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
-import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionItemProperties;
@@ -545,23 +542,6 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
-	}
-	
-	public static class CarrierPropertiesDAO extends RegistryPropertiesDAO implements CarrierProperties  {
-		protected Select<Record> build(SelectJoinStep<Record> select, CarrierFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(CarrierFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) {
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CARRIER.SCOPE);}
 	}
 	
 	public static class RNotePropertiesDAO implements RegistryNoteProperties {

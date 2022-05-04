@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
@@ -87,14 +86,12 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.CreditorPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CreditorFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PersonFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RNoteFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
@@ -119,7 +116,6 @@ public class RegistryOldDAO {
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
 	private static final RegistrySellerPropertiesDAO RSELLER_PROPERTIES = new RegistrySellerPropertiesDAO();
-	private static final CarrierPropertiesDAO CARRIER_PROPERTIES = new CarrierPropertiesDAO();
 	private static final RecordDataPropertiesDAO RECORD_DATA_PROPERTIES = new RecordDataPropertiesDAO();
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
 	private static final RegistryAddInfoPropertiesDAO RADDINFO_PROPERTIES = new RegistryAddInfoPropertiesDAO();
@@ -816,21 +812,14 @@ public class RegistryOldDAO {
 	
 	// ------------------- CARRIER
 
+	@Deprecated
 	public static Stream<Carrier> getCarrierStream(AONContext ctx, CarrierFilter filter){
-		return ctx.getDslContext().select()
-				.from(CARRIER).join(SCOPE).on(CARRIER.SCOPE.eq(SCOPE.ID))
-				.join(REGISTRY).on(REGISTRY.ID.eq(CARRIER.REGISTRY))
-				.where(CARRIER_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new CarrierFiller());
+		return CarrierDAO.getStream(ctx, filter);
 	}
 	
+	@Deprecated
 	public static Carrier insertCarrier(AONContext ctx, Carrier carrier){
-		Registry registry = insertRegistry(ctx, carrier);
-		ctx.getDslContext().insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.REGISTRY, CARRIER.SCOPE, CARRIER.STATUS)
-			.values(carrier.getDomain().getId(), registry.getId(), carrier.getScope(), carrier.getStatus().value())
-			.execute();
-		carrier.setId(registry.getId());
-		return carrier;
+		return CarrierDAO.save(ctx, carrier);
 	}
 	
 	// ------------------- CREDITOR

@@ -301,7 +301,7 @@ public class WarehouseServlet extends HttpServlet{
 				Scope scope = opt.isPresent() ? opt.get() : 
 					AON.insertScope(domain.getName(), domain.getId(), login, new Scope().setDomain(domain.getId()).setDescription("TRANSPORTE"));
 
-				carrier = new Carrier().setScope(scope.getId()).setStatus(CarrierStatus.ACTIVE);
+				carrier = new Carrier().setScope(scope).setStatus(CarrierStatus.ACTIVE);
 				carrier.setDomain(domain);
 				carrier.setName("TRANSPORTE");
 				

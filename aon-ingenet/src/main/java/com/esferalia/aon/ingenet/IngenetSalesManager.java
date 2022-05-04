@@ -22,9 +22,17 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.api.model.type.SalesType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
@@ -370,33 +378,47 @@ public class IngenetSalesManager {
 	private Integer createSales(AONContext ctx, int domainId, int scopeId, Sales sales){
 		com.esferalia.aon.occam.api.model.management.Sales  newSales = new com.esferalia.aon.occam.api.model.management.Sales();
 		newSales.setDomain(domainId);
-		newSales.setProject(sales.getProject() != null ? sales.getProject().getId() : null);
+		newSales.setProject(sales.getProject() != null ? new Project().setId(sales.getProject().getId()) : new Project());
 		newSales.setCustomer(new com.esferalia.aon.occam.api.model.Customer());
 		newSales.getCustomer().setId(sales.getCustomer() != null ? sales.getCustomer().getId() : null);
 		newSales.setSeries(sales.getSeries());
 		newSales.setNumber(sales.getNumber());
 		newSales.setPurchaseReference(sales.getPurchaseReference());
-		newSales.setShippingAddress(sales.getShippingAddress() != null ? sales.getShippingAddress().getId() : null);
-		newSales.setSeller(sales.getSeller() != null ? sales.getSeller().getId() : null);
+		newSales.setShippingAddress(sales.getShippingAddress() != null 
+			? new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(sales.getShippingAddress().getId())
+			: new com.esferalia.aon.occam.api.model.registry.RegistryAddress());
+		newSales.setSeller(sales.getSeller() != null 
+			? new Seller().setId(sales.getSeller().getId()) 
+			: new Seller());
 		newSales.setDiscountExpr(sales.getDiscountExpression() != null ? sales.getDiscountExpression().getDiscountExpr() : null);
-		newSales.setIssueDate(sales.getIssueDate());
-		newSales.setPayMethod(sales.getPayMethod() != null ? sales.getPayMethod().getId() : null);
-		newSales.setDocumentType(sales.getDocumentType() != null ? sales.getDocumentType().ordinal() : null);
-		newSales.setSecurityLevel(sales.getSecurityLevel().ordinal());
+		newSales.setDate(sales.getIssueDate());
+		newSales.setPayMethod(sales.getPayMethod() != null 
+			? new PayMethod().setId(sales.getPayMethod().getId()) 
+			: new PayMethod());
+		newSales.setDocumentType(sales.getDocumentType() != null 
+				? SalesType.safeValueOf(sales.getDocumentType().ordinal()) 
+				: SalesType.NORMAL);
+		newSales.setSecurityLevel(sales.getSecurityLevel() != null
+				? SecurityLevel.safeValueOf(sales.getSecurityLevel().ordinal())
+				: SecurityLevel.OFFICIAL);
 		newSales.setStatus(SalesStatus.valueOf(sales.getStatus().name()));
 		newSales.setComments(sales.getComments());
 		newSales.setRemarks(sales.getRemarks());
-		newSales.setWorkplace(sales.getWorkPlace().getId());
-		newSales.setScope(scopeId);
-		newSales.setNumberOfPymnts(sales.getNumberOfPayments());
-		newSales.setDaysToFirstPymnt(sales.getDaysToFirstPayment());
-		newSales.setDaysBetweenPymnts(sales.getDaysBetweenPayments());
+		newSales.setWorkplace(sales.getWorkPlace() != null
+			? new Workplace().setId(sales.getWorkPlace().getId())
+			: new Workplace());
+		newSales.setScope(new Scope().setId(scopeId));
+		newSales.setNumberOfPymnts((short) sales.getNumberOfPayments());
+		newSales.setDaysToFirstPymnt((short) sales.getDaysToFirstPayment());
+		newSales.setDaysBetweenPymnts((short) sales.getDaysBetweenPayments());
 		newSales.setPymntDays(sales.getPaymentDays());
 		newSales.setBankAccount(sales.getBankAccount().getIban());
 		newSales.setBankAlias(sales.getBankAlias());
 		newSales.setBic(sales.getBic());
 		newSales.setPurchaseGenerated(sales.isPurchaseGenerated());
-		newSales.setCarrier(sales.getCarrier() != null ? sales.getCarrier().getId() : null);
+		newSales.setCarrier(sales.getCarrier() != null 
+				? new Carrier().setId(sales.getCarrier().getId()) 
+				: new Carrier());
 		newSales.setShippingAlternativeAddress(sales.getShippingAlternativeAddress());
 		newSales.setShippingAlternativeAddress2(sales.getShippingAlternativeAddress2());
 		newSales.setShippingAlternativeZip(sales.getShippingAlternativeZip());
@@ -404,7 +426,9 @@ public class IngenetSalesManager {
 		newSales.setShippingAlternativePhone(sales.getShippingAlternativePhone());
 		newSales.setShippingAlternativeRecipient(sales.getShippingAlternativeRecipient());
 		newSales.setShippingContact(sales.getShippingContact());
-		newSales.setShippingPeriod(sales.getShippingPeriod() != null ? sales.getShippingPeriod().ordinal() : null);
+		newSales.setShippingPeriod(sales.getShippingPeriod() != null 
+				? ShipmentPeriod.safeValueOf(sales.getShippingPeriod().ordinal())
+				: null);
 		
 		Integer salesId = SalesDAO.getSales(ctx, 
 				filter -> filter.getSeriesProperty().eq(sales.getSeries())
@@ -428,7 +452,7 @@ public class IngenetSalesManager {
 		newDetail.setDomain(domainId);
 		newDetail.setSales(new com.esferalia.aon.occam.api.model.management.Sales());
 		newDetail.getSales().setId(salesId);
-		newDetail.setItem(new com.esferalia.aon.occam.api.model.product.OldItem());
+		newDetail.setItem(new com.esferalia.aon.occam.api.model.product.Item());
 		newDetail.getItem().setId(itemId);
 		newDetail.setLine(detail.getLine().shortValue());
 		newDetail.setDescription(detail.getDescription());
