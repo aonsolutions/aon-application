@@ -23,6 +23,10 @@
 			<property-name>beanName</property-name>
 			<value>helpSwitcher</value>
 		</managed-property>		
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>11</value>
+		</managed-property>		
 	</managed-bean>
 	
 

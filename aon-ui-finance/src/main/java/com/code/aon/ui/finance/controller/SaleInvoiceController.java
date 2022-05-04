@@ -593,7 +593,7 @@ public class SaleInvoiceController extends InvoiceController {
 				Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 				tbaiValidation(invoice);
-		
+				
 				Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
 				if(invoice.getNumber() < 1) {
 					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
@@ -605,10 +605,12 @@ public class SaleInvoiceController extends InvoiceController {
 						invoice.setTaxDate(new Date());
 						inv.setIssueDate(new Date());
 						inv.setTaxDate(new Date());
-					}				
+					}
 				}
 			
-				AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+				invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+				updateFinances(domainName, login, invoice);
+
 				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
 				TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
 			
@@ -624,6 +626,13 @@ public class SaleInvoiceController extends InvoiceController {
 			e.printStackTrace();
 			AonUtil.addErrorMessage(e.getMessage());
 		}
+	}
+	
+	public void updateFinances(String domainName, String login, com.esferalia.aon.occam.api.model.finance.Invoice invoice) {
+		invoice.getFinances().stream().forEach(finance -> {
+			finance.setConcept(invoice.getDocumentNumber());
+			AON.saveFinance(domainName, invoice.getDomain(), login, finance);
+		});
 	}
 	
 	private void tbaiValidation(com.esferalia.aon.occam.api.model.finance.Invoice invoice) throws Exception {

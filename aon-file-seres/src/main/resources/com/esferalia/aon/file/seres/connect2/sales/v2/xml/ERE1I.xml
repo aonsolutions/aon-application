@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1I">
+	<field name="Tipo registro ERE1I" value="ERE1I" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de línea de impuesto" value="bean" bean ="ERE1I" property="numeroDeLineaDeImpuesto" format="Numeric" pattern="9(2)" />
+	<field name="Calificador tipo de impuesto" value="bean" bean ="ERE1I" property="calificadorTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Impuesto" value="bean" bean ="ERE1I" property="porcentajeImpuesto" format="Numeric" pattern="9(3).99" />
+	<field name="Importe impuesto" value="bean" bean ="ERE1I" property="importeImpuesto" format="Numeric" pattern="9(14).999" />
+	<field name="Base imponible" value="bean" bean ="ERE1I" property="baseImponible" format="Numeric" pattern="9(14).999" />
+</register>

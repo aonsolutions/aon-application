@@ -2674,8 +2674,8 @@ public class IdcTest extends AbstractSQLTestCase {
 				assertEquals("31", tramo.getFechaHasta().getDia());
 				assertEquals("03", tramo.getFechaHasta().getMes());
 				assertEquals("2022", tramo.getFechaHasta().getAnho());
-				int datosSolicitados = assertTramoActivoNormal(tramo);
-				//assertDatosSolicitadosCount(datosSolicitados, tramo);
+				assertTramoActivoNormal(tramo);
+				assertNoDatosSolicitado(tramo, "I", "51");
 				
 
 			}
@@ -3308,6 +3308,19 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 		
 		throw new AssertException("Dato Solicitado " + codigo + " Not Found");
+	}
+
+	private static void assertNoDatosSolicitado( Tramo tramo, String tipoDato, String codigo) {
+		assertNoDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), tipoDato, codigo);
+	}
+
+	private static void assertNoDatosSolicitado( List<DatoSolicitado> datoSolicitados , String tipoDato, String codigo) {
+		for ( DatoSolicitado datoSolicitado: datoSolicitados ){
+			if ( datoSolicitado.getCodigo().equals(codigo) ) {
+				throw new AssertException("Dato Solicitado " + codigo + " Found");
+			}
+		}
+		
 	}
 
 	private static void assertDatosSolicitadosCount(int count, Tramo tramo) {
