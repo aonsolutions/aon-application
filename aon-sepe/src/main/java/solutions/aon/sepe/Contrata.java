@@ -103,10 +103,10 @@ public class Contrata {
 			catch (Exception e) {throw new SepeException(e);}
 	}
 	
-	public static byte[] getTransformacionsPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Optional<String> sepeId) throws SepeException {
+	public static byte[] getTransformationPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date fini, Optional<String> sepeId) throws SepeException {
 			try {
-				return getTransformacionsPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, sepeId);
+				return getTransformationPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, fini, sepeId);
 			}
 			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -116,9 +116,9 @@ public class Contrata {
 	}
 	
 	public static byte[] getTransformationCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Optional<String> sepeId) throws SepeException {
+			final String certificateType, String ipf, String cif, Date fini, Optional<String> sepeId) throws SepeException {
 			try {
-				return getTransformationCopyBasicPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, sepeId);
+				return getTransformationCopyBasicPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, cif, fini, sepeId);
 			} 
 			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -703,7 +703,7 @@ public class Contrata {
 	
 	
 	private static byte[] getTransformationCopyBasicPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
+			final String certificateType, String ipf, String cif, Date fini, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
 	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
@@ -732,14 +732,35 @@ public class Contrata {
 	            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide.substring(2, 6));
 	            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide.substring(6));
 	    	} else {
-		    	String[] fri = Toolkit.formatDate(fini);
-			    Integer ident  = 0; //NIF DEFAULT
-			    if(Toolkit.getIdentityType(ipf).equals("6")) ident = 1; // NIE
+		   
+		    	((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
+		    	
+			    //ENTERPRISE
+			    String cifValue = formDatos.getInputByName("cifnifnie").getValueAttribute();
 			    
-		    	formDatos.getInputByName("tipoacceso").click();
+			    if(cifValue!=null && cifValue.isEmpty()) {
+			        String cifTypeStr = Toolkit.getIdentityType(cif); 
+			        Integer cifType = 0; 
+			        if( cifTypeStr.equals("1")) 
+			        	cifType = 1;
+			        else if(cifTypeStr.equals("6")) 
+			        	cifType = 2;
+
+					HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumentoaux]>option").get(cifType);//" " cif, "D" NIF, "E" NIE			
+					option.click();
+
+					formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
+			    }
+
+				
+				//EMPLOYEE
+				Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 1 : 0; //1 NIE, 0 NIF
 				HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);				
 				option.click();
+
 				formDatos.getInputByName("nifnietrabajador").setValueAttribute(ipf);
+				
+				String[] fri = Toolkit.formatDate(fini);
 				formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
 				formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
 				formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
@@ -884,8 +905,8 @@ public class Contrata {
         return htmlPage;
 	}
 	
-	private static byte[] getTransformacionsPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException {
+	private static byte[] getTransformationPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date fini, Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	
 	    	HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
@@ -911,21 +932,42 @@ public class Contrata {
 	            formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide.substring(2, 6));
 	            formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide.substring(6));
 	    	} else {
-		    	String[] fri = Toolkit.formatDate(fini);
-			    Integer ident  = 0; //NIF DEFAULT
-			    if(Toolkit.getIdentityType(ipf).equals("6")) ident = 1; // NIE
-		    	formDatos.getInputByName("tipoacceso").click();
+	    		
+			    ((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
 		    	
+			    //ENTERPRISE
+			    String cifValue = formDatos.getInputByName("cifnifnie").getValueAttribute();
+			    
+			    if(cifValue!=null && cifValue.isEmpty()) {
+			        String cifTypeStr = Toolkit.getIdentityType(cif); 
+			        Integer cifType = 0; 
+			        if( cifTypeStr.equals("1")) 
+			        	cifType = 1;
+			        else if(cifTypeStr.equals("6")) 
+			        	cifType = 2;
+
+					HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumentoaux]>option").get(cifType);//" " cif, "D" NIF, "E" NIE			
+					option.click();
+
+					formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
+			    }
+
+				
+				//EMPLOYEE
+				Integer ident = Toolkit.getIdentityType(ipf).equals("6") ? 1 : 0; //1 NIE, 0 NIF
 				HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);				
 				option.click();
+				
 				formDatos.getInputByName("nifnietrabajador").setValueAttribute(ipf);
+				
+		    	String[] fri = Toolkit.formatDate(fini);
 				formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
 				formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
 				formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
 	    	}
+	    	
 	    	htmlPage = formDatos.getInputByName("aceptar").click();
 			handleSepeExceptions(htmlPage);
-
 			
 	     	Page page = htmlPage.getElementByName("Boton_imprimir").click();
 			if(page.isHtmlPage()) {

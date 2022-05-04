@@ -10,7 +10,8 @@ public enum TaskWorkflowType  {
 	DELETE("deleted"),
 	RESTORE("restore"),
 	COMMENT("comment"),
-	ASSIGN("assigned");
+	ASSIGN("assigned"),
+	CONNECTED("connected");
 	
 	String event;
 	

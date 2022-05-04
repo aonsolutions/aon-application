@@ -291,15 +291,13 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
  * @param {HTMLElement} aon-messenger-chat component
  * @param {Array} workflows array de flujo de trabajo
  */
-export const fillChat = (aonMessengerChat, workflows=[])=>{
+export const fillChat = (task, meId, workflows=[])=>{
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
         chat.innerHTML = "";
         if(workflows.length == 0){
             let noMessage = createNoMessage();
             noMessage.appendTo(chat);
         } else {
-            const task = aonMessengerChat.task;
-            const meId = aonMessengerChat.getApplicationParent().TASK_HOLDER.id;
 
             const firstComment = workflows.find(w=> WORKFLOW_TYPES.OPEN.includes(w.type));
             const observation = task.getDescriptionJson().observation;

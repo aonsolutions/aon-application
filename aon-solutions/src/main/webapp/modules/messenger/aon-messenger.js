@@ -243,8 +243,10 @@ export class AonMessenger extends AonElement {
 	}
 
 	taskNavBar(){
-		let messengerOpts = [
-			{
+		let messengerOpts = [];
+		
+		if(!this.cau){
+			messengerOpts.push({
 				name: 'Recibidas',
 				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				id: MATERIAL_ICONS.MOVE_TO_INBOX,
@@ -269,21 +271,29 @@ export class AonMessenger extends AonElement {
 					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
-			},
-			{
-				name: 'Todas',
-				icon: MATERIAL_ICONS.ALL_INBOX,
-				id: MATERIAL_ICONS.ALL_INBOX,
-				fn: () =>{
-					this._filter.task_holder = undefined;
-					this._filter.sender = undefined;
-					this._filter.workgroups = this.getWorkgroupsStr();
-					this.addListFilter(this._filter);
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+			});
+		}
+
+		messengerOpts.push({
+			name: 'Todas',
+			icon: MATERIAL_ICONS.ALL_INBOX,
+			id: MATERIAL_ICONS.ALL_INBOX,
+			fn: () =>{
+				this._filter.task_holder = undefined;
+				this._filter.sender = undefined;
+				this._filter.workgroups = this.getWorkgroupsStr();
+				this.addListFilter(this._filter);
+				let params = this._filter;
+				
+				if(!this.cau){
+					let taskHolder = this.TASK_HOLDER.id ? this.TASK_HOLDER.id : undefined;
+					params = {...this._filter, task_holder:taskHolder, sender:taskHolder}
 				}
-			},
-		];
-		
+				
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, params);
+			}
+		});
+
 		this.applicationEl.addSidenavOptions("BANDEJAS", messengerOpts);
 	}
 
@@ -516,26 +526,43 @@ export class AonMessenger extends AonElement {
 	updateCount(){
 		let application = this.applicationEl;
 		let filterCount= {};
-		if(this.cauInfo && this.cauInfo.auth && this.cauInfo.auth.email)
+		if(this.cauInfo && this.cauInfo.auth && this.cauInfo.auth.email){
 			filterCount.email = this.cauInfo.auth.email;
 
-		if(this.TASK_HOLDER.id)
-			filterCount.task_holder = this.TASK_HOLDER.id;
+		}
+
+		if(this.cau){
+			filterCount.task_holder = 1;
+			filterCount.sender = 1;
+		} else {
+			if(this.TASK_HOLDER.id){
+				filterCount.task_holder = this.TASK_HOLDER.id;
+			}
+				
+			const workgroupStr = this.getWorkgroupsStr();
+
+			if(workgroupStr){
+				filterCount.workgroups = workgroupStr;
+			}
+		}
+		
 			
-		getTaskCount(filterCount).then(count=>{
-			let sender =  count.sender || 0;
-			let task_holder =  count.task_holder || 0;
-			application.updateSidenavCount(MSG.SENT, sender);
-			application.updateSidenavCount("Recibidas", task_holder);
-		});
+		if(!this.cau){
+			getTaskCount(filterCount).then(count=>{
+				let sender =  count.sender || 0;
+				let task_holder =  count.task_holder || 0;
+				application.updateSidenavCount(MSG.SENT, sender);
+				application.updateSidenavCount("Recibidas", task_holder);
+			});	
+		}
 
 		let filter = {};
-		const workgroupStr = this.getWorkgroupsStr();
-		if(workgroupStr)
-			filter.workgroups = workgroupStr;
 
 		if(this._filter.source) 
 			filter.source = this._filter.source;
+
+		if(filterCount.workgroups)
+			filter.email = filterCount.workgroups;
 
 		if(filterCount.email)
 			filter.email = filterCount.email;
