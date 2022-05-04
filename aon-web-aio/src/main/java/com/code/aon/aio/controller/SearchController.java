@@ -44,7 +44,7 @@ public class SearchController implements Serializable {
 
 	public void setFilter(String filter) {
 		this.filter = filter;
-		//getHelpSwitcher().setFilter(filter);
+		getHelpSwitcher().setFilter(filter);
 		getDomainSwitcher().setFilter(filter);
 		getContractSwitcher().setFilter(filter);
 		

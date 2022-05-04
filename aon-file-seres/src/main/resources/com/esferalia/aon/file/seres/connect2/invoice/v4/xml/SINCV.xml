@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCV">
+	<field name="Tipo de Registro SINCV" value="SINCV" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de vencimientos" value="bean" bean ="SINCV" property="numeroDeVencimientos" format="Numeric" pattern="9(6)" />
+	<field name="Fecha de vencimiento" value="bean" bean ="SINCV" property="fechaDeVencimiento" format="Numeric" pattern="9(8)" />
+	<field name="Importe sujeto al vencimiento" value="bean" bean ="SINCV" property="importeSujetoAlVencimiento" format="Numeric" pattern="9(14).999" />
+</register>
