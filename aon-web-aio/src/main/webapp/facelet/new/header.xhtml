@@ -1734,16 +1734,23 @@
 			*  GLOBAL WINDOW CONTROLS
 			*/
 			document.documentElement.addEventListener("keydown", listenGlobalKeys)
+			
+			/**
+			* SONAR : Keep session alive  
+			*/
+			const sonar = new XMLHttpRequest();
+			sonar.onload = function() {
+				console.log(this.responseText);
+			}
+  			setInterval(function(){
+				sonar.open("GET", "sonar");				
+				sonar.send();				
+				
+			}, 300000);
+			
 		
 	</script>
 		
-	<a4j:region>
-		<h:form>
-			<a4j:poll status="aonStatus" interval="300000"
-				actionListener="#{desktop.onRefresh}" reRender="aonHeader" />
-		</h:form>
-	</a4j:region>
-
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
 		<aon:panelGrid columns="4" width="100%" 
