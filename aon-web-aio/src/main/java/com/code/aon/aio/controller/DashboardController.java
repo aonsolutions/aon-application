@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Vector;
 
 import javax.faces.context.ExternalContext;
@@ -82,7 +81,6 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
-import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
@@ -339,77 +337,78 @@ public class DashboardController implements Serializable {
 	}
 
 	public String navigateModel() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		Map<String, String> params = ec.getRequestParameterMap();
-		String ad = params.get("adm");
-		Administration administration = null;
-		if (StringUtils.isNotBlank(ad)) {
-			administration = Administration.valueOf(ad);
-		}
-		Model mod = Model.valueOf(params.get("model"));
-		Period period = Period.valueOf(params.get("period"));
-		boolean missing = Boolean.valueOf(params.get("status"));
-		String beanName = null;
-		if ( mod == Model.M111) {
-			return "gwt_mod111";
-		} else if ( mod == Model.M115) {
-			return "gwt_mod115";
-		} else if ( mod == Model.M123) {
-			return "gwt_mod123";
-		} else if ( mod == Model.M130) {
-			return "gwt_mod130";
-		} else if ( mod == Model.M131) {
-			return "gwt_mod131";
-		} else if ( mod == Model.MIVA) {
-			return "gwt_mod303";
-		} else if ( mod == Model.M303_RG) {
-			beanName = "vatTax";
-		} else if ( mod == Model.M303_RS) {
-			beanName = "mod303";
-		} else if ( mod == Model.M347) {
-			beanName = "mod347";
-		} else if ( mod == Model.M349) {
-			beanName = "mod349";
-		} else if ( mod == Model.M390_HF) {
-			beanName = "vatTax";
-		} else if ( mod == Model.M390) {
-			return "gwt_mod390";
-		} else if ( mod == Model.M180) {
-			return "gwt_mod180";
-		} else if ( mod == Model.M184) {
-			return "gwt_mod184";
-		} else if ( mod == Model.M190) {
-			return "gwt_mod190";
-		} else if ( mod == Model.M193) {
-			return "gwt_mod193";
-		} else if ( mod == Model.M200) {
-			return "gwt_mod200";
-		} else if ( mod == Model.M202) {
-			return "gwt_mod202";
-		} else {
-			String message = "Imposible realizar la navegación al modelo solicitado.";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message);
-		}
-		
-		if ( fiscalYear == null )
-			return "";
-		
-		IFiscalModelController controller = (IFiscalModelController) FormUtil.getController(beanName);
-		try {
-			String navKey = "";
-			if (missing) {
-				navKey = controller.newModel(administration, fiscalYear, period);	
-			} else {
-				navKey = controller.editModel(administration, fiscalYear, period);
-			}
-			this.fiscalConfig = null;
-			return navKey;
-		} catch (ManagerBeanException e) {
-			String message = "Imposible realizar la navegación al modelo solicitado.";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message,e);
-		}
+		return null;
+//		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+//		Map<String, String> params = ec.getRequestParameterMap();
+//		String ad = params.get("adm");
+//		Administration administration = null;
+//		if (StringUtils.isNotBlank(ad)) {
+//			administration = Administration.valueOf(ad);
+//		}
+//		Model mod = Model.valueOf(params.get("model"));
+//		Period period = Period.valueOf(params.get("period"));
+//		boolean missing = Boolean.valueOf(params.get("status"));
+//		String beanName = null;
+//		if ( mod == Model.M111) {
+//			return "gwt_mod111";
+//		} else if ( mod == Model.M115) {
+//			return "gwt_mod115";
+//		} else if ( mod == Model.M123) {
+//			return "gwt_mod123";
+//		} else if ( mod == Model.M130) {
+//			return "gwt_mod130";
+//		} else if ( mod == Model.M131) {
+//			return "gwt_mod131";
+//		} else if ( mod == Model.MIVA) {
+//			return "gwt_mod303";
+//		} else if ( mod == Model.M303_RG) {
+//			beanName = "vatTax";
+//		} else if ( mod == Model.M303_RS) {
+//			beanName = "mod303";
+//		} else if ( mod == Model.M347) {
+//			beanName = "mod347";
+//		} else if ( mod == Model.M349) {
+//			beanName = "mod349";
+//		} else if ( mod == Model.M390_HF) {
+//			beanName = "vatTax";
+//		} else if ( mod == Model.M390) {
+//			return "gwt_mod390";
+//		} else if ( mod == Model.M180) {
+//			return "gwt_mod180";
+//		} else if ( mod == Model.M184) {
+//			return "gwt_mod184";
+//		} else if ( mod == Model.M190) {
+//			return "gwt_mod190";
+//		} else if ( mod == Model.M193) {
+//			return "gwt_mod193";
+//		} else if ( mod == Model.M200) {
+//			return "gwt_mod200";
+//		} else if ( mod == Model.M202) {
+//			return "gwt_mod202";
+//		} else {
+//			String message = "Imposible realizar la navegación al modelo solicitado.";
+//			AonUtil.addErrorMessage(message);
+//			throw new AbortProcessingException(message);
+//		}
+//		
+//		if ( fiscalYear == null )
+//			return "";
+//		
+//		BasicController controller = (BasicController) FormUtil.getController(beanName);
+//		try {
+//			String navKey = "";
+//			if (missing) {
+//				navKey = controller.newModel(administration, fiscalYear, period);	
+//			} else {
+//				navKey = controller.editModel(administration, fiscalYear, period);
+//			}
+//			this.fiscalConfig = null;
+//			return navKey;
+//		} catch (ManagerBeanException e) {
+//			String message = "Imposible realizar la navegación al modelo solicitado.";
+//			AonUtil.addErrorMessage(message);
+//			throw new AbortProcessingException(message,e);
+//		}
 	}
 
 	public synchronized List<DashboardMessage> getMessages() {

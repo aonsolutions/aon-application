@@ -170,19 +170,6 @@
 		<mapping class="com.code.aon.finance.PosShiftCount"/>
 		<mapping class="com.code.aon.finance.Prepayment"/>
 
-		<!-- AON-FISCAL Mapping files -->
-		<mapping class="com.code.aon.fiscal.FiscalActivity"/>
-		<mapping class="com.code.aon.fiscal.FiscalActivityInfo"/>
-		<mapping class="com.code.aon.fiscal.FiscalModel"/>
-		<mapping class="com.code.aon.fiscal.FiscalModelDetail"/>
-		<mapping class="com.code.aon.fiscal.Mod347"/>
-		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
-		<mapping class="com.code.aon.fiscal.Mod349"/>
-		<mapping class="com.code.aon.fiscal.Mod349Detail"/>
-		<mapping class="com.code.aon.fiscal.VatTax"/>
-		<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
-		<mapping class="com.code.aon.fiscal.VatTaxDetail"/>
-		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>
