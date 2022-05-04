@@ -1,5 +1,10 @@
 package com.esferalia.aon.watson.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 public class AonArrayUtils {
 
 	/**
@@ -694,4 +699,50 @@ public class AonArrayUtils {
 		}
 		return bool;
 	}
+	
+	
+	public static <T> List<List<T>> allNoRepeatCombinations(T[] dataset) {
+		
+		if(dataset.length == 0) {
+			return new ArrayList<>();
+		}
+		
+		if(dataset.length == 1) {
+			ArrayList<List<T>> aux = new ArrayList<>();
+			aux.add(new ArrayList<T>());
+			aux.get(0).add(dataset[0]);
+			return aux;
+		}
+		
+		final int size = dataset.length;
+		ArrayList<List<T>> total = new ArrayList<>();
+		
+		// Add first line
+		List<T> first = Arrays.asList(dataset);
+		total.add(first);
+		
+		// set current to first
+		List<T> current = new ArrayList<>();
+		current.addAll(first);
+		
+		// while combination isn't repeating
+		do {
+			
+			T moving = current.get(0);  
+			
+			// for each movement
+			for (int i = 0; i < dataset.length - 1; i++) {
+				
+				T next = current.get(i + 1);
+				current.set(i, next);
+				current.set(i + 1 , moving);
+				
+				total.add(new ArrayList<T>(current));
+			}
+			
+		} while(!current.toString().equals(first.toString()));
+		
+		return total;
+	}
+	
 }
