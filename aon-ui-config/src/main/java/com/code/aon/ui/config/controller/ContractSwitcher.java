@@ -11,6 +11,8 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -22,6 +24,7 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
+import org.jooq.SelectConditionStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -105,41 +109,100 @@ public class ContractSwitcher implements
 
 
 	public DataModel getModel() throws ManagerBeanException {
-		if (model == null) {
-			initializeModel();
+		
+		if(filter == null) {
+			filter = "";
 		}
-		if (StringUtils.isBlank(getFilter())) {
+		
+		if(filter.equals(modelFilter)) {
 			return model;
-		} else {
-			if (!StringUtils.equals(modelFilter, filter)
-					|| filteredModel == null) {
-				setPage(1);
-				List<ContractData> filteredList = new LinkedList<ContractData>();
-				@SuppressWarnings("unchecked")
-				List<ContractData> list = (List<ContractData>) model
-						.getWrappedData();
-				for (ContractData d : list) {
-					if (AonStringUtils
-							.containsMatching(
-									d.getFullName(), getFilter())
-							|| StringUtils.containsIgnoreCase(
-									d.getSsNumber(), getFilter())
-							|| StringUtils.containsIgnoreCase(
-									d.getDocument(), getFilter())
-							|| containsAll(d.getFullName(), getFilter())
-	
-							) {
-						filteredList.add(d);
-						if ( filteredList.size() == pageLimit )
-							break;
-					}
-				}
-				setFilteredModel(new SerializableListDataModel(filteredList));
-				modelFilter = filter;
-			}
-			return filteredModel;
 		}
+		
+		Instant before = Instant.now();
+	
+		getDbModel(filter);
+		modelFilter = filter;
+		
+		Instant after = Instant.now();
+		long delta = Duration.between(before, after).toMillis();
+		System.out.println("Contracts loaded in: " + delta + "ms");
+	
+		return model;
+	
 	}
+	
+
+	private void getDbModel(String filter) throws ManagerBeanException {
+		
+		if(filter == null) {
+			filter = "";
+		}
+		
+		AONContext ctx = AONContext.getAONContext(getDomainNameURL(),getDomainId(),getCurrentUser());
+		LinkedList<ContractData> contracts = new LinkedList<ContractData>();
+		SelectConditionStep<org.jooq.Record> query = ctx
+		.getDslContext()
+		.select()
+		.from(CONTRACT)
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+		.innerJoin(DOMAIN).on(CONTRACT.DOMAIN.eq(DOMAIN.ID))
+		.where(getDomainCondition())
+		.and(CONTRACT.END_DATE.isNull()
+		.or(CONTRACT.END_DATE.ge(getStartDate())));
+		
+		// Like joining for word checking
+		Condition joinSequence = null;
+		
+		List<List<String>> combinations = AonArrayUtils.allNoRepeatCombinations(filter.split("\\s"));
+		for (List<String> comb : combinations) {
+
+			StringBuilder processed = new StringBuilder("%");
+			for (String word : comb) {
+				processed.append(word).append("%");
+			}			
+			
+			if(joinSequence == null) {
+				joinSequence = REGISTRY.NAME.like(processed.toString());
+			} else {
+				joinSequence = joinSequence.or(REGISTRY.NAME.like(processed.toString()));		
+			}
+		}	
+		
+		if(joinSequence != null) {
+			query.and(joinSequence);
+		}
+		
+		// or filter contains SS number 
+		query.or(PERSON.SOCIAL_SECURITY_NUM.like("%" + filter + "%"));
+		
+		// or filter contains document Document 
+		query.or(REGISTRY.DOCUMENT.like("%" + filter + "%"));
+		
+		// order by name
+		query.orderBy(REGISTRY.NAME)
+			 .limit(pageLimit)
+			 .offset(page);
+		
+		query.fetchStream()
+		.forEach( r -> {
+			ContractData contractData = 
+			new ContractData(
+					r.get(CONTRACT.ID), 
+					r.get(REGISTRY.DOCUMENT), 
+					r.get(REGISTRY.NAME), 
+					r.get(PERSON.SOCIAL_SECURITY_NUM), 
+					r.get(CONTRACT.END_DATE), 
+					r.get(CONTRACT.START_DATE),
+					r.get(DOMAIN.ID),
+					r.get(DOMAIN.DESCRIPTION));
+			contracts.add(contractData);
+		});
+
+		ctx.finalize();
+		setModel(new SerializableListDataModel(contracts));
+	}
+
 
 	private List<Integer> getUserScopes() throws ManagerBeanException {
 		List<Integer> scopes = null;
@@ -175,42 +238,6 @@ public class ContractSwitcher implements
 			condition = condition.and(DOMAIN.ID.eq(domain));
 		}
 		return condition;
-	}
-
-
-	private void initializeModel() throws ManagerBeanException {
-		
-		AONContext ctx = AONContext.getAONContext(getDomainNameURL(),getDomainId(),getCurrentUser());
-		LinkedList<ContractData> contracts = new LinkedList<ContractData>();
-		ctx
-		.getDslContext()
-		.select()
-		.from(CONTRACT)
-		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-		.innerJoin(DOMAIN).on(CONTRACT.DOMAIN.eq(DOMAIN.ID))
-		.where(getDomainCondition())
-		.and(CONTRACT.END_DATE.isNull()
-		.or(CONTRACT.END_DATE.ge(getStartDate())))
-		.orderBy(REGISTRY.NAME)
-		.fetchStream()
-		.forEach( r -> {
-			ContractData contractData = 
-			new ContractData(
-					r.get(CONTRACT.ID), 
-					r.get(REGISTRY.DOCUMENT), 
-					r.get(REGISTRY.NAME), 
-					r.get(PERSON.SOCIAL_SECURITY_NUM), 
-					r.get(CONTRACT.END_DATE), 
-					r.get(CONTRACT.START_DATE),
-					r.get(DOMAIN.ID),
-					r.get(DOMAIN.DESCRIPTION));
-			contracts.add(contractData);
-		})				
-		;
-
-		ctx.finalize();
-		setModel(new SerializableListDataModel(contracts));
 	}
 
 	public void setModel(DataModel model) {

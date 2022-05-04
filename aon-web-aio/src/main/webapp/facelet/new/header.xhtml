@@ -1551,7 +1551,7 @@
 			
 			function resetResultStates (searchResults, selected) {
 				searchResults.forEach(p => {
-					p.style.background = "#fff";
+					p.style.background = "unset";
 					
 					const mouseout = searchResults[selected].onmouseout;
 					if(false){
@@ -1832,7 +1832,7 @@
 						oncomplete="javascript:showSearchResults()"
 						reRender="smartFilterTableContainer"
 						eventsQueue="domainSwitcherFilterKeyUp"
-						requestDelay="500"
+						requestDelay="50"
 						ajaxSingle="true"
 						ignoreDupResponses="true"
 						limitToList="true">
