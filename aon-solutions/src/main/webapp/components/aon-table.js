@@ -257,6 +257,22 @@ export class AonTable extends AonElement {
     d.setMenuOptions(options, top, left);
     d.open();
   }
+
+  empty(message) {
+    message = message || 'No hay datos disponibles.';
+
+    let body = this.getElement(this.getId() + "TableBody");
+    if (!body) return true;
+
+    let tr = this.createElement(TAG.TR);
+    tr.style.textAlign = 'center';
+    body.appendChild(tr);
+   
+    let td = this.createElement(TAG.TD);
+    td.innerHTML = message;
+    td.style.fontWeight = 'bold';
+    tr.appendChild(td);
+  }
 }
 if(!window.customElements.get('aon-table')){
   window.customElements.define("aon-table", AonTable);

@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -189,6 +190,20 @@ public class JooqContractTransform {
 			.set(CONTRACT_INFO.END_DATE, DSL.castNull(CONTRACT_INFO.END_DATE))
 			.set(CONTRACT_INFO.CREATION_USER, "admin")
 			.execute();
+		
+		// Copy Old Sepe Data
+		
+		Record oldSepeDataRecord = dslContext.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(oldContractId)).and(CONTRACT_ATTACH.TYPE.eq((byte)4)).fetchOne();
+		if(null != oldSepeDataRecord)
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, oldContractRecord.get(CONTRACT.DOMAIN))
+				.set(CONTRACT_ATTACH.CONTRACT, newContractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)5)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "CONTRACT - Contrat@")
+				.set(CONTRACT_ATTACH.DATA, oldSepeDataRecord.get(CONTRACT_ATTACH.DATA))
+				.set(CONTRACT_ATTACH.TYPE, (byte)4)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, oldSepeDataRecord.get(CONTRACT_ATTACH.ATTACH_DATE))
+				.execute();
 		
 		// Enterprise Data
 		Record contractRecord = dslContext.select().from(CONTRACT)

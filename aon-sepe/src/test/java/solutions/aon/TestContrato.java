@@ -35,7 +35,7 @@ public class TestContrato {
 			.setRegimen("0111")
 			.setCtaCti("28231545357")
 			.setCifEnterprise("B87812889")
-			.setIpf("29128959B")
+			.setIpf("16262835H")
 			.setName("MARCOS")
 			.setSurname("SÁNCHEZ")
 			.setLastSurname("HERNÁNDEZ")
@@ -44,7 +44,7 @@ public class TestContrato {
 			.setCodNationality(724)
 			.setCodPaisDom(724)
 			.setCodMunDom("01059") 
-			.setNss("501012426156")
+			.setNss("010022757387")
 			.setCodContract("300")
 			.setDateIniContract(fini)
 			.setCodFormativo(59)//review
@@ -145,7 +145,8 @@ public class TestContrato {
 			@SuppressWarnings("deprecation")
 			Date ffin =  new Date("2022/02/18");
 			String ipf = "16262835H";
-			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin);
+			String sepeId = "0120200070286";
+			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -175,7 +176,9 @@ public class TestContrato {
 			@SuppressWarnings("deprecation")
 			Date fecha =  new Date("2016/05/06");
 			String ipf = "16262835H";
-			byte[] pdf = Sepe.transformacionsPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fecha);
+			String sepeId = "0120200070286";
+			
+			byte[] pdf = Sepe.getTransformacionsPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();

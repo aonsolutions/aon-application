@@ -36,6 +36,7 @@ public class Contract {
 	
 	private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 	private boolean previsible; // ¿ El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
+	private Date oldDateIniContract; // Para las transformaciones
 	
 	public String getSepeId() {
 		return sepeId;
@@ -120,6 +121,10 @@ public class Contract {
 	public Date getDateIniContract() {
 		return dateIniContract;
 	}
+	
+	public Date getOldDateIniContract() {
+		return oldDateIniContract;
+	}
 
 	public Date getDateFinContract() {
 		return dateFinContract;
@@ -201,7 +206,8 @@ public class Contract {
 		
 		private boolean discontinuo; // ¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?
 		private boolean previsible; // ¿El contrato tiene una duracion igual o inferior a 90 dias, situacion previsible ?
-
+		private Date oldDateIniContract; // Para la transformacion
+		
 		public ContractBuilder setCifEnterprise(String cifEnterprise) {
 			this.cifEnterprise = cifEnterprise;
 			return this;
@@ -295,6 +301,11 @@ public class Contract {
 
 		public ContractBuilder setDateIniContract(Date dateIniContract) {
 			this.dateIniContract = dateIniContract;
+			return this;
+		}
+		
+		public ContractBuilder setOldDateIniContract(Date oldDateIniContract) {
+			this.oldDateIniContract = oldDateIniContract;
 			return this;
 		}
 
@@ -396,6 +407,7 @@ public class Contract {
 			contract.interinidad = this.interinidad;
 			contract.discontinuo = this.discontinuo;
 			contract.previsible = this.previsible;
+			contract.oldDateIniContract = this.oldDateIniContract;
 			return contract;
 		}
 	}
@@ -476,7 +488,7 @@ public class Contract {
 				+ ", lastSurname=" + lastSurname + ", codNationality=" + codNationality + ", codPaisDom=" + codPaisDom
 				+ ", codMunDom=" + codMunDom + ", codFormativo=" + codFormativo + ", codOccupation=" + codOccupation
 				+ ", codPaisWork=" + codPaisWork + ", codMunWork=" + codMunWork + ", codContract=" + codContract
-				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", dateBirth="
+				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", oldDateIniContract=" + oldDateIniContract + ", dateBirth="
 				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType
 				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
 				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin +  ", interinidad=" + interinidad+"]";

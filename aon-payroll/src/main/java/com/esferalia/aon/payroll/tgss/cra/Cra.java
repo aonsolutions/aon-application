@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDatabaseOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbPasswordOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbUserOption;
@@ -91,7 +92,7 @@ public class Cra {
 			
 			Long findingDate = parseDate(cmd.getOptionValue(findingDateOpt.getLongOpt()));
 			
-			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(null, cccList, findingDate, null, connection));
+			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(null, null, cccList, findingDate, null, connection));
 			System.out.println(agrarianAFI);
 
 		} catch (ParseException e) {
@@ -235,7 +236,7 @@ public class Cra {
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddHHmmss");
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMainCRAByCRA(Integer domainId, List<String> cccList, long findingDate, java.util.Date fileNameDate, Connection connection)  {
+	public static JSONObject getMainCRAByCRA(Integer domainId, Integer userId, List<String> cccList, long findingDate, java.util.Date fileNameDate, Connection connection)  {
 		
 		// Get dslContext for given connection
 		@SuppressWarnings("resource")
@@ -272,6 +273,17 @@ public class Cra {
 		// Prepare JSON CCCs
 		JSONArray jsonCCCs = new JSONArray();
 		
+		// Domain Childs
+		List<Integer> domainChilds = dslContext.select(DOMAIN.ID).from(DOMAIN)
+				.where(DOMAIN.PARENT.eq(domainId))
+				.and(DOMAIN.SCOPE.in(
+					dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+						.where(USER_SCOPE.USER_ID.eq(userId))
+						.fetch(USER_SCOPE.SCOPE)
+				).or(DOMAIN.SCOPE.isNull())).fetch(DOMAIN.ID);
+		
+		domainChilds.add(domainId);
+		
 		for(int k=0; k<cccList.size(); k++) {
 			
 			String ccc = cccList.get(k);
@@ -284,7 +296,7 @@ public class Cra {
 					.and(SALARY.TYPE.eq((byte)0))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
-					.and(SALARY.DOMAIN.eq(domainId))
+					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
 			
 			filterRETARecords(salaryRecords, dslContext);
@@ -439,7 +451,7 @@ public class Cra {
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)3))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
-					.and(SALARY.DOMAIN.eq(domainId))
+					.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
 			
 			if(salaryRecords.isEmpty()){
@@ -555,7 +567,7 @@ public class Cra {
 						.and(SALARY.TYPE.eq((byte)2))
 						.and(SALARY.SS_REGIME.notEqual((byte)3))
 						.and(SALARY.TOTAL_PAYMENT.gt(0.00))
-						.and(SALARY.DOMAIN.eq(domainId))
+						.and(SALARY.DOMAIN.in(domainChilds))
 					.fetch();
 			
 			if(salaryRecords.isEmpty()){

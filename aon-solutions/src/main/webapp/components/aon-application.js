@@ -610,11 +610,19 @@ export class AonApplication extends AonElement {
     this.addSidenavOptionsList(data, options);
   }
 
+  removeBackgroundSidenavAll(){
+    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
+      li.style.backgroundColor = 'transparent';
+    });
+  }
+
   addBackgroundSidenav(id){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     const li =  this.getElement(sidenavId + id);
-    if(li)
+    if(li){
       li.style.backgroundColor = "#ddd";
+    }
   }
 
   /**

@@ -77,7 +77,7 @@ public class ContractSalaryCalculator4Dummies<T extends ISalary> extends Contrac
 		.getVariables(ContextVariable.MONTH_DAYS, p.getStart(), p.getEnd())
 		.stream()
 		.map(var-> (Number) var.getValue(var.getPeriod()))
-		.collect(Collectors.summingDouble(n->n.doubleValue())); 
+		.collect(Collectors.averagingDouble(n->n.doubleValue())); 
 		
 		Double d =  ((Number)constant).doubleValue()
 		* workedDays

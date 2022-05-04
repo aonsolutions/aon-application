@@ -31,6 +31,9 @@ public interface IdcParserListener {
 	default void onEmployeeQuoteGroup(String group) {
 	};
 
+	default void onEmployeeQuoteGroup(String group, boolean monthly ) {
+	};
+
 	default void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 	};
 

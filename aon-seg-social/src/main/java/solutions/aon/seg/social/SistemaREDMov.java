@@ -420,8 +420,9 @@ class SistemaREDMov {
 		Integer mov = 1;
 		String ident = Toolkit.getIdentityType(employee.getIpf());
 		String dni = Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
+		Optional<Date> frbOpt = employee.getFrb();
+		Optional<Date> frvOpt = employee.getFrv(); // fecha de vacaciones OCIONALES
 
-		String[] fra = formatDate(employee.getFra()); // fecha [dia,mes,anio]
 		WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType);
 		webClient.getOptions().setUseInsecureSSL(true);
 		HtmlPage htmlPage = firstPageAltaBaja(
@@ -431,14 +432,17 @@ class SistemaREDMov {
     	);
 
 		HtmlForm jacadaForm1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-		jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
-		jacadaForm1.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]);
-		jacadaForm1.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]);
-		jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]);
 
-		Optional<Date> frv = employee.getFrb();
-		if (!frv.isEmpty()) {
-			String[] fvac = formatDate(frv.get()); // fecha de vacaciones
+		if (!frbOpt.isEmpty()) {
+			String[] frb = formatDate(frbOpt.get()); // fecha [dia,mes,anio]
+			jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
+			jacadaForm1.getInputByName("txt_SDFFREALDD").setValueAttribute(frb[0]);
+			jacadaForm1.getInputByName("txt_SDFFREALMM").setValueAttribute(frb[1]);
+			jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(frb[2]);
+		}
+
+		if (!frvOpt.isEmpty()) {
+			String[] fvac = formatDate(frvOpt.get()); 
 			jacadaForm1.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]);
 			jacadaForm1.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
 			jacadaForm1.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]);

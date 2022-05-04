@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTracking;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
@@ -95,6 +96,14 @@ public class InvoiceTrackingDAO {
 			invoiceTracking.setInvoiceBatchDetail(invoiceBatchDetail);
 		}
 		return invoiceTracking;
+	}
+	
+	public static void delete(AONContext ctx, Integer invoiceId) {
+		Integer[] array = InvoiceBatchDetailDAO.getStream(ctx, f -> f.getInvoiceProperty().eq(invoiceId))
+				.map(InvoiceBatchDetail::getInvoiceBatch)
+				.toArray(Integer[]::new);
+		InvoiceBatchDetailDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId));
+		InvoiceBatchDAO.delete(ctx, f -> f.getIdProperty().in(array));
 	}
 
 	public static class InvoiceTrackingFiller extends Filler implements Function<Record, InvoiceTracking> {
