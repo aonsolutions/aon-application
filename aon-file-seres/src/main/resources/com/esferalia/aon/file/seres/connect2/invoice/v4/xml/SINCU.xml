@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCU">
+	<field name="Tipo de Registro SINCU" value="SINCU" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador de tipo de texto" value="bean" bean ="SINCU" property="calificadorDeTipoDeTexto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Texto 1" value="bean" bean ="SINCU" property="texto1" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 2" value="bean" bean ="SINCU" property="texto2" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 3" value="bean" bean ="SINCU" property="texto3" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 4" value="bean" bean ="SINCU" property="texto4" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 5" value="bean" bean ="SINCU" property="texto5" format="AlphaNumeric" pattern="X(70)" />
+</register>

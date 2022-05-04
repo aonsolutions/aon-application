@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCP">
+	<field name="Tipo de Registro SINCP" value="SINCP" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador del Interlocutor" value="bean" bean ="SINCP" property="calificadorDelInterlocutor" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Interlocutor" value="bean" bean ="SINCP" property="codigoInterlocutor" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Tipo Interlocutor (J- Persa. Jurídica/ F - Persa. Física/9 -EDI)" value="bean" bean ="SINCP" property="tipoInterlocutor_J_Persa_Juridica_F_Persa_Fisica_9_EDI_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Nombre 1" value="bean" bean ="SINCP" property="nombre1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 2" value="bean" bean ="SINCP" property="nombre2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 3" value="bean" bean ="SINCP" property="nombre3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 4" value="bean" bean ="SINCP" property="nombre4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 5" value="bean" bean ="SINCP" property="nombre5" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 1 (Calle + Número)" value="bean" bean ="SINCP" property="direccion1_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 2 (Calle + Número)" value="bean" bean ="SINCP" property="direccion2_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 3 (Calle + Número)" value="bean" bean ="SINCP" property="direccion3_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 4 (Calle + Número)" value="bean" bean ="SINCP" property="direccion4_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Ciudad" value="bean" bean ="SINCP" property="ciudad" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Provincia" value="bean" bean ="SINCP" property="provincia" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código Postal" value="bean" bean ="SINCP" property="codigoPostal" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código País" value="bean" bean ="SINCP" property="codigoPais" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Identificación Fiscal" value="bean" bean ="SINCP" property="numeroDeIdentificacionFiscal" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Adicional" value="bean" bean ="SINCP" property="codigoAdicional" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Función de contacto" value="bean" bean ="SINCP" property="funcionDeContacto" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código departamento o empleado" value="bean" bean ="SINCP" property="codigoDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Nombre departamento o empleado" value="bean" bean ="SINCP" property="nombreDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Teléfono" value="bean" bean ="SINCP" property="telefono" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Fax" value="bean" bean ="SINCP" property="fax" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de cuenta bancaria (IBAN)" value="bean" bean ="SINCP" property="numeroDeCuentaBancaria_IBAN_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Registro Mercantil del emisor" value="bean" bean ="SINCP" property="registroMercantilDelEmisor" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Capital Social" value="bean" bean ="SINCP" property="capitalSocial" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calificador referencia adicional" value="bean" bean ="SINCP" property="calificadorReferenciaAdicional" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Referencia adicional" value="bean" bean ="SINCP" property="referenciaAdicional" format="AlphaNumeric" pattern="X(35)" />
+</register>

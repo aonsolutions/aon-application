@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SEH1P">
+	<field name="Tipo registro SEH1P" value="SEH1P" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de jerarquía de embalaje" value="bean" bean ="SEH1P" property="numeroDeJerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de jerarquía padre de embalaje" value="bean" bean ="SEH1P" property="numeroDeJerarquiaPadreDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de paquetes" value="bean" bean ="SEH1P" property="numeroDePaquetes" format="Numeric" pattern="9(8)" />
+	<field name="Información sobre el embalaje, codificado" value="bean" bean ="SEH1P" property="informacionSobreElEmbalaje_Codificado" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Términos y Condiciones del embalaje, codificado" value="bean" bean ="SEH1P" property="terminosYCondicionesDelEmbalaje_Codificado" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de embalaje, codificado" value="bean" bean ="SEH1P" property="tipoDeEmbalaje_Codificado" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de embalaje, texto libre" value="bean" bean ="SEH1P" property="tipoDeEmbalaje_TextoLibre" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Responsabilidad Pago Transporte de Embalaje" value="bean" bean ="SEH1P" property="responsabilidadPagoTransporteDeEmbalaje" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Peso neto1 (AAC)" value="bean" bean ="SEH1P" property="pesoNeto1_AAC_" format="Numeric" pattern="9(14).999" />
+	<field name="Peso neto 2" value="bean" bean ="SEH1P" property="pesoNeto2" format="Numeric" pattern="9(14).999" />
+	<field name="Código significación de la medida peso neto" value="bean" bean ="SEH1P" property="codigoSignificacionDeLaMedidaPesoNeto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidad de medida para el peso neto" value="bean" bean ="SEH1P" property="unidadDeMedidaParaElPesoNeto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Peso bruto 1 (AAD)" value="bean" bean ="SEH1P" property="pesoBruto1_AAD_" format="Numeric" pattern="9(14).999" />
+	<field name="Peso bruto 2" value="bean" bean ="SEH1P" property="pesoBruto2" format="Numeric" pattern="9(14).999" />
+	<field name="Código significación de la medida peso bruto" value="bean" bean ="SEH1P" property="codigoSignificacionDeLaMedidaPesoBruto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidad de medida para el peso bruto" value="bean" bean ="SEH1P" property="unidadDeMedidaParaElPesoBruto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Dimensión de altura 1 (HT)" value="bean" bean ="SEH1P" property="dimensionDeAltura1_HT_" format="Numeric" pattern="9(14).999" />
+	<field name="Dimensión de altura 2" value="bean" bean ="SEH1P" property="dimensionDeAltura2" format="Numeric" pattern="9(14).999" />
+	<field name="Código significación de la medida altura" value="bean" bean ="SEH1P" property="codigoSignificacionDeLaMedidaAltura" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidad de medida para la altura" value="bean" bean ="SEH1P" property="unidadDeMedidaParaLaAltura" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Dimensión de ancho 1 (WD)" value="bean" bean ="SEH1P" property="dimensionDeAncho1_WD_" format="Numeric" pattern="9(14).999" />
+	<field name="Dimensión de ancho 2" value="bean" bean ="SEH1P" property="dimensionDeAncho2" format="Numeric" pattern="9(14).999" />
+	<field name="Código significación de la medida ancho" value="bean" bean ="SEH1P" property="codigoSignificacionDeLaMedidaAncho" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidad de medida para el ancho" value="bean" bean ="SEH1P" property="unidadDeMedidaParaElAncho" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Dimensión de longitud 1 (LN)" value="bean" bean ="SEH1P" property="dimensionDeLongitud1_LN_" format="Numeric" pattern="9(14).999" />
+	<field name="Dimensión de longitud 2" value="bean" bean ="SEH1P" property="dimensionDeLongitud2" format="Numeric" pattern="9(14).999" />
+	<field name="Código significación de la medida longitud" value="bean" bean ="SEH1P" property="codigoSignificacionDeLaMedidaLongitud" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidad de medida para la longitud" value="bean" bean ="SEH1P" property="unidadDeMedidaParaLaLongitud" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Dimensión de temperatura 1 (TC)" value="bean" bean ="SEH1P" property="dimensionDeTemperatura1_TC_" format="Numeric" pattern="9(14).999" />
+	<field name="Dimensión de temperatura 2" value="bean" bean ="SEH1P" property="dimensionDeTemperatura2" format="Numeric" pattern="9(14).999" />
+	<field name="Código significación de la medida temperatura" value="bean" bean ="SEH1P" property="codigoSignificacionDeLaMedidaTemperatura" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidad de medida para la temperatura" value="bean" bean ="SEH1P" property="unidadDeMedidaParaLaTemperatura" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Cantidad por embalaje" value="bean" bean ="SEH1P" property="cantidadPorEmbalaje" format="Numeric" pattern="9(12).999" />
+	<field name="Instrucciones de manejo, codificado" value="bean" bean ="SEH1P" property="instruccionesDeManejo_Codificado" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Instrucciones de manejo, texto libre" value="bean" bean ="SEH1P" property="instruccionesDeManejo_TextoLibre" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Marca de envió 1" value="bean" bean ="SEH1P" property="marcaDeEnvio1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca de envió 2" value="bean" bean ="SEH1P" property="marcaDeEnvio2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca de envió 3" value="bean" bean ="SEH1P" property="marcaDeEnvio3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca de envió 4" value="bean" bean ="SEH1P" property="marcaDeEnvio4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 1 o número de identificación inferior" value="bean" bean ="SEH1P" property="numeroSerial1ONumeroDeIdentificacionInferior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 1 o número de identificación superior" value="bean" bean ="SEH1P" property="numeroSerial1ONumeroDeIdentificacionSuperior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 2o número de identificación inferior" value="bean" bean ="SEH1P" property="numeroSerial2oNumeroDeIdentificacionInferior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 2 o número de identificación superior" value="bean" bean ="SEH1P" property="numeroSerial2ONumeroDeIdentificacionSuperior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 3 o número de identificación inferior" value="bean" bean ="SEH1P" property="numeroSerial3ONumeroDeIdentificacionInferior" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número Serial 3 o número de identificación superior" value="bean" bean ="SEH1P" property="numeroSerial3ONumeroDeIdentificacionSuperior" format="AlphaNumeric" pattern="X(35)" />
+</register>
