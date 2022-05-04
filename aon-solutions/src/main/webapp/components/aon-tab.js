@@ -36,6 +36,9 @@ export class AonTab extends AonElement {
         div.style.marginRight = '20px'
         div.style.paddingTop = '15px';
         this.appendChild(div);
+        if(!this.options) 
+            this.options = [];
+
         this.options.forEach((option, i) => {
             this.printOption(option, i);
         })
@@ -69,6 +72,13 @@ export class AonTab extends AonElement {
     addOption(option) {
         this.options.push(option);
         this.printOption(option, this.options.length - 1);
+    }
+
+    setOptionsPrint(options){
+        this.options = options;
+        this.options.forEach((option, i) => {
+            this.printOption(option, i);
+        })
     }
 
 }
