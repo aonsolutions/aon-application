@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.api.utils;
+package net.aonsolutions.aon.api.servlet.task;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -42,13 +42,13 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
 import net.aonsolutions.aon.api.model.mail.TaskMailTemplate;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
-import net.aonsolutions.aon.api.servlet.task.AppParamsRequest;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
@@ -114,7 +114,6 @@ public class TaskUtils {
 		Integer sender = params.optInt(IJsonNames.SENDER);
 		Integer registry = params.optInt(IJsonNames.REGISTRY);
 		String source = params.optString(IJsonNames.SOURCE);
-		String email = params.optString(IJsonNames.EMAIL);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		String workgroupStr = params.optString(IJsonNames.WORKGROUPS);
 		
@@ -126,9 +125,6 @@ public class TaskUtils {
 		if(registry != null && registry!=0) 
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		
-		if(isCau(params)) 
-			filter = filter.and(f.getGtaskIdProperty().eq(email));
-
 		if(workgroup != null && workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
 		else if(params.optBoolean(IJsonNames.WORKGROUP)) {//TRUE = ALL
@@ -140,7 +136,15 @@ public class TaskUtils {
 			filter = filter.and(f.getStartDateProperty().eq(AonDateUtils.toTimestamp(startDate)));
 		}
 		
-		 if(!workgroupStr.isEmpty()) {
+		if(api.getDur().isMessengerManager()) {
+			if(taskHolder!=0 && sender!=0) {
+				
+			} else if(taskHolder!=0) {
+				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
+			} else if(sender!=0) {
+				filter = filter.and(f.getSenderProperty().eq(sender));
+			}
+		} else if(!workgroupStr.isEmpty()) {
 			 String[]  str = workgroupStr.split(",");
 			 Integer[] arr = new Integer[str.length];
 			 for(int i=0; i<str.length; i++) {
@@ -151,8 +155,8 @@ public class TaskUtils {
 				filter = filter.and(
 						f.getWorkgroupProperty().in(arr)
 						.and(
-								f.getTaskHolderProperty().eq(taskHolder)
-								.or(f.getTaskHolderProperty().isNull())
+							f.getTaskHolderProperty().eq(taskHolder)
+							.or(f.getTaskHolderProperty().isNull())
 						)
 						.or(f.getSenderProperty().eq(sender))
 				);
@@ -160,8 +164,8 @@ public class TaskUtils {
 				filter = filter.and(
 					f.getWorkgroupProperty().in(arr)
 					.and(
-							f.getTaskHolderProperty().eq(taskHolder)
-							.or(f.getTaskHolderProperty().isNull())
+						f.getTaskHolderProperty().eq(taskHolder)
+						.or(f.getTaskHolderProperty().isNull())
 					)
 				);
 			} else if(sender!=0) {
@@ -170,16 +174,16 @@ public class TaskUtils {
 				filter = filter.and(f.getWorkgroupProperty().in(arr));
 			}
 		 } else {
-			 
-			if(taskHolder!=0) {
-				if(api.getDur().isMessengerManager()) {
-					filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
-				} else {
-					filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
-				}
-			}
-			
-			if(sender!=0) {
+
+			if(taskHolder!=0 && sender!=0){
+				filter = filter.and(
+					f.getTaskHolderProperty().eq(taskHolder)
+					.or(f.getTaskHolderProperty().isNull())
+					.or(f.getSenderProperty().eq(sender))
+				);
+			} else if(taskHolder!=0) {
+				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
+			} else if(sender!=0) {
 				filter = filter.and(f.getSenderProperty().eq(sender));
 			}
 		 }
@@ -205,7 +209,8 @@ public class TaskUtils {
 			String email = params.optString(IJsonNames.EMAIL);
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
 		} else {
-			if(taskHolder!=0 && !workgroupStr.isEmpty()) {
+
+			if( !api.getDur().isMessengerManager() && taskHolder!=0 && !workgroupStr.isEmpty()) {
 				String[]  str = workgroupStr.split(",");
 				Integer[] arr = new Integer[str.length];
 				for(int i=0; i<str.length; i++) {
@@ -228,11 +233,10 @@ public class TaskUtils {
 
 		}
 
-
 		return filter;
 	}
 	
-	public static Filter taskHolderFilterCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
+	public static Filter taskSenderFilterCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
 		JSONObject params = api.getData();
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 
@@ -242,7 +246,7 @@ public class TaskUtils {
 		
 		if(!isCau && taskHolder>0) {
 			 filter = filter.and(f.getSenderProperty().eq(taskHolder));
-		} else 	if( isCau || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) {
+		} else if( isCau || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) {
 			String email =  params.optString(IJsonNames.EMAIL);
 			filter = filter.and( f.getGtaskIdProperty().eq(email) );
 		}
@@ -263,21 +267,39 @@ public class TaskUtils {
 		
 		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
 		
-		if(!isCau && !workgroupStr.isEmpty() && taskHolder > 0) {
-			 String[]  str = workgroupStr.split(",");
-			 Integer[] arr = new Integer[str.length];
-			 for(int i=0; i<str.length; i++) {
-				 arr[i] = Integer.parseInt(str[i]);
-			 }
-		
-			filter = filter.and(
-				f.getWorkgroupProperty().in(arr)
-				.and(
-						f.getTaskHolderProperty().eq(taskHolder)
-						.or(f.getTaskHolderProperty().isNull())
-				)
-			);
-		} else if( isCau || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) {
+		if(!isCau) {
+			if( taskHolder > 0) {
+				if( api.getDur().isMessengerManager()) {
+					filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
+				} else {
+					List<Integer> list = new ArrayList<>();
+					if(workgroupStr.isEmpty()) {
+						
+						AON.getWorkgroupByTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
+							t-> t.getDomainProperty().eq(domain.getId()).and(t.getStatusProperty().eq(WorkgroupStatus.ACTIVE.value())),
+							taskHolder)
+						.map(Workgroup::getId)
+						.forEach(list::add);
+					} else {
+						 String[]  str = workgroupStr.split(",");
+						 for(int i=0; i<str.length; i++) {
+							 list.add( Integer.parseInt(str[i]) );
+						 }
+					}
+					
+					if(!list.isEmpty()) {
+						filter = filter.and(
+							f.getWorkgroupProperty().in(list.toArray(Integer[]::new))
+							.and(
+									f.getTaskHolderProperty().eq(taskHolder)
+									.or(f.getTaskHolderProperty().isNull())
+							)
+						);
+					}
+				} 
+			}
+
+		} else if(  taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager())  ) {
 			String email =  params.optString(IJsonNames.EMAIL);
 			filter = filter.and( f.getGtaskIdProperty().eq(email) );
 		}

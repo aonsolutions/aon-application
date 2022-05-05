@@ -21,7 +21,7 @@ public interface ITask2 {
 	public Task saveTask(AONContext ctx, Task task);
 	public void deleteTask(AONContext ctx, Integer id);
 	public HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter);
-	public HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter taskHolder, TaskFilter receiver);
+	public HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver);
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);

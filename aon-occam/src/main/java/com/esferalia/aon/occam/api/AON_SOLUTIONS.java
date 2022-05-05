@@ -765,9 +765,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter taskHolder, TaskFilter receiver) {
+	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter sender, TaskFilter receiver) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskCount(ctx, taskHolder, receiver);
+			return getTask2().getTaskCount(ctx, sender, receiver);
 		}
 	}
 	
