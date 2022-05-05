@@ -48,7 +48,7 @@ public class Page15 extends PageAbs {
 						 || key == Mod2002021Key.LM1254) {
 							table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left());					
 						}
-						paintKeyField(table,key,row,x+1,10);
+						paintKeyField(table,key,row,x+1,10, false);
 					}
 				}
 			}

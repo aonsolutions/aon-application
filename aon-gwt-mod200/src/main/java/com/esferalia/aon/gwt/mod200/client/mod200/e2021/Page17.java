@@ -123,7 +123,7 @@ public class Page17 extends PageAbs {
 		for (int i = 0; i < Mod2002021Constants.DOTACION_KEYS_5.length; i++) {
 			Mod2002021Key key = Mod2002021Constants.DOTACION_KEYS_5[i]; 
 			if (key != null && callback.getMod200Object().isVisible(key)) {
-				paintKeyField(table4,key,row,i+1,10);
+				paintKeyField(table4,key,row,i+1,10, false);
 			}
 		}
 

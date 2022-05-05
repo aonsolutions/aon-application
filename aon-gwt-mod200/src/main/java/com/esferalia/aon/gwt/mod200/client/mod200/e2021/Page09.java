@@ -184,7 +184,7 @@ public class Page09 extends PageAbs {
 			col = 1;
 			for (final IMod200Key k : key.getKeys() ) {
 				if (k != null && k!= Mod2002021Key.LQ1033){
-					paintKeyField(tableDetail, k, r, col, 9);
+					paintKeyField(tableDetail, k, r, col, 9, false);
 				}
 				++col;
 			}
@@ -211,7 +211,7 @@ public class Page09 extends PageAbs {
 			col = 1;
 			for (final IMod200Key k : key.getKeys() ) {
 				if (k != null){
-					paintKeyField(tableDetail2, k, r, col, 9);
+					paintKeyField(tableDetail2, k, r, col, 9, false);
 				}
 				++col;
 			}

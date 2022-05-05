@@ -169,7 +169,7 @@ public class Page07 extends PageAbs {
 			if (rowVisible) {
 				table.setWidget(row, 0, new Label(Page7Row.values()[row].getName()));
 				table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
-								if (Page7Row.values()[row].isTitle()) {
+				if (Page7Row.values()[row].isTitle()) {
 					table.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());	
 				}
 				tableCol = 1;

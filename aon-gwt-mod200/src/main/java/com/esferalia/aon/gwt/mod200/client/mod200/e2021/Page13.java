@@ -73,9 +73,49 @@ public class Page13 extends PageAbs {
 //			row++;
 //		}
 		
-		paintTable(addTable("Determinaci\u00F3n del resultado de la autoliquidaci\u00F3n en cada una de las Administraciones", 5, "200px", true, "400px"), Mod2002021Constants.COMBINED_TAXATION_3, 8, HEADERS, Mod2002021Key.TR420, Mod2002021Key.TR474, Mod2002021Key.TR494, Mod2002021Key.TR1624);
-		paintTable(addTable("Opci\u00F3n de fraccionamiento art. 19.1 LIS", 5, "200px", true, "400px"), Mod2002021Constants.COMBINED_TAXATION_4, 8, HEADERS, Mod2002021Key.TR1646, Mod2002021Key.TR1654);
-		paintTable(addTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", 5, "200px", true, "400px"), Mod2002021Constants.COMBINED_TAXATION_5, 8, HEADERS);
+////		paintTable(addTable("Determinaci\u00F3n del resultado de la autoliquidaci\u00F3n en cada una de las Administraciones", 5, "150px", true), Mod2002021Constants.COMBINED_TAXATION_3, 8, HEADERS, Mod2002021Key.TR420, Mod2002021Key.TR474, Mod2002021Key.TR494, Mod2002021Key.TR1624);
+////		paintTable(addTable("Opci\u00F3n de fraccionamiento art. 19.1 LIS", 5, "150px", true), Mod2002021Constants.COMBINED_TAXATION_4, 8, HEADERS, Mod2002021Key.TR1646, Mod2002021Key.TR1654);
+////		paintTable(addTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", 5, "150px", true), Mod2002021Constants.COMBINED_TAXATION_5, 8, HEADERS);
+//		
+		paintTable("Determinaci\u00F3n del resultado de la autoliquidaci\u00F3n en cada una de las Administraciones", Mod2002021Constants.COMBINED_TAXATION_3, HEADERS, Mod2002021Key.TR420, Mod2002021Key.TR474, Mod2002021Key.TR494, Mod2002021Key.TR1624);
+		paintTable("Opci\u00F3n de fraccionamiento art. 19.1 LIS", Mod2002021Constants.COMBINED_TAXATION_4, HEADERS, Mod2002021Key.TR1646, Mod2002021Key.TR1654);
+		paintTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", Mod2002021Constants.COMBINED_TAXATION_5, HEADERS);
+		
+	}
+	
+	private void paintTable(String title, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key... boldKeys) {
+		
+		FlexTable table = addTable(title, headers.length, "140px");
+	
+		int row = 0;
+		
+		paintEmptyCell(table, row, 0);
+		int col = 1;
+		for (String s : headers) {
+			paintTitle(table, s, row, col);
+			col++;			
+		}
+		
+		row++;
+		
+		for (Mod2002021Key[] keys : liquidationKeys) {
+			boolean paintDescription = true;							
+			for (int i = 0; i < keys.length; i++) {
+				if (keys[i] != null) {
+					if (paintDescription) {
+						boolean bold = false;
+						for (Mod2002021Key key : boldKeys) {
+							if (keys[i] == key)
+								bold = true;
+						}						
+						paintDescription(table, keys[i].getDescription(), row, 0, bold, 0);
+						paintDescription = false;
+					}
+					paintKeyField(table,keys[i], row, i+1, 8, false);					
+				}
+			}
+			row++;
+		}
 		
 	}
 	

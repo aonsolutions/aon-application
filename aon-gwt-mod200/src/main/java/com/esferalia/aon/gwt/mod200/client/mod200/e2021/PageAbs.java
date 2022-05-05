@@ -68,6 +68,24 @@ public abstract class PageAbs extends ResizeComposite {
 		});
 	}
 	
+	protected abstract void populate();
+	protected abstract void initializeTable();
+	
+	protected void dump() {
+		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
+			if (inputs.containsKey(key)) {
+				AonDoubleBox input = inputs.get(key);
+				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
+				input.setValue(var.getValue()); ;
+				input.addStyleName(AON.AON_CSS.aonChanged());
+			}
+		}
+	}
+	
+	protected boolean isAvailable() {
+		return true;
+	}
+	
 	public Map<IMod200Key, AonDoubleBox> getInputs() {
 		return inputs;
 	}
@@ -75,29 +93,34 @@ public abstract class PageAbs extends ResizeComposite {
 		return labels;
 	}
 	
-	protected int paintKey(FlexTable tab,final Mod2002021Key key,int row) {
-		paintKeyDescription(tab,key,row,0);
-		paintKeyField(tab,key,row,1);	
-		return ++row;
+	protected void addBasePanel() {
+		ScrollPanel scroll = new ScrollPanel();
+		basePanel = new FlowPanel();
+		scroll.add(basePanel);
+		initWidget(scroll);		
 	}
 	
-	protected void paintEmptyCell(FlexTable tab, int row,int col) {
+	protected void paintEmptyCell(FlexTable tab, int row, int col) {
 		tab.setWidget(row, col, new FlowPanel());		
 	}
 	
-	protected void paintKeyDescription(FlexTable tab, Mod2002021Key key, int row,int col) {
+	protected int paintKey(FlexTable tab, final Mod2002021Key key, int row) {
+		paintKeyDescription(tab, key, row, 0);
+		paintKeyField(tab, key, row, 1);	
+		return ++row;
+	}
+	
+	protected void paintKeyDescription(FlexTable tab, Mod2002021Key key, int row, int col) {
 		String description = key.getDescription();
-		paintDescription(tab, description, row,col,isTitle(key));	
+		paintDescription(tab, description, row, col, isTitle(key));	
 	}
 	
 	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean title) {
-//		paintDescription(tab, description, row,col, title, 120);
 		paintDescription(tab, description, row,col, title, 0);
 	}
 	
 	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean title, int size) {
 		Label desc = new Label( size > 0 ? AonStringUtils.abbreviate(description, size) : description );
-		//if (AonStringUtils.length(description) > 117) {
 		if (size > 0 && AonStringUtils.length(description) > (size-3)) {
 			desc.setTitle(description);
 		}
@@ -107,39 +130,37 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.setWidget(row, col, desc);
 		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalBorderBottom());
 	}
-
-	protected void paintTitle(FlexTable tab, String description, int row, int col) {
-		Label desc = new Label( description);
-		desc.setStyleName(AON.AON_CSS.aonBold());
-		desc.addStyleName(AON.AON_CSS.aonTextCenter());
-		desc.addStyleName(AON.AON_CSS.aonBorderBottom());		
-		tab.setWidget(row, col, desc);
+	
+	protected void paintKeyField(FlexTable tab, final Mod2002021Key key, int row, int col) {
+		paintKeyField(tab, key, row, col, AonDoubleBox.VISIBLE_LENGTH, true);
 	}
 	
-	protected void paintKeyField(FlexTable tab,final Mod2002021Key key,int row, int col) {
-		paintKeyField(tab, key, row, col, AonDoubleBox.VISIBLE_LENGTH);
-	}
-	
-	protected void paintKeyField(FlexTable tab,final IMod200Key k,int row, int col, int fieldLength) {
+	protected void paintKeyField(FlexTable tab, final IMod200Key k, int row, int col, int visibleLength, boolean padding) {
+		
 		boolean disabled = isDisabled(k);
 		
 		FlowPanel panel = new FlowPanel();
-		String code = k.getCode( callback.getMod200Object().getAdministration());
-//		boolean show = true;
-//		try {
-//			show = Integer.parseInt(codeId) > 0;
-//		} catch (NumberFormatException e) {
-//			// Nothing;
-//		}
-//		if (show) {
+		if (padding && !isTitle(k)) {
+		//if (!isTitle(k)) {
+			// PRUEBA
+			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
+//			panel.addStyleName(AON.AON_CSS.aonPaddingRight());  // 1em
+//			panel.addStyleName(AON.AON_CSS.aonPadding2Right()); // 5px
+		}		
+
+		String code = k.getCode(callback.getMod200Object().getAdministration());
 		if (!code.isEmpty()) {
 			AonBoxLabel codeBoxLabel = new AonBoxLabel(code, Model2002021.BOX_LENGTH);
 			getLabels().put(k, codeBoxLabel);
 			panel.add(codeBoxLabel);
 		}
 
-		final AonDoubleBox text = new AonDoubleBox(fieldLength);
+		final AonDoubleBox text = new AonDoubleBox(visibleLength);
 		text.setResolver(resolver);
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		text.setValue(callback.getMod200Object().getDoubleValue(k));
+		text.setEnabled(!disabled);
 		text.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
 			@Override
@@ -179,17 +200,10 @@ public abstract class PageAbs extends ResizeComposite {
 			}
 		});
 			
-		text.setValue(callback.getMod200Object().getDoubleValue(k));
-		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
-		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
-		text.setEnabled(!disabled);
+		getInputs().put(k, text);
+		
 		panel.add(text);
 		
-		getInputs().put(k, text);
-		// PRUEBA - NO PADDING
-		if (!isTitle(k)) {
-			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-		}
 		tab.setWidget(row, col, panel);
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
@@ -205,6 +219,14 @@ public abstract class PageAbs extends ResizeComposite {
 		return (behaviour != null && behaviour[0]); 
 	}
 	
+//	protected void paintTitle(FlexTable tab, String description, int row, int col) {
+//		Label desc = new Label( description);
+//		desc.setStyleName(AON.AON_CSS.aonBold());
+//		desc.addStyleName(AON.AON_CSS.aonTextCenter());
+//		desc.addStyleName(AON.AON_CSS.aonBorderBottom());		
+//		tab.setWidget(row, col, desc);
+//	}
+//	
 	protected int paintKeyBreakdownLink(final FlexTable tab, int row, Mod2002021Key breakdownKey, IMod200KeysProvider[] keysProvider, String[] headers) {
 		
 		final int boxRow = row-1;
@@ -213,12 +235,12 @@ public abstract class PageAbs extends ResizeComposite {
 		FlowPanel panel  = (FlowPanel) tab.getWidget( boxRow , boxCell );
 		panel.addStyleName(AON.AON_CSS.aonNowrap());
 		
-		Button breakdown = new Button();
+		Button breakdown = new Button();		
 		breakdown.setStyleName(AON.AON_CSS.aonIconModel());
 		breakdown.addStyleName(AON.AON_CSS.aonBorderNone());
 		breakdown.addStyleName(AON.AON_CSS.aonCursorPointer());
 		breakdown.addStyleName(AON.AON_CSS.aonMarginRight());
-		breakdown.setTitle(AON.MSG.breakdown());
+		breakdown.setTitle(AON.MSG.breakdown());		 
 		panel.insert(breakdown,0);
 		final FlowPanel container = new FlowPanel();
 		container.setVisible(false);
@@ -242,21 +264,13 @@ public abstract class PageAbs extends ResizeComposite {
 						tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
 						paintDesc = false;
 					}
-					paintKeyField(tableDetail, k, r, col, 9);					
+					paintKeyField(tableDetail, k, r, col, 9, false);					
 				}
 				++col;
 			}
 			if (!paintDesc)
 				++r;
 		}
-		
-		// Desglose casilla 565, lleva al final 2 checks más
-		// Los quitan a finales de junio de 2021
-//		if (breakdownKey == Mod2002021Key.BN565) {
-//			addCheckBox(Mod2002021Key.BN565A, tableDetail, r);
-//			++r;
-//			addCheckBox(Mod2002021Key.BN565B, tableDetail, r);
-//		}
 		
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
@@ -296,7 +310,7 @@ public abstract class PageAbs extends ResizeComposite {
 			int col = 1;
 			for (IMod200Key key : kp.getKeys()) {				 
 				if (key != null && callback.getMod200Object().isVisible((Mod2002021Key) key)) {
-					paintKeyField(tab,key,row,col,10);
+					paintKeyField(tab, key, row, col, 10, false);
 				}
 				col++;
 			}
@@ -304,31 +318,6 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 	}
 	
-//	protected void addCheckBox(Mod2002021Key key, FlexTable tab, int row) {
-//		
-//		final CheckBox cb = new CheckBox();
-//		cb.setText(key.getDescription());
-//		
-//		DoubleVariable2021 dv = callback.getMod200Object().getMod200().getKeysMap().get(key);			
-//		if (dv != null) {				 
-//		   cb.setValue(dv.getValue()==1.0);
-//		}
-//
-//		cb.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				DoubleVariable2021 bv = new DoubleVariable2021(key);
-//				bv.setValue( cb.getValue()?1.0:0.0 );
-//				callback.getMod200Object().getMod200().addVariable(bv);					
-//			}
-//			
-//		});
-//		
-//		tab.setWidget(row, 0, cb);
-//		tab.getFlexCellFormatter().setColSpan(row, 0, 3);		
-//		
-//	}	
-
 	protected FlexTable getFlexTable(Panel container, int row, String[] headers) {
 		FlexTable tableDetail = new FlexTable();
 		container.add(tableDetail);
@@ -356,24 +345,6 @@ public abstract class PageAbs extends ResizeComposite {
 		return tableDetail;
 	}
 	
-	protected abstract void populate();
-	protected abstract void initializeTable();
-	
-	protected void dump() {
-		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
-			if (inputs.containsKey(key)) {
-				AonDoubleBox input = inputs.get(key);
-				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
-				input.setValue(var.getValue()); ;
-				input.addStyleName(AON.AON_CSS.aonChanged());
-			}
-		}
-	}
-	
-	protected boolean isAvailable() {
-		return true;
-	}
-	
 	protected Label getTitle(String text) {
 		Label title = new Label(text);
 		title.setStyleName(AON.CSS.aonMarginTop());
@@ -396,14 +367,8 @@ public abstract class PageAbs extends ResizeComposite {
 		subtitle.addStyleName(AON.CSS.aonBorderBottom());
 		return subtitle;
 	}
-	
-	protected void addBasePanel() {
-		ScrollPanel scroll = new ScrollPanel();
-		basePanel = new FlowPanel();
-		scroll.add(basePanel);
-		initWidget(scroll);		
-	}
-	
+//	
+//	
 	// Añadir FlexTable a basePanel
 	protected FlexTable addTable() {
 		return addTable("");
@@ -420,36 +385,31 @@ public abstract class PageAbs extends ResizeComposite {
 	protected FlexTable addTable(String title, int numAmountCols, String columnWidth) {
 		return addTable(title, numAmountCols, columnWidth, false);			
 	}
-	protected FlexTable addTable(String title, int numAmountCols, String columnWidth, boolean horizontalScroll) {
-		return addTable(title, numAmountCols, columnWidth, horizontalScroll, "auto");
-	}
-	protected FlexTable addTable(String title, int numAmountCols, String columnWidth, boolean horizontalScroll, String descriptionWidth) {
+	protected FlexTable addTable(String title, int numAmountCols, String columnAmountWidth, boolean horizontalScroll) {
 
 		if (AonStringUtils.isNotBlank(title)) {
 			basePanel.add(getTitle(title));			
 		}
 		
 		FlexTable tab = new FlexTable();
-		tab.setCellSpacing(0);
+		// PRUEBA
+//		tab.setCellSpacing(0);		
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab.addStyleName(AON.CSS.aonMargin());
+		tab.addStyleName(AON.CSS.aonMargin());		
+		
+		// Ancho de las columnas de importes
+		for (int i = 0; i < numAmountCols; i++) {
+			tab.getColumnFormatter().setWidth((i+1), columnAmountWidth);
+		}
 		
 		if (horizontalScroll) {
 			FlowPanel tableContainer = new FlowPanel();
-			tableContainer.setStyleName(AON.AON_CSS.aonBorderBottom());
+			tableContainer.addStyleName(AON.AON_CSS.aonBorderBottom());
 			tableContainer.addStyleName(AON.AON_CSS.aonFiscalScrollTableWrapper());
 			tableContainer.add(tab);			
 			basePanel.add(tableContainer);
 		} else {
 			basePanel.add(tab);			
-		}
-		
-		// Ancho de la columna de la descripción
-		tab.getColumnFormatter().setWidth(0, descriptionWidth);
-		
-		// Ancho de las columnas de importes
-		for (int i = 0; i < numAmountCols; i++) {
-			tab.getColumnFormatter().setWidth((i+1), columnWidth);	
 		}
 		
 		return tab;
@@ -470,54 +430,69 @@ public abstract class PageAbs extends ResizeComposite {
 		
 	}
 	
+//	protected void paintTitle(FlexTable tab, String description, int row, int col) {
+//	Label desc = new Label( description);
+//	desc.setStyleName(AON.AON_CSS.aonBold());
+//	desc.addStyleName(AON.AON_CSS.aonTextCenter());
+//	desc.addStyleName(AON.AON_CSS.aonBorderBottom());		
+//	tab.setWidget(row, col, desc);
+//  }
+	
+	protected void paintTitle(FlexTable tab, String description, int row, int col) {
+		addHeaderCell(tab, row, col, description, false); 
+	}
+	
 	protected void addHeaderCell(FlexTable table, int row, int col, String msg) {
+		addHeaderCell(table, row, col, msg, true);
+	}
+	protected void addHeaderCell(FlexTable table, int row, int col, String msg, boolean smallFont) {
 
 		table.setWidget(row, col, new Label( msg ));
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		
-	}
-	
-	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key... boldKeys ) {
-		paintTable(table, liquidationKeys, AonDoubleBox.VISIBLE_LENGTH, headers, boldKeys);
-	}
-	
-	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, int fieldLength, String[] headers, Mod2002021Key... boldKeys ) {
-		
-		int row = 0;
-		
-		paintEmptyCell(table, row, 0);
-		int col = 1;
-		for (String s : headers) {
-			paintTitle(table, s, row, col);
-			col++;			
-		}
-		
-		row++;
-		
-		for (Mod2002021Key[] keys : liquidationKeys) {
-			boolean paintDescription = true;							
-			for (int i = 0; i < keys.length; i++) {
-				if (keys[i] != null) {
-					if (paintDescription) {						
-						boolean bold = false;
-						for (Mod2002021Key key : boldKeys) {
-							if (keys[i] == key)
-								bold = true;
-						}
-						
-						paintDescription(table, keys[i].getDescription(), row, 0, bold, 0);
-						
-						paintDescription = false;
-					}
-					paintKeyField(table, keys[i], row, i+1, fieldLength);
-				}
-			}
-			row++;
+		if (smallFont) {
+			table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
 		}
 		
 	}
+	
+//	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key... boldKeys ) {
+//		paintTable(table, liquidationKeys, AonDoubleBox.VISIBLE_LENGTH, headers, boldKeys);
+//	}
+//	
+//	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, int fieldLength, String[] headers, Mod2002021Key... boldKeys ) {
+//		
+//		int row = 0;
+//		
+//		paintEmptyCell(table, row, 0);
+//		int col = 1;
+//		for (String s : headers) {
+//			paintTitle(table, s, row, col);
+//			col++;			
+//		}
+//		
+//		row++;
+//		
+//		for (Mod2002021Key[] keys : liquidationKeys) {
+//			boolean paintDescription = true;							
+//			for (int i = 0; i < keys.length; i++) {
+//				if (keys[i] != null) {
+//					if (paintDescription) {						
+//						boolean bold = false;
+//						for (Mod2002021Key key : boldKeys) {
+//							if (keys[i] == key)
+//								bold = true;
+//						}
+//						paintDescription(table, keys[i].getDescription(), row, 0, bold);
+//						paintDescription = false;
+//					}
+//					paintKeyField(table, keys[i], row, i+1, fieldLength);
+//				}
+//			}
+//			row++;
+//		}
+//		
+//	}
 	
 }
