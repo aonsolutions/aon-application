@@ -6107,7 +6107,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 	
 	@Override
-	public String getEmployeeCbcTransform(String domainName, String userLogin, String ipf, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
+	public String getEmployeeCbcTransform(String domainName, String userLogin, String cif, String ipf, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6117,12 +6117,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Copy Contract
 			byte[] pdfBytes = JooqContractAttach.getCopyBasic(connection, contractId);
 
+			System.out.println("getEmployeeCbcTransform()\ncif : " + cif + "\nipf : " + ipf + "\nstartDate : " + startDate + "\nsepeIde : " + sepeIde);
+
 			// If not exist download
 			if (null == pdfBytes) {
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				String cif = "43443804R";
 				pdfBytes = AonStringUtils.isBlank(sepeIde) ?  Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
 						: Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyBasic(connection, domainId, contractId, pdfBytes);
@@ -6182,7 +6183,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 	
 	@Override
-	public String getEmployeeCtoTransform(String domainName, String userLogin, String ipf, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
+	public String getEmployeeCtoTransform(String domainName, String userLogin, String cif, String ipf, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6191,14 +6192,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Copy Contract
 			byte[] pdfBytes = JooqContractAttach.getCopyContract(connection, contractId);
+			
+			System.out.println("getEmployeeCtoTransform()\ncif : " + cif + "\nipf : " + ipf + "\nstartDate : " + startDate + "\nsepeIde : " + sepeIde);
 
 			// If not exist download
 			if (null == pdfBytes) {
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				String cif = "43443804R";
-				
 				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
 						: Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyContract(connection, domainId, contractId, pdfBytes);
