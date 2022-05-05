@@ -420,8 +420,6 @@ export const fillChat = (task, meId, workflows=[])=>{
     }
 }
 
-
-
 const getAppPermission = (dur, value) => {
   let apps = [];
   if( dur.isAccounting())

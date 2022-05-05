@@ -245,17 +245,20 @@ export const createAction = (icon, message, submessage) => {
   };
 
   const image = icon.type === CONSTANT.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
-  const text = createText({
-    text : message,
-    fontSize : "1.1em",
-    fontWeight:400,
-    color : CSS.variable(COLORS.GRAYSON)
-  });
-  text.element.style.flex = "1 0";
-  
   image.appendTo(wrapper.element);
   wrapper.appendTo(comp.element);
-  text.appendTo(comp.element);
+
+  if(message){
+    const text = createText({
+      text : message,
+      fontSize : "1.1em",
+      fontWeight:400,
+      color : CSS.variable(COLORS.GRAYSON)
+    });
+    text.element.style.flex = "1 0";
+    text.appendTo(comp.element);
+  } 
+
   if(submessage){
     const blockquote = newComponent({
       type:"blockquote",
@@ -754,7 +757,7 @@ export const createTagHtml = (tag, parent) => {
 }
 
 
-export const openSendTaskHistoricEmail= (ev)=> {
+export const openDialogBranch= (ev)=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const application = aonMessengerChat.getApplication();
 
@@ -768,13 +771,14 @@ export const openSendTaskHistoricEmail= (ev)=> {
     
 
   const div = document.createElement(TAG.DIV);
+  dialog.setContent(div);
 
   //---FORM------
   // const emailId  = "sendHistoricEmail";
   // const email = setAttributes(new AonInput(),{ name:emailId, id: emailId, description: MSG.EMAIL });
   // div.appendChild(email);
 
-  const workgroup  =  createSelectCau(MSG.WORKGROUP, MSG.WORKGROUP+"Random", MSG.WORKGROUP);
+  const workgroup  = createSelectCau(MSG.WORKGROUP, MSG.WORKGROUP+"Random", MSG.WORKGROUP);
   div.appendChild(workgroup);
   aonMessengerChat.getWorkgroup().then(options=>{
     workgroup.setOptions(options);
@@ -783,17 +787,30 @@ export const openSendTaskHistoricEmail= (ev)=> {
   const taskHolder = createSelectCau("taskHolderSendRandom", "taskHolderSendRandom", "Asignar a");
   div.appendChild(taskHolder);
 
-  aonMessengerChat.getTaskHolderByWorkgroup(aonMessengerChat.getData().myTaskHolder, {}).then(options=>{
+  const myTaskHolder =  aonMessengerChat.getData().myTaskHolder;
+
+  aonMessengerChat.getTaskHolderByWorkgroup(myTaskHolder, {})
+  .then(options=>{
     taskHolder.setOptions(options);
-  })
+  });
 
-  const noteId  = "sendHistoricId";
-  const note = setStyles(createAonTextArea("Escriba una nota..."), {  });
+  workgroup.addEventListener(EVENT.CHANGE, async ({detail})=>{
+    taskHolder.clear();
+    if(detail){
+      aonMessengerChat.getTaskHolderByWorkgroup(myTaskHolder, {workgroup:workgroup.value})
+      .then(options=>{
+        taskHolder.clear();
+        taskHolder.setOptions(options);
+      });
+    }
+   });
+
+  const noteId = "sendHistoricId";
+  const note = createAonTextArea("Escriba una nota...");
+  note.id = noteId;
   note.name = noteId;
-
   div.appendChild(note);
-
-  dialog.setContent(div);
+  note.getTextArea().style.minHeight = "100px";
 
   dialog.addSendAction(async()=>{
     if(taskHolder.value && workgroup.value){
@@ -805,7 +822,7 @@ export const openSendTaskHistoricEmail= (ev)=> {
           type: WORKFLOW_TYPES.CONNECTED, 
           workgroup:workgroup.getDetail(), 
           task_holder_receiver:taskHolder.getDetail(), 
-          comment: note.value
+          note: note.value
         };
         console.log(params);
 

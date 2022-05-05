@@ -487,7 +487,12 @@ export class AonMessengerChat extends AonElement {
 
     return options;
   }
-
+  /**
+   * 
+   * @param {TaskHolder} taskHolder myTaskHolder
+   * @param {Object} workgroud workgroupID 
+   * @returns 
+   */
   async getTaskHolderByWorkgroup(taskHolder, {workgroup}){
     const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
 

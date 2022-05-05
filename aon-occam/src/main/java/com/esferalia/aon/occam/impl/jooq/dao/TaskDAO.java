@@ -383,23 +383,24 @@ public class TaskDAO {
 //		return map;
 //	}
 	
-	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter taskHolder, TaskFilter receiver){
-		Integer th = 0;
+	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver){
 		Integer sd = 0;
-
+		Integer rv = 0;
+	
 		HashMap<String, Integer> map = new HashMap<>();
 		
-		//RECEIVED
-		th  = selectCount(ctx, taskHolder).fetchOne(0, Integer.class);
-		
 		//SENDER
-		sd = selectCount(ctx, receiver).fetchOne(0, Integer.class);
+		sd = selectCount(ctx, sender).fetchOne(0, Integer.class);
 		
-		if(sd==null)     sd = 0;
-		if(th==null) th = 0;
+		//RECEIVED
+		rv  = selectCount(ctx, receiver).fetchOne(0, Integer.class);
+		
+
+		if(sd==null)  sd = 0;
+		if(rv==null) rv = 0;
 	
 		map.put("sender", sd);
-		map.put("task_holder", th);
+		map.put("task_holder", rv);
 		
 		return map;
 	}
