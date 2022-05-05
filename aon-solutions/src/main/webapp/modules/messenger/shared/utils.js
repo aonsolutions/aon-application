@@ -125,7 +125,7 @@ const blockquote = ()=>{
  * @returns {Object} actionJson message new object
  */
 export const chooseIconMessage = ({type, date, name, comment}) => {
-    const dateParse = AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date);
+    const dateParse = date ? (AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date)) : null;
     
     let actionJson = {
         icon : MATERIAL_ICONS.INFO,
