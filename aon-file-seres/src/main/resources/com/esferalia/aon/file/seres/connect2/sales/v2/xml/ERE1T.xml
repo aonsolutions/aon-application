@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1T">
+	<field name="Tipo de Registro ERE1T" value="ERE1T" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador del tema de Texto" value="bean" bean ="ERE1T" property="calificadorDelTemaDeTexto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Texto 1" value="bean" bean ="ERE1T" property="texto1" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 2" value="bean" bean ="ERE1T" property="texto2" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 3" value="bean" bean ="ERE1T" property="texto3" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 4" value="bean" bean ="ERE1T" property="texto4" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 5" value="bean" bean ="ERE1T" property="texto5" format="AlphaNumeric" pattern="X(70)" />
+</register>

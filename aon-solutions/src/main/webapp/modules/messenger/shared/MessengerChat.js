@@ -1,14 +1,18 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT} from "../../../environments/environments.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
-import {  createMainView, createTitle, createAonTextArea, createChat, createSectionComment, createLabelFileText, openSendTaskHistoricEmail} from "./creationUtils.js";
+import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openSendTaskHistoricEmail} from "./creationUtils.js";
 import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
 import * as ACTIONS from "../../actions.js";
 import { SigninSidenav } from "../../timecontrol/signinEnums.js";
+import { AonTab } from "../../../components/aon-tab.js";
+import { getTaskOne } from "../../../services/taskService.js";
+import { Task } from "../../../models/task/Task.js";
+import { sortBy } from "../../../services/utils.js";
 
 /**
  * 
@@ -19,6 +23,8 @@ export const buildDesktop = (aonMessengerChat)=> {
   buildToolbar(aonMessengerChat);
 
   const mainView = createMainView(aonMessengerChat); //DIV MAIN
+  mainView.style.overflow = 'auto';
+  mainView.classList.add(CSS.NO_SCROLLBAR);
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
 
@@ -26,7 +32,12 @@ export const buildDesktop = (aonMessengerChat)=> {
 
   if(aonMessengerChat.task.id){
     const secondDiv = createSecondDiv(mainView); //-------------------------DIV RIGHT
-    buildSectionHistoric(secondDiv);
+
+    firstDiv.style.boxSizing = 'border-box';
+    secondDiv.style.boxSizing = 'border-box';
+    secondDiv.style.height = '96%';
+
+    buildTabs(secondDiv, aonMessengerChat);
   }
 }
 
@@ -52,16 +63,17 @@ const buildToolbar = (aonMessengerChat) => {
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
-    if(task.id && aonMessengerChat.isBeta() && !aonMessengerChat.isCau()){
-      toolbar.addButton2({
-        id:"sendEmail",
-        name: MSG.SEND,
-        icon:MATERIAL_ICONS.FORWARD_TO_INBOX
-      }, (e) =>openSendTaskHistoricEmail(e));
-    }
-
     if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
       if(!aonMessengerChat.isCau()){
+
+        if(task.id){
+          toolbar.addButton2({
+            id:"createBranch",
+            name: "Crear Rama",
+            aonIcon:"aon_branch" 
+          }, (e) =>openSendTaskHistoricEmail(e));
+        }
+
         toolbar.addButton2({
           id: 'Labels',
           name: MSG.LABELS,
@@ -84,11 +96,15 @@ const buildToolbar = (aonMessengerChat) => {
     }
 
     if(task.id){
-      if([TASK_STATUS.DELETED, TASK_STATUS.FINISHED].includes(task.status))
+      if([TASK_STATUS.DELETED, TASK_STATUS.FINISHED].includes(task.status)){
         toolbar.addButton2({...ACTIONS.RESTORE, name:MSG.REOPEN}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
+      }
 
-      if(task.status != TASK_STATUS.DELETED) 
+      if(task.status != TASK_STATUS.DELETED) {
         toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE,  icon: MATERIAL_ICONS.ARCHIVE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
+      } else {
+        toolbar.addButtonAfter(ACTIONS.DELETE, () => aonMessengerChat.deleteTask(), ACTIONS.PREVIOUS.id);
+      }
     }
 
     if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) )
@@ -108,27 +124,78 @@ const buildToolbar = (aonMessengerChat) => {
  * @param {HTMLElement} secondDiv secondDiv
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
-const buildSectionHistoric = (secondDiv) => {
-    /**
-     * Wrapper 
-     * if some new side menus / toolbars needed, here.
-     */
-    const wrapper = newComponent({
-        type: MESSENGER_COMPONENTS.WRAPPER,
-        classes: [CSS.FLEX_COLUMN],
-        styles: {
-            width:'92%',
-            height: '100%',
-        }
-    });
-    wrapper.appendTo(secondDiv);
+const buildTabs = async (secondDiv, aonMessengerChat) => {
+    secondDiv.classList.add(CSS.FLEX_WRAP);
 
-    const title = setStyles(createTitle(MSG.HISTORIC), {
-      alignSelf: 'center',
-      paddingBottom: '10px',
-      borderBottom: '1px solid #f0f0f0',
+    const task = aonMessengerChat.task;
+
+    let tab = new AonTab();
+    tab.id = MESSENGER_IDS.AON_TAB;
+    secondDiv.appendChild(tab);
+
+    // let divTab = document.getElementById(tab.DIV);
+    // console.log("newDiv", divTab);
+    // divTab.style.display = "flex";
+    // divTab.style.flexWrap = "wrap";
+    // divTab.style.height = "auto";
+    // divTab.style.minHeight = "40px";
+
+    const wrapper = buildWrapper(secondDiv, task);
+
+    buildChat(task, wrapper);
+
+    tab.addOption({ 
+      title: MSG.HISTORIC, 
+      fn: () => {
+        buildChat(task, wrapper);
+        aonMessengerChat.getTaskWorkflow(task);
+      }
     });
-    wrapper.appendChild(title);
+
+    if(task.getParent()){
+      await getTaskOne({id:task.getParent()}).then(tk => {
+
+        const task = new Task(tk);
+        
+        tab.addOption({
+          title: "Padre #"+(task.number || "0").toString().padStart(5, 0),
+          fn: ()=>{
+            buildChat(task, wrapper);
+            aonMessengerChat.getTaskWorkflow(task);
+          }
+        });
+
+      })
+    }
+
+    sortBy(task.getChilds(), 'number').forEach(tk=>{
+      const task = new Task(tk);
+      
+      tab.addOption({
+        title: "#"+(task.number || "0").toString().padStart(5, 0),
+        fn: ()=>{
+          buildChat(task, wrapper);
+          aonMessengerChat.getTaskWorkflow(task);
+        }
+      });
+    });
+}
+
+const buildWrapper = (secondDiv) => {
+   /**
+   * Wrapper 
+   * if some new side menus / toolbars needed, here.
+   */
+    const wrapper = newComponent({
+      type: MESSENGER_COMPONENTS.WRAPPER,
+      classes: [CSS.FLEX_COLUMN],
+      styles: {
+          width:'92%',
+          height: '100%',
+      }
+    }).element;
+    secondDiv.appendChild(wrapper);
+
     
     /**
      * The chat itself
@@ -138,16 +205,28 @@ const buildSectionHistoric = (secondDiv) => {
     chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
 
-
-    //-----------------ADD TEXT AREA CHAT
-    addTextAreaChat(wrapper); //
-
     addChatButtonsUpDown(secondDiv); //BUTTONS DOWN UP CHAT
+
+    return wrapper;
 }
 
-const addTextAreaChat = (wrapper) => {
+const buildChat = (task, wrapper) => {
+    wrapper.innerHTML = "";
+
+    wrapper.dataset.taskId = task.id;
+
+    const chat = createChat(); 
+    
+    chat.classList.add(CSS.MATERIAL_SCROLL);
+    wrapper.appendChild(chat);
+
+
+    //-----------------ADD TEXT AREA CHAT
+    addTextAreaChat(wrapper, task); //
+}
+
+const addTextAreaChat = (wrapper, task) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-  const task = aonMessengerChat.task;
 
   if( [TASK_STATUS.IN_PROGRESS, TASK_STATUS.PENDING].includes(task.status) ){
     const divs = createSectionComment(wrapper);
@@ -162,18 +241,18 @@ const addTextAreaChat = (wrapper) => {
 
     divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
       if (ev.ctrlKey && ev.keyCode == 13) {
-        aonMessengerChat.saveComment();
+        aonMessengerChat.saveComment(undefined, task);
       } else if(ev.ctrlKey && ev.keyCode == 88){
-        openFullComment(aonMessengerChat, divs.aonTextArea);
+        openFullComment(aonMessengerChat, divs.aonTextArea, task);
       }
     });
 
-    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment());
+    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment(undefined, task));
     divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
   }
 }
 
-const openFullComment = (aonMessengerChat, aonTextArea) => {
+const openFullComment = (aonMessengerChat, aonTextArea, task) => {
   const dialog = aonMessengerChat.applicationEl.getDialog();
   dialog.clear();
   if (!aonMessengerChat.isMobile()) dialog.width = "600px";
@@ -194,7 +273,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
 
   let button = dialog.addSendAction(
     ()=>{
-      aonMessengerChat.saveComment();
+      aonMessengerChat.saveComment(undefined, task);
       dialog.close();
     }, 
     MSG.SEND

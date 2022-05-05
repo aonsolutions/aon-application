@@ -1734,16 +1734,23 @@
 			*  GLOBAL WINDOW CONTROLS
 			*/
 			document.documentElement.addEventListener("keydown", listenGlobalKeys)
+			
+			/**
+			* SONAR : Keep session alive  
+			*/
+			const sonar = new XMLHttpRequest();
+			sonar.onload = function() {
+				console.log(this.responseText);
+			}
+  			setInterval(function(){
+				sonar.open("GET", "sonar");				
+				sonar.send();				
+				
+			}, 300000);
+			
 		
 	</script>
 		
-	<a4j:region>
-		<h:form>
-			<a4j:poll status="aonStatus" interval="300000"
-				actionListener="#{desktop.onRefresh}" reRender="aonHeader" />
-		</h:form>
-	</a4j:region>
-
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
 		<aon:panelGrid columns="4" width="100%" 
@@ -1812,43 +1819,82 @@
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 						</a4j:support> 
 						
-						<a4j:support 
-						event="onfocus"
-						onsubmit="if (!#{rich:element('smartFilter')}.value) {return false;}"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterFocus"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
-						</a4j:support> 
-
-						<a4j:support 
-						event="onblur"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterBlur"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{false}" />
-						</a4j:support> 
-
 					</aon:inputText>
 					
 					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" >
+						
 						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" style="display:none;" >
+
+							<aon:if test="#{aonConfiguration.properties.showSearchResults}" >
 
 							<aon:div styleClass="search-results-popup-filter" >
 								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
 							</aon:div>
 							
+							<aon:div styleClass="search-results-popup-title" >
+								<aon:if test="#{helpSwitcher.model.rowCount eq 0 }" >
+									<aon:outputText value="Ningún resultado en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{helpSwitcher.model.rowCount eq 1}" >
+									<aon:outputText value="Un resultado en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{helpSwitcher.model.rowCount le 10 and helpSwitcher.model.rowCount gt 1  }" >
+									<aon:outputText value=" #{helpSwitcher.model.rowCount} resultados en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{helpSwitcher.model.rowCount gt 10 }" >
+									<aon:outputText value="Más de 10 resultados en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+							</aon:div>
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+								<ui:param name="rows" value="10" />
+							
+								<ui:param name="skipSelectButton" value="#{true}" />
+								<ui:param name="showDataScroller" value="#{false}" />
+							
+								<ui:param name="controller" value="#{helpSwitcher}" />
+								<ui:param name="skipFocusFirst" value="true" />
+							
+								<ui:define name="columns">
+								<aon:column 
+									styleClass="aon-editDataTable-textColumn aon-width-auto selectable" 
+									onmouseover="javascript:showHelpTooltip(event,'#{to.getURI()}')"
+									onmouseout="javascript:hideHelpTooltip(event)"
+									onclick="javascript:hideHelpTooltip(true)"
+									>
+									
+									<h:outputLink target="#{to.getTitle()}" value="#{to.getURI()}" style="display: inline-block;width: 100%;">
+										<aon:outputText 
+											value="#{to.getDisplay(search.filter)}"
+											
+											escape="false" />
+									</h:outputLink> 					
+								</aon:column>
+								</ui:define>
+							</ui:decorate>
+
 							<aon:if test="#{(!domainSwitcher.adminDomain) and (domainSwitcher.domainCount > 0)}">
 								<aon:div styleClass="search-results-popup-title" >
-									<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
-									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									<aon:if test="#{domainSwitcher.model.rowCount eq 0}" >
+										<aon:outputText value="Ninguna Empresa encontrada"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
+									<aon:if test="#{domainSwitcher.model.rowCount eq 1}" >
+										<aon:outputText value="Una Empresa encontrada"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
+									<aon:if test="#{domainSwitcher.model.rowCount le 10 and domainSwitcher.model.rowCount gt 1}" >
+										<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
+									<aon:if test="#{domainSwitcher.model.rowCount gt 10 }" >
+										<aon:outputText value="Más de 10 Empresas encontradas"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
 								</aon:div>
 						
 								<aon:methodParam name="rowSelectorAction" value="start" />
@@ -1888,8 +1934,22 @@
 
 							<aon:if test="#{(!domainSwitcher.adminDomain)}">
 							<aon:div styleClass="search-results-popup-title" >
-								<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
-								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								<aon:if test="#{contractSwitcher.model.rowCount eq 0 }" >
+									<aon:outputText value="Ningún Trabajador encontrado"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{contractSwitcher.model.rowCount eq 1 }" >
+									<aon:outputText value="Un Trabajador encontrado"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{contractSwitcher.model.rowCount le 10 and contractSwitcher.model.rowCount gt 1 }" >
+									<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{contractSwitcher.model.rowCount gt 10 }" >
+									<aon:outputText value="Más de 10 Trabajadores Encontrados "
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
 							</aon:div>
 							<aon:methodParam name="rowSelectorAction" value="home_employee" />
 							<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectContractDomain}" type="actionListener" />
@@ -1918,7 +1978,9 @@
 							<aon:div></aon:div>
 							</aon:if>
 						
+							</aon:if>
 						</aon:div>
+					
 					</aon:div>
 	
 			</aon:panelGroup>

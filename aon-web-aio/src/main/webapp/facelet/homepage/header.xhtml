@@ -768,11 +768,11 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-tgss.png']});
 	}
 	
-	.aon-icon-mail-save{
+	.aon-icon-mail-save {
 		padding: 24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-download.svg']}) ;
 	}
-	
+
 	.aon-icon-audit {
 		background-size:cover;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-visibility.svg']});
@@ -1055,7 +1055,7 @@
     	border: solid #F3F3F3 1px !important;
     }
     
-.aon-menu-popup
+	.aon-menu-popup
 	 {
 		opacity:0.94;	 
 	 	color: #FFF !important;
@@ -1357,10 +1357,10 @@
 		display: none;
 		position: absolute;
 		z-index: 100;
-		width: 40rem;
+		width: 50rem;
 		opacity: 0;
 		background: "#fafafa";
-		transition: opacity .35s; 
+		transition: opacity .15s; 
 		cursor: pointer;
 		border-radius: .35rem;
 		box-shadow: 0 .1rem .2rem rgba(0,0,0,.14);
@@ -1368,12 +1368,13 @@
 		border: 0.12rem solid rgba(0,0,0,.11);
 	}
 	
-	#helpTooltip img {
+	#helpTooltip iframe {
 		position: relative;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-				
+		border: none;
+		height: 16rem;
 	}
 
 	#helpTooltip.focus{
@@ -1420,7 +1421,16 @@
 	#helpTooltip.focus #tooltip-key #pin {
 		display: inline;	
 	}
-	
+
+	#helpTooltip .keyboard-icon {
+		background: #002469;
+		color: #fff;
+		border-radius: .25rem;
+		padding: .01rem .3rem;
+		font-size: .6rem;
+		font-weight: bold;
+	}
+
 	@keyframes gradient-animation {
 	  from {
 	    left: 0%;
@@ -1429,7 +1439,7 @@
 	    left: 100%;
 	  }
 	}
-		
+	
 
 	</style>
 
@@ -1447,6 +1457,8 @@
 				}, 200);
 			}
 			
+			let selected = -1;
+			
 			function escSearchResults(e){
 				if ( e.which === 27 ) {
 					#{rich:element('smartFilterTablePanel')}.style.display='none';
@@ -1454,8 +1466,87 @@
       				e.preventDefault();  
       				e.returnValue = false;
       				e.cancelBubble = true;
+      				
+      				hideHelpTooltip(true);
       				return false;
 				}
+				
+				// if arrows or enter
+				if(e.which === 38 || e.which === 40 || e.which === 13) {
+					e.stopPropagation();
+      				e.preventDefault();  
+      				e.returnValue = false;
+      				e.cancelBubble = true;
+      				
+      				const searchResults = #{rich:element('smartFilterTablePanel')}.querySelectorAll(".selectable");
+      				if(searchResults.length == 0){
+      					return;
+      				}
+      				
+    				// Arrow up
+    				if(e.which === 38) {
+    					selected--;
+    					
+    					if(selected &lt; 0){
+    						selected = searchResults.length -1;
+    					}
+    					
+    					resetResultStates(searchResults, selected)
+    					
+    				}
+    				
+    				// Arrow down
+    				if(e.which === 40) {
+          				selected++;
+          				
+          				if(selected >= searchResults.length){
+          					selected = 0;
+          				}
+          				
+          				resetResultStates (searchResults, selected)
+    				}
+    				
+    				// Enter
+    				if(e.which === 13) {
+    					
+    					const link = searchResults[selected].querySelector("a");
+    					searchResults[selected].click();
+    					
+    					if(link) {
+    						link.click();
+    					}
+    					
+    				}
+      				
+				} else {
+					selected = -1;
+				}
+				
+
+				
+			}
+			
+			function resetResultStates (searchResults, selected) {
+				searchResults.forEach(p => {
+					p.style.background = "#fff";
+					
+					const mouseout = searchResults[selected].onmouseout;
+					if(mouseout){
+						mouseout({
+							target : searchResults[selected],
+						});
+					} 
+					})
+				
+				const mouseover =  searchResults[selected].onmouseover;
+				if(mouseover){
+					mouseover({
+						target : searchResults[selected],
+						clientX : searchResults[selected].getBoundingClientRect().right - (searchResults[selected].offsetWidth / 2),
+					});
+				}
+				
+				searchResults[selected].style.background = "#f1f1f1";
 			}
 			
 			function focusSearchResults(){
@@ -1469,108 +1560,188 @@
 
 			let helpTooltipTimeout;
 			
-			function showHelpTooltip(event,url){
+			/**
+			* 	Show help tooltip
+			*	@param event The event activating the function
+			*   @param url The url to show
+			*/
+			function showHelpTooltip( event, url ){
 				
 					helpTooltipTimeout = setTimeout(function(){
 						
 						const tooltip = document.getElementById("helpTooltip");
-						const image = document.querySelector("#helpTooltip img");
+						const frame = document.querySelector("#helpTooltip iframe");
 						const optionRect = event.target.getBoundingClientRect();;
 						
-						if(Math.abs(event.clientY - optionRect.top) > 18)
-						{
+						if(!tooltip || !frame){
 							return;
 						}
 						
+						if(Math.abs(event.clientY - optionRect.top) > 18){
+							return;
+						}
+						
+						tooltip.dataset.url = url;
+						
 						// Set loading animation
-						tooltip.classList.add("loading");	
-						image.style.transition = "none";
-						image.style.opacity = 0;
+						frame.style.transition = "none";
+						frame.style.opacity = 1;
 						
 
 						// Get the right tooltip URL						
 						const filename = url.substr( url.lastIndexOf('/') + 1, url.lastIndexOf('.pdf')-5);
 						let name = url.substr( url.lastIndexOf('#') + 1);
 						
+						let tooltipUrl = "";
+						
 						if(url.lastIndexOf('#') == -1) {
-							image.src = "Tooltip/?page=" + 0 + "&amp;filename=" + filename
+							tooltipUrl = b64EncodeUnicode("../../Tooltip/?page=" + 0 + "&amp;filename=" + filename)						
 						} else {
-							image.src = "Tooltip/?name=" + name + "&amp;filename=" + filename
+							tooltipUrl = b64EncodeUnicode("../../Tooltip/?name=" + name + "&amp;filename=" + filename)
 						}
-								
+						
+						frame.src =  "html/pdfjs/viewer.html?encoded=true&amp;file=" + tooltipUrl +"#zoom=page-width"; 
+						
 						// Show tooltip						
 						tooltip.style.display = "block";
-						tooltip.style.top = ( optionRect.top + 20) + "px";
+						tooltip.style.top = ( optionRect.top + 20 ) + "px";
+						
 						tooltip.style.left = event.clientX  + "px";
 						tooltip.style.transform = "translateX(-50%)";
-				
 						setTimeout(() => tooltip.style.opacity = "1", 250);
-						
-						// when image is loaded stop loading animation
-						const loadingCheckInterval = setInterval(() => {
-							if(image.complete){
-								setTimeout(() => {
-									image.style.transition = "opacity .25s";
-									image.style.opacity = "1";
-									image.onclick = () => window.open(url, '_blank').focus();
-									tooltip.classList.remove("loading");
-									clearInterval(loadingCheckInterval);
-								}, 350);
-								
-			}
-						}, 100);
-			
-			
-					}, 1000);
+												
+					}, 150);
+
 			}
 			
 			
+			/**
+			*	Encode unicode to base64 
+			*	@param str The string to encode
+			*/
+			function b64EncodeUnicode(str) {
+		        // first we use encodeURIComponent to get percent-encoded UTF-8,
+		        // then we convert the percent encodings into raw bytes which
+		        // can be fed into btoa.
+		        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+		            function toSolidBytes(match, p1) {
+		                return String.fromCharCode('0x' + p1);
+		        }));
+		    }
+			
+			/**
+			* Hide the help tooltip
+			* @param force force the hide tooltip, false by default
+			*/
 			function hideHelpTooltip(force = false) {
 				clearTimeout(helpTooltipTimeout);
 				const tooltip = document.getElementById("helpTooltip");
+				
+				if(!tooltip){
+					return;
+				}
+				
+				console.log("Hiding tooltip. FORCE = " + force);
 				
 				if(!force &amp;&amp; tooltip.classList.contains("focus")){
 					return;
 				}
 				
+			
+				
 				tooltip.style.opacity = "0";
-				setTimeout(() => tooltip.style.display = "none", 260);
+				setTimeout(() => tooltip.style.display = "none", 20);
 			}
 			
-			document.documentElement.addEventListener("keydown",(e) => {
+			
+			function listenGlobalKeys(e) {
 				const key = e.keyCode || e.witch;
 				if(key == 113){
 					
 					const tooltip = document.getElementById("helpTooltip");
-					const image = document.querySelector("#helpTooltip img");
+					const frame = document.querySelector("#helpTooltip iframe");
 					const message = document.getElementById("tooltip-key-message");
 					tooltip.onclick = () => tooltip.classList.remove("focus");
 					
-					if(!image.src){
+					if(!frame.src){
 						return;
 					}
 					
-					const isSearch = !document.querySelector(".search-results-popup div") == false;
+					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";
+					
+					
 					
 					if(isSearch &amp;&amp; tooltip.className.indexOf("focus") == -1){
 						tooltip.classList.add("focus");
-						message.innerHTML = "Pulse F2 para desenfocar la ventana";
+						
+						const content = frame.contentWindow || frame.contentDocument;
+						content.addEventListener("keydown", (e) => {
+							listenGlobalKeys(e);
+							
+							const key = e.keyCode || e.witch;
+							if(key == 113 || key == 27){
+								tooltip.classList.remove("focus");
+								hideHelpTooltip();
+							}
+							
+							 // CTRL + ENTER
+				            if (event.ctrlKey &amp;&amp; event.code === 'Enter') {
+				            	tooltip.classList.remove("focus");
+				            	hideHelpTooltip(true);				            	
+				            	window.open(tooltip.dataset.url,'_blank');
+				            }
+				               
+						});
+						
+						frame.focus();
+												
+						const f2Icon = document.createElement("span");
+						const ctrlIcon = document.createElement("span");
+						const enterIcon = document.createElement("span");
+						
+						f2Icon.className = "keyboard-icon";
+						ctrlIcon.className = "keyboard-icon";
+						enterIcon.className = "keyboard-icon";
+						
+						f2Icon.innerHTML = "F2";
+						ctrlIcon.innerHTML = "Ctrl";
+						enterIcon.innerHTML = "Enter";
+						
+						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para soltar la ventana | " + ctrlIcon.outerHTML + " " + enterIcon.outerHTML + " para ir al pdf";
 					} else {
 						tooltip.classList.remove("focus");
-						message.innerHTML = "Pulse F2 para enfocar la ventana";
+						
+						const f2Icon = document.createElement("span");
+						f2Icon.className = "keyboard-icon";
+						f2Icon.innerHTML = "F2";
+						
+						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
 					}
 				}
-			})
+			}
+			
+			
+			/**
+			*  GLOBAL WINDOW CONTROLS
+			*/
+			document.documentElement.addEventListener("keydown", listenGlobalKeys)
+			
+			/**
+			* SONAR : Keep session alive  
+			*/
+			const sonar = new XMLHttpRequest();
+			sonar.onload = function() {
+				console.log(this.responseText);
+			}
+  			setInterval(function(){
+				sonar.open("GET", "sonar");				
+				sonar.send();				
+				
+			}, 300000);
+			
 		
 	</script>
 		
-	<a4j:region>
-		<h:form>
-			<a4j:poll status="aonStatus" interval="300000"
-				actionListener="#{desktop.onRefresh}" reRender="aonHeader" />
-		</h:form>
-	</a4j:region>
-
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
 		<aon:panelGrid columns="4" width="100%" 
@@ -1628,7 +1799,7 @@
 						>
 						<a4j:support 
 						event="onkeyup"
-						onsubmit="if (window.event.which == 27) {return false;}"
+						onsubmit="if (window.event.which == 27 || window.event.which == 38 || window.event.which == 40) {return false;}"
 						oncomplete="javascript:showSearchResults()"
 						reRender="smartFilterTableContainer"
 						eventsQueue="domainSwitcherFilterKeyUp"
@@ -1639,43 +1810,82 @@
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 						</a4j:support> 
 						
-						<a4j:support 
-						event="onfocus"
-						onsubmit="if (!#{rich:element('smartFilter')}.value) {return false;}"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterFocus"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
-						</a4j:support> 
-
-						<a4j:support 
-						event="onblur"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterBlur"
-						requestDelay="500"
-						ajaxSingle="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{false}" />
-						</a4j:support> 
-
 					</aon:inputText>
 					
 					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" >
+						
 						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" style="display:none;" >
+
+							<aon:if test="#{aonConfiguration.properties.showSearchResults}" >
 
 							<aon:div styleClass="search-results-popup-filter" >
 								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
 							</aon:div>
 							
+							<aon:div styleClass="search-results-popup-title" >
+								<aon:if test="#{helpSwitcher.model.rowCount eq 0 }" >
+									<aon:outputText value="Ningún resultado en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{helpSwitcher.model.rowCount eq 1}" >
+									<aon:outputText value="Un resultado en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{helpSwitcher.model.rowCount le 10 and helpSwitcher.model.rowCount gt 1  }" >
+									<aon:outputText value=" #{helpSwitcher.model.rowCount} resultados en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{helpSwitcher.model.rowCount gt 10 }" >
+									<aon:outputText value="Más de 10 resultados en Ayuda"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+							</aon:div>
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+								<ui:param name="rows" value="10" />
+							
+								<ui:param name="skipSelectButton" value="#{true}" />
+								<ui:param name="showDataScroller" value="#{false}" />
+							
+								<ui:param name="controller" value="#{helpSwitcher}" />
+								<ui:param name="skipFocusFirst" value="true" />
+							
+								<ui:define name="columns">
+								<aon:column 
+									styleClass="aon-editDataTable-textColumn aon-width-auto selectable" 
+									onmouseover="javascript:showHelpTooltip(event,'#{to.getURI()}')"
+									onmouseout="javascript:hideHelpTooltip(event)"
+									onclick="javascript:hideHelpTooltip(true)"
+									>
+									
+									<h:outputLink target="#{to.getTitle()}" value="#{to.getURI()}" style="display: inline-block;width: 100%;">
+										<aon:outputText 
+											value="#{to.getDisplay(search.filter)}"
+											
+											escape="false" />
+									</h:outputLink> 					
+								</aon:column>
+								</ui:define>
+							</ui:decorate>
+
 							<aon:if test="#{(!domainSwitcher.adminDomain) and (domainSwitcher.domainCount > 0)}">
 								<aon:div styleClass="search-results-popup-title" >
-									<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
-									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									<aon:if test="#{domainSwitcher.model.rowCount eq 0}" >
+										<aon:outputText value="Ninguna Empresa encontrada"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
+									<aon:if test="#{domainSwitcher.model.rowCount eq 1}" >
+										<aon:outputText value="Una Empresa encontrada"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
+									<aon:if test="#{domainSwitcher.model.rowCount le 10 and domainSwitcher.model.rowCount gt 1}" >
+										<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
+									<aon:if test="#{domainSwitcher.model.rowCount gt 10 }" >
+										<aon:outputText value="Más de 10 Empresas encontradas"
+										styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+									</aon:if>
 								</aon:div>
 						
 								<aon:methodParam name="rowSelectorAction" value="start" />
@@ -1691,7 +1901,7 @@
 									<ui:param name="skipFocusFirst" value="true" />
 								
 									<ui:define name="columns">
-									<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto selectable">
 										<aon:outputText value="#{to.getDisplay(search.filter)}"
 											title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
 											style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"  escape="false" />					
@@ -1715,8 +1925,22 @@
 
 							<aon:if test="#{(!domainSwitcher.adminDomain)}">
 							<aon:div styleClass="search-results-popup-title" >
-								<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
-								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								<aon:if test="#{contractSwitcher.model.rowCount eq 0 }" >
+									<aon:outputText value="Ningún Trabajador encontrado"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{contractSwitcher.model.rowCount eq 1 }" >
+									<aon:outputText value="Un Trabajador encontrado"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{contractSwitcher.model.rowCount le 10 and contractSwitcher.model.rowCount gt 1 }" >
+									<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
+								<aon:if test="#{contractSwitcher.model.rowCount gt 10 }" >
+									<aon:outputText value="Más de 10 Trabajadores Encontrados "
+									styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+								</aon:if>
 							</aon:div>
 							<aon:methodParam name="rowSelectorAction" value="home_employee" />
 							<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectContractDomain}" type="actionListener" />
@@ -1730,7 +1954,7 @@
 								<ui:param name="skipFocusFirst" value="true" />
 						
 								<ui:define name="columns">
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto selectable">
 									<aon:outputText value="#{to.getDisplay(search.filter)}"
 										title="#{(!to.active)?bundle.admin_domain_inactive:''}"
 										style="#{(!to.active)?'color:gray;font-style:italic;':''}"  escape="false" />					
@@ -1745,7 +1969,9 @@
 							<aon:div></aon:div>
 							</aon:if>
 						
+							</aon:if>
 						</aon:div>
+					
 					</aon:div>
 	
 			</aon:panelGroup>
@@ -1790,7 +2016,7 @@
 									style="#{customize.fontStyle}" >
 								</h:outputLink>
 							</f:facet>
-							<aon:menuItem id="enableSupport"
+	                		<aon:menuItem id="enableSupport"
 								value="Activar Soporte"
 								rendered="#{!desktop.state.supportEnabled and (!domainSwitcher.adminDomain or (domainSwitcher.adminDomain and desktop.state.adminRole))}"
 								actionListener="#{desktop.onEnableSupport}"
@@ -1824,7 +2050,7 @@
 								rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 								value="#{bundle.admin_advanced_mode}" />
 							</aon:if>
-							<!-- <aon:menuItem id="config_userProfile" action="home_user"
+<!--						<aon:menuItem id="config_userProfile" action="home_user"
 								iconClass="aon-icon-menu-user"
 								actionListener="#{domainUser.onInitUserProfile}"
 								value="#{bundle.admin_user_profile}" /> -->
@@ -1878,9 +2104,9 @@
 		<a4j:log hotkey="Z" level="ALL" popup="true" />
 	</aon:if>
 	<aon:div id="helpTooltip"> 
-		<img/>
+		<iframe></iframe>
 		<div id="tooltip-key">
-			<span id="tooltip-key-message">Pulse F2 para enfocar la ventana</span>
+			<span id="tooltip-key-message">Pulse <span class="keyboard-icon">F2</span> para fijar la ventana</span>
 			<span class="material-icons" id="pin">push_pin</span>
 		</div>
 	</aon:div>

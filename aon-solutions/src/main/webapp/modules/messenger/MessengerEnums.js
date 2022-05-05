@@ -77,6 +77,7 @@ export const MESSENGER_IDS = {
     createSelectCau:"divTaskTags",
     TYPE_REQUEST_CAU: "typeRequestCau",
     SELECT_APP: "selectApp",
+    AON_TAB: "aonTabMessenger",
 }
 
 export const WORKFLOW_TYPES = {
@@ -90,6 +91,7 @@ export const WORKFLOW_TYPES = {
 	COMMENT: "comment",
     ASSIGN: "assigned",
     AON_FILE: "aonFile",
+    CONNECTED: "connected",
 } 
 
 export const WORKFLOW_TYPE = (type)=>{
@@ -101,6 +103,7 @@ export const WORKFLOW_TYPE = (type)=>{
     if(WORKFLOW_TYPES.DELETE.indexOf(type)!=-1)    return "Archivada";//TODO
     if(WORKFLOW_TYPES.RESTORE.indexOf(type)!=-1)   return "Restaurada";//TODO
     if(WORKFLOW_TYPES.ASSIGN.indexOf(type)!=-1)    return "Reasignada";//TODO
+    if(WORKFLOW_TYPES.CONNECTED.indexOf(type)!=-1) return "Conectada";//TODO
     return "Comentada"; //TODO
 } 
 
