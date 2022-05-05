@@ -175,8 +175,6 @@ public class Contrata {
 			
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 			
-			form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
-			
 			{// DATA ENTERPRISE
 				String ctaCti = cto.getCtaCti();
 				String regimen = cto.getRegimen();
@@ -192,9 +190,11 @@ public class Contrata {
 			}
 
 			{//DATA EMPLOYEE
-				String tipodoc =  "D";
-				if(Toolkit.getIdentityType(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
-			
+				String tipodoc = "D";
+				if(Toolkit.getIdentityType(cto.getIpf()).equals("6")) {
+					tipodoc = "E"; // NIE
+				}
+
 				String nss = cto.getNss();
 				((HtmlSelect)form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
 				form.getInputByName("nif").setValueAttribute(cto.getIpf());
@@ -219,9 +219,10 @@ public class Contrata {
 				((HtmlSelect)form.querySelector("select[name=nacionalidad]")).setSelectedAttribute(cto.getCodNationality().toString(), true);
 				((HtmlSelect)form.querySelector("select[name=codpaisdomicilio]")).setSelectedAttribute(cto.getCodPaisDom().toString(), true);
 
-				if(cto.getCodMunDom()!=null)
+				if(cto.getCodMunDom()!=null) {
 					form.getInputByName("municipio").setValueAttribute(cto.getCodMunDom());
-				
+				}
+					
 				form.getInputByName("nass1").setValueAttribute(nss.substring(0, 2));
 
 				form.getInputByName("nass2").setValueAttribute(nss.substring(2, 10));
@@ -231,6 +232,9 @@ public class Contrata {
 			}
 			
 			{//DATA CONTRACT
+				
+				form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
+				
 				if(cto.getDateIniContract()!=null) {
 					String[] dateInitContract = Toolkit.dateString(cto.getDateIniContract());
 
@@ -298,40 +302,29 @@ public class Contrata {
 
 			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 
-			//---------------------PREVISIBLE---------------------
-			if( Arrays.asList("402", "502").contains(cto.getCodContract()) ) { // es previsible
-				DomNode back = htmlPage.querySelector("#volver");
-				if(back!=null) {
-					htmlPage = ((HtmlSubmitInput)back).click();
-					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-					DomNode previsible = form.querySelector("select[name=preg90dias]"); 
-					if(previsible!=null) {
-						((HtmlSelect)previsible).setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
-					}
-					
-					setOccupation(cto, form);
-
-					htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-				}
-			}
-
-			handleSepeExceptions(htmlPage);
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			
-
-			String message = getSuccessMessage(htmlPage);
+			String message = null;
 			
-			if(message!=null && message.indexOf("returnInit")>=0) {
-				htmlPage = sepe_return_init(htmlPage, cto); 
-				message = getSuccessMessage(htmlPage); // message overwrite
+			for (int i = 0; i < 3; i++) {
+				message = getSuccessMessage(htmlPage);
+				
+				if(message==null || (message!=null && message.indexOf("E")>=0)) {
+					break;
+				} else if(message.contains("returnInit")) {
+					htmlPage = sepeReturnInitPage(htmlPage, cto); 
+				} 
+			}
+
+			if(message!=null && message.indexOf("E")>=0) {
+				message = message.substring(1);	
+			} else {
+				handleSepeExceptions(htmlPage);
+				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
 			}
 			
-			if(message!=null && message.indexOf("E")>=0) 
-				message.substring(1);
-			else 
-				throw new SepeException("Error no aceptada la comunicaci\u00f3n");
-		} 
-		return null;
+			return message;
+		}
 	}
 
 	private static void sendTransformationImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto, CopyBasic copyBasic) 
@@ -1039,20 +1032,28 @@ public class Contrata {
 	private static String getSuccessMessage(HtmlPage htmlPage) {
 		DomNodeList<DomNode> texts = htmlPage.querySelectorAll("#contIzq p");
 		String msg = null;
+		
+		final List<String> list = Arrays.asList(
+				"sin fecha de t\u00E9rmino", 
+				"f\u00EDsica en la base de datos", 
+				"igual o inferior a 90"
+		);
+		
 		for( DomNode p: texts) {
 			String pStr = Toolkit.removeNBSP(p.getVisibleText()).trim();
 			Integer pInt = pStr.length();
 			boolean b = false;
-			if(pInt > 0) {
-				if(pStr.indexOf("Identificador de la Comunicaci\u00F3n :")>=0) {
+			if(pInt > 2 && !pStr.isEmpty()) {
+				String pLowerCase = pStr.toLowerCase();
+				if(pLowerCase.contains("identificador de la comunicaci\u00F3n :")) {
 					String[] parts = pStr.split(":");
 					if(parts.length > 0) 
 						msg = (parts[1]).trim().replace("-", "");
 					b = true;
-				} else if(pStr.indexOf("se ha realizado correctamente")>=0) {
+				} else if(pLowerCase.contains("se ha realizado correctamente")) {
 					msg = pStr;
 					b = true;
-				} else if(Arrays.asList("sin fecha de t\u00E9rmino", "F\u00EDsica en la base de datos no coinciden").contains(pStr)) {
+				} else if( list.stream().anyMatch(pLowerCase::contains) ) {
 					msg = "returnInit";
 					b = true;
 				} 
@@ -1062,14 +1063,23 @@ public class Contrata {
 		return msg;
 	}
 	
-	private static HtmlPage sepe_return_init(HtmlPage htmlPage, Contract cto) throws IOException, InterruptedException, SepeException {
+	private static HtmlPage sepeReturnInitPage(HtmlPage htmlPage, Contract cto) throws IOException, InterruptedException, SepeException {
+		
 		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("#volver")).click();
 		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation().toString());// repeat cod contract
 		form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
 		form.getInputByName("nass").setValueAttribute(cto.getNss()); 
+		//---------------------PREVISIBLE---------------------
+		if( Arrays.asList("402", "502").contains(cto.getCodContract()) ) { // es previsible
+			DomNode previsible = form.querySelector("select[name=preg90dias]"); 
+			if(previsible!=null) {
+				((HtmlSelect)previsible).setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
+			}
+		}
+		
 		htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
-		handleSepeExceptions(htmlPage);
+		
 		return htmlPage;
 	}
 
