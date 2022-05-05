@@ -225,6 +225,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 									d.getCccs(), getFilter())
 							) {
 						filteredList.add(d);
+						if ( filteredList.size() == pageLimit )
+							break;
 					}
 				}
 				setFilteredModel(new SerializableListDataModel(filteredList));

@@ -283,12 +283,22 @@ public class CheckItModule extends MainEntryPoint {
 			double remainderTotal = 0;
 			boolean logs = false;
 			for (CheckItBankAccount bankAccount : opt.getConfiguration().getCheItBanks()) {
-				if(bankAccount.getLogs() != null && !bankAccount.getLogs().isEmpty()) {
-					if (!isMobile()) {						
+				
+				boolean areLogs = (bankAccount.getLogs() != null
+						&& !bankAccount.getLogs().isEmpty()
+						&& bankAccount.getLogs().stream().anyMatch(f -> AonDateUtils.compare(f.getCreated(), bankAccount.getAtDate()) > 0));
+				
+				if(areLogs) {
+					if (!isMobile()) {
 						for (CheckItLog log : bankAccount.getLogs()) {
-							Label logLabel = new Label("Error en " + bankAccount.getBank() + " " + bankAccount.getCcc() + " - " + log.getErrorMessage());
-							logLabel.setStyleName(AON.CSS.aonColorRed());
-							sessionLog.add(logLabel);
+							if (log.getCreated() != null) {
+								if (AonDateUtils.compare(bankAccount.getAtDate(), log.getCreated()) < 0) {									
+									String date = AON.DATE_FORMAT.format(log.getCreated());
+									Label logLabel = new Label(date +": Error en " + bankAccount.getBank() + " " + bankAccount.getCcc() + " - " + log.getErrorMessage());
+									logLabel.setStyleName(AON.CSS.aonColorRed());
+									sessionLog.add(logLabel);
+								}
+							}
 						}
 					}
 					logs = true;
@@ -400,7 +410,11 @@ public class CheckItModule extends MainEntryPoint {
 		private AonCheckItBankCard(final CheckItModuleOptions opt, CheckItBankAccount checkItBankAccount) {
 			
 			updateError = false;
-			boolean areLogs = (checkItBankAccount.getLogs() != null && !checkItBankAccount.getLogs().isEmpty());
+			
+			
+			boolean areLogs = (checkItBankAccount.getLogs() != null
+					&& !checkItBankAccount.getLogs().isEmpty()
+					&& checkItBankAccount.getLogs().stream().anyMatch(f -> AonDateUtils.compare(f.getCreated(), checkItBankAccount.getAtDate()) > 0));
 			
 			FlowPanel titlePanel = new FlowPanel();
 			titlePanel.addStyleName(AON.CSS.aonTextCenter());

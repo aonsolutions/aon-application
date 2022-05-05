@@ -239,7 +239,11 @@ public class Task  implements Serializable{
 		this.workflows = workflows;
 		return this;
 	}
-
+	
+	public void addWorkflow(TaskWorkflow w) {
+		this.workflows.add(w);
+	}
+	
 	public TaskPeriod getRepeatPeriod() {
 		return repeatPeriod;
 	}

@@ -142,8 +142,12 @@ export const chooseIconMessage = ({type, date, name, comment}) => {
     } else if(WORKFLOW_TYPES.DELETE.indexOf(type)>=0){
         actionJson.icon = MATERIAL_ICONS.ARCHIVE;
         actionJson.color = CSS.variable(COLORS.GRAYSON);
-    } else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0)
+    } else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
         actionJson.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
+    } else if(WORKFLOW_TYPES.CONNECTED.indexOf(type)>=0){
+        let b = "#" + (comment || "0").toString().padStart(5, 0);
+        actionJson.comment = `${WORKFLOW_TYPE(type)} con <b>${b}</b> ${dateParse}`;
+    }
 
     return actionJson;
 }
@@ -176,18 +180,17 @@ const appendChatMessage = (properties) => {
  * @param {HTMLElement} aon-messenger-chat 
  * @returns {Array} [value, messageEl] message element html
  */
-export const sendMessage = async (text, aonMessengerChat) => {
+export const sendMessage = async (text, task) => {
     let value = text;
     if(!text){
         let aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
-        await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT AND SEND
+        await checkFilesAndSend(aonTextArea, task); //CHECK FILES COMMENT AND SEND
         value = aonTextArea.value;
         aonTextArea.clear();
     }
     
     if(!value || (value && !value.trim().length)) return ;
 
-    const task = aonMessengerChat.task;
     const message = {
         type: WORKFLOW_TYPES.COMMENT,
         sender: "",
@@ -204,8 +207,6 @@ export const sendMessage = async (text, aonMessengerChat) => {
         date: message.creation_date,
         direction : MESSENGER_DIRECTION.RIGHT
     });
-    
-    aonMessengerChat.data = task;
 
     return [value, messageEl];
 }
@@ -215,14 +216,14 @@ export const sendMessage = async (text, aonMessengerChat) => {
  * @param {HTMLElement} textArea htmlElement textArea
  * check files and send uploadFile(taskAttach) 
  */
-const checkFilesAndSend = async (textArea)=>{
+const checkFilesAndSend = async (textArea, task)=>{
     const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
     if(btnSend)btnSend.style.pointerEvents = "none";
     try {
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const textAreaDiv = textArea.getTextArea();
         const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
-        const {id:taskId} = aonMessengerChat.task;
+        const {id:taskId} = task;
         const files = textArea.FILES;
         for await (const el of elements) {
             const fileId = el.dataset.id;
@@ -365,7 +366,7 @@ const jsonDiv = ()=> {
 export const buildForm = (firstDiv, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const isAdvisoryCompany = task.isAdvisoryCompany();
-    const dataDefault = aonMessengerChat.getData();
+    // const dataDefault = aonMessengerChat.getData();
 
     //-----------------------APPEND DIV TAGS
     createTagsDiv(firstDiv);
@@ -441,8 +442,11 @@ export const buildForm = (firstDiv, aonMessengerChat) => {
 
     requestTypeSelect.addEventListener(EVENT.CHANGE, ()=>{
         let type = requestTypeSelect.getDetail().value;
-        if(!task.id && btnForExternal){
-            hideBtnExternal(type, btnForExternal, divRequest);
+        if(!task.id){
+            if(btnForExternal){
+                hideBtnExternal(type, btnForExternal, divRequest);
+            }
+            aonMessengerChat.setWhAndTh();
         }
         onChangeTypeSelect(aonMessengerChat, requestTypeSelect, divDinamic, divProcess, btnForExternal ? btnForExternal.isChecked() : false)
     });

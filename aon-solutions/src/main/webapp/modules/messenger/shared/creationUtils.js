@@ -5,11 +5,11 @@ import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
+import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { sendTaskHistoricEmail } from "../../../services/taskService.js";
-
+import { sendTaskHistoricEmail, getTaskOne } from "../../../services/taskService.js";
+import { AonMessengerChat } from "../aon-messeger-chat.js";
 
 /**
  * 
@@ -490,7 +490,7 @@ export const createChatMessage = (properties, chat) => {
 
     const message = createMessageBox(properties);
     chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
-    console.log(properties);
+
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
       iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
@@ -757,52 +757,75 @@ export const createTagHtml = (tag, parent) => {
 export const openSendTaskHistoricEmail= (ev)=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const application = aonMessengerChat.getApplication();
-  const rect = ev.target.getBoundingClientRect();
-  const x = ev.clientX - rect.left + 180;
-  const y = ev.clientY - rect.top;
-  const top  = rect.top + y;
-  let left = rect.left + x;
-  const dialog = application.getOptionDialog();
-  const content = dialog.getContent();
+
+  const dialog = application.getDialog();
+
+  if (!application.isMobile()) 
+    dialog.width = '40%';
+
   dialog.clear();
-  dialog.setContentTitle(MSG.SEND+" por correo");
+  dialog.setTitle("Crear rama");
     
-  if(aonMessengerChat.isMobile()) {
-    content.style.left = 0;
-    content.style.right = 0;
-  }
 
   const div = document.createElement(TAG.DIV);
-  div.style.margin = "0 9px";
-  div.style.textAlign = "center";
+
   //---FORM------
-  const emailId  = "sendHistoricEmail";
-  const email = setAttributes(new AonInput(),{ name:emailId, id: emailId, description: MSG.EMAIL });
-  div.appendChild(email);
+  // const emailId  = "sendHistoricEmail";
+  // const email = setAttributes(new AonInput(),{ name:emailId, id: emailId, description: MSG.EMAIL });
+  // div.appendChild(email);
+
+  const workgroup  =  createSelectCau(MSG.WORKGROUP, MSG.WORKGROUP+"Random", MSG.WORKGROUP);
+  div.appendChild(workgroup);
+  aonMessengerChat.getWorkgroup().then(options=>{
+    workgroup.setOptions(options);
+  })
+
+  const taskHolder = createSelectCau("taskHolderSendRandom", "taskHolderSendRandom", "Asignar a");
+  div.appendChild(taskHolder);
+
+  aonMessengerChat.getTaskHolderByWorkgroup(aonMessengerChat.getData().myTaskHolder, {}).then(options=>{
+    taskHolder.setOptions(options);
+  })
 
   const noteId  = "sendHistoricId";
-  const note = setAttributes(new AonInput(),{ name:noteId, id: noteId, description: MSG.NOTE });
+  const note = setStyles(createAonTextArea("Escriba una nota..."), {  });
+  note.name = noteId;
+
   div.appendChild(note);
 
-
-  const btn = document.createElement(TAG.BUTTON);
-  btn.className = CSS.AON_BUTTON;
-  btn.textContent = MSG.SEND;
-  btn.style.padding ="0.5rem 1rem";
-  btn.style.marginBottom = "5px"; 
-  btn.addEventListener(EVENT.CLICK, async ()=>{
-    application.startLoading();
-    try {
-      await sendTaskHistoricEmail({...aonMessengerChat.task, email:email.value, note: note.value});
-      aonMessengerChat.showMessage(`${MSG.EMAIL} enviado!`);
-      dialog.close();
-    } catch (error) {
-      console.log(error);
-    }
-    application.stopLoading();
-  })
-  div.appendChild(btn);
-
   dialog.setContent(div);
-  dialog.openPosition({top, left});
+
+  dialog.addSendAction(async()=>{
+    if(taskHolder.value && workgroup.value){
+      application.startLoading();
+      try {
+        const task = aonMessengerChat.task;
+        const params = {
+          ...task.getWorkflowTmp(),
+          type: WORKFLOW_TYPES.CONNECTED, 
+          workgroup:workgroup.getDetail(), 
+          task_holder_receiver:taskHolder.getDetail(), 
+          comment: note.value
+        };
+        console.log(params);
+
+        await sendTaskHistoricEmail(params);
+        aonMessengerChat.showMessage(`Rama creada!`);
+
+        const data = await getTaskOne({id:task.id});
+        let element = new AonMessengerChat();
+        element.data = data;
+
+    		application.setContent(element);
+
+        dialog.close();
+
+      } catch (error) {
+        console.log(error);
+      }
+      application.stopLoading();
+    }
+  }, MSG.CREATE)
+
+  dialog.open();
 }

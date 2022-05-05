@@ -76,6 +76,7 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		
 		List<SalaryData> salaryData = 
 		salary.getSalaryDatas().stream()
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
 		junit.framework.Assert.assertEquals(2, salaryData.size());
@@ -134,6 +135,7 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		
 		List<SalaryData> salaryData = 
 		salary.getSalaryDatas().stream()
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
 		junit.framework.Assert.assertEquals(2, salaryData.size());
@@ -258,6 +260,7 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		
 		List<SalaryData> salaryData = 
 		salary.getSalaryDatas().stream()
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
 		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
 		
 		junit.framework.Assert.assertEquals(2, salaryData.size());

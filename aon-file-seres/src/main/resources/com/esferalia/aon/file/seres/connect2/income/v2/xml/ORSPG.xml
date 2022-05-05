@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ORSPG">
+<field name="Tipo registro ORSPG" value="ORSPG" format="AlphaNumeric" pattern="X(6)" />
+<field name="Código lugar de entrega" value="bean" bean ="ORSPG" property="codigoLugarDeEntrega" format="AlphaNumeric" pattern="X(25)" />
+<field name="Agencia responsable lista de códigos" value="bean" bean ="ORSPG" property="agenciaResponsableListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
+<field name="Lugar de entrega, texto libre" value="bean" bean ="ORSPG" property="lugarDeEntrega_textoLibre" format="AlphaNumeric" pattern="X(70)" />
+<field name="Fecha/hora de entrega requerida (2)" value="bean" bean ="ORSPG" property="fecha_horaDeEntregaRequerida_2_" format="AlphaNumeric" pattern="X(12)" />
+<field name="Cantidad envío dividida (11)" value="bean" bean ="ORSPG" property="cantidadEnvioDividida_11_" format="Numeric" pattern="9(12).999" />
+<field name="Calificador unidad de medida" value="bean" bean ="ORSPG" property="calificadorUnidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+</register>

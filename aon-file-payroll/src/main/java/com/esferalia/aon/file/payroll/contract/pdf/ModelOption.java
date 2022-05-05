@@ -200,11 +200,15 @@ public enum ModelOption implements IResourceable {
 	 */
 	TEMPORARY_OPT18(ContractPdfModel.TEMPORARY, 21, ContractCode.C990),
 	
-	
 	/**
 	 * BECARIOS
 	 */
 	INTERNSHIP(ContractPdfModel.INTERNSHIP, null),
+	
+	/**
+	 *  NUEVO FAMILIARES CONTRATADO DE AUTONOMOS. (pág 17 no se si esto esta bien)
+	 */
+	INDEFINITE_OPT18(ContractPdfModel.INDEFINITE, 17, ContractCode.C250, ContractCode.C350),
 	;
 	
 	private ContractPdfModel pdfModel;

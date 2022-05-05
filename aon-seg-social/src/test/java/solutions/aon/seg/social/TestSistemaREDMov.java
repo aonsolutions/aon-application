@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,10 +25,14 @@ import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 
 public class TestSistemaREDMov {
 
+	private final String CERTIFICATE_PASSWORD = "1234";
+	private final String CERTIFICATE_TYPE = "pkcs12"; 
+	private final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/CERT.pfx"; 
+	
 	@Test
 	@Ignore
 	public void testSendAlta() {
-		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.DATE, 8);
 			Date fecha=c.getTime();
@@ -40,10 +45,11 @@ public class TestSistemaREDMov {
 			.setFra(fecha)
 			.setOcup("a")
 			.setColec("60888888888888")
-			.setGc("03")
-			.setContract("401")
+			.setGc("04")
+			.setContract("502")
+//			.setCollective("968")
 			.build();
-			SistemaREDMov.sendAlta(certificateInputStream, "jg@FNMT", "pkcs12", employee);
+			SistemaREDMov.sendAlta(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, employee);
 		} catch (NotExistingYetException e) {} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
@@ -56,11 +62,11 @@ public class TestSistemaREDMov {
 	@Test
 	@Ignore
 	public void testRemoveMov() {
-		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.DATE, 8);
 			Date fecha=c.getTime();
-		    SistemaREDMov.movPrevDelete(certificateInputStream,"jg@FNMT", "pkcs12",
+		    SistemaREDMov.movPrevDelete(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
 		    		SituationType.ALTA, "0111", "01105360062", "010022757387", fecha);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,14 +80,12 @@ public class TestSistemaREDMov {
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.DATE, 8);
 			Date fecha=c.getTime();
-		    SistemaREDMov.removeMovConsolidated(certificateInputStream,"jg@FNMT", "pkcs12",
+		    SistemaREDMov.removeMovConsolidated(certificateInputStream, "jg@FNMT", "pkcs12",
 		    		SituationType.BAJA,  "0111", "01105360062", "010022757387", "16262835H", fecha);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 	}
-
-
 	
 	@Test
 	@Ignore

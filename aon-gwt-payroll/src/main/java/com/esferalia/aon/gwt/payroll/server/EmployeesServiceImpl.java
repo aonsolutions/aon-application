@@ -188,6 +188,7 @@ import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.SettleBuilder;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -197,8 +198,6 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -5811,6 +5810,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public String checkEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date, String idcDataUri)
+			throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			String idcBase64 = decodeURIComponent(idcDataUri);
+			
+			String base64Pdf = EmployeesServiceHelper.checkIDCNSS(connection, domainName, parentDomainId, userLogin, userId, contractId, date, idcBase64);
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+
+		} catch (SQLException | IOException | SegSocialException | UnknownPDFException  e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public String getEmployeeIdcPlNss(String domainName, String userLogin, Integer contractId, Date date)
@@ -6043,7 +6070,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Integer contractId, Date startDate,
-			Date endDate) throws IllegalArgumentException {
+			Date endDate, String sepeIde) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6058,8 +6085,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(),
-						certificate.getType(), ipf, startDate, endDate);
+				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
+						: Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
+				JooqContractAttach.setCopyBasic(connection, domainId, contractId, pdfBytes);
+			}
+
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (SQLException | SepeException | IOException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public String getEmployeeCbcTransform(String domainName, String userLogin, String cif, String ipf, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			// Copy Contract
+			byte[] pdfBytes = JooqContractAttach.getCopyBasic(connection, contractId);
+
+			System.out.println("getEmployeeCbcTransform()\ncif : " + cif + "\nipf : " + ipf + "\nstartDate : " + startDate + "\nsepeIde : " + sepeIde);
+
+			// If not exist download
+			if (null == pdfBytes) {
+				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+
+				pdfBytes = AonStringUtils.isBlank(sepeIde) ?  Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
+						: Sepe.getTransformationCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyBasic(connection, domainId, contractId, pdfBytes);
 			}
 
@@ -6080,8 +6146,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String getEmployeeCto(String domainName, String userLogin, String ipf, Integer contractId, Date startDate,
-			Date endDate) throws IllegalArgumentException {
+	public String getEmployeeCto(String domainName, String userLogin, String ipf, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6096,8 +6161,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				pdfBytes = Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(),
-						ipf, startDate, endDate);
+				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
+						: Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
+				JooqContractAttach.setCopyContract(connection, domainId, contractId, pdfBytes);
+			}
+
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (SQLException | SepeException | IOException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public String getEmployeeCtoTransform(String domainName, String userLogin, String cif, String ipf, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			// Copy Contract
+			byte[] pdfBytes = JooqContractAttach.getCopyContract(connection, contractId);
+			
+			System.out.println("getEmployeeCtoTransform()\ncif : " + cif + "\nipf : " + ipf + "\nstartDate : " + startDate + "\nsepeIde : " + sepeIde);
+
+			// If not exist download
+			if (null == pdfBytes) {
+				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
+
+				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
+						: Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
 				JooqContractAttach.setCopyContract(connection, domainId, contractId, pdfBytes);
 			}
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
@@ -16,19 +17,47 @@ public class Sepe {
 	
 	public static byte[] getContratoPdf( final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-		return Contrata.contratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend, Optional.empty());
 	}
-
+	
+	/**
+	 * COPY BASIC CONTRACT
+	 */
 	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-			return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+			return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend, Optional.empty());
 	}
 	
-	public static byte[] transformacionsPdf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini) throws SepeException {
-			return Contrata.transformacionsPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini);
+	public static byte[] getTransformationPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date fini) throws SepeException {
+			return Contrata.getTransformationPdf(certificateInputStream, certificatePassword, certificateType, ipf, cif, fini, Optional.empty());
 	}
 	
+	public static byte[] getTransformationCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String cif, Date fini) throws SepeException {
+			return Contrata.getTransformationCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, cif, fini, Optional.empty());
+	}
+	
+	public static byte[] getContratoPdf( final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String sepeId) throws SepeException {
+		return Contrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+	}
+	
+	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String sepeId) throws SepeException {
+			return Contrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+	}
+	
+	public static byte[] getTransformationPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String sepeId) throws SepeException {
+			return Contrata.getTransformationPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+	}
+	
+	public static byte[] getTransformationCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String sepeId) throws SepeException {
+			return Contrata.getTransformationCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, null, null, null, Optional.of(sepeId));
+	}
+
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String nif, Date fecha) throws SepeException {
 			return Certificado.certEnterprisePdf(certificateInputStream, certificatePassword, certificateType, nif, fecha);

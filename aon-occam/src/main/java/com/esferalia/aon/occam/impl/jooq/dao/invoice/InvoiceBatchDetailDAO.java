@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceBatchDetail.INVOICE_BATCH_DET
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -55,6 +56,11 @@ public class InvoiceBatchDetailDAO {
 		return select(ctx, filter).limit(1)
 			.fetch().stream().map(new InvoiceBatchDetailFiller())
 			.findFirst().orElse(new InvoiceBatchDetail());
+	}
+	
+	public static Stream<InvoiceBatchDetail> getStream(AONContext ctx, InvoiceBatchDetailFilter filter) {
+		return select(ctx, filter)
+			.fetch().stream().map(new InvoiceBatchDetailFiller());
 	}
 	
 	public static InvoiceBatchDetail save(AONContext ctx, InvoiceBatchDetail invoiceBatchDetail) {

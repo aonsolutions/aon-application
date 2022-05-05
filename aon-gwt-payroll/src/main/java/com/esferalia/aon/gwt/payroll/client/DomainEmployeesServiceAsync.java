@@ -507,6 +507,10 @@ public class DomainEmployeesServiceAsync {
 	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
+	
+	public void checkEmployeeIdc(Integer contractId, Date date, String idc, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.checkEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, idc, callback);
+	}
 
 	public void getEmployeeIdcPlNss(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeIdcPlNss(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
@@ -530,12 +534,20 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- SEPE Files
 	
-	public void getEmployeeCbc(String document, Integer contractId, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, callback);
+	public void getEmployeeCbc(String document, Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, sepeIde, callback);
 	}
 
-	public void getEmployeeCto(String document, Integer contractId, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, callback);
+	public void getEmployeeCbcTransform(String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCbcTransform(getCurrentDomainName(), getCurrentUser(), cif, document, contractId, startDate, sepeIde, callback);
+	}
+
+	public void getEmployeeCto(String document, Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, sepeIde, callback);
+	}
+	
+	public void getEmployeeCtoTransform(String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCtoTransform(getCurrentDomainName(), getCurrentUser(), cif, document, contractId, startDate, sepeIde, callback);
 	}
 	
 	public void getCertifica2PDF(Integer contractId, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {

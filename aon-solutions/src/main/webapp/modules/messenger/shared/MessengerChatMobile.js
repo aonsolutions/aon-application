@@ -133,6 +133,7 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
         background: CSS.variable(COLORS.AON_WHITE),
         margin: 0,
     });
+    
     writter.appendChild(textarea);
     buildTextareaToolbar(textarea);
 

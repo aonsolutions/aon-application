@@ -7,7 +7,6 @@ import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import { checkFilesAddEventDescription, sendMessage, setStyleMessageHistoric, setTaskTags } from "./shared/utils.js";
-import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
 import { getFormMovJson } from "./forms/mov-ss.js";
@@ -15,6 +14,7 @@ import { getFormTimeJson } from "./forms/time-control.js";
 import { getOfficeProjects } from "../../services/projectService.js";
 import { Workgroup } from "../../models/project/Workgroup.js";
 import { TaskHolder } from "../../models/project/TaskHolder.js";
+import { getTastHoldersWorkGroup } from "../../services/taskHolderService.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -89,7 +89,7 @@ export class AonMessengerChat extends AonElement {
   build() {
     this.paintView();
     if(this.task.id)  //FILL CHATS WORKFLOW
-      this.getTaskWorkflow();
+      this.getTaskWorkflow(this.task);
   }
 
   paintView() {
@@ -111,14 +111,24 @@ export class AonMessengerChat extends AonElement {
   /**
    * 
    * @param {String} text Optional
+   * @param {Task} task Optional
    */
-  async saveComment(text) {
+  async saveComment(text = undefined, task=undefined) {
     try {
-      const resp = await sendMessage(text, this); 
+      const taskW = task ? task : this.task;
+      const resp = await sendMessage(text, taskW); 
       if(resp){
         const [comment, messengeEl] = resp;
         if(comment){
-          const workflow = await saveTaskWorkflow({...this.task.getWorkflowTmp(), comment});
+          const workflow = await saveTaskWorkflow({
+            domain:taskW.getDomain().id,
+            task: taskW.getId(),
+            task_holder:this.getData().myTaskHolder,
+            type: WORKFLOW_TYPES.COMMENT,
+            email: this.getAuth().email ? this.getAuth().email : undefined,
+            comment
+          });
+
           if(workflow){
             messengeEl.dataset["id"] = workflow.id;
             if(this.isCau()) 
@@ -161,24 +171,21 @@ export class AonMessengerChat extends AonElement {
     // });
   }
 
-  async getTaskWorkflow() {
+  async getTaskWorkflow(task) {
     try {
-      let params = { task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name };
+      let params = { task:task.id, domainId:task.domain.id, domainName:task.domain.name };
       if(this.isCau() && this.getAuth().email){
         params.email =  this.getAuth().email;
       }
       let workflows = await getTaskWorkflow(params);
-      fillChat(this, workflows);
-      if(workflows.length>0) 
-        this.addButtonDelete();
+
+      const taskHolderId = this.getData().myTaskHolder ? this.getData().myTaskHolder.id : null;
+
+      fillChat(task, taskHolderId, workflows);
+
     } catch (error) {
       console.error("getTaskWorkflow", error);
     }
-  }
-
-  addButtonDelete(){
-    if(this.task.status == TASK_STATUS.DELETED) 
-      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask(), ACTIONS.PREVIOUS.id);
   }
 
   async save() {
@@ -194,7 +201,7 @@ export class AonMessengerChat extends AonElement {
 
       success = true;
 
-      this.getTaskWorkflow();
+      this.getTaskWorkflow(this.task);
     } catch (error) {
       console.log(error);
       this.showError(error);
@@ -464,6 +471,34 @@ export class AonMessengerChat extends AonElement {
 
       });
     }
+  }
+
+  async getWorkgroup(workgroup){
+    const workgroups = await this.getWorkGroups();
+    let options = [];
+    if(workgroups && workgroups.length>0)
+        options = workgroups.map( wg=> ({...wg, id: wg.value}) );
+    
+    if( workgroup && workgroup.id && workgroup.description){
+      const exist = options.some(({id})=> id  === workgroup.id );
+      if(!exist)
+        options.push({...workgroup, value:workgroup.id, name:workgroup.description});  
+    }
+
+    return options;
+  }
+
+  async getTaskHolderByWorkgroup(taskHolder, {workgroup}){
+    const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
+
+    let options = [];
+    if(taskHolders && taskHolders.length>0){
+      options = taskHolders.map( th=> ({...th, value: th.id}) )
+    } else if(taskHolder.id && taskHolder.name) {
+      options = [{...taskHolder, value:taskHolder.id}];
+    }
+
+    return options;
   }
   
   back(){
