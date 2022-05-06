@@ -1,9 +1,9 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, CONSTANT, TAG} from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
-import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openSendTaskHistoricEmail} from "./creationUtils.js";
+import {  createMainView, createAonTextArea, createChat, createSectionComment, createLabelFileText, openDialogBranch} from "./creationUtils.js";
 import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
@@ -71,7 +71,7 @@ const buildToolbar = (aonMessengerChat) => {
             id:"createBranch",
             name: "Crear Rama",
             aonIcon:"aon_branch" 
-          }, (e) =>openSendTaskHistoricEmail(e));
+          }, (e) =>openDialogBranch(e));
         }
 
         toolbar.addButton2({
@@ -140,7 +140,7 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
     // divTab.style.height = "auto";
     // divTab.style.minHeight = "40px";
 
-    const wrapper = buildWrapper(secondDiv, task);
+    const wrapper = buildWrapper(secondDiv);
 
     buildChat(task, wrapper);
 
@@ -153,29 +153,55 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
     });
 
     if(task.getParent()){
-      await getTaskOne({id:task.getParent()}).then(tk => {
+      await getTaskOne({id:task.getParent()}).then(t => {
 
-        const task = new Task(tk);
+        const tk = new Task(t);
         
         tab.addOption({
-          title: "Padre #"+(task.number || "0").toString().padStart(5, 0),
+          title: "Padre #"+(tk.number || "0").toString().padStart(5, 0),
           fn: ()=>{
-            buildChat(task, wrapper);
-            aonMessengerChat.getTaskWorkflow(task);
+            buildChat(tk, wrapper);
+            aonMessengerChat.getTaskWorkflow(tk);
           }
         });
 
       })
     }
 
-    sortBy(task.getChilds(), 'number').forEach(tk=>{
-      const task = new Task(tk);
-      
+    sortBy(task.getChilds(), 'number').forEach(t=>{
+      const tk = new Task(t);
+
+      const status = tk.getStatus();
+
+      let title = "#"+(tk.number || "0").toString().padStart(5, 0);
+
+      if([TASK_STATUS.FINISHED, TASK_STATUS.DELETED].includes(status)){
+        const isFinished = TASK_STATUS.FINISHED.includes(status);
+        const color = isFinished ? CSS.variable(COLORS.MATERIAL_RED) : CSS.variable(COLORS.GRAYSON);
+        const icon  = isFinished ? MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE : MATERIAL_ICONS.ARCHIVE;
+
+        let span = document.createElement(TAG.SPAN);
+        span.innerHTML = title;
+       
+        let i = document.createElement(TAG.I);
+        i.style.position = "relative";
+        i.style.fontSize = "1.4em";
+        i.style.top = "3px";
+        i.style.marginLeft = "1px";
+        i.style.color = color;
+        i.innerText = icon;
+        i.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
+        span.appendChild(i);
+
+        title = span.outerHTML;
+
+      }
+
       tab.addOption({
-        title: "#"+(task.number || "0").toString().padStart(5, 0),
+        title,
         fn: ()=>{
-          buildChat(task, wrapper);
-          aonMessengerChat.getTaskWorkflow(task);
+          buildChat(tk, wrapper);
+          aonMessengerChat.getTaskWorkflow(tk);
         }
       });
     });
@@ -220,7 +246,6 @@ const buildChat = (task, wrapper) => {
     chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
 
-
     //-----------------ADD TEXT AREA CHAT
     addTextAreaChat(wrapper, task); //
 }
@@ -239,6 +264,7 @@ const addTextAreaChat = (wrapper, task) => {
     label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
     divs.divWrite.appendChild(label);
 
+    divs.aonTextArea.height = "60px";
     divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
       if (ev.ctrlKey && ev.keyCode == 13) {
         aonMessengerChat.saveComment(undefined, task);
@@ -246,6 +272,7 @@ const addTextAreaChat = (wrapper, task) => {
         openFullComment(aonMessengerChat, divs.aonTextArea, task);
       }
     });
+
 
     divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment(undefined, task));
     divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));

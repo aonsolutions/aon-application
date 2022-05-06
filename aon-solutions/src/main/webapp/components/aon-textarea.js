@@ -409,14 +409,17 @@ export class AonTextArea extends AonElement {
 		let div = this.getSelectionForAdd();
 
 		for await (const file of files) {
-			const reader = await getReader(file).catch(e=>null);
+			const reader = await getReader(file).catch(()=>null);
 			if(reader) {
+				
 				const fileId = Math.random().toString(36).substring(7);
+
 				this.FILES.push({
 					contentType: reader.contentType,
 					content: reader.content,
 					id:fileId
-				})
+				});
+
 				const url = this.convertBase64Url(reader.content, reader.contentType);
 				let element = null;
 				if(reader.contentType && reader.contentType.indexOf("image")>-1){

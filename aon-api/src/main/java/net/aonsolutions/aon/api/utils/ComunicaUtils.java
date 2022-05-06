@@ -37,7 +37,7 @@ public class ComunicaUtils {
 			    String regimen = ccc.getCccRegimeCode();
 	            String cti = ccc.getCccAccount();
 	            try {
-	            	employees.addAll(ServicioREDEmployee.getPrevEmployees(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regimen, cti) );
+	            	employees.addAll(ServicioREDEmployee.getPrevEmployees(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regimen, cti) );
 				} catch (Exception e) {e.printStackTrace();}
 		 }
 	     return employees;
@@ -66,7 +66,7 @@ public class ComunicaUtils {
 
 	            try {
 		  			byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
-		  					new ByteArrayInputStream(certificate.getCertificate()), 
+		  					new ByteArrayInputStream(certificate.getData()), 
 		  					certificate.getPassword(), 
 		  					certificate.getType(), 
 		  					regime, 
