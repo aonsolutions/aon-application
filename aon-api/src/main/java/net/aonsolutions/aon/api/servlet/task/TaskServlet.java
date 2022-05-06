@@ -173,7 +173,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			throw new AonApiException("Auth inexistente");
 		}
 		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), 
-				f -> TaskUtils.taskFilter(api, f, api.getDomain(), new Customer()), page, perPage));
+				f -> TaskFilter.task(api, f, api.getDomain(), new Customer()), page, perPage));
 		
 		if(page==1)
 			getTasksOffice(api, jsonArr);
@@ -194,9 +194,8 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(task.getId()==null) throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
 		JSONObject json = TaskJSON.toJSON(task);
 		
-		if(task.getParent()==null) {
-			json.put("childs", TaskJSON.toJSON( AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getParentProperty().eq(task.getId()) ) ));
-		}
+		json.put("childs", TaskJSON.toJSON( AON_SOLUTIONS.getTaskStream(domain, user, f-> f.getParentProperty().eq(task.getId()) ) ));
+		
 		
 		return json;
 	}
@@ -205,7 +204,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		Domain domain = new Domain().setId(api.getData().optInt(IJsonNames.DOMAIN_ID)).setName(api.getData().optString(IJsonNames.DOMAIN_NAME));
 		return TaskWorkflowJSON.toJSON(
 				AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
-						f-> TaskUtils.workflowFilter(api, f)
+						f-> TaskFilter.workflow(api, f)
 				) 
 		);
 	}
@@ -234,21 +233,21 @@ public class TaskServlet extends AonApiHttpServlet{
 			TaskUtils.setCauInfo(api, task);
 		
 		if(edit) 
-			TaskUtils.checkFiles(api, task);
+			TaskUtils.checkFilesAndSave(api, task);
 		else 
 		 setWgAndThDefault(api, task);
 
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		
 		if(!edit) { // SAVE CREATE
-			TaskUtils.checkFiles(api, task);
+			TaskUtils.checkFilesAndSave(api, task);
 			task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		}
 		
 		if(!task.getWorkflows().isEmpty()) {
 			Integer taskId = task.getId();
 		
-			String description = TaskUtils.getTaskDescription(task);
+			String description = TaskUtils.parseDescription(task);
 			
 			task.getWorkflows().stream()
 			.forEach(w-> {
@@ -273,7 +272,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			workflowTmp.setDomain(api.getDomain().getId());	
 	
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflowTmp);
-		TaskUtils.changeWorkflow(api, workflow);
+		TaskUtils.onSaveWorkflow(api, workflow);
 		return TaskWorkflowJSON.toJSON(workflow);
 	}
 
@@ -312,13 +311,13 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskStatusCount(AonApiData api) {
 
-		HashMap<Byte, Integer> counts = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(),  f -> TaskUtils.taskFilterStatusCount(f, api, api.getDomain(), new Customer()));
+		HashMap<Byte, Integer> counts = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(),  f -> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()));
 		
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
-			HashMap<Byte, Integer> aux = AON_SOLUTIONS.getTaskStatusCount(domain, new User(),  f -> TaskUtils.taskFilterStatusCount(f, api, domain, customer));
+			HashMap<Byte, Integer> aux = AON_SOLUTIONS.getTaskStatusCount(domain, new User(),  f -> TaskFilter.taskStatusCount(f, api, domain, customer));
 			aux.keySet().stream().forEach(key -> {
 				if(counts.containsKey(key)) 
 					counts.put(key, counts.get(key) + aux.get(key));
@@ -334,11 +333,10 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getTaskCount(AonApiData api) {
-		
 	
 		HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
-				f -> TaskUtils.taskSenderFilterCount(api, api.getDomain(), f, new Customer()), 
-				f -> TaskUtils.taskReceiverFilterCount(api, api.getDomain(), f, new Customer())
+				f -> TaskFilter.taskSenderCount(api, api.getDomain(), f, new Customer()), 
+				f -> TaskFilter.taskReceiverCount(api, api.getDomain(), f, new Customer())
 		);
 		
 //		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
@@ -346,8 +344,8 @@ public class TaskServlet extends AonApiHttpServlet{
 //			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
 //			HashMap<String, Integer> aux = AON_SOLUTIONS.getTaskCount(
 //					domain, new User(),
-//					f -> TaskUtils.taskHolderFilterCount(api, domain, f, customer),
-//					f -> TaskUtils.taskReceiverFilterCount(api, domain, f, customer)
+//					f -> TaskFilter.taskSenderCount(api, domain, f, customer),
+//					f -> TaskFilter.taskReceiverCount(api, domain, f, customer)
 //			);
 //			
 //			aux.keySet().stream().forEach(key -> {
@@ -366,11 +364,13 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getCauInfo(AonApiData api) {
 		JSONObject json = new JSONObject();
+		
 		if(api.getDomain().isChild()) {
 			Company parentCompany = AON.getCompany(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin(), f -> 
 					f.getDomainProperty().eq(api.getDomain().getParentId()));
 			json.put(IJsonNames.PARENT, CompanyJSON.toJSON(parentCompany));
 		}
+		
 		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 			f.getDomainProperty().eq(api.getDomain().getId()));
 		json.put(IJsonNames.COMPANY, CompanyJSON.toJSON(company));
@@ -413,7 +413,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
 			task.setWorkflows(taskWorkflow);
 			
-			TaskUtils.sendHistoricWorkflow(api, task, true);
+			TaskNotification.sendHistoricWorkflow(api, task, true);
 			
 			Integer[] ids = taskWorkflow.stream().map(workflow->{
 				workflow.setNotificationDate(new Date());
@@ -493,7 +493,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	   
 	   newTask.setWorkflows(newTask.getWorkflows().stream().filter(w-> w.getType().equals(TaskWorkflowType.CLOSE)).collect(Collectors.toList()));
 	   
-	   TaskUtils.sendHistoricWorkflow(api, newTask, false);
+	   TaskNotification.sendHistoricWorkflow(api, newTask, false);
 	
 
 	   return new JSONObject();
@@ -503,10 +503,15 @@ public class TaskServlet extends AonApiHttpServlet{
 //		String status = api.getParams().optString("status");
 //		if(status.isEmpty() || "pending".equalsIgnoreCase(status)) {
 			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+			
 			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
+			
 				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
-				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> TaskUtils.taskFilter(api, f, domain, customer))
-				.forEach(t -> arr.put(TaskJSON.toJSON(t)));
+			
+				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+				.forEach(t -> 
+					arr.put(TaskJSON.toJSON(t))
+				);
 			});
 //		}
 		return arr;

@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 public class TaskAttachDAO {
 
 	private static final TaskAttachPropertiesDAO TASK_ATTACH_PROPERTIES = new TaskAttachPropertiesDAO();
+	
 	protected static class TaskAttachPropertiesDAO implements TaskAttachProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, TaskAttachFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -32,12 +33,12 @@ public class TaskAttachDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_ATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_ATTACH.DOMAIN);}
-		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_ATTACH.TASK);}
-		@Override public Property<Integer> getTaskWorkflowProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_ATTACH.TASK_WORKFLOW);}
-		@Override public Property<Byte> getMimetypeProperty()  {return new FilterDAO.PropertyDAO<Byte>(TASK_ATTACH.MIMETYPE);}
-		@Override public Property<byte[]> getDataProperty()  {return new FilterDAO.PropertyDAO<byte[]>(TASK_ATTACH.DATA);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_ATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_ATTACH.DOMAIN);}
+		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<>(TASK_ATTACH.TASK);}
+		@Override public Property<Integer> getTaskWorkflowProperty() {return new FilterDAO.PropertyDAO<>(TASK_ATTACH.TASK_WORKFLOW);}
+		@Override public Property<Byte> getMimetypeProperty()  {return new FilterDAO.PropertyDAO<>(TASK_ATTACH.MIMETYPE);}
+		@Override public Property<byte[]> getDataProperty()  {return new FilterDAO.PropertyDAO<>(TASK_ATTACH.DATA);}
 	}
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, TaskAttachFilter filter){	
@@ -50,7 +51,6 @@ public class TaskAttachDAO {
 	public static Stream<TaskAttach> getStream(AONContext ctx, TaskAttachFilter filter){	
 		return select(ctx, filter).fetch().stream().map(new TaskAttachFiller());
 	}
-	
 	
 	public static LinkedList<TaskAttach> getList(AONContext ctx, TaskAttachFilter filter){	
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
@@ -105,7 +105,6 @@ public class TaskAttachDAO {
 		.execute();
 		ctx.log().debug("DELETE TASK_ATTACH task:" + id);
 	}
-	
 	
 	public static class TaskAttachFiller implements Function<Record, TaskAttach> {
 		@Override
