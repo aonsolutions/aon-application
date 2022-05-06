@@ -23,26 +23,37 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page09 extends PageAbs {
 	
-	private static final String[] HEADERS_2 = new String[]{"",
-		 AON.MSG.previousPending()
-		,AON.MSG.current()
-		,AON.MSG.futurePending()		
+	private static final String[] HEADERS_2 = new String[] {
+		"",
+		AON.MSG.previousPending(),
+		AON.MSG.current(),
+		AON.MSG.futurePending()		
 	};
-	private static final String[] HEADERS_1 = new String[]{AON.MSG.cooperativeRegime()
-		,AON.MSG.cooperativeResult()
-	 	,AON.MSG.extraCooperativeResult()
+	
+	private static final String[] HEADERS_1 = new String[] {
+		AON.MSG.cooperativeRegime(),
+		AON.MSG.cooperativeResult(),
+		AON.MSG.extraCooperativeResult()
 	};
-	private static final String[] HEADERS_3 = new String[]{""
-		,"Derecho a reducir la B.I. generado en el per\u00EDodo/pendiente de aplicar a inicio del per\u00EDodo"
-	 	,"Reducci\u00F3n B.I. aplicada"
-	 	,"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
+	
+	private static final String[] HEADERS_3 = new String[] {
+		"",
+		"Derecho a reducir la B.I. generado en el per\u00EDodo/pendiente de aplicar a inicio del per\u00EDodo",
+		"Reducci\u00F3n B.I. aplicada",
+		"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
 	};
-	public static final String[] HEADERS_4 = new String[]{
+	
+	private static final String[] HEADERS_4 = new String[] {
 		"",
 		"Pendiente de aplicaci\u00F3n a principio del periodo/generada en el periodo",
 		AON.MSG.current(),
 		AON.MSG.futurePending()		
 	};
+	
+	private static final String FOOTER_547 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene bases imponibles negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2021, pero inferior a 12 meses y previo al ejercicio declarado.";
+	private static final String FOOTER_561 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene cuotas negativas por otro per\u00EDodo impositivo iniciado tambi\u00E9n en 2021, pero inferior a 12 meses y previo al ejercicio declarado.";
+	private static final String FOOTER_1032 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reservas pendientes de integrar en un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String FOOTER_1033 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene reducciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
 	
 	public Page09( Model200PageCallback callback ) {
 		super(callback);
@@ -121,6 +132,7 @@ public class Page09 extends PageAbs {
 				}
 								
 				row = paintKey(table,key,row);
+				
 				if (margin) {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft());
 				}
@@ -129,7 +141,7 @@ public class Page09 extends PageAbs {
 					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ554, Mod2002021LQ554Key.values(), HEADERS_1);
 				}
 				if (key == Mod2002021Key.LQ561) {
-					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ561, Mod2002021LQ561Key.values(), HEADERS_2);
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ561, Mod2002021LQ561Key.values(), HEADERS_2, FOOTER_561);
 				}
     			if (key == Mod2002021Key.LQ579) {
 					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ579, Mod2002021LQ579Key.values(), null);
@@ -137,10 +149,10 @@ public class Page09 extends PageAbs {
     			if (key == Mod2002021Key.LQ1032 
 					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002021Key.C0009) 
 					&& callback.getMod200Object().getMod200().isNotChecked(Mod2002021Key.C0010)) {
-					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ1032, Mod2002021LQ1032Key.values(), HEADERS_3);
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ1032, Mod2002021LQ1032Key.values(), HEADERS_3, FOOTER_1032);
 				}
     			if (key == Mod2002021Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
-					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ547, Mod2002021LQ547Key.values(), HEADERS_4);    				
+					row = paintKeyBreakdownLink(table, row, Mod2002021Key.LQ547, Mod2002021LQ547Key.values(), HEADERS_4, FOOTER_547);    				
 				}
     			if (key == Mod2002021Key.LQ1033) {
 					row = paintKeyBreakdownLinkLQ1033(table, row, Mod2002021Key.LQ1033.getDescription());
@@ -235,6 +247,8 @@ public class Page09 extends PageAbs {
 			}
 			
 		});
+		
+		paintFooterNote(container, FOOTER_1033);
 		
 		return ++row;
 	}

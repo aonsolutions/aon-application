@@ -81,8 +81,8 @@ public class Page08 extends PageAbs {
 		++row;
 		
 		paintEmptyCell(tab1, row, 0);
-		paintTitle(tab1, HEADERS[1], row, 1);
-		paintTitle(tab1, HEADERS[2], row, 2);
+		addHeaderCell(tab1, row, 1, HEADERS[1]);
+		addHeaderCell(tab1, row, 2, HEADERS[2]);
 		paintEmptyCell(tab1, row, 3);
 		++row;
 
@@ -101,8 +101,8 @@ public class Page08 extends PageAbs {
 		
 		if (callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002021Key.C0010) ) {
 			paintEmptyCell(tab1, row, 0);
-			paintTitle(tab1, HEADERS[1], row, 1);
-			paintTitle(tab1, HEADERS[2], row, 2);
+			addHeaderCell(tab1, row, 1, HEADERS[1]);
+			addHeaderCell(tab1, row, 2, HEADERS[2]);
 			paintEmptyCell(tab1, row, 3);
 			++row;
 			paintKeyDescription(tab1, Mod2002021Key.LQ1230, row, 0);
@@ -137,8 +137,8 @@ public class Page08 extends PageAbs {
 		
 		row = 0;
 		paintEmptyCell(tab2, row, 0);
-		paintTitle(tab2, HEADERS[1], row, 1);
-		paintTitle(tab2, HEADERS[2], row, 2);
+		addHeaderCell(tab2, row, 1, HEADERS[1], false);
+		addHeaderCell(tab2, row, 2, HEADERS[2], false);
 		row++;
 		
 		for (Mod2002021CorrectionKey ck : Mod2002021CorrectionKey.values()) {
@@ -172,12 +172,12 @@ public class Page08 extends PageAbs {
 		row = 0;
 		for (CorrectionKey ck : CorrectionKey.values()) {
 			if (row==0 || row==7) {			 
-				paintTitle(tab3, HEADERS2[1], row, 1);
-				paintTitle(tab3, HEADERS2[2], row, 2);
+				addHeaderCell(tab3, row, 1, HEADERS2[1]);
+				addHeaderCell(tab3, row, 2, HEADERS2[2]);
 				++row;
 			} else if (row==2) {
-				paintTitle(tab3, HEADERS[1], row, 1);
-				paintTitle(tab3, HEADERS[2], row, 2);
+				addHeaderCell(tab3, row, 1, HEADERS[1]);
+				addHeaderCell(tab3, row, 2, HEADERS[2]);
 				++row;
 			}
 			paintDescription(tab3, ck.getDescription(), row, 0, ck.isTitle());

@@ -1,4 +1,4 @@
-// REGIMEN ESPECIAL CANARIAS
+// REGIMEN ESPECIAL DE LA RESERVA PARA INVERSIONES EN CANARIAS
 package com.esferalia.aon.gwt.mod200.client.mod200.e2021;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -24,13 +24,13 @@ public class Page16 extends PageAbs {
 		
 		// RIC
 		
-		FlexTable table1 = addTable(AON.MSG.canariasRegime(), 5, "180px");
+		FlexTable table1 = addTable(AON.MSG.canariasRegime(), 5, "150px");
 		
 		int row = 0;
-		addHeaderCell(table1,row, 2,"Aplicado/materializado en esta liquidaci\u00F3n");
+		addHeaderCell(table1, row, 2, "Aplicado/materializado en esta liquidaci\u00F3n");
 		table1.getFlexCellFormatter().setColSpan(row, 2, 3);
 		row++;
-		paintKeysProvider(Mod2002021RIC_1Key.values(), table1, row, new String[] {
+		paintKeysProvider(Mod2002021RIC_1Key.values(), table1, row, false, new String[] {
 				"",
 				"Pendiente de materializar RIC a principio de per\u00EDodo", 
 				"Inversiones previstas letras A y B, art. 27.4 Ley 19/1994",
@@ -47,11 +47,11 @@ public class Page16 extends PageAbs {
 		table2.getColumnFormatter().setWidth(0, "400px");
 		table2.getColumnFormatter().setWidth(1, "200px");
 		row = 0;
-		paintKey(table2,Mod2002021Key.RC927,row);
+		paintKey(table2, Mod2002021Key.RC927, row);
 		
 		// Inversiones anticipadas
 
-		paintKeysProvider(Mod2002021RIC_2Key.values(), addTable(4), new String[] {
+		paintKeysProvider(Mod2002021RIC_2Key.values(), addTable("", 4, "150px"), 0, false, new String[] {
 				"",
 				"Pendiente de dotar RIC a principio de per\u00EDodo",
 				"Inversiones previstas letras A y B, art. 27.4 Ley 19/1994",
@@ -59,7 +59,7 @@ public class Page16 extends PageAbs {
 				"Pendiente de dotar RIC al final de per\u00EDodo"
 			});
 		
-	}
+	} 
 	
 	@Override
 	protected void populate() {

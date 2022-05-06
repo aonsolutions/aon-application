@@ -634,7 +634,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.CNEST,"N\u00FAmero de establecimientos permanentes a trav\u00E9s de los que opera, en caso de persona f\u00EDsica titular");
 		DESCRIPTION_MAP.put(Mod2002021Key.CN989,"Las entidades que hayan marcado la clave de caracteres de la declaraci\u00F3n [00003], [00004], [00024] \u00F3 [00025] deber\u00E1n consignar a continuaci\u00F3n el importe neto de la cifra de negocios en el ejercicio 2017");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.RC927,"Importe de la dotaci\u00F3n RIC con cargo a beneficios de 2020");
+		DESCRIPTION_MAP.put(Mod2002021Key.RC927,"Importe de la dotaci\u00F3n RIC con cargo a beneficios de 2021");
 	}
 	
 	static {

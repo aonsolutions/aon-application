@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021.Model200Pag
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021Key;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 
 public class Page14 extends PageAbs {
 
@@ -28,11 +29,16 @@ public class Page14 extends PageAbs {
 		
 		basePanel.clear();
 		
+		// APLICACION DE RESULTADOS
+		
 		basePanel.add(getTitle(AON.MSG.incomeDistribution()));
 		
-		basePanel.add(getSubtitle(AON.MSG.distributionBases()));
+		// Base de reparto
 		
+		basePanel.add(getSubtitle(AON.MSG.distributionBases()));		
 		addTable("", Mod2002021Constants.INCOME_DISTRIBUTION_KEYS_1);
+		
+		// Aplicación
 		
 		basePanel.add(getSubtitle(AON.MSG.aplication()));
 		
@@ -41,14 +47,14 @@ public class Page14 extends PageAbs {
 		int row = 0;
 		for (final Mod2002021Key key : Mod2002021Constants.INCOME_DISTRIBUTION_KEYS_2) {
 			if (callback.getMod200Object().isVisible(key)) {
-				row = paintKey(table1,key,row);
+				row = paintKey(table1, key, row);
 				if (key == Mod2002021Key.ID1270 || key == Mod2002021Key.ID1271 || key == Mod2002021Key.ID1522) {
 					table1.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
 				}				
 			}
 		}
 		
-		basePanel.add(getTitle(AON.MSG.documentsElectronicSede()));
+		// PRESENTACIÓN DE DOCUMENTACIÓN PREVIA EN LA SEDE ELECTRÓNICA
 		
 		nrsAnexoIII.setVisibleLength(22);
 		nrsAnexoIII.setMaxLength(22);
@@ -86,26 +92,34 @@ public class Page14 extends PageAbs {
 		justActivos.addValueChangeHandler(event -> {
 			callback.markAsDirty();
 		});
+		
+		basePanel.add(getTitle("Presentaci\u00F3n de documentaci\u00F3n previa en la Sede electr\u00F3nica"));		
 
 		FlexTable table2 = addTable();
 		
-		paintDescription(table2, AON.MSG.nrsAnexoIII(), 0, 0, false);
-		table2.setWidget(0, 1, nrsAnexoIII);
+		Label desc = new Label("Consigne el N\u00FAmero de Referencia de Sociedades (NRS):");
+		desc.setStyleName(AON.AON_CSS.aonBold());
+		table2.setWidget(0, 0, desc);
 		
-		paintDescription(table2, AON.MSG.nrsAnexoIV(), 1, 0, false);
-		table2.setWidget(1, 1, nrsAnexoIV);
+		row = 1;
 		
-		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo V (RIC: Inversiones anticipadas)", 2, 0, false);
-		table2.setWidget(2, 1, nrsAnexoVric);
+		paintDescription(table2, AON.MSG.nrsAnexoIII(), ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoIII);
 		
-		paintDescription(table2, "Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)", 3, 0, false);
-		table2.setWidget(3, 1, nrsAnexoV);
-
-		paintDescription(table2, AON.MSG.justCanarias(), 4, 0, false);
-		table2.setWidget(4, 1, justCanarias);
+		paintDescription(table2, AON.MSG.nrsAnexoIV(), ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoIV);
 		
-		paintDescription(table2, AON.MSG.justActivos(), 5, 0, false);
-		table2.setWidget(5, 1, justActivos);
+		paintDescription(table2, "Documentaci\u00F3n presentada por el Anexo V (RIC: Inversiones anticipadas)", ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoVric);
+		
+		paintDescription(table2, "Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)", ++row, 0, false);
+		table2.setWidget(row, 1, nrsAnexoV);
+		
+		paintDescription(table2, AON.MSG.justCanarias(), ++row, 0, false);
+		table2.setWidget(row, 1, justCanarias);
+		
+		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
+		table2.setWidget(row, 1, justActivos);
 		
 	}
 

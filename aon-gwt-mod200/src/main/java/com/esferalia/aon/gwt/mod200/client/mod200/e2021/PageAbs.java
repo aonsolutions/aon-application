@@ -96,6 +96,8 @@ public abstract class PageAbs extends ResizeComposite {
 	protected void addBasePanel() {
 		ScrollPanel scroll = new ScrollPanel();
 		basePanel = new FlowPanel();
+		// PRUEBA
+		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
 		scroll.add(basePanel);
 		initWidget(scroll);		
 	}
@@ -115,16 +117,16 @@ public abstract class PageAbs extends ResizeComposite {
 		paintDescription(tab, description, row, col, isTitle(key));	
 	}
 	
-	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean title) {
-		paintDescription(tab, description, row,col, title, 0);
+	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean bold) {
+		paintDescription(tab, description, row,col, bold, 0);
 	}
 	
-	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean title, int size) {
+	protected void paintDescription(FlexTable tab, String description, int row, int col, boolean bold, int size) {
 		Label desc = new Label( size > 0 ? AonStringUtils.abbreviate(description, size) : description );
 		if (size > 0 && AonStringUtils.length(description) > (size-3)) {
 			desc.setTitle(description);
 		}
-		if (title) {
+		if (bold) {
 			desc.setStyleName(AON.AON_CSS.aonBold());
 		}
 		tab.setWidget(row, col, desc);
@@ -141,11 +143,7 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		FlowPanel panel = new FlowPanel();
 		if (padding && !isTitle(k)) {
-		//if (!isTitle(k)) {
-			// PRUEBA
 			panel.addStyleName(AON.AON_CSS.aonFiscalPaddingRight());
-//			panel.addStyleName(AON.AON_CSS.aonPaddingRight());  // 1em
-//			panel.addStyleName(AON.AON_CSS.aonPadding2Right()); // 5px
 		}		
 
 		String code = k.getCode(callback.getMod200Object().getAdministration());
@@ -219,15 +217,7 @@ public abstract class PageAbs extends ResizeComposite {
 		return (behaviour != null && behaviour[0]); 
 	}
 	
-//	protected void paintTitle(FlexTable tab, String description, int row, int col) {
-//		Label desc = new Label( description);
-//		desc.setStyleName(AON.AON_CSS.aonBold());
-//		desc.addStyleName(AON.AON_CSS.aonTextCenter());
-//		desc.addStyleName(AON.AON_CSS.aonBorderBottom());		
-//		tab.setWidget(row, col, desc);
-//	}
-//	
-	protected int paintKeyBreakdownLink(final FlexTable tab, int row, Mod2002021Key breakdownKey, IMod200KeysProvider[] keysProvider, String[] headers) {
+	protected int paintKeyBreakdownLink(final FlexTable tab, int row, Mod2002021Key breakdownKey, IMod200KeysProvider[] keysProvider, String[] headers, String... footernotes) {
 		
 		final int boxRow = row-1;
 		final int boxCell = 1;
@@ -272,6 +262,12 @@ public abstract class PageAbs extends ResizeComposite {
 				++r;
 		}
 		
+		// Notas al pie
+		paintFooterNote(container, footernotes);
+//		for (String s : footernotes) {
+//			paintFooterNote(container, s);
+//		}
+		
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
 		
@@ -294,10 +290,10 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, String... headers) {
-		paintKeysProvider(keysProvider, tab, 0, headers);
+		paintKeysProvider(keysProvider, tab, 0, true, headers);
 	}
 	
-	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, int row, String... headers) {
+	protected void paintKeysProvider(IMod200KeysProvider[] keysProvider, final FlexTable tab, int row, boolean padding, String... headers) {
 		if (headers != null) {
 			for (int i = 0; i < headers.length; i++) {
 				addHeaderCell(tab, row, i, headers[i]);				
@@ -310,7 +306,7 @@ public abstract class PageAbs extends ResizeComposite {
 			int col = 1;
 			for (IMod200Key key : kp.getKeys()) {				 
 				if (key != null && callback.getMod200Object().isVisible((Mod2002021Key) key)) {
-					paintKeyField(tab, key, row, col, 10, false);
+					paintKeyField(tab, key, row, col, 10, padding);
 				}
 				col++;
 			}
@@ -367,8 +363,7 @@ public abstract class PageAbs extends ResizeComposite {
 		subtitle.addStyleName(AON.CSS.aonBorderBottom());
 		return subtitle;
 	}
-//	
-//	
+
 	// Añadir FlexTable a basePanel
 	protected FlexTable addTable() {
 		return addTable("");
@@ -393,9 +388,9 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		FlexTable tab = new FlexTable();
 		// PRUEBA
-//		tab.setCellSpacing(0);		
+//		tab.setCellSpacing(0);
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab.addStyleName(AON.CSS.aonMargin());		
+		tab.addStyleName(AON.CSS.aonMargin());
 		
 		// Ancho de las columnas de importes
 		for (int i = 0; i < numAmountCols; i++) {
@@ -438,9 +433,9 @@ public abstract class PageAbs extends ResizeComposite {
 //	tab.setWidget(row, col, desc);
 //  }
 	
-	protected void paintTitle(FlexTable tab, String description, int row, int col) {
-		addHeaderCell(tab, row, col, description, false); 
-	}
+//	protected void addHeaderCell(FlexTable tab, String description, int row, int col) {
+//		addHeaderCell(tab, row, col, description, false); 
+//	}
 	
 	protected void addHeaderCell(FlexTable table, int row, int col, String msg) {
 		addHeaderCell(table, row, col, msg, true);
@@ -455,6 +450,19 @@ public abstract class PageAbs extends ResizeComposite {
 			table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
 		}
 		
+	}
+	
+	protected void paintFooterNote(Panel container, String... notes) {
+ 
+		for (String text : notes) {
+			Label footernote = new Label(text);
+			footernote.setStyleName(AON.CSS.aonWidthAlmostAll());
+			footernote.addStyleName(AON.CSS.aonBlockCenter());
+			footernote.addStyleName(AON.CSS.aonFontSmaller());
+			footernote.addStyleName(AON.CSS.aonMarginLeftDouble());
+			container.add(footernote);
+		}
+	
 	}
 	
 //	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key... boldKeys ) {
