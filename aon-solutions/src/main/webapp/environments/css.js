@@ -296,6 +296,8 @@ export const ELEMENT_HIDDEN = "elementHidden";
 
 export const MESSAGE_AFTER = "messageAfter";
 
+export const TASK_MESSAGES = "task-messages";
+
 export const AON_FA_SPIN = 'aonFaSpin';
 export const AON_FA_PULSE = 'aonFaPulse';
 

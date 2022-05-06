@@ -149,7 +149,7 @@ export const createReceiverDiv = () => newComponent({
 const createMessageBox = (properties) =>{
   let component =  newComponent({
     type: MESSENGER_COMPONENTS.MESSAGE,
-    classes : [CSS.FLEX_COLUMN, "task-messages"],
+    classes : [CSS.FLEX_COLUMN, CSS.TASK_MESSAGES],
     styles: {
         margin:"5px",
         padding: '15px',

@@ -266,25 +266,24 @@ const checkFileAonFile = async(task, textArea)=> {
 }
 
 const checkFileBase64 = async(textArea)=> {
-    // const textAreaDiv = textArea.getTextArea();
-    // const elements = textAreaDiv.querySelectorAll(`img[src*=base64]`);
-    // let files = [];
-    // for (const el of elements) {
-    //     el.className = CSS.AON_IMG_COMMENT;
-    //     el.setAttribute(CONSTANT.TYPE, WORKFLOW_TYPES.AON_FILE);
-    //     let blob = getBlobBySrc(el.src);
-    //     if(blob){
-    //         files.push(blob);
-    //     }
-    // }
-    // if(files.length){
-    //     await textArea.addFiles(files);
-    // }
+    const textAreaDiv = textArea.getTextArea();
+    const elements = textAreaDiv.querySelectorAll(`img[src*=base64]`);
+    let files = [];
+    for (const el of elements) {
+        let blob = getBlobBySrc(el.src);
+        if(blob){
+            files.push(blob);
+        }
 
-    // console.log(textArea.FILES);
+        el.remove();
+    }
+
+    if(files.length){
+        await textArea.addFiles(files);
+    }
 }
 
-const getBlobBySrc= (src)=>{
+const getBlobBySrc = (src)=>{
     try {
         // base64 encoded data doesn't contain commas    
         const base64ContentArray = src.split(",")     
