@@ -84,7 +84,7 @@ const addTextAreaChat = (aonMessengerChat) => {
     
         buildFullComment(aonMessengerChat, divs.aonTextArea);
     } else {
-        firstDiv.style.height="100%";
+        firstDiv.style.height = "100%";
     }
 }
 

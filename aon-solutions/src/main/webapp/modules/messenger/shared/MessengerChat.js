@@ -140,7 +140,7 @@ const buildTabs = async (secondDiv, aonMessengerChat) => {
     // divTab.style.height = "auto";
     // divTab.style.minHeight = "40px";
 
-    const wrapper = buildWrapper(secondDiv, task);
+    const wrapper = buildWrapper(secondDiv);
 
     buildChat(task, wrapper);
 
@@ -246,7 +246,6 @@ const buildChat = (task, wrapper) => {
     chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
 
-
     //-----------------ADD TEXT AREA CHAT
     addTextAreaChat(wrapper, task); //
 }
@@ -265,6 +264,7 @@ const addTextAreaChat = (wrapper, task) => {
     label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
     divs.divWrite.appendChild(label);
 
+    divs.aonTextArea.height = "60px";
     divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
       if (ev.ctrlKey && ev.keyCode == 13) {
         aonMessengerChat.saveComment(undefined, task);
@@ -272,6 +272,7 @@ const addTextAreaChat = (wrapper, task) => {
         openFullComment(aonMessengerChat, divs.aonTextArea, task);
       }
     });
+
 
     divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment(undefined, task));
     divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));

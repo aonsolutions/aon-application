@@ -149,7 +149,7 @@ export const createReceiverDiv = () => newComponent({
 const createMessageBox = (properties) =>{
   let component =  newComponent({
     type: MESSENGER_COMPONENTS.MESSAGE,
-    classes : [CSS.FLEX_COLUMN],
+    classes : [CSS.FLEX_COLUMN, "task-messages"],
     styles: {
         margin:"5px",
         padding: '15px',
@@ -757,7 +757,7 @@ export const createTagHtml = (tag, parent) => {
 }
 
 
-export const openDialogBranch= (ev)=> {
+export const openDialogBranch = ()=> {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
   const application = aonMessengerChat.getApplication();
 
@@ -810,7 +810,7 @@ export const openDialogBranch= (ev)=> {
   note.id = noteId;
   note.name = noteId;
   div.appendChild(note);
-  note.getTextArea().style.minHeight = "100px";
+  note.height = "100px";
 
   dialog.addSendAction(async()=>{
     if(taskHolder.value && workgroup.value){
