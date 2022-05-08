@@ -14,7 +14,6 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { getCustomers } from '../../services/registryService.js';
 import { sortBy } from '../../services/utils.js';
-// import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -134,8 +133,11 @@ export class AonMessenger extends AonElement {
 		} else if(this.value){
 			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task)).catch(e=>this.showError(e));
 		} else if(this.TASK_HOLDER && this.TASK_HOLDER.id){
+			if(!this._filter.sender) {
+				this._filter.task_holder = this.TASK_HOLDER.id;
+			}
+
 			this._filter.workgroups = this.getWorkgroupsStr();
-			this._filter.task_holder = this.TASK_HOLDER.id;
 			this.addListFilter(this._filter);
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 		} else {
@@ -251,9 +253,15 @@ export class AonMessenger extends AonElement {
 				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				id: MATERIAL_ICONS.MOVE_TO_INBOX,
 				fn: () =>{
-					this._filter.sender = undefined;
+
+					if(this._filter.task_holder && !this._filter.sender){
+						this._filter.sender = this._filter.task_holder;
+					} else {
+						this._filter.task_holder = this.TASK_HOLDER.id;
+						this._filter.sender = undefined;
+					}
+		
 					this._filter.workgroups = this.getWorkgroupsStr();
-					this._filter.task_holder = this._filter.task_holder == this.TASK_HOLDER.id ? undefined : this.TASK_HOLDER.id;
 					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -263,10 +271,14 @@ export class AonMessenger extends AonElement {
 				icon: MATERIAL_ICONS.OUTBOX,
 				id: MATERIAL_ICONS.OUTBOX,
 				fn: () =>{
-					this._filter.task_holder = undefined;
-					if(!this.cau) {
-						this._filter.sender = this._filter.sender == this.TASK_HOLDER.id ? undefined : this.TASK_HOLDER.id;
+		
+					if(this._filter.sender && !this._filter.task_holder){
+						this._filter.task_holder = this._filter.sender;
+					} else {
+						this._filter.sender = this.TASK_HOLDER.id;
+						this._filter.task_holder = undefined;
 					}
+
 					this._filter.workgroups = this.getWorkgroupsStr();
 					this.addListFilter(this._filter);
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
@@ -282,15 +294,16 @@ export class AonMessenger extends AonElement {
 				this._filter.task_holder = undefined;
 				this._filter.sender = undefined;
 				this._filter.workgroups = this.getWorkgroupsStr();
-				this.addListFilter(this._filter);
-				let params = this._filter;
-				
-				if(!this.cau){
+
+				if(!this.cau && !this.getDur().isMessengerManager()){
 					let taskHolder = this.TASK_HOLDER.id ? this.TASK_HOLDER.id : undefined;
-					params = {...this._filter, task_holder:taskHolder, sender:taskHolder}
+					this._filter.sender = taskHolder;
+					this._filter.task_holder = taskHolder;
 				}
+
+				this.addListFilter(this._filter);
 				
-				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, params);
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 			}
 		});
 
@@ -449,11 +462,13 @@ export class AonMessenger extends AonElement {
 		if(filter){
 			this.applicationEl.removeBackgroundSidenavAll();
 
-			if(filter.sender){
+			if(filter.sender && filter.task_holder){
+				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+			} else if(filter.sender){
 				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
 			} else if(filter.task_holder){
 				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
-			} else if(!filter.sender && !filter.task_holder){
+			} else {
 				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
 			}
 
@@ -546,7 +561,6 @@ export class AonMessenger extends AonElement {
 			}
 		}
 		
-			
 		if(!this.cau){
 			getTaskCount(filterCount).then(count=>{
 				let sender =  count.sender || 0;

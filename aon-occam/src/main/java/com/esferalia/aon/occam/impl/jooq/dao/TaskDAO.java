@@ -181,7 +181,7 @@ public class TaskDAO {
 		} else {
 			insert(ctx, task);
 		}
-		setTaskTags(ctx, task);
+		saveTags(ctx, task);
 		return task;
 	}
 	
@@ -253,13 +253,15 @@ public class TaskDAO {
 		return task;
 	}	
 	
-	private static void setTaskTags(AONContext ctx, Task task) {
+	private static void saveTags(AONContext ctx, Task task) {
 		DSLContext dslContext = ctx.getDslContext();
 		InsertSetMoreStep<TaskTagRecord> insertTaskTags = null;
 		
-		setTag(ctx, task);
+		setTagIdOrSave(ctx, task);
 		
-		for(Tag tag: task.getTags()) {
+		List<Tag> tags = task.getTags().stream().filter(t->t.getId()!=null).collect(Collectors.toList());
+		
+		for(Tag tag: tags) {
 			
 			Optional<TaskTagRecord> tagExist = dslContext.select()
 			.from(TASK_TAG)
@@ -291,10 +293,10 @@ public class TaskDAO {
 	 * @param ctx
 	 * @param task
 	 */
-	private static void setTag(AONContext ctx, Task task) {
+	private static void setTagIdOrSave(AONContext ctx, Task task) {
 		DSLContext dslContext = ctx.getDslContext();
 
-		List<Tag> tagNotId = task.getTags().stream().filter(tag->tag.getId()==null).collect(Collectors.toList());
+		List<Tag> tagNotId = task.getTags().stream().filter(tag->tag.getId()==null&& tag.getName()!=null).collect(Collectors.toList());
 		
 		for (Tag tag: tagNotId) {
 			String name = tag.getName().toUpperCase();
@@ -361,45 +363,23 @@ public class TaskDAO {
 		return map;
 	}
 	
-//	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId){
-//		Integer sender = 0;
-//		Integer taskHolder = 0;
-//		HashMap<String, Integer> map = new HashMap<>();
-//		
-//		//SENDER
-//		Condition c = taskHolderId!=null && taskHolderId > 0 ? TASK.SENDER.eq(taskHolderId) : TASK.SENDER.isNull();
-//		sender = selectCount(ctx,filter).and(c).fetchOne(0, Integer.class);
-//		
-//		//RECEIVED
-//		Condition c2 = taskHolderId!=null && taskHolderId>0 ? TASK.TASK_HOLDER.eq(taskHolderId) : TASK.SENDER.isNotNull();
-//		taskHolder = selectCount(ctx,filter).and(c2).fetchOne(0, Integer.class);
-//				
-//		if(sender==null)     sender = 0;
-//		if(taskHolder==null) taskHolder = 0;
-//	
-//		map.put("sender", sender);
-//		map.put("task_holder", taskHolder);
-//		
-//		return map;
-//	}
-	
-	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter taskHolder, TaskFilter receiver){
-		Integer th = 0;
+	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter sender, TaskFilter receiver){
 		Integer sd = 0;
-
+		Integer rv = 0;
+	
 		HashMap<String, Integer> map = new HashMap<>();
 		
-		//RECEIVED
-		th  = selectCount(ctx, taskHolder).fetchOne(0, Integer.class);
-		
 		//SENDER
-		sd = selectCount(ctx, receiver).fetchOne(0, Integer.class);
+		sd = selectCount(ctx, sender).fetchOne(0, Integer.class);
 		
-		if(sd==null)     sd = 0;
-		if(th==null) th = 0;
+		//RECEIVED
+		rv  = selectCount(ctx, receiver).fetchOne(0, Integer.class);
+
+		if(sd==null)  sd = 0;
+		if(rv==null) rv = 0;
 	
 		map.put("sender", sd);
-		map.put("task_holder", th);
+		map.put("task_holder", rv);
 		
 		return map;
 	}

@@ -228,12 +228,12 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail){
                     task.setRegistry(detail);
-                    let registry = task.getRegistry().id;
-                    fillProject(task, undefined,  registry);
+                    let registryId = task.getRegistry().id;
+                    fillProject(task, undefined,  registryId);
 
                     const contact = document.getElementById(MESSENGER_IDS.GTASK_ID_TASK);
                     if(!task.getGTaskId() && contact){
-                        getCustomer({ id:registry, additional_info: ['MEDIA']})
+                        getCustomer({ id:registryId, additional_info: ['MEDIA']})
                         .then(resp=>{
                             const media = (resp.media || []).find(m => m.media ==="email");
                             if(media && media.value){
@@ -419,8 +419,6 @@ export const fillChat = (task, meId, workflows=[])=>{
         }
     }
 }
-
-
 
 const getAppPermission = (dur, value) => {
   let apps = [];

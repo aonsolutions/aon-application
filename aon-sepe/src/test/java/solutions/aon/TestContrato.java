@@ -19,10 +19,10 @@ import solutions.aon.sepe.Sepe;
 
 public class TestContrato {
 	
-	private static final String CERTIFICATE_PASSWORD = "aon@FNMT";
-	private static final String CERTIFICATE_TYPE = "pkcs12"; 
-	private static final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/eclipse-workspace/aon.parent/aon-sepe/src/test/resources/solutions/aon/SEPE.p12"; 
-
+	private final String CERTIFICATE_PASSWORD = "1234";
+	private final String CERTIFICATE_TYPE = "pkcs12"; 
+	private final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/MARIA_VERA.pfx"; 
+	
 	@Test
 	@Ignore
 	public void sendContrato() {
@@ -141,12 +141,11 @@ public class TestContrato {
 	public void getContratoPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {		
 			@SuppressWarnings("deprecation")
-			Date fini =  new Date("2020/08/03");
-			@SuppressWarnings("deprecation")
-			Date ffin =  new Date("2020/08/03");
-			String ipf = "47227931F";
-			String sepeId = "0120200070286";
-			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin);
+			Date fini =  new Date("2021/10/01");
+			String ipf = "71899097Q";
+			String sepeId = "3320210207385";
+//			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, fini);
+			byte[] pdf = Sepe.getContratoPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,11 +157,12 @@ public class TestContrato {
 	public void getCopyBasicPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			@SuppressWarnings("deprecation")
-			Date fini =  new Date("2020/09/09");
-			@SuppressWarnings("deprecation")
-			Date ffin =  new Date("2021/01/01");
-			String ipf = "16262835H";
-			byte[] pdf = Sepe.getCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, ffin);
+			Date fini =  new Date("2021/10/01");
+			String ipf = "71899097Q";
+			String sepeId = "3320210207385";
+//			byte[] pdf = Sepe.getCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, ipf, fini, fini);
+			
+			byte[] pdf = Sepe.getCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -171,14 +171,47 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void getTransformacionsPdf() {
+	public void getTransformationsPdf() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
 			@SuppressWarnings("deprecation")
-			Date fecha =  new Date("2016/05/06");
-			String ipf = "16262835H";
-			String sepeId = "0120200070286";
-			
-			byte[] pdf = Sepe.getTransformationPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, sepeId);
+			Date fini =  new Date("2021/10/01");
+			String ipf = "71899097Q";
+			String cif = "43443804R";	
+			String sepeId = "3320210207385";
+
+
+//			byte[] pdf = Sepe.getTransformationPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
+//					 ipf, cif, fini
+//			);
+
+			byte[] pdf = Sepe.getTransformationPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
+					sepeId
+					);
+			System.out.println( new String(Base64.getEncoder().encode(pdf)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void getTransformationCopyBasicPdf() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {			
+			@SuppressWarnings("deprecation")
+			Date fini =  new Date("2022/04/01");
+			String ipf = "71899097Q";
+			String cif = "43443804R";	
+
+			String sepeId = "3320210207385";
+
+
+//			byte[] pdf = Sepe.getTransformationCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
+//					 ipf, cif, fini
+//			);
+
+			byte[] pdf = Sepe.getTransformationCopyBasicPdf(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE,
+					sepeId
+					);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
