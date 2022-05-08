@@ -52,25 +52,25 @@ public interface IPayroll {
 	
 	// -------------------- BONUS 
 	
-	public Bonus [] getBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate);
+	public Bonus [] getBonuses(AONContext ctx, String domainName, Integer contractId);
 
 	public Bonus [] setBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus ...bonuses);
 
 	// -------------------- DEDUCTIONS 
 	
-	public Deduction [] getDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate);
+	public Deduction [] getDeductions(AONContext ctx, String domainName, Integer contractId);
 
 	public Deduction [] setDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions);
 
 	// -------------------- COSTS 
 	
-	public Cost [] getCosts(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate);
+	public Cost [] getCosts(AONContext ctx, String domainName, Integer contractId);
 
 	public Cost [] setCosts(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Cost ...costs);
 
 	// -------------------- BONUS 
 	
-	public ContractData [] getData(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate);
+	public ContractData [] getData(AONContext ctx, String domainName, Integer contractId);
 
 	public ContractData [] setData(AONContext ctx, String domainName,String ccc, String naf, Date startDate, Date endDate, ContractData...contractDatas);
 

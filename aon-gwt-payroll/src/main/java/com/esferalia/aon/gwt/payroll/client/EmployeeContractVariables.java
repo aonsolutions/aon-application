@@ -349,8 +349,10 @@ public class EmployeeContractVariables extends Composite {
 	public void setEmployeeContractVariablesObject(EmployeeContractVariablesObject employeeContractVariablesObject) {
 		this.employeeContractVariablesObject = employeeContractVariablesObject;
 		this.employeeContractVariablesObject.getContractVariables(
-				r -> initContractVariablesTable()
-				,t -> {});
+				r -> {
+					initializeYearLB();
+					initContractVariablesTable();
+				},t -> {});
 	}
 	
 	// ----------------------------------------------- setEmployeeContractVariablesObject.Methods
@@ -367,21 +369,25 @@ public class EmployeeContractVariables extends Composite {
 	}
 	
 	public void initializeYearLB() {
-		Integer year = DateUtils.getYear();
-		Integer yearAux = DateUtils.getYear();
-		Integer previusYear = year - 1;
+		Integer startYear = DateUtils.getYear(employeeContractVariablesObject.getContractStartDate());
+		Integer endYear = null == employeeContractVariablesObject.getContractEndDate() ? DateUtils.getYear() : DateUtils.getYear(employeeContractVariablesObject.getContractEndDate());
+		
+		Integer auxYear = endYear;
 		
 		this.yearLB.clear();
 		this.yearLB.addItem("-", "");
-		this.yearLB.addItem(yearAux.toString(), yearAux.toString());
-		this.yearLB.addItem(previusYear.toString(), previusYear.toString());
+		
+		while(auxYear >= startYear) {
+			this.yearLB.addItem(auxYear.toString(), auxYear.toString());
+			auxYear--;
+		}
 		
 		this.yearLB.addChangeHandler(e -> {
 			checkSelectedYear();
 			changeYear();
 		});
 		
-		setSelectedValueLB(this.yearLB, year.toString());
+		setSelectedValueLB(this.yearLB, endYear.toString());
 	}
 	
 	private void checkSelectedYear() {
@@ -442,7 +448,6 @@ public class EmployeeContractVariables extends Composite {
 		this.toolbar.add(this.variableTypeLB);
 		
 		this.yearLB = new ListBox();
-		initializeYearLB();
 		this.toolbar.add(this.yearLB);
 		
 		this.monthLB = new ListBox();

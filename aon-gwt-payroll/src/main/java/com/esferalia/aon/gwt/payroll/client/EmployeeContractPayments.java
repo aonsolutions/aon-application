@@ -182,7 +182,9 @@ public class EmployeeContractPayments extends Composite {
 	private List<ContractConceptCalc> contractConceptCalcList;
 	private Set<Payment> availablePayments = Collections.emptySet();
 	
+	private ListBox paymentTypeLB;
 	private ListBox yearLB;
+	private ListBox monthLB;
 	
 	private AddContextMenu addContextMenu;
 	
@@ -551,7 +553,7 @@ public class EmployeeContractPayments extends Composite {
 	    List<ContractConceptCalc> contractConceptCalcListAux = contractConceptCalcDataProvider.getList();
 	    contractConceptCalcListAux.clear();
 	    
-	    this.contractConceptCalcList = employeeContractPaymentsObject.getContractConceptCalcs(Integer.parseInt(yearLB.getSelectedValue()));
+	    this.contractConceptCalcList = employeeContractPaymentsObject.getContractConceptCalcs(yearLB.getSelectedValue(), monthLB.getSelectedValue(), paymentTypeLB.getSelectedValue());
 	    
 	    for (ContractConceptCalc contractConceptCalc : this.contractConceptCalcList) {
 	    	contractConceptCalcListAux.add(contractConceptCalc);
@@ -614,24 +616,74 @@ public class EmployeeContractPayments extends Composite {
 	public void setEmployeeContractPaymentsObject(EmployeeContractPaymentsObject employeeContractPaymentsObject) {
 		this.employeeContractPaymentsObject = employeeContractPaymentsObject;
 		this.employeeContractPaymentsObject.getContractPayements(
-				r -> initContractConceptCalcsTable()
-				,t -> {});
+				r -> {
+					initializeYearLB(this.yearLB);
+					initContractConceptCalcsTable();
+				},t -> {});
 	}
 	
 	// ----------------------------------------------- setEmployeeContractPaymentsObject.Methods
 	
+	public void initializePaymentTypeLB() {
+		this.paymentTypeLB.clear();
+		this.paymentTypeLB.addItem("Todos", "");
+		this.paymentTypeLB.addItem("Pagos", "0");
+		this.paymentTypeLB.addItem("Deducciones", "1");
+		this.paymentTypeLB.addItem("Costes", "2");
+		this.paymentTypeLB.addItem("Bonificaciones", "3");
+		
+		this.paymentTypeLB.addChangeHandler(e -> changeYear());
+		
+		setSelectedValueLB(this.paymentTypeLB, "");
+	}
+	
 	public void initializeYearLB(ListBox yearLB) {
-		Integer year = DateUtils.getYear();
-		Integer yearAux = DateUtils.getYear();
-		Integer previusYear = year - 1;
+		Integer startYear = DateUtils.getYear(employeeContractPaymentsObject.getContractStartDate());
+		Integer endYear = null == employeeContractPaymentsObject.getContractEndDate() ? DateUtils.getYear() : DateUtils.getYear(employeeContractPaymentsObject.getContractEndDate());
+		
+		Integer auxYear = endYear;
 		
 		yearLB.clear();
-		yearLB.addItem(yearAux.toString(), yearAux.toString());
-		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		yearLB.addItem("-", "");
 		
-		yearLB.addChangeHandler(e -> changeYear());
+		while(auxYear >= startYear) {
+			yearLB.addItem(auxYear.toString(), auxYear.toString());
+			auxYear--;
+		}
 		
-		setSelectedValueLB(yearLB, year.toString());
+		yearLB.addChangeHandler(e -> {
+			checkSelectedYear();
+			changeYear();
+		});
+		
+		setSelectedValueLB(yearLB, endYear.toString());
+	}
+	
+	private void checkSelectedYear() {
+		if(AonStringUtils.isBlank(yearLB.getSelectedValue())) {
+			monthLB.setSelectedIndex(0);
+			monthLB.setVisible(false);
+		} else
+			monthLB.setVisible(true);
+	}
+
+	public void initializeMonthLB() {
+		this.monthLB.clear();
+		this.monthLB.addItem("-", "");
+		this.monthLB.addItem("Enero", "0");
+		this.monthLB.addItem("Febrero", "1");
+		this.monthLB.addItem("Marzo", "2");
+		this.monthLB.addItem("Abril", "3");
+		this.monthLB.addItem("Mayo", "4");
+		this.monthLB.addItem("Junio", "5");
+		this.monthLB.addItem("Julio", "6");
+		this.monthLB.addItem("Agosto", "7");
+		this.monthLB.addItem("Septiembre", "8");
+		this.monthLB.addItem("Octubre", "9");
+		this.monthLB.addItem("Noviembre", "10");
+		this.monthLB.addItem("Diciembre", "11");
+		
+		this.monthLB.addChangeHandler(e -> changeYear());
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
@@ -676,9 +728,16 @@ public class EmployeeContractPayments extends Composite {
 		};
 		toolbar.add(addExpand);
 		
+		this.paymentTypeLB = new ListBox();
+		initializePaymentTypeLB();
+		this.toolbar.add(this.paymentTypeLB);
+		
 		this.yearLB = new ListBox();
-		initializeYearLB(this.yearLB);
 		this.toolbar.add(this.yearLB);
+		
+		this.monthLB = new ListBox();
+		initializeMonthLB();
+		this.toolbar.add(this.monthLB);
 	}
 
 	// ----------------------------------------------- Toolbar.Methods
@@ -800,8 +859,15 @@ public class EmployeeContractPayments extends Composite {
 		dockLayoutPanel.remove(toolbar);
 	}
 	
+	public void setVariableTypeLB(ListBox paymentTypeLB) {
+		this.paymentTypeLB = paymentTypeLB;
+	}
+	
 	public void setYearLB(ListBox yearLB) {
 		this.yearLB = yearLB;
 	}
 	
+	public void setMonthLB(ListBox monthLB) {
+		this.monthLB = monthLB;
+	}
 }
