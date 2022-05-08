@@ -1,262 +1,31 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-	<ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
-
-	<ui:style
-		type="com.esferalia.aon.gwt.payroll.client.SSPECDraft.MyStyle">
+	<ui:style>
 		
-		.noselect {
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-			-khtml-user-select: none; /* Konqueror HTML */
-			-moz-user-select: none; /* Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-		}
-		
-		@external gwt-Selector;
-		@external gwt-SuggestBoxPopup;
-		.gwt-SuggestBoxPopup {
-			z-index: 105;
-		}
-		
-		.gwt-Selector .gwt-SuggestBoxPopup {
-			z-index: 105;
-			height: inherit;
-		}
-
-		.title{
-			padding-left: 25px;
-			padding-top: 15px;
-    		font-size: small;
-		}
-
-		.title2{
-			font-size: small;
-		}
-
-		.paddingBlock{
-			padding-left: 15px;
-    		padding-top: 5px;
-		}
-
-		.bold{
-			font-weight: bold;
-			padding-bottom: 5px;
-			padding-top: 10px;
-		}
-
-		.paddingLabel{
-			padding: 8px;
-		}
-
-		.widthBox{
-			width: 99.5%;
-		}
-
-		.dateBox{
-			width: 121px !important;
-			text-align: center;
-			margin-top: 5px;
-		}
-		
-		.widthBlack{
-			width: 200px;
-		}
-
-		.firstCheckBox{
-			margin-left: 110px;
-    		margin-top: 10px;
-		}
-
-		.secondCheckBox{
-			margin-left: 110px;
-    		margin-top: 10px;
-		}
-
-		.secondColumnPadding{
-			padding-left: 20px;
-		}
-
-		.alignCenter{
-			text-align: center;
-		}
-
-		.marginLeftLine{
-			margin-left: 25px;
-		}
-
-		.button{
-			background: none;
-    		border: 1px solid #555555;
-    		margin-top: 15px;
-    		margin-left: 319px;
-			margin-bottom: 10px;
-		}
-
-		.paddingTop{
-			padding-top: 5px;
-			padding-right: 10px;
-		}
-
-		.paddingHide{
-    		padding-top: 25px;
-		}
-
-		.hide{
-			display: none;
-		}
-
-		.paddingLeft{
-			padding-left : 5px;
-		}
-
-		.noselect {
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-			-khtml-user-select: none; /* Konqueror HTML */
-			-moz-user-select: none; /* Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently
-				                                  supported by Chrome and Opera */
-		}
-
-		.buttonTable{
-			background: white;
-    		border-color: black !important;
-    		border-width: 1px !important;
-    		width: 60px;
-		}
-
-		.bold{
-			font-weight: bold;
-		}
-
-		.upperMenu td{
-			width: 100%;
-		}
-
-		.help{
-			height: 14px;
-   		 	margin-right: 5px;
-    		border: none;
-		}
-
-		.upperRightMenuStyle{
-			right: 0px;
-    		position: absolute;
-		}
-
-		.styleBorder{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-			margin-top: 20px; 
-			margin-left: 10px;
-			margin-right: 10px;
-		}
-
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
-		}
-
-		.styleBorder2{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-			margin-top: 40px; 
-			margin-left: 10px;
-		}
-
-		.firstColumnTextStyle{
-			padding:5px !important;
-		}
-
-		.maxWidth{
-			width: 100%;
-		}
-
-		.formulaStyle{
-			border: none;
-			color: #4b4b4b;
-			font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
-			width: 370px;
-		}
-
-		.descriptionStyle{
-			width: 290px 
-		}
-
-		.dateStyle{
-			width: 80px;
-		}
-
-		.selected{
-			background: #fff7ca !important;
-		}
-		
-		.selectedBG{
-			background: #fff7ca !important;
-		}
-
-		.unSelected{
-			background: white;
-		}
-		
-		.buttons {
-			padding: 10px;
-			text-align: right;
-		}
-		
-		.center{
+		.flexColumn {
 			display: flex;
-			justify-content: center;
-			width: 100%;
+			flex-direction: column;
+			padding: 0 1.5em 0 1.5em;
 		}
-
+		
 	</ui:style>
 	
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+		<g:north size="50">
+			<aon:AonToolbar ui:field="toolbar" />
+		</g:north>
+		<g:center>
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel ui:field="messagePanel" />
+				<c:DataGrid ui:field="ssPecDG" />
+			</g:HTMLPanel>
+			
+		</g:center>
+	</g:DockLayoutPanel>
 	
-	<g:HTMLPanel>
-		<g:HTMLPanel ui:field="toolbarPanel" />
-		<g:HTMLPanel ui:field="messagePanel" />
-		<g:ScrollPanel>
-	        <g:HTMLPanel styleName="{style.center}"> 
-            		<g:HTMLPanel ui:field='listPECsPanel'>
-            		    <g:VerticalPanel styleName="{style.styleBorder}">
-             		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Peculiaridades de Cotizaci&oacute;n</g:Label>
-             			<g:ScrollPanel>
-             				<g:Grid ui:field="listPECsTable" width="95%" styleName="{style.noselect}">
-             				    <g:row>
-             				        <g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-             				        <g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-             				    </g:row>
-             				</g:Grid>
-             			</g:ScrollPanel>
-            			</g:VerticalPanel>
-            		</g:HTMLPanel>
-	        </g:HTMLPanel> 
-	    </g:ScrollPanel>
-		
-	</g:HTMLPanel>
 </ui:UiBinder> 
 
