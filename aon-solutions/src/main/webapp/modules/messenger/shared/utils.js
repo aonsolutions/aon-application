@@ -1,6 +1,5 @@
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
-import { domainName } from "../../../services/request.js";
 import { setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
@@ -10,7 +9,6 @@ import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
 import { createFormTimeControl } from "../forms/time-control.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import { getReader } from "../../../services/utils.js";
 
 /**
  * Build standard toolbar options 
@@ -267,7 +265,7 @@ const checkFileAonFile = async(task, textArea)=> {
 
 const checkFileBase64 = async(textArea)=> {
     const textAreaDiv = textArea.getTextArea();
-    const elements = textAreaDiv.querySelectorAll(`img[src*=base64]`);
+    const elements = textAreaDiv.querySelectorAll(`img[src*=";base64"]`);
     let files = [];
     for (const el of elements) {
         let blob = getBlobBySrc(el.src);
@@ -318,7 +316,10 @@ export const checkFilesAddEventClick = (parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const task = aonMessengerChat.task;
-        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`).forEach(element=>{
+        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}], ${TAG.IMG}`).forEach(element=>{
+            // const tagName = element.tagName;
+            // if(tagName && tagName.toLowerCase() === TAG.IMG){}
+
             let url = element.src || element.href;      
             if(url){
                 if(task.id && aonMessengerChat.isCau()){

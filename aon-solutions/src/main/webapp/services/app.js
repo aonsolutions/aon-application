@@ -412,6 +412,7 @@ export const Apps = {
   INVOICE,
   MESSENGER,
   NOTES,
+  SALTRA,
 };
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, SALTRA };

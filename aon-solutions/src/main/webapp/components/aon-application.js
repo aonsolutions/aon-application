@@ -421,8 +421,10 @@ export class AonApplication extends AonElement {
 
   removeSidenavById(id){
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
-    let div = this.getElement(sidenav.id + id);
-    if(div) div.remove();
+    if(sidenav){
+      let div = this.getElement(sidenav.id + id);
+      if(div) div.remove();
+    }
   }
 
   buildSidenavSubOptions(data, options) {
