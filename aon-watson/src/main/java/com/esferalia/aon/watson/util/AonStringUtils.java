@@ -7484,14 +7484,14 @@ public class AonStringUtils {
 		}
 		
 		String[] words = searcher.split("\\s");
-		boolean matching = true;
-		
 		
 		for (String word : words) {		
-			 matching = matching && containsMatchingWord(text, word, tolerance);
+			 if ( !containsMatchingWord(text, word, tolerance) ) {
+				 return false;
+			 }
 		}
 		
-		return matching;
+		return true;
 	}
 	
 	/**
@@ -7518,15 +7518,16 @@ public class AonStringUtils {
 		text = normalized(text.toUpperCase());
 		searcher = normalized(searcher.toUpperCase());
 		
+		if(text.contains(searcher)){
+			return true;
+		}
+
 		String[] words = text.split("\\s");
 		for (String word : words) {
 			
+			
 			int currentDistance = AonStringUtils.getLevenshteinDistance(searcher, word);
 			int realTolerance = tolerance;
-			
-			if(word.contains(searcher)){
-				return true;
-			}
 			
 			if(currentDistance < realTolerance) {
 				return true;

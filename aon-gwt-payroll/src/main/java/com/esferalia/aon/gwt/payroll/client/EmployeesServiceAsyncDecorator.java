@@ -812,9 +812,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
-	public void getEmployeeCbcTransform(String currentDomainName, String user, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getEmployeeCbcTransform(String currentDomainName, String user, String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeCbcTransform(currentDomainName, user, document, contractId, startDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeCbcTransform(currentDomainName, user, cif, document, contractId, startDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
@@ -825,9 +825,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
-	public void getEmployeeCtoTransform(String currentDomainName, String user, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getEmployeeCtoTransform(String currentDomainName, String user, String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeCtoTransform(currentDomainName, user, document, contractId, startDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeCtoTransform(currentDomainName, user, cif, document, contractId, startDate, sepeIde, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	@Override

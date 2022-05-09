@@ -581,8 +581,8 @@ public class JooqPayrollBuilder {
 					int day = AonDateUtils.getDay(date);
 					PartTimeEntry entry = new PartTimeEntry();
 					if (isWorkedDay(date, salaryData, salary.getEndDate())) {
-						entry.setOrdinary(getDayHours(date, salaryData, salary.getEndDate()));
 						Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
+						entry.setOrdinary(dayHours);
 						if (dayHours != null && dayHours > 0) {
 							boolean daysData = areThereDaysData(date, salaryData, salary.getEndDate());
 							if (daysData || (!daysData && getDayOfWeek(date) > 1 && getDayOfWeek(date) < 7)) {
@@ -667,12 +667,16 @@ public class JooqPayrollBuilder {
 		if (optHoursData.isPresent()) {
 			return getExpressionValue(optHoursData.get().getExpression());
 		}
-		Optional<ContextData> optPartiality = salaryData.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList()).stream().filter(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)).findFirst();
-		if (optPartiality.isPresent()) {
-			Double coef = getExpressionValue(optPartiality.get().getExpression());
-			return coef != null ? coef * 8 : null;
+		if (!areThereDaysData(date, salaryData, salaryEnd)) {
+			Optional<ContextData> optPartiality = salaryData.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList()).stream().filter(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)).findFirst();
+			if (optPartiality.isPresent()) {
+				Double coef = getExpressionValue(optPartiality.get().getExpression());
+				return coef != null ? coef * 8 : null;
+			}
+			return 8d;
+		} else {
+			return null;
 		}
-		return 8d;
 	}
 
 	private static boolean areThereDaysData(Date date, Map<String, List<ContextData>> salaryData, Date salaryEnd) {

@@ -466,9 +466,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	}
 
 	public void onEditSearch(ActionEvent event) {
-		setModel(null);
-		setFilter(null);
-		setFilteredModel(null);
+		//setModel(null);
+		//setFilter(null);
+		//setFilteredModel(null);
 	}
 
 	public void onUpperDomain(ActionEvent event) {

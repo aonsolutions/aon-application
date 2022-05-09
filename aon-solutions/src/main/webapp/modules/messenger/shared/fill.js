@@ -228,12 +228,12 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail){
                     task.setRegistry(detail);
-                    let registry = task.getRegistry().id;
-                    fillProject(task, undefined,  registry);
+                    let registryId = task.getRegistry().id;
+                    fillProject(task, undefined,  registryId);
 
                     const contact = document.getElementById(MESSENGER_IDS.GTASK_ID_TASK);
                     if(!task.getGTaskId() && contact){
-                        getCustomer({ id:registry, additional_info: ['MEDIA']})
+                        getCustomer({ id:registryId, additional_info: ['MEDIA']})
                         .then(resp=>{
                             const media = (resp.media || []).find(m => m.media ==="email");
                             if(media && media.value){
@@ -291,15 +291,13 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
  * @param {HTMLElement} aon-messenger-chat component
  * @param {Array} workflows array de flujo de trabajo
  */
-export const fillChat = (aonMessengerChat, workflows=[])=>{
+export const fillChat = (task, meId, workflows=[])=>{
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
         chat.innerHTML = "";
         if(workflows.length == 0){
             let noMessage = createNoMessage();
             noMessage.appendTo(chat);
         } else {
-            const task = aonMessengerChat.task;
-            const meId = aonMessengerChat.getApplicationParent().TASK_HOLDER.id;
 
             const firstComment = workflows.find(w=> WORKFLOW_TYPES.OPEN.includes(w.type));
             const observation = task.getDescriptionJson().observation;
@@ -421,8 +419,6 @@ export const fillChat = (aonMessengerChat, workflows=[])=>{
         }
     }
 }
-
-
 
 const getAppPermission = (dur, value) => {
   let apps = [];

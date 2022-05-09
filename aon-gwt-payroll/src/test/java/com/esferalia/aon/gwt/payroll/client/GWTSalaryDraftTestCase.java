@@ -640,7 +640,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeCbcTransform(String currentDomainName, String currentUser, String document,
+			public void getEmployeeCbcTransform(String currentDomainName, String currentUser, String cif, String document,
 					Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback)
 					throws IllegalArgumentException {
 				// TODO Auto-generated method stub
@@ -660,7 +660,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeCtoTransform(String currentDomainName, String currentUser, String document,
+			public void getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document,
 					Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback)
 					throws IllegalArgumentException {
 				// TODO Auto-generated method stub

@@ -1031,7 +1031,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getEmployeeCbcTransform(String currentDomainName, String currentUser, String document,
+	public String getEmployeeCbcTransform(String currentDomainName, String currentUser, String cif, String document,
 			Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
@@ -1045,7 +1045,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getEmployeeCtoTransform(String currentDomainName, String currentUser, String document,
+	public String getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document,
 			Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;

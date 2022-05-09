@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SEH1G">
+	<field name="Tipo registro SEH1G" value="SEH1G" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código lugar/localización" value="bean" bean ="SEH1G" property="codigoLugar_localizacion" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Agencia responsable lista de códigos" value="bean" bean ="SEH1G" property="agenciaResponsableListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Lugar/localización, texto libre" value="bean" bean ="SEH1G" property="lugar_localizacion_TextoLibre" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Fecha/hora estimada de entrega (17)" value="bean" bean ="SEH1G" property="fecha_horaEstimadaDeEntrega_17_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Cantidad envío dividida (11/12)" value="bean" bean ="SEH1G" property="cantidadEnvioDividida_11_12_" format="Numeric" pattern="9(12).999" />
+	<field name="Peso envío dividido en KGM (12)" value="bean" bean ="SEH1G" property="pesoEnvioDivididoEnKGM_12_" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador lugar/localización" value="bean" bean ="SEH1G" property="calificadorLugar_localizacion" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de sacrificio (X20)" value="bean" bean ="SEH1G" property="fechaDeSacrificio_X20_" format="AlphaNumeric" pattern="X(12)" />
+</register>
