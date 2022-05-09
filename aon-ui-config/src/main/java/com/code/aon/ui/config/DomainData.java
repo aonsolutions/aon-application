@@ -132,6 +132,11 @@ public class DomainData implements Serializable {
 	
 	public String getDisplay(String filter) {
 		
+		return StringEscapeUtils.escapeHtml(description);
+	}
+
+	public String __getDisplay(String filter) {
+		
 		String htmlDescription = StringEscapeUtils.escapeHtml(description);
 		
 		if ( isBlank(filter) ) 
@@ -179,7 +184,7 @@ public class DomainData implements Serializable {
 	
 	public static String replace(final String text, final String searchString,
 			UnaryOperator<String> replace) {
-
+		
 		int start = 0;
 		int end = indexOfIgnoreCase(text, searchString, start);
 		if (end == INDEX_NOT_FOUND) {
