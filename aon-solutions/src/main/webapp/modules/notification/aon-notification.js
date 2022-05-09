@@ -218,7 +218,10 @@ export class AonNotification extends AonElement {
   createCard(data, close = false) {
     const ulEl = this.getElement(this.UL);
     const idCard = this.AON_NOTIFICATION + "Card" + data.id;
-    if(this.getElement(idCard)) this.getElement(idCard).remove();
+    
+    if(this.getElement(idCard)) {
+      this.getElement(idCard).remove();
+    }
 
     const aonCard = new AonCard();
     aonCard.style.cursor = "pointer";
@@ -233,6 +236,8 @@ export class AonNotification extends AonElement {
     aonCard.setContent(content.element);
     if (!data.status) 
       aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
+
+    aonCard.getContent().classList.add(CSS.IMG_MAX_WIDTH);
 
     const titleEl = aonCard.getCardTitle1();
     titleEl.style.whiteSpace = "pre-wrap";

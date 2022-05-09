@@ -373,9 +373,13 @@ export class AonAltaDirecta extends AonElement {
 
     async getContractType() {
         try {
-            let manager = this.applicationParentEl.getDur().isComunicaManager();
+            
+            let manager = this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltra();
+
             let resp = await getContractType();
+            
             let contract = this.data && this.data.contract ? this.data.contract : "";
+            
             if(!manager)
                 resp = resp.filter(({enable, value})=> enable || value == contract );
             
