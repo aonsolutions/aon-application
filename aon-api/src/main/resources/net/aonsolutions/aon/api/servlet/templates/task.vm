@@ -112,7 +112,7 @@
           <td>
             <div class="marginDocument">
               <b>Hola, <span class="firstLetters">$task.getTaskHolderName()</span> :</b><br>
-             Te informamos de que se ha $task.getTypeText() la solicitud en la Empresa <b>$task.getCompanyName()</b> con el siguiente número: <b>$task.getNumber()</b> y fecha $task.getDate().
+             Te informamos que se ha $task.getTypeText() la solicitud en la Empresa <b>$task.getCompanyName()</b> con el siguiente número: <b>$task.getNumber()</b> y fecha $task.getDate().
             </div>
           </td>
         </tr>

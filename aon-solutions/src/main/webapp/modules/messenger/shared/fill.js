@@ -199,6 +199,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
+        aonSelect.keyUpActive = false;
         aonSelect.clear();
         aonSelect.loading(true);
         try {
@@ -218,8 +219,10 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
                 const value = target.value;
                 if(value.length >0){
-                    const cs = await getCustomers({reload:true, page:1, perPage:30, value});
-                    aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+                    getCustomers({reload:true, page:1, perPage:30, value}).then(cs=>{
+                        const tmp = cs.map( c=> ({...c, value: c.id}) ) ;
+                        aonSelect.setOptions( tmp );
+                    });
                 }
             });
 
