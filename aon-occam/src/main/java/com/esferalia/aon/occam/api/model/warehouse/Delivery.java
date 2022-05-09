@@ -8,11 +8,13 @@ import java.util.List;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -59,9 +61,9 @@ public class Delivery implements Serializable {
 	private String shippingAlternativePhone;
 	private String shippingAlternativeRecipient;
 	private String shippingContact;
-	private Byte shippingPeriod;
+	private ShipmentPeriod shippingPeriod;
 	private String trackingNumber;	
-	private Byte shippingStatus;
+	private ShipmentStatus shippingStatus;
 	private Date statusModificationDate;	
 	// shippingAlternative
 	
@@ -546,11 +548,16 @@ public class Delivery implements Serializable {
 		return this;
 	}
 	
-	public Byte getShippingPeriod() {
+	public ShipmentPeriod getShippingPeriod() {
 		return shippingPeriod;
 	}
 	
-	public Delivery setShippingPeriod(Byte shippingPeriod) {
+	public Byte getShippingPeriodValue() {
+		return getShippingPeriod() != null
+			? getShippingPeriod().value() : null;
+	}
+	
+	public Delivery setShippingPeriod(ShipmentPeriod shippingPeriod) {
 		this.shippingPeriod = shippingPeriod;
 		return this;
 	}
@@ -564,11 +571,16 @@ public class Delivery implements Serializable {
 		return this;
 	}
 	
-	public Byte getShippingStatus() {
+	public ShipmentStatus getShippingStatus() {
 		return shippingStatus;
 	}
 	
-	public Delivery setShippingStatus(Byte shippingStatus) {
+	public Byte getShippingStatusValue() {
+		return getShippingStatus() != null
+			? getShippingStatus().value() : null;
+	}
+	
+	public Delivery setShippingStatus(ShipmentStatus shippingStatus) {
 		this.shippingStatus = shippingStatus;
 		return this;
 	}

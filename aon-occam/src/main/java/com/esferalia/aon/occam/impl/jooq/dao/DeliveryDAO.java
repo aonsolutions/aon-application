@@ -40,12 +40,14 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
@@ -197,8 +199,8 @@ public class DeliveryDAO {
 						delivery.getShippingAlternativeAddress2(), delivery.getShippingAlternativeZip(),
 						delivery.getShippingAlternativeCity(), delivery.getShippingAlternativePhone(),
 						delivery.getShippingAlternativeRecipient(), delivery.getShippingContact(),
-						delivery.getShippingPeriod(), delivery.getTrackingNumber(),
-						delivery.getShippingStatus(), delivery.getStatusModificationDate(),
+						delivery.getShippingPeriodValue(), delivery.getTrackingNumber(),
+						delivery.getShippingStatusValue(), delivery.getStatusModificationDate(),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
 				.returning().fetch().stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
@@ -248,9 +250,9 @@ public class DeliveryDAO {
 			.set(DELIVERY.SHIPPING_ALTERNATIVE_PHONE, delivery.getShippingAlternativePhone())
 			.set(DELIVERY.SHIPPING_ALTERNATIVE_RECIPIENT, delivery.getShippingAlternativeRecipient())
 			.set(DELIVERY.SHIPPING_CONTACT, delivery.getShippingContact())
-			.set(DELIVERY.SHIPPING_PERIOD, delivery.getShippingPeriod())
+			.set(DELIVERY.SHIPPING_PERIOD, delivery.getShippingPeriod().value())
 			.set(DELIVERY.TRACKING_NUMBER, delivery.getTrackingNumber())
-			.set(DELIVERY.SHIPPING_STATUS, delivery.getShippingStatus())
+			.set(DELIVERY.SHIPPING_STATUS, delivery.getShippingStatus().value())
 			.set(DELIVERY.STATUS_MODIFICATION_DATE, AonDateUtils.toTimestamp(delivery.getStatusModificationDate()))
 			.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
 			.set(DELIVERY.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
@@ -495,9 +497,9 @@ public class DeliveryDAO {
 					.setShippingAlternativePhone(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_PHONE))
 					.setShippingAlternativeRecipient(getValue(r, DELIVERY.SHIPPING_ALTERNATIVE_RECIPIENT))
 					.setShippingContact(getValue(r, DELIVERY.SHIPPING_CONTACT))
-					.setShippingPeriod(getValue(r, DELIVERY.SHIPPING_PERIOD))
+					.setShippingPeriod(ShipmentPeriod.safeValueOf(getValue(r, DELIVERY.SHIPPING_PERIOD)))
 					.setTrackingNumber(getValue(r, DELIVERY.TRACKING_NUMBER))
-					.setShippingStatus(getValue(r, DELIVERY.SHIPPING_STATUS))
+					.setShippingStatus(ShipmentStatus.safeValueOf(getValue(r, DELIVERY.SHIPPING_STATUS)))
 					.setStatusModificationDate(getValue(r, DELIVERY.STATUS_MODIFICATION_DATE))
 					.setCreationDate(getValue(r, DELIVERY.CREATION_DATE))
 					.setCreationUser(getValue(r, DELIVERY.CREATION_USER))

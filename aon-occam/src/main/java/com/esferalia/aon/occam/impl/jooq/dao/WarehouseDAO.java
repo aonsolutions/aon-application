@@ -71,7 +71,6 @@ import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
@@ -95,6 +94,9 @@ public class WarehouseDAO {
 	private static final StockPropertiesDAO STOCK_PROPERTIES = new StockPropertiesDAO();
 	private static final CarrierPackingPropertiesDAO CARRIER_PACKING_PROPERTIES = new CarrierPackingPropertiesDAO();
 	
+	private WarehouseDAO() {
+	
+	}
 	
 	protected static class WarehousePropertiesDAO implements WarehouseProperties {
 		protected Condition[] getConditions(WarehouseFilter filter) {
@@ -165,14 +167,14 @@ public class WarehouseDAO {
 		return ctx.getDslContext().select()
 				.from(WAREHOUSE)
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
-				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller());
+				.fetch().stream().map(new WarehouseFiller());
 	}
 	
 	public static Warehouse getWarehouse(AONContext ctx, WarehouseFilter filter){
 		return ctx.getDslContext().select()
 				.from(WAREHOUSE)
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
-				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller())
+				.fetch().stream().map(new WarehouseFiller())
 				.findFirst().orElse(null);
 	}
 	
@@ -186,7 +188,7 @@ public class WarehouseDAO {
 	public static Warehouse update(AONContext ctx, Warehouse warehouse) {
 		ctx.getDslContext().update(WAREHOUSE)
 		.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
-		.set(WAREHOUSE.ACTIVE, warehouse.getActive())
+		.set(WAREHOUSE.ACTIVE, warehouse.isActive() ? (byte) 1 : 0)
 		.set(WAREHOUSE.DEPARTMENT, warehouse.getDepartment())
 		.set(WAREHOUSE.NAME, warehouse.getName())
 		.set(WAREHOUSE.WORKPLACE, warehouse.getWorkplace())
@@ -198,7 +200,7 @@ public class WarehouseDAO {
 	public static Warehouse insert(AONContext ctx, Warehouse warehouse) {
 		Integer id = ctx.getDslContext().insertInto(WAREHOUSE)
 				.set(WAREHOUSE.DOMAIN, warehouse.getDomain())
-				.set(WAREHOUSE.ACTIVE, warehouse.getActive())
+				.set(WAREHOUSE.ACTIVE, warehouse.isActive() ? (byte) 1 : 0)
 				.set(WAREHOUSE.DEPARTMENT, warehouse.getDepartment())
 				.set(WAREHOUSE.NAME, warehouse.getName())
 				.set(WAREHOUSE.WORKPLACE, warehouse.getWorkplace())
@@ -280,11 +282,11 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.ID);} 
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.WAREHOUSE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.DOMAIN);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(STOCK.QUANTITY);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(STOCK.ID);} 
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(STOCK.WAREHOUSE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(STOCK.DOMAIN);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(STOCK.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(STOCK.QUANTITY);}
 	}
 	
 	
@@ -323,7 +325,7 @@ public class WarehouseDAO {
 	}
 	
 	public static void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
-		LinkedList<Integer> list = new LinkedList<Integer>();
+		LinkedList<Integer> list = new LinkedList<>();
 		getWarehouseTransferStream(ctx, filter).forEach(wt -> {
 			getWarehouseTransferDetailStream(ctx, f -> f.getWarehouseTransferProperty().eq(wt.getId()))
 			.forEach(wtd -> updateStock(ctx, wt, wtd));
@@ -359,7 +361,7 @@ public class WarehouseDAO {
 	public static Stream<WarehouseTransferDetail> getWarehouseTransferDetailStream(AONContext ctx, WarehouseTransferFilter filter,
 			ProductFilter pFilter, ItemFilter iFilter) {
 		
-		Collection<Condition> whereConditions = new ArrayList<Condition>();
+		Collection<Condition> whereConditions = new ArrayList<>();
 		whereConditions.addAll(Arrays.asList(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter)));
 		whereConditions.addAll(Arrays.asList(PRODUCT_PROPERTIES.getConditions(pFilter)));
 		whereConditions.addAll(Arrays.asList(ITEM_PROPERTIES.getConditions(iFilter)));
@@ -377,7 +379,7 @@ public class WarehouseDAO {
 	}
 	
 	public static Department getDepartment(AONContext ctx, Integer workplaceId, DepartmentFilter filter){
-		Record3<Integer, String, Integer> record = ctx.getDslContext()
+		Record3<Integer, String, Integer> r = ctx.getDslContext()
 			.selectDistinct(DEPARTMENT.ID, DEPARTMENT.NAME, DEPARTMENT.DOMAIN)
 			.from(DEPARTMENT).join(WORKPLACE_DEPARTMENT)
 			.on(WORKPLACE_DEPARTMENT.DEPARTMENT.eq(DEPARTMENT.ID))
@@ -385,11 +387,11 @@ public class WarehouseDAO {
 			.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(workplaceId))
 			.limit(1).fetchOne();
 			
-		if(record.getValue(DEPARTMENT.ID) != null){
+		if(r.getValue(DEPARTMENT.ID) != null){
 			return new Department()
-					.setDomain(record.getValue(DEPARTMENT.DOMAIN))
-					.setId(record.getValue(DEPARTMENT.ID))
-					.setName(record.getValue(DEPARTMENT.NAME))
+					.setDomain(r.getValue(DEPARTMENT.DOMAIN))
+					.setId(r.getValue(DEPARTMENT.ID))
+					.setName(r.getValue(DEPARTMENT.NAME))
 					.setEmpty(false);
 		}
 		return new Department().setEmpty(true);
@@ -402,7 +404,7 @@ public class WarehouseDAO {
 				.and(WORKPLACE_DEPARTMENT.WORKPLACE.eq(workplaceId))
 				.fetch();
 		
-		LinkedList<Department> list = new LinkedList<Department>();
+		LinkedList<Department> list = new LinkedList<>();
 		record.stream().forEach(r -> {
 			Department d = new Department()
 					.setDomain(r.getValue(DEPARTMENT.DOMAIN))
@@ -448,7 +450,7 @@ public class WarehouseDAO {
 		Result<Record1<Integer>> result = null;
 		if(serie != null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
 			.where(WAREHOUSE_TRANSFER.SERIES.eq(serie)).fetch();
-		else if(result == null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
+		if(result == null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
 			.where(WAREHOUSE_TRANSFER.SERIES.isNull()).fetch();
 		return result.isEmpty() ? 0 : result.get(0).value1()+1;
 	}
@@ -514,10 +516,6 @@ public class WarehouseDAO {
 	public static void insertDeliveryDetail(AONContext ctx,
 			DeliveryDetail detail) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
 		ctx.getDslContext()
 				.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
 						DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
@@ -534,18 +532,14 @@ public class WarehouseDAO {
 						detail.getDescription(), detail.getWarehouse(),
 						detail.getQuantity(), detail.getPrice(),
 						detail.getDiscountExpression(),
-						detail.getSalesDetail(), ctx.getUser(), creationDate,
-						ctx.getUser(), modificationDate).execute();
+						detail.getSalesDetail(), ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
+						ctx.getUser(), AonDateUtils.toTimestamp(new Date())).execute();
 	}
 	
 	public static void insertDeliveryDetails(AONContext ctx,
 			List<DeliveryDetail> list) {
 		ctx.checkWrite();
 		list.forEach(detail -> {
-			Timestamp creationDate = null, modificationDate = null;
-			creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-			modificationDate = new java.sql.Timestamp(
-					new java.util.Date().getTime());
 			ctx.getDslContext()
 			.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
 					DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
@@ -562,8 +556,8 @@ public class WarehouseDAO {
 							detail.getDescription(), detail.getWarehouse(),
 							detail.getQuantity(), detail.getPrice(),
 							detail.getDiscountExpression(),
-							detail.getSalesDetail(), ctx.getUser(), creationDate,
-							ctx.getUser(), modificationDate).execute();
+							detail.getSalesDetail(), ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
+							ctx.getUser(), AonDateUtils.toTimestamp(new Date())).execute();
 		});
 	}
 	
@@ -761,6 +755,22 @@ public class WarehouseDAO {
 		}
 	}
 	
-	
+	public static class WarehouseFiller extends Filler implements Function<Record, Warehouse> {
+
+		@Override
+		public Warehouse apply(Record r) {
+			return build(r);
+		}
+		
+		public static Warehouse build(Record r) {
+			return new Warehouse()
+					.setId(getValue(r, WAREHOUSE.ID))
+					.setDomain(getValue(r, WAREHOUSE.DOMAIN))
+					.setActive(getBoolean(r, WAREHOUSE.ACTIVE))
+					.setDepartment(getValue(r, WAREHOUSE.DEPARTMENT))
+					.setName(getValue(r, WAREHOUSE.NAME))
+					.setWorkplace(getValue(r, WAREHOUSE.WORKPLACE));					
+		}
+	}
 	
 }

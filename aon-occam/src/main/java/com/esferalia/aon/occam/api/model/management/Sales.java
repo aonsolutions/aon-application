@@ -50,6 +50,7 @@ public class Sales implements Serializable {
 	private boolean purchaseGenerated;
 	private Date deliveryDate;
 	private Carrier carrier;
+	
 	private String shippingAlternativeAddress;
 	private String shippingAlternativeAddress2;
 	private String shippingAlternativeZip;
@@ -445,6 +446,11 @@ public class Sales implements Serializable {
 	
 	public ShipmentPeriod getShippingPeriod() {
 		return shippingPeriod;
+	}
+	
+	public Byte getShippingPeriodValue() {
+		return getShippingPeriod() != null
+			? getShippingPeriod().value() : null;
 	}
 	
 	public Sales setShippingPeriod(ShipmentPeriod shippingPeriod) {

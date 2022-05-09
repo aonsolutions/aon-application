@@ -8,7 +8,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -68,8 +70,8 @@ public class DeliveryJSON {
 			.setShippingAlternativePhone(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_PHONE))
 			.setShippingAlternativeRecipient(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_RECIPIENT))
 			.setShippingContact(JsonUtils.getString(json, IJsonNames.SHIPPING_CONTACT))
-			.setShippingPeriod(JsonUtils.getByte(json, IJsonNames.SHIPPING_PERIOD))
-			.setShippingStatus(JsonUtils.getByte(json, IJsonNames.SHIPPING_STATUS))
+			.setShippingPeriod(ShipmentPeriod.safeValueOf(JsonUtils.getString(json, IJsonNames.SHIPPING_PERIOD)))
+			.setShippingStatus(ShipmentStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.SHIPPING_STATUS)))
 			.setStatusModificationDate(JsonUtils.getDate(json, IJsonNames.STATUS_MODIFICATION_DATE))
 			;
 	}
@@ -127,8 +129,10 @@ public class DeliveryJSON {
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_PHONE, object.getShippingAlternativePhone())
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_RECIPIENT, object.getShippingAlternativeRecipient())
 			.put(IJsonNames.SHIPPING_CONTACT, object.getShippingContact())
-			.put(IJsonNames.SHIPPING_PERIOD, object.getShippingPeriod())
-			.put(IJsonNames.SHIPPING_STATUS, object.getShippingStatus())
+			.put(IJsonNames.SHIPPING_PERIOD, object.getShippingPeriod() != null
+										? object.getShippingPeriod().name() : null)
+			.put(IJsonNames.SHIPPING_STATUS, object.getShippingStatus() != null
+										? object.getShippingStatus().name() : null)
 			.put(IJsonNames.STATUS_MODIFICATION_DATE, AonDateUtils.format(object.getStatusModificationDate(), AonDateUtils.DATE_TIME_FORMAT));
 	}
 }

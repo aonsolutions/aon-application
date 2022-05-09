@@ -602,7 +602,7 @@ public class AonFaker {
 			.setDomain(ctx.getDomainId())	
 			.setWorkplace(workplace.getId())
 			.setName(faker.beer().name())
-			.setActive((byte) 1);
+			.setActive(true);
 	}
 
 	public static Delivery getDelivery(AONContext ctx) {

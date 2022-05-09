@@ -2097,6 +2097,14 @@ public class AON {
 	
 	// ------------------ SALES
 	
+	public static Stream<Sales> getSalesStream(Domain domain, User user, SalesFilter filter) {
+		return getSalesStream(domain.getName(), domain.getId(),  user.getLogin(), filter);
+	}
+	
+	public static Stream<Sales> getSalesStream(Domain domain, String login, SalesFilter filter) {
+		return getSalesStream(domain.getName(), domain.getId(),  login, filter);
+	}
+	
 	public static Stream<Sales> getSalesStream(String domainName, Integer domainId, String login, SalesFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getManagement().getSalesStream(ctx, filter);

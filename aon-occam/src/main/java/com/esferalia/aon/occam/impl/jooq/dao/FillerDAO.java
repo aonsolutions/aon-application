@@ -43,7 +43,6 @@ import java.util.function.Function;
 
 import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -100,7 +99,6 @@ import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -111,7 +109,6 @@ import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
-import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO.OfferDetailFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -167,18 +164,6 @@ public class FillerDAO {
 		}
 	}
 	
-	public static class FullWarehouseFiller implements Function<WarehouseRecord, Warehouse> {
-		@Override
-		public Warehouse apply(WarehouseRecord r) {
-			return new Warehouse()
-					.setActive(r.getActive())
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setDepartment(r.getDepartment())
-					.setName(r.getName())
-					.setWorkplace(r.getWorkplace());
-		}
-	}
 	
 	public static class CarrierPackingFiller implements Function<Record, CarrierPacking> {
 		@Override

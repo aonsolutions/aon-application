@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.api.model.type.SalesType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SalesJSON {
@@ -33,7 +34,9 @@ public class SalesJSON {
 			.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
 			.setSeries(JsonUtils.getString(json, IJsonNames.SERIES))
 			.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
+			.setPurchaseReference(JsonUtils.getString(json, IJsonNames.PURCHASE_REFERENCE))
 			.setCustomer(CustomerJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CUSTOMER)))
+			.setSeller(SellerJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SELLER)))
 			.setShippingAddress(RegistryAddressJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ADDRESS)))
 			.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 			.setPayMethod(PayMethodJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PAY_METHOD)))
@@ -43,7 +46,10 @@ public class SalesJSON {
 			.setRemarks(JsonUtils.getString(json, IJsonNames.REMARKS))
 			.setWorkplace(WorkplaceJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKPLACE)))
 			.setScope(ScopeJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SCOPE)))
-			
+
+			.setDocumentType(SalesType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
+			.setDiscountExpr(JsonUtils.getString(json, IJsonNames.DISCOUNT))
+			.setDeliveryDate(JsonUtils.getDate(json, IJsonNames.DELIVERY_DATE))
 			.setNumberOfPymnts(JsonUtils.getShort(json, IJsonNames.NUMBER_OF_PYMNTS))
 			.setDaysToFirstPymnt(JsonUtils.getShort(json, IJsonNames.DAYS_TO_FIRST_PYMNT))
 			.setDaysBetweenPymnts(JsonUtils.getShort(json, IJsonNames.DAYS_BETWEEN_PYMNTS))
@@ -82,7 +88,9 @@ public class SalesJSON {
 			.put(IJsonNames.PROJECT, ProjectJSON.toJSON(object.getProject()))
 			.put(IJsonNames.SERIES, object.getSeries())
 			.put(IJsonNames.NUMBER, object.getNumber())
+			.put(IJsonNames.PURCHASE_REFERENCE, object.getPurchaseReference())
 			.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(object.getCustomer()))
+			.put(IJsonNames.SELLER, SellerJSON.toJSON(object.getSeller()))
 			.put(IJsonNames.ADDRESS, RegistryAddressJSON.toJSON(object.getShippingAddress()))
 			.put(IJsonNames.DATE, AonDateUtils.format(object.getDate(), AonDateUtils.DATE_TIME_FORMAT))
 			.put(IJsonNames.PAY_METHOD, PayMethodJSON.toJSON(object.getPayMethod()))
@@ -92,18 +100,18 @@ public class SalesJSON {
 			.put(IJsonNames.REMARKS, object.getRemarks())
 			.put(IJsonNames.WORKPLACE, WorkplaceJSON.toJSON(object.getWorkplace()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(object.getScope()))
-			
+			.put(IJsonNames.TYPE, object.getDocumentType().getName())
 			.put(IJsonNames.NUMBER_OF_PYMNTS, object.getNumberOfPymnts())
 			.put(IJsonNames.DAYS_TO_FIRST_PYMNT, object.getDaysToFirstPymnt())
 			.put(IJsonNames.DAYS_BETWEEN_PYMNTS, object.getDaysBetweenPymnts())
 			.put(IJsonNames.PYMNT_DAYS, object.getPymntDays())
-
 			.put(IJsonNames.BANK_ACCOUNT, object.getBankAccount())
 			.put(IJsonNames.BANK_ALIAS, object.getBankAlias())
 			.put(IJsonNames.BIC, object.getBic())
-			
+		
+			.put(IJsonNames.DISCOUNT, object.getDiscountExpr())
 			.put(IJsonNames.CARRIER, object.getCarrier())
-
+			.put(IJsonNames.DELIVERY_DATE,  AonDateUtils.format(object.getDeliveryDate(), AonDateUtils.DATE_TIME_FORMAT))
 			
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS, object.getShippingAlternativeAddress())
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS2, object.getShippingAlternativeAddress2())
@@ -112,6 +120,7 @@ public class SalesJSON {
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_PHONE, object.getShippingAlternativePhone())
 			.put(IJsonNames.SHIPPING_ALTERNATIVE_RECIPIENT, object.getShippingAlternativeRecipient())
 			.put(IJsonNames.SHIPPING_CONTACT, object.getShippingContact())
-			.put(IJsonNames.SHIPPING_PERIOD, object.getShippingPeriod());
+			.put(IJsonNames.SHIPPING_PERIOD, object.getShippingPeriod() != null 
+										? object.getShippingPeriod().name() : null);
 	}
 }
