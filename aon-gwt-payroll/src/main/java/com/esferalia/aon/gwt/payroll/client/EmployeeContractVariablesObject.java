@@ -22,11 +22,15 @@ public class EmployeeContractVariablesObject {
 	private List<ContractVariable> contractVariablesFiltered;
 	
 	private Integer contractId;
+	private Date contractStartDate;
+	private Date contractEndDate;
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeContractVariablesObject(Integer contractId) {
+	public EmployeeContractVariablesObject(Integer contractId, Date contractStartDate, Date contractEndDate) {
 		this.contractId = contractId;
+		this.contractStartDate =  contractStartDate;
+		this.contractEndDate = contractEndDate;
 		this.contractVariables = new ArrayList<>();
 		this.contractVariablesFiltered = new ArrayList<>();
 	}
@@ -146,6 +150,16 @@ public class EmployeeContractVariablesObject {
 				contractVariable.setId(id * -1);
 			}
 		}
+	}
+	
+	// ----------------------------------------------- Getter
+	
+	public Date getContractStartDate() {
+		return this.contractStartDate;
+	}
+	
+	public Date getContractEndDate() {
+		return this.contractEndDate;
 	}
 	
 }

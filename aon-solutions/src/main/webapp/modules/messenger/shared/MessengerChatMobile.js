@@ -84,7 +84,7 @@ const addTextAreaChat = (aonMessengerChat) => {
     
         buildFullComment(aonMessengerChat, divs.aonTextArea);
     } else {
-        firstDiv.style.height="100%";
+        firstDiv.style.height = "100%";
     }
 }
 
@@ -133,6 +133,7 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
         background: CSS.variable(COLORS.AON_WHITE),
         margin: 0,
     });
+    
     writter.appendChild(textarea);
     buildTextareaToolbar(textarea);
 

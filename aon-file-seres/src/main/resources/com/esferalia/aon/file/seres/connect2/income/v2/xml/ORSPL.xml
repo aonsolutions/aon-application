@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ORSPL">
+<field name="Tipo registro ORSPL" value="ORSPL" format="AlphaNumeric" pattern="X(6)" />
+<field name="Número de línea artículo" value="bean" bean ="ORSPL" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+<field name="Solicitud de acción o notificación" value="bean" bean ="ORSPL" property="solicitudDeAccionONotificacion" format="AlphaNumeric" pattern="X(3)" />
+<field name="Código EAN-13/DUN-14 del artículo" value="bean" bean ="ORSPL" property="codigoEAN_13_DUN_14DelArticulo" format="AlphaNumeric" pattern="X(15)" />
+<field name="Tipo código artículo" value="bean" bean ="ORSPL" property="tipoCodigoArticulo" format="AlphaNumeric" pattern="X(3)" />
+<field name="Tipo identificación de artículo (CU/DU)" value="bean" bean ="ORSPL" property="tipoIdentificacionDeArticulo_CU_DU_" format="AlphaNumeric" pattern="X(17)" />
+<field name="Descripción 1 artículo" value="bean" bean ="ORSPL" property="descripcion1Articulo" format="AlphaNumeric" pattern="X(70)" />
+<field name="Descripción 2 artículo" value="bean" bean ="ORSPL" property="descripcion2Articulo" format="AlphaNumeric" pattern="X(70)" />
+<field name="Tipo artículo" value="bean" bean ="ORSPL" property="tipoArticulo" format="AlphaNumeric" pattern="X(1)" />
+<field name="Número artículo proveedor (SA)" value="bean" bean ="ORSPL" property="numeroArticuloProveedor_SA_" format="AlphaNumeric" pattern="X(35)" />
+<field name="Número artículo comprador (IN/BP)" value="bean" bean ="ORSPL" property="numeroArticuloComprador_IN_BP_" format="AlphaNumeric" pattern="X(35)" />
+<field name="Variable promocional (PV)" value="bean" bean ="ORSPL" property="variablePromocional_PV_" format="AlphaNumeric" pattern="X(35)" />
+<field name="Código EAN del artículo adicional (1) (EN)" value="bean" bean ="ORSPL" property="codigoEANDelArticuloAdicional_1_EN_" format="AlphaNumeric" pattern="X(35)" />
+<field name="Cantidad pedida (21)" value="bean" bean ="ORSPL" property="cantidadPedida_21_" format="Numeric" pattern="9(12).999" />
+<field name="Cantidad bonificada (192)" value="bean" bean ="ORSPL" property="cantidadBonificada_192_" format="Numeric" pattern="9(12).999" />
+<field name="Calificador unidad de medida" value="bean" bean ="ORSPL" property="calificadorUnidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+<field name="Número Unidades de Consumo en U. Expedición" value="bean" bean ="ORSPL" property="numeroUnidadesDeConsumoEnU_Expedicion" format="Numeric" pattern="9(12).999" />
+<field name="Variación en cantidad" value="bean" bean ="ORSPL" property="variacionEnCantidad" format="Numeric" pattern="9(12).999" />
+<field name="Código discrepancia" value="bean" bean ="ORSPL" property="codigoDiscrepancia" format="AlphaNumeric" pattern="X(3)" />
+<field name="Razón del cambio" value="bean" bean ="ORSPL" property="razonDelCambio" format="AlphaNumeric" pattern="X(3)" />
+<field name="Calificador Fecha/Hora 1 (2-11-64)" value="bean" bean ="ORSPL" property="calificadorFecha_Hora1_2_11_64_" format="AlphaNumeric" pattern="X(3)" />
+<field name="Fecha/Hora 1" value="bean" bean ="ORSPL" property="fecha_Hora1" format="AlphaNumeric" pattern="X(12)" />
+<field name="Calificador Fecha/Hora 2 (2-11-63)" value="bean" bean ="ORSPL" property="calificadorFecha_Hora2_2_11_63_" format="AlphaNumeric" pattern="X(3)" />
+<field name="Fecha/Hora 2" value="bean" bean ="ORSPL" property="fecha_Hora2" format="AlphaNumeric" pattern="X(12)" />
+<field name="Importe neto línea (203)" value="bean" bean ="ORSPL" property="importeNetoLinea_203_" format="Numeric" pattern="9(14).999" />
+<field name="Importe línea con impuestos (388)" value="bean" bean ="ORSPL" property="importeLineaConImpuestos_388_" format="Numeric" pattern="9(14).999" />
+<field name="Precio bruto unitario (AAB)" value="bean" bean ="ORSPL" property="precioBrutoUnitario_AAB_" format="Numeric" pattern="9(12).999" />
+<field name="Precio neto unitario (AAA)" value="bean" bean ="ORSPL" property="precioNetoUnitario_AAA_" format="Numeric" pattern="9(12).999" />
+<field name="Precio a título Informativo (INF)" value="bean" bean ="ORSPL" property="precioATituloInformativo_INF_" format="Numeric" pattern="9(12).999" />
+<field name="Calificador unidad de medida precio" value="bean" bean ="ORSPL" property="calificadorUnidadDeMedidaPrecio" format="AlphaNumeric" pattern="X(6)" />
+<field name="Unidad base precio" value="bean" bean ="ORSPL" property="unidadBasePrecio" format="Numeric" pattern="9(6).999" />
+<field name="Calificador IVA/IGIC" value="bean" bean ="ORSPL" property="calificadorIVA_IGIC" format="AlphaNumeric" pattern="X(6)" />
+<field name="Porcentaje IVA/IGIC" value="bean" bean ="ORSPL" property="porcentajeIVA_IGIC" format="Numeric" pattern="9(3).99" />
+<field name="Importe IVA/IGIC" value="bean" bean ="ORSPL" property="importeIVA_IGIC" format="Numeric" pattern="9(14).999" />
+<field name="Porcentaje Recargo de Equivalencia" value="bean" bean ="ORSPL" property="porcentajeRecargoDeEquivalencia" format="Numeric" pattern="9(3).99" />
+<field name="Importe Recargo de Equivalencia" value="bean" bean ="ORSPL" property="importeRecargoDeEquivalencia" format="Numeric" pattern="9(14).999" />
+<field name="Calificador Otro Tipo de Impuesto" value="bean" bean ="ORSPL" property="calificadorOtroTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
+<field name="Porcentaje Otro Tipo de Impuesto" value="bean" bean ="ORSPL" property="porcentajeOtroTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
+<field name="Importe Otro Tipo de Impuesto" value="bean" bean ="ORSPL" property="importeOtroTipoDeImpuesto" format="Numeric" pattern="9(14).999" />
+<field name="Peso neto (PD) (AAA)" value="bean" bean ="ORSPL" property="pesoNeto_PD_AAA_" format="Numeric" pattern="9(14).999" />
+<field name="Calificador unidad de medida peso" value="bean" bean ="ORSPL" property="calificadorUnidadDeMedidaPeso" format="AlphaNumeric" pattern="X(6)" />
+<field name="Descripción del Modelo (BRN)" value="bean" bean ="ORSPL" property="descripcionDelModelo_BRN_" format="AlphaNumeric" pattern="X(25)" />
+<field name="Color (35)" value="bean" bean ="ORSPL" property="color_35_" format="AlphaNumeric" pattern="X(25)" />
+<field name="Anchura o talla (UP5)" value="bean" bean ="ORSPL" property="anchuraOTalla_UP5_" format="AlphaNumeric" pattern="X(25)" />
+<field name="Presentación, cantidad, formato (U03)" value="bean" bean ="ORSPL" property="presentacion_cantidad_formato_U03_" format="AlphaNumeric" pattern="X(25)" />
+<field name="Cantidad aceptada/enviada (12)" value="bean" bean ="ORSPL" property="cantidadAceptada_enviada_12_" format="Numeric" pattern="9(12).999" />
+<field name="Cantidad rechazada (83)" value="bean" bean ="ORSPL" property="cantidadRechazada_83_" format="Numeric" pattern="9(12).999" />
+<field name="Cancelled quantity(QTY+182)" value="bean" bean ="ORSPL" property="cancelledQuantity_QTY_182_" format="Numeric" pattern="9(12).999" />
+<field name="Rejected quantity (QTY+185)" value="bean" bean ="ORSPL" property="rejectedQuantity_QTY_185_" format="Numeric" pattern="9(12).999" />
+<field name="Número de embalajes (PAC)" value="bean" bean ="ORSPL" property="numeroDeEmbalajes_PAC_" format="Numeric" pattern="9(8)" />
+<field name="Identificación del tipo de embalaje (PAC)" value="bean" bean ="ORSPL" property="identificacionDelTipoDeEmbalaje_PAC_" format="AlphaNumeric" pattern="X(17)" />
+</register>

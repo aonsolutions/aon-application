@@ -241,32 +241,32 @@ public class EmployeeDAO {
 		return contractRecord;
 	}
 
-	public static Bonus [] getBonuses(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
-		return getBonuses(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+	public static Bonus [] getBonuses(AONContext aonContext, String domainName, Integer contractId) {
+		return getBonuses(aonContext.getDslContext(), domainName, contractId);
 	}
 
 	public static Bonus [] setBonuses(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus ...bonuses) {
 		return setBonuses(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), bonuses);
 	}
 
-	public static Deduction [] getDeductions(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
-		return getDeductions(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+	public static Deduction [] getDeductions(AONContext aonContext, String domainName, Integer contractId) {
+		return getDeductions(aonContext.getDslContext(), domainName, contractId);
 	}
 
 	public static Deduction [] setDeductions(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions) {
 		return setDeductions(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), deductions);
 	}
 
-	public static Cost [] getCosts(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
-		return getCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+	public static Cost [] getCosts(AONContext aonContext, String domainName, Integer contractId) {
+		return getCosts(aonContext.getDslContext(), domainName, contractId);
 	}
 
 	public static Cost [] setCosts(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Cost ...costs) {
 		return setCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), costs);
 	}
 
-	public static ContractData [] getData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
-		return getData(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+	public static ContractData [] getData(AONContext aonContext, String domainName, Integer contractId) {
+		return getData(aonContext.getDslContext(), domainName, contractId);
 	}
 
 	public static ContractData[] setData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, ContractData... contractDatas) {
@@ -778,7 +778,7 @@ public class EmployeeDAO {
 	}
 	
 	
-	private static Bonus [] getBonuses(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+	private static Bonus [] getBonuses(DSLContext dslContext, String domainName, Integer contractId) {
 		
 		return 
 		dslContext
@@ -790,10 +790,7 @@ public class EmployeeDAO {
 		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
 		.leftJoin(BONUS_CONCEPT).on(CONTRACT_BONUS.BONUS_CONCEPT.eq(BONUS_CONCEPT.ID))
 		.where(DOMAIN.NAME.eq(domainName))
-		.and(ENTERPRISE_CCC.CCC.eq(ccc))
-		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
-		.and(DSL.condition(endDate == null ).or(CONTRACT_BONUS.START_DATE.le(endDate)))
-		.and(CONTRACT_BONUS.END_DATE.isNull().or(CONTRACT_BONUS.END_DATE.ge(startDate)))
+		.and(CONTRACT.ID.eq(contractId))
 		.fetchStream()
 		.map(record -> 
 		new Bonus()
@@ -875,7 +872,7 @@ public class EmployeeDAO {
 		
 	}
 	
-	private static Deduction [] getDeductions(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+	private static Deduction [] getDeductions(DSLContext dslContext, String domainName, Integer contractId) {
 		
 		return 
 		dslContext
@@ -887,10 +884,7 @@ public class EmployeeDAO {
 		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
 		.leftJoin(DEDUCTION_CONCEPT).on(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT.eq(DEDUCTION_CONCEPT.ID))
 		.where(DOMAIN.NAME.eq(domainName))
-		.and(ENTERPRISE_CCC.CCC.eq(ccc))
-		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
-		.and(DSL.condition(endDate == null ).or(CONTRACT_DEDUCTION.START_DATE.le(endDate)))
-		.and(CONTRACT_DEDUCTION.END_DATE.isNull().or(CONTRACT_DEDUCTION.END_DATE.ge(startDate)))
+		.and(CONTRACT.ID.eq(contractId))
 		.fetchStream()
 		.map(record -> 
 		new Deduction()
@@ -985,7 +979,7 @@ public class EmployeeDAO {
 		
 	}
 
-	private static Cost [] getCosts(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+	private static Cost [] getCosts(DSLContext dslContext, String domainName, Integer contractId) {
 		
 		return 
 		dslContext
@@ -996,10 +990,7 @@ public class EmployeeDAO {
 		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
 		.where(DOMAIN.NAME.eq(domainName))
-		.and(ENTERPRISE_CCC.CCC.eq(ccc))
-		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
-		.and(DSL.condition(endDate == null ).or(CONTRACT_COST.START_DATE.le(endDate)))
-		.and(CONTRACT_COST.END_DATE.isNull().or(CONTRACT_COST.END_DATE.ge(startDate)))
+		.and(CONTRACT.ID.eq(contractId))
 		.fetchStreamInto(CONTRACT_COST)
 		.map(cost -> 
 		new Cost()
@@ -1086,7 +1077,7 @@ public class EmployeeDAO {
 		
 	}
 	
-	private static ContractData [] getData(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+	private static ContractData [] getData(DSLContext dslContext, String domainName, Integer contractId) {
 		
 		return 
 		dslContext
@@ -1097,10 +1088,7 @@ public class EmployeeDAO {
 		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
 		.where(DOMAIN.NAME.eq(domainName))
-		.and(ENTERPRISE_CCC.CCC.eq(ccc))
-		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
-		.and(DSL.condition(endDate == null ).or(CONTRACT_DATA.START_DATE.le(endDate)))
-		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(startDate)))
+		.and(CONTRACT.ID.eq(contractId))
 		.fetchStreamInto(CONTRACT_DATA)
 		.map(data -> 
 		new ContractData()

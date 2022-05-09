@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SEH1C">
+	<field name="Tipo de registro SEH1C" value="SEH1C" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de documento (351/35E)" value="bean" bean ="SEH1C" property="tipoDeDocumento_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número del documento" value="bean" bean ="SEH1C" property="numeroDelDocumento" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Función del mensaje" value="bean" bean ="SEH1C" property="funcionDelMensaje" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha/hora del documento (137) (102/203)" value="bean" bean ="SEH1C" property="fecha_horaDelDocumento_137__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Fecha/hora estimada de entrega(17) (102/203)" value="bean" bean ="SEH1C" property="fecha_horaEstimadaDeEntrega_17__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Fecha/Hora 1 (2-11-64)" value="bean" bean ="SEH1C" property="calificadorFecha_Hora1_2_11_64_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora 1" value="bean" bean ="SEH1C" property="fecha_hora1" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Fecha/Hora 2 (2-11-63)" value="bean" bean ="SEH1C" property="calificadorFecha_Hora2_2_11_63_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora 2" value="bean" bean ="SEH1C" property="fecha_hora2" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Información adicional" value="bean" bean ="SEH1C" property="informacionAdicional" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número pedido (comprador) (ON)" value="bean" bean ="SEH1C" property="numeroPedido_comprador__ON_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha/hora número pedido (171) (102/203)" value="bean" bean ="SEH1C" property="fecha_horaNumeroPedido_171__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número albarán (DQ)" value="bean" bean ="SEH1C" property="numeroAlbaran_DQ_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha/hora número albarán (171) (102/203)" value="bean" bean ="SEH1C" property="fecha_horaNumeroAlbaran_171__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador de referencia 1" value="bean" bean ="SEH1C" property="calificadorDeReferencia1" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Numero de referencia 1" value="bean" bean ="SEH1C" property="numeroDeReferencia1" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha/hora referencia 1(102/203)" value="bean" bean ="SEH1C" property="fecha_horaReferencia1_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador de Referencia 2" value="bean" bean ="SEH1C" property="calificadorDeReferencia2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de referencia 2" value="bean" bean ="SEH1C" property="numeroDeReferencia2" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha/hora referencia 2(102/203)" value="bean" bean ="SEH1C" property="fecha_horaReferencia2_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Método pago de costes de transporte" value="bean" bean ="SEH1C" property="metodoPagoDeCostesDeTransporte" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Condiciones de entrega o transporte, codificada" value="bean" bean ="SEH1C" property="condicionesDeEntregaOTransporte_Codificada" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Condiciones de entrega o transporte, texto libre" value="bean" bean ="SEH1C" property="condicionesDeEntregaOTransporte_TextoLibre" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Modo de transporte , codificado" value="bean" bean ="SEH1C" property="modoDeTransporte_Codificado" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Identificación de transportista" value="bean" bean ="SEH1C" property="identificacionDeTransportista" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Nombre del transportista" value="bean" bean ="SEH1C" property="nombreDelTransportista" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Matricula del vehículo" value="bean" bean ="SEH1C" property="matriculaDelVehiculo" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Lugar de entrega, codificado (8)" value="bean" bean ="SEH1C" property="lugarDeEntrega_Codificado_8_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Lugar de entrega, texto libre (8)" value="bean" bean ="SEH1C" property="lugarDeEntrega_TextoLibre_8_" format="AlphaNumeric" pattern="X(70)" />
+</register>

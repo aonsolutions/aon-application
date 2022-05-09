@@ -152,7 +152,7 @@ class SistemaREDITParts {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
-			throw new SegSocialException(e);
+			throw new SegSocialException(e.getMessage());
 		}
 	}
 	
@@ -173,7 +173,7 @@ class SistemaREDITParts {
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		} catch (Exception e) {
-			throw new SegSocialException(e);
+			throw new SegSocialException(e.getMessage());
 		} 
 	}
 	
@@ -198,7 +198,7 @@ class SistemaREDITParts {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
-			throw new SegSocialException(e);
+			throw new SegSocialException(e.getMessage());
 		}
 	}
 	
@@ -219,7 +219,7 @@ class SistemaREDITParts {
 		} catch (InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (Exception e) {
-			throw new SegSocialException(e);
+			throw new SegSocialException(e.getMessage());
 		}
 	}
 
@@ -338,8 +338,11 @@ class SistemaREDITParts {
 			handleItPartErrors(htmlPage);
 
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
-			if(null!=elem) 
+			if(null!=elem) {
 				System.out.println(elem.asText());
+				if (elem.asText().contains("no se ha dado"))
+					throw new InvalidDataException(elem.asText());
+			}
 		}
 	}
 
@@ -379,8 +382,11 @@ class SistemaREDITParts {
 			handleItPartErrors(htmlPage);
 
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
-			if(null!=elem) 
+			if(null!=elem) {
 				System.out.println(elem.asText());
+				if (elem.asText().contains("no se ha dado"))
+					throw new InvalidDataException(elem.asText());
+			}
 		}
 	}
 
@@ -444,8 +450,11 @@ class SistemaREDITParts {
 			handleItPartErrors(htmlPage);
 			
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
-			if(null!=elem) 
+			if(null!=elem) {
 				System.out.println(elem.asText());
+				if (elem.asText().contains("no se ha dado"))
+					throw new InvalidDataException(elem.asText());
+			}
 		}
 	}
 
@@ -565,10 +574,16 @@ class SistemaREDITParts {
 
 			HtmlSubmitInput confirm = htmlPage.querySelector("#general > form input[value=Confirmar]");
 			htmlPage = confirm.click();
+			handleItPartErrors(htmlPage);
+			
 
 			DomNode elem = htmlPage.querySelector("#miForm > div.importante > div.indent > span.TextoMensaje");
-			if(null!=elem) 
+			if(null!=elem) {
 				System.out.println(elem.asText());
+				if (elem.asText().contains("no se ha dado"))
+					throw new InvalidDataException(elem.asText());
+			}
+
 		}
 	}
 

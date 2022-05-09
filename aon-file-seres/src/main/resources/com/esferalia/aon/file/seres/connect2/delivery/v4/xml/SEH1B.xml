@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SEH1B">
+	<field name="Tipo registro SEH1B" value="SEH1B" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Instrucciones" value="bean" bean ="SEH1B" property="codigoInstrucciones" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Marcas de envío" value="bean" bean ="SEH1B" property="marcasDeEnvio" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Fecha de caducidad (36) (102/203)" value="bean" bean ="SEH1B" property="fechaDeCaducidad_36__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Fecha/hora recepción de la mercancía (50) (102/203)" value="bean" bean ="SEH1B" property="fecha_horaRecepcionDeLaMercancia_50__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Consumir antes de fecha (361) (102/203)" value="bean" bean ="SEH1B" property="consumirAntesDeFecha_361__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador de cantidad (11/12)" value="bean" bean ="SEH1B" property="calificadorDeCantidad_11_12_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Cantidad" value="bean" bean ="SEH1B" property="cantidad" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador número identidad" value="bean" bean ="SEH1B" property="calificadorNumeroIdentidad" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número identidad" value="bean" bean ="SEH1B" property="numeroIdentidad" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Fecha de Envasado o Empaquetado (365) (102/203)" value="bean" bean ="SEH1B" property="fechaDeEnvasadoOEmpaquetado_365__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Fecha producción/fabricación (94) (102/203)" value="bean" bean ="SEH1B" property="fechaProduccion_fabricacion_94__102_203_" format="AlphaNumeric" pattern="X(12)" />
+</register>

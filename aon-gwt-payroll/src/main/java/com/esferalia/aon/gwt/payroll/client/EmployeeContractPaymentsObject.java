@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -23,11 +24,15 @@ public class EmployeeContractPaymentsObject {
 	private List<ContractConceptCalc> contractConceptCalcs;
 	
 	private Integer contractId;
+	private Date contractStartDate;
+	private Date contractEndDate;
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeContractPaymentsObject(Integer contractId) {
+	public EmployeeContractPaymentsObject(Integer contractId, Date contractStartDate, Date contractEndDate) {
 		this.contractId = contractId;
+		this.contractStartDate =  contractStartDate;
+		this.contractEndDate = contractEndDate;
 		this.contractConceptCalcs = new ArrayList<>();
 	}
 
@@ -106,23 +111,52 @@ public class EmployeeContractPaymentsObject {
 		});
 	}
 
-	public List<ContractConceptCalc> getContractConceptCalcs(Integer year) {
+	public List<ContractConceptCalc> getContractConceptCalcs(String yearValue, String monthValue, String paymentTypeValue) {
 		this.contractConceptCalcs.clear();
-		Date startDate = DateUtils.getFirstDayOfYear(year - 1900);
-		Date endDate = DateUtils.getLastDayOfYear(year - 1900);
 		
-		for(ContractConceptCalc contractConceptCalc : contractPaymentData.getCcontractConceptCalcs()) {
-			if(contractConceptCalc.getId() < 0)
-				continue;
+		// Se filtra solo por tipo de variable sin fechas
+		if(AonStringUtils.isBlank(yearValue)) {
+			ContractConceptCalcType paymentType = getPaymentType(paymentTypeValue);
 			
-			if(	isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) ||
-				(null != contractConceptCalc.getEndDate() && isInPeriod(startDate, endDate, contractConceptCalc.getEndDate())) ||
-				(null == contractConceptCalc.getEndDate() && (isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) || DateUtils.isBeforeOrEquals(contractConceptCalc.getStartDate(), startDate))))
+			for(ContractConceptCalc contractConceptCalc : contractPaymentData.getCcontractConceptCalcs()) {
+				if(contractConceptCalc.getId() < 0)
+					continue;
 				
-				this.contractConceptCalcs.add(contractConceptCalc);
+				if(null == paymentType || paymentType.equals(contractConceptCalc.getContractConceptCalcType()))
+					this.contractConceptCalcs.add(contractConceptCalc);
+			}
+		// Se filtra por tipo de variable y fechas
+		} else {
+			Integer year = Integer.parseInt(yearValue);
+			Date startDate = DateUtils.getFirstDayOfYear(year - 1900);
+			Date endDate = DateUtils.getLastDayOfYear(year - 1900);
+			
+			if(AonStringUtils.isNotBlank(monthValue)) {
+				Integer month = Integer.parseInt(monthValue);
+				startDate.setMonth(month);
+				startDate = DateUtils.getFirstDayOfMonth(startDate);
+				endDate = DateUtils.getLastDayOfMonth(startDate);
+			}
+			
+			ContractConceptCalcType paymentType = getPaymentType(paymentTypeValue);
+			
+			for(ContractConceptCalc contractConceptCalc : contractPaymentData.getCcontractConceptCalcs()) {
+				if(contractConceptCalc.getId() < 0)
+					continue;
+				
+				if(	(isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) ||
+					(null != contractConceptCalc.getEndDate() && isInPeriod(startDate, endDate, contractConceptCalc.getEndDate())) ||
+					(null == contractConceptCalc.getEndDate() && (isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) || DateUtils.isBeforeOrEquals(contractConceptCalc.getStartDate(), startDate))))
+					&& (null == paymentType || paymentType.equals(contractConceptCalc.getContractConceptCalcType())))
+					
+					this.contractConceptCalcs.add(contractConceptCalc);
+			}
 		}
 		
-		this.contractConceptCalcs.sort((o1, o2) -> compareString(o1, o2, getContractConceptCalcTypeShort(o1.getContractConceptCalcType()), getContractConceptCalcTypeShort(o2.getContractConceptCalcType())));	
+		this.contractConceptCalcs.sort((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()));
+		Collections.reverse(this.contractConceptCalcs);
+		
+//		this.contractConceptCalcs.sort((o1, o2) -> compareString(o1, o2, getContractConceptCalcTypeShort(o1.getContractConceptCalcType()), getContractConceptCalcTypeShort(o2.getContractConceptCalcType())));	
 		
 		return this.contractConceptCalcs;
 	}
@@ -157,27 +191,29 @@ public class EmployeeContractPaymentsObject {
 		contractConceptCalc.setExpression(expression);
 	}
 	
-	private int compareString(Object o1, Object o2, String s1, String s2) {
-		if (o1 == o2) return 0;
-		else if (o1 == null) return -1;
-		else if (o2 == null) return 1;
-		else
-        	return s2.compareTo(s1);
+	private ContractConceptCalcType getPaymentType(String paymentTypeValue) {
+		switch (paymentTypeValue) {
+		case "0":
+			return ContractConceptCalcType.PAYMENT;
+		case "1":
+			return ContractConceptCalcType.DEDUCTION;
+		case "2":
+			return ContractConceptCalcType.COST;
+		case "3":
+			return ContractConceptCalcType.BONUS;
+		default:
+			return null;
+		}
 	}
 	
-	private String getContractConceptCalcTypeShort(ContractConceptCalcType contractConceptCalcType) {
-		switch (contractConceptCalcType) {
-			case PAYMENT:
-				return "P";
-			case DEDUCTION:
-				return "D";
-			case BONUS:
-				return "B";
-			case COST:
-				return "C";
-			default:
-				return "N/D";
-		}
+	// ----------------------------------------------- Getter
+	
+	public Date getContractStartDate() {
+		return this.contractStartDate;
+	}
+	
+	public Date getContractEndDate() {
+		return this.contractEndDate;
 	}
 	
 }

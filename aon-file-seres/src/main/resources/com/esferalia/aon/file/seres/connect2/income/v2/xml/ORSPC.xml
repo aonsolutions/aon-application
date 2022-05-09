@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ORSPC">
+	<field name="Tipo registro ORSPC" value="ORSPC" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo documento (231)" value="bean" bean ="ORSPC" property="tipoDocumento_231_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de respuesta al pedido" value="bean" bean ="ORSPC" property="numeroDeRespuestaAlPedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Función del mensaje" value="bean" bean ="ORSPC" property="funcionDelMensaje" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Tipo de respuesta" value="bean" bean ="ORSPC" property="tipoDeRespuesta" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora documento (137) (102/203)" value="bean" bean ="ORSPC" property="fecha_horaDocumento_137_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador fecha/hora 1" value="bean" bean ="ORSPC" property="calificadorFecha_hora1" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora 1" value="bean" bean ="ORSPC" property="fecha_hora1" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador fecha/hora 2" value="bean" bean ="ORSPC" property="calificadorFecha_hora2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/hora 2" value="bean" bean ="ORSPC" property="fecha_hora2" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Información adicional" value="bean" bean ="ORSPC" property="informacionAdicional" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número pedido comprador (ON)" value="bean" bean ="ORSPC" property="numeroPedidoComprador_ON_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha pedido" value="bean" bean ="ORSPC" property="fechaPedido" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Número pedido abierto (BO)" value="bean" bean ="ORSPC" property="numeroPedidoAbierto_BO_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número lista de precios (PL)" value="bean" bean ="ORSPC" property="numeroListaDePrecios_PL_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número pedido proveedor (VN)" value="bean" bean ="ORSPC" property="numeroPedidoProveedor_VN_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Calificador referencia adicional" value="bean" bean ="ORSPC" property="calificadorReferenciaAdicional" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número referencia adicional" value="bean" bean ="ORSPC" property="numeroReferenciaAdicional" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha referencia adicional" value="bean" bean ="ORSPC" property="fechaReferenciaAdicional" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Código moneda" value="bean" bean ="ORSPC" property="codigoMoneda" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de vencimiento único" value="bean" bean ="ORSPC" property="fechaDeVencimientoUnico" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Método Pago de costes de transportes" value="bean" bean ="ORSPC" property="metodoPagoDeCostesDeTransportes" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Condiciones de Entrega" value="bean" bean ="ORSPC" property="condicionesDeEntrega" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Importe Total Neto (79)" value="bean" bean ="ORSPC" property="importeTotalNeto_79_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Descuentos/Cargos (131)" value="bean" bean ="ORSPC" property="importeTotalDescuentos_Cargos_131_" format="Numeric" pattern="9(14).999" />
+	<field name="Base Imponible (125)" value="bean" bean ="ORSPC" property="baseImponible_125_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Impuestos (176)" value="bean" bean ="ORSPC" property="importeTotalImpuestos_176_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe a Pagar (139)" value="bean" bean ="ORSPC" property="importeAPagar_139_" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Bruto (98)" value="bean" bean ="ORSPC" property="importeTotalBruto_98_" format="Numeric" pattern="9(14).999" />
+</register>
