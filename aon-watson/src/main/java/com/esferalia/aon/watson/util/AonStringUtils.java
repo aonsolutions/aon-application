@@ -7568,7 +7568,7 @@ public class AonStringUtils {
 			return matches;
 		}
 		
-		String[] words = searcher.split("\\s");
+		String[] words = searcher.split("\\s+");
 		
 		for (String word : words) {
 			String matching = getMatchingWord(text, word, tolerance);
@@ -7606,10 +7606,10 @@ public class AonStringUtils {
 			return searcher;
 		}
 		
-		String[] words = text.split("\\s");
+		String[] words = text.split("\\s+");
 		for (String word : words) {
 		
-			String[] searcherWords = searcher.split("\\s");
+			String[] searcherWords = searcher.split("\\s+");
 			
 			for (String string : searcherWords) {
 				int currentDistance = AonStringUtils.getLevenshteinDistance(normalized(searcher).toUpperCase(), normalized(word).toUpperCase());
