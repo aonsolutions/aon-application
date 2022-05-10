@@ -49,17 +49,17 @@ public class PAYROLL {
 		}
 	}
 
-	public static ContractData[] getData(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+	public static ContractData[] getData(String domainName, Integer domainId, String login, Integer contractId) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
-			return getPayroll().getData(ctx, domainName, ccc, naf, startDate, endDate);
+			return getPayroll().getData(ctx, domainName, contractId);
 		}
 	}
 
 	// -------------------- DEDUCTIONS
 	
-	public static Deduction[] getDeductions(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+	public static Deduction[] getDeductions(String domainName, Integer domainId, String login, Integer contractId) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
-			return getPayroll().getDeductions(ctx, domainName, ccc, naf, startDate, endDate);
+			return getPayroll().getDeductions(ctx, domainName, contractId);
 		}
 	}
 
@@ -71,9 +71,9 @@ public class PAYROLL {
 
 	// -------------------- COSTS
 	
-	public static Cost[] getCosts(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+	public static Cost[] getCosts(String domainName, Integer domainId, String login, Integer contractId) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
-			return getPayroll().getCosts(ctx, domainName, ccc, naf, startDate, endDate);
+			return getPayroll().getCosts(ctx, domainName, contractId);
 		}
 	}
 
@@ -85,9 +85,9 @@ public class PAYROLL {
 
 	// -------------------- BONUS
 	
-	public static Bonus[] getBonuses(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+	public static Bonus[] getBonuses(String domainName, Integer domainId, String login, Integer contractId) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
-			return getPayroll().getBonuses(ctx, domainName, ccc, naf, startDate, endDate);
+			return getPayroll().getBonuses(ctx, domainName, contractId);
 		}
 	}
 

@@ -375,9 +375,11 @@ class SistemaREDMov {
 		employee.getCollective().ifPresent(collective->
 			form.getInputByName("txt_SDFCOLTRA_ayuda").setValueAttribute(collective)
 		);
+		
 		//CONVENIO
-		if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty() && colect.isPresent()) {
-			form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(colect.get()); 
+		if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty()) {
+		    String convenio = colect.isPresent() ? colect.get() : "60888888888888";
+			form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(convenio); 
 		}
 		//OCUPACION
 		if (employee.getOcup() != null)

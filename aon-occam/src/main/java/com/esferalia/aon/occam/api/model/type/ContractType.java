@@ -240,6 +240,9 @@ public class ContractType {
 		this.contractTypes.get(550).addNewModel(42, "TEMPORAL DE MENORES Y JOVENES EN CENTROS DE MENORES. ( SOMETIDOS A MEDIDADAS DE INTERNAMIENTO PREVISTAS EN LA LEY ORGANICA 5/2000 DE 21 DE ENERO )");
 		this.contractTypes.get(990).addNewModel(43, "TEMPORAL OTRAS SITUACIONES");
 		this.contractTypes.get(000).addNewModel(44, "BECARIO");
+		// NUEVO
+		this.contractTypes.get(250).addNewModel(45, "FAMILIARES CONTRATADO DE AUTONOMO");
+		this.contractTypes.get(350).addNewModel(45, "FAMILIARES CONTRATADO DE AUTONOMO");
 	}
 	
 	public Map<Integer, ContractTypeRecord> getContractTypes(){

@@ -28,6 +28,7 @@ export class Task {
   parent;
   project;
   tags;
+  childs;
   //TMP
   domainTmp;
   workflowTmp;
@@ -58,8 +59,10 @@ export class Task {
       this.status      = TASK_STATUS.PENDING;
       this.workflow    = [];
       this.tags    = [];
+      this.childs  = [];
       this.setWorkflowTmp({domain: this.domain.id});
       this.files = [];
+
       this.creation_user  = undefined;
       this.creation_date  = undefined;
     }
@@ -91,6 +94,7 @@ export class Task {
       this.setDomain(new Domain(task.domain));
       this.setWorkflow(task.workflow || []);
       this.setTags(task.tags || []);
+      this.setChilds(task.childs || []);
       this.setDomainTmp(this.domain);
       if(task.domainCompany) 
         this.setDomainCompany(task.domainCompany);
@@ -246,6 +250,15 @@ export class Task {
   getTags() {
     return this.tags || [];
   }
+
+  setChilds(childs) {
+    this.childs = childs;
+  }
+
+  getChilds() {
+    return this.childs || [];
+  }
+
 
   addTag(tag) {
     const existName = this.tags.find(t=> t.name === tag.name);

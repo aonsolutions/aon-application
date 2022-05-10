@@ -2238,7 +2238,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getEmployeeSSPEC().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			SSPECObject ssPECObject = ssPECMap.get(salaryDraft.getEmployeeId());
 			if(null == ssPECObject) {
-				ssPECObject = new SSPECObject(salaryDraft.getEmployeeId(), salaryDraft.getEndDate());
+				ssPECObject = new SSPECObject(salaryDraft.getEmployeeId(), salaryDraft.getEmployee().getStartDate(), salaryDraft.getEmployee().getEndDate());
 				ssPECMap.put(salaryDraft.getEmployeeId(), ssPECObject);
 			}
 			getEmployeeSSPEC().setContractSSPECObject(ssPECObject);
@@ -2251,8 +2251,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onPaymentsSelected() {
 			getEmployeeContractPayments().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-			EmployeeContractPaymentsObject employeeContractPaymentsObject = 
-					contractPaymentsMap.computeIfAbsent(salaryDraft.getEmployeeId(), EmployeeContractPaymentsObject::new );
+			EmployeeContractPaymentsObject employeeContractPaymentsObject = contractPaymentsMap.get(salaryDraft.getEmployeeId());
+			if(null == employeeContractPaymentsObject) {
+				employeeContractPaymentsObject = new EmployeeContractPaymentsObject(salaryDraft.getEmployeeId(), salaryDraft.getEmployee().getStartDate(), salaryDraft.getEmployee().getEndDate());
+				contractPaymentsMap.put(salaryDraft.getEmployeeId(), employeeContractPaymentsObject);
+			}
 			getEmployeeContractPayments().setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
 		}
 
@@ -2294,13 +2297,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
-			EmployeeContractVariablesObject employeeContractVariablesObject = 
-			new EmployeeContractVariablesObject(contractId);
-			
-			return employeeContractVariablesObject;
+			return new EmployeeContractVariablesObject(contractId, salaryDraft.getEmployee().getStartDate(), salaryDraft.getEmployee().getEndDate());
 		}
-		
-		
 		
 		private CategoryDraftObject newCategoryDraftObject(Employee employee) {
 			

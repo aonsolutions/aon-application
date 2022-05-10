@@ -11,7 +11,7 @@ export class AonSelect extends AonElement {
 
   valueAlias;
   nameAlias;
-
+  keyUpActive = true;
   static get observedAttributes() {
     return [CONSTANT.VALUE, CONSTANT.OPTIONS, CONSTANT.DISABLED];
   }
@@ -95,7 +95,9 @@ export class AonSelect extends AonElement {
       this.detail = {};
       if(this.default && '' === newValue) {
         let input = this.getElement(this.INPUT);
-        if(input) input.value = '-';
+        if(input) {
+          input.value = '-';
+        }
       } else {
         options.forEach((item, i) => {
           if(item[this.valueAlias] == newValue) {
@@ -147,10 +149,16 @@ export class AonSelect extends AonElement {
       if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {     
         input.setAttribute(CONSTANT.READONLY, true);
       }
+ 
       input.addEventListener(EVENT.KEYUP, () => {
-        const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-        this.buildOptions(optios.filter(opt => opt[this.nameAlias].toUpperCase().includes(input.value.toUpperCase())));
+          let optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+          // if(this.keyUpActive){
+            optios = optios.filter(opt => opt[this.nameAlias].toUpperCase().includes(input.value.toUpperCase()))
+          // }
+
+          this.buildOptions(optios);
       });
+      
       input.addIconButton('arrow_drop_down', () => {
         if(!this.isReadonly() && !this.isDisabled()) {
           const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
@@ -205,8 +213,11 @@ export class AonSelect extends AonElement {
   }
 
   buildOptions(options) {
-    if(options.length === 0) return null;
+
     this.clearElementById(this.OPTIONS);
+
+    if(options.length === 0) return null;
+
     let input = this.getElement(this.INPUT);
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
@@ -222,6 +233,8 @@ export class AonSelect extends AonElement {
     ul.classList.add(CSS.AON_UL);
     ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
+    div.appendChild(ul);
+
     for (const option of options) {
       let li = this.createElement(TAG.LI);
       li.className = 'aonInputListOptionsItem'
@@ -235,7 +248,7 @@ export class AonSelect extends AonElement {
       });
       ul.appendChild(li);
     }
-    div.appendChild(ul);
+
     
     document.addEventListener(EVENT.CLICK, function(event) {
       this.value = this._selected ? this._selected[this.nameAlias] : '';

@@ -1,6 +1,5 @@
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, SIG_URL, TAG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
-import { domainName } from "../../../services/request.js";
 import { setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TAG_TYPE, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
@@ -125,7 +124,7 @@ const blockquote = ()=>{
  * @returns {Object} actionJson message new object
  */
 export const chooseIconMessage = ({type, date, name, comment}) => {
-    const dateParse = AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date);
+    const dateParse = date ? (AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date)) : null;
     
     let actionJson = {
         icon : MATERIAL_ICONS.INFO,
@@ -142,8 +141,12 @@ export const chooseIconMessage = ({type, date, name, comment}) => {
     } else if(WORKFLOW_TYPES.DELETE.indexOf(type)>=0){
         actionJson.icon = MATERIAL_ICONS.ARCHIVE;
         actionJson.color = CSS.variable(COLORS.GRAYSON);
-    } else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0)
+    } else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
         actionJson.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
+    } else if(WORKFLOW_TYPES.CONNECTED.indexOf(type)>=0){
+        let b = "#" + (comment || "0").toString().padStart(5, 0);
+        actionJson.comment = `${WORKFLOW_TYPE(type)} con <b>${b}</b> ${dateParse}`;
+    }
 
     return actionJson;
 }
@@ -176,18 +179,17 @@ const appendChatMessage = (properties) => {
  * @param {HTMLElement} aon-messenger-chat 
  * @returns {Array} [value, messageEl] message element html
  */
-export const sendMessage = async (text, aonMessengerChat) => {
+export const sendMessage = async (text, task) => {
     let value = text;
     if(!text){
         let aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
-        await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT AND SEND
+        await checkFilesAndSend(aonTextArea, task); //CHECK FILES COMMENT AND SEND
         value = aonTextArea.value;
         aonTextArea.clear();
     }
     
     if(!value || (value && !value.trim().length)) return ;
 
-    const task = aonMessengerChat.task;
     const message = {
         type: WORKFLOW_TYPES.COMMENT,
         sender: "",
@@ -204,8 +206,6 @@ export const sendMessage = async (text, aonMessengerChat) => {
         date: message.creation_date,
         direction : MESSENGER_DIRECTION.RIGHT
     });
-    
-    aonMessengerChat.data = task;
 
     return [value, messageEl];
 }
@@ -215,45 +215,97 @@ export const sendMessage = async (text, aonMessengerChat) => {
  * @param {HTMLElement} textArea htmlElement textArea
  * check files and send uploadFile(taskAttach) 
  */
-const checkFilesAndSend = async (textArea)=>{
+const checkFilesAndSend = async (textArea, task)=>{
     const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
     if(btnSend)btnSend.style.pointerEvents = "none";
     try {
-        const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-        const textAreaDiv = textArea.getTextArea();
-        const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
-        const {id:taskId} = aonMessengerChat.task;
-        const files = textArea.FILES;
-        for await (const el of elements) {
-            const fileId = el.dataset.id;
-            const file = files.find(({id})=> id == fileId);
-            if(file){
-                const attach = await aonMessengerChat.uploadFile({ file, task:taskId });
-                if(attach){
-                    const json = {
-                        domain_name: attach.domain_name,
-                        attach_type: attach.attach_type,
-                        domain_id:attach.domain,
-                        id:attach.id
-                    };
-
-                    const jsonBase64 = btoa( JSON.stringify(json) );
-                    
-                    let linkTmp = `/${API_URL}/file/${jsonBase64}`;
-
-                    if(aonMessengerChat.isCau())
-                        linkTmp = SIG_URL+linkTmp;
-
-                    if(file.contentType.indexOf("image")>=0)
-                        el.src = linkTmp;
-                    else 
-                        el.href = linkTmp;
-                }
-            }
-        }
+        await checkFileBase64(textArea);
+        await checkFileAonFile(task, textArea);
     } catch (error) { console.log(error); }
     if(btnSend)btnSend.style.pointerEvents = "auto";
 }
+
+const checkFileAonFile = async(task, textArea)=> {
+
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+
+    const textAreaDiv = textArea.getTextArea();
+
+    const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
+    const {id:taskId} = task;
+    const files = textArea.FILES;
+    for await (const el of elements) {
+        const fileId = el.dataset.id;
+        const file = files.find(({id})=> id == fileId);
+        if(file){
+            const attach = await aonMessengerChat.uploadFile({ file, task:taskId });
+            if(attach){
+                const json = {
+                    domain_name: attach.domain_name,
+                    attach_type: attach.attach_type,
+                    domain_id:attach.domain,
+                    id:attach.id
+                };
+
+                const jsonBase64 = btoa( JSON.stringify(json) );
+                
+                let linkTmp = `/${API_URL}/file/${jsonBase64}`;
+
+                if(aonMessengerChat.isCau())
+                    linkTmp = SIG_URL+linkTmp;
+
+                if(file.contentType.indexOf("image")>=0)
+                    el.src = linkTmp;
+                else 
+                    el.href = linkTmp;
+            }
+        }
+    }
+}
+
+const checkFileBase64 = async(textArea)=> {
+    const textAreaDiv = textArea.getTextArea();
+    const elements = textAreaDiv.querySelectorAll(`img[src*=";base64"]`);
+    let files = [];
+    for (const el of elements) {
+        let blob = getBlobBySrc(el.src);
+        if(blob){
+            files.push(blob);
+        }
+
+        el.remove();
+    }
+
+    if(files.length){
+        await textArea.addFiles(files);
+    }
+}
+
+const getBlobBySrc = (src)=>{
+    try {
+        // base64 encoded data doesn't contain commas    
+        const base64ContentArray = src.split(",")     
+        
+        // base64 content cannot contain whitespaces but nevertheless skip if there are!
+        const contentType = base64ContentArray[0].match(/[^:\s*]\w+\/[\w-+\d.]+(?=[;| ])/)[0]
+        
+        // base64 encoded data - pure
+        const base64Str = base64ContentArray[1]
+
+        let byteCharacters = atob(base64Str);
+        let byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+
+        return new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
+    } catch (error) {
+        console.log("error getContentFileBase64", error);
+    }
+    return null;
+}
+
+
+
 
 /**
  * 
@@ -264,7 +316,10 @@ export const checkFilesAddEventClick = (parent)=>{
     new Promise(r => setTimeout(r, 1)).then(()=>{
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const task = aonMessengerChat.task;
-        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`).forEach(element=>{
+        parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}], ${TAG.IMG}`).forEach(element=>{
+            // const tagName = element.tagName;
+            // if(tagName && tagName.toLowerCase() === TAG.IMG){}
+
             let url = element.src || element.href;      
             if(url){
                 if(task.id && aonMessengerChat.isCau()){

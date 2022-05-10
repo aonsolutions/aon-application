@@ -163,7 +163,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -2415,95 +2414,86 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static List<SSPECData> getPECs(String domainName, Integer domainId, String user, Integer contractId) {
-		List<SSPECData> pecs = new ArrayList<SSPECData>();
+		List<SSPECData> pecs = new ArrayList<>();
 		
-		Date startDate = AonDateUtils.getSqlDate(1900, Calendar.JANUARY, 1);
+		com.esferalia.aon.occam.api.model.Cost costs [] = 
+		PAYROLL.getCosts(domainName, domainId, user, contractId);
 		
-		PAYROLL.getContract(domainName, domainId, user, p -> p.getIdProperty().eq(contractId))
-		.ifPresent(contract -> {
-			String ccc = contract.getEnterpriseCCC();
-			String naf = contract.getPersonSsNumber();
+		for (com.esferalia.aon.occam.api.model.Cost cost : costs)
+			if ( isPEC(cost.getExpression()) )
+				pecs.add(newSSPECData(
+						cost.getType(), 
+						cost.getStartDate(), 
+						cost.getEndDate(), 
+						String.format("%s. %s %s", cost.getDescription(), "CUOTA EMPRESARIAL", getName(cost.getType())), 
+						cost.getExpression()));
+					
+		com.esferalia.aon.occam.api.model.Bonus bonuses [] = 
+		PAYROLL.getBonuses(domainName, domainId, user, contractId);
+		for (com.esferalia.aon.occam.api.model.Bonus bonus : bonuses)
+			if ( isPEC(bonus.getExpression()) )
+				pecs.add(newSSPECData(
+						bonus.getType(), 
+						bonus.getStartDate(), 
+						bonus.getEndDate(), 
+						String.format("%s. %s %s", bonus.getDescription(), "CUOTA EMPRESARIAL", getName(bonus.getExpression())), 
+						bonus.getExpression()));
+		
+		com.esferalia.aon.occam.api.model.Deduction deductions [] = 
+		PAYROLL.getDeductions(domainName, domainId, user, contractId);
+		for (com.esferalia.aon.occam.api.model.Deduction deduction : deductions)
+			if ( isPEC(deduction.getExpression()) )
+				pecs.add(newSSPECData(
+						deduction.getType(),
+						deduction.getStartDate(), 
+						deduction.getEndDate(), 
+						String.format("%s. %s %s", deduction.getDescription(), "CUOTA TRABAJADOR", getName(deduction.getType())), 
+						deduction.getExpression()));
+		
+		com.esferalia.aon.occam.api.model.payroll.ContractData datas [] = 
+		PAYROLL.getData(domainName, domainId, user, contractId);
+		for (com.esferalia.aon.occam.api.model.payroll.ContractData data : datas) {
+			ContextVariable contextVar = ContextVariable.getVariableByName(data.getName());
+			if ( contextVar == null )
+				continue;
 			
-			com.esferalia.aon.occam.api.model.Cost costs [] = 
-			PAYROLL.getCosts(domainName, domainId, user, ccc, naf, startDate, null);
-			
-			for (com.esferalia.aon.occam.api.model.Cost cost : costs)
-				if ( isPEC(cost.getExpression()) )
-					pecs.add(newSSPECData(
-							cost.getType(), 
-							cost.getStartDate(), 
-							cost.getEndDate(), 
-							String.format("%s. %s %s", cost.getDescription(), "CUOTA EMPRESARIAL", getName(cost.getType())), 
-							cost.getExpression()));
-						
-			com.esferalia.aon.occam.api.model.Bonus bonuses [] = 
-			PAYROLL.getBonuses(domainName, domainId, user, ccc, naf, startDate, null);
-			for (com.esferalia.aon.occam.api.model.Bonus bonus : bonuses)
-				if ( isPEC(bonus.getExpression()) )
-					pecs.add(newSSPECData(
-							bonus.getType(), 
-							bonus.getStartDate(), 
-							bonus.getEndDate(), 
-							String.format("%s. %s %s", bonus.getDescription(), "CUOTA EMPRESARIAL", getName(bonus.getExpression())), 
-							bonus.getExpression()));
-			
-			com.esferalia.aon.occam.api.model.Deduction deductions [] = 
-			PAYROLL.getDeductions(domainName, domainId, user, ccc, naf, startDate, null);
-			for (com.esferalia.aon.occam.api.model.Deduction deduction : deductions)
-				if ( isPEC(deduction.getExpression()) )
-					pecs.add(newSSPECData(
-							deduction.getType(),
-							deduction.getStartDate(), 
-							deduction.getEndDate(), 
-							String.format("%s. %s %s", deduction.getDescription(), "CUOTA TRABAJADOR", getName(deduction.getType())), 
-							deduction.getExpression()));
-			
-			com.esferalia.aon.occam.api.model.payroll.ContractData datas [] = 
-			PAYROLL.getData(domainName, domainId, user, ccc, naf, startDate, null);
-			for (com.esferalia.aon.occam.api.model.payroll.ContractData data : datas) {
-				ContextVariable contextVar = ContextVariable.getVariableByName(data.getName());
-				if ( contextVar == null )
-					continue;
-				
-				switch (contextVar) {
-				case IT_RATE:
-					pecs.add(newSSPECData(
-						null,
-						data.getStartDate(), 
-						data.getEndDate(), 
-						String.format("I.T.: %.2f %%", Double.parseDouble(data.getExpression())), 
-						data.getExpression()));
-					break;
-				case IMS_RATE:
-					pecs.add(newSSPECData(
-						null,
-						data.getStartDate(), 
-						data.getEndDate(), 
-						String.format("I.M.S.: %.2f %%", Double.parseDouble(data.getExpression())), 
-						data.getExpression()));
-					break;
-				case UNEMPLOY_EMPLOYEE_PERCENT:
-					pecs.add(newSSPECData(
-						null,
-						data.getStartDate(), 
-						data.getEndDate(), 
-						String.format("DESEMPLEO TRABAJADOR: %.2f %%", Double.parseDouble(data.getExpression())), 
-						data.getExpression()));
-					break;
-				case UNEMPLOY_ENTERPRISE_PERCENT:
-					pecs.add(newSSPECData(
-						null,
-						data.getStartDate(), 
-						data.getEndDate(), 
-						String.format("DESEMPLEO EMPRESA:  %.2f %%", Double.parseDouble(data.getExpression())), 
-						data.getExpression()));
-					break;
-				default:
-					break;
-				}
+			switch (contextVar) {
+			case IT_RATE:
+				pecs.add(newSSPECData(
+					null,
+					data.getStartDate(), 
+					data.getEndDate(), 
+					String.format("I.T.: %.2f %%", Double.parseDouble(data.getExpression())), 
+					data.getExpression()));
+				break;
+			case IMS_RATE:
+				pecs.add(newSSPECData(
+					null,
+					data.getStartDate(), 
+					data.getEndDate(), 
+					String.format("I.M.S.: %.2f %%", Double.parseDouble(data.getExpression())), 
+					data.getExpression()));
+				break;
+			case UNEMPLOY_EMPLOYEE_PERCENT:
+				pecs.add(newSSPECData(
+					null,
+					data.getStartDate(), 
+					data.getEndDate(), 
+					String.format("DESEMPLEO TRABAJADOR: %.2f %%", Double.parseDouble(data.getExpression())), 
+					data.getExpression()));
+				break;
+			case UNEMPLOY_ENTERPRISE_PERCENT:
+				pecs.add(newSSPECData(
+					null,
+					data.getStartDate(), 
+					data.getEndDate(), 
+					String.format("DESEMPLEO EMPRESA:  %.2f %%", Double.parseDouble(data.getExpression())), 
+					data.getExpression()));
+				break;
+			default:
+				break;
 			}
-		});
-		
+		}
 		
 		return pecs;
 	}
@@ -2792,7 +2782,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return secondaryUsersCertificate;
 			
-		} catch (SQLException | SegSocialException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -3398,7 +3389,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return secondaryUsersCertificate;
 			
-		} catch (SQLException | SegSocialException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -3602,7 +3594,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain.getName());
 
 	    	Integer userId = AonServletUtils.getUserID(connection, userLogin, domain.getId(), parentDomainId);		
-			
+	    	List<String> messages = new ArrayList<>();
+	    	
 			 for (ItNotExist itNotExist : itNotExists) {
 			 	EmployeeIT employeeIT = itNotExist.getEmployeeIT();
 			 	EmployeeITPart part = itNotExist.getEmployeeITPart();
@@ -3612,14 +3605,20 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    if(employeeIT.getId()!=null) {
 			    	AON.removeEmployeeIT(domain, new User(), employeeIT.getId(), part.getId());
 			    } else { //DELETE TGSS
-
 			    	
 				 	employeeIT.setITParts(new ArrayList<>(Arrays.asList(part)));
 				 	
 					Certificate certificate = AON.getCertificate(domainName, domain.getId(), userLogin, userId, "TGSS");
-			    	ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
+			    	List<String> msgs = ITComunica.removeITs(certificate.getData(), certificate.getPassword(), certificate.getType(), employeeIT);
+			    	messages.addAll(msgs);
 			    }
 			 }
+			 
+	    	if(!messages.isEmpty()) {
+				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
+				if(!msg.isEmpty())
+					throw new IllegalArgumentException(msg);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);

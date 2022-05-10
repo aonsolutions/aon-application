@@ -33,8 +33,13 @@ public class HelpData {
 		this.title = title;
 		return this;
 	}
-	
 	public String getDisplay(String filter) {
+		
+		return StringEscapeUtils.escapeHtml(title);
+	}
+
+	
+	public String __getDisplay(String filter) {
 		
 		String htmlTitle = StringEscapeUtils.escapeHtml(title);
 
