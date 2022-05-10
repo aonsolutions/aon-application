@@ -446,6 +446,8 @@ const getAppPermission = (dur, value) => {
   if(dur.isInvoice())
     apps.push(Apps.INVOICE);
 
+  if(dur.isSaltra() && !dur.isPayroll() && !dur.isComunica())
+   apps.push(Apps.AON_SALTRA);
   if(value){
     const exist = apps.some(a => a.app === value );
     if(!exist) apps.push(getApp(value));

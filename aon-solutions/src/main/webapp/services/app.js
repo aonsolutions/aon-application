@@ -284,6 +284,20 @@ export const AON_SALTRA = {
   app: CONSTANT.SALTRA,
   title: MSG.SALTRA,
   description: MSG.SALTRA,
+  access: [
+    {
+      value: "Asesor",
+      name: "Asesor",
+    },
+    {
+      value: "Empresa",
+      name: "Empresa",
+    },
+    {
+      value: "Empleado",
+      name: "Empleado",
+    },
+  ],
   icon: AON_ICONS.AON_SALTRA,
   color: "#002469",
   price: " ", // '-'
@@ -293,6 +307,20 @@ export const SALTRA = {
   app: "saltra",
   title: "Saltra",
   description: "Saltra",
+  access: [
+    {
+      value: "Asesor",
+      name: "Asesor",
+    },
+    {
+      value: "Empresa",
+      name: "Empresa",
+    },
+    {
+      value: "Empleado",
+      name: "Empleado",
+    },
+  ],
   logo: "../assets/apps/saltra.png",
   price: " ",
 };
