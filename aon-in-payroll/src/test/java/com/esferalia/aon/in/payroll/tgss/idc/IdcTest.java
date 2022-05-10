@@ -20,7 +20,6 @@ import static java.util.Calendar.SEPTEMBER;
 import static java.util.Calendar.YEAR;
 import static net.aonsolutions.core.tgss.creta.jaxb.Utils.marshal;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -62,7 +61,6 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
-import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
@@ -2074,14 +2072,14 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			
 			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, ccc, naf);
-			Cost[] costsI = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
-			Bonus[] bonusI = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
-			Deduction [] deductionsI = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+			Cost[] costsI = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", contract.getId());
+			Bonus[] bonusI = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", contract.getId());
+			Deduction [] deductionsI = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", contract.getId());
 			
 			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, ccc, naf);
-			Cost[] costsII = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
-			Bonus[] bonusII = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
-			Deduction [] deductionsII = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+			Cost[] costsII = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", contract.getId());
+			Bonus[] bonusII = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", contract.getId());
+			Deduction [] deductionsII = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", contract.getId());
 		
 			Assert.assertEquals(bonusI.length, bonusII.length);
 			Assert.assertEquals(costsI.length, costsII.length);
@@ -3106,7 +3104,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
 			Assert.assertNull(imsData);
 			
-			Deduction[] deductions = PAYROLL.getDeductions(domainName, contract.getDomain(), "login", ccc, naf, contractDate, null);
+			Deduction[] deductions = PAYROLL.getDeductions(domainName, contract.getDomain(), "login", contract.getId());
 			Assert.assertEquals(3, deductions.length);
 			for (Deduction deduction : deductions) {
 				if ( deduction.getType() == UNEMPLOYMENT ) {

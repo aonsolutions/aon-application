@@ -6253,10 +6253,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 
-		} catch (CertificateNotFoundException e) {
-			throw new IllegalArgumentException(
-					"No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");
-		} catch (SQLException | SepeException | IOException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
+			if(e instanceof CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
@@ -6672,8 +6672,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String ide = Sepe.sendContract(certificateIS, certificate.getPassword(), certificate.getType(), cto);
 
 			// Set Sepe Ide
-			if (AonStringUtils.isBlank(employeeContractInfo.getContractInfo().getSepeId()))
+			if (AonStringUtils.isBlank(employeeContractInfo.getContractInfo().getSepeId()) && 
+					AonStringUtils.isNotBlank(ide)) {
 				JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
+				employeeContractInfo.getContractInfo().setSepeId(ide);
+			}
 
 		} catch (SQLException | SepeException | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());

@@ -1741,6 +1741,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		showLoading("Notificando contrato...");
 		contrataEmployeeObject.sendContract(s -> {
 			showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
+			setVisible(sepeContextMenu.getRemoveContract().getElement(), true);
 			downloadCto();
 			loadWindow(su -> {
 			});

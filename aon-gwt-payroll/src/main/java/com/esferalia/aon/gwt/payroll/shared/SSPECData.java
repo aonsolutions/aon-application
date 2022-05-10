@@ -3,16 +3,21 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.google.gwt.view.client.ProvidesKey;
+
 public class SSPECData implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Integer id;
 	private Boolean system;
 	private Date startDate;
 	private Date endDate;
 	private String description;
 	private Byte type;
 	private String formula;
+	
+	public static final ProvidesKey<SSPECData> KEY_PROVIDER = item -> item == null ? null : item.getId();
 	
 	public SSPECData() {
 		super();
@@ -28,6 +33,14 @@ public class SSPECData implements Serializable {
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
+	
+	public Integer getId() {
+		return this.id;
+	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	
 	public Boolean isSystem() {
 		return this.system;

@@ -411,7 +411,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("TA (Baja)", "99");
 		typeLB.addItem("IDC", "101");
 		typeLB.addItem("IDCPlNss", "102");
-		typeLB.addItem("Certifica2 (Pdf)", "102");
+		typeLB.addItem("Certifica2 (Pdf)", "103");
+		typeLB.addItem("Otros", "104");
 		return typeLB;
 	}
 
