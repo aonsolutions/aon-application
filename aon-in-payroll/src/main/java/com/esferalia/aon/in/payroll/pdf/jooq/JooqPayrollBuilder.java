@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.pdf.jooq;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -10,6 +11,9 @@ import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDayOfWeek;
+import static com.esferalia.aon.watson.util.AonDateUtils.compare;
+import static com.esferalia.aon.watson.util.AonDateUtils.max;
+import static com.esferalia.aon.watson.util.AonDateUtils.min;
 import static com.esferalia.aon.watson.util.AonStringUtils.containsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
@@ -25,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +52,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PartTimeParams.PartTimeEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.jooq.tables.ContractData;
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -562,78 +569,220 @@ public class JooqPayrollBuilder {
 			
 			
 			//-----PART TIME-----
-			Map<String, List<ContextData>> salaryData = salary.getContextData();
-			List<ContextData> partialities = salaryData.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList());
-			List<ContextData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
-			boolean isPartiality = partialities.stream().anyMatch(sd -> getExpressionValue(sd.getExpression()) != null && getExpressionValue(sd.getExpression()) < 1);
-			
-			if (SalaryType.SALARY.equals(salary.getSalaryType()) && isPartiality && !workedDays.isEmpty()) {
-				Date date = salary.getStartDate();
-				double contractHours = 0;
-				PartTimeParams params = new PartTimeParams(date)
-						.setEnterpriseCCC(salary.getEnterpriseCCC())
-						.setEnterpriseDocument(salary.getEnterpriseDocument())
-						.setEnterpriseName(salary.getEnterpriseName())
-						.setEmployeeName(salary.getEmployeeName())
-						.setPaymentDate(salary.getIssueDate());
-				Set<Date> workedDaysSet = new LinkedHashSet<>();
-				while (date.compareTo(salary.getEndDate()) <= 0) {
-					int day = AonDateUtils.getDay(date);
-					PartTimeEntry entry = new PartTimeEntry();
-					if (isWorkedDay(date, salaryData, salary.getEndDate())) {
-						Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
-						entry.setOrdinary(dayHours);
-						if (dayHours != null && dayHours > 0) {
-							boolean daysData = areThereDaysData(date, salaryData, salary.getEndDate());
-							if (daysData || (!daysData && getDayOfWeek(date) > 1 && getDayOfWeek(date) < 7)) {
-								params.addEntry(day, entry);
-								workedDaysSet.add(date);
-								contractHours += dayHours;
-							}
-						}
-					}
-					date = AonDateUtils.addDays(date, 1);
-				}
-				params.setContractHours(contractHours);
-				
-				date = salary.getStartDate();
-				double limit = complementaryLimit.orElse(1d);
-				
-				List<ContextData> complementaryHours = salaryData.getOrDefault("HORAS_COMPLEMENTARIAS", Collections.emptyList());
-				
-				for (ContextData sd : complementaryHours) {
-					Date sdStart = sd.getStartDate();
-					Date sdEnd = sd.getEndDate() != null ? sd.getEndDate() : salary.getEndDate();
-					Period period = new Period(sdStart, sdEnd);
-					Double value = getExpressionValue(sd.getExpression());
-					if (value != null && value > 0) {						
-						List<Date> daysList = workedDaysSet.stream().filter(period::contains).collect(Collectors.toList());
-						if (!daysList.isEmpty()) {
-							int days = daysList.size();
-							while (daysList.size() > 1 && value / days < limit) {
-								daysList.remove(daysList.size() - 1);
-								days = daysList.size();
-							}
-							final double valuePerDay = value / days;
-							workedDaysSet.forEach(d -> {
-								int day = AonDateUtils.getDay(d);
-								params.getEntry(day).setComplementary(valuePerDay);
-							});
-						}
-					}
-				}
-				
-				if (logo != null) {
-					params.setEnterpriseSignature(logo);
-				}
-				payrollBuilder.setPartTimeParams(Optional.of(params));
-			}
+			managePartTime(aonContext, payrollBuilder, salary, complementaryLimit, logo);
 			//-------------------
 
 			return payrollBuilder.build();
 		}).collect(Collectors.toList());
 	}
+
+	private static class SalaryData {
+		String expression;
+		Date startDate;
+		Date endDate;
+		String name;
+
+		public SalaryData(String expression, Date startDate, Date endDate) {
+			this.expression = expression;
+			this.startDate = startDate;
+			this.endDate = endDate;
+		}
+		public SalaryData(ContextData contextData) {
+			if (contextData != null) {				
+				this.expression = contextData.getExpression();
+				this.startDate = contextData.getStartDate();
+				this.endDate = contextData.getEndDate();
+			}
+		}
+		public SalaryData() {	
+		}
+		
+		public Date getEndDate() {
+			return endDate;
+		}
+		public SalaryData setEndDate(Date endDate) {
+			this.endDate = endDate;
+			return this;
+		}
+
+		public Date getStartDate() {
+			return startDate;
+		}
+		public SalaryData setStartDate(Date startDate) {
+			this.startDate = startDate;
+			return this;
+		}
+
+		public String getExpression() {
+			return expression;
+		}
+		public SalaryData setExpression(String expression) {
+			this.expression = expression;
+			return this;
+		}
+
+		public String getName() {
+			return name;
+		}
+		public SalaryData setName(String name) {
+			this.name = name;
+			return this;
+		}
+		
+		private boolean intersectsWith(Date startDate, Date endDate){
+			return compare(max(startDate,this.startDate),min(endDate,this.endDate)) <= 0;
+		}
+		
+		public static Map<String, List<SalaryData>> convertContextDatas(Map<String, List<ContextData>> contextDatas) {
+			if (contextDatas == null) {
+				return Collections.emptyMap();
+			}
+			Map<String, List<SalaryData>> map = new LinkedHashMap<>();
+			contextDatas.forEach((k, v) -> {
+				List<SalaryData> list = new LinkedList<>();
+				v.forEach(data -> {
+					list.add(new SalaryData(data));
+				});
+				map.put(k, list);
+			});
+			
+			return Collections.unmodifiableMap(map);
+		}
+		
+	}
 	
+	private static Map<String, List<SalaryData>> getHoursData(Map<String, List<SalaryData>> salaryData) {
+		if (salaryData == null)
+			return Collections.emptyMap();
+		List<String> keys = Arrays.stream(WEEK_DAYS).map(str -> "HORAS_" + str).collect(Collectors.toUnmodifiableList());
+		Map<String, List<SalaryData>> map = new LinkedHashMap<>();
+		salaryData.forEach((k, v) -> {
+			if (keys.contains(k)) {
+				map.put(k, v);
+			}
+		});
+		return Collections.unmodifiableMap(map);
+	}
+	
+	private static void managePartTime(AONContext aonContext, DefaultPayrollBuilder payrollBuilder, Salary salary,
+			Optional<Double> complementaryLimit, byte[] logo) {
+		
+		Map<String, List<SalaryData>> salaryDataTmp = SalaryData.convertContextDatas(salary.getContextData());
+		Map<String, List<SalaryData>> contractDataTmp = getContractDataBySalary(aonContext, salary.getId());
+		List<SalaryData> partialities = salaryDataTmp.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList());
+		if (partialities.isEmpty()) {
+			partialities = contractDataTmp.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList());
+		}
+		List<SalaryData> workedDays = salaryDataTmp.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
+		if (workedDays.isEmpty()) {
+			workedDays = contractDataTmp.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
+		}
+		
+		Map<String, List<SalaryData>> hoursData = getHoursData(salaryDataTmp);
+		Map<String, List<SalaryData>> datas = new LinkedHashMap<>();
+		Map<String, List<SalaryData>> contractHoursData = getHoursData(contractDataTmp);
+		if (hoursData.isEmpty() && !contractHoursData.isEmpty()) {
+			datas.putAll(contractHoursData);
+		}
+		datas.putAll(salaryDataTmp);
+		Map<String, List<SalaryData>> salaryData = Collections.unmodifiableMap(datas);
+		
+		boolean isPartiality = partialities.stream().anyMatch(sd -> getExpressionValue(sd.getExpression()) != null && getExpressionValue(sd.getExpression()) < 1);
+		
+		if (SalaryType.SALARY.equals(salary.getSalaryType()) && isPartiality && !workedDays.isEmpty()) {
+			Date date = salary.getStartDate();
+			double contractHours = 0;
+			PartTimeParams params = new PartTimeParams(date)
+					.setEnterpriseCCC(salary.getEnterpriseCCC())
+					.setEnterpriseDocument(salary.getEnterpriseDocument())
+					.setEnterpriseName(salary.getEnterpriseName())
+					.setEmployeeName(salary.getEmployeeName())
+					.setPaymentDate(salary.getIssueDate());
+			Set<Date> workedDaysSet = new LinkedHashSet<>();
+			while (date.compareTo(salary.getEndDate()) <= 0) {
+				int day = AonDateUtils.getDay(date);
+				PartTimeEntry entry = new PartTimeEntry();
+				if (isWorkedDay(date, salaryData, salary.getEndDate())) {
+					Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
+					entry.setOrdinary(dayHours);
+					if (dayHours != null && dayHours > 0) {
+						boolean daysData = areThereDaysData(date, salaryData, salary.getEndDate());
+						if (daysData || (!daysData && getDayOfWeek(date) > 1 && getDayOfWeek(date) < 7)) {
+							params.addEntry(day, entry);
+							workedDaysSet.add(date);
+							contractHours += dayHours;
+						}
+					}
+				}
+				date = AonDateUtils.addDays(date, 1);
+			}
+			params.setContractHours(contractHours);
+			
+			date = salary.getStartDate();
+			double limit = complementaryLimit.orElse(1d);
+			
+			List<SalaryData> complementaryHours = salaryData.getOrDefault("HORAS_COMPLEMENTARIAS", Collections.emptyList());
+			
+			for (SalaryData sd : complementaryHours) {
+				Date sdStart = sd.getStartDate();
+				Date sdEnd = sd.getEndDate() != null ? sd.getEndDate() : salary.getEndDate();
+				Period period = new Period(sdStart, sdEnd);
+				Double value = getExpressionValue(sd.getExpression());
+				if (value != null && value > 0) {						
+					List<Date> daysList = workedDaysSet.stream().filter(period::contains).collect(Collectors.toList());
+					if (!daysList.isEmpty()) {
+						int days = daysList.size();
+						while (daysList.size() > 1 && value / days < limit) {
+							daysList.remove(daysList.size() - 1);
+							days = daysList.size();
+						}
+						final double valuePerDay = value / days;
+						workedDaysSet.forEach(d -> {
+							int day = AonDateUtils.getDay(d);
+							params.getEntry(day).setComplementary(valuePerDay);
+						});
+					}
+				}
+			}
+			
+			if (logo != null) {
+				params.setEnterpriseSignature(logo);
+			}
+			payrollBuilder.setPartTimeParams(Optional.of(params));
+		}
+	}
+	
+	private static Map<String, List<SalaryData>> getContractDataBySalary(AONContext aonContext, final Integer salaryId) {
+		if (aonContext == null || salaryId == null)
+			return Collections.emptyMap();
+		
+		Map<String, List<SalaryData>> map = new LinkedHashMap<>();
+		
+		aonContext.getDslContext()
+		.select(CONTRACT_DATA.asterisk())
+		.from(CONTRACT)
+		.innerJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT))
+		.innerJoin(SALARY).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+		.where(SALARY.ID.eq(salaryId))
+		.and(CONTRACT_DATA.START_DATE.le(SALARY.END_DATE))
+		.fetchStreamInto(CONTRACT_DATA)
+		.map(JooqPayrollBuilder::convertContractData)
+		.filter(cd -> cd != null && !AonStringUtils.isEmpty(cd.getName()))
+		.forEach(cd -> {
+			List<SalaryData> cdList = map.getOrDefault(cd.getName(), new LinkedList<>());
+			cdList.add(cd);
+			map.put(cd.getName(), cdList);
+		});
+		return map;
+	}
+	
+	private static SalaryData convertContractData(ContractDataRecord cdr) {
+		return new SalaryData()
+				.setEndDate(cdr.getEndDate())
+				.setExpression(cdr.getExpression())
+				.setStartDate(cdr.getStartDate())
+				.setName(cdr.getName());
+	}
 	
 	private static void printAon(OutputStream outputStream, Collection<IDefaultPayroll> payrolls, byte[] logo) {
 		// PRINT
@@ -659,16 +808,19 @@ public class JooqPayrollBuilder {
 		}
 	}
 
-	private static Double getDayHours(Date date, Map<String, List<ContextData>> salaryData, Date salaryEnd) {
+	private static Double getDayHours(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {
 		if (date == null || salaryData == null || salaryEnd == null)
 			return null;
 		String name = "HORAS_" + WEEK_DAYS[AonDateUtils.getDayOfWeek(date) - 1];
-		Optional<ContextData> optHoursData = salaryData.getOrDefault(name, Collections.emptyList()).stream().filter(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)).findFirst();
+		Optional<SalaryData> optHoursData = salaryData.getOrDefault(name, Collections.emptyList()).stream().filter(sd -> {
+			Period period = new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd);
+			return period.contains(date);
+		}).findFirst();
 		if (optHoursData.isPresent()) {
 			return getExpressionValue(optHoursData.get().getExpression());
 		}
 		if (!areThereDaysData(date, salaryData, salaryEnd)) {
-			Optional<ContextData> optPartiality = salaryData.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList()).stream().filter(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)).findFirst();
+			Optional<SalaryData> optPartiality = salaryData.getOrDefault("COEFICIENTE_PARCIALIDAD", Collections.emptyList()).stream().filter(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)).findFirst();
 			if (optPartiality.isPresent()) {
 				Double coef = getExpressionValue(optPartiality.get().getExpression());
 				return coef != null ? coef * 8 : null;
@@ -679,17 +831,17 @@ public class JooqPayrollBuilder {
 		}
 	}
 
-	private static boolean areThereDaysData(Date date, Map<String, List<ContextData>> salaryData, Date salaryEnd) {
+	private static boolean areThereDaysData(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
 		List<String> days = Arrays.asList(WEEK_DAYS);
 		return days.stream().anyMatch(day -> salaryData.containsKey("HORAS_" + day) && salaryData.get("HORAS_" + day).stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)));
 	}
 
-	private static boolean isWorkedDay(Date date, Map<String, List<ContextData>> salaryData, Date salaryEnd) {
+	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
-		List<ContextData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
+		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
 		boolean isInWorkPeriod = workedDays.stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date));
 		if (isInWorkPeriod) {
 			if (areThereDaysData(date, salaryData, salaryEnd)) {
