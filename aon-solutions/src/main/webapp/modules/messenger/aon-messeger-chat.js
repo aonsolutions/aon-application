@@ -22,6 +22,7 @@ export class AonMessengerChat extends AonElement {
   TOOLBAR;
   PROJECTS;
   WORKGROUPS;
+  MY_TASKHOLDER;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -70,9 +71,11 @@ export class AonMessengerChat extends AonElement {
       auth:this.getAuth()
     };
       
-    const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
-    if(myTaskHolder && myTaskHolder.id) 
-      data.myTaskHolder = myTaskHolder;
+    const th = this.applicationParentEl.TASK_HOLDER;
+    if(th && th.id) {
+      data.myTaskHolder = th;
+      this.MY_TASKHOLDER = th;
+    }
 
     this.setData(data); 
     this.task = new Task(this.getData());
@@ -123,7 +126,7 @@ export class AonMessengerChat extends AonElement {
           const workflow = await saveTaskWorkflow({
             domain:taskW.getDomain().id,
             task: taskW.getId(),
-            task_holder:this.getData().myTaskHolder,
+            task_holder:this.MY_TASKHOLDER,
             type: WORKFLOW_TYPES.COMMENT,
             email: this.getAuth().email ? this.getAuth().email : undefined,
             comment
@@ -179,7 +182,7 @@ export class AonMessengerChat extends AonElement {
       }
       let workflows = await getTaskWorkflow(params);
 
-      const taskHolderId = this.getData().myTaskHolder ? this.getData().myTaskHolder.id : null;
+      const taskHolderId = this.MY_TASKHOLDER ? this.MY_TASKHOLDER.id : null;
 
       fillChat(task, taskHolderId, workflows);
 

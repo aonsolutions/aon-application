@@ -135,6 +135,8 @@ export const CUSTOM_VIEW = MSG.CUSTOM_VIEW;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
 export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
+export const CONVERSATION = 'Conversación'; // TODO
+
 
 // ----- D
 
@@ -354,6 +356,7 @@ export const PROJECT = "Proyecto"; //TODO
 export const PROJECTS = "Proyectos"; //TODO
 export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PROTOCOL = "Protocolo";
+export const PARENT = "Padre"; // TODO
 
 // ----- Q
 

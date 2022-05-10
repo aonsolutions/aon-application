@@ -317,8 +317,11 @@ export const checkFilesAddEventClick = (parent)=>{
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const task = aonMessengerChat.task;
         parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}], ${TAG.IMG}`).forEach(element=>{
-            // const tagName = element.tagName;
-            // if(tagName && tagName.toLowerCase() === TAG.IMG){}
+            const tagName = element.tagName;
+            if(tagName && tagName.toLowerCase() === TAG.IMG){
+                // parent.style.position = "relative";
+                // magnify(element, 3);
+            }
 
             let url = element.src || element.href;      
             if(url){
@@ -698,6 +701,7 @@ export const getIconJson =({source,status}) => {
       icon = MATERIAL_ICONS.SUPPORT_AGENT;
     else if(source===TASK_SOURCE.REQUEST) 
       icon = MATERIAL_ICONS.ASSIGNMENT;
+      
     if(status === TASK_STATUS.FINISHED) 
       icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
     else if(status === TASK_STATUS.DELETED) 
@@ -716,7 +720,7 @@ export const downChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat){
         setTimeout(() =>{
-            chat.lastChild.scrollIntoView();  //GO DOWN
+            chat.lastChild.scrollIntoView(); 
             addLine(chat);
         }, 100) 
     }
@@ -727,14 +731,18 @@ export const downChat = () => {
 export const upChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat)
-        setTimeout(() => chat.firstChild.scrollIntoView(), 100)      //GO UP   
+        setTimeout(() => chat.firstChild.scrollIntoView(), 100)    
 }
 
 /**
  * 
  * @param {HTMLElement} chat add line element html
  */
-const addLine = (chat) => chat.style.setProperty("--height", chat.scrollHeight + "px");
+const addLine = (chat) =>{
+    setTimeout(() =>{
+        chat.style.setProperty("--height", chat.scrollHeight + "px");
+    }, 250);
+}
 
 /**
  * 
@@ -994,4 +1002,3 @@ export const setStyleMessageHistoric = async (workflows) => {
       }
     }
 }
-  

@@ -298,7 +298,7 @@ export class AonDesktop extends AonElement {
 				}
 			}
 			
-			appsPermission = appsPermission.filter(app=> app.app !==Apps.NOTES.app);
+			appsPermission = appsPermission.filter(app=> ![Apps.NOTES.app, Apps.TIMECONTROL.app].includes(app.app));
 
 			if(appsPermission && appsPermission.length===1){
 				let app = appsPermission[0];

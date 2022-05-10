@@ -381,10 +381,19 @@ export class AonMessenger extends AonElement {
 				name: item.description,
 				icon: MATERIAL_ICONS.PEOPLE_ALT,
 				fn: () => {
-					this._filter.workgroups = undefined;
-					this._filter.workgroup = this._filter.workgroup == item.id ? undefined : item.id;
-					this.addListFilter({...this._filter});
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+					let filter = {};
+					if(this._filter.workgroup == item.id){
+						this._filter.workgroup  = undefined;
+						this.addListFilter({...this._filter});
+						filter = {...this.getListFilter()};
+					} else {
+						this._filter.workgroup  = item.id;
+						this.addListFilter({...this._filter});
+						filter = {...this.getListFilter(), sender:undefined, task_holder:undefined};
+					}
+
+					this.addBackgroundSidenav(filter);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
 				}
 			})
 		  );
@@ -454,8 +463,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	getListFilter() {
-		let filter =  this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
-		return filter;
+		return this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
 	}
 
 	addBackgroundSidenav(filter){
@@ -543,7 +551,6 @@ export class AonMessenger extends AonElement {
 		let filterCount= {};
 		if(this.cauInfo && this.cauInfo.auth && this.cauInfo.auth.email){
 			filterCount.email = this.cauInfo.auth.email;
-
 		}
 
 		if(this.cau){
@@ -563,10 +570,12 @@ export class AonMessenger extends AonElement {
 		
 		if(!this.cau){
 			getTaskCount(filterCount).then(count=>{
-				let sender =  count.sender || 0;
 				let task_holder =  count.task_holder || 0;
-				application.updateSidenavCount(MSG.SENT, sender);
-				application.updateSidenavCount("Recibidas", task_holder);
+				let sender =  count.sender || 0;
+				let total = task_holder + sender;
+				application.updateSidenavCount(MATERIAL_ICONS.MOVE_TO_INBOX, task_holder);
+				application.updateSidenavCount(MATERIAL_ICONS.OUTBOX, sender);
+				application.updateSidenavCount(MATERIAL_ICONS.ALL_INBOX, total);
 			});	
 		}
 
@@ -576,7 +585,7 @@ export class AonMessenger extends AonElement {
 			filter.source = this._filter.source;
 
 		if(filterCount.workgroups)
-			filter.email = filterCount.workgroups;
+			filter.workgroups = filterCount.workgroups;
 
 		if(filterCount.email)
 			filter.email = filterCount.email;

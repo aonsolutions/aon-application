@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskWorkflowProperties;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
@@ -153,36 +154,45 @@ public class TaskFilter {
 		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
 		
 		if(!isCau) {
-			if( taskHolder > 0) {
-				if( api.getDur().isMessengerManager()) {
-					filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
-				} else {
-					List<Integer> list = new ArrayList<>();
-					if(workgroupStr.isEmpty()) {
-						
-						AON.getWorkgroupByTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
-							t-> t.getDomainProperty().eq(domain.getId()).and(t.getStatusProperty().eq(WorkgroupStatus.ACTIVE.value())),
-							taskHolder)
-						.map(Workgroup::getId)
-						.forEach(list::add);
-					} else {
-						 String[]  str = workgroupStr.split(",");
-						 for(int i=0; i<str.length; i++) {
-							 list.add( Integer.parseInt(str[i]) );
-						 }
+			if(taskHolder==0) {
+				try {
+					TaskHolder tmp = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+							t->t.getUserIdProperty().eq(api.getUser().getId())
+					);
+					if(tmp.getId()!=null) {
+						taskHolder = tmp.getId();
 					}
-					
-					if(!list.isEmpty()) {
-						filter = filter.and(
-							f.getWorkgroupProperty().in(list.toArray(Integer[]::new))
-							.and(
-									f.getTaskHolderProperty().eq(taskHolder)
-									.or(f.getTaskHolderProperty().isNull())
-							)
-						);
-					}
-				} 
+				} catch (Exception e) {e.printStackTrace();}
 			}
+	
+			if( api.getDur().isMessengerManager()) {
+				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
+			} else {
+				List<Integer> list = new ArrayList<>();
+				if(workgroupStr.isEmpty()) {
+					
+					AON.getWorkgroupByTaskHolderStream(domain.getName(), domain.getId(), api.getUser().getLogin(),
+						t-> t.getDomainProperty().eq(domain.getId()).and(t.getStatusProperty().eq(WorkgroupStatus.ACTIVE.value())),
+						taskHolder)
+					.map(Workgroup::getId)
+					.forEach(list::add);
+				} else {
+					 String[]  str = workgroupStr.split(",");
+					 for(int i=0; i<str.length; i++) {
+						 list.add( Integer.parseInt(str[i]) );
+					 }
+				}
+				
+				if(!list.isEmpty()) {
+					filter = filter.and(
+						f.getWorkgroupProperty().in(list.toArray(Integer[]::new))
+						.and(
+								f.getTaskHolderProperty().eq(taskHolder)
+								.or(f.getTaskHolderProperty().isNull())
+						)
+					);
+				}
+			} 
 
 		} else if(  taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager())  ) {
 			String email =  params.optString(IJsonNames.EMAIL);
@@ -233,10 +243,10 @@ public class TaskFilter {
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 	
-		if(registry != null && registry!=0) 
+		if(registry!=0) 
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		
-		if(workgroup != null && workgroup !=0) 
+		if(workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
 		else if(params.optBoolean(IJsonNames.WORKGROUP)) {//TRUE = ALL
 			filter = filter.and(f.getWorkgroupProperty().isNull()).and(f.getTaskHolderProperty().isNull());
@@ -255,7 +265,7 @@ public class TaskFilter {
 			} else if(sender!=0) {
 				filter = filter.and(f.getSenderProperty().eq(sender));
 			}
-		} else if(!workgroupStr.isEmpty()) {
+		} else if(!workgroupStr.isEmpty() && workgroup ==0) {
 			 String[]  str = workgroupStr.split(",");
 			 Integer[] arr = new Integer[str.length];
 			 for(int i=0; i<str.length; i++) {

@@ -787,7 +787,7 @@ export const openDialogBranch = ()=> {
   const taskHolder = createSelectCau("taskHolderSendRandom", "taskHolderSendRandom", "Asignar a");
   div.appendChild(taskHolder);
 
-  const myTaskHolder =  aonMessengerChat.getData().myTaskHolder;
+  const myTaskHolder =  aonMessengerChat.MY_TASKHOLDER;
 
   aonMessengerChat.getTaskHolderByWorkgroup(myTaskHolder, {})
   .then(options=>{
@@ -822,9 +822,8 @@ export const openDialogBranch = ()=> {
           type: WORKFLOW_TYPES.CONNECTED, 
           workgroup:workgroup.getDetail(), 
           task_holder_receiver:taskHolder.getDetail(), 
-          note: note.value
+          comment: note.value
         };
-        console.log(params);
 
         await sendTaskHistoricEmail(params);
         aonMessengerChat.showMessage(`Rama creada!`);
