@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.pdf;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -62,6 +63,8 @@ public class SalaryPDFParser {
 		
 		SalaryPDFTemplate template = null;
 		
+		String[] partTimeSheetIdentifiers = {"Registro diario de jornada en trabajadores a tiempo parcial"};
+		
 		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
             // Set the page interval to extract. 
 			// If we don't, then all pages would be extracted.
@@ -69,7 +72,7 @@ public class SalaryPDFParser {
 			stripper.setEndPage(p);
 			
 			String text = stripper.getText(doc);
-			if ( AonStringUtils.isBlank(text) ) 
+			if ( AonStringUtils.isBlank(text) || Arrays.stream(partTimeSheetIdentifiers).anyMatch(str -> AonStringUtils.containsIgnoreCase(text, str))) 
 				continue;
 			
 //			System.out.println(text);
