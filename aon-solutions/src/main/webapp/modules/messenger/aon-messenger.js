@@ -381,10 +381,19 @@ export class AonMessenger extends AonElement {
 				name: item.description,
 				icon: MATERIAL_ICONS.PEOPLE_ALT,
 				fn: () => {
-					this._filter.workgroups = undefined;
-					this._filter.workgroup = this._filter.workgroup == item.id ? undefined : item.id;
-					this.addListFilter({...this._filter});
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+					let filter = {};
+					if(this._filter.workgroup == item.id){
+						this._filter.workgroup  = undefined;
+						this.addListFilter({...this._filter});
+						filter = {...this.getListFilter()};
+					} else {
+						this._filter.workgroup  = item.id;
+						this.addListFilter({...this._filter});
+						filter = {...this.getListFilter(), sender:undefined, task_holder:undefined};
+					}
+
+					this.addBackgroundSidenav(filter);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, filter);
 				}
 			})
 		  );

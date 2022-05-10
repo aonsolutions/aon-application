@@ -233,10 +233,10 @@ public class TaskFilter {
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 	
-		if(registry != null && registry!=0) 
+		if(registry!=0) 
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		
-		if(workgroup != null && workgroup !=0) 
+		if(workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
 		else if(params.optBoolean(IJsonNames.WORKGROUP)) {//TRUE = ALL
 			filter = filter.and(f.getWorkgroupProperty().isNull()).and(f.getTaskHolderProperty().isNull());
@@ -255,7 +255,7 @@ public class TaskFilter {
 			} else if(sender!=0) {
 				filter = filter.and(f.getSenderProperty().eq(sender));
 			}
-		} else if(!workgroupStr.isEmpty()) {
+		} else if(!workgroupStr.isEmpty() && workgroup ==0) {
 			 String[]  str = workgroupStr.split(",");
 			 Integer[] arr = new Integer[str.length];
 			 for(int i=0; i<str.length; i++) {

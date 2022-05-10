@@ -698,6 +698,7 @@ export const getIconJson =({source,status}) => {
       icon = MATERIAL_ICONS.SUPPORT_AGENT;
     else if(source===TASK_SOURCE.REQUEST) 
       icon = MATERIAL_ICONS.ASSIGNMENT;
+      
     if(status === TASK_STATUS.FINISHED) 
       icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
     else if(status === TASK_STATUS.DELETED) 

@@ -435,9 +435,9 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		Integer taskId = params.optInt(IJsonNames.TASK);
 		
-		String note = params.optString("note");
-		
 		TaskWorkflow workflow = TaskWorkflowJSON.fromJSON(params);
+		
+		String comment = workflow.getComment();
 		
 		TaskHolder taskHolderReceiver = TaskHolderJSON.fromJSON(params.optJSONObject("task_holder_receiver"));
 		
@@ -479,6 +479,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		   	wf.setTask(newTask.getId());
 		   	
 		    if(wf.getType().equals(TaskWorkflowType.OPEN)) {
+		    	wf.setComment(comment);
 			    wf.setEmail(workflow.getEmail());
 			    wf.setTaskHolder(workflow.getTaskHolder());
 		    }
@@ -488,8 +489,8 @@ public class TaskServlet extends AonApiHttpServlet{
   
 	   newTask.setGtaskId(email);
 	   
-	   if(note!=null && !note.isEmpty())
-		   newTask.setGtasklistId(note);
+	   if(comment!=null && !comment.isEmpty())
+		   newTask.setGtasklistId(comment);
 	   
 	   newTask.setWorkflows(newTask.getWorkflows().stream().filter(w-> w.getType().equals(TaskWorkflowType.CLOSE)).collect(Collectors.toList()));
 	   
