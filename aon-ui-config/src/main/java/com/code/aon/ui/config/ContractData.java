@@ -81,11 +81,6 @@ public class ContractData implements Serializable {
 	
 	public String getDisplay(String filter) {
 		
-		return StringEscapeUtils.escapeHtml(fullName);
-	}
-
-	public String __getDisplay(String filter) {
-		
 		String htmlFullName = StringEscapeUtils.escapeHtml(fullName);
 		
 		if ( isBlank(filter) ) 
