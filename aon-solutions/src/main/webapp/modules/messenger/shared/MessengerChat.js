@@ -194,13 +194,12 @@ const buildWrapper = (secondDiv) => {
       type: MESSENGER_COMPONENTS.WRAPPER,
       classes: [CSS.FLEX_COLUMN],
       styles: {
-          width:'92%',
-          height: '100%',
+        width:'94%',
+        height: '100%',
       }
     }).element;
     secondDiv.appendChild(wrapper);
 
-    
     /**
      * The chat itself
      */
@@ -332,7 +331,7 @@ const addChatButtonsUpDown = (secondDiv) => {
   const transparent = "transparent";
   const leftButtonBar = newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-    styles: { width: "8%" }
+    styles: { width: "6%" }
   });
   leftButtonBar.appendTo(secondDiv);
 

@@ -787,7 +787,7 @@ export const openDialogBranch = ()=> {
   const taskHolder = createSelectCau("taskHolderSendRandom", "taskHolderSendRandom", "Asignar a");
   div.appendChild(taskHolder);
 
-  const myTaskHolder =  aonMessengerChat.getData().myTaskHolder;
+  const myTaskHolder =  aonMessengerChat.MY_TASKHOLDER;
 
   aonMessengerChat.getTaskHolderByWorkgroup(myTaskHolder, {})
   .then(options=>{

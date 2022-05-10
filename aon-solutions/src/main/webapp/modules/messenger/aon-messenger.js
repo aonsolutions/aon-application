@@ -463,8 +463,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	getListFilter() {
-		let filter =  this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
-		return filter;
+		return this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
 	}
 
 	addBackgroundSidenav(filter){
@@ -552,7 +551,6 @@ export class AonMessenger extends AonElement {
 		let filterCount= {};
 		if(this.cauInfo && this.cauInfo.auth && this.cauInfo.auth.email){
 			filterCount.email = this.cauInfo.auth.email;
-
 		}
 
 		if(this.cau){
@@ -572,10 +570,12 @@ export class AonMessenger extends AonElement {
 		
 		if(!this.cau){
 			getTaskCount(filterCount).then(count=>{
-				let sender =  count.sender || 0;
 				let task_holder =  count.task_holder || 0;
-				application.updateSidenavCount(MSG.SENT, sender);
-				application.updateSidenavCount("Recibidas", task_holder);
+				let sender =  count.sender || 0;
+				let total = task_holder + sender;
+				application.updateSidenavCount(MATERIAL_ICONS.MOVE_TO_INBOX, task_holder);
+				application.updateSidenavCount(MATERIAL_ICONS.OUTBOX, sender);
+				application.updateSidenavCount(MATERIAL_ICONS.ALL_INBOX, total);
 			});	
 		}
 
@@ -585,7 +585,7 @@ export class AonMessenger extends AonElement {
 			filter.source = this._filter.source;
 
 		if(filterCount.workgroups)
-			filter.email = filterCount.workgroups;
+			filter.workgroups = filterCount.workgroups;
 
 		if(filterCount.email)
 			filter.email = filterCount.email;
