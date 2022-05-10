@@ -21,9 +21,6 @@ public class Page17 extends PageAbs {
 	private static final String FOOTER_1535 = "(*) Activos por impuesto diferido con derecho a conversi\u00F3n en cr\u00E9dito exigible (art. 130 LIS).";
 	private static final String FOOTER_1579 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene dotaciones pendientes de integrar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
 
-	// FALTA - VER SI LO PONEMOS EN LA TABLA O DIRECTAMENTE EN EL BASE PANEL
-//	private static final String FOOTER = "Los importes de este apartado se consignar\u00E1n a nivel de cuota.";
-
 	public Page17( Model200PageCallback callback ) {
 		super(callback);
 		addBasePanel();		
@@ -82,10 +79,9 @@ public class Page17 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.damageAmount4()));
 		
-		//paintFooterNote(basePanel, FOOTER);
-		
 		FlexTable table2 = addTable("", 8, "150px", true);
 		paintAmountLabel(table2);
+		
 		row = 1;
 		addHeaderCell(table2,row, 5,AON.MSG.dot4_2());
 		table2.getFlexCellFormatter().setColSpan(row, 5, 4);
@@ -107,8 +103,6 @@ public class Page17 extends PageAbs {
 		// Activos por impuesto diferido Art.130 LIS
 		
 		basePanel.add(getTitle(AON.MSG.damageAmount5()));
-		
-//		paintFooterNote(basePanel, FOOTER);
 		
 		FlexTable table3 = addTable("", 10, "150px", true);
 		paintAmountLabel(table3);
@@ -133,23 +127,19 @@ public class Page17 extends PageAbs {
 				AON.MSG.dot49()
 			});
 		
-//		paintFooterNote(basePanel, FOOTER);
-		
 		// Conversión de activos por impuesto diferido ...
 		
 		basePanel.add(getTitle(AON.MSG.damageAmount1()));
 		
-//		paintFooterNote(basePanel, FOOTER);
-		
 		FlexTable table4 = addTable("", 3);
 		paintAmountLabel(table4);
-		table4.getFlexCellFormatter().setColSpan(0, 0, 4);
+//		table4.getFlexCellFormatter().setColSpan(0, 0, 4);
 		
 		row = 1;
-		addHeaderCell(table4,row, 0,"");
-		addHeaderCell(table4,row, 1,"");
-		addHeaderCell(table4,row, 2,"Abono");
-		addHeaderCell(table4,row, 3,"Compensaci\u00F3n");
+		addHeaderCell(table4, row, 0, "");
+		addHeaderCell(table4, row, 1, "");
+		addHeaderCell(table4, row, 2, "Abono", false);
+		addHeaderCell(table4, row, 3, "Compensaci\u00F3n", false);
 		++row;
 		paintDescription(table4, "Importe del cr\u00E9dito exigible" , row, 0, false);
 		for (int i = 0; i < Mod2002021Constants.DOTACION_KEYS_5.length; i++) {
@@ -159,17 +149,14 @@ public class Page17 extends PageAbs {
 			}
 		}
 		
-//		paintFooterNote(basePanel, FOOTER);
-
 		// Exceso cuota líquida positiva ...
 		
 		basePanel.add(getTitle(AON.MSG.damageAmount6()));
 		
-//		paintFooterNote(basePanel, FOOTER);
-		// FALTA
-//		paintAmountLabel();
+		FlexTable table5 = addTable("", 4);
+		paintAmountLabel(table5);
 		
-		paintKeysProvider(Mod2002021LM1579Key.values(), addTable("", 4), new String[] {
+		paintKeysProvider(Mod2002021LM1579Key.values(), table5, 1, false, new String[] {
 				AON.MSG.liquiMsg1(),
 				AON.MSG.dot50(),
 				AON.MSG.dot51(),
@@ -178,13 +165,15 @@ public class Page17 extends PageAbs {
 			});
 	
 		paintFooterNote(basePanel, FOOTER_1579);
-				
+						
 	}
 	
 	private void paintAmountLabel(FlexTable table) {
-		Label desc = new Label("Los importes de este apartado se consignar\u00E1n a nivel de cuota.");
+		Label desc = new Label("Los importes de este apartado se consignar\u00E1n a nivel de cuota:");
 		desc.setStyleName(AON.AON_CSS.aonBold());
-		table.setWidget(0, 0, desc);		
+		desc.addStyleName(AON.CSS.aonFontSmall());
+		table.setWidget(0, 0, desc);
+		table.getFlexCellFormatter().setColSpan(0, 0, 4);
 	}
 	
 	@Override

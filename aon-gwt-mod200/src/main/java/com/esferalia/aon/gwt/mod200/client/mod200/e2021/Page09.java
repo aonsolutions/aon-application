@@ -164,6 +164,7 @@ public class Page09 extends PageAbs {
 	protected int paintKeyBreakdownLinkLQ1033(final FlexTable tab,int row,final String label) {
 		final int boxRow = row-1;
 		final int boxCell = tab.getCellCount(boxRow) - 1;
+		
 		FlowPanel panel  = (FlowPanel) tab.getWidget( boxRow , boxCell );
 		panel.addStyleName(AON.AON_CSS.aonNowrap());
 		Button breakdown = new Button();
@@ -173,12 +174,16 @@ public class Page09 extends PageAbs {
 		breakdown.addStyleName(AON.AON_CSS.aonMarginRight());
 		breakdown.setTitle(AON.MSG.breakdown());
 		panel.insert(breakdown,0);
+		
 		final FlowPanel container = new FlowPanel();
+		container.addStyleName(AON.CSS.aonPaddingBottom());
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
+		
 		Label label1 = new Label("Reducci\u00F3n en base imponible");
 		label1.setStyleName(AON.AON_CSS.aonBold());
 		label1.addStyleName(AON.AON_CSS.aonTextUnderline());
+		label1.addStyleName(AON.CSS.aonPaddingTop());
 		container.add(label1);
 		FlexTable tableDetail = getFlexTable(container, row, new String[]{
 				 "Ejercicio de generaci\u00F3n"
@@ -202,9 +207,12 @@ public class Page09 extends PageAbs {
 			}
 			++r;
 		}
+		paintFooterNote(container, FOOTER_1033);
+				
 		Label label2 = new Label("Dotaci\u00F3n de la reserva");
 		label2.setStyleName(AON.AON_CSS.aonBold());
 		label2.addStyleName(AON.AON_CSS.aonTextUnderline());
+		label2.addStyleName(AON.CSS.aonMarginTop());
 		container.add(label2);
 		FlexTable tableDetail2 = getFlexTable(container,row, new String[]{
 				 "Ejercicio de generaci\u00F3n"

@@ -112,7 +112,7 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.P1515,"Rentas positivas o negativas derivadas de la transmisi\u00F3n de la participaci\u00F3n, (+) = Aumentos; (-) = Disminuciones");
 		
 		DESCRIPTION_MAP.put(Mod2002021Key.P1504,"a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del periodo");
-		DESCRIPTION_MAP.put(Mod2002021Key.P1505,"b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16a LIS)");
+		DESCRIPTION_MAP.put(Mod2002021Key.P1505,"b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.P1506,"c) Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.P1809,"d) Eliminaci\u00F3n del deterioro de valores repr. de partic. en el capital o fondos propios (art. 15 k) LIS)");
 		DESCRIPTION_MAP.put(Mod2002021Key.P1810,"e) Ajuste por la disminuci\u00F3n de valor originada por criterio de valor razonable (art. 15 l) LIS)");
@@ -529,11 +529,11 @@ public class Mod2002021Description {
 		DESCRIPTION_MAP.put(Mod2002021Key.BN599, "Cuota del ejercicio a ingresar o a devolver");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN600, "Cuota del ejercicio a ingresar o a devolver");
 		
-		DESCRIPTION_MAP.put(Mod2002021Key.BN601, "1er pago fraccionado");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN601, "Pago fraccionado 1\u00BA");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN602, "1er pago fraccionado");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN603, "2o pago fraccionado");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN603, "Pago fraccionado 2\u00BA");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN604, "2o pago fraccionado");
-		DESCRIPTION_MAP.put(Mod2002021Key.BN605, "3er pago fraccionado");
+		DESCRIPTION_MAP.put(Mod2002021Key.BN605, "Pago fraccionado 3\u00BA");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN606, "3er pago fraccionado");
 		DESCRIPTION_MAP.put(Mod2002021Key.BN611, "Cuota diferencial");
 //		DESCRIPTION_MAP.put(Mod2002021Key.BN612, "Cuota diferencial");

@@ -95,8 +95,7 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	protected void addBasePanel() {
 		ScrollPanel scroll = new ScrollPanel();
-		basePanel = new FlowPanel();
-		// PRUEBA
+		basePanel = new FlowPanel();		
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
 		scroll.add(basePanel);
 		initWidget(scroll);		
@@ -232,7 +231,9 @@ public abstract class PageAbs extends ResizeComposite {
 		breakdown.addStyleName(AON.AON_CSS.aonMarginRight());
 		breakdown.setTitle(AON.MSG.breakdown());		 
 		panel.insert(breakdown,0);
-		final FlowPanel container = new FlowPanel();
+		
+		final FlowPanel container = new FlowPanel();		
+		container.addStyleName(AON.CSS.aonPaddingBottom());
 		container.setVisible(false);
 		final String backgroundColor = "#E0FFFF";
 		FlexTable tableDetail = getFlexTable(container, row, headers);
@@ -387,7 +388,6 @@ public abstract class PageAbs extends ResizeComposite {
 		}
 		
 		FlexTable tab = new FlexTable();
-		// PRUEBA
 //		tab.setCellSpacing(0);
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab.addStyleName(AON.CSS.aonMargin());
@@ -456,51 +456,12 @@ public abstract class PageAbs extends ResizeComposite {
  
 		for (String text : notes) {
 			Label footernote = new Label(text);
-			footernote.setStyleName(AON.CSS.aonWidthAlmostAll());
-			footernote.addStyleName(AON.CSS.aonBlockCenter());
+			footernote.setWidth("95%");
 			footernote.addStyleName(AON.CSS.aonFontSmaller());
-			footernote.addStyleName(AON.CSS.aonMarginLeftDouble());
+			footernote.addStyleName(AON.CSS.aonBlockCenter());
 			container.add(footernote);
 		}
 	
 	}
-	
-//	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, String[] headers, Mod2002021Key... boldKeys ) {
-//		paintTable(table, liquidationKeys, AonDoubleBox.VISIBLE_LENGTH, headers, boldKeys);
-//	}
-//	
-//	protected void paintTable(FlexTable table, Mod2002021Key[][] liquidationKeys, int fieldLength, String[] headers, Mod2002021Key... boldKeys ) {
-//		
-//		int row = 0;
-//		
-//		paintEmptyCell(table, row, 0);
-//		int col = 1;
-//		for (String s : headers) {
-//			paintTitle(table, s, row, col);
-//			col++;			
-//		}
-//		
-//		row++;
-//		
-//		for (Mod2002021Key[] keys : liquidationKeys) {
-//			boolean paintDescription = true;							
-//			for (int i = 0; i < keys.length; i++) {
-//				if (keys[i] != null) {
-//					if (paintDescription) {						
-//						boolean bold = false;
-//						for (Mod2002021Key key : boldKeys) {
-//							if (keys[i] == key)
-//								bold = true;
-//						}
-//						paintDescription(table, keys[i].getDescription(), row, 0, bold);
-//						paintDescription = false;
-//					}
-//					paintKeyField(table, keys[i], row, i+1, fieldLength);
-//				}
-//			}
-//			row++;
-//		}
-//		
-//	}
 	
 }

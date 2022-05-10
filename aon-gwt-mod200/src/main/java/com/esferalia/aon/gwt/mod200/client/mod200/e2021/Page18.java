@@ -31,6 +31,8 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
 public class Page18 extends PageAbs {
+	
+	private static final String FOOTER = "(*) La informaci\u00F3n sobre los datos a incluir en los apartados 6 a 9 anteriores, debe hacer referencia al importe total de las cantidades a imputar por la entidad declarante a las personas o entidades que ostenten los derechos inherentes o la cualidad de socio o de empresa miembro que sean residentes en territorio espa\u00F1ol o no residentes con establecimiento permanente en el mismo.";
 
 	public Page18( Model200PageCallback callback ) {
 		super(callback);
@@ -96,8 +98,8 @@ public class Page18 extends PageAbs {
 		tabB6.addStyleName(AON.CSS.aonBlockCenter());
 		
 		tabB6.addRow()
-			.addCell( new Label(AON.MSG.deductionBase()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label("%"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
+			.addCell( new Label(AON.MSG.deductionBaseAbbrv()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+			.addCell( new Label("% Participaci\u00F3n"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getUteBases().size(); i++) {
@@ -150,15 +152,15 @@ public class Page18 extends PageAbs {
 		paintKey(table1, Mod2002021Key.UTC01, row++);
 		paintDescription(table1, AON.MSG.ute4(), row++, 0, false);
 		paintKey(table1, Mod2002021Key.UTC02, row++);
-		table1.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left());
+		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		paintKey(table1, Mod2002021Key.UTC03, row++);
-		table1.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left());
+		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		paintKey(table1, Mod2002021Key.UT062, row++);
 		paintDescription(table1, AON.MSG.ute5(), row++, 0, false);
 		paintKey(table1, Mod2002021Key.UTC04, row++);
-		table1.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left());
+		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		paintKey(table1, Mod2002021Key.UTC05, row++);
-		table1.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left());
+		table1.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPadding2Left());
 		
 		paintDescription(table1, AON.MSG.ute6(), row++, 0, true);
 		
@@ -171,8 +173,8 @@ public class Page18 extends PageAbs {
 			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20())
 			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
 			.addCell( new Label(AON.MSG.province() + "/" + AON.MSG.country()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.nominalValue()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label("%"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
+			.addCell( new Label("Base imponible imputada"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+			.addCell( new Label("% Partic."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 	
 		for (int i = 0; i < callback.getMod200Object().getMod200().getUteParticipations().size(); i++) {
@@ -283,7 +285,10 @@ public class Page18 extends PageAbs {
 		
 		table1.getFlexCellFormatter().setColSpan(row, 0, 2);
 		table1.setWidget(row, 0, panelB11);
+		
+		paintFooterNote(basePanel, FOOTER);
 	
+		// FALTA - ESTE APARTADO ESTA AHORA EN LA PAGINA 2BIS, COMPROBAR SI AL FINAL SE QUEDA ASÍ O SE PUEDE CUMPLIMENTAR AUNQUE NO SEA UNA UTE
 		// Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE
 		
 		basePanel.add(getTitle(AON.MSG.utefor()));

@@ -577,14 +577,15 @@ public class Model2002021 extends DockLayoutPanel {
 		
 		FlowPanel linkContainer = new FlowPanel();
 		linkContainer.setStyleName(AON.CSS.aonPaddingLeft());
+		linkContainer.addStyleName(AON.CSS.aonPaddingBottom());
 		 
 		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Caracteres de la declaraci\u00F3n"	 ));
 		linkContainer.add(new WestFocusPanel( 2,AON.MSG.administratorPage()	 ));
 		linkContainer.add(new WestFocusPanel( 3,AON.MSG.participations2019() ));
 		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()		 ));
-		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivoAbbrv()	 ));
+		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()	 ));
 		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg() 				 ));
-		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresosAbbrv() ));
+		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresos() ));
 		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()	 ));
 		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI() + ": Resultado PyG, Cifra de negocios, Correcciones"));
 		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII() + ": Base imponible, Cuota \u00EDntegra"));
@@ -592,12 +593,12 @@ public class Model2002021 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones"));
 		linkContainer.add(new WestFocusPanel(13,AON.MSG.liquidacionV() + ": Cuota del ejercicio, Pagos fraccionados, L\u00EDquido a ingresar o devolver"));
 		linkContainer.add(new WestFocusPanel(14,AON.MSG.combinedTaxationAbbrv()));
-		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n de resultados / Documentaci\u00F3n previa"));
-		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitationAbbrv()));
+		linkContainer.add(new WestFocusPanel(15,"Aplicaci\u00F3n de resultados, Documentaci\u00F3n previa"));
+		linkContainer.add(new WestFocusPanel(16,AON.MSG.deducibleLimitation()));
 		linkContainer.add(new WestFocusPanel(17,AON.MSG.page17()		 	 ));
-		linkContainer.add(new WestFocusPanel(18,AON.MSG.page18()		 	 ));
-		linkContainer.add(new WestFocusPanel(19,"U.T.E.S."));
-		linkContainer.add(new WestFocusPanel(20,AON.MSG.bussinessAmount()	 ));
+		linkContainer.add(new WestFocusPanel(18,"Dotaciones por deterioro, Conversi\u00F3n de activos"));
+		linkContainer.add(new WestFocusPanel(19,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial)"));
+		linkContainer.add(new WestFocusPanel(20,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
 		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()		 ));		
 
 		// FALTA - PAGINA AGENCIA TRIBUTARIA CON INFO, FICHERO Y BORRADOR - POR AHORA SE PONEN 

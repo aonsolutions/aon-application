@@ -3912,7 +3912,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("8.- Base de las deducciones para incentivar la realizaci\u00F3n de determinadas actividades:")
 	String ute4();
 
-	@DefaultMessage("10.- Dividendos y participaciones en benefi cios distribuidos con cargo a reservas:")
+	@DefaultMessage("10.- Dividendos y participaciones en beneficios distribuidos con cargo a reservas:")
 	String ute5();
 
 	@DefaultMessage("11.- Relaci\u00F3n de socios existentes a la fecha de cierre del per\u00EDodo impositivo, que deban soportar las imputaciones, en orden decreciente de grado de participaci\u00F3n, con sus datos identificativos y grado de participaci\u00F3n en dicha fecha:")

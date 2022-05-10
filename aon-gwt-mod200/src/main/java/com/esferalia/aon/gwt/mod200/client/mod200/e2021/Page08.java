@@ -131,6 +131,8 @@ public class Page08 extends PageAbs {
 		basePanel.add(opeVol);
 		tableVol.setWidget(1, 0, opeVol);
 		
+		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstas en los art\u00EDculos 31, 32, 100.11 y DT 23\u00AA LIS.");
+		
 		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
 		
 		FlexTable tab2 = addTable();

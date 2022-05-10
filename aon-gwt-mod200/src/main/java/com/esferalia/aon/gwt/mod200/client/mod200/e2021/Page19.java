@@ -53,7 +53,7 @@ public class Page19 extends PageAbs {
 		
 		// Grupos de sociedades, art. 42 código de comercio, incluidas entidades de crédito y aseguradoras
 		
-		FlexTable tab1 = addTable(AON.MSG.bussinessAmount1());		
+		FlexTable tab1 = addTable(AON.MSG.bussinessAmount1() + " (*)");		
 		paintKey(tab1, Mod2002021Key.CN987, 0);
 		
 		AonDisplayTable tab2 = new AonDisplayTable();
@@ -62,7 +62,7 @@ public class Page19 extends PageAbs {
 		basePanel.add(tab2);
 		
 		tab2.addRow()
-			.addCell( new Label(AON.MSG.bussinessAmount11()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+			.addCell( new Label(AON.MSG.bussinessAmount11()+ " (**)"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
 			.addCell( new Label(AON.MSG.country()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
@@ -110,6 +110,9 @@ public class Page19 extends PageAbs {
 		});
 		tab2.addRow().addCell(addButton2);
 		
+		paintFooterNote(basePanel, "(*) Grupos mercantiles con entidad dominante residente en territorio espa\u00F1ol; s\u00F3lo deber\u00E1 cumplimentar el cuadro dicha entidad dominante.");
+		paintFooterNote(basePanel, "(**) NIF de las entidades del grupo (o equivalente al NIF del pa\u00EDs de residencia, si no tiene NIF en Espa\u00F1a) (excepto el de la entidad declarante)");
+		
 		// No residentes con más de un establecimiento permanente
 		
 		FlexTable tab3 = addTable(AON.MSG.bussinessAmount2());
@@ -122,7 +125,7 @@ public class Page19 extends PageAbs {
 		basePanel.add(tab4);
 		
 		tab4.addRow()
-			.addCell( new Label(AON.MSG.bussinessAmount12()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+			.addCell( new Label(AON.MSG.bussinessAmount12() + " (*)"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getEstablishments().size(); i++) {
@@ -156,6 +159,8 @@ public class Page19 extends PageAbs {
 			paint();
 		});
 		tab4.addRow().addCell(addButton4);		
+		
+		paintFooterNote(basePanel, "(*) NIF de los establecimientos permanentes, en caso de entidad titular (excepto el del establecimiento permanente al que se refiere esta declaraci\u00F3n).");
 		
 	}
 
