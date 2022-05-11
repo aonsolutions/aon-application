@@ -693,7 +693,7 @@ const formCau = (divDinamic, aonMessengerChat, forExternal = false) => {
  * @returns icon, icon_color
  */
 export const getIconJson =({source,status}) => {
-    const {AON_MESSENGER_LIST_OPEN,AON_MESSENGER_LIST_CLOSE,AON_MESSENGER_LIST_ARCHIVE} = MessengerOptions;
+    const { AON_MESSENGER_LIST_OPEN, AON_MESSENGER_LIST_IN_PROGRESS, AON_MESSENGER_LIST_CLOSE, AON_MESSENGER_LIST_ARCHIVE } = MessengerOptions;
     let icon = MATERIAL_ICONS.INFO;
     let icon_color = AON_MESSENGER_LIST_OPEN.icon_color;
 
@@ -701,8 +701,10 @@ export const getIconJson =({source,status}) => {
       icon = MATERIAL_ICONS.SUPPORT_AGENT;
     else if(source===TASK_SOURCE.REQUEST) 
       icon = MATERIAL_ICONS.ASSIGNMENT;
-      
-    if(status === TASK_STATUS.FINISHED) 
+
+    if(status === TASK_STATUS.IN_PROGRESS) 
+      icon_color = AON_MESSENGER_LIST_IN_PROGRESS.icon_color;
+    else if(status === TASK_STATUS.FINISHED) 
       icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
     else if(status === TASK_STATUS.DELETED) 
       icon_color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
