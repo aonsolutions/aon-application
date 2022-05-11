@@ -1,5 +1,5 @@
 import {  EVENT, MSG } from "../../../environments/environments.js";
-import {Apps, getApp} from "../../../services/app.js";
+import {Apps} from "../../../services/app.js";
 import { getProjects} from "../../../services/projectService.js";
 import { getCustomer, getCustomers } from "../../../services/registryService.js";
 import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
@@ -421,7 +421,7 @@ export const fillChat = (task, meId, workflows=[])=>{
     }
 }
 
-const getAppPermission = (dur, value) => {
+export const getAppPermission = (dur) => {
   let apps = [];
   if( dur.isAccounting())
     apps.push(Apps.ACCOUNTING);
@@ -446,10 +446,6 @@ const getAppPermission = (dur, value) => {
 
   if(dur.isSaltra() && !dur.isPayroll() && !dur.isComunica())
    apps.push(Apps.AON_SALTRA);
-  if(value){
-    const exist = apps.some(a => a.app === value );
-    if(!exist) apps.push(getApp(value));
-  }
 
   return apps;
 }

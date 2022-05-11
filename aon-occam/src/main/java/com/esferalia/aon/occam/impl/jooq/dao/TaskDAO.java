@@ -374,7 +374,7 @@ public class TaskDAO {
 		return map;
 	}
 	
-	public static TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup){
+	public static TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags){
 		TaskCounts taskCounts = new TaskCounts();
 		String count = "count";
 		
@@ -399,7 +399,22 @@ public class TaskDAO {
 				String wg = r.get(TASK.WORKGROUP)!= null ? r.get(TASK.WORKGROUP).toString() : "true";
 				taskCounts.addWorkgroup(wg, (Integer) r.get(DSL.name(count)));
 			});
-			
+		});
+		
+		tags.ifPresent(filter->{
+			ctx.getDslContext()
+			.select(DSL.count(TASK.ID).as(DSL.name(count)), TAG.ID)
+			.from(TASK)
+			.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+			.join(TAG).on(TAG.ID.eq(TASK_TAG.TAG))
+			.where(TASK_PROPERTIES.getConditions(filter))
+			.groupBy(TASK.ID)
+			.fetch().stream().forEach(r->  {
+				System.out.println(r);
+				if(r.get(TAG.ID)!=null) {
+					taskCounts.addTag(r.get(TAG.ID).toString(), (Integer) r.get(DSL.name(count)));
+				}
+			});
 		});
 		
 		return taskCounts;

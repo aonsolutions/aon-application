@@ -63,8 +63,8 @@ public class Task2Impl implements ITask2 {
 	}	
 	
 	@Override
-	public TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup) {
-		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskGeneralCount(ctx, status, workgroup));
+	public TaskCounts getTaskGeneralCount(AONContext ctx, Optional<TaskFilter> status, Optional<TaskFilter> workgroup, Optional<TaskFilter> tags) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskGeneralCount(ctx, status, workgroup, tags));
 	}	
 	
 	@Override
