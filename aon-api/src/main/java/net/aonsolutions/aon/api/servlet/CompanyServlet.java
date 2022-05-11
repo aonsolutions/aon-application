@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -347,7 +347,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 	private void taskCount(AonApiData api, JSONObject jsonG) {
 		try {			
 		
-			HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
+			Map<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
 				f -> TaskFilter.taskSenderCount(api, api.getDomain(), f, new Customer()), 
 				f -> TaskFilter.taskReceiverCount(api, api.getDomain(), f, new Customer())
 			);

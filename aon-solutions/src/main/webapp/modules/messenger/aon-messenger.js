@@ -5,9 +5,9 @@ import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from './MessengerEnums.js';
+import { APP_PARAMS_REQUEST, MessengerOptions, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
-import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskAppParams } from '../../services/taskService.js';
+import { getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskAppParams } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -322,6 +322,15 @@ export class AonMessenger extends AonElement {
 				}
 			},
 			{
+				...MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS,
+				fn: () =>{
+					this._filter.status = TASK_STATUS.IN_PROGRESS;
+					this._filter.workgroups = this.getWorkgroupsStr();
+					this.addListFilter(this._filter);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+				}
+			},
+			{
 				...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.FINISHED;
@@ -481,6 +490,9 @@ export class AonMessenger extends AonElement {
 			}
 
 			switch (filter.status){
+				case TASK_STATUS.IN_PROGRESS:
+					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name);
+					break;
 				case TASK_STATUS.FINISHED:
 					this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_CLOSE.name);
 					break;
@@ -572,10 +584,8 @@ export class AonMessenger extends AonElement {
 			getTaskCount(filterCount).then(count=>{
 				let task_holder =  count.task_holder || 0;
 				let sender =  count.sender || 0;
-				let total = task_holder + sender;
 				application.updateSidenavCount(MATERIAL_ICONS.MOVE_TO_INBOX, task_holder);
 				application.updateSidenavCount(MATERIAL_ICONS.OUTBOX, sender);
-				application.updateSidenavCount(MATERIAL_ICONS.ALL_INBOX, total);
 			});	
 		}
 
@@ -593,23 +603,31 @@ export class AonMessenger extends AonElement {
 		if(filterCount.task_holder && !this.getDur().isMessengerManager())
 			filter.task_holder = filterCount.task_holder;
 
-		getTaskStatusCount(filter).then(resp=>{
-			let openCount = resp[TASK_STATUS.PENDING];
-			let archiveCount = resp[TASK_STATUS.DELETED];
-			let closeCount = resp[TASK_STATUS.FINISHED];
-			
-			if(resp[TASK_STATUS.IN_PROGRESS]) 
-				openCount = openCount + resp[TASK_STATUS.IN_PROGRESS];
+		getTaskGeneralCount(filter).then(({status, workgroups})=>{
+			try {
+				if(status){
+					//----------------------- UPDATE COUNT---------------
+					let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
+					application.updateSidenavCount(listOpen.id, status[TASK_STATUS.PENDING]);
 	
-			//----------------------- UPDATE COUNT---------------
-			let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
-			application.updateSidenavCount(listOpen.id, openCount);
-
-			let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
-			application.updateSidenavCount(listClose.id, closeCount);
-			
-			let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
-			application.updateSidenavCount(listTrash.id, archiveCount);
+					let listInProgress = MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS;
+					application.updateSidenavCount(listInProgress.id, status[TASK_STATUS.IN_PROGRESS]);
+		
+					let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
+					application.updateSidenavCount(listClose.id, status[TASK_STATUS.DELETED]);
+					
+					let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
+					application.updateSidenavCount(listTrash.id, status[TASK_STATUS.FINISHED]);
+				}
+	
+				if(workgroups){
+					for(const key in workgroups){
+						application.updateSidenavCount(key,  workgroups[key]);
+					}
+				}
+			} catch (error) {
+				console.error(error);
+			}
 		});
 	}
 

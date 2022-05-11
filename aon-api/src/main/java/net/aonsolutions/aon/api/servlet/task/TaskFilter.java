@@ -39,33 +39,48 @@ public class TaskFilter {
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-		if("pending".equalsIgnoreCase(status) || ( status.isEmpty() && customer!=null && customer.getId()!=null) ) 
-			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
-		else if(!status.isEmpty())
+		
+		if(!status.isEmpty()) {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
+		} else {			
+			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+		}
 		
-		if(tag>0) 
+//		if("pending".equalsIgnoreCase(status) || ( status.isEmpty() && customer!=null && customer.getId()!=null) ) 
+//			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+//		else if(!status.isEmpty())
+//			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
+		
+		if(tag!=0) {
 			filter = filter.and(f.getTagIdProperty().eq(tag));
-		
-		if(!search.isEmpty()) 
+		}
+			
+		if(!search.isEmpty()) {
 			filter = filter.and(getSearch(f, search));
+		}
 		
 		if(customer!=null && customer.getId()!=null) { //CUSTOMER
 			
 			Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
+			
+			Integer sender = params.optInt(IJsonNames.SENDER);
+			
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 			
-			if(Boolean.FALSE.equals(api.getDur().isMessengerManager())) 
-				filter = filter.and(f.getGtaskIdProperty().eq(email));
 			
-			if(taskHolder!=0) //----------RECIBIDAS
-				filter = filter.and(f.getSenderProperty().isNotNull());
-			else if(!params.optString(IJsonNames.SENDER).isEmpty()) //----------ENVIADAS
-				filter = filter.and(f.getSenderProperty().isNull());
-			
-			if(workgroup != null && workgroup !=0) 
+			if(workgroup !=0) 
 				filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
-
+			else {
+//				if(Boolean.FALSE.equals(api.getDur().isMessengerManager())) 
+//				filter = filter.and(f.getGtaskIdProperty().eq(email));
+	
+				if(taskHolder!=0 && sender!=0) {
+				} else if(taskHolder!=0) { //----------RECIBIDAS
+					filter = filter.and( f.getSenderProperty().isNotNull());
+				} else if(sender!=0) {//----------ENVIADAS
+					filter = filter.and(f.getSenderProperty().isNull().or(f.getGtaskIdProperty().eq(email)) );
+				}
+			}
 		} else {
 			filter = filter.and(taskNotCustomer(api, f, domain));
 		}
@@ -122,25 +137,54 @@ public class TaskFilter {
 		return filter;
 	}
 	
+	public static Filter taskWorkgroupCount(TaskProperties f, AonApiData api, Domain domain) {
+		JSONObject params = api.getData();
+
+		String workgroupStr = params.optString(IJsonNames.WORKGROUPS);
+
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(
+			f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value()))
+		);
+		
+		if(TaskUtils.isCau(params)) {
+			String email = params.optString(IJsonNames.EMAIL);
+			filter = filter.and(f.getGtaskIdProperty().eq(email));
+		} else {
+
+			if( !api.getDur().isMessengerManager() && !workgroupStr.isEmpty()) {
+				String[]  str = workgroupStr.split(",");
+				Integer[] arr = new Integer[str.length];
+				for(int i=0; i<str.length; i++) {
+					arr[i] = Integer.parseInt(str[i]);
+				}
+				
+				filter = filter.and(f.getWorkgroupProperty().in(arr));
+			} 
+		}
+
+		return filter;
+	}
+	
 	public static Filter taskSenderCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
 		JSONObject params = api.getData();
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
+		String email =  params.optString(IJsonNames.EMAIL);
 
-		boolean isCau = TaskUtils.isCau(api.getData());
+		boolean isCau = TaskUtils.isCau(params);
 		
-		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
+		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(
+			f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value()))
+		);
 		
-		if(!isCau && taskHolder>0) {
-			 filter = filter.and(f.getSenderProperty().eq(taskHolder));
-		} else if( isCau || ( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) ) {
-			String email =  params.optString(IJsonNames.EMAIL);
+		if(isCau) {
 			filter = filter.and( f.getGtaskIdProperty().eq(email) );
-		}
-		
-		if(customer.getId()!=null) {
-			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));	
+		} else if(customer.getId()!=null) {
+			filter = filter.and(f.getRegistryProperty().eq(customer.getId()))
+					.and(f.getSenderProperty().isNull().or(f.getGtaskIdProperty().eq(email)) );	
+		} else if(taskHolder!=0) {
+			 filter = filter.and(f.getSenderProperty().eq(taskHolder));
 		} 
-		
+
 		return filter;
 	}
 	
@@ -148,12 +192,19 @@ public class TaskFilter {
 		JSONObject params = api.getData();
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		String workgroupStr = params.optString(IJsonNames.WORKGROUPS);
+		String email =  params.optString(IJsonNames.EMAIL);
 		
-		boolean isCau = TaskUtils.isCau(api.getData());
+		boolean isCau = TaskUtils.isCau(params);
 		
-		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
+		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(
+			f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value()))
+		);
 		
-		if(!isCau) {
+		if(isCau) {
+			filter = filter.and( f.getGtaskIdProperty().eq(email) );
+		} else if(customer.getId()!=null) {
+			filter = filter.and(f.getRegistryProperty().eq(customer.getId())).and(f.getSenderProperty().isNotNull());	
+		} else {
 			if(taskHolder==0) {
 				try {
 					TaskHolder tmp = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
@@ -193,15 +244,7 @@ public class TaskFilter {
 					);
 				}
 			} 
-
-		} else if(  taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager())  ) {
-			String email =  params.optString(IJsonNames.EMAIL);
-			filter = filter.and( f.getGtaskIdProperty().eq(email) );
 		}
-		
-		if(customer.getId()!=null) {
-			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));	
-		} 
 		
 		return filter;
 	}
@@ -237,8 +280,13 @@ public class TaskFilter {
 		String source = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		String workgroupStr = params.optString(IJsonNames.WORKGROUPS);
-		
+
 		Filter filter = f.getDomainProperty().eq(domain.getId());
+		
+		if(!params.optString("startDate").isEmpty()) {
+			Date startDate = AonDateUtils.parse(params.optString("startDate"), "yyyy-MM-dd");
+			filter = filter.and(f.getStartDateProperty().eq(AonDateUtils.toTimestamp(startDate)));
+		}
 
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
@@ -246,68 +294,64 @@ public class TaskFilter {
 		if(registry!=0) 
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		
-		if(workgroup !=0) 
+		if(workgroup!=0) {
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
-		else if(params.optBoolean(IJsonNames.WORKGROUP)) {//TRUE = ALL
+		} else if(params.optBoolean(IJsonNames.WORKGROUP)) {//TRUE = ALL
 			filter = filter.and(f.getWorkgroupProperty().isNull()).and(f.getTaskHolderProperty().isNull());
-		} 
-	
-		if(!params.optString("startDate").isEmpty()) {
-			Date startDate = AonDateUtils.parse(params.optString("startDate"), "yyyy-MM-dd");
-			filter = filter.and(f.getStartDateProperty().eq(AonDateUtils.toTimestamp(startDate)));
-		}
-		
-		if(api.getDur().isMessengerManager()) {
-			if(taskHolder!=0 && sender!=0) {
-				
-			} else if(taskHolder!=0) {
-				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
-			} else if(sender!=0) {
-				filter = filter.and(f.getSenderProperty().eq(sender));
-			}
-		} else if(!workgroupStr.isEmpty() && workgroup ==0) {
-			 String[]  str = workgroupStr.split(",");
-			 Integer[] arr = new Integer[str.length];
-			 for(int i=0; i<str.length; i++) {
-				 arr[i] = Integer.parseInt(str[i]);
-			 }
-				
-			 if(taskHolder!=0 && sender!=0){
-				filter = filter.and(
+		} else {
+			
+			if(api.getDur().isMessengerManager()) {
+				if(taskHolder!=0 && sender!=0) {
+					
+				} else if(taskHolder!=0) {
+					filter = filter.and(f.getTaskHolderProperty().eq(taskHolder).or(f.getTaskHolderProperty().isNull()));
+				} else if(sender!=0) {
+					filter = filter.and(f.getSenderProperty().eq(sender));
+				}
+			} else if(!workgroupStr.isEmpty()) {
+				 String[]  str = workgroupStr.split(",");
+				 Integer[] arr = new Integer[str.length];
+				 for(int i=0; i<str.length; i++) {
+					 arr[i] = Integer.parseInt(str[i]);
+				 }
+					
+				 if(taskHolder!=0 && sender!=0){
+					filter = filter.and(
+							f.getWorkgroupProperty().in(arr)
+							.and(
+								f.getTaskHolderProperty().eq(taskHolder)
+								.or(f.getTaskHolderProperty().isNull())
+							)
+							.or(f.getSenderProperty().eq(sender))
+					);
+				} else if(taskHolder!=0) {
+					filter = filter.and(
 						f.getWorkgroupProperty().in(arr)
 						.and(
 							f.getTaskHolderProperty().eq(taskHolder)
 							.or(f.getTaskHolderProperty().isNull())
 						)
-						.or(f.getSenderProperty().eq(sender))
-				);
-			} else if(taskHolder!=0) {
-				filter = filter.and(
-					f.getWorkgroupProperty().in(arr)
-					.and(
+					);
+				} else if(sender!=0) {
+					filter = filter.and(f.getSenderProperty().eq(sender));
+				} else {
+					filter = filter.and(f.getWorkgroupProperty().in(arr));
+				}
+			 } else {
+
+				if(taskHolder!=0 && sender!=0){
+					filter = filter.and(
 						f.getTaskHolderProperty().eq(taskHolder)
 						.or(f.getTaskHolderProperty().isNull())
-					)
-				);
-			} else if(sender!=0) {
-				filter = filter.and(f.getSenderProperty().eq(sender));
-			} else {
-				filter = filter.and(f.getWorkgroupProperty().in(arr));
-			}
-		 } else {
-
-			if(taskHolder!=0 && sender!=0){
-				filter = filter.and(
-					f.getTaskHolderProperty().eq(taskHolder)
-					.or(f.getTaskHolderProperty().isNull())
-					.or(f.getSenderProperty().eq(sender))
-				);
-			} else if(taskHolder!=0) {
-				filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
-			} else if(sender!=0) {
-				filter = filter.and(f.getSenderProperty().eq(sender));
-			}
-		 }
+						.or(f.getSenderProperty().eq(sender))
+					);
+				} else if(taskHolder!=0) {
+					filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
+				} else if(sender!=0) {
+					filter = filter.and(f.getSenderProperty().eq(sender));
+				}
+			 }
+		}
 		 
 		return filter;
 	}
