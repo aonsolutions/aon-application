@@ -407,7 +407,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 						key, className);
 			}
 		}
-		this.onEditSearch(null);
+		
+		setModel(null);
+		setFilter(null);
+		setFilteredModel(null);
+		
 		this.domainURL = null;
 		setShowInactive(false);
 		setShowExpired(false);
