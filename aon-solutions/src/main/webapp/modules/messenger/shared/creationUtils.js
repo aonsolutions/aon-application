@@ -836,6 +836,8 @@ export const openDialogBranch = ()=> {
 
         dialog.close();
 
+        aonMessengerChat.applicationParentEl.updateCount();
+
       } catch (error) {
         console.log(error);
       }
