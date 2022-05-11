@@ -120,7 +120,7 @@ ENV TZ=Europe/Madrid
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 
 # Enable all algorithms
-RUN sed -i -e  '/^\(jdk.tls.disabledAlgorithms\)/,+1 s/^/#/'  /usr/local/openjdk-16/conf/security/java.security
+RUN sed -i -e  '/^\(jdk.tls.disabledAlgorithms\)/,+1 s/^/#/'  /usr/local/openjdk-17/conf/security/java.security
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
