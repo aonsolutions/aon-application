@@ -298,10 +298,9 @@ export class AonDesktop extends AonElement {
 				}
 			}
 			
-			appsPermission = appsPermission.filter(app=> ![Apps.NOTES.app, Apps.TIMECONTROL.app].includes(app.app));
-
-			if(appsPermission && appsPermission.length===1){
-				let app = appsPermission[0];
+			const appsOpen = appsPermission.filter(app=> ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
+			if(appsOpen && appsOpen.length===1){
+				let app = appsOpen[0];
 				this.appSelection(app.app);
 				this.appOption = false;
 			}
