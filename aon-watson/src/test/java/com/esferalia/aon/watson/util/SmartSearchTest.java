@@ -120,8 +120,15 @@ public class SmartSearchTest {
 		System.out.println("\n SUCCESS.");
 	}
 	
-
-	
+	@Test
+	public void getMatchingMultipleSpacingTest() {
+		final String searcher = "2";
+		final String text = "IMPORTACIÓN   DE Nóminas  TRABAJADORES";		
+		List<String> matching = AonStringUtils.getMatching(text, searcher);
+		 
+		assertEquals(0, matching.size());
+		System.out.println("\n SUCCESS.");
+	}	
 
 	@Test
 	public void searchFilterTest() {

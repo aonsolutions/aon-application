@@ -374,22 +374,11 @@ export class AonMessenger extends AonElement {
     tagNavBar() {
 		let application = this.applicationEl;
 		
-		const fnTag = this.getDur().isMessengerManager() ? () => this.dialogTag() : null; 
+		const fnTag = this.getDur().isMessengerManager() && !this.cau ? () => this.dialogTag() : null; 
 		
 		application.addSidenavOptions2({
 			id: 'Tag',
 			name: MSG.TAG
-		}, [], fnTag);
-	}
-	
-    tagNavBar() {
-		let application = this.applicationEl;
-		
-		const fnTag = this.getDur().isMessengerManager() ? () => this.dialogTag() : null; 
-		
-		application.addSidenavOptions2({
-			id: 'Tag',
-			name: this.cau ? MSG.APPLICATION : MSG.TAG
 		}, [], fnTag);
 	}
 
@@ -448,7 +437,6 @@ export class AonMessenger extends AonElement {
 
 	async loadTag() {
 		let application = this.applicationEl;
-		const manager =  this.getDur().isMessengerManager();
 
 		let params = {type:TAG_TYPE.TASK_LABEL};
 
@@ -476,7 +464,7 @@ export class AonMessenger extends AonElement {
 				}
 			};
 
-			if(manager){
+			if(this.getDur().isMessengerManager() && !this.cau){
 				option.actions.push(
 					{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
 					{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item) }

@@ -82,7 +82,7 @@ export class AonAltaDirecta extends AonElement {
         createEmployeeData(aonEmployeeCard.getContent(),  this.id);
  
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        createContractData(aonContratoCard.getContent(), this.applicationParentEl.getDur().isComunicaManager() && !(this.data && this.data.fra));
+        createContractData(aonContratoCard.getContent(), (this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager()) && !(this.data && this.data.fra));
 
         if(!this.isMobile() && this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
@@ -110,7 +110,7 @@ export class AonAltaDirecta extends AonElement {
             this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
         }
 
-        if(this.isAlta() && this.data.fra && this.applicationParentEl.getDur().isComunicaManager()) 
+        if(this.isAlta() && this.data.fra && (this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager())) 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
 
         if( this.isAlta() || !this.data )  // ALTA
@@ -374,7 +374,7 @@ export class AonAltaDirecta extends AonElement {
     async getContractType() {
         try {
             
-            let manager = this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltra();
+            let manager = this.applicationParentEl.getDur().isComunicaManager() || this.applicationParentEl.getDur().isSaltraManager();
 
             let resp = await getContractType();
             

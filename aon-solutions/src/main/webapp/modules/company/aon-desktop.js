@@ -565,7 +565,7 @@ export class AonDesktop extends AonElement {
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
 		else if(Apps.SALTRA.app === app.app)
-			return this.getDur().isSaltra();
+			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
 		else return false;
 	}
 

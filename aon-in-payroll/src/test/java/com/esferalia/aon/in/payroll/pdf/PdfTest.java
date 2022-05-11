@@ -38,6 +38,30 @@ public class PdfTest {
 			});
 		}
 	}
+	@Test
+	public void testOmegaConflict() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("dsi_conflict.pdf") ){
+			SalaryPDFParser.parseOmega(is, new SalaryBuilder() {
+//				@Override
+//				public void setEmployeeName(String employeeName) {
+//					System.out.println(employeeName);
+//					
+//				}
+			});
+		}
+	}
+	@Test
+	public void testConflict() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("dsi_conflict.pdf") ){
+			SalaryPDFParser.parse(is, new SalaryBuilder() {
+//				@Override
+//				public void setEmployeeName(String employeeName) {
+//					System.out.println(employeeName);
+//					
+//				}
+			});
+		}
+	}
 	
 	
 	

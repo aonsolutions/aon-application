@@ -1,5 +1,5 @@
 import {  EVENT, MSG } from "../../../environments/environments.js";
-import {Apps, getApp} from "../../../services/app.js";
+import {Apps} from "../../../services/app.js";
 import { getProjects} from "../../../services/projectService.js";
 import { getCustomer, getCustomers } from "../../../services/registryService.js";
 import { getTaskProcess, getTaskTags } from "../../../services/taskService.js";
@@ -443,6 +443,9 @@ export const getAppPermission = (dur) => {
 
   if(dur.isInvoice())
     apps.push(Apps.INVOICE);
+
+  if(dur.isSaltra() && !dur.isPayroll() && !dur.isComunica())
+   apps.push(Apps.AON_SALTRA);
 
   return apps;
 }

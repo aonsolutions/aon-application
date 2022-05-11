@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,6 +81,7 @@ import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -280,7 +283,7 @@ public class EmployeesServiceHelper {
 				delayed.add ( () -> {
 					Integer cnae2009 = AonNumberUtils.toInteger(code);
 					if ( !AonNumberUtils.equals(ctx.getCnae2009(), cnae2009 ) ) {
-						idcHighlighter.highlight(code, AonStringUtils.defaultIfBlank(AonNumberUtils.toString(ctx.getCnae2009()) , "Empresa sin actividad economica"));
+						idcHighlighter.highlight(code, description, AonStringUtils.defaultIfBlank(AonNumberUtils.toString(ctx.getCnae2009()) , "Empresa sin actividad economica"));
 					}
 				});
 			}
@@ -337,7 +340,16 @@ public class EmployeesServiceHelper {
 			@Override
 			public void onContractType(String code, String description, IdcHighlighter idcHighlighter)
 					throws IOException {
-				checkString(ContextVariable.TC2, code, idcHighlighter);
+				String tc2;
+				try {
+					tc2 = getValue(ContextVariable.TC2, String.class );
+					if ( !AonStringUtils.equalsIgnoreCase(tc2, code) ) {
+						String tc2Description = getContractDescription(tc2);
+						idcHighlighter.highlight(code, description, AonStringUtils.defaultIfBlank(tc2 + " " + tc2Description, "Trabajador sin contrato"));
+					}
+				} catch (TooManyValuesException e) {
+					idcHighlighter.highlight(code, description);
+				}
 			}
 			
 			@Override
@@ -351,10 +363,16 @@ public class EmployeesServiceHelper {
 			@Override
 			public void onCoefficient(String partial, String reduction, IdcHighlighter idcHighlighter)
 					throws IOException {
-				if ( AonStringUtils.isBlank(partial))
-					;
-				else 	
+				if ( AonStringUtils.isBlank(partial)) {
+					try {
+						Double partialFactor = getValue(ContextVariable.PARTIAL_FACTOR, Double.class);
+						idcHighlighter.insert("COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:", Integer.toString((int) (partialFactor * 100.00)));
+					} catch (TooManyValuesException e) {
+					}
+				}
+				else { 	
 					checkNumber(ContextVariable.PARTIAL_FACTOR, partial, idcHighlighter);
+				}
 			}
 			
 			// ----------------------------------------------------------- PECs
@@ -393,7 +411,7 @@ public class EmployeesServiceHelper {
 				try {
 					T value = getValue(expression, clazz);
 					if ( !equals.apply(value, t))
-						idcHighlighter.highlight(string);
+						idcHighlighter.highlight(string, toString(value, "Trabajador sin " + expression ));
 				} catch ( TooManyValuesException e) {
 					idcHighlighter.highlight(string);
 				}
@@ -417,6 +435,27 @@ public class EmployeesServiceHelper {
 					throw new TooManyValuesException();
 				else 
 					return values.get(0);
+			}
+			
+			private String getContractDescription(String tc2) {
+				if ( AonStringUtils.isBlank(tc2)) 
+					return "";
+				try {
+					return new ContractType().getContractType(Integer.parseInt(tc2)).getContractTypeDescription();
+				} catch ( Exception  e) {
+					return "TIPO CONTRATO DESCONOCIDO";
+				}
+			}
+			
+			private <T> String toString(T t, String nullDefault) {
+				if ( t instanceof Date ) {
+					return new SimpleDateFormat("dd-MM-yyyy").format((Date)t);
+				} else if( t instanceof Number) {
+					return new DecimalFormat("#,##0.00", DecimalFormatSymbols.getInstance(new Locale("ES"))).format(t);
+				}
+				else {
+					return java.util.Objects.toString(t, nullDefault);
+				}
 			}
 			
 		});
@@ -449,7 +488,7 @@ public class EmployeesServiceHelper {
 		Contract contract = 
 		PAYROLL.
 		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
-		.orElseThrow(() -> new IOException() );
+		.orElseThrow(IOException::new);
 		String nif = contract.getPersonDocument();
 		String nss = contract.getPersonSsNumber();
 		String ccc = contract.getEnterpriseCCC();

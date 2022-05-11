@@ -170,8 +170,6 @@ public class TaskFilter {
 	public static Filter taskTagCount(TaskProperties f, AonApiData api, Domain domain) {
 		JSONObject params = api.getData();
 		
-		String email = params.optString(IJsonNames.EMAIL);
-		
 		String source = params.optString(IJsonNames.SOURCE);
 		
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
@@ -194,6 +192,7 @@ public class TaskFilter {
 			}
 			
 			if(TaskUtils.isCau(params)) {
+				String email = params.optString(IJsonNames.EMAIL);
 				filter = filter.and(f.getTagIdProperty().in(arr).and(f.getGtaskIdProperty().eq(email)));
 			} else if(api.getDur().isMessengerManager()) {
 				filter = filter.and(f.getTagIdProperty().in(arr));

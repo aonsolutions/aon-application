@@ -48,7 +48,9 @@ export const Role = {
   	AON_SMB: 'AON_SMB',							// ACCESO A AON SMB
   	DEV: 'DEV',									// USUARIO TIPO DESARROLLADOR.
 	SELFCONTA: 'SELFCONTA',
-	SALTRA: 'SALTRA'
+	SALTRA: 'SALTRA',
+	SALTRA_MANAGER: 'SALTRA_MANAGER',
+	SALTRA_PORTAL: 'SALTRA_PORTAL'
 }
 
 export const OldModule = {

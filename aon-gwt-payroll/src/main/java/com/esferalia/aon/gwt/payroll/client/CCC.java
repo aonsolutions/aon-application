@@ -542,7 +542,14 @@ public abstract class CCC extends ResizeComposite {
 		if(ccc.length() == 11) {
 			String code = ccc.substring(ccc.length()-2, ccc.length());
 			Integer codeInt = Integer.parseInt(code);
-			Integer cccInt = Integer.parseInt(ccc.substring(0, ccc.length()-2));
+			
+			String cccStr = ccc.substring(2, ccc.length()-2);
+			if(cccStr.startsWith("0"))
+				cccStr = ccc.substring(3, ccc.length()-2);
+			cccStr =  ccc.substring(0, 2) + cccStr;
+			
+			Integer cccInt = Integer.parseInt(cccStr);
+			
 			return cccInt % 97 == codeInt;
 		}else
 			return false;
