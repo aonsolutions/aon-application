@@ -950,7 +950,7 @@ const addCauForm = (aonMessengerChat, divStatic)=> {
     
 
     if(!task.id){
-        const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP, 'Aplicación');
+        const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP,  MSG.APPLICATION);
         createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
         fillSelectAppCau(aonMessengerChat);
     } else {

@@ -770,9 +770,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static TaskCounts getTaskGeneralCount(Domain domain, User user, Optional<TaskFilter> status, Optional<TaskFilter> workgroup) {
+	public static TaskCounts getTaskGeneralCount(Domain domain, User user, Optional<TaskFilter> status, Optional<TaskFilter> workgroup,  Optional<TaskFilter> tags) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskGeneralCount(ctx, status, workgroup);
+			return getTask2().getTaskGeneralCount(ctx, status, workgroup, tags);
 		}
 	}
 	

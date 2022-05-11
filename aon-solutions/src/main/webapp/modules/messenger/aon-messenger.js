@@ -14,6 +14,7 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { getCustomers } from '../../services/registryService.js';
 import { sortBy } from '../../services/utils.js';
+import { getAppPermission } from './shared/fill.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -109,14 +110,23 @@ export class AonMessenger extends AonElement {
 				} else {
 					this.buildToolbar();
 
+					let promisesLoad = [];
+
+					promisesLoad.push(this.loadTag());
+
                     if(!this.cau){
-                        this.loadWorkgroup();
+						promisesLoad.push(this.loadWorkgroup());
                     } else {
                         this._filter.email = email;
                         this.addListFilter(this._filter);
                     }
-                    
+
                     this.init();	
+
+					Promise.all(promisesLoad).then(()=>{
+						this.updateCount();
+					});
+
 				}
 			}
 		});		
@@ -145,8 +155,6 @@ export class AonMessenger extends AonElement {
 		}
 		
 		this.addBackgroundSidenav(this._filter);
-
-		this.updateCount();
 	}
 
 
@@ -179,8 +187,9 @@ export class AonMessenger extends AonElement {
 		
 		if(!this.cau){
 			this.groupNavBar();
-			this.tagNavBar();
 		}
+
+		this.tagNavBar();
 	}
 
 
@@ -361,10 +370,33 @@ export class AonMessenger extends AonElement {
 		}, []);
 	}
 
-	loadWorkgroup() {
+
+    tagNavBar() {
+		let application = this.applicationEl;
+		
+		const fnTag = this.getDur().isMessengerManager() ? () => this.dialogTag() : null; 
+		
+		application.addSidenavOptions2({
+			id: 'Tag',
+			name: MSG.TAG
+		}, [], fnTag);
+	}
+	
+    tagNavBar() {
+		let application = this.applicationEl;
+		
+		const fnTag = this.getDur().isMessengerManager() ? () => this.dialogTag() : null; 
+		
+		application.addSidenavOptions2({
+			id: 'Tag',
+			name: this.cau ? MSG.APPLICATION : MSG.TAG
+		}, [], fnTag);
+	}
+
+	async loadWorkgroup() {
 		let application = this.applicationEl;
 
-		this.getMyWorkgroups().then( workgroups => {
+		await this.getMyWorkgroups().then( workgroups => {
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  let options = [];
 
@@ -414,23 +446,20 @@ export class AonMessenger extends AonElement {
 		});
 	}
 
-
-    tagNavBar() {
-		let application = this.applicationEl;
-		
-		const fnTag = this.getDur().isMessengerManager() ? () => this.dialogTag() : null; 
-		
-		application.addSidenavOptions2({
-			id: 'Tag',
-			name: MSG.TAG
-		}, [], fnTag);
-		this.loadTag();
-	}
-
-	loadTag() {
+	async loadTag() {
 		let application = this.applicationEl;
 		const manager =  this.getDur().isMessengerManager();
-		getTaskTags({type:TAG_TYPE.TASK_LABEL}).then(tags => {
+
+		let params = {type:TAG_TYPE.TASK_LABEL};
+
+		if(this.cau){
+			let tags = getAppPermission(this.getDur()).map(app => app.tag);
+			if(tags.length){
+				params.tag = tags.join(",");
+			}
+		}
+
+		await getTaskTags(params).then(tags => {
 		  this._tags = sortBy(tags, "name", "asc").map(t => ({...t, value: t.id, description: t.name, name:t.name}));
 		  this.clearElementById(application.SIDENAV+'TagList');
 		  this._tags.forEach(item => {
@@ -591,19 +620,27 @@ export class AonMessenger extends AonElement {
 
 		let filter = {};
 
-		if(this._filter.source) 
+		if(this._filter.source) {
 			filter.source = this._filter.source;
+		}
 
-		if(filterCount.workgroups)
+		if(filterCount.workgroups){
 			filter.workgroups = filterCount.workgroups;
+		}
 
-		if(filterCount.email)
+		if(filterCount.email){
 			filter.email = filterCount.email;
+		}
 
-		if(filterCount.task_holder && !this.getDur().isMessengerManager())
+		if(filterCount.task_holder && !this.getDur().isMessengerManager()){
 			filter.task_holder = filterCount.task_holder;
+		}
+		
+		if(this._tags.length){
+			filter.tag = this._tags.map(t=> t.id).join(',');
+		}
 
-		getTaskGeneralCount(filter).then(({status, workgroups})=>{
+		getTaskGeneralCount(filter).then(({status, workgroups, tag})=>{
 			try {
 				if(status){
 					//----------------------- UPDATE COUNT---------------
@@ -623,6 +660,14 @@ export class AonMessenger extends AonElement {
 				if(workgroups){
 					for(const key in workgroups){
 						application.updateSidenavCount(key,  workgroups[key]);
+					}
+				}
+
+				if(this.cau){
+					if(tag){
+						for(const key in tag){
+							application.updateSidenavCount(key, tag[key]);
+						}
 					}
 				}
 			} catch (error) {

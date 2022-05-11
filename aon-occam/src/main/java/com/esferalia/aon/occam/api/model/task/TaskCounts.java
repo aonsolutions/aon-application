@@ -19,9 +19,12 @@ public class TaskCounts  implements Serializable{
 	
 	private ArrayList<GeneralData> workgroup;
 	
+	private ArrayList<GeneralData> tags;
+	
 	public TaskCounts() { 
 		this.status = new ArrayList<>();
 		this.workgroup = new ArrayList<>();
+		this.tags = new ArrayList<>();
 	}
 	
 	
@@ -40,12 +43,24 @@ public class TaskCounts  implements Serializable{
 		addWorkgroup(workgroupData);
 	}
 	
+	public void addTag(String tag, Integer count) {
+		GeneralData tagData = new GeneralData();
+		tagData.field = tag;
+		tagData.count = count;
+		addTag(tagData);
+	}
+	
+	
 	protected void addStatus(GeneralData statusData) {
 		status.add(statusData);
 	}
 	
 	protected void addWorkgroup(GeneralData workgroupData) {
 		workgroup.add(workgroupData);
+	}
+	
+	protected void addTag(GeneralData workgroupData) {
+		tags.add(workgroupData);
 	}
 	
 	private static class GeneralData {
@@ -72,9 +87,15 @@ public class TaskCounts  implements Serializable{
 			jsonWorkgroup.put(d.getField(), d.getCount())
 		);
 		
+		JSONObject jsonTags = new JSONObject();
+		tags.forEach(d->
+			jsonTags.put(d.getField(), d.getCount())
+		);
+		
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.STATUS, jsonStatus);
 		json.put(IJsonNames.WORKGROUPS, jsonWorkgroup);
+		json.put(IJsonNames.TAG, jsonTags);
 	
 		return json;
 	}

@@ -50,7 +50,6 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.TagType;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -211,14 +210,14 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getTaskTags(AonApiData api) {
-		String type = api.getData().optString(IJsonNames.TYPE);
+
 		Domain domain = api.getDomain();
 		return TagJSON.toJSON( 
 			AON.getTagList(
 				domain.getName(), 
-				domain.getId(), api.getUser().getLogin(),
-				f->f.getDomainProperty().eq(domain.getId())
-				.and(f.getTypeProperty().eq(TagType.safeValueOf(type).value()))
+				domain.getId(), 
+				api.getUser().getLogin(),
+				f-> TaskFilter.tags(f, api, domain)
 			) 
 		);
 	}
@@ -343,7 +342,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject getTaskGeneralCount(AonApiData api) {
 		TaskCounts taskCounts = AON_SOLUTIONS.getTaskGeneralCount(api.getDomain(), api.getUser(), 
 			Optional.of( f-> TaskFilter.taskStatusCount(f, api, api.getDomain(), new Customer()) ),
-			Optional.of( f-> TaskFilter.taskWorkgroupCount(f, api, api.getDomain()) )
+			Optional.of( f-> TaskFilter.taskWorkgroupCount(f, api, api.getDomain()) ),
+			Optional.of( f-> TaskFilter.taskTagCount(f, api, api.getDomain()) )
 		);
 		
 		return taskCounts.toJSON();

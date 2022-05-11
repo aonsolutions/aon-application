@@ -421,7 +421,7 @@ export const fillChat = (task, meId, workflows=[])=>{
     }
 }
 
-const getAppPermission = (dur, value) => {
+export const getAppPermission = (dur) => {
   let apps = [];
   if( dur.isAccounting())
     apps.push(Apps.ACCOUNTING);
@@ -443,11 +443,6 @@ const getAppPermission = (dur, value) => {
 
   if(dur.isInvoice())
     apps.push(Apps.INVOICE);
-
-  if(value){
-    const exist = apps.some(a => a.app === value );
-    if(!exist) apps.push(getApp(value));
-  }
 
   return apps;
 }
