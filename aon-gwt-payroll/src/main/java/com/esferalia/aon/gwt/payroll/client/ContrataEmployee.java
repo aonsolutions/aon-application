@@ -66,8 +66,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
 
-	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {
-	}
+	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {}
 
 	// ------------------------------------------------- ContractEmployeeUIImpl
 
@@ -254,10 +253,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(),
-					contrataEmployeeObject.getContractStartDate());
-			dialog.center();
-			dialog.show();
+			new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(), contrataEmployeeObject.getContractStartDate());
 		}
 	}
 
