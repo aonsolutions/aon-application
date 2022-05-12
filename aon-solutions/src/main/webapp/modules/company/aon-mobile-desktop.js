@@ -6,6 +6,8 @@ import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import '../invoice/aon-invoice-panel.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
+import { Apps, getAppsByDur } from '../../services/app.js';
+import { AonSaltra } from '../laboral/aon-saltra.js';
 
 export class AonMobileDesktop extends AonElement {
 
@@ -44,7 +46,9 @@ export class AonMobileDesktop extends AonElement {
 		this.initialize();
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
-			this.build();
+			if(!this.isOpenFirstApp(this.dur)){
+				this.build();
+			}
 		});
 	}
 
@@ -97,7 +101,19 @@ export class AonMobileDesktop extends AonElement {
 		} catch (error) {
 			console.log(error);
 		}
+	}
 
+	isOpenFirstApp(dur){
+		const appsOpen = getAppsByDur(dur).filter(app=>  ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
+
+		if(appsOpen && appsOpen.length===1){
+			let app = appsOpen[0];
+			if( app.app === Apps.AON_SALTRA.app ){
+				this.rootPanel(new AonSaltra())
+				return true;
+			}
+		}
+		return false;
 	}
 
 	async buildCompany() {
