@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -38,6 +39,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	private EmployeeCalendarDraftObject employeeCalendar;
 	
 	private EnterpriseContext enterpriseContext;
+	
+	private DomainUserRoles domainUserRoles;
 	
 	// ------------------------------------------------- Constructor
 	
@@ -85,7 +88,20 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				employeeContractData = employeeContractInfo;
 				employeeData = employeeContractInfo.getEmployeeInfo();
 				contractData = employeeContractInfo.getContractInfo();
-				success.accept(employeeContractInfo);
+				
+				enterprisesService.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+					
+					@Override
+					public void onSuccess(DomainUserRoles domainUserRolesDB) {
+						domainUserRoles = domainUserRolesDB;
+						success.accept(employeeContractInfo);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// Nothing to do here
+					}
+				});
 			}
 
 			@Override
@@ -153,6 +169,25 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 							success.accept(result);
 						}	
 			});
+	}
+	
+	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure, String situation) {
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
+		
+		employeesService.getEmployeeTa(contractId, situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 	
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
@@ -226,6 +261,161 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			public void onSuccess(List<Date> result) {
 				success.accept(result);
 			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	// ------------------------------------------------- Database Methods (TGSS Comunications)
+	
+	public void sendEmployeeAlta(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.sendEmployeeAlta(employeeContractData, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void sendEmployeeBaja(String settleReason, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeeContractData.getContractInfo().setSettleReason(settleReason);
+		employeesService.sendEmployeeBaja(employeeContractData, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void cambioGrupCtz(String quoteGroup, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioGrupCtz(employeeContractData, quoteGroup, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});
+	}
+	
+	public void cambioCoef(String coef, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioCoef(employeeContractData, coef, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});	
+	}
+	
+	public void cambioContrato(String tc2, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioContrato(employeeContractData, tc2, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});	
+	}
+	
+	public void cambioOcupacion(String ocupation, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioOcupacion(employeeContractData, ocupation, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});	
+	}
+	
+	public void cambioCatProf(String contract, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioCatProf(employeeContractData, contract, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});
+	}
+	
+	public void movPrevDelete(Consumer<Void> success, Consumer<Throwable> failure) {
+		String situation = employeeContractData.getContractInfo().isTGSSActive() ? "ALTA" : "BAJA";
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getEndDate() : employeeContractData.getContractInfo().getStartDate();
+		
+		employeesService.movPrevDelete(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void altaConsolidadaDelete(Consumer<Void> success, Consumer<Throwable> failure) {
+		String situation = "ALTA";
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getEndDate() : employeeContractData.getContractInfo().getStartDate();
+		
+		employeesService.altaConsolidadaDelete(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
@@ -732,6 +922,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 					return agreement.getDescription();
 		}
 		return null;
+	}
+
+	public boolean isComunica() {
+		return this.domainUserRoles.isComunica();
 	}
 	
 }
