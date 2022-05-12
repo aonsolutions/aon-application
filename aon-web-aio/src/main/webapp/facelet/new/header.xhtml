@@ -1550,16 +1550,7 @@
 			}
 			
 			function resetResultStates (searchResults, selected) {
-				searchResults.forEach(p => {
-					p.style.background = "unset";
-					
-					const mouseout = searchResults[selected].onmouseout;
-					if(false){
-						mouseout({
-							target : searchResults[selected],
-						});
-					} 
-				})
+				searchResults.forEach(p => p.style.background = "unset")
 				
 				const mouseover =  searchResults[selected].onmouseover;
 				if(mouseover){

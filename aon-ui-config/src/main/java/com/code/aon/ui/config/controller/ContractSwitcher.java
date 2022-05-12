@@ -154,7 +154,7 @@ public class ContractSwitcher implements
 		// Like joining for word checking
 		Condition joinSequence = null;
 		
-		List<List<String>> combinations = AonArrayUtils.allNoRepeatCombinations(filter.split("\\s"));
+		List<List<String>> combinations = AonArrayUtils.allNoRepeatCombinations(filter.split("\\s"));		
 		for (List<String> comb : combinations) {
 
 			StringBuilder processed = new StringBuilder("%");

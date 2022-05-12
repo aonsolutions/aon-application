@@ -7,9 +7,9 @@
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/listEx.xhtml" >
 		<aon:valueParam name="dataTableId" default="#{controller.beanName}Data" />
 		<aon:valueParam name="dataModel" default="#{controller.model}" />
-		<aon:valueParam name="rows" default="#{controller.pageLimit}" />
+		<aon:valueParam name="rows" default="#{10}" />
 		<aon:valueParam name="showDataTable" default="#{(dataModel!=null) and (dataModel.rowCount > 0)}" />
-		<aon:valueParam name="showDataScroller" default="#{true}" />
+		<aon:valueParam name="showDataScroller" default="#{!showAonPaginator}" />
 		<aon:valueParam name="showNote" default="#{true}" />
 		<aon:valueParam name="sortMode" default="multi" />
 		
@@ -21,6 +21,7 @@
 		
 		<aon:valueParam name="selectButtonRendered" default="#{true}" />
 		<aon:valueParam name="skipEditSelectedTo" default="#{!controller.editableSelectedTo}" testValue="true" />
+		<aon:valueParam name="showAonPaginator" default="#{showAonPaginator != null}"/>
 	</ui:include>
 	
 </ui:composition>
