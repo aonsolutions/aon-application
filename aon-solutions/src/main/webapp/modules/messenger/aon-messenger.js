@@ -1,7 +1,7 @@
 import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
-import Apps from '../../services/app.js';
+import {Apps, getAppsByDur} from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
@@ -14,7 +14,6 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
 import { getCustomers } from '../../services/registryService.js';
 import { sortBy } from '../../services/utils.js';
-import { getAppPermission } from './shared/fill.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -370,7 +369,6 @@ export class AonMessenger extends AonElement {
 		}, []);
 	}
 
-
     tagNavBar() {
 		let application = this.applicationEl;
 		
@@ -378,7 +376,7 @@ export class AonMessenger extends AonElement {
 		
 		application.addSidenavOptions2({
 			id: 'Tag',
-			name: MSG.TAG
+			name: this.cau ? MSG.APPLICATION : MSG.TAG
 		}, [], fnTag);
 	}
 
@@ -441,7 +439,7 @@ export class AonMessenger extends AonElement {
 		let params = {type:TAG_TYPE.TASK_LABEL};
 
 		if(this.cau){
-			let tags = getAppPermission(this.getDur()).map(app => app.tag);
+			let tags = getAppsByDur(this.getDur()).map(app => app.tag);
 			if(tags.length){
 				params.tag = tags.join(",");
 			}
@@ -450,6 +448,7 @@ export class AonMessenger extends AonElement {
 		await getTaskTags(params).then(tags => {
 		  this._tags = sortBy(tags, "name", "asc").map(t => ({...t, value: t.id, description: t.name, name:t.name}));
 		  this.clearElementById(application.SIDENAV+'TagList');
+
 		  this._tags.forEach(item => {
 			let option = {
 				id:item.id,

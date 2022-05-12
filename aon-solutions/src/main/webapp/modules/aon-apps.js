@@ -57,13 +57,9 @@ export class AonApps extends AonElement {
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP);
 
-		let appsPermission =[];
-
 		for (let key in Apps){
 			let app = Apps[key];
 			if(this.isApp(app)) {
-
-				appsPermission.push(app);
 
 				let li = this.createElement(TAG.LI);
 				li.classList.add(CSS.AON_LIST_GROUP_ITEM);
@@ -108,13 +104,6 @@ export class AonApps extends AonElement {
 			}
 		}
   	
-		appsPermission = appsPermission.filter(app=> app.app !==Apps.NOTES.app);
-
-		if(appsPermission && appsPermission.length===1){
-			let app = appsPermission[0];
-			this.appSelection(app.app);
-		}
-
 		this.appendChild(ul);
 	}
 
@@ -153,7 +142,7 @@ export class AonApps extends AonElement {
 			case Apps.MESSENGER.app:
 				this.rootPanelHtml('<aon-messenger></aon-messenger>');
 				break;
-			case Apps.SALTRA.app:
+			case Apps.AON_SALTRA.app:
 				this.rootPanel(new AonSaltra());
 				break;
 		}
@@ -180,9 +169,10 @@ export class AonApps extends AonElement {
 			return this.getDur().isInvoice();
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(Apps.SALTRA.app === app.app)
-			return !this.getDur().isComunica() && !this.getDur().isPayroll && this.getDur().isSaltra();
-		else return false;
+		else if(Apps.AON_SALTRA.app === app.app)
+			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
+		else 
+			return false;
 	}
 }
 

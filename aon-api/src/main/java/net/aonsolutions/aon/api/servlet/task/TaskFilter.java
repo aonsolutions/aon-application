@@ -332,7 +332,9 @@ public class TaskFilter {
 		if(!tagStr.isEmpty()) {
 			String[] arr = tagStr.split(",");
 			filter = filter.and(f.getNameProperty().in(arr));
-		} else if(!type.isEmpty()) {
+		}  
+		
+		if(!type.isEmpty()) {
 			filter = filter.and(f.getTypeProperty().eq(TagType.safeValueOf(type).value()));
 		}
 
